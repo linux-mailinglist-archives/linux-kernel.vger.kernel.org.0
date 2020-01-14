@@ -2,116 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C9E13AE9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53DE113AEA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbgANQJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:09:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49338 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728826AbgANQJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:09:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AB1B3AE54;
-        Tue, 14 Jan 2020 16:09:55 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Michael Reed <mdr@sgi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: qla1280: Fix dma firmware download, if dma address is 64bit
-Date:   Tue, 14 Jan 2020 17:09:36 +0100
-Message-Id: <20200114160936.1517-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728844AbgANQKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:10:39 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46722 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbgANQKi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:10:38 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00EG8DBH069867;
+        Tue, 14 Jan 2020 16:10:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=DXGEyr5ta0XlqUrJRWrExFRIxM3FCYNIxMhvm8kVLdE=;
+ b=ZI3C7yuVyQIPUg9GH91miMNTre/ToCR/HIiHa97eUXdjlFjn/9nZU30Sb1RwVufHnRyv
+ 0HwOKjY0uFb7isZPVyzuCOXXlMoMmOiDVKnNfUTey6jXtv1B2Hr8tytKkpWhZZLjvm25
+ oFdoDNbaOlKXKkK15Kzm9skxBszekYmb+9U4dMAnwRI/JRY7+j7Y+jWGsWWUesJ9MIoc
+ w2FPPEIuZNwiHq+aIauj3Yu4OmyPUwkJ3/di+G6ZwjIaIgdqeO76Q2AkS8oCcBpCl0kz
+ f3f5uYAG1k58SZTz45Ja+Qgf59QUsP4k9Qo7G0hI4PDpQHWEgBlTOLBGB0svdoCVbVin Ug== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xf74s6yb2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 16:10:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00EG9QRW168893;
+        Tue, 14 Jan 2020 16:10:08 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2xh8esas4m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 16:10:08 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00EG9umn004555;
+        Tue, 14 Jan 2020 16:09:56 GMT
+Received: from dhcp-10-175-171-251.vpn.oracle.com (/10.175.171.251)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 Jan 2020 08:09:55 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, dmitry.torokhov@gmail.com
+Cc:     sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org
+Subject: [PATCH] software node: introduce CONFIG_KUNIT_DRIVER_PE_TEST
+Date:   Tue, 14 Jan 2020 16:09:43 +0000
+Message-Id: <1579018183-14879-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001140137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001140137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do firmware download with 64bit LOAD_RAM command, if driver is using
-64bit addressing.
+currently the property entry kunit tests are built if CONFIG_KUNIT=y.
+This will cause warnings when merged with the kunit tree that now
+supports tristate CONFIG_KUNIT.  While the tests appear to compile
+as a module, we get a warning about missing module license.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+It's better to have a per-test suite CONFIG variable so that
+we can do selective building of kunit-based suites, and can
+also avoid merge issues like this.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: c032ace71c29 ("software node: add basic tests for property entries")
+Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
 ---
- drivers/scsi/qla1280.c | 20 ++++++++++++++------
- drivers/scsi/qla1280.h |  2 ++
- 2 files changed, 16 insertions(+), 6 deletions(-)
+ drivers/base/test/Kconfig  | 3 +++
+ drivers/base/test/Makefile | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-index 832af4213046..607cbddcdd14 100644
---- a/drivers/scsi/qla1280.c
-+++ b/drivers/scsi/qla1280.c
-@@ -1699,6 +1699,16 @@ qla1280_load_firmware_pio(struct scsi_qla_host *ha)
- 	return err;
- }
+diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+index 86e85da..d29ae95 100644
+--- a/drivers/base/test/Kconfig
++++ b/drivers/base/test/Kconfig
+@@ -8,3 +8,6 @@ config TEST_ASYNC_DRIVER_PROBE
+ 	  The module name will be test_async_driver_probe.ko
  
-+#if QLA_64BIT_PTR
-+#define LOAD_CMD	MBC_LOAD_RAM_A64_ROM
-+#define DUMP_CMD	MBC_DUMP_RAM_A64_ROM
-+#define CMD_ARGS	(BIT_7 | BIT_6 | BIT_4 | BIT_3 | BIT_2 | BIT_1 | BIT_0)
-+#else
-+#define LOAD_CMD	MBC_LOAD_RAM
-+#define DUMP_CMD	MBC_DUMP_RAM
-+#define CMD_ARGS	(BIT_4 | BIT_3 | BIT_2 | BIT_1 | BIT_0)
-+#endif
-+
- #define DUMP_IT_BACK 0		/* for debug of RISC loading */
- static int
- qla1280_load_firmware_dma(struct scsi_qla_host *ha)
-@@ -1748,7 +1758,7 @@ qla1280_load_firmware_dma(struct scsi_qla_host *ha)
- 		for(i = 0; i < cnt; i++)
- 			((__le16 *)ha->request_ring)[i] = fw_data[i];
+ 	  If unsure say N.
++config KUNIT_DRIVER_PE_TEST
++	bool "KUnit Tests for property entry API"
++	depends on KUNIT
+diff --git a/drivers/base/test/Makefile b/drivers/base/test/Makefile
+index 2214310..3ca5636 100644
+--- a/drivers/base/test/Makefile
++++ b/drivers/base/test/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_TEST_ASYNC_DRIVER_PROBE)	+= test_async_driver_probe.o
  
--		mb[0] = MBC_LOAD_RAM;
-+		mb[0] = LOAD_CMD;
- 		mb[1] = risc_address;
- 		mb[4] = cnt;
- 		mb[3] = ha->request_dma & 0xffff;
-@@ -1759,8 +1769,7 @@ qla1280_load_firmware_dma(struct scsi_qla_host *ha)
- 				__func__, mb[0],
- 				(void *)(long)ha->request_dma,
- 				mb[6], mb[7], mb[2], mb[3]);
--		err = qla1280_mailbox_command(ha, BIT_4 | BIT_3 | BIT_2 |
--				BIT_1 | BIT_0, mb);
-+		err = qla1280_mailbox_command(ha, CMD_ARGS, mb);
- 		if (err) {
- 			printk(KERN_ERR "scsi(%li): Failed to load partial "
- 			       "segment of f\n", ha->host_no);
-@@ -1768,7 +1777,7 @@ qla1280_load_firmware_dma(struct scsi_qla_host *ha)
- 		}
- 
- #if DUMP_IT_BACK
--		mb[0] = MBC_DUMP_RAM;
-+		mb[0] = DUMP_CMD;
- 		mb[1] = risc_address;
- 		mb[4] = cnt;
- 		mb[3] = p_tbuf & 0xffff;
-@@ -1776,8 +1785,7 @@ qla1280_load_firmware_dma(struct scsi_qla_host *ha)
- 		mb[7] = upper_32_bits(p_tbuf) & 0xffff;
- 		mb[6] = upper_32_bits(p_tbuf) >> 16;
- 
--		err = qla1280_mailbox_command(ha, BIT_4 | BIT_3 | BIT_2 |
--				BIT_1 | BIT_0, mb);
-+		err = qla1280_mailbox_command(ha, CMD_ARGS, mb);
- 		if (err) {
- 			printk(KERN_ERR
- 			       "Failed to dump partial segment of f/w\n");
-diff --git a/drivers/scsi/qla1280.h b/drivers/scsi/qla1280.h
-index a1a8aefc7cc3..e7820b5bca38 100644
---- a/drivers/scsi/qla1280.h
-+++ b/drivers/scsi/qla1280.h
-@@ -277,6 +277,8 @@ struct device_reg {
- #define MBC_MAILBOX_REGISTER_TEST	6	/* Wrap incoming mailboxes */
- #define MBC_VERIFY_CHECKSUM		7	/* Verify checksum */
- #define MBC_ABOUT_FIRMWARE		8	/* Get firmware revision */
-+#define MBC_LOAD_RAM_A64_ROM		9	/* Load RAM 64bit ROM version */
-+#define MBC_DUMP_RAM_A64_ROM		0x0a	/* Dump RAM 64bit ROM version */
- #define MBC_INIT_REQUEST_QUEUE		0x10	/* Initialize request queue */
- #define MBC_INIT_RESPONSE_QUEUE		0x11	/* Initialize response queue */
- #define MBC_EXECUTE_IOCB		0x12	/* Execute IOCB command */
+-obj-$(CONFIG_KUNIT) += property-entry-test.o
++obj-$(CONFIG_KUNIT_DRIVER_PE_TEST) += property-entry-test.o
 -- 
-2.24.1
+1.8.3.1
 
