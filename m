@@ -2,52 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11DC313AD0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0B213AD13
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:06:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbgANPFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbgANPFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:05:40 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF6982467D;
-        Tue, 14 Jan 2020 15:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579014340;
-        bh=r3wNhVw5AZzZVqBgn28DrRg3pRR9zCUi/o77MuqLd7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X70UJM6fVByW71pCqmtwmGQIsDsb6IvWRmvWxjj7vyLaTu/bzv/KKrXlu5ZBoS6sG
-         b2ww6UEsIaVzyBTVz2akPeQmnP9J2dPfP/N1o/FqDpYE4sInU/UQ4o7JmyzamlVD1k
-         oE8FNidfR50PgQvbItCK1BV33zz++u+Xrzr4ZyD0=
-Date:   Tue, 14 Jan 2020 16:05:37 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     rafael@kernel.org, lduncan@suse.com, cleech@redhat.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 2/3] drivers: base: Propagate errors through the
- transport component
-Message-ID: <20200114150537.GB1975425@kroah.com>
-References: <20200106185817.640331-1-krisman@collabora.com>
- <20200106185817.640331-3-krisman@collabora.com>
+        id S1729261AbgANPGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 10:06:10 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35286 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgANPGK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 10:06:10 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e12so12717969qto.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 07:06:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hG/77GxvunOSI8YW5THsJSlnBGvFxXbdDmptWBr5SD0=;
+        b=N6mHiyV6eoZw07syH/QFAGLQCob29tWC3bWYJntBg7Fwk4caieH6rUR5uik11ISsC8
+         JE8M6Y1hmnFKDooA5iGz5t52+Czb03pUToS+duHyS/suRwYBNnC3uIWUYI8oM3f/r/6k
+         s27UD7W/41Ci/W8OPhVObyStVWxeyJoBvtvPiQroko53bu3AvYeYGjC9FbS546NE8/hM
+         M1chhPRqXQY6PRZuWrhIEWnTULFi05hn5TAxOSvTgPPFIvpd7zxqWg23QUb3j8hDD37V
+         tCaxJmBg+Qb5B9JzG46etyRkvEgyVravi7Hr3/dVOetD/tnkMCVo1LlQ20vPE/Xd7W5U
+         qdvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hG/77GxvunOSI8YW5THsJSlnBGvFxXbdDmptWBr5SD0=;
+        b=nYeFl1eBLImyNIj6aWZj5nUSf5TgK17JP7MLAwVvKXe2l52YHb0RMJji8bHCv+/h6a
+         fdLSa89WGPIS4zxZb9DA99FXDpB4glBmTXyS1bpqjbgHD569l40YQtD5HPou/AcnoOUt
+         9e9j5os5vYeZzfjQgNIO2yjWBHIsevgFIfDPCG2NcMJJb0kF9H8Azw7qfhseVIPhab1m
+         MmxQ7ZVVt/qii7EYkoTD4MGIJcc7rJopf1UI1ShySCHMnKf5CVO7LW+QNjvUwx7LgEeN
+         9+j2lsly9FcIjKjg46EHhDS95KgGWtt46FqAA2ab6Fljm6A6Wtg4nw/7yRkHO4s1qmHc
+         o+9A==
+X-Gm-Message-State: APjAAAXOJKCRQzWxkjUbZ2Lz8WKzexYylbRWQsrwASZH4+ZXwvWRSEtn
+        MteknBpVPTo7joSbm2xEU/CO4pGR0D+lKYnHNCQAJw==
+X-Google-Smtp-Source: APXvYqyf/27+jnNcvaqjSCP+utuwjxx/iZBpThAVSG3EWNIUHVsrc1r3oe+sZn1Tl911eWYzrDbqSIAajn/zP9bjvqs=
+X-Received: by 2002:ac8:3703:: with SMTP id o3mr3962163qtb.208.1579014368945;
+ Tue, 14 Jan 2020 07:06:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106185817.640331-3-krisman@collabora.com>
+References: <20200107092922.18408-1-ktouil@baylibre.com> <20200107092922.18408-5-ktouil@baylibre.com>
+ <20200108205447.GA16981@bogus> <CAMpxmJXffr-S51udNmUyMHz687jAoBKrYspNypfUUqjOD45zxQ@mail.gmail.com>
+ <20200114144214.GA1898224@kroah.com>
+In-Reply-To: <20200114144214.GA1898224@kroah.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 14 Jan 2020 16:05:57 +0100
+Message-ID: <CAMpxmJW8edEZw81iQkwDr-Umdb1ibb85s=EshQs4yXRFh5LP=A@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: at25: add reference for the wp-gpios property
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Khouloud Touil <ktouil@baylibre.com>,
+        baylibre-upstreaming@groups.io,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 01:58:16PM -0500, Gabriel Krisman Bertazi wrote:
-> The transport registration may fail.  Make sure the errors are
-> propagated to the callers.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+wt., 14 sty 2020 o 15:42 Greg KH <gregkh@linuxfoundation.org> napisa=C5=82(=
+a):
+>
+> On Thu, Jan 09, 2020 at 10:47:56AM +0100, Bartosz Golaszewski wrote:
+> > =C5=9Br., 8 sty 2020 o 21:54 Rob Herring <robh@kernel.org> napisa=C5=82=
+(a):
+> > >
+> > > On Tue,  7 Jan 2020 10:29:21 +0100, Khouloud Touil wrote:
+> > > > As the at25 uses the NVMEM subsystem, and the property is now being
+> > > > handled, adding reference for it in the device tree binding documen=
+t,
+> > > > which allows to specify the GPIO line to which the write-protect pi=
+n
+> > > > is connected.
+> > > >
+> > > > Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/eeprom/at25.txt | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > >
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > Hi Greg,
+> >
+> > AT25 patches usually go through the char-misc tree. In this case
+> > however, the change depends on the other patches in this series. Can
+> > you ack this and I'll take it through the AT24 tree exceptionally?
+>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Patch applied with Greg's Ack.
+
+Bart
