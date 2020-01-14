@@ -2,95 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B73D13A7F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 12:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 436DC13A7ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 12:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729546AbgANLId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 06:08:33 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45238 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbgANLIc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 06:08:32 -0500
-Received: by mail-qk1-f196.google.com with SMTP id x1so11630937qkl.12
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 03:08:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=ukU/HTx3Lur+oN5f1R5Yulqfuax6so7AyFG3I+NXijE=;
-        b=mDLkJsF382qFbmEkUJXrjKsSsU0bztLQnJuEdueVjG+YHKn129QRMVkFBhaHs02jlb
-         S5JV36BNDDNUfL8KemT5hOsLWqTvUggPzEAa8N2CZKjqEUL2gsDnvv40g+BB+uela7dh
-         Jgrx9rDjz5OErwlXPsX7nNM+dSWsRNE8nulA4QnYl74qcvdSBJGmDk3He16/4mFZs33S
-         IzPGb27j4W2dHx0T8+OODSyZm7E16IzcLQzguhPs5vHLJASI9JeNCkexh2az/dQ96t3u
-         ruWKhzckHLSdD4ijmd79+MvrNJzlzIX0uzlRXCf+RicfDnuUK7rhsIpo8bqFBLTAzkrn
-         doog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=ukU/HTx3Lur+oN5f1R5Yulqfuax6so7AyFG3I+NXijE=;
-        b=CNQiyO2vC9S9HBaHQQF6batSaCNGMbHMEJExzs3Y7EM/MqAuDW+Se+2H4zj8iTG/kc
-         QtlX6aMvszoMdca1qoXCtr4Nvr4zdmqjfVVmxZiyYM0OpPIFF8rWcBItw1rVItzNtFJH
-         AW3v+mWW+Jk0IvLMGY7YMQMXGSIPBv++Hq1x9xfZW4NVWtpwAOctqkSUC4NIZF7hznQK
-         Y/ro0kvuBvF/wMh4WydqInn6uN6gQo6DFtUXa6E80N0o90OkZLE2+oHSVExxB+G6lHzX
-         ImiXJRmT45M1cITyLWpBtCyLF0vMaYbFrcjlZAJWFePUI/I86J5PWlOowVbBrkf5DbPt
-         5UsA==
-X-Gm-Message-State: APjAAAXBe7zFIZBFMSv9iZ+zH+ZUjBIK9f1kvIkyUyp2tGDLowvJcalS
-        Md+sIRyWcAkjJkZM3HJs9TV1Yg==
-X-Google-Smtp-Source: APXvYqw+K7nK6v62iaPG8IRuXo2+JcN5WoG4smCXzjE2do7qUArjfSk6sdyUR46tJD8UtoLaDUB45w==
-X-Received: by 2002:a37:4b93:: with SMTP id y141mr21982856qka.205.1579000111263;
-        Tue, 14 Jan 2020 03:08:31 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id i16sm6406845qkh.120.2020.01.14.03.08.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 03:08:30 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 01/10] kcsan: Add Kernel Concurrency Sanitizer infrastructure
-Date:   Tue, 14 Jan 2020 06:08:29 -0500
-Message-Id: <53F6B915-AC53-41BB-BF32-33732515B3A0@lca.pw>
-References: <CANpmjNOC2PYFsE_TK2SYmKcHxyG+2arWc8x_fmeWPOMi0+ot8g@mail.gmail.com>
-Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-In-Reply-To: <CANpmjNOC2PYFsE_TK2SYmKcHxyG+2arWc8x_fmeWPOMi0+ot8g@mail.gmail.com>
-To:     Marco Elver <elver@google.com>
-X-Mailer: iPhone Mail (17C54)
+        id S1729417AbgANLHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 06:07:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:50840 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726169AbgANLHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 06:07:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46832142F;
+        Tue, 14 Jan 2020 03:07:52 -0800 (PST)
+Received: from [10.163.1.192] (unknown [10.163.1.192])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E61483F6C4;
+        Tue, 14 Jan 2020 03:07:45 -0800 (PST)
+Subject: Re: [PATCH V11 1/5] mm/hotplug: Introduce arch callback validating
+ the hot remove range
+To:     David Hildenbrand <david@redhat.com>,
+        David Hildenbrand <dhildenb@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
+        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com,
+        mgorman@techsingularity.net, osalvador@suse.de,
+        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
+        valentin.schneider@arm.com, robin.murphy@arm.com,
+        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com
+References: <6f0efddc-f124-58ca-28b6-4632469cf992@arm.com>
+ <3C3BE5FA-0CFC-4C90-8657-63EF5B680B0B@redhat.com>
+ <6b8fb779-31e8-1b63-85a8-9f6c93a04494@arm.com>
+ <19194427-1295-3596-2c2c-463c4adf4f35@redhat.com>
+ <78f04711-2ca6-280c-d0c2-ab9eea866e59@arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <2c4b04d6-6d86-e87a-9b09-b931133a0d9c@arm.com>
+Date:   Tue, 14 Jan 2020 16:39:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <78f04711-2ca6-280c-d0c2-ab9eea866e59@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -98,57 +52,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-> On Jan 6, 2020, at 7:47 AM, Marco Elver <elver@google.com> wrote:
->=20
-> Thanks, I'll look into KCSAN + lockdep compatibility. It's probably
-> missing some KCSAN_SANITIZE :=3D n in some Makefile.
+On 01/14/2020 07:43 AM, Anshuman Khandual wrote:
+> 
+> 
+> On 01/13/2020 04:07 PM, David Hildenbrand wrote:
+>> On 13.01.20 10:50, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 01/13/2020 02:44 PM, David Hildenbrand wrote:
+>>>>
+>>>>
+>>>>> Am 13.01.2020 um 10:10 schrieb Anshuman Khandual <anshuman.khandual@arm.com>:
+>>>>>
+>>>>> ﻿
+>>>>>
+>>>>>> On 01/10/2020 02:12 PM, David Hildenbrand wrote:
+>>>>>>> On 10.01.20 04:09, Anshuman Khandual wrote:
+>>>>>>> Currently there are two interfaces to initiate memory range hot removal i.e
+>>>>>>> remove_memory() and __remove_memory() which then calls try_remove_memory().
+>>>>>>> Platform gets called with arch_remove_memory() to tear down required kernel
+>>>>>>> page tables and other arch specific procedures. But there are platforms
+>>>>>>> like arm64 which might want to prevent removal of certain specific memory
+>>>>>>> ranges irrespective of their present usage or movability properties.
+>>>>>>
+>>>>>> Why? Is this only relevant for boot memory? I hope so, otherwise the
+>>>>>> arch code needs fixing IMHO.
+>>>>>
+>>>>> Right, it is relevant only for the boot memory on arm64 platform. But this
+>>>>> new arch callback makes it flexible to reject any given memory range.
+>>>>>
+>>>>>>
+>>>>>> If it's only boot memory, we should disallow offlining instead via a
+>>>>>> memory notifier - much cleaner.
+>>>>>
+>>>>> Dont have much detail understanding of MMU notifier mechanism but from some
+>>>>> initial reading, it seems like we need to have a mm_struct for a notifier
+>>>>> to monitor various events on the page table. Just wondering how a physical
+>>>>> memory range like boot memory can be monitored because it can be used both
+>>>>> for for kernel (init_mm) or user space process at same time. Is there some
+>>>>> mechanism we could do this ?
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Current arch call back arch_remove_memory() is too late in the process to
+>>>>>>> abort memory hot removal as memory block devices and firmware memory map
+>>>>>>> entries would have already been removed. Platforms should be able to abort
+>>>>>>> the process before taking the mem_hotplug_lock with mem_hotplug_begin().
+>>>>>>> This essentially requires a new arch callback for memory range validation.
+>>>>>>
+>>>>>> I somewhat dislike this very much. Memory removal should never fail if
+>>>>>> used sanely. See e.g., __remove_memory(), it will BUG() whenever
+>>>>>> something like that would strike.
+>>>>>>
+>>>>>>>
+>>>>>>> This differentiates memory range validation between memory hot add and hot
+>>>>>>> remove paths before carving out a new helper check_hotremove_memory_range()
+>>>>>>> which incorporates a new arch callback. This call back provides platforms
+>>>>>>> an opportunity to refuse memory removal at the very onset. In future the
+>>>>>>> same principle can be extended for memory hot add path if required.
+>>>>>>>
+>>>>>>> Platforms can choose to override this callback in order to reject specific
+>>>>>>> memory ranges from removal or can just fallback to a default implementation
+>>>>>>> which allows removal of all memory ranges.
+>>>>>>
+>>>>>> I suspect we want really want to disallow offlining instead. E.g., I
+>>>>>
+>>>>> If boot memory pages can be prevented from being offlined for sure, then it
+>>>>> would indirectly definitely prevent hot remove process as well.
+>>>>>
+>>>>>> remember s390x does that with certain areas needed for dumping/kexec.
+>>>>>
+>>>>> Could not find any references to mmu_notifier in arch/s390 or any other arch
+>>>>> for that matter apart from KVM (which has an user space component), could you
+>>>>> please give some pointers ?
+>>>>
+>>>> Memory (hotplug) notifier, not MMU notifier :)
+>>>
+>>> They are so similarly named :)
+>>>
+>>>>
+>>>> Not on my notebook right now, grep for MEM_GOING_OFFLINE, that should be it.
+>>>>
+>>>
+>>> Got it, thanks ! But we will still need boot memory enumeration via MEMBLOCK_BOOT
+>>> to reject affected offline requests in the callback.
+>>
+>> Do you really need that?
+>>
+>> We have SECTION_IS_EARLY. You could iterate all involved sections (for
+>> which you are getting notified) and check if any one of these is marked
+>> SECTION_IS_EARLY. then, it was added during boot and not via add_memory().
+> 
+> Seems to be a better approach than adding a new memblock flag.
 
-Can I have a update on fixing this? It looks like more of a problem that kcs=
-an_setup_watchpoint() will disable IRQs and then dive into the page allocato=
-r where it would complain because it might sleep.
+These additional changes do the trick and prevent boot memory removal.
+Hope this is in line with your earlier suggestion.
 
-BTW, I saw Paul sent a pull request for 5.6 but it is ugly to have everybody=
- could trigger a deadlock (sleep function called in atomic context) like thi=
-s during boot once this hits the mainline not to mention about only recently=
- it is possible to test this feature (thanks to warning ratelimit) with the e=
-xisting debugging options because it was unable to boot due to the brokennes=
-s with debug_pagealloc as mentioned in this thread, so this does sounds like=
- it needs more soak time for the mainline to me.
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 00f3e1836558..3b59e6a29dea 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -17,6 +17,7 @@
++++ b/arch/arm64/mm/mmu.c
+@@ -17,6 +17,7 @@
+ #include <linux/mman.h>
+ #include <linux/nodemask.h>
+ #include <linux/memblock.h>
++#include <linux/memory.h>
+ #include <linux/fs.h>
+ #include <linux/io.h>
+ #include <linux/mm.h>
+@@ -1365,4 +1366,37 @@ void arch_remove_memory(int nid, u64 start, u64 size,
+        __remove_pages(start_pfn, nr_pages, altmap);
+        __remove_pgd_mapping(swapper_pg_dir, __phys_to_virt(start), size);
+ }
++
++static int boot_mem_remove_notifier(struct notifier_block *nb,
++                                   unsigned long action, void *data)
++{
++       unsigned long start_pfn, end_pfn, pfn, section_nr;
++       struct mem_section *ms;
++       struct memory_notify *arg = data;
++
++       start_pfn = arg->start_pfn;
++       end_pfn = start_pfn + arg->nr_pages;
++
++       if (action != MEM_GOING_OFFLINE)
++               return NOTIFY_OK;
++
++       for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
++               section_nr = pfn_to_section_nr(pfn);
++               ms = __nr_to_section(section_nr);
++
++               if (early_section(ms))
++                       return NOTIFY_BAD;
++       }
++       return NOTIFY_OK;
++}
++
++static struct notifier_block boot_mem_remove_nb = {
++       .notifier_call = boot_mem_remove_notifier,
++};
++
++static int __init boot_mem_remove_init(void)
++{
++       return register_memory_notifier(&boot_mem_remove_nb);
++}
++device_initcall(boot_mem_remove_init);
+ #endif
 
-0000000000000400
-[   13.416814][    T1] Call Trace:
-[   13.416814][    T1]  lock_is_held_type+0x66/0x160
-[   13.416814][    T1]  ___might_sleep+0xc1/0x1d0
-[   13.416814][    T1]  __might_sleep+0x5b/0xa0
-[   13.416814][    T1]  slab_pre_alloc_hook+0x7b/0xa0
-[   13.416814][    T1]  __kmalloc_node+0x60/0x300
-[   13.416814   T1]  ? alloc_cpumask_var_node+0x44/0x70
-[   13.416814][    T1]  ? topology_phys_to_logical_die+0x7e/0x180
-[   13.416814][    T1]  alloc_cpumask_var_node+0x44/0x70
-[   13.416814][    T1]  zalloc_cpumask_var+0x2a/0x40
-[   13.416814][    T1]  native_smp_prepare_cpus+0x246/0x425
-[   13.416814][    T1]  kernel_init_freeable+0x1b8/0x496
-[   13.416814][    T1]  ? rest_init+0x381/0x381
-[   13.416814][    T1]  kernel_init+0x18/0x17f
-[   13.416814][    T1]  ? rest_init+0x381/0x381
-[   13.416814][    T1]  ret_from_fork+0x3a/0x50
-[   13.416814][    T1] irq event stamp: 910
-[   13.416814][    T1] hardirqs last  enabled at (909): [<ffffffff8d1240f3>]=
- _raw_write_unlock_irqrestore+0x53/0x57
-[   13.416814][    T1] hardirqs last disabled at (910): [<ffffffff8c8bba76>]=
- kcsan_setup_watchpoint+0x96/0x460
-[   13.416814][    T1] softirqs last  enabled at (0): [<ffffffff8c6b697a>] c=
-opy_process+0x11fa/0x34f0
-[   13.416814][    T1] softirqs last disabled at (0): [<0000000000000000>] 0=
-x0
-[   13.416814][    T1] ---[ end trace 7d1df66da055aa92 ]---
-[   13.416814][    T1] possible reason: unannotated irqs-on.
-[   13.416814][ent stamp: 910
-[   13.416814][    T1] hardirqs last  enabled at (909): [<ffffffff8d1240f3>]=
- _raw_write_unlock_irqrestore+0x53/0x57
-[   13.416814][    T1] hardirqs last disabled at (910): [<ffffffff8c8bba76>]=
- kcsan_setup_watchpoint+0x96/0x460
-[   13.416814][    T1] softirqs last  enabled at (0): [<ffffffff8c6b697a>] c=
-opy_process+0x11fa/0x34f0
-[   13.416814][    T1] softirqs last disabled at (0): [<0000000000000000>] 0=
-x0=
+> 
+>>
+>>
+> 
+> 
