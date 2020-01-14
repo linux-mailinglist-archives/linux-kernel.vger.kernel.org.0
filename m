@@ -2,58 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A3C139EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 794B2139EC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:12:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbgANBGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 20:06:11 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:24388 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729153AbgANBGL (ORCPT
+        id S1729345AbgANBLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:11:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55598 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729163AbgANBLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 20:06:11 -0500
+        Mon, 13 Jan 2020 20:11:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578963970;
+        s=mimecast20190719; t=1578964310;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pcPgHMjbM1tTuJs57rpRm00UDVEplEHbWgFk0hTeOZ4=;
-        b=hV5nmls0y+UjjLdXrdHioATIafPa74aOEh3qZHQJvgy5NC7qEDePpvhwg5hdNV3a2liUXr
-        NmAh3TeJFoNw8tYD7ZNmETxkud3jxtY1S+9MR/TiJo4DuibrIH4CynbsIr0Ja+UMrWz5fn
-        hfhrY0AeLkUhtu80W49bSBmGLgjeamI=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-101-2wdm5lbuMTuscRUgDvVePA-1; Mon, 13 Jan 2020 20:06:08 -0500
-X-MC-Unique: 2wdm5lbuMTuscRUgDvVePA-1
-Received: by mail-qv1-f72.google.com with SMTP id f16so7657661qvr.7
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 17:06:08 -0800 (PST)
+        bh=yJS3SQDuyFcfsfzdSLUzj3J9c/FI6Hl/bpVZVrZ98a8=;
+        b=FVpF3BDaEYWQ7X990OCJslqrK7wILUgBxAdxoRjmqiAImRLXI2jcWpEYFVvrKw+g0uE/v9
+        ujZexW2CB8vO4ROk+oExIMcqEoortze4hVT6TNsrHQAZtXXaky0jUtx4k+iR2r2NQOmwmV
+        rCtginBoQPNoArqPnbJXzN38rmF8WGc=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-zO1fxCPOM6qPVPIPot8_Ow-1; Mon, 13 Jan 2020 20:11:49 -0500
+X-MC-Unique: zO1fxCPOM6qPVPIPot8_Ow-1
+Received: by mail-qv1-f71.google.com with SMTP id g6so7641751qvp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 17:11:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pcPgHMjbM1tTuJs57rpRm00UDVEplEHbWgFk0hTeOZ4=;
-        b=pcOdjthsEFnAx3Gxmwy0vvFfdufqUJ/GQWkWVy4bDCuwHGj6dMVHLMxE6BRBvsbes2
-         3ZCU6OInKgh+TRBx1J7RfUISqFqLX1Q76VhMTGktZslvWfDon6v9moN0t1gkDAubO7ip
-         YQ1mxKZletdlZoZWx/IznCO+DXx++3L4+AcYN6VuotYEla17gfi7CaMjjVRm6x9GfqZS
-         EUOxuvsLHKlDfL8BGzt4eYnK3/bbrjVXttkvXUVAbijz5/9SPDs1lbLq78g9kY/FB4CE
-         +QSFKJkpo/GEvYWhQNHt28Liu6nJ1n/mPHXA+xCv3EUh1J/ezXIvSHXE5STKoYa42UnR
-         sRow==
-X-Gm-Message-State: APjAAAXuDSG27/sQzayeZHVdfkcwuvVTptoDpxFo2L4tDCzOpJMYP9ml
-        phy6fYKqmxdr38E3STpMXw+vhQR4/GrOX0DROer8L46FwLfUxlPfLQv4KwsyRJzVZ8H+EjGhZXU
-        jKtYhcDmUkdBMx+dZCpU9Re7l0MvPr/Mbjfub3dmZ
-X-Received: by 2002:a37:a086:: with SMTP id j128mr14135968qke.459.1578963968132;
-        Mon, 13 Jan 2020 17:06:08 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFgUVJ57OMm6qYtoPN41WVqMHNymaDdu9B+b9YyZZgWZjfQ9S0NylFBVceVMYo3g/DIWX4riFinR12zotGq5c=
-X-Received: by 2002:a37:a086:: with SMTP id j128mr14135942qke.459.1578963967884;
- Mon, 13 Jan 2020 17:06:07 -0800 (PST)
+        bh=yJS3SQDuyFcfsfzdSLUzj3J9c/FI6Hl/bpVZVrZ98a8=;
+        b=I37rA2ZtlfPczZHNFy38w2YPXEC5qoqcnMRTjKbvVzIFiWN6CtYgGo/f5zW69a5uZB
+         wnyoJZxJE1JyTnpMsZn5wAXTZZT18HBhx6P0qFIE1fe9IdVTNLE8nskWocXfGHuextEo
+         zaqTxB9nDxKk7LXJeez9KpN+5so5zJhWjG18UdWYWQWUaGMUq7ZdXhEX8sqUVnxBcrGZ
+         GYx074P/p/ICIndYSA97j4wVOK1pABqUW46OhaC5m89VqsMlQeK2zjLSd1cRAhzXXgRR
+         DCo027MoyET0+VapTuYFqd/251eeVFfz99O6sgyS2Vh6ooAFyMqrRS4QmAXLM1kBM/FY
+         DWRg==
+X-Gm-Message-State: APjAAAWy+QbW5v8LP6cSJDPaC4zACJsEUMtUtCAt7VnR8JRELF4KBe4m
+        7PZgdROOoSOPW+gHyiVMilYJoUDXaHVu+igSoE4WK0iLroNhb98SPOEU8u0OWtCFyH+oHCZCfVi
+        wp68xekXakNAamhDkV0LZZQhv7cgcHgnKHzm8i0YD
+X-Received: by 2002:ac8:6b98:: with SMTP id z24mr749420qts.294.1578964308732;
+        Mon, 13 Jan 2020 17:11:48 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxcj0IG1yTGPYw+rvBGa//EjfsrQIdxtjKY9m8WnLqY6tnFhjxIf3+hwKS2Q5MxcKSkwOtS19rpkAkklAKKXnI=
+X-Received: by 2002:ac8:6b98:: with SMTP id z24mr749412qts.294.1578964308564;
+ Mon, 13 Jan 2020 17:11:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20200112220612.3448741-1-lains@archlinux.org>
-In-Reply-To: <20200112220612.3448741-1-lains@archlinux.org>
+References: <20200112205021.3004703-1-lains@archlinux.org> <7d49a8444ea1740444d1e9133104530731bfb30a.camel@archlinux.org>
+ <CAO-hwJ+56qUTr8HQOLyx9tgbJMuTTPbb6K40cwWnO=PzMcO+tQ@mail.gmail.com> <1e4143394f773df60a2ba329c940b339e4563bee.camel@archlinux.org>
+In-Reply-To: <1e4143394f773df60a2ba329c940b339e4563bee.camel@archlinux.org>
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 14 Jan 2020 21:03:30 +1000
-Message-ID: <CAO-hwJJJYRc8_kRiGGu9E4Dx-WpSADro4b28D8QoE87FBUTnOA@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: logitech-hidpp: add support for the Powerplay mat/receiver
+Date:   Tue, 14 Jan 2020 21:08:42 +1000
+Message-ID: <CAO-hwJJ00Vy5Hv=gsbopr=8e8xJfmt7wvZf+CSVrSZZ=S0uO9Q@mail.gmail.com>
+Subject: Re: [PATCH] HID: logitech-hidpp: add support for the Powerplay mat/receiver
 To:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
 Cc:     Jiri Kosina <jikos@kernel.org>,
         "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
@@ -65,79 +66,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Filipe,
+On Tue, Jan 14, 2020 at 10:55 AM Filipe La=C3=ADns <lains@archlinux.org> wr=
+ote:
+>
+> On Tue, 2020-01-14 at 20:48 +1000, Benjamin Tissoires wrote:
+> > On Tue, Jan 14, 2020 at 1:31 AM Filipe La=C3=ADns <lains@archlinux.org>
+> > wrote:
+> > > On Sun, 2020-01-12 at 20:50 +0000, Filipe La=C3=ADns wrote:
+> > > > I also marked all lightspeed devices as HID++ compatible. As the
+> > > > internal powerplay device does not have REPORT_TYPE_KEYBOARD or
+> > > > REPORT_TYPE_KEYBOARD it was not being marked as HID++ compatible
+> > > > in
+> > > > logi_hidpp_dev_conn_notif_equad.
+> > >
+> > > Actually I had another look at the code and I don't understand why
+> > > we
+> > > are manually setting |=3D HIDPP in
+> > > logi_hidpp_dev_conn_notif_equad/logi_hidpp_dev_conn_notif_27mhz. We
+> > > should set it in logi_dj_hidpp_event as it is triggered by
+> > > receiving a
+> > > HID++ packet.
+> >
+> > long story short: nope :)
+> >
+> > The whole purpose of setting the workitem->reports_supported is to be
+> > able to create the matching report descriptor in the new virtual
+> > device. So having this set in a callback will add an operation for
+> > nothing every time we get an event, and will also not ensure a proper
+> > separation of concerns.
+> >
+> > Cheers,
+> > Benjamin
+> >
+> > > What do you think Benjamin?
+> > >
+> > > --
+> > > Filipe La=C3=ADns
+>
+> Okay, then is maybe better if I add HIDPP to reports_supported based on
+> the device ID (7). This is the only product to my knowledge that
+> exports a device with ID 7. It's a better solution than setting HIDPP
+> on all lightspeed devices.
 
-On Mon, Jan 13, 2020 at 8:07 AM Filipe La=C3=ADns <lains@archlinux.org> wro=
-te:
->
-> The Logitech G Powerplay has a lightspeed receiver with a static HID++
-> device with ID 7 attached to it to. It is used to configure the led on
-> the mat. For this reason I increased the max number of devices.
->
-> I also marked all lightspeed devices as HID++ compatible. As the
-> internal powerplay device does not have REPORT_TYPE_KEYBOARD or
-> REPORT_TYPE_MOUSE it was not being marked as HID++ compatible in
-> logi_hidpp_dev_conn_notif_equad.
->
-> Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
-> ---
->  drivers/hid/hid-logitech-dj.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.=
-c
-> index bb50d6e7745b..732380b55b15 100644
-> --- a/drivers/hid/hid-logitech-dj.c
-> +++ b/drivers/hid/hid-logitech-dj.c
-> @@ -16,11 +16,11 @@
->  #include <asm/unaligned.h>
->  #include "hid-ids.h"
->
-> -#define DJ_MAX_PAIRED_DEVICES                  6
-> +#define DJ_MAX_PAIRED_DEVICES                  7
->  #define DJ_MAX_NUMBER_NOTIFS                   8
->  #define DJ_RECEIVER_INDEX                      0
->  #define DJ_DEVICE_INDEX_MIN                    1
-> -#define DJ_DEVICE_INDEX_MAX                    6
-> +#define DJ_DEVICE_INDEX_MAX                    7
->
->  #define DJREPORT_SHORT_LENGTH                  15
->  #define DJREPORT_LONG_LENGTH                   32
-> @@ -971,7 +971,7 @@ static void logi_hidpp_recv_queue_notif(struct hid_de=
-vice *hdev,
->         case 0x0c:
->                 device_type =3D "eQUAD Lightspeed 1";
->                 logi_hidpp_dev_conn_notif_equad(hdev, hidpp_report, &work=
-item);
-> -               workitem.reports_supported |=3D STD_KEYBOARD;
-> +               workitem.reports_supported |=3D STD_KEYBOARD | HIDPP;
+Yep, looks better.
 
-This feels wrong. The whole initial code was hack-ish, and now this is
-even more hack-ish.
+>
+> I will send a new patch if you agree with this approach.
 
-I don't have a simple solution right now (at a conference this week),
-but I will need to be convinced this is the only sane solution :/
+thanks.
 
 Cheers,
 Benjamin
 
->                 break;
->         case 0x0d:
->                 device_type =3D "eQUAD Lightspeed 1_1";
-> @@ -1850,6 +1850,10 @@ static const struct hid_device_id logi_dj_receiver=
-s[] =3D {
->           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
->                 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1),
->          .driver_data =3D recvr_type_gaming_hidpp},
-> +       { /* Logitech powerplay mat/receiver (0xc539) */
-> +         HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
-> +               0xc53a),
-> +        .driver_data =3D recvr_type_gaming_hidpp},
->         { /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
->           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_REC=
-EIVER),
->          .driver_data =3D recvr_type_27mhz},
-> --
-> 2.24.1
 >
+> --
+> Filipe La=C3=ADns
 
