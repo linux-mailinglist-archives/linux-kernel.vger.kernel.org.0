@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7B513A5F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 219ED13A578
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbgANKGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36266 "EHLO mail.kernel.org"
+        id S1729988AbgANKH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:07:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729417AbgANKGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:06:49 -0500
+        id S1730158AbgANKHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E76824681;
-        Tue, 14 Jan 2020 10:06:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A71F24677;
+        Tue, 14 Jan 2020 10:07:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996408;
-        bh=I2LKLTtBWS4PoSIgSlNuZBGxHpJKQwjuaBfWGWzmPiE=;
+        s=default; t=1578996474;
+        bh=233lHTpAXwJwCP194gW01K4F3DNqIeFJxperaV1GY2k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JoOHi580/XXtel+8yhK3KsO1arIJ8tPCYcgjyQFz0y3p7ajEb+99vBcZiwct+NF60
-         GKtmo/kV8JDWrlzcKTQkDPHC19mXhX7qcsY6c96GvSW7gdmVF996nw7zOGZclUvydQ
-         qkP6NILdBErQr45V0BbxhCE8pM0B8tbgvh/s7ZP0=
+        b=0o7Qdjw7/cchupVbko/vBZ3XZP0FuDmInjrwU0UbeS+9MEYW4WK7RGQqYHbKi+p2F
+         0aO7Chmh0z9iAYeY/8CaIFOCfCXmGHXeOrNjgxoYlckvDtiaK6lA4kMr9u/YHxIVo7
+         Ngh6hlErC8JUpgBWaqwYHVTcCCW3ShrAsrTB8O2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 5.4 71/78] ath10k: fix memory leak
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.19 28/46] usb: musb: Disable pullup at init
 Date:   Tue, 14 Jan 2020 11:01:45 +0100
-Message-Id: <20200114094402.874361267@linuxfoundation.org>
+Message-Id: <20200114094346.102633539@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
-References: <20200114094352.428808181@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,31 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-commit b8d17e7d93d2beb89e4f34c59996376b8b544792 upstream.
+commit 96a0c12843109e5c4d5eb1e09d915fdd0ce31d25 upstream.
 
-In ath10k_usb_hif_tx_sg the allocated urb should be released if
-usb_submit_urb fails.
+The pullup may be already enabled before the driver is initialized. This
+happens for instance on JZ4740.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+It has to be disabled at init time, as we cannot guarantee that a gadget
+driver will be bound to the UDC.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Suggested-by: Bin Liu <b-liu@ti.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Link: https://lore.kernel.org/r/20200107152625.857-3-b-liu@ti.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/ath/ath10k/usb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/musb/musb_core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/usb.c
-+++ b/drivers/net/wireless/ath/ath10k/usb.c
-@@ -443,6 +443,7 @@ static int ath10k_usb_hif_tx_sg(struct a
- 			ath10k_dbg(ar, ATH10K_DBG_USB_BULK,
- 				   "usb bulk transmit failed: %d\n", ret);
- 			usb_unanchor_urb(urb);
-+			usb_free_urb(urb);
- 			ret = -EINVAL;
- 			goto err_free_urb_to_pipe;
- 		}
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2324,6 +2324,9 @@ musb_init_controller(struct device *dev,
+ 	musb_disable_interrupts(musb);
+ 	musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
+ 
++	/* MUSB_POWER_SOFTCONN might be already set, JZ4740 does this. */
++	musb_writeb(musb->mregs, MUSB_POWER, 0);
++
+ 	/* Init IRQ workqueue before request_irq */
+ 	INIT_DELAYED_WORK(&musb->irq_work, musb_irq_work);
+ 	INIT_DELAYED_WORK(&musb->deassert_reset_work, musb_deassert_reset);
 
 
