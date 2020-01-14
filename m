@@ -2,98 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDE8139E93
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2875139EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:02:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbgANAtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 19:49:36 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23571 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726494AbgANAtf (ORCPT
+        id S1729273AbgANBCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:02:15 -0500
+Received: from mail-m974.mail.163.com ([123.126.97.4]:55096 "EHLO
+        mail-m974.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728896AbgANBCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:49:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578962974;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2l/F28QWuQvndxXiZazLaTDPrBDdV1YaH8Th1UuXAEQ=;
-        b=Qs995VgtIwaXnRi+UyXEHdbXCjZCdl3ZWGmqy8obIGmhBCgXyVImFA+aF2+2Q+D+azFjsx
-        YGjFbGf4xkUjXzMLWvjzWxbrdCSHCC1bMuNen46/YsrbJFD+yxGtyZIigYUnmChXGoboog
-        EGQ5sGtVu5fQubaMkWuINw571VB74CE=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-bgekvYNzOi-2su8ae3E4aQ-1; Mon, 13 Jan 2020 19:49:33 -0500
-X-MC-Unique: bgekvYNzOi-2su8ae3E4aQ-1
-Received: by mail-qt1-f197.google.com with SMTP id c8so7825619qte.22
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 16:49:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2l/F28QWuQvndxXiZazLaTDPrBDdV1YaH8Th1UuXAEQ=;
-        b=HoA7vLFNhgp6C1Yo1iaYSw67etK7f73SezP1axhkX8XH/OaQqgKT+vyrjEOVRd7ww6
-         TeSGykZbtstRMc/QruC2pWLldmKW+1dxPRs/W9XvpqUtPe6V6kGPylspY40lrYsfkMp5
-         BzjgPQL2WlNIYzn5neZvCN2Cno8SLZU/gvFMvcsSXLljMAeqqcmJ2O1PJtvN/1o9Cnpx
-         YNeISrOjCqS87PE0+ia/xLAXbqoyyiAPABGuYXliJMlb2huYXbOpufb+xkxB0VJCM73C
-         Ow84omJcvEOsDFpwszyT6tC0pzSGFD3b+gW7TbUu6ih5tDAG5oPh4hwLgYWp9HbXVvdL
-         92ew==
-X-Gm-Message-State: APjAAAXZXtYAabtND/K1Bkw2cayAeZ43Ek8ZWK+ZcO4IYBh1yGsxZmoY
-        905+7XGFbCBtC/uMl2zdVC03E4A9j28hy6dsiP0y3DpYSU+JxbtUG08fEwNiyYtW4JpoIGwIDpO
-        n7Ofy+S5bavHNeVg0fXb6/z4O1jXjqYxLlM8LDZBp
-X-Received: by 2002:ac8:478a:: with SMTP id k10mr1344572qtq.260.1578962972796;
-        Mon, 13 Jan 2020 16:49:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyjxu5nBmZuS7sk+Evmp+4P+dIg5mfw0lvZthkPTRl3Bk9pdAQzlF5dtnuqpdGQwTqLJqW9VdkFG12KK27SFQI=
-X-Received: by 2002:ac8:478a:: with SMTP id k10mr1344554qtq.260.1578962972518;
- Mon, 13 Jan 2020 16:49:32 -0800 (PST)
+        Mon, 13 Jan 2020 20:02:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Uelvu
+        7kF0s69Lu17ZLO/24scVGUTvnSP2RRh1v1R1g0=; b=pcB0715yLWgMmKIeWhFrZ
+        M4sTc9Uxm7DogZHJWitnB0jlzkriBdxf97DmgBv2VKjua9mGkbzPx5fridxneq+p
+        kwm4fTtO9aD2O9mMsIs6Gy86jXxwTXtTUJSHzT/kMDH1rVXGKULrSmaaBGBNQsq9
+        O5UgNGCcSQ0b1y5/7aCc1A=
+Received: from xilei-TM1604.mioffice.cn (unknown [114.247.175.223])
+        by smtp4 (Coremail) with SMTP id HNxpCgAnDSLkEh1ewZVvDw--.2666S4;
+        Tue, 14 Jan 2020 09:01:24 +0800 (CST)
+From:   Niu Xilei <niu_xilei@163.com>
+To:     davem@davemloft.net
+Cc:     tglx@linutronix.de, fw@strlen.de, peterz@infradead.org,
+        steffen.klassert@secunet.com, bigeasy@linutronix.de,
+        jonathan.lemon@gmail.com, pabeni@redhat.com,
+        anshuman.khandual@arm.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Niu Xilei <niu_xilei@163.com>
+Subject: [v3] pktgen: Allow configuration of IPv6 source address range
+Date:   Tue, 14 Jan 2020 09:01:22 +0800
+Message-Id: <20200114010122.5327-1-niu_xilei@163.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200112205021.3004703-1-lains@archlinux.org> <7d49a8444ea1740444d1e9133104530731bfb30a.camel@archlinux.org>
-In-Reply-To: <7d49a8444ea1740444d1e9133104530731bfb30a.camel@archlinux.org>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 14 Jan 2020 20:48:17 +1000
-Message-ID: <CAO-hwJ+56qUTr8HQOLyx9tgbJMuTTPbb6K40cwWnO=PzMcO+tQ@mail.gmail.com>
-Subject: Re: [PATCH] HID: logitech-hidpp: add support for the Powerplay mat/receiver
-To:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: HNxpCgAnDSLkEh1ewZVvDw--.2666S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxur47Zr45Gr45Aw43Gr17KFg_yoWrJw45pa
+        y3GF9xJryxZr43twsxJF9rtr1S9w4v9345XayfA3sY9FyDWryrA397Ga47KFyjqryvk398
+        tr42ga90ga1qqrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2c_-UUUUU=
+X-Originating-IP: [114.247.175.223]
+X-CM-SenderInfo: pqlxs5plohxqqrwthudrp/xtbBRQSqgFPAEO8rFwAAs7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 1:31 AM Filipe La=C3=ADns <lains@archlinux.org> wro=
-te:
->
-> On Sun, 2020-01-12 at 20:50 +0000, Filipe La=C3=ADns wrote:
-> > I also marked all lightspeed devices as HID++ compatible. As the
-> > internal powerplay device does not have REPORT_TYPE_KEYBOARD or
-> > REPORT_TYPE_KEYBOARD it was not being marked as HID++ compatible in
-> > logi_hidpp_dev_conn_notif_equad.
->
-> Actually I had another look at the code and I don't understand why we
-> are manually setting |=3D HIDPP in
-> logi_hidpp_dev_conn_notif_equad/logi_hidpp_dev_conn_notif_27mhz. We
-> should set it in logi_dj_hidpp_event as it is triggered by receiving a
-> HID++ packet.
+Pktgen can use only one IPv6 source address from output device or src6
+command setting. In pressure test we need create lots of sessions more than
+65535. So add src6_min and src6_max command to set the range.
 
-long story short: nope :)
+Signed-off-by: Niu Xilei <niu_xilei@163.com>
 
-The whole purpose of setting the workitem->reports_supported is to be
-able to create the matching report descriptor in the new virtual
-device. So having this set in a callback will add an operation for
-nothing every time we get an event, and will also not ensure a proper
-separation of concerns.
+Changes since v2:
+ - reword subject line
+Changes since v1:
+ - only create IPv6 source address over least significant 64 bit range
+---
+ net/core/pktgen.c | 90 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-Cheers,
-Benjamin
-
->
-> What do you think Benjamin?
->
-> --
-> Filipe La=C3=ADns
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 294bfcf0ce0e..33435ae0ba68 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -1355,6 +1355,49 @@ static ssize_t pktgen_if_write(struct file *file,
+ 		sprintf(pg_result, "OK: dst6_max=%s", buf);
+ 		return count;
+ 	}
++	if (!strcmp(name, "src6_min")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->min_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->min_in6_saddr);
++
++		pkt_dev->cur_in6_saddr = pkt_dev->min_in6_saddr;
++		if (debug)
++			pr_debug("src6_min set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: src6_min=%s", buf);
++		return count;
++	}
++	if (!strcmp(name, "src6_max")) {
++		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
++		if (len < 0)
++			return len;
++
++		pkt_dev->flags |= F_IPV6;
++
++		if (copy_from_user(buf, &user_buffer[i], len))
++			return -EFAULT;
++		buf[len] = 0;
++
++		in6_pton(buf, -1, pkt_dev->max_in6_saddr.s6_addr, -1, NULL);
++		snprintf(buf, sizeof(buf), "%pI6c", &pkt_dev->max_in6_saddr);
++
++		if (debug)
++			pr_debug("dst6_max set to: %s\n", buf);
++
++		i += len;
++		sprintf(pg_result, "OK: dst6_max=%s", buf);
++		return count;
++	}
+ 	if (!strcmp(name, "src6")) {
+ 		len = strn_len(&user_buffer[i], sizeof(buf) - 1);
+ 		if (len < 0)
+@@ -2286,6 +2329,51 @@ static void set_cur_queue_map(struct pktgen_dev *pkt_dev)
+ 	pkt_dev->cur_queue_map  = pkt_dev->cur_queue_map % pkt_dev->odev->real_num_tx_queues;
+ }
+ 
++/* generate ipv6 source addr */
++static inline void set_src_in6_addr(struct pktgen_dev *pkt_dev)
++{
++	__be64 min6_h, min6_l, max6_h, max6_l, addr_l, *t;
++	u64 min6, max6, rand, i;
++	struct in6_addr addr6;
++
++	memcpy(&min6_h, pkt_dev->min_in6_saddr.s6_addr, 8);
++	memcpy(&min6_l, pkt_dev->min_in6_saddr.s6_addr + 8, 8);
++	memcpy(&max6_h, pkt_dev->max_in6_saddr.s6_addr, 8);
++	memcpy(&max6_l, pkt_dev->max_in6_saddr.s6_addr + 8, 8);
++
++	/* only generate source address in least significant 64 bits range
++	 * most significant 64 bits must be equal
++	 */
++	if (max6_h != min6_h)
++		return;
++
++	addr6 = pkt_dev->min_in6_saddr;
++	t = (__be64 *)addr6.s6_addr + 1;
++	min6 = be64_to_cpu(min6_l);
++	max6 = be64_to_cpu(max6_l);
++
++	if (min6 < max6) {
++		if (pkt_dev->flags & F_IPSRC_RND) {
++			do {
++				prandom_bytes(&rand, sizeof(rand));
++				rand = rand % (max6 - min6) + min6;
++				addr_l = cpu_to_be64(rand);
++				memcpy(t, &addr_l, 8);
++			} while (ipv6_addr_loopback(&addr6) ||
++				 ipv6_addr_v4mapped(&addr6) ||
++				 ipv6_addr_is_multicast(&addr6));
++		} else {
++			addr6 = pkt_dev->cur_in6_saddr;
++			i = be64_to_cpu(*t);
++			if (++i > max6)
++				i = min6;
++			addr_l = cpu_to_be64(i);
++			memcpy(t, &addr_l, 8);
++		}
++	}
++	pkt_dev->cur_in6_saddr = addr6;
++}
++
+ /* Increment/randomize headers according to flags and current values
+  * for IP src/dest, UDP src/dst port, MAC-Addr src/dst
+  */
+@@ -2454,6 +2542,8 @@ static void mod_cur_headers(struct pktgen_dev *pkt_dev)
+ 		}
+ 	} else {		/* IPV6 * */
+ 
++		set_src_in6_addr(pkt_dev);
++
+ 		if (!ipv6_addr_any(&pkt_dev->min_in6_daddr)) {
+ 			int i;
+ 
+-- 
+2.20.1
 
