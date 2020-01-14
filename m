@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DEBF13AF30
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DD313AF31
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgANQXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:23:07 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:40453 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbgANQXH (ORCPT
+        id S1728721AbgANQXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:23:12 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45378 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbgANQXL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:23:07 -0500
-Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MadGG-1jOni72MkU-00cAgg for <linux-kernel@vger.kernel.org>; Tue, 14 Jan
- 2020 17:23:05 +0100
-Received: by mail-qt1-f177.google.com with SMTP id e25so1616729qtr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:23:05 -0800 (PST)
-X-Gm-Message-State: APjAAAWYdj7e+xNIesLXUX4z+qvmTdLeJM+LP16d3X/kogzK/Wnwe98U
-        TcnBSInHoRCwRX1vgYG1HJnYJy53xuyb0VWK0sk=
-X-Google-Smtp-Source: APXvYqyQRl+RS+4lYhvE1+899F0TLsfD48pCLsOVltbaCq1aMotPe+CAUHfgKfZ14B7Ib3sDZnxXOK6/4sE99hB3IPY=
-X-Received: by 2002:ac8:709a:: with SMTP id y26mr4384832qto.304.1579018984475;
- Tue, 14 Jan 2020 08:23:04 -0800 (PST)
+        Tue, 14 Jan 2020 11:23:11 -0500
+Received: by mail-io1-f68.google.com with SMTP id i11so14437582ioi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=4RbjksI4ZVf8jlMAui9QSDoZFwWF9mQNUo5m2497TSc=;
+        b=ivxeIqnDGG2IPj9/lbhO5RIgpchuTRJIBcbtiK0vCwtmMsgUCquQtt1lgRB24Rdi3U
+         433Z4zGeEF1dtED3XsNhNO4TECggm2mOYJLSz2bgeeGQAePcA8xrCdrMey7alEh+T08Z
+         uyBSIn7pi+Dvg5f5h/pOicZt1oRmaEBB87obVZ3Cxz4XMliFF9DjSPUBIBR0cCkYDXtu
+         d6C864QDoOzkX9MlLKqHwSEYVJkjGdyJGaHAvpO4ajrvtL/IrtSjV5aLb873FwjD9ou1
+         5IsTK9x5qHkJCM0MIfrtFo9Z+aBanyKN+Efhh/rAjtru4Ij5uja0ffMxT34I4BD7RtGv
+         lsHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=4RbjksI4ZVf8jlMAui9QSDoZFwWF9mQNUo5m2497TSc=;
+        b=hTkygFOXX2CY2DgRvEucr6vxSyF2cSy3uuDk2jYoD55wXyKw8SPJ2i+t+DGVV0PJSl
+         5T8mVIauNWqD0miNs/TV/DIHjXKX+m2FFngL3OTvK1PfmBtAJpdsBSkJGqwTSokggKsK
+         oU2NElNVeFbvwjj3Q1l0Hx6vvfY/kfSYJ3tf67dNqD1cy0Oz8XhkgpLAd6fgDmUXns03
+         ECuBtJE1XtgKrz47O63GoP63Ks5yr33QIs9gyyXxBGgEzoTSYT7tPgF+t1OzwcmH49I1
+         cx0lHklV7VmPjlf7Ak9PHe+FCx1uxW1ZRMROvb6NW6pkSKC2/DvmbVhrC6loT2DZaqPP
+         ILug==
+X-Gm-Message-State: APjAAAUAAuENGzAU8iv7KZN9WReeuM6aeFrYw8HRWj9q2XpcwPm0inb9
+        /TgLcYoWuDX/MBJHrztJ5kiyz0V4vR3NT+aJZLc=
+X-Google-Smtp-Source: APXvYqw8FoAyu9xw6e8ZLdUILqg1lBJXWS1Bdg7P+lIfjlrLnKw89R/gpPcrpU/TYg8ySypzehsm+PTRVghC7vf3k0c=
+X-Received: by 2002:a5e:9507:: with SMTP id r7mr17073461ioj.152.1579018991200;
+ Tue, 14 Jan 2020 08:23:11 -0800 (PST)
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Jan 2020 17:22:48 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3wHmr3hgb5H69V68ZA3KCDSFeOekAKmR80MWxgQ7JK=w@mail.gmail.com>
-Message-ID: <CAK8P3a3wHmr3hgb5H69V68ZA3KCDSFeOekAKmR80MWxgQ7JK=w@mail.gmail.com>
-Subject: asm-generic: fixes for v5.5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nick Hu <nickhu@andestech.com>, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@kernel.org>
+Received: by 2002:a6b:5a0a:0:0:0:0:0 with HTTP; Tue, 14 Jan 2020 08:23:10
+ -0800 (PST)
+Reply-To: aakkaavvii@gmail.com
+From:   Abraham Morrison <mrbidokeke@gmail.com>
+Date:   Tue, 14 Jan 2020 08:23:10 -0800
+Message-ID: <CADSEnMo6OUNvTLAhAVat_EReeXY1KWOwX_MxwkRnrvNNwWgO-g@mail.gmail.com>
+Subject: Good day!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:CnUs0kVGHiAhk0kV3rWyYaSMio9KcVG43K+nMgnM/MoZEVMl9Qg
- H2BmezWgWLKYreseuCTjv2jBV0YE84NVhoGT6YQoHQxTN6vZB1mLXQglivlT9Izb/gZZ1R0
- b9kjxIOmGHFD3FUHhehYzDQdzZ5dthxAxs67dNklHD1+D/s4E1JlK80wAnTQArxaa9ucVZS
- 04W4nhEOnCYtMC6uWHNfw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+AaxaToq39s=:1uJTeA3AR8guXpZMY293Or
- 250YoYabYahaFo5xKCRfbqqHAoZ+rFRm7FBNNP7tHZq59CZlgRUVHyvYFcgnNz5FPvZgc6sXZ
- i/5Bbb+XVhR76IcB7jCvphYJSLr92V8WPFfWydpXzrOGOrzBXwzjSBANPi0WdcoPavzXKoil8
- Vm5dL2FbEWgFbNJ2pZGHM0HxpYClepmqzVMMQ5hDVmaxHc74SUJWsrXKUfBGNTuPB8jMltiKG
- 1k0YfEMUb9UccCEnvSltGClmzpDjxLFG0uUf9hbCRuHCEG0CwWrKQWc0bAfMPgsRdSApiRnOE
- Q6m4qizUcTtEzvUhsULQUTWX8aECKlJeRYmBoQHOwRe9iOoL0B5eAPLnXNDRUCWy/vgn3oYEQ
- O/rsNwLqa+sPqPyZbnknWELtQFBtphRwwujGoByeW35q4ZfGHABm1dPHxgcml/TaEoE2S4OXS
- WiQpvOQAVMIKpSOkmx6iWXjOHFoyPp0z28i/p3SmspKoBtLKr9HhYhomTbmYHdORDdO4a4P6h
- IAB1iI8uWj0oda2NMGFM36EGC7XOB1Vs3zNaAOAj8HJU6onCob0+sgmzdExZfrbbNRKp5u2nF
- +JJUJp8oW6N+tHQ7b6ny+RVJO4WkO2vzQ3jViCs3sVv5sMPCCvURjoCjLQE9fyaeT5p1jSzj9
- EBDHwfupUEky3H3hdgF2sEl0Re5PMvtaeULsho6va0oX2moPa6w1fpcFnEfaibgAMY7KEBlNW
- qEFqzqwHDw6DHxMXGP7kEd5277OBmmOdWvFLpQh3dRZLQGA9XDp4PibpqefHKXBpT/TPTcQmM
- nrzqZxD0vwxduuDvPL43cMTrqr5ENMbwjDy4Rq85oiEaquMsoZUMzo+wnh6/voGvGTaK+EPHL
- uAIA/BQzG8/Y6hoRf3Jw==
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
-
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git
-tags/asm-generic-5.5
-
-for you to fetch changes up to 060dc911501f6ee222569304f50962172a52b1d6:
-
-  nds32: fix build failure caused by page table folding updates
-(2019-12-30 11:19:05 +0100)
-
-----------------------------------------------------------------
-asm-generic: fixes for v5.5
-
-Here are two bugfixes from Mike Rapoport, both fixing
-compile-time errors on the nds32 architecture that
-were recently introduced.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-----------------------------------------------------------------
-Mike Rapoport (2):
-      asm-generic/nds32: don't redefine cacheflush primitives
-      nds32: fix build failure caused by page table folding updates
-
- arch/nds32/include/asm/cacheflush.h | 11 +++++++----
- arch/nds32/include/asm/pgtable.h    |  2 +-
- include/asm-generic/cacheflush.h    | 33 ++++++++++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 6 deletions(-)
+RGVhciBGcmllbmQsDQpJIGFtIEJhcnJpc3RlciBBYnJhaGFtIE1vcnJpc29uLCBEaWQgeW91IHJl
+Y2VpdmUgbXkgcHJldmlvdXMgbWVzc2FnZQ0KdG8geW91PyBJIGhhdmUgYW4gaW1wb3J0YW50IGlu
+Zm9ybWF0aW9uIGZvciB5b3UgYWJvdXQgeW91ciBpbmhlcml0YW5jZQ0KZnVuZCB3b3J0aCBvZiAo
+JDIwLDUwMCwwMDAuMDApIE1pbGxpb24gd2hpY2ggd2FzIGxlZnQgZm9yIHlvdSBieSB5b3VyDQps
+YXRlIHJlbGF0aXZlLCBNci4gQWxleGFuZGVyLiBTbyBpZiB5b3UgYXJlIGludGVyZXN0ZWQgZ2V0
+IGJhY2sgdG8gbWUNCmZvciBtb3JlIGRldGFpbHMuDQpUaGFuayB5b3UuDQpCYXJyaXN0ZXIgQWJy
+YWhhbSBNb3JyaXNvbi4NCi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uDQrQlNC+0YDQvtCz0L7QuSDQtNGA0YPQsywNCtCvINCR0LDRgNGA
+0LjRgdGC0LXRgCDQkNCy0YDQsNCw0Lwg0JzQvtGA0YDQuNGB0L7QvSwg0JLRiyDQv9C+0LvRg9GH
+0LjQu9C4INC80L7QtSDQv9GA0LXQtNGL0LTRg9GJ0LXQtSDRgdC+0L7QsdGJ0LXQvdC40LUg0LTQ
+u9GPDQrQstCw0YE/INCjINC80LXQvdGPINC10YHRgtGMINC00LvRjyDQstCw0YEg0LLQsNC20L3Q
+sNGPINC40L3RhNC+0YDQvNCw0YbQuNGPINC+INCy0LDRiNC10Lwg0L3QsNGB0LvQtdC00YHRgtCy
+0LXQvdC90L7QvA0K0YTQvtC90LTQtSDQsiDRgNCw0LfQvNC10YDQtSAoMjAgNTAwIDAwMCwwMCkg
+0LzQuNC70LvQuNC+0L3QvtCyINC00L7Qu9C70LDRgNC+0LIsINC+0YHRgtCw0LLQu9C10L3QvdC+
+0Lwg0LLQsNC8DQrQv9C+0LrQvtC50L3Ri9C8INGA0L7QtNGB0YLQstC10L3QvdC40LrQvtC8LCDQ
+vNC40YHRgtC10YAg0JDQu9C10LrRgdCw0L3QtNGALiDQotCw0Log0YfRgtC+LCDQtdGB0LvQuCDQ
+stGLDQrQt9Cw0LjQvdGC0LXRgNC10YHQvtCy0LDQvdGLLCDRgdCy0Y/QttC40YLQtdGB0Ywg0YHQ
+viDQvNC90L7QuSDQtNC70Y8g0LHQvtC70LXQtSDQv9C+0LTRgNC+0LHQvdC+0Lkg0LjQvdGE0L7R
+gNC80LDRhtC40LguDQrQodC/0LDRgdC40LHQvi4NCtCR0LDRgNGA0LjRgdGC0LXRgCDQkNCy0YDQ
+sNCw0Lwg0JzQvtGA0YDQuNGB0L7QvS4NCg==
