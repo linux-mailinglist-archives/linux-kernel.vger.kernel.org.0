@@ -2,132 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C85013AC95
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7574813AC9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgANOqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:46:40 -0500
-Received: from mga14.intel.com ([192.55.52.115]:51924 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbgANOqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:46:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 06:46:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,433,1571727600"; 
-   d="scan'208";a="305163859"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 14 Jan 2020 06:46:36 -0800
-Subject: Re: [PATCH 2/3] xhci: Wait until link state trainsits to U0 after
- setting USB_SS_PORT_LS_U0
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200103084008.3579-1-kai.heng.feng@canonical.com>
- <20200103084008.3579-2-kai.heng.feng@canonical.com>
- <17701887-a249-eade-eecb-541df6c2c704@linux.intel.com>
- <CAAd53p56oXDsPBKqZA_HJbtajWNBQz_LfK-fpOiuxoTrn3WU5w@mail.gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <7f6d4742-6e68-ea1d-4266-c69c27a19df6@linux.intel.com>
-Date:   Tue, 14 Jan 2020 16:48:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729016AbgANOuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:50:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44982 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728868AbgANOuG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:50:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6nJUJhhumQt0VjlRrHEVPz0UIG6WR97W9B6Dcn2o5bo=; b=amMLuROlHT/tLBsR+5kwzWHb7
+        naLAfg3uDbdvdIcSpnBKTj9lHHnRZCrjQukY2soUdDUpHasEnZRnagbYgTHyiHQlKJeHF//0nrZFK
+        WLr+qr0loLSfVMA5aBNaftPEU3fCh1PvgjHcwFkbtPPYOHhak//E+0XGT2DyOyHtjc3GM=;
+Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1irNVp-0008Pd-SH; Tue, 14 Jan 2020 14:49:45 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 32656D01965; Tue, 14 Jan 2020 14:49:45 +0000 (GMT)
+Date:   Tue, 14 Jan 2020 14:49:45 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     jeff_chang <jeff_chang@richtek.com>,
+        Jeff Chang <richtek.jeff.chang@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6] ASoC: Add MediaTek MT6660 Speaker Amp Driver
+Message-ID: <20200114144945.GU3897@sirena.org.uk>
+References: <1578968526-13191-1-git-send-email-richtek.jeff.chang@gmail.com>
+ <s5htv4yfpnt.wl-tiwai@suse.de>
+ <36357249c6ed4a989cd11535fdefef6e@ex1.rt.l>
+ <s5hwo9uqrbu.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAAd53p56oXDsPBKqZA_HJbtajWNBQz_LfK-fpOiuxoTrn3WU5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/7+LvQqw8N5lf/3J"
+Content-Disposition: inline
+In-Reply-To: <s5hwo9uqrbu.wl-tiwai@suse.de>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.1.2020 11.18, Kai-Heng Feng wrote:
-> On Fri, Jan 10, 2020 at 11:27 PM Mathias Nyman
-> <mathias.nyman@linux.intel.com> wrote:
->>
->> On 3.1.2020 10.40, Kai-Heng Feng wrote:
->>> Like U3 case, xHCI spec doesn't specify the upper bound of U0 transition
->>> time. The 20ms is not enough for some devices.
->>>
->>> Intead of polling PLS or PLC, we can facilitate the port change event to
->>> know that the link transits to U0 is completed.
->>>
->>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>> ---
->>>    drivers/usb/host/xhci-hub.c  | 8 +++++++-
->>>    drivers/usb/host/xhci-mem.c  | 1 +
->>>    drivers/usb/host/xhci-ring.c | 1 +
->>>    drivers/usb/host/xhci.h      | 1 +
->>>    4 files changed, 10 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
->>> index 2b2e9d004dbf..07886a1bce62 100644
->>> --- a/drivers/usb/host/xhci-hub.c
->>> +++ b/drivers/usb/host/xhci-hub.c
->>> @@ -1310,11 +1310,17 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
->>>                                        spin_lock_irqsave(&xhci->lock, flags);
->>>                                }
->>>                        }
->>> +                     if (link_state == USB_SS_PORT_LS_U0)
->>> +                             reinit_completion(&ports[wIndex]->link_state_changed);
->>
->> All the other suspend and resume related port flags/completions are
->> in struct xhci_bus_state. See for example rexit_done[].
->> Not sure that is a better place but at least it would be consistent.
->>
->> Could actually make sense to move more of them to the xhci_port structure,
->> but perhaps in some later suspend/resume rework patch.
-> 
-> Ok. Should I keep this part of the patch as is? Or move it to
-> xhci_bus_state and probably move it back to xhci_port in later rework
-> patch?
 
-Maybe move it to xhci_bus_state for now.
+--/7+LvQqw8N5lf/3J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
->>>
->>>                        xhci_set_link_state(xhci, ports[wIndex], link_state);
->>>
->>>                        spin_unlock_irqrestore(&xhci->lock, flags);
->>> -                     msleep(20); /* wait device to enter */
->>> +                     if (link_state == USB_SS_PORT_LS_U0) {
->>> +                             if (!wait_for_completion_timeout(&ports[wIndex]->link_state_changed, msecs_to_jiffies(100)))
->>> +                                     xhci_dbg(xhci, "missing U0 port change event for port %d-%d\n", hcd->self.busnum, wIndex + 1);
->>
->> We might be waiting for completion here in unnecessary.
->> No completion is called if port is already in U0, either set by
->> xhci_bus_resume(), or we race with a device initiated resume.
-> 
-> Is there a way to know if device initiated resume is inplace?
+On Tue, Jan 14, 2020 at 11:12:53AM +0100, Takashi Iwai wrote:
 
-Yes, before xhci interrupt handler handles the device initiated resume PLS
-is XDEV_RESUME and PLC is set.
+> So, for the codec, it doesn't matter at all about the signedness and
+> the alingment of 32bit / 24bit of the incoming signals, but magically
+> handled as is?  Interesting...
 
-After the interrupt handler PLS goes from XDEV_RESUME to XDEV_RECOVERY to XDEV_U0.
-A bit is set for bus_state->port_remote_wakeup, and on usb core side
-also bus->resuming_ports |= bit is set, (having both may be a bit redundant, we might
-be able to get rid of bus_state->port_remote_wakeup, but not right now)
+On the playback side CODECs sometimes don't care that much, they
+clock data in and if it stops early they just go on to the next
+sample with the width being used to configure filters or
+something.
 
-> 
->>
->> Maybe read the current port link state first, and don't do anything if it's
->> already in U0, or fail if it's in a state where we can't resume to U0.
-> 
-> What happens if device initiated resume happens right after we query the PLS?
+The signedness is a bit more surprising I have to say :/
 
-Not sure, fortunately the drivers task is to write XDEV_U0 to PLS both when
-we want a host initiated resume, or when we want to react on a device initiated
-resume. So hopefully that's ok, but this race exists.
+--/7+LvQqw8N5lf/3J
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Better keep calling completion for both host and device initiated resume cases
-when port reaches U0/U1/U2 to avoid waiting for the completion unnecessary,
-like you current patch does.
-  
--Mathias
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4d1PgACgkQJNaLcl1U
+h9D7qgf+KdBUSPJ38rdTjpyt2K7lYvMyXL5+ZUVws3WSh8Mf6NKFkc2TRAtLJLMm
+cqQxLWHy6m4R7X+tZtn2iwoi5f+RDi8uYHOcvSfU9qoI5KQeCgHQjXwaU6tnx7fx
+UeeJ0kwtqgsO3xcGpn6DUjoujSvxI9dyr83h0MS3EhX216xvzEDBgF/ujsbnYfCj
+ukYd9ZB/jD9aFtelkTHgJh6zeKPkcLTLhBB+/i3AalSM+yBR2eLgXkVUGBB7pPMD
+k4LL/2R2f91ziU7J/6NgZuO+X6RzXAmYNDs2nH28v9sQotj1KTXXFl3/t5L42zm7
+3XPg4S+5Q5SefOGfY4kvylDWjank2A==
+=ff88
+-----END PGP SIGNATURE-----
+
+--/7+LvQqw8N5lf/3J--
