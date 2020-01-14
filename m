@@ -2,97 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A154C139F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:37:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83DDA139F21
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbgANBhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 20:37:08 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:47042 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729211AbgANBhD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 20:37:03 -0500
-Received: by mail-lj1-f196.google.com with SMTP id m26so12341588ljc.13;
-        Mon, 13 Jan 2020 17:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=j37XV7ANVgjgiPiKALeBvbZ2E7R44griMSfBNJCXDRY=;
-        b=RCFEaDv8eLqR+dkAJPPi0US3XDGA7lGYfGyiNSdZ/b04EuE3c5BRa8MTn3uueqALZO
-         Oz2XAJIDlgG4i0ctRSkXV+n3Oynu9wm63ZFzTxJaOC9a7j+7mk3XBc/Lu53nwnp4LvS1
-         VuROMTtyenY4w4m7hzUtkLTJ3lrOAat6avIXEE2CxjSo3QToCoGetyHH6/LZwMU6o8to
-         ZN1D4qOG4IxV9MjVkHD5Nf5MF++BAQ7sXIwfpqLWLo3C3Ci5ITnqnsTOm6dVfjXmPjdd
-         h+ib++Ef9kPqhF5ee99x5c7yCYfJS8yR2CJbUyx6FcJZMCMxkziSYZeB/rqtdjKoiPk+
-         Sm3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=j37XV7ANVgjgiPiKALeBvbZ2E7R44griMSfBNJCXDRY=;
-        b=PjBmef9kegOQ7swggIAaK2+qUPR1BXJtd98YXRACadK6jq6w0gEYYYVCn6SxMt0rzD
-         XIjjHG7BZgsOLYNBw5fKOZ6ni0X5hvfNz4wIQtyYvD4lssrvmziX1A03fEyAdb9zKib6
-         ff5w0Pla5aqNld0qtGaJb74O2HZzwJ5loO5nQnHCXordhRFe2Ta4Zqo18Z2Tt8gXVM5h
-         DfwZNHGEjkKAw5Ab6Rol4qHuhGMHsP6oYFFNkKkeLEQhnlO4uETMYAE3m8cX6jK7De8G
-         i74+yMdGAXT7cZcuH0CgToYWGX+hkID3C26AuVGPI2eoIAwz3RksiKMCvClKdHv/YFri
-         InJA==
-X-Gm-Message-State: APjAAAWXATUmRuXLMwQTI8JspSlP0L6aA1An0xpxpvShl1kRsGJldFBi
-        KIr3MIMa3/FWihq3Yncfcl8=
-X-Google-Smtp-Source: APXvYqx0y/x6x92NL4UcrV/reFxNS83Q8lDCSR0DLz0ROr//QRUrSXG1Ne8tEimzmk2ExsPcWkx8qQ==
-X-Received: by 2002:a2e:9e4c:: with SMTP id g12mr12627755ljk.15.1578965820944;
-        Mon, 13 Jan 2020 17:37:00 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id m189sm6427627lfd.92.2020.01.13.17.37.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 17:37:00 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 8/8] i2c: tegra: Check DMA completion status in addition to left time
-Date:   Tue, 14 Jan 2020 04:34:42 +0300
-Message-Id: <20200114013442.28448-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200114013442.28448-1-digetx@gmail.com>
-References: <20200114013442.28448-1-digetx@gmail.com>
+        id S1729543AbgANBhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:37:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8714 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728946AbgANBhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 20:37:53 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BA7115B6EC2D4E62466E;
+        Tue, 14 Jan 2020 09:37:51 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.236) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 Jan 2020
+ 09:37:42 +0800
+Subject: Re: [PATCH] x86/ftrace: usr ftrace_write to simplify code
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <xiexiuqi@huawei.com>, <huawei.libin@huawei.com>,
+        <bobo.shaobowang@huawei.com>, <rostedt@goodmis.org>,
+        <mingo@redhat.com>, <tglx@linutronix.de>
+References: <20200113073347.22748-1-cj.chengjian@huawei.com>
+From:   "chengjian (D)" <cj.chengjian@huawei.com>
+Message-ID: <8ab66ffb-614b-063d-7362-2f01906aec51@huawei.com>
+Date:   Tue, 14 Jan 2020 09:37:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <20200113073347.22748-1-cj.chengjian@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.133.217.236]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is more robust to check completion status in addition to the left time
-in a case of DMA transfer because transfer's completion happens in two
-phases [one is ISR, other is tasklet] and thus it is possible that DMA is
-completed while I2C completion awaiting times out because of the deferred
-notification done by the DMA driver. The DMA completion status becomes
-100% actual after DMA synchronization. This fixes spurious DMA timeouts
-when system is under load.
+I am sorry.
 
-Tested-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+usr => use in subject.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3c7c86d4b0e4..cbc2ad49043e 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1224,7 +1224,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 					 i2c_dev->rx_dma_chan :
- 					 i2c_dev->tx_dma_chan);
- 
--		if (time_left == 0) {
-+		if (!time_left && !completion_done(&i2c_dev->dma_complete)) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
- 			tegra_i2c_init(i2c_dev, true);
- 			return -ETIMEDOUT;
--- 
-2.24.0
+I will resend this patch.
+
+  --Cheng Jian
+
+On 2020/1/13 15:33, Cheng Jian wrote:
+> ftrace_write() can be used directly in ftrace_modify_code_direct(),
+> that make the code more brief.
+>
+> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
+> ---
+>   arch/x86/kernel/ftrace.c | 24 +++++++++++-------------
+>   1 file changed, 11 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 024c3053dbba..6b36ed2fd04d 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -114,6 +114,16 @@ static const unsigned char *ftrace_nop_replace(void)
+>   	return ideal_nops[NOP_ATOMIC5];
+>   }
+>   
+> +static int ftrace_write(unsigned long ip, const char *val, int size)
+> +{
+> +	ip = text_ip_addr(ip);
+> +
+> +	if (probe_kernel_write((void *)ip, val, size))
+> +		return -EPERM;
+> +
+> +	return 0;
+> +}
+> +
+>   static int
+>   ftrace_modify_code_direct(unsigned long ip, unsigned const char *old_code,
+>   		   unsigned const char *new_code)
+> @@ -138,10 +148,8 @@ ftrace_modify_code_direct(unsigned long ip, unsigned const char *old_code,
+>   	if (memcmp(replaced, old_code, MCOUNT_INSN_SIZE) != 0)
+>   		return -EINVAL;
+>   
+> -	ip = text_ip_addr(ip);
+> -
+>   	/* replace the text with the new text */
+> -	if (probe_kernel_write((void *)ip, new_code, MCOUNT_INSN_SIZE))
+> +	if (ftrace_write(ip, new_code, MCOUNT_INSN_SIZE))
+>   		return -EPERM;
+>   
+>   	sync_core();
+> @@ -326,16 +334,6 @@ int ftrace_int3_handler(struct pt_regs *regs)
+>   }
+>   NOKPROBE_SYMBOL(ftrace_int3_handler);
+>   
+> -static int ftrace_write(unsigned long ip, const char *val, int size)
+> -{
+> -	ip = text_ip_addr(ip);
+> -
+> -	if (probe_kernel_write((void *)ip, val, size))
+> -		return -EPERM;
+> -
+> -	return 0;
+> -}
+> -
+>   static int add_break(unsigned long ip, const char *old)
+>   {
+>   	unsigned char replaced[MCOUNT_INSN_SIZE];
 
