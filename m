@@ -2,96 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DF513B01E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C78713B026
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbgANQ5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:57:43 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:45898 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbgANQ5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:57:42 -0500
-Received: by mail-qv1-f66.google.com with SMTP id l14so5968246qvu.12
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R4InSAKuZ5aCK6QR9Y31K9i3lSVfiJudcKWrhEMNHDc=;
-        b=XTiJWkcP0CtYyjzpFYIsdheUjlKBCgS/2w+rJ6OzGCRSJQhoTM3fQPNtiylHKjRsUx
-         ayrC2dfUPa3VHxwXtXRAfyuvl5IzL+Clvwtq9p5vFydeY08ncMvtJVlB2PIhe1Cr/Vxv
-         DjZgNqeXb4lAgJNIfthyvvgBbP5uaC7dd9oRB4BrVhPE3xX7sATluJtjrCp3PwSdUUoh
-         v++u0APj+AaMOwdR3P4C+tYqR1iVvC+ZimG54pzqKaU8TmJ6OcvkixJgzhq+fEJjJ+5D
-         JUg1ZiQTPSazNN7A6pMwjLwBMZkHicU2mpVIpCH4LnOO/G9OWeZHvoORlWe2FiaeMlFF
-         rKJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R4InSAKuZ5aCK6QR9Y31K9i3lSVfiJudcKWrhEMNHDc=;
-        b=TXHycka1oVh0N5xLWJHta4T8D/WWboK3VGqp1ftj6/x/DmmhtJV3giVyDpnnVI4idc
-         L5cBdKrxGtYtDxHi32H0NrDCMDOiAUs4nElqsgeSR2WPJOC7QQ+YOJvKzkvS1I12W6BJ
-         ZCoUg494wajlZW2F82j7VJbQAsZi91s0FJ0CUQONeA5Fvj8Z4klS4kstV6FwlALYc1Eb
-         BK8yXwPn3GbxeiMJME2WEdIJ8ebVhUJ+Z5xYLmsBoUEJAwDF8w5V5W+D2dktB51KPX1q
-         xVOv9aEEQ5NfS5OODr6UzMITHNO5W4lfJyDCWmLz7cQrm0Ty0e6aO2gRkLIppkYNSL8D
-         V3eg==
-X-Gm-Message-State: APjAAAXjMJ2Bdx1hfkf0KGK6obnbAxu+yRy6TiESeHSB9lOAMJF+3qeh
-        Az+BWnMmJkXYpQsC+LBLQ9ityA==
-X-Google-Smtp-Source: APXvYqxAwJK6KP985x5SBiObouJjRK4aFNXWGUGpgf/HH+9wFqdlGTn1tzkvG8CrF/UY6GDih4BbRQ==
-X-Received: by 2002:a0c:fe8d:: with SMTP id d13mr21133077qvs.150.1579021061827;
-        Tue, 14 Jan 2020 08:57:41 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id j1sm6868284qkl.86.2020.01.14.08.57.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Jan 2020 08:57:41 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1irPVc-0003VV-RT; Tue, 14 Jan 2020 12:57:40 -0400
-Date:   Tue, 14 Jan 2020 12:57:40 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     madhuparnabhowmik04@gmail.com
-Cc:     mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
-        paulmck@kernel.org, joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        rcu@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] infiniband: hw: hfi1: verbs.c: Use built-in RCU list
- checking
-Message-ID: <20200114165740.GB22037@ziepe.ca>
-References: <20200114162345.19995-1-madhuparnabhowmik04@gmail.com>
+        id S1728721AbgANQ7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:59:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbgANQ7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:59:09 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C8522084D;
+        Tue, 14 Jan 2020 16:59:08 +0000 (UTC)
+Date:   Tue, 14 Jan 2020 11:59:06 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Vincent Guittot' <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: sched/fair: scheduler not running high priority process on idle
+ cpu
+Message-ID: <20200114115906.22f952ff@gandalf.local.home>
+In-Reply-To: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
+References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114162345.19995-1-madhuparnabhowmik04@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 09:53:45PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> 
-> list_for_each_entry_rcu has built-in RCU and lock checking.
-> Pass cond argument to list_for_each_entry_rcu.
-> 
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
->  drivers/infiniband/hw/hfi1/verbs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
-> index 089e201d7550..22f2d4fd2577 100644
-> +++ b/drivers/infiniband/hw/hfi1/verbs.c
-> @@ -515,7 +515,7 @@ static inline void hfi1_handle_packet(struct hfi1_packet *packet,
->  				       opa_get_lid(packet->dlid, 9B));
->  		if (!mcast)
->  			goto drop;
-> -		list_for_each_entry_rcu(p, &mcast->qp_list, list) {
-> +		list_for_each_entry_rcu(p, &mcast->qp_list, list, lockdep_is_held(&(ibp->rvp.lock))) {
+On Tue, 14 Jan 2020 16:50:43 +0000
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-Okay, this looks reasonable
+> I've a test that uses four RT priority processes to process audio data every 10ms.
+> One process wakes up the other three, they all 'beaver away' clearing a queue of
+> jobs and the last one to finish sleeps until the next tick.
+> Usually this takes about 0.5ms, but sometimes takes over 3ms.
+> 
+> AFAICT the processes are normally woken on the same cpu they last ran on.
+> There seems to be a problem when the selected cpu is running a (low priority)
+> process that is looping in kernel [1].
+> I'd expect my process to be picked up by one of the idle cpus, but this
+> doesn't happen.
+> Instead the process sits in state 'waiting' until the active processes sleeps
+> (or calls cond_resched()).
+> 
+> Is this really the expected behaviour?????
 
-Mike, Dennis, is this the right lock to test?
+It is with CONFIG_PREEMPT_VOLUNTARY. I think you want to recompile your
+kernel with CONFIG_PREEMPT. The idea is that the RT task will continue
+to run on the CPU it last ran on, and would push off the lower priority
+task to the idle CPU. But CONFIG_PREEMPT_VOLUNTARY means that this
+will have to wait for the running task to not be in kernel context or
+hit a cond_resched() which is the "voluntary" scheduling point.
 
-Jason
+-- Steve
