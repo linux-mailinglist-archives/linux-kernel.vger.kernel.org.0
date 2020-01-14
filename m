@@ -2,236 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70ACD13AE19
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B10313AE37
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:00:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgANP4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:56:01 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:52909 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729073AbgANPz7 (ORCPT
+        id S1728733AbgANQAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:00:09 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:14343 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726375AbgANQAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:55:59 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 14 Jan 2020 11:00:08 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579017608; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=SP7KtqJLhxcHuH5kxq8tGE8k0HxhmfSYXMOApVPO+zk=; b=loIQ8eWgs2QZJZg54tiedGwT7AfcahqqP5ZRgv8U+7GyRaG9PGe1qqGP+miZm+t7xM0Cex2k
+ C4N/ndrYhEweDVz0c48RwSUKwK8aAzSJJVIMihct4D/dGPcSzI0RVCiziIxX9WWGdJDhRJFv
+ VR6a0xnvtU6WibakvdldTZZDoak=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1de580.7f3f21883458-smtp-out-n02;
+ Tue, 14 Jan 2020 16:00:00 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 48704C4479F; Tue, 14 Jan 2020 15:59:59 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 4D29D22F54;
-        Tue, 14 Jan 2020 16:55:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1579017356;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ct+aRr3TCzgVYVm23SiKR4zjf2kwIVnO+TG3pSdmezY=;
-        b=KjiA8IFV8kh9MFDYSMCamYHUdpAMT8W1rARrucZWoMZ/ZsX32xNmVzsBsC6z4Ea+zRZjS7
-        yOUENZSRAKYyVxPldWIFsKdaqdiDOqgqD3Ky8TJY3DfAJjRO6xO/Egpg3NQF550qrx8uKd
-        sMPt6cOJqVVi530tOVFjbRAsNC0CjVc=
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9845FC433CB;
+        Tue, 14 Jan 2020 15:59:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9845FC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Tue, 14 Jan 2020 08:59:55 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Paul <sean@poorly.run>, linux-arm-msm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Brian Masney <masneyb@onstation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/msm: Fix error about comments within a comment block
+Message-ID: <20200114155955.GA31665@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Douglas Anderson <dianders@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Paul <sean@poorly.run>, linux-arm-msm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Brian Masney <masneyb@onstation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        freedreno@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>
+References: <20200113140427.1.I5e35e29bebe575e091177c4f82606c15370b71d7@changeid>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 14 Jan 2020 16:55:56 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 3/3] clk: fsl-sai: new driver
-In-Reply-To: <20200102231101.11834-3-michael@walle.cc>
-References: <20200102231101.11834-1-michael@walle.cc>
- <20200102231101.11834-3-michael@walle.cc>
-Message-ID: <6069b1edf7796f3eff0d68c398eefff2@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: +
-X-Spam-Level: *
-X-Rspamd-Server: web
-X-Spam-Status: No, score=1.40
-X-Spam-Score: 1.40
-X-Rspamd-Queue-Id: 4D29D22F54
-X-Spamd-Result: default: False [1.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         NEURAL_HAM(-0.00)[-0.813];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113140427.1.I5e35e29bebe575e091177c4f82606c15370b71d7@changeid>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 2020-01-03 00:11, schrieb Michael Walle:
-> With this driver it is possible to use the BCLK pin of the SAI module 
-> as
-> a generic clock output. This is esp. useful if you want to drive a 
-> clock
-> to an audio codec. Because the output only allows integer divider 
-> values
-> the audio codec needs an integrated PLL.
+On Mon, Jan 13, 2020 at 02:04:46PM -0800, Douglas Anderson wrote:
+> My compiler yells:
+>   .../drivers/gpu/drm/msm/adreno/adreno_gpu.c:69:27:
+>   error: '/*' within block comment [-Werror,-Wcomment]
 > 
-> Signed-off-by: Michael Walle <michael@walle.cc>
+> Let's fix.
 
-Ping :)
+grumble something about the road being paved with good intentions....
 
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+
+> Fixes: 6a0dea02c2c4 ("drm/msm: support firmware-name for zap fw (v2)")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> changes since v2:
->  - convert to platform driver, thus also use devm_ functions
->  - use new style to get the parent clock by using parent_data
->    and the new clk_hw_register_composite_pdata()
 > 
-> changes since v1:
->  - none
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/clk/Kconfig       | 12 +++++
->  drivers/clk/Makefile      |  1 +
->  drivers/clk/clk-fsl-sai.c | 92 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 105 insertions(+)
->  create mode 100644 drivers/clk/clk-fsl-sai.c
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index c146c3b8f52b..7fd29829b2fa 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -67,7 +67,7 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+>  	 *
+>  	 * If the firmware-name property is found, we bypass the
+>  	 * adreno_request_fw() mechanism, because we don't need to handle
+> -	 * the /lib/firmware/qcom/* vs /lib/firmware/* case.
+> +	 * the /lib/firmware/qcom/... vs /lib/firmware/... case.
+>  	 *
+>  	 * If the firmware-name property is not found, for backwards
+>  	 * compatibility we fall back to the fwname from the gpulist
+> -- 
+> 2.25.0.rc1.283.g88dfdc4193-goog
 > 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 45653a0e6ecd..dd1a5abc4ce8 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -174,6 +174,18 @@ config COMMON_CLK_CS2000_CP
->  	help
->  	  If you say yes here you get support for the CS2000 clock 
-> multiplier.
-> 
-> +config COMMON_CLK_FSL_SAI
-> +	bool "Clock driver for BCLK of Freescale SAI cores"
-> +	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-> +	help
-> +	  This driver supports the Freescale SAI (Synchronous Audio 
-> Interface)
-> +	  to be used as a generic clock output. Some SoCs have restrictions
-> +	  regarding the possible pin multiplexer settings. Eg. on some SoCs
-> +	  two SAI interfaces can only be enabled together. If just one is
-> +	  needed, the BCLK pin of the second one can be used as general
-> +	  purpose clock output. Ideally, it can be used to drive an audio
-> +	  codec (sometimes known as MCLK).
-> +
->  config COMMON_CLK_GEMINI
->  	bool "Clock driver for Cortina Systems Gemini SoC"
->  	depends on ARCH_GEMINI || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 0696a0c1ab58..ec23fd956228 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
->  obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
->  obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
->  obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
-> +obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
->  obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
->  obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
->  obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
-> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-> new file mode 100644
-> index 000000000000..0221180a4dd7
-> --- /dev/null
-> +++ b/drivers/clk/clk-fsl-sai.c
-> @@ -0,0 +1,92 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Freescale SAI BCLK as a generic clock driver
-> + *
-> + * Copyright 2020 Michael Walle <michael@walle.cc>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +
-> +#define I2S_CSR		0x00
-> +#define I2S_CR2		0x08
-> +#define CSR_BCE_BIT	28
-> +#define CR2_BCD		BIT(24)
-> +#define CR2_DIV_SHIFT	0
-> +#define CR2_DIV_WIDTH	8
-> +
-> +struct fsl_sai_clk {
-> +	struct clk_divider div;
-> +	struct clk_gate gate;
-> +	spinlock_t lock;
-> +};
-> +
-> +static int fsl_sai_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct fsl_sai_clk *sai_clk;
-> +	struct clk_parent_data pdata = { .index = 0 };
-> +	void __iomem *base;
-> +	struct clk_hw *hw;
-> +	struct resource *res;
-> +
-> +	sai_clk = devm_kzalloc(dev, sizeof(*sai_clk), GFP_KERNEL);
-> +	if (!sai_clk)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	spin_lock_init(&sai_clk->lock);
-> +
-> +	sai_clk->gate.reg = base + I2S_CSR;
-> +	sai_clk->gate.bit_idx = CSR_BCE_BIT;
-> +	sai_clk->gate.lock = &sai_clk->lock;
-> +
-> +	sai_clk->div.reg = base + I2S_CR2;
-> +	sai_clk->div.shift = CR2_DIV_SHIFT;
-> +	sai_clk->div.width = CR2_DIV_WIDTH;
-> +	sai_clk->div.lock = &sai_clk->lock;
-> +
-> +	/* set clock direction, we are the BCLK master */
-> +	writel(CR2_BCD, base + I2S_CR2);
-> +
-> +	hw = clk_hw_register_composite_pdata(dev, dev->of_node->name,
-> +					     &pdata, 1, NULL, NULL,
-> +					     &sai_clk->div.hw,
-> +					     &clk_divider_ops,
-> +					     &sai_clk->gate.hw,
-> +					     &clk_gate_ops,
-> +					     CLK_SET_RATE_GATE);
-> +	if (IS_ERR(hw))
-> +		return PTR_ERR(hw);
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
-> +}
-> +
-> +static const struct of_device_id of_fsl_sai_clk_ids[] = {
-> +	{ .compatible = "fsl,vf610-sai-clock" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, of_fsl_sai_clk_ids);
-> +
-> +static struct platform_driver fsl_sai_clk_driver = {
-> +	.probe = fsl_sai_clk_probe,
-> +	.driver		= {
-> +		.name	= "fsl-sai-clk",
-> +		.of_match_table = of_fsl_sai_clk_ids,
-> +	},
-> +};
-> +module_platform_driver(fsl_sai_clk_driver);
-> +
-> +MODULE_DESCRIPTION("Freescale SAI bitclock-as-a-clock driver");
-> +MODULE_AUTHOR("Michael Walle <michael@walle.cc>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:fsl-sai-clk");
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
