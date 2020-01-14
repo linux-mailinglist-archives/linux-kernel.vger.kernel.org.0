@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 116EC13A259
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 507AB13A25D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgANH6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:58:00 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40797 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729159AbgANH54 (ORCPT
+        id S1729266AbgANH6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:58:13 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34673 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbgANH55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:57:56 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q8so6185311pfh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:57:56 -0800 (PST)
+        Tue, 14 Jan 2020 02:57:57 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i6so6195583pfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:57:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FdqD8NRNphouo9P3H8kSDAOVyLnUT6AjcPDXOI9PAiQ=;
-        b=hXEgZMMfgZiKB0EiZMA8jnwtGVY5x7TFCicAgnVuoKVm/oL3b1I9rT4nQxEKh2Aduc
-         eBf+3WgpTPpbe2XLWgBqBtMnr3mKL3ULYAd0CBWTnJfF3jikFm8ZJjIPUXHd3EYu8xCW
-         fROeetq+ibhA623110viLke2EtOw1Ne/dMR+wB67s1Xo1kGPMGJ6lkOe+NBWBzUXXSlI
-         tajOZDcrlDV00sqYDQHsLVyeCw/pnUojUaDdzuJxFFIbSuxTmWND8IwQgetc4u957+Kb
-         8oH4RSxVb/aUQec1MZpft5UDzNNp8dPrJR3fq5UAtOhefO+8ITVeLPEwMrRUlTW8EwNT
-         DkSQ==
+        bh=cT6CIKbYE+ZaFFcNOOsxSrYLOhAgjqy8hJjakcWsraw=;
+        b=HWJ1FrKZivAC77Q6ewttmSwMoUhC4h8f56+T4yQkYs25/XqVt1ThC3IC6EIkcHoLVG
+         Y2dYcFEqMihzuuTAPZAm1+7UqRpMk5pYxniaU+29kPfB+8LfcZdqTBakVYTfdnANH3PP
+         7+mK1m0XlZawRAeIqF2Owtzv8kZbkk0jPGX4STZEQUySpNfqfiEeeR+JoJaD/qi+ZSWB
+         BraJSp7wL9eRt7pusrlG48nShyFwNDz4uqSEEtRRYZrexuBcShVJaAk25O66oIUw8APO
+         FRBI0GvoQCE0Uxu/OeTAMbDVUOtpBRsi8LgxGZUFs1lRq0Ok2CvcFBYSLTufUgLaep5l
+         Oi8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FdqD8NRNphouo9P3H8kSDAOVyLnUT6AjcPDXOI9PAiQ=;
-        b=qglUT1IWaaiqFhnYymZkeR6/f9SDLbgFMq4+iFEIk6JWsd+I+thaAKsE1XDOIEA3Rd
-         Fi/Sd2OJqZFAn8RoORzKiVqwQuzBace2R0qY4zO5CqQAh1NY40SgwaAffkVkLUhSI9SY
-         jFbYKoIA+wOaSHyVweDlToF7VEZxpAnC0ZzBoHIo6XpDsfL/wrPKsykXW3pRpCHJpETv
-         FjSjaEpy1PfoFLS818gLwJJDbNt5z8ji+I/CiAU77upIW+kKO7aAg/wqA4fAOcvsAywm
-         PzvdFr96igODIbqC7wE4xpPilHyeOdIlRifrUjgCgWL+sYxOG5BkrJxjADc92Na/41Gs
-         tgYA==
-X-Gm-Message-State: APjAAAXdE27Zj/gG9mYrwLJyEviqs2E1qE4A+1Fz2G6AxJPyw3YbqHPw
-        SsNZ2Lh8oCMIk2ehp5mlUAQ/Gw==
-X-Google-Smtp-Source: APXvYqxYrG4IWc5BNa9rUaA7OJZ1AJ0p5PIQfRuXTlRa6Zk9yaCMkVK4RZYw1LGxEK8Z7NmG88+LNw==
-X-Received: by 2002:a62:2cc1:: with SMTP id s184mr24788042pfs.111.1578988675810;
-        Mon, 13 Jan 2020 23:57:55 -0800 (PST)
+        bh=cT6CIKbYE+ZaFFcNOOsxSrYLOhAgjqy8hJjakcWsraw=;
+        b=LP3XlYU6ptL25xOmUgSXbLDpyjTpuhA7gL5xh+mYebgaNLmiBkneXiJeB0D/+Gbm8I
+         FZkH6NIO3rUhy8LYzgMkmhaWOouCOInN/DGmM5pav0Gk4vVen/DQd2eOPt8MXfwe9xaq
+         PN3gZN1XmTkt0xdjTT2nroN3krEn9/w3JXR8JUTv8zsTtGOqdh0c/gMTVWDhUO6bg5n+
+         tk9zp05zBzmiLb6dZIcG8/pBAl4fAcZU+2Rrh3Cc61CNk4k8OO4ClbTPR/l29N4hm6iY
+         tQUHO2Veuy8GImdQb/nNxbL1+4u5vxB7w4Fx1Pa3/+OHmmUYCISGC1viAbFh4spLo0lV
+         B9wQ==
+X-Gm-Message-State: APjAAAVe08yf3zyanzQdxHI9cSmcv2FLCPGIrYiDMHi7qpuN72oYVzYt
+        yXU5jV1M1kX26Hq8PYAoSOtTAQ==
+X-Google-Smtp-Source: APXvYqxa0sjqaAqTU3VpbArJAMp7cdEEAKNxoK+7V8ScX+GgBOrVf0psQGSLOw/kjBSkfLKnRweY0w==
+X-Received: by 2002:aa7:979a:: with SMTP id o26mr24139687pfp.0.1578988677055;
+        Mon, 13 Jan 2020 23:57:57 -0800 (PST)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q63sm17349352pfb.149.2020.01.13.23.57.54
+        by smtp.gmail.com with ESMTPSA id q63sm17349352pfb.149.2020.01.13.23.57.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 23:57:55 -0800 (PST)
+        Mon, 13 Jan 2020 23:57:56 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
         Chris Lew <clew@codeaurora.org>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v4 3/5] net: qrtr: Migrate node lookup tree to spinlock
-Date:   Mon, 13 Jan 2020 23:57:01 -0800
-Message-Id: <20200114075703.2145718-4-bjorn.andersson@linaro.org>
+Subject: [PATCH v4 4/5] net: qrtr: Make qrtr_port_lookup() use RCU
+Date:   Mon, 13 Jan 2020 23:57:02 -0800
+Message-Id: <20200114075703.2145718-5-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
 References: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
@@ -63,9 +63,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move operations on the qrtr_nodes radix tree under a separate spinlock
-and make the qrtr_nodes tree GFP_ATOMIC, to allow operation from atomic
-context in a subsequent patch.
+The important part of qrtr_port_lookup() wrt synchronization is that the
+function returns a reference counted struct qrtr_sock, or fail.
+
+As such we need only to ensure that an decrement of the object's
+refcount happens inbetween the finding of the object in the idr and
+qrtr_port_lookup()'s own increment of the object.
+
+By using RCU and putting a synchronization point after we remove the
+mapping from the idr, but before it can be released we achieve this -
+with the benefit of not having to hold the mutex in qrtr_port_lookup().
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
@@ -73,82 +80,38 @@ Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Changes since v3:
 - None
 
- net/qrtr/qrtr.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ net/qrtr/qrtr.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 304d536c7353..52816d44fb26 100644
+index 52816d44fb26..8ae301132a54 100644
 --- a/net/qrtr/qrtr.c
 +++ b/net/qrtr/qrtr.c
-@@ -8,6 +8,7 @@
- #include <linux/qrtr.h>
- #include <linux/termios.h>	/* For TIOCINQ/OUTQ */
- #include <linux/numa.h>
-+#include <linux/spinlock.h>
- #include <linux/wait.h>
+@@ -646,11 +646,11 @@ static struct qrtr_sock *qrtr_port_lookup(int port)
+ 	if (port == QRTR_PORT_CTRL)
+ 		port = 0;
  
- #include <net/sock.h>
-@@ -98,10 +99,11 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
- static unsigned int qrtr_local_nid = NUMA_NO_NODE;
+-	mutex_lock(&qrtr_port_lock);
++	rcu_read_lock();
+ 	ipc = idr_find(&qrtr_ports, port);
+ 	if (ipc)
+ 		sock_hold(&ipc->sk);
+-	mutex_unlock(&qrtr_port_lock);
++	rcu_read_unlock();
  
- /* for node ids */
--static RADIX_TREE(qrtr_nodes, GFP_KERNEL);
-+static RADIX_TREE(qrtr_nodes, GFP_ATOMIC);
-+static DEFINE_SPINLOCK(qrtr_nodes_lock);
- /* broadcast list */
- static LIST_HEAD(qrtr_all_nodes);
--/* lock for qrtr_nodes, qrtr_all_nodes and node reference */
-+/* lock for qrtr_all_nodes and node reference */
- static DEFINE_MUTEX(qrtr_node_lock);
- 
- /* local port allocation management */
-@@ -165,10 +167,13 @@ static void __qrtr_node_release(struct kref *kref)
- {
- 	struct qrtr_node *node = container_of(kref, struct qrtr_node, ref);
- 	struct radix_tree_iter iter;
-+	unsigned long flags;
- 	void __rcu **slot;
- 
-+	spin_lock_irqsave(&qrtr_nodes_lock, flags);
- 	if (node->nid != QRTR_EP_NID_AUTO)
- 		radix_tree_delete(&qrtr_nodes, node->nid);
-+	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
- 
- 	list_del(&node->item);
- 	mutex_unlock(&qrtr_node_lock);
-@@ -376,11 +381,12 @@ static int qrtr_node_enqueue(struct qrtr_node *node, struct sk_buff *skb,
- static struct qrtr_node *qrtr_node_lookup(unsigned int nid)
- {
- 	struct qrtr_node *node;
-+	unsigned long flags;
- 
--	mutex_lock(&qrtr_node_lock);
-+	spin_lock_irqsave(&qrtr_nodes_lock, flags);
- 	node = radix_tree_lookup(&qrtr_nodes, nid);
- 	node = qrtr_node_acquire(node);
--	mutex_unlock(&qrtr_node_lock);
-+	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
- 
- 	return node;
+ 	return ipc;
  }
-@@ -392,13 +398,15 @@ static struct qrtr_node *qrtr_node_lookup(unsigned int nid)
-  */
- static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
- {
-+	unsigned long flags;
+@@ -692,6 +692,10 @@ static void qrtr_port_remove(struct qrtr_sock *ipc)
+ 	mutex_lock(&qrtr_port_lock);
+ 	idr_remove(&qrtr_ports, port);
+ 	mutex_unlock(&qrtr_port_lock);
 +
- 	if (node->nid != QRTR_EP_NID_AUTO || nid == QRTR_EP_NID_AUTO)
- 		return;
- 
--	mutex_lock(&qrtr_node_lock);
-+	spin_lock_irqsave(&qrtr_nodes_lock, flags);
- 	radix_tree_insert(&qrtr_nodes, nid, node);
- 	node->nid = nid;
--	mutex_unlock(&qrtr_node_lock);
-+	spin_unlock_irqrestore(&qrtr_nodes_lock, flags);
++	/* Ensure that if qrtr_port_lookup() did enter the RCU read section we
++	 * wait for it to up increment the refcount */
++	synchronize_rcu();
  }
  
- /**
+ /* Assign port number to socket.
 -- 
 2.24.0
 
