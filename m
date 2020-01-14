@@ -2,85 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE6413ABBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:01:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D74FE13ABCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:02:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbgANOA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:00:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbgANOA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:00:27 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB17E2467A;
-        Tue, 14 Jan 2020 14:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579010426;
-        bh=H/51/5ZekFpSpHx8KB4PX8o7MbAINifRHPOl5iU9qxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tgsc0vIAH4ypovFs6+X7TCXJaixVEaZ3kmYgpSSQiuV9uX9j1TI4IytD7AN8c23NB
-         a/sUBOs7OcRou2dLRq6ElfACP80NU4L7BTkYxd5HdO5HAeUIjFbxy2G5qE293D2b+x
-         h/eNhyVub2cXQ85X/05WByxgbgQm6gAmL+A2hoj4=
-Date:   Tue, 14 Jan 2020 15:00:23 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
-Subject: Re: [PATCH v5 1/1] usb: gadget: add raw-gadget interface
-Message-ID: <20200114140023.GA1694074@kroah.com>
-References: <cover.1579007786.git.andreyknvl@google.com>
- <461a787e63a9a01d83edc563575b8585bc138e8d.1579007786.git.andreyknvl@google.com>
+        id S1728909AbgANOCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:02:53 -0500
+Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:21717
+        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727285AbgANOCw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:02:52 -0500
+Received: from mschiller01.dev.tdt.de (unknown [10.2.3.20])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 251F5204F5;
+        Tue, 14 Jan 2020 14:02:44 +0000 (UTC)
+From:   Martin Schiller <ms@dev.tdt.de>
+To:     kubakici@wp.pl, khc@pm.waw.pl, davem@davemloft.net
+Cc:     linux-x25@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH v2 1/2] wan/hdlc_x25: make lapb params configurable
+Date:   Tue, 14 Jan 2020 15:02:22 +0100
+Message-Id: <20200114140223.22446-1-ms@dev.tdt.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <461a787e63a9a01d83edc563575b8585bc138e8d.1579007786.git.andreyknvl@google.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 02:24:43PM +0100, Andrey Konovalov wrote:
-> USB Raw Gadget is a kernel module that provides a userspace interface for
-> the USB Gadget subsystem. Essentially it allows to emulate USB devices
-> from userspace. Enabled with CONFIG_USB_RAW_GADGET. Raw Gadget is
-> currently a strictly debugging feature and shouldn't be used in
-> production.
-> 
-> Raw Gadget is similar to GadgetFS, but provides a more low-level and
-> direct access to the USB Gadget layer for the userspace. The key
-> differences are:
-> 
-> 1. Every USB request is passed to the userspace to get a response, while
->    GadgetFS responds to some USB requests internally based on the provided
->    descriptors. However note, that the UDC driver might respond to some
->    requests on its own and never forward them to the Gadget layer.
-> 
-> 2. GadgetFS performs some sanity checks on the provided USB descriptors,
->    while Raw Gadget allows you to provide arbitrary data as responses to
->    USB requests.
-> 
-> 3. Raw Gadget provides a way to select a UDC device/driver to bind to,
->    while GadgetFS currently binds to the first available UDC.
-> 
-> 4. Raw Gadget uses predictable endpoint names (handles) across different
->    UDCs (as long as UDCs have enough endpoints of each required transfer
->    type).
-> 
-> 5. Raw Gadget has ioctl-based interface instead of a filesystem-based one.
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
-> 
-> Greg, I've assumed your LGTM meant that I can add a Reviewed-by from you.
+This enables you to configure mode (DTE/DCE), Modulo, Window, T1, T2, N2 via
+sethdlc (which needs to be patched as well).
 
-Yes, I was about to give it a "real" one, but that is fine here, thanks.
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+---
+ drivers/net/wan/hdlc_x25.c      | 78 ++++++++++++++++++++++++++++++++-
+ include/uapi/linux/hdlc/ioctl.h |  9 ++++
+ include/uapi/linux/if.h         |  1 +
+ 3 files changed, 86 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
+index 5643675ff724..0479a2bf42f7 100644
+--- a/drivers/net/wan/hdlc_x25.c
++++ b/drivers/net/wan/hdlc_x25.c
+@@ -21,8 +21,17 @@
+ #include <linux/skbuff.h>
+ #include <net/x25device.h>
+ 
++struct x25_state {
++	x25_hdlc_proto settings;
++};
++
+ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr);
+ 
++static struct x25_state* state(hdlc_device *hdlc)
++{
++	return (struct x25_state *)hdlc->state;
++}
++
+ /* These functions are callbacks called by LAPB layer */
+ 
+ static void x25_connect_disconnect(struct net_device *dev, int reason, int code)
+@@ -132,6 +141,8 @@ static netdev_tx_t x25_xmit(struct sk_buff *skb, struct net_device *dev)
+ static int x25_open(struct net_device *dev)
+ {
+ 	int result;
++	hdlc_device *hdlc = dev_to_hdlc(dev);
++	struct lapb_parms_struct params;
+ 	static const struct lapb_register_struct cb = {
+ 		.connect_confirmation = x25_connected,
+ 		.connect_indication = x25_connected,
+@@ -144,6 +155,26 @@ static int x25_open(struct net_device *dev)
+ 	result = lapb_register(dev, &cb);
+ 	if (result != LAPB_OK)
+ 		return result;
++
++	result = lapb_getparms(dev, &params);
++	if (result != LAPB_OK)
++		return result;
++
++	if (state(hdlc)->settings.dce)
++		params.mode = params.mode | LAPB_DCE;
++
++	if (state(hdlc)->settings.modulo == 128)
++		params.mode = params.mode | LAPB_EXTENDED;
++
++	params.window = state(hdlc)->settings.window;
++	params.t1 = state(hdlc)->settings.t1;
++	params.t2 = state(hdlc)->settings.t2;
++	params.n2 = state(hdlc)->settings.n2;
++
++	result = lapb_setparms(dev, &params);
++	if (result != LAPB_OK)
++		return result;
++
+ 	return 0;
+ }
+ 
+@@ -186,6 +217,9 @@ static struct hdlc_proto proto = {
+ 
+ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ {
++	x25_hdlc_proto __user *x25_s = ifr->ifr_settings.ifs_ifsu.x25;
++	const size_t size = sizeof(x25_hdlc_proto);
++	x25_hdlc_proto new_settings;
+ 	hdlc_device *hdlc = dev_to_hdlc(dev);
+ 	int result;
+ 
+@@ -194,7 +228,13 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ 		if (dev_to_hdlc(dev)->proto != &proto)
+ 			return -EINVAL;
+ 		ifr->ifr_settings.type = IF_PROTO_X25;
+-		return 0; /* return protocol only, no settable parameters */
++		if (ifr->ifr_settings.size < size) {
++			ifr->ifr_settings.size = size; /* data size wanted */
++			return -ENOBUFS;
++		}
++		if (copy_to_user(x25_s, &state(hdlc)->settings, size))
++			return -EFAULT;
++		return 0;
+ 
+ 	case IF_PROTO_X25:
+ 		if (!capable(CAP_NET_ADMIN))
+@@ -203,12 +243,46 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ 		if (dev->flags & IFF_UP)
+ 			return -EBUSY;
+ 
++		/* backward compatibility */
++		if (ifr->ifr_settings.size = 0) {
++			new_settings.dce = 0;
++			new_settings.modulo = 8;
++			new_settings.window = 7;
++			new_settings.t1 = 3;
++			new_settings.t2 = 1;
++			new_settings.n2 = 10;
++		}
++		else {
++			if (copy_from_user(&new_settings, x25_s, size))
++				return -EFAULT;
++
++			if ((new_settings.dce != 0 &&
++			new_settings.dce != 1) ||
++			(new_settings.modulo != 8 &&
++			new_settings.modulo != 128) ||
++			new_settings.window < 1 ||
++			(new_settings.modulo == 8 &&
++			new_settings.window > 7) ||
++			(new_settings.modulo == 128 &&
++			new_settings.window > 127) ||
++			new_settings.t1 < 1 ||
++			new_settings.t1 > 255 ||
++			new_settings.t2 < 1 ||
++			new_settings.t2 > 255 ||
++			new_settings.n2 < 1 ||
++			new_settings.n2 > 255)
++				return -EINVAL;
++		}
++
+ 		result=hdlc->attach(dev, ENCODING_NRZ,PARITY_CRC16_PR1_CCITT);
+ 		if (result)
+ 			return result;
+ 
+-		if ((result = attach_hdlc_protocol(dev, &proto, 0)))
++		if ((result = attach_hdlc_protocol(dev, &proto,
++						   sizeof(struct x25_state))))
+ 			return result;
++
++		memcpy(&state(hdlc)->settings, &new_settings, size);
+ 		dev->type = ARPHRD_X25;
+ 		call_netdevice_notifiers(NETDEV_POST_TYPE_CHANGE, dev);
+ 		netif_dormant_off(dev);
+diff --git a/include/uapi/linux/hdlc/ioctl.h b/include/uapi/linux/hdlc/ioctl.h
+index 0fe4238e8246..b06341acab5e 100644
+--- a/include/uapi/linux/hdlc/ioctl.h
++++ b/include/uapi/linux/hdlc/ioctl.h
+@@ -79,6 +79,15 @@ typedef struct {
+     unsigned int timeout;
+ } cisco_proto;
+ 
++typedef struct {
++	unsigned short dce; /* 1 for DCE (network side) operation */
++	unsigned int modulo; /* modulo (8 = basic / 128 = extended) */
++	unsigned int window; /* frame window size */
++	unsigned int t1; /* timeout t1 */
++	unsigned int t2; /* timeout t2 */
++	unsigned int n2; /* frame retry counter */
++} x25_hdlc_proto;
++
+ /* PPP doesn't need any info now - supply length = 0 to ioctl */
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/include/uapi/linux/if.h b/include/uapi/linux/if.h
+index 4bf33344aab1..be714cd8c826 100644
+--- a/include/uapi/linux/if.h
++++ b/include/uapi/linux/if.h
+@@ -213,6 +213,7 @@ struct if_settings {
+ 		fr_proto		__user *fr;
+ 		fr_proto_pvc		__user *fr_pvc;
+ 		fr_proto_pvc_info	__user *fr_pvc_info;
++		x25_hdlc_proto		__user *x25;
+ 
+ 		/* interface settings */
+ 		sync_serial_settings	__user *sync;
+-- 
+2.20.1
+
