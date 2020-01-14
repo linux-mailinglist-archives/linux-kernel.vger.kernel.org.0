@@ -2,87 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B325013AF03
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F66513AF08
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgANQQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:16:59 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51559 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726450AbgANQQ7 (ORCPT
+        id S1728929AbgANQRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:17:10 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36607 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbgANQRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:16:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579018618;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MmNBZkwBy1szGWacQmXBphuROcFRHJi+XYFCIYFXOoM=;
-        b=e1meb4QSnsUO5sGiGE5crJWgxiIVIVk52dfnCa9xOJ5+BlgL3wfnn0fnoue8v+YX1z8q7Z
-        0UTSotLqWrtfvZ+e19eC80VRlTTxFfiJHf8jqtxrliuGMRAItUACyRug953xzPZiFFBoZR
-        5Rk2t6VrtoGGcIBziYzpso4QyMtA2JA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-430-dIecYhpBPyKNb0Hd40mSXg-1; Tue, 14 Jan 2020 11:16:57 -0500
-X-MC-Unique: dIecYhpBPyKNb0Hd40mSXg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0BD568DD348;
-        Tue, 14 Jan 2020 16:16:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 03D2680F5C;
-        Tue, 14 Jan 2020 16:16:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix afs_lookup() to not clobber the version on a new
- dentry
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 14 Jan 2020 16:16:54 +0000
-Message-ID: <157901861423.1394.15115986296413304429.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 14 Jan 2020 11:17:10 -0500
+Received: by mail-io1-f66.google.com with SMTP id d15so14468197iog.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:17:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=njKesd31KBQ2xQQuRIkmN40ckuYup5IXgW1XxbAYU5Ki2x6oe+1QegIPzUrOjM86V0
+         Y9oqwKfInDrcjvlrCGmqQaM7wfH1T5qwxEIhzKytObyQV33XMNS6ZNGVvf4KznNGaG2T
+         sqij9t3CPGAIT8n8zAmDY/fe+QXSd2FKh6qAGl2/MWaO6wIq2k+5gTbsEAjoAFYx4lV2
+         cQB5SM5QfrZ0ztGyV2GzUc8fb89NWx6Ijg8QEYlkLM5s8eiYsJOVpUQLW2ZH2BiSQNWB
+         IrvIqJB3Yw9nw/EzpZ1PtWVN8mHBdBwDdisOm82jBRdyBt+nOmYcfVIeR2VfznXLT4Vr
+         4gnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=DvXT8Zim5ODpY0lzUGzZg7oghk2BSDyWCeBIzluhmgJVo+u/rVQs3GAwd4POg1dr6f
+         /2OT5C3bfxzLUGbISzDiDADDErj1J/7Hr/GBK2LkWumeTOmpYhWkb1/HS/IrfH9sKcmA
+         NRvhwUH9wYlOY6Mt9iwqEpzGEGiAsay1wWuHL9CzVqB0f0wXn4rh5Q7zVTx6Dx6SorXI
+         asiGNtRUUy0v4vWXGnnL5nfRnalaMH4Fx99k6rbiO/RqAhzz0C1sTPs4SxfxeH0rpxxA
+         w23RMwscTR6sRxIvO/I4sQU3bG5dSRDQnF5nre9o6of9lIodncnMYQFwDZQoI77fqBjd
+         78+g==
+X-Gm-Message-State: APjAAAXmfdmfsPAytuGXAyiozdqEQN/bcFKFRN+s8gLOFpyQggVjTQ4e
+        JE84mQmf3VLEBTCbzBlSu16ifLQzdOMauPz+ilc=
+X-Google-Smtp-Source: APXvYqxNMujQxG1cJ30mv86MWOwCqUWzZwOX6ivV5F4sI9+LGnfEYWHyuIycI1vf6/tzhBcGmLj9xvyS92YraDokCOQ=
+X-Received: by 2002:a6b:3a8a:: with SMTP id h132mr17330124ioa.207.1579018629087;
+ Tue, 14 Jan 2020 08:17:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Received: by 2002:a4f:5f43:0:0:0:0:0 with HTTP; Tue, 14 Jan 2020 08:17:08
+ -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <kouevigathk@gmail.com>
+Date:   Tue, 14 Jan 2020 17:17:08 +0100
+Message-ID: <CAMpCND0U2tzarhYCtii+hnpjurT20-pokHpLUsW--PEy7cty7g@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix afs_lookup() to not clobber the version set on a new dentry by
-afs_do_lookup() - especially as it's using the wrong version of the version
-(we need to use the one given to us by whatever op the dir contents
-correspond to rather than what's in the afs_vnode).
+Hallo
 
-Fixes: 9dd0b82ef530 ("afs: Fix missing dentry data version updating")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
- fs/afs/dir.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 813db1708494..5c794f4b051a 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -952,12 +952,8 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
- 	afs_stat_v(dvnode, n_lookup);
- 	inode = afs_do_lookup(dir, dentry, key);
- 	key_put(key);
--	if (inode == ERR_PTR(-ENOENT)) {
-+	if (inode == ERR_PTR(-ENOENT))
- 		inode = afs_try_auto_mntpt(dentry, dir);
--	} else {
--		dentry->d_fsdata =
--			(void *)(unsigned long)dvnode->status.data_version;
--	}
- 
- 	if (!IS_ERR_OR_NULL(inode))
- 		fid = AFS_FS_I(inode)->fid;
+Vielen Dank im Voraus,
+Mr. Eddy William,
 
+
+
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
+
+Many thanks in advance,
+Mr.Eddy William,
