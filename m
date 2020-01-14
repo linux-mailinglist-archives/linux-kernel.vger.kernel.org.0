@@ -2,99 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D2113AB61
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:47:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE6413AB5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:46:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgANNqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:46:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:27860 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbgANNqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:46:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 05:46:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,432,1571727600"; 
-   d="scan'208";a="225221170"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
-  by orsmga003.jf.intel.com with ESMTP; 14 Jan 2020 05:46:48 -0800
-Subject: Re: [PATCH] perf tools: intel-pt: fix endless record after being
- terminated
-To:     Jiri Olsa <jolsa@redhat.com>, Wei Li <liwei391@huawei.com>
-Cc:     acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, huawei.libin@huawei.com
-References: <20200102074211.19901-1-liwei391@huawei.com>
- <20200106120250.GD207350@krava>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <7e01a903-29c3-89c4-360e-bbf4834a3f36@intel.com>
-Date:   Tue, 14 Jan 2020 15:45:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20200106120250.GD207350@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728848AbgANNqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:46:24 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46014 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbgANNqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:46:23 -0500
+Received: by mail-qt1-f193.google.com with SMTP id w30so12409424qtd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:46:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=FJt5ul6jSl2oFgQgoNYCrlZqJ8ZxSmr3QhwWHFt0fl0=;
+        b=jlTtnwmXXaDZbMLFdDf9rwr5nOnDzERvvJZeZRJJ4nklL+kf4y4RYe2uFCwecObjDt
+         NOpcGc8JN0hIY1RA5TJaAGT2Kt+Br5DTYoXKnDBA6D4vWMDVIy9akjaGEezKyscsmgF5
+         1JVRcnV+SPxc81HX2DRsNQ6LmeYErSfjszdJ51njd0gaYDjIsc2qY96jQlmFvbcH15J+
+         w9p1jCZ4uLAhjRnUEAQa8lxV+MMYSoz0V+zv6zBMTYtoPlSsKHW4V9RwFyqjLHBfmnKG
+         C7ejF5aUKxM5mf46atR1oNZ8r9qQSV3ahe4YHWM6LJN1Ah949eVDQRPfPLzvE8K5iK0Y
+         6U4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=FJt5ul6jSl2oFgQgoNYCrlZqJ8ZxSmr3QhwWHFt0fl0=;
+        b=eXsJ16oWquOEg8Z7oD1i/QZdLJXaCRCx4zG5FfPvwbiYsboZGFChcTmX8tve+spgI7
+         3ZSjDjhUXMOs7HNn1c0KwfMPkdAr3BpTRt/4CgDYrKYX3dzfvl330D9jL5o6+1nePIAa
+         BJLw310HaVcAfjlGJdmkBcChTacOCELY7fH8MBIyGkApxLe+t7W3ESN185jeH411nx2a
+         ajGiWqndVA+4z1XULO17mbhp1vQnHbGrQwPOqObf8O6Kl0VyTNNAF4zscJ5ebuc+Y9wp
+         AGHn2xBXx3/rxPT0Qf575Flpa+2R36DguWeceinkoPZ2WgLJR4Rz/xzMSZqhct0CwwqT
+         tNZw==
+X-Gm-Message-State: APjAAAUuF0IwKNpyUnS02ZIeL71NAbeSeVKmz4lm5FFtPTCwr7IiOOpy
+        weDSIZpWoVndh84Cz3yBJbG5opAVQwPW9w==
+X-Google-Smtp-Source: APXvYqwjloJcjp9rPTzCKEyvILBYokgQ8xivl6xDKlKiin4V+lyZt1nRX4QTpnG8/kBXw6NfMgK6Tg==
+X-Received: by 2002:ac8:a8b:: with SMTP id d11mr3570022qti.94.1579009582711;
+        Tue, 14 Jan 2020 05:46:22 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id l44sm7724328qtb.48.2020.01.14.05.46.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jan 2020 05:46:22 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm/vmscan: remove prefetch_prev_lru_page
+Date:   Tue, 14 Jan 2020 08:46:21 -0500
+Message-Id: <FC618797-2F5E-4F73-A244-0DC19AA1CB74@lca.pw>
+References: <1579006500-127143-1-git-send-email-alex.shi@linux.alibaba.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1579006500-127143-1-git-send-email-alex.shi@linux.alibaba.com>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/01/20 2:02 pm, Jiri Olsa wrote:
-> On Thu, Jan 02, 2020 at 03:42:11PM +0800, Wei Li wrote:
->> In __cmd_record(), when receiving SIGINT(ctrl + c), a done flag will
->> be set and the event list will be disabled by evlist__disable() once.
->>
->> While in auxtrace_record.read_finish(), the related events will be
->> enabled again, if they are continuous, the recording seems to be endless.
->>
->> If the intel_pt event is disabled, we don't enable it again here.
->>
->> Before the patch:
->> huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
->> intel_pt//u -p 46803
->> ^C^C^C^C^C^C
->>
->> After the patch:
->> huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
->> intel_pt//u -p 48591
->> ^C[ perf record: Woken up 0 times to write data ]
->> Warning:
->> AUX data lost 504 times out of 4816!
->>
->> [ perf record: Captured and wrote 2024.405 MB perf.data ]
->>
->> Signed-off-by: Wei Li <liwei391@huawei.com>
->> ---
->>  tools/perf/arch/x86/util/intel-pt.c | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
->> index 20df442fdf36..1e96afcd8646 100644
->> --- a/tools/perf/arch/x86/util/intel-pt.c
->> +++ b/tools/perf/arch/x86/util/intel-pt.c
->> @@ -1173,9 +1173,13 @@ static int intel_pt_read_finish(struct auxtrace_record *itr, int idx)
->>  	struct evsel *evsel;
->>  
->>  	evlist__for_each_entry(ptr->evlist, evsel) {
->> -		if (evsel->core.attr.type == ptr->intel_pt_pmu->type)
->> -			return perf_evlist__enable_event_idx(ptr->evlist, evsel,
->> -							     idx);
->> +		if (evsel->core.attr.type == ptr->intel_pt_pmu->type) {
->> +			if (evsel->disabled)
->> +				return 0;
->> +			else
->> +				return perf_evlist__enable_event_idx(
->> +						ptr->evlist, evsel, idx);
-> 
-> what's the logic behind enabling the event in here?
 
-Tracing stops when the auxtrace buffer is full and won't start again until
-the event is scheduled in (which is never for system-wide events) but
-enabling here will start tracing again immediately if possible.
+
+> On Jan 14, 2020, at 7:55 AM, Alex Shi <alex.shi@linux.alibaba.com> wrote:
+>=20
+> This macro are never used in git history. So better to remove.
+
+When removing unused thingy, it is important to figure out which commit intr=
+oduced it in the first place and Cc the relevant people in that commit.=
