@@ -2,155 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95055139EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD11139F25
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:39:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729508AbgANBaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 20:30:24 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58216 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729436AbgANBaW (ORCPT
+        id S1729121AbgANBjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:39:25 -0500
+Received: from mta02.svc.cra.dublin.eircom.net ([159.134.118.53]:51845 "HELO
+        mta02.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1728794AbgANBjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 20:30:22 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E1TE0t105524;
-        Tue, 14 Jan 2020 01:30:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=A6M6k3ikXF8yBWj9VHiQxI6pJTnSUujmxK2S/8NxTcw=;
- b=GKgg2CgDiqDxyhrkWOqF5UoV2rsi4K9yH9eAVdbJxkCwdoEtLoEPutV0eO8fXq9FQ4a6
- 64D23mOZG1H98R4V+rWk5icqO2pxgB5ZEy7If5GR3rlVDKTm44wtUbooYstWE61y6xLY
- 3jqHo/KXOoArSRRa61aEhf2kSx6MJiyH5TCJTIfzIL/hKG7bndLDlQ5IGAqf9RWA9hn8
- f/4mPMz0qC85XqsvtE9d4ye8zPyOCwMCpYQfp58opVNt268rwz3Pk6MKRv3BCfTnsOo5
- PGSvO9I4sMNUyPjm+uWgIOcA3XjZWib8IHOcfxro+uwIJRtbvmu/PhZxHqGr76yD9CbZ 7A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2xf73tjpw8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 01:30:11 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E1TDD3176589;
-        Tue, 14 Jan 2020 01:30:10 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2xfrgjp4mg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 01:30:10 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00E1U68n006854;
-        Tue, 14 Jan 2020 01:30:06 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Jan 2020 17:30:06 -0800
-Date:   Mon, 13 Jan 2020 17:30:04 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
-Message-ID: <20200114013004.GU8247@magnolia>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-10-ira.weiny@intel.com>
- <20200113222212.GO8247@magnolia>
- <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
+        Mon, 13 Jan 2020 20:39:25 -0500
+X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jan 2020 20:39:23 EST
+Received: (qmail 17009 messnum 3305465 invoked from network[213.94.190.12/avas01.vendorsvc.cra.dublin.eircom.net]); 14 Jan 2020 01:32:41 -0000
+Received: from avas01.vendorsvc.cra.dublin.eircom.net (HELO avas01) (213.94.190.12)
+  by mta02.svc.cra.dublin.eircom.net (qp 17009) with SMTP; 14 Jan 2020 01:32:41 -0000
+Received: from vzmbx18.eircom.net ([86.43.60.98])
+        by Cloudmark Gateway with SMTP
+        id rB4SilIS8vSCGrB4SilrJf; Tue, 14 Jan 2020 01:32:41 +0000
+X-Spam-Flag: NO
+X-CNFS-Analysis: v=2.2 cv=Vs1TO6+n c=1 sm=1 tr=0
+ a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
+ a=56OF8xidLmEA:10 a=Ta-MJLm6_moA:10 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+ a=mf9jJPqrL4kA:10 a=sgm4F-J2Ld0A:10 a=ZZnuYtJkoWoA:10 a=UqCG9HQmAAAA:8
+ a=4q5nmWF_J0Ip0owdAhoA:9 a=sdQFkm6Mf0l6Isv9:21 a=5ynS3-km4IMm0R91:21
+ a=QEXdDO2ut3YA:10 a=dRqJYu-X7R0A:10 a=UuxKnNfG_hQA:10 a=i0FYOed3za4A:10
+Date:   Tue, 14 Jan 2020 01:32:40 +0000 (GMT)
+From:   Ahmed <ahmed25442@eircom.net>
+Reply-To: ouedraogoahmed@outlook.com
+Message-ID: <1762071180.135292.1578965560857.JavaMail.zimbra@eircom.net>
+Subject: HELLO DEAR
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001140011
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001140011
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [37.120.208.67]
+X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
+Thread-Topic: HELLO DEAR
+Thread-Index: vLC4sVjcjsDm032YV6RcNxioMSICpw==
+X-CMAE-Envelope: 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
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 04:46:10PM -0800, Ira Weiny wrote:
-> On Mon, Jan 13, 2020 at 02:22:12PM -0800, Darrick J. Wong wrote:
-> > On Fri, Jan 10, 2020 at 11:29:39AM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> 
-> [snip]
-> 
-> > >  
-> > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > > index bc3654fe3b5d..1ab0906c6c7f 100644
-> > > --- a/fs/xfs/xfs_ioctl.c
-> > > +++ b/fs/xfs/xfs_ioctl.c
-> > > @@ -1200,6 +1200,14 @@ xfs_ioctl_setattr_dax_invalidate(
-> > >  		goto out_unlock;
-> > >  	}
-> > >  
-> > > +	/*
-> > > +	 * If there is a mapping in place we must remain in our current mode.
-> > > +	 */
-> > > +	if (atomic64_read(&inode->i_mapped)) {
-> > 
-> > Urk, should we really be messing around with the address space
-> > internals?
-> 
-> I contemplated a function call instead of checking i_mapped directly?  Is that
-> what you mean?
+Dear Friend,
 
-Yeah.  Abstracting the details just enough that filesystems don't have
-to know that i_mapped is atomic64 etc.
+I need your urgent assistance in transferring the sum of $11.3million to your private account.By indicating your interest i will send you the full details on how the business will be executed.
 
-> 
-> > 
-> > > +		error = -EBUSY;
-> > > +		goto out_unlock;
-> > > +	}
-> > > +
-> > >  	error = filemap_write_and_wait(inode->i_mapping);
-> > >  	if (error)
-> > >  		goto out_unlock;
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 631f11d6246e..6e7dc626b657 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -740,6 +740,7 @@ struct inode {
-> > >  #endif
-> > >  
-> > >  	void			*i_private; /* fs or device private pointer */
-> > > +	atomic64_t               i_mapped;
-> > 
-> > I would have expected to find this in struct address_space since the
-> > mapping count is a function of the address space, right?
-> 
-> I suppose but the only external call (above) would be passing an inode.  So to
-> me it seemed better here.
+Please if you are interested contact me through my private e-mail (ouedraogoahmed@outlook.com)  
 
-But the number of memory mappings reflects the state of the address
-space, not the inode.  Or maybe put another way, if I were an mm
-developer I would not expect to look in struct inode for mm state.
-
-static inline bool inode_has_mappings(struct inode *inode)
-{
-	return atomic64_read(&inode->i_mapping->mapcount) > 0;
-}
-
-OTOH if there exist other mm developers who /do/ find that storing the
-mmap count in struct inode is more logical, please let me know. :)
-
---D
-
-> Ira
-> 
-> > 
-> > --D
-> > 
+Best Regards,
+Ahmed Ouedraogo
