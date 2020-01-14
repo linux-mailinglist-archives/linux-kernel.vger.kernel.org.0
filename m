@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F4513A583
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF8A13A533
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbgANKIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        id S1730145AbgANKFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:05:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729416AbgANKIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:08:20 -0500
+        id S1729745AbgANKFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:05:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65AF7207FF;
-        Tue, 14 Jan 2020 10:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CED124684;
+        Tue, 14 Jan 2020 10:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996500;
-        bh=Zkne0qlY6NJIT3bKQZGPcYYlFRgfrwxG1in28LCITt0=;
+        s=default; t=1578996329;
+        bh=6jKw0O+CyPMH+hrct7EUfZqs7cAxZ67cxAcmQxPZ5Qc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UG4FDY5eeU4TQTFWEu9Ii1E/2lPuDJSikkEgzMWaFEpWTymYo99xQ5jzRjuk8G06B
-         NiDv8eDWjMm383/psVMGNlrLQC9g4B3/LV/varVunP7Bx0n67ctI717+NK/WwQA+/Y
-         lScQXAJUZvAl8AHnLV51YEzk7mSohD1qHHhOgdUY=
+        b=PEcujaff86P/cqKh3kS60WtdPZGId6CJSwj0CKWnhof+t7MlS1/Kz6ekaOX50E/6m
+         y/sg7hY5XsS8SDwJjU+5XGJuweesV83iFbe14jVOV0KlRLnuc9CRKioII59AmdEa88
+         iT+wOSU9GglItY3xBfmI3L+1rzECzpMcTD2kXmiU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com,
-        syzbot+76f3a30e88d256644c78@syzkaller.appspotmail.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 14/46] Input: add safety guards to input_set_keycode()
-Date:   Tue, 14 Jan 2020 11:01:31 +0100
-Message-Id: <20200114094343.435861738@linuxfoundation.org>
+        stable@vger.kernel.org, Amanieu dAntras <amanieu@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 5.4 58/78] arm64: Implement copy_thread_tls
+Date:   Tue, 14 Jan 2020 11:01:32 +0100
+Message-Id: <20200114094401.225685284@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
-References: <20200114094339.608068818@linuxfoundation.org>
+In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
+References: <20200114094352.428808181@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Amanieu d'Antras <amanieu@gmail.com>
 
-commit cb222aed03d798fc074be55e59d9a112338ee784 upstream.
+commit a4376f2fbcc8084832f2f114577c8d68234c7903 upstream.
 
-If we happen to have a garbage in input device's keycode table with values
-too big we'll end up doing clear_bit() with offset way outside of our
-bitmaps, damaging other objects within an input device or even outside of
-it. Let's add sanity checks to the returned old keycodes.
+This is required for clone3 which passes the TLS value through a
+struct rather than a register.
 
-Reported-by: syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com
-Reported-by: syzbot+76f3a30e88d256644c78@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/r/20191207212757.GA245964@dtor-ws
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Amanieu d'Antras <amanieu@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: <stable@vger.kernel.org> # 5.3.x
+Acked-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20200102172413.654385-3-amanieu@gmail.com
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/input.c |   26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ arch/arm64/Kconfig          |    1 +
+ arch/arm64/kernel/process.c |   10 +++++-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -858,16 +858,18 @@ static int input_default_setkeycode(stru
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -139,6 +139,7 @@ config ARM64
+ 	select HAVE_CMPXCHG_DOUBLE
+ 	select HAVE_CMPXCHG_LOCAL
+ 	select HAVE_CONTEXT_TRACKING
++	select HAVE_COPY_THREAD_TLS
+ 	select HAVE_DEBUG_BUGVERBOSE
+ 	select HAVE_DEBUG_KMEMLEAK
+ 	select HAVE_DMA_CONTIGUOUS
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -360,8 +360,8 @@ int arch_dup_task_struct(struct task_str
+ 
+ asmlinkage void ret_from_fork(void) asm("ret_from_fork");
+ 
+-int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+-		unsigned long stk_sz, struct task_struct *p)
++int copy_thread_tls(unsigned long clone_flags, unsigned long stack_start,
++		unsigned long stk_sz, struct task_struct *p, unsigned long tls)
+ {
+ 	struct pt_regs *childregs = task_pt_regs(p);
+ 
+@@ -394,11 +394,11 @@ int copy_thread(unsigned long clone_flag
  		}
- 	}
  
--	__clear_bit(*old_keycode, dev->keybit);
--	__set_bit(ke->keycode, dev->keybit);
--
--	for (i = 0; i < dev->keycodemax; i++) {
--		if (input_fetch_keycode(dev, i) == *old_keycode) {
--			__set_bit(*old_keycode, dev->keybit);
--			break; /* Setting the bit twice is useless, so break */
-+	if (*old_keycode <= KEY_MAX) {
-+		__clear_bit(*old_keycode, dev->keybit);
-+		for (i = 0; i < dev->keycodemax; i++) {
-+			if (input_fetch_keycode(dev, i) == *old_keycode) {
-+				__set_bit(*old_keycode, dev->keybit);
-+				/* Setting the bit twice is useless, so break */
-+				break;
-+			}
- 		}
- 	}
- 
-+	__set_bit(ke->keycode, dev->keybit);
- 	return 0;
- }
- 
-@@ -923,9 +925,13 @@ int input_set_keycode(struct input_dev *
- 	 * Simulate keyup event if keycode is not present
- 	 * in the keymap anymore
- 	 */
--	if (test_bit(EV_KEY, dev->evbit) &&
--	    !is_event_supported(old_keycode, dev->keybit, KEY_MAX) &&
--	    __test_and_clear_bit(old_keycode, dev->key)) {
-+	if (old_keycode > KEY_MAX) {
-+		dev_warn(dev->dev.parent ?: &dev->dev,
-+			 "%s: got too big old keycode %#x\n",
-+			 __func__, old_keycode);
-+	} else if (test_bit(EV_KEY, dev->evbit) &&
-+		   !is_event_supported(old_keycode, dev->keybit, KEY_MAX) &&
-+		   __test_and_clear_bit(old_keycode, dev->key)) {
- 		struct input_value vals[] =  {
- 			{ EV_KEY, old_keycode, 0 },
- 			input_value_sync
+ 		/*
+-		 * If a TLS pointer was passed to clone (4th argument), use it
+-		 * for the new thread.
++		 * If a TLS pointer was passed to clone, use it for the new
++		 * thread.
+ 		 */
+ 		if (clone_flags & CLONE_SETTLS)
+-			p->thread.uw.tp_value = childregs->regs[3];
++			p->thread.uw.tp_value = tls;
+ 	} else {
+ 		memset(childregs, 0, sizeof(struct pt_regs));
+ 		childregs->pstate = PSR_MODE_EL1h;
 
 
