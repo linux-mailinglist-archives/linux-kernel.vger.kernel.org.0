@@ -2,106 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF0C13A3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:31:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11F6B13A3E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:35:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbgANJbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 04:31:44 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46818 "EHLO mail.skyhub.de"
+        id S1728921AbgANJfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:35:07 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:54044 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbgANJbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:31:43 -0500
-Received: from zn.tnic (p200300EC2F0C7700ADC3CAC9BB95AB92.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:7700:adc3:cac9:bb95:ab92])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A64AF1EC0C76;
-        Tue, 14 Jan 2020 10:31:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1578994301;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=oVOv19JYih/7QBdhQIDrcxH7dJf1wRTSDlsNoAXaOY4=;
-        b=Op5S07B1bBe9uvsJbhwmhBQEjTQO/NCR8xUCHou3ZSrFKAX+wG5Tf6vbvL+7qyFBL/OmxC
-        PHOEsU9albCCnI2LsgCfGkS94dnIF/pSH1b+TKBWi8bA+gpaWrVZWGaixC6QAc9QstNw5e
-        AZNv5TI9m4WNJxduf+OlljIIB6zhMPk=
-Date:   Tue, 14 Jan 2020 10:31:38 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH] KVM: VMX: Rename define to CPU_BASED_USE_TSC_OFFSETTING
-Message-ID: <20200114093138.GB31032@zn.tnic>
-References: <20191221044513.21680-1-sean.j.christopherson@intel.com>
- <20191221044513.21680-18-sean.j.christopherson@intel.com>
- <20200113183228.GO13310@zn.tnic>
- <20200113183705.GL1175@linux.intel.com>
- <20200113183823.GP13310@zn.tnic>
- <20200113184217.GA2216@linux.intel.com>
- <20200113185216.GQ13310@zn.tnic>
- <20200113201610.GE2322@linux.intel.com>
+        id S1725956AbgANJfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 04:35:07 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id 00E9XCOp024222
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 14 Jan 2020 01:33:33 -0800
+Received: from pek-qwang2-d1.wrs.com (128.224.162.199) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.468.0; Tue, 14 Jan 2020 01:33:07 -0800
+From:   <quanyang.wang@windriver.com>
+To:     <richard@nod.at>, <miquel.raynal@bootlin.com>, <vigneshr@ti.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quanyang.wang@windriver.com>
+Subject: [PATCH] ubi: fix memory leak from ubi->fm_anchor
+Date:   Tue, 14 Jan 2020 17:33:05 +0800
+Message-ID: <20200114093305.666-1-quanyang.wang@windriver.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200113201610.GE2322@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 12:16:10PM -0800, Sean Christopherson wrote:
-> On Mon, Jan 13, 2020 at 07:52:16PM +0100, Borislav Petkov wrote:
-> > On Mon, Jan 13, 2020 at 10:42:17AM -0800, Sean Christopherson wrote:
-> > > > Doesn't bother me, I could do it in a patch ontop. But your call.
-> > > 
-> > > No objection here.
-> > 
-> > Something like this:
-> > 
-> > ---
-> > From: Borislav Petkov <bp@suse.de>
-> > 
-> > ... so that "offsetting" is spelled the same as the respective VMX feature
-> > bit VMX_FEATURE_TSC_OFFSETTING.
-> > 
-> > No functional changes.
-> > 
-> > Signed-off-by: Borislav Petkov <bp@suse.de>
-> > ---
-> 
-> Reviewed-and-tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Quanyang Wang <quanyang.wang@windriver.com>
 
-Yah, so I tried to do a test-merge with linux-next to see what surprises should
-I be prepared for and there's the first one:
+Some ubi_wl_entry are allocated in erase_aeb() and one of them is
+assigned to ubi->fm_anchor in __erase_worker(). And it should be freed
+like others which are freed in tree_destroy(). Otherwise, it will
+cause a memory leak:
 
-5e3d394fdd9e ("KVM: VMX: Fix the spelling of CPU_BASED_USE_TSC_OFFSETTING")
+unreferenced object 0xbc094318 (size 24):
+  comm "ubiattach", pid 491, jiffies 4294954015 (age 420.110s)
+  hex dump (first 24 bytes):
+    30 43 09 bc 00 00 00 00 00 00 00 00 01 00 00 00  0C..............
+    02 00 00 00 04 00 00 00                          ........
+  backtrace:
+    [<6c2d5089>] erase_aeb+0x28/0xc8
+    [<a1c68fb1>] ubi_wl_init+0x1d8/0x4a8
+    [<d4f408f8>] ubi_attach+0xffc/0x10d0
+    [<add3b5d8>] ubi_attach_mtd_dev+0x5b4/0x9fc
+    [<d375a11c>] ctrl_cdev_ioctl+0xb8/0x1d8
+    [<72b250f2>] vfs_ioctl+0x28/0x3c
+    [<b80095d7>] do_vfs_ioctl+0xb0/0x798
+    [<bf9ef69e>] ksys_ioctl+0x58/0x74
+    [<5355bdbe>] ret_fast_syscall+0x0/0x54
+    [<90c6c3ca>] 0x7eadf854
 
-which is already in Paolo's tree. Dropping it on my side.
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+---
+ drivers/mtd/ubi/wl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 5d77a38dba54..a5e9d1e4dc34 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1885,6 +1885,7 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+ 	tree_destroy(ubi, &ubi->used);
+ 	tree_destroy(ubi, &ubi->free);
+ 	tree_destroy(ubi, &ubi->scrub);
++	wl_entry_destroy(ubi, ubi->fm_anchor);
+ 	kfree(ubi->lookuptbl);
+ 	return err;
+ }
+@@ -1920,6 +1921,7 @@ void ubi_wl_close(struct ubi_device *ubi)
+ 	tree_destroy(ubi, &ubi->erroneous);
+ 	tree_destroy(ubi, &ubi->free);
+ 	tree_destroy(ubi, &ubi->scrub);
++	wl_entry_destroy(ubi, ubi->fm_anchor);
+ 	kfree(ubi->lookuptbl);
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
