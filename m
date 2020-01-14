@@ -2,170 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD5813ABB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB33213ABAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:01:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbgANOAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:00:14 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54628 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbgANOAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:00:07 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b19so13872899wmj.4;
-        Tue, 14 Jan 2020 06:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mmCo0cmcYxTYUl0HTh9b5uPHQjBF+Ornrl4fpC6nIuw=;
-        b=YwKwklKFwVrhQTbq9+emPqf95apR1314k05ofi1R4X4ecmLMYVeTbhUyQp8rc6JOOE
-         1OtSdz22N7qTe1XPnouOPYwL70jWyR9WzmlK2ZXg2p4vGpwHbn4BMRc+jo0MBgwO6T0l
-         kwj1Qo0YWV0mSI6WuIA9JmgmgulgXFJC/X0mzv2VstuVM/XkmTbkjnaL13iIDmY92It8
-         5oNt9CMr3GzgOVZqxWqargG03QKjOuUSUMJbmcmPXGbcmT0gddtiaVxm7R4gWVDD353H
-         OJ5ZNctjqERrdhzXqK1zFZdA3CDKpvZ79XSCt2HQ6upbF63gIHwk+/f4B7j0TroYbesC
-         L5Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mmCo0cmcYxTYUl0HTh9b5uPHQjBF+Ornrl4fpC6nIuw=;
-        b=rcIHleI73aIPMfFTkCUOdiB4s/Di6/J114pp92+lkbFvqF7JcYF2ekbKFO7xnLsp2l
-         uywubl83JiupnTTu/BnxsB7UgGHEU//5PfYw1QMWiQTbEBauMABOI6HYz2VGb603VbKh
-         1EugfIiCNkzXwvxv6GQXSSLQCwU0PkOMslPkUPzl5LqDDJJzLXZed0ATVdqyNOAQcT0a
-         pPwFNv27r/KUPXWLpY3xG54AhdoM3g364wYQIAbFrShC+LQ9Gph0N+E4emAa78p3oEyk
-         NjD7LUZgEQJLGUebYh1rXIVtadh72+CE77MSzcuQMkB70j9iQ+RsqDufs/nTMlZZ0yTt
-         TNMQ==
-X-Gm-Message-State: APjAAAV5xiXdxrUJsuCQg8SN5CD1Un/n4EUs+dp661ZOcabNI9lJoUqY
-        GrINbq9f0mK6BIV8DHWuRNg=
-X-Google-Smtp-Source: APXvYqxIi99Bpxvcwct69pL122PlCYsc6pFqFmQLsPv1kKKkDRC+0KM4vq6kSF3tJBiUx5oECNcNKw==
-X-Received: by 2002:a7b:c389:: with SMTP id s9mr27249334wmj.7.1579010405396;
-        Tue, 14 Jan 2020 06:00:05 -0800 (PST)
-Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id 4sm17854448wmg.22.2020.01.14.06.00.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 06:00:04 -0800 (PST)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     alexandre.torgue@st.com, davem@davemloft.net,
-        herbert@gondor.apana.org.au, mcoquelin.stm32@gmail.com,
-        mripard@kernel.org, wens@csie.org, iuliana.prodan@nxp.com,
-        horia.geanta@nxp.com, aymen.sghaier@nxp.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH RFC 10/10] crypto: sun8i-ce: use the new batch mechanism
+        id S1728928AbgANN7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:59:55 -0500
+Received: from mail-vi1eur05on2101.outbound.protection.outlook.com ([40.107.21.101]:3745
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727285AbgANN7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:59:52 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NSyG36ZQDrxyHiDm5k5bR9jJCp3f4PZNJ1TWRmqsIZtLBqYJt+PqFhnsbCqmL3XMm6SOnIWWitm/OQuO3LSWVso1V+GrdWVzjaCyqQEDLJw/G9yiLM1xSCPTh+isx89Jt3aiTDuKW53RJqpedbjo5rwu7rLI3KKe6D7TnhGcjpBCtiFkeQHXQJom7niGWAqIdIgr++GD/aqm+1dYqmd3Dt/ewPD6X2NKVvVGCb20fSTjXm/Ie7CG4M5j7EGo66Qm2cm9wfWuyi9aBuQTNiXDus1OWObJTdgulFYj+riT5usixY/UpwYb62ypdlir/sj/ILnu13Av/Q5SPuVHjk0zqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8DWqM+nIiyToc6tqulDetCnmws2igtNY24BaqWBt1SI=;
+ b=b37tlS+1CzKqfMm3VmaNwuHo3K2QlM7p7l5DtpqsyZvSa3dp5CUXsWxaSteu6i1wGkZAIMii90xCW+5RIGuHPHBfWz3PwSBQlYDLhOTAzg4xqN4an4wcRiWHN5wPgua8I5tXgGyaioASG9n7+hZjrCwGTitBtZW9fOdvgoeIfAJdWRxJSCa524fAAPZkzu/rjaJ3bZpZJdRFtUrSFUrcKpcmQFe6yN2HI9zthMmJTdMvR1WiTr4Bw6sCW6402AVB2LiPRxWjZGYlWpLJIbHtDACcYL+HEwz/TrtW2H8BETK3T+gmySGbeRk5kC51BH6ZGmO2ib5NQYtK5VqwlHAK+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8DWqM+nIiyToc6tqulDetCnmws2igtNY24BaqWBt1SI=;
+ b=m3SLeKrZXAVExsVsROuysx3KfKg1Z3FJSfY+Jfrr6Mzxj9eHLXPkijXT4xT5Gn3Bpg02iyfoCcjpYvEp1gG7ROLXH0t2zWh0bWqm96SHKDSUE2mzua/NBHch7g/207MNTHM0LwLWz0UxfkKscVohL7Wbf90gTRCW6Ajgtg9JsdY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+Received: from VI1PR07MB5040.eurprd07.prod.outlook.com (20.177.203.20) by
+ VI1PR07MB3358.eurprd07.prod.outlook.com (10.175.243.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.10; Tue, 14 Jan 2020 13:59:49 +0000
+Received: from VI1PR07MB5040.eurprd07.prod.outlook.com
+ ([fe80::20c4:7ce8:f735:316e]) by VI1PR07MB5040.eurprd07.prod.outlook.com
+ ([fe80::20c4:7ce8:f735:316e%2]) with mapi id 15.20.2644.015; Tue, 14 Jan 2020
+ 13:59:49 +0000
+From:   Alexander X Sverdlin <alexander.sverdlin@nokia.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH] rapidio/mport_cdev: Fix race in mport_cdev_release()
 Date:   Tue, 14 Jan 2020 14:59:36 +0100
-Message-Id: <20200114135936.32422-11-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114135936.32422-1-clabbe.montjoie@gmail.com>
-References: <20200114135936.32422-1-clabbe.montjoie@gmail.com>
-MIME-Version: 1.0
+Message-Id: <20200114135936.4800-1-alexander.sverdlin@nokia.com>
+X-Mailer: git-send-email 2.24.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HE1PR05CA0132.eurprd05.prod.outlook.com
+ (2603:10a6:7:28::19) To VI1PR07MB5040.eurprd07.prod.outlook.com
+ (2603:10a6:803:9c::20)
+MIME-Version: 1.0
+Received: from ulegcpsvdell.emea.nsn-net.net (131.228.32.181) by HE1PR05CA0132.eurprd05.prod.outlook.com (2603:10a6:7:28::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.11 via Frontend Transport; Tue, 14 Jan 2020 13:59:48 +0000
+X-Mailer: git-send-email 2.24.0
+X-Originating-IP: [131.228.32.181]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 816ee973-7eaa-472b-dcff-08d798fa050b
+X-MS-TrafficTypeDiagnostic: VI1PR07MB3358:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR07MB335819C0E3D121C7ADB4C25A88340@VI1PR07MB3358.eurprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
+X-Forefront-PRVS: 028256169F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(346002)(136003)(396003)(366004)(376002)(199004)(189003)(6666004)(66946007)(66556008)(2616005)(54906003)(86362001)(66476007)(956004)(52116002)(16526019)(5660300002)(316002)(186003)(26005)(6506007)(8936002)(6916009)(6512007)(2906002)(4326008)(478600001)(81166006)(81156014)(8676002)(6486002)(1076003)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB3358;H:VI1PR07MB5040.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jZW9kXgHlWt/586W4qWlTNBacK8bDEHpNHo1+9jgZaP8cqd4TLXeiJje6dN7Mczxf27CRuuOQHEtbsqW7MCCYC8HwxuP6AkaWWwF6k36SakgOFhySJABMSe6YDrtLZPRAP3Z0J+0dPoyoKk9h6+ErASIT7nlO/EA4ne1rIzwkjMvAQRnO56XoMRqC98JYKUvXbYAGV/nVOkpqa2CJf9DxvEyE6FZacezRjV4kPNHUhELxJ8KObXQOMtL8hQnYNVpZt2nZzH4eHGCHTUdvzinjJ5+obCFwrT2tTHkk+KbdB5cdYnTzoAFEIqLi3SFq+mkEtAJY1F00wsJInwAHQaRtQLA2/8drD9UPXOcEXwaWWKdA2CIFObQVWsMLC+gdnERSzZRsXpxE5qKQY3HPvdzbezSS1FqNBtKQyuvhsmIsMxDGxVF3cZ7et2mVpNTmkvB
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 816ee973-7eaa-472b-dcff-08d798fa050b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2020 13:59:49.1843
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eEskwZo2e8GBdTdIMliI2sOYsAl/kff3tHRD/W9DZUawNI/onQp+KjacKyUFC1+35dzv47jeYDKngOpbubEBWtZ3tPkhNrBRoq2o1RJsVPE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB3358
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now all infrastructure to batch request are in place, it is time to use
-it.
-Introduce some debug for it also.
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+While get_dma_channel() is protected against concurrent calls, there is a
+race against kref_put() in mport_cdev_release():
+
+CPU0                                        CPU1
+
+get_dma_channel()
+ kref_init(&priv->md->dma_ref);
+ ...
+mport_cdev_release_dma()
+ kref_put(&md->dma_ref,
+          mport_release_def_dma);
+                                            get_dma_channel()
+                                             if (priv->md->dma_chan) {
+                                              ...
+                                              kref_get(&priv->md->dma_ref);
+  mport_release_def_dma()
+   md->dma_chan = NULL;
+
+which may appear like this:
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 12057 at .../linux/include/linux/kref.h:46 rio_dma_transfer.isra.12+0x8e0/0xbe8 [rio_mport_cdev]
+ ...
+CPU: 1 PID: 12057 Comm: ... Tainted: G           O    4.9.109-... #1
+Stack : ...
+
+Call Trace:
+[<ffffffff80140040>] show_stack+0x90/0xb0
+[<ffffffff803eeeb8>] dump_stack+0x88/0xc0
+[<ffffffff80159670>] __warn+0x108/0x120
+[<ffffffffc0541df0>] rio_dma_transfer.isra.12+0x8e0/0xbe8 [rio_mport_cdev]
+[<ffffffffc05426fc>] mport_cdev_ioctl+0x604/0x2988 [rio_mport_cdev]
+[<ffffffff802881e8>] do_vfs_ioctl+0xb8/0x780
+[<ffffffff80288938>] SyS_ioctl+0x88/0xc0
+[<ffffffff80146ae8>] syscall_common+0x34/0x58
+---[ end trace 78842d4915cfc502 ]---
+
+Fixes: e8de370188d0 ("rapidio: add mport char device driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 ---
- .../crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c    | 14 ++++++++------
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c  |  9 ++++++---
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h       |  2 ++
- 3 files changed, 16 insertions(+), 9 deletions(-)
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-index 41d18c18d1d1..fe5374788304 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-@@ -103,20 +103,22 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 8155f59..a6276dc 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -1980,6 +1980,7 @@ static void mport_cdev_release_dma(struct file *filp)
+ 			current->comm, task_pid_nr(current), wret);
+ 	}
  
- 	algt = container_of(alg, struct sun8i_ce_alg_template, alg.skcipher);
++	mutex_lock(&priv->dma_lock);
+ 	if (priv->dmach != priv->md->dma_chan) {
+ 		rmcd_debug(EXIT, "Release DMA channel for filp=%p %s(%d)",
+ 			   filp, current->comm, task_pid_nr(current));
+@@ -1990,6 +1991,7 @@ static void mport_cdev_release_dma(struct file *filp)
+ 	}
  
--	dev_dbg(ce->dev, "%s %s %u %x IV(%p %u) key=%u\n", __func__,
-+	dev_dbg(ce->dev, "%s %s %u %x IV(%p %u) key=%u slot=%d\n", __func__,
- 		crypto_tfm_alg_name(areq->base.tfm),
- 		areq->cryptlen,
- 		rctx->op_dir, areq->iv, crypto_skcipher_ivsize(tfm),
--		op->keylen);
--
--#ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
--	algt->stat_req++;
--#endif
-+		op->keylen, slot);
- 
- 	flow = rctx->flow;
- 
- 	chan = &ce->chanlist[flow];
- 
-+#ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
-+	algt->stat_req++;
-+	if (chan->engine->ct + 1 > chan->tmax)
-+		chan->tmax = chan->engine->ct + 1;
-+#endif
-+
- 	cet = &chan->tl[slot];
- 	memset(cet, 0, sizeof(struct ce_task));
- 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-index 39bf684c0ff5..7cd98c227357 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-@@ -104,7 +104,7 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
- 	int err = 0;
- 
- #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
--	ce->chanlist[flow].stat_req++;
-+	ce->chanlist[flow].stat_req += ce->chanlist[flow].engine->ct;
- #endif
- 	/* mark last one */
- 	ce->chanlist[flow].tl[ce->chanlist[flow].engine->ct - 1].t_common_ctl |= cpu_to_le32(CE_COMM_INT);
-@@ -287,7 +287,10 @@ static int sun8i_ce_dbgfs_read(struct seq_file *seq, void *v)
- 	int i;
- 
- 	for (i = 0; i < MAXFLOW; i++)
--		seq_printf(seq, "Channel %d: nreq %lu\n", i, ce->chanlist[i].stat_req);
-+		seq_printf(seq, "Channel %d: nreq %lu tmax %d eqlen=%d/%d\n", i,
-+			   ce->chanlist[i].stat_req, ce->chanlist[i].tmax,
-+			   ce->chanlist[i].engine->queue.qlen,
-+			   ce->chanlist[i].engine->queue.max_qlen);
- 
- 	for (i = 0; i < ARRAY_SIZE(ce_algs); i++) {
- 		if (!ce_algs[i].ce)
-@@ -345,7 +348,7 @@ static int sun8i_ce_allocate_chanlist(struct sun8i_ce_dev *ce)
- 	for (i = 0; i < MAXFLOW; i++) {
- 		init_completion(&ce->chanlist[i].complete);
- 
--		ce->chanlist[i].engine = crypto_engine_alloc_init(ce->dev, true);
-+		ce->chanlist[i].engine = crypto_engine_alloc_init2(ce->dev, true, MAXTASK, MAXTASK * 2);
- 		if (!ce->chanlist[i].engine) {
- 			dev_err(ce->dev, "Cannot allocate engine\n");
- 			i--;
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-index 2d3325a13bf1..22bb15fea476 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-@@ -135,6 +135,7 @@ struct ce_task {
-  * @t_phy:	Physical address of task
-  * @tl:		pointer to the current ce_task for this flow
-  * @stat_req:	number of request done by this flow
-+ * @tmax:	The maximum number of tasks done in one batch
-  */
- struct sun8i_ce_flow {
- 	struct crypto_engine *engine;
-@@ -145,6 +146,7 @@ struct sun8i_ce_flow {
- 	struct ce_task *tl;
- #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
- 	unsigned long stat_req;
-+	int tmax;
- #endif
- };
- 
+ 	priv->dmach = NULL;
++	mutex_unlock(&priv->dma_lock);
+ }
+ #else
+ #define mport_cdev_release_dma(priv) do {} while (0)
 -- 
-2.24.1
+2.4.6
 
