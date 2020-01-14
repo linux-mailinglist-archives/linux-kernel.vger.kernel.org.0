@@ -2,82 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569F113B1DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79AE713B1E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:18:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgANSRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 13:17:48 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43440 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgANSRr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:17:47 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p27so5539296pli.10;
-        Tue, 14 Jan 2020 10:17:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pTDm6uj7nXPZqYgCReR2qesU7OAfZp8TW1KIkVsDtsg=;
-        b=TDtpxNdsmrScmiMRJHH/FVuHnOx9oBrr0lHnJy4J+VHYHVhYSlOiLQxvhQSVhFzkke
-         KHtRQkUBlNqfU+DKKrxNo3R0GA5e2wpe5OFv19B9GNj2VQR3moju1ibBmNLgtFxEYrbm
-         GvUH8L0M1YwWbaTr2NmjdO9udFhfriYHVlFg0pJIzftkFZ805vLmU7QP/2kvv5QjULKS
-         PbSKTcsNhdL4Chxygp0OOTZN6HUFwAdt2yDP4ATCDvk5Mks7AL3tbTOevOojp6RFjT0s
-         HBNnJVzwgHRmrzRlo+z4sriA8rJAKWl1aAs2pVTWAaciezvmqmthew4FkrmBoUuOtvPM
-         7vfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pTDm6uj7nXPZqYgCReR2qesU7OAfZp8TW1KIkVsDtsg=;
-        b=Yd6q0oeobBJliWVg1okbh5jvQK3GK4QBO6ZLG74Mz81tct4D7twvH53OgdJZMsD+E3
-         QfF31biHSRUYRytRyYkYoHuuP3t0O3WDrISRbG5xVXlyPEDrRyOF8bxT1CDvNBmYXtz9
-         +Dgn7yCYeSJEQMvZ+Cy+LVJWABvs6ppySvhx6EBNi+OL113CVYrv6OzdC3URAzPOsz9H
-         s7V/LJzEnkkmeAi31iCHWlIJYbw1DXHercIYCAE4/TzNnKqidZN5EBvjP30cUVXzxZPA
-         G7iG9J34N7WbZY+p7rTOr2yujR9jIBk4xizVb+AXJMnOIcXeHVc9rOfb2oDS9O/FMBNV
-         5MaQ==
-X-Gm-Message-State: APjAAAWq55AlQ7NpvcVpUqYLh121t9hlh+ZV8pzntrrMdlS2M6ER7q/q
-        zVqh43nX9ye0RWTBBTF8KJs=
-X-Google-Smtp-Source: APXvYqyEwNUVk4bb3HJz1Xqyz5CcuVz21L8us0zxIA63STCvqg6FpWv+rGvZjJYsxlGv7aVmB32mNw==
-X-Received: by 2002:a17:902:aa85:: with SMTP id d5mr28350689plr.16.1579025866843;
-        Tue, 14 Jan 2020 10:17:46 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r3sm19490818pfg.145.2020.01.14.10.17.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 14 Jan 2020 10:17:46 -0800 (PST)
-Date:   Tue, 14 Jan 2020 10:17:45 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/78] 5.4.12-stable review
-Message-ID: <20200114181745.GD18872@roeck-us.net>
-References: <20200114094352.428808181@linuxfoundation.org>
+        id S1728811AbgANSSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 13:18:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42980 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbgANSSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 13:18:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9CB5AAC5C;
+        Tue, 14 Jan 2020 18:18:48 +0000 (UTC)
+Message-ID: <8a7057fe1aaf415272d28f4e690313984c3a148d.camel@suse.de>
+Subject: Re: [PATCH v5 3/6] PCI: brcmstb: Add Broadcom STB PCIe host
+ controller driver
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     andrew.murray@arm.com, maz@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, james.quinlan@broadcom.com,
+        mbrugger@suse.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 14 Jan 2020 19:18:46 +0100
+In-Reply-To: <20200114171101.GA11177@e121166-lin.cambridge.arm.com>
+References: <20191216110113.30436-1-nsaenzjulienne@suse.de>
+         <20191216110113.30436-4-nsaenzjulienne@suse.de>
+         <20200114171101.GA11177@e121166-lin.cambridge.arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-aT8Qvga/f/1E/yJbYhHH"
+User-Agent: Evolution 3.34.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 11:00:34AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.12 release.
-> There are 78 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
-> Anything received after that time might be too late.
-> 
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 389 pass: 389 fail: 0
+--=-aT8Qvga/f/1E/yJbYhHH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Guenter
+Hi Lorenzo,
+
+On Tue, 2020-01-14 at 17:11 +0000, Lorenzo Pieralisi wrote:
+> On Mon, Dec 16, 2019 at 12:01:09PM +0100, Nicolas Saenz Julienne wrote:
+> > From: Jim Quinlan <james.quinlan@broadcom.com>
+> >=20
+> > This adds a basic driver for Broadcom's STB PCIe controller, for now
+> > aimed at Raspberry Pi 4's SoC, bcm2711.
+> >=20
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+> > Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+> >=20
+> > ---
+> >=20
+> > Changes since v3:
+> >   - Update commit message
+> >   - rollback roundup_pow_two usage, it'll be updated later down the lin=
+e
+> >   - Remove comment in register definition
+> >=20
+> > Changes since v2:
+> >   - Correct rc_bar2_offset sign
+>=20
+> In relation to this change.
+>=20
+> [...]
+>=20
+> > +static inline int brcm_pcie_get_rc_bar2_size_and_offset(struct brcm_pc=
+ie
+> > *pcie,
+> > +							u64 *rc_bar2_size,
+> > +							u64 *rc_bar2_offset)
+> > +{
+> > +	struct pci_host_bridge *bridge =3D pci_host_bridge_from_priv(pcie);
+> > +	struct device *dev =3D pcie->dev;
+> > +	struct resource_entry *entry;
+> > +
+> > +	entry =3D resource_list_first_type(&bridge->dma_ranges, IORESOURCE_ME=
+M);
+> > +	if (!entry)
+> > +		return -ENODEV;
+> > +
+> > +	*rc_bar2_offset =3D -entry->offset;
+>=20
+> I think this deserves a comment - I guess it has to do with how the
+> controller expects CPU<->PCI offsets to be expressed compared to how it
+> is computed in dma_ranges entries.
+
+You're right, OF code calculates it by doing:
+
+	offset =3D cpu_start_addr - pci_start_addr (see
+devm_of_pci_get_host_bridge_resources())
+
+While the RC_BAR2_CONFIG register expects the opposite subtraction. I'll ad=
+d a
+comment on the next revision.
+
+> I will try to complete the review shortly and try to apply it given
+> that it has already been reviewed by others.
+
+Thanks!
+
+Regards,
+Nicolas
+
+> Lorenzo
+>=20
+
+
+--=-aT8Qvga/f/1E/yJbYhHH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl4eBgYACgkQlfZmHno8
+x/5eqQf9E0hAW+zHpUgu0m0lqOFYwXeP3hO0XVERD2rmERkNOwvehWM7LhMdsfRA
+jtDJJSpC5itlAY7Oz8bi0SfTTRzt8XjaF7eSR6EfkCgwPpvMlw2pJIFlGEKYhv0k
++NEwi+dOPllYZXC656nAKXI0c5CAt7B4P373ByV7fNjw9ULWv04O58QWh3mTAyBO
+x9nWW6d8ZGwD8SQcsGY9RRjpr/XaZ85LDxxbvYCKC7JXCuW1CfyetICSveZ1R22v
+ysutXh0PlbPP8+jvTFfYrkPnc6SIytq0tdqr+Rma/BBF/lGvvi1uF2rUc5HYXZ+g
+gAkFA1hv1HEEr2m4IXDi96GBnimNnw==
+=EJpg
+-----END PGP SIGNATURE-----
+
+--=-aT8Qvga/f/1E/yJbYhHH--
+
