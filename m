@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3673813B329
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94ACF13B339
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgANTtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:49:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44691 "EHLO
+        id S1729127AbgANTt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:49:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44693 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgANTtC (ORCPT
+        with ESMTP id S1728863AbgANTtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Jan 2020 14:49:02 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1irSBO-0005Z9-37; Tue, 14 Jan 2020 20:48:58 +0100
-Message-Id: <20200114185237.273005683@linutronix.de>
+        id 1irSBO-0005ZC-VQ; Tue, 14 Jan 2020 20:48:59 +0100
+Message-Id: <20200114185946.656652824@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 14 Jan 2020 19:52:37 +0100
+Date:   Tue, 14 Jan 2020 19:52:38 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -38,80 +38,64 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>
-Subject: [patch 00/15] lib/vdso: Bugfix and consolidation
+Subject: [patch 01/15] lib/vdso: Make __arch_update_vdso_data() logic understandable
+References: <20200114185237.273005683@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The recent discussions about changes in the VDSO to support PPC
-triggered this consolidation series which in turn unearthed a subtle
-bug affecting ARM.
+The function name suggests that this is a boolean checking whether the
+architecture asks for an update of the VDSO data, but it works the other
+way round. To spare further confusion invert the logic.
 
-The bug affects only ARM 32bit systems which lack a VDSO capable
-timer. The absence of the ARM architected timer causes the VDSO update
-code to terminate early. As a result the parts of the VDSO data which
-is usable without a VDSO capable clocksource are not updated either,
-but the VDSO code uses them, i.e. it uses stale data and will serve
-that forever. The fix is to make only the parts of the update
-conditional which are related to te high resolution interfaces.
+Fixes: 44f57d788e7d ("timekeeping: Provide a generic update_vsyscall() implementation")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/arm/include/asm/vdso/vsyscall.h |    4 ++--
+ include/asm-generic/vdso/vsyscall.h  |    4 ++--
+ kernel/time/vsyscall.c               |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-The rest of the series is addressing the following points:
-
- - Allow architectures to compile out the high resolution parts of the
-   VDSO library when they know at compile time that no VDSO capable
-   clocksource will be available.
-
- - Move the storage of the VDSO clockmode into generic code and remove
-   all the redundant copies of the storage and the handling of it from
-   the architectures. 
-
-   This allows to remove the check for a valid clocksource at runtime
-   from the clock readout function and make it generic by checking
-   for a clock mode != NONE in the generic code. This generates better
-   code on PPC and does not affect x86/arm performance.
-
-Thanks,
-
-       tglx
-
-8<----------
- arch/arm/Kconfig                            |    1 
- arch/arm/include/asm/clocksource.h          |    5 -
- arch/arm/include/asm/vdso/gettimeofday.h    |    6 +
- arch/arm/include/asm/vdso/vsyscall.h        |   35 ---------
- arch/arm64/Kconfig                          |    1 
- arch/arm64/include/asm/clocksource.h        |    5 -
- arch/arm64/include/asm/vdso/vsyscall.h      |    9 --
- arch/mips/Kconfig                           |    1 
- arch/mips/include/asm/clocksource.h         |   18 ----
- arch/mips/include/asm/vdso/vsyscall.h       |    9 --
- arch/mips/kernel/csrc-r4k.c                 |    2 
- arch/x86/Kconfig                            |    1 
- arch/x86/entry/vdso/vma.c                   |    8 +-
- arch/x86/include/asm/clocksource.h          |   23 ++++--
- arch/x86/include/asm/mshyperv.h             |    4 -
- arch/x86/include/asm/vdso/gettimeofday.h    |    6 -
- arch/x86/include/asm/vdso/vsyscall.h        |   15 ----
- arch/x86/include/asm/vgtod.h                |    6 -
- arch/x86/kernel/kvmclock.c                  |    9 ++
- arch/x86/kernel/pvclock.c                   |    2 
- arch/x86/kernel/time.c                      |   12 ---
- arch/x86/kernel/tsc.c                       |   32 +++++---
- arch/x86/kvm/trace.h                        |    4 -
- arch/x86/kvm/x86.c                          |   22 +++---
- arch/x86/xen/time.c                         |   36 ++++++---
- b/arch/mips/include/asm/vdso/gettimeofday.h |   29 +++----
- b/include/asm-generic/vdso/vsyscall.h       |   14 ---
- drivers/clocksource/arm_arch_timer.c        |    8 +-
- drivers/clocksource/hyperv_timer.c          |    7 +
- drivers/clocksource/mips-gic-timer.c        |    8 +-
- include/linux/clocksource.h                 |  102 ++++++++++++++++------------
- include/vdso/datapage.h                     |    2 
- kernel/time/clocksource.c                   |    9 ++
- kernel/time/namespace.c                     |    7 +
- kernel/time/vsyscall.c                      |   43 +++++------
- lib/vdso/gettimeofday.c                     |   43 +++++++----
- 36 files changed, 259 insertions(+), 285 deletions(-)
-
+--- a/arch/arm/include/asm/vdso/vsyscall.h
++++ b/arch/arm/include/asm/vdso/vsyscall.h
+@@ -34,9 +34,9 @@ struct vdso_data *__arm_get_k_vdso_data(
+ #define __arch_get_k_vdso_data __arm_get_k_vdso_data
+ 
+ static __always_inline
+-int __arm_update_vdso_data(void)
++bool __arm_update_vdso_data(void)
+ {
+-	return !cntvct_ok;
++	return cntvct_ok;
+ }
+ #define __arch_update_vdso_data __arm_update_vdso_data
+ 
+--- a/include/asm-generic/vdso/vsyscall.h
++++ b/include/asm-generic/vdso/vsyscall.h
+@@ -12,9 +12,9 @@ static __always_inline struct vdso_data
+ #endif /* __arch_get_k_vdso_data */
+ 
+ #ifndef __arch_update_vdso_data
+-static __always_inline int __arch_update_vdso_data(void)
++static __always_inline bool __arch_update_vdso_data(void)
+ {
+-	return 0;
++	return true;
+ }
+ #endif /* __arch_update_vdso_data */
+ 
+--- a/kernel/time/vsyscall.c
++++ b/kernel/time/vsyscall.c
+@@ -84,7 +84,7 @@ void update_vsyscall(struct timekeeper *
+ 	struct vdso_timestamp *vdso_ts;
+ 	u64 nsec;
+ 
+-	if (__arch_update_vdso_data()) {
++	if (!__arch_update_vdso_data()) {
+ 		/*
+ 		 * Some architectures might want to skip the update of the
+ 		 * data page.
 
