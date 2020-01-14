@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CF313A57C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 646EC13A548
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730853AbgANKIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:08:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38924 "EHLO mail.kernel.org"
+        id S1729928AbgANKGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:06:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730407AbgANKIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:08:01 -0500
+        id S1729654AbgANKGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:06:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45DAD24690;
-        Tue, 14 Jan 2020 10:08:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 257CA2467A;
+        Tue, 14 Jan 2020 10:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996480;
-        bh=QOtqjUFCOKYM8zRv5UdVdn1GxVGQCrtHBIh9QLZ5b9Y=;
+        s=default; t=1578996370;
+        bh=+PI48K9XTvgjwsMAYb2zfC9iKKt9NZ6/WaU3LZy+OyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKG0XEmVhB8L53JuE2+usS/5R9wh9r9vKZqc4ZEIy7l3x//68DcSR44DFA0QTjnak
-         9jZR9tDIGhti5tzTdIAtwPebT51sxPEzuVGiFXAWRc3C99v9niDBYastoIJxG5cAZD
-         WC2b8p154F599YOw/rx/ZvLyZpRtW5rt6E8bfbx8=
+        b=S729PkJU6iy3Rqi4jeCXbfDpA53C5GimcIMSf2Ju0iXfFwG3TATHn5AOZbSHJmdRI
+         NvlZa0Jbjdld1BkFEkJFtm373Q7VwBW7/wjJxsxBl7DQDnE5+lqsMbTVgJ2Nl7kNSY
+         RU5SsKVkJa9lqQwBMXQKDRalDXBFHP96e0RIclK4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmytro Fil <monkdaf@gmail.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.19 30/46] staging: comedi: adv_pci1710: fix AI channels 16-31 for PCI-1713
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Roger Whittaker <Roger.Whittaker@suse.com>
+Subject: [PATCH 5.4 73/78] USB: Fix: Dont skip endpoint descriptors with maxpacket=0
 Date:   Tue, 14 Jan 2020 11:01:47 +0100
-Message-Id: <20200114094346.470710904@linuxfoundation.org>
+Message-Id: <20200114094403.165941697@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
-References: <20200114094339.608068818@linuxfoundation.org>
+In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
+References: <20200114094352.428808181@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,41 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit a9d3a9cedc1330c720e0ddde1978a8e7771da5ab upstream.
+commit 2548288b4fb059b2da9ceada172ef763077e8a59 upstream.
 
-The Advantech PCI-1713 has 32 analog input channels, but an incorrect
-bit-mask in the definition of the `PCI171X_MUX_CHANH(x)` and
-PCI171X_MUX_CHANL(x)` macros is causing channels 16 to 31 to be aliases
-of channels 0 to 15.  Change the bit-mask value from 0xf to 0xff to fix
-it.  Note that the channel numbers will have been range checked already,
-so the bit-mask isn't really needed.
+It turns out that even though endpoints with a maxpacket length of 0
+aren't useful for data transfer, the descriptors do serve other
+purposes.  In particular, skipping them will also skip over other
+class-specific descriptors for classes such as UVC.  This unexpected
+side effect has caused some UVC cameras to stop working.
 
-Fixes: 92c65e5553ed ("staging: comedi: adv_pci1710: define the mux control register bits")
-Reported-by: Dmytro Fil <monkdaf@gmail.com>
-Cc: <stable@vger.kernel.org> # v4.5+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Link: https://lore.kernel.org/r/20191227170054.32051-1-abbotti@mev.co.uk
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In addition, the USB spec requires that when isochronous endpoint
+descriptors are present in an interface's altsetting 0 (which is true
+on some devices), the maxpacket size _must_ be set to 0.  Warning
+about such things seems like a bad idea.
+
+This patch updates an earlier commit which would log a warning and
+skip these endpoint descriptors.  Now we only log a warning, and we
+don't even do that for isochronous endpoints in altsetting 0.
+
+We don't need to worry about preventing endpoints with maxpacket = 0
+from ever being used for data transfers; usb_submit_urb() already
+checks for this.
+
+Reported-and-tested-by: Roger Whittaker <Roger.Whittaker@suse.com>
+Fixes: d482c7bb0541 ("USB: Skip endpoints with 0 maxpacket length")
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Link: https://marc.info/?l=linux-usb&m=157790377329882&w=2
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.2001061040270.1514-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/adv_pci1710.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/core/config.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/comedi/drivers/adv_pci1710.c
-+++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-@@ -46,8 +46,8 @@
- #define PCI171X_RANGE_UNI	BIT(4)
- #define PCI171X_RANGE_GAIN(x)	(((x) & 0x7) << 0)
- #define PCI171X_MUX_REG		0x04	/* W:   A/D multiplexor control */
--#define PCI171X_MUX_CHANH(x)	(((x) & 0xf) << 8)
--#define PCI171X_MUX_CHANL(x)	(((x) & 0xf) << 0)
-+#define PCI171X_MUX_CHANH(x)	(((x) & 0xff) << 8)
-+#define PCI171X_MUX_CHANL(x)	(((x) & 0xff) << 0)
- #define PCI171X_MUX_CHAN(x)	(PCI171X_MUX_CHANH(x) | PCI171X_MUX_CHANL(x))
- #define PCI171X_STATUS_REG	0x06	/* R:   status register */
- #define PCI171X_STATUS_IRQ	BIT(11)	/* 1=IRQ occurred */
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -392,12 +392,16 @@ static int usb_parse_endpoint(struct dev
+ 			endpoint->desc.wMaxPacketSize = cpu_to_le16(8);
+ 	}
+ 
+-	/* Validate the wMaxPacketSize field */
++	/*
++	 * Validate the wMaxPacketSize field.
++	 * Some devices have isochronous endpoints in altsetting 0;
++	 * the USB-2 spec requires such endpoints to have wMaxPacketSize = 0
++	 * (see the end of section 5.6.3), so don't warn about them.
++	 */
+ 	maxp = usb_endpoint_maxp(&endpoint->desc);
+-	if (maxp == 0) {
+-		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has wMaxPacketSize 0, skipping\n",
++	if (maxp == 0 && !(usb_endpoint_xfer_isoc(d) && asnum == 0)) {
++		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has invalid wMaxPacketSize 0\n",
+ 		    cfgno, inum, asnum, d->bEndpointAddress);
+-		goto skip_to_next_endpoint_or_interface_descriptor;
+ 	}
+ 
+ 	/* Find the highest legal maxpacket size for this endpoint */
 
 
