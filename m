@@ -2,84 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DCA313B14E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3C513B15D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:51:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbgANRsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 12:48:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgANRsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:48:15 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C52924676;
-        Tue, 14 Jan 2020 17:48:14 +0000 (UTC)
-Date:   Tue, 14 Jan 2020 12:48:12 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Vincent Guittot' <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: sched/fair: scheduler not running high priority process on idle
- cpu
-Message-ID: <20200114124812.4d5355ae@gandalf.local.home>
-In-Reply-To: <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
-References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
-        <20200114115906.22f952ff@gandalf.local.home>
-        <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728708AbgANRvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 12:51:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:32814 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgANRvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 12:51:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sc1Nx+HAQZISsrmd3+gnlnxtvqsFDI0QD633bhln+Vw=; b=Ws8m8W0VdPB5r8ceyEL0CggzY
+        pip6/AhQ9Mj/yUu4KR2E5bvi+rhUSqsDYpUZyDsrUpvAT4gBTB09jojYdwktpoQmIBOC3jVgAkiGX
+        p38uVHu1Oxdwds2Thne/H1ZHyWI+1c3rJHThx/j1R+sN68n2qn3bMgCdQzkCvNISRlZwb/+3aqPZf
+        OD+jIzeHMniQjm9uRnuXcxyUpVXfxg6+s038vsuTSawmf42QTeSsouYJZFzj2+Pb5DCWinRfu1Ius
+        LBCdgchHvlDQ70mSpq0QF3c240Z80izr53BpNnYn+nyP47qep5kPb/mgnarDpCwXaXdM4kU2t3Q12
+        lIWW+L0Sg==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irQLz-0000tX-Cs; Tue, 14 Jan 2020 17:51:47 +0000
+Subject: Re: [PATCHv2-next 2/3] serial/sysrq: Add MAGIC_SYSRQ_SERIAL_SEQUENCE
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+References: <20200114171912.261787-1-dima@arista.com>
+ <20200114171912.261787-3-dima@arista.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7a1ba665-fc32-8dd9-ffa1-de71209d0153@infradead.org>
+Date:   Tue, 14 Jan 2020 09:51:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200114171912.261787-3-dima@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020 17:33:50 +0000
-David Laight <David.Laight@ACULAB.COM> wrote:
+On 1/14/20 9:19 AM, Dmitry Safonov wrote:
+> +static bool uart_try_toggle_sysrq(struct uart_port *port, unsigned int ch)
+> +{
+> +	if (ARRAY_SIZE(sysrq_toggle_seq) <= 1)
+> +		return 0;
+> +
+> +	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= sizeof(port->sysrq_seq)*U8_MAX);
 
-> I have added a cond_resched() to the offending loop, but a close look implies
-> that code is called with a lock held in another (less common) path so that
-> can't be directly committed and so CONFIG_PREEMPT won't help.
-> 
-> Indeed requiring CONFIG_PREEMPT doesn't help when customers are running
-> the application, nor (probably) on AWS since I doubt it is ever the default.
-> 
-> Does the same apply to non-RT tasks?
-> I can select almost any priority, but RT ones are otherwise a lot better.
-> 
-> I've also seen RT processes delayed by the network stack 'bh' that runs
-> in a softint from the hardware interrupt.
-> That can take a while (clearing up tx and refilling rx) and I don't think we
-> have any control over the cpu it runs on?
+That sizeof(...) is confusing (to me).  I would just write:
 
-Yes, even with CONFIG_PREEMPT, Linux has no guarantees of latency for
-any task regardless of priority. If you have latency requirements, then
-you need to apply the PREEMPT_RT patch (which may soon make it to
-mainline this year!), which spin locks and bh wont stop a task from
-scheduling (unless they need the same lock).
++	BUILD_BUG_ON(ARRAY_SIZE(sysrq_toggle_seq) >= U8_MAX);
 
-> 
-> The cost of ftrace function call entry/exit (about 200 clocks) makes it
-> rather unsuitable for any performance measurements unless only
-> a very few functions are traced - which rather requires you know
-> what the code is doing :-(
-> 
+> +	if (sysrq_toggle_seq[port->sysrq_seq] != ch) {
+> +		port->sysrq_seq = 0;
+> +		return 0;
+> +	}
 
-Well, when I use function tracing, I start all of them, analyze the
-trace, then the functions I don't care about (usually spin locks and
-other utils), I add to the set_ftrace_notrace file,  which keeps them
-from being part of the trace. I keep doing this until I find a set of
-functions that doesn't hurt overhead as much and gives me enough
-information to know what is happening. It also helps to enable all or
-most events (at least scheduling events).
+cheers.
+-- 
+~Randy
 
--- Steve
