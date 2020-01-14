@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8720313AB54
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 064ED13AB55
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbgANNpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:45:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39041 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbgANNpG (ORCPT
+        id S1726053AbgANNpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:45:09 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55731 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728925AbgANNpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Jan 2020 08:45:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y11so12225133wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:45:05 -0800 (PST)
+Received: by mail-wm1-f67.google.com with SMTP id q9so13831407wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:45:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oOinymv8pj0OPIX5ZcmZOCfgWEimDpoAKZBv8j+ojuM=;
-        b=Lc53V3tkjlGBkcEODzZEcZMxyr5u7gBymcpf3xPxp3UNZGW7aeizjYh4kDZuGVh5cz
-         qj9whch/rqLI3Ms+cNnAas3dr76fCNtoqTEwSGdA76RrNzEzrVBGCQ1ZBpzyZTlYcTSv
-         VvYGl1lE+wciZiU2FOgrXwK/Can9sGn8/1L/FJa9ITjGCYnG/2TdK7I53a2xTymkhDi1
-         RCq+tyTcQHQXxN0zKysxR6gxzwH+zRKdlzK5vieFInf/jv15TfehzoKPGi+5+4sYlGiV
-         eTzHvH9FZjtWHYXp1mLaAvqmL70Tq3QbA+v1JVvijw0rTs4LlhrlZ9kKR/JTSroP7B5E
-         FWZw==
+        bh=2EoZeO+c/poPIYPOn5vcl26D2pY2q5fzcBUdeS7xDt4=;
+        b=MyjMpUdpo8WAO/sU8V5oDMi0HTUA4066v3Y6drZWzV7zF/vZ8VXw+JW2LKC2P8PpJJ
+         F0by2u0IoGQHw2HMbkBMRRoMa3rk0U+CO7jOqqMOsAUvYoDh0wHCbbqp7tK6u1BjHeb1
+         D0MN1q0SpRZ/qbvxRMP/kXry37CPdA/OHEcrLxHMAVcft3gF6UthImqniPlj/4zE+EAb
+         IpKS70mVclhZAooZYwlRWBf2dx8xEVr8bUn5UxvydIEVBCQBm29nJEnCOmEYpLMBl/7A
+         CchO4cKIgZPFdWS7RRxLxJAtJKsp5Snye3M+xRCAiLENbuiNce+cLra1fuvBYNPhhUGs
+         bE9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oOinymv8pj0OPIX5ZcmZOCfgWEimDpoAKZBv8j+ojuM=;
-        b=mvDkFbp92BZzZroGhlHkrRqDY+bIRPKyQFBIfYARQCQUMZQbkBfkDZCelHJ21aHYq1
-         CxmRNPfYXiZh2gGLVr8ZdAAR3+vbdsFtu7+u6CcUZNfxlj9SLuugPmMkJAElPdKwOSPl
-         1P+DZq/ineg4BqwFl6I2dqTCMVj7aYvtra40wsNVGYNkroQTnmizRVFHtMo+8QidsDO5
-         MNMArgK7myMwEKIIX2BjZ94sBSTG6fIu7SKR3enHZeXVr8uk+I8PZMPJpJO/je6Nyceq
-         EXbsNbPeqJnlYfbay82iQRtdpudX6wECRKV4xr57OgdZysJQ6oB9jIAJB97gT1euKUnp
-         A6Pg==
-X-Gm-Message-State: APjAAAUfsiTDjtGZXggnFiTEGdH7WLo4JMigOKAvKJsKG8TFtAgRGGJM
-        JnHwts04vawOn1otYj3XDfs=
-X-Google-Smtp-Source: APXvYqzFCtc2A2pvS5NtVwBfj/8CT2OpaYFNp29LauEBS3MXVSECFCW5PltwLwbBu1K/r6eg2TSLLw==
-X-Received: by 2002:a5d:6350:: with SMTP id b16mr25470961wrw.132.1579009504598;
-        Tue, 14 Jan 2020 05:45:04 -0800 (PST)
+        bh=2EoZeO+c/poPIYPOn5vcl26D2pY2q5fzcBUdeS7xDt4=;
+        b=IAytcMfH+nSCluumFi9YkauFEu+fmlLVxbAhWEHnJGROtBpoHeY+n7UfR7r+u/3OGM
+         5ipDHs7H220ExKuO8iRvSkR/n9sZ0ucM/lkl/vCuThhC+2fHyQprqHheUbyBJOg3Ll87
+         FxGX0OzltaxC/35wI8Px/2hA9Gt3UIZ9JA/Md4i6nTdHG6EQT5YUT7H8aLFflyBB9l/Y
+         mBETmpJfabbxl7zsN4YCohMLwmiU0FbpnKXEM5opazaRsMMxgpgefkWtCJcA6pYSGNDS
+         voVjCf2UQAq/LTjNDkK1wSmTwDCJ19FGBGhL/YnfCiW8li5awzUg+rd5fanpomEiKdtt
+         ufFg==
+X-Gm-Message-State: APjAAAXqtmr/mY4yclEJJGtlHIeCQmrbl3H2tKNO0nLFL5UVYHMB2G84
+        5Tl7kG2PuL+x3myQwRfjie7bWz2C
+X-Google-Smtp-Source: APXvYqyASaijEWhtzoj4yJw/tBI5qonz0HuDyNCmaCNPJOImenGjbP+US/LcL2vI1RGPY8hKaFrFnQ==
+X-Received: by 2002:a7b:c3d2:: with SMTP id t18mr27982774wmj.90.1579009505615;
+        Tue, 14 Jan 2020 05:45:05 -0800 (PST)
 Received: from localhost.localdomain (dslb-088-070-028-164.088.070.pools.vodafone-ip.de. [88.70.28.164])
-        by smtp.gmail.com with ESMTPSA id x10sm19361333wrp.58.2020.01.14.05.45.03
+        by smtp.gmail.com with ESMTPSA id x10sm19361333wrp.58.2020.01.14.05.45.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 05:45:04 -0800 (PST)
+        Tue, 14 Jan 2020 05:45:05 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/5] staging: rtl8188eu: convert rtw_hal_antdiv_before_linked() to bool
-Date:   Tue, 14 Jan 2020 14:44:19 +0100
-Message-Id: <20200114134422.13598-2-straube.linux@gmail.com>
+Subject: [PATCH 3/5] staging: rtl8188eu: cleanup long lines in rtl8188e_dm.c
+Date:   Tue, 14 Jan 2020 14:44:20 +0100
+Message-Id: <20200114134422.13598-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114134422.13598-1-straube.linux@gmail.com>
 References: <20200114134422.13598-1-straube.linux@gmail.com>
@@ -63,41 +63,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function rtw_hal_antdiv_before_linked() returns boolean values, so
-change the return type from u8 to bool.
+Cleanup lines over 80 characters in rtl8188e_dm.c by adding
+appropriate line breaks.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_dm.c  | 2 +-
- drivers/staging/rtl8188eu/include/hal_intf.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/hal/rtl8188e_dm.c | 26 ++++++++++++++-------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-index 0aa5e9346787..756945d41412 100644
+index 756945d41412..36255199633a 100644
 --- a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
 +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-@@ -184,7 +184,7 @@ void rtw_hal_antdiv_rssi_compared(struct adapter *Adapter, struct wlan_bssid_ex
+@@ -51,8 +51,10 @@ static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
+ 
+ 	dm_odm->AntDivType = hal_data->TRxAntDivType;
+ 
+-	/*  Tx power tracking BB swing table. */
+-	/*  The base index = 12. +((12-n)/2)dB 13~?? = decrease tx pwr by -((n-12)/2)dB */
++	/* Tx power tracking BB swing table.
++	 * The base index =
++	 * 12. +((12-n)/2)dB 13~?? = decrease tx pwr by -((n-12)/2)dB
++	 */
+ 	dm_odm->BbSwingIdxOfdm = 12; /*  Set defalut value as index 12. */
+ 	dm_odm->BbSwingIdxOfdmCurrent = 12;
+ 	dm_odm->BbSwingFlagOfdm = false;
+@@ -106,14 +108,17 @@ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
+ 	dm_odm->pbPowerSaving = (bool *)&pwrctrlpriv->bpower_saving;
+ 	dm_odm->AntDivType = hal_data->TRxAntDivType;
+ 
+-	/*  Tx power tracking BB swing table. */
+-	/*  The base index = 12. +((12-n)/2)dB 13~?? = decrease tx pwr by -((n-12)/2)dB */
++	/* Tx power tracking BB swing table.
++	 * The base index =
++	 * 12. +((12-n)/2)dB 13~?? = decrease tx pwr by -((n-12)/2)dB
++	 */
+ 	dm_odm->BbSwingIdxOfdm = 12; /*  Set defalut value as index 12. */
+ 	dm_odm->BbSwingIdxOfdmCurrent = 12;
+ 	dm_odm->BbSwingFlagOfdm = false;
+ 
+ 	for (i = 0; i < NUM_STA; i++)
+-		ODM_CmnInfoPtrArrayHook(dm_odm, ODM_CMNINFO_STA_STATUS, i, NULL);
++		ODM_CmnInfoPtrArrayHook(dm_odm, ODM_CMNINFO_STA_STATUS, i,
++					NULL);
  }
  
- /*  Add new function to reset the state of antenna diversity before link. */
--u8 rtw_hal_antdiv_before_linked(struct adapter *Adapter)
-+bool rtw_hal_antdiv_before_linked(struct adapter *Adapter)
- {
- 	struct odm_dm_struct *dm_odm = &Adapter->HalData->odmpriv;
- 	struct sw_ant_switch *dm_swat_tbl = &dm_odm->DM_SWAT_Table;
-diff --git a/drivers/staging/rtl8188eu/include/hal_intf.h b/drivers/staging/rtl8188eu/include/hal_intf.h
-index 516a89647003..39df30599a5d 100644
---- a/drivers/staging/rtl8188eu/include/hal_intf.h
-+++ b/drivers/staging/rtl8188eu/include/hal_intf.h
-@@ -209,7 +209,7 @@ void	rtw_hal_set_bwmode(struct adapter *padapter,
- void	rtw_hal_set_chan(struct adapter *padapter, u8 channel);
- void	rtw_hal_dm_watchdog(struct adapter *padapter);
+ void rtl8188e_InitHalDm(struct adapter *Adapter)
+@@ -172,13 +177,18 @@ void rtw_hal_dm_init(struct adapter *Adapter)
  
--u8	rtw_hal_antdiv_before_linked(struct adapter *padapter);
-+bool rtw_hal_antdiv_before_linked(struct adapter *padapter);
- void	rtw_hal_antdiv_rssi_compared(struct adapter *padapter,
- 				     struct wlan_bssid_ex *dst,
- 				     struct wlan_bssid_ex *src);
+ /*  Add new function to reset the state of antenna diversity before link. */
+ /*  Compare RSSI for deciding antenna */
+-void rtw_hal_antdiv_rssi_compared(struct adapter *Adapter, struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src)
++void rtw_hal_antdiv_rssi_compared(struct adapter *Adapter,
++				  struct wlan_bssid_ex *dst,
++				  struct wlan_bssid_ex *src)
+ {
+ 	if (Adapter->HalData->AntDivCfg != 0) {
+-		/* select optimum_antenna for before linked =>For antenna diversity */
++		/* select optimum_antenna for before linked => For antenna
++		 * diversity
++		 */
+ 		if (dst->Rssi >=  src->Rssi) {/* keep org parameter */
+ 			src->Rssi = dst->Rssi;
+-			src->PhyInfo.Optimum_antenna = dst->PhyInfo.Optimum_antenna;
++			src->PhyInfo.Optimum_antenna =
++				dst->PhyInfo.Optimum_antenna;
+ 		}
+ 	}
+ }
 -- 
 2.24.1
 
