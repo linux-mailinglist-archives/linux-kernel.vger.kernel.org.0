@@ -2,93 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0FE13A9A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 13:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757AF13A9A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 13:49:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgANMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 07:48:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37586 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgANMsG (ORCPT
+        id S1726495AbgANMt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 07:49:29 -0500
+Received: from mail-qt1-f170.google.com ([209.85.160.170]:42329 "EHLO
+        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbgANMt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 07:48:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4GqE2Lx+k2JThlIRuOZwkWMYwse09vSDmRyJ5N5ET+Y=; b=wuNFl2uWonj2S+6POiWKI5XZR
-        4NUVe+SH2fp+SGWHoc8NPzlC26hmsxUaZuoImIWN0KxpfX4QevXRtioasxq8Ln8OPxr7lpqmc5BpO
-        ZQnXJIriMGj0VXxVl3aDQSJtgB19WAxawavOQcslxGV9YJnMy5C2sitp3Lj26Yw29NUfQ=;
-Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1irLbl-00085w-9b; Tue, 14 Jan 2020 12:47:45 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id F3D37D01965; Tue, 14 Jan 2020 12:47:44 +0000 (GMT)
-Date:   Tue, 14 Jan 2020 12:47:44 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jeff Chang <richtek.jeff.chang@gmail.com>, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, jeff_chang@richtek.com
-Subject: Re: [PATCH v6] ASoC: Add MediaTek MT6660 Speaker Amp Driver
-Message-ID: <20200114124744.GT3897@sirena.org.uk>
-References: <1578968526-13191-1-git-send-email-richtek.jeff.chang@gmail.com>
- <s5htv4yfpnt.wl-tiwai@suse.de>
+        Tue, 14 Jan 2020 07:49:28 -0500
+Received: by mail-qt1-f170.google.com with SMTP id j5so12274868qtq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 04:49:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ZaV4m9Wcsat3J/nLpMI47qepAUKn/rpOgZEXzjgN9as=;
+        b=fMjNShPSngStx8oxOMaBNnubnGn4/wL7TxocQ7D+swB+yGG94DrHkwunzEeO1+a04U
+         9oPA1wzfpCCekcvi79x8tolKz4/99WwDs10KimzHsnuSRZCehJbS/TjVIpiYaA22/sI+
+         yWyCd9tLK9ib8DrgFFbhuee6nfuBeIZNRfcaydckJGIgYSAjcj/F7IvJc0CHfhFU2uIL
+         L8pxTYHxIoaka7mi1ohfQH7mNEbwrWneS7GlbO+Ae3MHyHTEM0IsNLlr2gtD8f/SDe/w
+         HZPhmFremm0QFaTmCdsEBRybj2yUuQXJdTNGLZhEjiNZLwEmxtV6gENsnK6u49OoMROG
+         F9VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ZaV4m9Wcsat3J/nLpMI47qepAUKn/rpOgZEXzjgN9as=;
+        b=h10+kRA4HrjTiC2SeVWAkxCLw237vU+fxfyM39cy89Wz+/+0N+XRbIDNFmDBw62JDQ
+         aiPnV4L6tONnTUYebHlBCVngYtatoBAj0J9QWqs/t7+0Jkyqh4yhWgvS/8sMTTBivL5D
+         uKmo3vRqFIIl3x8lWb7A+wgMcIVQQCI5aWpTA60No51Vl3dj3phNCWDWCeSQoln7JVVB
+         xHgAA63EqPMvuAi6z/maucl5M7TiljcbeUxfWsV6wdS2nOXAttNFZT4/sgUcu/Sn7+6J
+         VCW8MWY2Ewjw/mwCLm1sWnVS/iMRmUAW7hgqmI74quF642RktdRii1RxJf9mcyyswSIc
+         BLjA==
+X-Gm-Message-State: APjAAAXlJfwE5uR1oMgEIev0XV6iwx2b34PaA7Q4GYehaPejhAkqWf0O
+        Jcba9f/qnRNnjNVO7g5cDscSnPTZ8lqoqq9Y4C7M9Q==
+X-Google-Smtp-Source: APXvYqzOPmOW7qGGhKbm11KAVGts8ygNrKgXlvvd5T10h4JhosA+oMMdtItFss4YhevQwFIPoVAMO9oaJguXa0ioggM=
+X-Received: by 2002:ac8:2a06:: with SMTP id k6mr3417568qtk.145.1579006167842;
+ Tue, 14 Jan 2020 04:49:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H88uUF932U8Oj0a6"
-Content-Disposition: inline
-In-Reply-To: <s5htv4yfpnt.wl-tiwai@suse.de>
-X-Cookie: Programming is an unnatural act.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Axel Lin <axel.lin@ingics.com>
+Date:   Tue, 14 Jan 2020 20:49:16 +0800
+Message-ID: <CAFRkauBRi2g_4b3wUnmwLkeogTyWjX4=6VfyDLJr-REf=LeC-w@mail.gmail.com>
+Subject: regulator: mpq7920: Some inconsistencies in current driver
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Saravanan,
 
---H88uUF932U8Oj0a6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There are a few inconsistencies in current driver:
+I don't have the datasheet, so I'm not 100% sure.
+Maybe you can help check it.
 
-On Tue, Jan 14, 2020 at 08:44:22AM +0100, Takashi Iwai wrote:
-> Jeff Chang wrote:
+1. It's unlikely MPQ7920_LDO1_REG_B and MPQ7920_REG_CTL0 have the same address.
+   I think this needs double check.
 
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	reg_data = (u8)ret;
-> > +	if (on_off)
-> > +		reg_data &= (~0x01);
-> > +	else
-> > +		reg_data |= 0x01;
-> > +	return regmap_write(chip->regmap, MT6660_REG_SYSTEM_CTRL, reg_data);
+2. The MPQ7920_DISCHARGE_ON seems wrong because it does not match
+MPQ7920_MASK_DISCHARGE.
+   I guess MPQ7920_DISCHARGE_ON should be BIT(5).
 
-> Hm, this looks like an open-code of forced update bits via regmap.
-> But interestingly there is no corresponding standard helper for that.
-> Essentially it should be regmap_update_bits_base() with force=1.
+3. The MPQ7920_MASK_BUCK_ILIM seems wrong. I guess it should be 0xC0.
 
-> Mark?
+4. Not sure why define both MPQ7920_REG_REGULATOR_EN1 and
+MPQ7920_REG_REGULATOR_EN.
 
-regmap_write_bits().
-
---H88uUF932U8Oj0a6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4duHAACgkQJNaLcl1U
-h9Buowf/UyFuv5m4kkR3mDh23iVqGGfCUbs52vx5O6dxillJ76kZ71N7Vg2LPrOq
-c9B8A7CLb2Ao2pTBr3o1ZONyZiRm1L+5OqyeZZzSnUnuECVsQASRgBpssbrUINHV
-p5rY6kKIF5dKZGOBjmZWHSNjZ8GgC0BW4Si0P5WH0k7xDHlUsXQHiz47YXWcHQ2d
-zjenB+X5Kg74bvJ6uh+5KM0kqhQPKSHw33HR7DejUQQMyQFQtNtQVkebVEXnMM6/
-sItgCSyukh8F9TTWI6StXdTeJvcveaa1VUAqu68nImD0VL2im79DbbPzoMks/29G
-GORmKiyK82lF0hw6y6zwOcga3GD/KQ==
-=xw93
------END PGP SIGNATURE-----
-
---H88uUF932U8Oj0a6--
+Regards,
+Axel
