@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E83913A59A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6672113A56E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731318AbgANKJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:09:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41818 "EHLO mail.kernel.org"
+        id S1730314AbgANKHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:07:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730344AbgANKJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:09:16 -0500
+        id S1729499AbgANKHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DCCB24677;
-        Tue, 14 Jan 2020 10:09:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A17BC20678;
+        Tue, 14 Jan 2020 10:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996556;
-        bh=BYuNfj1nw+D5gkWyr3wenMnYQK7C14TUVrWawPaE4Y0=;
+        s=default; t=1578996450;
+        bh=k18qRjP/nywpIHZ3grDId+QnddItalWgK5eGRgAKNkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kEB+FBpVs9KQb6dHo5smYxDJA/WS4ZMZKKj1y3EeFAnjQQd9qkddYr0KBpIfhrhJS
-         8K0NowxMkjO03GReuoV99F9YIp4UfAsCsru5KB2lT+az6SzU1saRry4dJAZaSiVZ7i
-         Bu/ahQhd55SkodM9DwpE0JneRmA+Tt8VXzAKJxhw=
+        b=l0ixdT7HT4ko6ZUnq1qxLhLWR3IddHdJ7h2EvRe38FRNmyE5L8gCFv+6nLYN6zgwH
+         dAW7ig350Yu8zjX1IWoDh0wxiFInm3fFTLj+d+/rxkNQLApIcaFXlE6Slmu6Ijn7B4
+         YsLJy9M68MxFRy/RReorky/OCXKSjyHTxaNcGOoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 03/39] ALSA: usb-audio: Apply the sample rate quirk for Bose Companion 5
-Date:   Tue, 14 Jan 2020 11:01:37 +0100
-Message-Id: <20200114094337.479991841@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Faber <faber@faberman.de>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 21/46] can: mscan: mscan_rx_poll(): fix rx path lockup when returning from polling to irq mode
+Date:   Tue, 14 Jan 2020 11:01:38 +0100
+Message-Id: <20200114094344.766503208@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
-References: <20200114094336.210038037@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +43,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Florian Faber <faber@faberman.de>
 
-commit 51d4efab7865e6ea6a4ebcd25b3f03c019515c4c upstream.
+commit 2d77bd61a2927be8f4e00d9478fe6996c47e8d45 upstream.
 
-Bose Companion 5 (with USB ID 05a7:1020) doesn't seem supporting
-reading back the sample rate, so the existing quirk is needed.
+Under load, the RX side of the mscan driver can get stuck while TX still
+works. Restarting the interface locks up the system. This behaviour
+could be reproduced reliably on a MPC5121e based system.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=206063
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200104110936.14288-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The patch fixes the return value of the NAPI polling function (should be
+the number of processed packets, not constant 1) and the condition under
+which IRQs are enabled again after polling is finished.
+
+With this patch, no more lockups were observed over a test period of ten
+days.
+
+Fixes: afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
+Signed-off-by: Florian Faber <faber@faberman.de>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/can/mscan/mscan.c |   21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1143,6 +1143,7 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	case USB_ID(0x04D8, 0xFEEA): /* Benchmark DAC1 Pre */
- 	case USB_ID(0x0556, 0x0014): /* Phoenix Audio TMX320VC */
- 	case USB_ID(0x05A3, 0x9420): /* ELP HD USB Camera */
-+	case USB_ID(0x05a7, 0x1020): /* Bose Companion 5 */
- 	case USB_ID(0x074D, 0x3553): /* Outlaw RR2150 (Micronas UAC3553B) */
- 	case USB_ID(0x1395, 0x740a): /* Sennheiser DECT */
- 	case USB_ID(0x1901, 0x0191): /* GE B850V3 CP2114 audio interface */
+--- a/drivers/net/can/mscan/mscan.c
++++ b/drivers/net/can/mscan/mscan.c
+@@ -392,13 +392,12 @@ static int mscan_rx_poll(struct napi_str
+ 	struct net_device *dev = napi->dev;
+ 	struct mscan_regs __iomem *regs = priv->reg_base;
+ 	struct net_device_stats *stats = &dev->stats;
+-	int npackets = 0;
+-	int ret = 1;
++	int work_done = 0;
+ 	struct sk_buff *skb;
+ 	struct can_frame *frame;
+ 	u8 canrflg;
+ 
+-	while (npackets < quota) {
++	while (work_done < quota) {
+ 		canrflg = in_8(&regs->canrflg);
+ 		if (!(canrflg & (MSCAN_RXF | MSCAN_ERR_IF)))
+ 			break;
+@@ -419,18 +418,18 @@ static int mscan_rx_poll(struct napi_str
+ 
+ 		stats->rx_packets++;
+ 		stats->rx_bytes += frame->can_dlc;
+-		npackets++;
++		work_done++;
+ 		netif_receive_skb(skb);
+ 	}
+ 
+-	if (!(in_8(&regs->canrflg) & (MSCAN_RXF | MSCAN_ERR_IF))) {
+-		napi_complete(&priv->napi);
+-		clear_bit(F_RX_PROGRESS, &priv->flags);
+-		if (priv->can.state < CAN_STATE_BUS_OFF)
+-			out_8(&regs->canrier, priv->shadow_canrier);
+-		ret = 0;
++	if (work_done < quota) {
++		if (likely(napi_complete_done(&priv->napi, work_done))) {
++			clear_bit(F_RX_PROGRESS, &priv->flags);
++			if (priv->can.state < CAN_STATE_BUS_OFF)
++				out_8(&regs->canrier, priv->shadow_canrier);
++		}
+ 	}
+-	return ret;
++	return work_done;
+ }
+ 
+ static irqreturn_t mscan_isr(int irq, void *dev_id)
 
 
