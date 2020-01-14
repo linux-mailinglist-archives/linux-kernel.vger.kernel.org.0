@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9899413B337
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B8B313B336
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbgANTtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:49:47 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44711 "EHLO
+        id S1729092AbgANTto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:49:44 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44720 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728871AbgANTtE (ORCPT
+        with ESMTP id S1728913AbgANTtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:49:04 -0500
+        Tue, 14 Jan 2020 14:49:05 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1irSBS-0005Zd-PY; Tue, 14 Jan 2020 20:49:02 +0100
-Message-Id: <20200114185947.092272476@linutronix.de>
+        id 1irSBT-0005Zo-Ps; Tue, 14 Jan 2020 20:49:03 +0100
+Message-Id: <20200114185947.203089624@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 14 Jan 2020 19:52:42 +0100
+Date:   Tue, 14 Jan 2020 19:52:43 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -38,7 +38,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>
-Subject: [patch 05/15] ARM: vdso: Compile high resolution parts conditionally
+Subject: [patch 06/15] MIPS: vdso: Compile high resolution parts conditionally
 References: <20200114185237.273005683@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,27 +47,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the architected timer is disabled in the kernel configuration then let
-the core VDSO code drop the high resolution parts at compile time.
+If neither the R4K nor the GIC timer is enabled in the kernel configuration
+then let the core VDSO code drop the high resolution parts at compile time.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/arm/include/asm/vdso/gettimeofday.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/include/asm/vdso/gettimeofday.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/arm/include/asm/vdso/gettimeofday.h
-+++ b/arch/arm/include/asm/vdso/gettimeofday.h
-@@ -106,6 +106,12 @@ static __always_inline int clock_getres3
- 	return ret;
+--- a/arch/mips/include/asm/vdso/gettimeofday.h
++++ b/arch/mips/include/asm/vdso/gettimeofday.h
+@@ -199,6 +199,13 @@ static __always_inline u64 __arch_get_hw
+ 	return cycle_now;
  }
  
-+static inline bool arm_vdso_hres_capable(void)
++static inline bool mips_vdso_hres_capable(void)
 +{
-+	return IS_ENABLED(CONFIG_ARM_ARCH_TIMER);
++	return IS_ENABLED(CONFIG_CSRC_R4K) ||
++	       IS_ENABLED(CONFIG_CLKSRC_MIPS_GIC);
 +}
-+#define __arch_vdso_hres_capable arm_vdso_hres_capable
++#define __arch_vdso_hres_capable mips_vdso_hres_capable
 +
- static __always_inline u64 __arch_get_hw_counter(int clock_mode)
+ static __always_inline const struct vdso_data *__arch_get_vdso_data(void)
  {
- #ifdef CONFIG_ARM_ARCH_TIMER
+ 	return get_vdso_data();
 
