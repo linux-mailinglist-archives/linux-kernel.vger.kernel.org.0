@@ -2,198 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0365113A25B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D638213A261
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbgANH6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:58:06 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36719 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729203AbgANH57 (ORCPT
+        id S1729293AbgANH6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:58:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36864 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbgANH6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:57:59 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x184so6202309pfb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:57:58 -0800 (PST)
+        Tue, 14 Jan 2020 02:58:16 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so11145738wru.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ub9JDyGMUxQof+H4IEJYhc2XianN2EATxXRgJUWENds=;
-        b=edQveFVNGBmirFSUcumEYH029TCRAajNzFKT/KzPziTWbIDkCUXYB9yzJaZgYw/4uj
-         yxwg6JF698tOKGj+lqOKWp+RJQ2h7YoALN29/Muw1plu6ZbYmzcOnlGI2RSspvswS/Jr
-         MTkWIxB+ujwsTChClg36ilwfvAmzGYvvzMW4bEByT0M+oyC0hJt+SZDoFH2AzfhGATFF
-         AN52UstsBahraPWXjlDPxxQAvmTvbmry7X50zh3KMGSxmvpzGc5pfneT9navMrmBAqMW
-         /iGD0BpXuDtVcxB0tCjCcliVVDOXb6r08uHIUKhRTQxY/H629eycfQNBEpm8eIWbqCoh
-         4dKw==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=rbig32eOr50Fg3Pl+aEs/mNBrNThyFSHZWhVDQMxVUU=;
+        b=CF/xuhzmVCRthuwJH06L18yseaKb7oIXNzM152sOtUAKNQ+YGt8p0UuH0t5KvJop+7
+         CF1e3iJdULcUGDZl+0D+R3UUWIZ3Ytb96EOBDCtkCxq1Yrrnv03SE9t8QoKd8uO5nTDq
+         Tn87CN+c/Yv35vPFg/vlEho5bsYjXmX9QVrcPEEbIAPEuH9IAHc2xbYZ6LG9PizvQy2N
+         xfDC8GCUotkzreEMrT3nZQ0Fd5CiK+pimz6fND0la5j38JuOEbRZ12LeztGSLZId+zjv
+         Ic2HeH7zK+Q3eiYOFQzW6exqSs+6bPVE4dHg7gBMPyCmM1qiv2lex2qajD7Ddqu9H5n9
+         kv+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ub9JDyGMUxQof+H4IEJYhc2XianN2EATxXRgJUWENds=;
-        b=GwsES+AW3M9vkCESUgWCj6+7QsQlQpZeYus9aQiaiBfcEsjK0KvRtqnom7x+AK3+mJ
-         LLQjx3ChabOnUK54oZ/Ybq8bUidEjC9FrZXAthj6Um6CoyzG2ZxZyxqmJ3VYZ8gQodvX
-         f+P1afzkoG3oXHi6U5wPB7D1+BZ+vP8ooXPi91w6Tpo1q/plpe3pRQ8jmLsxgMORkZuG
-         PEvaCyMcs1Xn8cV1brBdnfUm5ZBl0g9K8CCFQ3SAex5/tN+kZMeCWJozAjqxBaZ4Eb/R
-         PJ4fKVa+GRFdf+z1Ymhhth/9G7DXFp9dO+rV9Up7CRywoqUapY03AUebs0kgODwfHNpE
-         fsiA==
-X-Gm-Message-State: APjAAAU6llM+7ooM8yC0w140jF7/2eAUjYRJ/AVAlTssBUY+CBjJGeTt
-        XDQ5AWGgZ9nC6OoxbjmiHWAf7g==
-X-Google-Smtp-Source: APXvYqwPfvh3MFq9kRw0DS1s0ko52noeknCvU4/iqOQN+Ktgm6EgDjVJYUpNyhKEpAdKQm1yj6G2yA==
-X-Received: by 2002:a65:4c82:: with SMTP id m2mr24894429pgt.432.1578988678193;
-        Mon, 13 Jan 2020 23:57:58 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q63sm17349352pfb.149.2020.01.13.23.57.57
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=rbig32eOr50Fg3Pl+aEs/mNBrNThyFSHZWhVDQMxVUU=;
+        b=blDXDwDpYpgCtPdalyWxbKCTI+oTga/5sWQl7eNupixouO6WTJLmc8NrwEBnpPRamR
+         8GMesFetLeuA/JiKuqAn/8nPhdDRxt19d9Q5FflGcSi7JvoVlCaKlfEqB7KSaOHNunFO
+         Tf+pEGo+NwHyd9yHxxZofo+P1TBXuwdbhuVMPgNl/XlSfCfmtdG28ajHea5FZb0+gU28
+         72JkgKYHHkotmPyIIEcB/obzMfxuPHexz9qd+qXBL1UoMo+tDwrXg9Wt7oq5I5i6rlIk
+         GMB2BR3iuqiCF6vANr+w7zIAehLViOA5NQGB6zmwL6FHLZDL1dhY0Na2LSmLuPttkRII
+         uSuQ==
+X-Gm-Message-State: APjAAAUuIoRsCXCo47BPztY2+2ityAqOmcFm5we7E0z1o4N29/QYLrkq
+        cA37ycZ8jTFByDwrNiZbLrvz+aFYi9k=
+X-Google-Smtp-Source: APXvYqxOFNKkysW5IxjL1XmW18JG1x16t20l6Ie3rcKpVfh4ZhISo4dMlH20xO3vOn3h/zvIllwx5Q==
+X-Received: by 2002:a5d:6ac3:: with SMTP id u3mr24104295wrw.25.1578988694185;
+        Mon, 13 Jan 2020 23:58:14 -0800 (PST)
+Received: from wambui.local ([154.70.37.104])
+        by smtp.googlemail.com with ESMTPSA id t131sm17972758wmb.13.2020.01.13.23.58.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 23:57:57 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v4 5/5] net: qrtr: Remove receive worker
-Date:   Mon, 13 Jan 2020 23:57:03 -0800
-Message-Id: <20200114075703.2145718-6-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
-References: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
+        Mon, 13 Jan 2020 23:58:13 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+X-Google-Original-From: Wambui Karuga <wambui@wambui>
+Date:   Tue, 14 Jan 2020 10:58:03 +0300 (EAT)
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+cc:     airlied@linux.ie, daniel@ffwll.ch, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        sean@poorly.run, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915: convert to new logging macros based on struct
+ intel_engine_cs.
+In-Reply-To: <157891427231.27314.12398974277241668021@skylake-alporthouse-com>
+Message-ID: <alpine.LNX.2.21.99999.375.2001141057240.2558@wambui>
+References: <20200113111025.2048-1-wambui.karugax@gmail.com> <157891427231.27314.12398974277241668021@skylake-alporthouse-com>
+User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than enqueuing messages and scheduling a worker to deliver them
-to the individual sockets we can now, thanks to the previous work, move
-this directly into the endpoint callback.
 
-This saves us a context switch per incoming message and removes the
-possibility of an opportunistic suspend to happen between the message is
-coming from the endpoint until it ends up in the socket's receive
-buffer.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- net/qrtr/qrtr.c | 57 +++++++++++++++----------------------------------
- 1 file changed, 17 insertions(+), 40 deletions(-)
+On Mon, 13 Jan 2020, Chris Wilson wrote:
 
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 8ae301132a54..343a94b64f1c 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -119,7 +119,6 @@ static DEFINE_MUTEX(qrtr_port_lock);
-  * @qrtr_tx_flow: tree of qrtr_tx_flow, keyed by node << 32 | port
-  * @qrtr_tx_lock: lock for qrtr_tx_flow inserts
-  * @rx_queue: receive queue
-- * @work: scheduled work struct for recv work
-  * @item: list item for broadcast list
-  */
- struct qrtr_node {
-@@ -132,7 +131,6 @@ struct qrtr_node {
- 	struct mutex qrtr_tx_lock; /* for qrtr_tx_flow */
- 
- 	struct sk_buff_head rx_queue;
--	struct work_struct work;
- 	struct list_head item;
- };
- 
-@@ -157,6 +155,8 @@ static int qrtr_local_enqueue(struct qrtr_node *node, struct sk_buff *skb,
- static int qrtr_bcast_enqueue(struct qrtr_node *node, struct sk_buff *skb,
- 			      int type, struct sockaddr_qrtr *from,
- 			      struct sockaddr_qrtr *to);
-+static struct qrtr_sock *qrtr_port_lookup(int port);
-+static void qrtr_port_put(struct qrtr_sock *ipc);
- 
- /* Release node resources and free the node.
-  *
-@@ -178,7 +178,6 @@ static void __qrtr_node_release(struct kref *kref)
- 	list_del(&node->item);
- 	mutex_unlock(&qrtr_node_lock);
- 
--	cancel_work_sync(&node->work);
- 	skb_queue_purge(&node->rx_queue);
- 
- 	/* Free tx flow counters */
-@@ -422,6 +421,7 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- 	struct qrtr_node *node = ep->node;
- 	const struct qrtr_hdr_v1 *v1;
- 	const struct qrtr_hdr_v2 *v2;
-+	struct qrtr_sock *ipc;
- 	struct sk_buff *skb;
- 	struct qrtr_cb *cb;
- 	unsigned int size;
-@@ -486,8 +486,20 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
- 
- 	skb_put_data(skb, data + hdrlen, size);
- 
--	skb_queue_tail(&node->rx_queue, skb);
--	schedule_work(&node->work);
-+	qrtr_node_assign(node, cb->src_node);
-+
-+	if (cb->type == QRTR_TYPE_RESUME_TX) {
-+		qrtr_tx_resume(node, skb);
-+	} else {
-+		ipc = qrtr_port_lookup(cb->dst_port);
-+		if (!ipc)
-+			goto err;
-+
-+		if (sock_queue_rcv_skb(&ipc->sk, skb))
-+			goto err;
-+
-+		qrtr_port_put(ipc);
-+	}
- 
- 	return 0;
- 
-@@ -522,40 +534,6 @@ static struct sk_buff *qrtr_alloc_ctrl_packet(struct qrtr_ctrl_pkt **pkt)
- 	return skb;
- }
- 
--static struct qrtr_sock *qrtr_port_lookup(int port);
--static void qrtr_port_put(struct qrtr_sock *ipc);
--
--/* Handle and route a received packet.
-- *
-- * This will auto-reply with resume-tx packet as necessary.
-- */
--static void qrtr_node_rx_work(struct work_struct *work)
--{
--	struct qrtr_node *node = container_of(work, struct qrtr_node, work);
--	struct sk_buff *skb;
--
--	while ((skb = skb_dequeue(&node->rx_queue)) != NULL) {
--		struct qrtr_sock *ipc;
--		struct qrtr_cb *cb = (struct qrtr_cb *)skb->cb;
--
--		qrtr_node_assign(node, cb->src_node);
--
--		if (cb->type == QRTR_TYPE_RESUME_TX) {
--			qrtr_tx_resume(node, skb);
--		} else {
--			ipc = qrtr_port_lookup(cb->dst_port);
--			if (!ipc) {
--				kfree_skb(skb);
--			} else {
--				if (sock_queue_rcv_skb(&ipc->sk, skb))
--					kfree_skb(skb);
--
--				qrtr_port_put(ipc);
--			}
--		}
--	}
--}
--
- /**
-  * qrtr_endpoint_register() - register a new endpoint
-  * @ep: endpoint to register
-@@ -575,7 +553,6 @@ int qrtr_endpoint_register(struct qrtr_endpoint *ep, unsigned int nid)
- 	if (!node)
- 		return -ENOMEM;
- 
--	INIT_WORK(&node->work, qrtr_node_rx_work);
- 	kref_init(&node->ref);
- 	mutex_init(&node->ep_lock);
- 	skb_queue_head_init(&node->rx_queue);
--- 
-2.24.0
+> Quoting Wambui Karuga (2020-01-13 11:10:25)
+>> fn(...) {
+>> ...
+>> struct intel_engine_cs *E = ...;
+>> +struct drm_i915_private *dev_priv = E->i915;
+>
+> No new dev_priv.
+>
+> There should be no reason for drm_dbg here, as the rest of the debug is
+> behind ENGINE_TRACE and so the vestigial debug should be moved over, or
+> deleted as not being useful.
+>
+> The error messages look unhelpful.
+Hey Chris, could you please elaborate on the debugs that should be 
+removed? These patches are for just converting the current debug 
+instances, so removing them might need separate patches.
 
+Thanks,
+-wambui
+>
+>>                 if ((batch_end - cmd) < length) {
+>> -                       DRM_DEBUG("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
+>> -                                 *cmd,
+>> -                                 length,
+>> -                                 batch_end - cmd);
+>> +                       drm_dbg(&dev_priv->drm,
+>> +                               "CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
+>
+> No. This is not driver debug. If anything this should be pr_debug, or
+> some over user centric channel.
+> -Chris
+>
