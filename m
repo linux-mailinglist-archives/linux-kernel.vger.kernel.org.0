@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F7813A6C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F3513A679
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbgANKNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:13:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50562 "EHLO mail.kernel.org"
+        id S1732674AbgANKLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:11:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733174AbgANKNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:13:19 -0500
+        id S1732598AbgANKLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:11:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 597F420678;
-        Tue, 14 Jan 2020 10:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42C6B24679;
+        Tue, 14 Jan 2020 10:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996798;
-        bh=k18qRjP/nywpIHZ3grDId+QnddItalWgK5eGRgAKNkk=;
+        s=default; t=1578996696;
+        bh=5HIOlXodj6KSKqOwuWlEHpU/UGJ5CaP6WiWWcZyXtGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DFJo32+TX3L+QQa559GBv0/ewbgX7itK+sWBpwBo+9Wx2duJdVc9MPzDf0FuN0CLp
-         gaeJlPYd7avcQRqyTNTPxSVYgtgJsv/3yrrT398uyog95PYlCnnVRQRbqs40KsVqqo
-         DocMGhUI15U+zIkA+KJL/Bm5GALezIzlLqOkaQZs=
+        b=He3frAblW5rxl+4h+1M5muadJIvGhUHo0ZV2Mx5xwS+4+7Qe53OPbU9EzIpU0WhL/
+         sFwx3PfChE0fNlVEqqVLkaEyRK4shEMhyYu9OoD87KQEQw2K4DoZY7RhoEHoJYTX7M
+         5y97niqQKSIjL6sqZGbdXDInSpInI1odnrFI7Vn0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Faber <faber@faberman.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 13/28] can: mscan: mscan_rx_poll(): fix rx path lockup when returning from polling to irq mode
-Date:   Tue, 14 Jan 2020 11:02:15 +0100
-Message-Id: <20200114094342.088889078@linuxfoundation.org>
+        stable@vger.kernel.org, "Kenneth R. Crudup" <kenny@panix.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.9 24/31] tty: always relink the port
+Date:   Tue, 14 Jan 2020 11:02:16 +0100
+Message-Id: <20200114094344.464770427@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
-References: <20200114094336.845958665@linuxfoundation.org>
+In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
+References: <20200114094334.725604663@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,75 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Faber <faber@faberman.de>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-commit 2d77bd61a2927be8f4e00d9478fe6996c47e8d45 upstream.
+commit 273f632912f1b24b642ba5b7eb5022e43a72f3b5 upstream.
 
-Under load, the RX side of the mscan driver can get stuck while TX still
-works. Restarting the interface locks up the system. This behaviour
-could be reproduced reliably on a MPC5121e based system.
+If the serial device is disconnected and reconnected, it re-enumerates
+properly but does not link it. fwiw, linking means just saving the port
+index, so allow it always as there is no harm in saving the same value
+again even if it tries to relink with the same port.
 
-The patch fixes the return value of the NAPI polling function (should be
-the number of processed packets, not constant 1) and the condition under
-which IRQs are enabled again after polling is finished.
-
-With this patch, no more lockups were observed over a test period of ten
-days.
-
-Fixes: afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
-Signed-off-by: Florian Faber <faber@faberman.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fixes: fb2b90014d78 ("tty: link tty and port before configuring it as console")
+Reported-by: Kenneth R. Crudup <kenny@panix.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191227174434.12057-1-sudipm.mukherjee@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/mscan/mscan.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/tty/tty_port.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/can/mscan/mscan.c
-+++ b/drivers/net/can/mscan/mscan.c
-@@ -392,13 +392,12 @@ static int mscan_rx_poll(struct napi_str
- 	struct net_device *dev = napi->dev;
- 	struct mscan_regs __iomem *regs = priv->reg_base;
- 	struct net_device_stats *stats = &dev->stats;
--	int npackets = 0;
--	int ret = 1;
-+	int work_done = 0;
- 	struct sk_buff *skb;
- 	struct can_frame *frame;
- 	u8 canrflg;
- 
--	while (npackets < quota) {
-+	while (work_done < quota) {
- 		canrflg = in_8(&regs->canrflg);
- 		if (!(canrflg & (MSCAN_RXF | MSCAN_ERR_IF)))
- 			break;
-@@ -419,18 +418,18 @@ static int mscan_rx_poll(struct napi_str
- 
- 		stats->rx_packets++;
- 		stats->rx_bytes += frame->can_dlc;
--		npackets++;
-+		work_done++;
- 		netif_receive_skb(skb);
- 	}
- 
--	if (!(in_8(&regs->canrflg) & (MSCAN_RXF | MSCAN_ERR_IF))) {
--		napi_complete(&priv->napi);
--		clear_bit(F_RX_PROGRESS, &priv->flags);
--		if (priv->can.state < CAN_STATE_BUS_OFF)
--			out_8(&regs->canrier, priv->shadow_canrier);
--		ret = 0;
-+	if (work_done < quota) {
-+		if (likely(napi_complete_done(&priv->napi, work_done))) {
-+			clear_bit(F_RX_PROGRESS, &priv->flags);
-+			if (priv->can.state < CAN_STATE_BUS_OFF)
-+				out_8(&regs->canrier, priv->shadow_canrier);
-+		}
- 	}
--	return ret;
-+	return work_done;
+--- a/drivers/tty/tty_port.c
++++ b/drivers/tty/tty_port.c
+@@ -48,8 +48,7 @@ void tty_port_link_device(struct tty_por
+ {
+ 	if (WARN_ON(index >= driver->num))
+ 		return;
+-	if (!driver->ports[index])
+-		driver->ports[index] = port;
++	driver->ports[index] = port;
  }
+ EXPORT_SYMBOL_GPL(tty_port_link_device);
  
- static irqreturn_t mscan_isr(int irq, void *dev_id)
 
 
