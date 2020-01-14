@@ -2,53 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C85F13B36A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6F613B375
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:11:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgANUJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 15:09:07 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:53206 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727285AbgANUI5 (ORCPT
+        id S1728787AbgANUL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 15:11:29 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:45165 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbgANUL3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 15:08:57 -0500
-Received: from mailhost.synopsys.com (sv2-mailhost1.synopsys.com [10.205.2.133])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D144B406F7;
-        Tue, 14 Jan 2020 20:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1579032536; bh=pnuNzowJEgDqFBcmPzhqodh5b56v6RmG8ENp9KF/2mQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBcoxjqItxVjnTN0eYL3kI5Re7OGfz1Wr/fEHGi/KZQSeWVEV4Y6lKo+YXfps9tUb
-         +OiepL3APR61mf5HiqQQu3gcE6J+pDR2nkZ7DTCT04x+UYI3LJQ3JdS+1qUmG3KNcq
-         M9ZR0dwNXKMThv+OivrSN9MRIeloVrhg60DOUKQLDEN8lx/7vcGDQPVI78x4J62nM5
-         XfriUwN4yomOGCl2oTAqolFokcsc9QZHUdcLB8Ahmsyf2vwxzCNA47RfRByRL8x1H4
-         Z9nVQ7//YTY82LmYfl+NRSYMWxCqAa42QwIT1cd3ExRleiMENTWfXTl+zfjcRK9hYQ
-         SJtLUn/iHDKBw==
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.25])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 8090AA00AD;
-        Tue, 14 Jan 2020 20:08:55 +0000 (UTC)
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [RFC 4/4] ARC: uaccess: use optimized generic __strnlen_user/__strncpy_from_user
-Date:   Tue, 14 Jan 2020 12:08:46 -0800
-Message-Id: <20200114200846.29434-5-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200114200846.29434-1-vgupta@synopsys.com>
-References: <20200114200846.29434-1-vgupta@synopsys.com>
+        Tue, 14 Jan 2020 15:11:29 -0500
+Received: by mail-qv1-f68.google.com with SMTP id l14so6284299qvu.12
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 12:11:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qBp3Gt/C+a/mHRpipU20c3QaHKvIEsS9ocruCJDZZhE=;
+        b=pk6gO3ry5wNUzd/t243vbBkeE+MDmMeF+1KrIkjJBT/AhgL4JEKmh4UN3hSngT6aG3
+         s4YyCYSJR48wyozqNncYg3yc3kFwVQ85HD8EEyz65dIgFlIkNrm24+JwhhJeVLQqn0R9
+         5eWxKX5YjIymf+FI6ozamFVtZ216TCUKUOKwQyyavzhz3tlwtNS88w3UCNRUKKB/vbN2
+         IBeu/o+ArE6aCPZyeA2Vluva4jEfnQX/dC34VXRf5XfjNSIQnCMlutDeuLABBSm3L2W6
+         c7vhVZsf1gSRjij4tRPuLyNVkhHUMAcFPrCalN1BqrWeTJc38vo2XsusRoB8/jbJiNKF
+         4lZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qBp3Gt/C+a/mHRpipU20c3QaHKvIEsS9ocruCJDZZhE=;
+        b=PMZRqBh8apOX+CUlu/ZBweWj9u/xKhDUbJLcLGaLF9RswJMnDns6+T1HHwVIVWqloS
+         TrO4ZM6PgHzbxWjxndOLqMvWVtOTp/xrHGzSdb7Q0k3g+ajP6m5qfKeXWjVo8Nv5syoQ
+         oMBAsPvsFTbTu+XBaVfazv8jcB/paRWLJuNTshp/2phA+VZnx0ZhSp7eel04hBB0ukEe
+         S51zLFRqVao4NY79O4h4oYXCTbWJQ3RiTcKq5HfEldvieTWTnJJHGOTH0ZRjAukdpiSJ
+         jopJIam1uBDKf4yS20kQq5GeUwcagGJ/ZG22gpc7GIdz3fLlc/W8fldwfSm6EyL+JwEu
+         StPQ==
+X-Gm-Message-State: APjAAAVXW1UxltVk5QwcuyXL4RD26Luq2kkfoHYhDqefnZWfnbU5x7bK
+        CONewGbOeYCfn9o5ZV4ucVPr4Q==
+X-Google-Smtp-Source: APXvYqzxZ8pgPcoyA9hDnr6J0eUQT4XcUQ6l54zl8N2EkmcgtTpRJuaSSDwK+/DZmuoelSC7OCcxrw==
+X-Received: by 2002:a0c:e28e:: with SMTP id r14mr18896392qvl.234.1579032688196;
+        Tue, 14 Jan 2020 12:11:28 -0800 (PST)
+Received: from ovpn-120-31.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id j15sm7912023qtn.37.2020.01.14.12.11.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Jan 2020 12:11:27 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@kernel.org, sergey.senozhatsky.work@gmail.com,
+        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
+        david@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/hotplug: silence a lockdep splat with printk()
+Date:   Tue, 14 Jan 2020 15:11:14 -0500
+Message-Id: <20200114201114.14696-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,195 +62,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These rely on word access rather than byte loop
+Similar to the recent commit [1] merged into the random and -next trees,
+it is not a good idea to call printk() with zone->lock held. The
+standard fix is to use printk_deferred() in those places, but memory
+offline will call dump_page() which need to defer after the lock. While
+at it, remove a similar but unnecessary debug printk() as well.
 
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[1] https://lore.kernel.org/lkml/1573679785-21068-1-git-send-email-cai@lca.pw/
+
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- arch/arc/Kconfig                      |  2 +
- arch/arc/include/asm/Kbuild           |  1 -
- arch/arc/include/asm/uaccess.h        | 71 ++-------------------------
- arch/arc/include/asm/word-at-a-time.h | 49 ++++++++++++++++++
- 4 files changed, 56 insertions(+), 67 deletions(-)
- create mode 100644 arch/arc/include/asm/word-at-a-time.h
+ include/linux/page-isolation.h |  2 +-
+ mm/memory_hotplug.c            |  2 +-
+ mm/page_alloc.c                | 12 +++++-------
+ mm/page_isolation.c            | 10 +++++++++-
+ 4 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 26108ea785c2..3b074c4d31fb 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -26,6 +26,8 @@ config ARC
- 	select GENERIC_PENDING_IRQ if SMP
- 	select GENERIC_SCHED_CLOCK
- 	select GENERIC_SMP_IDLE_THREAD
-+	select GENERIC_STRNCPY_FROM_USER if MMU
-+	select GENERIC_STRNLEN_USER if MMU
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_DEBUG_STACKOVERFLOW
-diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
-index 1b505694691e..cb8d459b7f56 100644
---- a/arch/arc/include/asm/Kbuild
-+++ b/arch/arc/include/asm/Kbuild
-@@ -24,5 +24,4 @@ generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += user.h
- generic-y += vga.h
--generic-y += word-at-a-time.h
- generic-y += xor.h
-diff --git a/arch/arc/include/asm/uaccess.h b/arch/arc/include/asm/uaccess.h
-index 0b34c152086f..f579e06447a9 100644
---- a/arch/arc/include/asm/uaccess.h
-+++ b/arch/arc/include/asm/uaccess.h
-@@ -23,7 +23,6 @@
+diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+index 148e65a9c606..5d8ba078006f 100644
+--- a/include/linux/page-isolation.h
++++ b/include/linux/page-isolation.h
+@@ -34,7 +34,7 @@ static inline bool is_migrate_isolate(int migratetype)
+ #define REPORT_FAILURE	0x2
  
- #include <linux/string.h>	/* for generic string functions */
+ bool has_unmovable_pages(struct zone *zone, struct page *page, int migratetype,
+-			 int flags);
++			 int flags, char *dump);
+ void set_pageblock_migratetype(struct page *page, int migratetype);
+ int move_freepages_block(struct zone *zone, struct page *page,
+ 				int migratetype, int *num_movable);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 7a6de9b0dcab..f10928538fa3 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1149,7 +1149,7 @@ static bool is_pageblock_removable_nolock(unsigned long pfn)
+ 		return false;
  
--
- #define __kernel_ok		(uaccess_kernel())
- 
- /*
-@@ -52,6 +51,8 @@
- #define __access_ok(addr, sz)	(unlikely(__kernel_ok) || \
- 				 likely(__user_ok((addr), (sz))))
- 
-+#define user_addr_max() 	(uaccess_kernel() ? ~0UL : get_fs())
-+
- /*********** Single byte/hword/word copies ******************/
- 
- #define __get_user_fn(sz, u, k)					\
-@@ -655,75 +656,13 @@ static inline unsigned long __clear_user(void __user *to, unsigned long n)
- 	return res;
+ 	return !has_unmovable_pages(zone, page, MIGRATE_MOVABLE,
+-				    MEMORY_OFFLINE);
++				    MEMORY_OFFLINE, NULL);
  }
  
--static inline long
--__strncpy_from_user(char *dst, const char __user *src, long count)
--{
--	long res = 0;
--	char val;
--
--	if (count == 0)
--		return 0;
--
--	__asm__ __volatile__(
--	"	mov	lp_count, %5		\n"
--	"	lp	3f			\n"
--	"1:	ldb.ab  %3, [%2, 1]		\n"
--	"	breq.d	%3, 0, 3f               \n"
--	"	stb.ab  %3, [%1, 1]		\n"
--	"	add	%0, %0, 1	# Num of NON NULL bytes copied	\n"
--	"3:								\n"
--	"	.section .fixup, \"ax\"		\n"
--	"	.align 4			\n"
--	"4:	mov %0, %4		# sets @res as -EFAULT	\n"
--	"	j   3b				\n"
--	"	.previous			\n"
--	"	.section __ex_table, \"a\"	\n"
--	"	.align 4			\n"
--	"	.word   1b, 4b			\n"
--	"	.previous			\n"
--	: "+r"(res), "+r"(dst), "+r"(src), "=r"(val)
--	: "g"(-EFAULT), "r"(count)
--	: "lp_count", "memory");
--
--	return res;
--}
--
--static inline long __strnlen_user(const char __user *s, long n)
--{
--	long res, tmp1, cnt;
--	char val;
--
--	__asm__ __volatile__(
--	"	mov %2, %1			\n"
--	"1:	ldb.ab  %3, [%0, 1]		\n"
--	"	breq.d  %3, 0, 2f		\n"
--	"	sub.f   %2, %2, 1		\n"
--	"	bnz 1b				\n"
--	"	sub %2, %2, 1			\n"
--	"2:	sub %0, %1, %2			\n"
--	"3:	;nop				\n"
--	"	.section .fixup, \"ax\"		\n"
--	"	.align 4			\n"
--	"4:	mov %0, 0			\n"
--	"	j   3b				\n"
--	"	.previous			\n"
--	"	.section __ex_table, \"a\"	\n"
--	"	.align 4			\n"
--	"	.word 1b, 4b			\n"
--	"	.previous			\n"
--	: "=r"(res), "=r"(tmp1), "=r"(cnt), "=r"(val)
--	: "0"(s), "1"(n)
--	: "memory");
--
--	return res;
--}
--
- #define INLINE_COPY_TO_USER
- #define INLINE_COPY_FROM_USER
+ /* Checks if this range of memory is likely to be hot-removable. */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e56cd1f33242..b6bec3925e80 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8204,7 +8204,7 @@ void *__init alloc_large_system_hash(const char *tablename,
+  * race condition. So you can't expect this function should be exact.
+  */
+ bool has_unmovable_pages(struct zone *zone, struct page *page, int migratetype,
+-			 int flags)
++			 int flags, char *dump)
+ {
+ 	unsigned long iter = 0;
+ 	unsigned long pfn = page_to_pfn(page);
+@@ -8305,8 +8305,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int migratetype,
+ 	return false;
+ unmovable:
+ 	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
+-	if (flags & REPORT_FAILURE)
+-		dump_page(pfn_to_page(pfn + iter), reason);
++	if (flags & REPORT_FAILURE) {
++		page = pfn_to_page(pfn + iter);
++		strscpy(dump, reason, 64);
++	}
+ 	return true;
+ }
  
- #define __clear_user		__clear_user
--#define __strncpy_from_user	__strncpy_from_user
--#define __strnlen_user		__strnlen_user
-+
-+extern long strncpy_from_user(char *dest, const char __user *src, long count);
-+extern __must_check long strnlen_user(const char __user *str, long n);
+@@ -8711,10 +8713,6 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 		BUG_ON(!PageBuddy(page));
+ 		order = page_order(page);
+ 		offlined_pages += 1 << order;
+-#ifdef CONFIG_DEBUG_VM
+-		pr_info("remove from free list %lx %d %lx\n",
+-			pfn, 1 << order, end_pfn);
+-#endif
+ 		del_page_from_free_area(page, &zone->free_area[order]);
+ 		pfn += (1 << order);
+ 	}
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 1f8b9dfecbe8..ce0fe3c1ceff 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -20,6 +20,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
+ 	struct zone *zone;
+ 	unsigned long flags;
+ 	int ret = -EBUSY;
++	char dump[64];
  
- #include <asm/segment.h>
- #include <asm-generic/uaccess.h>
-diff --git a/arch/arc/include/asm/word-at-a-time.h b/arch/arc/include/asm/word-at-a-time.h
-new file mode 100644
-index 000000000000..00e92be70987
---- /dev/null
-+++ b/arch/arc/include/asm/word-at-a-time.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2020 Synopsys Inc.
-+ */
-+#ifndef __ASM_ARC_WORD_AT_A_TIME_H
-+#define __ASM_ARC_WORD_AT_A_TIME_H
-+
-+#ifdef __LITTLE_ENDIAN__
-+
-+#include <linux/kernel.h>
-+
-+struct word_at_a_time {
-+	const unsigned long one_bits, high_bits;
-+};
-+
-+#define WORD_AT_A_TIME_CONSTANTS { REPEAT_BYTE(0x01), REPEAT_BYTE(0x80) }
-+
-+static inline unsigned long has_zero(unsigned long a, unsigned long *bits,
-+				     const struct word_at_a_time *c)
-+{
-+	unsigned long mask = ((a - c->one_bits) & ~a) & c->high_bits;
-+	*bits = mask;
-+	return mask;
-+}
-+
-+#define prep_zero_mask(a, bits, c) (bits)
-+
-+static inline unsigned long create_zero_mask(unsigned long bits)
-+{
-+	bits = (bits - 1) & ~bits;
-+	return bits >> 7;
-+}
-+
-+static inline unsigned long find_zero(unsigned long mask)
-+{
-+#ifdef CONFIG_64BIT
-+	return fls64(mask) >> 3;
-+#else
-+	return fls(mask) >> 3;
-+#endif
-+}
-+
-+#define zero_bytemask(mask) (mask)
-+
-+#else	/* __BIG_ENDIAN__ */
-+#include <asm-generic/word-at-a-time.h>
-+#endif
-+
-+#endif /* __ASM_WORD_AT_A_TIME_H */
+ 	zone = page_zone(page);
+ 
+@@ -37,7 +38,8 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
+ 	 * FIXME: Now, memory hotplug doesn't call shrink_slab() by itself.
+ 	 * We just check MOVABLE pages.
+ 	 */
+-	if (!has_unmovable_pages(zone, page, migratetype, isol_flags)) {
++	if (!has_unmovable_pages(zone, page, migratetype, isol_flags,
++				 dump)) {
+ 		unsigned long nr_pages;
+ 		int mt = get_pageblock_migratetype(page);
+ 
+@@ -54,6 +56,12 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
+ 	spin_unlock_irqrestore(&zone->lock, flags);
+ 	if (!ret)
+ 		drain_all_pages(zone);
++	else if (isol_flags & REPORT_FAILURE)
++		/*
++		 * printk() with zone->lock held will guarantee to trigger a
++		 * lockdep splat, so defer it here.
++		 */
++		dump_page(page, dump);
+ 	return ret;
+ }
+ 
 -- 
-2.20.1
+2.21.0 (Apple Git-122.2)
 
