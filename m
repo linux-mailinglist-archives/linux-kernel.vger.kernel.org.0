@@ -2,68 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 771DB139FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B0B139FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:30:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbgAND0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 22:26:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728802AbgAND0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 22:26:47 -0500
-Received: from cakuba (c-73-93-4-247.hsd1.ca.comcast.net [73.93.4.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 299BA20CC7;
-        Tue, 14 Jan 2020 03:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578972406;
-        bh=K6QwoHZlKmBhi1HwYzE/vZ5jsixqOCwKPUF803F9Qxs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MOw/5NOJp9s0xnIQVt2/sEGGKIeo0Cyb1YDjbXSSkAiEBe36usdVrXv9v3vNsWHdp
-         Lo9S42pGO0Awd1ZGkPJB02wF0w5FsKBNHdK5lR8g6TZWLQMD5lfU9992QlV/pbCxKP
-         mtIW0MgAAVFt/IeLYY26xiacHbP42MkmI5ulPG38=
-Date:   Mon, 13 Jan 2020 19:26:45 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     netdev@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 0/8] net: stmmac: ETF support
-Message-ID: <20200113192645.6b9f51d1@cakuba>
-In-Reply-To: <cover.1578932287.git.Jose.Abreu@synopsys.com>
-References: <cover.1578932287.git.Jose.Abreu@synopsys.com>
+        id S1729588AbgANDaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 22:30:24 -0500
+Received: from forward500o.mail.yandex.net ([37.140.190.195]:35601 "EHLO
+        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728802AbgANDaX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 22:30:23 -0500
+Received: from mxback18o.mail.yandex.net (mxback18o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::69])
+        by forward500o.mail.yandex.net (Yandex) with ESMTP id 9554360637;
+        Tue, 14 Jan 2020 06:30:20 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback18o.mail.yandex.net (mxback/Yandex) with ESMTP id 9JPZXyJDt7-UJVWLU2i;
+        Tue, 14 Jan 2020 06:30:19 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1578972619;
+        bh=yTsm5oMcLHPTAmSkdzNgo7hZnZ7/5IAdpa6CtG/274w=;
+        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
+        b=giDRAfeB9QXiDljnK2KNb1EVEJyzM/LRlKBBOaeQuYnxjYC1NycTLEyAlGb3RqQEZ
+         ZF1yFADe6B3G4QuG2dpc394xbfJupKA2SntipcVoZ8ozkBn2vJSlCFJnLUr6TAlewg
+         HjIqFhN+uziGgS0q6TZvMWeZbXWRx6hkQIvpq0rc=
+Authentication-Results: mxback18o.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by iva4-6593cae50902.qloud-c.yandex.net with HTTP;
+        Tue, 14 Jan 2020 06:30:19 +0300
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Envelope-From: yjx@flygoat.com
+To:     Paul Burton <paulburton89@gmail.com>
+Cc:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "chenhc@lemote.com" <chenhc@lemote.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>
+In-Reply-To: <20200113185246.zvsahaeh36gdfsv2@pburton-laptop>
+References: <20200113140705.74605-1-jiaxun.yang@flygoat.com>
+         <20200113140705.74605-2-jiaxun.yang@flygoat.com> <20200113185246.zvsahaeh36gdfsv2@pburton-laptop>
+Subject: Re: [PATCH 2/2] MIPS: Loongson64: Add dma iocoherency detection support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Tue, 14 Jan 2020 11:30:19 +0800
+Message-Id: <29582761578972619@iva4-6593cae50902.qloud-c.yandex.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020 17:24:08 +0100, Jose Abreu wrote:
-> This series adds the support for ETF scheduler in stmmac.
-> 
-> 1) Starts adding the support by implementing Enhanced Descriptors in stmmac
-> main core. This is needed for ETF feature in XGMAC and QoS cores.
-> 
-> 2) Integrates the ETF logic into stmmac TC core.
-> 
-> 3) and 4) adds the HW specific support for ETF in XGMAC and QoS cores. The
-> IP feature is called TBS (Time Based Scheduling).
-> 
-> 5) Enables ETF in GMAC5 IPK PCI entry for all Queues except Queue 0.
-> 
-> 6) Adds the new TBS feature and even more information into the debugFS
-> HW features file.
-> 
-> 7) Switches the selftests mechanism to use dev_direct_xmit() so that we can
-> send packets on specific Queues.
-> 
-> 8) Adds a new test for TBS feature.
 
-Applied, thank you!
+
+14.01.2020, 02:52, "Paul Burton" <paulburton89@gmail.com>:
+> Hi Jiaxun,
+>
+> On Mon, Jan 13, 2020 at 10:07:05PM +0800, Jiaxun Yang wrote:
+>>  diff --git a/arch/mips/include/asm/mach-loongson64/boot_param.h b/arch/mips/include/asm/mach-loongson64/boot_param.h
+>>  index 8c286bedff3e..2da2be40ad81 100644
+>>  --- a/arch/mips/include/asm/mach-loongson64/boot_param.h
+>>  +++ b/arch/mips/include/asm/mach-loongson64/boot_param.h
+>>  @@ -115,7 +115,8 @@ struct irq_source_routing_table {
+>>           u64 pci_io_start_addr;
+>>           u64 pci_io_end_addr;
+>>           u64 pci_config_addr;
+>>  - u32 dma_mask_bits;
+>>  + u16 dma_mask_bits;
+>>  + u16 dma_noncoherent;
+>>   } __packed;
+>
+> This struct is generated by the firmware, right? So does this change
+> require that firmware be updated along with the kernel? Or was the
+> kernel's definition always incorrect/incomplete?
+Hi Paul,
+
+This define added to the firmware by 2013 but somehow never upstream.
+That's what Loongson always doing.
+
+Some versions of Loongson-3B1500 failed to maintain DMA coherent.
+So they add this parameter to the firmware.
+As the maximum dma_mask_bits is 64, the upper 16bit of the old u32 will always
+be zero. Which means coherent DMA transformed into the new definition,
+that's the expected default behavior. Thus it's safe to do so even if firmware
+doesn't understand this parameter.
+
+Thanks
+
+>
+> Thanks,
+>     Paul
+--
+Jiaxun
