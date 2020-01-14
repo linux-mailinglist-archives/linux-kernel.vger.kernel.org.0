@@ -2,158 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1595713A6E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1368E13A70E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbgANKPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:15:41 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35737 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729251AbgANKPk (ORCPT
+        id S1731489AbgANKRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:17:36 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42354 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732267AbgANKRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:15:40 -0500
-Received: by mail-qk1-f194.google.com with SMTP id z76so11578792qka.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 02:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vAww8IXRbacm5VnYWGSAdMWNYd81EOzINN0pZmP3twY=;
-        b=JrWid8wp2iMoLpTtIpDrviIVbYP/QmY50Eke5TiVbMd0HmvZOBYbIZi6EZp7B8nG9P
-         HM6tQsuJu/r74x791WYGXgnH8A/8LULqGHT/q3vXixEvxTcwn58RGc4IsoNmCnibqJ/l
-         4mP5zCo1bSHoCOS8CAdch0US6ADtIJEy+T0e3dTfXldWJm2YcvqQ46WO2Twdt+yi+czZ
-         t06Smo4K7LgA54/F0ASLVNMf+Rk/jaDZRRhKql8zNPRor1XNu/Rnp+sScichiq6n9SP6
-         SmTkx5/YL8a59vhARMANx87W169EJ3ENa4wKJCxVZaO81EzSy3+O0nNvLZYI90X/FdgE
-         YR5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vAww8IXRbacm5VnYWGSAdMWNYd81EOzINN0pZmP3twY=;
-        b=Y1GKJwUFQbW6y/tpg4eQxK3OsYSBUR+ymwaf8VAcQpXDnEk7/T+FY65iXRHgTEOgPB
-         EJn0D25VmdrhQSWMhOsHogqkg7TFfBUg03uLhaI+f4Un65JLhhPVOXkC/WME0I0H9MUy
-         MNgRInK2UvrZznCIXT6b7aBChC9a7QoF8btnvKhC5GDyOkYvAkqkQk09SKWwJ2zFVb+M
-         AYZOUdcKsKnCQ4unxKGo3vSvxUzwCUPEeOIEASHZsMAjiqjpUeRUUwr+5HxipnxI9kXs
-         Ye8YwiVTCXi3QeTjEWiou2GSe+/4L3B46WM9GGjJL2gjfpr80xxSUHinKcKLZcIc3Rqs
-         ux2A==
-X-Gm-Message-State: APjAAAVqmQ7r27Q90lNzm1Q6nBZ5G3vODWx9ykBUXfGD9rT9MOA5/nyK
-        NU19KTLRXhSJHwyI8m+SpN5UBbMaawp5Di9f6F+omA==
-X-Google-Smtp-Source: APXvYqxUfpkSmdp0pLEpSj6LsMYLo+Bw0o/5va7KDXqh6AZF9C8OLiMQTOK59YPqJAPuyS4wxU5gUfGXlGXKC8kpn/Q=
-X-Received: by 2002:a05:620a:1136:: with SMTP id p22mr21161287qkk.8.1578996938005;
- Tue, 14 Jan 2020 02:15:38 -0800 (PST)
+        Tue, 14 Jan 2020 05:17:02 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1irJFj-0007ex-Py; Tue, 14 Jan 2020 11:16:51 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 120D81C001A;
+        Tue, 14 Jan 2020 11:16:51 +0100 (CET)
+Date:   Tue, 14 Jan 2020 10:16:50 -0000
+From:   "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] KVM: VMX: Allow KVM_INTEL when building for Centaur
+ and/or Zhaoxin CPUs
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191221044513.21680-20-sean.j.christopherson@intel.com>
+References: <20191221044513.21680-20-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-References: <00000000000036decf0598c8762e@google.com> <CACT4Y+YVMUxeLcFMray9n0+cXbVibj5X347LZr8YgvjN5nC8pw@mail.gmail.com>
- <CACT4Y+asdED7tYv462Ui2OhQVKXVUnC+=fumXR3qM1A4d6AvOQ@mail.gmail.com>
- <f7758e0a-a157-56a2-287e-3d4452d72e00@schaufler-ca.com> <87a787ekd0.fsf@dja-thinkpad.axtens.net>
- <87h81zax74.fsf@dja-thinkpad.axtens.net> <CACT4Y+b+Vx1FeCmhMAYq-g3ObHdMPOsWxouyXXUr7S5OjNiVGQ@mail.gmail.com>
- <0b60c93e-a967-ecac-07e7-67aea1a0208e@I-love.SAKURA.ne.jp>
- <6d009462-74d9-96e9-ab3f-396842a58011@schaufler-ca.com> <CACT4Y+bURugCpLm5TG37-7voFEeEoXo_Gb=3sy75_RELZotXHw@mail.gmail.com>
- <CACT4Y+avizeUd=nY2w1B_LbEC1cP5prBfpnANYaxhgS_fcL6ag@mail.gmail.com>
- <CACT4Y+Z3GCncV3G1=36NmDRX_XOZsdoRJ3UshZoornbSRSN28w@mail.gmail.com>
- <CACT4Y+ZyVi=ow+VXA9PaWEVE8qKj8_AKzeFsNdsmiSR9iL3FOw@mail.gmail.com>
- <CACT4Y+axj5M4p=mZkFb1MyBw0MK1c6nWb-fKQcYSnYB8n1Cb8Q@mail.gmail.com>
- <CAG_fn=XddhnhqwFfzavcNJSYVprapH560okDL+mYmJ4OWGxWLA@mail.gmail.com>
- <CAKwvOdmYM+sfn3pNOxZm51K40MjyniEmBvwQJVxshq=FMaW_=Q@mail.gmail.com>
- <CACT4Y+apeR4GJdS3SwNZLAuGeojj0jKvc-s5jA=VBECnRFmunQ@mail.gmail.com>
- <CAKwvOdkh8CV0pgqqHXknv8+gE2ovoKEV_m+qiEmWutmLnra3=g@mail.gmail.com> <CAG_fn=UU0fuws59L8Bp8DEVhH+X6xRaanwuRrzy-HNdrVpqJmg@mail.gmail.com>
-In-Reply-To: <CAG_fn=UU0fuws59L8Bp8DEVhH+X6xRaanwuRrzy-HNdrVpqJmg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 14 Jan 2020 11:15:26 +0100
-Message-ID: <CACT4Y+ZWvnEVEDQe6c-4WRhdKkS0W=DHcWXe0etONnjjysR2pA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in sys_kill
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Axtens <dja@axtens.net>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+de8d933e7d153aa0c1bb@syzkaller.appspotmail.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <157899701088.1022.10241551646411306885.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clang instances are back to life (incl smack).
+The following commit has been merged into the x86/cpu branch of tip:
 
-#syz invalid
+Commit-ID:     8f63aaf5c493c6502a058585cdfa3c71cdf8c44a
+Gitweb:        https://git.kernel.org/tip/8f63aaf5c493c6502a058585cdfa3c71cdf8c44a
+Author:        Sean Christopherson <sean.j.christopherson@intel.com>
+AuthorDate:    Fri, 20 Dec 2019 20:45:13 -08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 13 Jan 2020 19:35:33 +01:00
 
-On Fri, Jan 10, 2020 at 9:37 AM 'Alexander Potapenko' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
->
-> On Thu, Jan 9, 2020 at 6:39 PM 'Nick Desaulniers' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> >
-> > On Thu, Jan 9, 2020 at 9:23 AM Dmitry Vyukov <dvyukov@google.com> wrote=
-:
-> > >
-> > > On Thu, Jan 9, 2020 at 6:17 PM Nick Desaulniers <ndesaulniers@google.=
-com> wrote:
-> > > > I disabled loop unrolling and loop unswitching in LLVM when the loo=
-p
-> > > > contained asm goto in:
-> > > > https://github.com/llvm/llvm-project/commit/c4f245b40aad7e8627b37a8=
-bf1bdcdbcd541e665
-> > > > I have a fix for loop unrolling in:
-> > > > https://reviews.llvm.org/D64101
-> > > > that I should dust off. I haven't looked into loop unswitching yet.
-> > >
-> > > c4f245b40aad7e8627b37a8bf1bdcdbcd541e665 is in the range between the
-> > > broken compiler and the newer compiler that seems to work, so I would
-> > > assume that that commit fixes this.
-> > > We will get the final stamp from syzbot hopefully by tomorrow.
-> >
-> > How often do you refresh the build of Clang in syzbot? Is it manual? I
-> > understand the tradeoffs of living on the tip of the spear, but
-> > c4f245b40aad7e8627b37a8bf1bdcdbcd541e665 is 6 months old.  So upstream
-> > LLVM could be regressing more often, and you wouldn't notice for 1/2 a
-> > year or more. :-/
-> KMSAN used to be the only user of Clang on syzbot, so I didn't bother too=
- often.
-> Now that there are other users, we'll need a better strategy.
-> Clang revisions I've been picking previously came from Chromium's
-> Clang distributions. This is nice, because Chromium folks usually pick
-> a revision that has been extensively tested at Google already, plus
-> they make sure Chromium tests also pass.
-> They don't roll the compiler often, however (typically once a month or
-> two, but this time there were holidays, plus some nasty breakages).
-> > --
-> > Thanks,
-> > ~Nick Desaulniers
-> >
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps "kasan-dev" group.
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to kasan-dev+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/ms=
-gid/kasan-dev/CAKwvOdkh8CV0pgqqHXknv8%2BgE2ovoKEV_m%2BqiEmWutmLnra3%3Dg%40m=
-ail.gmail.com.
->
->
->
-> --
-> Alexander Potapenko
-> Software Engineer
->
-> Google Germany GmbH
-> Erika-Mann-Stra=C3=9Fe, 33
-> 80636 M=C3=BCnchen
->
-> Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-> Registergericht und -nummer: Hamburg, HRB 86891
-> Sitz der Gesellschaft: Hamburg
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kasan-dev+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/kasan-dev/CAG_fn%3DUU0fuws59L8Bp8DEVhH%2BX6xRaanwuRrzy-HNdrVpqJmg%40mail.=
-gmail.com.
+KVM: VMX: Allow KVM_INTEL when building for Centaur and/or Zhaoxin CPUs
+
+Change the dependency for KVM_INTEL, i.e. KVM w/ VMX, from Intel CPUs to
+any CPU that supports the IA32_FEAT_CTL MSR and thus VMX functionality.
+This effectively allows building KVM_INTEL for Centaur and Zhaoxin CPUs.
+
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20191221044513.21680-20-sean.j.christopherson@intel.com
+---
+ arch/x86/kvm/Kconfig | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index 840e125..991019d 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -60,13 +60,11 @@ config KVM
+ 	  If unsure, say N.
+ 
+ config KVM_INTEL
+-	tristate "KVM for Intel processors support"
+-	depends on KVM
+-	# for perf_guest_get_msrs():
+-	depends on CPU_SUP_INTEL
++	tristate "KVM for Intel (and compatible) processors support"
++	depends on KVM && IA32_FEAT_CTL
+ 	---help---
+-	  Provides support for KVM on Intel processors equipped with the VT
+-	  extensions.
++	  Provides support for KVM on processors equipped with Intel's VT
++	  extensions, a.k.a. Virtual Machine Extensions (VMX).
+ 
+ 	  To compile this as a module, choose M here: the module
+ 	  will be called kvm-intel.
