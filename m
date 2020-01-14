@@ -2,153 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0B613AC14
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5734213AC24
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:20:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbgANORK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgANORI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:17:08 -0500
-Received: from localhost.localdomain (aaubervilliers-681-1-7-206.w90-88.abo.wanadoo.fr [90.88.129.206])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56EB92468B;
-        Tue, 14 Jan 2020 14:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579011428;
-        bh=aXlNmzU3c4DebfOZqxQIuf2kGpmEOcf7xtmQHre7OJk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y283MTURx/bz6qeJVYlyRxufy4OQzwRT+/RKaZbTkKKPRx9KkNxYxa38ldJI0MKTo
-         PhpPPic7On2n9h6QQ9BLKYRT/QN22QiLOMPlfe3cz/ABncAt3LpdvnQjdQ8vGtIQ6W
-         BwiFPQdK6rxTp6N2ALcE9tN9FEp57I+DthIxGnt4=
-From:   Ard Biesheuvel <ardb@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ardb@kernel.org>, jarkko.sakkinen@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, masahisa.kojima@linaro.org,
-        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
-        peterhuewe@gmx.de, jgg@ziepe.ca
-Subject: [PATCH v2 2/2] tpm: tis: add support for MMIO TPM on SynQuacer
-Date:   Tue, 14 Jan 2020 15:16:47 +0100
-Message-Id: <20200114141647.109347-3-ardb@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200114141647.109347-1-ardb@kernel.org>
-References: <20200114141647.109347-1-ardb@kernel.org>
+        id S1728915AbgANOUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:20:30 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1365 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726115AbgANOUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:20:30 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EEDJ9I002429;
+        Tue, 14 Jan 2020 15:20:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=WTFGUCLWTDzRKhLgs2q+UxAA1l4yHovIjS8c0XHL7Ts=;
+ b=eS83FUjgp0iLFkBIkXcu/qIBlD3rdf4FW+3ea+xyHP71BDP3H/ICWz+eX+s0YAz4mjud
+ 05NJ1HvOgeFPWKYBkhAJPzKGvLgupHTzn4oNqI6Ek828o7VbY3b9irWi52Qlp3ht3l7E
+ NUaiCPJP+S8gsOXJsQuW6TBv5UWBZPpKuQlGNr85eIiaLxj5LmISYQKpDpCjSieW+Eb8
+ YTy1AG6LziF/fPIlLY+u40e7qx7lxbKPgPgh41Iq/77PDfENGSFwYR92Socl3SNKCEOo
+ 6bUkNG+adXmauv4zw4tfeaRPnSriPMCkzSu3h04bZvmzY5J7brDM49uJU360Lzh9UVBO AA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xf78s5xb5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 15:20:19 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CBD02100034;
+        Tue, 14 Jan 2020 15:20:14 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 85D832BC7AB;
+        Tue, 14 Jan 2020 15:20:14 +0100 (CET)
+Received: from localhost (10.75.127.50) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 14 Jan 2020 15:20:14
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] drm: fix parameters documentation style
+Date:   Tue, 14 Jan 2020 15:20:12 +0100
+Message-ID: <20200114142012.14389-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_04:2020-01-13,2020-01-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When fitted, the SynQuacer platform exposes its SPI TPM via a MMIO
-window that is backed by the SPI command sequencer in the SPI bus
-controller. This arrangement has the limitation that only byte size
-accesses are supported, and so we'll need to provide a separate set
-of read and write accessors that take this into account.
+Remove old documentation style and use new one to avoid warnings when
+compiling with W=1
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/char/tpm/tpm_tis.c | 50 +++++++++++++++++++-
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_dma.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e7df342a317d..2466295fcfe8 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -32,6 +32,7 @@
+diff --git a/drivers/gpu/drm/drm_dma.c b/drivers/gpu/drm/drm_dma.c
+index e45b07890c5a..f90bdd4ac69d 100644
+--- a/drivers/gpu/drm/drm_dma.c
++++ b/drivers/gpu/drm/drm_dma.c
+@@ -42,10 +42,10 @@
+ #include "drm_legacy.h"
  
- struct tpm_info {
- 	struct resource res;
-+	const struct tpm_tis_phy_ops *ops;
- 	/* irq > 0 means: use irq $irq;
- 	 * irq = 0 means: autoprobe for an irq;
- 	 * irq = -1 means: no irq support
-@@ -186,6 +187,48 @@ static const struct tpm_tis_phy_ops tpm_tcg = {
- 	.write32 = tpm_tcg_write32,
- };
- 
-+static int tpm_tcg_read16_bw(struct tpm_tis_data *data, u32 addr, u16 *result)
-+{
-+	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-+
-+	*result = (ioread8(phy->iobase + addr)) |
-+		  (ioread8(phy->iobase + addr + 1) << 8);
-+
-+	return 0;
-+}
-+
-+static int tpm_tcg_read32_bw(struct tpm_tis_data *data, u32 addr, u32 *result)
-+{
-+	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-+
-+	*result = (ioread8(phy->iobase + addr)) |
-+		  (ioread8(phy->iobase + addr + 1) << 8) |
-+		  (ioread8(phy->iobase + addr + 2) << 16) |
-+		  (ioread8(phy->iobase + addr + 3) << 24);
-+
-+	return 0;
-+}
-+
-+static int tpm_tcg_write32_bw(struct tpm_tis_data *data, u32 addr, u32 value)
-+{
-+	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
-+
-+	iowrite8(value, phy->iobase + addr);
-+	iowrite8(value >> 8, phy->iobase + addr + 1);
-+	iowrite8(value >> 16, phy->iobase + addr + 2);
-+	iowrite8(value >> 24, phy->iobase + addr + 3);
-+
-+	return 0;
-+}
-+
-+static const struct tpm_tis_phy_ops tpm_tcg_bw = {
-+	.read_bytes	= tpm_tcg_read_bytes,
-+	.write_bytes	= tpm_tcg_write_bytes,
-+	.read16		= tpm_tcg_read16_bw,
-+	.read32		= tpm_tcg_read32_bw,
-+	.write32	= tpm_tcg_write32_bw,
-+};
-+
- static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
- {
- 	struct tpm_tis_tcg_phy *phy;
-@@ -210,7 +253,7 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
- 	if (itpm || is_itpm(ACPI_COMPANION(dev)))
- 		phy->priv.flags |= TPM_TIS_ITPM_WORKAROUND;
- 
--	return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
-+	return tpm_tis_core_init(dev, &phy->priv, irq, tpm_info->ops,
- 				 ACPI_HANDLE(dev));
+ /**
+- * Initialize the DMA data.
++ * drm_legacy_dma_setup() - Initialize the DMA data.
+  *
+- * \param dev DRM device.
+- * \return zero on success or a negative value on failure.
++ * @dev: DRM device.
++ * return zero on success or a negative value on failure.
+  *
+  * Allocate and initialize a drm_device_dma structure.
+  */
+@@ -71,9 +71,9 @@ int drm_legacy_dma_setup(struct drm_device *dev)
  }
  
-@@ -219,7 +262,7 @@ static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
- static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
- 			    const struct pnp_device_id *pnp_id)
- {
--	struct tpm_info tpm_info = {};
-+	struct tpm_info tpm_info = { .ops = &tpm_tcg };
- 	struct resource *res;
- 
- 	res = pnp_get_resource(pnp_dev, IORESOURCE_MEM, 0);
-@@ -295,6 +338,8 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
- 			tpm_info.irq = 0;
- 	}
- 
-+	tpm_info.ops = of_device_get_match_data(&pdev->dev) ?: &tpm_tcg;
-+
- 	return tpm_tis_init(&pdev->dev, &tpm_info);
+ /**
+- * Cleanup the DMA resources.
++ * drm_legacy_dma_takedown() - Cleanup the DMA resources.
+  *
+- * \param dev DRM device.
++ * @dev: DRM device.
+  *
+  * Free all pages associated with DMA buffers, the buffers and pages lists, and
+  * finally the drm_device::dma structure itself.
+@@ -120,10 +120,10 @@ void drm_legacy_dma_takedown(struct drm_device *dev)
  }
  
-@@ -311,6 +356,7 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
- #ifdef CONFIG_OF
- static const struct of_device_id tis_of_platform_match[] = {
- 	{.compatible = "tcg,tpm-tis-mmio"},
-+	{.compatible = "socionext,synquacer-tpm-mmio", .data = &tpm_tcg_bw},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tis_of_platform_match);
+ /**
+- * Free a buffer.
++ * drm_legacy_free_buffer() - Free a buffer.
+  *
+- * \param dev DRM device.
+- * \param buf buffer to free.
++ * @dev: DRM device.
++ * @buf: buffer to free.
+  *
+  * Resets the fields of \p buf.
+  */
+@@ -139,9 +139,10 @@ void drm_legacy_free_buffer(struct drm_device *dev, struct drm_buf * buf)
+ }
+ 
+ /**
+- * Reclaim the buffers.
++ * drm_legacy_reclaim_buffers() - Reclaim the buffers.
+  *
+- * \param file_priv DRM file private.
++ * @dev: DRM device.
++ * @file_priv: DRM file private.
+  *
+  * Frees each buffer associated with \p file_priv not already on the hardware.
+  */
 -- 
-2.20.1
+2.15.0
 
