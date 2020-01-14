@@ -2,112 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A96313B4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 22:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E29813B4B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 22:49:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgANVsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 16:48:30 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33010 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbgANVs0 (ORCPT
+        id S1729027AbgANVtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 16:49:24 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41096 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbgANVtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 16:48:26 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d71so13753425qkc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 13:48:25 -0800 (PST)
+        Tue, 14 Jan 2020 16:49:24 -0500
+Received: by mail-lj1-f196.google.com with SMTP id h23so16129640ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 13:49:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=+DWS+MFZkVa3i7JL1v23vFX8ZF9bOD40hjVh+TnhgTw=;
-        b=kTA/4UdOngvSeVJIgyUwXfSmC4pFX4cZ5I+ptvKNiDUDrBCK3Xa6fArbNyo6l6nxb8
-         5EcYmRd0FDGFqPu64+AjMXSBJYT9Xm9K2GVc0Eibfs/aG/5+2uYGo3hERmgxzy/NrqnL
-         ysJwZdrzM5vZ+w4ahgN5xLWWxN742DXjNplMMUb7Ajr9TLVEZmMDRL7jnsTO3jp11y8t
-         srBKh4ZeuPiNmDR+nmaS59U+wSTXDGJ/1SXQynVkHqpCGgTBHGAhOVQi+RTdds3j9FFT
-         6JE8158krmEqWBWOJJjADKiIj3cc50aC9kP/0MjE1wHc2EI3IKG9/GjmhiZNmToR8VWH
-         Y4BA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vctch71naqEGLrugWbqoCH3ToLlQlQB3yrVoOl+SPvs=;
+        b=KZsiFFqPOkrryEiWdCUg5hoXCgV2OLEIU5JBuDM284Mh6WRn/AjOiD1HtsNJRqviVx
+         9kKzxAmtgZreU18bWEW2HXaM6Ao4fNRodAVWs6R4i29I6H6YakNGcUy2JKOXR0tVereO
+         66FAx40w7vVtGWNG+UhiUq933mXri6+ihEilQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=+DWS+MFZkVa3i7JL1v23vFX8ZF9bOD40hjVh+TnhgTw=;
-        b=ks4NHh4jaEhLwYuh2xhe78THmKi7XwnynHpHImGTFI8xvC4F3u0iILAr6GZcQci2OD
-         KsJrBHrBMld4g4rnUPi46tPRcnGYIGfeo3KCs8Np+yGvwPWY0XozTUtof3xjKJLLFiUh
-         Y4em4ujeMZxaoe/Bvdvdn7I5fC21Fx5tPFDd3/M/keXZcKo+kFkOxYu53FtOHiAU16P+
-         jgXm3GBk9dRe2imlmIq/k3/eKbDUCL52xehd4j9D259AvQ3vxM4scn/ohFFdI/lKVjpg
-         qyo7FeAS+QC+5QkzxFDP+euD51mVo9cNuVkozz0geal99Re172dXExgQkTJ7poSwa+gb
-         Ufdw==
-X-Gm-Message-State: APjAAAVMvGcXjPK34+O8IIAQaB6xlmge9pE8ml4Ig+yn7mls8gKzR+hJ
-        eMXlYIXFGBKbjuOqWMzbb31VSg==
-X-Google-Smtp-Source: APXvYqzhz76wpbmFEdnf6KLqsZJdbwLrRAZ/QuVspYZEWhFTQ8VaAMVQ+9dwFgE6WodfNf1ikl6Q9w==
-X-Received: by 2002:a05:620a:1592:: with SMTP id d18mr24178234qkk.80.1579038505028;
-        Tue, 14 Jan 2020 13:48:25 -0800 (PST)
-Received: from ?IPv6:2600:1000:b029:6649:f4b1:4b94:dfb9:77cf? ([2600:1000:b029:6649:f4b1:4b94:dfb9:77cf])
-        by smtp.gmail.com with ESMTPSA id 24sm7408173qka.32.2020.01.14.13.48.23
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vctch71naqEGLrugWbqoCH3ToLlQlQB3yrVoOl+SPvs=;
+        b=V5mRjTi2nufpRLACuA+XNavXwCzY8mX5MHHq3kLfMdw9+ugB5EYjSTWZ3g7B6puSUX
+         MfuCySJ7Fv+H1Te59mYp4Z22VWwHEs+X+2tFUvOqyl1GPJVGecAMQJPLQedLCuDmg6bQ
+         HgkWcXMlaSA9BFPLd2QhlSttPnqFl7oHCtGeH1Ux3HmSdbEMRJX02JBnB0PFrwF3FFFF
+         CO/2X81fnFQP90AXM0g0ukLZaqp+QhDy/PaYyRupqFVWJXyMITs9O9UDi/hUNuTG9tJm
+         1s6hrJHejZx/Yo1vglp4YKqjmMHJoolNg6uz5l/J+IdXGoo7LAXCnIvNQ8xDpNrSHPQb
+         Ilng==
+X-Gm-Message-State: APjAAAXYi6/EvQt5u5JlTowsuRF/Eyk429yCeuHCBhlXJYLEGGatfX00
+        dx0rmhz3rmoCW3zd8P5ICeIDKPSkOxk=
+X-Google-Smtp-Source: APXvYqwJqNtUMrFlqLmo3je2ydLgJdhBWrYKz5F1/+76vXvV7dWONcLmI/8BGrrUmP479iu/9N1WgQ==
+X-Received: by 2002:a05:651c:204f:: with SMTP id t15mr16374836ljo.240.1579038560631;
+        Tue, 14 Jan 2020 13:49:20 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id n11sm8070638ljg.15.2020.01.14.13.49.19
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 13:48:24 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 01/10] kcsan: Add Kernel Concurrency Sanitizer infrastructure
-Date:   Tue, 14 Jan 2020 16:48:22 -0500
-Message-Id: <9970E373-DF70-4FE4-A839-AAE641612EC5@lca.pw>
-References: <20200114213405.GX2935@paulmck-ThinkPad-P72>
-Cc:     Marco Elver <elver@google.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
+        Tue, 14 Jan 2020 13:49:19 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id n25so11075695lfl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 13:49:19 -0800 (PST)
+X-Received: by 2002:a19:48c5:: with SMTP id v188mr3185145lfa.100.1579038558938;
+ Tue, 14 Jan 2020 13:49:18 -0800 (PST)
+MIME-Version: 1.0
+References: <20200114200846.29434-1-vgupta@synopsys.com> <20200114200846.29434-5-vgupta@synopsys.com>
+ <CAK8P3a2GUqmcA_q33=20OrK1+cU4f3mCrgci_bO3ho4B5PRODg@mail.gmail.com> <3734021d-1756-3a09-6595-14ca58c64bf9@synopsys.com>
+In-Reply-To: <3734021d-1756-3a09-6595-14ca58c64bf9@synopsys.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 14 Jan 2020 13:49:03 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjX-c9YpPhbQ073UPnTvELNQCN49vqK1yY7JGuHSn5-ew@mail.gmail.com>
+Message-ID: <CAHk-=wjX-c9YpPhbQ073UPnTvELNQCN49vqK1yY7JGuHSn5-ew@mail.gmail.com>
+Subject: Re: [RFC 4/4] ARC: uaccess: use optimized generic __strnlen_user/__strncpy_from_user
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
         Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-In-Reply-To: <20200114213405.GX2935@paulmck-ThinkPad-P72>
-To:     paulmck@kernel.org
-X-Mailer: iPhone Mail (17C54)
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 14, 2020 at 1:37 PM Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>
+> On 1/14/20 12:42 PM, Arnd Bergmann wrote:
+> >
+> > What's wrong with the generic version on little-endian? Any
+> > chance you can find a way to make it work as well for you as
+> > this copy?
+>
+> find_zero() by default doesn't use pop count instructions.
 
+Don't you think the generic find_zero() is likely just as fast as the
+pop count instruction? On 32-bit, I think it's like a shift and a mask
+and a couple of additions.
 
-> On Jan 14, 2020, at 4:34 PM, Paul E. McKenney <paulmck@kernel.org> wrote:
->=20
-> As an alternative, once the patches needed for your tests to pass
-> reach mainline, you could announce that KCSAN was ready to be enabled
-> in distros.
->=20
-> Though I confess that I don't know how that works.  Is there a separate
-> testing kernel binary provided by the distros in question?
+The 64-bit case has a multiply that is likely expensive unless you
+have a good multiplication unit (but what 64-bit architecture
+doesn't?), but the generic 32-bit LE code should already be pretty
+close to optimal, and it might not be worth it to worry about it.
 
-I don=E2=80=99t think I have powers to announce that. Once the feature hit t=
-he mainline, distro people could start to use in the debug kernel variant, a=
-nd it is a shame to only find out it is broken. Anyway, I=E2=80=99ll try to e=
-dge out those corner cases. Stay tuned.=
+(The big-endian case is very different, and architectures really can
+do much better. But LE allows for bit tricks using the carry chain)
+
+             Linus
