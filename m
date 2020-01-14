@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 926E413A660
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E91B913A593
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbgANKLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:11:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45800 "EHLO mail.kernel.org"
+        id S1730656AbgANKJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:09:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732359AbgANKLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:11:05 -0500
+        id S1731176AbgANKI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:08:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E82E24685;
-        Tue, 14 Jan 2020 10:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9622124679;
+        Tue, 14 Jan 2020 10:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996664;
-        bh=E/QgGsKX187fm06fbc72l+VFzYNIk6fBCxejTqhkB1c=;
+        s=default; t=1578996539;
+        bh=IAWoV7sLHY7VarPJfk6cJJN8sA4BpJYPO9/iJ9t548g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IqlISAb3/OCKSciEy6yIGgHHKikISp+RmXWzdC74uLvWMm52aj7zUouvNGy3ADEXt
-         NThgIrbxzao7b6Jnu9z7xdLIgpCpa1L5ek6O+fC0XhLWI29sDrPxsn/dXIb/cMR81J
-         3IxK2EUKH7Fkn1BuqUAO7MKZ0QZtZJW2pmX6fdJE=
+        b=Zi9t3OEnrUgRZwzkf6NpJkQ6RsSL/guWjQHwRE+KCtvANxpux+GtSdkF7NBpVg65k
+         ad7LxaRjcQyHDhrosuim0BF9slVXIP304GGMmK3kGF1sZ28hwYTX1yceRv5P/cLXqP
+         zGEcfSzt4RP/eVGbroU39Wna0+pBjKBlGidjKmBE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 04/31] ALSA: usb-audio: Apply the sample rate quirk for Bose Companion 5
+        stable@vger.kernel.org,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.19 39/46] ath10k: fix memory leak
 Date:   Tue, 14 Jan 2020 11:01:56 +0100
-Message-Id: <20200114094340.082217722@linuxfoundation.org>
+Message-Id: <20200114094347.933299495@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
-References: <20200114094334.725604663@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +45,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 51d4efab7865e6ea6a4ebcd25b3f03c019515c4c upstream.
+commit b8d17e7d93d2beb89e4f34c59996376b8b544792 upstream.
 
-Bose Companion 5 (with USB ID 05a7:1020) doesn't seem supporting
-reading back the sample rate, so the existing quirk is needed.
+In ath10k_usb_hif_tx_sg the allocated urb should be released if
+usb_submit_urb fails.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=206063
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200104110936.14288-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks.c |    1 +
+ drivers/net/wireless/ath/ath10k/usb.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1141,6 +1141,7 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	case USB_ID(0x04D8, 0xFEEA): /* Benchmark DAC1 Pre */
- 	case USB_ID(0x0556, 0x0014): /* Phoenix Audio TMX320VC */
- 	case USB_ID(0x05A3, 0x9420): /* ELP HD USB Camera */
-+	case USB_ID(0x05a7, 0x1020): /* Bose Companion 5 */
- 	case USB_ID(0x074D, 0x3553): /* Outlaw RR2150 (Micronas UAC3553B) */
- 	case USB_ID(0x1395, 0x740a): /* Sennheiser DECT */
- 	case USB_ID(0x1901, 0x0191): /* GE B850V3 CP2114 audio interface */
+--- a/drivers/net/wireless/ath/ath10k/usb.c
++++ b/drivers/net/wireless/ath/ath10k/usb.c
+@@ -454,6 +454,7 @@ static int ath10k_usb_hif_tx_sg(struct a
+ 			ath10k_dbg(ar, ATH10K_DBG_USB_BULK,
+ 				   "usb bulk transmit failed: %d\n", ret);
+ 			usb_unanchor_urb(urb);
++			usb_free_urb(urb);
+ 			ret = -EINVAL;
+ 			goto err_free_urb_to_pipe;
+ 		}
 
 
