@@ -2,119 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898FD13AB39
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4438B13AB3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:41:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgANNkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:40:15 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:59879 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726106AbgANNkP (ORCPT
+        id S1728850AbgANNl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:41:26 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:54266 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbgANNl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:40:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579009213;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3/OUNp+8eiwyelLTvZ+VWbwPArDWt2E+tZJCkFYGzyI=;
-        b=DlLo+h70F5LbBFuSDSw9pI7MViebRH/hppymEwhLChpQqhDM3b2GjYqtSFKuvyye3fT5cZ
-        PCY6HKnc+JGTt8Arydqhp0bC2Svmf49uKqn3LNr1me0iVyqCIxOmO3GrqRjphHQ6B5tiqn
-        0pLBw5zFvvcFHlM7CpQ4nj9mgJbN9S4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-PEUzUONqOYWMl4g-bG-mTA-1; Tue, 14 Jan 2020 08:40:08 -0500
-X-MC-Unique: PEUzUONqOYWMl4g-bG-mTA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 71285A0689;
-        Tue, 14 Jan 2020 13:40:06 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2991C5DA70;
-        Tue, 14 Jan 2020 13:40:00 +0000 (UTC)
-Date:   Tue, 14 Jan 2020 14:39:58 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Sudarikov, Roman" <roman.sudarikov@linux.intel.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, eranian@google.com,
-        bgregg@netflix.com, ak@linux.intel.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v3 1/2] perf x86: Infrastructure for exposing an Uncore
- unit to PMON mapping
-Message-ID: <20200114133958.GE170376@krava>
-References: <20200113135444.12027-1-roman.sudarikov@linux.intel.com>
- <20200113135444.12027-2-roman.sudarikov@linux.intel.com>
- <20200113143430.GA390411@kroah.com>
- <9bfcc058-8fde-9b24-3d82-255004e7f057@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bfcc058-8fde-9b24-3d82-255004e7f057@linux.intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Tue, 14 Jan 2020 08:41:26 -0500
+Received: by mail-pf1-f201.google.com with SMTP id k26so8787943pfp.20
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:41:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=d+VdQ2mgKVufPtzjAPQVlGG6NNayGmHdnWPr+cE7Zlg=;
+        b=vxydxJ9xqFxpwBc2+UwfYvzeeJpgLwd/1r3pppsJwIBl+STg3q0/MMmyu1axqmnaru
+         xm1giynSu1419J1y6kfH0IL7f14D7iMnLFgrdvN+uW/rFSqIUTfQAJDX1TX/hOqcTFk2
+         /N/tVvCsqfdw3ynNPIdX6QiaX/K3m0u4q5S1gZD4BZHVw0bNyLZAxfxEPRMSodC14qHM
+         gwe4snUrF2jaul+wVyR65CvZh8lJtSp3kvPq8aenqxz5Y7ME575tTVtSPalakIOnqUFa
+         OvhOat5LFFF83Ushb6mvW3v5Pf/9ysaOK6jgFLm8UQ06wvVXwtxrVSps2GRn2YfUIpal
+         3iKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=d+VdQ2mgKVufPtzjAPQVlGG6NNayGmHdnWPr+cE7Zlg=;
+        b=UXFwZ6227Jew4Yru82yr2pw1SGray2N6sYbJOe3+GUCuVWwpGO86si6+voEeC37+8L
+         5JQoZv48DvLyVNZ95Iz8qtTt20Z4r9TSi/Ilrfbt/av6/GVqpc5VwU6DByfgNyHa1V2N
+         gxUyvnCGWtNvFXhn1CQrakb25+B9ty/rWw0Tj2wq+7YsjqPUnuKWpgwdpyNbz050nb7g
+         y4kfNKkD95Nj+/erIOQO2CNcjtmhgkfSsHL2NL/IKpfbLyqQwMnXaFAo2ZHjZWAO5qqy
+         n6od0Kllf49lkQvg+I0SDgv7GwAgLuiFfcNQ0/0uvBw/h+HAfaXF3NKkmGQWYd7YpMpF
+         MNcQ==
+X-Gm-Message-State: APjAAAVORKD8jhupMcRyher6vtnVC+4fzc4OZV2UkpyQFry1ecGT2f3T
+        Ped6QZuVnnH8JfxgC3rAMbl1VvXLMj3dNBI=
+X-Google-Smtp-Source: APXvYqxPytptLgvCOeDIY8GJeYREKZybdYA2zNzqFDpmj8uJG4bTWCrOZJ7jIuAoqRo47+i8Apc/fTaIZr2pw90=
+X-Received: by 2002:a63:9d85:: with SMTP id i127mr25739436pgd.186.1579009285567;
+ Tue, 14 Jan 2020 05:41:25 -0800 (PST)
+Date:   Tue, 14 Jan 2020 21:41:01 +0800
+Message-Id: <20200114134101.159194-1-liumartin@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+Subject: [PATCH] dma-buf: support 32bit DMA_BUF_SET_NAME ioctl
+From:   Martin Liu <liumartin@google.com>
+To:     sumit.semwal@linaro.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liumartin@google.com, jenhaochen@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 04:24:34PM +0300, Sudarikov, Roman wrote:
+This commit adds SET_NAME ioctl coversion to
+support 32 bit ioctl.
 
-SNIP
+Signed-off-by: Martin Liu <liumartin@google.com>
+---
+ drivers/dma-buf/dma-buf.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-> > >   {
-> > >   	struct intel_uncore_pmu *pmus;
-> > > @@ -950,10 +976,19 @@ static int __init uncore_type_init(struct intel_uncore_type *type, bool setid)
-> > >   			attr_group->attrs[j] = &type->event_descs[j].attr.attr;
-> > >   		type->events_group = &attr_group->group;
-> > > -	}
-> > > +	} else
-> > > +		type->events_group = &empty_group;
-> > Why???
-> Hi Greg,
-> 
-> Technically, what I'm trying to do is to add an attribute which depends on
-> the uncore pmu type and BIOS support. New attribute is added to the end of
-> the attribute groups array. It appears that the events attribute group is
-> optional for most of the uncore pmus for x86/intel, i.e. events_group =
-> NULL.
-> 
-> NULL element in the middle of the attribute groups array "hides" all others
-> attribute groups which follows that element.
-> 
-> To work around it, embedded NULL elements should be either removed from
-> the attribute groups array [1] or replaced with empty attribute; see
-> implementation above.
-> 
-> If both approaches are incorrect then please advice what would be correct
-> solution for that case.
-
-hi,
-I think Greg is reffering to the recent cleanup where we used attribute
-groups with is_vissible callbacks, you can check changes below:
-
-b7c9b3927337 perf/x86/intel: Use ->is_visible callback for default group
-6a9f4efe78af perf/x86: Use update attribute groups for default attributes
-b657688069a2 perf/x86/intel: Use update attributes for skylake format
-3ea40ac77261 perf/x86: Use update attribute groups for extra format
-1f157286829c perf/x86: Use update attribute groups for caps
-baa0c83363c7 perf/x86: Use the new pmu::update_attrs attribute group
-
-jirka
-
-> 
-> [1] https://lore.kernel.org/lkml/20191210091451.6054-3-roman.sudarikov@linux.intel.com/
-> 
-> Thanks,
-> Roman
-> > Didn't we fix up the x86 attributes to work properly and not mess around
-> > with trying to merge groups and the like?  Please don't perpetuate that
-> > more...
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> 
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index ce41cd9b758a..a73048b34843 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -25,6 +25,7 @@
+ #include <linux/mm.h>
+ #include <linux/mount.h>
+ #include <linux/pseudo_fs.h>
++#include <linux/compat.h>
+ 
+ #include <uapi/linux/dma-buf.h>
+ #include <uapi/linux/magic.h>
+@@ -409,13 +410,32 @@ static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
+ 	dma_resv_unlock(dmabuf->resv);
+ }
+ 
++#ifdef CONFIG_COMPAT
++static long dma_buf_ioctl_compat(struct file *file, unsigned int cmd,
++				 unsigned long arg)
++{
++	switch (_IOC_NR(cmd)) {
++	case _IOC_NR(DMA_BUF_SET_NAME):
++		/* Fix up pointer size*/
++		if (_IOC_SIZE(cmd) == sizeof(compat_uptr_t)) {
++			cmd &= ~IOCSIZE_MASK;
++			cmd |= sizeof(void *) << IOCSIZE_SHIFT;
++		}
++		break;
++	}
++	return dma_buf_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ static const struct file_operations dma_buf_fops = {
+ 	.release	= dma_buf_release,
+ 	.mmap		= dma_buf_mmap_internal,
+ 	.llseek		= dma_buf_llseek,
+ 	.poll		= dma_buf_poll,
+ 	.unlocked_ioctl	= dma_buf_ioctl,
+-	.compat_ioctl	= compat_ptr_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= dma_buf_ioctl_compat,
++#endif
+ 	.show_fdinfo	= dma_buf_show_fdinfo,
+ };
+ 
+-- 
+2.25.0.rc1.283.g88dfdc4193-goog
 
