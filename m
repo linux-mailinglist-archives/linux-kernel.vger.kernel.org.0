@@ -2,65 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A4D13A8D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 12:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D8ED13A8E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 13:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729683AbgANL4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 06:56:50 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9172 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725956AbgANL4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 06:56:50 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D9E49CC318F77E6BF210;
-        Tue, 14 Jan 2020 19:56:46 +0800 (CST)
-Received: from huawei.com (10.175.107.192) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 Jan 2020
- 19:56:38 +0800
-From:   wanghongzhe <wanghongzhe@huawei.com>
-To:     <peterhuewe@gmx.de>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhangchenfeng1@huawei.com>, <wanghongzhe@huawei.com>
-Subject: [PATCH] tpm: tpm_tis_spi: set cs_change = 0 when timesout
-Date:   Tue, 14 Jan 2020 20:31:59 +0800
-Message-ID: <1579005119-16318-1-git-send-email-wanghongzhe@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1729308AbgANMBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 07:01:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40614 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbgANMBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 07:01:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id BC840AE34;
+        Tue, 14 Jan 2020 12:01:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5544B1E0D0E; Tue, 14 Jan 2020 13:01:38 +0100 (CET)
+Date:   Tue, 14 Jan 2020 13:01:38 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [WIP PATCH 1/4] udf: Do not access LVIDIU revision members when
+ they are not filled
+Message-ID: <20200114120138.GH6466@quack2.suse.cz>
+References: <20200112175933.5259-1-pali.rohar@gmail.com>
+ <20200112175933.5259-2-pali.rohar@gmail.com>
+ <20200113120049.GF23642@quack2.suse.cz>
+ <20200113183728.ucuidmverddt4nme@pali>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.107.192]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200113183728.ucuidmverddt4nme@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-when i reach TPM_RETRY, the cs cannot  change back to 'high'.So the TPM chips thinks this communication is not over. 
-And next times communication cannot be effective because the communications mixed up with the last time.
+On Mon 13-01-20 19:37:28, Pali Rohár wrote:
+> On Monday 13 January 2020 13:00:49 Jan Kara wrote:
+> > On Sun 12-01-20 18:59:30, Pali Rohár wrote:
+> > > minUDFReadRev, minUDFWriteRev and maxUDFWriteRev members were introduced in
+> > > UDF 1.02. Previous UDF revisions used that area for implementation specific
+> > > data. So in this case do not touch these members.
+> > > 
+> > > To check if LVIDIU contain revisions members, first read UDF revision from
+> > > LVD. If revision is at least 1.02 LVIDIU should contain revision members.
+> > > 
+> > > This change should fix mounting UDF 1.01 images in R/W mode. Kernel would
+> > > not touch, read overwrite implementation specific area of LVIDIU.
+> > > 
+> > > Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+> > 
+> > Maybe we could store the fs revision in the superblock as well to avoid
+> > passing the udf_rev parameter?
+> 
+> Unfortunately not. Function udf_verify_domain_identifier() is called
+> also when parsing FSD. FSD is stored on partition map and e.g. Metadata
+> partition map depends on UDF revision. So it is not a good idea to
+> overwrite UDF revision from FSD. This is reason why I decided to use
+> initial UDF revision number only from LVD.
+> 
+> But whole stuff around UDF revision is a mess. UDF revision is stored on
+> these locations:
+> 
+> main LVD
+> reserve LVD
+> main IUVD
+> reserve IUVD
+> FSD
+> 
+> And optionally (when specific UDF feature is used) also on:
+> 
+> sparable partition map 1.50+
+> virtual partition map 1.50+
+> all sparing tables 1.50+
+> VAT 1.50
+> 
+> Plus tuple minimal read, minimal write, maximal write UDF revision is
+> stored on:
+> 
+> LVIDIU 1.02+
+> VAT 2.00+
+> 
+> VAT in 2.00+ format overrides information stored on LVIDIU.
 
-Signed-off-by: wanghongzhe <wanghongzhe@huawei.com>
----
- drivers/char/tpm/tpm_tis_spi.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks for the summary. This is indeed a mess in the standard so let's not
+overcomplicate it. I agree with just taking the revision from 'main LVD'
+and storing it in the superblock like you do in this patch. I'd just
+slightly change your code so that extracting a revision from 'struct regid'
+is a separate function and not "hidden" inside
+udf_verify_domain_identifier(). There's no strong reason for combining
+these two.
 
-diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-index d1754fd..a1ae4f6 100644
---- a/drivers/char/tpm/tpm_tis_spi.c
-+++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -67,7 +67,14 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
- 		}
- 
- 		if (i == TPM_RETRY)
-+ 		{
-+ 			spi_xfer.cs_change = 0;
-+ 			spi_xfer->len = 1;
-+ 			spi_message_init(&m);
-+ 			spi_message_add_tail(spi_xfer, &m);
-+ 			ret = spi_sync_locked(phy->spi_device, &m);
- 			return -ETIMEDOUT;
-+ 		}
- 	}
- 
- 	return 0;
+WRT parsing of minUDFReadRev and friends, I'd handle them similarly to
+numDirs and numFiles. I'd initialize them to the version we've got from
+LVD, then possibly override them in udf_load_logicalvolint(), and finally
+possibly override them in udf_load_vat().
+
+								Honza
 -- 
-1.7.12.4
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
