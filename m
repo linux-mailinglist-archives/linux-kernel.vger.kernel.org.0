@@ -2,109 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5149C139E3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECFFB139E21
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:25:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbgANAaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 19:30:20 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37627 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729052AbgANAaT (ORCPT
+        id S1729140AbgANAZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 19:25:30 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34495 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726536AbgANAZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:30:19 -0500
-Received: by mail-ot1-f68.google.com with SMTP id k14so10892639otn.4
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 16:30:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fTr7T7GJceLoLFzB5OjtrxDOobOt56IiyvMJHYGzl0w=;
-        b=ugkEd3IL0pF+1nUpxO7KEYhAIB2uLDld0KuSZ4/TtTVx+P+vHOxfWTRjxNjfSuOkIG
-         uWwjHyR0D7avFkxYRWoZWlZdd288a6kRiUt3THiQUvadM8rSmH9KmC3y0Mo1oB3Q3Yjk
-         SzS9+JEIoAoCPJFbdVogdao21/fInopH8Rurjp9euR74rpsY1Yg9p4Ua0fjJkLEjFrOs
-         F7WoMLIq7517czWj9AzbV68nWzVk80Pt6kAHOg49U8ltDtajqKXIzn1tr5y9iKd4Xjse
-         DM2VogNiFCfwolyf9ESvANiuAfMWvok4pb0DVudy6wqEstMeeSFOwJ2IOQUNuMHDTN6b
-         k8Eg==
-X-Gm-Message-State: APjAAAXO85xoG9UnqtzMFv4ElknpTb/jSmFulfeaS+HAJZdYMi7T80xt
-        AMK72gogaAiXjDAQTgAbDyFuMLDtJg==
-X-Google-Smtp-Source: APXvYqwaDEwe8dwKgTEuyVExUTpL9d68u600aB7rNgMBVJbjVzYkufIiNpzTq/nqw5kx7cJ3KN00Ww==
-X-Received: by 2002:a05:6830:451:: with SMTP id d17mr14322624otc.53.1578961818586;
-        Mon, 13 Jan 2020 16:30:18 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k17sm4118401oic.45.2020.01.13.16.30.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 16:30:18 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 223ddc
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 13 Jan 2020 18:24:15 -0600
-Date:   Mon, 13 Jan 2020 18:24:15 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        vkoul@kernel.org, eugen.hristev@microchip.com, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        mchehab@kernel.org, lee.jones@linaro.org,
-        radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
-        tudor.ambarus@microchip.com, miquel.raynal@bootlin.com,
-        richard@nod.at, vigneshr@ti.com, wg@grandegger.com,
-        mkl@pengutronix.de, a.zummo@towertech.it,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 13/17] dt-bindings: atmel-usart: remove wildcard
-Message-ID: <20200114002415.GA18336@bogus>
-References: <1578673089-3484-1-git-send-email-claudiu.beznea@microchip.com>
- <1578673089-3484-14-git-send-email-claudiu.beznea@microchip.com>
+        Mon, 13 Jan 2020 19:25:29 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7F7657699;
+        Mon, 13 Jan 2020 19:25:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 13 Jan 2020 19:25:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09AfyreM=; b=I2KNDFPfO4++5woh
+        Cv9+FYDbg0wzwLTavX3kLx+EHn8Q18NuIs+jqQWuarjw1NE+Zr5ih3Aqffp5KVvZ
+        kDOiTi6mlgNgi2nc9al6pJgd+oLGc0vkHEREjILC+Va3hddW/B98Mg4b9DqBXQGZ
+        ashy5rq75a3k85pz3ZxNirx/Sih4BWJhq8ck4j+LeFyHum/4jHodx2gXZdTJHyyF
+        DYBJMTKR4x0Jz5WY3jCeiDSEmRMGh0KK3Ji3CGXQ8s0RYEV6KPX4FYMMre05AAqi
+        D6Y5h5R7wxUt1oztN99McV+kgUrg82l+XrLd+0TaAvk2j1KL4ahYlpGewQQsrTJ9
+        hdix3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=XFMTDBtfZHyOed7ZfNLbmx3RNw8tsdJDO4d09Afyr
+        eM=; b=FvAfXkVhBHwCnEjEnIhffwPCShG13/kCORFDhQUOK8FfZVCXc3t4co4rU
+        kwFyOB7c3TSO347gZaoWx6HiCp/hSHVnGtixPTiM75Cv3RHuC5R4uYXOZHl1+cqX
+        oaAEF/1RWSCvuXqnM7JkyubPOrN5vDHeDo2sDzfFvFH3yX1LylQLMIemTnvofyW5
+        khaaXwkhBL3U9BE4tL60xIJXYCTojno+VysAQ90vHEAYNcH8/cgVQNXTuUjpKMd6
+        M9Ukdh4ZTi6+6lXUrBw04KyMavKgBOYNfN6Ii+QHcetTfv6xjbW0E84eisU4euOt
+        FHIjykuHyaccKrUitVlB1qjxwIyrQ==
+X-ME-Sender: <xms:dwodXpWP-PAZ8T_JYYRYRU5ZMicpYKidZXY3DZlDytKoUsePwM5oDA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
+    drudejhedrvdehnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgr
+    fidrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:dwodXsAsuu8nva3t4h-3fEN2U5lV_ZCnBr8eIrbfceQMO4BDdzz1Lg>
+    <xmx:dwodXjFvriQIKE7K-SUPP8Ps_oonmO-5papqb1mtcOMHocMhw2ZHhA>
+    <xmx:dwodXrdOPsxQaFwEHjUakg6WPVod0GWiD2M_YPTQq2ZEcTySZggaCg>
+    <xmx:eAodXivqthC1ZIwAIcCOasT42x8LlItV_-Uw9j_7c7lwa7hFyX1giA>
+Received: from mickey.themaw.net (unknown [118.209.175.25])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B008E30607B4;
+        Mon, 13 Jan 2020 19:25:22 -0500 (EST)
+Message-ID: <19fa114ef619057c0d14dc1a587d0ae9ad67dc6d.camel@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        stable <stable@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 14 Jan 2020 08:25:19 +0800
+In-Reply-To: <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
+References: <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+         <20200101234009.GB8904@ZenIV.linux.org.uk>
+         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+         <20200103014901.GC8904@ZenIV.linux.org.uk>
+         <20200108031314.GE8904@ZenIV.linux.org.uk>
+         <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
+         <20200108213444.GF8904@ZenIV.linux.org.uk>
+         <CAHk-=wiq11+thoe60qhsSHk_nbRF2TRL1Wnf6eHcYObjhJmsww@mail.gmail.com>
+         <20200110041523.GK8904@ZenIV.linux.org.uk>
+         <979cf680b0fbdce515293a3449d564690cde6a3f.camel@themaw.net>
+         <20200112213352.GP8904@ZenIV.linux.org.uk>
+         <800d36a0dccd43f1b61cab6332a6252ab9aab73c.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578673089-3484-14-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 06:18:05PM +0200, Claudiu Beznea wrote:
-> Remove chip whildcard and introduce the list of compatibles instead.
+On Mon, 2020-01-13 at 10:59 +0800, Ian Kent wrote:
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/mfd/atmel-usart.txt | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 3) is _anything_ besides root directory ever created in direct
+> > autofs
+> > superblocks by anyone?  If not, why does autofs_lookup() even
+> > bother
+> > to
+> > do anything there?  IOW, why not have it return ERR_PTR(-ENOENT)
+> > immediately
+> > for direct ones?  Or am I missing something and it is, in fact,
+> > possible
+> > to have the daemon create something in those?
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/atmel-usart.txt b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> index 699fd3c9ace8..09013c49f6cc 100644
-> --- a/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> +++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> @@ -1,10 +1,11 @@
->  * Atmel Universal Synchronous Asynchronous Receiver/Transmitter (USART)
->  
->  Required properties for USART:
-> -- compatible: Should be "atmel,<chip>-usart" or "atmel,<chip>-dbgu"
-> -  The compatible <chip> indicated will be the first SoC to support an
-> -  additional mode or an USART new feature.
-> -  For the dbgu UART, use "atmel,<chip>-dbgu", "atmel,<chip>-usart"
-> +- compatible: Should be one of the following:
-> +	- "atmel,at91rm9200-usart"
-> +	- "atmel,at91sam9260-usart"
-> +	- "atmel,at91rm9200-dbgu"
-> +	- "atmel,at91sam9260-dbgu"
-
-Should be:
-
-"atmel,at91rm9200-dbgu", "atmel,at91rm9200-usart"
-"atmel,at91sam9260-dbgu", "atmel,at91sam9260-usart"
-
->  - reg: Should contain registers location and length
->  - interrupts: Should contain interrupt
->  - clock-names: tuple listing input clock names.
-> -- 
-> 2.7.4
+> Short answer is no, longer answer is directories "shouldn't" ever
+> be created inside direct mount points.
 > 
+> The thing is that the multi-mount map construct can be used with
+> direct mounts too, but they must always have a real mount at the
+> base because they are direct mounts. So processes should not be
+> able to walk into them while they are being mounted (constructed).
+> 
+> But I'm pretty sure it's rare (maybe not done at all) that this
+> map construct is used with direct mounts.
+
+This isn't right.
+
+There's actually nothing stopping a user from using a direct map
+entry that's a multi-mount without an actual mount at its root.
+So there could be directories created under these, it's just not
+usually done.
+
+I'm pretty sure I don't check and disallow this.
+
+Ian
+
