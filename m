@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B11E913AE7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F87C13AEA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgANQJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:09:24 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37508 "EHLO
+        id S1729439AbgANQKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:10:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37512 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728929AbgANQJX (ORCPT
+        with ESMTP id S1728943AbgANQJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Jan 2020 11:09:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,25 +18,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=FtjWDnF1Kar+1LXTdsMn9cWyX+PRtDjdGAMpdHfwvE8=; b=jiEvTaqdwpuW
-        W8ZkPAlaLTiEgNqB77n1RVV7SsDhjNmfDziA2hpK3fdwMzr11UdxaphfK+85J3WYToBOyQVvwh9Vo
-        W5+aIuf3vhXASqQ9TYSM3ZyB2fEFwKmPwUoYeHZzGPNA6rDBYgQHqSSPkHo1MHgf6TU/iJXPGI5M4
-        rzn80=;
+        List-Archive; bh=dxOH+M7gS9ZRsnyVhrWwBGhTEmsCg5fPIzt8wRWSCxE=; b=lZRN/UqBLxez
+        hGGE16rR/Gw/s7hU3TswScmUuMoPdjxsLDTLpt0IIFCK6zzHWgc7bD2kVwv3poREp4Tvf7jrHeguA
+        mesaJXftv68PB2uJXvNv+zV6w2RTHn5K6Hgu0P4wpgiN7fBDgJ5M+obPXd84Bc8x5coHQ1EKhExoE
+        YhguY=;
 Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1irOkq-0001Yd-40; Tue, 14 Jan 2020 16:09:20 +0000
+        id 1irOkq-0001Yi-8B; Tue, 14 Jan 2020 16:09:20 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id C77ECD02C77; Tue, 14 Jan 2020 16:09:19 +0000 (GMT)
+        id E9452D02C7B; Tue, 14 Jan 2020 16:09:19 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
         Mantas Pucka <mantas@8devices.com>,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: vqmmc-ipq4019: Trivial clean up" to the regulator tree
-In-Reply-To: <20200114065847.31667-2-axel.lin@ingics.com>
-Message-Id: <applied-20200114065847.31667-2-axel.lin@ingics.com>
+Subject: Applied "regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove" to the regulator tree
+In-Reply-To: <20200114065847.31667-1-axel.lin@ingics.com>
+Message-Id: <applied-20200114065847.31667-1-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
 Date:   Tue, 14 Jan 2020 16:09:19 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: vqmmc-ipq4019: Trivial clean up
+   regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove
 
 has been applied to the regulator tree at
 
@@ -71,53 +71,49 @@ to this mail.
 Thanks,
 Mark
 
-From f72c5835509109715a8d8f0d98fddef089b3a4d8 Mon Sep 17 00:00:00 2001
+From d47e4f978f2a2c0ffce543e58d30a00d1f850727 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 14 Jan 2020 14:58:47 +0800
-Subject: [PATCH] regulator: vqmmc-ipq4019: Trivial clean up
+Date: Tue, 14 Jan 2020 14:58:46 +0800
+Subject: [PATCH] regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove
 
-A few trivial clean up:
-* Make ipq4019_regulator_voltage_ops and vmmc_regulator const
-* Make ipq4019_vmmcq_regmap_config static
-* Use regulator_map_voltage_ascend
+This driver is using devm_regulator_register() so no need to call
+regulator_unregister() in ipq4019_regulator_remove().
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20200114065847.31667-2-axel.lin@ingics.com
+Link: https://lore.kernel.org/r/20200114065847.31667-1-axel.lin@ingics.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/vqmmc-ipq4019-regulator.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/regulator/vqmmc-ipq4019-regulator.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
 diff --git a/drivers/regulator/vqmmc-ipq4019-regulator.c b/drivers/regulator/vqmmc-ipq4019-regulator.c
-index 42a2368e9ef7..685b585b39a1 100644
+index dae16094d3a2..42a2368e9ef7 100644
 --- a/drivers/regulator/vqmmc-ipq4019-regulator.c
 +++ b/drivers/regulator/vqmmc-ipq4019-regulator.c
-@@ -18,13 +18,14 @@ static const unsigned int ipq4019_vmmc_voltages[] = {
- 	1500000, 1800000, 2500000, 3000000,
- };
+@@ -81,15 +81,6 @@ static int ipq4019_regulator_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
--static struct regulator_ops ipq4019_regulator_voltage_ops = {
-+static const struct regulator_ops ipq4019_regulator_voltage_ops = {
- 	.list_voltage = regulator_list_voltage_table,
-+	.map_voltage = regulator_map_voltage_ascend,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
- };
+-static int ipq4019_regulator_remove(struct platform_device *pdev)
+-{
+-	struct regulator_dev *rdev = platform_get_drvdata(pdev);
+-
+-	regulator_unregister(rdev);
+-
+-	return 0;
+-}
+-
+ static const struct of_device_id regulator_ipq4019_of_match[] = {
+ 	{ .compatible = "qcom,vqmmc-ipq4019-regulator", },
+ 	{},
+@@ -97,7 +88,6 @@ static const struct of_device_id regulator_ipq4019_of_match[] = {
  
--static struct regulator_desc vmmc_regulator = {
-+static const struct regulator_desc vmmc_regulator = {
- 	.name		= "vmmcq",
- 	.ops		= &ipq4019_regulator_voltage_ops,
- 	.type		= REGULATOR_VOLTAGE,
-@@ -35,7 +36,7 @@ static struct regulator_desc vmmc_regulator = {
- 	.vsel_mask	= 0x3,
- };
- 
--const struct regmap_config ipq4019_vmmcq_regmap_config = {
-+static const struct regmap_config ipq4019_vmmcq_regmap_config = {
- 	.reg_bits	= 32,
- 	.reg_stride	= 4,
- 	.val_bits	= 32,
+ static struct platform_driver ipq4019_regulator_driver = {
+ 	.probe = ipq4019_regulator_probe,
+-	.remove = ipq4019_regulator_remove,
+ 	.driver = {
+ 		.name = "vqmmc-ipq4019-regulator",
+ 		.owner = THIS_MODULE,
 -- 
 2.20.1
 
