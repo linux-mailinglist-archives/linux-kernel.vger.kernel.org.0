@@ -2,219 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8199213B4F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 22:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ECC413B50C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 23:04:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbgANV7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 16:59:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33474 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbgANV7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 16:59:31 -0500
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C3024673;
-        Tue, 14 Jan 2020 21:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579039170;
-        bh=zJWCWSOhHDeEqNF2yErLCC2xC0maaTa3qYu5FhuOrh8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MsxBFZ1sSqm0ONGM+VzeO01CT3AFqKClr8dIYzHrYGReVdFEiaOG3tA9Yhj8qpCQo
-         8Wx6wN11xc8saLCW00kPko8DwdFnhakLEL6Szm2xnn26iE1a27+dvTAmLLGopZ8p+1
-         r/tSFPNF8wX/35xMMEMKTzGE1rWGs0AwxAoeBVG8=
-Received: by mail-qv1-f54.google.com with SMTP id dp13so6434035qvb.7;
-        Tue, 14 Jan 2020 13:59:30 -0800 (PST)
-X-Gm-Message-State: APjAAAWlYbidPYhkwxXxU/qv1qPx7n1xbZOFYDTS4/flLtNuKL0qBOJ1
-        7ieAFf82cmyAUACz9OVgt4eBoOJFE7767fSu0g==
-X-Google-Smtp-Source: APXvYqwq7E+CYgVOvhkNu4ZwbkCIUECyJO9AoKk6K3ct3z+22Upakg4Zec8xFRF4mmPeyUbM0xZt2DUav5zMOi1Fn3c=
-X-Received: by 2002:a0c:f6cd:: with SMTP id d13mr22537735qvo.20.1579039169569;
- Tue, 14 Jan 2020 13:59:29 -0800 (PST)
+        id S1727073AbgANWEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 17:04:24 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:34203 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbgANWEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 17:04:13 -0500
+Received: by mail-io1-f70.google.com with SMTP id n26so9036362ioj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 14:04:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=OMN3C/VoYyKIvwTqw2B7b50mrKvNUjoFBtsQzpL17pw=;
+        b=B1G8sEkgupTKBPtlLAQQPBOMifRAWV6CYkixd8QTkb1dAfSCMWHgnBdbbmiLPYzvCJ
+         mwdcBmmXAwPIjN8m8vWOzw/+2v54ZIpaz8/Ovr8arZtOEwcAThXvdmCZknVi9TWZq0fQ
+         Q9egnvFwzU3ipFUPOC/olxtwuBnh0eZeOqqTG9z7U83oDTZdat3b6l76lKRkAJvst7gF
+         6mGgilecVsMyGM4gRXw7ZtAqm5eT1bhbV8s+mfuIAbnk74C5z0foDyhSnWlpazrLhLJc
+         e0TLWMiTH3VKV4HiQTQcCacSTgRNur2fwyEkwGtqD60EjWcs6h3UkkARfdQG634sW8Td
+         dGbA==
+X-Gm-Message-State: APjAAAWs9oWs5cq/GeEv/PYA+eC0uD4CXENYml0EKPHTWWUYyOhlkdYP
+        WhUygXkFaRl62fES2M8hSsAZkdLPoqGwVpHE4z+QrhoPrkEV
+X-Google-Smtp-Source: APXvYqwT5gXgVOW2dudlVYr3OrjQUlenltw3HdN1hwCoQje3ZeeWmf8prgS/U+Qse+oz3HaCUTBqLCpufZngjUDXwJlPy1cnd1QE
 MIME-Version: 1.0
-References: <20191127105522.31445-1-miquel.raynal@bootlin.com>
- <20191127105522.31445-5-miquel.raynal@bootlin.com> <20191209113506.41341ed4@collabora.com>
- <CAL_JsqJP3-h7bPAommzt7KQKoohZpkk=RMxfN1j3rXbisD4eCA@mail.gmail.com> <20200114191052.0a16d116@xps13>
-In-Reply-To: <20200114191052.0a16d116@xps13>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 14 Jan 2020 15:59:18 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLp6++g9ArSm9guuHeywETanCaLvSKVmV3vV5EYfvUDvg@mail.gmail.com>
-Message-ID: <CAL_JsqLp6++g9ArSm9guuHeywETanCaLvSKVmV3vV5EYfvUDvg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] mtd: Add driver for concatenating devices
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Bernhard Frauendienst <kernel@nospam.obeliks.de>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a92:cd07:: with SMTP id z7mr583436iln.124.1579039452376;
+ Tue, 14 Jan 2020 14:04:12 -0800 (PST)
+Date:   Tue, 14 Jan 2020 14:04:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a539c1059c20c5aa@google.com>
+Subject: WARNING: refcount bug in free_nsproxy (2)
+From:   syzbot <syzbot+a98eee31f5df4261d88c@syzkaller.appspotmail.com>
+To:     allison@lohutok.net, armijn@tjaldur.nl, ast@kernel.org,
+        bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jakub.kicinski@netronome.com,
+        jhs@mojatatu.com, jiri@resnulli.us, kafai@fb.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, xiyou.wangcong@gmail.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 12:11 PM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
->
-> Hi Rob,
->
-> Rob Herring <robh+dt@kernel.org> wrote on Tue, 14 Jan 2020 11:46:18
-> -0600:
->
-> > On Mon, Dec 9, 2019 at 4:35 AM Boris Brezillon
-> > <boris.brezillon@collabora.com> wrote:
-> > >
-> > > On Wed, 27 Nov 2019 11:55:22 +0100
-> > > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> > >
-> > > > Introduce a generic way to define concatenated MTD devices. This may
-> > > > be very useful in the case of ie. stacked SPI-NOR. Partitions to
-> > > > concatenate are described in an additional property of the partitions
-> > > > subnode:
-> > > >
-> > > >         flash0 {
-> > > >                 partitions {
-> > > >                         compatible = "fixed-partitions";
-> > > >                         part-concat = <&flash0_part1>, <&flash1_part0>;
-> > > >
-> > > >                       part0@0 {
-> > > >                               label = "part0_0";
-> > > >                               reg = <0x0 0x800000>;
-> > > >                       };
-> > > >
-> > > >                       flash0_part1: part1@800000 {
-> > > >                               label = "part0_1";
-> > > >                               reg = <0x800000 0x800000>;
-> > >
-> > > So, flash0_part1 and flash0_part2 will be created even though the user
-> > > probably doesn't need them?
-> >
-> > I don't follow?
->
-> Well, one will have to create "fake" partitions in order to concatenate
-> them with this solution, instead of just concatenating the devices (in
-> the case where you want to concatenate the entire devices). But the real
-> debate is below, on the representation.
+Hello,
 
-So concatenating multiple devices without partitions defined in DT? To
-support that, then we need to link flash nodes rather than partition
-nodes.
+syzbot found the following crash on:
 
-> > > >                       };
-> > > >                 };
-> > > >         };
-> > > >
-> > > >         flash1 {
-> > > >                 partitions {
-> > > >                         compatible = "fixed-partitions";
-> > > >
-> > > >                       flash0_part1: part1@0 {
-> > > >                               label = "part1_0";
-> > > >                               reg = <0x0 0x800000>;
-> > > >                       };
-> > > >
-> > > >                       part0@800000 {
-> > > >                               label = "part1_1";
-> > > >                               reg = <0x800000 0x800000>;
-> > > >                       };
-> > > >                 };
-> > > >         };
-> > >
-> > > IMHO this representation is far from intuitive. At first glance it's not
-> > > obvious which partitions are linked together and what's the name of the
-> > > resulting concatenated part. I definitely prefer the solution where we
-> > > have a virtual device describing the concatenation. I also understand
-> > > that this goes against the #1 DT rule: "DT only decribes HW blocks, not
-> > > how they should be used/configured", but maybe we can find a compromise
-> > > here, like moving this description to the /chosen node?
-> > >
-> > > chosen {
-> > >         flash-arrays {
-> > >                 /*
-> > >                  * my-flash-array is the MTD name if label is
-> > >                  * not present.
-> > >                  */
-> > >                 my-flash-array {
-> > >                         /*
-> > >                          * We could have
-> > >                          * compatible = "flash-array";
-> > >                          * but we can also do without it.
-> > >                          */
-> > >                         label = "foo";
-> > >                         flashes = <&flash1 &flash2 ...>;
-> > >                         partitions {
-> > >                                 /* usual partition description. */
-> > >                                 ...
-> > >                         };
-> > >                 };
-> > >         };
-> > > };
-> > >
-> > > Rob, what do you think?
-> >
-> > I don't think chosen is the right place to put all the partition
-> > information. It's not something the bootloader configures.
-> >
-> > This suffers from the same issue I have with the original proposal. It
-> > will not work for existing s/w. There's only 1 logical partition that
->
-> I don't get why it would not work? Current hardware will just not have
-> the concatenation support, that's all. How is this a problem?
+HEAD commit:    6c09d7db Add linux-next specific files for 20200110
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=102b2156e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7dc7ab9739654fbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=a98eee31f5df4261d88c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162f16aee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13457571e00000
 
-No one has multiple flash devices on any h/w already? If I already
-have a working system that can load and boot a kernel off an MTD
-partition, but could benefit from concatenating other partitions (i.e.
-rootfs), why should I have to modify my bootloader(s)?
+The bug was bisected to:
 
-> > concatenated. The rest of the partitions shouldn't need any special
-> > handling. So we really only need some way to say 'link these 2
-> > partitions into 1 logical partition'. Though perhaps one could want to
-> > combine any number of physical partitions into logical partitions, but
-> > then none of the proposals could support that. Then again, maybe
->
-> Yes, the flash-array proposal supports having more than two
-> partitions/devices concatenated, it is also already supported by the
-> driver (you don't care about this, but I do :) ).
+commit 14215108a1fd7e002c0a1f9faf8fbaf41fdda50d
+Author: Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu Feb 21 05:37:42 2019 +0000
 
-I meant for N devices, you'd only have at most N-1 concatenated
-partitions as there are N-1 device boundaries. Whereas you could
-define any partition could be combined with any other number of
-partitions regardless of where they lie. The types of things you can
-do with LVM and disk partitions is what I'm thinking of.
+     net_sched: initialize net pointer inside tcf_exts_init()
 
-> > that's a userspace problem like with disks.
->
-> I see one big issue with this solution: what about bootloaders?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1063da9ee00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1263da9ee00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1463da9ee00000
 
-Similar to how it works with disks. Bootloaders (at a minimum)
-understand physical partitions. Later stages understand logical
-partitions.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a98eee31f5df4261d88c@syzkaller.appspotmail.com
+Fixes: 14215108a1fd ("net_sched: initialize net pointer inside  
+tcf_exts_init()")
 
-> The root cause for such idea is that, in my case, the 2 MTD devices are
-> too small to contain the images needed to boot. The perfect solution is
-> to merge the two devices virtually in one single device and let U-Boot
-> read it like one.
+R13: 0000000000000008 R14: 0000000000000000 R15: 0000000000000000
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 1 PID: 9780 at lib/refcount.c:28  
+refcount_warn_saturate+0x1dc/0x1f0 lib/refcount.c:28
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 9780 Comm: syz-executor174 Not tainted  
+5.5.0-rc5-next-20200110-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  panic+0x2e3/0x75c kernel/panic.c:221
+  __warn.cold+0x2f/0x3e kernel/panic.c:582
+  report_bug+0x289/0x300 lib/bug.c:195
+  fixup_bug arch/x86/kernel/traps.c:176 [inline]
+  fixup_bug arch/x86/kernel/traps.c:171 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:269
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:288
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+RIP: 0010:refcount_warn_saturate+0x1dc/0x1f0 lib/refcount.c:28
+Code: e9 d8 fe ff ff 48 89 df e8 b1 a6 13 fe e9 85 fe ff ff e8 47 6e d5 fd  
+48 c7 c7 80 64 91 88 c6 05 4f 5b 00 07 01 e8 e3 f5 a5 fd <0f> 0b e9 ac fe  
+ff ff 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 55 48
+RSP: 0018:ffffc90005fd7cf8 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815e8546 RDI: fffff52000bfaf91
+RBP: ffffc90005fd7d08 R08: ffff8880a65ee500 R09: ffffed1015d26659
+R10: ffffed1015d26658 R11: ffff8880ae9332c7 R12: 0000000000000003
+R13: ffff88809aff6040 R14: ffff88809aff6044 R15: 00000000000002bc
+  refcount_sub_and_test include/linux/refcount.h:261 [inline]
+  refcount_dec_and_test include/linux/refcount.h:281 [inline]
+  put_net include/net/net_namespace.h:259 [inline]
+  free_nsproxy+0x2eb/0x330 kernel/nsproxy.c:180
+  switch_task_namespaces+0xb3/0xd0 kernel/nsproxy.c:225
+  exit_task_namespaces+0x18/0x20 kernel/nsproxy.c:230
+  do_exit+0xbc6/0x2f70 kernel/exit.c:800
+  do_group_exit+0x135/0x360 kernel/exit.c:899
+  __do_sys_exit_group kernel/exit.c:910 [inline]
+  __se_sys_exit_group kernel/exit.c:908 [inline]
+  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:908
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441228
+Code: 74 20 63 6f 64 65 20 62 61 73 65 2e 00 00 00 00 00 00 72 73 79 73 6c  
+6f 67 64 3a 20 24 41 62 6f 72 74 4f 6e 55 6e 63 6c 65 61 <6e> 43 6f 6e 66  
+69 67 20 69 73 20 73 65 74 2c 20 61 6e 64 20 63 6f
+RSP: 002b:00007ffedb54aa88 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000441228
+RDX: 0000000000000001 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00000000004c79d0 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006daa80 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Got any actual h/w that the flash devices are smaller than a
-kernel+ramdisk yet had the $ and board space to put multiple devices
-down?
 
-What about the stages before u-boot? Assume they all use DT, why
-require adding this support before a stage that actually needs it.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> I need to have the same representation both in U-Boot and Linux, hence
-> a userspace tool and a kernel command line argument do not work, right?
-
-I never said u-boot can't gain support for this, it's just requiring
-it to from the start even if you only wanted to have a concatenated
-partition for your rootfs or non-boot partition. Only the kernel would
-need to understand concatenating partitions vs. every component that
-reads the partitions.
-
-Rob
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
