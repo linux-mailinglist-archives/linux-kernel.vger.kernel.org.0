@@ -2,181 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9AD13B330
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8541813B33D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:53:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbgANTtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:49:18 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44841 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728865AbgANTtO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:49:14 -0500
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1irSBc-0005bs-NJ; Tue, 14 Jan 2020 20:49:12 +0100
-Message-Id: <20200114185948.088821198@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Tue, 14 Jan 2020 19:52:52 +0100
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>
-Subject: [patch 15/15] lib/vdso: Move VCLOCK_TIMENS to vdso_clock_modes
-References: <20200114185237.273005683@linutronix.de>
+        id S1728850AbgANTwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:52:50 -0500
+Received: from mga04.intel.com ([192.55.52.120]:35089 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727102AbgANTwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 14:52:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 11:52:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
+   d="scan'208";a="213450054"
+Received: from emkilgox-mobl2.amr.corp.intel.com (HELO [10.251.0.151]) ([10.251.0.151])
+  by orsmga007.jf.intel.com with ESMTP; 14 Jan 2020 11:52:48 -0800
+Subject: Re: [alsa-devel] [PATCH 4/5] soundwire: intel: add sdw_stream_setup
+ helper for .startup callback
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20200110214609.30356-1-pierre-louis.bossart@linux.intel.com>
+ <20200110214609.30356-5-pierre-louis.bossart@linux.intel.com>
+ <20200114061441.GB2818@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <0f9e36f1-2cc7-d9e2-8d35-985b409d9e3a@linux.intel.com>
+Date:   Tue, 14 Jan 2020 12:55:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200114061441.GB2818@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the time namespace indicator clock mode to the other ones for
-consistency sake.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/clocksource.h |    3 +++
- include/vdso/datapage.h     |    2 --
- kernel/time/namespace.c     |    7 ++++---
- lib/vdso/gettimeofday.c     |   18 ++++++++++--------
- 4 files changed, 17 insertions(+), 13 deletions(-)
 
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -34,6 +34,9 @@ enum vdso_clock_mode {
- 	VDSO_ARCH_CLOCKMODES,
- #endif
- 	VDSO_CLOCKMODE_MAX,
-+
-+	/* Indicator for time namespace VDSO */
-+	VDSO_CLOCKMODE_TIMENS = INT_MAX
- };
- 
- /**
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -21,8 +21,6 @@
- #define CS_RAW		1
- #define CS_BASES	(CS_RAW + 1)
- 
--#define VCLOCK_TIMENS	UINT_MAX
--
- /**
-  * struct vdso_timestamp - basetime per clock_id
-  * @sec:	seconds
---- a/kernel/time/namespace.c
-+++ b/kernel/time/namespace.c
-@@ -8,6 +8,7 @@
- #include <linux/user_namespace.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/task.h>
-+#include <linux/clocksource.h>
- #include <linux/seq_file.h>
- #include <linux/proc_ns.h>
- #include <linux/export.h>
-@@ -172,8 +173,8 @@ static struct timens_offset offset_from_
-  * for vdso_data->clock_mode is a non-issue. The task is spin waiting for the
-  * update to finish and for 'seq' to become even anyway.
-  *
-- * Timens page has vdso_data->clock_mode set to VCLOCK_TIMENS which enforces
-- * the time namespace handling path.
-+ * Timens page has vdso_data->clock_mode set to VDSO_CLOCKMODE_TIMENS which
-+ * enforces the time namespace handling path.
-  */
- static void timens_setup_vdso_data(struct vdso_data *vdata,
- 				   struct time_namespace *ns)
-@@ -183,7 +184,7 @@ static void timens_setup_vdso_data(struc
- 	struct timens_offset boottime = offset_from_ts(ns->offsets.boottime);
- 
- 	vdata->seq			= 1;
--	vdata->clock_mode		= VCLOCK_TIMENS;
-+	vdata->clock_mode		= VDSO_CLOCKMODE_TIMENS;
- 	offset[CLOCK_MONOTONIC]		= monotonic;
- 	offset[CLOCK_MONOTONIC_RAW]	= monotonic;
- 	offset[CLOCK_MONOTONIC_COARSE]	= monotonic;
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -116,10 +116,10 @@ static __always_inline int do_hres(const
- 
- 	do {
- 		/*
--		 * Open coded to handle VCLOCK_TIMENS. Time namespace
-+		 * Open coded to handle VDSO_CLOCKMODE_TIMENS. Time namespace
- 		 * enabled tasks have a special VVAR page installed which
- 		 * has vd->seq set to 1 and vd->clock_mode set to
--		 * VCLOCK_TIMENS. For non time namespace affected tasks
-+		 * VDSO_CLOCKMODE_TIMENS. For non time namespace affected tasks
- 		 * this does not affect performance because if vd->seq is
- 		 * odd, i.e. a concurrent update is in progress the extra
- 		 * check for vd->clock_mode is just a few extra
-@@ -128,7 +128,7 @@ static __always_inline int do_hres(const
- 		 */
- 		while (unlikely((seq = READ_ONCE(vd->seq)) & 1)) {
- 			if (IS_ENABLED(CONFIG_TIME_NS) &&
--			    vd->clock_mode == VCLOCK_TIMENS)
-+			    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
- 				return do_hres_timens(vd, clk, ts);
- 			cpu_relax();
- 		}
-@@ -200,12 +200,12 @@ static __always_inline int do_coarse(con
- 
- 	do {
- 		/*
--		 * Open coded to handle VCLOCK_TIMENS. See comment in
-+		 * Open coded to handle VDSO_CLOCK_TIMENS. See comment in
- 		 * do_hres().
- 		 */
- 		while ((seq = READ_ONCE(vd->seq)) & 1) {
- 			if (IS_ENABLED(CONFIG_TIME_NS) &&
--			    vd->clock_mode == VCLOCK_TIMENS)
-+			    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
- 				return do_coarse_timens(vd, clk, ts);
- 			cpu_relax();
- 		}
-@@ -292,7 +292,7 @@ static __maybe_unused int
- 
- 	if (unlikely(tz != NULL)) {
- 		if (IS_ENABLED(CONFIG_TIME_NS) &&
--		    vd->clock_mode == VCLOCK_TIMENS)
-+		    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
- 			vd = __arch_get_timens_vdso_data();
- 
- 		tz->tz_minuteswest = vd[CS_HRES_COARSE].tz_minuteswest;
-@@ -308,7 +308,8 @@ static __maybe_unused __kernel_old_time_
- 	const struct vdso_data *vd = __arch_get_vdso_data();
- 	__kernel_old_time_t t;
- 
--	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VCLOCK_TIMENS)
-+	if (IS_ENABLED(CONFIG_TIME_NS) &&
-+	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
- 		vd = __arch_get_timens_vdso_data();
- 
- 	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
-@@ -333,7 +334,8 @@ int __cvdso_clock_getres_common(clockid_
- 	if (unlikely((u32) clock >= MAX_CLOCKS))
- 		return -1;
- 
--	if (IS_ENABLED(CONFIG_TIME_NS) && vd->clock_mode == VCLOCK_TIMENS)
-+	if (IS_ENABLED(CONFIG_TIME_NS) &&
-+	    vd->clock_mode == VDSO_CLOCKMODE_TIMENS)
- 		vd = __arch_get_timens_vdso_data();
- 
- 	hrtimer_res = READ_ONCE(vd[CS_HRES_COARSE].hrtimer_res);
+>> +	name = kzalloc(32, GFP_KERNEL);
+>> +	if (!name)
+>> +		return -ENOMEM;
+>> +
+>> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+>> +		snprintf(name, 32, "%s-Playback", dai->name);
+>> +	else
+>> +		snprintf(name, 32, "%s-Capture", dai->name);
+> 
+> How about use DAI_SIZE instead of 32 here and above few places? Lets not
+> code number like this please
 
+Yes, thanks for spotting this. kasprintf seems like a better solution I 
+guess, will send a v2.
