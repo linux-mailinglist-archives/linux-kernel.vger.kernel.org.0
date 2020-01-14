@@ -2,78 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C4F913B120
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C286C13B0F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:30:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbgANRiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 12:38:22 -0500
-Received: from bosmailout05.eigbox.net ([66.96.185.5]:53091 "EHLO
-        bosmailout05.eigbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbgANRiW (ORCPT
+        id S1728803AbgANRam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 12:30:42 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48343 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbgANRam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:38:22 -0500
-X-Greylist: delayed 1930 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Jan 2020 12:38:22 EST
-Received: from bosmailscan12.eigbox.net ([10.20.15.12])
-        by bosmailout05.eigbox.net with esmtp (Exim)
-        id 1irPdr-0000Zp-ID
-        for linux-kernel@vger.kernel.org; Tue, 14 Jan 2020 12:06:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=david.com;
-         s=dkim; h=Sender:Content-Transfer-Encoding:Content-Type:MIME-Version:
-        Reply-To:From:Subject:Date:Message-ID:To:Cc:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=WOdlJs5dooiWO5oXeW6FBsXezz+BgdNelVJPm2OSldc=; b=X3sbN0FXOtHzLn6Kw0sUoO2Wv7
-        mK5/chsT+hOMq/cvEGDVyivwt42BbJCuXBq4mE6Mx9u2eKNL0gdruRcPgB5opTp4oob0ywOTxmbHi
-        yK2PAM9NPNh4fBvckap+f7HCkUhxAvuRuHb77NYU8MFBOqe4ZLYqEYRcTzJQSgBRGzQQ19BfoIkY+
-        iHd7nGgWm3nf9oJ8CNBFI+x5rPS4I4uPpNS3DyoSGbXQ2Dbd4hb37oRaqh50NZS7s/4POTqMuMv6k
-        1PaImaaeZa+8EClFoK/lj4EV2y8nX2WWOLwcDiPpwiTdKMqxejjsWVeWt+WRdaExfurFrI/QnI+Dw
-        YCxI0DWA==;
-Received: from [10.115.3.33] (helo=bosimpout13)
-        by bosmailscan12.eigbox.net with esmtp (Exim)
-        id 1irPde-0001qW-M4; Tue, 14 Jan 2020 12:05:58 -0500
-Received: from boswebmail18.eigbox.net ([10.20.16.18])
-        by bosimpout13 with 
-        id qH5N2100Q0PNyma01H5RmR; Tue, 14 Jan 2020 12:05:58 -0500
-X-EN-SP-DIR: OUT
-X-EN-SP-SQ: 1
-Received: from [127.0.0.1] (helo=emailmg.ipower.com)
-        by boswebmail18.eigbox.net with esmtp (Exim)
-        id 1irPd2-0002ah-6X; Tue, 14 Jan 2020 12:05:20 -0500
-Received: from 146.185.28.62
-        (SquirrelMail authenticated user info5@aquesttax.com)
-        by emailmg.ipower.com with HTTP;
-        Tue, 14 Jan 2020 12:05:20 -0500
-Message-ID: <f5cbf3fb0fc2ff06380245acde4b5944.squirrel@emailmg.ipower.com>
-Date:   Tue, 14 Jan 2020 12:05:20 -0500
-Subject: My Regards
-From:   "David Roberts" <info@david.com>
-Reply-To: droberts267@yahoo.com.hk
-User-Agent: SquirrelMail/1.4.19
+        Tue, 14 Jan 2020 12:30:42 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1irQ1V-0003a8-1C; Tue, 14 Jan 2020 18:30:37 +0100
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1irQ1U-00077d-9M; Tue, 14 Jan 2020 18:30:36 +0100
+Date:   Tue, 14 Jan 2020 18:30:36 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     support.opensource@diasemi.com, contact@stefanchrist.eu,
+        Adam.Thomson.Opensource@diasemi.com,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH] watchdog: da9062: make restart handler atomic safe
+Message-ID: <20200114173036.ueepbqf54yzh26lm@pengutronix.de>
+References: <20200113091521.5754-1-m.felsch@pengutronix.de>
+ <20200113202809.GA21484@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain;charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-X-Priority: 3 (Normal)
-Importance: Normal
-X-EN-AuthUser: info5@aquesttax.com
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113202809.GA21484@roeck-us.net>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 18:16:48 up 60 days,  8:35, 57 users,  load average: 0.02, 0.02,
+ 0.01
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On 20-01-13 12:28, Guenter Roeck wrote:
+> On Mon, Jan 13, 2020 at 10:15:21AM +0100, Marco Felsch wrote:
+> > The restart handler is executed during the shutdown phase which is
+> > atomic/irq-less. The i2c framework supports atomic transfers since
+> > commit 63b96983a5dd ("i2c: core: introduce callbacks for atomic
+> > transfers") but unfortunately the regmap framework doesn't support it
+> > yet. Hard coding the i2c stuff can be done without worries since the
+> > DA9062 is an i2c-only device.
+> > 
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> > Hi,
+> > 
+> > This patch is based on Stefan Lengfeld's RFC Patch [1].
+> > 
+> > [1] https://patchwork.ozlabs.org/patch/1085942/
+> > ---
+> >  drivers/watchdog/da9062_wdt.c | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/watchdog/da9062_wdt.c b/drivers/watchdog/da9062_wdt.c
+> > index c9b9d6394525..84c5a0a455b2 100644
+> > --- a/drivers/watchdog/da9062_wdt.c
+> > +++ b/drivers/watchdog/da9062_wdt.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/uaccess.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/i2c.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/jiffies.h>
+> >  #include <linux/mfd/da9062/registers.h>
+> > @@ -149,12 +150,18 @@ static int da9062_wdt_restart(struct watchdog_device *wdd, unsigned long action,
+> >  			      void *data)
+> >  {
+> >  	struct da9062_watchdog *wdt = watchdog_get_drvdata(wdd);
+> > +	struct i2c_client *client = to_i2c_client(wdt->hw->dev);
+> > +	u8 buf[] = {DA9062AA_CONTROL_F, DA9062AA_SHUTDOWN_MASK};
+> > +	struct i2c_msg msg = {
+> > +		.addr = client->addr,
+> > +		.flags = 0,
+> > +		.len = sizeof(buf),
+> > +		.buf = buf,
+> > +	};
+> >  	int ret;
+> >  
+> > -	ret = regmap_write(wdt->hw->regmap,
+> > -			   DA9062AA_CONTROL_F,
+> > -			   DA9062AA_SHUTDOWN_MASK);
+> > -	if (ret)
+> > +	ret = i2c_transfer(client->adapter, &msg, 1);
+> 
+> Why not i2c_smbus_write_byte_data() ? I don't immediately see the difference.
 
+Because I didn't noticed it, sorry. I changed it and notice no
+differences. Thanks for the review =)
 
-Re Compliment
+Regards,
+  Marco
 
-I Have a very important request that make me to contact you; As you
-already know my name is Mr. David L Roberts, I write to seek your
-co-operation over this business proposal worth (Twenty Five Million
-Pounds) do acknowledge and get back to me through my email address:
-david.roberts111@hotmail.com
-
-Warmest Regards
-Mr. David L Roberts
-Lloyds Banking Group plc
-
+> Guenter
+> 
+> > +	if (ret < 0)
+> >  		dev_alert(wdt->hw->dev, "Failed to shutdown (err = %d)\n",
+> >  			  ret);
+> >  
+> > -- 
+> > 2.20.1
+> > 
