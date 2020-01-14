@@ -2,86 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1200313AA21
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5F213AA36
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbgANNDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:03:19 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43274 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729057AbgANNCp (ORCPT
+        id S1729494AbgANNEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:04:09 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:55216 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728841AbgANNEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:02:45 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1irLqD-0004ru-57; Tue, 14 Jan 2020 14:02:41 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 781CB1C0861;
-        Tue, 14 Jan 2020 14:02:24 +0100 (CET)
-Date:   Tue, 14 Jan 2020 13:02:24 -0000
-From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] arm64: compat: vdso: Expose BUILD_VDSO32
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Tue, 14 Jan 2020 08:04:08 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R501e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TnjL6ub_1579007045;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnjL6ub_1579007045)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 14 Jan 2020 21:04:06 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Varad Gautam <vrd@amazon.de>,
+        Amir Goldstein <amir73il@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20190830135902.20861-2-vincenzo.frascino@arm.com>
-References: <20190830135902.20861-2-vincenzo.frascino@arm.com>
-MIME-Version: 1.0
-Message-ID: <157900694432.396.17035298471043626143.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/devpts: remove unused macro PTMX_MINOR
+Date:   Tue, 14 Jan 2020 21:04:03 +0800
+Message-Id: <1579007043-131766-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+This macro are not used anymore from 
+commit 8ead9dd54716 ("devpts: more pty driver interface cleanups")
+So it's better to remove it now.
 
-Commit-ID:     3b5584afeef05319ade0fbf5f634a64fd3e5772b
-Gitweb:        https://git.kernel.org/tip/3b5584afeef05319ade0fbf5f634a64fd3e5772b
-Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate:    Fri, 30 Aug 2019 14:58:55 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 14 Jan 2020 12:20:43 +01:00
-
-arm64: compat: vdso: Expose BUILD_VDSO32
-
-clock_gettime32 and clock_getres_time32 should be compiled only with the
-32 bit vdso library.
-
-Expose BUILD_VDSO32 when arm64 compat is compiled, to provide an
-indication to the generic library to include these symbols.
-
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Link: https://lore.kernel.org/r/20190830135902.20861-2-vincenzo.frascino@arm.com
-
-
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Varad Gautam <vrd@amazon.de> 
+Cc: Amir Goldstein <amir73il@gmail.com> 
+Cc: Thomas Gleixner <tglx@linutronix.de> 
+Cc: linux-kernel@vger.kernel.org 
 ---
- arch/arm64/include/asm/vdso/compat_gettimeofday.h | 1 +
- 1 file changed, 1 insertion(+)
+ fs/devpts/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-index c50ee1b..fe7afe0 100644
---- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-+++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-@@ -17,6 +17,7 @@
- #define VDSO_HAS_CLOCK_GETRES		1
+diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+index 42e5a766d33c..ed1176682845 100644
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@ -33,7 +33,6 @@
+  * permissions.
+  */
+ #define DEVPTS_DEFAULT_PTMX_MODE 0000
+-#define PTMX_MINOR	2
  
- #define VDSO_HAS_32BIT_FALLBACK		1
-+#define BUILD_VDSO32			1
- 
- static __always_inline
- int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+ /*
+  * sysctl support for setting limits on the number of Unix98 ptys allocated.
+-- 
+1.8.3.1
+
