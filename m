@@ -2,98 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C8513B325
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B19F13B328
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbgANTqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:46:55 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46993 "EHLO mga03.intel.com"
+        id S1728834AbgANTsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:48:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbgANTqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:46:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 11:46:54 -0800
-X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
-   d="scan'208";a="213448748"
-Received: from ddalessa-mobl.amr.corp.intel.com (HELO [10.254.201.179]) ([10.254.201.179])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Jan 2020 11:46:52 -0800
-Subject: Re: [PATCH 1/3] infiniband: hw: hfi1: verbs.c: Use built-in RCU list
- checking
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     madhuparnabhowmik04@gmail.com, mike.marciniszyn@intel.com,
-        paulmck@kernel.org, joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        rcu@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200114162345.19995-1-madhuparnabhowmik04@gmail.com>
- <20200114165740.GB22037@ziepe.ca>
- <74adec84-ec5b-ea1b-7adf-3f8608838259@intel.com>
- <25133367-6544-d0af-ae30-5178909748b1@intel.com>
- <20200114194148.GD22037@ziepe.ca>
-From:   Dennis Dalessandro <dennis.dalessandro@intel.com>
-Message-ID: <7959316e-7647-9ba3-5f1a-10c8d31a2994@intel.com>
-Date:   Tue, 14 Jan 2020 14:46:50 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726491AbgANTsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 14:48:46 -0500
+Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 940A524655;
+        Tue, 14 Jan 2020 19:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579031326;
+        bh=Jwtjbz1xWl2epV72DQ55JG7jJJ7iyLgmYALvx4gZz4M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=L1KzeYrIy55KkTvrJ5ex0kR+Iz1jl9gpFWZnB6xbgs9V7I+KBnRKxn4W72X4UxOUp
+         0cxlWPXEOGmyqKuGEwlQsnHqMeigm+iw9EMpMetHRCKHkCXnzTT95K4CiQpATDNfTv
+         hcCzWFVsRU/HMM8L5igYBAQQYJbvlCyhr71H6gxk=
+Date:   Tue, 14 Jan 2020 13:48:43 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     sathyanarayanan.kuppuswamy@linux.intel.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com
+Subject: Re: [PATCH v12 0/8] Add Error Disconnect Recover (EDR) support
+Message-ID: <20200114194843.GA134677@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200114194148.GD22037@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1578682741.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/2020 2:41 PM, Jason Gunthorpe wrote:
-> On Tue, Jan 14, 2020 at 01:24:00PM -0500, Dennis Dalessandro wrote:
->> On 1/14/2020 12:00 PM, Dennis Dalessandro wrote:
->>> On 1/14/2020 11:57 AM, Jason Gunthorpe wrote:
->>>> On Tue, Jan 14, 2020 at 09:53:45PM +0530,
->>>> madhuparnabhowmik04@gmail.com wrote:
->>>>> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
->>>>>
->>>>> list_for_each_entry_rcu has built-in RCU and lock checking.
->>>>> Pass cond argument to list_for_each_entry_rcu.
->>>>>
->>>>> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
->>>>>    drivers/infiniband/hw/hfi1/verbs.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/infiniband/hw/hfi1/verbs.c
->>>>> b/drivers/infiniband/hw/hfi1/verbs.c
->>>>> index 089e201d7550..22f2d4fd2577 100644
->>>>> +++ b/drivers/infiniband/hw/hfi1/verbs.c
->>>>> @@ -515,7 +515,7 @@ static inline void hfi1_handle_packet(struct
->>>>> hfi1_packet *packet,
->>>>>                           opa_get_lid(packet->dlid, 9B));
->>>>>            if (!mcast)
->>>>>                goto drop;
->>>>> -        list_for_each_entry_rcu(p, &mcast->qp_list, list) {
->>>>> +        list_for_each_entry_rcu(p, &mcast->qp_list, list,
->>>>> lockdep_is_held(&(ibp->rvp.lock))) {
->>>>
->>>> Okay, this looks reasonable
->>>>
->>>> Mike, Dennis, is this the right lock to test?
->>>>
->>>
->>> I'm looking at that right now actually, I don't think this is correct.
->>> Wanted to talk to Mike before I send a response though.
->>>
->>> -Denny
->>
->> That's definitely going to throw a ton of lock dep messages. It's not really
->> the right lock either. Instead what we probably need to do is what we do in
->> the non-multicast part of the code and take the rcu_read_lock().
-> 
-> Uh.. why is this using the _rcu varient without holding the rcu lock?
-> That is quite wrong already.
->
+On Sun, Jan 12, 2020 at 02:43:54PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> ...
+> Changes since v11:
+>  * Allowed error recovery to proceed after successful reset_link().
+>  * Used correct ACPI handle for sending EDR status.
+>  * Rebased on top of v5.5-rc5
 
-Yep, seems like a bug to me. Patch forthcoming.
+You don't need to rebase this for *me*, since I always apply patches
+on topic branches based on my "master" branch (typically -rc1) unless
+they depend on something that's not in -rc1 (please tell me when this
+is the case).
 
--Denny
-
+It usually doesn't *hurt* (and this series applies just fine on -rc1),
+so this is just FYI.
