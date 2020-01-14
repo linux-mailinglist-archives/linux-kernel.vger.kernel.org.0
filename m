@@ -2,64 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AA713B017
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C990613B024
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbgANQ4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:56:10 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57489 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbgANQ4K (ORCPT
+        id S1728803AbgANQ54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:57:56 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57072 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726195AbgANQ54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:56:10 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1irPU1-0003PD-Qa; Tue, 14 Jan 2020 16:56:01 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to variable cond
-Date:   Tue, 14 Jan 2020 16:56:01 +0000
-Message-Id: <20200114165601.374597-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 14 Jan 2020 11:57:56 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00EGvdbn022943
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 11:57:40 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 0B01E4207DF; Tue, 14 Jan 2020 11:57:39 -0500 (EST)
+Date:   Tue, 14 Jan 2020 11:57:39 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Qian Cai <cai@lca.pw>
+Subject: Re: linux-next: Signed-off-by missing for commit in the random tree
+Message-ID: <20200114165739.GB140865@mit.edu>
+References: <20200108113953.1a92a90f@canb.auug.org.au>
+ <20200114001832.GP76141@mit.edu>
+ <20200114012221.GC202391@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114012221.GC202391@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jan 14, 2020 at 10:22:21AM +0900, Sergey Senozhatsky wrote:
+> 
+> Oh, I didn't realize I was the author. Sorry!
+> 
+> Sure, confirmed
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+>
 
-Variable cond is being assigned with a value that is never
-read, it is assigned a new value later on. The assignment is
-redundant and can be removed.
+Hmm... the e-mail in question[1] was sent by Qian Cai, but there was a
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
-index 5ca900f97d66..d13983ec09ad 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
-@@ -264,7 +264,7 @@ static bool _rtl88e_check_condition(struct ieee80211_hw *hw,
- 	u32 _board = rtlefuse->board_type; /*need efuse define*/
- 	u32 _interface = rtlhal->interface;
- 	u32 _platform = 0x08;/*SupportPlatform */
--	u32 cond = condition;
-+	u32 cond;
- 
- 	if (condition == 0xCDCDCDCD)
- 		return true;
--- 
-2.24.0
+in the first line of the body which attributed the patch to you.  But
+then e-mail continues:
 
+   Sergey didn't like the locking order .... but those code is so old,
+   and I have no clue how to de-couple it after checking other locks in
+   the splat. There is an onging effort to make all printk() as deferred,
+   so until that happens, workaround it for now as a short-term fix.
+
+So did Qian Cai author the patch, and this should have been
+"Reported-by Sergey Senozhatsky"?  In which case I need a
+Signed-off-by from Qian Cai.
+
+This is a pretty trivial patch, but it would be good to get the
+attributions and credit correct!
+
+						- Ted
+
+[1] https://lore.kernel.org/linux-arm-kernel/1573679785-21068-1-git-send-email-cai@lca.pw/
