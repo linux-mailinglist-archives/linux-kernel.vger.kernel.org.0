@@ -2,154 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E0FE13B62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E8813B635
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:53:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgANXwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 18:52:49 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33188 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbgANXwo (ORCPT
+        id S1729072AbgANXxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 18:53:11 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:51197 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729047AbgANXxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 18:52:44 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00ENqbjh091809;
-        Tue, 14 Jan 2020 17:52:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579045957;
-        bh=EV+SZqSB5hyndsCzQOz7pyuWRNEJtahXq1ja5MBaalA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=p48aSBNtFvdkXakiOwl5Ombj7qIf5gHH/8fzfozIhAOBtFqL7MG1w6SItLYRHH5zb
-         lUQSyhjV8HDlES1Dkoh0wE0GlKeBSPHvWFGyNwhVI3g8Mysyro4OyLsAXd3bi+nSmw
-         71qTjaX7Hn8t+e7JrS65KqkNIUCatrq9syx0eHVU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00ENqbGl100760
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Jan 2020 17:52:37 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 14
- Jan 2020 17:52:37 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 14 Jan 2020 17:52:37 -0600
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00ENqaHP128032;
-        Tue, 14 Jan 2020 17:52:37 -0600
-Subject: Re: [PATCH v2] rpmsg: core: add API to get MTU
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20191113172249.32412-1-arnaud.pouliquen@st.com>
- <20200113172453.GQ738324@yoga> <c6ecd3b6-2a3b-11d8-6d1c-a531c73bc388@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <c199d1ba-53c4-b79c-1dd0-b01ef12dbb48@ti.com>
-Date:   Tue, 14 Jan 2020 17:52:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 14 Jan 2020 18:53:11 -0500
+Received: by mail-pj1-f67.google.com with SMTP id r67so6467076pjb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 15:53:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j2E7ZFy6aieNRC/FnnKvvkc+wJEJ/BlK5p7TcHenYqg=;
+        b=Fb+1mHnYFzLqwCbfsucuxwt0wY+h3w4IlMju1fc0DKE2j5G5drb/oMOhZOLjmhY6Cm
+         UBSBLkcRwfQkWW3VcGlkbdZFmm/CxHmc/2Cyf3jsXzVSebCwPNJ3gbxegEJgO4vqXYuB
+         O6G/wcmz551H/oc5Zazco/bimLiHWykwQs3jvWoCtz62t2knGN1/LLs8UoT4ZgOKAYWH
+         xfsjM0/XnppMiz0cPvApP3BH8y6C9sq7q14LY5ZBZd7oVtj9doWc8+zZqozQo5urFXRP
+         BYH5UgxcjFbZ66PDI/USdqohoUsrFnrXl82ZSjpngY7c4LxdgZrXmdEbjMwrrUsUffKQ
+         DEwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j2E7ZFy6aieNRC/FnnKvvkc+wJEJ/BlK5p7TcHenYqg=;
+        b=Tct7Xd3IEW935uofc09tltW3TGk28DJMvZNy3j72ek/ecpY5aWjEJ1HqZNigErO5Oj
+         rcdmiwZiC1R4fCeMIR660MBXFnvlhMjnDbiXUf7dwQWoDfmG1KOZRkTCLtXRd8ViA92z
+         MWXhZgKElsqSSE4lKb+Gq1UelHmpdvjCdewg/FrjfzOW9Gkc3chRJHd3W33ovtGPV3gi
+         SF7EZr0rYQe7mYEQXuxrWmUqIetAKrADY+3hoeKCAUXdZsXNOG/o0mdTjpUcigkXT1fn
+         S/pslTjIoBwjn9fZMDrdeehLCvp1er+QZzdn0R2e11YsMBYLo98rIjrFI7Rcw4hQqO4O
+         MRaA==
+X-Gm-Message-State: APjAAAVGmaj5vZTmq5GuP2u74JjCnsyGFSV1/8PplTRE2kSohdmJLO2v
+        SsL7N46QVZAh9i4dPugD9b4PXxXrtftGrjj3bCFO3A==
+X-Google-Smtp-Source: APXvYqwnx0dad7N/SaM9hd+5nBJXlA/iobnlbtzjmtuuf7lccodkk2OuAJgL+VX8zJSDFFC3D20UmtA5hgMoLN2iXRA=
+X-Received: by 2002:a17:902:7d94:: with SMTP id a20mr22016821plm.297.1579045989763;
+ Tue, 14 Jan 2020 15:53:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c6ecd3b6-2a3b-11d8-6d1c-a531c73bc388@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1579018183-14879-1-git-send-email-alan.maguire@oracle.com>
+ <alpine.LRH.2.20.2001141639240.15464@dhcp-10-175-171-251.vpn.oracle.com>
+ <51d7d427-2ef6-b0cd-ad23-2fb75b06b763@infradead.org> <1973062.CA44Rh9njY@kreacher>
+In-Reply-To: <1973062.CA44Rh9njY@kreacher>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 14 Jan 2020 15:52:57 -0800
+Message-ID: <CAFd5g46q94DZYtk-dfDaX=nNaGdXoYZeshvTiFh6D8UsQrvVHg@mail.gmail.com>
+Subject: Re: [PATCH] software node: introduce CONFIG_KUNIT_DRIVER_PE_TEST
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 3:06 AM, Arnaud POULIQUEN wrote:
-> Hi Bjorn
-> 
-> On 1/13/20 6:24 PM, Bjorn Andersson wrote:
->> On Wed 13 Nov 09:22 PST 2019, Arnaud Pouliquen wrote:
->>
->>> Return the rpmsg buffer MTU for sending message, so rpmsg users
->>> can split a long message in several sub rpmsg buffers.
->>>
->>
->> I won't merge this new api without a client, and I'm still concerned
->> about the details.
-> The client exists: it is the rpmsg tty that i 've been rying to upstream since for a while.
-> https://patchwork.kernel.org/cover/11130213/
-> This patch is the result of some comments you did on rpmsg tty thread. 
-> Suman was also interested in and request to merge it independently
-> (https://lkml.org/lkml/2019/9/3/774).
-> That's why i'm trying to do it in 2 steps.
-> 
->>
->>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->>> ---
->>>  V1 to V2
->>>
->>>   V1 patch:https://lore.kernel.org/patchwork/patch/1124684/
->>>   - Change patch title,
->>>   - as not solution today to support MTU on GLINK make ops optional,
->>>     RPMsg client API returns -ENOTSUPP in this case,
->>>   - suppress smd and glink patches.
->>
->> That's ok.
->>
->>> ---
->>>  drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
->>>  drivers/rpmsg/rpmsg_internal.h   |  2 ++
->>>  drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
->>>  include/linux/rpmsg.h            | 10 ++++++++++
->>>  4 files changed, 43 insertions(+)
->>>
->>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->>> index e330ec4dfc33..a6ef54c4779a 100644
->>> --- a/drivers/rpmsg/rpmsg_core.c
->>> +++ b/drivers/rpmsg/rpmsg_core.c
->>> @@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>>  }
->>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->>>  
->>> +/**
->>> + * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->>> + * @ept: the rpmsg endpoint
->>> + *
->>> + * This function returns maximum buffer size available for a single message.
->>> + *
->>> + * Return: the maximum transmission size on success and an appropriate error
->>> + * value on failure.
->>
->> Is the expectation that a call to rpmsg_send() with this size will
->> eventually succeed?
-> yes, this should be the role of the transport layer
-> (e.g. RPMsg VirtIO bus) to ensure this.
-> 
->>
->>> + */
->> [..]
->>> +static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->>> +{
->>> +	struct rpmsg_device *rpdev = ept->rpdev;
->>> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->>> +
->>> +	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
->>
->> I'm still under the impression that the rpmsg protocol doesn't have to
->> operate on fixed size messages. Would this then return vrp->num_bufs *
->> vrp->buf_size / 2 - sizeof(rpmsg_hdr)?
+On Tue, Jan 14, 2020 at 2:43 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Tuesday, January 14, 2020 5:45:56 PM CET Randy Dunlap wrote:
+> > On 1/14/20 8:42 AM, Alan Maguire wrote:
+> > > On Tue, 14 Jan 2020, Randy Dunlap wrote:
+> > >
+> > >> Hi Alan,
+> > >>
+> > >> On 1/14/20 8:09 AM, Alan Maguire wrote:
+> > >>> currently the property entry kunit tests are built if CONFIG_KUNIT=y.
+> > >>> This will cause warnings when merged with the kunit tree that now
+> > >>> supports tristate CONFIG_KUNIT.  While the tests appear to compile
+> > >>> as a module, we get a warning about missing module license.
+> > >>>
+> > >>> It's better to have a per-test suite CONFIG variable so that
+> > >>> we can do selective building of kunit-based suites, and can
+> > >>> also avoid merge issues like this.
+> > >>>
+> > >>> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > >>
+> > >> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > >>
+> > >
+> > > Apologies for missing you out here.
+> > >
+> > >>> Fixes: c032ace71c29 ("software node: add basic tests for property entries")
+> > >>> Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> > >>> ---
+> > >>>  drivers/base/test/Kconfig  | 3 +++
+> > >>>  drivers/base/test/Makefile | 2 +-
+> > >>>  2 files changed, 4 insertions(+), 1 deletion(-)
+> > >>>
+> > >>> diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+> > >>> index 86e85da..d29ae95 100644
+> > >>> --- a/drivers/base/test/Kconfig
+> > >>> +++ b/drivers/base/test/Kconfig
+> > >>> @@ -8,3 +8,6 @@ config TEST_ASYNC_DRIVER_PROBE
+> > >>>     The module name will be test_async_driver_probe.ko
+> > >>>
+> > >>>     If unsure say N.
+> > >>> +config KUNIT_DRIVER_PE_TEST
+> > >>> + bool "KUnit Tests for property entry API"
+> > >>> + depends on KUNIT
+> > >>
+> > >> Why is this bool instead of tristate?
+> > >>
+> > >
+> > > The support for building kunit and kunit tests as modules has not merged
+> > > into linux-next yet, so if we set the option to tristate the build would
+> > > fail for allmodconfig builds.   Once it's merged we can revisit though; I
+> > > should have mentioned this, thanks for reminding me!
+> >
+> > Oh. I see.  Thanks.
+>
+> Patch applied, thanks!
 
-There was some discussion in the past to remove the 512 bytes
-hard-coding and replace it with a configurable value, but that is not
-yet done. There was some code restructuring towards the same, but it it
-still fixed atm in virtio_rpmsg transport.
-
-> it depends on the transport layer. For RPMsg over virtio, this is the size
-> of the payload of a buffer so vrp->buf_size  - sizeof(rpmsg_hdr)
-
-The vrp->num_bufs is the number of buffers available in the vring
-transport, vrp->buf_size is the size for each transport buffer, and
-every message includes the rpmsg_hdr structure, so the amount available
-for rpmsg clients is less by that much.
-
-regards
-Suman
+Cool, looks good. Thanks!
