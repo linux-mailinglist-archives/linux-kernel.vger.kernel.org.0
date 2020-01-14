@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F281F13A1B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 393AD13A1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgANHY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:24:56 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13262 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729129AbgANHYo (ORCPT
+        id S1729320AbgANHZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:25:24 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13918 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729145AbgANHYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 14 Jan 2020 02:24:44 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1d6c840001>; Mon, 13 Jan 2020 23:23:49 -0800
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1d6ca80000>; Mon, 13 Jan 2020 23:24:24 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
   Mon, 13 Jan 2020 23:24:43 -0800
 X-PGP-Universal: processed;
         by hqpgpgate101.nvidia.com on Mon, 13 Jan 2020 23:24:43 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 14 Jan
- 2020 07:24:42 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 14 Jan 2020 07:24:42 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 14 Jan
+ 2020 07:24:43 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 14 Jan 2020 07:24:43 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.242]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1d6cb90003>; Mon, 13 Jan 2020 23:24:42 -0800
+        id <B5e1d6cba0004>; Mon, 13 Jan 2020 23:24:43 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <broonie@kernel.org>,
@@ -40,9 +40,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 17/22] ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
-Date:   Mon, 13 Jan 2020 23:24:22 -0800
-Message-ID: <1578986667-16041-18-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 18/22] ASoC: tegra: Add audio mclk parent configuration
+Date:   Mon, 13 Jan 2020 23:24:23 -0800
+Message-ID: <1578986667-16041-19-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
@@ -50,46 +50,156 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578986629; bh=pWNZAo13Br7GvFxHxRFIS/1sozX6HF632kX/lxY43iQ=;
+        t=1578986664; bh=/leVjgcNFPxWtGaEAwDQwXy4HGpc0OjNsEO+712Qyuo=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=rykc2x8E9KoeCszN8vs2smSy3V/kR1R6KO2wQH7JzY8CHfR+fOB22rgxYlOuVPZwX
-         nxa0iS4xlhZEPcTeEtdlslY8+/ZXH1SzyTgSuu77UuHgZnBKFhLuvb6AqIov3Y/oHR
-         2KYkzS0zA8qic9tDkZfOMqmIMsxGQAXba0PykfChJldHlsXdz2cuiZwT0RbUWjgoR+
-         gFxbQg5nQw3Xv0dQPG0dm2k9R0Z72m68wY9p3kbFOz7VxPfiXWdDtnDCtUaFyF1z/l
-         u1CPUJz+NI8OUqUx0U2fS/jewk5xeN5c5HW3SWb5BV4QKpk2B8BrDJ3ZPYwE/IahrH
-         JszxP08gG9FgQ==
+        b=gRom/lpM176zhFHuu5K/41f+bp5376g6yfYMQkIZNKa4fKzjVorGviXXBC6l1Yfj7
+         IBMXoVu1c0UdDqpqlJLSFQWitp3A2A+ory3Mv06+y0S0S3k5eKvM7MgesPvRIivscr
+         2DfDdBz7WlGsMzp+iPfYPpVLBgOSsVM2SbMkVKxmBJ8kLx2C04fdSBiRV6IXo4MSvi
+         dWdpETGdFY1oLD1ttDC0SC9wbc1mHglFPDOFEin/gOM4YrepCSRejZYIQ56s2tdYCO
+         iSCBgaGX/ib/qCspS5XkhxEK8EE5MI7tvGftuJVEJDSm2cVoTxyRte1I7G+zqdEY0q
+         bUKH/jcvKMGrw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
-these clocks are moved from clock drvier to pmc driver with pmc as
-a provider for these clocks.
+Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+through Tegra210 and currently Tegra clock driver does the initial parent
+configuration for audio mclk and keeps it enabled by default.
 
-Update bindings document to use pmc as clock provider for clk_out_2 and
-change id to pmc clock id.
+With the move of PMC clocks from clock driver into pmc driver,
+audio clocks parent configuration can be specified through the device tree
+using assigned-clock-parents property and audio mclk control should be
+taken care by the audio driver.
 
+This patch has implementation for parent configuration when default parent
+configuration through assigned-clock-parents property is not specified in
+the device tree.
+
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sameer Pujar <spujar@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra_asoc_utils.c | 68 ++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
-index d16d96839bcb..388a7bc60b1f 100644
---- a/Documentation/devicetree/bindings/sound/nau8825.txt
-+++ b/Documentation/devicetree/bindings/sound/nau8825.txt
-@@ -101,5 +101,5 @@ Example:
-       nuvoton,crosstalk-enable;
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 84c4f59df71f..1dce5ad6e665 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -60,8 +60,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_mclk = 0;
  
-       clock-names = "mclk";
--      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+      clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
-   };
+ 	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
+ 
+ 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
+ 	if (err) {
+@@ -77,18 +75,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_prepare_enable(data->clk_pll_a);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
+-
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -109,8 +95,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 	int err;
+ 
+ 	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
+ 
+ 	/*
+ 	 * AC97 rate is fixed at 24.576MHz and is used for both the host
+@@ -130,18 +114,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_prepare_enable(data->clk_pll_a);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
+-
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -158,6 +130,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 			  struct device *dev)
+ {
++	struct clk *clk_out_1, *clk_extern1;
+ 	int ret;
+ 
+ 	data->dev = dev;
+@@ -204,6 +177,45 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		dev_info(data->dev, "Falling back to extern1\n");
+ 	}
+ 
++	/*
++	 * If clock parents are not set in DT, configure here to use clk_out_1
++	 * as mclk and extern1 as parent for Tegra30 and higher.
++	 */
++	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
++	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
++		dev_warn(data->dev,
++			 "Configuring clocks for a legacy device-tree\n");
++		dev_warn(data->dev,
++			 "Please update DT to use assigned-clock-parents\n");
++		clk_extern1 = devm_clk_get(dev, "extern1");
++		if (IS_ERR(clk_extern1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			return PTR_ERR(clk_extern1);
++		}
++
++		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk extern1\n");
++			return ret;
++		}
++
++		clk_out_1 = devm_clk_get(dev, "pmc_clk_out_1");
++		if (IS_ERR(clk_out_1)) {
++			dev_err(data->dev, "Can't retrieve pmc_clk_out_1\n");
++			return PTR_ERR(clk_out_1);
++		}
++
++		ret = clk_set_parent(clk_out_1, clk_extern1);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for pmc_clk_out_1\n");
++			return ret;
++		}
++
++		data->clk_cdev1 = clk_out_1;
++	}
++
+ 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+ 	if (ret)
+ 		return ret;
 -- 
 2.7.4
 
