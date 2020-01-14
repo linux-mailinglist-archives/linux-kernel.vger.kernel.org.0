@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9667B13A66F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF5513A649
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732472AbgANKLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:11:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46578 "EHLO mail.kernel.org"
+        id S1729457AbgANKKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:10:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731618AbgANKL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:11:27 -0500
+        id S1731677AbgANKKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:10:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6097C20678;
-        Tue, 14 Jan 2020 10:11:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4393624679;
+        Tue, 14 Jan 2020 10:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996686;
-        bh=cjlnCtikVhdsPP03FSvBdeIWwsBF8I4ietu7C61I0N8=;
+        s=default; t=1578996629;
+        bh=6lINS67maLB9kwGabHyzk9NbG8aCuLQiDV7WIYBEgSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PVZb/cOnIMoXzYmjkR2C3ZvUCALNSjumufQsE+g9wm1RBvBBjEGLrufXa/ss2vX54
-         8f74eaZZo8IrAg6e3m9Yg+uNwI/d0eqQb5LgbQL1CQ7FKBijxVyTwxkFxobIvIQX6H
-         rgcNHW/AhC8LfK5uwDedthvITXIe7la+PPGf1878=
+        b=PL/Mfz6X+WLyJNJ1c0Q20bWOXJbSMrXQPS5cs7OI8+1x+ao/2iOCKzY6qwHaTD1i5
+         5X8beizJU/IQwFM/HiPav0Uh4yfqTttw1i4bRL85UU7VHovLkpUoAcf4tpYamN7Kw5
+         sWKYBqfsv6zWxL4E6O1wJdgw5dgYJnpNQA/Ozxpo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Artur Rojek <contact@artur-rojek.eu>, Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 20/31] usb: musb: dma: Correct parameter passed to IRQ handler
-Date:   Tue, 14 Jan 2020 11:02:12 +0100
-Message-Id: <20200114094343.709242477@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 39/39] netfilter: ipset: avoid null deref when IPSET_ATTR_LINENO is present
+Date:   Tue, 14 Jan 2020 11:02:13 +0100
+Message-Id: <20200114094347.044431222@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
-References: <20200114094334.725604663@linuxfoundation.org>
+In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
+References: <20200114094336.210038037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Florian Westphal <fw@strlen.de>
 
-commit c80d0f4426c7fdc7efd6ae8d8b021dcfc89b4254 upstream.
+commit 22dad713b8a5ff488e07b821195270672f486eb2 upstream.
 
-The IRQ handler was passed a pointer to a struct dma_controller, but the
-argument was then casted to a pointer to a struct musb_dma_controller.
+The set uadt functions assume lineno is never NULL, but it is in
+case of ip_set_utest().
 
-Fixes: 427c4f333474 ("usb: struct device - replace bus_id with dev_name(), dev_set_name()")
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20191216161844.772-2-b-liu@ti.com
+syzkaller managed to generate a netlink message that calls this with
+LINENO attr present:
+
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+RIP: 0010:hash_mac4_uadt+0x1bc/0x470 net/netfilter/ipset/ip_set_hash_mac.c:104
+Call Trace:
+ ip_set_utest+0x55b/0x890 net/netfilter/ipset/ip_set_core.c:1867
+ nfnetlink_rcv_msg+0xcf2/0xfb0 net/netfilter/nfnetlink.c:229
+ netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+ nfnetlink_rcv+0x1ba/0x460 net/netfilter/nfnetlink.c:563
+
+pass a dummy lineno storage, its easier than patching all set
+implementations.
+
+This seems to be a day-0 bug.
+
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Reported-by: syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com
+Fixes: a7b4f989a6294 ("netfilter: ipset: IP set core support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musbhsdma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/ipset/ip_set_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musbhsdma.c
-+++ b/drivers/usb/musb/musbhsdma.c
-@@ -399,7 +399,7 @@ struct dma_controller *musbhs_dma_contro
- 	controller->controller.channel_abort = dma_channel_abort;
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -1639,6 +1639,7 @@ static int ip_set_utest(struct net *net,
+ 	struct ip_set *set;
+ 	struct nlattr *tb[IPSET_ATTR_ADT_MAX + 1] = {};
+ 	int ret = 0;
++	u32 lineno;
  
- 	if (request_irq(irq, dma_controller_irq, 0,
--			dev_name(musb->controller), &controller->controller)) {
-+			dev_name(musb->controller), controller)) {
- 		dev_err(dev, "request_irq %d failed!\n", irq);
- 		musb_dma_controller_destroy(&controller->controller);
+ 	if (unlikely(protocol_failed(attr) ||
+ 		     !attr[IPSET_ATTR_SETNAME] ||
+@@ -1655,7 +1656,7 @@ static int ip_set_utest(struct net *net,
+ 		return -IPSET_ERR_PROTOCOL;
  
+ 	rcu_read_lock_bh();
+-	ret = set->variant->uadt(set, tb, IPSET_TEST, NULL, 0, 0);
++	ret = set->variant->uadt(set, tb, IPSET_TEST, &lineno, 0, 0);
+ 	rcu_read_unlock_bh();
+ 	/* Userspace can't trigger element to be re-added */
+ 	if (ret == -EAGAIN)
 
 
