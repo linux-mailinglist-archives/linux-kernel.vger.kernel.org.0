@@ -2,249 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 977C713AFFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB69613AFFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:50:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgANQtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:49:40 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36496 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgANQtk (ORCPT
+        id S1728835AbgANQud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:50:33 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:42448 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726270AbgANQud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:49:40 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x184so6861923pfb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:49:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ayd9f3cYgl4qWDrpBjsdRYd2mAYU8sWweONj/PljPbA=;
-        b=q0IopxeGBQcol9tKXjrIxXw4M22bIyKZ/H0CD7tcK5oNf3ih/2hYCmdTw3T2mlLpVN
-         K1740k2EmgIUpEIde0oLp+1K8RDo10D1L2eYXchk2ATwn/oV4iz1NaoMtLgHslqhXuRP
-         hAsLD01aKVGfO7GYPYpg2aWXCwUStdIDyxfVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ayd9f3cYgl4qWDrpBjsdRYd2mAYU8sWweONj/PljPbA=;
-        b=GhcFQudx1BVH70vAFY2EeUY7UYnmogkXUoBJ7HMqkBoJNRAOXvReburzCrjJaU40Gz
-         d8iiGy44XQScd8wX83xRT5m/dFdV6Kg1fewBNSU7zB7kps8v9Yf857lYQh3i9tOl5Yuk
-         NE3HMCNdoRzrY8d/3bQoVw8nYddBnrPNL1YJkyFy44hIEY3Ki5s9C1OtUuPaTOLHutc2
-         H4FRev4j+xwPIRuNm0SLT6G3X9slpomZ5RD89hBzVSmC4FWa0IHHPxWNs65LWZwBN1o6
-         +wFatncPQHAvB2Bi3YL1DDmQMIhygWOxAMFTESzYoHkMxxUz2lFYwWrfNkJkN1SXtau1
-         TFgw==
-X-Gm-Message-State: APjAAAWUdKQE3gbY/PfvGuawa75Lzc6IFOKetWlddJA+wt5QIZoNzzSa
-        t0BQ/AcRGONz/e17QZITyxyacQ==
-X-Google-Smtp-Source: APXvYqxE3J+uShSftk2i77xK0VkwTN6jbDtvsEOSCPgxU/LuxRSrFHr7fwvb4op59vrZ8KmIueJowA==
-X-Received: by 2002:a63:3e03:: with SMTP id l3mr28011076pga.118.1579020579313;
-        Tue, 14 Jan 2020 08:49:39 -0800 (PST)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j28sm18549513pgb.36.2020.01.14.08.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 08:49:38 -0800 (PST)
-Date:   Tue, 14 Jan 2020 11:49:37 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
- kfree_rcu()
-Message-ID: <20200114164937.GA50403@google.com>
-References: <20191231122241.5702-1-urezki@gmail.com>
- <20200113190315.GA12543@paulmck-ThinkPad-P72>
+        Tue, 14 Jan 2020 11:50:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579020631;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=ypyiFkfOLcLDY1ROsSrExMxK0so4QCDX8yHGj0JqcR4=;
+        b=QC0mIKRjnaFyAH/6KWLaaAWp2Ez0HE+tnLlkffaU50Lot+H/cEg9RPRIpOQvZziqtbB+Fw
+        ZpHSf5+g5oxpLqjFXxMR8HZG6XNy7duA8QvZymHu6BPJwH0tCyteOji3eVH7boUsZioUqZ
+        XMQECFMzd1vc9ZhIR1zuJDYon4AHg40=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-422-uWR0b6vfNnyEzJN6rNtkpg-1; Tue, 14 Jan 2020 11:50:27 -0500
+X-MC-Unique: uWR0b6vfNnyEzJN6rNtkpg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 58D9C9069A2;
+        Tue, 14 Jan 2020 16:50:26 +0000 (UTC)
+Received: from [10.36.118.60] (unknown [10.36.118.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D2391842AD;
+        Tue, 14 Jan 2020 16:50:24 +0000 (UTC)
+Subject: Re: [PATCH v1 2/2] mm: factor out next_present_section_nr()
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+References: <0B77E39C-BD38-4A61-AB28-3578B519952F@redhat.com>
+ <C40ACB72-F8C7-4F9B-B3F3-00FBC0C44406@redhat.com>
+ <20200114104119.pybggnb4b2mq45wr@box>
+ <4de17591-e2c4-daff-e4b2-d03dd8792d0f@redhat.com>
+ <20200114155258.kww5ve7agifxxtoy@box>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <9d703042-f6dd-c069-fd45-26fdaeb0dfe8@redhat.com>
+Date:   Tue, 14 Jan 2020 17:50:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113190315.GA12543@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200114155258.kww5ve7agifxxtoy@box>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On 14.01.20 16:52, Kirill A. Shutemov wrote:
+> On Tue, Jan 14, 2020 at 11:49:19AM +0100, David Hildenbrand wrote:
+>> memmap_init_zone() is called for a physical memory region: pfn + size
+>> (nr_pages)
+>>
+>> The highest possible PFN you can have is "-1(unsigned long) >>
+>> PFN_SHIFT". So even if you would want to add the very last section, th=
+e
+>> PFN would still be smaller than -1UL << PFN_SECTION_SHIFT.
+>=20
+> PFN_SHIFT? I guess you mean PAGE_SHIFT.
 
-On Mon, Jan 13, 2020 at 11:03:15AM -0800, Paul E. McKenney wrote:
-> On Tue, Dec 31, 2019 at 01:22:41PM +0100, Uladzislau Rezki (Sony) wrote:
-> > kfree_rcu() logic can be improved further by using kfree_bulk()
-> > interface along with "basic batching support" introduced earlier.
-> > 
-> > The are at least two advantages of using "bulk" interface:
-> > - in case of large number of kfree_rcu() requests kfree_bulk()
-> >   reduces the per-object overhead caused by calling kfree()
-> >   per-object.
-> > 
-> > - reduces the number of cache-misses due to "pointer chasing"
-> >   between objects which can be far spread between each other.
-> > 
-> > This approach defines a new kfree_rcu_bulk_data structure that
-> > stores pointers in an array with a specific size. Number of entries
-> > in that array depends on PAGE_SIZE making kfree_rcu_bulk_data
-> > structure to be exactly one page.
-> > 
-> > Since it deals with "block-chain" technique there is an extra
-> > need in dynamic allocation when a new block is required. Memory
-> > is allocated with GFP_NOWAIT | __GFP_NOWARN flags, i.e. that
-> > allows to skip direct reclaim under low memory condition to
-> > prevent stalling and fails silently under high memory pressure.
-> > 
-> > The "emergency path" gets maintained when a system is run out
-> > of memory. In that case objects are linked into regular list
-> > and that is it.
-> > 
-> > In order to evaluate it, the "rcuperf" was run to analyze how
-> > much memory is consumed and what is kfree_bulk() throughput.
-> > 
-> > Testing on the HiKey-960, arm64, 8xCPUs with below parameters:
-> > 
-> > CONFIG_SLAB=y
-> > kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
-> > 
-> > 102898760401 ns, loops: 200000, batches: 5822, memory footprint: 158MB
-> > 89947009882  ns, loops: 200000, batches: 6715, memory footprint: 115MB
-> > 
-> > rcuperf shows approximately ~12% better throughput(Total time)
-> > in case of using "bulk" interface. The "drain logic" or its RCU
-> > callback does the work faster that leads to better throughput.
-> 
-> Nice improvement!
-> 
-> But rcuperf uses a single block size, which turns into kfree_bulk() using
-> a single slab, which results in good locality of reference.  So I have to
+Yes :)
 
-You meant a "single cache" category when you say "single slab"? Just to
-mention, the number of slabs (in a single cache) when a large number of
-objects are allocated is more than 1 (not single). With current rcuperf, I
-see 100s of slabs (each slab being one page) in the kmalloc-32 cache. Each
-slab contains around 128 objects of type kfree_rcu (24 byte object aligned to
-32-byte slab object).
+>=20
+> Of course PFN can be more than -1UL >> PAGE_SHIFT. Like on 32-bit x86 w=
+ith
+> PAE it is ((1ULL << 36) - 1) >> PAGE_SHIFT. That's the whole reason for
+> PAE.
 
-> ask...  Is this performance result representative of production workloads?
+You are right about PAE, but I think you agree that is is a special case.
 
-I added more variation to allocation sizes to rcuperf (patch below) to distribute
-allocations across 4 kmalloc slabs (32,64,96 and 128) and I see a signficant
-improvement with Ulad's patch in SLAB in terms of completion time of the
-test. Below are the results. With SLUB I see slightly higher memory
-footprint, I have never used SLUB and not sure who is using it so I am not
-too concerned since the degradation in memory footprint is only slight with
-SLAB having the signifcant improvement.
+>=20
+> The highest possible PFN must fit into phys_addr_t when shifted left by
+> PAGE_SHIFT and must fit into unsigned long. It's can be -1UL if
+> phys_addr_t is 64-bit.
+>=20
 
-with SLAB:
+Right, and for 32bit, that would mean (assuming something like 12bit
+PAGE_SHIFT) if you have -1 (0xffffffff) that the biggest possible
+address is 0xfffffffffff (44bit). In that case, the existing code would
+already break because "end_pfn" (is actually +1, pointing after the one
+to initialize), would overflow to 0 and you would have an endless loop
+in memmap_init_zone().
 
-with Ulad's patch:
-[   19.096052] Total time taken by all kfree'ers: 17519684419 ns, loops: 10000, batches: 3378, memory footprint: 319MB
-[   18.980837] Total time taken by all kfree'ers: 17460918969 ns, loops: 10000, batches: 3399, memory footprint: 312MB
-[   18.671535] Total time taken by all kfree'ers: 17116640301 ns, loops: 10000, batches: 3331, memory footprint: 268MB
-[   18.737601] Total time taken by all kfree'ers: 17227635828 ns, loops: 10000, batches: 3311, memory footprint: 329MB
+Now, after thischange you not only get an endless loop when trying to
+init the very last PFN, but when trying to init a PFN in the very last
+section (section_nr=3D -1 - e.g., the last 128MB).
 
-without Ulad's patch:
-[   22.679112] Total time taken by all kfree'ers: 21174999896 ns, loops: 10000, batches: 2722, memory footprint: 314MB
-[   22.099168] Total time taken by all kfree'ers: 20528110989 ns, loops: 10000, batches: 2611, memory footprint: 240MB
-[   22.477571] Total time taken by all kfree'ers: 20975674614 ns, loops: 10000, batches: 2763, memory footprint: 341MB
-[   22.772915] Total time taken by all kfree'ers: 21207270347 ns, loops: 10000, batches: 2765, memory footprint: 329MB
+I don't think there is any sane use case where you initialize something
+partially in the last section that is possible with any hardware address
+extension mechanism.
 
-with SLUB:
+--=20
+Thanks,
 
-without Ulad's patch:
-[   10.714471] Total time taken by all kfree'ers: 9216968353 ns, loops: 10000, batches: 1099, memory footprint: 393MB
-[   11.188174] Total time taken by all kfree'ers: 9613032449 ns, loops: 10000, batches: 1147, memory footprint: 387MB
-[   11.077431] Total time taken by all kfree'ers: 9547675890 ns, loops: 10000, batches: 1292, memory footprint: 296MB
-[   11.212767] Total time taken by all kfree'ers: 9712869591 ns, loops: 10000, batches: 1155, memory footprint: 387MB
-
-
-with Ulad's patch
-[   11.241949] Total time taken by all kfree'ers: 9681912225 ns, loops: 10000, batches: 1087, memory footprint: 417MB
-[   11.651831] Total time taken by all kfree'ers: 10154268745 ns, loops: 10000, batches: 1184, memory footprint: 416MB
-[   11.342659] Total time taken by all kfree'ers: 9844937317 ns, loops: 10000, batches: 1137, memory footprint: 477MB
-[   11.718769] Total time taken by all kfree'ers: 10138649532 ns, loops: 10000, batches: 1159, memory footprint: 395MB
-
-Test patch for rcuperf is below. The memory footprint measurement for rcuperf
-is still under discussion in another thread, but I tested based on that anyway:
-
----8<-----------------------
-
-From d44e4c6112c388d39f7c2241e061dd77cca28d9e Mon Sep 17 00:00:00 2001
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 14 Jan 2020 09:59:23 -0500
-Subject: [PATCH] rcuperf: Add support to vary the slab object sizes
-
-Signed-off-by: Joel Fernandes <joelaf@google.com>
----
- kernel/rcu/rcuperf.c | 43 ++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index a4a8d097d84d..216d7c072ca2 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -600,17 +600,29 @@ static int kfree_nrealthreads;
- static atomic_t n_kfree_perf_thread_started;
- static atomic_t n_kfree_perf_thread_ended;
- 
--struct kfree_obj {
--	char kfree_obj[8];
--	struct rcu_head rh;
--};
-+/*
-+ * Define a kfree_obj with size as the @size parameter + the size of rcu_head
-+ * (rcu_head is 16 bytes on 64-bit arch).
-+ */
-+#define DEFINE_KFREE_OBJ(size)	\
-+struct kfree_obj_ ## size {	\
-+	char kfree_obj[size];	\
-+	struct rcu_head rh;	\
-+}
-+
-+/* This should goto the right sized slabs on both 32-bit and 64-bit arch */
-+DEFINE_KFREE_OBJ(16); // goes on kmalloc-32 slab
-+DEFINE_KFREE_OBJ(32); // goes on kmalloc-64 slab
-+DEFINE_KFREE_OBJ(64); // goes on kmalloc-96 slab
-+DEFINE_KFREE_OBJ(96); // goes on kmalloc-128 slab
- 
- static int
- kfree_perf_thread(void *arg)
- {
- 	int i, loop = 0;
- 	long me = (long)arg;
--	struct kfree_obj *alloc_ptr;
-+	void *alloc_ptr;
-+
- 	u64 start_time, end_time;
- 	long long mem_begin, mem_during = 0;
- 
-@@ -635,11 +647,28 @@ kfree_perf_thread(void *arg)
- 		}
- 
- 		for (i = 0; i < kfree_alloc_num; i++) {
--			alloc_ptr = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
-+			int kfree_type = i % 4;
-+
-+			if (kfree_type == 0)
-+				alloc_ptr = kmalloc(sizeof(struct kfree_obj_16), GFP_KERNEL);
-+			else if (kfree_type == 1)
-+				alloc_ptr = kmalloc(sizeof(struct kfree_obj_32), GFP_KERNEL);
-+			else if (kfree_type == 2)
-+				alloc_ptr = kmalloc(sizeof(struct kfree_obj_64), GFP_KERNEL);
-+			else
-+				alloc_ptr = kmalloc(sizeof(struct kfree_obj_96),  GFP_KERNEL);
-+
- 			if (!alloc_ptr)
- 				return -ENOMEM;
- 
--			kfree_rcu(alloc_ptr, rh);
-+			if (kfree_type == 0)
-+				kfree_rcu((struct kfree_obj_16 *)alloc_ptr, rh);
-+			else if (kfree_type == 1)
-+				kfree_rcu((struct kfree_obj_32 *)alloc_ptr, rh);
-+			else if (kfree_type == 2)
-+				kfree_rcu((struct kfree_obj_64 *)alloc_ptr, rh);
-+			else
-+				kfree_rcu((struct kfree_obj_96 *)alloc_ptr, rh);
- 		}
- 
- 		cond_resched();
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
+David / dhildenb
 
