@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9B513B32C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F59113B32D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbgANTtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:49:10 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:44728 "EHLO
+        id S1728957AbgANTtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:49:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44733 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728914AbgANTtH (ORCPT
+        with ESMTP id S1728921AbgANTtI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:49:07 -0500
+        Tue, 14 Jan 2020 14:49:08 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1irSBU-0005Zy-TA; Tue, 14 Jan 2020 20:49:05 +0100
-Message-Id: <20200114185947.297142051@linutronix.de>
+        id 1irSBW-0005a8-2B; Tue, 14 Jan 2020 20:49:06 +0100
+Message-Id: <20200114185947.406096630@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Tue, 14 Jan 2020 19:52:44 +0100
+Date:   Tue, 14 Jan 2020 19:52:45 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
@@ -38,7 +38,7 @@ Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Marc Zyngier <maz@kernel.org>
-Subject: [patch 07/15] clocksource: Cleanup struct clocksource and documentation
+Subject: [patch 08/15] x86/vdso: Move VDSO clocksource state tracking to callback
 References: <20200114185237.273005683@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,135 +47,248 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reformat the struct definition, add missing member documentation.
-No functional change.
+All architectures which use the generic VDSO code have their own storage
+for the VDSO clock mode. That's pointless and just requires duplicate code.
+
+X86 abuses the function which retrieves the architecture specific clock
+mode storage to mark the clocksource as used in the VDSO. That's silly
+because this is invoked on every tick when the VDSO data is updated.
+
+Move this functionality to the clocksource::enable() callback so it gets
+invoked once when the clocksource is installed. This allows to make the
+clock mode storage generic.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/clocksource.h |   87 +++++++++++++++++++++++---------------------
- 1 file changed, 47 insertions(+), 40 deletions(-)
+ arch/x86/entry/vdso/vma.c            |    4 ++++
+ arch/x86/include/asm/clocksource.h   |   12 ++++++++++++
+ arch/x86/include/asm/mshyperv.h      |    2 ++
+ arch/x86/include/asm/vdso/vsyscall.h |   10 +---------
+ arch/x86/include/asm/vgtod.h         |    6 ------
+ arch/x86/kernel/kvmclock.c           |    7 +++++++
+ arch/x86/kernel/tsc.c                |   32 ++++++++++++++++++++------------
+ arch/x86/xen/time.c                  |   17 ++++++++++++-----
+ drivers/clocksource/hyperv_timer.c   |    7 +++++++
+ 9 files changed, 65 insertions(+), 32 deletions(-)
 
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -32,9 +32,19 @@ struct module;
-  *	Provides mostly state-free accessors to the underlying hardware.
-  *	This is the structure used for system time.
-  *
-- * @name:		ptr to clocksource name
-- * @list:		list head for registration
-- * @rating:		rating value for selection (higher is better)
-+ * @read:		Returns a cycle value, passes clocksource as argument
-+ * @mask:		Bitmask for two's complement
-+ *			subtraction of non 64 bit counters
-+ * @mult:		Cycle to nanosecond multiplier
-+ * @shift:		Cycle to nanosecond divisor (power of two)
-+ * @max_idle_ns:	Maximum idle time permitted by the clocksource (nsecs)
-+ * @maxadj:		Maximum adjustment value to mult (~11%)
-+ * @archdata:		Optional arch-specific data
-+ * @max_cycles:		Maximum safe cycle value which won't overflow on
-+ *			multiplication
-+ * @name:		Pointer to clocksource name
-+ * @list:		List head for registration (internal)
-+ * @rating:		Rating value for selection (higher is better)
-  *			To avoid rating inflation the following
-  *			list should give you a guide as to how
-  *			to assign your clocksource a rating
-@@ -49,27 +59,23 @@ struct module;
-  *			400-499: Perfect
-  *				The ideal clocksource. A must-use where
-  *				available.
-- * @read:		returns a cycle value, passes clocksource as argument
-- * @enable:		optional function to enable the clocksource
-- * @disable:		optional function to disable the clocksource
-- * @mask:		bitmask for two's complement
-- *			subtraction of non 64 bit counters
-- * @mult:		cycle to nanosecond multiplier
-- * @shift:		cycle to nanosecond divisor (power of two)
-- * @max_idle_ns:	max idle time permitted by the clocksource (nsecs)
-- * @maxadj:		maximum adjustment value to mult (~11%)
-- * @max_cycles:		maximum safe cycle value which won't overflow on multiplication
-- * @flags:		flags describing special properties
-- * @archdata:		arch-specific data
-- * @suspend:		suspend function for the clocksource, if necessary
-- * @resume:		resume function for the clocksource, if necessary
-+ * @flags:		Flags describing special properties
-+ * @enable:		Optional function to enable the clocksource
-+ * @disable:		Optional function to disable the clocksource
-+ * @suspend:		Optional suspend function for the clocksource
-+ * @resume:		Optional resume function for the clocksource
-  * @mark_unstable:	Optional function to inform the clocksource driver that
-  *			the watchdog marked the clocksource unstable
-- * @owner:		module reference, must be set by clocksource in modules
-+ * @tick_stable:        Optional function called periodically from the watchdog
-+ *			code to provide stable syncrhonization points
-+ * @wd_list:		List head to enqueue into the watchdog list (internal)
-+ * @cs_last:		Last clocksource value for clocksource watchdog
-+ * @wd_last:		Last watchdog value corresponding to @cs_last
-+ * @owner:		Module reference, must be set by clocksource in modules
-  *
-  * Note: This struct is not used in hotpathes of the timekeeping code
-  * because the timekeeper caches the hot path fields in its own data
-- * structure, so no line cache alignment is required,
-+ * structure, so no cache line alignment is required,
-  *
-  * The pointer to the clocksource itself is handed to the read
-  * callback. If you need extra information there you can wrap struct
-@@ -78,35 +84,36 @@ struct module;
-  * structure.
-  */
- struct clocksource {
--	u64 (*read)(struct clocksource *cs);
--	u64 mask;
--	u32 mult;
--	u32 shift;
--	u64 max_idle_ns;
--	u32 maxadj;
-+	u64			(*read)(struct clocksource *cs);
-+	u64			mask;
-+	u32			mult;
-+	u32			shift;
-+	u64			max_idle_ns;
-+	u32			maxadj;
- #ifdef CONFIG_ARCH_CLOCKSOURCE_DATA
- 	struct arch_clocksource_data archdata;
- #endif
--	u64 max_cycles;
--	const char *name;
--	struct list_head list;
--	int rating;
--	int (*enable)(struct clocksource *cs);
--	void (*disable)(struct clocksource *cs);
--	unsigned long flags;
--	void (*suspend)(struct clocksource *cs);
--	void (*resume)(struct clocksource *cs);
--	void (*mark_unstable)(struct clocksource *cs);
--	void (*tick_stable)(struct clocksource *cs);
-+	u64			max_cycles;
-+	const char		*name;
-+	struct list_head	list;
-+	int			rating;
-+	unsigned long		flags;
-+
-+	int			(*enable)(struct clocksource *cs);
-+	void			(*disable)(struct clocksource *cs);
-+	void			(*suspend)(struct clocksource *cs);
-+	void			(*resume)(struct clocksource *cs);
-+	void			(*mark_unstable)(struct clocksource *cs);
-+	void			(*tick_stable)(struct clocksource *cs);
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -38,6 +38,8 @@ struct vdso_data *arch_get_vdso_data(voi
+ }
+ #undef EMIT_VVAR
  
- 	/* private: */
- #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
- 	/* Watchdog related data, used by the framework */
--	struct list_head wd_list;
--	u64 cs_last;
--	u64 wd_last;
-+	struct list_head	wd_list;
-+	u64			cs_last;
-+	u64			wd_last;
++unsigned int vclocks_used __read_mostly;
++
+ #if defined(CONFIG_X86_64)
+ unsigned int __read_mostly vdso64_enabled = 1;
  #endif
--	struct module *owner;
-+	struct module		*owner;
+@@ -445,6 +447,8 @@ static __init int vdso_setup(char *s)
+ 
+ static int __init init_vdso(void)
+ {
++	BUILD_BUG_ON(VCLOCK_MAX >= 32);
++
+ 	init_vdso_image(&vdso_image_64);
+ 
+ #ifdef CONFIG_X86_X32_ABI
+--- a/arch/x86/include/asm/clocksource.h
++++ b/arch/x86/include/asm/clocksource.h
+@@ -14,4 +14,16 @@ struct arch_clocksource_data {
+ 	int vclock_mode;
+ };
+ 
++extern unsigned int vclocks_used;
++
++static inline bool vclock_was_used(int vclock)
++{
++	return READ_ONCE(vclocks_used) & (1U << vclock);
++}
++
++static inline void vclocks_set_used(unsigned int which)
++{
++	WRITE_ONCE(vclocks_used, READ_ONCE(vclocks_used) | (1 << which));
++}
++
+ #endif /* _ASM_X86_CLOCKSOURCE_H */
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -47,6 +47,8 @@ typedef int (*hyperv_fill_flush_list_fun
+ 	wrmsrl(HV_X64_MSR_REFERENCE_TSC, val)
+ #define hv_set_clocksource_vdso(val) \
+ 	((val).archdata.vclock_mode = VCLOCK_HVCLOCK)
++#define hv_enable_vdso_clocksource() \
++	vclocks_set_used(VCLOCK_HVCLOCK);
+ #define hv_get_raw_timer() rdtsc_ordered()
+ 
+ void hyperv_callback_vector(void);
+--- a/arch/x86/include/asm/vdso/vsyscall.h
++++ b/arch/x86/include/asm/vdso/vsyscall.h
+@@ -10,8 +10,6 @@
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
+ 
+-int vclocks_used __read_mostly;
+-
+ DEFINE_VVAR(struct vdso_data, _vdso_data);
+ /*
+  * Update the vDSO data page to keep in sync with kernel timekeeping.
+@@ -26,13 +24,7 @@ struct vdso_data *__x86_get_k_vdso_data(
+ static __always_inline
+ int __x86_get_clock_mode(struct timekeeper *tk)
+ {
+-	int vclock_mode = tk->tkr_mono.clock->archdata.vclock_mode;
+-
+-	/* Mark the new vclock used. */
+-	BUILD_BUG_ON(VCLOCK_MAX >= 32);
+-	WRITE_ONCE(vclocks_used, READ_ONCE(vclocks_used) | (1 << vclock_mode));
+-
+-	return vclock_mode;
++	return tk->tkr_mono.clock->archdata.vclock_mode;
+ }
+ #define __arch_get_clock_mode __x86_get_clock_mode
+ 
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -15,10 +15,4 @@ typedef u64 gtod_long_t;
+ typedef unsigned long gtod_long_t;
+ #endif
+ 
+-extern int vclocks_used;
+-static inline bool vclock_was_used(int vclock)
+-{
+-	return READ_ONCE(vclocks_used) & (1 << vclock);
+-}
+-
+ #endif /* _ASM_X86_VGTOD_H */
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -159,12 +159,19 @@ bool kvm_check_and_clear_guest_paused(vo
+ 	return ret;
+ }
+ 
++static int kvm_cs_enable(struct clocksource *cs)
++{
++	vclocks_set_used(VCLOCK_PVCLOCK);
++	return 0;
++}
++
+ struct clocksource kvm_clock = {
+ 	.name	= "kvm-clock",
+ 	.read	= kvm_clock_get_cycles,
+ 	.rating	= 400,
+ 	.mask	= CLOCKSOURCE_MASK(64),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
++	.enable	= kvm_cs_enable,
+ };
+ EXPORT_SYMBOL_GPL(kvm_clock);
+ 
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1108,17 +1108,24 @@ static void tsc_cs_tick_stable(struct cl
+ 		sched_clock_tick_stable();
+ }
+ 
++static int tsc_cs_enable(struct clocksource *cs)
++{
++	vclocks_set_used(VCLOCK_TSC);
++	return 0;
++}
++
+ /*
+  * .mask MUST be CLOCKSOURCE_MASK(64). See comment above read_tsc()
+  */
+ static struct clocksource clocksource_tsc_early = {
+-	.name                   = "tsc-early",
+-	.rating                 = 299,
+-	.read                   = read_tsc,
+-	.mask                   = CLOCKSOURCE_MASK(64),
+-	.flags                  = CLOCK_SOURCE_IS_CONTINUOUS |
++	.name			= "tsc-early",
++	.rating			= 299,
++	.read			= read_tsc,
++	.mask			= CLOCKSOURCE_MASK(64),
++	.flags			= CLOCK_SOURCE_IS_CONTINUOUS |
+ 				  CLOCK_SOURCE_MUST_VERIFY,
+-	.archdata               = { .vclock_mode = VCLOCK_TSC },
++	.archdata		= { .vclock_mode = VCLOCK_TSC },
++	.enable			= tsc_cs_enable,
+ 	.resume			= tsc_resume,
+ 	.mark_unstable		= tsc_cs_mark_unstable,
+ 	.tick_stable		= tsc_cs_tick_stable,
+@@ -1131,14 +1138,15 @@ static struct clocksource clocksource_ts
+  * been found good.
+  */
+ static struct clocksource clocksource_tsc = {
+-	.name                   = "tsc",
+-	.rating                 = 300,
+-	.read                   = read_tsc,
+-	.mask                   = CLOCKSOURCE_MASK(64),
+-	.flags                  = CLOCK_SOURCE_IS_CONTINUOUS |
++	.name			= "tsc",
++	.rating			= 300,
++	.read			= read_tsc,
++	.mask			= CLOCKSOURCE_MASK(64),
++	.flags			= CLOCK_SOURCE_IS_CONTINUOUS |
+ 				  CLOCK_SOURCE_VALID_FOR_HRES |
+ 				  CLOCK_SOURCE_MUST_VERIFY,
+-	.archdata               = { .vclock_mode = VCLOCK_TSC },
++	.archdata		= { .vclock_mode = VCLOCK_TSC },
++	.enable			= tsc_cs_enable,
+ 	.resume			= tsc_resume,
+ 	.mark_unstable		= tsc_cs_mark_unstable,
+ 	.tick_stable		= tsc_cs_tick_stable,
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -145,12 +145,19 @@ static struct notifier_block xen_pvclock
+ 	.notifier_call = xen_pvclock_gtod_notify,
+ };
+ 
++static int xen_cs_enable(struct clocksource *cs)
++{
++	vclocks_set_used(VCLOCK_PVCLOCK);
++	return 0;
++}
++
+ static struct clocksource xen_clocksource __read_mostly = {
+-	.name = "xen",
+-	.rating = 400,
+-	.read = xen_clocksource_get_cycles,
+-	.mask = ~0,
+-	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
++	.name	= "xen",
++	.rating	= 400,
++	.read	= xen_clocksource_get_cycles,
++	.mask	= CLOCKSOURCE_MASK(64),
++	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
++	.enable = xen_cs_enable,
  };
  
  /*
+--- a/drivers/clocksource/hyperv_timer.c
++++ b/drivers/clocksource/hyperv_timer.c
+@@ -330,12 +330,19 @@ static u64 read_hv_sched_clock_tsc(void)
+ 	return read_hv_clock_tsc(NULL) - hv_sched_clock_offset;
+ }
+ 
++static int hv_cs_enable(struct clocksource *cs)
++{
++	hv_enable_vdso_clocksource();
++	return 0;
++}
++
+ static struct clocksource hyperv_cs_tsc = {
+ 	.name	= "hyperv_clocksource_tsc_page",
+ 	.rating	= 400,
+ 	.read	= read_hv_clock_tsc,
+ 	.mask	= CLOCKSOURCE_MASK(64),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
++	.enable = hv_cs_enable,
+ };
+ 
+ static u64 notrace read_hv_clock_msr(struct clocksource *arg)
 
