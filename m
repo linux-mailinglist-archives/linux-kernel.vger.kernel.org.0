@@ -2,79 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9937139F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 715C8139F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbgANCPc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 13 Jan 2020 21:15:32 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2989 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729402AbgANCPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 21:15:31 -0500
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id B9AA8675F32A4268D52D;
-        Tue, 14 Jan 2020 10:15:28 +0800 (CST)
-Received: from dggeme716-chm.china.huawei.com (10.1.199.112) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 14 Jan 2020 10:15:28 +0800
-Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
- dggeme716-chm.china.huawei.com (10.1.199.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Tue, 14 Jan 2020 10:15:28 +0800
-Received: from dggeme763-chm.china.huawei.com ([10.6.66.36]) by
- dggeme763-chm.china.huawei.com ([10.6.66.36]) with mapi id 15.01.1713.004;
- Tue, 14 Jan 2020 10:15:28 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2] KVM: nVMX: vmread should not set rflags to specify
- success in case of #PF
-Thread-Topic: [PATCH v2] KVM: nVMX: vmread should not set rflags to specify
- success in case of #PF
-Thread-Index: AdXKfnlTqBbphD17SN+x8lK5ZNmfGA==
-Date:   Tue, 14 Jan 2020 02:15:28 +0000
-Message-ID: <724c22eff5f94a338e0f8af4f2c1df93@huawei.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.173.221.158]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729575AbgANCTJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 21:19:09 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:32795 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729160AbgANCTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 21:19:08 -0500
+Received: by mail-pj1-f68.google.com with SMTP id u63so431238pjb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 18:19:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I7aN7Y1nzik1KbsNshiwY6nugyBpWzW8lv7vF97PZQM=;
+        b=C5RRpqXMfZpMtG14RRkraQFn1Sb5pbDBSB3Cb3uaNQfi/0xa0jM56TSKBtGYYLNo6n
+         tWVPwTFEsCdF+47l7vtn4Fr1RnA6OJhuyLBDUrjWxQQ45xqZS4KPsPekcWf7md5BWqqN
+         y4mtINZx/zEAi+nLD+ji9BLOfL2uI46y8ZAOK7cfFJuLd4mjK04x4Ln4RILVBD7LUPxu
+         67aj+1E82N427JNXgL467Ozglj20XYvWOSxrkp7QD/dF1/C6tlpKrtB0oay4HWoY6h1l
+         6powEnAq0H5y3mvCQXt1bNGGmpkQwichArkoOF08BCpu76t8xY9MMH04iAcDzbD1ZFQ0
+         +4oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I7aN7Y1nzik1KbsNshiwY6nugyBpWzW8lv7vF97PZQM=;
+        b=VMUGBbmMuZ+dMJISiKL2IZoxdyrGOfJnb8GUvWiyAfdgCJTLQ5TfQRi32QBovlcKDi
+         9FhotHJ0i3dqFn+PAjChxrz64GcDRacuOXdDiBbwd7+Rohi/pjSY/q67EmmP9lzmBZVV
+         sXUh8TG3pEW1kCgr3cOxNBa5DO7v1ExEYttVbhA1HdCEYTLE7VwiGP+CiQPMywT3dMR/
+         jBfLYVLNn2NFhwUdS/7K9Xm1aJEtXiRud4zSCibt3GWQ7k3K3102i8iUNbYjl0eoJ4oh
+         jIQL+Insciy86uHVMdfJPWYtZ3vytuIvfdhg233MpSKNidWk1iU+j3/RKyLnVkWTsFly
+         F4qg==
+X-Gm-Message-State: APjAAAVbom5cJJ6VA8OVrb0rUdy81kJcxVe6xdyIZOjChzosTI1diE7z
+        98OyoeuZHwgtVCqyXjpikCk3LRWcaT9lpzm3gH9GcQ==
+X-Google-Smtp-Source: APXvYqz+9AZOJJpTU34QiSXSYDhA2HUFGP93xod3rAKylUqbvfH/Pmt8P197RInxMERv7NI/gqMqrsXBuTOaZAiTkLM=
+X-Received: by 2002:a17:902:fe8d:: with SMTP id x13mr17804616plm.232.1578968347761;
+ Mon, 13 Jan 2020 18:19:07 -0800 (PST)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <1578656965-2993-1-git-send-email-alan.maguire@oracle.com> <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
+In-Reply-To: <bb27a03b-1c3d-567b-caf3-7b0e4a039f6d@linuxfoundation.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 13 Jan 2020 18:18:56 -0800
+Message-ID: <CAFd5g45qfWtB9yp=MZ=79hR7Z+c7r7nsfMeofxzF0WAbzkvxag@mail.gmail.com>
+Subject: Re: [PATCH kunit] kunit: building kunit as a module breaks allmodconfig
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Alan Maguire <alan.maguire@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        jmorris@namei.org, serge@hallyn.com,
+        Knut Omang <knut.omang@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, Jan 13, 2020 at 12:09:42PM -0800, Sean Christopherson wrote:
-> > On Sat, Dec 28, 2019 at 02:25:24PM +0800, linmiaohe wrote:
-> > > From: Miaohe Lin <linmiaohe@huawei.com>
-> > > 
-> > > In case writing to vmread destination operand result in a #PF, 
-> > vmread should not call nested_vmx_succeed() to set rflags to specify success.
-> > > Similar to as done in VMPTRST (See handle_vmptrst()).
-> > > 
-> > > Reviewed-by: Liran Alon <liran.alon@oracle.com>
-> > > Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> > 
-> > Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+On Fri, Jan 10, 2020 at 1:39 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
 >
-> Gah, got trigger happy.  This could also have "Cc: stable@vger.kernel.org".
-> With that, my Reviewed-by stands :-).
+> Hi Alan,
+>
+> On 1/10/20 4:49 AM, Alan Maguire wrote:
+> > kunit tests that do not support module build should depend
+> > on KUNIT=y rather than just KUNIT in Kconfig, otherwise
+> > they will trigger compilation errors for "make allmodconfig"
+> > builds.
+> >
+> > Fixes: 9fe124bf1b77 ("kunit: allow kunit to be loaded as a module")
+> > Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+> Thanks for fixing this quickly. For future reference, Signed-off-by
+> should be last. I fixed it and applied the patch.
 
-Many thanks for your review. I would add Cc tag and resend a v3. Thanks again.
+Thanks everyone for taking care of this so quickly in my absence!
+
+Cheers
