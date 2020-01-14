@@ -2,130 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A5813ACB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A95D113ACC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbgANOzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:55:52 -0500
-Received: from mga03.intel.com ([134.134.136.65]:23513 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbgANOzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:55:51 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 06:55:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,433,1571727600"; 
-   d="scan'208";a="242495126"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga002.jf.intel.com with SMTP; 14 Jan 2020 06:55:42 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 14 Jan 2020 16:55:41 +0200
-Date:   Tue, 14 Jan 2020 16:55:41 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, swati2.sharma@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/i915: Re-init lspcon after HPD if lspcon probe
- failed
-Message-ID: <20200114145541.GW13686@intel.com>
-References: <20191224084251.28414-1-kai.heng.feng@canonical.com>
- <85235F00-7FBA-46E4-B7A5-45294DE1B824@canonical.com>
- <87ftgiku03.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        id S1729052AbgANO5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:57:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2486 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727092AbgANO5L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:57:11 -0500
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EEqqEV103289
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 09:57:11 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xfaw04g1g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 09:57:09 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 14 Jan 2020 14:56:59 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 14 Jan 2020 14:56:55 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EEusPu65208380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 14:56:54 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C0F552051;
+        Tue, 14 Jan 2020 14:56:54 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.223.52])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 47F0A5204F;
+        Tue, 14 Jan 2020 14:56:53 +0000 (GMT)
+Subject: Re: inconsistent lock state in ima_process_queued_keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Date:   Tue, 14 Jan 2020 09:56:52 -0500
+In-Reply-To: <CACT4Y+av-ipjsdtsXs4d55w=inNHJqho3s3XKfU0Jo7f98yi8w@mail.gmail.com>
+References: <000000000000486474059c19f4d7@google.com>
+         <CACT4Y+av-ipjsdtsXs4d55w=inNHJqho3s3XKfU0Jo7f98yi8w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ftgiku03.fsf@intel.com>
-X-Patchwork-Hint: comment
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 20011414-0020-0000-0000-000003A09735
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011414-0021-0000-0000-000021F80C57
+Message-Id: <1579013812.12230.21.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_04:2020-01-14,2020-01-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001140128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 04:11:40PM +0200, Jani Nikula wrote:
-> On Mon, 06 Jan 2020, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
-> > Hi Jani,
+On Tue, 2020-01-14 at 14:58 +0100, Dmitry Vyukov wrote:
+> On Tue, Jan 14, 2020 at 2:56 PM syzbot
+> <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com> wrote:
 > >
-> >> On Dec 24, 2019, at 16:42, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
-> >> 
-> >> On HP 800 G4 DM, if HDMI cable isn't plugged before boot, the HDMI port
-> >> becomes useless and never responds to cable hotplugging:
-> >> [    3.031904] [drm:lspcon_init [i915]] *ERROR* Failed to probe lspcon
-> >> [    3.031945] [drm:intel_ddi_init [i915]] *ERROR* LSPCON init failed on port D
-> >> 
-> >> Seems like the lspcon chip on the system in question only gets powered
-> >> after the cable is plugged.
-> >> 
-> >> So let's call lspcon_init() dynamically to properly initialize the
-> >> lspcon chip and make HDMI port work.
+> > Hello,
 > >
-> > Do you have any further suggestion for this patch?
-> 
-> Sorry for taking so long. Comments inline.
-> 
+> > syzbot found the following crash on:
 > >
-> > Kai-Heng
+> > HEAD commit:    1b851f98 Add linux-next specific files for 20200114
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12bcbb25e00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3e7d9cf7ebfa08ad
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a4a503d7f37292ae1664
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 > >
-> >> 
-> >> Closes: https://gitlab.freedesktop.org/drm/intel/issues/203
-> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >> ---
-> >> v3:
-> >> - Make sure it's handled under long HPD case.
-> >> 
-> >> v2: 
-> >> - Move lspcon_init() inside of intel_dp_hpd_pulse().
-> >> 
-> >> drivers/gpu/drm/i915/display/intel_dp.c | 8 +++++++-
-> >> 1 file changed, 7 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> >> index fe31bbfd6c62..a72c9c041c60 100644
-> >> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> >> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> >> @@ -6573,6 +6573,7 @@ enum irqreturn
-> >> intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
-> >> {
-> >> 	struct intel_dp *intel_dp = &intel_dig_port->dp;
-> >> +	struct drm_i915_private *dev_priv = dp_to_i915(intel_dp);
-> >> 
-> >> 	if (long_hpd && intel_dig_port->base.type == INTEL_OUTPUT_EDP) {
-> >> 		/*
-> >> @@ -6593,7 +6594,12 @@ intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
-> >> 		      long_hpd ? "long" : "short");
-> >> 
-> >> 	if (long_hpd) {
-> >> -		intel_dp->reset_link_params = true;
-> >> +		if (intel_dig_port->base.type == INTEL_OUTPUT_DDI &&
-> >> +		    HAS_LSPCON(dev_priv) && !intel_dig_port->lspcon.active)
-> >> +			lspcon_init(intel_dig_port);
-> >> +		else
-> >> +			intel_dp->reset_link_params = true;
-> >> +
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com
 > 
-> Hmm, I think this will try to init lspcon on ports that do not have
-> lspcon. Also, why wouldn't we reset the params?
+> +Lakshmi, you seem to have submitted a number of changes to this file recently.
 > 
-> I think this boils down to just adding the following lines:
+> This completely breaks linux-next testing for us, every kernel crashes
+> a few minutes after boot.
 > 
-> 	if (intel_bios_is_lspcon_present(dev_priv, intel_dig_port->base.port) &&
->             !intel_dig_port->lspcon.active)
-> 		lspcon_init(intel_dig_port);
-> 
-> 
-> Ville?
+> 2020/01/14 14:45:00 vm-26: crash: inconsistent lock state in
+> ima_process_queued_keys
 
-This won't work right. Eg. intel_infoframe_init() assumes that lspcon
-init happens during driver load. We should probably change that to just
-trust the VBT and simply move the lspcon probe (if we even need one)
-into dp_detect() instead of sprinkling it around in several places.
+Yikes! Â Are you running with an IMA policy? Â I assume this is being
+caused by commit 8f5d2d06f217 ("IMA: Defined timer to free queued
+keys". Â Does reverting it prevent this from happening?
 
--- 
-Ville Syrjälä
-Intel
+Mimi
+
