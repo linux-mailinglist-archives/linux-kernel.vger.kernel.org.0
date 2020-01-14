@@ -2,77 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C25C13AB45
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:44:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1637313AB4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbgANNoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:44:38 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:40371 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbgANNog (ORCPT
+        id S1728921AbgANNpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:45:04 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43576 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbgANNpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:44:36 -0500
-Received: by mail-pj1-f68.google.com with SMTP id bg7so5887361pjb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:44:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MnqGcAehX1wU5gwwiMLN+N6Z2YOiwMYW6UCijsntxno=;
-        b=Htw3saGw+wHiHPek12YM321HKtvgj7SH79Ljty2vOzIg9vtFofbjUcgB4bpgPsz3m4
-         siyh1yD8rWHSH/IzB5SBqxYR3QYPNnA9nqZffI+Ul+ZmPTeUtXcL27OBe+8xjkd+gPHO
-         7A8Gh9sA7lzNjhVOULGU2KBAfFmmfhFUL5uWs96eNoz47B9jvZcimTNKwSx0TwHU82CD
-         glLb2evg9XDBbjhvX5iXBsYZAt+H+9KEYCU0xVNQtD7M+v33jrQuxFPQ5PEesiMeijvX
-         8p4lKgVuya5io7JZIaGXVa2w8XqyY23aNC03M9pxyxwkXbX6LBR4NIgGmJ2lMyVg+MRY
-         S1uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MnqGcAehX1wU5gwwiMLN+N6Z2YOiwMYW6UCijsntxno=;
-        b=j2skAy2SGejM8EUhgMPTetmYHvOoP96YfbO5o17npGw1iuctcW/MoaRxf7OYnIkNUb
-         Vnb0ZQMx9Dz0k7qFWCRGi/9eQmcRC8YqRzTyU98Oiqt97YG3sYM72B+EwbkVrkToMpPg
-         rDnq4gdc+haYyZ/nXdM/53P8bqxIqRsbClYXVp/daAcdjnmpuYlKRNdhxFtnpTn8Ri27
-         26LHBRwulpgSNcrdnqzEYsgxB/hNXxMUJsqa9so9vguC8ubtQc8DFIhL973o4IyDiHSd
-         phuKAJFeM7h8m8NBrtiZJSn5YSgwR3aVAh4G1ZBgwH8NkgZv59TEUeMRAu31YPMEPglM
-         6UTA==
-X-Gm-Message-State: APjAAAX/ynjdY9CldAG0rNwiIS4O0Q/aNFA+PvYewQX1mpcadEuatFvl
-        LKJ/M3TdD3zGOdoqEAGpuSc8xBTCUl9+dA==
-X-Google-Smtp-Source: APXvYqyKX/YY52+Dk4ut5XBvn/NDgz0FdIlhRtW3UaxpoVB0L4M+YCS2y0+YsWHIWYWWlJlRFsTBww==
-X-Received: by 2002:a17:90a:db0b:: with SMTP id g11mr28185778pjv.140.1579009475725;
-        Tue, 14 Jan 2020 05:44:35 -0800 (PST)
-Received: from [10.11.6.52] ([96.68.148.21])
-        by smtp.gmail.com with ESMTPSA id q10sm18994445pfn.5.2020.01.14.05.44.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 05:44:34 -0800 (PST)
-Subject: Re: [PATCH] btrfs: Implement lazytime
-To:     Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        linux-btrfs@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20200114085325045.JFBE.12086.ppp.dion.ne.jp@dmta0008.auone-net.jp>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <7d0eadb4-5712-6fa1-f50f-f8ea6d8aea43@toxicpanda.com>
-Date:   Tue, 14 Jan 2020 05:44:33 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        Tue, 14 Jan 2020 08:45:04 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1irMVB-0006cA-B3; Tue, 14 Jan 2020 14:45:01 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 7615A101DEE; Tue, 14 Jan 2020 14:45:00 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Peter Xu <peterx@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Ming Lei <minlei@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org
+Subject: Re: Kernel-managed IRQ affinity (cont)
+In-Reply-To: <20200111024835.GA24575@ming.t460p>
+References: <20191216195712.GA161272@xz-x1> <20191219082819.GB15731@ming.t460p> <20191219143214.GA50561@xz-x1> <20191219161115.GA18672@ming.t460p> <87eew8l7oz.fsf@nanos.tec.linutronix.de> <20200110012802.GA4501@ming.t460p> <87v9pjrtbh.fsf@nanos.tec.linutronix.de> <20200111024835.GA24575@ming.t460p>
+Date:   Tue, 14 Jan 2020 14:45:00 +0100
+Message-ID: <87r202b19f.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20200114085325045.JFBE.12086.ppp.dion.ne.jp@dmta0008.auone-net.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 12:53 AM, Kusanagi Kouichi wrote:
-> I tested with xfstests and lazytime didn't cause any new failures.
-> 
-> Signed-off-by: Kusanagi Kouichi <slash@ac.auone-net.jp>
-> ---
+Ming,
 
-We don't use the I_DIRTY flags for tracking our inodes, and .write_inode was 
-removed because we didn't need it and it deadlocks.  Thanks,
+Ming Lei <ming.lei@redhat.com> writes:
+> On Fri, Jan 10, 2020 at 08:43:14PM +0100, Thomas Gleixner wrote:
+>> Ming Lei <ming.lei@redhat.com> writes:
+>> > That is why I try to exclude isolated CPUs from interrupt effective affinity,
+>> > turns out the approach is simple and doable.
+>> 
+>> Yes, it's doable. But it still is inconsistent behaviour. Assume the
+>> following configuration:
+>> 
+>>   8 CPUs CPU0,1 assigned for housekeeping
+>> 
+>> With 8 queues the proposed change does nothing because each queue is
+>> mapped to exactly one CPU.
+>
+> That is expected behavior for this RT case, given userspace won't submit
+> IO from isolated CPUs.
 
-Josef
+What is _this_ RT case? We really don't implement policy for a specific
+use case. If the kernel implements a policy then it has to be generally
+useful and practical.
+
+>> With 4 queues you get the following:
+>> 
+>>  CPU0,1       queue 0
+>>  CPU2,3       queue 1
+>>  CPU4,5       queue 2
+>>  CPU6,7       queue 3
+>> 
+>> No effect on the isolated CPUs either.
+>> 
+>> With 2 queues you get the following:
+>> 
+>>  CPU0,1,2,3   queue 0
+>>  CPU4,5,6,7   queue 1
+>> 
+>> So here the isolated CPUs 2 and 3 get the isolation, but 4-7
+>> not. That's perhaps intended, but definitely not documented.
+>
+> That is intentional change, given no IO will be submitted from 4-7
+> most of times in RT case, so it is fine to select effective CPU from
+> isolated CPUs in this case. As peter mentioned, IO may just be submitted
+> from isolated CPUs during booting. Once the system is setup, no IO
+> comes from isolated CPUs, then no interrupt is delivered to isolated
+> CPUs, then meet RT's requirement.
+
+Again. This is a specific usecase. Is this generally applicable?
+
+> We can document this change somewhere.
+
+Yes, this needs to be documented very clearly with that command line
+parameter.
+
+>> So you really need to make your mind up and describe what the intended
+>> effect of this is and why you think that the result is correct.
+>
+> In short, if there is at least one housekeeping available in the
+> interrupt's affinity, we choose effective CPU from housekeeping CPUs.
+> Otherwise, keep the current behavior wrt. selecting effective CPU.
+>
+> With this approach, no interrupts can be delivered to isolated CPUs
+> if no IOs are submitted from these CPUs.
+>
+> Please let us know if it addresses your concerns.
+
+Mostly. See above.
+
+Thanks,
+
+        tglx
+
+
