@@ -2,301 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2A113B2F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3673813B329
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:49:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbgANT2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:28:50 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:51886 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726839AbgANT2t (ORCPT
+        id S1728894AbgANTtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:49:02 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44691 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgANTtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:28:49 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Tnkd7HG_1579030123;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Tnkd7HG_1579030123)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 15 Jan 2020 03:28:45 +0800
-Subject: Re: [v2 PATCH] mm: shmem: allow split THP when truncating THP
- partially
-To:     Hugh Dickins <hughd@google.com>
-Cc:     kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1575420174-19171-1-git-send-email-yang.shi@linux.alibaba.com>
- <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <00f0bb7d-3c25-a65f-ea94-3e2de8e9bcdd@linux.alibaba.com>
-Date:   Tue, 14 Jan 2020 11:28:41 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1912041601270.12930@eggly.anvils>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 14 Jan 2020 14:49:02 -0500
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1irSBO-0005Z9-37; Tue, 14 Jan 2020 20:48:58 +0100
+Message-Id: <20200114185237.273005683@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Tue, 14 Jan 2020 19:52:37 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, John Stultz <john.stultz@linaro.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [patch 00/15] lib/vdso: Bugfix and consolidation
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The recent discussions about changes in the VDSO to support PPC
+triggered this consolidation series which in turn unearthed a subtle
+bug affecting ARM.
 
+The bug affects only ARM 32bit systems which lack a VDSO capable
+timer. The absence of the ARM architected timer causes the VDSO update
+code to terminate early. As a result the parts of the VDSO data which
+is usable without a VDSO capable clocksource are not updated either,
+but the VDSO code uses them, i.e. it uses stale data and will serve
+that forever. The fix is to make only the parts of the update
+conditional which are related to te high resolution interfaces.
 
-On 12/4/19 4:15 PM, Hugh Dickins wrote:
-> On Wed, 4 Dec 2019, Yang Shi wrote:
->
->> Currently when truncating shmem file, if the range is partial of THP
->> (start or end is in the middle of THP), the pages actually will just get
->> cleared rather than being freed unless the range cover the whole THP.
->> Even though all the subpages are truncated (randomly or sequentially),
->> the THP may still be kept in page cache.  This might be fine for some
->> usecases which prefer preserving THP.
->>
->> But, when doing balloon inflation in QEMU, QEMU actually does hole punch
->> or MADV_DONTNEED in base page size granulairty if hugetlbfs is not used.
->> So, when using shmem THP as memory backend QEMU inflation actually doesn't
->> work as expected since it doesn't free memory.  But, the inflation
->> usecase really needs get the memory freed.  Anonymous THP will not get
->> freed right away too but it will be freed eventually when all subpages are
->> unmapped, but shmem THP would still stay in page cache.
->>
->> Split THP right away when doing partial hole punch, and if split fails
->> just clear the page so that read to the hole punched area would return
->> zero.
->>
->> Cc: Hugh Dickins <hughd@google.com>
->> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> Cc: Andrea Arcangeli <aarcange@redhat.com>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->> v2: * Adopted the comment from Kirill.
->>      * Dropped fallocate mode flag, THP split is the default behavior.
->>      * Blended Huge's implementation with my v1 patch. TBH I'm not very keen to
->>        Hugh's find_get_entries() hack (basically neutral), but without that hack
-> Thanks for giving it a try.  I'm not neutral about my find_get_entries()
-> hack: it surely had to go (without it, I'd have just pushed my own patch).
-> I've not noticed anything wrong with your patch, and it's in the right
-> direction, but I'm still not thrilled with it.  I also remember that I
-> got the looping wrong in my first internal attempt (fixed in what I sent),
-> and need to be very sure of the try-again-versus-move-on-to-next conditions
-> before agreeing to anything.  No rush, I'll come back to this in days or
-> month ahead: I'll try to find a less gotoey blend of yours and mine.
+The rest of the series is addressing the following points:
 
-Hi Hugh,
+ - Allow architectures to compile out the high resolution parts of the
+   VDSO library when they know at compile time that no VDSO capable
+   clocksource will be available.
 
-Any update on this one?
+ - Move the storage of the VDSO clockmode into generic code and remove
+   all the redundant copies of the storage and the handling of it from
+   the architectures. 
+
+   This allows to remove the check for a valid clocksource at runtime
+   from the clock readout function and make it generic by checking
+   for a clock mode != NONE in the generic code. This generates better
+   code on PPC and does not affect x86/arm performance.
 
 Thanks,
-Yang
 
->
-> Hugh
->
->>        we have to rely on pagevec_release() to release extra pins and play with
->>        goto. This version does in this way. The patch is bigger than Hugh's due
->>        to extra comments to make the flow clear.
->>
->>   mm/shmem.c | 120 ++++++++++++++++++++++++++++++++++++++++++-------------------
->>   1 file changed, 83 insertions(+), 37 deletions(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 220be9f..1ae0c7f 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -806,12 +806,15 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   	long nr_swaps_freed = 0;
->>   	pgoff_t index;
->>   	int i;
->> +	bool split = false;
->> +	struct page *page = NULL;
->>   
->>   	if (lend == -1)
->>   		end = -1;	/* unsigned, so actually very big */
->>   
->>   	pagevec_init(&pvec);
->>   	index = start;
->> +retry:
->>   	while (index < end) {
->>   		pvec.nr = find_get_entries(mapping, index,
->>   			min(end - index, (pgoff_t)PAGEVEC_SIZE),
->> @@ -819,7 +822,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   		if (!pvec.nr)
->>   			break;
->>   		for (i = 0; i < pagevec_count(&pvec); i++) {
->> -			struct page *page = pvec.pages[i];
->> +			split = false;
->> +			page = pvec.pages[i];
->>   
->>   			index = indices[i];
->>   			if (index >= end)
->> @@ -838,23 +842,24 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   			if (!trylock_page(page))
->>   				continue;
->>   
->> -			if (PageTransTail(page)) {
->> -				/* Middle of THP: zero out the page */
->> -				clear_highpage(page);
->> -				unlock_page(page);
->> -				continue;
->> -			} else if (PageTransHuge(page)) {
->> -				if (index == round_down(end, HPAGE_PMD_NR)) {
->> +			if (PageTransCompound(page) && !unfalloc) {
->> +				if (PageHead(page) &&
->> +				    index != round_down(end, HPAGE_PMD_NR)) {
->>   					/*
->> -					 * Range ends in the middle of THP:
->> -					 * zero out the page
->> +					 * Fall through when punching whole
->> +					 * THP.
->>   					 */
->> -					clear_highpage(page);
->> -					unlock_page(page);
->> -					continue;
->> +					index += HPAGE_PMD_NR - 1;
->> +					i += HPAGE_PMD_NR - 1;
->> +				} else {
->> +					/*
->> +					 * Split THP for any partial hole
->> +					 * punch.
->> +					 */
->> +					get_page(page);
->> +					split = true;
->> +					goto split;
->>   				}
->> -				index += HPAGE_PMD_NR - 1;
->> -				i += HPAGE_PMD_NR - 1;
->>   			}
->>   
->>   			if (!unfalloc || !PageUptodate(page)) {
->> @@ -866,9 +871,29 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   			}
->>   			unlock_page(page);
->>   		}
->> +split:
->>   		pagevec_remove_exceptionals(&pvec);
->>   		pagevec_release(&pvec);
->>   		cond_resched();
->> +
->> +		if (split) {
->> +			/*
->> +			 * The pagevec_release() released all extra pins
->> +			 * from pagevec lookup.  And we hold an extra pin
->> +			 * and still have the page locked under us.
->> +			 */
->> +			if (!split_huge_page(page)) {
->> +				unlock_page(page);
->> +				put_page(page);
->> +				/* Re-lookup page cache from current index */
->> +				goto retry;
->> +			}
->> +
->> +			/* Fail to split THP, move to next index */
->> +			unlock_page(page);
->> +			put_page(page);
->> +		}
->> +
->>   		index++;
->>   	}
->>   
->> @@ -901,6 +926,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   		return;
->>   
->>   	index = start;
->> +again:
->>   	while (index < end) {
->>   		cond_resched();
->>   
->> @@ -916,7 +942,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   			continue;
->>   		}
->>   		for (i = 0; i < pagevec_count(&pvec); i++) {
->> -			struct page *page = pvec.pages[i];
->> +			split = false;
->> +			page = pvec.pages[i];
->>   
->>   			index = indices[i];
->>   			if (index >= end)
->> @@ -936,30 +963,24 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   
->>   			lock_page(page);
->>   
->> -			if (PageTransTail(page)) {
->> -				/* Middle of THP: zero out the page */
->> -				clear_highpage(page);
->> -				unlock_page(page);
->> -				/*
->> -				 * Partial thp truncate due 'start' in middle
->> -				 * of THP: don't need to look on these pages
->> -				 * again on !pvec.nr restart.
->> -				 */
->> -				if (index != round_down(end, HPAGE_PMD_NR))
->> -					start++;
->> -				continue;
->> -			} else if (PageTransHuge(page)) {
->> -				if (index == round_down(end, HPAGE_PMD_NR)) {
->> +			if (PageTransCompound(page) && !unfalloc) {
->> +				if (PageHead(page) &&
->> +				    index != round_down(end, HPAGE_PMD_NR)) {
->>   					/*
->> -					 * Range ends in the middle of THP:
->> -					 * zero out the page
->> +					 * Fall through when punching whole
->> +					 * THP.
->>   					 */
->> -					clear_highpage(page);
->> -					unlock_page(page);
->> -					continue;
->> +					index += HPAGE_PMD_NR - 1;
->> +					i += HPAGE_PMD_NR - 1;
->> +				} else {
->> +					/*
->> +					 * Split THP for any partial hole
->> +					 * punch.
->> +					 */
->> +					get_page(page);
->> +					split = true;
->> +					goto rescan_split;
->>   				}
->> -				index += HPAGE_PMD_NR - 1;
->> -				i += HPAGE_PMD_NR - 1;
->>   			}
->>   
->>   			if (!unfalloc || !PageUptodate(page)) {
->> @@ -976,8 +997,33 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->>   			}
->>   			unlock_page(page);
->>   		}
->> +rescan_split:
->>   		pagevec_remove_exceptionals(&pvec);
->>   		pagevec_release(&pvec);
->> +
->> +		if (split) {
->> +			/*
->> +			 * The pagevec_release() released all extra pins
->> +			 * from pagevec lookup.  And we hold an extra pin
->> +			 * and still have the page locked under us.
->> +			 */
->> +			if (!split_huge_page(page)) {
->> +				unlock_page(page);
->> +				put_page(page);
->> +				/* Re-lookup page cache from current index */
->> +				goto again;
->> +			}
->> +
->> +			/*
->> +			 * Split fail, clear the page then move to next
->> +			 * index.
->> +			 */
->> +			clear_highpage(page);
->> +
->> +			unlock_page(page);
->> +			put_page(page);
->> +		}
->> +
->>   		index++;
->>   	}
->>   
->> -- 
->> 1.8.3.1
->>
->>
+       tglx
+
+8<----------
+ arch/arm/Kconfig                            |    1 
+ arch/arm/include/asm/clocksource.h          |    5 -
+ arch/arm/include/asm/vdso/gettimeofday.h    |    6 +
+ arch/arm/include/asm/vdso/vsyscall.h        |   35 ---------
+ arch/arm64/Kconfig                          |    1 
+ arch/arm64/include/asm/clocksource.h        |    5 -
+ arch/arm64/include/asm/vdso/vsyscall.h      |    9 --
+ arch/mips/Kconfig                           |    1 
+ arch/mips/include/asm/clocksource.h         |   18 ----
+ arch/mips/include/asm/vdso/vsyscall.h       |    9 --
+ arch/mips/kernel/csrc-r4k.c                 |    2 
+ arch/x86/Kconfig                            |    1 
+ arch/x86/entry/vdso/vma.c                   |    8 +-
+ arch/x86/include/asm/clocksource.h          |   23 ++++--
+ arch/x86/include/asm/mshyperv.h             |    4 -
+ arch/x86/include/asm/vdso/gettimeofday.h    |    6 -
+ arch/x86/include/asm/vdso/vsyscall.h        |   15 ----
+ arch/x86/include/asm/vgtod.h                |    6 -
+ arch/x86/kernel/kvmclock.c                  |    9 ++
+ arch/x86/kernel/pvclock.c                   |    2 
+ arch/x86/kernel/time.c                      |   12 ---
+ arch/x86/kernel/tsc.c                       |   32 +++++---
+ arch/x86/kvm/trace.h                        |    4 -
+ arch/x86/kvm/x86.c                          |   22 +++---
+ arch/x86/xen/time.c                         |   36 ++++++---
+ b/arch/mips/include/asm/vdso/gettimeofday.h |   29 +++----
+ b/include/asm-generic/vdso/vsyscall.h       |   14 ---
+ drivers/clocksource/arm_arch_timer.c        |    8 +-
+ drivers/clocksource/hyperv_timer.c          |    7 +
+ drivers/clocksource/mips-gic-timer.c        |    8 +-
+ include/linux/clocksource.h                 |  102 ++++++++++++++++------------
+ include/vdso/datapage.h                     |    2 
+ kernel/time/clocksource.c                   |    9 ++
+ kernel/time/namespace.c                     |    7 +
+ kernel/time/vsyscall.c                      |   43 +++++------
+ lib/vdso/gettimeofday.c                     |   43 +++++++----
+ 36 files changed, 259 insertions(+), 285 deletions(-)
+
 
