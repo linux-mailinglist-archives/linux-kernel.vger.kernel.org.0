@@ -2,132 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8855713B2E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 699CE13B2EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgANTWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:22:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46278 "EHLO mail.kernel.org"
+        id S1728967AbgANTXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:23:01 -0500
+Received: from mout.gmx.net ([212.227.17.22]:52427 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbgANTWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:22:22 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9888124658;
-        Tue, 14 Jan 2020 19:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579029740;
-        bh=mKLOd2xmuYtb73s/4dD84EKQ2MMEkc1ge3ZF5InQbH8=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=117MId6Fz76RZor5q9TDLOOoMgry1k3C0QHZUjZIdh92Cr0Y66vkwVY4G+FR6cfpv
-         BIBczBS/bbgKByRPmw3XmuYD/Ayq9MiHEziGem3GpZoV1tAE9hrhlFPzNXPZF0Ldve
-         dtbxedSQL5fov2WMA872xeXZ/jl8mPcSM/6v5OrA=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 3FB583522798; Tue, 14 Jan 2020 11:22:20 -0800 (PST)
-Date:   Tue, 14 Jan 2020 11:22:20 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Marco Elver <elver@google.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alexander Potapenko <glider@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Daniel Axtens <dja@axtens.net>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-efi@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCH v4 01/10] kcsan: Add Kernel Concurrency Sanitizer
- infrastructure
-Message-ID: <20200114192220.GS2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <CANpmjNOC2PYFsE_TK2SYmKcHxyG+2arWc8x_fmeWPOMi0+ot8g@mail.gmail.com>
- <53F6B915-AC53-41BB-BF32-33732515B3A0@lca.pw>
+        id S1728656AbgANTW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 14:22:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1579029769;
+        bh=lq30yIs/kC7cfrgLzXRHtUHGynXb89ZYgnwcKuYTLNE=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject;
+        b=g5wL/jH6+URP2UNQCK5hFk7dGX2j5kexWIwUQsfx6t5neivSt0hgbU/bJpexlakRE
+         2h/OskBvdMsgCksJcwKNSz9aySouLfrEKLbSiqDzFz3OZ/0PfSXJaZC+DaP2nBmAXq
+         MZ8O5KxNwidsEHfwvu3/656EGF0NIWTW8vlFb/lU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530.fritz.box ([92.116.171.104]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MnakX-1jYmom2w3J-00jdli; Tue, 14
+ Jan 2020 20:22:49 +0100
+Date:   Tue, 14 Jan 2020 20:22:47 +0100
+From:   Helge Deller <deller@gmx.de>
+To:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com,
+        Serge Semin <fancer.lancer@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] ntb_tool: Fix printk format
+Message-ID: <20200114192247.GA30840@ls3530.fritz.box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <53F6B915-AC53-41BB-BF32-33732515B3A0@lca.pw>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Provags-ID: V03:K1:cqTwOqVIQYt3IB2/nbO2/Luf1hWf6voFM2wcMONjNhcxwkzE5lC
+ 13ZcewEVHh+aQnf2xsKUYsyEgPjdxFHofbLhKgp+KOQ1nsIWZTE/ci9cSDjf6CHCZkRXkXT
+ lC4kUszKHhrVK9J1sxM2naso06sxpHuqBcSKXcKc3sFSl27WoHM9BUFmbf9Z+aPyUrWJNVf
+ Ho685sHT0PeWOquU6rHPQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wyHYgapCZjo=:roclqpz9XbEmK9svrJhxpv
+ L4UiUpakxKhuu8HIUITvo0Kak2YkvO5+b4hIZEHbnRqJZXYEe7EJc1pYLBx5+oDGZ2n7EOg0Y
+ koZMOyb4UyhPYhCYM66dlfqsmJBSmCgJR/jwKWvS0gzjv5HVWhMzZOtnmQ+oIBeqWDkNuuhBK
+ WCf5enuIwAjCEc5fcD2K64dPHh0brL3wmd9EIkdKbx/wAxrpU6PcwAuPYS1p3OyoEiwSs1/8y
+ E5oDYZRDTYdOLdE7rqCXR070dVUutM9Bn8/qFw4/Z/vEEpMSCoUEMH7agVxaE8za0jb2PyLJk
+ 264IDe/57kFISEEpMJjehlgW7m+LU+kgg9uKBt7ml1RANiw2Vu3BuywAnGZRc6cEUiJ+1Xi+e
+ e7ZgCsYUG34yvFHGV02chVWZCUIhAk7RizTYKz8EO61moM7m5RFCm5SLLA5sjz6IP4zZKfxZ9
+ v2BxLjRofIIhLytEsBFSgIMpaiWGH0JTqjnxMIVbIDPAIp4zhyortTargGPK7tBhASCmK1UbC
+ VnM0TVlHcRaQNV2h9ZWtsupuF4Ae7moIZVs62U/wuLqtODRAV8jv5fob7823ky6pRtTSHMmrE
+ 9TL8HMC0xYsBpUalEe5nmO+hOvUXxVHGex4MD+P/0Gz+jqGyRZ6GtnTuAY5F2bhgZqW7icg91
+ EDoYUE84Wnp2VSLRoLLasu9J7hOoFvI+LpUm9SrGgpZTAHcOoom2iQgifBCQ1LqdD3h4fOHOU
+ zz+tuxxbbeQAjG/LQHdj5SUrngEtXg+NI929vX9No5mLqA1pVC8Iezw8Y7ZI0rRCTxGqpdIoK
+ ctWa1VjjrvyW1taHa5Z3lOUBp4hVA8oNSGQQta+FP7U5qJe0UXSTqRSGYUJFcEkUhyZBfBNAk
+ zSmJRkeLhoGmiu4Uu7tG6u2GBI/6Sj9ymutc0y/E/OF10GJ3my18UMS6GgB5V89pXv/XdNj2m
+ qIgW0tmJRproK0vlD6SF43ERKJiWI4/mSbLn7T47BuqVHChrPFxCeINLSXixPtZ7pkYlJSF5Z
+ 6ic5oI9wBGQC3wGWkhcPRoCpUGVZsQ+F0v8dFbzt9Gn4pYWkwkGZ1ZstkLlGDWmdcRSohB81Z
+ YsWUgBcf/d37yqxfS2uCnRtJQZdaTT5/7hOJwKHNLykq8fjJ4ktXluIkIMbN/ixRJjX/guqar
+ MFRT7cRYOPPGz+pamRhFs1Mb32UmUgK9E9GD74k49TiOvECBGn2k/qtJNPtL/3t4ebfcDAzMe
+ Pcot8cSGsycwPG/6jEeRyHQi4XrbVGCz/K2Id7w==
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 06:08:29AM -0500, Qian Cai wrote:
-> 
-> 
-> > On Jan 6, 2020, at 7:47 AM, Marco Elver <elver@google.com> wrote:
-> > 
-> > Thanks, I'll look into KCSAN + lockdep compatibility. It's probably
-> > missing some KCSAN_SANITIZE := n in some Makefile.
-> 
-> Can I have a update on fixing this? It looks like more of a problem that kcsan_setup_watchpoint() will disable IRQs and then dive into the page allocator where it would complain because it might sleep.
-> 
-> BTW, I saw Paul sent a pull request for 5.6 but it is ugly to have everybody could trigger a deadlock (sleep function called in atomic context) like this during boot once this hits the mainline not to mention about only recently it is possible to test this feature (thanks to warning ratelimit) with the existing debugging options because it was unable to boot due to the brokenness with debug_pagealloc as mentioned in this thread, so this does sounds like it needs more soak time for the mainline to me.
+The correct printk format is %pa or %pap, but not %pa[p].
 
-Just so I understand...  Does this problem happen even in CONFIG_KCSAN=n
-kernels?
+Signed-off-by: Helge Deller <deller@gmx.de>
+Fixes: 7f46c8b3a5523 ("NTB: ntb_tool: Add full multi-port NTB API support"=
+)
 
-I have been running extensive CONFIG_KSCAN=y rcutorture tests for quite
-awhile now, so even if this only happens for CONFIG_KSCAN=y, it is not
-like it affects everyone.
+diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
+index d592c0ffbd19..69da758fe64c 100644
+=2D-- a/drivers/ntb/test/ntb_tool.c
++++ b/drivers/ntb/test/ntb_tool.c
+@@ -678,19 +678,19 @@ static ssize_t tool_mw_trans_read(struct file *filep=
+, char __user *ubuf,
+ 			 &inmw->dma_base);
 
-Yes, it should be fixed, and Marco does have a patch on the way.
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Window Size    \t%pa[p]\n",
++			 "Window Size    \t%pap\n",
+ 			 &inmw->size);
 
-							Thanx, Paul
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Alignment      \t%pa[p]\n",
++			 "Alignment      \t%pap\n",
+ 			 &addr_align);
 
-> 0000000000000400
-> [   13.416814][    T1] Call Trace:
-> [   13.416814][    T1]  lock_is_held_type+0x66/0x160
-> [   13.416814][    T1]  ___might_sleep+0xc1/0x1d0
-> [   13.416814][    T1]  __might_sleep+0x5b/0xa0
-> [   13.416814][    T1]  slab_pre_alloc_hook+0x7b/0xa0
-> [   13.416814][    T1]  __kmalloc_node+0x60/0x300
-> [   13.416814   T1]  ? alloc_cpumask_var_node+0x44/0x70
-> [   13.416814][    T1]  ? topology_phys_to_logical_die+0x7e/0x180
-> [   13.416814][    T1]  alloc_cpumask_var_node+0x44/0x70
-> [   13.416814][    T1]  zalloc_cpumask_var+0x2a/0x40
-> [   13.416814][    T1]  native_smp_prepare_cpus+0x246/0x425
-> [   13.416814][    T1]  kernel_init_freeable+0x1b8/0x496
-> [   13.416814][    T1]  ? rest_init+0x381/0x381
-> [   13.416814][    T1]  kernel_init+0x18/0x17f
-> [   13.416814][    T1]  ? rest_init+0x381/0x381
-> [   13.416814][    T1]  ret_from_fork+0x3a/0x50
-> [   13.416814][    T1] irq event stamp: 910
-> [   13.416814][    T1] hardirqs last  enabled at (909): [<ffffffff8d1240f3>] _raw_write_unlock_irqrestore+0x53/0x57
-> [   13.416814][    T1] hardirqs last disabled at (910): [<ffffffff8c8bba76>] kcsan_setup_watchpoint+0x96/0x460
-> [   13.416814][    T1] softirqs last  enabled at (0): [<ffffffff8c6b697a>] copy_process+0x11fa/0x34f0
-> [   13.416814][    T1] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> [   13.416814][    T1] ---[ end trace 7d1df66da055aa92 ]---
-> [   13.416814][    T1] possible reason: unannotated irqs-on.
-> [   13.416814][ent stamp: 910
-> [   13.416814][    T1] hardirqs last  enabled at (909): [<ffffffff8d1240f3>] _raw_write_unlock_irqrestore+0x53/0x57
-> [   13.416814][    T1] hardirqs last disabled at (910): [<ffffffff8c8bba76>] kcsan_setup_watchpoint+0x96/0x460
-> [   13.416814][    T1] softirqs last  enabled at (0): [<ffffffff8c6b697a>] copy_process+0x11fa/0x34f0
-> [   13.416814][    T1] softirqs last disabled at (0): [<0000000000000000>] 0x0
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Size Alignment \t%pa[p]\n",
++			 "Size Alignment \t%pap\n",
+ 			 &size_align);
+
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Size Max       \t%pa[p]\n",
++			 "Size Max       \t%pap\n",
+ 			 &size_max);
+
+ 	ret =3D simple_read_from_buffer(ubuf, size, offp, buf, off);
+@@ -907,16 +907,16 @@ static ssize_t tool_peer_mw_trans_read(struct file *=
+filep, char __user *ubuf,
+ 			 "Virtual address     \t0x%pK\n", outmw->io_base);
+
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Phys Address        \t%pa[p]\n", &map_base);
++			 "Phys Address        \t%pap\n", &map_base);
+
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Mapping Size        \t%pa[p]\n", &map_size);
++			 "Mapping Size        \t%pap\n", &map_size);
+
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+ 			 "Translation Address \t0x%016llx\n", outmw->tr_base);
+
+ 	off +=3D scnprintf(buf + off, buf_size - off,
+-			 "Window Size         \t%pa[p]\n", &outmw->size);
++			 "Window Size         \t%pap\n", &outmw->size);
+
+ 	ret =3D simple_read_from_buffer(ubuf, size, offp, buf, off);
+ 	kfree(buf);
