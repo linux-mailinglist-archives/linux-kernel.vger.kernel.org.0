@@ -2,65 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1FC513AD10
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3465713AD18
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbgANPGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:06:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbgANPGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:06:05 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47311206D5;
-        Tue, 14 Jan 2020 15:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579014364;
-        bh=hrgX1mwFA1hO9cXQwtcHBBFuCTcWaR2255QdVI4Rx8g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cewPS/kP0cj2h5XJ8K9A1Oi6v8931IUE1i5JMQ/gkhV8kA3hn0ObOWw2XeodbkCb5
-         ZG8zYbMG4XSNasMHsLe0kycHUxKqWghMl0Y1U+ojmbkimMslR8q4lVILVwUm/YsCSb
-         b9RrEesMEkP8qsR0k/dNF8r6wixNDfElgK30DxLU=
-Date:   Tue, 14 Jan 2020 16:06:02 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     rafael@kernel.org, lduncan@suse.com, cleech@redhat.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        open-iscsi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 0/3] drivers base: transport component error propagation
-Message-ID: <20200114150602.GC1975425@kroah.com>
-References: <20200106185817.640331-1-krisman@collabora.com>
+        id S1729222AbgANPGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 10:06:33 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:46228 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgANPGd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 10:06:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1579014390; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=BvjxXIepNx0mvNesr/9RNNIfuKuiwR0fPltZa2H6Xhg=;
+        b=fhkoDSuRwh+LXfXPVfRhqr12UIMtlJkqYCYIMQahdwi69mjKPY6C+xJoNsJzyweN9Rxr4m
+        /TQ5lvFpLNg0uQUYHvs2vOy/re2HNQuEybnlwGRMDdyCaYUb+JEld5NEYFllL6KdwElHNq
+        EpeaeDJemdlfN99Pz7712Yx/Ko+4/9E=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     od@zcrc.me, linux-kernel@vger.kernel.org,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: [PATCH v3] clocksource: Add driver for the Ingenic JZ47xx OST
+Date:   Tue, 14 Jan 2020 12:06:19 -0300
+Message-Id: <20200114150619.14611-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106185817.640331-1-krisman@collabora.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 01:58:14PM -0500, Gabriel Krisman Bertazi wrote:
-> Hi,
-> 
-> This small series improves error propagation on the transport component
-> to prevent an inconsistent state in the iscsi module.  The bug that
-> motivated this patch results in a hanging iscsi connection that cannot
-> be used or removed by userspace, since the session is in an inconsistent
-> state.
-> 
-> That said, I tested it using the TCP iscsi transport (and forcing errors
-> on the triggered function), which doesn't require a particularly complex
-> container structure, so it is not the best test for finding corner cases
-> on the atomic attribute_container_device trigger version.
-> 
-> Please let me know what you think.
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-Looks sane, feel free to take the first two patches through what ever
-tree iscsi patches go through.
+OST is the OS Timer, a 64-bit timer/counter with buffered reading.
 
-thanks,
+SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
+JZ4780 have a 64-bit OST.
 
-greg k-h
+This driver will register both a clocksource and a sched_clock to the
+system.
+
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Tested-by: Artur Rojek <contact@artur-rojek.eu>
+---
+
+Notes:
+    v2: local_irq_save/restore were moved within sched_clock_register
+    v3: Only register as 32-bit clocksource to simplify things
+
+ drivers/clocksource/Kconfig       |   8 ++
+ drivers/clocksource/Makefile      |   1 +
+ drivers/clocksource/ingenic-ost.c | 183 ++++++++++++++++++++++++++++++
+ 3 files changed, 192 insertions(+)
+ create mode 100644 drivers/clocksource/ingenic-ost.c
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 5fdd76cb1768..5be2f876f64f 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -697,4 +697,12 @@ config INGENIC_TIMER
+ 	help
+ 	  Support for the timer/counter unit of the Ingenic JZ SoCs.
+ 
++config INGENIC_OST
++	bool "Ingenic JZ47xx Operating System Timer"
++	depends on MIPS || COMPILE_TEST
++	depends on COMMON_CLK
++	select MFD_SYSCON
++	help
++	  Support for the OS Timer of the Ingenic JZ4770 or similar SoC.
++
+ endmenu
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 4dfe4225ece7..6bc97a6fd229 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -80,6 +80,7 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+ obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
+ obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
+ obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
++obj-$(CONFIG_INGENIC_OST)		+= ingenic-ost.o
+ obj-$(CONFIG_INGENIC_TIMER)		+= ingenic-timer.o
+ obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
+ obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
+new file mode 100644
+index 000000000000..2c91e3b34572
+--- /dev/null
++++ b/drivers/clocksource/ingenic-ost.c
+@@ -0,0 +1,183 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * JZ47xx SoCs TCU Operating System Timer driver
++ *
++ * Copyright (C) 2016 Maarten ter Huurne <maarten@treewalker.org>
++ * Copyright (C) 2020 Paul Cercueil <paul@crapouillou.net>
++ */
++
++#include <linux/clk.h>
++#include <linux/clocksource.h>
++#include <linux/mfd/ingenic-tcu.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/regmap.h>
++#include <linux/sched_clock.h>
++
++#define TCU_OST_TCSR_MASK	0xffc0
++#define TCU_OST_TCSR_CNT_MD	BIT(15)
++
++#define TCU_OST_CHANNEL		15
++
++struct ingenic_ost_soc_info {
++	bool is64bit;
++};
++
++struct ingenic_ost {
++	struct regmap *map;
++	struct clk *clk;
++
++	struct clocksource cs;
++};
++
++static struct ingenic_ost *ingenic_ost;
++
++static u64 notrace ingenic_ost_read_cntl(void)
++{
++	u32 val;
++
++	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTL, &val);
++
++	return val;
++}
++
++static u64 notrace ingenic_ost_read_cnth(void)
++{
++	u32 val;
++
++	regmap_read(ingenic_ost->map, TCU_REG_OST_CNTH, &val);
++
++	return val;
++}
++
++static u64 notrace ingenic_ost_clocksource_readl(struct clocksource *cs)
++{
++	return ingenic_ost_read_cntl();
++}
++
++static u64 notrace ingenic_ost_clocksource_readh(struct clocksource *cs)
++{
++	return ingenic_ost_read_cnth();
++}
++
++static int __init ingenic_ost_probe(struct platform_device *pdev)
++{
++	const struct ingenic_ost_soc_info *soc_info;
++	struct device *dev = &pdev->dev;
++	struct ingenic_ost *ost;
++	struct clocksource *cs;
++	unsigned long rate;
++	int err;
++
++	soc_info = device_get_match_data(dev);
++	if (!soc_info)
++		return -EINVAL;
++
++	ost = devm_kzalloc(dev, sizeof(*ost), GFP_KERNEL);
++	if (!ost)
++		return -ENOMEM;
++
++	ingenic_ost = ost;
++
++	ost->map = device_node_to_regmap(dev->parent->of_node);
++	if (!ost->map) {
++		dev_err(dev, "regmap not found\n");
++		return -EINVAL;
++	}
++
++	ost->clk = devm_clk_get(dev, "ost");
++	if (IS_ERR(ost->clk))
++		return PTR_ERR(ost->clk);
++
++	err = clk_prepare_enable(ost->clk);
++	if (err)
++		return err;
++
++	/* Clear counter high/low registers */
++	if (soc_info->is64bit)
++		regmap_write(ost->map, TCU_REG_OST_CNTL, 0);
++	regmap_write(ost->map, TCU_REG_OST_CNTH, 0);
++
++	/* Don't reset counter at compare value. */
++	regmap_update_bits(ost->map, TCU_REG_OST_TCSR,
++			   TCU_OST_TCSR_MASK, TCU_OST_TCSR_CNT_MD);
++
++	rate = clk_get_rate(ost->clk);
++
++	/* Enable OST TCU channel */
++	regmap_write(ost->map, TCU_REG_TESR, BIT(TCU_OST_CHANNEL));
++
++	cs = &ost->cs;
++	cs->name	= "ingenic-ost";
++	cs->rating	= 320;
++	cs->flags	= CLOCK_SOURCE_IS_CONTINUOUS;
++	cs->mask	= CLOCKSOURCE_MASK(32);
++
++	if (soc_info->is64bit)
++		cs->read = ingenic_ost_clocksource_readl;
++	else
++		cs->read = ingenic_ost_clocksource_readh;
++
++	err = clocksource_register_hz(cs, rate);
++	if (err) {
++		dev_err(dev, "clocksource registration failed: %d\n", err);
++		clk_disable_unprepare(ost->clk);
++		return err;
++	}
++
++	if (soc_info->is64bit)
++		sched_clock_register(ingenic_ost_read_cntl, 32, rate);
++	else
++		sched_clock_register(ingenic_ost_read_cnth, 32, rate);
++
++	return 0;
++}
++
++static int __maybe_unused ingenic_ost_suspend(struct device *dev)
++{
++	struct ingenic_ost *ost = dev_get_drvdata(dev);
++
++	clk_disable(ost->clk);
++
++	return 0;
++}
++
++static int __maybe_unused ingenic_ost_resume(struct device *dev)
++{
++	struct ingenic_ost *ost = dev_get_drvdata(dev);
++
++	return clk_enable(ost->clk);
++}
++
++static const struct dev_pm_ops __maybe_unused ingenic_ost_pm_ops = {
++	/* _noirq: We want the OST clock to be gated last / ungated first */
++	.suspend_noirq = ingenic_ost_suspend,
++	.resume_noirq  = ingenic_ost_resume,
++};
++
++static const struct ingenic_ost_soc_info jz4725b_ost_soc_info = {
++	.is64bit = false,
++};
++
++static const struct ingenic_ost_soc_info jz4770_ost_soc_info = {
++	.is64bit = true,
++};
++
++static const struct of_device_id ingenic_ost_of_match[] = {
++	{ .compatible = "ingenic,jz4725b-ost", .data = &jz4725b_ost_soc_info, },
++	{ .compatible = "ingenic,jz4770-ost", .data = &jz4770_ost_soc_info, },
++	{ }
++};
++
++static struct platform_driver ingenic_ost_driver = {
++	.driver = {
++		.name = "ingenic-ost",
++#ifdef CONFIG_PM_SUSPEND
++		.pm = &ingenic_ost_pm_ops,
++#endif
++		.of_match_table = ingenic_ost_of_match,
++	},
++};
++builtin_platform_driver_probe(ingenic_ost_driver, ingenic_ost_probe);
+-- 
+2.24.1
+
