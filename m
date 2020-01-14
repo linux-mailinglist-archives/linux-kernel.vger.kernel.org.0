@@ -2,97 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E5713A3B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:21:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 024EF13A3AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:20:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgANJVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 04:21:42 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:42813 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725842AbgANJVl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:21:41 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TnibZb5_1578993695;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnibZb5_1578993695)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 14 Jan 2020 17:21:35 +0800
-Subject: Re: [PATCH v7 02/10] mm/memcg: fold lru_lock in lock_page_lru
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        daniel.m.jordan@oracle.com, yang.shi@linux.alibaba.com,
-        shakeelb@google.com, hannes@cmpxchg.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-References: <1577264666-246071-1-git-send-email-alex.shi@linux.alibaba.com>
- <1577264666-246071-3-git-send-email-alex.shi@linux.alibaba.com>
- <36d7e390-a3d1-908c-d181-4a9e9c8d3d98@yandex-team.ru>
- <952d02c2-8aa5-40bb-88bb-c43dee65c8bc@linux.alibaba.com>
- <2ba8a04e-d8e0-1d50-addc-dbe1b4d8e0f1@yandex-team.ru>
- <a095d80d-8e34-c84f-e4be-085a5aae1929@linux.alibaba.com>
- <20200113163456.GA332@bombadil.infradead.org>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <2f3b6613-d107-6d89-2510-6d01c0ae0625@linux.alibaba.com>
-Date:   Tue, 14 Jan 2020 17:20:06 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        id S1728855AbgANJUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:20:25 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8715 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725820AbgANJUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 04:20:25 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D0652962A9F513952354;
+        Tue, 14 Jan 2020 17:20:22 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.236) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Tue, 14 Jan 2020
+ 17:20:15 +0800
+Subject: Re: [PATCH] x86/ftrace: use ftrace_write to simplify code
+To:     Peter Zijlstra <peterz@infradead.org>, <rostedt@goodmis.org>
+CC:     <xiexiuqi@huawei.com>, <huawei.libin@huawei.com>,
+        <tglx@linutronix.de>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bobo.shaobowang@huawei.com>
+References: <20200114015217.9246-1-cj.chengjian@huawei.com>
+ <20200114081636.GH2827@hirez.programming.kicks-ass.net>
+From:   "chengjian (D)" <cj.chengjian@huawei.com>
+Message-ID: <8435b848-f638-978c-bbd5-459657c4b34e@huawei.com>
+Date:   Tue, 14 Jan 2020 17:20:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20200113163456.GA332@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200114081636.GH2827@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.133.217.236]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-在 2020/1/14 上午12:34, Matthew Wilcox 写道:
-> On Mon, Jan 13, 2020 at 08:47:25PM +0800, Alex Shi wrote:
->> 在 2020/1/13 下午5:55, Konstantin Khlebnikov 写道:
->>>>> That's wrong. Here PageLRU must be checked again under lru_lock.
->>>> Hi, Konstantin,
->>>>
->>>> For logical remain, we can get the lock and then release for !PageLRU.
->>>> but I still can figure out the problem scenario. Would like to give more hints?
->>>
->>> That's trivial race: page could be isolated from lru between
->>>
->>> if (PageLRU(page))
->>> and
->>> spin_lock_irq(&pgdat->lru_lock);
+On 2020/1/14 16:16, Peter Zijlstra wrote:
+> On Tue, Jan 14, 2020 at 01:52:17AM +0000, Cheng Jian wrote:
+>> ftrace_write() can be used in ftrace_modify_code_direct(),
+>> that make the code more brief.
 >>
->> yes, it could be a problem. guess the following change could helpful:
->> I will update it in new version.
-> 
->> +       if (lrucare) {
->> +               lruvec = lock_page_lruvec_irq(page);
->> +               if (likely(PageLRU(page))) {
->> +                       ClearPageLRU(page);
->> +                       del_page_from_lru_list(page, lruvec, page_lru(page));
->> +               } else {
->> +                       unlock_page_lruvec_irq(lruvec);
->> +                       lruvec = NULL;
->> +               }
-> 
-> What about a harder race to hit like a page being on LRU list A when you
-> look up the lruvec, then it's removed and added to LRU list B by the
-> time you get the lock?  At that point, you are holding a lock on the
-> wrong LRU list.  I think you need to check not just that the page
-> is still PageLRU but also still on the same LRU list.
-> 
+>> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
+> None of the code you're patching still exists. Please see tip/master.
+>
+> .
 
-Thanks for comments, Matthew!
 
-We will check and lock lruvec after lock_page_memcg, so if it works well, a page
-won't moved from one lruvec to another. Also the later debug do this check, to
-see if lruvec changed.
+I find these patches in TIP. My patch may not be necessary.
 
-If you mean lru list not lruvec, It seems there is noway to figure out the lru list
-from a page now.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=768ae4406a5cab7e8702550f2446dbeb377b798d
 
-Thanks
-Alex
+Thank you, Peter.
+
+
+-- Cheng Jian
+
 
