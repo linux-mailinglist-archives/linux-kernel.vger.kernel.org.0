@@ -2,71 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC8013B396
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F79213B398
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgANUW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 15:22:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42600 "EHLO mail.kernel.org"
+        id S1728748AbgANUZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 15:25:49 -0500
+Received: from mga17.intel.com ([192.55.52.151]:11257 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbgANUW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 15:22:56 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEFCD24655;
-        Tue, 14 Jan 2020 20:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579033375;
-        bh=YbQTajE7YvAN49UaYJLiPm1Xwm6KCKn5jLGZ01KW3O4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AvJIfinXLt45LbbST9DUSvUFUY5Teqqft3pgkjau6HSfsv2Sw8I6JX9yx/iwMrzqd
-         bBRwiHR7BpfmIjF2esGSyC/bJll/bfmGI+KRjNW2KZWTLahEjU0Gz1d0wm2gaFCzkW
-         Q5STdGqb6SVD7hRJle9S8DgTcuITb6Ed5pqFQ4rc=
-Subject: Re: [PATCH 4.19 00/46] 4.19.96-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20200114094339.608068818@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <89d2275e-39b4-32db-56fb-8f7dec531b42@kernel.org>
-Date:   Tue, 14 Jan 2020 13:22:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726491AbgANUZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 15:25:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 12:25:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
+   d="scan'208";a="423274156"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jan 2020 12:25:48 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu: Print "VMX disabled" error message iff KVM is enabled
+Date:   Tue, 14 Jan 2020 12:25:45 -0800
+Message-Id: <20200114202545.20296-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <157899701402.1022.5566010856636345851.tip-bot2@tip-bot2>
+References: <157899701402.1022.5566010856636345851.tip-bot2@tip-bot2>
 MIME-Version: 1.0
-In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 3:01 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.96 release.
-> There are 46 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.96-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Don't print an error message about VMX being disabled by BIOS if KVM,
+the sole user of VMX, is disabled.  E.g. if KVM is disabled and the
+MSR is unlocked, the kernel will intentionally disable VMX when locking
+feature control and then complain that "BIOS" disabled VMX.
 
-Compiled and booted on my test system. No dmesg regressions.
+Fixes: ef4d3bf19855 ("x86/cpu: Clear VMX feature flag if VMX is not fully enabled")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+Found a flaw when rebasing the SGX series on the feature control series.
 
-thanks,
--- Shuah
+The Fixes: tag references the commit in tip/x86/cpu, obviously should be
+dropped if you can apply this as fixup instead of a patch on top.
+
+ arch/x86/kernel/cpu/feat_ctl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 24a4fdc1ab51..0268185bef94 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -133,8 +133,9 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ 
+ 	if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
+ 	    (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
+-		pr_err_once("VMX (%s TXT) disabled by BIOS\n",
+-			    tboot ? "inside" : "outside");
++		if (IS_ENABLED(CONFIG_KVM_INTEL))
++			pr_err_once("VMX (%s TXT) disabled by BIOS\n",
++				    tboot ? "inside" : "outside");
+ 		clear_cpu_cap(c, X86_FEATURE_VMX);
+ 	} else {
+ #ifdef CONFIG_X86_VMX_FEATURE_NAMES
+-- 
+2.24.1
+
