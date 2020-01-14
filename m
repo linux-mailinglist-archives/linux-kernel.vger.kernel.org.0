@@ -2,160 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F094E13A0E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 07:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FDAA13A0E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 07:17:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgANGPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 01:15:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbgANGPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 01:15:09 -0500
-Received: from localhost (unknown [49.207.51.160])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B12E2084D;
-        Tue, 14 Jan 2020 06:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578982508;
-        bh=Bvg/p2APBIXoLXN92+QfE3MG7q8+n3xAIpTyfePVQ9E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ecCzcFXtAc1P9IgW3Tg2kmrIZV/ocoYgiCF/WjlbiW/73Ub0eugd9hOHa38I20TKa
-         X+yjnXBFIDq3NuM3DTlGf2hytbj0DDUO1Ok2Ftcqz6T5OMDqPvM+5PfXdtptVVuN6m
-         7m7IJUJBZEgov+WQkKH5QenGMOeO1M1mDJOjnjhs=
-Date:   Tue, 14 Jan 2020 11:44:41 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH 4/5] soundwire: intel: add sdw_stream_setup helper for
- .startup callback
-Message-ID: <20200114061441.GB2818@vkoul-mobl>
-References: <20200110214609.30356-1-pierre-louis.bossart@linux.intel.com>
- <20200110214609.30356-5-pierre-louis.bossart@linux.intel.com>
+        id S1728699AbgANGQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 01:16:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35362 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbgANGQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 01:16:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i23so6074579pfo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 22:16:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZW1Kr5RunKt89ySLs0ifejwyEOZ7KGLEQsv6kiSYYIQ=;
+        b=dcCJLGcoIwuw1+CPq418hByPhBdhEF9DsclVmF9sjx97qlV18p2OorXTNMYTPMHMEl
+         TuneoVmqp3D0yY3OGzXYiPsA0mdK2XgYML/zopdzbiFDFWVbNs1ahNmlEQO9Ye2WWPba
+         seKHLTreOa0djmOezhzNWJkzJ2aU+S5/zu3H3yaNes8mciqwE6fhKMGa74NLuxBDcv27
+         3MtKlPKq7T1mQB/CyPteAttzJARm1xTfgO7PJ9OoO5UT3gc1VzaM06ergseY1uQMyEtj
+         XfAuBFt8vGT1NI+JhBSebn3bv3azJD+Pe18Qda5ITG33EXTPP7fwDhMXDZ8mIA5QrV23
+         mZlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZW1Kr5RunKt89ySLs0ifejwyEOZ7KGLEQsv6kiSYYIQ=;
+        b=EiKMN+rOhBvnBNIKqTq1sanIGQL23fGqEh6d8j9ZH3PAVb70bIlpNJBfAZrCzntC5E
+         3KcQP9ehZIy4qCSsLXjHuLP/jeYLPYk5KNDISJgka1JBQWQWYmYWC7/8DLq4Vu6SD29K
+         9lok/As/DK0PMwHEoOoqgkZ2ghs9RegiImeM8cwKoQHxAFGjgTN4fb3RTLw/mNZhU11O
+         MowUyFwumN0wkSh1UJsH90qaTaQbe8DQNesu+Afo4frl1xh1ow8LgtPVhfeRhiYkbPCQ
+         HDIj1yiv5NGdfVfPuD5Mil0kGaFXkrnr2Cf1Fdq09zXFFo6E7l44G3ZrMLxXPUjMvv41
+         HKzw==
+X-Gm-Message-State: APjAAAVpgnHNkDqKHSYngkFltGrX/OKL2md3KHrlCQEwGBqtpZWU6FGj
+        q8o3W9w6I5iesumVcvQNo9kYKRxE13w=
+X-Google-Smtp-Source: APXvYqwOuTQqk7tfP4RUvnQNhJZrAQrnJo8PGpS+kX9+xHK/qdAdMiRxqsGSxp2F2ebF+7JDyqbBNw==
+X-Received: by 2002:a63:b64a:: with SMTP id v10mr25811896pgt.145.1578982614792;
+        Mon, 13 Jan 2020 22:16:54 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id s131sm17914820pfs.135.2020.01.13.22.16.53
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 13 Jan 2020 22:16:54 -0800 (PST)
+Date:   Tue, 14 Jan 2020 14:16:51 +0800
+From:   chenqiwu <qiwuchen55@gmail.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+        oleg@redhat.com, elena.reshetova@intel.com, jgg@ziepe.ca,
+        christian@kellner.me, aarcange@redhat.com, viro@zeniv.linux.org.uk,
+        cyphar@cyphar.com, ldv@altlinux.org, linux-kernel@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>
+Subject: Re: [PATCH] kernel/fork: put some fork variables into read-mostly
+ section
+Message-ID: <20200114061651.GA8818@cqw-OptiPlex-7050>
+References: <1578885793-24095-1-git-send-email-qiwuchen55@gmail.com>
+ <20200113094342.5ghlgttmhuxfqv2v@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200110214609.30356-5-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20200113094342.5ghlgttmhuxfqv2v@wittgenstein>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-01-20, 15:46, Pierre-Louis Bossart wrote:
-> From: Rander Wang <rander.wang@linux.intel.com>
+On Mon, Jan 13, 2020 at 10:43:43AM +0100, Christian Brauner wrote:
+> On Mon, Jan 13, 2020 at 11:23:13AM +0800, qiwuchen55@gmail.com wrote:
+> > From: chenqiwu <chenqiwu@xiaomi.com>
+> > 
+> > Since total_forks/nr_threads/max_threads global variables are
+> > frequently used for process fork, putting these variables into
+> > read_mostly section can avoid unnecessary cache line bouncing.
+> > 
+> > Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+> > ---
+> >  kernel/fork.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 0808095..163e152 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -120,10 +120,10 @@
+> >  /*
+> >   * Protected counters by write_lock_irq(&tasklist_lock)
+> >   */
+> > -unsigned long total_forks;	/* Handle normal Linux uptimes. */
+> > -int nr_threads;			/* The idle threads do not count.. */
+> > +unsigned long total_forks __read_mostly; /* Handle normal Linux uptimes. */
+> > +int nr_threads __read_mostly;  /* The idle threads do not count.. */
 > 
-> The sdw stream is allocated and stored in dai to share the sdw runtime
-> information.
+> total_forks is incremented at every ~CLONE_THREAD and nr_threads at
+> CLONE_THREAD I wouldn't exactly say that this qualifies as mostly
+> reading.
+>
+
+Hi Christian,
+I'm holding different views on this matter.
+1) total_forks is incremented when any process does sys_fork() reasonablely,
+   it counts for every process fork.
+2) nr_threads counts for any parent process (except for idle thread) does
+   fork successfully, it never exceeds than max_threads.
+
+For an example of arm64 kdump, the system has been running at 119057s,
+we can see total_forks is very large, so total_forks is very qualified
+as mostly reading because it is referenced frequntly.
+
+crash> p max_threads
+max_threads = $2 = 39150
+crash> p nr_threads
+nr_threads = $1 = 2676
+crash> p total_forks
+total_forks = $3 = 2413880
+
+nr_threads and max_threads is also qualified as mostly reading because
+they are frequntly referenced in the following code of copy_process():
+	if (nr_threads >= max_threads)
+		goto bad_fork_cleanup_count;
+   
+> >  
+> > -static int max_threads;		/* tunable limit on nr_threads */
+> > +static int max_threads __read_mostly; /* tunable limit on nr_threads */
 > 
-> Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/intel.c | 65 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
+> That make sense.
 > 
-> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-> index aa80c46156cb..f4554386d832 100644
-> --- a/drivers/soundwire/intel.c
-> +++ b/drivers/soundwire/intel.c
-> @@ -617,6 +617,69 @@ static int intel_post_bank_switch(struct sdw_bus *bus)
->   * DAI routines
->   */
->  
-> +static int sdw_stream_setup(struct snd_pcm_substream *substream,
-> +			    struct snd_soc_dai *dai)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct sdw_stream_runtime *sdw_stream = NULL;
-> +	char *name;
-> +	int i, ret;
-> +
-> +	name = kzalloc(32, GFP_KERNEL);
-> +	if (!name)
-> +		return -ENOMEM;
-> +
-> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-> +		snprintf(name, 32, "%s-Playback", dai->name);
-> +	else
-> +		snprintf(name, 32, "%s-Capture", dai->name);
+> Christian
 
-How about use DAI_SIZE instead of 32 here and above few places? Lets not
-code number like this please
-
-> +
-> +	sdw_stream = sdw_alloc_stream(name);
-> +	if (!sdw_stream) {
-> +		dev_err(dai->dev, "alloc stream failed for DAI %s", dai->name);
-> +		ret = -ENOMEM;
-> +		goto error;
-> +	}
-> +
-> +	/* Set stream pointer on CPU DAI */
-> +	ret = snd_soc_dai_set_sdw_stream(dai, sdw_stream, substream->stream);
-> +	if (ret < 0) {
-> +		dev_err(dai->dev, "failed to set stream pointer on cpu dai %s",
-> +			dai->name);
-> +		goto release_stream;
-> +	}
-> +
-> +	/* Set stream pointer on all CODEC DAIs */
-> +	for (i = 0; i < rtd->num_codecs; i++) {
-> +		ret = snd_soc_dai_set_sdw_stream(rtd->codec_dais[i], sdw_stream,
-> +						 substream->stream);
-> +		if (ret < 0) {
-> +			dev_err(dai->dev, "failed to set stream pointer on codec dai %s",
-> +				rtd->codec_dais[i]->name);
-> +			goto release_stream;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +release_stream:
-> +	sdw_release_stream(sdw_stream);
-> +error:
-> +	kfree(name);
-> +	return ret;
-> +}
-> +
-> +static int intel_startup(struct snd_pcm_substream *substream,
-> +			 struct snd_soc_dai *dai)
-> +{
-> +	/*
-> +	 * TODO: add pm_runtime support here, the startup callback
-> +	 * will make sure the IP is 'active'
-> +	 */
-> +
-> +	return sdw_stream_setup(substream, dai);
-> +}
-> +
->  static int intel_hw_params(struct snd_pcm_substream *substream,
->  			   struct snd_pcm_hw_params *params,
->  			   struct snd_soc_dai *dai)
-> @@ -796,6 +859,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
->  }
->  
->  static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
-> +	.startup = intel_startup,
->  	.hw_params = intel_hw_params,
->  	.prepare = intel_prepare,
->  	.trigger = intel_trigger,
-> @@ -805,6 +869,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
->  };
->  
->  static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
-> +	.startup = intel_startup,
->  	.hw_params = intel_hw_params,
->  	.prepare = intel_prepare,
->  	.trigger = intel_trigger,
-> -- 
-> 2.20.1
-
--- 
-~Vinod
+Thanks for your review!
+Qiwu
