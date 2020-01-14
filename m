@@ -2,62 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7C113A9C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 13:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5184E13A9D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 13:55:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgANMyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 07:54:06 -0500
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:65131 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726265AbgANMyF (ORCPT
+        id S1728346AbgANMzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 07:55:09 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:37789 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726053AbgANMzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 07:54:05 -0500
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Jan 2020 18:24:00 +0530
-Received: from dikshita-linux.qualcomm.com ([10.204.65.237])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 14 Jan 2020 18:23:50 +0530
-Received: by dikshita-linux.qualcomm.com (Postfix, from userid 347544)
-        id 91A563587; Tue, 14 Jan 2020 18:23:49 +0530 (IST)
-From:   Dikshita Agarwal <dikshita@codeaurora.org>
-To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vgarodia@codeaurora.org,
-        Dikshita Agarwal <dikshita@codeaurora.org>
-Subject: [PATCH V4 4/4] arm64: dts: sc7180: Add Venus firmware subnode
-Date:   Tue, 14 Jan 2020 18:23:36 +0530
-Message-Id: <1579006416-11599-5-git-send-email-dikshita@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1579006416-11599-1-git-send-email-dikshita@codeaurora.org>
-References: <1579006416-11599-1-git-send-email-dikshita@codeaurora.org>
+        Tue, 14 Jan 2020 07:55:09 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TnjKHlv_1579006506;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnjKHlv_1579006506)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 14 Jan 2020 20:55:06 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/vmscan: remove prefetch_prev_lru_page
+Date:   Tue, 14 Jan 2020 20:55:00 +0800
+Message-Id: <1579006500-127143-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds Venus firmware subnode for non-TZ platform.
+This macro are never used in git history. So better to remove.
 
-Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org> 
+Cc: linux-mm@kvack.org 
+Cc: linux-kernel@vger.kernel.org 
 ---
- arch/arm64/boot/dts/qcom/sc7180-idp.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/vmscan.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-index 388f50a..2f82510 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
-@@ -287,6 +287,12 @@
- 	vdda-pll-supply = <&vreg_l4a_0p8>;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 4e699ed3501e..033e7145061b 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -146,20 +146,6 @@ struct scan_control {
+ 	struct reclaim_state reclaim_state;
  };
  
-+&venus {
-+	video-firmware {
-+		iommus = <&apps_smmu 0x0c42 0x0>;
-+	};
-+};
-+
- /* PINCTRL - additions to nodes defined in sc7180.dtsi */
- 
- &qspi_clk {
+-#ifdef ARCH_HAS_PREFETCH
+-#define prefetch_prev_lru_page(_page, _base, _field)			\
+-	do {								\
+-		if ((_page)->lru.prev != _base) {			\
+-			struct page *prev;				\
+-									\
+-			prev = lru_to_page(&(_page->lru));		\
+-			prefetch(&prev->_field);			\
+-		}							\
+-	} while (0)
+-#else
+-#define prefetch_prev_lru_page(_page, _base, _field) do { } while (0)
+-#endif
+-
+ #ifdef ARCH_HAS_PREFETCHW
+ #define prefetchw_prev_lru_page(_page, _base, _field)			\
+ 	do {								\
 -- 
-1.9.1
+1.8.3.1
 
