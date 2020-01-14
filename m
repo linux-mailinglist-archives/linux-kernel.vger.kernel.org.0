@@ -2,78 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DD313AF31
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05F5E13AF3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgANQXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:23:12 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45378 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726342AbgANQXL (ORCPT
+        id S1728795AbgANQY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:24:28 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36373 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgANQY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:23:11 -0500
-Received: by mail-io1-f68.google.com with SMTP id i11so14437582ioi.12
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:23:11 -0800 (PST)
+        Tue, 14 Jan 2020 11:24:28 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x184so6828113pfb.3;
+        Tue, 14 Jan 2020 08:24:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=4RbjksI4ZVf8jlMAui9QSDoZFwWF9mQNUo5m2497TSc=;
-        b=ivxeIqnDGG2IPj9/lbhO5RIgpchuTRJIBcbtiK0vCwtmMsgUCquQtt1lgRB24Rdi3U
-         433Z4zGeEF1dtED3XsNhNO4TECggm2mOYJLSz2bgeeGQAePcA8xrCdrMey7alEh+T08Z
-         uyBSIn7pi+Dvg5f5h/pOicZt1oRmaEBB87obVZ3Cxz4XMliFF9DjSPUBIBR0cCkYDXtu
-         d6C864QDoOzkX9MlLKqHwSEYVJkjGdyJGaHAvpO4ajrvtL/IrtSjV5aLb873FwjD9ou1
-         5IsTK9x5qHkJCM0MIfrtFo9Z+aBanyKN+Efhh/rAjtru4Ij5uja0ffMxT34I4BD7RtGv
-         lsHQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=PDyuI6D5hJtH0+thVw4r/qR9DD4Csl28GlClVXYvOmo=;
+        b=V2E6iTOF2PVQVslEQICUxmidoKU9xM7zyf01P1l8489cYNbLJV+ZZQtrMLKoe+T8eg
+         +RvB47tw077vmFFz1SAkZawppGOeh5OaoMD9v2r5r1y94MTQOQ6ddLw8/VsovLd9ksgB
+         NRfbzmyWdVy3/z1cel1683RKLbEehtnBUjZFDT9EgMVCocxLnMwj/o8KvPBRJEnJFrTE
+         JkPCEEOTnwhprwu9BJGSmZVnaIEEWLsJ7amXbOu8f9YNbGqjmxFz/NVL57hroXB+ioMA
+         3NljDF2X1l1v6dnYyjtA60qgRV+7ya0pidazHJ7gkZ7fLKb0XTCN8wyGHq696y0+STxM
+         qqng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=4RbjksI4ZVf8jlMAui9QSDoZFwWF9mQNUo5m2497TSc=;
-        b=hTkygFOXX2CY2DgRvEucr6vxSyF2cSy3uuDk2jYoD55wXyKw8SPJ2i+t+DGVV0PJSl
-         5T8mVIauNWqD0miNs/TV/DIHjXKX+m2FFngL3OTvK1PfmBtAJpdsBSkJGqwTSokggKsK
-         oU2NElNVeFbvwjj3Q1l0Hx6vvfY/kfSYJ3tf67dNqD1cy0Oz8XhkgpLAd6fgDmUXns03
-         ECuBtJE1XtgKrz47O63GoP63Ks5yr33QIs9gyyXxBGgEzoTSYT7tPgF+t1OzwcmH49I1
-         cx0lHklV7VmPjlf7Ak9PHe+FCx1uxW1ZRMROvb6NW6pkSKC2/DvmbVhrC6loT2DZaqPP
-         ILug==
-X-Gm-Message-State: APjAAAUAAuENGzAU8iv7KZN9WReeuM6aeFrYw8HRWj9q2XpcwPm0inb9
-        /TgLcYoWuDX/MBJHrztJ5kiyz0V4vR3NT+aJZLc=
-X-Google-Smtp-Source: APXvYqw8FoAyu9xw6e8ZLdUILqg1lBJXWS1Bdg7P+lIfjlrLnKw89R/gpPcrpU/TYg8ySypzehsm+PTRVghC7vf3k0c=
-X-Received: by 2002:a5e:9507:: with SMTP id r7mr17073461ioj.152.1579018991200;
- Tue, 14 Jan 2020 08:23:11 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a6b:5a0a:0:0:0:0:0 with HTTP; Tue, 14 Jan 2020 08:23:10
- -0800 (PST)
-Reply-To: aakkaavvii@gmail.com
-From:   Abraham Morrison <mrbidokeke@gmail.com>
-Date:   Tue, 14 Jan 2020 08:23:10 -0800
-Message-ID: <CADSEnMo6OUNvTLAhAVat_EReeXY1KWOwX_MxwkRnrvNNwWgO-g@mail.gmail.com>
-Subject: Good day!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PDyuI6D5hJtH0+thVw4r/qR9DD4Csl28GlClVXYvOmo=;
+        b=U2rl4GuV9yk1zWnlb5QpZ+DPzKQo2AC9iRZ8kP4LG/i/u2zrb+oG31fFVoqrR5gouH
+         o6lzB0pKFH+6cLm7rqKluX6Z1m58jsnLVa8zyQlrXTGbhrQXdMxoEWYxDgxERTPT2DFi
+         mVzMrplsKKcd2bDe20mzvgMhDNDJ0650fke0pugNDQtodenu7aOQHCStwyE9jRaesiem
+         3W9m4bEt5gMXYVyp9ksNbvZaFhf/HTAFbas7eYW0ntYyj2I/rygLIxfwcI3QOp1rxZ1z
+         fdF2TvtW9Z0ejRQzFdc5DwJxGQr5NmzgiLnqVZufQx3c93UFogEZ4QBh+ZSrAfcY/goJ
+         EavA==
+X-Gm-Message-State: APjAAAVuljGlpVuAFnTlJY7ZHvyxkpkKguxmzuydeYN0XtOBRSEFP9xD
+        uTNnOGKhpGulhYW1NtKL/sY=
+X-Google-Smtp-Source: APXvYqz88bNIaPHzcim/6S/uUF9DpjERKnfgOQ8Qhg0gQstgjbriVUc2j5BW+2+pkvXrCW1t1Hmc0Q==
+X-Received: by 2002:a65:56c6:: with SMTP id w6mr28444928pgs.167.1579019067136;
+        Tue, 14 Jan 2020 08:24:27 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee7:f789:438:77e9:83ea:bb95])
+        by smtp.gmail.com with ESMTPSA id s20sm17511918pjn.2.2020.01.14.08.24.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 08:24:26 -0800 (PST)
+From:   madhuparnabhowmik04@gmail.com
+To:     mike.marciniszyn@intel.com, dennis.dalessandro@intel.com,
+        jgg@ziepe.ca, paulmck@kernel.org
+Cc:     joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        rcu@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH 1/3] infiniband: hw: hfi1: verbs.c: Use built-in RCU list checking
+Date:   Tue, 14 Jan 2020 21:53:45 +0530
+Message-Id: <20200114162345.19995-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVhciBGcmllbmQsDQpJIGFtIEJhcnJpc3RlciBBYnJhaGFtIE1vcnJpc29uLCBEaWQgeW91IHJl
-Y2VpdmUgbXkgcHJldmlvdXMgbWVzc2FnZQ0KdG8geW91PyBJIGhhdmUgYW4gaW1wb3J0YW50IGlu
-Zm9ybWF0aW9uIGZvciB5b3UgYWJvdXQgeW91ciBpbmhlcml0YW5jZQ0KZnVuZCB3b3J0aCBvZiAo
-JDIwLDUwMCwwMDAuMDApIE1pbGxpb24gd2hpY2ggd2FzIGxlZnQgZm9yIHlvdSBieSB5b3VyDQps
-YXRlIHJlbGF0aXZlLCBNci4gQWxleGFuZGVyLiBTbyBpZiB5b3UgYXJlIGludGVyZXN0ZWQgZ2V0
-IGJhY2sgdG8gbWUNCmZvciBtb3JlIGRldGFpbHMuDQpUaGFuayB5b3UuDQpCYXJyaXN0ZXIgQWJy
-YWhhbSBNb3JyaXNvbi4NCi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uDQrQlNC+0YDQvtCz0L7QuSDQtNGA0YPQsywNCtCvINCR0LDRgNGA
-0LjRgdGC0LXRgCDQkNCy0YDQsNCw0Lwg0JzQvtGA0YDQuNGB0L7QvSwg0JLRiyDQv9C+0LvRg9GH
-0LjQu9C4INC80L7QtSDQv9GA0LXQtNGL0LTRg9GJ0LXQtSDRgdC+0L7QsdGJ0LXQvdC40LUg0LTQ
-u9GPDQrQstCw0YE/INCjINC80LXQvdGPINC10YHRgtGMINC00LvRjyDQstCw0YEg0LLQsNC20L3Q
-sNGPINC40L3RhNC+0YDQvNCw0YbQuNGPINC+INCy0LDRiNC10Lwg0L3QsNGB0LvQtdC00YHRgtCy
-0LXQvdC90L7QvA0K0YTQvtC90LTQtSDQsiDRgNCw0LfQvNC10YDQtSAoMjAgNTAwIDAwMCwwMCkg
-0LzQuNC70LvQuNC+0L3QvtCyINC00L7Qu9C70LDRgNC+0LIsINC+0YHRgtCw0LLQu9C10L3QvdC+
-0Lwg0LLQsNC8DQrQv9C+0LrQvtC50L3Ri9C8INGA0L7QtNGB0YLQstC10L3QvdC40LrQvtC8LCDQ
-vNC40YHRgtC10YAg0JDQu9C10LrRgdCw0L3QtNGALiDQotCw0Log0YfRgtC+LCDQtdGB0LvQuCDQ
-stGLDQrQt9Cw0LjQvdGC0LXRgNC10YHQvtCy0LDQvdGLLCDRgdCy0Y/QttC40YLQtdGB0Ywg0YHQ
-viDQvNC90L7QuSDQtNC70Y8g0LHQvtC70LXQtSDQv9C+0LTRgNC+0LHQvdC+0Lkg0LjQvdGE0L7R
-gNC80LDRhtC40LguDQrQodC/0LDRgdC40LHQvi4NCtCR0LDRgNGA0LjRgdGC0LXRgCDQkNCy0YDQ
-sNCw0Lwg0JzQvtGA0YDQuNGB0L7QvS4NCg==
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+
+list_for_each_entry_rcu has built-in RCU and lock checking.
+Pass cond argument to list_for_each_entry_rcu.
+
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ drivers/infiniband/hw/hfi1/verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
+index 089e201d7550..22f2d4fd2577 100644
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -515,7 +515,7 @@ static inline void hfi1_handle_packet(struct hfi1_packet *packet,
+ 				       opa_get_lid(packet->dlid, 9B));
+ 		if (!mcast)
+ 			goto drop;
+-		list_for_each_entry_rcu(p, &mcast->qp_list, list) {
++		list_for_each_entry_rcu(p, &mcast->qp_list, list, lockdep_is_held(&(ibp->rvp.lock))) {
+ 			packet->qp = p->qp;
+ 			if (hfi1_do_pkey_check(packet))
+ 				goto drop;
+-- 
+2.17.1
+
