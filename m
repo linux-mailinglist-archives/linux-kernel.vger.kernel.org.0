@@ -2,96 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D574D13B16C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 362ED13B176
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgANRyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 12:54:07 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:46906 "EHLO pegase1.c-s.fr"
+        id S1728734AbgANR4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 12:56:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728794AbgANRyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:54:06 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 47xykg4CK5z9txh1;
-        Tue, 14 Jan 2020 18:54:03 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=trAj8ycD; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id E1j5e-IhSXwz; Tue, 14 Jan 2020 18:54:03 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47xykg3Bhsz9txgv;
-        Tue, 14 Jan 2020 18:54:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579024443; bh=1gi8tiy8dwBccsWJGA9/konOi1hFYyPrqA/8BJnI8Bs=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=trAj8ycD8diCyKtiJlgO5Ksee62ZFOkwrA+hRQdP9J69dNXqYLdXFLF/S5kH/XJYD
-         sM/Xp3fxcPY1UrSNa85p0CbGbpkO0ciXIWM7iC8jwuwPqhXABX6uqkqftL4oWioqiN
-         z1z5Mn2ujoPm1x3Bb/4sXqjYMfQaL2VS5/zay9nE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 29EE68B7EB;
-        Tue, 14 Jan 2020 18:54:05 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id R8LJQr3mEul9; Tue, 14 Jan 2020 18:54:05 +0100 (CET)
-Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E258D8B7E8;
-        Tue, 14 Jan 2020 18:54:04 +0100 (CET)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B1B776381C; Tue, 14 Jan 2020 17:54:04 +0000 (UTC)
-Message-Id: <b29ffffb9206dc14541fa420c17604240728041b.1579024426.git.christophe.leroy@c-s.fr>
-In-Reply-To: <031dec5487bde9b2181c8b3c9800e1879cf98c1a.1579024426.git.christophe.leroy@c-s.fr>
-References: <031dec5487bde9b2181c8b3c9800e1879cf98c1a.1579024426.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 5/5] powerpc/32: reuse orphaned memblocks in
- kasan_init_shadow_page_tables()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, erhard_f@mailbox.org,
-        dja@axtens.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 14 Jan 2020 17:54:04 +0000 (UTC)
+        id S1726270AbgANR4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 12:56:51 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ECA724656;
+        Tue, 14 Jan 2020 17:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579024610;
+        bh=yOtLnUO5Ym3EaCqIMQHuofC8OLSSDAFzdn+4A1v7ju8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kSmLnGtYFH2i3CoU+unGvIp1h6C8YQ4yTiLkhriTng6g4qEx/sCAsL8sd80jNr0cI
+         WdHRaM/jOmQYryhjrZvsclFhdtjlf8vI4JmnGfm0bb8oq6kwqCZCKvcHeL3GGa2LZR
+         UTew4F5VjJohhyqakV4EttOn+4B0OXvL2eiSB5GU=
+Date:   Tue, 14 Jan 2020 18:56:47 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCHv2-next 3/3] serial_core: Remove unused member in uart_port
+Message-ID: <20200114175647.GA2055173@kroah.com>
+References: <20200114171912.261787-1-dima@arista.com>
+ <20200114171912.261787-4-dima@arista.com>
+ <e1b3cccb0814ba4b0c99592715776ed48f343795.camel@perches.com>
+ <8f11e2fa-495d-fe25-f5e4-52c9580240d7@arista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f11e2fa-495d-fe25-f5e4-52c9580240d7@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If concurrent PMD population has happened, re-use orphaned memblocks.
+On Tue, Jan 14, 2020 at 05:47:33PM +0000, Dmitry Safonov wrote:
+> On 1/14/20 5:36 PM, Joe Perches wrote:
+> > On Tue, 2020-01-14 at 17:19 +0000, Dmitry Safonov wrote:
+> >> It should remove the align-padding before @name.
+> > []
+> >> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+> > []
+> >> @@ -247,7 +247,6 @@ struct uart_port {
+> >>  
+> >>  	unsigned char		hub6;			/* this should be in the 8250 driver */
+> >>  	unsigned char		suspended;
+> >> -	unsigned char		unused;
+> > 
+> > I suggest this not be applied as this is just to let
+> > readers know that there is an unused 1 byte alignment
+> > hole here that could be used for something else.
+> 
+> Heh, 2/3 adds another `unsigned char`, so the neighbours look like:
+> 
+> : unsigned long sysrq;		/* sysrq timeout */
+> : unsigned int	sysrq_ch;	/* char for sysrq */
+> : unsigned char	has_sysrq;
+> : unsigned char	sysrq_seq;	/* index in sysrq_toggle_seq */
+> :
+> : unsigned char	hub6;		/* this should be in the 8250 driver */
+> : unsigned char	suspended;
+> : unsigned char	unused;
+> : const char	*name;		/* port name */
+> 
+> So the hole became 4 bytes on 64-bit.
+> 
+> I can make it unused[4], but..
+> 
+> Separated the patch per Greg's review and I think it makes sense to have
+> it separately from 2/3 because last time I've touched it, it actually
+> was in use by drivers (regardless the name).
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/mm/kasan/kasan_init_32.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes, it makes sense to remove it now.  And then we can properly
+reorginize the structure if people really care about the padding issues
+(hint, I really doubt it).  Someone can run pahole on the structure if
+they care, but getting rid of "unused" is good as it has been abused in
+the past.
 
-diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
-index c4bf9ed04f88..d3cacd462560 100644
---- a/arch/powerpc/mm/kasan/kasan_init_32.c
-+++ b/arch/powerpc/mm/kasan/kasan_init_32.c
-@@ -34,17 +34,17 @@ static int __init kasan_init_shadow_page_tables(unsigned long k_start, unsigned
- {
- 	pmd_t *pmd;
- 	unsigned long k_cur, k_next;
-+	pte_t *new = NULL;
- 
- 	pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
- 
- 	for (k_cur = k_start; k_cur != k_end; k_cur = k_next, pmd++) {
--		pte_t *new;
--
- 		k_next = pgd_addr_end(k_cur, k_end);
- 		if ((void *)pmd_page_vaddr(*pmd) != kasan_early_shadow_pte)
- 			continue;
- 
--		new = memblock_alloc(PTE_FRAG_SIZE, PTE_FRAG_SIZE);
-+		if (!new)
-+			new = memblock_alloc(PTE_FRAG_SIZE, PTE_FRAG_SIZE);
- 
- 		if (!new)
- 			return -ENOMEM;
--- 
-2.13.3
+thanks,
 
+greg k-h
