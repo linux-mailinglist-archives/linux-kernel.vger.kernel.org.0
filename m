@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D1B13A529
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE3113A574
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbgANKFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:05:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32916 "EHLO mail.kernel.org"
+        id S1730774AbgANKHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:07:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbgANKFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:05:03 -0500
+        id S1730747AbgANKHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D567D2467E;
-        Tue, 14 Jan 2020 10:05:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B3C207FF;
+        Tue, 14 Jan 2020 10:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996303;
-        bh=6x5H/qSfeoUdvmRrLY1/QJTMbneI6c4ICGyYoLfZWVg=;
+        s=default; t=1578996466;
+        bh=hp3tyotnzJKkUh2bGZfuSWRRRn68vaaDLm7ShU8eO6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mIph/3NXmVvsx2oRPconjLXu7BXg/74S/4ShLMlS2fDNebEcvZpysqVVdQ75u7Rvr
-         uly4Pv3Ib6lhHRfE0l8NrFS4ly/4PbIkyoCI/4lTKoT/l0DedckP3pc7/vdC16swCX
-         xJZ2kZ4SX/7quAzSW4zGXM+9oJaHbyQqUjijqv1g=
+        b=raeyyHtgsYMxrp/Th60QUBaB5HuPaAMRfT/FvSu66s+nnHYq0wj/jXkfVwkNsYAxC
+         uuJZZe9CFMSHwdEsQlHzQ3V5WRzYfpynKAVGtztFFhvh9sKTg4ugMdXQSmA5n8Yoed
+         rlJ3YSIlJ38MVak47FwuQgsEHFu6DHHSBYt431Ok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 5.4 50/78] staging: vt6656: correct return of vnt_init_registers.
-Date:   Tue, 14 Jan 2020 11:01:24 +0100
-Message-Id: <20200114094400.201384767@linuxfoundation.org>
+        stable@vger.kernel.org, Kaitao Cheng <pilgrimtao@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.19 08/46] kernel/trace: Fix do not unregister tracepoints when register sched_migrate_task fail
+Date:   Tue, 14 Jan 2020 11:01:25 +0100
+Message-Id: <20200114094342.139174139@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
-References: <20200114094352.428808181@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,31 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Kaitao Cheng <pilgrimtao@gmail.com>
 
-commit 7de6155c8968a3342d1bef3f7a2084d31ae6e4be upstream.
+commit 50f9ad607ea891a9308e67b81f774c71736d1098 upstream.
 
-The driver standard error returns remove bool false conditions.
+In the function, if register_trace_sched_migrate_task() returns error,
+sched_switch/sched_wakeup_new/sched_wakeup won't unregister. That is
+why fail_deprobe_sched_switch was added.
 
-Cc: stable <stable@vger.kernel.org> # v5.3+
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/072ec0b3-425f-277e-130c-1e3a116c90d6@gmail.com
+Link: http://lkml.kernel.org/r/20191231133530.2794-1-pilgrimtao@gmail.com
+
+Cc: stable@vger.kernel.org
+Fixes: 478142c39c8c2 ("tracing: do not grab lock in wakeup latency function tracing")
+Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/main_usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_sched_wakeup.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -950,7 +950,7 @@ static const struct ieee80211_ops vnt_ma
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -640,7 +640,7 @@ static void start_wakeup_tracer(struct t
+ 	if (ret) {
+ 		pr_info("wakeup trace: Couldn't activate tracepoint"
+ 			" probe to kernel_sched_migrate_task\n");
+-		return;
++		goto fail_deprobe_sched_switch;
+ 	}
  
- int vnt_init(struct vnt_private *priv)
- {
--	if (!(vnt_init_registers(priv)))
-+	if (vnt_init_registers(priv))
- 		return -EAGAIN;
+ 	wakeup_reset(tr);
+@@ -658,6 +658,8 @@ static void start_wakeup_tracer(struct t
+ 		printk(KERN_ERR "failed to start wakeup tracer\n");
  
- 	SET_IEEE80211_PERM_ADDR(priv->hw, priv->permanent_net_addr);
+ 	return;
++fail_deprobe_sched_switch:
++	unregister_trace_sched_switch(probe_wakeup_sched_switch, NULL);
+ fail_deprobe_wake_new:
+ 	unregister_trace_sched_wakeup_new(probe_wakeup, NULL);
+ fail_deprobe:
 
 
