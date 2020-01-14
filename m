@@ -2,116 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6E313A3AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:21:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7271713A3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:22:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgANJVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 04:21:01 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43711 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbgANJVB (ORCPT
+        id S1728918AbgANJWx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 Jan 2020 04:22:53 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42004 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbgANJWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:21:01 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1irINZ-000420-DH; Tue, 14 Jan 2020 10:20:53 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1irINX-0004kf-RU; Tue, 14 Jan 2020 10:20:51 +0100
-Date:   Tue, 14 Jan 2020 10:20:51 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     quanyang.wang@windriver.com
-Cc:     richard@nod.at, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ubifs: fix memory leak from c->sup_node
-Message-ID: <20200114092051.autszasi2rmywtyk@pengutronix.de>
-References: <20200114054311.8984-1-quanyang.wang@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114054311.8984-1-quanyang.wang@windriver.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 10:20:10 up 190 days, 15:30, 87 users,  load average: 0.30, 0.21,
- 0.28
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 14 Jan 2020 04:22:50 -0500
+Received: from mail-pj1-f72.google.com ([209.85.216.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1irIPP-0006qn-ND
+        for linux-kernel@vger.kernel.org; Tue, 14 Jan 2020 09:22:47 +0000
+Received: by mail-pj1-f72.google.com with SMTP id gn11so8514621pjb.6
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 01:22:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ZWAvW0Rz1fE7AgqGVyczDvEbs9mU6QRWoYteCf8IMgY=;
+        b=ApMbS4Izoyx4Hk/FJ1dSCDxh0lrd7E/SkWrKNyuuSPAi0gJwnmbLKMdY2yhM+li0bl
+         Bs2Va0lYkdq9ysYxQzYxFLIUt7rjw+XZsX1P6XKW4GCj4pKsewRF+r08Rzxdsk1xlM3m
+         3kENukQoBDwj0o9hFh+7UvhlJqUnDggDaMTqGSipSfJiG63Z2i7+OL/KoiGmDC/79y58
+         cj31S88x7b/tokt4S1/nI2AIxOcT/6UXcIMTj2kInsX+eAw3T6oAghFfz5SudYT6RNIQ
+         l49KnHn1j+D6or99jUQJe3qA12AMQKFB8n9HL98Qqx7mOUNTqYVqchD2vsvEveTclqwp
+         46jA==
+X-Gm-Message-State: APjAAAUd+isC+K0nnHN79UoDPwOCUuRT53pzhgQPhMj8UYqkHG4oBPLV
+        /1s37VgYfA8YPQ7ZUSBXl5eVAbEPjaagJp1Ut5S4i19pOk3HxR+Ud7quNL6sAmSwI8A/WW3AVZo
+        9IzF5DY8P0tJNjFmLOo9ddNyXv6GoxgXxkUVu5AkJ4A==
+X-Received: by 2002:a17:90a:cb83:: with SMTP id a3mr27325366pju.80.1578993766159;
+        Tue, 14 Jan 2020 01:22:46 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz/dfKdh6hyfCjf7/vtp3J9v7vz7wJtppmbIjvVArkf4ZL6hlcXyW/MQU84uBegDfMHDLn6Tg==
+X-Received: by 2002:a17:90a:cb83:: with SMTP id a3mr27325337pju.80.1578993765891;
+        Tue, 14 Jan 2020 01:22:45 -0800 (PST)
+Received: from 2001-b011-380f-35a3-5d99-e277-e07f-4d26.dynamic-ip6.hinet.net (2001-b011-380f-35a3-5d99-e277-e07f-4d26.dynamic-ip6.hinet.net. [2001:b011:380f:35a3:5d99:e277:e07f:4d26])
+        by smtp.gmail.com with ESMTPSA id a6sm15893776pgg.25.2020.01.14.01.22.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Jan 2020 01:22:45 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH] r8152: Add MAC passthrough support to new device
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <1578990223.15925.0.camel@suse.com>
+Date:   Tue, 14 Jan 2020 17:22:39 +0800
+Cc:     David Miller <davem@davemloft.net>,
+        Hayes Wang <hayeswang@realtek.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Prashant Malani <pmalani@chromium.org>,
+        Grant Grundler <grundler@chromium.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        David Chen <david.chen7@dell.com>,
+        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <A3D0DBA9-7014-48BF-8001-6F34EC2200B1@canonical.com>
+References: <20200114044127.20085-1-kai.heng.feng@canonical.com>
+ <1578990223.15925.0.camel@suse.com>
+To:     Oliver Neukum <oneukum@suse.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 01:43:11PM +0800, quanyang.wang@windriver.com wrote:
-> From: Quanyang Wang <quanyang.wang@windriver.com>
-> 
-> The c->sup_node is allocated in function ubifs_read_sb_node but
-> is not freed. This will cause memory leak as below:
-> 
-> unreferenced object 0xbc9ce000 (size 4096):
->   comm "mount", pid 500, jiffies 4294952946 (age 315.820s)
->   hex dump (first 32 bytes):
->     31 18 10 06 06 7b f1 11 02 00 00 00 00 00 00 00  1....{..........
->     00 10 00 00 06 00 00 00 00 00 00 00 08 00 00 00  ................
->   backtrace:
->     [<d1c503cd>] ubifs_read_superblock+0x48/0xebc
->     [<a20e14bd>] ubifs_mount+0x974/0x1420
->     [<8589ecc3>] legacy_get_tree+0x2c/0x50
->     [<5f1fb889>] vfs_get_tree+0x28/0xfc
->     [<bbfc7939>] do_mount+0x4f8/0x748
->     [<4151f538>] ksys_mount+0x78/0xa0
->     [<d59910a9>] ret_fast_syscall+0x0/0x54
->     [<1cc40005>] 0x7ea02790
-> 
-> Free it in ubifs_umount and in the error path of mount_ubifs.
-> 
-> Fixes: fd6150051bec ("ubifs: Store read superblock node")
-> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
 
-Looks good.
 
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Sascha
-
-> ---
->  fs/ubifs/super.c | 2 ++
->  1 file changed, 2 insertions(+)
+> On Jan 14, 2020, at 16:23, Oliver Neukum <oneukum@suse.com> wrote:
 > 
-> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-> index 7d4547e5202d..a4412c259bb3 100644
-> --- a/fs/ubifs/super.c
-> +++ b/fs/ubifs/super.c
-> @@ -1599,6 +1599,7 @@ static int mount_ubifs(struct ubifs_info *c)
->  	vfree(c->ileb_buf);
->  	vfree(c->sbuf);
->  	kfree(c->bottom_up_buf);
-> +	kfree(c->sup_node);
->  	ubifs_debugging_exit(c);
->  	return err;
->  }
-> @@ -1641,6 +1642,7 @@ static void ubifs_umount(struct ubifs_info *c)
->  	vfree(c->ileb_buf);
->  	vfree(c->sbuf);
->  	kfree(c->bottom_up_buf);
-> +	kfree(c->sup_node);
->  	ubifs_debugging_exit(c);
->  }
->  
-> -- 
-> 2.17.1
+> Am Dienstag, den 14.01.2020, 12:41 +0800 schrieb Kai-Heng Feng:
+>> Device 0xa387 also supports MAC passthrough, therefore add it to the
+>> whitelst.
 > 
+> Hi,
+> 
+> this list is getting longer and longer. Isn't there a way to do
+> this generically? ACPI?
+
+ACPI only provides the MAC address, to write the MAC to r8152 it still requires hardware support.
+So we need to use whitelist here, not all r8152 support this feature.
+
+Kai-Heng
+
+> 
+> 	Regards
+> 		Oliver
 > 
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
