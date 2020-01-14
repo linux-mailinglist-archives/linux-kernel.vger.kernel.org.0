@@ -2,103 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D638213A261
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B7C13A267
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:58:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbgANH6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:58:18 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36864 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbgANH6Q (ORCPT
+        id S1729352AbgANH6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:58:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39355 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729127AbgANH6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:58:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w15so11145738wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:58:14 -0800 (PST)
+        Tue, 14 Jan 2020 02:58:36 -0500
+Received: by mail-wm1-f65.google.com with SMTP id 20so12511053wmj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 23:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=rbig32eOr50Fg3Pl+aEs/mNBrNThyFSHZWhVDQMxVUU=;
-        b=CF/xuhzmVCRthuwJH06L18yseaKb7oIXNzM152sOtUAKNQ+YGt8p0UuH0t5KvJop+7
-         CF1e3iJdULcUGDZl+0D+R3UUWIZ3Ytb96EOBDCtkCxq1Yrrnv03SE9t8QoKd8uO5nTDq
-         Tn87CN+c/Yv35vPFg/vlEho5bsYjXmX9QVrcPEEbIAPEuH9IAHc2xbYZ6LG9PizvQy2N
-         xfDC8GCUotkzreEMrT3nZQ0Fd5CiK+pimz6fND0la5j38JuOEbRZ12LeztGSLZId+zjv
-         Ic2HeH7zK+Q3eiYOFQzW6exqSs+6bPVE4dHg7gBMPyCmM1qiv2lex2qajD7Ddqu9H5n9
-         kv+A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2tqeA9SVRpbYOWNEv52NfjSgUYnaSyLjZ8VbKBWvkB8=;
+        b=nj+SbZ34MQo3ObpLHJ81f1fsqNyqoIbFh9D59Ut6hwJJqqviusHEBofnbn9WEMHTkH
+         BowT+qANUEoaF7Ya4KZP1bSuMDzr3BrfBc4qXVeGmkv+W2YkD64gZdlGT1o3hIs69C+R
+         Frm7G0TnEgQN+CcgJpGTHzupvS2axENPUO9tDbkad1jsACJb/T7vVOMZjXrau9B0y1xP
+         Nivrll2vslPIaal6ObHQgNrwwh1/ns4IANfiXYseBn8G6sPo2cLt3Q1oVOcocUcMuoWB
+         jAj8yw5pFR5ln7Zr+jVforKxx/vd60vD57WvedRNYlKMdSDCMYBSbGYeBhIY1f5KuAo0
+         4RCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=rbig32eOr50Fg3Pl+aEs/mNBrNThyFSHZWhVDQMxVUU=;
-        b=blDXDwDpYpgCtPdalyWxbKCTI+oTga/5sWQl7eNupixouO6WTJLmc8NrwEBnpPRamR
-         8GMesFetLeuA/JiKuqAn/8nPhdDRxt19d9Q5FflGcSi7JvoVlCaKlfEqB7KSaOHNunFO
-         Tf+pEGo+NwHyd9yHxxZofo+P1TBXuwdbhuVMPgNl/XlSfCfmtdG28ajHea5FZb0+gU28
-         72JkgKYHHkotmPyIIEcB/obzMfxuPHexz9qd+qXBL1UoMo+tDwrXg9Wt7oq5I5i6rlIk
-         GMB2BR3iuqiCF6vANr+w7zIAehLViOA5NQGB6zmwL6FHLZDL1dhY0Na2LSmLuPttkRII
-         uSuQ==
-X-Gm-Message-State: APjAAAUuIoRsCXCo47BPztY2+2ityAqOmcFm5we7E0z1o4N29/QYLrkq
-        cA37ycZ8jTFByDwrNiZbLrvz+aFYi9k=
-X-Google-Smtp-Source: APXvYqxOFNKkysW5IxjL1XmW18JG1x16t20l6Ie3rcKpVfh4ZhISo4dMlH20xO3vOn3h/zvIllwx5Q==
-X-Received: by 2002:a5d:6ac3:: with SMTP id u3mr24104295wrw.25.1578988694185;
-        Mon, 13 Jan 2020 23:58:14 -0800 (PST)
-Received: from wambui.local ([154.70.37.104])
-        by smtp.googlemail.com with ESMTPSA id t131sm17972758wmb.13.2020.01.13.23.58.10
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2tqeA9SVRpbYOWNEv52NfjSgUYnaSyLjZ8VbKBWvkB8=;
+        b=p+q+QXy2VynOplO8S6PgvD83sIvNVW0XEi5NPk7emuXnLva+/X4lMNESCKNqL7y8aO
+         sV+3fP8Zili70gQE8+VH5NtlG59php/dANv/PKeuohzifSeVyklCzzliyhxJQ+Nw7A2+
+         AcRMtN5ZMkPyEuUfKkDaEuyZLUxJhG91j/1uad7q3nOTwJNQx44eQvphBScRKuyp5XPP
+         5aH4fq24kYctvAm8MvsfL0lk045uGjvVD9ReU6pGnGA0WbsBCajfVq7YrG+Atvsk0kCF
+         /osvGaERnCW5IkCso3eR3NZUacwWOTtzdcHZxiTnq0jtURyYfoQqT8f09q5+7kFUYqKD
+         yK7A==
+X-Gm-Message-State: APjAAAVsr0WKndVy8wIrDeffuw7yi5F+UMWfN0F5ALRrsOKw6VHmXrdQ
+        yLS0Ol2yTzW+JdWWxYKsgXWMaw==
+X-Google-Smtp-Source: APXvYqxpPA4KEPMdkCalFXAmGAvGmPtnz+o0nFOyZiKWNQHG3sc/7GlSmvHxayF93Mper9G7Nk467g==
+X-Received: by 2002:a7b:c85a:: with SMTP id c26mr25125804wml.107.1578988714621;
+        Mon, 13 Jan 2020 23:58:34 -0800 (PST)
+Received: from dell ([95.147.198.95])
+        by smtp.gmail.com with ESMTPSA id k16sm18893042wru.0.2020.01.13.23.58.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 23:58:13 -0800 (PST)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-X-Google-Original-From: Wambui Karuga <wambui@wambui>
-Date:   Tue, 14 Jan 2020 10:58:03 +0300 (EAT)
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-cc:     airlied@linux.ie, daniel@ffwll.ch, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        sean@poorly.run, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: convert to new logging macros based on struct
- intel_engine_cs.
-In-Reply-To: <157891427231.27314.12398974277241668021@skylake-alporthouse-com>
-Message-ID: <alpine.LNX.2.21.99999.375.2001141057240.2558@wambui>
-References: <20200113111025.2048-1-wambui.karugax@gmail.com> <157891427231.27314.12398974277241668021@skylake-alporthouse-com>
-User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
+        Mon, 13 Jan 2020 23:58:34 -0800 (PST)
+Date:   Tue, 14 Jan 2020 07:58:55 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Wen Su <Wen.Su@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        wsd_upstream <wsd_upstream@mediatek.com>
+Subject: Re: [PATCH 3/4] regulator: mt6359: Add support for MT6359 regulator
+Message-ID: <20200114075855.GA325@dell>
+References: <1571218786-15073-1-git-send-email-Wen.Su@mediatek.com>
+ <1571218786-15073-4-git-send-email-Wen.Su@mediatek.com>
+ <1578969594.4495.3.camel@mtkswgap22>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578969594.4495.3.camel@mtkswgap22>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 14 Jan 2020, Wen Su wrote:
 
+> Dear reviewers, 
+> 
+> 	Gentle ping for this patch set.
 
-On Mon, 13 Jan 2020, Chris Wilson wrote:
+Not a good idea.
 
-> Quoting Wambui Karuga (2020-01-13 11:10:25)
->> fn(...) {
->> ...
->> struct intel_engine_cs *E = ...;
->> +struct drm_i915_private *dev_priv = E->i915;
->
-> No new dev_priv.
->
-> There should be no reason for drm_dbg here, as the rest of the debug is
-> behind ENGINE_TRACE and so the vestigial debug should be moved over, or
-> deleted as not being useful.
->
-> The error messages look unhelpful.
-Hey Chris, could you please elaborate on the debugs that should be 
-removed? These patches are for just converting the current debug 
-instances, so removing them might need separate patches.
+If you think a patch has slipped through the net, please apply all
+your received *-by tags and resubmit the set, changing "PATCH" to
+"RESEND" in the subject line.
 
-Thanks,
--wambui
->
->>                 if ((batch_end - cmd) < length) {
->> -                       DRM_DEBUG("CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
->> -                                 *cmd,
->> -                                 length,
->> -                                 batch_end - cmd);
->> +                       drm_dbg(&dev_priv->drm,
->> +                               "CMD: Command length exceeds batch length: 0x%08X length=%u batchlen=%td\n",
->
-> No. This is not driver debug. If anything this should be pr_debug, or
-> some over user centric channel.
-> -Chris
->
+> On Wed, 2019-10-16 at 17:39 +0800, Wen Su wrote:
+> > From: "wen.su" <wen.su@mediatek.com>
+> > 
+> > The MT6359 is a regulator found on boards based on MediaTek MT6779 and
+> > probably other SoCs. It is a so called pmic and connects as a slave to
+> > SoC using SPI, wrapped inside the pmic-wrapper.
+> > 
+> > Signed-off-by: wen.su <wen.su@mediatek.com>
+> > ---
+> >  drivers/regulator/Kconfig                  |   9 +
+> >  drivers/regulator/Makefile                 |   1 +
+> >  drivers/regulator/mt6359-regulator.c       | 859 +++++++++++++++++++++++++++++
+> >  include/linux/regulator/mt6359-regulator.h |  58 ++
+> >  4 files changed, 927 insertions(+)
+> >  create mode 100644 drivers/regulator/mt6359-regulator.c
+> >  create mode 100644 include/linux/regulator/mt6359-regulator.h
+
+[...]
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
