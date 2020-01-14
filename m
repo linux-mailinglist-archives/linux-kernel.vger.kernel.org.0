@@ -2,102 +2,451 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C65713AD70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A1013AD73
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:20:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgANPTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:19:38 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45467 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbgANPTd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:19:33 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 2so6714153pfg.12;
-        Tue, 14 Jan 2020 07:19:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ST7QEf8JaPsIhTPBLpP4peL3yXUV3NDdYF9SiuXeCzg=;
-        b=IVlh6j/iSAlzh10qy/FDJ4HvKz7R892wUQuYxOTYHl2N97PS0Wd+wj3Vcue7B+cqjn
-         +GUB4l5bI0/Eq5IssJDljQfcYTJ3oOQj4m33wenYcWvcEGIuzPtWFr+seGkEJtifjYEM
-         OtOSSexK4L4a64yBYbhtlTy6uLShoG5jR7+VC1c4obRovM2+xRUGWGJiw4B/aVCuMioK
-         mNIBgWFyvaKaUu0wWhRdQCyCAl99OH7jU+9lEHb1wEpM2H4qRPUR7G3e13xHve+pUgFB
-         Sr3EsDENkZfV3fAXxfr8EULSslN0/W9x3sjP0V1ghY94OGauXGQdzNXH0qSYZ3oX9qdg
-         SuGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ST7QEf8JaPsIhTPBLpP4peL3yXUV3NDdYF9SiuXeCzg=;
-        b=qKLW8ECzKkm0T5HhzveDbxoxqQapYtT1NroKKsDEy8dr3NtvsorKPe5EX48x/ZUS9h
-         hsNPzPQJ+3UHEsbHL1zFmU82NcSiqVStv2dA65P8VI1wq7X9+BqD5gq6+ZxR1lMu3YLI
-         xlDX25A8tkwHW7SQ4njRtv1xXeO0mgpnnOTZ33abbARS7qJKu6emwma+mqKxe358Bupo
-         E79uj88B4t8P8RKhjlAqukUzkal9MVe8NT89Ypj1P3YeEivZjmlE1C10Y9QmBxk0MJSI
-         feVK/JnP/8KutJVo9DeFaWL+2io7UU6PI9ip3Q9rZN85FSlSO0t1t2Xwn0PHOQauX+YU
-         mBEQ==
-X-Gm-Message-State: APjAAAUQpWjnIAKqPWh+x5CXjlLeboOPA5K+keKeMi3aKYzm8DDSEF/7
-        gZT23zH4vxJxqbhS3MO9EA4=
-X-Google-Smtp-Source: APXvYqwJlfdrCgQOUs+s+KcUfryciwUOYLQN9kEOTk43lgOjAPQX3p1bITQdDG6m0bJ77nBU9isuZw==
-X-Received: by 2002:a65:6914:: with SMTP id s20mr26982174pgq.44.1579015172492;
-        Tue, 14 Jan 2020 07:19:32 -0800 (PST)
-Received: from localhost.localdomain (c-67-165-113-11.hsd1.wa.comcast.net. [67.165.113.11])
-        by smtp.gmail.com with ESMTPSA id 207sm18834425pfu.88.2020.01.14.07.19.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 07:19:31 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] ARM: dts: vf610-zii-cfu1: Add voltage monitor DT node
-Date:   Tue, 14 Jan 2020 07:19:06 -0800
-Message-Id: <20200114151906.25491-6-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200114151906.25491-1-andrew.smirnov@gmail.com>
-References: <20200114151906.25491-1-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729279AbgANPT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 10:19:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726971AbgANPT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 10:19:56 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E887B24681;
+        Tue, 14 Jan 2020 15:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579015195;
+        bh=tW0W0o9HBD84cD7ThOImD5YWeUnrGIajQQvx78FQ7Ro=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ejGNkjej6UTgipnp5pz3NiRGjiYPhagQMQg4Bpurg5rLxarCfdnJzDH/1DFDxVz6e
+         GUzH57FuTBgrkXemI8VYD1boaA/MbQfG3EiDSkS5oZi0gOaM5mR4jp4anoQTKA5p8M
+         vg8y9Oo1YAfRPYuvK3ptaBypVDzdKAiVfor2IzQQ=
+Message-ID: <1579015193.31031.12.camel@kernel.org>
+Subject: Re: [PATCH v2 04/12] tracing: Add dynamic event command creation
+ interface
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     rostedt@goodmis.org, artem.bityutskiy@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Date:   Tue, 14 Jan 2020 09:19:53 -0600
+In-Reply-To: <20200114211420.71aae80cc4bdc7466960697d@kernel.org>
+References: <cover.1578688120.git.zanussi@kernel.org>
+         <b10d5656847c54c51b1496319e0da2764e660458.1578688120.git.zanussi@kernel.org>
+         <20200114211420.71aae80cc4bdc7466960697d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a DT node for various voltage supply rails connected to SoC's ADC
-for voltage monitoring purposes.
+Hi Masami,
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/boot/dts/vf610-zii-cfu1.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Tue, 2020-01-14 at 21:14 +0900, Masami Hiramatsu wrote:
+> Hi Tom,
+> 
+> Would you have any reason to export these raw interface to modules?
+> (add_dynevent_arg() and add_dynevent_arg_pair())
+> 
+> I'm OK to export wrapped interfaces, but I can't find any good reason
+> to export these raw interfaces. Especially since the argument format
+> has been defined by each event type (synthetic, kprobe and uprobe),
+> so modules may not be able to add new one...
+> 
 
-diff --git a/arch/arm/boot/dts/vf610-zii-cfu1.dts b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-index 28732249cfc0..ce1920c052fc 100644
---- a/arch/arm/boot/dts/vf610-zii-cfu1.dts
-+++ b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-@@ -71,6 +71,14 @@
- 		los-gpio = <&gpio4 4 GPIO_ACTIVE_HIGH>;
- 		tx-disable-gpio = <&gpio3 22 GPIO_ACTIVE_HIGH>;
- 	};
-+
-+	supply-voltage-monitor {
-+		compatible = "iio-hwmon";
-+		io-channels = <&adc0 8>, /* 28VDC_IN */
-+			      <&adc0 9>, /* +3.3V    */
-+			      <&adc1 8>, /* VCC_1V5  */
-+			      <&adc1 9>; /* VCC_1V2  */
-+	};
- };
- 
- &adc0 {
--- 
-2.21.0
+I didn't have a strong reason to export them, other than I thought they
+might come in handy for some user at some point.  But you make some
+good points, and I'm fine with assuming that only the wrapped
+interfaces are what we care about.  I'll unexport them in the next
+revision.
 
+Thanks,
+
+Tom
+
+> Thank you,
+> 
+> On Fri, 10 Jan 2020 14:35:10 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > Add an interface used to build up dynamic event creation commands,
+> > such as synthetic and kprobe events.  Interfaces specific to those
+> > particular types of events and others can be built on top of this
+> > interface.
+> > 
+> > Command creation is started by first using the dynevent_cmd_init()
+> > function to initialize the dynevent_cmd object.  Following that,
+> > args
+> > are appended and optionally checked by the add_dynevent_arg() and
+> > add_dynevent_arg_pair() functions, which use objects representing
+> > arguments and pairs of arguments, initialized respectively by
+> > dynevent_arg_init() and dynevent_arg_pair_init().  Finally, once
+> > all
+> > args have been successfully added, the command is finalized and
+> > actually created using create_dynevent().
+> > 
+> > The code here for actually printing into the dyn_event->cmd buffer
+> > using snprintf() etc was adapted from v4 of Masami's 'tracing/boot:
+> > Add synthetic event support' patch.
+> > 
+> > Signed-off-by: Tom Zanussi <zanussi@kernel.org>
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  include/linux/trace_events.h |  54 +++++++++++
+> >  kernel/trace/trace_events.c  | 217
+> > +++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 271 insertions(+)
+> > 
+> > diff --git a/include/linux/trace_events.h
+> > b/include/linux/trace_events.h
+> > index c8038d1a1a48..bf4cc2e56125 100644
+> > --- a/include/linux/trace_events.h
+> > +++ b/include/linux/trace_events.h
+> > @@ -353,6 +353,60 @@ extern struct trace_event_file
+> > *get_event_file(const char *instance,
+> >  					       const char *event);
+> >  extern void put_event_file(struct trace_event_file *file);
+> >  
+> > +struct dynevent_cmd;
+> > +
+> > +typedef int (*dynevent_check_arg_fn_t)(void *data);
+> > +typedef int (*dynevent_create_fn_t)(struct dynevent_cmd *cmd);
+> > +
+> > +struct dynevent_arg {
+> > +	const char		*str;
+> > +	char			separator; /* e.g. ';', ',',
+> > or nothing */
+> > +	dynevent_check_arg_fn_t	check_arg;
+> > +};
+> > +
+> > +extern void dynevent_arg_init(struct dynevent_arg *arg,
+> > +			      dynevent_check_arg_fn_t check_arg,
+> > +			      char separator);
+> > +extern int add_dynevent_arg(struct dynevent_cmd *cmd,
+> > +			    struct dynevent_arg *arg);
+> > +
+> > +struct dynevent_arg_pair {
+> > +	const char		*lhs;
+> > +	const char		*rhs;
+> > +	char			operator; /* e.g. '=' or
+> > nothing */
+> > +	char			separator; /* e.g. ';', ',',
+> > or nothing */
+> > +	dynevent_check_arg_fn_t	check_arg;
+> > +};
+> > +
+> > +extern void dynevent_arg_pair_init(struct dynevent_arg_pair
+> > *arg_pair,
+> > +				   dynevent_check_arg_fn_t
+> > check_arg,
+> > +				   char operator, char separator);
+> > +extern int add_dynevent_arg_pair(struct dynevent_cmd *cmd,
+> > +				 struct dynevent_arg_pair
+> > *arg_pair);
+> > +
+> > +#define MAX_DYNEVENT_CMD_LEN	(2048)
+> > +
+> > +enum dynevent_type {
+> > +	DYNEVENT_TYPE_SYNTH,
+> > +	DYNEVENT_TYPE_KPROBE,
+> > +};
+> > +
+> > +struct dynevent_cmd {
+> > +	char			*buf;
+> > +	const char		*event_name;
+> > +	int			maxlen;
+> > +	int			remaining;
+> > +	unsigned int		n_fields;
+> > +	enum dynevent_type	type;
+> > +	dynevent_create_fn_t	run_command;
+> > +	void			*private_data;
+> > +};
+> > +
+> > +extern void dynevent_cmd_init(struct dynevent_cmd *cmd, char *buf,
+> > int maxlen,
+> > +			      enum dynevent_type type,
+> > +			      dynevent_create_fn_t run_command);
+> > +extern int create_dynevent(struct dynevent_cmd *cmd);
+> > +
+> >  extern int delete_synth_event(const char *name);
+> >  
+> >  /*
+> > diff --git a/kernel/trace/trace_events.c
+> > b/kernel/trace/trace_events.c
+> > index 184e10d3772d..751a2c887953 100644
+> > --- a/kernel/trace/trace_events.c
+> > +++ b/kernel/trace/trace_events.c
+> > @@ -3301,6 +3301,223 @@ void __init trace_event_init(void)
+> >  	event_trace_enable();
+> >  }
+> >  
+> > +/**
+> > + * add_dynevent_arg - Add an arg to a dynevent_cmd
+> > + * @cmd: A pointer to the dynevent_cmd struct representing the new
+> > event cmd
+> > + * @arg: The argument to append to the current cmd
+> > + *
+> > + * Append an argument to a dynevent_cmd.  The argument string will
+> > be
+> > + * appended to the current cmd string, followed by a separator, if
+> > + * applicable.  Before the argument is added, the check_arg()
+> > + * function, if defined, is called.
+> > + *
+> > + * The cmd string, separator, and check_arg() function should be
+> > set
+> > + * using the dynevent_arg_init() before any arguments are added
+> > using
+> > + * this function.
+> > + *
+> > + * Return: 0 if successful, error otherwise.
+> > + */
+> > +int add_dynevent_arg(struct dynevent_cmd *cmd,
+> > +		     struct dynevent_arg *arg)
+> > +{
+> > +	int ret = 0;
+> > +	int delta;
+> > +	char *q;
+> > +
+> > +	if (arg->check_arg) {
+> > +		ret = arg->check_arg(arg);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	q = cmd->buf + (cmd->maxlen - cmd->remaining);
+> > +
+> > +	delta = snprintf(q, cmd->remaining, " %s%c", arg->str,
+> > arg->separator);
+> > +	if (delta >= cmd->remaining) {
+> > +		pr_err("String is too long: %s\n", arg->str);
+> > +		return -E2BIG;
+> > +	}
+> > +	cmd->remaining -= delta;
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(add_dynevent_arg);
+> > +
+> > +/**
+> > + * add_dynevent_arg_pair - Add an arg pair to a dynevent_cmd
+> > + * @cmd: A pointer to the dynevent_cmd struct representing the new
+> > event cmd
+> > + * @arg_pair: The argument pair to append to the current cmd
+> > + *
+> > + * Append an argument pair to a dynevent_cmd.  An argument pair
+> > + * consists of a left-hand-side argument and a right-hand-side
+> > + * argument separated by an operator, which can be whitespace, all
+> > + * followed by a separator, if applicable.  This can be used to
+> > add
+> > + * arguments of the form 'type variable_name;' or 'x+y'.
+> > + *
+> > + * The lhs argument string will be appended to the current cmd
+> > string,
+> > + * followed by an operator, if applicable, followd by the rhs
+> > string,
+> > + * followed finally by a separator, if applicable.  Before
+> > anything is
+> > + * added, the check_arg() function, if defined, is called.
+> > + *
+> > + * The cmd strings, operator, separator, and check_arg() function
+> > + * should be set using the dynevent_arg_init() before any
+> > arguments
+> > + * are added using this function.
+> > + *
+> > + * Return: 0 if successful, error otherwise.
+> > + */
+> > +int add_dynevent_arg_pair(struct dynevent_cmd *cmd,
+> > +			  struct dynevent_arg_pair *arg_pair)
+> > +{
+> > +	int ret = 0;
+> > +	int delta;
+> > +	char *q;
+> > +
+> > +	if (arg_pair->check_arg) {
+> > +		ret = arg_pair->check_arg(arg_pair);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	q = cmd->buf + (cmd->maxlen - cmd->remaining);
+> > +
+> > +	delta = snprintf(q, cmd->remaining, " %s%c", arg_pair-
+> > >lhs,
+> > +			 arg_pair->operator);
+> > +	if (delta >= cmd->remaining) {
+> > +		pr_err("field string is too long: %s\n", arg_pair-
+> > >lhs);
+> > +		return -E2BIG;
+> > +	}
+> > +	cmd->remaining -= delta; q += delta;
+> > +
+> > +	delta = snprintf(q, cmd->remaining, "%s%c", arg_pair->rhs,
+> > +			 arg_pair->separator);
+> > +	if (delta >= cmd->remaining) {
+> > +		pr_err("field string is too long: %s\n", arg_pair-
+> > >rhs);
+> > +		return -E2BIG;
+> > +	}
+> > +	cmd->remaining -= delta; q += delta;
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(add_dynevent_arg_pair);
+> > +
+> > +/**
+> > + * dynevent_cmd_init - Initialize a dynevent_cmd object
+> > + * @cmd: A pointer to the dynevent_cmd struct representing the cmd
+> > + * @buf: A pointer to the buffer to generate the command into
+> > + * @maxlen: The length of the buffer the command will be generated
+> > into
+> > + * @type: The type of the cmd, checked against further operations
+> > + * @run_command: The type-specific function that will actually run
+> > the command
+> > + *
+> > + * Initialize a dynevent_cmd.  A dynevent_cmd is used to build up
+> > and
+> > + * run dynamic event creation commands, such as commands for
+> > creating
+> > + * synthetic and kprobe events.  Before calling any of the
+> > functions
+> > + * used to build the command, a dynevent_cmd object should be
+> > + * instantiated and initialized using this function.
+> > + *
+> > + * The initialization sets things up by saving a pointer to the
+> > + * user-supplied buffer and its length via the @buf and @maxlen
+> > + * params, and by saving the cmd-specific @type and @run_command
+> > + * params which are used to check subsequent dynevent_cmd
+> > operations
+> > + * and actually run the command when complete.
+> > + */
+> > +void dynevent_cmd_init(struct dynevent_cmd *cmd, char *buf, int
+> > maxlen,
+> > +		       enum dynevent_type type,
+> > +		       dynevent_create_fn_t run_command)
+> > +{
+> > +	memset(cmd, '\0', sizeof(*cmd));
+> > +
+> > +	cmd->buf = buf;
+> > +	cmd->maxlen = maxlen;
+> > +	cmd->remaining = cmd->maxlen;
+> > +	cmd->type = type;
+> > +	cmd->run_command = run_command;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dynevent_cmd_init);
+> > +
+> > +/**
+> > + * dynevent_arg_init - Initialize a dynevent_arg object
+> > + * @arg: A pointer to the dynevent_arg struct representing the arg
+> > + * @check_arg: An (optional) pointer to a function checking arg
+> > sanity
+> > + * @separator: An (optional) separator, appended after adding the
+> > arg
+> > + *
+> > + * Initialize a dynevent_arg object.  A dynevent_arg represents an
+> > + * object used to append single arguments to the current command
+> > + * string.  The @check_arg function, if present, will be used to
+> > check
+> > + * the sanity of the current arg string (which is directly set by
+> > the
+> > + * caller).  After the arg string is successfully appended to the
+> > + * command string, the optional @separator is appended.  If no
+> > + * separator was specified when initializing the arg, a space will
+> > be
+> > + * appended.
+> > + */
+> > +void dynevent_arg_init(struct dynevent_arg *arg,
+> > +		       dynevent_check_arg_fn_t check_arg,
+> > +		       char separator)
+> > +{
+> > +	memset(arg, '\0', sizeof(*arg));
+> > +
+> > +	if (!separator)
+> > +		separator = ' ';
+> > +	arg->separator = separator;
+> > +
+> > +	arg->check_arg = check_arg;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dynevent_arg_init);
+> > +
+> > +/**
+> > + * dynevent_arg_pair_init - Initialize a dynevent_arg_pair object
+> > + * @arg_pair: A pointer to the dynevent_arg_pair struct
+> > representing the arg
+> > + * @check_arg: An (optional) pointer to a function checking arg
+> > sanity
+> > + * @operator: An (optional) operator, appended after adding the
+> > first arg
+> > + * @separator: An (optional) separator, appended after adding the
+> > second arg
+> > + *
+> > + * Initialize a dynevent_arg_pair object.  A dynevent_arg_pair
+> > + * represents an object used to append argument pairs such as
+> > 'type
+> > + * variable_name;' or 'x+y' to the current command string.  An
+> > + * argument pair consists of a left-hand-side argument and a
+> > + * right-hand-side argument separated by an operator, which can be
+> > + * whitespace, all followed by a separator, if applicable. The
+> > + * @check_arg function, if present, will be used to check the
+> > sanity
+> > + * of the current arg strings (which is directly set by the
+> > caller).
+> > + * After the first arg string is successfully appended to the
+> > command
+> > + * string, the optional @operator is appended, followed by the
+> > second
+> > + * arg and and optional @separator.  If no separator was specified
+> > + * when initializing the arg, a space will be appended.
+> > + */
+> > +void dynevent_arg_pair_init(struct dynevent_arg_pair *arg_pair,
+> > +			    dynevent_check_arg_fn_t check_arg,
+> > +			    char operator, char separator)
+> > +{
+> > +	memset(arg_pair, '\0', sizeof(*arg_pair));
+> > +
+> > +	if (!operator)
+> > +		operator = ' ';
+> > +	arg_pair->operator = operator;
+> > +
+> > +	if (!separator)
+> > +		separator = ' ';
+> > +	arg_pair->separator = separator;
+> > +
+> > +	arg_pair->check_arg = check_arg;
+> > +}
+> > +EXPORT_SYMBOL_GPL(dynevent_arg_pair_init);
+> > +
+> > +/**
+> > + * create_dynevent - Create the dynamic event contained in
+> > dynevent_cmd
+> > + * @cmd: The dynevent_cmd object containing the dynamic event
+> > creation command
+> > + *
+> > + * Once a dynevent_cmd object has been successfully built up via
+> > the
+> > + * dynevent_cmd_init(), add_dynevent_arg() and
+> > add_dynevent_arg_pair()
+> > + * functions, this function runs the final command to actually
+> > create
+> > + * the event.
+> > + *
+> > + * Return: 0 if the event was successfully created, error
+> > otherwise.
+> > + */
+> > +int create_dynevent(struct dynevent_cmd *cmd)
+> > +{
+> > +	return cmd->run_command(cmd);
+> > +}
+> > +EXPORT_SYMBOL_GPL(create_dynevent);
+> > +
+> >  #ifdef CONFIG_EVENT_TRACE_STARTUP_TEST
+> >  
+> >  static DEFINE_SPINLOCK(test_spinlock);
+> > -- 
+> > 2.14.1
+> > 
+> 
+> 
