@@ -2,37 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D156413A658
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCFE113A588
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732131AbgANKLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:11:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45420 "EHLO mail.kernel.org"
+        id S1730695AbgANKIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:08:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730223AbgANKKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:10:54 -0500
+        id S1729094AbgANKIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:08:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D72C207FF;
-        Tue, 14 Jan 2020 10:10:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89247207FF;
+        Tue, 14 Jan 2020 10:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996654;
-        bh=3m7vJrRJiNVPTW0Tg9aTVd7TV0vHHZB0UqpneiJ7gSg=;
+        s=default; t=1578996514;
+        bh=XQLkSruPo+o5PUSErv4u/zaJfbC1EOrkYq7lBk8SaLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LAPc7f6kXQ37mKYBI7h23X0zX5Q/6KmOMUAtU1hEQ7/ql/PrYu2Sy5TQYn7nHSAHb
-         rprpaFN5lUxZPKszwnsiHxEONpWov83NfncP74FMeOwakXuzEXYRoWRpmFGvqmjdVt
-         6nMbHNiDLM1iYtA3VDCxoy72xd3ZujCdzvPN45x8=
+        b=Opt09eAgz/DaGEyCv+VwY/HmC9Wvz91gDVRHBiFX2aBypdO/7beOf9QDmVaRt+Sz4
+         8Y+VseF1RI2F2W+TYoqKd6/J7haTb0L6RIC2ScyVlwQS45RPlsaOTUZSkJslCWvqkF
+         MhByH/yfkcTsYnuHNRmBzWYHHjUMJyrKEocuLDrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4.14 25/39] staging: rtl8188eu: Add device code for TP-Link TL-WN727N v5.21
-Date:   Tue, 14 Jan 2020 11:01:59 +0100
-Message-Id: <20200114094344.485415658@linuxfoundation.org>
+        stable@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.19 43/46] phy: cpcap-usb: Fix flakey host idling and enumerating of devices
+Date:   Tue, 14 Jan 2020 11:02:00 +0100
+Message-Id: <20200114094348.528047360@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
-References: <20200114094336.210038037@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +49,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Straube <straube.linux@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 58dcc5bf4030cab548d5c98cd4cd3632a5444d5a upstream.
+commit 049226b9fd7442149dcbcf55f15408f5973cceda upstream.
 
-This device was added to the stand-alone driver on github.
-Add it to the staging driver as well.
+We must let the USB host idle things properly before we switch to debug
+UART mode. Otherwise the USB host may never idle after disconnecting
+devices, and that causes the next enumeration to be flakey.
 
-Link: https://github.com/lwfinger/rtl8188eu/commit/b9b537aa25a8
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191228143725.24455-1-straube.linux@gmail.com
+Cc: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Scott <hashcode0f@gmail.com>
+Cc: NeKit <nekit1000@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Fixes: 6d6ce40f63af ("phy: cpcap-usb: Add CPCAP PMIC USB support")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/motorola/phy-cpcap-usb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -45,6 +45,7 @@ static const struct usb_device_id rtw_us
- 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
- 	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
- 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
-+	{USB_DEVICE(0x2357, 0x0111)}, /* TP-Link TL-WN727N v5.21 */
- 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
- 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
- 	{}	/* Terminating entry */
+--- a/drivers/phy/motorola/phy-cpcap-usb.c
++++ b/drivers/phy/motorola/phy-cpcap-usb.c
+@@ -281,13 +281,13 @@ static void cpcap_usb_detect(struct work
+ 		return;
+ 	}
+ 
++	cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_OFF);
++
+ 	/* Default to debug UART mode */
+ 	error = cpcap_usb_set_uart_mode(ddata);
+ 	if (error)
+ 		goto out_err;
+ 
+-	cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_OFF);
+-
+ 	dev_dbg(ddata->dev, "set UART mode\n");
+ 
+ 	return;
 
 
