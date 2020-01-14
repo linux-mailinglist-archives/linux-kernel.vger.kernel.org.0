@@ -2,217 +2,1098 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE719139EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:04:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EE68139EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbgANBEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 20:04:34 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36218 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728896AbgANBEe (ORCPT
+        id S1729308AbgANBIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:08:32 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38294 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728896AbgANBIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 20:04:34 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E13GnB085465;
-        Tue, 14 Jan 2020 01:04:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=7jBHH4oOQP9IrNSe4g8pOXVxUUR5i6Dekv8HSEosktE=;
- b=q49gJ62uRjgjD6IaNwvxQbHBzO6WlK2GucQc7AR6OZxlLWMotZvd9XOqZ1vGG69Z4EDX
- VdqF5U1wK8g7Pr5lFGBTg171P7DQcUiHDEVHRi6/Ram8BKUz2XY7UwMuqehMf9sXUmn3
- ukFgJeiSNQmrdmFcMjMf2jXrH8xOtd01f6iVSEUEIGnXpJfbs3N836jRs8Vev2s2F7hK
- A+LNbxni8wynofU3YSaldKp1HASUi7JevUc3AtTgVnPuhO+ZvD6dXq34cFrboLoze392
- KhyyQiB62M/bOTmkmAL4cC8B8G02w1g2miOIee+/7joxjYF4ctqXl/qiE6Dy8gUfWPUF wg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2xf73tjkcb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 01:04:24 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E14FB5170858;
-        Tue, 14 Jan 2020 01:04:23 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2xh2sbjdc2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 01:04:22 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00E13OGJ020546;
-        Tue, 14 Jan 2020 01:03:24 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 13 Jan 2020 17:03:24 -0800
-Date:   Mon, 13 Jan 2020 17:03:22 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 07/12] fs: Add locking for a dynamic inode 'mode'
-Message-ID: <20200114010322.GS8247@magnolia>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-8-ira.weiny@intel.com>
- <20200113221218.GM8247@magnolia>
- <20200114002005.GA29860@iweiny-DESK2.sc.intel.com>
+        Mon, 13 Jan 2020 20:08:31 -0500
+Received: by mail-pl1-f196.google.com with SMTP id f20so4526539plj.5;
+        Mon, 13 Jan 2020 17:08:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/vfhkrlWhIH14AG8+cuyneg/lF282r5qmWZu7Iqzvho=;
+        b=EiP1NH8FTf45TBKB+uAelC4TFn88d0sWDTASBzy4Hi7fPLjzYrHxhaKSVIZ4yQn2SQ
+         PtLC0aHXLj7SRALP+Nk+qzdkpsArZ0f/b+skgzKZUnYxneLVwHMs3JUz3tLn48iM5jky
+         i/GIJe937uK9pRNmbRAF/yHIS9fleaQPnWHIDJ5l/g80XLjYGzBxAfFqKLu22UjrwXk4
+         HqWRTtN/Dv2SfymPLTwCBzEyEw3xd/GQv6/fUEqriHOWMDa+o9z5/wm9fV89cKJ89Vt5
+         ar4DyMeCLlUz4wAJKUbR0CD0ZNLawrGk6juv9CMBSQMiHY4onYDS4NTG9GAgDeVvMwvo
+         X1Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/vfhkrlWhIH14AG8+cuyneg/lF282r5qmWZu7Iqzvho=;
+        b=YmMEAFeaHCSM4VoVKABqPuJopqOBCcurCTrpb8CjRPgU73rwoENbtVyom8BuqPhOdW
+         NjiHXlScyReQfztS2ReetrNwp1RJCSXhK7ESDMORmMn4kKYK56ZzOQrLUq20pv5iHsqE
+         GIsvaFhv7vxxk6UYB3IGm2q4q8md4Hsizs5HcymzBTMJqHvdflFpIqC67WQ9uV4+nK4p
+         8mXjv+Pfm5lZh+0LdSjaGXTpGWWqvp5CnWVlAaV1/dpwSKZoUVc7lmxW6EaGj3UuXTZg
+         iKftdJzO6+7fZxCizBV7KtcuO0nl61o+dzE+JkXHa8tYLbOy6y2K0qTh2haEu6eZ41Jx
+         3dWw==
+X-Gm-Message-State: APjAAAUajrRwg92vLt9kDTu84i0fX1wpf1xiBBS5LQqTTDTSbxVQl59b
+        Cr1EwS6pt+ftBIobXIuS1+4=
+X-Google-Smtp-Source: APXvYqxwdOrqEYxB77Extt+wnJ5mkSzOQ9kKIAwwxbaqWQU7CbbOM7Ndbv2g6CDY4hGdww0OMeuMWg==
+X-Received: by 2002:a17:90a:8685:: with SMTP id p5mr25897192pjn.92.1578964110381;
+        Mon, 13 Jan 2020 17:08:30 -0800 (PST)
+Received: from [192.168.1.60] (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id 199sm16710114pfv.81.2020.01.13.17.08.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 13 Jan 2020 17:08:28 -0800 (PST)
+Subject: Re: [PATCH V2 5/7] USB: serial: f81232: Set F81534A serial port with
+ RS232 mode
+To:     Johan Hovold <johan@kernel.org>
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
+ <20190923022449.10952-6-hpeter+linux_kernel@gmail.com>
+ <20191023115300.GU24768@localhost>
+ <f3a8b0bd-79f7-3bef-4d07-69774c87873a@gmail.com>
+ <20200108143502.GJ30908@localhost>
+ <3c79f786-de34-550e-3964-d7fb334f6d56@gmail.com>
+ <20200113151732.GC2301@localhost>
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+Message-ID: <c386949c-18f3-bd5b-35e3-4a7894265131@gmail.com>
+Date:   Tue, 14 Jan 2020 09:08:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114002005.GA29860@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001140007
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001140007
+In-Reply-To: <20200113151732.GC2301@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 04:20:05PM -0800, Ira Weiny wrote:
-> On Mon, Jan 13, 2020 at 02:12:18PM -0800, Darrick J. Wong wrote:
-> > On Fri, Jan 10, 2020 at 11:29:37AM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> 
-> [snip]
-> 
-> > >  
-> > >  The File Object
-> > >  ---------------
-> > > @@ -437,6 +459,8 @@ As of kernel 2.6.22, the following members are defined:
-> > >  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
-> > >  				   unsigned open_flag, umode_t create_mode);
-> > >  		int (*tmpfile) (struct inode *, struct dentry *, umode_t);
-> > > +		void (*lock_mode)(struct inode *);
-> > > +		void (*unlock_mode)(struct inode *);
-> > 
-> > Yikes.  "mode" has a specific meaning for inodes, and this lock isn't
-> > related to i_mode.  This lock protects aops from changing while an
-> > address space operation is in use.
-> 
-> Ah...  yea ok mode is a bad name.
-> 
-> > 
-> > >  	};
-> > >  
-> > >  Again, all methods are called without any locks being held, unless
-> > > @@ -584,6 +608,12 @@ otherwise noted.
-> > >  	atomically creating, opening and unlinking a file in given
-> > >  	directory.
-> > >  
-> > > +``lock_mode``
-> > > +	called to prevent operations which depend on the inode's mode from
-> > > +        proceeding should a mode change be in progress
-> > 
-> > "Inodes can't change mode, because files do not suddenly become
-> > directories". ;)
-> 
-> Yea sorry.
-> 
-> > 
-> > Oh, you meant "lock_XXXX is called to prevent a change in the pagecache
-> > mode from proceeding while there are address space operations in
-> > progress".  So these are really more aops get and put functions...
-> 
-> At first I actually did have aops get/put functions but this is really
-> protecting more than the aops vector because as Christoph said there are file
-> operations which need to be protected not just address space operations.
-> 
-> But I agree "mode" is a bad name...  Sorry...
+Hi Johan,
 
-inode_fops_{get,set}(), then?
+Johan Hovold 於 2020/1/13 下午 11:17 寫道:
+> On Thu, Jan 09, 2020 at 10:37:09AM +0800, Ji-Ze Hong (Peter Hong) wrote:
+>> Bus 001 Device 053: ID 2c42:1636
+>> Bus 001 Device 044: ID 2c42:16f8
+>> Bus 001 Device 043: ID 2c42:1608
+> 
+> Can you post verbose ("lsusb -v") output for the three device types for
+> completeness?
 
-inode_start_fileop()
-inode_end_fileop() ?
+Bus 001 Device 007: ID 2c42:1608
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            9 Hub
+   bDeviceSubClass         0 Unused
+   bDeviceProtocol         1 Single TT
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1608
+   bcdDevice           80.ff
+   iManufacturer           0
+   iProduct                1 FINTEK_USB2.0 HUB
+   iSerial                 0
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           25
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xe0
+       Self Powered
+       Remote Wakeup
+     MaxPower              500mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           1
+       bInterfaceClass         9 Hub
+       bInterfaceSubClass      0 Unused
+       bInterfaceProtocol      0 Full speed (or root) hub
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0002  1x 2 bytes
+         bInterval              12
+Hub Descriptor:
+   bLength              10
+   bDescriptorType      41
+   nNbrPorts            13
+   wHubCharacteristic 0x00e9
+     Per-port power switching
+     Per-port overcurrent protection
+     TT think time 32 FS bits
+     Port indicators
+   bPwrOn2PwrGood        8 * 2 milli seconds
+   bHubContrCurrent    100 milli Ampere
+   DeviceRemovable    0x03 0xc0
+   PortPwrCtrlMask    0xff 0xa2
+  Hub Port Status:
+    Port 1: 0000.0503 highspeed power enable connect
+    Port 2: 0000.0503 highspeed power enable connect
+    Port 3: 0000.0503 highspeed power enable connect
+    Port 4: 0000.0503 highspeed power enable connect
+    Port 5: 0000.0503 highspeed power enable connect
+    Port 6: 0000.0503 highspeed power enable connect
+    Port 7: 0000.0503 highspeed power enable connect
+    Port 8: 0000.0503 highspeed power enable connect
+    Port 9: 0000.0503 highspeed power enable connect
+    Port 10: 0000.0503 highspeed power enable connect
+    Port 11: 0000.0503 highspeed power enable connect
+    Port 12: 0000.0503 highspeed power enable connect
+    Port 13: 0000.0503 highspeed power enable connect
+Device Qualifier (for other device speed):
+   bLength                10
+   bDescriptorType         6
+   bcdUSB               2.00
+   bDeviceClass            9 Hub
+   bDeviceSubClass         0 Unused
+   bDeviceProtocol         0 Full speed (or root) hub
+   bMaxPacketSize0        64
+   bNumConfigurations      1
+Device Status:     0x0001
+   Self Powered
 
-Trying to avoid sounding foppish <COUGH>
+Bus 001 Device 008: ID 2c42:16f8
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x16f8
+   bcdDevice           80.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3 88635600168801
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           18
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           0
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+Device Status:     0x0000
+   (Bus Powered)
 
-> > 
-> > > +``unlock_mode``
-> > > +	called when critical mode dependent operation is complete
-> > >  
-> > >  The Address Space Object
-> > >  ========================
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 7c9a5df5a597..ed6ab5303a24 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -55,18 +55,29 @@ EXPORT_SYMBOL(vfs_ioctl);
-> > >  static int ioctl_fibmap(struct file *filp, int __user *p)
-> > >  {
-> > >  	struct address_space *mapping = filp->f_mapping;
-> > > +	struct inode *inode = filp->f_inode;
-> > >  	int res, block;
-> > >  
-> > > +	lock_inode_mode(inode);
-> > > +
-> > >  	/* do we support this mess? */
-> > > -	if (!mapping->a_ops->bmap)
-> > > -		return -EINVAL;
-> > > -	if (!capable(CAP_SYS_RAWIO))
-> > > -		return -EPERM;
-> > > +	if (!mapping->a_ops->bmap) {
-> > > +		res = -EINVAL;
-> > > +		goto out;
-> > > +	}
-> > > +	if (!capable(CAP_SYS_RAWIO)) {
-> > > +		res = -EPERM;
-> > > +		goto out;
-> > 
-> > Why does the order of these checks change here?
-> 
-> I don't understand?  The order does not change we just can't return without
-> releasing the lock.  And to protect against bmap changing the lock needs to be
-> taken first.
+Bus 001 Device 016: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           88.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
 
-Doh.  -ENOCOFFEE, I plead.
+Bus 001 Device 015: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           87.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
 
---D
+Bus 001 Device 014: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           86.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
 
-> [snip]
+Bus 001 Device 013: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           85.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 012: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           84.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 011: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           83.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 010: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           82.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 009: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           81.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 020: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           8c.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 019: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           8b.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 018: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           8a.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+Bus 001 Device 017: ID 2c42:1636
+Device Descriptor:
+   bLength                18
+   bDescriptorType         1
+   bcdUSB               2.00
+   bDeviceClass            0 (Defined at Interface level)
+   bDeviceSubClass         0
+   bDeviceProtocol         0
+   bMaxPacketSize0        64
+   idVendor           0x2c42
+   idProduct          0x1636
+   bcdDevice           89.00
+   iManufacturer           1 FINTEK
+   iProduct                2 USB TO UART BRIDGE
+   iSerial                 3
+   bNumConfigurations      1
+   Configuration Descriptor:
+     bLength                 9
+     bDescriptorType         2
+     wTotalLength           39
+     bNumInterfaces          1
+     bConfigurationValue     1
+     iConfiguration          0
+     bmAttributes         0xa0
+       (Bus Powered)
+       Remote Wakeup
+     MaxPower              100mA
+     Interface Descriptor:
+       bLength                 9
+       bDescriptorType         4
+       bInterfaceNumber        0
+       bAlternateSetting       0
+       bNumEndpoints           3
+       bInterfaceClass         0 (Defined at Interface level)
+       bInterfaceSubClass      0
+       bInterfaceProtocol      0
+       iInterface              0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x81  EP 1 IN
+         bmAttributes            3
+           Transfer Type            Interrupt
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0010  1x 16 bytes
+         bInterval              10
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x82  EP 2 IN
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0200  1x 512 bytes
+         bInterval               0
+       Endpoint Descriptor:
+         bLength                 7
+         bDescriptorType         5
+         bEndpointAddress     0x01  EP 1 OUT
+         bmAttributes            2
+           Transfer Type            Bulk
+           Synch Type               None
+           Usage Type               Data
+         wMaxPacketSize     0x0080  1x 128 bytes
+         bInterval               0
+Device Status:     0x0002
+   (Bus Powered)
+   Remote Wakeup Enabled
+
+>>> Can you read back the enable state of each port?
+>>
+>> DTR pin of the F81534A series are strap pin on power on, when IC detect
+>> it pulled to low, the UART device can't enable and DTR change to input
+>> mode.
 > 
-> > >  
-> > > +static inline void lock_inode_mode(struct inode *inode)
-> > 
-> > inode_aops_get()?
+> Can you read back the state of the DTR pin when pulled low? So that you
+> can determine which UARTs have been disabled in hardware?
+
+If the DTR pin pulled low, the UART device always can't be enabled.
+We can read the port en/disabled infomation in GPIO device only.
+
 > 
-> Let me think on this.  This is not just getting a reference to the aops vector.
-> It is more than that...  and inode_get is not right either!  ;-P
+> I'm leaning more towards not exporting this as a gpio device at all.
+> It's clear from the datasheet (and your implementation) that these pins
+> are supposed to be used with your own tranceivers. You can start with
+> only supporting RS232, and then we can discuss an interface for
+> switching modes later.
+
+OK, I'll send patch v3 only with UART & device enable function after
+clarify all issues.
+
+>>>
+>>
+>> Our device VID/PID is changeable, but we assume don't change it.
 > 
-> > 
-> > > +{
-> > > +	WARN_ON_ONCE(inode->i_op->lock_mode &&
-> > > +		     !inode->i_op->unlock_mode);
-> > > +	if (inode->i_op->lock_mode)
-> > > +		inode->i_op->lock_mode(inode);
-> > > +}
-> > > +static inline void unlock_inode_mode(struct inode *inode)
-> > > +{
-> > > +	WARN_ON_ONCE(inode->i_op->unlock_mode &&
-> > > +		     !inode->i_op->lock_mode);
-> > > +	if (inode->i_op->unlock_mode)
-> > > +		inode->i_op->unlock_mode(inode);
-> > > +}
-> > > +
-> > >  static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
-> > >  				     struct iov_iter *iter)
-> > 
-> > inode_aops_put()?
-> 
-> ...  something like that but not 'aops'...
-> 
-> Ira
-> 
-> > 
-> > --D
-> > 
+> Ok, then I guess we must assume that the MODE pins are only connected to
+> your tranceivers and hardcoding the various configurations is fine.
+
+Agree
+
+-- 
+With Best Regards,
+Peter Hong
