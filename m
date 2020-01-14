@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D26213A6DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B42E113A69B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbgANKPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:15:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
+        id S1733067AbgANKMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732469AbgANKLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:11:24 -0500
+        id S1733064AbgANKM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:12:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C706A24682;
-        Tue, 14 Jan 2020 10:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 689D5207FF;
+        Tue, 14 Jan 2020 10:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996684;
-        bh=fU+uoKOXpuBcf++EMnv2Fo9GfhZpAn5vxVCa+VZOIWo=;
+        s=default; t=1578996746;
+        bh=mtKLXxFEnGPm48CN0waeK598N3Inza2HibBee1soN8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SoRf1YikQ6C8SZ5bIbprFJsRZ+36zpNpoL5Y1OVi63h1uSSRjfuBSJxtY3wzsQaEA
-         vSqeOQ75RVwtkRf7IiG4r00Wyq6BdM5lb82PlpCLcQAX5uHXA2JwMUey1DtMqRbH3N
-         DuXQ4j6W/EaLWCDoMo1Da1AzZkdR/699c2xXCPKs=
+        b=TG9nUxIfW1z1TqvTGvZ1BIT9H4N3bJSM42q111F1jSF+3SJvhMoh8+3TSYwIdxL2f
+         DdbykPq2SlCUze7kcNSq3f7OUy3zi0gMYSLmLi/cKOrRBxEDUlfRswEB/siVBswfON
+         nR5GwX4DZwx5eBwxGB1UAZvN2g5+YbV5zPemW/W0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 19/31] usb: musb: Disable pullup at init
-Date:   Tue, 14 Jan 2020 11:02:11 +0100
-Message-Id: <20200114094343.516551634@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com,
+        syzbot+76f3a30e88d256644c78@syzkaller.appspotmail.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 10/28] Input: add safety guards to input_set_keycode()
+Date:   Tue, 14 Jan 2020 11:02:12 +0100
+Message-Id: <20200114094341.515504421@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
-References: <20200114094334.725604663@linuxfoundation.org>
+In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
+References: <20200114094336.845958665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 96a0c12843109e5c4d5eb1e09d915fdd0ce31d25 upstream.
+commit cb222aed03d798fc074be55e59d9a112338ee784 upstream.
 
-The pullup may be already enabled before the driver is initialized. This
-happens for instance on JZ4740.
+If we happen to have a garbage in input device's keycode table with values
+too big we'll end up doing clear_bit() with offset way outside of our
+bitmaps, damaging other objects within an input device or even outside of
+it. Let's add sanity checks to the returned old keycodes.
 
-It has to be disabled at init time, as we cannot guarantee that a gadget
-driver will be bound to the UDC.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Suggested-by: Bin Liu <b-liu@ti.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20200107152625.857-3-b-liu@ti.com
+Reported-by: syzbot+c769968809f9359b07aa@syzkaller.appspotmail.com
+Reported-by: syzbot+76f3a30e88d256644c78@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/20191207212757.GA245964@dtor-ws
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/usb/musb/musb_core.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -2317,6 +2317,9 @@ musb_init_controller(struct device *dev,
- 	musb_platform_disable(musb);
- 	musb_generic_disable(musb);
+---
+ drivers/input/input.c |   26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -851,16 +851,18 @@ static int input_default_setkeycode(stru
+ 		}
+ 	}
  
-+	/* MUSB_POWER_SOFTCONN might be already set, JZ4740 does this. */
-+	musb_writeb(musb->mregs, MUSB_POWER, 0);
-+
- 	/* Init IRQ workqueue before request_irq */
- 	INIT_DELAYED_WORK(&musb->irq_work, musb_irq_work);
- 	INIT_DELAYED_WORK(&musb->deassert_reset_work, musb_deassert_reset);
+-	__clear_bit(*old_keycode, dev->keybit);
+-	__set_bit(ke->keycode, dev->keybit);
+-
+-	for (i = 0; i < dev->keycodemax; i++) {
+-		if (input_fetch_keycode(dev, i) == *old_keycode) {
+-			__set_bit(*old_keycode, dev->keybit);
+-			break; /* Setting the bit twice is useless, so break */
++	if (*old_keycode <= KEY_MAX) {
++		__clear_bit(*old_keycode, dev->keybit);
++		for (i = 0; i < dev->keycodemax; i++) {
++			if (input_fetch_keycode(dev, i) == *old_keycode) {
++				__set_bit(*old_keycode, dev->keybit);
++				/* Setting the bit twice is useless, so break */
++				break;
++			}
+ 		}
+ 	}
+ 
++	__set_bit(ke->keycode, dev->keybit);
+ 	return 0;
+ }
+ 
+@@ -916,9 +918,13 @@ int input_set_keycode(struct input_dev *
+ 	 * Simulate keyup event if keycode is not present
+ 	 * in the keymap anymore
+ 	 */
+-	if (test_bit(EV_KEY, dev->evbit) &&
+-	    !is_event_supported(old_keycode, dev->keybit, KEY_MAX) &&
+-	    __test_and_clear_bit(old_keycode, dev->key)) {
++	if (old_keycode > KEY_MAX) {
++		dev_warn(dev->dev.parent ?: &dev->dev,
++			 "%s: got too big old keycode %#x\n",
++			 __func__, old_keycode);
++	} else if (test_bit(EV_KEY, dev->evbit) &&
++		   !is_event_supported(old_keycode, dev->keybit, KEY_MAX) &&
++		   __test_and_clear_bit(old_keycode, dev->key)) {
+ 		struct input_value vals[] =  {
+ 			{ EV_KEY, old_keycode, 0 },
+ 			input_value_sync
 
 
