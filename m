@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1637313AB4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9D613AB5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:46:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbgANNpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:45:04 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43576 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbgANNpE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:45:04 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1irMVB-0006cA-B3; Tue, 14 Jan 2020 14:45:01 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 7615A101DEE; Tue, 14 Jan 2020 14:45:00 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Peter Xu <peterx@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Ming Lei <minlei@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-Subject: Re: Kernel-managed IRQ affinity (cont)
-In-Reply-To: <20200111024835.GA24575@ming.t460p>
-References: <20191216195712.GA161272@xz-x1> <20191219082819.GB15731@ming.t460p> <20191219143214.GA50561@xz-x1> <20191219161115.GA18672@ming.t460p> <87eew8l7oz.fsf@nanos.tec.linutronix.de> <20200110012802.GA4501@ming.t460p> <87v9pjrtbh.fsf@nanos.tec.linutronix.de> <20200111024835.GA24575@ming.t460p>
-Date:   Tue, 14 Jan 2020 14:45:00 +0100
-Message-ID: <87r202b19f.fsf@nanos.tec.linutronix.de>
+        id S1728855AbgANNpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:45:55 -0500
+Received: from mx3.wp.pl ([212.77.101.9]:9043 "EHLO mx3.wp.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726197AbgANNpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:45:54 -0500
+Received: (wp-smtpd smtp.wp.pl 30180 invoked from network); 14 Jan 2020 14:45:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1579009550; bh=1OCCshn/NahZBP1gvKTaGqss5mpmUoD2DAPD0KfhKvo=;
+          h=From:To:Cc:Subject;
+          b=B/JnFwJP0YTQ5MWEM8Xjp9XJbCCGcxPqRvYh6grlUxxIwM/8vzqBbR2XVnHyR3gRg
+           Y7GFZFp2v/91NdDqQ+NgP+hZkA+uiATwvzF3lnKuecSMTZpZ1BiNen91iCBN1Dv10A
+           awohaKHajJnNbkae8aglEM90VbUWmAxTdmPY7Yak=
+Received: from c-73-93-4-247.hsd1.ca.comcast.net (HELO cakuba.hsd1.ca.comcast.net) (kubakici@wp.pl@[73.93.4.247])
+          (envelope-sender <kubakici@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <ms@dev.tdt.de>; 14 Jan 2020 14:45:50 +0100
+Date:   Tue, 14 Jan 2020 05:45:43 -0800
+From:   Jakub Kicinski <kubakici@wp.pl>
+To:     Martin Schiller <ms@dev.tdt.de>
+Cc:     khc@pm.waw.pl, davem@davemloft.net, linux-x25@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] wan/hdlc_x25: make lapb params configurable
+Message-ID: <20200114054543.576dbf8b@cakuba.hsd1.ca.comcast.net>
+In-Reply-To: <3b439730f93e29c9e823126b74c2fbd3@dev.tdt.de>
+References: <20200113124551.2570-1-ms@dev.tdt.de>
+        <20200113055316.4e811276@cakuba>
+        <83f60f76a0cf602c73361ccdb34cc640@dev.tdt.de>
+        <20200114045149.4e97f0ac@cakuba>
+        <3b439730f93e29c9e823126b74c2fbd3@dev.tdt.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-WP-MailID: 7066841284ff01c5adb105bd79b4273d
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [AXPU]                               
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ming,
-
-Ming Lei <ming.lei@redhat.com> writes:
-> On Fri, Jan 10, 2020 at 08:43:14PM +0100, Thomas Gleixner wrote:
->> Ming Lei <ming.lei@redhat.com> writes:
->> > That is why I try to exclude isolated CPUs from interrupt effective affinity,
->> > turns out the approach is simple and doable.
->> 
->> Yes, it's doable. But it still is inconsistent behaviour. Assume the
->> following configuration:
->> 
->>   8 CPUs CPU0,1 assigned for housekeeping
->> 
->> With 8 queues the proposed change does nothing because each queue is
->> mapped to exactly one CPU.
+On Tue, 14 Jan 2020 14:33:51 +0100, Martin Schiller wrote:
+> On 2020-01-14 13:51, Jakub Kicinski wrote:
+> > On Tue, 14 Jan 2020 06:37:03 +0100, Martin Schiller wrote:  
+> >> >> diff --git a/include/uapi/linux/hdlc/ioctl.h
+> >> >> b/include/uapi/linux/hdlc/ioctl.h
+> >> >> index 0fe4238e8246..3656ce8b8af0 100644
+> >> >> --- a/include/uapi/linux/hdlc/ioctl.h
+> >> >> +++ b/include/uapi/linux/hdlc/ioctl.h
+> >> >> @@ -3,7 +3,7 @@
+> >> >>  #define __HDLC_IOCTL_H__
+> >> >>
+> >> >>
+> >> >> -#define GENERIC_HDLC_VERSION 4	/* For synchronization with sethdlc
+> >> >> utility */
+> >> >> +#define GENERIC_HDLC_VERSION 5	/* For synchronization with sethdlc
+> >> >> utility */  
+> >> >
+> >> > What's the backward compatibility story in this code?  
+> >> 
+> >> Well, I thought I have to increment the version to keep the kernel 
+> >> code
+> >> and the sethdlc utility in sync (like the comment says).  
+> > 
+> > Perhaps I chose the wrong place for asking this question, IOCTL code
+> > was my real worry. I don't think this version number is validated so
+> > I think bumping it shouldn't break anything?  
+> 
+> sethdlc validates the GENERIC_HDLC_VERSION at compile time.
 >
-> That is expected behavior for this RT case, given userspace won't submit
-> IO from isolated CPUs.
+> https://mirrors.edge.kernel.org/pub/linux/utils/net/hdlc/
 
-What is _this_ RT case? We really don't implement policy for a specific
-use case. If the kernel implements a policy then it has to be generally
-useful and practical.
+Aw, okay, best not to bump it then.
+ 
+> Another question:
+> Where do I have to send my patch for sethdlc to?
 
->> With 4 queues you get the following:
->> 
->>  CPU0,1       queue 0
->>  CPU2,3       queue 1
->>  CPU4,5       queue 2
->>  CPU6,7       queue 3
->> 
->> No effect on the isolated CPUs either.
->> 
->> With 2 queues you get the following:
->> 
->>  CPU0,1,2,3   queue 0
->>  CPU4,5,6,7   queue 1
->> 
->> So here the isolated CPUs 2 and 3 get the isolation, but 4-7
->> not. That's perhaps intended, but definitely not documented.
->
-> That is intentional change, given no IO will be submitted from 4-7
-> most of times in RT case, so it is fine to select effective CPU from
-> isolated CPUs in this case. As peter mentioned, IO may just be submitted
-> from isolated CPUs during booting. Once the system is setup, no IO
-> comes from isolated CPUs, then no interrupt is delivered to isolated
-> CPUs, then meet RT's requirement.
-
-Again. This is a specific usecase. Is this generally applicable?
-
-> We can document this change somewhere.
-
-Yes, this needs to be documented very clearly with that command line
-parameter.
-
->> So you really need to make your mind up and describe what the intended
->> effect of this is and why you think that the result is correct.
->
-> In short, if there is at least one housekeeping available in the
-> interrupt's affinity, we choose effective CPU from housekeeping CPUs.
-> Otherwise, keep the current behavior wrt. selecting effective CPU.
->
-> With this approach, no interrupts can be delivered to isolated CPUs
-> if no IOs are submitted from these CPUs.
->
-> Please let us know if it addresses your concerns.
-
-Mostly. See above.
-
-Thanks,
-
-        tglx
-
-
+No idea :)
