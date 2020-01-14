@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C39213AB58
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECFEE13AB57
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbgANNpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:45:20 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36653 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728926AbgANNpI (ORCPT
+        id S1728986AbgANNpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:45:13 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33338 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728950AbgANNpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:45:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so12233529wru.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:45:07 -0800 (PST)
+        Tue, 14 Jan 2020 08:45:09 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d139so2359312wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:45:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M3X91y0YKtpUefKBm5V1gWMHQT+xVCGqO4GixzAymWQ=;
-        b=SVaDdHHmNlwwRRAVfaT035wYU03VxGPN9Ht8Fv97RRkc7k3TWKgA0MsGC6PHFLUa9Q
-         R9hIL8sjzGh1SIRcHqyKVBxkkGrZ8f6I8aiYWwyt6zxpEnlK8NCiu1kIiDhiQiyougQc
-         i4dY6eRx8NGY3LH9k99/KHn7F8oG7dQsJ8Ut3CJGOb9hrOTf+7Fuo6UefWJPSkwribI2
-         tNQuOgFRFuNVt8g8QBYdfqCz+qZpHwOtUp7vzJWL275o68ejAv0a9d8fXBcHzrE0h4Ds
-         GFM6b5aHMnZOB78LJQdviwKqPiwZBJoiZ2x/9A/MIMsYKAfBbM7X4FwPYyQ/JTdo1STf
-         sdcQ==
+        bh=H5pgahcKzcsGLYm3HCTp6kuWUGFmaO98tCAh35M9tis=;
+        b=F1h05tkYwEuuSjvSlnbzm4t96VPN8YNHCB8meS50nK4gDMe0kaN6xKQGEaCnJZ3T/r
+         hIb3mhhPHogJG2n+GuRytmq/YYosk5hEy5A+kP6txRhIhzoinL/sxH2sPGFR7iPLtW1q
+         ekP3KPoQJdPhTALkGoxSmSENSNUeVyMJ3CtwiMkEZPzzNglU47YQbQU+ZfW4XOMv4gyb
+         26tSF4W0NRHVX7SSbeS3goI8In/XJgk0JW15vGRnkB3bEn3MCS2U5NpHBXiD4/a635YZ
+         I9yVpjK4WnVBY34C0s1mX8mf4Mjya2BXKO2FlqQthlWnMtP5t2hnARGPKmVHSH2tAdwt
+         RgKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M3X91y0YKtpUefKBm5V1gWMHQT+xVCGqO4GixzAymWQ=;
-        b=sOQd29vct+3priVYxaetHbem0D0wcYG7UDJvT0Kt1iDnNva0Hmm4+IcH6upYDb304v
-         yYSEOUFj5eT+efZ9Bs/OIkSj5gHomfRvah6z5UFGtd4q/nR3xQhN3TjRy+3AiZFIYMiB
-         kng6cXcMur3I867pRGQxBEpzwT0maVCo2gdLY9AmxxKJlWRdYWcFOkeVS2rFI6km1HQv
-         XPgMWmZFnlcX9SrtlTrVYY9GpIPeJgTTKTPR7vEiWigithnquyLB/SP1Nxhc6tnbqT7U
-         tFexgLA9QrJFrfLk2y9eY4EFjs31yWOpablFU1Ph/kGwU4ZjL1yrBxqsaDHUFmN/kePm
-         Jjcg==
-X-Gm-Message-State: APjAAAWn41eaFDHh2FhUn2LFuk9M5phiQUMomlpE3FQVjvNjjgGHnVTH
-        LkxfkodkzN5tlsVSydttePE=
-X-Google-Smtp-Source: APXvYqx5a25T1uCgc/icHMS0apRgqIDzxT6d3HRuVADKN3fgIRpLjyzKHMlFZxYKAE6M/tm+lJvWsw==
-X-Received: by 2002:adf:ffc7:: with SMTP id x7mr25110475wrs.159.1579009506901;
-        Tue, 14 Jan 2020 05:45:06 -0800 (PST)
+        bh=H5pgahcKzcsGLYm3HCTp6kuWUGFmaO98tCAh35M9tis=;
+        b=OI8fREdV+dEg+WpySpgWyQ+m9hVfYOsNvEaLH6iWQE0vEtnTb6boUQQGFp0pyzbjgI
+         wJUYQii3/NzckdSqvIrELO5tnrz/10Zn88ZPC4bkj7YzJIE6QgorZLK1kReXJDbEhezy
+         dhaYEYbc3WpvfI4PqidH0p2pIsM+QkYI/IL7HLqiCnGa3sGLzAny/cbPLaVh5AcAKuz7
+         QsG9n9s7VVGUtRmVU1cmenFlsdaSt3SxdFQd74jPUKcdrxGuBTinhCfvCHMeLVCltqyg
+         kTYSDmTRt8vtdb+3zI3fNDRS6uY4cmML26fJj7suzEPe4guW2nxX9A7vHeuqgPW1ipYW
+         O76g==
+X-Gm-Message-State: APjAAAXn9KRNdNINw9orR5sOxx3MLsi7LDANBm3ZFb87068M4hDi3t/H
+        jbUKCkTPHvpjZ7AN7kOx+gU=
+X-Google-Smtp-Source: APXvYqx9vqod9rD0/2L4fJTgpjwdJgh7w8NLI6DG2fuKwjp0n36+ytZMdJJ71TzFNprWaRa5t9fUog==
+X-Received: by 2002:a1c:e289:: with SMTP id z131mr25829140wmg.18.1579009508086;
+        Tue, 14 Jan 2020 05:45:08 -0800 (PST)
 Received: from localhost.localdomain (dslb-088-070-028-164.088.070.pools.vodafone-ip.de. [88.70.28.164])
-        by smtp.gmail.com with ESMTPSA id x10sm19361333wrp.58.2020.01.14.05.45.05
+        by smtp.gmail.com with ESMTPSA id x10sm19361333wrp.58.2020.01.14.05.45.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 05:45:06 -0800 (PST)
+        Tue, 14 Jan 2020 05:45:07 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/5] staging: rtl8188eu: remove unnecessary parentheses in rtl8188e_dm.c
-Date:   Tue, 14 Jan 2020 14:44:21 +0100
-Message-Id: <20200114134422.13598-4-straube.linux@gmail.com>
+Subject: [PATCH 5/5] staging: rtl8188eu: cleanup whitespace in rtl8188e_dm.c
+Date:   Tue, 14 Jan 2020 14:44:22 +0100
+Message-Id: <20200114134422.13598-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114134422.13598-1-straube.linux@gmail.com>
 References: <20200114134422.13598-1-straube.linux@gmail.com>
@@ -63,53 +63,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary parentheses reported by checkpatch.
+Replace tabs with spaces and/or remove spaces to use typical kernel
+horizontal whitespace.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_dm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8188eu/hal/rtl8188e_dm.c | 44 ++++++++++-----------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-index 36255199633a..5348db2725a1 100644
+index 5348db2725a1..241f55b92808 100644
 --- a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
 +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-@@ -36,7 +36,7 @@ static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
+@@ -21,7 +21,7 @@
+ /*  Initialize GPIO setting registers */
+ static void dm_InitGPIOSetting(struct adapter *Adapter)
+ {
+-	u8	tmp1byte;
++	u8 tmp1byte;
+ 
+ 	tmp1byte = usb_read8(Adapter, REG_GPIO_MUXCFG);
+ 	tmp1byte &= (GPIOSEL_GPIO | ~GPIOSEL_ENBT);
+@@ -35,7 +35,7 @@ static void dm_InitGPIOSetting(struct adapter *Adapter)
+ static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
  {
  	struct hal_data_8188e *hal_data = Adapter->HalData;
- 	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
--	struct odm_dm_struct *dm_odm = &(hal_data->odmpriv);
-+	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
+-	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
++	struct dm_priv *pdmpriv = &hal_data->dmpriv;
+ 	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
  
  	/*  Init Value */
- 	memset(dm_odm, 0, sizeof(*dm_odm));
-@@ -71,7 +71,7 @@ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
- 	struct mlme_priv	*pmlmepriv = &Adapter->mlmepriv;
+@@ -59,38 +59,38 @@ static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
+ 	dm_odm->BbSwingIdxOfdmCurrent = 12;
+ 	dm_odm->BbSwingFlagOfdm = false;
+ 
+-	pdmpriv->InitODMFlag =	ODM_RF_CALIBRATION |
+-				ODM_RF_TX_PWR_TRACK;
++	pdmpriv->InitODMFlag = ODM_RF_CALIBRATION |
++			       ODM_RF_TX_PWR_TRACK;
+ 
+ 	dm_odm->SupportAbility = pdmpriv->InitODMFlag;
+ }
+ 
+ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
+ {
+-	struct mlme_ext_priv	*pmlmeext = &Adapter->mlmeextpriv;
+-	struct mlme_priv	*pmlmepriv = &Adapter->mlmepriv;
++	struct mlme_ext_priv *pmlmeext = &Adapter->mlmeextpriv;
++	struct mlme_priv *pmlmepriv = &Adapter->mlmepriv;
  	struct pwrctrl_priv *pwrctrlpriv = &Adapter->pwrctrlpriv;
  	struct hal_data_8188e *hal_data = Adapter->HalData;
--	struct odm_dm_struct *dm_odm = &(hal_data->odmpriv);
-+	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
- 	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
+ 	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
+-	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
++	struct dm_priv *pdmpriv = &hal_data->dmpriv;
  	int i;
  
-@@ -124,7 +124,7 @@ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
+-	pdmpriv->InitODMFlag =	ODM_BB_DIG |
+-				ODM_BB_RA_MASK |
+-				ODM_BB_DYNAMIC_TXPWR |
+-				ODM_BB_FA_CNT |
+-				ODM_BB_RSSI_MONITOR |
+-				ODM_BB_CCK_PD |
+-				ODM_BB_PWR_SAVE |
+-				ODM_MAC_EDCA_TURBO |
+-				ODM_RF_CALIBRATION |
+-				ODM_RF_TX_PWR_TRACK;
++	pdmpriv->InitODMFlag = ODM_BB_DIG |
++			       ODM_BB_RA_MASK |
++			       ODM_BB_DYNAMIC_TXPWR |
++			       ODM_BB_FA_CNT |
++			       ODM_BB_RSSI_MONITOR |
++			       ODM_BB_CCK_PD |
++			       ODM_BB_PWR_SAVE |
++			       ODM_MAC_EDCA_TURBO |
++			       ODM_RF_CALIBRATION |
++			       ODM_RF_TX_PWR_TRACK;
+ 	if (hal_data->AntDivCfg)
+ 		pdmpriv->InitODMFlag |= ODM_BB_ANT_DIV;
+ 
+ 	if (Adapter->registrypriv.mp_mode == 1) {
+-		pdmpriv->InitODMFlag =	ODM_RF_CALIBRATION |
+-					ODM_RF_TX_PWR_TRACK;
++		pdmpriv->InitODMFlag = ODM_RF_CALIBRATION |
++				       ODM_RF_TX_PWR_TRACK;
+ 	}
+ 
+ 	dm_odm->SupportAbility = pdmpriv->InitODMFlag;
+@@ -123,7 +123,7 @@ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
+ 
  void rtl8188e_InitHalDm(struct adapter *Adapter)
  {
- 	struct dm_priv	*pdmpriv = &Adapter->HalData->dmpriv;
--	struct odm_dm_struct *dm_odm = &(Adapter->HalData->odmpriv);
-+	struct odm_dm_struct *dm_odm = &Adapter->HalData->odmpriv;
+-	struct dm_priv	*pdmpriv = &Adapter->HalData->dmpriv;
++	struct dm_priv *pdmpriv = &Adapter->HalData->dmpriv;
+ 	struct odm_dm_struct *dm_odm = &Adapter->HalData->odmpriv;
  
  	dm_InitGPIOSetting(Adapter);
- 	pdmpriv->DM_Type = DM_Type_ByDriver;
-@@ -198,7 +198,7 @@ bool rtw_hal_antdiv_before_linked(struct adapter *Adapter)
- {
- 	struct odm_dm_struct *dm_odm = &Adapter->HalData->odmpriv;
- 	struct sw_ant_switch *dm_swat_tbl = &dm_odm->DM_SWAT_Table;
--	struct mlme_priv *pmlmepriv = &(Adapter->mlmepriv);
-+	struct mlme_priv *pmlmepriv = &Adapter->mlmepriv;
+@@ -167,7 +167,7 @@ void rtw_hal_dm_watchdog(struct adapter *Adapter)
  
- 	/*  Condition that does not need to use antenna diversity. */
- 	if (Adapter->HalData->AntDivCfg == 0)
+ void rtw_hal_dm_init(struct adapter *Adapter)
+ {
+-	struct dm_priv	*pdmpriv = &Adapter->HalData->dmpriv;
++	struct dm_priv *pdmpriv = &Adapter->HalData->dmpriv;
+ 	struct odm_dm_struct *podmpriv = &Adapter->HalData->odmpriv;
+ 
+ 	memset(pdmpriv, 0, sizeof(struct dm_priv));
+@@ -185,7 +185,7 @@ void rtw_hal_antdiv_rssi_compared(struct adapter *Adapter,
+ 		/* select optimum_antenna for before linked => For antenna
+ 		 * diversity
+ 		 */
+-		if (dst->Rssi >=  src->Rssi) {/* keep org parameter */
++		if (dst->Rssi >= src->Rssi) {/* keep org parameter */
+ 			src->Rssi = dst->Rssi;
+ 			src->PhyInfo.Optimum_antenna =
+ 				dst->PhyInfo.Optimum_antenna;
 -- 
 2.24.1
 
