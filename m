@@ -2,154 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014A513B359
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBD913B36C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 21:09:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbgANUFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 15:05:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33604 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728733AbgANUFD (ORCPT
+        id S1728912AbgANUJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 15:09:08 -0500
+Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:53226 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727556AbgANUI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 15:05:03 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1irSQv-000376-D1; Tue, 14 Jan 2020 20:05:01 +0000
-Subject: Re: [PATCH] ALSA: hda - fix out of bounds read on spec->smux_paths
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200114154412.365395-1-colin.king@canonical.com>
- <s5ho8v5renx.wl-tiwai@suse.de>
-From:   Colin Ian King <colin.king@canonical.com>
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c826c500-1573-b42b-3c72-5c9f3123d0ed@canonical.com>
-Date:   Tue, 14 Jan 2020 20:05:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 14 Jan 2020 15:08:57 -0500
+Received: from mailhost.synopsys.com (sv2-mailhost1.synopsys.com [10.205.2.133])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C556C4049B;
+        Tue, 14 Jan 2020 20:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1579032536; bh=f5GlxhH1g7W0d3zEgvx81jnLwcqIiTTmh3wCeGRzGW0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fm/TVH0mNkG5VblJWaqvz2mdAEeXboKh6uXtqrQv8g6K4lppyWbpONWze6HfTGsuk
+         D2nlY9m6Pj5TuT/CDkL/5sqZREDt6Zglbeh2zl2SeWZnT2t8hTzfTfGOBNL6qjn2ze
+         l+6kT7uCoaj6sPfP0fVQF0cAeyMFvxfLBseZ3fZnwnYBiRxvXI19qO5Z2DoBJKZnwh
+         OXJ0kTUQXr9X/Q6zhLzEm7kiJ+wGcLkYjxUHfkIx8UvjwO7rnNCDjoGqDi9kudoPcV
+         4I1HXDCoIfP3aTmCGr+u+jl1aLHOa6jxn1p9w8TUZ6nT7hprCvrRNupN9xnlctaqnw
+         IHOf0LtcpCi1A==
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (vineetg-latitude-e7450.internal.synopsys.com [10.10.161.25])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 88973A0096;
+        Tue, 14 Jan 2020 20:08:51 +0000 (UTC)
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: [RFC 0/4] Switching ARC to optimized generic strncpy_from_user
+Date:   Tue, 14 Jan 2020 12:08:42 -0800
+Message-Id: <20200114200846.29434-1-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <s5ho8v5renx.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2020 20:01, Takashi Iwai wrote:
-> On Tue, 14 Jan 2020 16:44:12 +0100,
-> Colin King wrote:
->>
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> It is possible for the call to snd_hda_get_num_conns to fail and return
->> a negative error code that gets assigned to num_conns. In that specific
->> case, the check of very large values of val against num_conns will not
->> fail the -EINVAL check and later on an out of bounds array read on
->> spec->smux_paths will occur.  Fix this by sanity checking for an error
->> return from the call to snd_hda_get_num_conns.
-> 
-> Thanks for the patch, but this can't happen.
-> The ad1988_auto_smux_enum_put() is used only for IEC958 Playback
-> Source element, and it's added in ad1988_add_spdif_mux_ctl().  And
-> there at the beginning, there is already a check of the value:
-> 
-> 	num_conns = snd_hda_get_num_conns(codec, 0x0b) + 1;
-> 	if (num_conns != 3 && num_conns != 4)
-> 		return 0;
-> 				
-> And the snd_hda_get_num_conns() function returns the cached value,
-> hence it's always same at the second and later calls, so it can't be a
-> negative error.
+Hi,
 
-Ah, OK, sorry about the noise.
+This came up when trying to move ARC over to generic word-at-a-time
+interface.
 
-> 
-> That said, I don't think we need to apply the change as is.  But if we
-> were to improve something, we can rather record this number more
-> explicitly e.g. introduce a new field spec->num_spdif_mux_conns and
-> keep there instead of calling snd_hda_get_num_conns() at each place.
+ - 1/4 is a trivial fix (and needed for ARC switch)
+ - 2/4 is mucking with internals hence the RFC. I could very likely be
+   overlooking some possible DoS / exploit issues and apologies in advance
+   if thats the case but I felt like sharing it anyways to see what
+   others think.
+ - 3/4, 4/4 are ARC changes to remove the existing ARC version and
+   switch to generic (needs 1/4).
 
-That would seem more optimal for sure.
+Thx,
+-Vineet
 
-Colin
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
->>
->> Addresses-Coverity: ("Out-of-bounds read")
->> Fixes: 272f3ea31776 ("ALSA: hda - Add SPDIF mux control to AD codec auto-parser")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  sound/pci/hda/patch_analog.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/pci/hda/patch_analog.c b/sound/pci/hda/patch_analog.c
->> index 88c46b051d14..399561369495 100644
->> --- a/sound/pci/hda/patch_analog.c
->> +++ b/sound/pci/hda/patch_analog.c
->> @@ -756,9 +756,11 @@ static int ad1988_auto_smux_enum_put(struct snd_kcontrol *kcontrol,
->>  	struct ad198x_spec *spec = codec->spec;
->>  	unsigned int val = ucontrol->value.enumerated.item[0];
->>  	struct nid_path *path;
->> -	int num_conns = snd_hda_get_num_conns(codec, 0x0b) + 1;
->> +	int num_conns = snd_hda_get_num_conns(codec, 0x0b);
->>  
->> -	if (val >= num_conns)
->> +	if (num_conns < 0)
->> +		return num_conns;
->> +	if (val >= num_conns + 1)
->>  		return -EINVAL;
->>  	if (spec->cur_smux == val)
->>  		return 0;
->> -- 
->> 2.24.0
->>
+Vineet Gupta (4):
+  asm-generic/uaccess: don't define inline functions if noinline lib/*
+    in use
+  lib/strncpy_from_user: Remove redundant user space pointer range check
+  ARC: uaccess: remove noinline variants of __strncpy_from_user() and
+    friends
+  ARC: uaccess: use optimized generic __strnlen_user/__strncpy_from_user
+
+ arch/arc/Kconfig                      |  2 +
+ arch/arc/include/asm/Kbuild           |  1 -
+ arch/arc/include/asm/uaccess.h        | 87 ++-------------------------
+ arch/arc/include/asm/word-at-a-time.h | 49 +++++++++++++++
+ arch/arc/mm/extable.c                 | 23 -------
+ include/asm-generic/uaccess.h         |  4 ++
+ lib/strncpy_from_user.c               | 36 ++++-------
+ lib/strnlen_user.c                    | 28 +++------
+ 8 files changed, 79 insertions(+), 151 deletions(-)
+ create mode 100644 arch/arc/include/asm/word-at-a-time.h
+
+-- 
+2.20.1
 
