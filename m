@@ -2,224 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7EB8139FA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68367139FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:04:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbgANDAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 22:00:41 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:47088 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbgANDAl (ORCPT
+        id S1729641AbgANDEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 22:04:37 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:53130 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729224AbgANDEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 22:00:41 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y8so4616959pll.13
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 19:00:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xw77Nj8XUDXZQNK7NNDsnZyCzzV6HvnWRz+soLowYlo=;
-        b=VtK5kb1IIXzAZGv5xfHcXoUA1l/Ad6CPQ9LUKhr+RoI7TeYws3etYYok+4TRX4ZIJC
-         wDmYyPNesscKL7dJTvpH9NWKzONlXQSHjS/LK+kBhzuHjODJXMK5gUAJ56lBcDYA957F
-         rVNYNjraamPxQlGrJR/UrQuBnJERHHToi6T0q/zZuyohqY5DQn+0WLFUkYv36lzpRoVe
-         WqBgHdLDe9964l4TI+9CM59mxiq+oCrhI6vw4sq7UvS/plJckPHwO6dr6mUVLINMp7kS
-         0VUkVeQSnKZo/nscboNpuZNw6tXGbRZnPEf+ulBgyjBoJuvhMj2e/nEV5FFA30Yp7JnY
-         kHVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xw77Nj8XUDXZQNK7NNDsnZyCzzV6HvnWRz+soLowYlo=;
-        b=Xcx0wCJrW3y56qM3ivfQrpd2FkOaGccqicSJqfm6NPw0eP3EiFy1F2c0wa8erHUM45
-         oeuTgXMZuXjJmeuzcI5ZSYHYqub1FBxWljXXAJlXutMwjd6vgxvvB+ohskh6fgweVmlA
-         mFD/kPPysEe7VtKXiwzUPPCUKXvF3DZI+eKIkTgfJX4EqYaPTfUAHjrkWnL5oj4svOtl
-         FEfPbXcJ2fq6W1EWQpYZeHqBW64WJuaoedvYDlFw4UyMi430FGFEDk7XcJSTLXTwMQ0H
-         8q14EJYXBQGnLBXGU34sUa48kW1E9DVJPXK+Hg2PU654oJaYWN6Qxs6p31pCRujCgW29
-         23HA==
-X-Gm-Message-State: APjAAAX57+vY8vEb8N/MUGUbQIbRFKrKfZ17zmh4cRoJG7F0p4G/ouPo
-        hf4Sad1tscmcN+zZnh5zN5w=
-X-Google-Smtp-Source: APXvYqxl7syTqoq0VTOABZalLn1oIB8fgP/NolrZjvoq7aZBcSgtjuvP8BEuWB/LPeAtmsTvGDIaWQ==
-X-Received: by 2002:a17:902:124:: with SMTP id 33mr17206920plb.115.1578970839903;
-        Mon, 13 Jan 2020 19:00:39 -0800 (PST)
-Received: from workstation-portable ([103.211.17.159])
-        by smtp.gmail.com with ESMTPSA id c34sm14721134pgc.61.2020.01.13.19.00.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 19:00:39 -0800 (PST)
-Date:   Tue, 14 Jan 2020 08:30:30 +0530
-From:   Amol Grover <frextrite@gmail.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Corey Minyard <minyard@acm.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v2] drivers: char: ipmi: ipmi_msghandler: Pass lockdep
- expression to RCU lists
-Message-ID: <20200114030030.GB2559@workstation-portable>
-References: <20200110164709.26741-1-frextrite@gmail.com>
- <202001121358.YVbD4V9l%lkp@intel.com>
+        Mon, 13 Jan 2020 22:04:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E33f0n181167;
+        Tue, 14 Jan 2020 03:04:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=keJibTsJRKKM7cxbY4WBKFccqeBdlACR5qxE4hPJX+4=;
+ b=KKp4Lez6+ddRjoyGpUtf4VWNMY+B3LVFG52sUGwtjh/9v2zq9CcRmH5IV/3gDWj5mZtz
+ vtHWtkVgOr9rmKfQxdB0jYdPL/to+TFrSl9ZTbeCy3U/1mpQr/MTZhX21WFF906elohQ
+ 3uYqtdf8jy0Gx3EJK12rwmZQWLhRY4muOJxdMLAGLUdWTQBVg1nRqLQF24zQmFZrfxb5
+ YsItUNOOvMmrWiiL8jxwVN/qEQ4u8NVwcagtESmfF0uwtd9oJSYxG3XSVn2wp8ouGWxW
+ foe1SEaAWDhbVfQwjVifj0LHDkRKXT0R9o23x5DRMluQRi4sOtEwsYa28K2897yOJBA5 rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2xf73tk4a4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 03:04:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00E33E1L194107;
+        Tue, 14 Jan 2020 03:04:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2xfrgjss6w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 03:03:59 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00E33vjH010007;
+        Tue, 14 Jan 2020 03:03:57 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 13 Jan 2020 19:03:57 -0800
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH v2] hwmon: Driver for temperature sensors on SATA drives
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191215174509.1847-1-linux@roeck-us.net>
+        <20191215174509.1847-2-linux@roeck-us.net>
+        <yq1r211dvck.fsf@oracle.com>
+        <b22a519c-8f26-e731-345f-9deca1b2150e@roeck-us.net>
+        <yq1sgkq21ll.fsf@oracle.com> <20200108153341.GB28530@roeck-us.net>
+        <38af9fda-9edf-1b54-bd8d-92f712ae4cda@roeck-us.net>
+Date:   Mon, 13 Jan 2020 22:03:54 -0500
+In-Reply-To: <38af9fda-9edf-1b54-bd8d-92f712ae4cda@roeck-us.net> (Guenter
+        Roeck's message of "Sat, 11 Jan 2020 12:22:57 -0800")
+Message-ID: <yq1r202spr9.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202001121358.YVbD4V9l%lkp@intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=643
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001140026
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9499 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=704 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001140026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 12, 2020 at 01:25:58PM +0800, kbuild test robot wrote:
-> Hi Amol,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on char-misc/char-misc-testing]
-> [also build test WARNING on ipmi/for-next arm-soc/for-next v5.5-rc5]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Amol-Grover/drivers-char-ipmi-ipmi_msghandler-Pass-lockdep-expression-to-RCU-lists/20200111-081002
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git 16bb7abc4a6b9defffa294e4dc28383e62a1dbcf
-> config: x86_64-randconfig-a003-20200109 (attached as .config)
-> compiler: gcc-5 (Ubuntu 5.5.0-12ubuntu1) 5.5.0 20171010
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/export.h:43:0,
->                     from include/linux/linkage.h:7,
->                     from include/linux/kernel.h:8,
->                     from include/linux/list.h:9,
->                     from include/linux/module.h:12,
->                     from drivers/char/ipmi/ipmi_msghandler.c:17:
->    drivers/char/ipmi/ipmi_msghandler.c: In function 'find_cmd_rcvr':
->    include/linux/rculist.h:53:25: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->                             ^
 
-As mentioned above, RCU_LOCKDEP_WARN macro is called from
-__list_check_rcu with 2 parameters
+Hi Guenter!
 
-1. !cond && !rcu_read_lock_any_held()
-2. The message to display incase there is a lockdep warning.
+> I tried again, this time with v5.5-rc5. Loading and unloading ahci and
+> drivetemp in any order does not cause any problems for me.
 
+I tried your hwmon-next branch and it still happens for me. Both in qemu
+and on real hw. I'm really low on bandwidth the next couple of days.
+Will try to look later this week unless you beat me to it. I get lots of
+these warnings after modprobe drivetemp; modprobe ahci:
 
-However, if I pass the lockdep checking condition as:
+[ 1055.611922] WARNING: CPU: 3 PID: 3233 at drivers/base/dd.c:519 really_probe+0x436/0x4f0
 
-list_for_each_entry_rcu(ptr, list, head, lockdep_is_held(&some_lock) || rcu_read_lock_held())
+A quick test forcing synchronous SCSI scanning made no difference.
 
-this trickles down to __list_check_rcu and then finally to
-RCU_LOCKDEP_WARN as (here cond is `lockdep_is_held(&some_lock) || rcu_read_lock_held()`):
-
-RCU_LOCKDEP_WARN(!lockdep_is_held(&some_lock) || rcu_read_lock_held() && !rcu_read_lock_any_held())
-
-which according to operator precedence (I hopefully got them right)
-would always evaluate to true if we are in an RCU read-side critical
-section (without a lock), and hence, result in a false-positive lockdep
-warning.
-
-This could be easily solved by putting `cond` inside brackets as it is
-correctly done in RCU_LOCKDEP_WARN macro but not in __list_check_rcu
-macro. Is that so, or did I miss something?
-
-Secondly, since there is already a condition that checks for RCU
-read-side critical section, the extra `rcu_read_lock_held()` we supply
-is sort of redundant and can be skipped right?
-
-Thanks
-Amol
-
->    include/linux/compiler.h:58:52: note: in definition of macro '__trace_if_var'
->     #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
->                                                        ^
-> >> include/linux/rcupdate.h:263:3: note: in expansion of macro 'if'
->       if (debug_lockdep_rcu_enabled() && !__warned && (c)) { \
->       ^
-> >> include/linux/rculist.h:53:2: note: in expansion of macro 'RCU_LOCKDEP_WARN'
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->      ^
->    include/linux/rculist.h:371:7: note: in expansion of macro '__list_check_rcu'
->      for (__list_check_rcu(dummy, ## cond, 0),   \
->           ^
->    drivers/char/ipmi/ipmi_msghandler.c:1607:2: note: in expansion of macro 'list_for_each_entry_rcu'
->      list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
->      ^
->    include/linux/rculist.h:53:25: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->                             ^
->    include/linux/compiler.h:58:61: note: in definition of macro '__trace_if_var'
->     #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
->                                                                 ^
-> >> include/linux/rcupdate.h:263:3: note: in expansion of macro 'if'
->       if (debug_lockdep_rcu_enabled() && !__warned && (c)) { \
->       ^
-> >> include/linux/rculist.h:53:2: note: in expansion of macro 'RCU_LOCKDEP_WARN'
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->      ^
->    include/linux/rculist.h:371:7: note: in expansion of macro '__list_check_rcu'
->      for (__list_check_rcu(dummy, ## cond, 0),   \
->           ^
->    drivers/char/ipmi/ipmi_msghandler.c:1607:2: note: in expansion of macro 'list_for_each_entry_rcu'
->      list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
->      ^
->    include/linux/rculist.h:53:25: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->                             ^
->    include/linux/compiler.h:69:3: note: in definition of macro '__trace_if_value'
->      (cond) ?     \
->       ^
->    include/linux/compiler.h:56:28: note: in expansion of macro '__trace_if_var'
->     #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
->                                ^
-> >> include/linux/rcupdate.h:263:3: note: in expansion of macro 'if'
->       if (debug_lockdep_rcu_enabled() && !__warned && (c)) { \
->       ^
-> >> include/linux/rculist.h:53:2: note: in expansion of macro 'RCU_LOCKDEP_WARN'
->      RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),  \
->      ^
->    include/linux/rculist.h:371:7: note: in expansion of macro '__list_check_rcu'
->      for (__list_check_rcu(dummy, ## cond, 0),   \
->           ^
->    drivers/char/ipmi/ipmi_msghandler.c:1607:2: note: in expansion of macro 'list_for_each_entry_rcu'
->      list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
->      ^
-> 
-> vim +/if +263 include/linux/rcupdate.h
-> 
-> 632ee200130899 Paul E. McKenney 2010-02-22  254  
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  255  /**
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  256   * RCU_LOCKDEP_WARN - emit lockdep splat if specified condition is met
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  257   * @c: condition to check
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  258   * @s: informative message
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  259   */
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  260  #define RCU_LOCKDEP_WARN(c, s)						\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  261  	do {								\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  262  		static bool __section(.data.unlikely) __warned;		\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18 @263  		if (debug_lockdep_rcu_enabled() && !__warned && (c)) {	\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  264  			__warned = true;				\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  265  			lockdep_rcu_suspicious(__FILE__, __LINE__, s);	\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  266  		}							\
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  267  	} while (0)
-> f78f5b90c4ffa5 Paul E. McKenney 2015-06-18  268  
-> 
-> :::::: The code at line 263 was first introduced by commit
-> :::::: f78f5b90c4ffa559e400c3919a02236101f29f3f rcu: Rename rcu_lockdep_assert() to RCU_LOCKDEP_WARN()
-> 
-> :::::: TO: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> :::::: CC: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> ---
-> 0-DAY kernel test infrastructure                 Open Source Technology Center
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
