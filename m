@@ -2,65 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F339A13B119
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5291E13B111
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 18:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgANRhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 12:37:09 -0500
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:42062 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726270AbgANRhH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:37:07 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 2813D182CF665;
-        Tue, 14 Jan 2020 17:37:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2896:3138:3139:3140:3141:3142:3350:3622:3865:3867:3870:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30029:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: cent53_3dc9e911f6f34
-X-Filterd-Recvd-Size: 1584
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 14 Jan 2020 17:37:04 +0000 (UTC)
-Message-ID: <e1b3cccb0814ba4b0c99592715776ed48f343795.camel@perches.com>
-Subject: Re: [PATCHv2-next 3/3] serial_core: Remove unused member in
- uart_port
-From:   Joe Perches <joe@perches.com>
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-Date:   Tue, 14 Jan 2020 09:36:09 -0800
-In-Reply-To: <20200114171912.261787-4-dima@arista.com>
-References: <20200114171912.261787-1-dima@arista.com>
-         <20200114171912.261787-4-dima@arista.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1728872AbgANRge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 12:36:34 -0500
+Received: from foss.arm.com ([217.140.110.172]:55544 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbgANRgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 12:36:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 086F71396;
+        Tue, 14 Jan 2020 09:36:33 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CD8F3F68E;
+        Tue, 14 Jan 2020 09:36:30 -0800 (PST)
+Date:   Tue, 14 Jan 2020 17:36:28 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Will Deacon <will@kernel.org>, Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v4 10/12] arm64: BTI: Reset BTYPE when skipping emulated
+ instructions
+Message-ID: <20200114173627.GM30444@arrakis.emea.arm.com>
+References: <20191211154206.46260-1-broonie@kernel.org>
+ <20191211154206.46260-11-broonie@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191211154206.46260-11-broonie@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-01-14 at 17:19 +0000, Dmitry Safonov wrote:
-> It should remove the align-padding before @name.
-[]
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-[]
-> @@ -247,7 +247,6 @@ struct uart_port {
+On Wed, Dec 11, 2019 at 03:42:04PM +0000, Mark Brown wrote:
+> From: Dave Martin <Dave.Martin@arm.com>
+> 
+> Since normal execution of any non-branch instruction resets the
+> PSTATE BTYPE field to 0, so do the same thing when emulating a
+> trapped instruction.
+> 
+> Branches don't trap directly, so we should never need to assign a
+> non-zero value to BTYPE here.
+> 
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kernel/traps.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index bf79d8024fbe..9fc05ae500e6 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -332,6 +332,8 @@ void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
 >  
->  	unsigned char		hub6;			/* this should be in the 8250 driver */
->  	unsigned char		suspended;
-> -	unsigned char		unused;
+>  	if (regs->pstate & PSR_MODE32_BIT)
 
-I suggest this not be applied as this is just to let
-readers know that there is an unused 1 byte alignment
-hole here that could be used for something else.
+Same comment as on a previous patch, compat_user_mode() could be used.
 
+Other than this:
 
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
