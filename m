@@ -2,82 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD4F13AB43
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:44:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8629B13AB47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbgANNoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:44:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:52428 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbgANNoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:44:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E6841435;
-        Tue, 14 Jan 2020 05:44:31 -0800 (PST)
-Received: from [240.8.37.10] (unknown [10.37.8.240])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DA943F534;
-        Tue, 14 Jan 2020 05:44:27 -0800 (PST)
-Subject: Re: [PATCH] arm: Fix Kexec compilation issue.
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux@armlinux.org.uk
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20200110123125.51092-1-vincenzo.frascino@arm.com>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <27d511d6-90de-02f1-733b-e177462dffab@arm.com>
-Date:   Tue, 14 Jan 2020 13:44:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728916AbgANNon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:44:43 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:12008 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728877AbgANNoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:44:39 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579009479; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=xVs39pFzdxC0AYVqKrc2ELfrFrxwiZjTOESKySUWCss=; b=LziO/rPAMeiVL0LfHuD5nnizigmLRJ+sMS0WJNssFWCVMU5sdo5odX/6gJ97slyfe/i8a5iz
+ /uBdyuqdsHAdjovPeTeCR2wKq4YZlREypMK1JtIKTlD1eGGF2DMI3zIwfzRpRffLhV0XZQ/v
+ 5ZxFfs9DsPH7s9h2Qp0T2kIJSRY=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e1dc5c3.7f48b9847810-smtp-out-n03;
+ Tue, 14 Jan 2020 13:44:35 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 73359C4479F; Tue, 14 Jan 2020 13:44:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from x230.qca.qualcomm.com (85-76-19-103-nat.elisa-mobile.fi [85.76.19.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A70ECC433CB;
+        Tue, 14 Jan 2020 13:44:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A70ECC433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Wen Huang <huangwenabc@gmail.com>,
+        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.de>, Miroslav Benes <mbenes@suse.cz>
+Subject: Re: [PATCH 2/2] libertas: make lbs_ibss_join_existing() return error code on rates overflow
+References: <87woa04t2v.fsf@suse.de> <20200114103903.2336-1-nstange@suse.de>
+        <20200114103903.2336-3-nstange@suse.de>
+Date:   Tue, 14 Jan 2020 15:44:30 +0200
+In-Reply-To: <20200114103903.2336-3-nstange@suse.de> (Nicolai Stange's message
+        of "Tue, 14 Jan 2020 11:39:03 +0100")
+Message-ID: <87k15uqhj5.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200110123125.51092-1-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/20 12:31 PM, Vincenzo Frascino wrote:
-> To perform the reserve_crashkernel() operation kexec uses SECTION_SIZE to
-> find a memblock in a range.
-> SECTION_SIZE is not defined for nommu systems. Trying to compile kexec in
-> these conditions results in a build error:
-> 
->   linux/arch/arm/kernel/setup.c: In function ‘reserve_crashkernel’:
->   linux/arch/arm/kernel/setup.c:1016:25: error: ‘SECTION_SIZE’ undeclared
->      (first use in this function); did you mean ‘SECTIONS_WIDTH’?
->              crash_size, SECTION_SIZE);
->                          ^~~~~~~~~~~~
->                          SECTIONS_WIDTH
->   linux/arch/arm/kernel/setup.c:1016:25: note: each undeclared identifier
->      is reported only once for each function it appears in
->   linux/scripts/Makefile.build:265: recipe for target 'arch/arm/kernel/setup.o'
->      failed
-> 
-> Make KEXEC depend on MMU to fix the compilation issue.
-> 
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  arch/arm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index ba75e3661a41..bc99582bdc85 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1904,7 +1904,7 @@ config XIP_DEFLATED_DATA
->  config KEXEC
->  	bool "Kexec system call (EXPERIMENTAL)"
->  	depends on (!SMP || PM_SLEEP_SMP)
-> -	depends on !CPU_V7M
-> +	depends on MMU
->  	select KEXEC_CORE
->  	help
->  	  kexec is a system call that implements the ability to shutdown your
-> 
+Nicolai Stange <nstange@suse.de> writes:
 
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+> Commit e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+> descriptor") introduced a bounds check on the number of supplied rates to
+> lbs_ibss_join_existing() and made it to return on overflow.
+>
+> However, the aforementioned commit doesn't set the return value accordingly
+> and thus, lbs_ibss_join_existing() would return with zero even though it
+> failed.
+>
+> Make lbs_ibss_join_existing return -EINVAL in case the bounds check on the
+> number of supplied rates fails.
+>
+> Fixes: e5e884b42639 ("libertas: Fix two buffer overflows at parsing bss
+>                       descriptor")
 
-Cheers
-Vladimir
+This should be in one line, I'll fix it during commit.
+
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
