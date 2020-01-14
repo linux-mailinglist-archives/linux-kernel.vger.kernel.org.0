@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E23713A55D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A371A13A72C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:26:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbgANKHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:07:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36746 "EHLO mail.kernel.org"
+        id S1729941AbgANKTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:19:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729904AbgANKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:07:03 -0500
+        id S1729262AbgANKEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:04:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C8822467E;
-        Tue, 14 Jan 2020 10:07:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D79E72467E;
+        Tue, 14 Jan 2020 10:04:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996422;
-        bh=ocDHSV1qnOiDS/xN6mfuyC8MVNZZPZoaK0u4+SohiY8=;
+        s=default; t=1578996295;
+        bh=MAlV+duEr8rc3TFIDMPW6PfMhcvKZUNZfrDrNpUsQj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CAX6+YR8hj/BOTIYBDSvJ5Te6fb3N2ylhjhzxepefydQGa0+6DSrWpHZWddXnnyZG
-         65EY5X5DIDlrxHJ8rL5LuKy785Gq47lnQ9AUWrcVpA18vwI5RAyTJJ4drBxGOqfyLu
-         ZyD8uagCe+/9JQffJP9zTkHkC4FYlYlGOS6WM6ZI=
+        b=CEJ+3Y64zyDKNUzBAeqPG/AqHeZwSVaFPgl6zL8yBR2Kl3BTPFGZ0aRWUnNwOTlZv
+         jGZIpj/OVmjCwrQ1v7DkAihktrBT9MeG/CEqAJFvt1/IcXnHojrNBm94qSpprZ6NDl
+         PTOoi6JdTlHHppqXw8o/RQkNygayzWORhkeVY7i0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 04/46] ALSA: usb-audio: Apply the sample rate quirk for Bose Companion 5
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Bin Liu <b-liu@ti.com>
+Subject: [PATCH 5.4 47/78] usb: musb: Disable pullup at init
 Date:   Tue, 14 Jan 2020 11:01:21 +0100
-Message-Id: <20200114094341.269203063@linuxfoundation.org>
+Message-Id: <20200114094359.836642366@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
-References: <20200114094339.608068818@linuxfoundation.org>
+In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
+References: <20200114094352.428808181@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,32 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Paul Cercueil <paul@crapouillou.net>
 
-commit 51d4efab7865e6ea6a4ebcd25b3f03c019515c4c upstream.
+commit 96a0c12843109e5c4d5eb1e09d915fdd0ce31d25 upstream.
 
-Bose Companion 5 (with USB ID 05a7:1020) doesn't seem supporting
-reading back the sample rate, so the existing quirk is needed.
+The pullup may be already enabled before the driver is initialized. This
+happens for instance on JZ4740.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=206063
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200104110936.14288-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+It has to be disabled at init time, as we cannot guarantee that a gadget
+driver will be bound to the UDC.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Suggested-by: Bin Liu <b-liu@ti.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Link: https://lore.kernel.org/r/20200107152625.857-3-b-liu@ti.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/usb/quirks.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/musb/musb_core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1177,6 +1177,7 @@ bool snd_usb_get_sample_rate_quirk(struc
- 	case USB_ID(0x04D8, 0xFEEA): /* Benchmark DAC1 Pre */
- 	case USB_ID(0x0556, 0x0014): /* Phoenix Audio TMX320VC */
- 	case USB_ID(0x05A3, 0x9420): /* ELP HD USB Camera */
-+	case USB_ID(0x05a7, 0x1020): /* Bose Companion 5 */
- 	case USB_ID(0x074D, 0x3553): /* Outlaw RR2150 (Micronas UAC3553B) */
- 	case USB_ID(0x1395, 0x740a): /* Sennheiser DECT */
- 	case USB_ID(0x1901, 0x0191): /* GE B850V3 CP2114 audio interface */
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2318,6 +2318,9 @@ musb_init_controller(struct device *dev,
+ 	musb_disable_interrupts(musb);
+ 	musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
+ 
++	/* MUSB_POWER_SOFTCONN might be already set, JZ4740 does this. */
++	musb_writeb(musb->mregs, MUSB_POWER, 0);
++
+ 	/* Init IRQ workqueue before request_irq */
+ 	INIT_DELAYED_WORK(&musb->irq_work, musb_irq_work);
+ 	INIT_DELAYED_WORK(&musb->deassert_reset_work, musb_deassert_reset);
 
 
