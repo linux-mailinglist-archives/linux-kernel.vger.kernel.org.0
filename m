@@ -2,83 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8860413AECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CAF13AEBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:13:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbgANQNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:13:02 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43754 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbgANQNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:13:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=m2saCpf7ggz2fcYQT7OoTpnuyef/oFSaHismlZbaRwg=; b=oe4mwhFZgfpe9eTAKq5ucy4vTN
-        NaN8iUTyOjY/EZWJ71LcA5QaZWt4OSsutSc6fLAIIoAare7j/+jUTGIn/UtPsBt4EWMGxOBKEcbDS
-        EZYHcVXyQqFS/k3PtNf5ElfH03EYQdj4YLWnBMY4t26wLDS91nEdgDBck5YCUSwo5euviW7OmwMik
-        ZIlKWgxrRLkyWEH9i2gbgtzUo3YqrNrJAlVWITaDEbflh5zmoN/E4VbqXU9dCYXe285Fjafs/dpm0
-        MSi9wED6clPOjNi1XE6QmGW9rw5fxSkj7bZrJvQnHGiIWqmpamopH8FdxveTkOrCheBdsT6fUAvzu
-        UftNEe5A==;
-Received: from [2001:4bb8:18c:4f54:fcbb:a92b:61e1:719] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1irOoO-0000GP-6P; Tue, 14 Jan 2020 16:13:00 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 12/12] iomap: remove the inode_dio_begin/end calls
-Date:   Tue, 14 Jan 2020 17:12:25 +0100
-Message-Id: <20200114161225.309792-13-hch@lst.de>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114161225.309792-1-hch@lst.de>
-References: <20200114161225.309792-1-hch@lst.de>
+        id S1729270AbgANQMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:12:51 -0500
+Received: from mga07.intel.com ([134.134.136.100]:58605 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729263AbgANQMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:12:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 08:12:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,433,1571727600"; 
+   d="scan'208";a="217788065"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.255.37.212])
+  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2020 08:12:45 -0800
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        cedric.xing@intel.com, puiterwijk@redhat.com,
+        linux-security-module@vger.kernel.org,
+        "Suresh Siddha" <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH v24 12/24] x86/sgx: Linux Enclave Driver
+Reply-To: haitao.huang@linux.intel.com
+References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
+ <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
+Date:   Tue, 14 Jan 2020 10:12:45 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
+From:   "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.0ed4njqcwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <20191129231326.18076-13-jarkko.sakkinen@linux.intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all iomap users hold i_rwsem over asynchronous I/O
-operations these calls can be removed.
+On Fri, 29 Nov 2019 17:13:14 -0600, Jarkko Sakkinen  
+<jarkko.sakkinen@linux.intel.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/direct-io.c | 3 ---
- 1 file changed, 3 deletions(-)
+> +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct  
+> *sigstruct,
+> +			 struct sgx_einittoken *token)
+> +{
+> +	u64 mrsigner[4];
+> +	int ret;
+> +	int i;
+> +	int j;
+> +
+> +	/* Check that the required attributes have been authorized. */
+> +	if (encl->secs_attributes & ~encl->allowed_attributes)
+> +		return -EINVAL;
+> +
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 0113ac33b0a0..c90ec82e8e08 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -126,7 +126,6 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio, bool unlock)
- 	if (ret > 0 && (dio->flags & IOMAP_DIO_NEED_SYNC))
- 		ret = generic_write_sync(iocb, ret);
- 
--	inode_dio_end(file_inode(iocb->ki_filp));
- 	kfree(dio);
- 
- 	return ret;
-@@ -513,8 +512,6 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 			goto out_free_dio;
- 	}
- 
--	inode_dio_begin(inode);
--
- 	blk_start_plug(&plug);
- 	do {
- 		ret = iomap_apply(inode, pos, count, flags, ops, dio,
--- 
-2.24.1
+EACCES to be more specific?
 
+Thanks
+Haitao
