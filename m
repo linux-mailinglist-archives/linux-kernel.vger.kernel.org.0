@@ -2,68 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB55E13B1AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C040513B1B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbgANSHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 13:07:25 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:34644 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbgANSHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:07:24 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1irQaw-0000jP-3C; Tue, 14 Jan 2020 11:07:14 -0700
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Kit Chow <kchow@gigaio.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <20200113200756.GA97441@google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <f15334a9-6cac-803d-7e64-28c74c4d12af@deltatee.com>
-Date:   Tue, 14 Jan 2020 11:07:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727331AbgANSLB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 Jan 2020 13:11:01 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:43143 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbgANSLB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 13:11:01 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 19A3B240005;
+        Tue, 14 Jan 2020 18:10:53 +0000 (UTC)
+Date:   Tue, 14 Jan 2020 19:10:52 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Bernhard Frauendienst <kernel@nospam.obeliks.de>
+Subject: Re: [PATCH v5 4/4] mtd: Add driver for concatenating devices
+Message-ID: <20200114191052.0a16d116@xps13>
+In-Reply-To: <CAL_JsqJP3-h7bPAommzt7KQKoohZpkk=RMxfN1j3rXbisD4eCA@mail.gmail.com>
+References: <20191127105522.31445-1-miquel.raynal@bootlin.com>
+        <20191127105522.31445-5-miquel.raynal@bootlin.com>
+        <20191209113506.41341ed4@collabora.com>
+        <CAL_JsqJP3-h7bPAommzt7KQKoohZpkk=RMxfN1j3rXbisD4eCA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20200113200756.GA97441@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: mika.westerberg@linux.intel.com, nicholas.johnson-opensource@outlook.com.au, benh@kernel.crashing.org, kchow@gigaio.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v5] PCI: Fix disabling of bridge BARs when assigning bus
- resources
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
+Rob Herring <robh+dt@kernel.org> wrote on Tue, 14 Jan 2020 11:46:18
+-0600:
 
-On 2020-01-13 1:07 p.m., Bjorn Helgaas wrote:
-> Applied to pci/resource for v5.6, thanks!
+> On Mon, Dec 9, 2019 at 4:35 AM Boris Brezillon
+> <boris.brezillon@collabora.com> wrote:
+> >
+> > On Wed, 27 Nov 2019 11:55:22 +0100
+> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >  
+> > > Introduce a generic way to define concatenated MTD devices. This may
+> > > be very useful in the case of ie. stacked SPI-NOR. Partitions to
+> > > concatenate are described in an additional property of the partitions
+> > > subnode:
+> > >
+> > >         flash0 {
+> > >                 partitions {
+> > >                         compatible = "fixed-partitions";
+> > >                         part-concat = <&flash0_part1>, <&flash1_part0>;
+> > >
+> > >                       part0@0 {
+> > >                               label = "part0_0";
+> > >                               reg = <0x0 0x800000>;
+> > >                       };
+> > >
+> > >                       flash0_part1: part1@800000 {
+> > >                               label = "part0_1";
+> > >                               reg = <0x800000 0x800000>;  
+> >
+> > So, flash0_part1 and flash0_part2 will be created even though the user
+> > probably doesn't need them?  
 > 
-> I added a check of pci_is_bridge() as another hint that this is really
-> a bridge-specific issue.  Let me know if that breaks anything.
+> I don't follow?
+
+Well, one will have to create "fake" partitions in order to concatenate
+them with this solution, instead of just concatenating the devices (in
+the case where you want to concatenate the entire devices). But the real
+debate is below, on the representation.
+
 > 
-> commit 9db8dc6d0785 ("PCI: Don't disable bridge BARs when assigning bus resources")
-> Author: Logan Gunthorpe <logang@deltatee.com>
-> Date:   Wed Jan 8 14:32:08 2020 -0700
+> >  
+> > >                       };
+> > >                 };
+> > >         };
+> > >
+> > >         flash1 {
+> > >                 partitions {
+> > >                         compatible = "fixed-partitions";
+> > >
+> > >                       flash0_part1: part1@0 {
+> > >                               label = "part1_0";
+> > >                               reg = <0x0 0x800000>;
+> > >                       };
+> > >
+> > >                       part0@800000 {
+> > >                               label = "part1_1";
+> > >                               reg = <0x800000 0x800000>;
+> > >                       };
+> > >                 };
+> > >         };  
+> >
+> > IMHO this representation is far from intuitive. At first glance it's not
+> > obvious which partitions are linked together and what's the name of the
+> > resulting concatenated part. I definitely prefer the solution where we
+> > have a virtual device describing the concatenation. I also understand
+> > that this goes against the #1 DT rule: "DT only decribes HW blocks, not
+> > how they should be used/configured", but maybe we can find a compromise
+> > here, like moving this description to the /chosen node?
+> >
+> > chosen {
+> >         flash-arrays {
+> >                 /*
+> >                  * my-flash-array is the MTD name if label is
+> >                  * not present.
+> >                  */
+> >                 my-flash-array {
+> >                         /*
+> >                          * We could have
+> >                          * compatible = "flash-array";
+> >                          * but we can also do without it.
+> >                          */
+> >                         label = "foo";
+> >                         flashes = <&flash1 &flash2 ...>;
+> >                         partitions {
+> >                                 /* usual partition description. */
+> >                                 ...
+> >                         };
+> >                 };
+> >         };
+> > };
+> >
+> > Rob, what do you think?  
+> 
+> I don't think chosen is the right place to put all the partition
+> information. It's not something the bootloader configures.
+> 
+> This suffers from the same issue I have with the original proposal. It
+> will not work for existing s/w. There's only 1 logical partition that
 
-Thanks! I was going to test the pci/resource branch, but I haven't seen
-the patch in your repo yet... Current head is
+I don't get why it would not work? Current hardware will just not have
+the concatenation support, that's all. How is this a problem?
 
-86f98025a075 ("PCI: Allow extend_bridge_window() to shrink resource if
-necessary")
+> concatenated. The rest of the partitions shouldn't need any special
+> handling. So we really only need some way to say 'link these 2
+> partitions into 1 logical partition'. Though perhaps one could want to
+> combine any number of physical partitions into logical partitions, but
+> then none of the proposals could support that. Then again, maybe
 
-Logan
+Yes, the flash-array proposal supports having more than two
+partitions/devices concatenated, it is also already supported by the
+driver (you don't care about this, but I do :) ).
+
+> that's a userspace problem like with disks.
+
+I see one big issue with this solution: what about bootloaders?
+
+The root cause for such idea is that, in my case, the 2 MTD devices are
+too small to contain the images needed to boot. The perfect solution is
+to merge the two devices virtually in one single device and let U-Boot
+read it like one.
+
+I need to have the same representation both in U-Boot and Linux, hence
+a userspace tool and a kernel command line argument do not work, right?
+
+> To throw out another option, what if the first device contains the
+> complete partitions for both devices with some property in one or both
+> devices pointing to the other device? That would make the partitions
+> in the 1st device still accessible to existing s/w (unless it bounds
+> checks the partitions).
+
+From a coding perspective this is very difficult as bound checks are
+done everywhere and lying about the boundaries is IMHO a bit complex.
+
+Thanks,
+Miquèl
