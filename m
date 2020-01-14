@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A08DE13AD43
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB2413AD4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:16:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbgANPQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:16:04 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:47598 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbgANPQE (ORCPT
+        id S1729113AbgANPQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 10:16:53 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33484 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbgANPQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:16:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1579014962; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kann6zCyNBbdeCYKcxlAxIyBSoLFOxdoAfrds4Ykqew=;
-        b=m2bfD8zkD7c1NMMwpd4j5EvVeSrnaEjcN+Zirav8BO5gKVRc73sv4NiqrnLvmj9fUZ9rww
-        tqLLASDOGtM1ES8AoU9N1o3/Ph2OERksgOoE0mCmt8XE4KT+HljF9mi1q+T2qWxRl4XH12
-        119cIoASr+kLxZ+E8c8LvtBOD5lIWFQ=
-Date:   Tue, 14 Jan 2020 12:15:48 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] usb: common: usb-conn-gpio: Register charger
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <1579014948.3.0@crapouillou.net>
-In-Reply-To: <1578536872.21256.25.camel@mhfsdcap03>
-References: <20200107002901.940297-1-paul@crapouillou.net>
-        <20200108165323.GA2506374@kroah.com> <1578504370.3.1@crapouillou.net>
-        <1578536872.21256.25.camel@mhfsdcap03>
+        Tue, 14 Jan 2020 10:16:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=K15TeIKz2iH2yNBaQfbFQ/2HZ43ycaI2mrMgjoB89W8=; b=eqqWHZPhE1xW0gJlR8rUqsdv+
+        14x7EIh3mp7KCevqvc2W/P5xWtIynG2LI174Hi1s+Cl5gRYWHvrPZXBPtnxUpvTNSMeUEAtZCYsrU
+        RXg2EFs3MZ+EQLZGh170vi1j1eAEhv9Ac9eR8jghkcbjKtQ4zgx89uVywSYcPvGB1uMW0=;
+Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1irNvv-00004y-E7; Tue, 14 Jan 2020 15:16:43 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 22C3ED04DF5; Tue, 14 Jan 2020 15:16:43 +0000 (GMT)
+Date:   Tue, 14 Jan 2020 15:16:43 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org
+Subject: Re: [PATCH v3 4/7] drm/panfrost: Add support for multiple regulators
+Message-ID: <20200114151643.GW3897@sirena.org.uk>
+References: <20200114071602.47627-1-drinkcat@chromium.org>
+ <20200114071602.47627-5-drinkcat@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="buDNgeHiu+HCsDEc"
+Content-Disposition: inline
+In-Reply-To: <20200114071602.47627-5-drinkcat@chromium.org>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunfeng,
 
-Le jeu., janv. 9, 2020 at 10:27, Chunfeng Yun=20
-<chunfeng.yun@mediatek.com> a =E9crit :
-> Hi Paul,
->=20
-> On Wed, 2020-01-08 at 14:26 -0300, Paul Cercueil wrote:
->>  Hi Greg,
->>=20
->>=20
->>  Le mer., janv. 8, 2020 at 17:53, Greg Kroah-Hartman
->>  <gregkh@linuxfoundation.org> a =E9crit :
->>  > On Tue, Jan 07, 2020 at 01:29:01AM +0100, Paul Cercueil wrote:
->>  >>  Register a power supply charger, whose online state depends on
->>  >> whether
->>  >>  the USB role is set to device or not.
->>  >
->>  > That says _what_ you are doing, but I have no idea _why_ you want=20
->> to
->>  > do
->>  > this.
->>  >
->>  > What is this going to cause to have happen?  What new userspace=20
->> api is
->>  > going to result?  What will a user do with this?
->>=20
->>  This is useful when the USB role is the only way to know if the=20
->> device
->>  is charging from USB.
-> There is no charger IC on your platform?
+--buDNgeHiu+HCsDEc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Correct.
+On Tue, Jan 14, 2020 at 03:15:59PM +0800, Nicolas Boichat wrote:
 
->=20
->>=20
->>  The API is the standard power supply charger API, you get a
->>  /sys/class/power_supply/xxx/online node which tells you the state of
->>  the charger.
->>=20
->>  The sole purpose of this is to give userspace applications a way to
->>  know whether or not the charger is plugged.
->>=20
->>  > Is this going to always show up, no matter if the role is not even
->>  > relevant for a power supply?
->>=20
->>  I guess it'd always show up, yes. In which case would the role not=20
->> be
->>  relevant for a power supply?
-> Do you also need it if the platform don't have battery?
+>  - I couldn't find a way to detect the number of regulators in the
+>    device tree, if we wanted to refuse to probe the device if there
+>    are too many regulators, which might be required for safety, see
+>    the thread on v2 [1].
 
-I guess not. Would you prefer it to be disabled by default? If so, what=20
-would be the way to have it enabled? A flag in devicetree?
+You'd need to enumerate all the properties of the device and look
+for things matching *-supply.
 
->=20
->>  Is gpio-b-connector not always used for
->>  OTG connectors?
-> It also supports device only mode, usually uses vBus pin to
-> enable/disable controller
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Yes, that would work too. The problem would be a host-only=20
-gpio-b-connector.
+--buDNgeHiu+HCsDEc
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Paul
+-----BEGIN PGP SIGNATURE-----
 
-=
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4d21oACgkQJNaLcl1U
+h9CCOwf+K6UJ3dhSHND3Fpdx/IUgRmsJiK2V3jATceFWHdf8/BMeiNDYwD2U7i1q
+3086jl6AsX+YoSVr7Y1z7U+i8sHs2E/x/bP9LjOzRAXLya+5rdefN2ngQZq1Deex
+AUlEQpjAk186CwzKC1OWLLmbBYRbo/avge9LcYp3eAFfUbv2kjv2QRPII2EspHzi
+Zs3Y57WJlZ7STEyx7rHHXWYqEv7IqhlIo1f2xZobE7MFBmsYCjYy9GMMexe6H2z4
+zMbp8clRBhJ/+CeT06cbMK5/gPb1biOaPeFndjeQOSbO3hmvfi2F2w32lJZsad4x
+qAImcHOYwKX7KXoR1RoiFJO5kVdyaw==
+=l7/J
+-----END PGP SIGNATURE-----
 
+--buDNgeHiu+HCsDEc--
