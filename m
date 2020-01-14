@@ -2,83 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEC3C13A6EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D30BE13A4CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbgANKQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:16:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729122AbgANKKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:10:10 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34E9B24679;
-        Tue, 14 Jan 2020 10:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996609;
-        bh=uUrA3Z+l+qzdLYCP9M082e6po9DoD8BgNE22uN5SkBk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SdyI6k/Khevxwprx1O3ayr1It7NU4cqKpDZdmB69JDwYdrS/oT7bHJbZg8X07Dbo0
-         8qqCH5Wgn5XNKIISZTYpyphn7KB+YwqYnHPBshwjM3wNN4IgrMMhQbWVuPwQbfMncx
-         KTC6NaWvh8J+cL8xML6HAqYT0tRl1T4ihxzFBx+I=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 10/39] can: gs_usb: gs_usb_probe(): use descriptors of current altsetting
-Date:   Tue, 14 Jan 2020 11:01:44 +0100
-Message-Id: <20200114094341.436889131@linuxfoundation.org>
+        id S1729246AbgANKCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:02:33 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726053AbgANKC3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:02:29 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EA2DH4157834;
+        Tue, 14 Jan 2020 05:02:20 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xh7h70vdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 05:02:19 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00EA0uDp029507;
+        Tue, 14 Jan 2020 10:02:25 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma01wdc.us.ibm.com with ESMTP id 2xf7502ga5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 10:02:25 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EA2Iuu23790018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 10:02:18 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F47AC605A;
+        Tue, 14 Jan 2020 10:02:18 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB55BC6061;
+        Tue, 14 Jan 2020 10:02:15 +0000 (GMT)
+Received: from skywalker.in.ibm.com (unknown [9.124.35.105])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 14 Jan 2020 10:02:15 +0000 (GMT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH v3 8/9] asm-generic/tlb: Rename HAVE_MMU_GATHER_NO_GATHER
+Date:   Tue, 14 Jan 2020 15:31:44 +0530
+Message-Id: <20200114100145.365527-9-aneesh.kumar@linux.ibm.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
-References: <20200114094336.210038037@linuxfoundation.org>
-User-Agent: quilt/0.66
+In-Reply-To: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
+References: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_02:2020-01-13,2020-01-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 adultscore=0 clxscore=1015 mlxscore=0
+ suspectscore=2 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001140090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 2f361cd9474ab2c4ab9ac8db20faf81e66c6279b upstream.
+Towards a more consistent naming scheme.
 
-Make sure to always use the descriptors of the current alternate setting
-to avoid future issues when accessing fields that may differ between
-settings.
-
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN devices")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- drivers/net/can/usb/gs_usb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/Kconfig              |  2 +-
+ arch/s390/Kconfig         |  2 +-
+ include/asm-generic/tlb.h | 14 ++++++++++++--
+ mm/mmu_gather.c           | 10 +++++-----
+ 4 files changed, 19 insertions(+), 9 deletions(-)
 
---- a/drivers/net/can/usb/gs_usb.c
-+++ b/drivers/net/can/usb/gs_usb.c
-@@ -926,7 +926,7 @@ static int gs_usb_probe(struct usb_inter
- 			     GS_USB_BREQ_HOST_FORMAT,
- 			     USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_INTERFACE,
- 			     1,
--			     intf->altsetting[0].desc.bInterfaceNumber,
-+			     intf->cur_altsetting->desc.bInterfaceNumber,
- 			     hconf,
- 			     sizeof(*hconf),
- 			     1000);
-@@ -949,7 +949,7 @@ static int gs_usb_probe(struct usb_inter
- 			     GS_USB_BREQ_DEVICE_CONFIG,
- 			     USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_INTERFACE,
- 			     1,
--			     intf->altsetting[0].desc.bInterfaceNumber,
-+			     intf->cur_altsetting->desc.bInterfaceNumber,
- 			     dconf,
- 			     sizeof(*dconf),
- 			     1000);
-
+diff --git a/arch/Kconfig b/arch/Kconfig
+index e8548211b6a9..c35668fbf4d4 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -402,7 +402,7 @@ config MMU_GATHER_PAGE_SIZE
+ config MMU_GATHER_NO_RANGE
+ 	bool
+ 
+-config HAVE_MMU_GATHER_NO_GATHER
++config MMU_GATHER_NO_GATHER
+ 	bool
+ 
+ config ARCH_HAVE_NMI_SAFE_CMPXCHG
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index e2cde82a1a3c..de39c2e92435 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -163,7 +163,7 @@ config S390
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_MEMBLOCK_NODE_MAP
+ 	select HAVE_MEMBLOCK_PHYS_MAP
+-	select HAVE_MMU_GATHER_NO_GATHER
++	select MMU_GATHER_NO_GATHER
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select HAVE_NOP_MCOUNT
+ 	select HAVE_OPROFILE
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index 53befa5acb27..ca0fe75b5355 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -143,6 +143,16 @@
+  *  MMU_GATHER_NO_RANGE
+  *
+  *  Use this if your architecture lacks an efficient flush_tlb_range().
++ *
++ *  MMU_GATHER_NO_GATHER
++ *
++ *  If the option is set the mmu_gather will not track individual pages for
++ *  delayed page free anymore. A platform that enables the option needs to
++ *  provide its own implementation of the __tlb_remove_page_size() function to
++ *  free pages.
++ *
++ *  This is useful if your architecture already flushes TLB entries in the
++ *  various ptep_get_and_clear() functions.
+  */
+ 
+ #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
+@@ -202,7 +212,7 @@ extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
+ #endif /* CONFIG_MMU_GATHER_RCU_TABLE_FREE */
+ 
+ 
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ /*
+  * If we can't allocate a page to make a big batch of page pointers
+  * to work on, then just handle a few from the on-stack structure.
+@@ -277,7 +287,7 @@ struct mmu_gather {
+ 
+ 	unsigned int		batch_count;
+ 
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ 	struct mmu_gather_batch *active;
+ 	struct mmu_gather_batch	local;
+ 	struct page		*__pages[MMU_GATHER_BUNDLE];
+diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+index 297c70307367..a28c74328085 100644
+--- a/mm/mmu_gather.c
++++ b/mm/mmu_gather.c
+@@ -11,7 +11,7 @@
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+ 
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ 
+ static bool tlb_next_batch(struct mmu_gather *tlb)
+ {
+@@ -89,7 +89,7 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
+ 	return false;
+ }
+ 
+-#endif /* HAVE_MMU_GATHER_NO_GATHER */
++#endif /* MMU_GATHER_NO_GATHER */
+ 
+ #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
+ 
+@@ -180,7 +180,7 @@ static void tlb_flush_mmu_free(struct mmu_gather *tlb)
+ #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
+ 	tlb_table_flush(tlb);
+ #endif
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ 	tlb_batch_pages_flush(tlb);
+ #endif
+ }
+@@ -211,7 +211,7 @@ void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 	/* Is it from 0 to ~0? */
+ 	tlb->fullmm     = !(start | (end+1));
+ 
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ 	tlb->need_flush_all = 0;
+ 	tlb->local.next = NULL;
+ 	tlb->local.nr   = 0;
+@@ -271,7 +271,7 @@ void tlb_finish_mmu(struct mmu_gather *tlb,
+ 
+ 	tlb_flush_mmu(tlb);
+ 
+-#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++#ifndef CONFIG_MMU_GATHER_NO_GATHER
+ 	tlb_batch_list_free(tlb);
+ #endif
+ 	dec_tlb_flush_pending(tlb->mm);
+-- 
+2.24.1
 
