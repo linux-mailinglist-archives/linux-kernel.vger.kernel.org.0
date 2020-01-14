@@ -2,123 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50ADE13AFC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 267F213AFEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbgANQqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:46:19 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:6828 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbgANQqS (ORCPT
+        id S1728777AbgANQsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:48:39 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44743 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727102AbgANQsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:46:18 -0500
-Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
-  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="Horatiu.Vultur@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa1.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: y+ft/dlKJOCa17GdZ1QBuWly0sE48PA5wRGmIFD6wVJusyZ8AcWlL3fyfIG6YhYN/nJeKrCins
- Ahg78OxmOcrIdFk+0U9KHOIPhaCpJIGTqEJN+6dDV1FI2aZUdDw4I2mawl4zZLfbzMEz7tEu0W
- nI8gib6X0JaYJ9MbdAt+omA11WCk86f2l8mm/I6lm6Re1SvWChmL++MKtecYBOoljRvpyAdyBe
- b+bmzBTVMlh4iYDnZ05itmtjCwKgkPmFmJtg207FN6DkG5ngdmMUAdwRkg8pTjjSoGHxqZt50w
- FkM=
-X-IronPort-AV: E=Sophos;i="5.70,433,1574146800"; 
-   d="scan'208";a="64704366"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Jan 2020 09:46:16 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 14 Jan 2020 09:46:16 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Tue, 14 Jan 2020 09:46:16 -0700
-Date:   Tue, 14 Jan 2020 17:46:15 +0100
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bridge@lists.linux-foundation.org>, <davem@davemloft.net>,
-        <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
-        <jakub.kicinski@netronome.com>, <vivien.didelot@gmail.com>,
-        <olteanv@gmail.com>, <anirudh.venkataramanan@intel.com>,
-        <dsahern@gmail.com>, <jiri@resnulli.us>, <ivecera@redhat.com>,
-        <UNGLinuxDriver@microchip.com>
-Subject: Re: [RFC net-next Patch v2 4/4] net: bridge: mrp: switchdev: Add HW
- offload
-Message-ID: <20200114164615.yvidcidrj24x4gcy@soft-dev3.microsemi.net>
-References: <20200113124620.18657-1-horatiu.vultur@microchip.com>
- <20200113124620.18657-5-horatiu.vultur@microchip.com>
- <20200113140053.GE11788@lunn.ch>
- <20200113225751.jkkio4rztyuff4xj@soft-dev3.microsemi.net>
- <20200113233011.GF11788@lunn.ch>
- <20200114080856.wa7ljxyzaf34u4xj@soft-dev3.microsemi.net>
- <20200114132047.GG11788@lunn.ch>
+        Tue, 14 Jan 2020 11:48:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579020518;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wa4DvoCfeEWwo/urASd6YVcN7NZPPV/NkQMLP8JZMPc=;
+        b=a3/2qNtWS5NkfAPYCrG5beYpHo7nJ4Rt04O2/q8kHNOiZdBHTXTFPkuXyjnCfl2DytpqFQ
+        iCLMOb5vjRn3HtaPkxGon0FLKq9/jpGVd6B3JuT/5/hc5UEzXvhmlSDSRB/2eXmOiOBtVC
+        w5k25P/1KTBHhZVD2SaFQafi6fWIiuo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-137-qff8BlnUO7GRh5at_9TLdg-1; Tue, 14 Jan 2020 11:48:34 -0500
+X-MC-Unique: qff8BlnUO7GRh5at_9TLdg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B70891FE18;
+        Tue, 14 Jan 2020 16:48:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E8C9C60BF1;
+        Tue, 14 Jan 2020 16:48:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, hch@lst.de,
+        tytso@mit.edu, adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+cc:     dhowells@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20200114132047.GG11788@lunn.ch>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4466.1579020509.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 14 Jan 2020 16:48:29 +0000
+Message-ID: <4467.1579020509@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 01/14/2020 14:20, Andrew Lunn wrote:
-> 
-> On Tue, Jan 14, 2020 at 09:08:56AM +0100, Horatiu Vultur wrote:
-> > The 01/14/2020 00:30, Andrew Lunn wrote:
-> > >
-> > > Hi Horatiu
-> > >
-> > > It has been said a few times what the basic state machine should be in
-> > > user space. A pure software solution can use raw sockets to send and
-> > > receive MRP_Test test frames. When considering hardware acceleration,
-> > > the switchdev API you have proposed here seems quite simple. It should
-> > > not be too hard to map it to a set of netlink messages from userspace.
-> >
-> > Yes and we will try to go with this approach, to have a user space
-> > application that contains the state machines and then in the kernel to
-> > extend the netlink messages to map to the switchdev API.
-> > So we will create a new RFC once we will have the user space and the
-> > definition of the netlink messages.
-> 
-> Cool.
-> 
-> Before you get too far, we might want to discuss exactly how you pass
-> these netlink messages. Do we want to make this part of the new
-> ethtool Netlink implementation? Part of devlink? Extend the current
-> bridge netlink interface used by userspae RSTP daemons? A new generic
-> netlink socket?
+Again with regard to my rewrite of fscache and cachefiles:
 
-We are not yet 100% sure. We were thinking to choose between extending
-the bridge netlink interface or adding a new netlink socket.  I was
-leaning to create a new netlink socket, because I think that would be
-clearer and easier to understand. But I don't have much experience with
-this, so in both cases I need to sit down and actually try to implement
-it to see exactly.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
+/?h=3Dfscache-iter
 
-> 
-> Extending the bridge netlink interface might seem the most logical.
-> The argument against it, is that the kernel bridge code probably does
-> not need to know anything about this offloading. But it does allow you
-> to make use of the switchdev API, so we have a uniform API between the
-> network stack and drivers implementing offloading.
-> 
->       Andrew
+I've got rid of my use of bmap()!  Hooray!
 
--- 
-/Horatiu
+However, I'm informed that I can't trust the extent map of a backing file =
+to
+tell me accurately whether content exists in a file because:
+
+ (a) Not-quite-contiguous extents may be joined by insertion of blocks of
+     zeros by the filesystem optimising itself.  This would give me a fals=
+e
+     positive when trying to detect the presence of data.
+
+ (b) Blocks of zeros that I write into the file may get punched out by
+     filesystem optimisation since a read back would be expected to read z=
+eros
+     there anyway, provided it's below the EOF.  This would give me a fals=
+e
+     negative.
+
+Is there some setting I can use to prevent these scenarios on a file - or =
+can
+one be added?
+
+Without being able to trust the filesystem to tell me accurately what I've
+written into it, I have to use some other mechanism.  Currently, I've swit=
+ched
+to storing a map in an xattr with 1 bit per 256k block, but that gets hard=
+ to
+use if the file grows particularly large and also has integrity consequenc=
+es -
+though those are hopefully limited as I'm now using DIO to store data into=
+ the
+cache.
+
+If it helps, I'm downloading data in aligned 256k blocks and storing data =
+in
+those same aligned 256k blocks, so if that makes it easier...
+
+David
+
