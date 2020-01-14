@@ -2,257 +2,465 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B384413AE6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F017313AE9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbgANQIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:08:43 -0500
-Received: from mail-eopbgr50084.outbound.protection.outlook.com ([40.107.5.84]:14244
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725904AbgANQIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:08:42 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R/zd51ia640Tfp0MMqoS3vcGEEV1QLad+KNhBn1MO44mdb6AFNmhodfzSe8zqo+lvmVjorMmVYZJseJyXnPSMeHSdNcdHUXxzS3ywdYppiYEp4pUFdsjD+bItfVV2ebtHdaoX7qwLLdRKyo+t5M3NWOAgVx0PeA4NfzM2za183iO3M6VmBISMy4Qhm+MRT9UtM2tsXcxPDxdnh91vQ2qnp3InuJlW2LOk6jrC0jxv03pZj//BoA8umArrV/OFEHQyx+Xg8ivcRxsJShUV7j+qzy8OhLXw2vrqnBPw1U70jdwI27zQisbcMRzcSt+Q6w10kelCOW6SRE7P8N8dczDow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TVhhZozBGEFP+R0qHiSbAHb3dZjqdAb9bO1/gfmqwGM=;
- b=iFdcDfSvAq6tQhzXfIb7MEmTgwRt3tOL0UDhsjQjS7SLo/bBhC5HYSkr2fo8NNcoSgzVYsUJZsSrcZXi9W1xgif066kLn8XqIWLq2AcTIPSSo5+HtbxzK56D6IWhXkDZHzckht9mUoSUbFZCq5keGwAks17Lsgzk7qdGO9wbXV6D+w4i5uD7xgzqNNFKVkZQNerSs837vxej8CcJEpXgeY9fojjFARHH4wljSViSD5p1ql+xhv/+MwbHwyeE8QEko7hj0uZ1yt8DlhKpZu/BIh/doU+eILpS66BGXluHXI2vprKSLqKYa3K7uXR+UbVo4aOS7wD+FBCmPLf325cqDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TVhhZozBGEFP+R0qHiSbAHb3dZjqdAb9bO1/gfmqwGM=;
- b=D/kPgnNDDhevrgAQbaLOISVpE8fs9KxYduaPY8z2R76ULie+xFbI3g1aizx7sfRKzv86SC/GJayLUyPQDySKudU/caLpSsivhk3iDYo/ZoTCJyJxP1dZceNQ82yxdytDSSEDDrcqHP2gVa3MX8RVvZiZdiqGVUg1fphdFsaLdfE=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB3149.eurprd04.prod.outlook.com (10.170.229.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.13; Tue, 14 Jan 2020 16:08:38 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2623.017; Tue, 14 Jan 2020
- 16:08:38 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-CC:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 1/2] thermal: devfreq_cooling: Use PM QoS to set frequency
- limits
-Thread-Topic: [PATCH 1/2] thermal: devfreq_cooling: Use PM QoS to set
- frequency limits
-Thread-Index: AQHVx95NFadO4WGfQUyi2pcSmj7HoQ==
-Date:   Tue, 14 Jan 2020 16:08:38 +0000
-Message-ID: <VI1PR04MB70233705094CCA4BA7545CF0EE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: eb0f6c14-3abc-48df-f682-08d7990c0443
-x-ms-traffictypediagnostic: VI1PR04MB3149:
-x-microsoft-antispam-prvs: <VI1PR04MB3149AA65941AE69CE5206F8BEE340@VI1PR04MB3149.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:635;
-x-forefront-prvs: 028256169F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(39860400002)(136003)(376002)(346002)(189003)(199004)(26005)(33656002)(2906002)(186003)(71200400001)(44832011)(53546011)(110136005)(7696005)(6506007)(54906003)(478600001)(7416002)(66476007)(9686003)(81156014)(81166006)(316002)(4326008)(64756008)(55016002)(8936002)(66446008)(5660300002)(86362001)(52536014)(66946007)(76116006)(66556008)(8676002)(91956017);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3149;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WUEWKLdc6+JGRkNLwXMImJoAJuG7OKxrF70p0skuet0+IoEZo+VsEmkjzfW/55vmU3yom8HCDDfsroDK8Y9UcSOZMySC6OZU8X9UEhRtfR4hXDZETuXrMW05KbKnCBNssF1anxKBivCMzNvJybrZ3wtVD7/c72P4cjXKIwMoMqEocY9bKwLT1BjFcfNCKzLac3jbjElyxPmMUjuCn9/SLqfofDbI5e1ZOLGl/+bj9XD27i1LstI0BYkUCmOUhn6+bqyM3G71ZRR5Z4emqnGPzjeKB/CL2knEeByp9YVjEUA+693mlZeCTQx7upd44PTX0cmEJJ4nw2hG7LhL27DlBrBMxlWpaY+cbrm+g7q6sgNSq1sw8Topi4vTIf3/xvZRu/mMvaOw5Hdtj6p2XgwjOJLVeAfWeW9ENiTmtE+0DfgmGtcyR+lIK5b3BZh9+NhN
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb0f6c14-3abc-48df-f682-08d7990c0443
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2020 16:08:38.5299
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OkIkVQq4vXLOc62u82HfsaTUtbhjBUYDdzFbUE47HFtc2/cwT7pKyo98SX/23ke1Osa0jcqMZ/ASCDOpnM0DAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3149
+        id S1729425AbgANQKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:10:14 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37448 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728904AbgANQJX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:09:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=QL8elIV7/kWFIzb2dMQMFGR8MhrEPyJ7y+Tb6idzyfQ=; b=Gp4KU0jkeTzU
+        BM7rnbKTHdvzjqC36hYeLaNGvvSXV6G5fdhgsYSSlfIA1XbHLxgS72wUIP8Y+gj7ApLwK9dF/j5G6
+        0P/AjQg1xF8VpdGCTJlOUZVf+pLWS/oFlwgbfGEK/TIqFn8V7mSl1vERdZjbr5zEh66PzB4wl+Ojb
+        Ul9Cg=;
+Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1irOkb-0001Uk-Tv; Tue, 14 Jan 2020 16:09:05 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 1A265D02C77; Tue, 14 Jan 2020 16:09:05 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        devicetree@vger.kernel.org, festevam@gmail.com,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Mark Brown <broonie@kernel.org>,
+        mark.rutland@arm.com, nicoleotsuka@gmail.com,
+        Nicolin Chen <nicoleotsuka@gmail.com>, perex@perex.cz,
+        robh+dt@kernel.org, timur@kernel.org, tiwai@suse.com,
+        Xiubo.Lee@gmail.com
+Subject: Applied "ASoC: fsl_asrc: Add support for imx8qm & imx8qxp" to the asoc tree
+In-Reply-To: <f33dfe3157b5ab200e09ccbf9ab73d31fac6664b.1575452454.git.shengjiu.wang@nxp.com>
+Message-Id: <applied-f33dfe3157b5ab200e09ccbf9ab73d31fac6664b.1575452454.git.shengjiu.wang@nxp.com>
+X-Patchwork-Hint: ignore
+Date:   Tue, 14 Jan 2020 16:09:05 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.2020 19:49, Matthias Kaehlcke wrote:=0A=
-> Now that devfreq supports limiting the frequency range of a device=0A=
-> through PM QoS make use of it instead of disabling OPPs that should=0A=
-> not be used.=0A=
-> =0A=
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>=0A=
-> ---=0A=
-=0A=
-It is not obvious but this changes behavior when min max requests =0A=
-conflict (min > max): with PM QoS a MIN_FREQUENCY request takes =0A=
-precedence but if higher OPPs are disabled then this will override =0A=
-MIN_FREQUENCY.=0A=
-=0A=
-There are very few users of this functionality so I don't think there =0A=
-are any systems that depend on this behaving one way or the other but =0A=
-perhaps it should be mentioned in commit message?=0A=
-=0A=
-As far as I can tell the only user of devfreq_cooling in upstream is =0A=
-drivers/gpu/drm/panfrost?=0A=
-=0A=
->   drivers/thermal/devfreq_cooling.c | 66 ++++++++++---------------------=
-=0A=
->   1 file changed, 20 insertions(+), 46 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_=
-cooling.c=0A=
-> index ef59256887ff..3a63603afcf2 100644=0A=
-> --- a/drivers/thermal/devfreq_cooling.c=0A=
-> +++ b/drivers/thermal/devfreq_cooling.c=0A=
-> @@ -24,11 +24,13 @@=0A=
->   #include <linux/idr.h>=0A=
->   #include <linux/slab.h>=0A=
->   #include <linux/pm_opp.h>=0A=
-> +#include <linux/pm_qos.h>=0A=
->   #include <linux/thermal.h>=0A=
->   =0A=
->   #include <trace/events/thermal.h>=0A=
->   =0A=
-> -#define SCALE_ERROR_MITIGATION 100=0A=
-> +#define HZ_PER_KHZ		1000=0A=
-> +#define SCALE_ERROR_MITIGATION	100=0A=
->   =0A=
->   static DEFINE_IDA(devfreq_ida);=0A=
->   =0A=
-> @@ -65,49 +67,9 @@ struct devfreq_cooling_device {=0A=
->   	struct devfreq_cooling_power *power_ops;=0A=
->   	u32 res_util;=0A=
->   	int capped_state;=0A=
-> +	struct dev_pm_qos_request req_max_freq;=0A=
->   };=0A=
->   =0A=
-> -/**=0A=
-> - * partition_enable_opps() - disable all opps above a given state=0A=
-> - * @dfc:	Pointer to devfreq we are operating on=0A=
-> - * @cdev_state:	cooling device state we're setting=0A=
-> - *=0A=
-> - * Go through the OPPs of the device, enabling all OPPs until=0A=
-> - * @cdev_state and disabling those frequencies above it.=0A=
-> - */=0A=
-> -static int partition_enable_opps(struct devfreq_cooling_device *dfc,=0A=
-> -				 unsigned long cdev_state)=0A=
-> -{=0A=
-> -	int i;=0A=
-> -	struct device *dev =3D dfc->devfreq->dev.parent;=0A=
-> -=0A=
-> -	for (i =3D 0; i < dfc->freq_table_size; i++) {=0A=
-> -		struct dev_pm_opp *opp;=0A=
-> -		int ret =3D 0;=0A=
-> -		unsigned int freq =3D dfc->freq_table[i];=0A=
-> -		bool want_enable =3D i >=3D cdev_state ? true : false;=0A=
-> -=0A=
-> -		opp =3D dev_pm_opp_find_freq_exact(dev, freq, !want_enable);=0A=
-> -=0A=
-> -		if (PTR_ERR(opp) =3D=3D -ERANGE)=0A=
-> -			continue;=0A=
-> -		else if (IS_ERR(opp))=0A=
-> -			return PTR_ERR(opp);=0A=
-> -=0A=
-> -		dev_pm_opp_put(opp);=0A=
-> -=0A=
-> -		if (want_enable)=0A=
-> -			ret =3D dev_pm_opp_enable(dev, freq);=0A=
-> -		else=0A=
-> -			ret =3D dev_pm_opp_disable(dev, freq);=0A=
-> -=0A=
-> -		if (ret)=0A=
-> -			return ret;=0A=
-> -	}=0A=
-> -=0A=
-> -	return 0;=0A=
-> -}=0A=
-> -=0A=
->   static int devfreq_cooling_get_max_state(struct thermal_cooling_device =
-*cdev,=0A=
->   					 unsigned long *state)=0A=
->   {=0A=
-> @@ -134,7 +96,7 @@ static int devfreq_cooling_set_cur_state(struct therma=
-l_cooling_device *cdev,=0A=
->   	struct devfreq_cooling_device *dfc =3D cdev->devdata;=0A=
->   	struct devfreq *df =3D dfc->devfreq;=0A=
->   	struct device *dev =3D df->dev.parent;=0A=
-> -	int ret;=0A=
-> +	unsigned long freq;=0A=
->   =0A=
->   	if (state =3D=3D dfc->cooling_state)=0A=
->   		return 0;=0A=
-> @@ -144,9 +106,10 @@ static int devfreq_cooling_set_cur_state(struct ther=
-mal_cooling_device *cdev,=0A=
->   	if (state >=3D dfc->freq_table_size)=0A=
->   		return -EINVAL;=0A=
->   =0A=
-> -	ret =3D partition_enable_opps(dfc, state);=0A=
-> -	if (ret)=0A=
-> -		return ret;=0A=
-> +	freq =3D dfc->freq_table[state];=0A=
-> +=0A=
-> +	dev_pm_qos_update_request(&dfc->req_max_freq,=0A=
-> +				  DIV_ROUND_UP(freq, HZ_PER_KHZ));=0A=
->   =0A=
->   	dfc->cooling_state =3D state;=0A=
->   =0A=
-> @@ -529,6 +492,12 @@ of_devfreq_cooling_register_power(struct device_node=
- *np, struct devfreq *df,=0A=
->   	if (err)=0A=
->   		goto free_dfc;=0A=
->   =0A=
-> +	err =3D dev_pm_qos_add_request(df->dev.parent, &dfc->req_max_freq,=0A=
-> +				     DEV_PM_QOS_MAX_FREQUENCY,=0A=
-> +				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);=0A=
-> +	if (err < 0)=0A=
-> +		goto remove_qos_req;=0A=
-> +=0A=
->   	err =3D ida_simple_get(&devfreq_ida, 0, 0, GFP_KERNEL);=0A=
->   	if (err < 0)=0A=
->   		goto free_tables;=0A=
-> @@ -552,6 +521,10 @@ of_devfreq_cooling_register_power(struct device_node=
- *np, struct devfreq *df,=0A=
->   =0A=
->   release_ida:=0A=
->   	ida_simple_remove(&devfreq_ida, dfc->id);=0A=
-> +=0A=
-> +remove_qos_req:=0A=
-> +	dev_pm_qos_remove_request(&dfc->req_max_freq); > +=0A=
-=0A=
-A quirk of the dev_pm_qos API is that dev_pm_qos_remove_request prints a =
-=0A=
-WARN splat if !dev_pm_qos_request_active and this can true on =0A=
-dev_pm_qos_add_request error.=0A=
-=0A=
-I dealt with this by checking dev_pm_qos_request_active explicitly but =0A=
-perhaps dev_pm_qos API could be changed? In general "free/release" =0A=
-functions shouldn't complain if there's nothing to do.=0A=
-=0A=
->   free_tables:=0A=
->   	kfree(dfc->power_table);=0A=
->   	kfree(dfc->freq_table);=0A=
-> @@ -600,6 +573,7 @@ void devfreq_cooling_unregister(struct thermal_coolin=
-g_device *cdev)=0A=
->   =0A=
->   	thermal_cooling_device_unregister(dfc->cdev);=0A=
->   	ida_simple_remove(&devfreq_ida, dfc->id);=0A=
-> +	dev_pm_qos_remove_request(&dfc->req_max_freq);=0A=
->   	kfree(dfc->power_table);=0A=
->   	kfree(dfc->freq_table);=0A=
+The patch
+
+   ASoC: fsl_asrc: Add support for imx8qm & imx8qxp
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c05f10f28ef697aae8f1d82012d660af3cfc8cf9 Mon Sep 17 00:00:00 2001
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+Date: Wed, 4 Dec 2019 20:00:19 +0800
+Subject: [PATCH] ASoC: fsl_asrc: Add support for imx8qm & imx8qxp
+
+There are two asrc module in imx8qm & imx8qxp, each module has
+different clock configuration, and the DMA type is EDMA.
+
+So in this patch, we define the new clocks, refine the clock map,
+and include struct fsl_asrc_soc_data for different soc usage.
+
+The EDMA channel is fixed with each dma request, one dma request
+corresponding to one dma channel. So we need to request dma
+channel with dma request of asrc module.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Link: https://lore.kernel.org/r/f33dfe3157b5ab200e09ccbf9ab73d31fac6664b.1575452454.git.shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/fsl/fsl_asrc.c     | 125 +++++++++++++++++++++++++++++------
+ sound/soc/fsl/fsl_asrc.h     |  64 +++++++++++++++++-
+ sound/soc/fsl/fsl_asrc_dma.c |  41 ++++++++----
+ 3 files changed, 194 insertions(+), 36 deletions(-)
+
+diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
+index a3cfceea7d2f..0dcebc24c312 100644
+--- a/sound/soc/fsl/fsl_asrc.c
++++ b/sound/soc/fsl/fsl_asrc.c
+@@ -41,26 +41,65 @@ static struct snd_pcm_hw_constraint_list fsl_asrc_rate_constraints = {
+  * The following tables map the relationship between asrc_inclk/asrc_outclk in
+  * fsl_asrc.h and the registers of ASRCSR
+  */
+-static unsigned char input_clk_map_imx35[] = {
++static unsigned char input_clk_map_imx35[ASRC_CLK_MAP_LEN] = {
+ 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
++	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
++	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+ };
+ 
+-static unsigned char output_clk_map_imx35[] = {
++static unsigned char output_clk_map_imx35[ASRC_CLK_MAP_LEN] = {
+ 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
++	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
++	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+ };
+ 
+ /* i.MX53 uses the same map for input and output */
+-static unsigned char input_clk_map_imx53[] = {
++static unsigned char input_clk_map_imx53[ASRC_CLK_MAP_LEN] = {
+ /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
+ 	0x0, 0x1, 0x2, 0x7, 0x4, 0x5, 0x6, 0x3, 0x8, 0x9, 0xa, 0xb, 0xc, 0xf, 0xe, 0xd,
++	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
++	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+ };
+ 
+-static unsigned char output_clk_map_imx53[] = {
++static unsigned char output_clk_map_imx53[ASRC_CLK_MAP_LEN] = {
+ /*	0x0  0x1  0x2  0x3  0x4  0x5  0x6  0x7  0x8  0x9  0xa  0xb  0xc  0xd  0xe  0xf */
+ 	0x8, 0x9, 0xa, 0x7, 0xc, 0x5, 0x6, 0xb, 0x0, 0x1, 0x2, 0x3, 0x4, 0xf, 0xe, 0xd,
++	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
++	0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7,
+ };
+ 
+-static unsigned char *clk_map[2];
++/**
++ * i.MX8QM/i.MX8QXP uses the same map for input and output.
++ * clk_map_imx8qm[0] is for i.MX8QM asrc0
++ * clk_map_imx8qm[1] is for i.MX8QM asrc1
++ * clk_map_imx8qxp[0] is for i.MX8QXP asrc0
++ * clk_map_imx8qxp[1] is for i.MX8QXP asrc1
++ */
++static unsigned char clk_map_imx8qm[2][ASRC_CLK_MAP_LEN] = {
++	{
++	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
++	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
++	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	},
++	{
++	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
++	0x0, 0x1, 0x2, 0x3, 0xb, 0xc, 0xf, 0xf, 0xd, 0xe, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	0x4, 0x5, 0x6, 0xf, 0x8, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	},
++};
++
++static unsigned char clk_map_imx8qxp[2][ASRC_CLK_MAP_LEN] = {
++	{
++	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
++	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0xf, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xf, 0xf,
++	0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	},
++	{
++	0xf, 0xf, 0xf, 0xf, 0xf, 0x7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0x0,
++	0x0, 0x1, 0x2, 0x3, 0x7, 0x8, 0xf, 0xf, 0x9, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	0xf, 0xf, 0x6, 0xf, 0xf, 0xf, 0xa, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf,
++	},
++};
+ 
+ /**
+  * Select the pre-processing and post-processing options
+@@ -353,8 +392,8 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
+ 	}
+ 
+ 	/* Validate input and output clock sources */
+-	clk_index[IN] = clk_map[IN][config->inclk];
+-	clk_index[OUT] = clk_map[OUT][config->outclk];
++	clk_index[IN] = asrc_priv->clk_map[IN][config->inclk];
++	clk_index[OUT] = asrc_priv->clk_map[OUT][config->outclk];
+ 
+ 	/* We only have output clock for ideal ratio mode */
+ 	clk = asrc_priv->asrck_clk[clk_index[ideal ? OUT : IN]];
+@@ -398,13 +437,13 @@ static int fsl_asrc_config_pair(struct fsl_asrc_pair *pair, bool use_ideal_rate)
+ 	/* Set the channel number */
+ 	channels = config->channel_num;
+ 
+-	if (asrc_priv->channel_bits < 4)
++	if (asrc_priv->soc->channel_bits < 4)
+ 		channels /= 2;
+ 
+ 	/* Update channels for current pair */
+ 	regmap_update_bits(asrc_priv->regmap, REG_ASRCNCR,
+-			   ASRCNCR_ANCi_MASK(index, asrc_priv->channel_bits),
+-			   ASRCNCR_ANCi(index, channels, asrc_priv->channel_bits));
++			   ASRCNCR_ANCi_MASK(index, asrc_priv->soc->channel_bits),
++			   ASRCNCR_ANCi(index, channels, asrc_priv->soc->channel_bits));
+ 
+ 	/* Default setting: Automatic selection for processing mode */
+ 	regmap_update_bits(asrc_priv->regmap, REG_ASRCTR,
+@@ -531,7 +570,7 @@ static int fsl_asrc_dai_startup(struct snd_pcm_substream *substream,
+ 	struct fsl_asrc *asrc_priv = snd_soc_dai_get_drvdata(dai);
+ 
+ 	/* Odd channel number is not valid for older ASRC (channel_bits==3) */
+-	if (asrc_priv->channel_bits == 3)
++	if (asrc_priv->soc->channel_bits == 3)
+ 		snd_pcm_hw_constraint_step(substream->runtime, 0,
+ 					   SNDRV_PCM_HW_PARAM_CHANNELS, 2);
+ 
+@@ -905,6 +944,7 @@ static int fsl_asrc_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	int irq, ret, i;
++	u32 map_idx;
+ 	char tmp[16];
+ 
+ 	asrc_priv = devm_kzalloc(&pdev->dev, sizeof(*asrc_priv), GFP_KERNEL);
+@@ -964,14 +1004,37 @@ static int fsl_asrc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	asrc_priv->soc = of_device_get_match_data(&pdev->dev);
++	if (!asrc_priv->soc) {
++		dev_err(&pdev->dev, "failed to get soc data\n");
++		return -ENODEV;
++	}
++
+ 	if (of_device_is_compatible(np, "fsl,imx35-asrc")) {
+-		asrc_priv->channel_bits = 3;
+-		clk_map[IN] = input_clk_map_imx35;
+-		clk_map[OUT] = output_clk_map_imx35;
+-	} else {
+-		asrc_priv->channel_bits = 4;
+-		clk_map[IN] = input_clk_map_imx53;
+-		clk_map[OUT] = output_clk_map_imx53;
++		asrc_priv->clk_map[IN] = input_clk_map_imx35;
++		asrc_priv->clk_map[OUT] = output_clk_map_imx35;
++	} else if (of_device_is_compatible(np, "fsl,imx53-asrc")) {
++		asrc_priv->clk_map[IN] = input_clk_map_imx53;
++		asrc_priv->clk_map[OUT] = output_clk_map_imx53;
++	} else if (of_device_is_compatible(np, "fsl,imx8qm-asrc") ||
++		   of_device_is_compatible(np, "fsl,imx8qxp-asrc")) {
++		ret = of_property_read_u32(np, "fsl,asrc-clk-map", &map_idx);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to get clk map index\n");
++			return ret;
++		}
++
++		if (map_idx > 1) {
++			dev_err(&pdev->dev, "unsupported clk map index\n");
++			return -EINVAL;
++		}
++		if (of_device_is_compatible(np, "fsl,imx8qm-asrc")) {
++			asrc_priv->clk_map[IN] = clk_map_imx8qm[map_idx];
++			asrc_priv->clk_map[OUT] = clk_map_imx8qm[map_idx];
++		} else {
++			asrc_priv->clk_map[IN] = clk_map_imx8qxp[map_idx];
++			asrc_priv->clk_map[OUT] = clk_map_imx8qxp[map_idx];
++		}
+ 	}
+ 
+ 	ret = fsl_asrc_init(asrc_priv);
+@@ -1113,9 +1176,31 @@ static const struct dev_pm_ops fsl_asrc_pm = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(fsl_asrc_suspend, fsl_asrc_resume)
+ };
+ 
++static const struct fsl_asrc_soc_data fsl_asrc_imx35_data = {
++	.use_edma = false,
++	.channel_bits = 3,
++};
++
++static const struct fsl_asrc_soc_data fsl_asrc_imx53_data = {
++	.use_edma = false,
++	.channel_bits = 4,
++};
++
++static const struct fsl_asrc_soc_data fsl_asrc_imx8qm_data = {
++	.use_edma = true,
++	.channel_bits = 4,
++};
++
++static const struct fsl_asrc_soc_data fsl_asrc_imx8qxp_data = {
++	.use_edma = true,
++	.channel_bits = 4,
++};
++
+ static const struct of_device_id fsl_asrc_ids[] = {
+-	{ .compatible = "fsl,imx35-asrc", },
+-	{ .compatible = "fsl,imx53-asrc", },
++	{ .compatible = "fsl,imx35-asrc", .data = &fsl_asrc_imx35_data },
++	{ .compatible = "fsl,imx53-asrc", .data = &fsl_asrc_imx53_data },
++	{ .compatible = "fsl,imx8qm-asrc", .data = &fsl_asrc_imx8qm_data },
++	{ .compatible = "fsl,imx8qxp-asrc", .data = &fsl_asrc_imx8qxp_data },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, fsl_asrc_ids);
+diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
+index 2b57e8c53728..8a821132d9d0 100644
+--- a/sound/soc/fsl/fsl_asrc.h
++++ b/sound/soc/fsl/fsl_asrc.h
+@@ -308,6 +308,29 @@ enum asrc_inclk {
+ 	INCLK_SSI3_TX = 0x0b,
+ 	INCLK_SPDIF_TX = 0x0c,
+ 	INCLK_ASRCK1_CLK = 0x0f,
++
++	/* clocks for imx8 */
++	INCLK_AUD_PLL_DIV_CLK0 = 0x10,
++	INCLK_AUD_PLL_DIV_CLK1 = 0x11,
++	INCLK_AUD_CLK0         = 0x12,
++	INCLK_AUD_CLK1         = 0x13,
++	INCLK_ESAI0_RX_CLK     = 0x14,
++	INCLK_ESAI0_TX_CLK     = 0x15,
++	INCLK_SPDIF0_RX        = 0x16,
++	INCLK_SPDIF1_RX        = 0x17,
++	INCLK_SAI0_RX_BCLK     = 0x18,
++	INCLK_SAI0_TX_BCLK     = 0x19,
++	INCLK_SAI1_RX_BCLK     = 0x1a,
++	INCLK_SAI1_TX_BCLK     = 0x1b,
++	INCLK_SAI2_RX_BCLK     = 0x1c,
++	INCLK_SAI3_RX_BCLK     = 0x1d,
++	INCLK_ASRC0_MUX_CLK    = 0x1e,
++
++	INCLK_ESAI1_RX_CLK     = 0x20,
++	INCLK_ESAI1_TX_CLK     = 0x21,
++	INCLK_SAI6_TX_BCLK     = 0x22,
++	INCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
++	INCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
+ };
+ 
+ enum asrc_outclk {
+@@ -325,9 +348,33 @@ enum asrc_outclk {
+ 	OUTCLK_SSI3_RX = 0x0b,
+ 	OUTCLK_SPDIF_RX = 0x0c,
+ 	OUTCLK_ASRCK1_CLK = 0x0f,
++
++	/* clocks for imx8 */
++	OUTCLK_AUD_PLL_DIV_CLK0 = 0x10,
++	OUTCLK_AUD_PLL_DIV_CLK1 = 0x11,
++	OUTCLK_AUD_CLK0         = 0x12,
++	OUTCLK_AUD_CLK1         = 0x13,
++	OUTCLK_ESAI0_RX_CLK     = 0x14,
++	OUTCLK_ESAI0_TX_CLK     = 0x15,
++	OUTCLK_SPDIF0_RX        = 0x16,
++	OUTCLK_SPDIF1_RX        = 0x17,
++	OUTCLK_SAI0_RX_BCLK     = 0x18,
++	OUTCLK_SAI0_TX_BCLK     = 0x19,
++	OUTCLK_SAI1_RX_BCLK     = 0x1a,
++	OUTCLK_SAI1_TX_BCLK     = 0x1b,
++	OUTCLK_SAI2_RX_BCLK     = 0x1c,
++	OUTCLK_SAI3_RX_BCLK     = 0x1d,
++	OUTCLK_ASRCO_MUX_CLK    = 0x1e,
++
++	OUTCLK_ESAI1_RX_CLK     = 0x20,
++	OUTCLK_ESAI1_TX_CLK     = 0x21,
++	OUTCLK_SAI6_TX_BCLK     = 0x22,
++	OUTCLK_HDMI_RX_SAI0_RX_BCLK     = 0x24,
++	OUTCLK_HDMI_TX_SAI0_TX_BCLK     = 0x25,
+ };
+ 
+ #define ASRC_CLK_MAX_NUM	16
++#define ASRC_CLK_MAP_LEN	0x30
+ 
+ enum asrc_word_width {
+ 	ASRC_WIDTH_24_BIT = 0,
+@@ -387,6 +434,17 @@ struct dma_block {
+ 	unsigned int length;
+ };
+ 
++/**
++ * fsl_asrc_soc_data: soc specific data
++ *
++ * @use_edma: using edma as dma device or not
++ * @channel_bits: width of ASRCNCR register for each pair
++ */
++struct fsl_asrc_soc_data {
++	bool use_edma;
++	unsigned int channel_bits;
++};
++
+ /**
+  * fsl_asrc_pair: ASRC Pair private data
+  *
+@@ -431,8 +489,9 @@ struct fsl_asrc_pair {
+  * @asrck_clk: clock sources to driver ASRC internal logic
+  * @lock: spin lock for resource protection
+  * @pair: pair pointers
+- * @channel_bits: width of ASRCNCR register for each pair
++ * @soc: soc specific data
+  * @channel_avail: non-occupied channel numbers
++ * @clk_map: clock map for input/output clock
+  * @asrc_rate: default sample rate for ASoC Back-Ends
+  * @asrc_width: default sample width for ASoC Back-Ends
+  * @regcache_cfg: store register value of REG_ASRCFG
+@@ -450,8 +509,9 @@ struct fsl_asrc {
+ 	spinlock_t lock;
+ 
+ 	struct fsl_asrc_pair *pair[ASRC_PAIR_MAX_NUM];
+-	unsigned int channel_bits;
++	const struct fsl_asrc_soc_data *soc;
+ 	unsigned int channel_avail;
++	unsigned char *clk_map[2];
+ 
+ 	int asrc_rate;
+ 	int asrc_width;
+diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
+index 79d66224c0a8..ece130f59d15 100644
+--- a/sound/soc/fsl/fsl_asrc_dma.c
++++ b/sound/soc/fsl/fsl_asrc_dma.c
+@@ -197,21 +197,34 @@ static int fsl_asrc_dma_hw_params(struct snd_soc_component *component,
+ 	dma_cap_set(DMA_SLAVE, mask);
+ 	dma_cap_set(DMA_CYCLIC, mask);
+ 
+-	/* Get DMA request of Back-End */
+-	tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
+-	tmp_data = tmp_chan->private;
+-	pair->dma_data.dma_request = tmp_data->dma_request;
+-	dma_release_channel(tmp_chan);
+-
+-	/* Get DMA request of Front-End */
+-	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
+-	tmp_data = tmp_chan->private;
+-	pair->dma_data.dma_request2 = tmp_data->dma_request;
+-	pair->dma_data.peripheral_type = tmp_data->peripheral_type;
+-	pair->dma_data.priority = tmp_data->priority;
+-	dma_release_channel(tmp_chan);
++	/*
++	 * An EDMA DEV_TO_DEV channel is fixed and bound with DMA event of each
++	 * peripheral, unlike SDMA channel that is allocated dynamically. So no
++	 * need to configure dma_request and dma_request2, but get dma_chan via
++	 * dma_request_slave_channel directly with dma name of Front-End device
++	 */
++	if (!asrc_priv->soc->use_edma) {
++		/* Get DMA request of Back-End */
++		tmp_chan = dma_request_slave_channel(dev_be, tx ? "tx" : "rx");
++		tmp_data = tmp_chan->private;
++		pair->dma_data.dma_request = tmp_data->dma_request;
++		dma_release_channel(tmp_chan);
++
++		/* Get DMA request of Front-End */
++		tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
++		tmp_data = tmp_chan->private;
++		pair->dma_data.dma_request2 = tmp_data->dma_request;
++		pair->dma_data.peripheral_type = tmp_data->peripheral_type;
++		pair->dma_data.priority = tmp_data->priority;
++		dma_release_channel(tmp_chan);
++
++		pair->dma_chan[dir] =
++			dma_request_channel(mask, filter, &pair->dma_data);
++	} else {
++		pair->dma_chan[dir] =
++			fsl_asrc_get_dma_channel(pair, dir);
++	}
+ 
+-	pair->dma_chan[dir] = dma_request_channel(mask, filter, &pair->dma_data);
+ 	if (!pair->dma_chan[dir]) {
+ 		dev_err(dev, "failed to request DMA channel for Back-End\n");
+ 		return -EINVAL;
+-- 
+2.20.1
+
