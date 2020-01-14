@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5B913B226
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2935D13B22F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:33:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbgANScu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 13:32:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgANSct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:32:49 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728769AbgANSdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 13:33:43 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53971 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726053AbgANSdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 13:33:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579026821;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VU3iLjKmaQ0aNJQ9ZbgSwibwLQ11TCA8buR9ZQY0R+A=;
+        b=OHpxPSxm2iP9+ZZ43M93SEKKidT4Bmh0iG4FWTJy2zgYp7BahNFtiZFgPqtkwg8nzMjStS
+        OAmj/ckS0tlGtWGKphU02HYuIIohzmquEYLwgPkB1/Sn4QadR3Zz6fSMV7Qd4Jv6HfMXji
+        NM4T583IXoA/K7hRdfnEPnnwQeVSIxc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-272-OMK7ZWSpPBGwRivqNqoE-g-1; Tue, 14 Jan 2020 13:33:40 -0500
+X-MC-Unique: OMK7ZWSpPBGwRivqNqoE-g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49833222C4;
-        Tue, 14 Jan 2020 18:32:48 +0000 (UTC)
-Date:   Tue, 14 Jan 2020 13:32:46 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD03F801E78;
+        Tue, 14 Jan 2020 18:33:38 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-218.rdu2.redhat.com [10.10.122.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8900F5C1D6;
+        Tue, 14 Jan 2020 18:33:33 +0000 (UTC)
+Subject: Re: [PATCH 02/12] locking/rwsem: Exit early when held by an anonymous
+ owner
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdl?= =?UTF-8?B?bnNlbg==?= 
-        <thoiland@redhat.com>, Jean-Tsung Hsiao <jhsiao@redhat.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing/uprobe: Fix double perf_event linking on
- multiprobe uprobe
-Message-ID: <20200114133246.20b96d09@gandalf.local.home>
-In-Reply-To: <20200114174503.GB4769@kernel.org>
-References: <157862073931.1800.3800576241181489174.stgit@devnote2>
-        <20200114173535.GA4769@kernel.org>
-        <20200114124404.50a1c396@gandalf.local.home>
-        <20200114174503.GB4769@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20200114161225.309792-1-hch@lst.de>
+ <20200114161225.309792-3-hch@lst.de>
+ <925d1343-670e-8f92-0e73-6e9cee0d3ffb@redhat.com>
+ <20200114182514.GA9949@lst.de>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <478b3737-79e1-33a9-ac44-c6656e83adf5@redhat.com>
+Date:   Tue, 14 Jan 2020 13:33:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200114182514.GA9949@lst.de>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020 14:45:03 -0300
-Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+On 1/14/20 1:25 PM, Christoph Hellwig wrote:
+> On Tue, Jan 14, 2020 at 01:17:45PM -0500, Waiman Long wrote:
+>> The owner field is just a pointer to the task structure with the lower 3
+>> bits served as flag bits. Setting owner to RWSEM_OWNER_UNKNOWN (-2) will
+>> stop optimistic spinning. So under what condition did the crash happen?
+> When running xfstests with all patches in this series except for this
+> one, IIRC in generic/114.
 
-> Em Tue, Jan 14, 2020 at 12:44:04PM -0500, Steven Rostedt escreveu:
-> > On Tue, 14 Jan 2020 14:35:35 -0300
-> > Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
-> >   
-> > > If you don't mind I can put it into my next perf/urgent pull req to
-> > > Ingo/Thomas,  
-> > 
-> > I was going to pull this into my urgent tree when my tests finish with
-> > my for-next code.
-> > 
-> > I have one or two other patches I need to apply to urgent as well, so
-> > it's not an issue for me to take this.  
-> 
-> Go ahead, I still need some more time for my tests with the other
-> patches, please just collect my Tested-by,
->
+OK, I think I know where the bug is. I will send a patch to fix that.
 
-Will do!
+Thanks,
+Longman
 
-This also needs to run through my test suite which will take 13
-hours more (after my previous one finishes, which took more than 13
-because of all the patches I was testing).
 
--- Steve
