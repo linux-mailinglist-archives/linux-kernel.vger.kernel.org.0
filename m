@@ -2,144 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F176139F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A0A139F5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:13:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbgANCMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 21:12:02 -0500
-Received: from foss.arm.com ([217.140.110.172]:46700 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729267AbgANCMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 21:12:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A10B51045;
-        Mon, 13 Jan 2020 18:12:01 -0800 (PST)
-Received: from [192.168.0.129] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 095483F6C4;
-        Mon, 13 Jan 2020 18:11:54 -0800 (PST)
-Subject: Re: [PATCH V11 1/5] mm/hotplug: Introduce arch callback validating
- the hot remove range
-To:     David Hildenbrand <david@redhat.com>,
-        David Hildenbrand <dhildenb@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com,
-        cai@lca.pw, logang@deltatee.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com, steve.capper@arm.com, broonie@kernel.org,
-        valentin.schneider@arm.com, robin.murphy@arm.com,
-        steven.price@arm.com, suzuki.poulose@arm.com, ira.weiny@intel.com
-References: <6f0efddc-f124-58ca-28b6-4632469cf992@arm.com>
- <3C3BE5FA-0CFC-4C90-8657-63EF5B680B0B@redhat.com>
- <6b8fb779-31e8-1b63-85a8-9f6c93a04494@arm.com>
- <19194427-1295-3596-2c2c-463c4adf4f35@redhat.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <78f04711-2ca6-280c-d0c2-ab9eea866e59@arm.com>
-Date:   Tue, 14 Jan 2020 07:43:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729454AbgANCNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 21:13:51 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:33613 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728922AbgANCNv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 13 Jan 2020 21:13:51 -0500
+Received: by mail-pj1-f66.google.com with SMTP id u63so427301pjb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 18:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+z8kiB27wPGXn90Jifmc7GvqCcTTfQFQ09TVSilQ62U=;
+        b=nz5AooyyO8UV4W2raMKoiKBMXtT/bo9PatBrL5aEBihU5Bu8dzhJ8lIyBnJQ+7UN76
+         P+8/m5ClVTYTjII38MEWxWvX3IgSd4aJJ5WHnTZBjPegsX3qCbvmzuugoTbHeCGxKb4D
+         x4Tz6JqgNPET3RWsCkuix5TjP3xnI2zk1U5FIhqepS7I66Q5kXX0uOyeIxJgvG80qeSF
+         xxacbzLRmtPQRQNpVGry/ia8R+OdKCBfLrFLnw5bvA0fTBwrEhvK38+x3T07HMggXDyN
+         L3ZMnfshrU53TdeSuwwYqAH4t9yzn8peHp4uA1EZQ7oD09Aj36dwrTV0bi7V3NhYvo8o
+         1BBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+z8kiB27wPGXn90Jifmc7GvqCcTTfQFQ09TVSilQ62U=;
+        b=h+nZsiJ8T1x3QMjFYhHClRWDI9C9TuXm7LX5NJvzJuaHxEd+3+p0aaKJogl1YvTRUd
+         TJYOaKDgdlDPZ/HNgajo8Px0TTUWIM3VnSM0E4TKBNrgZgzs5diR05HcI8XNW42nWYVc
+         iOIrtqaJU5XfIg8rAV1H/n8sRZsHdnzPDjKSXCRX+yY+m8AtfqixUX/Xlc3w42bWj9zs
+         frYMl/+WGYkTIGb9lYWqTlGoovp45Xd/wfogRYY2Y6rvBZmDuk1f+ytv+Murb2Cnxx5a
+         2ffd3+QZ14lhh9N2M8ay386qitI1jhO2h9GYlsdbsTKM3SBDY4QSrmRe6AEyhYuNhtq6
+         cFFA==
+X-Gm-Message-State: APjAAAVLBzI39bJ4sMz3kclPJwZWUjwsVuv8u7RUSuZMDMFbSTUrCNIG
+        XHpZFE1E0/+lmHhv0kEU/Bqv86+ilS7Qs3TwnmhqKw==
+X-Google-Smtp-Source: APXvYqw6inDyeiXLNEF5jBW5S399bu/qD+aslWeemGXOynwxYjD/Q4CHQwEuQJmIYgaJouVkAD9Go4Az+fNFNcXaWa0=
+X-Received: by 2002:a17:902:fe8d:: with SMTP id x13mr17781759plm.232.1578968030398;
+ Mon, 13 Jan 2020 18:13:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <19194427-1295-3596-2c2c-463c4adf4f35@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200110134337.1752000-1-arnd@arndb.de> <CAFd5g47+_oyqsS0o0kQ+CaLNtjqbvOmQc-n0Ch1jAT6P6RSFiw@mail.gmail.com>
+In-Reply-To: <CAFd5g47+_oyqsS0o0kQ+CaLNtjqbvOmQc-n0Ch1jAT6P6RSFiw@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 13 Jan 2020 18:13:39 -0800
+Message-ID: <CAFd5g45bsH1781stRRWR45AN92=o9MeafHDjt7qZQveJSVMOJQ@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] kunit: move binary assertion out of line
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 13, 2020 at 6:12 PM Brendan Higgins
+<brendanhiggins@google.com> wrote:
+>
+> On Fri, Jan 10, 2020 at 5:43 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > In combination with the structleak gcc plugin, kunit can lead to excessive
+> > stack usage when each assertion adds another structure to the stack from
+> > of the calling function:
+> >
+> > base/test/property-entry-test.c:99:1: error: the frame size of 3032 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+> >
+> > As most assertions are binary, change those over to a direct function
+> > call that does not have this problem.  This can probably be improved
+> > further, I just went for a straightforward conversion, but a function
+> > call with 12 fixed arguments plus varargs it not great either.
+>
+> Yeah, I am not exactly excited by maintaining such a set of functions.
+>
+> I don't think anyone wants to go with the heap allocation route.
+>
+> Along the lines of the union/single copy idea[1]. What if we just put
+> a union of all the assertion types in the kunit struct? One is already
+> allocated for every test case and we only need one assertion object
+> for each test case at a time, so I imagine that sould work.
+>
+> I will start messing around with the idea. Still, it sounds like we
+> are down to either reducing the number of instances of this struct
+> that get created per test case, or we need to remove it entirely (as
+> you have done here).
+>
+> Cheers
 
+Woops forgot to link the original discussion.
 
-On 01/13/2020 04:07 PM, David Hildenbrand wrote:
-> On 13.01.20 10:50, Anshuman Khandual wrote:
->>
->>
->> On 01/13/2020 02:44 PM, David Hildenbrand wrote:
->>>
->>>
->>>> Am 13.01.2020 um 10:10 schrieb Anshuman Khandual <anshuman.khandual@arm.com>:
->>>>
->>>> ﻿
->>>>
->>>>> On 01/10/2020 02:12 PM, David Hildenbrand wrote:
->>>>>> On 10.01.20 04:09, Anshuman Khandual wrote:
->>>>>> Currently there are two interfaces to initiate memory range hot removal i.e
->>>>>> remove_memory() and __remove_memory() which then calls try_remove_memory().
->>>>>> Platform gets called with arch_remove_memory() to tear down required kernel
->>>>>> page tables and other arch specific procedures. But there are platforms
->>>>>> like arm64 which might want to prevent removal of certain specific memory
->>>>>> ranges irrespective of their present usage or movability properties.
->>>>>
->>>>> Why? Is this only relevant for boot memory? I hope so, otherwise the
->>>>> arch code needs fixing IMHO.
->>>>
->>>> Right, it is relevant only for the boot memory on arm64 platform. But this
->>>> new arch callback makes it flexible to reject any given memory range.
->>>>
->>>>>
->>>>> If it's only boot memory, we should disallow offlining instead via a
->>>>> memory notifier - much cleaner.
->>>>
->>>> Dont have much detail understanding of MMU notifier mechanism but from some
->>>> initial reading, it seems like we need to have a mm_struct for a notifier
->>>> to monitor various events on the page table. Just wondering how a physical
->>>> memory range like boot memory can be monitored because it can be used both
->>>> for for kernel (init_mm) or user space process at same time. Is there some
->>>> mechanism we could do this ?
->>>>
->>>>>
->>>>>>
->>>>>> Current arch call back arch_remove_memory() is too late in the process to
->>>>>> abort memory hot removal as memory block devices and firmware memory map
->>>>>> entries would have already been removed. Platforms should be able to abort
->>>>>> the process before taking the mem_hotplug_lock with mem_hotplug_begin().
->>>>>> This essentially requires a new arch callback for memory range validation.
->>>>>
->>>>> I somewhat dislike this very much. Memory removal should never fail if
->>>>> used sanely. See e.g., __remove_memory(), it will BUG() whenever
->>>>> something like that would strike.
->>>>>
->>>>>>
->>>>>> This differentiates memory range validation between memory hot add and hot
->>>>>> remove paths before carving out a new helper check_hotremove_memory_range()
->>>>>> which incorporates a new arch callback. This call back provides platforms
->>>>>> an opportunity to refuse memory removal at the very onset. In future the
->>>>>> same principle can be extended for memory hot add path if required.
->>>>>>
->>>>>> Platforms can choose to override this callback in order to reject specific
->>>>>> memory ranges from removal or can just fallback to a default implementation
->>>>>> which allows removal of all memory ranges.
->>>>>
->>>>> I suspect we want really want to disallow offlining instead. E.g., I
->>>>
->>>> If boot memory pages can be prevented from being offlined for sure, then it
->>>> would indirectly definitely prevent hot remove process as well.
->>>>
->>>>> remember s390x does that with certain areas needed for dumping/kexec.
->>>>
->>>> Could not find any references to mmu_notifier in arch/s390 or any other arch
->>>> for that matter apart from KVM (which has an user space component), could you
->>>> please give some pointers ?
->>>
->>> Memory (hotplug) notifier, not MMU notifier :)
->>
->> They are so similarly named :)
->>
->>>
->>> Not on my notebook right now, grep for MEM_GOING_OFFLINE, that should be it.
->>>
->>
->> Got it, thanks ! But we will still need boot memory enumeration via MEMBLOCK_BOOT
->> to reject affected offline requests in the callback.
-> 
-> Do you really need that?
-> 
-> We have SECTION_IS_EARLY. You could iterate all involved sections (for
-> which you are getting notified) and check if any one of these is marked
-> SECTION_IS_EARLY. then, it was added during boot and not via add_memory().
-
-Seems to be a better approach than adding a new memblock flag.
-
-> 
-> 
+[1] https://lkml.org/lkml/2020/1/13/1166
