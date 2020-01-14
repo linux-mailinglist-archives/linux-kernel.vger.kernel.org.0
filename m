@@ -2,71 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA03B13A3E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 427F013A403
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgANJeB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 Jan 2020 04:34:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42106 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgANJeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:34:01 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1irIa7-0006V0-A2; Tue, 14 Jan 2020 10:33:51 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 90C00101DEE; Tue, 14 Jan 2020 10:33:50 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
-        salyzyn@android.com, 0x7f454c46@gmail.com, luto@kernel.org
-Subject: Re: [PATCH v2 2/8] lib: vdso: Build 32 bit specific functions in the right context
-In-Reply-To: <87tv4zq9dc.fsf@nanos.tec.linutronix.de>
-References: <20190830135902.20861-1-vincenzo.frascino@arm.com> <20190830135902.20861-3-vincenzo.frascino@arm.com> <87tv4zq9dc.fsf@nanos.tec.linutronix.de>
-Date:   Tue, 14 Jan 2020 10:33:50 +0100
-Message-ID: <87r202qt4x.fsf@nanos.tec.linutronix.de>
+        id S1728797AbgANJnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:43:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbgANJnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 04:43:01 -0500
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AF052084D;
+        Tue, 14 Jan 2020 09:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578994980;
+        bh=ZY32olhBC9Vu8GoFnoJlyKFKyLmpEDns5sByfyxWduo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=J0meMBCO3EIcNZcCnTo3GjEw6jIjd/3BjqmkWnaw4uxOrcVNa27MEziWkOR6idYlY
+         fukBMrgtxqNzPUPw1yUafxPOgrX/CUbMLrp1qe+DZHx6tAUmFR/a4RtlEq1WLVXWnW
+         r+dv808jcPRdMXdnJvGTpLhxqpEmRnjm+2fsvM1o=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 1F57B5FC9E; Tue, 14 Jan 2020 17:42:58 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: sun8i: a83t: Fix incorrect clk and reset macros for EMAC device
+Date:   Tue, 14 Jan 2020 17:42:52 +0800
+Message-Id: <20200114094252.8908-1-wens@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+From: Chen-Yu Tsai <wens@csie.org>
 
-> Vincenzo Frascino <vincenzo.frascino@arm.com> writes:
->
->> clock_gettime32 and clock_getres_time32 should be compiled only with a
->> 32 bit vdso library.
->>
->> Exclude these symbols when BUILD_VDSO32 is not defined.
->
-> This breaks the ARM build with:
->
-> arch/arm/vdso/vgettimeofday.c: In function ‘__vdso_clock_gettime’:
-> arch/arm/vdso/vgettimeofday.c:15:9: error: implicit declaration of function ‘__cvdso_clock_gettime32’; did you mean ‘__cvdso_clock_gettime’? [-Werror=implicit-function-declaration]
->   return __cvdso_clock_gettime32(clock, ts);
->          ^~~~~~~~~~~~~~~~~~~~~~~
->          __cvdso_clock_gettime
-> arch/arm/vdso/vgettimeofday.c: In function ‘__vdso_clock_getres’:
-> arch/arm/vdso/vgettimeofday.c:33:9: error: implicit declaration of function ‘__cvdso_clock_getres_time32’; did you mean ‘__cvdso_clock_getres_common’? [-Werror=implicit-function-declaration]
->   return __cvdso_clock_getres_time32(clock_id, res);
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->          __cvdso_clock_getres_common
-> cc1: some warnings being treated as errors
->
-> The patch below 'fixes' at least the build. Can someone please confirm
-> the correctness?
+When the raw numbers used for clk and reset indices in the EMAC device
+node were converted to the new macros, the order of the clk and reset
+properties was overlooked, and thus the incorrect macros were used.
+This results in the EMAC being non-responsive, as well as an oops due
+to incorrect usage of the reset control.
 
-Bah, it's not fixing it. That's what you get when you compile the wrong
-tree...
+Correct the macro types, and also reorder the clk and reset properties
+to match all the other device nodes.
+
+Fixes: 765866edb16a ("ARM: dts: sunxi: Use macros for references to CCU clocks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+
+Error on my part. Hope no one was affected for too long.
+
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 74ac7ee9383c..e7b9bef1be6b 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -1006,10 +1006,10 @@ emac: ethernet@1c30000 {
+ 			reg = <0x01c30000 0x104>;
+ 			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "macirq";
+-			resets = <&ccu CLK_BUS_EMAC>;
+-			reset-names = "stmmaceth";
+-			clocks = <&ccu RST_BUS_EMAC>;
++			clocks = <&ccu CLK_BUS_EMAC>;
+ 			clock-names = "stmmaceth";
++			resets = <&ccu RST_BUS_EMAC>;
++			reset-names = "stmmaceth";
+ 			status = "disabled";
+ 
+ 			mdio: mdio {
+-- 
+2.24.1
+
