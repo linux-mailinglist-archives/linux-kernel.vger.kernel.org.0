@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B381713A52B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:08:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 244C213A52E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbgANKFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:05:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32974 "EHLO mail.kernel.org"
+        id S1730106AbgANKFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:05:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730039AbgANKFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:05:06 -0500
+        id S1729638AbgANKFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:05:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86F4D2467A;
-        Tue, 14 Jan 2020 10:05:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E7F12467A;
+        Tue, 14 Jan 2020 10:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996306;
-        bh=S+40nex0JIA9ewxDDyPd0N5/flVV4l8E29pDRYNagGA=;
+        s=default; t=1578996309;
+        bh=DLUMAB8sKpPd5p+SiSltdWxQrt78MGu3CgUvppVNDlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNftzATmNF8PfPVy/VQPfdt1zysAPBL+wq6xmhJMULTSYZH6IuYFFidpoCCEFT9y+
-         Tfbvs7mh0sMp6VAmmOBBlzGLeZ/OgW5CuS5fkpObXWmAdvPJsaBy6h53Cy6BqWYZtr
-         aayHAZFtrU83xcUjzRRprUsorAsWnkoOK+fqkRW4=
+        b=2J+2WXEQq7pON/uQPZ0TY484thOyNYqTR7jDtzqyZ47Sc5xXkb0o3snolVknMDUUi
+         /4ZOleY1uusjl++QmRq7f0W9l6bwug4MuDEdwNyZ/uQN//IUgjpmrw9iv/Ccm6QOIp
+         +AdXnEgmCJvn/VyOjykEG7qGLFPCGJ34SpJL0xSM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 5.4 51/78] staging: vt6656: limit reg output to block size
-Date:   Tue, 14 Jan 2020 11:01:25 +0100
-Message-Id: <20200114094400.340325348@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 5.4 52/78] staging: rtl8188eu: Add device code for TP-Link TL-WN727N v5.21
+Date:   Tue, 14 Jan 2020 11:01:26 +0100
+Message-Id: <20200114094400.464699193@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
 References: <20200114094352.428808181@linuxfoundation.org>
@@ -42,88 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Michael Straube <straube.linux@gmail.com>
 
-commit 69cc1f925e1aa74b96e2ace67e3453a50d091d2f upstream.
+commit 58dcc5bf4030cab548d5c98cd4cd3632a5444d5a upstream.
 
-vnt_control_out appears to fail when BBREG is greater than 64 writes.
+This device was added to the stand-alone driver on github.
+Add it to the staging driver as well.
 
-Create new function that will relay an array in no larger than
-the indicated block size.
-
-It appears that this command has always failed but was ignored by
-driver until the introduction of error checking.
-
-Cc: stable <stable@vger.kernel.org> # v5.3+
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/a41f0601-df46-ce6e-ab7c-35e697946e2a@gmail.com
+Link: https://github.com/lwfinger/rtl8188eu/commit/b9b537aa25a8
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191228143725.24455-1-straube.linux@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/vt6656/baseband.c |    4 ++--
- drivers/staging/vt6656/usbpipe.c  |   17 +++++++++++++++++
- drivers/staging/vt6656/usbpipe.h  |    5 +++++
- 3 files changed, 24 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/staging/vt6656/baseband.c
-+++ b/drivers/staging/vt6656/baseband.c
-@@ -449,8 +449,8 @@ int vnt_vt3184_init(struct vnt_private *
- 
- 	memcpy(array, addr, length);
- 
--	ret = vnt_control_out(priv, MESSAGE_TYPE_WRITE, 0,
--			      MESSAGE_REQUEST_BBREG, length, array);
-+	ret = vnt_control_out_blocks(priv, VNT_REG_BLOCK_SIZE,
-+				     MESSAGE_REQUEST_BBREG, length, array);
- 	if (ret)
- 		goto end;
- 
---- a/drivers/staging/vt6656/usbpipe.c
-+++ b/drivers/staging/vt6656/usbpipe.c
-@@ -76,6 +76,23 @@ int vnt_control_out_u8(struct vnt_privat
- 			       reg_off, reg, sizeof(u8), &data);
- }
- 
-+int vnt_control_out_blocks(struct vnt_private *priv,
-+			   u16 block, u8 reg, u16 length, u8 *data)
-+{
-+	int ret = 0, i;
-+
-+	for (i = 0; i < length; i += block) {
-+		u16 len = min_t(int, length - i, block);
-+
-+		ret = vnt_control_out(priv, MESSAGE_TYPE_WRITE,
-+				      i, reg, len, data + i);
-+		if (ret)
-+			goto end;
-+	}
-+end:
-+	return ret;
-+}
-+
- int vnt_control_in(struct vnt_private *priv, u8 request, u16 value,
- 		   u16 index, u16 length, u8 *buffer)
- {
---- a/drivers/staging/vt6656/usbpipe.h
-+++ b/drivers/staging/vt6656/usbpipe.h
-@@ -18,6 +18,8 @@
- 
- #include "device.h"
- 
-+#define VNT_REG_BLOCK_SIZE	64
-+
- int vnt_control_out(struct vnt_private *priv, u8 request, u16 value,
- 		    u16 index, u16 length, u8 *buffer);
- int vnt_control_in(struct vnt_private *priv, u8 request, u16 value,
-@@ -26,6 +28,9 @@ int vnt_control_in(struct vnt_private *p
- int vnt_control_out_u8(struct vnt_private *priv, u8 reg, u8 ref_off, u8 data);
- int vnt_control_in_u8(struct vnt_private *priv, u8 reg, u8 reg_off, u8 *data);
- 
-+int vnt_control_out_blocks(struct vnt_private *priv,
-+			   u16 block, u8 reg, u16 len, u8 *data);
-+
- int vnt_start_interrupt_urb(struct vnt_private *priv);
- int vnt_submit_rx_urb(struct vnt_private *priv, struct vnt_rcb *rcb);
- int vnt_tx_context(struct vnt_private *priv,
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -37,6 +37,7 @@ static const struct usb_device_id rtw_us
+ 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
+ 	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
+ 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
++	{USB_DEVICE(0x2357, 0x0111)}, /* TP-Link TL-WN727N v5.21 */
+ 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
+ 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+ 	{}	/* Terminating entry */
 
 
