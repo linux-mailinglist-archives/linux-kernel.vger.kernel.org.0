@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EB5313AA04
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE6513AA02
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbgANNCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:02:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43242 "EHLO
+        id S1729270AbgANNDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:03:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43281 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728961AbgANNCh (ORCPT
+        with ESMTP id S1729074AbgANNCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:02:37 -0500
+        Tue, 14 Jan 2020 08:02:45 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1irLq5-0004ny-Cn; Tue, 14 Jan 2020 14:02:33 +0100
+        id 1irLqB-0004qi-Il; Tue, 14 Jan 2020 14:02:39 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4B0F31C0852;
-        Tue, 14 Jan 2020 14:02:22 +0100 (CET)
-Date:   Tue, 14 Jan 2020 13:02:22 -0000
-From:   "tip-bot2 for Christophe Leroy" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0505D1C085A;
+        Tue, 14 Jan 2020 14:02:24 +0100 (CET)
+Date:   Tue, 14 Jan 2020 13:02:23 -0000
+From:   "tip-bot2 for Vincenzo Frascino" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] lib/vdso: Avoid duplication in __cvdso_clock_getres()
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+Subject: [tip: timers/core] lib/vdso: Build 32 bit specific functions in the
+ right context
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Andy Lutomirski <luto@kernel.org>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: =?utf-8?q?=3Cfdf1a968a8f7edd61456f1689ac44082ebb19c15=2E15771?=
- =?utf-8?q?11367=2Egit=2Echristophe=2Eleroy=40c-s=2Efr=3E?=
-References: =?utf-8?q?=3Cfdf1a968a8f7edd61456f1689ac44082ebb19c15=2E157711?=
- =?utf-8?q?1367=2Egit=2Echristophe=2Eleroy=40c-s=2Efr=3E?=
+In-Reply-To: <20190830135902.20861-3-vincenzo.frascino@arm.com>
+References: <20190830135902.20861-3-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-Message-ID: <157900694207.396.9782329695399222834.tip-bot2@tip-bot2>
+Message-ID: <157900694383.396.6172623174438789034.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,51 +49,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     cdb7c5a9c897ab2e5c56df647dd84c84e150e925
-Gitweb:        https://git.kernel.org/tip/cdb7c5a9c897ab2e5c56df647dd84c84e150e925
-Author:        Christophe Leroy <christophe.leroy@c-s.fr>
-AuthorDate:    Mon, 23 Dec 2019 14:31:09 
+Commit-ID:     bf279849ad59538a1518c667c0795ec1fe9dbd66
+Gitweb:        https://git.kernel.org/tip/bf279849ad59538a1518c667c0795ec1fe9dbd66
+Author:        Vincenzo Frascino <vincenzo.frascino@arm.com>
+AuthorDate:    Fri, 30 Aug 2019 14:58:56 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 14 Jan 2020 12:20:47 +01:00
+CommitterDate: Tue, 14 Jan 2020 12:20:44 +01:00
 
-lib/vdso: Avoid duplication in __cvdso_clock_getres()
+lib/vdso: Build 32 bit specific functions in the right context
 
-VDSO_HRES and VDSO_RAW clocks are handled the same way.
+clock_gettime32 and clock_getres_time32 should be compiled only with a
+32 bit vdso library.
 
-Avoid the code duplication.
+Exclude these symbols when BUILD_VDSO32 is not defined.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Link: https://lore.kernel.org/r/fdf1a968a8f7edd61456f1689ac44082ebb19c15.1577111367.git.christophe.leroy@c-s.fr
+Link: https://lore.kernel.org/r/20190830135902.20861-3-vincenzo.frascino@arm.com
 
 
 ---
- lib/vdso/gettimeofday.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ lib/vdso/gettimeofday.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index 5a5ec89..fac9e86 100644
+index 42bd8ab..8e77071 100644
 --- a/lib/vdso/gettimeofday.c
 +++ b/lib/vdso/gettimeofday.c
-@@ -193,7 +193,7 @@ int __cvdso_clock_getres_common(clockid_t clock, struct __kernel_timespec *res)
- 	 * clocks are handled in the VDSO directly.
- 	 */
- 	msk = 1U << clock;
--	if (msk & VDSO_HRES) {
-+	if (msk & (VDSO_HRES | VDSO_RAW)) {
- 		/*
- 		 * Preserves the behaviour of posix_get_hrtimer_res().
- 		 */
-@@ -203,11 +203,6 @@ int __cvdso_clock_getres_common(clockid_t clock, struct __kernel_timespec *res)
- 		 * Preserves the behaviour of posix_get_coarse_res().
- 		 */
- 		ns = LOW_RES_NSEC;
--	} else if (msk & VDSO_RAW) {
--		/*
--		 * Preserves the behaviour of posix_get_hrtimer_res().
--		 */
--		ns = hrtimer_res;
- 	} else {
- 		return -1;
+@@ -117,6 +117,7 @@ __cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
+ 	return 0;
+ }
+ 
++#ifdef BUILD_VDSO32
+ static __maybe_unused int
+ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+ {
+@@ -139,6 +140,7 @@ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
  	}
+ 	return ret;
+ }
++#endif /* BUILD_VDSO32 */
+ 
+ static __maybe_unused int
+ __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
+@@ -231,6 +233,7 @@ int __cvdso_clock_getres(clockid_t clock, struct __kernel_timespec *res)
+ 	return 0;
+ }
+ 
++#ifdef BUILD_VDSO32
+ static __maybe_unused int
+ __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
+ {
+@@ -253,4 +256,5 @@ __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
+ 	}
+ 	return ret;
+ }
++#endif /* BUILD_VDSO32 */
+ #endif /* VDSO_HAS_CLOCK_GETRES */
