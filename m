@@ -2,74 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E325413A002
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D6C13A00B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 04:45:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbgANDg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 22:36:29 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:39764 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728802AbgANDg3 (ORCPT
+        id S1729690AbgANDpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 22:45:34 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:56845 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729335AbgANDpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 22:36:29 -0500
-X-UUID: 4f42a4862b1b48f8958ddc645d1d2871-20200114
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=l1LB1RrzPHfxgwSbc7kiDcv5fjLNgTXp3z5W5A8tXfo=;
-        b=JtRWlBUjUQIdNpKiNDx2hsWyA8AHkZDV8bAX6XuvVKIsCOKQ3yEOPoJw9oGEmnIuOP2pVstWaSHkpYoya/jNqtEqgczp91I02utXVcB9kuppA367wpMK/otlBBLF/JwXGdcDn+zdX8KNh/LOLhJY0GxWctrqIXASVLk7UL7PkVU=;
-X-UUID: 4f42a4862b1b48f8958ddc645d1d2871-20200114
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <maoguang.meng@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 725869208; Tue, 14 Jan 2020 11:36:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 14 Jan 2020 11:35:08 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 14 Jan 2020 11:36:31 +0800
-From:   <maoguang.meng@mediatek.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-CC:     Maxime Ripard <mripard@kernel.org>, Sean Young <sean@mess.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Maoguang Meng <maoguang.meng@mediatek.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mon, 13 Jan 2020 22:45:34 -0500
+Received: from droid12-sz.software.amlogic (10.28.8.22) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 14 Jan 2020
+ 11:45:58 +0800
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Xingyu Chen <xingyu.chen@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Xia Jiang <xia.jiang@mediatek.com>
-Subject: media: platform: VIDEO_MEDIATEK_JPEG can also depend on MTK_IOMMU
-Date:   Tue, 14 Jan 2020 11:36:12 +0800
-Message-ID: <20200114033612.16904-1-maoguang.meng@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v6 0/5] add meson secure watchdog driver
+Date:   Tue, 14 Jan 2020 11:45:22 +0800
+Message-ID: <1578973527-4759-1-git-send-email-xingyu.chen@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: D58AFFB3BD81A49B5EFA5B0B1DB085E38D02C470B92696A388E40B4F79B922552000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-Originating-IP: [10.28.8.22]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTWFvZ3VhbmcgTWVuZyA8bWFvZ3VhbmcubWVuZ0BtZWRpYXRlay5jb20+DQoNCm1lZGlh
-dGVrIGpwZWcgdmNvZGVjIGRyaXZlciBjYW4gZGVwZW5kIG9uIE1US19JT01NVSBvciBNVEtfSU9N
-TVVfVjEuDQoNCg0KU2lnbmVkLW9mZi1ieTogTWFvZ3VhbmcgTWVuZyA8bWFvZ3VhbmcubWVuZ0Bt
-ZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcgfCAyICst
-DQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL0tjb25maWcgYi9kcml2ZXJzL21lZGlhL3Bs
-YXRmb3JtL0tjb25maWcNCmluZGV4IGU4NGYzNWQzYTY4ZS4uODUzNzdjODhlOTFhIDEwMDY0NA0K
-LS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9LY29uZmlnDQorKysgYi9kcml2ZXJzL21lZGlh
-L3BsYXRmb3JtL0tjb25maWcNCkBAIC0yMDAsNyArMjAwLDcgQEAgY29uZmlnIFZJREVPX0lNWF9Q
-WFANCiANCiBjb25maWcgVklERU9fTUVESUFURUtfSlBFRw0KIAl0cmlzdGF0ZSAiTWVkaWF0ZWsg
-SlBFRyBDb2RlYyBkcml2ZXIiDQotCWRlcGVuZHMgb24gTVRLX0lPTU1VX1YxIHx8IENPTVBJTEVf
-VEVTVA0KKwlkZXBlbmRzIG9uIE1US19JT01NVV9WMSB8fCBNVEtfSU9NTVUgfHwgQ09NUElMRV9U
-RVNUDQogCWRlcGVuZHMgb24gVklERU9fREVWICYmIFZJREVPX1Y0TDINCiAJZGVwZW5kcyBvbiBB
-UkNIX01FRElBVEVLIHx8IENPTVBJTEVfVEVTVA0KIAlzZWxlY3QgVklERU9CVUYyX0RNQV9DT05U
-SUcNCi0tIA0KMi4xOC4wDQo=
+The watchdog controller on the Meson-A/C series SoCs is moved to secure world,
+We have to call SMC instruction to trap the ATF for watchdog operation. These
+operations are different from previous SoCs, so we introduce a new watchdog
+driver to support this kind of SoCs.
+
+Changes since v5 at [4]:
+- take the wdt node as child node of secure-monitor
+- update dt-binding description
+- invoke of_platform_default_populate() instantiate wdt device according to Rob's suggestion at [5]
+- find the secure-monitor node through the wdt parent node instead of of_find_compatible_node()
+- add Guenter's Reviewed-by
+
+Changes since v4 at [3]:
+- add watchdog node in dts, and introduce a new optional property "timeout-sec"
+- add dt-binding for meson secure watchdog
+- instantiate wdt device through dts node instead of platform_device_register_simple()
+
+Changes since v3 at [2]:
+- add SM_A1_ prefix for WATCHDOG_OPS
+- remove phandle to secure-monitor node
+- remove watchdog node from dts, and register wdt device by platform_device_register_simple()
+- remove dt-binding for meson secure watchdog
+- use the msec as unit of timeout parameter which is passed to fw side
+
+Changes since v2 at [1]:
+- remove useless dependency in Kconfig
+- return zero when getting left time value fails
+
+Changes since v1 at [0]:
+- add a new dependency in Kconfig
+- simplify/add the return operation
+- remove useless ping operation when setting the timeout
+- fix some return values
+- fix the license statement
+
+[0]:https://lore.kernel.org/linux-amlogic/1570874721-36077-1-git-send-email-xingyu.chen@amlogic.com
+[1]:https://lore.kernel.org/linux-amlogic/1571387622-35132-1-git-send-email-xingyu.chen@amlogic.com
+[2]:https://lore.kernel.org/linux-amlogic/1571983984-11771-1-git-send-email-xingyu.chen@amlogic.com
+[3]:https://lore.kernel.org/linux-amlogic/1574685218-31164-1-git-send-email-xingyu.chen@amlogic.com
+[4]:https://lore.kernel.org/linux-amlogic/1576153187-28378-1-git-send-email-xingyu.chen@amlogic.com
+[5]:https://patchwork.kernel.org/patch/11288017
+
+Xingyu Chen (5):
+  firmware: meson_sm: add new SMC ID support for accessing secure
+    watchdog
+  firmware: meson_sm: populate platform device based on the child node
+  dt-bindings: watchdog: add new binding for meson secure watchdog
+  watchdog: add meson secure watchdog driver
+  arm64: dts: a1: add secure watchdog controller
+
+ .../bindings/watchdog/amlogic,meson-sec-wdt.yaml   |  40 +++++
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |   6 +
+ drivers/firmware/meson/meson_sm.c                  |   3 +
+ drivers/watchdog/Kconfig                           |  16 ++
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/meson_sec_wdt.c                   | 185 +++++++++++++++++++++
+ include/linux/firmware/meson/meson_sm.h            |   1 +
+ 7 files changed, 252 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/amlogic,meson-sec-wdt.yaml
+ create mode 100644 drivers/watchdog/meson_sec_wdt.c
+
+-- 
+2.7.4
 
