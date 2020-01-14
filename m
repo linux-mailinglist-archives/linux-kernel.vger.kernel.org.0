@@ -2,171 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615A713A1BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F9D13A1DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgANHZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:25:03 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6499 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729163AbgANHYs (ORCPT
+        id S1729365AbgANHZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:25:34 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:34409 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729145AbgANHZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:24:48 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1d6cab0000>; Mon, 13 Jan 2020 23:24:27 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 13 Jan 2020 23:24:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 13 Jan 2020 23:24:47 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 14 Jan
- 2020 07:24:46 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 14 Jan 2020 07:24:46 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.242]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1d6cbd0003>; Mon, 13 Jan 2020 23:24:46 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration from clock driver
-Date:   Mon, 13 Jan 2020 23:24:27 -0800
-Message-ID: <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 14 Jan 2020 02:25:28 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id 10B8B588;
+        Tue, 14 Jan 2020 02:25:26 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 14 Jan 2020 02:25:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        /NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnwD0=; b=E+ih20sLIVU+JbJh
+        GMonwA3D/ZyhFUdpopjO/xWDrjZbqNO8zR9cLwbWeJr22sMl1zKFbETUElpcnVa7
+        AZwG1LxxtTO+ko/gqWu80xN7Zbk/PcLuuDF5nrzNxGUeBFUkpEqytNpRR4zj9jgQ
+        MwNA4ZaiNwOlduy0avAJJTt28ITICiZQsmwskuDugVgvIoxc/2fhyOpucVwLenD8
+        2rzQRanDG6iaiZ/zm3UAwId6Qy/QndsPopAnMpE0XJzDKxmIWC+jR3WChj0eXaSl
+        RECfi2W8F9+zXmaU42/RdbEIQ2LN7taoksGTww8VcWjjFAV+lCAoxfzTQP8br7xQ
+        s0mDXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=/NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnw
+        D0=; b=Qw7ET2JBhGByLUbuhnMGdCt0ocsN4ZJ1W63vM2d0Zj4VYuzMJCZIEqhmz
+        zYRBHMx4dCEm4HJ7vzFDuj6t795vci2ZrwsUNL/Jj2lg1ySSC/H+cKBYRJJx1asc
+        JUZAoTc57MJSHGBSIZ7vLbAWVMM+ntQmGprAzzvUdqp/F568NcT3cJEtQ57Dz1vh
+        oqsDLvCIknSE7wgxh8i2Tzb/mddOiBj+TXBtXYkQXw5O6oLPt8uMZJh9LIfm4fPY
+        QxFCroF3EtV1zts0ra0mRLmvjJ+CjNA29Ry7Y/sHRZgaGtQHBLoR9zOPjctKHmeO
+        c9EpvMI9Ex3sMQuNAqxPxiL5LcxIQ==
+X-ME-Sender: <xms:5GwdXoyDk01dGhrYk-lUgd_o49kcDsWhhmsFBI9wGmXSUGGMEbGmuQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehgih
+    hthhhusgdrtghomhenucfkphepuddukedrvddtledrudejhedrvdehnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghruf
+    hiiigvpedt
+X-ME-Proxy: <xmx:5GwdXqhQh5_xsQeu5Bt4b-uQgEUgv7L0TE_eUIaS5jxLSehm7Cn-jg>
+    <xmx:5GwdXjqLQoGkx49VqXhKNW3LwhcJRZVWB3tgbBYVXmPhM_d299SSBg>
+    <xmx:5GwdXpg2yG7pEdPaTNZH7UOTmDXi9-7YFtu76zkYqKd9fZx1BCgcIw>
+    <xmx:5WwdXhBRnznhTdSbPNsSDY5dRfJ20UAStkRh6FV2Bpj5Vc-4DtjGta3THcU>
+Received: from mickey.themaw.net (unknown [118.209.175.25])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D37C730602DB;
+        Tue, 14 Jan 2020 02:25:19 -0500 (EST)
+Message-ID: <7b2b9f81871898d2b6301a74f2bee85943f21cdc.camel@themaw.net>
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 14 Jan 2020 15:25:15 +0800
+In-Reply-To: <20200113133047.GR8904@ZenIV.linux.org.uk>
+References: <20200101030815.GA17593@ZenIV.linux.org.uk>
+         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
+         <20200101234009.GB8904@ZenIV.linux.org.uk>
+         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
+         <20200103014901.GC8904@ZenIV.linux.org.uk>
+         <20200110231945.GL8904@ZenIV.linux.org.uk>
+         <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
+         <20200113035407.GQ8904@ZenIV.linux.org.uk>
+         <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
+         <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
+         <20200113133047.GR8904@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578986667; bh=9n0i70uqB/SBucs2JdxwPHD5wO5OH4uHQGIBNiAAbZ8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=qDV4EkZpTa2kxN3VAFRrqD3Kewct0gJjNOk5II/BJDCokuYnsPlWqnf4FJsgSKibx
-         Sp9Qcvl1aveQ4n88e64k3SNrJsXr0MwmiiVSJfpxern8+beXIW907SpHICDAl7FfFq
-         0PlTLOMt+SduYhhny9Z2tQcRevZrChXy9kmWEhmbeBBdvbv8d+GIY8sJS8F4PyjmkK
-         q5Faj7SZc9un5Iu7bnbwWc4HrMZa6g/lwXoP3kf1gwUjObZm+vqM7ZZIRlif03yP0a
-         g9a8Re2ZvOBhFHVh2xQIvj5j8xFFciJXbu+34BaTzduX2cpT9k6xUoYjJFxWLCcQVn
-         +m/n8X3V1HeoA==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current clock driver enables PLLA, cdev1 on Tegra20 and extern1 on
-Tegra30 and above as a part of clocks init and there is no need to
-have these audio clocks enabled by the clock driver.
+On Mon, 2020-01-13 at 13:30 +0000, Al Viro wrote:
+> On Mon, Jan 13, 2020 at 02:03:00PM +0800, Ian Kent wrote:
+> 
+> > Oh wait, for systemd I was actually looking at:
+> > https://github.com/systemd/systemd/blob/master/src/shared/switch-root.c
+> > 
+> > > Mind you, that's not the actual systemd repo. either I probably
+> > > need to look a lot deeper (and at the actual systemd repo) to
+> > > work out what's actually being called.
+> > > 
+> > > > Sigh...  Guess I'll have to dig that Fedora KVM image out and
+> > > > try to see what it's about... ;-/  Here comes a couple of hours
+> > > > of build...
+> 
+> D'oh...  And yes, that would've been a bisect hazard - switch to
+> path_lookupat() later in the series gets rid of that.  Incremental
+> (to be foldede, of course):
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1793661c3342..204677c37751 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2634,7 +2634,7 @@ path_mountpoint(struct nameidata *nd, unsigned
+> flags, struct path *path)
+>  		(err = lookup_last(nd)) > 0) {
+>  		s = trailing_symlink(nd);
+>  	}
+> -	if (!err)
+> +	if (!err && (nd->flags & LOOKUP_RCU))
+>  		err = unlazy_walk(nd);
+>  	if (!err)
+>  		err = handle_lookup_down(nd);
 
-extern1 is used as parent for clk_out_1 and clk_out_1 is dedicated
-for audio mclk on Tegra30 and above Tegra platforms and these clocks
-are taken care by ASoC driver.
+Ok, so I've tested with the updated patch.
 
-So, this patch removes audio related clocks configuration from clock
-init of Tegra20 and above.
+The autofs connectathon tests I use function fine.
 
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk-tegra114.c | 5 ++---
- drivers/clk/tegra/clk-tegra124.c | 5 ++---
- drivers/clk/tegra/clk-tegra20.c  | 5 ++---
- drivers/clk/tegra/clk-tegra210.c | 5 ++---
- drivers/clk/tegra/clk-tegra30.c  | 5 ++---
- 5 files changed, 10 insertions(+), 15 deletions(-)
+I also tested sending a SIGKILL to the daemon with about 180 active
+mounts and restarted the daemon to test the function of the ioctls
+that Al was concerned about.
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index c138ef75480b..bc9e47a4cb60 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1136,9 +1136,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_UARTB, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTC, TEGRA114_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA114_CLK_UARTD, TEGRA114_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA114_CLK_EXTERN1, TEGRA114_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA114_CLK_PLL_A, TEGRA114_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA114_CLK_PLL_A_OUT0, TEGRA114_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S0, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S1, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA114_CLK_I2S2, TEGRA114_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 54cac77deaa3..64e229ddf2a5 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1292,9 +1292,8 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_UARTB, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTC, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTD, TEGRA124_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA124_CLK_EXTERN1, TEGRA124_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index fe536f1d770d..0da402c144d8 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1029,9 +1029,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_UARTC, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTD, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTE, TEGRA20_CLK_PLL_P, 0, 0 },
--	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
--	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
-+	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 0 },
-+	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index d2f1e9c0ed25..c6304f5e813e 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3442,9 +3442,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_UARTB, TEGRA210_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA210_CLK_UARTC, TEGRA210_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA210_CLK_UARTD, TEGRA210_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA210_CLK_EXTERN1, TEGRA210_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA210_CLK_PLL_A, TEGRA210_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA210_CLK_PLL_A_OUT0, TEGRA210_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S0, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S1, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA210_CLK_I2S2, TEGRA210_CLK_PLL_A_OUT0, 11289600, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 5732fdbe20db..53d1c48532ae 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
--	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
-+	{ TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
--- 
-2.7.4
+While the connectathon test expired everything I had 3 mounts left
+after allowing sufficient expire time with the SIGKILL test.
+
+Those mounts correspond to one map entry that has a mix of NFS
+vers=3 and vers=2 mount options and NFSv2 isn't supported by the
+servers I use in testing.
+
+I'm inclined to think this is a bug in the automount mount tree
+re-connection code rather than a problem with this patch since
+all the other mounts, some simple and others with not so simple
+constructs, expired fine after automount re-connected to them.
+
+There are two other map entries that have an NFS vers=2 option but
+they are simple mounts that will fail on attempting the automount
+because the server doesn't support v2 so they don't end up with
+mounts to reconnect to.
+
+This particular map entry, having a mix of NFS vers=3 and vers=2
+in the offsets of the entry, will lead to a partial mount of the
+map entry which is probably not being handled properly by automount
+when re-connecting to the mounts in the tree.
+
+So I think the patch here is fine from an autofs POV.
+
+Ian
 
