@@ -2,99 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94A3713B2C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:13:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0CF13B2CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:17:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgANTN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:13:56 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:37430 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbgANTNz (ORCPT
+        id S1728708AbgANTRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:17:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31858 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726491AbgANTRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:13:55 -0500
-Received: by mail-pj1-f67.google.com with SMTP id m13so6306594pjb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 11:13:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kh1Ge+Ojyq1Hkaf57+ksFQlpw/tvYEo5VWAEqDe26e0=;
-        b=IoV0u8G3OE4qe/OlOUrmQtTvkn0Ck8iGTgGitUdy4pm3zeqyty3RtPcor2vp/ZM5UM
-         bh3Y3Dm0Rl8FtYVdIGq1TmyzYHROP92D3Yb8/avJnDjSPv2yCHiRXrJt9rFiOnhFOgfx
-         J1uuzsbaA6SZJOUNcD3OseGl4+stFJaViEmj8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kh1Ge+Ojyq1Hkaf57+ksFQlpw/tvYEo5VWAEqDe26e0=;
-        b=c+XGeaya0IbH4vJPIgHBHNl9D6TCNvOVlwjptqXeVIawaySdxUq0o9HhkeoaysvdCK
-         yEL34Vxb5Yo7ZHcP/WXdO8tmExtOLh+UBxSSNVmRyFjzr670+7AHA8xZlWdRhmLDypbT
-         d1lT8avAYMFXzUV9aKrZte22ANKJNB8/1ge4e249FAEOxLQpCGQtTqI5VluJLPq03JD1
-         8G3PPbUAUMYMPI0h3W4MPlS5IwYbJVONreLnqpe777uexH4l6yeFZP4687AvFroQKts0
-         fj7RND2LpW8rGnyYd6Js+z0Ch7nQwXEQse4XwqC7XOyCZhL534iTjLMQIIsWsC5d57rD
-         cFeA==
-X-Gm-Message-State: APjAAAURALyDrYjyoN+4wJuMoJ4A9ZYUEshbb700e0N85Pys0J8btcX6
-        wTNn1AIs2X6k+xoZF/USFUNt8w==
-X-Google-Smtp-Source: APXvYqwzRsJ2RVe43UkCslTgq8Oqb8xg0wTDZUJHvubtVap0H3WXcQ3V3xpS5d6YsDXJ15yBA5c0TQ==
-X-Received: by 2002:a17:902:8c84:: with SMTP id t4mr21515599plo.101.1579029235167;
-        Tue, 14 Jan 2020 11:13:55 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id v4sm18628483pff.174.2020.01.14.11.13.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 11:13:54 -0800 (PST)
-Date:   Tue, 14 Jan 2020 11:13:53 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <chanwoo@kernel.org>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 2/2] PM / devfreq: Use exclusively PM QoS to determine
- frequency limits
-Message-ID: <20200114191353.GL89495@google.com>
-References: <20200110094913.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
- <CGME20200110174932epcas1p345b0e750b48cc9e351dca14e0dd4de86@epcas1p3.samsung.com>
- <20200110094913.2.Ie8eacf976ce7a13e421592f5c1ab8dbdc537da5c@changeid>
- <c793c2e5-dd0e-bff4-9769-26344afe914e@samsung.com>
- <VI1PR04MB702308C23513581F33EFE697EE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <CAGTfZH1YvkSQtVTCrCYyWyBNUvKoTk8Vfrc2hHYsH=3AHr-tqw@mail.gmail.com>
+        Tue, 14 Jan 2020 14:17:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579029423;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=azbvDxnc2xgDC9U0cn3dkI+d0+KvXPPR9kPql0yzi6E=;
+        b=hRnFOSqxjLnZvo5WK29bYbRzi3YmJ45KmypaNf2X51OoZf52APtqGu+gOhVsdX9FDuYC4M
+        LiDRr3UBJzeDNeUbdW4S1aNrY5M/p+EvCk5h6qSeD4ZMig7qYkI+4YmTPc7PVtl2SDu8cT
+        FhY0PMI5jn6nuFh9wD3AqktPgO1Ea7w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-405-8IqR9p4SMDejD8I74EWQEA-1; Tue, 14 Jan 2020 14:16:59 -0500
+X-MC-Unique: 8IqR9p4SMDejD8I74EWQEA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7CA5510D08B4;
+        Tue, 14 Jan 2020 19:16:58 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-218.rdu2.redhat.com [10.10.122.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD6B1842B8;
+        Tue, 14 Jan 2020 19:16:57 +0000 (UTC)
+Subject: Re: [PATCH v2 4/6] locking/lockdep: Reuse freed chain_hlocks entries
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20191216151517.7060-1-longman@redhat.com>
+ <20191216151517.7060-5-longman@redhat.com>
+ <20200113155823.GY2844@hirez.programming.kicks-ass.net>
+ <e282e7f3-6010-ef13-bd07-524445049ef8@redhat.com>
+ <20200114094656.GA2844@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b19df484-1d82-1014-1edf-a1294b4dcd09@redhat.com>
+Date:   Tue, 14 Jan 2020 14:16:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20200114094656.GA2844@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGTfZH1YvkSQtVTCrCYyWyBNUvKoTk8Vfrc2hHYsH=3AHr-tqw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 02:35:48AM +0900, Chanwoo Choi wrote:
-> On Wed, Jan 15, 2020 at 1:08 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> >
-> > On 13.01.2020 09:24, Chanwoo Choi wrote:
-> > > Hi,
-> > >
-> > > Any device driver except for devfreq_cooling.c might
-> > > use dev_pm_opp_enable/disable interface.
-> > > So, don't need to remove the devfreq->scaling_max_freq
-> > > and devfreq->scaling_min_freq for supporting OPP interface.
-> >
-> > It seems that devfreq_cooling was the only upstream user of
-> > dev_pm_opp_enable and the remaining callers of dev_pm_opp_disable are
-> > probe-time checks.
-> 
-> OPP interface has still dev_pm_opp_enable and dev_pm_opp_disable
-> function. As long as remains them, any device driver related to devfreq
-> could call them at some time. The devfreq supports the OPP interface,
-> not just for only devfreq_cooling.
+On 1/14/20 4:46 AM, Peter Zijlstra wrote:
+> On Mon, Jan 13, 2020 at 11:24:37AM -0500, Waiman Long wrote:
+>> On 1/13/20 10:58 AM, Peter Zijlstra wrote:
+>>> That's _two_ allocators :/ And it can trivially fail, even if there's
+>>> plenty space available.
+>>>
+>>> Consider nr_chain_hlocks is exhaused, and @size is empty, but size+1
+>>> still has blocks.
+>>>
+>>> I'm guessing you didn't make it a single allocator because you didn't
+>>> want to implement block splitting? why?
+>>>
+>> In my testing, most of the lock chains tend to be rather short (within
+>> the 2-8 range). I don't see a lot of free blocks left in the system
+>> after the test. So I don't see a need to implement block splitting for now.
+>>
+>> If you think this is a feature that needs to be implemented for the
+>> patch to be complete, I can certainly add patch to do that. My initial
+>> thought is just to split long blocks in the unsized list for allocation
+>> request that is no longer than 8 to make thing easier.
+> From an engineering POV I'd much prefer a single complete allocator over
+> two half ones. We can leave block merger out of the initial allocator I
+> suppose and worry about that if/when fragmentation really shows to be a
+> problem.
+>
+> I'm thinking worst-fit might work well for our use-case. Best-fit would
+> result in a heap of tiny fragments and we don't have really large
+> allocations, which is the Achilles-heel of worst-fit.
+I am going to add a patch to split chain block as a last resort in case
+we run out of the main buffer.
+>
+> Also, since you put in a minimal allocation size of 2, but did not
+> mandate size is a multiple of 2, there is a weird corner case of size-1
+> fragments. The simplest case is to leak those, but put in a counter so
+> we can see if they're a problem -- there is a fairly trivial way to
+> recover them without going full merge.
 
-I would like to remove the disabled OPP handling since no devfreq device
-makes use of dev_pm_opp_enable/disable, but I fear you are right that
-we have to keep it as long as the API is available.
+There is no size-1 fragment. Are you referring to the those blocks with
+a size of 2, but with only one entry used? There are some wasted space
+there. I can add a counter to track that.
+
+Cheers,
+Longman
+
+>
+> Also, there's a bunch of syzcaller reports of running out of
+> ENTRIES/CHAIN_HLOCKS, perhaps try some of those workloads to better
+> stress the allocator?
+>
+
