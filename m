@@ -2,105 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6510C13A409
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:44:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E3EF13A40F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:46:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbgANJoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 04:44:16 -0500
-Received: from mout01.posteo.de ([185.67.36.65]:45134 "EHLO mout01.posteo.de"
+        id S1728992AbgANJqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgANJoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:44:15 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id BF25F16006C
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 10:44:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1578995052; bh=ZQZSbgw/YGRKUI9Cpp6WEiaoPNlOpSORV4nBp/7wD2M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lmwXCF+683QlsdRUz1TNxq65LQyZ/+41R039wIbfsrMaWvNrXpAdhSnijQteskB8r
-         9bcm1MK2yyeDLuQf3f28FcgLvSVEez0MRY1VqULG3ce7vbBL1R+cgfT4XzGVyjHKV8
-         e1Py7Bb9xaQGA7luWjkkD8a9nfJcNjq5SivDRDOvY/R4TAupMOESqQihN5vTLkDuWH
-         h9IHgochJ0GaAvBOZROWhAUPnmb3r2vEv8jmsP9StQszvMIYbpJXhG8UfgaEdKMPHI
-         V26rT9TGjDWVXad/2d2cidcNgqHU4pGsT9RixgpMeg9MdSrQQ/5h2TA4TOuLjy/YXR
-         iUZdu5k+HfJ5g==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 47xlsP6qlTz6tmG;
-        Tue, 14 Jan 2020 10:44:09 +0100 (CET)
+        id S1725820AbgANJqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 04:46:03 -0500
+Received: from dogfood.home (amontpellier-657-1-18-247.w109-210.abo.wanadoo.fr [109.210.65.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5FCE24670;
+        Tue, 14 Jan 2020 09:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578995162;
+        bh=oXoVf5FYzK2l54ZMTKBmt/diqvZDokYRd/mYU7Iuj7w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ofFAsr0yMlwqOasIzmRJEYHG7eCD55Tw4XqWV8py/NHRxsNvvsm9h+vw/whb8uWXZ
+         6LhHsk/1b5w3U50AnfJon2zQ7Jyt2wPN4kOL/cG/Zp7TOb3w8YUjBw6r0CpUS/O3kn
+         t7N/DVvu3lAy41/P2bAc+9c+6VSwH5DisAhMffX4=
+From:   Ard Biesheuvel <ardb@kernel.org>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-arm-kernel@lists.infradead.org, masahisa.kojima@linaro.org,
+        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH 0/2] synquacer: add TPM support
+Date:   Tue, 14 Jan 2020 10:45:03 +0100
+Message-Id: <20200114094505.11855-1-ardb@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 14 Jan 2020 10:44:09 +0100
-From:   stanner@posteo.de
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Hagen Pfeifer <hagen@jauu.net>,
-        mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de
-Subject: Re: =?UTF-8?Q?SCHED=5FDEADLINE=20with=20CPU=20affinity?=
-Message-ID: <3000986a52f2c961177c95289df69535@posteo.de>
-X-Sender: stanner@posteo.de
-User-Agent: Posteo Webmail
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds support for driving the TPM on Socionext SynQuacer platforms
+using the existing driver for a memory mapped TIS frame.
 
+Ard Biesheuvel (2):
+  dt-bindings: tpm-tis-mmio: add compatible string for SynQuacer TPM
+  tpm: tis: add support for MMIO TPM on SynQuacer
 
-Am 13.01.2020 10:22 schrieb Juri Lelli:
-> Hi,
-> 
-> Sorry for the delay in repling (Xmas + catching-up w/ emails).
+ Documentation/devicetree/bindings/security/tpm/tpm_tis_mmio.txt |  1 +
+ drivers/char/tpm/tpm_tis.c                                      | 31 ++++++++++++++++++--
+ 2 files changed, 30 insertions(+), 2 deletions(-)
 
-No worries
+-- 
+2.20.1
 
->> I fear I have not understood quite well yet why this
->> "workaround" leads to (presumably) the same results as set_affinity
->> would. From what I have read, I understand it as follows: For
->> sched_dead, admission control tries to guarantee that the requested
->> policy can be executed. To do so, it analyzes the current workload
->> situation, taking especially the number of cores into account.
->> 
->> Now, with a pre-configured set, the kernel knows which tasks will run
->> on which core, therefore it's able to judge wether a process can be
->> deadline scheduled or not. But when using the default way, you could
->> start your processes as SCHED_OTHER, set SCHED_DEADLINE as policy and
->> later many of them could suddenly call set_affinity, desiring to run 
->> on
->> the same core, therefore provoking collisions.
-> 
-> But setting affinity would still have to pass admission control, and
-> should fail in the case you are describing (IIUC).
-> 
-> https://elixir.bootlin.com/linux/latest/source/kernel/sched/core.c#L5433
-
-Well, no, that's not what I meant.
-I understand that the kernel currently rejects the combination of 
-set_affinity and
-sched_setattr.
-My question, basically is: Why does it work with exclusive cpu-sets?
-
-As I wrote above, I assume that the difference is that the kernel knows 
-which
-programs will run on which core beforehand and therefore can check the
-rules of admission control, whereas without exclusive cpu_sets it could 
-happen
-any time that certain (other) deadline applications decide to switch 
-cores manually,
-causing collisions with a deadline task already running on this core.
-
-You originally wrote that this solution is "currently" required; that's 
-why assume that
-in theory the admission control check could also be done dynamically 
-when
-sched_setattr or set_affinity are called (after each other, without 
-exclusive cpu sets).
-
-Have I been clear enough now? Basically I want to know why 
-cpusets+sched_deadline
-works whereas set_affinity+sched_deadline is rejected, although both 
-seem to lead
-to the same result.
-
-P.
