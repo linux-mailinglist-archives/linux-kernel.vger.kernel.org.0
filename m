@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9270E13AA20
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:06:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8946113A9F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:03:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgANNCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:02:39 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43191 "EHLO
+        id S1729123AbgANNCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:02:48 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43264 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbgANNCb (ORCPT
+        with ESMTP id S1729035AbgANNCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:02:31 -0500
+        Tue, 14 Jan 2020 08:02:43 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1irLpz-0004kH-LX; Tue, 14 Jan 2020 14:02:27 +0100
+        id 1irLq7-0004mi-JL; Tue, 14 Jan 2020 14:02:38 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EBE551C0809;
-        Tue, 14 Jan 2020 14:02:19 +0100 (CET)
-Date:   Tue, 14 Jan 2020 13:02:19 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 01CBE1C07FA;
+        Tue, 14 Jan 2020 14:02:21 +0100 (CET)
+Date:   Tue, 14 Jan 2020 13:02:20 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] alarmtimer: Provide get_timespec() callback
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Dmitry Safonov <dima@arista.com>, x86 <x86@kernel.org>,
+Subject: [tip: timers/core] time: Add timens_offsets to be used for tasks in
+ time namespace
+Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-9-dima@arista.com>
-References: <20191112012724.250792-9-dima@arista.com>
+In-Reply-To: <20191112012724.250792-5-dima@arista.com>
+References: <20191112012724.250792-5-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157900693978.396.15353469532295891202.tip-bot2@tip-bot2>
+Message-ID: <157900694083.396.6789904611289992625.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,71 +48,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     2f58bf909abf9670fa4e848b433dc12ba4c2a44e
-Gitweb:        https://git.kernel.org/tip/2f58bf909abf9670fa4e848b433dc12ba4c2a44e
-Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:26:57 
+Commit-ID:     af993f58d69ee9c1f421dfc87c3ed231c113989c
+Gitweb:        https://git.kernel.org/tip/af993f58d69ee9c1f421dfc87c3ed231c113989c
+Author:        Andrei Vagin <avagin@openvz.org>
+AuthorDate:    Tue, 12 Nov 2019 01:26:53 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 14 Jan 2020 12:20:51 +01:00
+CommitterDate: Tue, 14 Jan 2020 12:20:49 +01:00
 
-alarmtimer: Provide get_timespec() callback
+time: Add timens_offsets to be used for tasks in time namespace
 
-The upcoming support for time namespaces requires to have access to:
+Introduce offsets for time namespace. They will contain an adjustment
+needed to convert clocks to/from host's.
 
-  - The time in a task's time namespace for sys_clock_gettime()
-  - The time in the root name space for common_timer_get()
+A new namespace is created with the same offsets as the time namespace
+of the current process.
 
-Wire up alarm bases with get_timespec().
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-9-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-5-dima@arista.com
 
 
 ---
- kernel/time/alarmtimer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/time_namespace.h | 22 ++++++++++++++++++++++
+ kernel/time/namespace.c        |  2 ++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 22b6f9b..357be1f 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -37,12 +37,14 @@
-  * @lock:		Lock for syncrhonized access to the base
-  * @timerqueue:		Timerqueue head managing the list of events
-  * @get_ktime:		Function to read the time correlating to the base
-+ * @get_timespec:	Function to read the namespace time correlating to the base
-  * @base_clockid:	clockid for the base
-  */
- static struct alarm_base {
- 	spinlock_t		lock;
- 	struct timerqueue_head	timerqueue;
- 	ktime_t			(*get_ktime)(void);
-+	void			(*get_timespec)(struct timespec64 *tp);
- 	clockid_t		base_clockid;
- } alarm_bases[ALARM_NUMTYPE];
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index 8c74cc1..d7e3b49 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -12,11 +12,17 @@
+ struct user_namespace;
+ extern struct user_namespace init_user_ns;
  
-@@ -670,7 +672,8 @@ static int alarm_clock_get_timespec(clockid_t which_clock, struct timespec64 *tp
- 	if (!alarmtimer_get_rtcdev())
- 		return -EINVAL;
- 
--	*tp = ktime_to_timespec64(base->get_ktime());
-+	base->get_timespec(tp);
++struct timens_offsets {
++	struct timespec64 monotonic;
++	struct timespec64 boottime;
++};
 +
+ struct time_namespace {
+ 	struct kref		kref;
+ 	struct user_namespace	*user_ns;
+ 	struct ucounts		*ucounts;
+ 	struct ns_common	ns;
++	struct timens_offsets	offsets;
+ } __randomize_layout;
+ 
+ extern struct time_namespace init_time_ns;
+@@ -39,6 +45,20 @@ static inline void put_time_ns(struct time_namespace *ns)
+ 	kref_put(&ns->kref, free_time_ns);
+ }
+ 
++static inline void timens_add_monotonic(struct timespec64 *ts)
++{
++	struct timens_offsets *ns_offsets = &current->nsproxy->time_ns->offsets;
++
++	*ts = timespec64_add(*ts, ns_offsets->monotonic);
++}
++
++static inline void timens_add_boottime(struct timespec64 *ts)
++{
++	struct timens_offsets *ns_offsets = &current->nsproxy->time_ns->offsets;
++
++	*ts = timespec64_add(*ts, ns_offsets->boottime);
++}
++
+ #else
+ static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
+ {
+@@ -66,6 +86,8 @@ static inline int timens_on_fork(struct nsproxy *nsproxy,
  	return 0;
  }
  
-@@ -883,8 +886,10 @@ static int __init alarmtimer_init(void)
- 	/* Initialize alarm bases */
- 	alarm_bases[ALARM_REALTIME].base_clockid = CLOCK_REALTIME;
- 	alarm_bases[ALARM_REALTIME].get_ktime = &ktime_get_real;
-+	alarm_bases[ALARM_REALTIME].get_timespec = ktime_get_real_ts64,
- 	alarm_bases[ALARM_BOOTTIME].base_clockid = CLOCK_BOOTTIME;
- 	alarm_bases[ALARM_BOOTTIME].get_ktime = &ktime_get_boottime;
-+	alarm_bases[ALARM_BOOTTIME].get_timespec = ktime_get_boottime_ts64;
- 	for (i = 0; i < ALARM_NUMTYPE; i++) {
- 		timerqueue_init_head(&alarm_bases[i].timerqueue);
- 		spin_lock_init(&alarm_bases[i].lock);
++static inline void timens_add_monotonic(struct timespec64 *ts) { }
++static inline void timens_add_boottime(struct timespec64 *ts) { }
+ #endif
+ 
+ #endif /* _LINUX_TIMENS_H */
+diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+index 2662a69..c2a58e4 100644
+--- a/kernel/time/namespace.c
++++ b/kernel/time/namespace.c
+@@ -14,6 +14,7 @@
+ #include <linux/slab.h>
+ #include <linux/cred.h>
+ #include <linux/err.h>
++#include <linux/mm.h>
+ 
+ static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
+ {
+@@ -60,6 +61,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
+ 	ns->ucounts = ucounts;
+ 	ns->ns.ops = &timens_operations;
+ 	ns->user_ns = get_user_ns(user_ns);
++	ns->offsets = old_ns->offsets;
+ 	return ns;
+ 
+ fail_free:
