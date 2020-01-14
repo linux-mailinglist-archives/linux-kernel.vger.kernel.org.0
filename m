@@ -2,114 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F46013A270
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B012213A277
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbgANIEA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 14 Jan 2020 03:04:00 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39851 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbgANID7 (ORCPT
+        id S1729214AbgANIFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 03:05:11 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:61739 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbgANIFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 03:03:59 -0500
-Received: from mail-pj1-f71.google.com ([209.85.216.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1irHB5-0006fy-Rr
-        for linux-kernel@vger.kernel.org; Tue, 14 Jan 2020 08:03:56 +0000
-Received: by mail-pj1-f71.google.com with SMTP id bg6so7687147pjb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 00:03:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=oyHMiGCOwwLhZ3ql1qP5fClJMPTVAnuOcLkJMOC5WrM=;
-        b=d96i1Tc8bwGvGmCOiuDJ5RSwRNl8nZdZ5Vr+VcjePyFpNiBXLDffWPrOLs0X06ZBe6
-         fRGfcM4bx/zFhC7ilTmGwTScW/b2WmFMjSmWMiY1mkQ9yrrTTgo4ip5M4I+TqeeEhjSk
-         kM+KgYSIuUVR+ccbV2drQjkouwrHrigclg1QdXQRvyhxbP/2Yo65T9Kn2nAhvaY/73A4
-         61UbwpAqfz3qPATiKQO+B5GjC8S6qFmAX+MZf6idXWht/bwsLuu8r7T+LJ5pZ5RPoxT7
-         o7dZaqLzD0ee+2s65p8qhEYBHSIsJK0W9vM4YSsCLw7h4bmFYtltwKr4EeScDv+Ht5ZQ
-         HSmA==
-X-Gm-Message-State: APjAAAVY+RUiaUoJc9YT5vV0u4R9o6/YxKfcCBYJztzTpZ78tyFzouiR
-        XiqJSjJ9J3fl0bKO19l+SSzaMY5dd/4QmuiidvoZUUp+8inCGFr2bZ+XhWxda7opyRT5/CohxA2
-        t560yDy7/rWeOHE1vTzlLUP4SIrwe59DRxP43r6LI5g==
-X-Received: by 2002:a63:ea4c:: with SMTP id l12mr24798748pgk.174.1578989034500;
-        Tue, 14 Jan 2020 00:03:54 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxShyOZDQstdIjpd/FUo8c7HCAwhOQJ9K9D7HaFj30wgfmPowWV6e8wRIMwJtnAXgZ8tGtY1g==
-X-Received: by 2002:a63:ea4c:: with SMTP id l12mr24798706pgk.174.1578989034126;
-        Tue, 14 Jan 2020 00:03:54 -0800 (PST)
-Received: from 2001-b011-380f-35a3-5d99-e277-e07f-4d26.dynamic-ip6.hinet.net (2001-b011-380f-35a3-5d99-e277-e07f-4d26.dynamic-ip6.hinet.net. [2001:b011:380f:35a3:5d99:e277:e07f:4d26])
-        by smtp.gmail.com with ESMTPSA id bo19sm15439224pjb.25.2020.01.14.00.03.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Jan 2020 00:03:53 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH] r8152: Add MAC passthrough support to new device
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CACeCKacQpDsptRi6AZhuFYg2c87-bW0KS6vy=CacB8+j+6YBXA@mail.gmail.com>
-Date:   Tue, 14 Jan 2020 16:03:50 +0800
-Cc:     David Miller <davem@davemloft.net>,
-        Hayes Wang <hayeswang@realtek.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Grant Grundler <grundler@chromium.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        David Chen <david.chen7@dell.com>,
-        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
-        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <14A65209-846C-4C94-9EC3-55605D2528B0@canonical.com>
-References: <20200114044127.20085-1-kai.heng.feng@canonical.com>
- <CACeCKacQpDsptRi6AZhuFYg2c87-bW0KS6vy=CacB8+j+6YBXA@mail.gmail.com>
-To:     Prashant Malani <pmalani@chromium.org>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        Tue, 14 Jan 2020 03:05:11 -0500
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 00E84k4r023665;
+        Tue, 14 Jan 2020 17:04:46 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 00E84k4r023665
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578989086;
+        bh=zqtq7IkCW0id1F79otkq2+3zhL0Fqy1TdiL18Qrl+go=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PGMJ4GR8yXY0XFl7WeuL8GsoMC9mwzswUAhGBUp03qVUOut1FPZT38sH4zKo0m1Ta
+         Q/6OKFqhSlG91gvqrQxtkmMativVX78yjntMkR2FSkuvdJq+tjaKsboRowajPTZ3aY
+         eKLd0i8bf4i/dmnzE6LGyqe5mDVEuxwnBI5gweaLpu9Df/weFOLWLv71VoMFLTa4Z8
+         LNIgICa0C/DaHLG8Bn27+j6hrrMVoLIUi3WwjivDdX0Xvg93Ro/q9lUXzDwwM1eS/4
+         MDYm5kzLK4ZCDaFNcsuFM+z+Yyv8aCA563qvVwQg5dcp+IL1LY2c5CbsDpf0/tBUyD
+         UeIE0VvsfVLwQ==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id y23so4436379ual.2;
+        Tue, 14 Jan 2020 00:04:46 -0800 (PST)
+X-Gm-Message-State: APjAAAUdg9v5S3EZKt8HBI6ODLMWjCTeCP697WXp3JA8UQfgpnda+Jdj
+        NT0XfIRfhp0OSIJlRCKv461EOLbFyKRa+HufGx8=
+X-Google-Smtp-Source: APXvYqxACHfBMoAc+LfpdScWVrlt7n/Wtwl7tQFYgbXxfF+CTJmEFF/P0ykqAGDjiJK626yMtn+wvRqVclE4WoYQdIY=
+X-Received: by 2002:ab0:2ea6:: with SMTP id y6mr9924613uay.25.1578989085420;
+ Tue, 14 Jan 2020 00:04:45 -0800 (PST)
+MIME-Version: 1.0
+References: <20200113064841.3946-1-masahiroy@kernel.org> <20200113064841.3946-4-masahiroy@kernel.org>
+ <7da5750c40489dcb6cd8eef0307ee8d8df2e134e.camel@decadent.org.uk>
+In-Reply-To: <7da5750c40489dcb6cd8eef0307ee8d8df2e134e.camel@decadent.org.uk>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 14 Jan 2020 17:04:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR3fL-RQM412LJmJD6v81JTJ+s0A5vcS4O=Y_=kNO4DUA@mail.gmail.com>
+Message-ID: <CAK7LNAR3fL-RQM412LJmJD6v81JTJ+s0A5vcS4O=Y_=kNO4DUA@mail.gmail.com>
+Subject: Re: [PATCH 4/7] builddeb: avoid invoking sub-shells where possible
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ben,
+
+On Tue, Jan 14, 2020 at 2:21 AM Ben Hutchings <ben@decadent.org.uk> wrote:
+> > +(
+> > +     cd $srctree
+> > +     find . arch/$SRCARCH -maxdepth 1 -name Makefile\*
+> > +     find include scripts -type f -o -type l
+> > +     find arch/$SRCARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
+> > +     find arch/$SRCARCH -name include -type f
+>
+> This command is wrong.  We currently find all files under all
+> directories named "include" under arch/$SRCARCH.  (arc, arm and xtensa
+> have some per-platform include directories in additional to the per-
+> architecture include directory.)
+>
+> > +
+> > +     if [ -d arch/$SRCARCH/scripts ]; then
+> > +             find arch/$SRCARCH/scripts -type f
+> > +     fi
+> > +) > debian/hdrsrcfiles
+> > +
+> > +{
+> > +     if is_enabled CONFIG_STACK_VALIDATION; then
+> > +             find tools/objtool -type f -executable
+> > +     fi
+> > +
+> > +     find arch/$SRCARCH/include Module.symvers include scripts -type f
+> > +
+> > +     if is_enabled CONFIG_GCC_PLUGINS; then
+> > +             find scripts/gcc-plugins -name \*.so -o -name gcc-common.h
+> > +     fi
+>
+> This is reverting patch 1.
+>
+> Ben.
+
+Thank you for catching these.
+
+I made a mistake somehow
+when I inserted the patch 1, and then
+rebased the others on top of it.
+
+I will fix it in v2.
 
 
-> On Jan 14, 2020, at 15:51, Prashant Malani <pmalani@chromium.org> wrote:
-> 
-> On Mon, Jan 13, 2020 at 8:41 PM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> 
->> Device 0xa387 also supports MAC passthrough, therefore add it to the
->> whitelst.
->> 
->> BugLink: https://bugs.launchpad.net/bugs/1827961/comments/30
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/net/usb/r8152.c | 3 ++-
->> 1 file changed, 2 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
->> index c5ebf35d2488..42dcf1442cc0 100644
->> --- a/drivers/net/usb/r8152.c
->> +++ b/drivers/net/usb/r8152.c
->> @@ -6657,7 +6657,8 @@ static int rtl8152_probe(struct usb_interface *intf,
->>        }
->> 
->>        if (le16_to_cpu(udev->descriptor.idVendor) == VENDOR_ID_LENOVO &&
->> -           le16_to_cpu(udev->descriptor.idProduct) == 0x3082)
->> +           (le16_to_cpu(udev->descriptor.idProduct) == 0x3082 ||
->> +            le16_to_cpu(udev->descriptor.idProduct) == 0xa387))
-> Perhaps we can try to use #define's for these vendor IDs (like
-> https://github.com/torvalds/linux/blob/master/drivers/net/usb/r8152.c#L680)
-> ?
-
-We can, but it'll bring some inconsistencies inside of rtl8152_table[], since we don't know idProduct for other devices.
-
-Kai-Heng
-
-> 
->>                set_bit(LENOVO_MACPASSTHRU, &tp->flags);
->> 
->>        if (le16_to_cpu(udev->descriptor.bcdDevice) == 0x3011 && udev->serial &&
->> --
->> 2.17.1
->> 
-
+-- 
+Best Regards
+Masahiro Yamada
