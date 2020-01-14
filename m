@@ -2,106 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B3C139EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A3C139EB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbgANB16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 20:27:58 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43811 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbgANB1z (ORCPT
+        id S1729297AbgANBGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:06:11 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:24388 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729153AbgANBGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 20:27:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id a13so12340563ljm.10;
-        Mon, 13 Jan 2020 17:27:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9J+ZBDrrbAWIuYb9veix6cNQ5A4bHUrnUSJB4zcW68k=;
-        b=ZdLGHd8ALoHsOB7Odi9BlE3MBkQlCtuLWt/omzqH2vJyZA1f7nzweh/ne+kv87A165
-         MW9iHcqmiclnGk2LCki08DEjy7Yb5TrxILnjxsQAP8mhgYh7yzHScwn3AaeFJBtombzW
-         cvL2Nohgsi4uDiTCtrkxmz3zafTIfjdBhofs2M66VHxO/XmEpV0HtHNPuE9frVX9AF7Y
-         46yzJv50UpQKZs8GbG94m+lQ3CP72m5dCV6utACRjHVlLKHK9tOY524mQHUuOSm489p4
-         PiSBJt2FoKKvXSGvod22r3Zd5Nes64D4HrAVMQD0S0vsFX1fjOq5cFKVRS4Z2cwfZ9jB
-         YcZg==
+        Mon, 13 Jan 2020 20:06:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578963970;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pcPgHMjbM1tTuJs57rpRm00UDVEplEHbWgFk0hTeOZ4=;
+        b=hV5nmls0y+UjjLdXrdHioATIafPa74aOEh3qZHQJvgy5NC7qEDePpvhwg5hdNV3a2liUXr
+        NmAh3TeJFoNw8tYD7ZNmETxkud3jxtY1S+9MR/TiJo4DuibrIH4CynbsIr0Ja+UMrWz5fn
+        hfhrY0AeLkUhtu80W49bSBmGLgjeamI=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-2wdm5lbuMTuscRUgDvVePA-1; Mon, 13 Jan 2020 20:06:08 -0500
+X-MC-Unique: 2wdm5lbuMTuscRUgDvVePA-1
+Received: by mail-qv1-f72.google.com with SMTP id f16so7657661qvr.7
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 17:06:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9J+ZBDrrbAWIuYb9veix6cNQ5A4bHUrnUSJB4zcW68k=;
-        b=RvarO9fHWCkr2AJ1b117AkTcCTVy3uxltrauN56sk14/41GjwR5MW8Ty6r1ctiR3LU
-         /cRlfjqbJXnzorB3E34Il/F3O6DacZUhs+TgXdHKNWzb9tDbM62YVcUHDMfTmJl7DrWS
-         casMtC7ycg824UfHhkRkGj/1BB/tIfBU3hC7rD29XS1iiPKVrOVUN2497id0zBrPWQaV
-         H1ZRQ4fbt3l2y2JcTh6WNFFHdt3aq5C4WYjPKkSqZOepWAL8LhRCiflCverIBVxmq2gL
-         RzxnSSugAKJN0SDQ7O9G70N3qgO7Y772AvvBtBEwi8qU4KCaEktfbcfNoVXagWKeIQ7Q
-         C89Q==
-X-Gm-Message-State: APjAAAUm9SxmLNbOQUZ+k6gQDiPPyeQGNTEk31/vEJwo9H4eSwYpihKx
-        kFTgto3rk9aMC9rsciLt7v98mnbC
-X-Google-Smtp-Source: APXvYqzzO9l1yft9CikyOnAO3k3mUKutKwk/sQe+BlAogzYNR1k2D/EI85SPG+Ynq1mZQJOxpLfLxQ==
-X-Received: by 2002:a2e:8916:: with SMTP id d22mr11919214lji.19.1578965273521;
-        Mon, 13 Jan 2020 17:27:53 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id s12sm6698527ljs.96.2020.01.13.17.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2020 17:27:52 -0800 (PST)
-Subject: Re: [PATCH v4 4/8] i2c: tegra: Support atomic transfers
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>, linux-i2c@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200112171430.27219-1-digetx@gmail.com>
- <20200112171430.27219-5-digetx@gmail.com> <20200113220315.GB2689@ninjato>
- <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
-Message-ID: <49fbcb5d-011b-8ace-15f9-a36d4ae30397@gmail.com>
-Date:   Tue, 14 Jan 2020 04:26:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pcPgHMjbM1tTuJs57rpRm00UDVEplEHbWgFk0hTeOZ4=;
+        b=pcOdjthsEFnAx3Gxmwy0vvFfdufqUJ/GQWkWVy4bDCuwHGj6dMVHLMxE6BRBvsbes2
+         3ZCU6OInKgh+TRBx1J7RfUISqFqLX1Q76VhMTGktZslvWfDon6v9moN0t1gkDAubO7ip
+         YQ1mxKZletdlZoZWx/IznCO+DXx++3L4+AcYN6VuotYEla17gfi7CaMjjVRm6x9GfqZS
+         EUOxuvsLHKlDfL8BGzt4eYnK3/bbrjVXttkvXUVAbijz5/9SPDs1lbLq78g9kY/FB4CE
+         +QSFKJkpo/GEvYWhQNHt28Liu6nJ1n/mPHXA+xCv3EUh1J/ezXIvSHXE5STKoYa42UnR
+         sRow==
+X-Gm-Message-State: APjAAAXuDSG27/sQzayeZHVdfkcwuvVTptoDpxFo2L4tDCzOpJMYP9ml
+        phy6fYKqmxdr38E3STpMXw+vhQR4/GrOX0DROer8L46FwLfUxlPfLQv4KwsyRJzVZ8H+EjGhZXU
+        jKtYhcDmUkdBMx+dZCpU9Re7l0MvPr/Mbjfub3dmZ
+X-Received: by 2002:a37:a086:: with SMTP id j128mr14135968qke.459.1578963968132;
+        Mon, 13 Jan 2020 17:06:08 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzFgUVJ57OMm6qYtoPN41WVqMHNymaDdu9B+b9YyZZgWZjfQ9S0NylFBVceVMYo3g/DIWX4riFinR12zotGq5c=
+X-Received: by 2002:a37:a086:: with SMTP id j128mr14135942qke.459.1578963967884;
+ Mon, 13 Jan 2020 17:06:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <86f71bfe-7d17-0bf4-edda-13c84301a598@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200112220612.3448741-1-lains@archlinux.org>
+In-Reply-To: <20200112220612.3448741-1-lains@archlinux.org>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 14 Jan 2020 21:03:30 +1000
+Message-ID: <CAO-hwJJJYRc8_kRiGGu9E4Dx-WpSADro4b28D8QoE87FBUTnOA@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: logitech-hidpp: add support for the Powerplay mat/receiver
+To:     =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-14.01.2020 01:52, Dmitry Osipenko пишет:
-> 14.01.2020 01:03, Wolfram Sang пишет:
->> On Sun, Jan 12, 2020 at 08:14:26PM +0300, Dmitry Osipenko wrote:
->>> System shutdown may happen with interrupts being disabled and in this case
->>> I2C core rejects transfers if atomic transfer isn't supported by driver.
->>
->> Well, not quite. The core complains about it nowadays, but does not
->> reject messages. It will try the same behaviour as before. It will just
->> inform the user that somethings is tried which may not work. I probably
->> should update the error message printed saying that the transfer is
->> still tried.
-> 
-> Indeed, now I'm recalling noticing that the transfer actually should
-> happen despite of the error message, but then completely forgot to
-> update the commit's message. I can update the message and send out v5,
-> if you're thinking that it's worthwhile to do.
+Hi Filipe,
 
-I have time to do it now, will send v5 shortly.
+On Mon, Jan 13, 2020 at 8:07 AM Filipe La=C3=ADns <lains@archlinux.org> wro=
+te:
+>
+> The Logitech G Powerplay has a lightspeed receiver with a static HID++
+> device with ID 7 attached to it to. It is used to configure the led on
+> the mat. For this reason I increased the max number of devices.
+>
+> I also marked all lightspeed devices as HID++ compatible. As the
+> internal powerplay device does not have REPORT_TYPE_KEYBOARD or
+> REPORT_TYPE_MOUSE it was not being marked as HID++ compatible in
+> logi_hidpp_dev_conn_notif_equad.
+>
+> Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
+> ---
+>  drivers/hid/hid-logitech-dj.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.=
+c
+> index bb50d6e7745b..732380b55b15 100644
+> --- a/drivers/hid/hid-logitech-dj.c
+> +++ b/drivers/hid/hid-logitech-dj.c
+> @@ -16,11 +16,11 @@
+>  #include <asm/unaligned.h>
+>  #include "hid-ids.h"
+>
+> -#define DJ_MAX_PAIRED_DEVICES                  6
+> +#define DJ_MAX_PAIRED_DEVICES                  7
+>  #define DJ_MAX_NUMBER_NOTIFS                   8
+>  #define DJ_RECEIVER_INDEX                      0
+>  #define DJ_DEVICE_INDEX_MIN                    1
+> -#define DJ_DEVICE_INDEX_MAX                    6
+> +#define DJ_DEVICE_INDEX_MAX                    7
+>
+>  #define DJREPORT_SHORT_LENGTH                  15
+>  #define DJREPORT_LONG_LENGTH                   32
+> @@ -971,7 +971,7 @@ static void logi_hidpp_recv_queue_notif(struct hid_de=
+vice *hdev,
+>         case 0x0c:
+>                 device_type =3D "eQUAD Lightspeed 1";
+>                 logi_hidpp_dev_conn_notif_equad(hdev, hidpp_report, &work=
+item);
+> -               workitem.reports_supported |=3D STD_KEYBOARD;
+> +               workitem.reports_supported |=3D STD_KEYBOARD | HIDPP;
 
-And yes, clarifying the error message could be helpful. Although,
-perhaps it won't help much to drivers which may schedule during the
-atomic transfer.
+This feels wrong. The whole initial code was hack-ish, and now this is
+even more hack-ish.
 
->>> There were several occurrences where I found my Nexus 7 completely
->>> discharged despite of being turned off and then one day I spotted this in
->>> the log:
->>
->> Given my reasoning above, that should have happened before the warning
->> was printed as well? Because same behaviour. I'd be surprised if there
->> was a change...
-> 
-> Pretty sure that it was happening before, but I wasn't paying much
-> attention back then.
-> 
+I don't have a simple solution right now (at a conference this week),
+but I will need to be convinced this is the only sane solution :/
+
+Cheers,
+Benjamin
+
+>                 break;
+>         case 0x0d:
+>                 device_type =3D "eQUAD Lightspeed 1_1";
+> @@ -1850,6 +1850,10 @@ static const struct hid_device_id logi_dj_receiver=
+s[] =3D {
+>           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+>                 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1),
+>          .driver_data =3D recvr_type_gaming_hidpp},
+> +       { /* Logitech powerplay mat/receiver (0xc539) */
+> +         HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+> +               0xc53a),
+> +        .driver_data =3D recvr_type_gaming_hidpp},
+>         { /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
+>           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_REC=
+EIVER),
+>          .driver_data =3D recvr_type_27mhz},
+> --
+> 2.24.1
+>
+
