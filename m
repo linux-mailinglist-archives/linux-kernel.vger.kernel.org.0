@@ -2,783 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B22F139F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 829B5139F63
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 03:16:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbgANCWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 21:22:31 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:34653 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728802AbgANCWb (ORCPT
+        id S1729606AbgANCQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 21:16:00 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:35145 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729190AbgANCQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 21:22:31 -0500
-Received: by mail-pj1-f68.google.com with SMTP id s94so431885pjc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 18:22:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CA0gQQz1peIt5ORw2SYXLgeVXbCwcvwX5CQRfJkJWNA=;
-        b=nvkGA+SHXd7wG94tyAcEYOgvSdaCrc1QKbcV/jvaOLkod0d3P+MIVoGqHC++NMSeg9
-         YH7uCFAtuTpjqaNYzJK9Zzom1ki1WEczyoWfnP2nynL+nq27FYtf+77s+ewyoUeDJnVD
-         +gEmgs+u1cEAJdl7jFm47pR7hiw+S5L+fl4vSoUiG58SJ8HoQW3pIC6fP02oGOb1+9/P
-         KrULUfbyU/W+FJ0MKQucgPjPGOgHK5YwhGV/8qvaCooBihkIVyqtVXoWC0dGCVrOWsag
-         EhLJjXUnw88LnyZiv1U4whrmj/hWvheYKeJL+ujW93HoDY5po3c1VBBMbSzfUIawJ1JY
-         Dg+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CA0gQQz1peIt5ORw2SYXLgeVXbCwcvwX5CQRfJkJWNA=;
-        b=uhYZFyiT4Kw9AHf4DxbUPEzTGO+nJZCG1yQMvnw5IX/PEB8wxygI291H/I3kNS9oSq
-         pKudokwqsVQMBoNm3YJEDdANh8/1R2qaoRWmte9TZywz+Tkmxn8uOjzBcCCna6l3SKNb
-         Dr85BJNJjT5m+O6ASO9K+z4iaZy3LyDsZXsXnzXgph85NcOo0C6+XmVitl2ySNuQEaa7
-         RJps6UOT/EizALdo2FE0YXK/dk73eWutG0v3EUcUuO7a9QhFx4GAMaLNJoV4YR/Q3GtM
-         AV+Ry9FSFziWqTh5MQ9BSuEal8DHvNm3XhSSEOCt+MQcv79h+olGTLCLwZ1JmVhuMjdy
-         EMew==
-X-Gm-Message-State: APjAAAVw2WfFjEj5nRJ+4zbFX3Y24O4mvJw5WbIYh9oSb+eVfYZQOeWG
-        NHzCPavrvWqIKHdF2IkMcEM=
-X-Google-Smtp-Source: APXvYqwJngriEk6QV4ut0gh4Kn6bztf9lSvGQMZyS/4AJNnI8BN7IlDpHVAS4n0JpuGdwJvyS+VrsQ==
-X-Received: by 2002:a17:90b:941:: with SMTP id dw1mr25904052pjb.21.1578968549928;
-        Mon, 13 Jan 2020 18:22:29 -0800 (PST)
-Received: from localhost.localdomain ([101.12.40.97])
-        by smtp.gmail.com with ESMTPSA id u20sm14643881pgf.29.2020.01.13.18.22.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 13 Jan 2020 18:22:29 -0800 (PST)
-From:   Jeff Chang <richtek.jeff.chang@gmail.com>
-To:     lgirdwood@gmail.com
-Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        matthias.bgg@gmail.com, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jeff_chang@richtek.com, richtek.jeff.chang@gmail.com
-Subject: [PATCH v6] ASoC: Add MediaTek MT6660 Speaker Amp Driver
-Date:   Tue, 14 Jan 2020 10:22:06 +0800
-Message-Id: <1578968526-13191-1-git-send-email-richtek.jeff.chang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 13 Jan 2020 21:16:00 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200114021557epoutp04efa396970855e73ecf43cdd401c06251~pnyyAUIam0126701267epoutp041
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 02:15:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200114021557epoutp04efa396970855e73ecf43cdd401c06251~pnyyAUIam0126701267epoutp041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578968157;
+        bh=OjHGQsaPHZyYn4enX7XMl477/5nJU8/MOaR87n1tsEg=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=h1g6HG3ZhbwmwDEZs9X+1bTOKDiz2dXkm0WXwzwm97xDGXasAH+04NKJaeyZiunDx
+         TGy+5Q/67GkAhLWbHJSbOCdaieWTaAz5636uWEKXtQ7N1muH5NbfiOyzQh2fc22eOz
+         V1h60qUo5d4OGGtxD4ekt6ewjxZ2D559pXvvMpeI=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200114021557epcas1p47439ec34e546504a1ae5c87740d2afde~pnyxW_9xm2335023350epcas1p4v;
+        Tue, 14 Jan 2020 02:15:57 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47xYwB2xF3zMqYkV; Tue, 14 Jan
+        2020 02:15:54 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        73.71.51241.7542D1E5; Tue, 14 Jan 2020 11:15:51 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200114021550epcas1p149762e9eb9367d420c2eaf054656c533~pnyrFpgie1802918029epcas1p1B;
+        Tue, 14 Jan 2020 02:15:50 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200114021550epsmtrp1407f2cbc4fa1a91e6326faa1abf85581~pnyrE0cXp0827108271epsmtrp1Y;
+        Tue, 14 Jan 2020 02:15:50 +0000 (GMT)
+X-AuditID: b6c32a39-14bff7000001c829-5c-5e1d245778fa
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        45.FE.10238.6542D1E5; Tue, 14 Jan 2020 11:15:50 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200114021550epsmtip261501e6642765a8a44864ec293ef7dd6~pnyq0EtWe1150211502epsmtip2K;
+        Tue, 14 Jan 2020 02:15:50 +0000 (GMT)
+Subject: Re: [PATCH v3] PM / devfreq: Add debugfs support with
+ devfreq_summary file
+To:     Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, enric.balletbo@collabora.com,
+        hl@rock-chips.com, bjorn.andersson@linaro.org,
+        jcrouse@codeaurora.org, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <9635588e-66c2-14d5-9d84-43dbce976722@samsung.com>
+Date:   Tue, 14 Jan 2020 11:23:05 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
+MIME-Version: 1.0
+In-Reply-To: <20ebd8e0-f74c-335c-4af8-35c3dc81902f@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJsWRmVeSWpSXmKPExsWy7bCmvm64imycwcINshb357UyWpze/47F
+        YuKNKywWqz8+ZrRYc/sQo8WPDaeYLTYuyLY42/SG3WLF3Y+sFpd3zWGz+Nx7hNFiYVMLu8Xa
+        I3fZLW43rmBz4PNYM28No8flvl4mjx13lzB67Jx1l91j06pONo871/aweWx8t4PJ4++s/Swe
+        fVtWMXp83iQXwBWVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
+        E6DrlpkD9IGSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CyQK84Mbe4NC9dLzk/
+        18rQwMDIFKgwITtj8/Qz7AXzHCrmX/rA3sD4Ub+LkZNDQsBEYtvGdqYuRi4OIYEdjBKzNz1m
+        gXA+MUr0f2pkhnC+MUr8evSHDabl8obLjBCJvYwSP891QFW9Z5RoW9zBClIlLBAqsX3HH0YQ
+        W0QgQeLIn39gS5gFpjBJzD3dywySYBPQktj/4gbYWH4BRYmrPx6DNfAK2EkcXXYXbBCLgKrE
+        8ePNYLaoQJjEyW0tUDWCEidnPmEBsTkFbCXmnDoANpNZQFzi1pP5TBC2vETz1tlg10kIHGOX
+        aPrzEGgZB5DjIrHxDzvEO8ISr45vgbKlJF72t0HZ1RIrTx5hg+jtYJTYsv8CK0TCWGL/0slM
+        IHOYBTQl1u+ChqSixM7fcxkh9vJJvPvawwqxileio00IokRZ4vKDu0wQtqTE4vZOtgmMSrOQ
+        fDMLyQezkHwwC2HZAkaWVYxiqQXFuempxYYFpsjRvYkRnLy1LHcwHjvnc4hRgINRiYdXI0cm
+        Tog1say4MvcQowQHs5II76ZzUnFCvCmJlVWpRfnxRaU5qcWHGE2BgT2RWUo0OR+YWfJK4g1N
+        jYyNjS1MDM1MDQ2VxHk5flyMFRJITyxJzU5NLUgtgulj4uCUamA8zzFVPD3iW3hP+bOg73rz
+        VZ7Nmvjjeu8HjnfiDXuuvNu/Z1bTvpll7FXX9NV85wdKHJ3yQsqlPMTOy0pAYYV922qpvJfT
+        7gnEhi1kCTuwj8lc1uSZ3m3rx24bOsuOKYa2zNDtmP3BJrd1yh7HvFmxa393GZo/Se3u7D0l
+        v+P1Hae5R54LvC9RYinOSDTUYi4qTgQA5VmnwPQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsWy7bCSvG6YimycQc9ZEYv781oZLU7vf8di
+        MfHGFRaL1R8fM1qsuX2I0eLHhlPMFhsXZFucbXrDbrHi7kdWi8u75rBZfO49wmixsKmF3WLt
+        kbvsFrcbV7A58HmsmbeG0eNyXy+Tx467Sxg9ds66y+6xaVUnm8eda3vYPDa+28Hk8XfWfhaP
+        vi2rGD0+b5IL4IrisklJzcksSy3St0vgytg8/Qx7wTyHivmXPrA3MH7U72Lk5JAQMJG4vOEy
+        YxcjF4eQwG5GiT8L9zJDJCQlpl08CmRzANnCEocPF0PUvGWU2Nn9jQ2kRlggVOLc89usILaI
+        QILE3/8fwQYxC0xhkpjTewtq6kFGie4jXWAdbAJaEvtf3ACz+QUUJa7+eMwIYvMK2EkcXXYX
+        bBKLgKrE8ePNYLaoQJjEziWPmSBqBCVOznzCAmJzCthKzDl1AOxSZgF1iT/zLkHZ4hK3nsxn
+        grDlJZq3zmaewCg8C0n7LCQts5C0zELSsoCRZRWjZGpBcW56brFhgWFearlecWJucWleul5y
+        fu4mRnAca2nuYLy8JP4QowAHoxIPb0OeTJwQa2JZcWXuIUYJDmYlEd5N56TihHhTEiurUovy
+        44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBaBJNl4uCUamDsObZjybaNeqdCTkQe7Gp6
+        2sts91vA6sAbFbUL58yt5tZy7M2IutZtUfTXqSAk98Wcl7khytquQbNlc4o4FlcmFNidOtJ1
+        c33v+rbVOY0mb4PT5EMK8i+KfjixaMbRco2HVeeif5nqbYvhZPz6eN4swZglX5t5Hb748doU
+        +bklWJT4cU0zrVJiKc5INNRiLipOBAAqEbCn3wIAAA==
+X-CMS-MailID: 20200114021550epcas1p149762e9eb9367d420c2eaf054656c533
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200114013826epcas1p23a4c6c39f043dd09d33d48541288c1bd
+References: <CGME20200114013826epcas1p23a4c6c39f043dd09d33d48541288c1bd@epcas1p2.samsung.com>
+        <20200114014540.31490-1-cw00.choi@samsung.com>
+        <20ebd8e0-f74c-335c-4af8-35c3dc81902f@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Chang <jeff_chang@richtek.com>
+On 1/14/20 10:45 AM, Dmitry Osipenko wrote:
+> 14.01.2020 04:45, Chanwoo Choi пишет:
+>> Add debugfs interface to provide debugging information of devfreq device.
+>> It contains 'devfreq_summary' entry to show the summary of registered
+>> devfreq devices as following and the additional debugfs file will be added.
+>> - /sys/kernel/debug/devfreq/devfreq_summary
+>>
+>> [Detailed description of each field of 'devfreq_summary' debugfs file]
+>> - dev_name	: Device name of h/w.
+>> - dev		: Device name made by devfreq core.
+>> - parent_dev	: If devfreq device uses the passive governor,
+>> 		  show parent devfreq device name. Otherwise, show 'null'.
+>> - governor	: Devfreq governor.
+>> - polling_ms	: If devfreq device uses the simple_ondemand governor,
+>> 		  polling_ms is necessary for the period. (unit: millisecond)
+>> - cur_freq_Hz	: Current Frequency (unit: Hz)
+>> - old_freq_Hz	: Frequency before changing. (unit: Hz)
+>> - new_freq_Hz	: Frequency after changed. (unit: Hz)
+>>
+>> [For example on Exynos5422-based Odroid-XU3 board]
+>> $ cat /sys/kernel/debug/devfreq/devfreq_summary
+>> dev_name                       dev        parent_dev governor        polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
+>> ------------------------------ ---------- ---------- --------------- ---------- ------------ ------------ ------------
+>> 10c20000.memory-controller     devfreq0   null       simple_ondemand          0    165000000    165000000    825000000
+>> soc:bus_wcore                  devfreq1   null       simple_ondemand         50    532000000     88700000    532000000
+>> soc:bus_noc                    devfreq2   devfreq1   passive                  0    111000000     66600000    111000000
+>> soc:bus_fsys_apb               devfreq3   devfreq1   passive                  0    222000000    111000000    222000000
+>> soc:bus_fsys                   devfreq4   devfreq1   passive                  0    200000000     75000000    200000000
+>> soc:bus_fsys2                  devfreq5   devfreq1   passive                  0    200000000     75000000    200000000
+>> soc:bus_mfc                    devfreq6   devfreq1   passive                  0    333000000     83250000    333000000
+>> soc:bus_gen                    devfreq7   devfreq1   passive                  0    266000000     88700000    266000000
+>> soc:bus_peri                   devfreq8   devfreq1   passive                  0     66600000     66600000     66600000
+>> soc:bus_g2d                    devfreq9   devfreq1   passive                  0    333000000     83250000    333000000
+>> soc:bus_g2d_acp                devfreq10  devfreq1   passive                  0    266000000     66500000    266000000
+>> soc:bus_jpeg                   devfreq11  devfreq1   passive                  0    300000000     75000000    300000000
+>> soc:bus_jpeg_apb               devfreq12  devfreq1   passive                  0    166500000     83250000    166500000
+>> soc:bus_disp1_fimd             devfreq13  devfreq1   passive                  0    200000000    120000000    200000000
+>> soc:bus_disp1                  devfreq14  devfreq1   passive                  0    300000000    120000000    300000000
+>> soc:bus_gscl_scaler            devfreq15  devfreq1   passive                  0    300000000    150000000    300000000
+>> soc:bus_mscl                   devfreq16  devfreq1   passive                  0    666000000     84000000    666000000
+>>
+>> [lkp: Reported the build error]
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>> Changes from v2:
+>> - Show 'null' at 'parent_dev' field when governor of devfreq device
+>>   is not passive
+>> Changes from v1:
+>> - Drop the patch about 'devfreq_transitions' debugfs file
+>> - Modify from 'hz' to 'Hz'
+>> - Edit the indentation of 'devfreq_summary' when show summary
+>> - Exchange sequence between PTR_ERR and IS_ERR when debugfs_create_dir
+>>
+>>  drivers/devfreq/devfreq.c | 84 +++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 84 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index 89260b17598f..c5ef2d194b1b 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -10,6 +10,7 @@
+>>  #include <linux/kernel.h>
+>>  #include <linux/kmod.h>
+>>  #include <linux/sched.h>
+>> +#include <linux/debugfs.h>
+>>  #include <linux/errno.h>
+>>  #include <linux/err.h>
+>>  #include <linux/init.h>
+>> @@ -33,6 +34,7 @@
+>>  #define HZ_PER_KHZ	1000
+>>  
+>>  static struct class *devfreq_class;
+>> +static struct dentry *devfreq_debugfs;
+>>  
+>>  /*
+>>   * devfreq core provides delayed work based load monitoring helper
+>> @@ -1643,6 +1645,79 @@ static struct attribute *devfreq_attrs[] = {
+>>  };
+>>  ATTRIBUTE_GROUPS(devfreq);
+>>  
+>> +/**
+>> + * devfreq_summary_show() - Show the summary of the devfreq devices
+>> + * @s:		seq_file instance to show the summary of devfreq devices
+>> + * @data:	not used
+>> + *
+>> + * Show the summary of the devfreq devices via 'devfreq_summary' debugfs file.
+>> + * It helps that user can know the detailed information of the devfreq devices.
+>> + *
+>> + * Return 0 always because it shows the information without any data change.
+>> + */
+>> +static int devfreq_summary_show(struct seq_file *s, void *data)
+>> +{
+>> +	struct devfreq *devfreq;
+>> +	struct devfreq *p_devfreq = NULL;
+>> +	unsigned long cur_freq, min_freq, max_freq;
+>> +	unsigned int polling_ms;
+>> +
+>> +	seq_printf(s, "%-30s %-10s %-10s %-15s %10s %12s %12s %12s\n",
+>> +			"dev_name",
+>> +			"dev",
+>> +			"parent_dev",
+>> +			"governor",
+>> +			"polling_ms",
+>> +			"cur_freq_Hz",
+>> +			"min_freq_Hz",
+>> +			"max_freq_Hz");
+>> +	seq_printf(s, "%30s %10s %10s %15s %10s %12s %12s %12s\n",
+>> +			"------------------------------",
+>> +			"----------",
+>> +			"----------",
+>> +			"---------------",
+>> +			"----------",
+>> +			"------------",
+>> +			"------------",
+>> +			"------------");
+>> +
+>> +	mutex_lock(&devfreq_list_lock);
+>> +
+>> +	list_for_each_entry_reverse(devfreq, &devfreq_list, node) {
+>> +		if (!strncmp(devfreq->governor_name, DEVFREQ_GOV_PASSIVE,
+>> +							DEVFREQ_NAME_LEN)) {
+>> +			struct devfreq_passive_data *data = devfreq->data;
+>> +
+>> +			if (data)
+>> +				p_devfreq = data->parent;
+>> +		} else {
+>> +			p_devfreq = NULL;
+>> +		}
+>> +
+>> +		mutex_lock(&devfreq->lock);
+>> +		cur_freq = devfreq->previous_freq,
+>> +		get_freq_range(devfreq, &min_freq, &max_freq);
+>> +		polling_ms = devfreq->profile->polling_ms,
+>> +		mutex_unlock(&devfreq->lock);
+>> +
+>> +		seq_printf(s,
+>> +			"%-30s %-10s %-10s %-15s %10d %12ld %12ld %12ld\n",
+>> +			dev_name(devfreq->dev.parent),
+>> +			dev_name(&devfreq->dev),
+>> +			p_devfreq ? dev_name(&p_devfreq->dev) : "null",
+>> +			devfreq->governor_name,
+>> +			polling_ms,
+>> +			cur_freq,
+>> +			min_freq,
+>> +			max_freq);
+>> +	}
+>> +
+>> +	mutex_unlock(&devfreq_list_lock);
+>> +
+>> +	return 0;
+>> +}
+>> +DEFINE_SHOW_ATTRIBUTE(devfreq_summary);
+>> +
+>>  static int __init devfreq_init(void)
+>>  {
+>>  	devfreq_class = class_create(THIS_MODULE, "devfreq");
+>> @@ -1659,6 +1734,15 @@ static int __init devfreq_init(void)
+>>  	}
+>>  	devfreq_class->dev_groups = devfreq_groups;
+>>  
+>> +	
+> If you'll you'll take a look at [2], you may notice notice that it
+> checks whether devfreq_debugfs IS_ERR [3] and then bails out.
+> 
+> [2] https://protect2.fireeye.com/url?k=a5047d02-f8ca7cd1-a505f64d-000babff317b-ed64c541cd573190&u=https://elixir.bootlin.com/linux/v5.5-rc6/source/fs/debugfs/inode.c#L432
+> [3] https://protect2.fireeye.com/url?k=0a43fffa-578dfe29-0a4274b5-000babff317b-1c1c1062bfaeb0fc&u=https://elixir.bootlin.com/linux/v5.5-rc6/source/fs/debugfs/inode.c#L316
+> 
+> Thus you could simply remove the above error handling, making code to
+> look cleaner.
+> 
+> 
 
-The MT6660 is a boosted BTL class-D amplifier with V/I sensing.
-A built-in DC-DC step-up converter is used to provide efficient
-power for class-D amplifier with multi-level class-G operation.
-The digital audio interface supports I2S, left-justified,
-right-justified, TDM and DSP A/B format for audio in with a data
-out used for chip information like voltage sense and current
-sense, which are able to be monitored via DATAO through proper
+OK. I'll modify it as following: Do you agree?
 
-Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
----
- sound/soc/codecs/Kconfig  |  11 +
- sound/soc/codecs/Makefile |   2 +
- sound/soc/codecs/mt6660.c | 533 ++++++++++++++++++++++++++++++++++++++++++++++
- sound/soc/codecs/mt6660.h |  77 +++++++
- 4 files changed, 623 insertions(+)
- create mode 100644 sound/soc/codecs/mt6660.c
- create mode 100644 sound/soc/codecs/mt6660.h
+	devfreq_debugfs = debugfs_create_dir("devfreq", NULL);
+	debugfs_create_file("devfreq_summary", 0444,
+			devfreq_debugfs, NULL,
+			&devfreq_summary_fops);
 
 
-changelogs between v6 & v5
-	- remove parse DT and apply function about Chip INIT SETTING.
-	- remove DT binding Documentation.
-
-changelogs between v5 & v4
-        - remove redundant initialization.
-        - use packed structures.
-        - remove useless switch case.
-        - take care of memory allocation failures.
-
-changelogs between v4 & v3
-        - remove unnecessary kcontrols.
-        - modify copy right header.
-        - use dev_dbg instead of dev_info.
-        - add necessary debug message.
-        - add DT binding documentation.
-        - add space before } at every table.
-
-changelogs between v3 & v2
-
-        - modify MT6660 Kconfig, remove unnecessary selection.
-        - remove my own debug io interface. use standard regmap for debugging.
-        - remove regmap volatile ops, we do not use cache.
-        - remove component io read/write function, use snd_soc_component_init_regmap.
-        - remove init setting write code. Using parsing dts to set them.
-        - remove unnecessary pr_info log message.
-        - remove mt6660_component_put_volsw. Using snd_soc_get_volsw.
-
-
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 229cc89..f135fbb 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -122,6 +122,7 @@ config SND_SOC_ALL_CODECS
- 	select SND_SOC_ML26124 if I2C
- 	select SND_SOC_MT6351 if MTK_PMIC_WRAP
- 	select SND_SOC_MT6358 if MTK_PMIC_WRAP
-+	select SND_SOC_MT6660 if I2C
- 	select SND_SOC_NAU8540 if I2C
- 	select SND_SOC_NAU8810 if I2C
- 	select SND_SOC_NAU8822 if I2C
-@@ -1465,6 +1466,16 @@ config SND_SOC_MT6358
- 	  Enable support for the platform which uses MT6358 as
- 	  external codec device.
- 
-+config SND_SOC_MT6660
-+	tristate "Mediatek MT6660 Speaker Amplifier"
-+	depends on I2C
-+	help
-+	  MediaTek MT6660 is a smart power amplifier which contain
-+	  speaker protection, multi-band DRC, equalizer functions.
-+	  Select N if you don't have MT6660 on board.
-+	  Select M to build this as module.
-+
-+
- config SND_SOC_NAU8540
-        tristate "Nuvoton Technology Corporation NAU85L40 CODEC"
-        depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index c498373..2b6814c 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -119,6 +119,7 @@ snd-soc-msm8916-analog-objs := msm8916-wcd-analog.o
- snd-soc-msm8916-digital-objs := msm8916-wcd-digital.o
- snd-soc-mt6351-objs := mt6351.o
- snd-soc-mt6358-objs := mt6358.o
-+snd-soc-mt6660-objs := mt6660.o
- snd-soc-nau8540-objs := nau8540.o
- snd-soc-nau8810-objs := nau8810.o
- snd-soc-nau8822-objs := nau8822.o
-@@ -403,6 +404,7 @@ obj-$(CONFIG_SND_SOC_MSM8916_WCD_ANALOG) +=snd-soc-msm8916-analog.o
- obj-$(CONFIG_SND_SOC_MSM8916_WCD_DIGITAL) +=snd-soc-msm8916-digital.o
- obj-$(CONFIG_SND_SOC_MT6351)	+= snd-soc-mt6351.o
- obj-$(CONFIG_SND_SOC_MT6358)	+= snd-soc-mt6358.o
-+obj-$(CONFIG_SND_SOC_MT6660)	+= snd-soc-mt6660.o
- obj-$(CONFIG_SND_SOC_NAU8540)   += snd-soc-nau8540.o
- obj-$(CONFIG_SND_SOC_NAU8810)   += snd-soc-nau8810.o
- obj-$(CONFIG_SND_SOC_NAU8822)   += snd-soc-nau8822.o
-diff --git a/sound/soc/codecs/mt6660.c b/sound/soc/codecs/mt6660.c
-new file mode 100644
-index 0000000..b2523b3
---- /dev/null
-+++ b/sound/soc/codecs/mt6660.c
-@@ -0,0 +1,533 @@
-+// SPDX-License-Identifier: GPL-2.0 //
-+
-+// Copyright (c) 2019 MediaTek Inc.
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/version.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/delay.h>
-+#include <sound/soc.h>
-+#include <sound/tlv.h>
-+#include <sound/pcm_params.h>
-+#include <linux/debugfs.h>
-+
-+#include "mt6660.h"
-+
-+#pragma pack(push, 1)
-+struct codec_reg_val {
-+	u32 addr;
-+	u32 mask;
-+	u32 data;
-+};
-+
-+struct reg_size_table {
-+	u32 addr;
-+	u8 size;
-+};
-+#pragma pack(pop)
-+
-+static const struct reg_size_table mt6660_reg_size_table[] = {
-+	{ MT6660_REG_HPF1_COEF, 4 },
-+	{ MT6660_REG_HPF2_COEF, 4 },
-+	{ MT6660_REG_TDM_CFG3, 2 },
-+	{ MT6660_REG_RESV17, 2 },
-+	{ MT6660_REG_RESV23, 2 },
-+	{ MT6660_REG_SIGMAX, 2 },
-+	{ MT6660_REG_DEVID, 2 },
-+	{ MT6660_REG_HCLIP_CTRL, 2 },
-+	{ MT6660_REG_DA_GAIN, 2 },
-+};
-+
-+static int mt6660_get_reg_size(uint32_t addr)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(mt6660_reg_size_table); i++) {
-+		if (mt6660_reg_size_table[i].addr == addr)
-+			return mt6660_reg_size_table[i].size;
-+	}
-+	return 1;
-+}
-+
-+static int mt6660_reg_write(void *context, unsigned int reg, unsigned int val)
-+{
-+	struct mt6660_chip *chip = context;
-+	int size = mt6660_get_reg_size(reg);
-+	u8 reg_data[4];
-+	int i, ret;
-+
-+	for (i = 0; i < size; i++)
-+		reg_data[size - i - 1] = (val >> (8 * i)) & 0xff;
-+
-+	ret = i2c_smbus_write_i2c_block_data(chip->i2c, reg, size, reg_data);
-+	return ret;
-+}
-+
-+static int mt6660_reg_read(void *context, unsigned int reg, unsigned int *val)
-+{
-+	struct mt6660_chip *chip = context;
-+	int size = mt6660_get_reg_size(reg);
-+	int i, ret;
-+	u8 data[4];
-+	u32 reg_data = 0;
-+
-+	ret = i2c_smbus_read_i2c_block_data(chip->i2c, reg, size, data);
-+	if (ret < 0)
-+		return ret;
-+	for (i = 0; i < size; i++) {
-+		reg_data <<= 8;
-+		reg_data |= data[i];
-+	}
-+	*val = reg_data;
-+	return 0;
-+}
-+
-+static struct regmap_config mt6660_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 32,
-+	.reg_write = mt6660_reg_write,
-+	.reg_read = mt6660_reg_read,
-+};
-+
-+static int mt6660_codec_dac_event(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+
-+	if (event == SND_SOC_DAPM_POST_PMU)
-+		usleep_range(1000, 1100);
-+	return 0;
-+}
-+
-+static int mt6660_codec_classd_event(struct snd_soc_dapm_widget *w,
-+	struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_dapm_to_component(w->dapm);
-+	int ret;
-+
-+	switch (event) {
-+	case SND_SOC_DAPM_PRE_PMU:
-+		dev_dbg(component->dev,
-+			"%s: before classd turn on\n", __func__);
-+		/* config to adaptive mode */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_BST_CTRL, 0x03, 0x03);
-+		if (ret < 0) {
-+			dev_err(component->dev, "config mode adaptive fail\n");
-+			return ret;
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMU:
-+		/* voltage sensing enable */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_RESV7, 0x04, 0x04);
-+		if (ret < 0) {
-+			dev_err(component->dev,
-+				"enable voltage sensing fail\n");
-+			return ret;
-+		}
-+		dev_dbg(component->dev, "Amp on\n");
-+		break;
-+	case SND_SOC_DAPM_PRE_PMD:
-+		dev_dbg(component->dev, "Amp off\n");
-+		/* voltage sensing disable */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_RESV7, 0x04, 0x00);
-+		if (ret < 0) {
-+			dev_err(component->dev,
-+				"disable voltage sensing fail\n");
-+			return ret;
-+		}
-+		/* pop-noise improvement 1 */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_RESV10, 0x10, 0x10);
-+		if (ret < 0) {
-+			dev_err(component->dev,
-+				"pop-noise improvement 1 fail\n");
-+			return ret;
-+		}
-+		break;
-+	case SND_SOC_DAPM_POST_PMD:
-+		dev_dbg(component->dev,
-+			"%s: after classd turn off\n", __func__);
-+		/* pop-noise improvement 2 */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_RESV10, 0x10, 0x00);
-+		if (ret < 0) {
-+			dev_err(component->dev,
-+				"pop-noise improvement 2 fail\n");
-+			return ret;
-+		}
-+		/* config to off mode */
-+		ret = snd_soc_component_update_bits(component,
-+			MT6660_REG_BST_CTRL, 0x03, 0x00);
-+		if (ret < 0) {
-+			dev_err(component->dev, "config mode off fail\n");
-+			return ret;
-+		}
-+		break;
-+	}
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_widget mt6660_component_dapm_widgets[] = {
-+	SND_SOC_DAPM_DAC_E("DAC", NULL, MT6660_REG_PLL_CFG1,
-+		0, 1, mt6660_codec_dac_event, SND_SOC_DAPM_POST_PMU),
-+	SND_SOC_DAPM_ADC("VI ADC", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_PGA("PGA", SND_SOC_NOPM, 0, 0, NULL, 0),
-+	SND_SOC_DAPM_OUT_DRV_E("ClassD", MT6660_REG_SYSTEM_CTRL, 2, 0,
-+			       NULL, 0, mt6660_codec_classd_event,
-+			       SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
-+			       SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD),
-+	SND_SOC_DAPM_OUTPUT("OUTP"),
-+	SND_SOC_DAPM_OUTPUT("OUTN"),
-+};
-+
-+static const struct snd_soc_dapm_route mt6660_component_dapm_routes[] = {
-+	{ "DAC", NULL, "aif_playback" },
-+	{ "PGA", NULL, "DAC" },
-+	{ "ClassD", NULL, "PGA" },
-+	{ "OUTP", NULL, "ClassD" },
-+	{ "OUTN", NULL, "ClassD" },
-+	{ "VI ADC", NULL, "ClassD" },
-+	{ "aif_capture", NULL, "VI ADC" },
-+};
-+
-+static int mt6660_component_get_volsw(struct snd_kcontrol *kcontrol,
-+				  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component =
-+		snd_soc_kcontrol_component(kcontrol);
-+	struct mt6660_chip *chip = (struct mt6660_chip *)
-+		snd_soc_component_get_drvdata(component);
-+	int ret = -EINVAL;
-+
-+	if (!strcmp(kcontrol->id.name, "Chip Rev")) {
-+		ucontrol->value.integer.value[0] = chip->chip_rev & 0x0f;
-+		ret = 0;
-+	}
-+	return ret;
-+}
-+
-+static const DECLARE_TLV_DB_SCALE(vol_ctl_tlv, -1155, 5, 0);
-+
-+static const struct snd_kcontrol_new mt6660_component_snd_controls[] = {
-+	SOC_SINGLE_TLV("Digital Volume", MT6660_REG_VOL_CTRL, 0, 255,
-+			   1, vol_ctl_tlv),
-+	SOC_SINGLE("Hard Clip Switch", MT6660_REG_HCLIP_CTRL, 8, 1, 0),
-+	SOC_SINGLE("Clip Switch", MT6660_REG_SPS_CTRL, 0, 1, 0),
-+	SOC_SINGLE("Boost Mode", MT6660_REG_BST_CTRL, 0, 3, 0),
-+	SOC_SINGLE("DRE Switch", MT6660_REG_DRE_CTRL, 0, 1, 0),
-+	SOC_SINGLE("DC Protect Switch",	MT6660_REG_DC_PROTECT_CTRL, 3, 1, 0),
-+	SOC_SINGLE("Data Output Left Channel Selection",
-+		   MT6660_REG_DATAO_SEL, 3, 7, 0),
-+	SOC_SINGLE("Data Output Right Channel Selection",
-+		   MT6660_REG_DATAO_SEL, 0, 7, 0),
-+	SOC_SINGLE_EXT("T0 SEL", MT6660_REG_CALI_T0, 0, 7, 0,
-+		       snd_soc_get_volsw, NULL),
-+	SOC_SINGLE_EXT("Chip Rev", MT6660_REG_DEVID, 8, 15, 0,
-+		       mt6660_component_get_volsw, NULL),
-+};
-+
-+static int _mt6660_chip_power_on(struct mt6660_chip *chip, int on_off)
-+{
-+	u8 reg_data;
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(chip->i2c, MT6660_REG_SYSTEM_CTRL);
-+	if (ret < 0)
-+		return ret;
-+	reg_data = (u8)ret;
-+	if (on_off)
-+		reg_data &= (~0x01);
-+	else
-+		reg_data |= 0x01;
-+	return regmap_write(chip->regmap, MT6660_REG_SYSTEM_CTRL, reg_data);
-+}
-+
-+static int mt6660_component_probe(struct snd_soc_component *component)
-+{
-+	struct mt6660_chip *chip = snd_soc_component_get_drvdata(component);
-+
-+	dev_dbg(component->dev, "%s\n", __func__);
-+	snd_soc_component_init_regmap(component, chip->regmap);
-+
-+	return 0;
-+}
-+
-+static void mt6660_component_remove(struct snd_soc_component *component)
-+{
-+	dev_dbg(component->dev, "%s\n", __func__);
-+	snd_soc_component_exit_regmap(component);
-+}
-+
-+static const struct snd_soc_component_driver mt6660_component_driver = {
-+	.probe = mt6660_component_probe,
-+	.remove = mt6660_component_remove,
-+
-+	.controls = mt6660_component_snd_controls,
-+	.num_controls = ARRAY_SIZE(mt6660_component_snd_controls),
-+	.dapm_widgets = mt6660_component_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(mt6660_component_dapm_widgets),
-+	.dapm_routes = mt6660_component_dapm_routes,
-+	.num_dapm_routes = ARRAY_SIZE(mt6660_component_dapm_routes),
-+
-+	.idle_bias_on = false, /* idle_bias_off = true */
-+};
-+
-+static int mt6660_component_aif_hw_params(struct snd_pcm_substream *substream,
-+	struct snd_pcm_hw_params *hw_params, struct snd_soc_dai *dai)
-+{
-+	int word_len = params_physical_width(hw_params);
-+	int aud_bit = params_width(hw_params);
-+	u16 reg_data = 0;
-+	int ret;
-+
-+	dev_dbg(dai->dev, "%s: ++\n", __func__);
-+	dev_dbg(dai->dev, "format: 0x%08x\n", params_format(hw_params));
-+	dev_dbg(dai->dev, "rate: 0x%08x\n", params_rate(hw_params));
-+	dev_dbg(dai->dev, "word_len: %d, aud_bit: %d\n", word_len, aud_bit);
-+	if (word_len > 32 || word_len < 16) {
-+		dev_err(dai->dev, "not supported word length\n");
-+		return -ENOTSUPP;
-+	}
-+	switch (aud_bit) {
-+	case 16:
-+		reg_data = 3;
-+		break;
-+	case 18:
-+		reg_data = 2;
-+		break;
-+	case 20:
-+		reg_data = 1;
-+		break;
-+	case 24:
-+	case 32:
-+		reg_data = 0;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+	ret = snd_soc_component_update_bits(dai->component,
-+		MT6660_REG_SERIAL_CFG1, 0xc0, (reg_data << 6));
-+	if (ret < 0) {
-+		dev_err(dai->dev, "config aud bit fail\n");
-+		return ret;
-+	}
-+	ret = snd_soc_component_update_bits(dai->component,
-+		MT6660_REG_TDM_CFG3, 0x3f0, word_len << 4);
-+	if (ret < 0) {
-+		dev_err(dai->dev, "config word len fail\n");
-+		return ret;
-+	}
-+	dev_dbg(dai->dev, "%s: --\n", __func__);
-+	return 0;
-+}
-+
-+static const struct snd_soc_dai_ops mt6660_component_aif_ops = {
-+	.hw_params = mt6660_component_aif_hw_params,
-+};
-+
-+#define STUB_RATES	SNDRV_PCM_RATE_8000_192000
-+#define STUB_FORMATS	(SNDRV_PCM_FMTBIT_S16_LE | \
-+			SNDRV_PCM_FMTBIT_U16_LE | \
-+			SNDRV_PCM_FMTBIT_S24_LE | \
-+			SNDRV_PCM_FMTBIT_U24_LE | \
-+			SNDRV_PCM_FMTBIT_S32_LE | \
-+			SNDRV_PCM_FMTBIT_U32_LE)
-+
-+static struct snd_soc_dai_driver mt6660_codec_dai = {
-+	.name = "mt6660-aif",
-+	.playback = {
-+		.stream_name	= "aif_playback",
-+		.channels_min	= 1,
-+		.channels_max	= 2,
-+		.rates		= STUB_RATES,
-+		.formats	= STUB_FORMATS,
-+	},
-+	.capture = {
-+		.stream_name	= "aif_capture",
-+		.channels_min	= 1,
-+		.channels_max	= 2,
-+		.rates = STUB_RATES,
-+		.formats = STUB_FORMATS,
-+	},
-+	/* dai properties */
-+	.symmetric_rates = 1,
-+	.symmetric_channels = 1,
-+	.symmetric_samplebits = 1,
-+	/* dai operations */
-+	.ops = &mt6660_component_aif_ops,
-+};
-+
-+static inline int _mt6660_chip_id_check(struct mt6660_chip *chip)
-+{
-+	u8 id[2];
-+	int ret;
-+
-+	ret = i2c_smbus_read_i2c_block_data(chip->i2c, MT6660_REG_DEVID, 2, id);
-+	if (ret < 0)
-+		return ret;
-+	ret = (id[0] << 8) + id[1];
-+	ret &= 0x0ff0;
-+	if (ret != 0x00e0 && ret != 0x01e0) {
-+		dev_err(chip->dev, "%s id(%x) not match\n", __func__, ret);
-+		return -ENODEV;
-+	}
-+	return ret;
-+}
-+
-+static inline int _mt6660_chip_sw_reset(struct mt6660_chip *chip)
-+{
-+	int ret;
-+
-+	/* turn on main pll first, then trigger reset */
-+	ret = regmap_write(chip->regmap, 0x03, 0x00);
-+	if (ret < 0)
-+		return ret;
-+	ret = regmap_write(chip->regmap, MT6660_REG_SYSTEM_CTRL, 0x80);
-+	if (ret < 0)
-+		return ret;
-+	msleep(30);
-+	return 0;
-+}
-+
-+static inline int _mt6660_read_chip_revision(struct mt6660_chip *chip)
-+{
-+	u8 reg_data[2];
-+	int ret;
-+
-+	ret = i2c_smbus_read_i2c_block_data(
-+		chip->i2c, MT6660_REG_DEVID, 2, reg_data);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "get chip revision fail\n");
-+		return ret;
-+	}
-+	chip->chip_rev = reg_data[1];
-+	return 0;
-+}
-+
-+static int mt6660_i2c_probe(struct i2c_client *client,
-+			    const struct i2c_device_id *id)
-+{
-+	struct mt6660_chip *chip = NULL;
-+	int ret;
-+
-+	dev_dbg(&client->dev, "%s\n", __func__);
-+	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+	chip->i2c = client;
-+	chip->dev = &client->dev;
-+	mutex_init(&chip->io_lock);
-+	i2c_set_clientdata(client, chip);
-+
-+	chip->regmap = devm_regmap_init(&client->dev,
-+		NULL, chip, &mt6660_regmap_config);
-+	if (IS_ERR(chip->regmap)) {
-+		ret = PTR_ERR(chip->regmap);
-+		dev_err(&client->dev, "failed to initialise regmap: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* chip reset first */
-+	ret = _mt6660_chip_sw_reset(chip);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "chip reset fail\n");
-+		goto probe_fail;
-+	}
-+	/* chip power on */
-+	ret = _mt6660_chip_power_on(chip, 1);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "chip power on 2 fail\n");
-+		goto probe_fail;
-+	}
-+	/* chip devid check */
-+	ret = _mt6660_chip_id_check(chip);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "chip id check fail\n");
-+		goto probe_fail;
-+	}
-+	/* chip revision get */
-+	ret = _mt6660_read_chip_revision(chip);
-+	if (ret < 0) {
-+		dev_err(chip->dev, "read chip revision fail\n");
-+		goto probe_fail;
-+	}
-+	pm_runtime_set_active(chip->dev);
-+	pm_runtime_enable(chip->dev);
-+
-+	ret = devm_snd_soc_register_component(chip->dev,
-+					       &mt6660_component_driver,
-+					       &mt6660_codec_dai, 1);
-+	return ret;
-+probe_fail:
-+	_mt6660_chip_power_on(chip, 0);
-+	mutex_destroy(&chip->io_lock);
-+	return ret;
-+}
-+
-+static int mt6660_i2c_remove(struct i2c_client *client)
-+{
-+	struct mt6660_chip *chip = i2c_get_clientdata(client);
-+
-+	pm_runtime_disable(chip->dev);
-+	pm_runtime_set_suspended(chip->dev);
-+	mutex_destroy(&chip->io_lock);
-+	return 0;
-+}
-+
-+static int __maybe_unused mt6660_i2c_runtime_suspend(struct device *dev)
-+{
-+	struct mt6660_chip *chip = dev_get_drvdata(dev);
-+
-+	dev_dbg(dev, "enter low power mode\n");
-+	return regmap_update_bits(chip->regmap,
-+		MT6660_REG_SYSTEM_CTRL, 0x01, 0x01);
-+}
-+
-+static int __maybe_unused mt6660_i2c_runtime_resume(struct device *dev)
-+{
-+	struct mt6660_chip *chip = dev_get_drvdata(dev);
-+
-+	dev_dbg(dev, "exit low power mode\n");
-+	return regmap_update_bits(chip->regmap,
-+		MT6660_REG_SYSTEM_CTRL, 0x01, 0x00);
-+}
-+
-+static const struct dev_pm_ops mt6660_dev_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mt6660_i2c_runtime_suspend,
-+			   mt6660_i2c_runtime_resume, NULL)
-+};
-+
-+static const struct of_device_id __maybe_unused mt6660_of_id[] = {
-+	{ .compatible = "mediatek,mt6660",},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mt6660_of_id);
-+
-+static const struct i2c_device_id mt6660_i2c_id[] = {
-+	{"mt6660", 0 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(i2c, mt6660_i2c_id);
-+
-+static struct i2c_driver mt6660_i2c_driver = {
-+	.driver = {
-+		.name = "mt6660",
-+		.of_match_table = of_match_ptr(mt6660_of_id),
-+		.pm = &mt6660_dev_pm_ops,
-+	},
-+	.probe = mt6660_i2c_probe,
-+	.remove = mt6660_i2c_remove,
-+	.id_table = mt6660_i2c_id,
-+};
-+module_i2c_driver(mt6660_i2c_driver);
-+
-+MODULE_AUTHOR("Jeff Chang <jeff_chang@richtek.com>");
-+MODULE_DESCRIPTION("MT6660 SPKAMP Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_VERSION("1.0.7_G");
-diff --git a/sound/soc/codecs/mt6660.h b/sound/soc/codecs/mt6660.h
-new file mode 100644
-index 0000000..054a3c5
---- /dev/null
-+++ b/sound/soc/codecs/mt6660.h
-@@ -0,0 +1,77 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019 MediaTek Inc.
-+ */
-+
-+#ifndef __SND_SOC_MT6660_H
-+#define __SND_SOC_MT6660_H
-+
-+#include <linux/mutex.h>
-+#include <linux/regmap.h>
-+
-+#pragma pack(push, 1)
-+struct mt6660_platform_data {
-+	u8 init_setting_num;
-+	u32 *init_setting_addr;
-+	u32 *init_setting_mask;
-+	u32 *init_setting_val;
-+};
-+
-+struct mt6660_chip {
-+	struct i2c_client *i2c;
-+	struct device *dev;
-+	struct platform_device *param_dev;
-+	struct mt6660_platform_data plat_data;
-+	struct mutex io_lock;
-+	struct regmap *regmap;
-+	u16 chip_rev;
-+};
-+#pragma pack(pop)
-+
-+#define MT6660_REG_DEVID		(0x00)
-+#define MT6660_REG_SYSTEM_CTRL		(0x03)
-+#define MT6660_REG_IRQ_STATUS1		(0x05)
-+#define MT6660_REG_ADDA_CLOCK		(0x07)
-+#define MT6660_REG_SERIAL_CFG1		(0x10)
-+#define MT6660_REG_DATAO_SEL		(0x12)
-+#define MT6660_REG_TDM_CFG3		(0x15)
-+#define MT6660_REG_HPF_CTRL		(0x18)
-+#define MT6660_REG_HPF1_COEF		(0x1A)
-+#define MT6660_REG_HPF2_COEF		(0x1B)
-+#define MT6660_REG_PATH_BYPASS		(0x1E)
-+#define MT6660_REG_WDT_CTRL		(0x20)
-+#define MT6660_REG_HCLIP_CTRL		(0x24)
-+#define MT6660_REG_VOL_CTRL		(0x29)
-+#define MT6660_REG_SPS_CTRL		(0x30)
-+#define MT6660_REG_SIGMAX		(0x33)
-+#define MT6660_REG_CALI_T0		(0x3F)
-+#define MT6660_REG_BST_CTRL		(0x40)
-+#define MT6660_REG_PROTECTION_CFG	(0x46)
-+#define MT6660_REG_DA_GAIN		(0x4c)
-+#define MT6660_REG_AUDIO_IN2_SEL	(0x50)
-+#define MT6660_REG_SIG_GAIN		(0x51)
-+#define MT6660_REG_PLL_CFG1		(0x60)
-+#define MT6660_REG_DRE_CTRL		(0x68)
-+#define MT6660_REG_DRE_THDMODE		(0x69)
-+#define MT6660_REG_DRE_CORASE		(0x6B)
-+#define MT6660_REG_PWM_CTRL		(0x70)
-+#define MT6660_REG_DC_PROTECT_CTRL	(0x74)
-+#define MT6660_REG_ADC_USB_MODE		(0x7c)
-+#define MT6660_REG_INTERNAL_CFG		(0x88)
-+#define MT6660_REG_RESV0		(0x98)
-+#define MT6660_REG_RESV1		(0x99)
-+#define MT6660_REG_RESV2		(0x9A)
-+#define MT6660_REG_RESV3		(0x9B)
-+#define MT6660_REG_RESV6		(0xA2)
-+#define MT6660_REG_RESV7		(0xA3)
-+#define MT6660_REG_RESV10		(0xB0)
-+#define MT6660_REG_RESV11		(0xB1)
-+#define MT6660_REG_RESV16		(0xB6)
-+#define MT6660_REG_RESV17		(0xB7)
-+#define MT6660_REG_RESV19		(0xB9)
-+#define MT6660_REG_RESV21		(0xBB)
-+#define MT6660_REG_RESV23		(0xBD)
-+#define MT6660_REG_RESV31		(0xD3)
-+#define MT6660_REG_RESV40		(0xE0)
-+
-+#endif /* __SND_SOC_MT6660_H */
 -- 
-2.7.4
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
