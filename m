@@ -2,87 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7579113AE97
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A147E13AE82
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:09:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbgANQJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:09:40 -0500
-Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:40702 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727102AbgANQJi (ORCPT
+        id S1729255AbgANQJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:09:34 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729221AbgANQJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:09:38 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 94EADC0624;
-        Tue, 14 Jan 2020 16:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1579018177; bh=J145tdWmmuWUgjzVVhs0iS89opFX/TcApLpKRx6zF0c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=O0lPhaS3S3fIYCpNoRDZbPPk5SQAh4yMdUpnXVr/ZGzKQTPr6CjUTy/9O4SEDB+ML
-         CALgAhGxO6TuCsXJgPuLpkgBwu2+NN+cNlDP3Km1DFXFEcZQ+1P8Hg58qufkc5g2WT
-         MkgowU8Fhd/V/RZ3nVrd82Iam6PqeGGQ7Xh2NfzZ8/bZmCo8PE0v9nxJafSENhcp2y
-         nKoxWIaOU5VnvH+n/gDcSQrf2rxD+ydl2a/QQiK3fnzV3qLezqdIu3oo5l2xrW7TSz
-         4Krlyzo7TIOuHdM2l6zH3ZiEwSytOVzLM29URCY7+JN1iHuA6+Tz8rY4CRIavX+kVk
-         TWfbMuvWEfnfQ==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3BAE1A0073;
-        Tue, 14 Jan 2020 16:09:35 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        devicetree@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net 4/4] ARC: [plat-axs10x]: Add missing multicast filter number to GMAC node
-Date:   Tue, 14 Jan 2020 17:09:24 +0100
-Message-Id: <b1abebaf6ac9a0176b82e179944a455fbf1d7a15.1579017787.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1579017787.git.Jose.Abreu@synopsys.com>
-References: <cover.1579017787.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1579017787.git.Jose.Abreu@synopsys.com>
-References: <cover.1579017787.git.Jose.Abreu@synopsys.com>
+        Tue, 14 Jan 2020 11:09:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=KnzzFRQVAj4uXpCR1TI5559XQTFDEbE+udZJZl8tRkY=; b=AjgZBkR4/z+z
+        z9IwW85L2iFBz4XQgi88yrN8+2uSRMke8qAS0fKmlyr6fgo39TSJGcxaMKfbgs3uOpv4STGJqGpWr
+        n3XmYbqbm0UOuw/Ae6LMTNLUvFwjP0SfJyhFd1hCa2Li3xfgI/ldJ+pXhKS/2051zCPM0j/YZYUkf
+        0vlss=;
+Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1irOkv-0001ZG-7m; Tue, 14 Jan 2020 16:09:25 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id EB622D02C77; Tue, 14 Jan 2020 16:09:24 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        kbuild test robot <lkp@intel.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: fsl: simplify error path in of_fsl_spi_probe()" to the spi tree
+In-Reply-To: <2a4a7e11b37cfa0558d68f0d35e90d6da858b059.1579017697.git.christophe.leroy@c-s.fr>
+Message-Id: <applied-2a4a7e11b37cfa0558d68f0d35e90d6da858b059.1579017697.git.christophe.leroy@c-s.fr>
+X-Patchwork-Hint: ignore
+Date:   Tue, 14 Jan 2020 16:09:24 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a missing property to GMAC node so that multicast filtering works
-correctly.
+The patch
 
-Fixes: 556cc1c5f528 ("ARC: [axs101] Add support for AXS101 SDP (software development platform)")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+   spi: fsl: simplify error path in of_fsl_spi_probe()
 
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 2f3d8035b0f7a8e781b60e0884551dd8a1173a75 Mon Sep 17 00:00:00 2001
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Date: Tue, 14 Jan 2020 16:02:40 +0000
+Subject: [PATCH] spi: fsl: simplify error path in of_fsl_spi_probe()
+
+No need to 'goto err;' for just doing a return.
+return directly from where the error happens.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Link: https://lore.kernel.org/r/2a4a7e11b37cfa0558d68f0d35e90d6da858b059.1579017697.git.christophe.leroy@c-s.fr
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-snps-arc@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arc/boot/dts/axs10x_mb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/spi/spi-fsl-spi.c | 27 ++++++++-------------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
-index f9a5c9ddcae7..1d109b06e7d8 100644
---- a/arch/arc/boot/dts/axs10x_mb.dtsi
-+++ b/arch/arc/boot/dts/axs10x_mb.dtsi
-@@ -78,6 +78,7 @@
- 			interrupt-names = "macirq";
- 			phy-mode = "rgmii";
- 			snps,pbl = < 32 >;
-+			snps,multicast-filter-bins = <256>;
- 			clocks = <&apbclk>;
- 			clock-names = "stmmaceth";
- 			max-speed = <100>;
+diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
+index fb4159ad6bf6..3b81772fea0d 100644
+--- a/drivers/spi/spi-fsl-spi.c
++++ b/drivers/spi/spi-fsl-spi.c
+@@ -706,8 +706,8 @@ static int of_fsl_spi_probe(struct platform_device *ofdev)
+ 	struct device_node *np = ofdev->dev.of_node;
+ 	struct spi_master *master;
+ 	struct resource mem;
+-	int irq = 0, type;
+-	int ret = -ENOMEM;
++	int irq, type;
++	int ret;
+ 
+ 	ret = of_mpc8xxx_spi_probe(ofdev);
+ 	if (ret)
+@@ -722,10 +722,8 @@ static int of_fsl_spi_probe(struct platform_device *ofdev)
+ 
+ 		if (spisel_boot) {
+ 			pinfo->immr_spi_cs = ioremap(get_immrbase() + IMMR_SPI_CS_OFFSET, 4);
+-			if (!pinfo->immr_spi_cs) {
+-				ret = -ENOMEM;
+-				goto err;
+-			}
++			if (!pinfo->immr_spi_cs)
++				return -ENOMEM;
+ 		}
+ #endif
+ 		/*
+@@ -744,24 +742,15 @@ static int of_fsl_spi_probe(struct platform_device *ofdev)
+ 
+ 	ret = of_address_to_resource(np, 0, &mem);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	irq = platform_get_irq(ofdev, 0);
+-	if (irq < 0) {
+-		ret = irq;
+-		goto err;
+-	}
++	if (irq < 0)
++		return irq;
+ 
+ 	master = fsl_spi_probe(dev, &mem, irq);
+-	if (IS_ERR(master)) {
+-		ret = PTR_ERR(master);
+-		goto err;
+-	}
+-
+-	return 0;
+ 
+-err:
+-	return ret;
++	return PTR_ERR_OR_ZERO(master);
+ }
+ 
+ static int of_fsl_spi_remove(struct platform_device *ofdev)
 -- 
-2.7.4
+2.20.1
 
