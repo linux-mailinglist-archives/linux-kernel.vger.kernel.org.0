@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A3013A665
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBAB013A595
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbgANKLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:11:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46018 "EHLO mail.kernel.org"
+        id S1731249AbgANKJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:09:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbgANKLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:11:10 -0500
+        id S1731214AbgANKJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:09:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1C2124687;
-        Tue, 14 Jan 2020 10:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F8892467A;
+        Tue, 14 Jan 2020 10:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996670;
-        bh=8W7dvBwMRQLuHVRZsMPvivPXSG58cKKOr57Wv6sdDI8=;
+        s=default; t=1578996544;
+        bh=+PI48K9XTvgjwsMAYb2zfC9iKKt9NZ6/WaU3LZy+OyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o3rxuf2StITQYBVMOnSQQewZuNoIlyiGEGONXGMbVz6kKYqc8VAkqLjIU/DJWc3Sf
-         jvuEDaFVJ05IpxBrAJWWHitT7VYDHDEZsIxcUSbMV8rrExne66+FU3TBwJdtEizlop
-         iOF8RpRdAjmlBBgr0MEizXYG+i3Qm7pgHubmVeTQ=
+        b=CRXJrjGWiL/vBIOx51IJtYNogX0phv7PPaTW7SRVxNDV2HawdNmz3bUpzrgLJby1B
+         atzp7tQivCPO3IbcowIN8roANmKKXc3SPFys41TTCzcOC677ynTlGAIN2/LAfkQ/ff
+         9r+44paFn64/WZrzoz9s62YNcFPTwICWjHc8YjA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kaitao Cheng <pilgrimtao@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 06/31] kernel/trace: Fix do not unregister tracepoints when register sched_migrate_task fail
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Roger Whittaker <Roger.Whittaker@suse.com>
+Subject: [PATCH 4.19 41/46] USB: Fix: Dont skip endpoint descriptors with maxpacket=0
 Date:   Tue, 14 Jan 2020 11:01:58 +0100
-Message-Id: <20200114094340.855869396@linuxfoundation.org>
+Message-Id: <20200114094348.257779024@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
-References: <20200114094334.725604663@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaitao Cheng <pilgrimtao@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 50f9ad607ea891a9308e67b81f774c71736d1098 upstream.
+commit 2548288b4fb059b2da9ceada172ef763077e8a59 upstream.
 
-In the function, if register_trace_sched_migrate_task() returns error,
-sched_switch/sched_wakeup_new/sched_wakeup won't unregister. That is
-why fail_deprobe_sched_switch was added.
+It turns out that even though endpoints with a maxpacket length of 0
+aren't useful for data transfer, the descriptors do serve other
+purposes.  In particular, skipping them will also skip over other
+class-specific descriptors for classes such as UVC.  This unexpected
+side effect has caused some UVC cameras to stop working.
 
-Link: http://lkml.kernel.org/r/20191231133530.2794-1-pilgrimtao@gmail.com
+In addition, the USB spec requires that when isochronous endpoint
+descriptors are present in an interface's altsetting 0 (which is true
+on some devices), the maxpacket size _must_ be set to 0.  Warning
+about such things seems like a bad idea.
 
-Cc: stable@vger.kernel.org
-Fixes: 478142c39c8c2 ("tracing: do not grab lock in wakeup latency function tracing")
-Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+This patch updates an earlier commit which would log a warning and
+skip these endpoint descriptors.  Now we only log a warning, and we
+don't even do that for isochronous endpoints in altsetting 0.
+
+We don't need to worry about preventing endpoints with maxpacket = 0
+from ever being used for data transfers; usb_submit_urb() already
+checks for this.
+
+Reported-and-tested-by: Roger Whittaker <Roger.Whittaker@suse.com>
+Fixes: d482c7bb0541 ("USB: Skip endpoints with 0 maxpacket length")
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Link: https://marc.info/?l=linux-usb&m=157790377329882&w=2
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.2001061040270.1514-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_sched_wakeup.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/core/config.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -625,7 +625,7 @@ static void start_wakeup_tracer(struct t
- 	if (ret) {
- 		pr_info("wakeup trace: Couldn't activate tracepoint"
- 			" probe to kernel_sched_migrate_task\n");
--		return;
-+		goto fail_deprobe_sched_switch;
+--- a/drivers/usb/core/config.c
++++ b/drivers/usb/core/config.c
+@@ -392,12 +392,16 @@ static int usb_parse_endpoint(struct dev
+ 			endpoint->desc.wMaxPacketSize = cpu_to_le16(8);
  	}
  
- 	wakeup_reset(tr);
-@@ -643,6 +643,8 @@ static void start_wakeup_tracer(struct t
- 		printk(KERN_ERR "failed to start wakeup tracer\n");
+-	/* Validate the wMaxPacketSize field */
++	/*
++	 * Validate the wMaxPacketSize field.
++	 * Some devices have isochronous endpoints in altsetting 0;
++	 * the USB-2 spec requires such endpoints to have wMaxPacketSize = 0
++	 * (see the end of section 5.6.3), so don't warn about them.
++	 */
+ 	maxp = usb_endpoint_maxp(&endpoint->desc);
+-	if (maxp == 0) {
+-		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has wMaxPacketSize 0, skipping\n",
++	if (maxp == 0 && !(usb_endpoint_xfer_isoc(d) && asnum == 0)) {
++		dev_warn(ddev, "config %d interface %d altsetting %d endpoint 0x%X has invalid wMaxPacketSize 0\n",
+ 		    cfgno, inum, asnum, d->bEndpointAddress);
+-		goto skip_to_next_endpoint_or_interface_descriptor;
+ 	}
  
- 	return;
-+fail_deprobe_sched_switch:
-+	unregister_trace_sched_switch(probe_wakeup_sched_switch, NULL);
- fail_deprobe_wake_new:
- 	unregister_trace_sched_wakeup_new(probe_wakeup, NULL);
- fail_deprobe:
+ 	/* Find the highest legal maxpacket size for this endpoint */
 
 
