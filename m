@@ -2,76 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB76D13B5C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B00D13B5CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbgANX1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 18:27:04 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42405 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728759AbgANX1C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 18:27:02 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so14404304otd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 15:27:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ttZMLAqDhxSTsHlfd8sLeyc9soxLzGATxjf7nZzKPPw=;
-        b=oc++Qy1ydxir8V8MInt3cnVFzHGNZCJzwzZNIm5WnFk0aU3n2RGDhWJqPkYsRVQaxZ
-         uh8uzd0hoLWpEEUoxGooxyA9jtAZB9Mmxcef0AkiGrYzwU30sgsCXl6POE8lvZ8ANwiG
-         GthMSUl59S/Qzpfmu6sCXpkSKPiz0k/w+W5jSVEfZQCUscslh1N202NbuOfX31qmp23Z
-         6T9RlzGReu/lDqb9pUXO4lp+bXijEPkC8gyARKS751k1364M8JKA77PU3ZnXv1mfmARD
-         vHpGySLdfyu81kv4LQr8c3qeIyFJjdgEwnnzQzSuzeNntOUAeLOy09V4blGKPTTW9UoB
-         g2GQ==
-X-Gm-Message-State: APjAAAXSy2WnF/f4N4FaeJiDNaOrk+2BTcJxlHGjfH+z/pzhGHkHnPqv
-        GmMrRkC227qh/hOt+dgPieZJH7U=
-X-Google-Smtp-Source: APXvYqxDsN5FkUMyo6QVPa+7Uh4itS/NxQkvwY/TuFxVWHQjaMmeAx315uDEnmBdPpOLDD7/zwY+0w==
-X-Received: by 2002:a05:6830:10d5:: with SMTP id z21mr711195oto.30.1579044422035;
-        Tue, 14 Jan 2020 15:27:02 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v25sm5847316otk.51.2020.01.14.15.27.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 15:27:00 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 221a3a
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Tue, 14 Jan 2020 17:26:59 -0600
-Date:   Tue, 14 Jan 2020 17:26:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     robh+dt@kernel.org, lee.jones@linaro.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, radu_nicolae.pirea@upb.ro,
-        richard.genoud@gmail.com, a.zummo@towertech.it,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-rtc@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v3 2/7] dt-bindings: atmel-tcb: add microchip,sam9x60-tcb
-Message-ID: <20200114232659.GA16642@bogus>
-References: <1578997397-23165-1-git-send-email-claudiu.beznea@microchip.com>
- <1578997397-23165-3-git-send-email-claudiu.beznea@microchip.com>
+        id S1728848AbgANX3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 18:29:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728650AbgANX3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 18:29:16 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6A6824673;
+        Tue, 14 Jan 2020 23:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579044556;
+        bh=OD2v4XK+902GfGaJ22vyCAKsqTvtmPpnm9a7Hcn0H9o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Xwcin41tq+Riut8SBL9PtEppVO/1uKbbLVVgtvoyXiyq99HwDrfGBozppnEZLVqBW
+         iUVDvDcMFanJPj5/UoX02VsPlRx+pkulgTcuAmaaIZMAWXdnLtWo/zkW/WIDyd5fu5
+         t3Yk6sWmVf8Bz/5xdqgh5iMhyDeypd7hFhJe/Cr4=
+Subject: Re: [PATCH 4.4 00/28] 4.4.210-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20200114094336.845958665@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <c6ec911d-3ecb-3dae-5415-a754ad300ca9@kernel.org>
+Date:   Tue, 14 Jan 2020 16:29:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578997397-23165-3-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020 12:23:12 +0200, Claudiu Beznea wrote:
-> Add microchip,sam9x60-tcb to DT bindings documentation.
+On 1/14/20 3:02 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.210 release.
+> There are 28 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/mfd/atmel-tcb.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.210-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
