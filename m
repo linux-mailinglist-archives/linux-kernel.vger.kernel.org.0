@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D5D13A702
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:26:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A37C213A6F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732814AbgANKRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:17:09 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:42373 "EHLO
+        id S1731519AbgANKQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:16:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:42302 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729387AbgANKRF (ORCPT
+        with ESMTP id S1729251AbgANKQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:17:05 -0500
+        Tue, 14 Jan 2020 05:16:56 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1irJFk-0007f0-6O; Tue, 14 Jan 2020 11:16:52 +0100
+        id 1irJFj-0007ey-M7; Tue, 14 Jan 2020 11:16:51 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C11821C1928;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4C3691C03A9;
         Tue, 14 Jan 2020 11:16:51 +0100 (CET)
 Date:   Tue, 14 Jan 2020 10:16:51 -0000
 From:   "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] KVM: VMX: Check for full VMX support when verifying
- CPU compatibility
+Subject: [tip: x86/cpu] perf/x86: Provide stubs of KVM helpers for non-Intel CPUs
 Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191221044513.21680-17-sean.j.christopherson@intel.com>
-References: <20191221044513.21680-17-sean.j.christopherson@intel.com>
+In-Reply-To: <20191221044513.21680-19-sean.j.christopherson@intel.com>
+References: <20191221044513.21680-19-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Message-ID: <157899701164.1022.11587224751821960742.tip-bot2@tip-bot2>
+Message-ID: <157899701117.1022.3718082104115954655.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,41 +47,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     ff10e22e65f2b4d5d09805dd9e7194b93e303eb1
-Gitweb:        https://git.kernel.org/tip/ff10e22e65f2b4d5d09805dd9e7194b93e303eb1
+Commit-ID:     616c59b52342b0370ab822ce88fa0ff7f3671e4a
+Gitweb:        https://git.kernel.org/tip/616c59b52342b0370ab822ce88fa0ff7f3671e4a
 Author:        Sean Christopherson <sean.j.christopherson@intel.com>
-AuthorDate:    Fri, 20 Dec 2019 20:45:10 -08:00
+AuthorDate:    Fri, 20 Dec 2019 20:45:12 -08:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 13 Jan 2020 19:26:58 +01:00
+CommitterDate: Mon, 13 Jan 2020 19:33:56 +01:00
 
-KVM: VMX: Check for full VMX support when verifying CPU compatibility
+perf/x86: Provide stubs of KVM helpers for non-Intel CPUs
 
-Explicitly check the current CPU's IA32_FEAT_CTL and VMX feature flags
-when verifying compatibility across physical CPUs.  This effectively
-adds a check on IA32_FEAT_CTL to ensure that VMX is fully enabled on
-all CPUs.
+Provide stubs for perf_guest_get_msrs() and intel_pt_handle_vmx() when
+building without support for Intel CPUs, i.e. CPU_SUP_INTEL=n.  Lack of
+stubs is not currently a problem as the only user, KVM_INTEL, takes a
+dependency on CPU_SUP_INTEL=y.  Provide the stubs for all CPUs so that
+KVM_INTEL can be built for any CPU with compatible hardware support,
+e.g. Centuar and Zhaoxin CPUs.
+
+Note, the existing stub for perf_guest_get_msrs() is essentially dead
+code as KVM selects CONFIG_PERF_EVENTS, i.e. the only user guarantees
+the full implementation is built.
 
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20191221044513.21680-17-sean.j.christopherson@intel.com
+Link: https://lkml.kernel.org/r/20191221044513.21680-19-sean.j.christopherson@intel.com
 ---
- arch/x86/kvm/vmx/vmx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/perf_event.h | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 06e0e52..cdb4bf5 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6838,6 +6838,12 @@ static int __init vmx_check_processor_compat(void)
- 	struct vmcs_config vmcs_conf;
- 	struct vmx_capability vmx_cap;
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index ee26e92..29964b0 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -322,17 +322,10 @@ struct perf_guest_switch_msr {
+ 	u64 host, guest;
+ };
  
-+	if (!this_cpu_has(X86_FEATURE_MSR_IA32_FEAT_CTL) ||
-+	    !this_cpu_has(X86_FEATURE_VMX)) {
-+		pr_err("kvm: VMX is disabled on CPU %d\n", smp_processor_id());
-+		return -EIO;
-+	}
+-extern struct perf_guest_switch_msr *perf_guest_get_msrs(int *nr);
+ extern void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap);
+ extern void perf_check_microcode(void);
+ extern int x86_perf_rdpmc_index(struct perf_event *event);
+ #else
+-static inline struct perf_guest_switch_msr *perf_guest_get_msrs(int *nr)
+-{
+-	*nr = 0;
+-	return NULL;
+-}
+-
+ static inline void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
+ {
+ 	memset(cap, 0, sizeof(*cap));
+@@ -342,8 +335,23 @@ static inline void perf_events_lapic_init(void)	{ }
+ static inline void perf_check_microcode(void) { }
+ #endif
+ 
++#if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
++extern struct perf_guest_switch_msr *perf_guest_get_msrs(int *nr);
++#else
++static inline struct perf_guest_switch_msr *perf_guest_get_msrs(int *nr)
++{
++	*nr = 0;
++	return NULL;
++}
++#endif
 +
- 	if (setup_vmcs_config(&vmcs_conf, &vmx_cap) < 0)
- 		return -EIO;
- 	if (nested)
+ #ifdef CONFIG_CPU_SUP_INTEL
+  extern void intel_pt_handle_vmx(int on);
++#else
++static inline void intel_pt_handle_vmx(int on)
++{
++
++}
+ #endif
+ 
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_AMD)
