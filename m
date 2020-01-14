@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B9913A699
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCB113A64E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbgANKM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:12:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48712 "EHLO mail.kernel.org"
+        id S1731819AbgANKKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:10:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731650AbgANKMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:12:24 -0500
+        id S1731677AbgANKKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:10:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F86720678;
-        Tue, 14 Jan 2020 10:12:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6624320678;
+        Tue, 14 Jan 2020 10:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996744;
-        bh=UnitqGIL4BayPEuh5GU0szWLUTtZK+Bm39PXTu23tIU=;
+        s=default; t=1578996637;
+        bh=j4koRJ49R9/AKxvnyrRZo35HoCjp+RRH2+npINBK69E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zjGR7VMIVAPasBgtl4BD7oxHU7XuI2MidihADS5y5pyXenubx8hCtTIScVLWIIIBo
-         Bb/2S1sN6g+tKK1F1LkxojuaitYBmoGg8qbnDln88xSsFa8/oMSnbneL4OiylH3wqO
-         6nqF0xasJCQd+FKgKgIXzv7WKkAQ7llU3BM4IccU=
+        b=r2LQCHhEf6Ck2I/27gcIhFY83X70+WzatRWzKKiqe5a48B3iUj8SdVFdYl7KGepKr
+         e2NhMg8YPyaXNHORPNrV/gHrtdieNCH/x2yBOezNE/BiNo0kldleBxCDS23LEY878I
+         vZ+s9mWRea7SYAcTYsa9eRJv5i3cDzCJiVTB64zM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@fb.com>
-Subject: [PATCH 4.4 01/28] kobject: Export kobject_get_unless_zero()
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 29/39] mwifiex: pcie: Fix memory leak in mwifiex_pcie_alloc_cmdrsp_buf
 Date:   Tue, 14 Jan 2020 11:02:03 +0100
-Message-Id: <20200114094337.305391779@linuxfoundation.org>
+Message-Id: <20200114094345.309549224@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
-References: <20200114094336.845958665@linuxfoundation.org>
+In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
+References: <20200114094336.210038037@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,54 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit c70c176ff8c3ff0ac6ef9a831cd591ea9a66bd1a upstream.
+commit db8fd2cde93227e566a412cf53173ffa227998bc upstream.
 
-Make the function available for outside use and fortify it against NULL
-kobject.
+In mwifiex_pcie_alloc_cmdrsp_buf, a new skb is allocated which should be
+released if mwifiex_map_pci_memory() fails. The release is added.
 
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Bart Van Assche <bart.vanassche@sandisk.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Fixes: fc3314609047 ("mwifiex: use pci_alloc/free_consistent APIs for PCIe")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Acked-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/kobject.h |    2 ++
- lib/kobject.c           |    5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/pcie.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/kobject.h
-+++ b/include/linux/kobject.h
-@@ -108,6 +108,8 @@ extern int __must_check kobject_rename(s
- extern int __must_check kobject_move(struct kobject *, struct kobject *);
+--- a/drivers/net/wireless/marvell/mwifiex/pcie.c
++++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+@@ -1022,8 +1022,10 @@ static int mwifiex_pcie_alloc_cmdrsp_buf
+ 	}
+ 	skb_put(skb, MWIFIEX_UPLD_SIZE);
+ 	if (mwifiex_map_pci_memory(adapter, skb, MWIFIEX_UPLD_SIZE,
+-				   PCI_DMA_FROMDEVICE))
++				   PCI_DMA_FROMDEVICE)) {
++		kfree_skb(skb);
+ 		return -1;
++	}
  
- extern struct kobject *kobject_get(struct kobject *kobj);
-+extern struct kobject * __must_check kobject_get_unless_zero(
-+						struct kobject *kobj);
- extern void kobject_put(struct kobject *kobj);
+ 	card->cmdrsp_buf = skb;
  
- extern const void *kobject_namespace(struct kobject *kobj);
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -599,12 +599,15 @@ struct kobject *kobject_get(struct kobje
- }
- EXPORT_SYMBOL(kobject_get);
- 
--static struct kobject * __must_check kobject_get_unless_zero(struct kobject *kobj)
-+struct kobject * __must_check kobject_get_unless_zero(struct kobject *kobj)
- {
-+	if (!kobj)
-+		return NULL;
- 	if (!kref_get_unless_zero(&kobj->kref))
- 		kobj = NULL;
- 	return kobj;
- }
-+EXPORT_SYMBOL(kobject_get_unless_zero);
- 
- /*
-  * kobject_cleanup - free kobject resources.
 
 
