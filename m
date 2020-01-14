@@ -2,118 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F87C13AEA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82AF213AE86
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:09:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbgANQKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:10:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37512 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728943AbgANQJX (ORCPT
+        id S1729319AbgANQJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:09:42 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:40714 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728699AbgANQJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:09:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=dxOH+M7gS9ZRsnyVhrWwBGhTEmsCg5fPIzt8wRWSCxE=; b=lZRN/UqBLxez
-        hGGE16rR/Gw/s7hU3TswScmUuMoPdjxsLDTLpt0IIFCK6zzHWgc7bD2kVwv3poREp4Tvf7jrHeguA
-        mesaJXftv68PB2uJXvNv+zV6w2RTHn5K6Hgu0P4wpgiN7fBDgJ5M+obPXd84Bc8x5coHQ1EKhExoE
-        YhguY=;
-Received: from fw-tnat-cam7.arm.com ([217.140.106.55] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1irOkq-0001Yi-8B; Tue, 14 Jan 2020 16:09:20 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id E9452D02C7B; Tue, 14 Jan 2020 16:09:19 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mantas Pucka <mantas@8devices.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove" to the regulator tree
-In-Reply-To: <20200114065847.31667-1-axel.lin@ingics.com>
-Message-Id: <applied-20200114065847.31667-1-axel.lin@ingics.com>
-X-Patchwork-Hint: ignore
-Date:   Tue, 14 Jan 2020 16:09:19 +0000 (GMT)
+        Tue, 14 Jan 2020 11:09:38 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 8B4D0C0620;
+        Tue, 14 Jan 2020 16:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1579018177; bh=lMsPxq+6nqsKDOeBMq7JTDZwDRAvL67CUWdXLkXkMqk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iffSGqxx8OFb+Pmq5zvInZjDB2S3nvyAmHaayuDazU2IvKr/ANqsV+5cZMMo8mEA7
+         D/qW49WaOk4HilFsZS4A6AtLQpWaLJHDroppQP33m0JNSFWe0yPFn0Anbbg8bTjS9+
+         NC5VtqbX5LZ3aE5VqaUl+HbTu18GVXyBoUFKuDW4bBBFWCjHssPmMRURjNyldKlSTd
+         jOZVxY2F2e5aMUW8ntYKkUK21GyFdSAxBUD4StzGG/z/L8ThH3c4OIuxFdChJUTV0J
+         /CyV16jzSwo0YukQ+a8zJk4cwoeD+HK9N3ktwFJPa3+MsS7cwCl8d4h6SGO0uaqTgz
+         J/sl3s3Q7dV3A==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 221CDA005B;
+        Tue, 14 Jan 2020 16:09:34 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH net 0/4] net: stmmac: Fix selftests in Synopsys AXS101 board
+Date:   Tue, 14 Jan 2020 17:09:20 +0100
+Message-Id: <cover.1579017787.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Set of fixes for sefltests so that they work in Synopsys AXS101 board.
 
-   regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove
+Final output:
 
-has been applied to the regulator tree at
+$ ethtool -t eth0
+The test result is PASS
+The test extra info:
+ 1. MAC Loopback                 0
+ 2. PHY Loopback                 -95
+ 3. MMC Counters                 0
+ 4. EEE                          -95
+ 5. Hash Filter MC               0
+ 6. Perfect Filter UC            0
+ 7. MC Filter                    0
+ 8. UC Filter                    0
+ 9. Flow Control                 -95
+10. RSS                          -95
+11. VLAN Filtering               -95
+12. VLAN Filtering (perf)        -95
+13. Double VLAN Filter           -95
+14. Double VLAN Filter (perf)    -95
+15. Flexible RX Parser           -95
+16. SA Insertion (desc)          -95
+17. SA Replacement (desc)        -95
+18. SA Insertion (reg)           -95
+19. SA Replacement (reg)         -95
+20. VLAN TX Insertion            -95
+21. SVLAN TX Insertion           -95
+22. L3 DA Filtering              -95
+23. L3 SA Filtering              -95
+24. L4 DA TCP Filtering          -95
+25. L4 SA TCP Filtering          -95
+26. L4 DA UDP Filtering          -95
+27. L4 SA UDP Filtering          -95
+28. ARP Offload                  -95
+29. Jumbo Frame                  0
+30. Multichannel Jumbo           -95
+31. Split Header                 -95
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
+Description:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+1) Fixes the unaligned accesses that caused CPU halt in Synopsys AXS101
+boards.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+2) Fixes the VLAN tests when filtering failed to work.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+3) Fixes the VLAN Perfect tests when filtering is not available in HW.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+4) Fixes the Ethernet DT bindings for AXS101 board.
 
-Thanks,
-Mark
-
-From d47e4f978f2a2c0ffce543e58d30a00d1f850727 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 14 Jan 2020 14:58:46 +0800
-Subject: [PATCH] regulator: vqmmc-ipq4019: Remove ipq4019_regulator_remove
-
-This driver is using devm_regulator_register() so no need to call
-regulator_unregister() in ipq4019_regulator_remove().
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20200114065847.31667-1-axel.lin@ingics.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/vqmmc-ipq4019-regulator.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
+---
 
-diff --git a/drivers/regulator/vqmmc-ipq4019-regulator.c b/drivers/regulator/vqmmc-ipq4019-regulator.c
-index dae16094d3a2..42a2368e9ef7 100644
---- a/drivers/regulator/vqmmc-ipq4019-regulator.c
-+++ b/drivers/regulator/vqmmc-ipq4019-regulator.c
-@@ -81,15 +81,6 @@ static int ipq4019_regulator_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int ipq4019_regulator_remove(struct platform_device *pdev)
--{
--	struct regulator_dev *rdev = platform_get_drvdata(pdev);
--
--	regulator_unregister(rdev);
--
--	return 0;
--}
--
- static const struct of_device_id regulator_ipq4019_of_match[] = {
- 	{ .compatible = "qcom,vqmmc-ipq4019-regulator", },
- 	{},
-@@ -97,7 +88,6 @@ static const struct of_device_id regulator_ipq4019_of_match[] = {
- 
- static struct platform_driver ipq4019_regulator_driver = {
- 	.probe = ipq4019_regulator_probe,
--	.remove = ipq4019_regulator_remove,
- 	.driver = {
- 		.name = "vqmmc-ipq4019-regulator",
- 		.owner = THIS_MODULE,
+Jose Abreu (4):
+  net: stmmac: selftests: Make it work in Synopsys AXS101 boards
+  net: stmmac: selftests: Mark as fail when received VLAN ID != expected
+  net: stmmac: selftests: Guard VLAN Perfect test against non supported
+    HW
+  ARC: [plat-axs10x]: Add missing multicast filter number to GMAC node
+
+ arch/arc/boot/dts/axs10x_mb.dtsi                   |  1 +
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 32 +++++++++++++++-------
+ 2 files changed, 23 insertions(+), 10 deletions(-)
+
 -- 
-2.20.1
+2.7.4
 
