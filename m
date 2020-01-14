@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB14513A54D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A00813A54E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbgANKG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:06:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35468 "EHLO mail.kernel.org"
+        id S1730372AbgANKG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:06:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730349AbgANKGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:06:24 -0500
+        id S1729963AbgANKG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:06:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3EDD24677;
-        Tue, 14 Jan 2020 10:06:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D449024677;
+        Tue, 14 Jan 2020 10:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996383;
-        bh=GbtqwMneNo3v6uAAUTpxgiAM3ZWQ3YV6tpTW6Pk4ciw=;
+        s=default; t=1578996386;
+        bh=hzYuebpsFq1xFNMWn96tvRnGDTzteUizVMhWlBa9x8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e+6MjPjoN8CJbPJMA/wNB/zneN6vIdrAsmfAtHldJGR5JR3zI7hsNqv6bJ2ae5SHl
-         oaJml4MXccbHENJq1m3b9L/qToFM3cMIYo8s9jk2M5C4Ybp1U2LEuk4I7NS7eg/51h
-         sTnEFIdRfm44rZWGQ+bUF/1m4lUAIBqQVknNEiAg=
+        b=fYSV9xzodACnoAyBSOQcc6AzHITiLYLzCZtKZj0nSicUqhnMHk/CjkwTxq0C8zPgn
+         gdTEy7Z12wTEFOi2IPGAUvT/jQoB7DRv0Nok6kN1Cd/4UgX6pCRtZ+CLP8p8p/yV7z
+         dNniY6MFZLXdsPwK2e3kwpkwDUCjVBacwc+N3HX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+46a4ad33f345d1dd346e@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com,
         Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 77/78] netfilter: conntrack: dccp, sctp: handle null timeout argument
-Date:   Tue, 14 Jan 2020 11:01:51 +0100
-Message-Id: <20200114094403.640052810@linuxfoundation.org>
+Subject: [PATCH 5.4 78/78] netfilter: ipset: avoid null deref when IPSET_ATTR_LINENO is present
+Date:   Tue, 14 Jan 2020 11:01:52 +0100
+Message-Id: <20200114094403.749795669@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
 References: <20200114094352.428808181@linuxfoundation.org>
@@ -47,54 +48,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Westphal <fw@strlen.de>
 
-commit 1d9a7acd3d1e74c2d150d8934f7f55bed6d70858 upstream.
+commit 22dad713b8a5ff488e07b821195270672f486eb2 upstream.
 
-The timeout pointer can be NULL which means we should modify the
-per-nets timeout instead.
+The set uadt functions assume lineno is never NULL, but it is in
+case of ip_set_utest().
 
-All do this, except sctp and dccp which instead give:
+syzkaller managed to generate a netlink message that calls this with
+LINENO attr present:
 
 general protection fault: 0000 [#1] PREEMPT SMP KASAN
-net/netfilter/nf_conntrack_proto_dccp.c:682
- ctnl_timeout_parse_policy+0x150/0x1d0 net/netfilter/nfnetlink_cttimeout.c:67
- cttimeout_default_set+0x150/0x1c0 net/netfilter/nfnetlink_cttimeout.c:368
+RIP: 0010:hash_mac4_uadt+0x1bc/0x470 net/netfilter/ipset/ip_set_hash_mac.c:104
+Call Trace:
+ ip_set_utest+0x55b/0x890 net/netfilter/ipset/ip_set_core.c:1867
  nfnetlink_rcv_msg+0xcf2/0xfb0 net/netfilter/nfnetlink.c:229
  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+ nfnetlink_rcv+0x1ba/0x460 net/netfilter/nfnetlink.c:563
 
-Reported-by: syzbot+46a4ad33f345d1dd346e@syzkaller.appspotmail.com
-Fixes: c779e849608a8 ("netfilter: conntrack: remove get_timeout() indirection")
+pass a dummy lineno storage, its easier than patching all set
+implementations.
+
+This seems to be a day-0 bug.
+
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Reported-by: syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com
+Fixes: a7b4f989a6294 ("netfilter: ipset: IP set core support")
 Signed-off-by: Florian Westphal <fw@strlen.de>
+Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conntrack_proto_dccp.c |    3 +++
- net/netfilter/nf_conntrack_proto_sctp.c |    3 +++
- 2 files changed, 6 insertions(+)
+ net/netfilter/ipset/ip_set_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/netfilter/nf_conntrack_proto_dccp.c
-+++ b/net/netfilter/nf_conntrack_proto_dccp.c
-@@ -677,6 +677,9 @@ static int dccp_timeout_nlattr_to_obj(st
- 	unsigned int *timeouts = data;
- 	int i;
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -1658,6 +1658,7 @@ static int ip_set_utest(struct net *net,
+ 	struct ip_set *set;
+ 	struct nlattr *tb[IPSET_ATTR_ADT_MAX + 1] = {};
+ 	int ret = 0;
++	u32 lineno;
  
-+	if (!timeouts)
-+		 timeouts = dn->dccp_timeout;
-+
- 	/* set default DCCP timeouts. */
- 	for (i=0; i<CT_DCCP_MAX; i++)
- 		timeouts[i] = dn->dccp_timeout[i];
---- a/net/netfilter/nf_conntrack_proto_sctp.c
-+++ b/net/netfilter/nf_conntrack_proto_sctp.c
-@@ -594,6 +594,9 @@ static int sctp_timeout_nlattr_to_obj(st
- 	struct nf_sctp_net *sn = nf_sctp_pernet(net);
- 	int i;
+ 	if (unlikely(protocol_min_failed(attr) ||
+ 		     !attr[IPSET_ATTR_SETNAME] ||
+@@ -1674,7 +1675,7 @@ static int ip_set_utest(struct net *net,
+ 		return -IPSET_ERR_PROTOCOL;
  
-+	if (!timeouts)
-+		timeouts = sn->timeouts;
-+
- 	/* set default SCTP timeouts. */
- 	for (i=0; i<SCTP_CONNTRACK_MAX; i++)
- 		timeouts[i] = sn->timeouts[i];
+ 	rcu_read_lock_bh();
+-	ret = set->variant->uadt(set, tb, IPSET_TEST, NULL, 0, 0);
++	ret = set->variant->uadt(set, tb, IPSET_TEST, &lineno, 0, 0);
+ 	rcu_read_unlock_bh();
+ 	/* Userspace can't trigger element to be re-added */
+ 	if (ret == -EAGAIN)
 
 
