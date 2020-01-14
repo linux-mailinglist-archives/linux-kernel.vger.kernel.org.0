@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23ACC13A62D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A19313A587
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbgANKJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
+        id S1730588AbgANKId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:08:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731498AbgANKJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:09:55 -0500
+        id S1731005AbgANKIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:08:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6682C24677;
-        Tue, 14 Jan 2020 10:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1BE020678;
+        Tue, 14 Jan 2020 10:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996594;
-        bh=Lv120bcg/Eqbm6F5BkYFSHwxvzllsH613wmYXWHfjqE=;
+        s=default; t=1578996511;
+        bh=D3VkGmMM0F+62RmYOJvCGnU+mkcmb+KmFgNnf0ojJhg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mRVFVI1D/fBw/OYuJ+rmh31cOxemarbcegJtdI7WLr++D0BYATg9GHbDxtxOYYlbw
-         37opuIF8IESK/9/8clw/Pd41wevTGzbFhnyQ3BTC8N+OflmTfgCF1I2NPzEqiF7PQB
-         0/SSVOL+RDbhkiNWuc6EW/YnwCZFhc6V2RCmygm4=
+        b=yfl2ikiQo8SCt+QbpboaqzO8fTK2hAS1HJYrT8z6Iiy1gtwYRO2AUYewcvhT2n42E
+         0lvAteHBAO2pt3GqQyUKicNrczAauyF0i9LQ4C+sqiCFH6QClwZjdIcbNIeh4EfX+j
+         Oqp5pJlgL2lGq60PCQl3oHVrWt0FXprBSndY4cXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
-        Wayne Lin <Wayne.Lin@amd.com>, Lyude Paul <lyude@redhat.com>
-Subject: [PATCH 4.14 24/39] drm/dp_mst: correct the shifting in DP_REMOTE_I2C_READ
-Date:   Tue, 14 Jan 2020 11:01:58 +0100
-Message-Id: <20200114094344.333911566@linuxfoundation.org>
+        stable@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.19 42/46] phy: cpcap-usb: Fix error path when no host driver is loaded
+Date:   Tue, 14 Jan 2020 11:01:59 +0100
+Message-Id: <20200114094348.395107803@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
-References: <20200114094336.210038037@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,52 +46,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wayne Lin <Wayne.Lin@amd.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit c4e4fccc5d52d881afaac11d3353265ef4eccb8b upstream.
+commit 4acb0200ab2b07843e3ef5599add3454c7440f03 upstream.
 
-[Why]
-According to DP spec, it should shift left 4 digits for NO_STOP_BIT
-in REMOTE_I2C_READ message. Not 5 digits.
+If musb_mailbox() returns an error, we must still continue to finish
+configuring the phy.
 
-In current code, NO_STOP_BIT is always set to zero which means I2C
-master is always generating a I2C stop at the end of each I2C write
-transaction while handling REMOTE_I2C_READ sideband message. This issue
-might have the generated I2C signal not meeting the requirement. Take
-random read in I2C for instance, I2C master should generate a repeat
-start to start to read data after writing the read address. This issue
-will cause the I2C master to generate a stop-start rather than a
-re-start which is not expected in I2C random read.
+Otherwise the phy state may end up only half initialized, and this can
+cause the debug serial console to stop working. And this will happen if the
+usb driver musb controller is not loaded.
 
-[How]
-Correct the shifting value of NO_STOP_BIT for DP_REMOTE_I2C_READ case in
-drm_dp_encode_sideband_req().
+Let's fix the issue by adding helper for cpcap_usb_try_musb_mailbox().
 
-Changes since v1:(https://patchwork.kernel.org/patch/11312667/)
-* Add more descriptions in commit and cc to stable
-
-Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20200103055001.10287-1-Wayne.Lin@amd.com
+Fixes: 6d6ce40f63af ("phy: cpcap-usb: Add CPCAP PMIC USB support")
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/phy/motorola/phy-cpcap-usb.c |   33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -274,7 +274,7 @@ static void drm_dp_encode_sideband_req(s
- 			memcpy(&buf[idx], req->u.i2c_read.transactions[i].bytes, req->u.i2c_read.transactions[i].num_bytes);
- 			idx += req->u.i2c_read.transactions[i].num_bytes;
+--- a/drivers/phy/motorola/phy-cpcap-usb.c
++++ b/drivers/phy/motorola/phy-cpcap-usb.c
+@@ -207,6 +207,19 @@ static int cpcap_phy_get_ints_state(stru
+ static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata);
+ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata);
  
--			buf[idx] = (req->u.i2c_read.transactions[i].no_stop_bit & 0x1) << 5;
-+			buf[idx] = (req->u.i2c_read.transactions[i].no_stop_bit & 0x1) << 4;
- 			buf[idx] |= (req->u.i2c_read.transactions[i].i2c_transaction_delay & 0xf);
- 			idx++;
++static void cpcap_usb_try_musb_mailbox(struct cpcap_phy_ddata *ddata,
++				       enum musb_vbus_id_status status)
++{
++	int error;
++
++	error = musb_mailbox(status);
++	if (!error)
++		return;
++
++	dev_dbg(ddata->dev, "%s: musb_mailbox failed: %i\n",
++		__func__, error);
++}
++
+ static void cpcap_usb_detect(struct work_struct *work)
+ {
+ 	struct cpcap_phy_ddata *ddata;
+@@ -226,9 +239,7 @@ static void cpcap_usb_detect(struct work
+ 		if (error)
+ 			goto out_err;
+ 
+-		error = musb_mailbox(MUSB_ID_GROUND);
+-		if (error)
+-			goto out_err;
++		cpcap_usb_try_musb_mailbox(ddata, MUSB_ID_GROUND);
+ 
+ 		error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC3,
+ 					   CPCAP_BIT_VBUSSTBY_EN,
+@@ -255,9 +266,7 @@ static void cpcap_usb_detect(struct work
+ 			error = cpcap_usb_set_usb_mode(ddata);
+ 			if (error)
+ 				goto out_err;
+-			error = musb_mailbox(MUSB_ID_GROUND);
+-			if (error)
+-				goto out_err;
++			cpcap_usb_try_musb_mailbox(ddata, MUSB_ID_GROUND);
+ 
+ 			return;
  		}
+@@ -267,9 +276,7 @@ static void cpcap_usb_detect(struct work
+ 		error = cpcap_usb_set_usb_mode(ddata);
+ 		if (error)
+ 			goto out_err;
+-		error = musb_mailbox(MUSB_VBUS_VALID);
+-		if (error)
+-			goto out_err;
++		cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_VALID);
+ 
+ 		return;
+ 	}
+@@ -279,9 +286,7 @@ static void cpcap_usb_detect(struct work
+ 	if (error)
+ 		goto out_err;
+ 
+-	error = musb_mailbox(MUSB_VBUS_OFF);
+-	if (error)
+-		goto out_err;
++	cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_OFF);
+ 
+ 	dev_dbg(ddata->dev, "set UART mode\n");
+ 
+@@ -647,9 +652,7 @@ static int cpcap_usb_phy_remove(struct p
+ 	if (error)
+ 		dev_err(ddata->dev, "could not set UART mode\n");
+ 
+-	error = musb_mailbox(MUSB_VBUS_OFF);
+-	if (error)
+-		dev_err(ddata->dev, "could not set mailbox\n");
++	cpcap_usb_try_musb_mailbox(ddata, MUSB_VBUS_OFF);
+ 
+ 	usb_remove_phy(&ddata->phy);
+ 	cancel_delayed_work_sync(&ddata->detect_work);
 
 
