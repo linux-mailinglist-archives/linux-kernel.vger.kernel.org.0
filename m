@@ -2,84 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42191139E11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E18D139DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:18:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbgANAZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 19:25:04 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41888 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgANAZE (ORCPT
+        id S1729420AbgANASr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 19:18:47 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46216 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728865AbgANASr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:25:04 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r27so10855189otc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 16:25:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UiO2+Fp93HhiZmZTyPCKddyYzvj9rECWLiqMRlRa5BM=;
-        b=mv+R/smN7mTb3EjXD84wRTaMTsBVWD5OsO7ch27PhZltFDPdWq5riV1y0c/ncX511P
-         0WlEwtzIOJFI/jeLDU304Ic8SMuDsZRmTTZkS4eHCnuEtii80uLrUy0t/54zip5AJIuc
-         KqfLWBc7jp2mvZX9w7qmXbtFROht0Vq1lTrYxViLTF+FCjQXxc7clhkfcEkrY23eVPaO
-         4kHmIdOL7mCXQcZxXH7a5ZpyF0nzL9RA+F6pVmouwfgwdM1pgkNcgkEIqalLtfLCmxzP
-         c4yGpI0pp/Dm2wjGE7VmYvE1CMKuddn6/Vr5dy6sRagI3KQr5ffX4ZwBsLKlMlLe+Dw8
-         R9GA==
-X-Gm-Message-State: APjAAAVYn4eb8/Az7FOFwGtcM1XYuCvWymI0MqTXxEmI1v40rhJ+q9Qf
-        sQ26ifGLFynl86WK3A4S3n833L97kA==
-X-Google-Smtp-Source: APXvYqx6H9dn9Z3+VbB78oOxjMtujuJk3rWpBUThHGdTnb796bO/RBXsluxAO5Rskl6XXnZ7B7+GHQ==
-X-Received: by 2002:a05:6830:2141:: with SMTP id r1mr15228900otd.39.1578961503746;
-        Mon, 13 Jan 2020 16:25:03 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z21sm4731527oto.52.2020.01.13.16.25.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 16:25:03 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 220b00
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Mon, 13 Jan 2020 18:18:03 -0600
-Date:   Mon, 13 Jan 2020 18:18:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, vkoul@kernel.org,
-        eugen.hristev@microchip.com, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mchehab@kernel.org,
-        lee.jones@linaro.org, radu_nicolae.pirea@upb.ro,
-        richard.genoud@gmail.com, tudor.ambarus@microchip.com,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        wg@grandegger.com, mkl@pengutronix.de, a.zummo@towertech.it,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v2 10/17] dt-bindings: atmel-smc: add
- microchip,sam9x60-smc
-Message-ID: <20200114001803.GA13249@bogus>
-References: <1578673089-3484-1-git-send-email-claudiu.beznea@microchip.com>
- <1578673089-3484-11-git-send-email-claudiu.beznea@microchip.com>
+        Mon, 13 Jan 2020 19:18:47 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00E0IWQ7000877
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Jan 2020 19:18:33 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 8AA984207DF; Mon, 13 Jan 2020 19:18:32 -0500 (EST)
+Date:   Mon, 13 Jan 2020 19:18:32 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Qian Cai <cai@lca.pw>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the random tree
+Message-ID: <20200114001832.GP76141@mit.edu>
+References: <20200108113953.1a92a90f@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1578673089-3484-11-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200108113953.1a92a90f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 18:18:02 +0200, Claudiu Beznea wrote:
-> Add microchip,sam9x60-smc to DT bindings documentation.
+On Wed, Jan 08, 2020 at 11:39:53AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/mfd/atmel-smc.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Commit
 > 
+>   1b710b1b10ef ("char/random: silence a lockdep splat with printk()")
+> 
+> is missing a Signed-off-by from its author.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Sergey, can you confirm that you intended to add a Signed-off-by: for
+this patch?
+
+Thanks!!
+
+						- Ted
