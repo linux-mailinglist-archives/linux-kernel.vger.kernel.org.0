@@ -2,126 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F97E13B2C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:12:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2FB713B2C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 20:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgANTMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 14:12:44 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33859 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgANTMn (ORCPT
+        id S1728842AbgANTOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 14:14:00 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44886 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbgANTN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 14:12:43 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i6so7037076pfc.1;
-        Tue, 14 Jan 2020 11:12:43 -0800 (PST)
+        Tue, 14 Jan 2020 14:13:59 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t3so13446288qtr.11;
+        Tue, 14 Jan 2020 11:13:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f63B2LvCWNuhkfnuBRLARt3WlWJAkv9H8cQcBpg+JxA=;
-        b=FAh3QOQ1X9MK9Pkn9EPZC1KsIdUlp49a/rCb3pGSAITaan1p0Ol+Z7s8PCAXCawGqs
-         Aa/ExjygiJ+AtFLNFlladFpAl8pFyc/NyExixttixtN5ciGxwpzMPof30OJnzlegvZY0
-         /s/oOvu65AKFBuvQDrMfdkyHaOwhX7xUnUhWOVhx1wWUbqMvNkIjnC1t3BkSTAIw/2+s
-         EPPshBT+J1/T3JPY2XqkRc6ZdKJAxilRZu4bIMTGTdqowbXS6XxpBT4K0ZIzbHtb8qNg
-         fbTyUw8d1pqhgT/fkk8utuPbGZrAFBj8+JK1nlcvG3jdWmlKyQGTzgqTlnBe3eoWtNRK
-         RWaQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MFqB+06rBeER++BRySglojh7CJB3/vJLed3nR17srZY=;
+        b=Cr1uy4rA/yc63G/NYnYI6sGqCHjIbj2TiaQVLsKC492L5usjwa9oleTsoZYu7gfzAz
+         fViS+p1sEET0HTnq0582qDyZfsPjAw9Ra2caO/4j6osRwltuRqO4/3vDtygeKSJc5Isd
+         5OXxYJlilf3YnCifUUYtc59aGVj8cejFf5udT1ze8tUSnxdZg+oZDuh75TG2ov1we41u
+         5wuNe7KELTyQuRDb+nQ6wVTXB5CRurnsWsmU2IV5cbDT/ZGTWhRWaQV9TnDXkS8+Fq8t
+         nBf+mW01SclboYCRG+sxLVUG8YtFgwpfHnPt2yo7FFNV0j1WgVRego3SjXeap6hREQk6
+         WBBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f63B2LvCWNuhkfnuBRLARt3WlWJAkv9H8cQcBpg+JxA=;
-        b=j2B1lTi5AaNnCW50WGCRDqtsEbxIDh8lNBv0t1piRlnun/GD5pO+2VF+UVg72enDF7
-         TVRQ+9mrBpzINP3ubf82cb1j+hv2x5SRuNpO8vdtanOJNN4AXY7rRp/bvYYHJRnkQYFK
-         e1kRBmcMqSnoR0x/XqU4Nx6swhC8wIqknk/nNAp6wI8Yg7SJ3LVP65YiQ39OnV2gtT57
-         7PrDQfcfbIHjUuW7dmxShiT8UXZLDYZI58l9BP8VOMf++RzZowf+0+PZkqxX2zyx3ytu
-         QXwoOp1tM9/bjMrh7njUyVEBziZEeWmNXyfdjkrIASlP/EJfT8O9yS0pIrgi4q5waHBl
-         cEOQ==
-X-Gm-Message-State: APjAAAWYE+tdLr5+CnWntQQis4DRJdk4kKD2d6dpcMyDowNgoLq5/YIw
-        eY9+IDQ36kvPqkSjtCk930U=
-X-Google-Smtp-Source: APXvYqyX2/Ztqg7zQzkHX1bJyFkvAa04iBHiUGPG+wyB3Anf0nnb8KK8PuqFSwewo4GCFsiXAryL3w==
-X-Received: by 2002:a63:b141:: with SMTP id g1mr29790386pgp.168.1579029162494;
-        Tue, 14 Jan 2020 11:12:42 -0800 (PST)
-Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id b21sm20330960pfp.0.2020.01.14.11.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 11:12:41 -0800 (PST)
-Date:   Tue, 14 Jan 2020 11:12:39 -0800
-From:   Minchan Kim <minchan@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>, oleksandr@redhat.com,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>
-Subject: Re: [PATCH 2/4] mm: introduce external memory hinting API
-Message-ID: <20200114191239.GB178589@google.com>
-References: <20200110213433.94739-1-minchan@kernel.org>
- <20200110213433.94739-3-minchan@kernel.org>
- <56ea0927-ad2e-3fbd-3366-3813330f6cec@virtuozzo.com>
- <CAKOZuevwbQvrFWqy5GOm4RXuGszKLBvRs9i-KbAi3nPcHhwvSw@mail.gmail.com>
- <3eec2097-75a3-1e1d-06d9-44ee5eaf1312@virtuozzo.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MFqB+06rBeER++BRySglojh7CJB3/vJLed3nR17srZY=;
+        b=RZl0rP21WpIFESdYGs2F//HMoxhqAaE0qgc4q7BGZqRF6yXRnAbGWhWtCTKfd3cZ1j
+         t+/YzU0UXva+qpWsF7uWtisRxLKMg7DkCHwKNr2wyewSKceFrua7MHi+x78fMFb386SD
+         bi/JaGWYHLCjX4cVJQod+f+B0Nmy9z4A5Ftz/R4BwnGaFFetvVyLpptEpHDGbyfcNSYQ
+         iCuZiWrEwDHjHJQlNEFdHipeLBV+7s+aU1qp8Q1QG0l8sHeXxWRd/ARu2FhcBNO7Exf9
+         M4DqcgnGqS0On0hABrgt0HjkTpUdrE1q6BnV1+UYs7ravOjdnuEr102enN0xw4Qu1QEq
+         g1iA==
+X-Gm-Message-State: APjAAAUHqwlR1+E4oRJAtd+kJcJc9UrflkD8AKj/Hs+i4JAqiB6TEKN/
+        kyCXwP1HDUzcpZtDZXE33+md3LXwBiMYJtpkrKtG3HRs
+X-Google-Smtp-Source: APXvYqzlubP7Me7CKiqxoDf6GVTcdnAviypa3ckAtyf8BEQW1oEW0BFawdKK8kqKdvmjfa1uBN2JxgI5I5GwUsEjXcc=
+X-Received: by 2002:ac8:7b29:: with SMTP id l9mr72065qtu.141.1579029238026;
+ Tue, 14 Jan 2020 11:13:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eec2097-75a3-1e1d-06d9-44ee5eaf1312@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200114164614.47029-1-brianvv@google.com> <20200114164614.47029-9-brianvv@google.com>
+ <CAEf4BzYEGv-q7p0rK-d94Ng0fyQLuTEvsy1ZSzTdk0xZcyibQA@mail.gmail.com> <CAMzD94ScYuQfvx2FLY7RAzgZ8xO-E31L79dGEJH-tNDKJzrmOg@mail.gmail.com>
+In-Reply-To: <CAMzD94ScYuQfvx2FLY7RAzgZ8xO-E31L79dGEJH-tNDKJzrmOg@mail.gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 14 Jan 2020 11:13:47 -0800
+Message-ID: <CAEf4BzZHFaCGNg21VuWywB0Qsa_AkqDPnM4k_pcU_ssmFjd0Yg@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 7/9] libbpf: add libbpf support to batch ops
+To:     Brian Vazquez <brianvv@google.com>
+Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 11:39:28AM +0300, Kirill Tkhai wrote:
-> On 13.01.2020 22:18, Daniel Colascione wrote:
-> > On Mon, Jan 13, 2020, 12:47 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>> +SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
-> >>> +             size_t, len_in, int, behavior, unsigned long, flags)
-> >>
-> >> I don't like the interface. The fact we have pidfd does not mean,
-> >> we have to use it for new syscalls always. A user may want to set
-> >> madvise for specific pid from console and pass pid as argument.
-> >> pidfd would be an overkill in this case.
-> >> We usually call "kill -9 pid" from console. Why shouldn't process_madvise()
-> >> allow this?
-> > 
-> > All new APIs should use pidfds: they're better than numeric PIDs
-> 
-> Yes
-> 
-> > in every way.
-> 
-> No
-> 
-> > If a program wants to allow users to specify processes by
-> > numeric PID, it can parse that numeric PID, open the corresponding
-> > pidfd, and then use that pidfd with whatever system call it wants.
-> > It's not necessary to support numeric PIDs at the system call level to
-> > allow a console program to identify a process by numeric PID.
-> 
-> No. It is overkill. Ordinary pid interfaces also should be available.
-> There are a lot of cases, when they are more comfortable. Say, a calling
-> of process_madvise() from tracer, when a tracee is stopped. In this moment
-> the tracer knows everything about tracee state, and pidfd brackets
-> pidfd_open() and close() around actual action look just stupid, and this
-> is cpu time wasting.
-> 
-> Another example is a parent task, which manages parameters of its children.
-> It knows everything about them, whether they are alive or not. Pidfd interface
-> will just utilize additional cpu time here.
-> 
-> So, no. Both interfaces should be available.
+On Tue, Jan 14, 2020 at 10:54 AM Brian Vazquez <brianvv@google.com> wrote:
+>
+> On Tue, Jan 14, 2020 at 10:36 AM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Tue, Jan 14, 2020 at 8:46 AM Brian Vazquez <brianvv@google.com> wrote:
+> > >
+> > > From: Yonghong Song <yhs@fb.com>
+> > >
+> > > Added four libbpf API functions to support map batch operations:
+> > >   . int bpf_map_delete_batch( ... )
+> > >   . int bpf_map_lookup_batch( ... )
+> > >   . int bpf_map_lookup_and_delete_batch( ... )
+> > >   . int bpf_map_update_batch( ... )
+> > >
+> > > Signed-off-by: Yonghong Song <yhs@fb.com>
+> > > ---
+> > >  tools/lib/bpf/bpf.c      | 60 ++++++++++++++++++++++++++++++++++++++++
+> > >  tools/lib/bpf/bpf.h      | 22 +++++++++++++++
+> > >  tools/lib/bpf/libbpf.map |  4 +++
+> > >  3 files changed, 86 insertions(+)
+> > >
+> > > diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> > > index 500afe478e94a..12ce8d275f7dc 100644
+> > > --- a/tools/lib/bpf/bpf.c
+> > > +++ b/tools/lib/bpf/bpf.c
+> > > @@ -452,6 +452,66 @@ int bpf_map_freeze(int fd)
+> > >         return sys_bpf(BPF_MAP_FREEZE, &attr, sizeof(attr));
+> > >  }
+> > >
+> > > +static int bpf_map_batch_common(int cmd, int fd, void  *in_batch,
+> > > +                               void *out_batch, void *keys, void *values,
+> > > +                               __u32 *count,
+> > > +                               const struct bpf_map_batch_opts *opts)
+> > > +{
+> > > +       union bpf_attr attr = {};
+> > > +       int ret;
+> > > +
+> > > +       if (!OPTS_VALID(opts, bpf_map_batch_opts))
+> > > +               return -EINVAL;
+> > > +
+> > > +       memset(&attr, 0, sizeof(attr));
+> > > +       attr.batch.map_fd = fd;
+> > > +       attr.batch.in_batch = ptr_to_u64(in_batch);
+> > > +       attr.batch.out_batch = ptr_to_u64(out_batch);
+> > > +       attr.batch.keys = ptr_to_u64(keys);
+> > > +       attr.batch.values = ptr_to_u64(values);
+> > > +       if (count)
+> > > +               attr.batch.count = *count;
+> > > +       attr.batch.elem_flags  = OPTS_GET(opts, elem_flags, 0);
+> > > +       attr.batch.flags = OPTS_GET(opts, flags, 0);
+> > > +
+> > > +       ret = sys_bpf(cmd, &attr, sizeof(attr));
+> > > +       if (count)
+> > > +               *count = attr.batch.count;
+> >
+> > what if syscall failed, do you still want to assign *count then?
+>
+> Hi Andrii, thanks for taking a look.
+>
+> attr.batch.count should report the number of entries correctly
+> processed before finding and error, an example could be when you
+> provided a buffer for 3 entries and the map only has 1, ret is going
+> to be -ENOENT meaning that you traversed the map and you still want to
+> assign *count.
 
-Sounds like that you want to support both options for every upcoming API
-which deals with pid. I'm not sure how it's critical for process_madvise
-API this case. In general, we sacrifice some performance for the nicer one
-and later, once it's reported as hurdle for some workload, we could fix it
-via introducing new flag. What I don't like at this moment is to make
-syscall complicated with potential scenarios without real workload.
+ah, ok, tricky semantics :) if syscall failed before kernel got to
+updating count, I'm guessing it is guaranteed to preserve old value?
+
+>
+> That being said, the condition 'if (count)' is wrong and I think it
+> should be removed.
+
+So count is mandatory, right? In that case both `if (count)` checks are wrong.
+
+>
+> >
+> > > +
+> > > +       return ret;
+> > > +}
+> > > +
+> >
+> > [...]
