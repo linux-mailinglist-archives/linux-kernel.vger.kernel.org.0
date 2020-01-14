@@ -2,145 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A580313AD32
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36DC713AD36
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 16:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbgANPKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 10:10:54 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:42754 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726450AbgANPKw (ORCPT
+        id S1729085AbgANPMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 10:12:24 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39849 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbgANPMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 10:10:52 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EFAojg004601;
-        Tue, 14 Jan 2020 09:10:51 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=PODMain02222019;
- bh=oZ3UOLHNg5cmYLllMOV3BK0IOa3Edehb6BWYGoMVahM=;
- b=jn8W6Old1pR8vjUksNHf4P/+u3ioTg6jC+/vTSzsjpbPY4GAgK+9CeluSk+zLEdeNlsz
- eZVBxsdakEC9RLd6r7BrBLz87hQXTmZ8LUxJyJv91yiNS48w3GASwRGLXZJcJxXnE5vN
- fUyw41ghzEMFQjvM7RJZkU024MccFwHv0tWzCg+9W3Glp9JJMBGZamPSYvnf0IEFUDSf
- Miiz/AUNr0il5lpkkYrVVLt+onks5mlfO0KVGg7PlDEPEjVyVmgxxp0ZcAQ6R/A7crUZ
- Y0reSGHWVC8rvK3AdXZD3p3NYnRWs3zVGzvBLFnLj51A6vixOCzB7h6UVV8uENBTfZrC gw== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex02.ad.cirrus.com ([5.172.152.52])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2xfbntvpsa-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 14 Jan 2020 09:10:50 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 14 Jan
- 2020 15:10:48 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 14 Jan 2020 15:10:48 +0000
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id CDAFD2D4;
-        Tue, 14 Jan 2020 15:10:48 +0000 (UTC)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH v2 3/3] mfd: madera: Allow more time for hardware reset
-Date:   Tue, 14 Jan 2020 15:10:48 +0000
-Message-ID: <20200114151048.20282-3-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200114151048.20282-1-ckeepax@opensource.cirrus.com>
-References: <20200114151048.20282-1-ckeepax@opensource.cirrus.com>
+        Tue, 14 Jan 2020 10:12:23 -0500
+Received: by mail-io1-f67.google.com with SMTP id c16so14162803ioh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 07:12:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nkGZG7SrCg/dkC5ag7U6FC/+BJoAtyAPaz4N+sK3NTU=;
+        b=UXrUv4mDNhE+LH+9At0LmtyxUu2Z40+9NS0Ktltdfw4q6iyq6yksNKateEPraVHvkM
+         b9GWB7C4mBdDiOES6HOfWXBe/0MMUg5+9nNgoB52WFEDKHAt8UkdzxeI+IadsQBCsBd5
+         EArO0SwQWXOGFiXKu7oun4s5rm2kd2HdlRlto=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nkGZG7SrCg/dkC5ag7U6FC/+BJoAtyAPaz4N+sK3NTU=;
+        b=FFTEJ51fIXcBaXoJm3L06CwCI1J1hZewLUkoFF5Yw+dDWKc5o7K/TaLK9BNmDxt5e1
+         I7LqrgBpVFIc7WmluKxE/0tMq75UG+OGiY5xYG0yGUF+kKjMXcyvz/xs7C+ieeHxqeAb
+         Z0S3KLRkqQRc1B3Qg93XH9LpR43Wt/Ee9I6DDlgv2kBnoA0lkDlBdCfzFCFvPTjvg0hv
+         UQ9eWMgKlTNDRyjxcB2Hdg3cMbzwVCg/RtGerH/kbv5BDVCfgf3BM2cXw9qoVggYxC2K
+         UYu3WP6FcbSLwpHaYfC4viCHLND3Rc85qsm4PnhNBr90s6LLe6WhZ3gAsphq/fK2RtY6
+         70qg==
+X-Gm-Message-State: APjAAAVIBtJV+gzQWW4fGPbVujiTgOHXtyflVJ3pv2C37CkIkpT3fZdr
+        QgCQ+ajs2a+PmUApWleXeh3ZFQ==
+X-Google-Smtp-Source: APXvYqx7NRi22leRc5ddyOl/X7SLLbpIm7rIxKyIP+F/4ZOOcaI37n9oV2Ou7EI/V2rDZItw6s/SwQ==
+X-Received: by 2002:a05:6602:235b:: with SMTP id r27mr17579379iot.51.1579014743030;
+        Tue, 14 Jan 2020 07:12:23 -0800 (PST)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id a9sm4958922ilk.14.2020.01.14.07.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 07:12:22 -0800 (PST)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     joro@8bytes.org
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu: amd: Fix IOMMU perf counter clobbering during init
+Date:   Tue, 14 Jan 2020 08:12:20 -0700
+Message-Id: <20200114151220.29578-1-skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 malwarescore=0
- suspectscore=1 priorityscore=1501 impostorscore=0 mlxlogscore=999
- phishscore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001140130
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both manual and power on resets have a brief period where the chip will
-not be accessible immediately afterwards. Extend the time allowed for
-this from a minimum of 1mS to 2mS based on newer evaluation of the
-hardware and ensure this reset happens in all reset conditions. Whilst
-making the change also remove the redundant NULL checks in the reset
-functions as the GPIO functions already check for this.
+init_iommu_perf_ctr() clobbers the register when it checks write access
+to IOMMU perf counters and fails to restore when they are writable.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Add save and restore to fix it.
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
+ drivers/iommu/amd_iommu_init.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Changes since v1:
- - Switch from a helper function to defines for the delay
-
-This patch can be applied separately from the other patches in the series,
-if needed.
-
-Thanks,
-Charles
-
- drivers/mfd/madera-core.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index a7d50a7fa625d..7e0835cb062b1 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -35,6 +35,9 @@
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 568c52317757..c0ad4f293522 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -1655,27 +1655,37 @@ static int iommu_pc_get_set_reg(struct amd_iommu *iommu, u8 bank, u8 cntr,
+ static void init_iommu_perf_ctr(struct amd_iommu *iommu)
+ {
+ 	struct pci_dev *pdev = iommu->dev;
+-	u64 val = 0xabcd, val2 = 0;
++	u64 val = 0xabcd, val2 = 0, save_reg = 0;
  
- #define MADERA_32KZ_MCLK2	1
+ 	if (!iommu_feature(iommu, FEATURE_PC))
+ 		return;
  
-+#define MADERA_RESET_MIN_US	2000
-+#define MADERA_RESET_MAX_US	3000
+ 	amd_iommu_pc_present = true;
+ 
++	/* save the value to restore, if writable */
++	if (iommu_pc_get_set_reg(iommu, 0, 0, 0, &save_reg, false))
++		goto pc_false;
 +
- static const char * const madera_core_supplies[] = {
- 	"AVDD",
- 	"DBVDD1",
-@@ -256,16 +259,13 @@ static int madera_soft_reset(struct madera *madera)
- 	}
+ 	/* Check if the performance counters can be written to */
+ 	if ((iommu_pc_get_set_reg(iommu, 0, 0, 0, &val, true)) ||
+ 	    (iommu_pc_get_set_reg(iommu, 0, 0, 0, &val2, false)) ||
+-	    (val != val2)) {
+-		pci_err(pdev, "Unable to write to IOMMU perf counter.\n");
+-		amd_iommu_pc_present = false;
+-		return;
+-	}
++	    (val != val2))
++		goto pc_false;
++
++	/* restore */
++	if (iommu_pc_get_set_reg(iommu, 0, 0, 0, &save_reg, true))
++		goto pc_false;
  
- 	/* Allow time for internal clocks to startup after reset */
--	usleep_range(1000, 2000);
-+	usleep_range(MADERA_RESET_MIN_US, MADERA_RESET_MAX_US);
+ 	pci_info(pdev, "IOMMU performance counters supported\n");
  
- 	return 0;
+ 	val = readl(iommu->mmio_base + MMIO_CNTR_CONF_OFFSET);
+ 	iommu->max_banks = (u8) ((val >> 12) & 0x3f);
+ 	iommu->max_counters = (u8) ((val >> 7) & 0xf);
++
++pc_false:
++	pci_err(pdev, "Unable to read/write to IOMMU perf counter.\n");
++	amd_iommu_pc_present = false;
++	return;
  }
  
- static void madera_enable_hard_reset(struct madera *madera)
- {
--	if (!madera->pdata.reset)
--		return;
--
- 	/*
- 	 * There are many existing out-of-tree users of these codecs that we
- 	 * can't break so preserve the expected behaviour of setting the line
-@@ -276,11 +276,9 @@ static void madera_enable_hard_reset(struct madera *madera)
- 
- static void madera_disable_hard_reset(struct madera *madera)
- {
--	if (!madera->pdata.reset)
--		return;
--
- 	gpiod_set_raw_value_cansleep(madera->pdata.reset, 1);
--	usleep_range(1000, 2000);
-+
-+	usleep_range(MADERA_RESET_MIN_US, MADERA_RESET_MAX_US);
- }
- 
- static int __maybe_unused madera_runtime_resume(struct device *dev)
-@@ -299,6 +297,8 @@ static int __maybe_unused madera_runtime_resume(struct device *dev)
- 	regcache_cache_only(madera->regmap, false);
- 	regcache_cache_only(madera->regmap_32bit, false);
- 
-+	usleep_range(MADERA_RESET_MIN_US, MADERA_RESET_MAX_US);
-+
- 	ret = madera_wait_for_boot(madera);
- 	if (ret)
- 		goto err;
+ static ssize_t amd_iommu_show_cap(struct device *dev,
 -- 
-2.11.0
+2.20.1
 
