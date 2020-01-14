@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E81413A723
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E40413A721
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:26:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgANKTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:19:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35664 "EHLO mail.kernel.org"
+        id S1728964AbgANKSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:18:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730353AbgANKGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:06:30 -0500
+        id S1730287AbgANKHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8176F24672;
-        Tue, 14 Jan 2020 10:06:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8146E24679;
+        Tue, 14 Jan 2020 10:07:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996389;
-        bh=FkcS2BdMEXIokPkWULH/aGT00OXhvGq1WKC6EOCQqfc=;
+        s=default; t=1578996453;
+        bh=EzNgiiWZ33n+Hg8gPGnUEB6TwMW3CwgI6GJIxqhBaLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFZbSJW8hNnwmZVw7ntbo32WbOF8G0aL5rlrwoPd9ylcRsbuXDzCT3KVXgzUJjFQA
-         dBAmR0WCwS0J1UAzWE0P4/ElfYnGPFnEiu3aXz2Kr7/+PhP9FOoovcP8uq95g1mqxi
-         DB9Di4v7919AquLZq1lKYHthpcZ83DE3//PxDk3c=
+        b=C6gUs0X2OwfSWddcaHwhHnEE9DBqDW90UBnVucWzFnbwZPcLzM47CsS+ykCxspi0E
+         lvlb2v8IjZT2GzbQMewPdC9oNemB4cmE37y0Ug9BDKEIv6zMv3WAsH+AaE/s47x0Ql
+         WO1FJJRyxaahZ/F5eeBtf7Ce0sg7t4+31ndANH7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amanieu dAntras <amanieu@gmail.com>,
-        linux-um@lists.infradead.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 5.4 64/78] um: Implement copy_thread_tls
-Date:   Tue, 14 Jan 2020 11:01:38 +0100
-Message-Id: <20200114094402.012253565@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 22/46] can: can_dropped_invalid_skb(): ensure an initialized headroom in outgoing CAN sk_buffs
+Date:   Tue, 14 Jan 2020 11:01:39 +0100
+Message-Id: <20200114094344.962581194@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
-References: <20200114094352.428808181@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,109 +45,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amanieu d'Antras <amanieu@gmail.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 457677c70c7672a4586b0b8abc396cc1ecdd376d upstream.
+commit e7153bf70c3496bac00e7e4f395bb8d8394ac0ea upstream.
 
-This is required for clone3 which passes the TLS value through a
-struct rather than a register.
+KMSAN sysbot detected a read access to an untinitialized value in the
+headroom of an outgoing CAN related sk_buff. When using CAN sockets this
+area is filled appropriately - but when using a packet socket this
+initialization is missing.
 
-Signed-off-by: Amanieu d'Antras <amanieu@gmail.com>
-Cc: linux-um@lists.infradead.org
-Cc: <stable@vger.kernel.org> # 5.3.x
-Link: https://lore.kernel.org/r/20200104123928.1048822-1-amanieu@gmail.com
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+The problematic read access occurs in the CAN receive path which can
+only be triggered when the sk_buff is sent through a (virtual) CAN
+interface. So we check in the sending path whether we need to perform
+the missing initializations.
+
+Fixes: d3b58c47d330d ("can: replace timestamp as unique skb attribute")
+Reported-by: syzbot+b02ff0707a97e4e79ebb@syzkaller.appspotmail.com
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v4.1
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/um/Kconfig                      |    1 +
- arch/um/include/asm/ptrace-generic.h |    2 +-
- arch/um/kernel/process.c             |    6 +++---
- arch/x86/um/tls_32.c                 |    6 ++----
- arch/x86/um/tls_64.c                 |    7 +++----
- 5 files changed, 10 insertions(+), 12 deletions(-)
+ include/linux/can/dev.h |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/arch/um/Kconfig
-+++ b/arch/um/Kconfig
-@@ -14,6 +14,7 @@ config UML
- 	select HAVE_FUTEX_CMPXCHG if FUTEX
- 	select HAVE_DEBUG_KMEMLEAK
- 	select HAVE_DEBUG_BUGVERBOSE
-+	select HAVE_COPY_THREAD_TLS
- 	select GENERIC_IRQ_SHOW
- 	select GENERIC_CPU_DEVICES
- 	select GENERIC_CLOCKEVENTS
---- a/arch/um/include/asm/ptrace-generic.h
-+++ b/arch/um/include/asm/ptrace-generic.h
-@@ -36,7 +36,7 @@ extern long subarch_ptrace(struct task_s
- extern unsigned long getreg(struct task_struct *child, int regno);
- extern int putreg(struct task_struct *child, int regno, unsigned long value);
+--- a/include/linux/can/dev.h
++++ b/include/linux/can/dev.h
+@@ -18,6 +18,7 @@
+ #include <linux/can/error.h>
+ #include <linux/can/led.h>
+ #include <linux/can/netlink.h>
++#include <linux/can/skb.h>
+ #include <linux/netdevice.h>
  
--extern int arch_copy_tls(struct task_struct *new);
-+extern int arch_set_tls(struct task_struct *new, unsigned long tls);
- extern void clear_flushed_tls(struct task_struct *task);
- extern int syscall_trace_enter(struct pt_regs *regs);
- extern void syscall_trace_leave(struct pt_regs *regs);
---- a/arch/um/kernel/process.c
-+++ b/arch/um/kernel/process.c
-@@ -153,8 +153,8 @@ void fork_handler(void)
- 	userspace(&current->thread.regs.regs, current_thread_info()->aux_fp_regs);
- }
+ /*
+@@ -91,6 +92,36 @@ struct can_priv {
+ #define get_can_dlc(i)		(min_t(__u8, (i), CAN_MAX_DLC))
+ #define get_canfd_dlc(i)	(min_t(__u8, (i), CANFD_MAX_DLC))
  
--int copy_thread(unsigned long clone_flags, unsigned long sp,
--		unsigned long arg, struct task_struct * p)
-+int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-+		unsigned long arg, struct task_struct * p, unsigned long tls)
- {
- 	void (*handler)(void);
- 	int kthread = current->flags & PF_KTHREAD;
-@@ -188,7 +188,7 @@ int copy_thread(unsigned long clone_flag
- 		 * Set a new TLS for the child thread?
- 		 */
- 		if (clone_flags & CLONE_SETTLS)
--			ret = arch_copy_tls(p);
-+			ret = arch_set_tls(p, tls);
- 	}
++/* Check for outgoing skbs that have not been created by the CAN subsystem */
++static inline bool can_skb_headroom_valid(struct net_device *dev,
++					  struct sk_buff *skb)
++{
++	/* af_packet creates a headroom of HH_DATA_MOD bytes which is fine */
++	if (WARN_ON_ONCE(skb_headroom(skb) < sizeof(struct can_skb_priv)))
++		return false;
++
++	/* af_packet does not apply CAN skb specific settings */
++	if (skb->ip_summed == CHECKSUM_NONE) {
++		/* init headroom */
++		can_skb_prv(skb)->ifindex = dev->ifindex;
++		can_skb_prv(skb)->skbcnt = 0;
++
++		skb->ip_summed = CHECKSUM_UNNECESSARY;
++
++		/* preform proper loopback on capable devices */
++		if (dev->flags & IFF_ECHO)
++			skb->pkt_type = PACKET_LOOPBACK;
++		else
++			skb->pkt_type = PACKET_HOST;
++
++		skb_reset_mac_header(skb);
++		skb_reset_network_header(skb);
++		skb_reset_transport_header(skb);
++	}
++
++	return true;
++}
++
+ /* Drop a given socketbuffer if it does not contain a valid CAN frame. */
+ static inline bool can_dropped_invalid_skb(struct net_device *dev,
+ 					  struct sk_buff *skb)
+@@ -108,6 +139,9 @@ static inline bool can_dropped_invalid_s
+ 	} else
+ 		goto inval_skb;
  
- 	return ret;
---- a/arch/x86/um/tls_32.c
-+++ b/arch/x86/um/tls_32.c
-@@ -215,14 +215,12 @@ static int set_tls_entry(struct task_str
- 	return 0;
- }
++	if (!can_skb_headroom_valid(dev, skb))
++		goto inval_skb;
++
+ 	return false;
  
--int arch_copy_tls(struct task_struct *new)
-+int arch_set_tls(struct task_struct *new, unsigned long tls)
- {
- 	struct user_desc info;
- 	int idx, ret = -EFAULT;
- 
--	if (copy_from_user(&info,
--			   (void __user *) UPT_SI(&new->thread.regs.regs),
--			   sizeof(info)))
-+	if (copy_from_user(&info, (void __user *) tls, sizeof(info)))
- 		goto out;
- 
- 	ret = -EINVAL;
---- a/arch/x86/um/tls_64.c
-+++ b/arch/x86/um/tls_64.c
-@@ -6,14 +6,13 @@ void clear_flushed_tls(struct task_struc
- {
- }
- 
--int arch_copy_tls(struct task_struct *t)
-+int arch_set_tls(struct task_struct *t, unsigned long tls)
- {
- 	/*
- 	 * If CLONE_SETTLS is set, we need to save the thread id
--	 * (which is argument 5, child_tid, of clone) so it can be set
--	 * during context switches.
-+	 * so it can be set during context switches.
- 	 */
--	t->thread.arch.fs = t->thread.regs.regs.gp[R8 / sizeof(long)];
-+	t->thread.arch.fs = tls;
- 
- 	return 0;
- }
+ inval_skb:
 
 
