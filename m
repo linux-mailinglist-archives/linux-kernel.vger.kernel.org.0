@@ -2,186 +2,602 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB91613B3ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 22:03:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F270713B407
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 22:05:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbgANVDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 16:03:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50518 "EHLO mail.kernel.org"
+        id S1729332AbgANVE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 16:04:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbgANVDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 16:03:37 -0500
+        id S1728656AbgANVDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 16:03:38 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2E8D24658;
+        by mail.kernel.org (Postfix) with ESMTPSA id EB06B24672;
         Tue, 14 Jan 2020 21:03:36 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1irTLb-000Cz5-MN; Tue, 14 Jan 2020 16:03:35 -0500
-Message-Id: <20200114210316.450821675@goodmis.org>
+        id 1irTLb-000Cze-RD; Tue, 14 Jan 2020 16:03:35 -0500
+Message-Id: <20200114210335.729078296@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 14 Jan 2020 16:03:16 -0500
+Date:   Tue, 14 Jan 2020 16:03:17 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/26] tracing: Updates for 5.6
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: [for-next][PATCH 01/26] perf: Make struct ring_buffer less ambiguous
+References: <20200114210316.450821675@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Head SHA1: 3b42a4c83a31d8f1d8a7cb7eb2f4ee809d42c69d
+eBPF requires needing to know the size of the perf ring buffer structure.
+But it unfortunately has the same name as the generic ring buffer used by
+tracing and oprofile. To make it less ambiguous, rename the perf ring buffer
+structure to "perf_buffer".
+
+As other parts of the ring buffer code has "perf_" as the prefix, it only
+makes sense to give the ring buffer the "perf_" prefix as well.
+
+Link: https://lore.kernel.org/r/20191213153553.GE20583@krava
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/perf_event.h  |  6 ++---
+ kernel/events/core.c        | 42 ++++++++++++++---------------
+ kernel/events/internal.h    | 34 +++++++++++------------
+ kernel/events/ring_buffer.c | 54 ++++++++++++++++++-------------------
+ 4 files changed, 68 insertions(+), 68 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 6d4c22aee384..cf65763af0cb 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -582,7 +582,7 @@ struct swevent_hlist {
+ #define PERF_ATTACH_ITRACE	0x10
+ 
+ struct perf_cgroup;
+-struct ring_buffer;
++struct perf_buffer;
+ 
+ struct pmu_event_list {
+ 	raw_spinlock_t		lock;
+@@ -694,7 +694,7 @@ struct perf_event {
+ 	struct mutex			mmap_mutex;
+ 	atomic_t			mmap_count;
+ 
+-	struct ring_buffer		*rb;
++	struct perf_buffer		*rb;
+ 	struct list_head		rb_entry;
+ 	unsigned long			rcu_batches;
+ 	int				rcu_pending;
+@@ -854,7 +854,7 @@ struct perf_cpu_context {
+ 
+ struct perf_output_handle {
+ 	struct perf_event		*event;
+-	struct ring_buffer		*rb;
++	struct perf_buffer		*rb;
+ 	unsigned long			wakeup;
+ 	unsigned long			size;
+ 	u64				aux_flags;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index a1f8bde19b56..455451d24b4a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4373,7 +4373,7 @@ static void free_event_rcu(struct rcu_head *head)
+ }
+ 
+ static void ring_buffer_attach(struct perf_event *event,
+-			       struct ring_buffer *rb);
++			       struct perf_buffer *rb);
+ 
+ static void detach_sb_event(struct perf_event *event)
+ {
+@@ -5054,7 +5054,7 @@ perf_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ static __poll_t perf_poll(struct file *file, poll_table *wait)
+ {
+ 	struct perf_event *event = file->private_data;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	__poll_t events = EPOLLHUP;
+ 
+ 	poll_wait(file, &event->waitq, wait);
+@@ -5296,7 +5296,7 @@ static long _perf_ioctl(struct perf_event *event, unsigned int cmd, unsigned lon
+ 		return perf_event_set_bpf_prog(event, arg);
+ 
+ 	case PERF_EVENT_IOC_PAUSE_OUTPUT: {
+-		struct ring_buffer *rb;
++		struct perf_buffer *rb;
+ 
+ 		rcu_read_lock();
+ 		rb = rcu_dereference(event->rb);
+@@ -5432,7 +5432,7 @@ static void calc_timer_values(struct perf_event *event,
+ static void perf_event_init_userpage(struct perf_event *event)
+ {
+ 	struct perf_event_mmap_page *userpg;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5464,7 +5464,7 @@ void __weak arch_perf_update_userpage(
+ void perf_event_update_userpage(struct perf_event *event)
+ {
+ 	struct perf_event_mmap_page *userpg;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	u64 enabled, running, now;
+ 
+ 	rcu_read_lock();
+@@ -5515,7 +5515,7 @@ EXPORT_SYMBOL_GPL(perf_event_update_userpage);
+ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+ {
+ 	struct perf_event *event = vmf->vma->vm_file->private_data;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 
+ 	if (vmf->flags & FAULT_FLAG_MKWRITE) {
+@@ -5548,9 +5548,9 @@ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
+ }
+ 
+ static void ring_buffer_attach(struct perf_event *event,
+-			       struct ring_buffer *rb)
++			       struct perf_buffer *rb)
+ {
+-	struct ring_buffer *old_rb = NULL;
++	struct perf_buffer *old_rb = NULL;
+ 	unsigned long flags;
+ 
+ 	if (event->rb) {
+@@ -5608,7 +5608,7 @@ static void ring_buffer_attach(struct perf_event *event,
+ 
+ static void ring_buffer_wakeup(struct perf_event *event)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5619,9 +5619,9 @@ static void ring_buffer_wakeup(struct perf_event *event)
+ 	rcu_read_unlock();
+ }
+ 
+-struct ring_buffer *ring_buffer_get(struct perf_event *event)
++struct perf_buffer *ring_buffer_get(struct perf_event *event)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	rcu_read_lock();
+ 	rb = rcu_dereference(event->rb);
+@@ -5634,7 +5634,7 @@ struct ring_buffer *ring_buffer_get(struct perf_event *event)
+ 	return rb;
+ }
+ 
+-void ring_buffer_put(struct ring_buffer *rb)
++void ring_buffer_put(struct perf_buffer *rb)
+ {
+ 	if (!refcount_dec_and_test(&rb->refcount))
+ 		return;
+@@ -5672,7 +5672,7 @@ static void perf_mmap_close(struct vm_area_struct *vma)
+ {
+ 	struct perf_event *event = vma->vm_file->private_data;
+ 
+-	struct ring_buffer *rb = ring_buffer_get(event);
++	struct perf_buffer *rb = ring_buffer_get(event);
+ 	struct user_struct *mmap_user = rb->mmap_user;
+ 	int mmap_locked = rb->mmap_locked;
+ 	unsigned long size = perf_data_size(rb);
+@@ -5790,8 +5790,8 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct perf_event *event = file->private_data;
+ 	unsigned long user_locked, user_lock_limit;
+ 	struct user_struct *user = current_user();
++	struct perf_buffer *rb = NULL;
+ 	unsigned long locked, lock_limit;
+-	struct ring_buffer *rb = NULL;
+ 	unsigned long vma_size;
+ 	unsigned long nr_pages;
+ 	long user_extra = 0, extra = 0;
+@@ -6266,7 +6266,7 @@ static unsigned long perf_prepare_sample_aux(struct perf_event *event,
+ 					  size_t size)
+ {
+ 	struct perf_event *sampler = event->aux_event;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+ 	data->aux_size = 0;
+ 
+@@ -6299,7 +6299,7 @@ static unsigned long perf_prepare_sample_aux(struct perf_event *event,
+ 	return data->aux_size;
+ }
+ 
+-long perf_pmu_snapshot_aux(struct ring_buffer *rb,
++long perf_pmu_snapshot_aux(struct perf_buffer *rb,
+ 			   struct perf_event *event,
+ 			   struct perf_output_handle *handle,
+ 			   unsigned long size)
+@@ -6338,8 +6338,8 @@ static void perf_aux_sample_output(struct perf_event *event,
+ 				   struct perf_sample_data *data)
+ {
+ 	struct perf_event *sampler = event->aux_event;
++	struct perf_buffer *rb;
+ 	unsigned long pad;
+-	struct ring_buffer *rb;
+ 	long size;
+ 
+ 	if (WARN_ON_ONCE(!sampler || !data->aux_size))
+@@ -6707,7 +6707,7 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 		int wakeup_events = event->attr.wakeup_events;
+ 
+ 		if (wakeup_events) {
+-			struct ring_buffer *rb = handle->rb;
++			struct perf_buffer *rb = handle->rb;
+ 			int events = local_inc_return(&rb->events);
+ 
+ 			if (events >= wakeup_events) {
+@@ -7150,7 +7150,7 @@ void perf_event_exec(void)
+ }
+ 
+ struct remote_output {
+-	struct ring_buffer	*rb;
++	struct perf_buffer	*rb;
+ 	int			err;
+ };
+ 
+@@ -7158,7 +7158,7 @@ static void __perf_event_output_stop(struct perf_event *event, void *data)
+ {
+ 	struct perf_event *parent = event->parent;
+ 	struct remote_output *ro = data;
+-	struct ring_buffer *rb = ro->rb;
++	struct perf_buffer *rb = ro->rb;
+ 	struct stop_event_data sd = {
+ 		.event	= event,
+ 	};
+@@ -10998,7 +10998,7 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+ static int
+ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+ {
+-	struct ring_buffer *rb = NULL;
++	struct perf_buffer *rb = NULL;
+ 	int ret = -EINVAL;
+ 
+ 	if (!output_event)
+diff --git a/kernel/events/internal.h b/kernel/events/internal.h
+index 747d67f130cb..f16f66b6b655 100644
+--- a/kernel/events/internal.h
++++ b/kernel/events/internal.h
+@@ -10,7 +10,7 @@
+ 
+ #define RING_BUFFER_WRITABLE		0x01
+ 
+-struct ring_buffer {
++struct perf_buffer {
+ 	refcount_t			refcount;
+ 	struct rcu_head			rcu_head;
+ #ifdef CONFIG_PERF_USE_VMALLOC
+@@ -58,17 +58,17 @@ struct ring_buffer {
+ 	void				*data_pages[0];
+ };
+ 
+-extern void rb_free(struct ring_buffer *rb);
++extern void rb_free(struct perf_buffer *rb);
+ 
+ static inline void rb_free_rcu(struct rcu_head *rcu_head)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 
+-	rb = container_of(rcu_head, struct ring_buffer, rcu_head);
++	rb = container_of(rcu_head, struct perf_buffer, rcu_head);
+ 	rb_free(rb);
+ }
+ 
+-static inline void rb_toggle_paused(struct ring_buffer *rb, bool pause)
++static inline void rb_toggle_paused(struct perf_buffer *rb, bool pause)
+ {
+ 	if (!pause && rb->nr_pages)
+ 		rb->paused = 0;
+@@ -76,16 +76,16 @@ static inline void rb_toggle_paused(struct ring_buffer *rb, bool pause)
+ 		rb->paused = 1;
+ }
+ 
+-extern struct ring_buffer *
++extern struct perf_buffer *
+ rb_alloc(int nr_pages, long watermark, int cpu, int flags);
+ extern void perf_event_wakeup(struct perf_event *event);
+-extern int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
++extern int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+ 			pgoff_t pgoff, int nr_pages, long watermark, int flags);
+-extern void rb_free_aux(struct ring_buffer *rb);
+-extern struct ring_buffer *ring_buffer_get(struct perf_event *event);
+-extern void ring_buffer_put(struct ring_buffer *rb);
++extern void rb_free_aux(struct perf_buffer *rb);
++extern struct perf_buffer *ring_buffer_get(struct perf_event *event);
++extern void ring_buffer_put(struct perf_buffer *rb);
+ 
+-static inline bool rb_has_aux(struct ring_buffer *rb)
++static inline bool rb_has_aux(struct perf_buffer *rb)
+ {
+ 	return !!rb->aux_nr_pages;
+ }
+@@ -94,7 +94,7 @@ void perf_event_aux_event(struct perf_event *event, unsigned long head,
+ 			  unsigned long size, u64 flags);
+ 
+ extern struct page *
+-perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff);
++perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff);
+ 
+ #ifdef CONFIG_PERF_USE_VMALLOC
+ /*
+@@ -103,25 +103,25 @@ perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff);
+  * Required for architectures that have d-cache aliasing issues.
+  */
+ 
+-static inline int page_order(struct ring_buffer *rb)
++static inline int page_order(struct perf_buffer *rb)
+ {
+ 	return rb->page_order;
+ }
+ 
+ #else
+ 
+-static inline int page_order(struct ring_buffer *rb)
++static inline int page_order(struct perf_buffer *rb)
+ {
+ 	return 0;
+ }
+ #endif
+ 
+-static inline unsigned long perf_data_size(struct ring_buffer *rb)
++static inline unsigned long perf_data_size(struct perf_buffer *rb)
+ {
+ 	return rb->nr_pages << (PAGE_SHIFT + page_order(rb));
+ }
+ 
+-static inline unsigned long perf_aux_size(struct ring_buffer *rb)
++static inline unsigned long perf_aux_size(struct perf_buffer *rb)
+ {
+ 	return rb->aux_nr_pages << PAGE_SHIFT;
+ }
+@@ -141,7 +141,7 @@ static inline unsigned long perf_aux_size(struct ring_buffer *rb)
+ 			buf += written;					\
+ 		handle->size -= written;				\
+ 		if (!handle->size) {					\
+-			struct ring_buffer *rb = handle->rb;		\
++			struct perf_buffer *rb = handle->rb;	\
+ 									\
+ 			handle->page++;					\
+ 			handle->page &= rb->nr_pages - 1;		\
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 7ffd5c763f93..192b8abc6330 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -35,7 +35,7 @@ static void perf_output_wakeup(struct perf_output_handle *handle)
+  */
+ static void perf_output_get_handle(struct perf_output_handle *handle)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 
+ 	preempt_disable();
+ 
+@@ -49,7 +49,7 @@ static void perf_output_get_handle(struct perf_output_handle *handle)
+ 
+ static void perf_output_put_handle(struct perf_output_handle *handle)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 	unsigned long head;
+ 	unsigned int nest;
+ 
+@@ -150,7 +150,7 @@ __perf_output_begin(struct perf_output_handle *handle,
+ 		    struct perf_event *event, unsigned int size,
+ 		    bool backward)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long tail, offset, head;
+ 	int have_lost, page_shift;
+ 	struct {
+@@ -301,7 +301,7 @@ void perf_output_end(struct perf_output_handle *handle)
+ }
+ 
+ static void
+-ring_buffer_init(struct ring_buffer *rb, long watermark, int flags)
++ring_buffer_init(struct perf_buffer *rb, long watermark, int flags)
+ {
+ 	long max_size = perf_data_size(rb);
+ 
+@@ -361,7 +361,7 @@ void *perf_aux_output_begin(struct perf_output_handle *handle,
+ {
+ 	struct perf_event *output_event = event;
+ 	unsigned long aux_head, aux_tail;
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned int nest;
+ 
+ 	if (output_event->parent)
+@@ -449,7 +449,7 @@ void *perf_aux_output_begin(struct perf_output_handle *handle,
+ }
+ EXPORT_SYMBOL_GPL(perf_aux_output_begin);
+ 
+-static __always_inline bool rb_need_aux_wakeup(struct ring_buffer *rb)
++static __always_inline bool rb_need_aux_wakeup(struct perf_buffer *rb)
+ {
+ 	if (rb->aux_overwrite)
+ 		return false;
+@@ -475,7 +475,7 @@ static __always_inline bool rb_need_aux_wakeup(struct ring_buffer *rb)
+ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
+ {
+ 	bool wakeup = !!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED);
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 	unsigned long aux_head;
+ 
+ 	/* in overwrite mode, driver provides aux_head via handle */
+@@ -532,7 +532,7 @@ EXPORT_SYMBOL_GPL(perf_aux_output_end);
+  */
+ int perf_aux_output_skip(struct perf_output_handle *handle, unsigned long size)
+ {
+-	struct ring_buffer *rb = handle->rb;
++	struct perf_buffer *rb = handle->rb;
+ 
+ 	if (size > handle->size)
+ 		return -ENOSPC;
+@@ -569,8 +569,8 @@ long perf_output_copy_aux(struct perf_output_handle *aux_handle,
+ 			  struct perf_output_handle *handle,
+ 			  unsigned long from, unsigned long to)
+ {
++	struct perf_buffer *rb = aux_handle->rb;
+ 	unsigned long tocopy, remainder, len = 0;
+-	struct ring_buffer *rb = aux_handle->rb;
+ 	void *addr;
+ 
+ 	from &= (rb->aux_nr_pages << PAGE_SHIFT) - 1;
+@@ -626,7 +626,7 @@ static struct page *rb_alloc_aux_page(int node, int order)
+ 	return page;
+ }
+ 
+-static void rb_free_aux_page(struct ring_buffer *rb, int idx)
++static void rb_free_aux_page(struct perf_buffer *rb, int idx)
+ {
+ 	struct page *page = virt_to_page(rb->aux_pages[idx]);
+ 
+@@ -635,7 +635,7 @@ static void rb_free_aux_page(struct ring_buffer *rb, int idx)
+ 	__free_page(page);
+ }
+ 
+-static void __rb_free_aux(struct ring_buffer *rb)
++static void __rb_free_aux(struct perf_buffer *rb)
+ {
+ 	int pg;
+ 
+@@ -662,7 +662,7 @@ static void __rb_free_aux(struct ring_buffer *rb)
+ 	}
+ }
+ 
+-int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
++int rb_alloc_aux(struct perf_buffer *rb, struct perf_event *event,
+ 		 pgoff_t pgoff, int nr_pages, long watermark, int flags)
+ {
+ 	bool overwrite = !(flags & RING_BUFFER_WRITABLE);
+@@ -753,7 +753,7 @@ int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
+ 	return ret;
+ }
+ 
+-void rb_free_aux(struct ring_buffer *rb)
++void rb_free_aux(struct perf_buffer *rb)
+ {
+ 	if (refcount_dec_and_test(&rb->aux_refcount))
+ 		__rb_free_aux(rb);
+@@ -766,7 +766,7 @@ void rb_free_aux(struct ring_buffer *rb)
+  */
+ 
+ static struct page *
+-__perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	if (pgoff > rb->nr_pages)
+ 		return NULL;
+@@ -798,13 +798,13 @@ static void perf_mmap_free_page(void *addr)
+ 	__free_page(page);
+ }
+ 
+-struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
++struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long size;
+ 	int i;
+ 
+-	size = sizeof(struct ring_buffer);
++	size = sizeof(struct perf_buffer);
+ 	size += nr_pages * sizeof(void *);
+ 
+ 	if (order_base_2(size) >= PAGE_SHIFT+MAX_ORDER)
+@@ -843,7 +843,7 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ 	return NULL;
+ }
+ 
+-void rb_free(struct ring_buffer *rb)
++void rb_free(struct perf_buffer *rb)
+ {
+ 	int i;
+ 
+@@ -854,13 +854,13 @@ void rb_free(struct ring_buffer *rb)
+ }
+ 
+ #else
+-static int data_page_nr(struct ring_buffer *rb)
++static int data_page_nr(struct perf_buffer *rb)
+ {
+ 	return rb->nr_pages << page_order(rb);
+ }
+ 
+ static struct page *
+-__perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++__perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	/* The '>' counts in the user page. */
+ 	if (pgoff > data_page_nr(rb))
+@@ -878,11 +878,11 @@ static void perf_mmap_unmark_page(void *addr)
+ 
+ static void rb_free_work(struct work_struct *work)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	void *base;
+ 	int i, nr;
+ 
+-	rb = container_of(work, struct ring_buffer, work);
++	rb = container_of(work, struct perf_buffer, work);
+ 	nr = data_page_nr(rb);
+ 
+ 	base = rb->user_page;
+@@ -894,18 +894,18 @@ static void rb_free_work(struct work_struct *work)
+ 	kfree(rb);
+ }
+ 
+-void rb_free(struct ring_buffer *rb)
++void rb_free(struct perf_buffer *rb)
+ {
+ 	schedule_work(&rb->work);
+ }
+ 
+-struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
++struct perf_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ {
+-	struct ring_buffer *rb;
++	struct perf_buffer *rb;
+ 	unsigned long size;
+ 	void *all_buf;
+ 
+-	size = sizeof(struct ring_buffer);
++	size = sizeof(struct perf_buffer);
+ 	size += sizeof(void *);
+ 
+ 	rb = kzalloc(size, GFP_KERNEL);
+@@ -939,7 +939,7 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+ #endif
+ 
+ struct page *
+-perf_mmap_to_page(struct ring_buffer *rb, unsigned long pgoff)
++perf_mmap_to_page(struct perf_buffer *rb, unsigned long pgoff)
+ {
+ 	if (rb->aux_nr_pages) {
+ 		/* above AUX space */
+-- 
+2.24.1
 
 
-Masami Hiramatsu (23):
-      bootconfig: Add Extra Boot Config support
-      bootconfig: Load boot config from the tail of initrd
-      tools: bootconfig: Add bootconfig command
-      tools: bootconfig: Add bootconfig test script
-      proc: bootconfig: Add /proc/bootconfig to show boot config list
-      init/main.c: Alloc initcall_command_line in do_initcall() and free it
-      bootconfig: init: Allow admin to use bootconfig for kernel command line
-      bootconfig: init: Allow admin to use bootconfig for init command line
-      Documentation: bootconfig: Add a doc for extended boot config
-      tracing: Apply soft-disabled and filter to tracepoints printk
-      tracing: kprobes: Output kprobe event to printk buffer
-      tracing: kprobes: Register to dynevent earlier stage
-      tracing: Accept different type for synthetic event fields
-      tracing: Add NULL trace-array check in print_synth_event()
-      tracing/boot: Add boot-time tracing
-      tracing/boot: Add per-event settings
-      tracing/boot Add kprobe event support
-      tracing/boot: Add synthetic event support
-      tracing/boot: Add instance node support
-      tracing/boot: Add cpu_mask option support
-      tracing/boot: Add function tracer filter options
-      Documentation: tracing: Add boot-time tracing document
-      tracing: trigger: Replace unneeded RCU-list traversals
-
-Steven Rostedt (VMware) (3):
-      perf: Make struct ring_buffer less ambiguous
-      tracing: Rename trace_buffer to array_buffer
-      tracing: Make struct ring_buffer less ambiguous
-
-----
- Documentation/admin-guide/bootconfig.rst           | 186 +++++
- Documentation/admin-guide/index.rst                |   1 +
- Documentation/trace/boottime-trace.rst             | 184 +++++
- Documentation/trace/index.rst                      |   1 +
- MAINTAINERS                                        |   9 +
- drivers/oprofile/cpu_buffer.c                      |   2 +-
- fs/proc/Makefile                                   |   1 +
- fs/proc/bootconfig.c                               |  89 +++
- include/linux/bootconfig.h                         | 224 ++++++
- include/linux/perf_event.h                         |   6 +-
- include/linux/ring_buffer.h                        | 110 +--
- include/linux/trace_events.h                       |   9 +-
- include/trace/trace_events.h                       |   2 +-
- init/Kconfig                                       |  12 +
- init/main.c                                        | 213 +++++-
- kernel/events/core.c                               |  42 +-
- kernel/events/internal.h                           |  34 +-
- kernel/events/ring_buffer.c                        |  54 +-
- kernel/trace/Kconfig                               |   9 +
- kernel/trace/Makefile                              |   1 +
- kernel/trace/blktrace.c                            |   8 +-
- kernel/trace/ftrace.c                              |   8 +-
- kernel/trace/ring_buffer.c                         | 124 ++--
- kernel/trace/ring_buffer_benchmark.c               |   2 +-
- kernel/trace/trace.c                               | 355 ++++-----
- kernel/trace/trace.h                               |  38 +-
- kernel/trace/trace_boot.c                          | 353 +++++++++
- kernel/trace/trace_branch.c                        |   6 +-
- kernel/trace/trace_events.c                        |  21 +-
- kernel/trace/trace_events_hist.c                   |  59 +-
- kernel/trace/trace_events_trigger.c                |  22 +-
- kernel/trace/trace_functions.c                     |   8 +-
- kernel/trace/trace_functions_graph.c               |  14 +-
- kernel/trace/trace_hwlat.c                         |   2 +-
- kernel/trace/trace_irqsoff.c                       |   8 +-
- kernel/trace/trace_kdb.c                           |   8 +-
- kernel/trace/trace_kprobe.c                        |  81 ++-
- kernel/trace/trace_mmiotrace.c                     |  12 +-
- kernel/trace/trace_output.c                        |   2 +-
- kernel/trace/trace_sched_wakeup.c                  |  20 +-
- kernel/trace/trace_selftest.c                      |  26 +-
- kernel/trace/trace_syscalls.c                      |   8 +-
- kernel/trace/trace_uprobe.c                        |   2 +-
- lib/Kconfig                                        |   3 +
- lib/Makefile                                       |   2 +
- lib/bootconfig.c                                   | 803 +++++++++++++++++++++
- tools/Makefile                                     |  11 +-
- tools/bootconfig/.gitignore                        |   1 +
- tools/bootconfig/Makefile                          |  23 +
- tools/bootconfig/include/linux/bootconfig.h        |   7 +
- tools/bootconfig/include/linux/bug.h               |  12 +
- tools/bootconfig/include/linux/ctype.h             |   7 +
- tools/bootconfig/include/linux/errno.h             |   7 +
- tools/bootconfig/include/linux/kernel.h            |  18 +
- tools/bootconfig/include/linux/printk.h            |  17 +
- tools/bootconfig/include/linux/string.h            |  32 +
- tools/bootconfig/main.c                            | 353 +++++++++
- .../samples/bad-array-space-comment.bconf          |   5 +
- tools/bootconfig/samples/bad-array.bconf           |   2 +
- tools/bootconfig/samples/bad-dotword.bconf         |   4 +
- tools/bootconfig/samples/bad-empty.bconf           |   1 +
- tools/bootconfig/samples/bad-keyerror.bconf        |   2 +
- tools/bootconfig/samples/bad-longkey.bconf         |   1 +
- tools/bootconfig/samples/bad-manywords.bconf       |   1 +
- tools/bootconfig/samples/bad-no-keyword.bconf      |   2 +
- tools/bootconfig/samples/bad-nonprintable.bconf    |   2 +
- tools/bootconfig/samples/bad-spaceword.bconf       |   2 +
- tools/bootconfig/samples/bad-tree.bconf            |   5 +
- tools/bootconfig/samples/bad-value.bconf           |   3 +
- tools/bootconfig/samples/escaped.bconf             |   3 +
- .../samples/good-array-space-comment.bconf         |   4 +
- .../samples/good-comment-after-value.bconf         |   1 +
- tools/bootconfig/samples/good-printables.bconf     |   2 +
- tools/bootconfig/samples/good-simple.bconf         |  11 +
- tools/bootconfig/samples/good-single.bconf         |   4 +
- .../samples/good-space-after-value.bconf           |   1 +
- tools/bootconfig/samples/good-tree.bconf           |  12 +
- tools/bootconfig/test-bootconfig.sh                | 105 +++
- 78 files changed, 3315 insertions(+), 530 deletions(-)
- create mode 100644 Documentation/admin-guide/bootconfig.rst
- create mode 100644 Documentation/trace/boottime-trace.rst
- create mode 100644 fs/proc/bootconfig.c
- create mode 100644 include/linux/bootconfig.h
- create mode 100644 kernel/trace/trace_boot.c
- create mode 100644 lib/bootconfig.c
- create mode 100644 tools/bootconfig/.gitignore
- create mode 100644 tools/bootconfig/Makefile
- create mode 100644 tools/bootconfig/include/linux/bootconfig.h
- create mode 100644 tools/bootconfig/include/linux/bug.h
- create mode 100644 tools/bootconfig/include/linux/ctype.h
- create mode 100644 tools/bootconfig/include/linux/errno.h
- create mode 100644 tools/bootconfig/include/linux/kernel.h
- create mode 100644 tools/bootconfig/include/linux/printk.h
- create mode 100644 tools/bootconfig/include/linux/string.h
- create mode 100644 tools/bootconfig/main.c
- create mode 100644 tools/bootconfig/samples/bad-array-space-comment.bconf
- create mode 100644 tools/bootconfig/samples/bad-array.bconf
- create mode 100644 tools/bootconfig/samples/bad-dotword.bconf
- create mode 100644 tools/bootconfig/samples/bad-empty.bconf
- create mode 100644 tools/bootconfig/samples/bad-keyerror.bconf
- create mode 100644 tools/bootconfig/samples/bad-longkey.bconf
- create mode 100644 tools/bootconfig/samples/bad-manywords.bconf
- create mode 100644 tools/bootconfig/samples/bad-no-keyword.bconf
- create mode 100644 tools/bootconfig/samples/bad-nonprintable.bconf
- create mode 100644 tools/bootconfig/samples/bad-spaceword.bconf
- create mode 100644 tools/bootconfig/samples/bad-tree.bconf
- create mode 100644 tools/bootconfig/samples/bad-value.bconf
- create mode 100644 tools/bootconfig/samples/escaped.bconf
- create mode 100644 tools/bootconfig/samples/good-array-space-comment.bconf
- create mode 100644 tools/bootconfig/samples/good-comment-after-value.bconf
- create mode 100644 tools/bootconfig/samples/good-printables.bconf
- create mode 100644 tools/bootconfig/samples/good-simple.bconf
- create mode 100644 tools/bootconfig/samples/good-single.bconf
- create mode 100644 tools/bootconfig/samples/good-space-after-value.bconf
- create mode 100644 tools/bootconfig/samples/good-tree.bconf
- create mode 100755 tools/bootconfig/test-bootconfig.sh
