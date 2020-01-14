@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5D5313A1E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4754213A1C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbgANHZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:25:41 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13248 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729103AbgANHYk (ORCPT
+        id S1729187AbgANHYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:24:49 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:13902 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729108AbgANHYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:24:40 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1d6c810001>; Mon, 13 Jan 2020 23:23:45 -0800
+        Tue, 14 Jan 2020 02:24:41 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1d6ca40003>; Mon, 13 Jan 2020 23:24:20 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 13 Jan 2020 23:24:39 -0800
+  Mon, 13 Jan 2020 23:24:40 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 13 Jan 2020 23:24:39 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+        by hqpgpgate101.nvidia.com on Mon, 13 Jan 2020 23:24:40 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
  (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 14 Jan
  2020 07:24:39 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Tue, 14 Jan 2020 07:24:39 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.242]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1d6cb60005>; Mon, 13 Jan 2020 23:24:39 -0800
+        id <B5e1d6cb70001>; Mon, 13 Jan 2020 23:24:39 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <broonie@kernel.org>,
@@ -40,9 +40,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 13/22] ARM: dts: tegra: Add clock-cells property to pmc
-Date:   Mon, 13 Jan 2020 23:24:18 -0800
-Message-ID: <1578986667-16041-14-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 14/22] arm64: tegra: Add clock-cells property to Tegra PMC node
+Date:   Mon, 13 Jan 2020 23:24:19 -0800
+Message-ID: <1578986667-16041-15-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
@@ -50,79 +50,53 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578986625; bh=n6u43CCO3Rk0SBQthIrTkuUi3daCYDOTJ3i1e6Ox8Hs=;
+        t=1578986661; bh=gkcJtn8jnkfrlt7lseMCLMoUPqIVSBgfxdajsl9lga0=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=k8bZr685sWuPrSD4y5jupnSFlnxHcuF9B1w+l0cqPG6vuViq/b+/i2gwoHf8aRpUF
-         Bbu9j2+k1P68AAX6hwW+MF+oV74O1SZAvPv6d1vTslMJYLI6osH/ecowFu/Dx5Rs3R
-         KcMTnoQzdrkE4kV+/Tgghw2slH8ViNpIjIaQFUzJ7SAXVEiubrhvB9k3+VW8kIlLAr
-         xX5a84YcgwvWrXn18vYUDynpLjOJl2/uvrtrXILMy+/vppSEeQbtP/s3nkIlfqBP94
-         he60XAJ7smE8Zh7j89yP2t8PhYO4qNUA6sT2D0FuWYpGL+Yi0YZlKV9C+eHiqpxVrG
-         WNI+sAi7XLxrg==
+        b=EpulRLGmG6edAApwn7XEGi81PvEOv19bNVEl+ky9Aw4yuY2g8EL5onn5ZrlFZypKz
+         y9LWMisxjssQEPmGWyo6QEoZ+oDXN9aLSuJPGat7v/Hw6X7QfRZ8sAM50UCfFGW+sV
+         m4v65ReZ/DDoincIGSgvEIDX8pGLzcb6ucIELEx0W4dgkFJq7IwwQgeUOpTAKYM8BE
+         LkoD3qIu500JZ4mnP8RXo3pE63vHIKRy9efxU93O6CefwZnU0eymQ6WJBeib1tORjw
+         /87IT7ecGyUDrih8sYHiUg/pSbLjyd76GSuyzU0ej6hNjodPkDCqUtVxTcQ6pOexJU
+         bLaedu3PfZzyg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3, and blink clock.
+Tegra132 and Tegra210 PMC block has clk_out_1, clk_out_2, clk_out_3,
+and a blink clock as a part of PMC.
 
-These clocks are moved from clock driver to pmc driver with pmc
-as the clock provider for these clocks.
+These clocks are moved from clock driver to pmc driver with pmc as a
+clock provider.
 
-This patch adds #clock-cells property with 1 clock specifier to
-the Tegra PMC node in device tree.
+Clock ids for these clocks are defined in pmc dt-bindings.
 
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
+This patch updated device tree to include pmc dt-binding and adds
+#clock-cells property with one clock specifier to pmc node.
+
 Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 4 +++-
- arch/arm/boot/dts/tegra124.dtsi | 4 +++-
- arch/arm/boot/dts/tegra20.dtsi  | 4 +++-
- arch/arm/boot/dts/tegra30.dtsi  | 4 +++-
- 4 files changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 +++-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 0d7a6327e404..450a1f1b12a0 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
- 	compatible = "nvidia,tegra114";
-@@ -514,11 +515,12 @@
- 		status = "disabled";
- 	};
- 
--	pmc@7000e400 {
-+	tegra_pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra114-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA114_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 	};
- 
- 	fuse@7000f800 {
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 413bfb981de8..bd7fad35d29a 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 631a7f77c386..79b1e3b01096 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
 @@ -6,6 +6,7 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/tegra124-car.h>
  #include <dt-bindings/thermal/tegra124-soctherm.h>
 +#include <dt-bindings/soc/tegra-pmc.h>
  
  / {
- 	compatible = "nvidia,tegra124";
-@@ -595,11 +596,12 @@
- 		clocks = <&tegra_car TEGRA124_CLK_RTC>;
+ 	compatible = "nvidia,tegra132", "nvidia,tegra124";
+@@ -577,11 +578,12 @@
+ 		clock-names = "rtc";
  	};
  
 -	pmc@7000e400 {
@@ -135,58 +109,38 @@ index 413bfb981de8..bd7fad35d29a 100644
  	};
  
  	fuse@7000f800 {
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 9c58e7fcf5c0..c3b8ad53b967 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra20-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 48c63256ba7f..3e73b76249f9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/reset/tegra210-car.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
 +#include <dt-bindings/soc/tegra-pmc.h>
  
  / {
- 	compatible = "nvidia,tegra20";
-@@ -608,11 +609,12 @@
- 		status = "disabled";
+ 	compatible = "nvidia,tegra210";
+@@ -770,16 +771,17 @@
+ 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x0 0x7000e000 0x0 0x100>;
+ 		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-parent = <&pmc>;
++		interrupt-parent = <&tegra_pmc>;
+ 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
+ 		clock-names = "rtc";
  	};
  
--	pmc@7000e400 {
+-	pmc: pmc@7000e400 {
 +	tegra_pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra20-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA20_CLK_PCLK>, <&clk32k_in>;
+ 		compatible = "nvidia,tegra210-pmc";
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
  		clock-names = "pclk", "clk32k_in";
 +		#clock-cells = <1>;
- 	};
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
  
- 	mc: memory-controller@7000f000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 55ae050042ce..d2d05f1da274 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra30-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
- 	compatible = "nvidia,tegra30";
-@@ -714,11 +715,12 @@
- 		status = "disabled";
- 	};
- 
--	pmc@7000e400 {
-+	tegra_pmc: pmc@7000e400 {
- 		compatible = "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
- 		clocks = <&tegra_car TEGRA30_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#clock-cells = <1>;
- 	};
- 
- 	mc: memory-controller@7000f000 {
 -- 
 2.7.4
 
