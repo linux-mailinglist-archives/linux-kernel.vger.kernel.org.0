@@ -2,80 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A805913A33F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:51:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAED913A35A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbgANIv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 03:51:26 -0500
-Received: from mga02.intel.com ([134.134.136.20]:4333 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbgANIv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 03:51:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 00:51:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,432,1571727600"; 
-   d="scan'208";a="225161401"
-Received: from unknown (HELO [10.238.129.140]) ([10.238.129.140])
-  by orsmga003.jf.intel.com with ESMTP; 14 Jan 2020 00:51:23 -0800
-Subject: Re: [PATCH 1/4] x86/resctrl: Fix use-after-free when deleting
- resource groups
-To:     Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, pei.p.jia@intel.com,
-        stable@vger.kernel.org, Xiaochen Shen <xiaochen.shen@intel.com>
-References: <1578500886-21771-2-git-send-email-xiaochen.shen@intel.com>
- <20200109143629.C6C822077B@mail.kernel.org>
-From:   Xiaochen Shen <xiaochen.shen@intel.com>
-Message-ID: <33a88a00-56d3-3cd2-a0dc-0d97e5a7329a@intel.com>
-Date:   Tue, 14 Jan 2020 16:51:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1728721AbgANI7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 03:59:45 -0500
+Received: from snd00005.auone-net.jp ([111.86.247.5]:60129 "EHLO
+        dmta0006-f.auone-net.jp" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725820AbgANI7o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 03:59:44 -0500
+X-Greylist: delayed 377 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Jan 2020 03:59:43 EST
+Received: from ppp.dion.ne.jp by dmta0008.auone-net.jp with ESMTP
+          id <20200114085325045.JFBE.12086.ppp.dion.ne.jp@dmta0008.auone-net.jp>;
+          Tue, 14 Jan 2020 17:53:25 +0900
+Date:   Tue, 14 Jan 2020 17:53:24 +0900
+From:   Kusanagi Kouichi <slash@ac.auone-net.jp>
+To:     linux-btrfs@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: Implement lazytime
 MIME-Version: 1.0
-In-Reply-To: <20200109143629.C6C822077B@mail.kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Message-Id: <20200114085325045.JFBE.12086.ppp.dion.ne.jp@dmta0008.auone-net.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha,
+I tested with xfstests and lazytime didn't cause any new failures.
 
-The backporting for v4.14.x and v4.19.x stable trees needs some manual
-tweaking due to difference code bases (since x86/resctrl rename/re-arrange
-in v5.0 upstream kernel).
+Signed-off-by: Kusanagi Kouichi <slash@ac.auone-net.jp>
+---
+ fs/btrfs/delayed-inode.c |  6 ++++++
+ fs/btrfs/file.c          | 11 +++++++++++
+ fs/btrfs/inode.c         | 28 +++++++++++++++++++++++++---
+ fs/btrfs/ioctl.c         | 14 ++++++++++++++
+ fs/btrfs/super.c         |  1 +
+ 5 files changed, 57 insertions(+), 3 deletions(-)
 
-I will work on the backporting once this patch is merged into upstream.
-
-Thank you.
-
-On 1/9/2020 22:36, Sasha Levin wrote:
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: f3cbeacaa06e ("x86/intel_rdt/cqm: Add rmdir support").
-> 
-> The bot has tested the following trees: v5.4.8, v4.19.93, v4.14.162.
-> 
-> v5.4.8: Build OK!
-> v4.19.93: Failed to apply! Possible dependencies:
->      Unable to calculate
-> 
-> v4.14.162: Failed to apply! Possible dependencies:
->      Unable to calculate
-> 
-> 
-> NOTE: The patch will not be queued to stable trees until it is upstream.
-> 
-> How should we proceed with this patch?
-> 
-
+diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+index d3e15e1d4a91..b30b00678503 100644
+--- a/fs/btrfs/delayed-inode.c
++++ b/fs/btrfs/delayed-inode.c
+@@ -1722,6 +1722,12 @@ static void fill_stack_inode_item(struct btrfs_trans_handle *trans,
+ 				  struct btrfs_inode_item *inode_item,
+ 				  struct inode *inode)
+ {
++	if (inode->i_sb->s_flags & SB_LAZYTIME) {
++		spin_lock(&inode->i_lock);
++		inode->i_state &= ~(I_DIRTY_SYNC | I_DIRTY_TIME);
++		spin_unlock(&inode->i_lock);
++	}
++
+ 	btrfs_set_stack_inode_uid(inode_item, i_uid_read(inode));
+ 	btrfs_set_stack_inode_gid(inode_item, i_gid_read(inode));
+ 	btrfs_set_stack_inode_size(inode_item, BTRFS_I(inode)->disk_i_size);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 8d47c76b7bd1..36aa75f4e532 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -2069,6 +2069,17 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 
+ 	trace_btrfs_sync_file(file, datasync);
+ 
++	if (!datasync && inode->i_sb->s_flags & SB_LAZYTIME) {
++		while (1) {
++			ret = sync_inode_metadata(inode, 0);
++			if (ret != -EAGAIN)
++				break;
++			flush_work(&fs_info->async_reclaim_work);
++		}
++		if (ret)
++			return ret;
++	}
++
+ 	btrfs_init_log_ctx(&ctx, inode);
+ 
+ 	/*
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 5509c41a4f43..a60aee76cc95 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3941,6 +3941,12 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
+ 
+ 	btrfs_init_map_token(&token, leaf);
+ 
++	if (inode->i_sb->s_flags & SB_LAZYTIME) {
++		spin_lock(&inode->i_lock);
++		inode->i_state &= ~(I_DIRTY_SYNC | I_DIRTY_TIME);
++		spin_unlock(&inode->i_lock);
++	}
++
+ 	btrfs_set_token_inode_uid(leaf, item, i_uid_read(inode), &token);
+ 	btrfs_set_token_inode_gid(leaf, item, i_gid_read(inode), &token);
+ 	btrfs_set_token_inode_size(leaf, item, BTRFS_I(inode)->disk_i_size,
+@@ -6188,6 +6194,16 @@ static int btrfs_dirty_inode(struct inode *inode)
+ 	return ret;
+ }
+ 
++int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc)
++{
++	if (work_busy(&btrfs_sb(inode->i_sb)->async_reclaim_work) & WORK_BUSY_RUNNING) {
++		mark_inode_dirty_sync(inode);
++		return -EAGAIN;
++	}
++
++	return btrfs_dirty_inode(inode);
++}
++
+ /*
+  * This is a copy of file_update_time.  We need this so we can return error on
+  * ENOSPC for updating the inode in the case of file write and mmap writes.
+@@ -6201,15 +6217,21 @@ static int btrfs_update_time(struct inode *inode, struct timespec64 *now,
+ 	if (btrfs_root_readonly(root))
+ 		return -EROFS;
+ 
+-	if (flags & S_VERSION)
+-		dirty |= inode_maybe_inc_iversion(inode, dirty);
++	if (!(flags & S_VERSION && inode_maybe_inc_iversion(inode, dirty))) {
++		if (unlikely(!dirty))
++			return 0;
++		if (inode->i_sb->s_flags & SB_LAZYTIME &&
++		    !test_bit(BTRFS_INODE_DUMMY, &BTRFS_I(inode)->runtime_flags))
++			return generic_update_time(inode, now, flags);
++	}
++
+ 	if (flags & S_CTIME)
+ 		inode->i_ctime = *now;
+ 	if (flags & S_MTIME)
+ 		inode->i_mtime = *now;
+ 	if (flags & S_ATIME)
+ 		inode->i_atime = *now;
+-	return dirty ? btrfs_dirty_inode(inode) : 0;
++	return btrfs_dirty_inode(inode);
+ }
+ 
+ /*
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 18e328ce4b54..af47b4b046de 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -799,6 +799,14 @@ static int create_snapshot(struct btrfs_root *root, struct inode *dir,
+ 	if (ret)
+ 		goto dec_and_free;
+ 
++	/* For xfstests generic/003. Is it better to fix the test? */
++	if (dir->i_sb->s_flags & SB_LAZYTIME) {
++		down_read(&dir->i_sb->s_umount);
++		if (!sb_rdonly(dir->i_sb))
++			sync_inodes_sb(dir->i_sb);
++		up_read(&dir->i_sb->s_umount);
++	}
++
+ 	/*
+ 	 * All previous writes have started writeback in NOCOW mode, so now
+ 	 * we force future writes to fallback to COW mode during snapshot
+@@ -5497,6 +5505,12 @@ long btrfs_ioctl(struct file *file, unsigned int
+ 		ret = btrfs_start_delalloc_roots(fs_info, -1);
+ 		if (ret)
+ 			return ret;
++		if (inode->i_sb->s_flags & SB_LAZYTIME) {
++			down_read(&inode->i_sb->s_umount);
++			if (!sb_rdonly(inode->i_sb))
++				sync_inodes_sb(inode->i_sb);
++			up_read(&inode->i_sb->s_umount);
++		}
+ 		ret = btrfs_sync_fs(inode->i_sb, 1);
+ 		/*
+ 		 * The transaction thread may want to do more work,
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index f452a94abdc3..ccfe9aff1394 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2281,6 +2281,7 @@ static int btrfs_show_devname(struct seq_file *m, struct dentry *root)
+ }
+ 
+ static const struct super_operations btrfs_super_ops = {
++	.write_inode	= btrfs_write_inode,
+ 	.drop_inode	= btrfs_drop_inode,
+ 	.evict_inode	= btrfs_evict_inode,
+ 	.put_super	= btrfs_put_super,
 -- 
-Best regards,
-Xiaochen
+2.25.0.rc2
+
