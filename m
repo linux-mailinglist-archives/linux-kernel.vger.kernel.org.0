@@ -2,121 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A953813A352
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:57:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9B513A35E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:02:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbgANI52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 03:57:28 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35982 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgANI52 (ORCPT
+        id S1727083AbgANJCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:02:34 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24563 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725820AbgANJCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 03:57:28 -0500
-Received: by mail-il1-f196.google.com with SMTP id b15so10835827iln.3;
-        Tue, 14 Jan 2020 00:57:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7tLJRdOhrpRuZLt75MI5obWTF6EcjzoGZuRIS5Hzxcs=;
-        b=aQTf3sEn9a0g2FxG5v0LVpqc58XSbGWNhATPrWkhBednuc/CyIE1RtYBVyLSlXWth9
-         ou6Ym1tDAikDfkjZJr8myF2Qs39VPN1Bw6D3lDqamHm8YF3dIBLPuZ7vbteaDASG6XGK
-         S/KitbEo7bRMwMJNVpBi6pKrCHSTZJ7+odCi+DW7Wd3GiRuZQs6NyUQ8b7TzfSfP301h
-         aVHmNBvop3ndYUvYWeU0SrilMcBszdMVdMrb9WL4sK2n6oyIaoUUXxOtrhVx9Ke7/ndV
-         kjefa9lojQzn53re4iusfuGbH+xFI2oKiYlr8qU/ixC5jGhgzAU06iv1waTYmnLP5hrI
-         0JNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7tLJRdOhrpRuZLt75MI5obWTF6EcjzoGZuRIS5Hzxcs=;
-        b=un+rC/9tZAIb2PMyRE1gLTH9WJ2/eaHosKXOEdx3N80DBRqkMTlcIndHXP5llUGMAB
-         /t2GmauDXuhBUP6z7euJ1rYU7nUJCB4pYlGHRGUy5MtX+nksiX0BTeW/Lfx3DA9v9OAw
-         87Ed6WjPybHIYMFo9BQsPE3I4ZjKdsFecSCfgW/el5NUMkFXe4s8fWbWqyzASVeBIiFa
-         9BzHxG4MkJ9Icn/auCnylY1ygN2iyw0gSWxXhDTn/mEMtNU1mcyoxYO7zZ89iZtuj2WQ
-         glvxwyyZluqTGT51ZX9mb3wiIG3ACX8P+phhNYHEfJn45PwERnUvj6SHoaYAcVrhMLc3
-         IQ+A==
-X-Gm-Message-State: APjAAAV+BjpGdh0xTZBOx4bwxUpBhPcmhTxLw4JtXp+3Hr9Vltz6KyD/
-        x5NloKmrGGA0CaONGXxRDrHgRpHhmbn5koMIpi0=
-X-Google-Smtp-Source: APXvYqyVec6v6hJouPfOSiTNhYY92qh0MJoQ4kjIp+7oXZYlk8mkFQvVqO4pI3zA3PRg0Tx+oxovxBS4uJpppm7o0Fs=
-X-Received: by 2002:a92:c111:: with SMTP id p17mr2648717ile.204.1578992247189;
- Tue, 14 Jan 2020 00:57:27 -0800 (PST)
+        Tue, 14 Jan 2020 04:02:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578992553;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=8S5kqPvgQePLbpZGGM/0St6imEN4uhhrzDiI6YACF/0=;
+        b=auO4XMmJf+fGy0n3DPrt/MeF8b9PJmu6mr2CbfqMPQq78Dpu3e5Fv+oDqJeLqM1Sdi/ZVM
+        ksXh3r5qLSRkg8cnk+uqHrXYGFSCcW7TGTt2MK9cOY8D5mbX3Bnwrps/m5WL0EjUUy9jV0
+        YpJXlrKTJNuD3cuyJ6HruESy+6G7Pgw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-43-dOwQ9SHAOfGdptCCwiGyaQ-1; Tue, 14 Jan 2020 04:02:28 -0500
+X-MC-Unique: dOwQ9SHAOfGdptCCwiGyaQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D5145107ACC4;
+        Tue, 14 Jan 2020 09:02:26 +0000 (UTC)
+Received: from [10.36.117.154] (ovpn-117-154.ams2.redhat.com [10.36.117.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3EEF80F6D;
+        Tue, 14 Jan 2020 09:02:25 +0000 (UTC)
+Subject: Re: [PATCH] mm/cma.c: find a named CMA area by name
+To:     buddy.zhang@aliyun.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20200114075147.30672-1-buddy.zhang@aliyun.com>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <3cb5e071-c5c0-47f8-96e9-526ca5dbfc62@redhat.com>
+Date:   Tue, 14 Jan 2020 10:02:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-References: <20200108113719.21551-1-pawell@cadence.com> <20200108142829.GB2383861@kroah.com>
- <BYAPR07MB4709983A2DF70AA0058C737FDD390@BYAPR07MB4709.namprd07.prod.outlook.com>
- <20200109063841.GA2579094@kroah.com> <BYAPR07MB4709AA109700B4BCAD1C1ED8DD390@BYAPR07MB4709.namprd07.prod.outlook.com>
- <20200109093812.GC44349@kroah.com>
-In-Reply-To: <20200109093812.GC44349@kroah.com>
-From:   Peter Chen <hzpeterchen@gmail.com>
-Date:   Tue, 14 Jan 2020 16:57:15 +0800
-Message-ID: <CAL411-pE7QheAEQf+ki8auChWP6MOWxaaAA3xkkdweWn=q_0wA@mail.gmail.com>
-Subject: Re: [PATCH] usb: cdns3: Fix: ARM core hang after connect/disconnect operation.
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Pawel Laszczak <pawell@cadence.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Sanket Parmar <sparmar@cadence.com>,
-        Peter Chan <peter.chan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200114075147.30672-1-buddy.zhang@aliyun.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 9, 2020 at 5:39 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jan 09, 2020 at 08:34:12AM +0000, Pawel Laszczak wrote:
-> > >
-> > >On Thu, Jan 09, 2020 at 06:27:02AM +0000, Pawel Laszczak wrote:
-> > >> >> +       writel(EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
-> > >> >> +
-> > >> >> +       ret = readl_poll_timeout_atomic(&priv_dev->regs->ep_cmd, val,
-> > >> >> +                                       !(val & (EP_CMD_CSTALL | EP_CMD_EPRST)),
-> > >> >> +                                       1, 1000);
-> > >> >> +
-> > >> >> +       if (unlikely(ret))
-> > >> >
-> > >> >Unless you can measure the difference of using/not using a
-> > >> >unlikely/likely mark, NEVER use it.  The compiler and cpu can almost
-> > >> >always do better than you can, we have the tests to prove it.
-> > >> >
-> > >>
-> > >> The both of the above timeout should never occur. If they occurred it would be a
-> > >> critical controller bug. In this case driver can only inform  about this event.
-> > >
-> > >"Should never occur" is a fun thing to say :)
-> > >
-> > >If it can never occur, then don't even check for it.
-> >
-> > Yes, on existing platforms it can never occur.
-> >
-> > >
-> > >If it can, then check for it and handle it properly.
-> > >
-> > >What about this controller in systems with removable busses (like PCI?)
-> > >What happens then (hint, I bet this could occur...)
-> >
-> > It's good question.  Nobody from our customer currently use such system.
-> > The only platform with PCI is used by me for testing purpose.
->
-> So if you do have a PCI device, then you need to handle PCI reads
-> failing and returning all 1s.  Hopefully you can gracefully handle this :)
->
-> Adding timeout handling here, where it is totally obvious to do so,
-> would be a good thing.
->
-> thanks,
->
-> greg k-h
+On 14.01.20 08:51, buddy.zhang@aliyun.com wrote:
+> From: BuddyZhang <buddy.zhang@aliyun.com>
+> 
+> This function could help developer who want to find a special
+> named CMA area.
 
-Hi Pawel,
+*could help* - if there is no user, why do we need it? Or do you have a
+user?
 
-My email is: peter.chen@nxp.com, please change it when your send next version.
+> 
+> The CMA supports multiple named CMA areas, and the device could
+> use or exclusive a special CAM arae via "cma_area" on "struct
+> device". When probing, the device can setup special CMA area which
+> find by "cma_find_by_name()".
+> 
+> If device can't find named CMA area, "cma_find_by_name()" will
+> return NULL, and device will used default CMA area.
+> 
+> Signed-off-by: BuddyZhang <buddy.zhang@aliyun.com>
+> ---
+>  mm/cma.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/mm/cma.c b/mm/cma.c
+> index be55d1988c67..b562557572c4 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -40,6 +40,18 @@ struct cma cma_areas[MAX_CMA_AREAS];
+>  unsigned cma_area_count;
+>  static DEFINE_MUTEX(cma_mutex);
+>  
+> +struct cma *cma_find_by_name(const char *name)
+> +{
+> +	int idx;
+> +
+> +	for (idx = 0; idx < MAX_CMA_AREAS; idx++) {
+> +		if (cma_areas[idx].name && !strcmp(name, cma_areas[idx].name))
+> +			return &cma_areas[idx];
+> +	}
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(cma_find_by_name)
+> +
+>  phys_addr_t cma_get_base(const struct cma *cma)
+>  {
+>  	return PFN_PHYS(cma->base_pfn);
+> 
 
-Peter
+
+-- 
+Thanks,
+
+David / dhildenb
+
