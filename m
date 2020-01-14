@@ -2,161 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D450113AF11
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF03313AF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:19:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgANQTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:19:17 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.8]:49706 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726495AbgANQTP (ORCPT
+        id S1728882AbgANQTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:19:54 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:22120 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726495AbgANQTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:19:15 -0500
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-8.bemta.az-a.eu-west-1.aws.symcld.net id 7D/12-02751-BF9ED1E5; Tue, 14 Jan 2020 16:19:07 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRWlGSWpSXmKPExsWSoc9jrfvrpWy
-  cQc8vXYv5R86xWqyaupPF4v7Xo4wWl3fNYbO4sW4fu8WThWeYLD7susps0br3CLsDh8emVZ1s
-  Hneu7WHz6P9r4LHzewO7x+dNcgGsUayZeUn5FQmsGS1vlzMWfOKs2H7jNFMD42qOLkYuDkaBp
-  cwSLy5/Y4JwjrFI9M04xwLhbGaU+N37kw3EYRE4wSzxoXE7K4gjJDCRSWLzmj+MXYycQM5dRo
-  ml331AbDYBC4nJJx6AdYgInGSS6D/3Emwws8BnRomXfXtZQKqEBVwkLj04zgRiiwi4SlxfeII
-  NwjaSWPThIDOIzSKgKrF9wyowm1cgVuLnmk2sENvyJFatnA5mcwrYSty88wnMZhSQlfjSuBqs
-  nllAXOLWk/lg8yUEBCSW7DnPDGGLSrx8/A+qPlXiZNMNRoi4jsTZ60+gbCWJeXOPQNmyEpfmd
-  0PZvhLPLs8FsjmAbC2J29u1IcIWEku6W1kgwioS/w5VQoRzJK5uu8kGYatJbJq4DcqWkeg/Ow
-  MciBIC75kl7p/ZwTyBUX8WkqshbB2JBbs/sUHY2hLLFr5mngUOCUGJkzOfsCxgZFnFaJFUlJm
-  eUZKbmJmja2hgoGtoaKRraGmka2RkoZdYpZuol1qqW55aXKJrqJdYXqxXXJmbnJOil5dasokR
-  mMpSCg482cH47eNbvUOMkhxMSqK8Intk44T4kvJTKjMSizPii0pzUosPMcpwcChJ8Fq8AMoJF
-  qWmp1akZeYA0ypMWoKDR0mEtwQkzVtckJhbnJkOkTrFqMsx4eXcRcxCLHn5ealS4rwCwCQtJA
-  BSlFGaBzcCluIvMcpKCfMyMjAwCPEUpBblZpagyr9iFOdgVBLmtQaZwpOZVwK36RXQEUxAR8w
-  /BXZESSJCSqqBqemh9b2CK5e/70g/PadGVrX9yowYPpZDhXXNR+fcfZB822LWr+c/BNYmbUjv
-  rXKS4J8eNluhfXbj1EaVb/ctkrWuRv9juDJHysHvYa1edWn+geveQTsS86NjtmyLf91daXAz6
-  YLwlYJzqxKuWz13M/Y4m2Z368K55Wk1MY3e0+rm2dbYznlhs7Ky6PONYz/XGR2cNLsmw3kaf0
-  Iak5sZE1+yY7Dr4p2+R+bsvbzcYGM3I49Q9NT8PvWDX+v1Lx2uzjfYt6DJ/nUOe8fkJnf5B+V
-  1K8RMs6pyZG/UmIT90Q6REp54z4ctpGxuyjTbf8IiJS5zpYK1i+cqGJh3X9W4pbvimqxegGLp
-  b94bX/YrsRRnJBpqMRcVJwIAzL34+mwEAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-10.tower-268.messagelabs.com!1579018746!371452!1
-X-Originating-IP: [104.47.12.59]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.25; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 10365 invoked from network); 14 Jan 2020 16:19:06 -0000
-Received: from mail-db3eur04lp2059.outbound.protection.outlook.com (HELO EUR04-DB3-obe.outbound.protection.outlook.com) (104.47.12.59)
-  by server-10.tower-268.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Jan 2020 16:19:06 -0000
+        Tue, 14 Jan 2020 11:19:53 -0500
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EGANVs014495;
+        Tue, 14 Jan 2020 11:19:31 -0500
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2xfbvb80gn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 11:19:31 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LGeS2slT2Y1w1u8y9tEe/JP603djh2t15wDPeVwNv5DD8z+D9QZ9dUuHtTRmOausam2VXJjFf8jWkVi44B+4hrnskLx/a8nzQwP8xJ3Gvt/XVS+WPeVGclgiNXqci2fZZtnU/uFYODGj1xiaWIdwxQHmWkHfuapJe3ptt6x9v6F9yOmAZ7MGgTEvHo6u7FMwTDHmpbdjud3aGB+wBbFzNstdk9AML3Dj7QfS7ZFkG31heR1gOdE6+w2/5DbtVoQqK4gDAJOaqGDtItq+ZTxEx1XpXJ7T2D2LouEkFbqv4L+DxY1ccrZboeTqv6GsqRtyU0BXikeyAutmSc8ubrVl3g==
+ b=b3aiGquvbvPF7qIRuT8Z31KnlJ8gwvON8pZ/T3bnj50LzbG+u4jynwEylUGDLIDrnueVJPqfKpmJahlZ835MBa1dBdtVZ7+1J4Xl72EjwQ1Yy5z+ee9CqKsP2uJBaMEdOMX5OYfK2c4g6AeSWXL91PrOyH3b+P50Nqhj/kLxh1M3HqJ6k06AygtNfeXWKgIJbewigYJMwRjCHKl0ZyF5y/EdJJvB6whnUATOoOcj/hn8vJJHr+2VseazmL/61edaDhgFyWT5k/D3RqMdWcV+FsuCPNcDFj0Qeh72BRrd8bLGYw/ryTWvLnqSGmE4KW0iw5TrIMzROnXXMVamX4dfoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=svcHoSh7sOp0g5ayscJMDcOBjXVtcAI7SGWowf926eg=;
- b=hSq1IODQFZf9UeER5+4p3keFz/4G9TSF6q8IA3LnB16fO2a4/HkTCZQHR0K5Z/lOmslZ4Vw6IHXbdbJpwjbaSWiOeBDnIMdaX2sNqp5Rz7fKTro+IEj7XIhnui+jeu1z+z2bPfrhzhbvfX08Nfpq6C8IkQmxHWTPcYWx7I7mS7pqyVFahBTep+TYxxM6ZQ4Mhmm+SN6j/jTCDK40H9+JrHNbY7XKmHEwgTxnkl+hd6OK3fvbOYeC3uLkvOoMzMiYRET9BdE/mi0KQnNmKpKSo2OuIfzTw8JGRBziP+7w3WVn8GkM5hZBLXbkgMB4038/aijoJH5Kl/9P3PMcbHKn1Q==
+ bh=0WfxVG0Dfpc11Yt49C/FxAy0/M9andAMqtCAg0LTHcQ=;
+ b=JpmTtVf8vED0EL+Wit5+2Q/Lc9xxpoeasZkXot+JVWywspRDRbyx2nYq4wqxYvoDLKj5uA5Q0bJ8XPy2NqxPWteyqj5cKtJgvY1kvCiGHk7sEziF4QHdrwfoO7WV00T6vIUkwyJqXjQDU3FHdU76wbNgAI1CC/DBtwbqEHigFIW90eM4vpod/NmqRNv+dvvQ2xoDVqt8qJ0rshJUTpOOkc+HcoEhjrmJawVD1ZZ511JilmsptmMp6QaPC97qdMOMHX1BA1zBnFck3w4wXsXYNGxtEGNkhp+ILno4ujE4ouNF47rwcStRQCFhDzZeR8+EYkkeeL08m+YnoNxMSLKDDg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=diasemi.com; dmarc=pass action=none header.from=diasemi.com;
- dkim=pass header.d=diasemi.com; arc=none
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com;
- s=selector1-dialogsemiconductor-onmicrosoft-com;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=svcHoSh7sOp0g5ayscJMDcOBjXVtcAI7SGWowf926eg=;
- b=f59Lp2VizeeF9VzwfO5MgdomtV1dsAP7tIg0qeRnHw67zMkV8nsDTyeLDk4NZqWsGH/EqgxkroTNhkbzExssvS9ny9r/GQH2fw+aAvoqAM7N70kfOLyUEDJ2ebuYB7NrLcPkbtSVv0kSdaBLuJi2v6L0rB+5UBkIgfr2v7m534o=
-Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM (20.177.116.141) by
- AM6PR10MB2518.EURPRD10.PROD.OUTLOOK.COM (20.177.115.31) with Microsoft SMTP
+ bh=0WfxVG0Dfpc11Yt49C/FxAy0/M9andAMqtCAg0LTHcQ=;
+ b=3ra3QtoJl7iVGugZ+rLorIxJVhGKg5L277n0zDzSgoXuhEc//bA8oZBWZWYHi6cZFvWrY44WUhr512oSJRIuvKcAgKPs+JujseLJR4SLmcEHonSBOdEbbkt1QlYKRNMR1/mmRpHIeK0MeYLBEyj2X4cOU4kj8w2hzk/0md1fxjg=
+Received: from BN6PR03MB2596.namprd03.prod.outlook.com (10.173.142.13) by
+ BN6PR03MB3362.namprd03.prod.outlook.com (10.174.232.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.14; Tue, 14 Jan 2020 16:19:04 +0000
-Received: from AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9be:9fca:6def:97c3]) by AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9be:9fca:6def:97c3%5]) with mapi id 15.20.2623.017; Tue, 14 Jan 2020
- 16:19:04 +0000
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-To:     Marco Felsch <m.felsch@pengutronix.de>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-CC:     "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ 15.20.2644.18; Tue, 14 Jan 2020 16:19:28 +0000
+Received: from BN6PR03MB2596.namprd03.prod.outlook.com
+ ([fe80::4c96:2ad:9610:99d4]) by BN6PR03MB2596.namprd03.prod.outlook.com
+ ([fe80::4c96:2ad:9610:99d4%3]) with mapi id 15.20.2644.015; Tue, 14 Jan 2020
+ 16:19:28 +0000
+From:   "Hennerich, Michael" <Michael.Hennerich@analog.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        "Bia, Beniamin" <Beniamin.Bia@analog.com>
+CC:     "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: RE: [PATCH 1/3] mfd: da9062: fix watchdog compatible string
-Thread-Topic: [PATCH 1/3] mfd: da9062: fix watchdog compatible string
-Thread-Index: AQHVxgoH+VEwCd0goUCdzD0vjKNBfafqYIMg
-Date:   Tue, 14 Jan 2020 16:19:04 +0000
-Message-ID: <AM6PR10MB2263E53D89F7EC66C5E3779D80340@AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM>
-References: <20200108095704.23233-1-m.felsch@pengutronix.de>
- <20200108095704.23233-2-m.felsch@pengutronix.de>
-In-Reply-To: <20200108095704.23233-2-m.felsch@pengutronix.de>
-Accept-Language: en-GB, en-US
+        "biabeniamin@outlook.com" <biabeniamin@outlook.com>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>
+Subject: RE: [PATCH] iio: frequency: adf4371: Fix divide by zero exception bug
+Thread-Topic: [PATCH] iio: frequency: adf4371: Fix divide by zero exception
+ bug
+Thread-Index: AQHVxVxmuPaZEiKGZ0Wv4SEU2+Ds2qflVEUAgAUMRnA=
+Date:   Tue, 14 Jan 2020 16:19:28 +0000
+Message-ID: <BN6PR03MB25966D74469371C11AFC4E4C8E340@BN6PR03MB2596.namprd03.prod.outlook.com>
+References: <20200107131559.17772-1-beniamin.bia@analog.com>
+ <20200111110848.7c45a4f3@archlinux>
+In-Reply-To: <20200111110848.7c45a4f3@archlinux>
+Accept-Language: de-DE, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.225.80.228]
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcbWhlbm5lcmlc?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy1hMTNiODcwMS0zNmU5LTExZWEtOGZiYS00ODg5?=
+ =?us-ascii?Q?ZTc3Y2RkZWZcYW1lLXRlc3RcYTEzYjg3MDMtMzZlOS0xMWVhLThmYmEtNDg4?=
+ =?us-ascii?Q?OWU3N2NkZGVmYm9keS50eHQiIHN6PSIyODg1IiB0PSIxMzIyMzQ5MjM2NjAy?=
+ =?us-ascii?Q?OTk5NzIiIGg9Im44cGNQU0RiWkk3TUxTaTFEWjhFYWQ5RWZUYz0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUt3QkFB?=
+ =?us-ascii?Q?REVUcXhqOXNyVkFhNllmRkFlMDVqa3JwaDhVQjdUbU9RQ0FBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQUE4QVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBWWVqd1pRQUFBQUFBQUFBQUFBQUFBSjRBQUFCaEFHUUFh?=
+ =?us-ascii?Q?UUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QUc4QWFnQmxBR01BZEFCekFG?=
+ =?us-ascii?Q?OEFkQUJwQUdVQWNnQXhBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRR?=
+ =?us-ascii?Q?QnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURJ?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUE9Ii8+PC9tZXRhPg=3D=3D?=
+x-dg-rorf: true
+x-originating-ip: [137.71.226.54]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 20f9947f-a04a-4f11-4e5f-08d7990d7975
-x-ms-traffictypediagnostic: AM6PR10MB2518:
-x-ms-exchange-sharedmailbox-routingagent-processed: True
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ca1e9841-8fbb-4256-3120-08d7990d8780
+x-ms-traffictypediagnostic: BN6PR03MB3362:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR10MB2518FAE2E4E7604D1EE00E58A7340@AM6PR10MB2518.EURPRD10.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
+x-microsoft-antispam-prvs: <BN6PR03MB33623127A6E204FF6C2930448E340@BN6PR03MB3362.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 028256169F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(189003)(199004)(26005)(55016002)(54906003)(71200400001)(8936002)(110136005)(8676002)(9686003)(81166006)(81156014)(55236004)(6506007)(53546011)(7696005)(498600001)(52536014)(86362001)(76116006)(66446008)(66476007)(66946007)(64756008)(33656002)(66556008)(186003)(2906002)(5660300002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR10MB2518;H:AM6PR10MB2263.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(346002)(136003)(396003)(199004)(189003)(64756008)(66446008)(76116006)(55016002)(9686003)(66946007)(7696005)(66556008)(26005)(66476007)(110136005)(6506007)(316002)(54906003)(2906002)(86362001)(33656002)(52536014)(5660300002)(4326008)(45080400002)(478600001)(6636002)(186003)(8676002)(53546011)(81156014)(71200400001)(8936002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB3362;H:BN6PR03MB2596.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: analog.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: DIxcMtydyy7HJbqhoBe6a9p1EtFmrVVIq8+22rDFg0qrn3dK3i+hyxrm7S5I8ig4y/esYdNjSl4UK0VdSaaRA0uzpGzjNmFrdWng1glIUYwXWyLU5D7xLymbDvbzmD0MgoGcdRsYnU/IrGkENxWL/B3huol1m53PfPm5B+Yvl471w5mhSpga3kIYoFnEwnb511EWivg/JvaMTIsZjq+0z1kp5wZD47oPaRlI8TwzZKpMaxeQCOyK7N8TrKrI5eyHsJCADmW6ocWlDbeki+Ojf92hYFMOLl/HT4n8vzPZlA72xV45pNWznyT6K9qAEQ/GaFhoCHIzvKk89OFPAEB9ED4y1o+pi+WcAA3SAAf3hICy0dKPeXxYH7RgxlTE+yiB2i2lxf6PflouQRjw8U9D36KrF1TEbkCsdiKK8aP1NYm2dxabrIljNOPDPi6dpy6v
+x-microsoft-antispam-message-info: hGLSUYJ+dAg2JIIRDp/ZsjA1yYg+2v7uZfXs06GpHhjCp+gvnzPnZos0nApW7+UYdLD2x3lX+dK939vqSvOWSMbTnOOtTv2M+TaFcD8anKaZxotihZGaAEFQUN/g1xGelHy+VigWnpQ2It7/af4GaOAo5PkYwahsn05FL1Q7ZzVmxeSp5KYjORMWH/fap6ccZPSh8CyoWvSi7/8LxxBpXuwedoD7pl5VNPUBRDBgHVFbyfNz3COylsvtga0D13Gpk0jJ+GbWl4fydGVW2/oQpETyUceOd42lyGDZVD81I1cB3UEDA1W6pPoXhysSe9kb5fA5i5wBtZ1iabrlBP66ZeRyWlTpWbtIkuAFvK4+6G/xXsVgbahXq4NN7W7edlgZjpj4KsT8kjC3uP+oW2ndllfOfgk7yeUiGNJCsOM3iYt0HlI3N/ufn5XB5XWc0+xZ
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20f9947f-a04a-4f11-4e5f-08d7990d7975
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2020 16:19:04.6010
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca1e9841-8fbb-4256-3120-08d7990d8780
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2020 16:19:28.1875
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jYl8qDO9c1BnaSk0CLzNCC8LugoIOvff5lL5Kd7oE7IQ2FiCAPyhEL8eb7citcWXIhfkig1OqK4OSwhqfJUhv9Va4fLjd0I1lLd0IKFSP1s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2518
+X-MS-Exchange-CrossTenant-userprincipalname: essI/MnM/31vhQd721P0bDEC82ai3Vqv+Nmo71Na9fpmBjgsu5e1A4IWX3+H95AnU3fcd3cnfp+8vrl37wxTMcq4HPQNCPTHfDsvgAwcQQk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB3362
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_04:2020-01-14,2020-01-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 spamscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001140137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08 January 2020 09:57, Marco Felsch wrote:
 
-> The watchdog driver compatible is "dlg,da9062-watchdog" and not
-> "dlg,da9062-wdt". Therefore the mfd-core can't populate the of_node and
-> fwnode. As result the watchdog driver can't parse the devicetree.
+
+> -----Original Message-----
+> From: Jonathan Cameron <jic23@kernel.org>
+> Sent: Samstag, 11. Januar 2020 12:09
+> To: Bia, Beniamin <Beniamin.Bia@analog.com>
+> Cc: lars@metafoo.de; Hennerich, Michael <Michael.Hennerich@analog.com>;
+> pmeerw@pmeerw.net; linux-iio@vger.kernel.org; linux-
+> kernel@vger.kernel.org; biabeniamin@outlook.com; knaack.h@gmx.de
+> Subject: Re: [PATCH] iio: frequency: adf4371: Fix divide by zero exceptio=
+n bug
 >=20
-
-I do agree there's a mismatch between the documentation and the MFD code.
-So in your DT are you specifying 'dlg,da9062-watchdog' and not 'dlg,da9062-=
-wdt'
-hence the issue? Are there any existing users who are using 'dlg,da9062-wdt=
-' in
-their DT instead?
-
-> Fixes: 9b40b030c4ad ("mfd: da9062: Supply core driver")
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
->  drivers/mfd/da9062-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, 7 Jan 2020 15:15:59 +0200
+> Beniamin Bia <beniamin.bia@analog.com> wrote:
 >=20
-> diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-> index e69626867c26..9143de7b77b8 100644
-> --- a/drivers/mfd/da9062-core.c
-> +++ b/drivers/mfd/da9062-core.c
-> @@ -248,7 +248,7 @@ static const struct mfd_cell da9062_devs[] =3D {
->  		.name		=3D "da9062-watchdog",
->  		.num_resources	=3D ARRAY_SIZE(da9062_wdt_resources),
->  		.resources	=3D da9062_wdt_resources,
-> -		.of_compatible  =3D "dlg,da9062-wdt",
-> +		.of_compatible  =3D "dlg,da9062-watchdog",
->  	},
->  	{
->  		.name		=3D "da9062-thermal",
-> --
-> 2.20.1
+> > From: Michael Hennerich <michael.hennerich@analog.com>
+> >
+> > During initialization adf4371_pll_fract_n_get_rate() is called on all
+> > output channels to determine if the device was setup. In this case
+> > mod2 is zero which can cause a divide by zero exception.
+> > Return before that can happen.
+> I'm confused by this description vs the code.
+>=20
+> As far as I can see fract_n_get_rate is only called on a sysfs read of th=
+e
+> frequency.
+
+That's not the case. The failure mechanism comes via adf4371_channel_config=
+().
+It calls adf4371_pll_fract_n_get_rate() prior adf4371_set_freq() which init=
+ializes=20
+st->mod2 via adf4371_pll_fract_n_compute(). This only happens the first tim=
+e=20
+during probe and setup. So the solution was to return 0 if st->mod2 =3D=3D =
+0.
+
+-Michael
+
+>=20
+> mod2 is set when fract_n_compute is called in the relevant set_freq calls=
+.
+> This seems to occur on a sysfs set frequency call.
+>=20
+> So the issue here is that a sysfs read before a write of the frequency wi=
+ll cause a
+> div zero?  If so, is there a sane set of initial values we can put in mod=
+2 and
+> friends before exposing them via the device register?
+>=20
+> If mod2=3D=3D0 is a valid value and indicates for example that the channe=
+l is turned
+> off, then the description should make that clear.
+>=20
+> Jonathan
+>=20
+> >
+> > Fixes: 7f699bd149134 ("iio: frequency: adf4371: Add support for
+> > ADF4371 PLL")
+> > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> > Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+> > ---
+> >  drivers/iio/frequency/adf4371.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/iio/frequency/adf4371.c
+> > b/drivers/iio/frequency/adf4371.c index e2a599b912e5..c21462238314
+> > 100644
+> > --- a/drivers/iio/frequency/adf4371.c
+> > +++ b/drivers/iio/frequency/adf4371.c
+> > @@ -191,6 +191,9 @@ static unsigned long long
+> adf4371_pll_fract_n_get_rate(struct adf4371_state *st,
+> >  	unsigned long long val, tmp;
+> >  	unsigned int ref_div_sel;
+> >
+> > +	if (st->mod2 =3D=3D 0)
+> > +		return 0;
+> > +
+> >  	val =3D (((u64)st->integer * ADF4371_MODULUS1) + st->fract1) * st-
+> >fpfd;
+> >  	tmp =3D (u64)st->fract2 * st->fpfd;
+> >  	do_div(tmp, st->mod2);
 
