@@ -2,84 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE9D613AB5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D2113AB61
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:47:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbgANNpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:45:55 -0500
-Received: from mx3.wp.pl ([212.77.101.9]:9043 "EHLO mx3.wp.pl"
+        id S1728945AbgANNqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:46:53 -0500
+Received: from mga09.intel.com ([134.134.136.24]:27860 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbgANNpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:45:54 -0500
-Received: (wp-smtpd smtp.wp.pl 30180 invoked from network); 14 Jan 2020 14:45:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1579009550; bh=1OCCshn/NahZBP1gvKTaGqss5mpmUoD2DAPD0KfhKvo=;
-          h=From:To:Cc:Subject;
-          b=B/JnFwJP0YTQ5MWEM8Xjp9XJbCCGcxPqRvYh6grlUxxIwM/8vzqBbR2XVnHyR3gRg
-           Y7GFZFp2v/91NdDqQ+NgP+hZkA+uiATwvzF3lnKuecSMTZpZ1BiNen91iCBN1Dv10A
-           awohaKHajJnNbkae8aglEM90VbUWmAxTdmPY7Yak=
-Received: from c-73-93-4-247.hsd1.ca.comcast.net (HELO cakuba.hsd1.ca.comcast.net) (kubakici@wp.pl@[73.93.4.247])
-          (envelope-sender <kubakici@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <ms@dev.tdt.de>; 14 Jan 2020 14:45:50 +0100
-Date:   Tue, 14 Jan 2020 05:45:43 -0800
-From:   Jakub Kicinski <kubakici@wp.pl>
-To:     Martin Schiller <ms@dev.tdt.de>
-Cc:     khc@pm.waw.pl, davem@davemloft.net, linux-x25@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] wan/hdlc_x25: make lapb params configurable
-Message-ID: <20200114054543.576dbf8b@cakuba.hsd1.ca.comcast.net>
-In-Reply-To: <3b439730f93e29c9e823126b74c2fbd3@dev.tdt.de>
-References: <20200113124551.2570-1-ms@dev.tdt.de>
-        <20200113055316.4e811276@cakuba>
-        <83f60f76a0cf602c73361ccdb34cc640@dev.tdt.de>
-        <20200114045149.4e97f0ac@cakuba>
-        <3b439730f93e29c9e823126b74c2fbd3@dev.tdt.de>
+        id S1726038AbgANNqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:46:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 05:46:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,432,1571727600"; 
+   d="scan'208";a="225221170"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga003.jf.intel.com with ESMTP; 14 Jan 2020 05:46:48 -0800
+Subject: Re: [PATCH] perf tools: intel-pt: fix endless record after being
+ terminated
+To:     Jiri Olsa <jolsa@redhat.com>, Wei Li <liwei391@huawei.com>
+Cc:     acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, huawei.libin@huawei.com
+References: <20200102074211.19901-1-liwei391@huawei.com>
+ <20200106120250.GD207350@krava>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <7e01a903-29c3-89c4-360e-bbf4834a3f36@intel.com>
+Date:   Tue, 14 Jan 2020 15:45:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20200106120250.GD207350@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-WP-MailID: 7066841284ff01c5adb105bd79b4273d
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [AXPU]                               
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020 14:33:51 +0100, Martin Schiller wrote:
-> On 2020-01-14 13:51, Jakub Kicinski wrote:
-> > On Tue, 14 Jan 2020 06:37:03 +0100, Martin Schiller wrote:  
-> >> >> diff --git a/include/uapi/linux/hdlc/ioctl.h
-> >> >> b/include/uapi/linux/hdlc/ioctl.h
-> >> >> index 0fe4238e8246..3656ce8b8af0 100644
-> >> >> --- a/include/uapi/linux/hdlc/ioctl.h
-> >> >> +++ b/include/uapi/linux/hdlc/ioctl.h
-> >> >> @@ -3,7 +3,7 @@
-> >> >>  #define __HDLC_IOCTL_H__
-> >> >>
-> >> >>
-> >> >> -#define GENERIC_HDLC_VERSION 4	/* For synchronization with sethdlc
-> >> >> utility */
-> >> >> +#define GENERIC_HDLC_VERSION 5	/* For synchronization with sethdlc
-> >> >> utility */  
-> >> >
-> >> > What's the backward compatibility story in this code?  
-> >> 
-> >> Well, I thought I have to increment the version to keep the kernel 
-> >> code
-> >> and the sethdlc utility in sync (like the comment says).  
-> > 
-> > Perhaps I chose the wrong place for asking this question, IOCTL code
-> > was my real worry. I don't think this version number is validated so
-> > I think bumping it shouldn't break anything?  
+On 6/01/20 2:02 pm, Jiri Olsa wrote:
+> On Thu, Jan 02, 2020 at 03:42:11PM +0800, Wei Li wrote:
+>> In __cmd_record(), when receiving SIGINT(ctrl + c), a done flag will
+>> be set and the event list will be disabled by evlist__disable() once.
+>>
+>> While in auxtrace_record.read_finish(), the related events will be
+>> enabled again, if they are continuous, the recording seems to be endless.
+>>
+>> If the intel_pt event is disabled, we don't enable it again here.
+>>
+>> Before the patch:
+>> huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
+>> intel_pt//u -p 46803
+>> ^C^C^C^C^C^C
+>>
+>> After the patch:
+>> huawei@huawei-2288H-V5:~/linux-5.5-rc4/tools/perf$ ./perf record -e \
+>> intel_pt//u -p 48591
+>> ^C[ perf record: Woken up 0 times to write data ]
+>> Warning:
+>> AUX data lost 504 times out of 4816!
+>>
+>> [ perf record: Captured and wrote 2024.405 MB perf.data ]
+>>
+>> Signed-off-by: Wei Li <liwei391@huawei.com>
+>> ---
+>>  tools/perf/arch/x86/util/intel-pt.c | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+>> index 20df442fdf36..1e96afcd8646 100644
+>> --- a/tools/perf/arch/x86/util/intel-pt.c
+>> +++ b/tools/perf/arch/x86/util/intel-pt.c
+>> @@ -1173,9 +1173,13 @@ static int intel_pt_read_finish(struct auxtrace_record *itr, int idx)
+>>  	struct evsel *evsel;
+>>  
+>>  	evlist__for_each_entry(ptr->evlist, evsel) {
+>> -		if (evsel->core.attr.type == ptr->intel_pt_pmu->type)
+>> -			return perf_evlist__enable_event_idx(ptr->evlist, evsel,
+>> -							     idx);
+>> +		if (evsel->core.attr.type == ptr->intel_pt_pmu->type) {
+>> +			if (evsel->disabled)
+>> +				return 0;
+>> +			else
+>> +				return perf_evlist__enable_event_idx(
+>> +						ptr->evlist, evsel, idx);
 > 
-> sethdlc validates the GENERIC_HDLC_VERSION at compile time.
->
-> https://mirrors.edge.kernel.org/pub/linux/utils/net/hdlc/
+> what's the logic behind enabling the event in here?
 
-Aw, okay, best not to bump it then.
- 
-> Another question:
-> Where do I have to send my patch for sethdlc to?
-
-No idea :)
+Tracing stops when the auxtrace buffer is full and won't start again until
+the event is scheduled in (which is never for system-wide events) but
+enabling here will start tracing again immediately if possible.
