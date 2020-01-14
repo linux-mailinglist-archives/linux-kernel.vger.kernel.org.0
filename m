@@ -2,158 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F9D13A1DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:25:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1668213A219
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 08:28:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbgANHZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 02:25:34 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:34409 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729145AbgANHZ2 (ORCPT
+        id S1729260AbgANH1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 02:27:32 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:2584 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728899AbgANH1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 02:25:28 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id 10B8B588;
-        Tue, 14 Jan 2020 02:25:26 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 14 Jan 2020 02:25:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        /NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnwD0=; b=E+ih20sLIVU+JbJh
-        GMonwA3D/ZyhFUdpopjO/xWDrjZbqNO8zR9cLwbWeJr22sMl1zKFbETUElpcnVa7
-        AZwG1LxxtTO+ko/gqWu80xN7Zbk/PcLuuDF5nrzNxGUeBFUkpEqytNpRR4zj9jgQ
-        MwNA4ZaiNwOlduy0avAJJTt28ITICiZQsmwskuDugVgvIoxc/2fhyOpucVwLenD8
-        2rzQRanDG6iaiZ/zm3UAwId6Qy/QndsPopAnMpE0XJzDKxmIWC+jR3WChj0eXaSl
-        RECfi2W8F9+zXmaU42/RdbEIQ2LN7taoksGTww8VcWjjFAV+lCAoxfzTQP8br7xQ
-        s0mDXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=/NSb4tftAi/8pTDnCjJ4L9lPoIhmBX5FSwiZPETnw
-        D0=; b=Qw7ET2JBhGByLUbuhnMGdCt0ocsN4ZJ1W63vM2d0Zj4VYuzMJCZIEqhmz
-        zYRBHMx4dCEm4HJ7vzFDuj6t795vci2ZrwsUNL/Jj2lg1ySSC/H+cKBYRJJx1asc
-        JUZAoTc57MJSHGBSIZ7vLbAWVMM+ntQmGprAzzvUdqp/F568NcT3cJEtQ57Dz1vh
-        oqsDLvCIknSE7wgxh8i2Tzb/mddOiBj+TXBtXYkQXw5O6oLPt8uMZJh9LIfm4fPY
-        QxFCroF3EtV1zts0ra0mRLmvjJ+CjNA29Ry7Y/sHRZgaGtQHBLoR9zOPjctKHmeO
-        c9EpvMI9Ex3sMQuNAqxPxiL5LcxIQ==
-X-ME-Sender: <xms:5GwdXoyDk01dGhrYk-lUgd_o49kcDsWhhmsFBI9wGmXSUGGMEbGmuQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdejuddguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehgih
-    hthhhusgdrtghomhenucfkphepuddukedrvddtledrudejhedrvdehnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghruf
-    hiiigvpedt
-X-ME-Proxy: <xmx:5GwdXqhQh5_xsQeu5Bt4b-uQgEUgv7L0TE_eUIaS5jxLSehm7Cn-jg>
-    <xmx:5GwdXjqLQoGkx49VqXhKNW3LwhcJRZVWB3tgbBYVXmPhM_d299SSBg>
-    <xmx:5GwdXpg2yG7pEdPaTNZH7UOTmDXi9-7YFtu76zkYqKd9fZx1BCgcIw>
-    <xmx:5WwdXhBRnznhTdSbPNsSDY5dRfJ20UAStkRh6FV2Bpj5Vc-4DtjGta3THcU>
-Received: from mickey.themaw.net (unknown [118.209.175.25])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D37C730602DB;
-        Tue, 14 Jan 2020 02:25:19 -0500 (EST)
-Message-ID: <7b2b9f81871898d2b6301a74f2bee85943f21cdc.camel@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 14 Jan 2020 15:25:15 +0800
-In-Reply-To: <20200113133047.GR8904@ZenIV.linux.org.uk>
-References: <20200101030815.GA17593@ZenIV.linux.org.uk>
-         <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
-         <20200101234009.GB8904@ZenIV.linux.org.uk>
-         <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
-         <20200103014901.GC8904@ZenIV.linux.org.uk>
-         <20200110231945.GL8904@ZenIV.linux.org.uk>
-         <aea0bc800b6a1e547ca1944738ff9db4379098ba.camel@themaw.net>
-         <20200113035407.GQ8904@ZenIV.linux.org.uk>
-         <41c535d689530f3715f21cd25074eb61e825a5f6.camel@themaw.net>
-         <58f9894e51a00ad2a4ac3d4122bf29e7cb6c0d54.camel@themaw.net>
-         <20200113133047.GR8904@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        Tue, 14 Jan 2020 02:27:31 -0500
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00E7QLjw029195;
+        Tue, 14 Jan 2020 02:27:09 -0500
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2051.outbound.protection.outlook.com [104.47.37.51])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2xfbvb6xqe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 02:27:09 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MoFPOxgjyjkX+VQruGxb4nnBt9wpqkgRFLDCZ73uwvYc6I0NKrsxUJFgx9ewVYxrLpoxT+5M0rTMx3wERhhomk1ExJ9jgCBWL/F00dpGEha2AGREVKtopD1MBlHbbEdQNtHmPUdMZsPsMBuyxTtkiFHpGF4JS4nV4iGvsKgDjGSHHTSACrwV7/QKJL0P7qne5OT0ATgGKeQzMJ2PxyU5+vzTVtjbCZc/WvtwRShwP0BJ7A820xHr+HvtGlTK9h4csx/zB35pkqxbtwRKoNggs0L1YB/ImSxOFKuw994r9I6X/cDmMIC3yOkIeMT1GYe0Flig4DRaqVT17REDmOtCcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FXv3V7i8gxyrH/8nZ7nvF+9GgDcdQ6ODxN+ENSOO6F4=;
+ b=bi/b83c7v4v0wB092i9XdLCXZgCVM5srxWTGvDW/5FEAd96weEmuD4M/mD127xOFuq4pBGi4CYO4qbHt9d+/fSSLmEnKEKOXDkEZ6Gsr3U06uvRq6RbJQhV83uwR+B6JM+iYRMR42Irw2YsLKDp+yXB/GWJQiiSxU9RWaENNvz2hbiokqSImcuI29pPr8jiqk87GLdOTQ0OFvcFKBFjEWxJ1zYIBl8WbZW3A8aHJVkL5E0Z/s+Xjy83cxEXl8rdA7XMM5fITFYknnScAwttPrcSzcgf+2V0KIaghdaS49m1DoNjJz+O45/g7itRPRCgoVLfrJrUtcvRQkuURgsH5iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FXv3V7i8gxyrH/8nZ7nvF+9GgDcdQ6ODxN+ENSOO6F4=;
+ b=WzQ93q0E8mOdXRN5OjBpp+8h2FcefEd+sVZ95y58iS+X8SCQK9pAUntoY3L+OEBG+PggiMStqYXfD2iveXB0TT9GFFyoMeG6s55N+Cj9OhQEAoPEUnCH/wEIAG6K9wMiOk865QT1tpJdWo+WsAf6e19m9qPSmm0QKXZQ5oEgwZ8=
+Received: from CH2PR03MB5192.namprd03.prod.outlook.com (20.180.12.152) by
+ CH2PR03MB5272.namprd03.prod.outlook.com (20.180.4.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.10; Tue, 14 Jan 2020 07:27:08 +0000
+Received: from CH2PR03MB5192.namprd03.prod.outlook.com
+ ([fe80::dce7:7fec:f33f:ad39]) by CH2PR03MB5192.namprd03.prod.outlook.com
+ ([fe80::dce7:7fec:f33f:ad39%7]) with mapi id 15.20.2623.015; Tue, 14 Jan 2020
+ 07:27:08 +0000
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "Bia, Beniamin" <Beniamin.Bia@analog.com>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "lars@metafoo.de" <lars@metafoo.de>
+CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "biabeniamin@outlook.com" <biabeniamin@outlook.com>
+Subject: Re: [PATCH 1/3] iio: amplifiers: hmc425a: Add support for HMC425A
+ step attenuator with gpio interface
+Thread-Topic: [PATCH 1/3] iio: amplifiers: hmc425a: Add support for HMC425A
+ step attenuator with gpio interface
+Thread-Index: AQHVyhvEEIAnedXVb0WyMiMRJByquKfpE+4AgACwfgA=
+Date:   Tue, 14 Jan 2020 07:27:08 +0000
+Message-ID: <5925b4f1d47306ec4376a296a1146ff024239044.camel@analog.com>
+References: <20200113141555.16117-1-beniamin.bia@analog.com>
+         <5ae63616-5749-da51-b0b2-85cdcaa948f3@metafoo.de>
+In-Reply-To: <5ae63616-5749-da51-b0b2-85cdcaa948f3@metafoo.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.71.226.54]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 93d07e32-63a5-4af4-a2ef-08d798c329b1
+x-ms-traffictypediagnostic: CH2PR03MB5272:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR03MB52722574CA650F723DC022CDF9340@CH2PR03MB5272.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 028256169F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(376002)(366004)(396003)(189003)(199004)(64756008)(6506007)(478600001)(5660300002)(66476007)(966005)(2906002)(6486002)(66556008)(8676002)(81156014)(66446008)(81166006)(53546011)(76116006)(4326008)(86362001)(66946007)(7416002)(110136005)(54906003)(2616005)(36756003)(71200400001)(6512007)(26005)(316002)(186003)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR03MB5272;H:CH2PR03MB5192.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: analog.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: pT2dyXY/vUtuRvloq0waWIeBA2j6OpgloVC2CunuEZs2En0udlQYg9Pig+HgwanB22JajQQQ0cmWa4HNFubz0W6mZhY337+b/b4D6tR2sThkIfrWGfEQTZydMKWwdU+q/upioRQ5HEGGp4UDFvJ3LfG512sg6PVk1zcJXubTSxk+41PQY827uxeCXtF07COGFV8VO6YKK5bknsVqN43H0VqBfizXfH/gD6DPN4Z0paihbkEIRjUEP8XXept7Lb4yp9voQVO+uiISjfX4e7XGSBotmIanWPJnMxjeuOwHcqc87YO3dUQolKF97TBT2946j4yuMebhzCvYdSXXxW58xMJVdXtVhuT5k/nSGM9We3scp2Kw2P6ip93Oc26vycvF4PQj6hQ6e12tKNgpz2bTugu+SQRMkxI0kpMkEODRJ1PDm9Y9LscW57L/LxAGSTJqbObTrX2pl/+wnN7pXMEp0K6GibKn5f/ljyvx4/+4myo=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <492776969DF61D4EB8807DF9477039AB@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93d07e32-63a5-4af4-a2ef-08d798c329b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2020 07:27:08.0203
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oP3fg7wqqj1FOZHlSkmfscv3DTg3OJQjhQxrfRykfyYVMOaDydgXo3PLB4ArP8KiVLODnk2lTLffg40kiAKlRCVTaXasoynqgSfa1py2PyA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB5272
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_01:2020-01-13,2020-01-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 spamscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001140064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-01-13 at 13:30 +0000, Al Viro wrote:
-> On Mon, Jan 13, 2020 at 02:03:00PM +0800, Ian Kent wrote:
-> 
-> > Oh wait, for systemd I was actually looking at:
-> > https://github.com/systemd/systemd/blob/master/src/shared/switch-root.c
-> > 
-> > > Mind you, that's not the actual systemd repo. either I probably
-> > > need to look a lot deeper (and at the actual systemd repo) to
-> > > work out what's actually being called.
-> > > 
-> > > > Sigh...  Guess I'll have to dig that Fedora KVM image out and
-> > > > try to see what it's about... ;-/  Here comes a couple of hours
-> > > > of build...
-> 
-> D'oh...  And yes, that would've been a bisect hazard - switch to
-> path_lookupat() later in the series gets rid of that.  Incremental
-> (to be foldede, of course):
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1793661c3342..204677c37751 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2634,7 +2634,7 @@ path_mountpoint(struct nameidata *nd, unsigned
-> flags, struct path *path)
->  		(err = lookup_last(nd)) > 0) {
->  		s = trailing_symlink(nd);
->  	}
-> -	if (!err)
-> +	if (!err && (nd->flags & LOOKUP_RCU))
->  		err = unlazy_walk(nd);
->  	if (!err)
->  		err = handle_lookup_down(nd);
-
-Ok, so I've tested with the updated patch.
-
-The autofs connectathon tests I use function fine.
-
-I also tested sending a SIGKILL to the daemon with about 180 active
-mounts and restarted the daemon to test the function of the ioctls
-that Al was concerned about.
-
-While the connectathon test expired everything I had 3 mounts left
-after allowing sufficient expire time with the SIGKILL test.
-
-Those mounts correspond to one map entry that has a mix of NFS
-vers=3 and vers=2 mount options and NFSv2 isn't supported by the
-servers I use in testing.
-
-I'm inclined to think this is a bug in the automount mount tree
-re-connection code rather than a problem with this patch since
-all the other mounts, some simple and others with not so simple
-constructs, expired fine after automount re-connected to them.
-
-There are two other map entries that have an NFS vers=2 option but
-they are simple mounts that will fail on attempting the automount
-because the server doesn't support v2 so they don't end up with
-mounts to reconnect to.
-
-This particular map entry, having a mix of NFS vers=3 and vers=2
-in the offsets of the entry, will lead to a partial mount of the
-map entry which is probably not being handled properly by automount
-when re-connecting to the mounts in the tree.
-
-So I think the patch here is fine from an autofs POV.
-
-Ian
-
+T24gTW9uLCAyMDIwLTAxLTEzIGF0IDIxOjU3ICswMTAwLCBMYXJzLVBldGVyIENsYXVzZW4gd3Jv
+dGU6DQo+IFtFeHRlcm5hbF0NCj4gDQo+IE9uIDEvMTMvMjAgMzoxNSBQTSwgQmVuaWFtaW4gQmlh
+IHdyb3RlOg0KPiBbLi4uXQ0KPiA+ICtzdGF0aWMgaW50IGhtYzQyNWFfd3JpdGUoc3RydWN0IGlp
+b19kZXYgKmluZGlvX2RldiwgdTMyIHZhbHVlKQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgaG1jNDI1
+YV9zdGF0ZSAqc3QgPSBpaW9fcHJpdihpbmRpb19kZXYpOw0KPiA+ICsJaW50IGksICp2YWx1ZXM7
+DQo+ID4gKw0KPiA+ICsJdmFsdWVzID0ga21hbGxvY19hcnJheShzdC0+Y2hpcF9pbmZvLT5udW1f
+Z3Bpb3MsIHNpemVvZihpbnQpLA0KPiA+ICsJCQkgICAgICAgR0ZQX0tFUk5FTCk7DQo+ID4gKwlp
+ZiAoIXZhbHVlcykNCj4gPiArCQlyZXR1cm4gLUVOT01FTTsNCj4gPiArDQo+ID4gKwlmb3IgKGkg
+PSAwOyBpIDwgc3QtPmNoaXBfaW5mby0+bnVtX2dwaW9zOyBpKyspDQo+ID4gKwkJdmFsdWVzW2ld
+ID0gKHZhbHVlID4+IGkpICYgMTsNCj4gPiArDQo+ID4gKwlncGlvZF9zZXRfYXJyYXlfdmFsdWVf
+Y2Fuc2xlZXAoc3QtPmdwaW9zLT5uZGVzY3MsIHN0LT5ncGlvcy0+ZGVzYywNCj4gPiArCQkJCSAg
+ICAgICB2YWx1ZXMpOw0KPiANCj4gVGhpcyBBUEkgZ290IGNoYW5nZWQgYSB3aGlsZSBhZ28gaW4g
+dXBzdHJlYW0sIHNlZQ0KPiBodHRwczovL2dpdGh1Yi5jb20vYW5hbG9nZGV2aWNlc2luYy9saW51
+eC9jb21taXQvYjk3NjJiZWJjNjMzMmI0MGMzM2UwM2RlYTAzZTMwZmExMmQ5ZTNlZA0KPiANCj4g
+PiArCWtmcmVlKHZhbHVlcyk7DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiBbLi4uXQ0KPiA+
+ICtzdGF0aWMgaW50IGhtYzQyNWFfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
+Cj4gPiArew0KPiBbLi4uXQ0KPiA+ICsNCj4gPiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYs
+IGluZGlvX2Rldik7DQo+IA0KPiBkcnZkYXRhIGlzIG5ldmVyIGFjY2Vzc2VkLCBubyBuZWVkIHRv
+IHNldCBpdC4NCj4gDQo+ID4gKwltdXRleF9pbml0KCZzdC0+bG9jayk7DQo+ID4gKw0KPiA+ICsJ
+aW5kaW9fZGV2LT5kZXYucGFyZW50ID0gJnBkZXYtPmRldjsNCj4gPiArCWluZGlvX2Rldi0+bmFt
+ZSA9IG5wLT5uYW1lOw0KPiANCj4gSSBrbm93IEFESSBsaWtlcyB0byBkbyB0aGlzIGluIGl0cyBu
+b24gdXBzdHJlYW0gZHJpdmVycywgYnV0IHRoZSBhYm92ZQ0KPiBpcyBub3QgSUlPIEFCSSBjb21w
+bGlhbnQuIFRoZSBuYW1lIGlzIHN1cHBvc2VkIHRvIGlkZW50aWZ5IHRoZSB0eXBlIG9mDQo+IHRo
+ZSBkZXZpY2UsIHdoaWNoIG1lYW5zIGZvciB0aGlzIGRyaXZlciBzaG91bGQgYmUgc3RhdGljICJo
+bWM0MjVhIi4NCj4gTWF5YmUgY29uc2lkZXIgYWRkaW5nIGEgZmllbGQgdG8gdGhlIGhtYzQyNWFf
+Y2hpcF9pbmZvIGZvciB0aGlzLg0KDQpXZSd2ZSBhY3R1YWxseSBbcmVjZW50bHldIGhhZCBhIGRp
+c2N1c3Npb24gYWJvdXQgdGhpcyBpbnRlcm5hbGx5IHJlZ2FyZGluZw0KdGhlICdpbmRpb19kZXYt
+Pm5hbWUnLg0KDQpNYXliZSBpdCdzIGEgZ29vZCB0aW1lIHRvIGFzayBoZXJlIChub3cpLg0KQSBs
+b3Qgb2Ygb3VyIHVzZXJzcGFjZSBzdHVmZiBoYXZlIGJlZW4gc2VhcmNoaW5nIElJTyBkZXZpY2Vz
+IHZpYSB0aGUgJ25hbWUnDQpmaWVsZCBpbiBzeXNmcywgd2hpY2ggaXMgdGhlIG5hbWUgYXNzaWdu
+ZWQgaGVyZS4NClRoYXQgY3JlYXRlcyBhIHByb2JsZW0gd2hlbiB5b3UgaGF2ZSBtdWx0aXBsZSBk
+ZXZpY2VzIHdpdGggdGhlIHNhbWUgZHJpdmVyLg0KV2hpY2ggaXMgd2h5LCBvbmUgDQoNClNvLCB0
+aGVuIHNvbWUgcXVlc3Rpb25zIHdvdWxkIGJlOg0KSXMgYSBzZWFyY2hpbmcgZm9yIElJTyBkZXZp
+Y2VzIFtpbiB1c2Vyc3BhY2VdIGJhc2VkIG9uIElJTyBkZXZpY2UtbmFtZSBub3QNCnJlY29tbWVu
+ZGVkPyBJZiBub3QsIHdoYXQgd291bGQgYmU/IE9yIHdoYXQgd291bGQgYmUgYSBiZXR0ZXIgaWRl
+YT8NCg0KVGhlIEFCSSByZWFkcyBbaG9wZWZ1bGx5IEkgcHVsbGVkIHVwIHRoZSByaWdodCBmaWVs
+ZF06DQpXaGF0OiAgICAgICAgICAgL3N5cy9idXMvaWlvL2RldmljZXMvaWlvOmRldmljZVgvbmFt
+ZQ0KS2VybmVsVmVyc2lvbjogIDIuNi4zNQ0KQ29udGFjdDogICAgICAgIGxpbnV4LWlpb0B2Z2Vy
+Lmtlcm5lbC5vcmcNCkRlc2NyaXB0aW9uOg0KICAgICAgICAgICAgICAgIERlc2NyaXB0aW9uIG9m
+IHRoZSBwaHlzaWNhbCBjaGlwIC8gZGV2aWNlIGZvciBkZXZpY2UgWC4NCiAgICAgICAgICAgICAg
+ICBUeXBpY2FsbHkgYSBwYXJ0IG51bWJlci4NCg0KVGhlIHRleHQgaW4gZGVzY3JpcHRpb24gaXMg
+YSBiaXQgb3BlbiB0byBpbnRlcnByZXRhdGlvbiwgc28gSSBjYW4ndCBtYWtlIGFuDQphc3Nlc3Nt
+ZW50IG9mIHdoYXQgaXMgY29ycmVjdC4NCkluIGNhc2UgdGhlcmUgd2FzIGEgZGlzY3Vzc2lvbiBh
+Ym91dCB0aGlzLCBzb3JyeSBmb3IgcmVwZWF0aW5nIHNvbWUgdGhpbmdzDQpub3cuDQoNCg0KPiAN
+Cj4gPiArCWluZGlvX2Rldi0+aW5mbyA9ICZobWM0MjVhX2luZm87DQo+ID4gKwlpbmRpb19kZXYt
+Pm1vZGVzID0gSU5ESU9fRElSRUNUX01PREU7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIGRldm1faWlv
+X2RldmljZV9yZWdpc3RlcigmcGRldi0+ZGV2LCBpbmRpb19kZXYpOw0KPiA+ICt9DQo=
