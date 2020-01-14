@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9615A13AF16
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6859813AF20
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:20:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgANQTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:19:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33398 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726495AbgANQTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:19:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C5744AB7D;
-        Tue, 14 Jan 2020 16:19:44 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 00150DA795; Tue, 14 Jan 2020 17:19:31 +0100 (CET)
-Date:   Tue, 14 Jan 2020 17:19:31 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Zaslonko Mikhail <zaslonko@linux.ibm.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
+        id S1728759AbgANQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:20:35 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:44045 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgANQUf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:20:35 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1irOvA-00024a-Fo; Tue, 14 Jan 2020 17:20:00 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id B7A82101DEE; Tue, 14 Jan 2020 17:19:59 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Eduard Shishkin <edward6@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] btrfs: Use larger zlib buffer for s390 hardware
- compression
-Message-ID: <20200114161931.GE3929@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Zaslonko Mikhail <zaslonko@linux.ibm.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, Richard Purdie <rpurdie@rpsys.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Eduard Shishkin <edward6@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200107143058.GU3929@twin.jikos.cz>
- <20200108105103.29028-1-zaslonko@linux.ibm.com>
- <75a2d45c-fd7b-9542-403d-caea7d977add@toxicpanda.com>
- <94e06859-6174-c80d-3eb6-065f67fbe95d@linux.ibm.com>
- <20200109011025.GM3929@suse.cz>
- <62a53ff3-a515-8801-d58b-b518dbe0c55c@linux.ibm.com>
+        Guenter Roeck <groeck@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH RESEND v4] reboot: support offline CPUs before reboot
+In-Reply-To: <20200114110620.164861-1-hsinyi@chromium.org>
+References: <20200114110620.164861-1-hsinyi@chromium.org>
+Date:   Tue, 14 Jan 2020 17:19:59 +0100
+Message-ID: <87o8v6au34.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <62a53ff3-a515-8801-d58b-b518dbe0c55c@linux.ibm.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 11:03:29AM +0100, Zaslonko Mikhail wrote:
-> Hello David,
-> 
-> On 09.01.2020 02:10, David Sterba wrote:
-> > On Wed, Jan 08, 2020 at 07:48:31PM +0100, Zaslonko Mikhail wrote:
-> >>>> +        } else if (workspace->strm.avail_out == 0) {
-> >>>> +            /* get another page for the stream end */
-> >>>> +            kunmap(out_page);
-> >>>> +            if (nr_pages == nr_dest_pages) {
-> >>>> +                out_page = NULL;
-> >>>> +                ret = -E2BIG;
-> >>>> +                goto out;
-> >>>> +            }
-> >>>> +            out_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
-> >>>> +            if (out_page == NULL) {
-> >>>> +                ret = -ENOMEM;
-> >>>> +                goto out;
-> >>>> +            }
-> >>>
-> >>> Do we need zlib_deflateEnd() for the above error cases?  Thanks,
-> >>
-> >> The original btrfs code did not call zlib_deflateEnd() for -E2BIG and 
-> >> -ENOMEM cases, so I stick to the same logic.
-> >> Unlike userspace zlib where deflateEnd() frees all dynamically allocated 
-> >> memory, in the kernel it doesn't do much apart from setting the return 
-> >> code (since all the memory allocations for kernel zlib are performed in advance).
-> > 
-> > Agreed, deflateEnd is not necessary in the error cases.
-> 
-> Can I consider this as 'Acked-by' from your side?
+Hsin-Yi Wang <hsinyi@chromium.org> writes:
+>
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> ---
+> Resend v4:
+> * Cc more people and mailing lists. Also fix a few nits from v4.
 
-Yes, I also sent rev-by to the patch.
+Please don't name it resend if you actually changed the patch. Resend
+wants to be an unmodified patch and the only reasons to do that are:
+
+ - add more people to CC
+
+ - Resend it because it got ignored or dropped (do that only after a
+   couple of weeks)
+
+If you changed the patch, then it wants a new version number.
+
+Thanks,
+
+        tglx
