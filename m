@@ -2,119 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4E413B21F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:29:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A241A13B22D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:33:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbgANS3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 13:29:46 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35968 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbgANS3q (ORCPT
+        id S1728739AbgANSdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 13:33:13 -0500
+Received: from smtprelay0213.hostedemail.com ([216.40.44.213]:56188 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726839AbgANSdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:29:46 -0500
-Received: by mail-pj1-f66.google.com with SMTP id n59so6264111pjb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 10:29:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=xvalv4jk2soL/e/FiXnFpGdN+0Q1Oxjo6xaDHJKcsiM=;
-        b=d/ukjTZQfO8s56/Bm7eL6nnsIWHHUAxSvc9gMl83F1AK5hkq+mryx8OkD2GBVXuek3
-         X0tYrBJjYuu06syiGyQs39b5PiV3Pb5fFyJIxIh0YtoeGO8h3DaFMa7jnUZ3NOdEdCsz
-         DIDOSM0nT91MIhH4OYPRkaaFSRJWQfem5Vism8ahgkTdPVk8vmsZrPBBfB8SNW/kFLQa
-         8VlU6NKoJmognEjuq89cuYy+Myf3kWfM1+FHMDdCxnAO+Mzs/juD2h0xjlN2mdwtkxnQ
-         Eq0NOFKt0I6duYI0XC/hN9LSzidEe1lpWFo5wzk23aYXj9Jt+gtSHKcK6tBDD425ZKSj
-         7oSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=xvalv4jk2soL/e/FiXnFpGdN+0Q1Oxjo6xaDHJKcsiM=;
-        b=Vo9d80XT2aw6fa4IOQh31V6qZI7jsATreq4cthFevzP37txX3CfIDu09FKPEBvyBKr
-         2VhuaHUCVWiWIAJube76d+Xi6ktqT/hKiZV696jQ3udDpbAwWrRxJ/nvdB/sF7ru32HZ
-         Z8KSXkXdbrf6kflbDh+G13YcyG2eLwVcWfIXmxlUnzCaYsvaGyo6OJF2ifV2zxuYnir0
-         chOvA4aH5NHDhA9GTBpWo6RGwOOQTXIJLQHWI9T7dzae7HVC3BbDAQ39Mwmeq7I3+Pj6
-         6ITGN6/rv/3YuegXPLZV6y9C4PRG/Nx6fGRoNDDwVAgGhAhGX47NcyvSfg2NA9a4YaMh
-         VJwQ==
-X-Gm-Message-State: APjAAAUFwY2MzTV+hWHwBxTgXLn8+v28gca8Adm4VmXXj/iwFnFIJo1Y
-        qnwjTKA/smu9IexRiPQM9pARf4pI+q4=
-X-Google-Smtp-Source: APXvYqyRU3A3KDrz6Ny82QPuYclaFXEtDIkm6DDFB4IA2vOr+LKt1SUVt75tb6yfEt/QLD1KqHUcmw==
-X-Received: by 2002:a17:90a:3643:: with SMTP id s61mr30595268pjb.44.1579026584941;
-        Tue, 14 Jan 2020 10:29:44 -0800 (PST)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
-        by smtp.gmail.com with ESMTPSA id f8sm18309037pjg.28.2020.01.14.10.29.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 10:29:44 -0800 (PST)
-From:   bsegall@google.com
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair : prevent unlimited runtime on throttled group
-References: <1579011236-31256-1-git-send-email-vincent.guittot@linaro.org>
-Date:   Tue, 14 Jan 2020 10:29:43 -0800
-In-Reply-To: <1579011236-31256-1-git-send-email-vincent.guittot@linaro.org>
-        (Vincent Guittot's message of "Tue, 14 Jan 2020 15:13:56 +0100")
-Message-ID: <xm26blr5oprc.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Tue, 14 Jan 2020 13:33:13 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id CEE711801E56A;
+        Tue, 14 Jan 2020 18:33:11 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2110:2198:2199:2393:2553:2559:2562:2828:2896:3138:3139:3140:3141:3142:3353:3622:3865:3867:3870:3871:3872:3874:4321:5007:10004:10400:10848:11026:11232:11658:11914:12296:12297:12740:12760:12895:13069:13095:13161:13229:13311:13357:13439:14659:14721:21080:21433:21451:21627:21939:30029:30045:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: bone95_7302979734f62
+X-Filterd-Recvd-Size: 2619
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 14 Jan 2020 18:33:10 +0000 (UTC)
+Message-ID: <805e5dbb1f28e8f8b8f2599adb56294d3225c2d0.camel@perches.com>
+Subject: Re: [PATCHv2-next 3/3] serial_core: Remove unused member in
+ uart_port
+From:   Joe Perches <joe@perches.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org
+Date:   Tue, 14 Jan 2020 10:32:15 -0800
+In-Reply-To: <20200114175647.GA2055173@kroah.com>
+References: <20200114171912.261787-1-dima@arista.com>
+         <20200114171912.261787-4-dima@arista.com>
+         <e1b3cccb0814ba4b0c99592715776ed48f343795.camel@perches.com>
+         <8f11e2fa-495d-fe25-f5e4-52c9580240d7@arista.com>
+         <20200114175647.GA2055173@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vincent Guittot <vincent.guittot@linaro.org> writes:
+On Tue, 2020-01-14 at 18:56 +0100, Greg Kroah-Hartman wrote:
+> On Tue, Jan 14, 2020 at 05:47:33PM +0000, Dmitry Safonov wrote:
+> > On 1/14/20 5:36 PM, Joe Perches wrote:
+> > > On Tue, 2020-01-14 at 17:19 +0000, Dmitry Safonov wrote:
+> > > > It should remove the align-padding before @name.
+> > > []
+> > > > diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+> > > []
+> > > > @@ -247,7 +247,6 @@ struct uart_port {
+> > > >  
+> > > >  	unsigned char		hub6;			/* this should be in the 8250 driver */
+> > > >  	unsigned char		suspended;
+> > > > -	unsigned char		unused;
+> > > 
+> > > I suggest this not be applied as this is just to let
+> > > readers know that there is an unused 1 byte alignment
+> > > hole here that could be used for something else.
+> > 
+> > Heh, 2/3 adds another `unsigned char`, so the neighbours look like:
+> > 
+> > : unsigned long sysrq;		/* sysrq timeout */
+> > : unsigned int	sysrq_ch;	/* char for sysrq */
+> > : unsigned char	has_sysrq;
+> > : unsigned char	sysrq_seq;	/* index in sysrq_toggle_seq */
+> > :
+> > : unsigned char	hub6;		/* this should be in the 8250 driver */
+> > : unsigned char	suspended;
+> > : unsigned char	unused;
+> > : const char	*name;		/* port name */
+> > 
+> > So the hole became 4 bytes on 64-bit.
 
-> When a running task is moved on a throttled task group and there is no
-> other task enqueued on the CPU, the task can keep running using 100% CPU
-> whatever the allocated bandwidth for the group and although its cfs rq is
-> throttled. Furthermore, the group entity of the cfs_rq and its parents are
-> not enqueued but only set as curr on their respective cfs_rqs.
->
-> We have the following sequence:
->
-> sched_move_task
->   -dequeue_task: dequeue task and group_entities.
->   -put_prev_task: put task and group entities.
->   -sched_change_group: move task to new group.
->   -enqueue_task: enqueue only task but not group entities because cfs_rq is
->     throttled.
->   -set_next_task : set task and group_entities as current sched_entity of
->     their cfs_rq.
->
-> Another impact is that the root cfs_rq runnable_load_avg at root rq stays
-> null because the group_entities are not enqueued. This situation will stay
-> the same until an "external" event triggers a reschedule. Let trigger it
-> immediately instead.
+Ah, perhaps the commit message could state that
+there is no longer an alignment hole instead.
 
-Sounds reasonable to me, "moved group" being an explicit resched check
-doesn't sound like a problem in general.
+cheers, Joe
 
->
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/core.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index e7b08d52db93..d0acc67336c0 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -7062,8 +7062,15 @@ void sched_move_task(struct task_struct *tsk)
->  
->  	if (queued)
->  		enqueue_task(rq, tsk, queue_flags);
-> -	if (running)
-> +	if (running) {
->  		set_next_task(rq, tsk);
-> +		/*
-> +		 * After changing group, the running task may have joined a
-> +		 * throttled one but it's still the running task. Trigger a
-> +		 * resched to make sure that task can still run.
-> +		 */
-> +		resched_curr(rq);
-> +	}
->  
->  	task_rq_unlock(rq, tsk, &rf);
->  }
+
