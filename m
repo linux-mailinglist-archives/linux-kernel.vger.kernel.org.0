@@ -2,70 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D26713A550
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F047213A4C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbgANKGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:06:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729640AbgANKGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:06:32 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FC3E24677;
-        Tue, 14 Jan 2020 10:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996391;
-        bh=Jh40u/tSBu3myoAaCydzkNwil2EpuaMTa9hi9TmuNPk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWhRRAPo3ygs8CHOJ2H6u6eMS2+3vvUuTfkUaY9MxAsr7rvAg3ZZ6WdQBgz3DdIYA
-         FuN1r9iOqOOdMn9vEngqbWAN14awrh2WE7fIRojo8MtfLFlP3z18WOrEdZoYggBo0c
-         MNqwm4H6GzON6mT+zyQMmQ2XXtL3jpU21WZvLDFs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Malcolm Priestley <tvboxspy@gmail.com>
-Subject: [PATCH 5.4 65/78] staging: vt6656: remove bool from vnt_radio_power_on ret
-Date:   Tue, 14 Jan 2020 11:01:39 +0100
-Message-Id: <20200114094402.155167930@linuxfoundation.org>
+        id S1729093AbgANKCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:02:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726053AbgANKCY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:02:24 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EA2CpJ040439;
+        Tue, 14 Jan 2020 05:02:12 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xh8d3evj3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 05:02:12 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00EA06UR019477;
+        Tue, 14 Jan 2020 10:02:07 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02wdc.us.ibm.com with ESMTP id 2xf750ahs4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Jan 2020 10:02:07 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EA26xA43254174
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jan 2020 10:02:06 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4ADB8C6059;
+        Tue, 14 Jan 2020 10:02:06 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DB083C6055;
+        Tue, 14 Jan 2020 10:02:03 +0000 (GMT)
+Received: from skywalker.in.ibm.com (unknown [9.124.35.105])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 14 Jan 2020 10:02:03 +0000 (GMT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH v3 4/9] asm-gemeric/tlb: Remove stray function declarations
+Date:   Tue, 14 Jan 2020 15:31:40 +0530
+Message-Id: <20200114100145.365527-5-aneesh.kumar@linux.ibm.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094352.428808181@linuxfoundation.org>
-References: <20200114094352.428808181@linuxfoundation.org>
-User-Agent: quilt/0.66
+In-Reply-To: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
+References: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_02:2020-01-13,2020-01-14 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=597 spamscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 adultscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001140090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Malcolm Priestley <tvboxspy@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 07f59f180ee083c48c32a1e69ae1d0091444d212 upstream.
+We removed the actual functions a while ago.
 
-The driver uses logical only error checking a bool true would flag error.
-
-Signed-off-by: Malcolm Priestley <tvboxspy@gmail.com>
-Link: https://lore.kernel.org/r/cc52b67c-9ef8-3e57-815a-44d10701919e@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 1808d65b55e4 ("asm-generic/tlb: Remove arch_tlb*_mmu()")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- drivers/staging/vt6656/card.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/asm-generic/tlb.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/staging/vt6656/card.c
-+++ b/drivers/staging/vt6656/card.c
-@@ -719,7 +719,7 @@ end:
-  */
- int vnt_radio_power_on(struct vnt_private *priv)
- {
--	int ret = true;
-+	int ret = 0;
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index b36b3bef5661..1a4cea5f95df 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -285,11 +285,7 @@ struct mmu_gather {
+ #endif
+ };
  
- 	vnt_exit_deep_sleep(priv);
+-void arch_tlb_gather_mmu(struct mmu_gather *tlb,
+-	struct mm_struct *mm, unsigned long start, unsigned long end);
+ void tlb_flush_mmu(struct mmu_gather *tlb);
+-void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+-			 unsigned long start, unsigned long end, bool force);
  
-
+ static inline void __tlb_adjust_range(struct mmu_gather *tlb,
+ 				      unsigned long address,
+-- 
+2.24.1
 
