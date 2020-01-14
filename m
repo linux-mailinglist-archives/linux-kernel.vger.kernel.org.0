@@ -2,109 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8259513ACA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6AE13AC99
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:48:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgANOub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:50:31 -0500
-Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:51458 "EHLO
-        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbgANOua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:50:30 -0500
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Jan 2020 09:50:30 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1579013430;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=LmLcwm7ETBP99P7FEc+YIc1hsYwuyPtB6gvyIrxiSLc=;
-  b=LI9+MkkflKGXk67N5BMaTrRoql2yA/7fhNxnRATaU4fGVmNEMKoywpQI
-   7fIsgK8xi5dW6DT21zBtr9XgKoaSBFCWmhgCNHzlUdPckbKrM6AqwYd/J
-   cKcPY1uRrDKt3mMHfmHYLZppYM7msJ4/u8J0RjCqn1nHEnQrFNearaRXs
-   c=;
-Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=igor.druzhinin@citrix.com; spf=Pass smtp.mailfrom=igor.druzhinin@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  igor.druzhinin@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="igor.druzhinin@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
-  igor.druzhinin@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="igor.druzhinin@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="igor.druzhinin@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: QuCOSjVj2SpJELBpaAxW3hiC/ycnXsWdWQPRo+lPtUKiHp3f9mNJoQ/vyizR7bumcB2UKxalrz
- WpBHkIfywCWTPDRNaSyBDE4pauf/sqZ+Ms8YrKvA8rl39vRO4xgUeswyxzVAJwa6gqEmNcxzwL
- 1a4PY37RLBRZg6qkD19c8VhGl1dBoZMeZ6B1sAblxO3r2zitM2sCO5RauA2zs287NR6pjftpGI
- QkCVs68qqaZ0CxHiDirAHyHlgfIjXRajvKsdZsfF/pISHS+NRpdQhDGUCqesyAZlRgyjfzuIIH
- pSA=
-X-SBRS: 2.7
-X-MesageID: 11321047
-X-Ironport-Server: esa6.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,433,1571716800"; 
-   d="scan'208";a="11321047"
-From:   Igor Druzhinin <igor.druzhinin@citrix.com>
-To:     <fcoe-devel@open-fcoe.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hare@suse.de>
-CC:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-        Igor Druzhinin <igor.druzhinin@citrix.com>
-Subject: [PATCH RESEND 2/2] scsi: libfc: drop extra rport reference in fc_rport_create()
-Date:   Tue, 14 Jan 2020 14:43:20 +0000
-Message-ID: <1579013000-14570-3-git-send-email-igor.druzhinin@citrix.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579013000-14570-1-git-send-email-igor.druzhinin@citrix.com>
-References: <1579013000-14570-1-git-send-email-igor.druzhinin@citrix.com>
+        id S1729005AbgANOsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:48:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:53184 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726878AbgANOsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:48:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 978E21435;
+        Tue, 14 Jan 2020 06:48:20 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3A443F68E;
+        Tue, 14 Jan 2020 06:48:19 -0800 (PST)
+Date:   Tue, 14 Jan 2020 14:48:17 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     "Zengtao (B)" <prime.zeng@hisilicon.com>
+Cc:     Linuxarm <linuxarm@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cpu-topology: Skip the exist but not possible cpu
+ nodes
+Message-ID: <20200114144817.GB48816@bogus>
+References: <1578725620-39677-1-git-send-email-prime.zeng@hisilicon.com>
+ <20200113101922.GE52694@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340E41D1@DGGEMM506-MBX.china.huawei.com>
+ <20200113122101.GA49933@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340E59BA@DGGEMM506-MBX.china.huawei.com>
+ <20200114102956.GB10403@bogus>
+ <678F3D1BB717D949B966B68EAEB446ED340E6EE9@DGGEMM506-MBX.china.huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED340E6EE9@DGGEMM506-MBX.china.huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The callers of this function seem to assume the reference is not taken
-in case rport already exists. This results in one extra reference taken
-on each rport re-discovery that will eventually get to inability to
-free rport structure on port removal.
+On Tue, Jan 14, 2020 at 12:17:41PM +0000, Zengtao (B) wrote:
+[...]
 
-Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
----
- drivers/scsi/libfc/fc_rport.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Thanks very much for your explanation.
+> So finally it turns into a very simple patch like this, more cleaner:
+> +/*
+> + * This function returns the logic cpu number of the node.
+> + * There are basically three kinds of return values:
+> + * (1) logic cpu number which is > 0.
+> + * (2) -ENDEV when the node is valid one which can be found in the device tree
 
-diff --git a/drivers/scsi/libfc/fc_rport.c b/drivers/scsi/libfc/fc_rport.c
-index da6e97d..a43f9dd 100644
---- a/drivers/scsi/libfc/fc_rport.c
-+++ b/drivers/scsi/libfc/fc_rport.c
-@@ -133,8 +133,10 @@ struct fc_rport_priv *fc_rport_create(struct fc_lport *lport, u32 port_id)
- 	lockdep_assert_held(&lport->disc.disc_mutex);
- 
- 	rdata = fc_rport_lookup(lport, port_id);
--	if (rdata)
-+	if (rdata) {
-+		kref_put(&rdata->kref, fc_rport_destroy);
- 		return rdata;
-+	}
- 
- 	if (lport->rport_priv_size > 0)
- 		rport_priv_size = lport->rport_priv_size;
--- 
-2.7.4
+s/ENDEV/ENODEV/ again :)
 
+> + * but there is no possible cpu nodes to match, when the CONFIG_NR_CPUS is
+> + * smaller than cpus node numbers in device tree, this will happen. It's
+> + * suggested to just ignore this case.
+> + * (3) -1 if the node does not exist in the device tree
+> + */
+>  static int __init get_cpu_for_node(struct device_node *node)
+>  {
+>         struct device_node *cpu_node;
+> @@ -261,7 +271,8 @@ static int __init get_cpu_for_node(struct device_node *node)
+>         if (cpu >= 0)
+>                 topology_parse_cpu_capacity(cpu_node, cpu);
+>         else
+> -               pr_crit("Unable to find CPU node for %pOF\n", cpu_node);
+> +               pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
+> +                       cpu_node, cpumask_pr_args(cpu_possible_mask));
+> 
+>         of_node_put(cpu_node);
+>         return cpu;
+> @@ -286,9 +297,8 @@ static int __init parse_core(struct device_node *core, int package_id,
+>                                 cpu_topology[cpu].package_id = package_id;
+>                                 cpu_topology[cpu].core_id = core_id;
+>                                 cpu_topology[cpu].thread_id = i;
+> -                       } else {
+> -                               pr_err("%pOF: Can't get CPU for thread\n",
+> -                                      t);
+> +                       } else if (cpu != -ENODEV) {
+> +                               pr_err("%pOF: Can't get CPU for thread\n", t);
+>                                 of_node_put(t);
+>                                 return -EINVAL;
+>                         }
+> @@ -307,7 +317,7 @@ static int __init parse_core(struct device_node *core, int package_id,
+> 
+>                 cpu_topology[cpu].package_id = package_id;
+>                 cpu_topology[cpu].core_id = core_id;
+> -       } else if (leaf) {
+> +       } else if (leaf && cpu != -ENODEV) {
+>                 pr_err("%pOF: Can't get CPU for leaf core\n", core);
+>                 return -EINVAL;
+>         }
+> 
+> Any more suggestions?
+
+None except the above minor nit. I will wait for v3 before I give ack/review
+tag. Thanks for the patience.
+
+--
+Regards,
+Sudeep
