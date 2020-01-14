@@ -2,196 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D30BE13A4CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87BBC13A57B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgANKCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:02:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726053AbgANKC3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:02:29 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EA2DH4157834;
-        Tue, 14 Jan 2020 05:02:20 -0500
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xh7h70vdy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 05:02:19 -0500
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00EA0uDp029507;
-        Tue, 14 Jan 2020 10:02:25 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma01wdc.us.ibm.com with ESMTP id 2xf7502ga5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 10:02:25 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EA2Iuu23790018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 10:02:18 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F47AC605A;
-        Tue, 14 Jan 2020 10:02:18 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB55BC6061;
-        Tue, 14 Jan 2020 10:02:15 +0000 (GMT)
-Received: from skywalker.in.ibm.com (unknown [9.124.35.105])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Jan 2020 10:02:15 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v3 8/9] asm-generic/tlb: Rename HAVE_MMU_GATHER_NO_GATHER
-Date:   Tue, 14 Jan 2020 15:31:44 +0530
-Message-Id: <20200114100145.365527-9-aneesh.kumar@linux.ibm.com>
+        id S1730838AbgANKIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:08:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729067AbgANKHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:52 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3873924677;
+        Tue, 14 Jan 2020 10:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578996471;
+        bh=8AIZEBeI+orkEPwjWlJSquPttIx5N798ymgLlc/bwHs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bIr9V7QOxTw6Nlh4NqzojvTkLo9eZRfC4Jr41qkn0Q+zVI8XixHllg82Z6WMJGa29
+         Dy38grSz84k84Qg33vr8iQUV0XFBumjwUhhHoKA+8OiipoB3MVSmEgC0orlRMmiISa
+         wzoOSr7O2iYORfT93f7+8InijtQBenzLHE38eJo8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.19 27/46] usb: musb: fix idling for suspend after disconnect interrupt
+Date:   Tue, 14 Jan 2020 11:01:44 +0100
+Message-Id: <20200114094345.907114623@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
-References: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-14_02:2020-01-13,2020-01-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0
- phishscore=0 bulkscore=0 adultscore=0 clxscore=1015 mlxscore=0
- suspectscore=2 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1910280000 definitions=main-2001140090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Tony Lindgren <tony@atomide.com>
 
-Towards a more consistent naming scheme.
+commit 5fbf7a2534703fd71159d3d71504b0ad01b43394 upstream.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+When disconnected as USB B-device, suspend interrupt should come before
+diconnect interrupt, because the DP/DM pins are shorter than the
+VBUS/GND pins on the USB connectors. But we sometimes get a suspend
+interrupt after disconnect interrupt. In that case we have devctl set to
+99 with VBUS still valid and musb_pm_runtime_check_session() wrongly
+thinks we have an active session. We have no other interrupts after
+disconnect coming in this case at least with the omap2430 glue.
+
+Let's fix the issue by checking the interrupt status again with
+delayed work for the devctl 99 case. In the suspend after disconnect
+case the devctl session bit has cleared by then and musb can idle.
+For a typical USB B-device connect case we just continue with normal
+interrupts.
+
+Fixes: 467d5c980709 ("usb: musb: Implement session bit based runtime PM for musb-core")
+
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Link: https://lore.kernel.org/r/20200107152625.857-2-b-liu@ti.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/Kconfig              |  2 +-
- arch/s390/Kconfig         |  2 +-
- include/asm-generic/tlb.h | 14 ++++++++++++--
- mm/mmu_gather.c           | 10 +++++-----
- 4 files changed, 19 insertions(+), 9 deletions(-)
+ drivers/usb/musb/musb_core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index e8548211b6a9..c35668fbf4d4 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -402,7 +402,7 @@ config MMU_GATHER_PAGE_SIZE
- config MMU_GATHER_NO_RANGE
- 	bool
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -1842,6 +1842,9 @@ static const struct attribute_group musb
+ #define MUSB_QUIRK_B_INVALID_VBUS_91	(MUSB_DEVCTL_BDEVICE | \
+ 					 (2 << MUSB_DEVCTL_VBUS_SHIFT) | \
+ 					 MUSB_DEVCTL_SESSION)
++#define MUSB_QUIRK_B_DISCONNECT_99	(MUSB_DEVCTL_BDEVICE | \
++					 (3 << MUSB_DEVCTL_VBUS_SHIFT) | \
++					 MUSB_DEVCTL_SESSION)
+ #define MUSB_QUIRK_A_DISCONNECT_19	((3 << MUSB_DEVCTL_VBUS_SHIFT) | \
+ 					 MUSB_DEVCTL_SESSION)
  
--config HAVE_MMU_GATHER_NO_GATHER
-+config MMU_GATHER_NO_GATHER
- 	bool
- 
- config ARCH_HAVE_NMI_SAFE_CMPXCHG
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index e2cde82a1a3c..de39c2e92435 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -163,7 +163,7 @@ config S390
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_MEMBLOCK_NODE_MAP
- 	select HAVE_MEMBLOCK_PHYS_MAP
--	select HAVE_MMU_GATHER_NO_GATHER
-+	select MMU_GATHER_NO_GATHER
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_NOP_MCOUNT
- 	select HAVE_OPROFILE
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index 53befa5acb27..ca0fe75b5355 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -143,6 +143,16 @@
-  *  MMU_GATHER_NO_RANGE
-  *
-  *  Use this if your architecture lacks an efficient flush_tlb_range().
-+ *
-+ *  MMU_GATHER_NO_GATHER
-+ *
-+ *  If the option is set the mmu_gather will not track individual pages for
-+ *  delayed page free anymore. A platform that enables the option needs to
-+ *  provide its own implementation of the __tlb_remove_page_size() function to
-+ *  free pages.
-+ *
-+ *  This is useful if your architecture already flushes TLB entries in the
-+ *  various ptep_get_and_clear() functions.
-  */
- 
- #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-@@ -202,7 +212,7 @@ extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
- #endif /* CONFIG_MMU_GATHER_RCU_TABLE_FREE */
- 
- 
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- /*
-  * If we can't allocate a page to make a big batch of page pointers
-  * to work on, then just handle a few from the on-stack structure.
-@@ -277,7 +287,7 @@ struct mmu_gather {
- 
- 	unsigned int		batch_count;
- 
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- 	struct mmu_gather_batch *active;
- 	struct mmu_gather_batch	local;
- 	struct page		*__pages[MMU_GATHER_BUNDLE];
-diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-index 297c70307367..a28c74328085 100644
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -11,7 +11,7 @@
- #include <asm/pgalloc.h>
- #include <asm/tlb.h>
- 
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- 
- static bool tlb_next_batch(struct mmu_gather *tlb)
- {
-@@ -89,7 +89,7 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
- 	return false;
- }
- 
--#endif /* HAVE_MMU_GATHER_NO_GATHER */
-+#endif /* MMU_GATHER_NO_GATHER */
- 
- #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- 
-@@ -180,7 +180,7 @@ static void tlb_flush_mmu_free(struct mmu_gather *tlb)
- #ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- 	tlb_table_flush(tlb);
- #endif
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- 	tlb_batch_pages_flush(tlb);
- #endif
- }
-@@ -211,7 +211,7 @@ void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
- 	/* Is it from 0 to ~0? */
- 	tlb->fullmm     = !(start | (end+1));
- 
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- 	tlb->need_flush_all = 0;
- 	tlb->local.next = NULL;
- 	tlb->local.nr   = 0;
-@@ -271,7 +271,7 @@ void tlb_finish_mmu(struct mmu_gather *tlb,
- 
- 	tlb_flush_mmu(tlb);
- 
--#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
-+#ifndef CONFIG_MMU_GATHER_NO_GATHER
- 	tlb_batch_list_free(tlb);
- #endif
- 	dec_tlb_flush_pending(tlb->mm);
--- 
-2.24.1
+@@ -1864,6 +1867,11 @@ static void musb_pm_runtime_check_sessio
+ 	s = MUSB_DEVCTL_FSDEV | MUSB_DEVCTL_LSDEV |
+ 		MUSB_DEVCTL_HR;
+ 	switch (devctl & ~s) {
++	case MUSB_QUIRK_B_DISCONNECT_99:
++		musb_dbg(musb, "Poll devctl in case of suspend after disconnect\n");
++		schedule_delayed_work(&musb->irq_work,
++				      msecs_to_jiffies(1000));
++		break;
+ 	case MUSB_QUIRK_B_INVALID_VBUS_91:
+ 		if (musb->quirk_retries && !musb->flush_irq_work) {
+ 			musb_dbg(musb,
+
 
