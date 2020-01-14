@@ -2,130 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A9513A2FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9542013A31B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbgANI3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 03:29:53 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38624 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbgANI3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 03:29:53 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00E8TfZC013873;
-        Tue, 14 Jan 2020 02:29:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578990581;
-        bh=EREYuC/AXrNZ/pdGBfsKD3rJsw744+e7sxVQeRfj0Ms=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cYSAbBwXgYczJ1pzAgHb4s44xJhvBOfrWiaPtDtcOWA3pk4vWoH4RusCyBwGtRHWh
-         h1cgcTwTWH/6ArvIdiID6Q8fjUqzqC3tz886wYHUXBRJYbzjeURiyZjgmQaZhViJVi
-         2ud4Shu7La5vYldKuKPeggufGiEex5pc1opnFiek=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00E8TfjR103963
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Jan 2020 02:29:41 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 14
- Jan 2020 02:29:41 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 14 Jan 2020 02:29:41 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00E8TbcU059355;
-        Tue, 14 Jan 2020 02:29:38 -0600
-Subject: Re: [RESEND PATCH v5 01/11] dt-bindings: phy-mtk-tphy: add two
- optional properties for u2phy
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Kishon Vijay Abraham I <kishon@a0393678ub>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1578448326-27455-1-git-send-email-chunfeng.yun@mediatek.com>
- <20200110111006.GB2220@a0393678ub> <1578990166.21256.35.camel@mhfsdcap03>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <970b7cce-40ed-9ab7-5e04-9e3d609eadf7@ti.com>
-Date:   Tue, 14 Jan 2020 14:01:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <1578990166.21256.35.camel@mhfsdcap03>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        id S1728879AbgANIlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 03:41:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33882 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbgANIlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 03:41:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C9258AE6F;
+        Tue, 14 Jan 2020 08:41:03 +0000 (UTC)
+Message-ID: <1578990223.15925.0.camel@suse.com>
+Subject: Re: [PATCH] r8152: Add MAC passthrough support to new device
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>, davem@davemloft.net,
+        hayeswang@realtek.com
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Prashant Malani <pmalani@chromium.org>,
+        Grant Grundler <grundler@chromium.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        David Chen <david.chen7@dell.com>,
+        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Tue, 14 Jan 2020 09:23:43 +0100
+In-Reply-To: <20200114044127.20085-1-kai.heng.feng@canonical.com>
+References: <20200114044127.20085-1-kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chunfeng,
+Am Dienstag, den 14.01.2020, 12:41 +0800 schrieb Kai-Heng Feng:
+> Device 0xa387 also supports MAC passthrough, therefore add it to the
+> whitelst.
 
-On 14/01/20 1:52 PM, Chunfeng Yun wrote:
-> Hi Kishon,
-> 
-> On Fri, 2020-01-10 at 16:40 +0530, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On Wed, Jan 08, 2020 at 09:51:56AM +0800, Chunfeng Yun wrote:
->>> Add two optional properties, one for tuning J-K voltage by INTR,
->>> another for disconnect threshold, both of them are related with
->>> connect detection
->>>
->>> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
->>> Acked-by: Rob Herring <robh@kernel.org>
->>
->> Patch does not apply. I get the following errors
->> error: patch failed: Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt:52
->> error: Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt: patch does not apply
->> error: Did you hand edit your patch?
->>
->> Can you send them again in the right format?
-> I download this patch from https://patchwork.kernel.org/patch/11322505/
-> and fetch kernel5.5-rc5, then
+Hi,
 
-Please try applying to
-git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
-> 
-> git am --reject
-> RESEND-v5-01-11-dt-bindings-phy-mtk-tphy-add-two-optional-properties-for-u2phy.patch
-> Applying: dt-bindings: phy-mtk-tphy: add two optional properties for
-> u2phy
-> Checking patch Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt...
-> Applied patch Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> cleanly.
-> 
-> don't reproduce the error you encountered, can you tell me the steps you
-> apply the patch, thanks
+this list is getting longer and longer. Isn't there a way to do
+this generically? ACPI?
 
-git am chunfeng.yun.patch --reject
-Applying: dt-bindings: phy-mtk-tphy: add two optional properties for u2phy
-Checking patch Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt...
-error: while searching for:
-- mediatek,eye-vrt	: u32, the selection of VRT reference voltage?
-- mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage?
-- mediatek,bc12	: bool, enable BC12 of u2phy if support it?
-?
-Example:?
-?
+	Regards
+		Oliver
 
-error: patch failed:
-Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt:52
-Applying patch Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-with 1 reject...
-Rejected hunk #1.
-Patch failed at 0001 dt-bindings: phy-mtk-tphy: add two optional
-properties for u2phy
-Use 'git am --show-current-patch' to see the failed patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
-
-Thanks
-Kishon
