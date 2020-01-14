@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 094A513AA34
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97EC813AA31
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:06:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbgANNEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:04:02 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43192 "EHLO
+        id S1729429AbgANND7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:03:59 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:43205 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728894AbgANNCb (ORCPT
+        with ESMTP id S1728916AbgANNCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:02:31 -0500
+        Tue, 14 Jan 2020 08:02:33 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1irLpw-0004gf-4o; Tue, 14 Jan 2020 14:02:24 +0100
+        id 1irLq1-0004iB-UB; Tue, 14 Jan 2020 14:02:30 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2C0441C0805;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 841E31C0823;
         Tue, 14 Jan 2020 14:02:18 +0100 (CET)
 Date:   Tue, 14 Jan 2020 13:02:18 -0000
 From:   "tip-bot2 for Andrei Vagin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Make timer_settime() time namespace aware
-Cc:     Andrei Vagin <avagin@openvz.org>, Dmitry Safonov <dima@arista.com>,
+Subject: [tip: timers/core] timerfd: Make timerfd_settime() time namespace aware
+Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191112012724.250792-15-dima@arista.com>
-References: <20191112012724.250792-15-dima@arista.com>
+In-Reply-To: <20191112012724.250792-14-dima@arista.com>
+References: <20191112012724.250792-14-dima@arista.com>
 MIME-Version: 1.0
-Message-ID: <157900693801.396.4434514969684868264.tip-bot2@tip-bot2>
+Message-ID: <157900693827.396.372162983564210186.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,49 +47,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     7da8b3a44bb426a43670b3a97ed61085018a9d43
-Gitweb:        https://git.kernel.org/tip/7da8b3a44bb426a43670b3a97ed61085018a9d43
+Commit-ID:     6cd889d43c40b13f81a44c41896781ce70244769
+Gitweb:        https://git.kernel.org/tip/6cd889d43c40b13f81a44c41896781ce70244769
 Author:        Andrei Vagin <avagin@gmail.com>
-AuthorDate:    Tue, 12 Nov 2019 01:27:03 
+AuthorDate:    Tue, 12 Nov 2019 01:27:02 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 14 Jan 2020 12:20:54 +01:00
+CommitterDate: Tue, 14 Jan 2020 12:20:53 +01:00
 
-posix-timers: Make timer_settime() time namespace aware
+timerfd: Make timerfd_settime() time namespace aware
 
-Wire timer_settime() syscall into time namespace virtualization.
-
-sys_timer_settime() calls the ktime->timer_set() callback. Right now,
-common_timer_set() is the only implementation for the callback.
-
-The user-supplied expiry value is converted from timespec64 to ktime and
-then timens_ktime_to_host() can be used to convert namespace's time to the
-host time.
-
-Inside a time namespace kernel's time differs by a fixed offset from a
-user-supplied time, but only absolute values (TIMER_ABSTIME) must be
-converted.
+timerfd_settime() accepts an absolute value of the expiration time if
+TFD_TIMER_ABSTIME is specified. This value is in the task's time namespace
+and has to be converted to the host's time namespace.
 
 Co-developed-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20191112012724.250792-15-dima@arista.com
+Link: https://lore.kernel.org/r/20191112012724.250792-14-dima@arista.com
 
 
 ---
- kernel/time/posix-timers.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/timerfd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index d26b915..473082b 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -885,6 +885,8 @@ int common_timer_set(struct k_itimer *timr, int flags,
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index ac7f59a..c5509d2 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -26,6 +26,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/compat.h>
+ #include <linux/rcupdate.h>
++#include <linux/time_namespace.h>
  
- 	timr->it_interval = timespec64_to_ktime(new_setting->it_interval);
- 	expires = timespec64_to_ktime(new_setting->it_value);
-+	if (flags & TIMER_ABSTIME)
-+		expires = timens_ktime_to_host(timr->it_clock, expires);
- 	sigev_none = timr->it_sigev_notify == SIGEV_NONE;
+ struct timerfd_ctx {
+ 	union {
+@@ -196,6 +197,8 @@ static int timerfd_setup(struct timerfd_ctx *ctx, int flags,
+ 	}
  
- 	kc->timer_arm(timr, expires, flags & TIMER_ABSTIME, sigev_none);
+ 	if (texp != 0) {
++		if (flags & TFD_TIMER_ABSTIME)
++			texp = timens_ktime_to_host(clockid, texp);
+ 		if (isalarm(ctx)) {
+ 			if (flags & TFD_TIMER_ABSTIME)
+ 				alarm_start(&ctx->t.alarm, texp);
