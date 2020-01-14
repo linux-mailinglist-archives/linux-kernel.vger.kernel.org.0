@@ -2,112 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ABB713A28A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B080713A293
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 09:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgANIKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 03:10:43 -0500
-Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:1074
-        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725956AbgANIKn (ORCPT
+        id S1729334AbgANILl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 03:11:41 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41253 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgANILk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 03:10:43 -0500
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id 9D3F3204F5;
-        Tue, 14 Jan 2020 08:10:33 +0000 (UTC)
+        Tue, 14 Jan 2020 03:11:40 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i1so10981062oie.8;
+        Tue, 14 Jan 2020 00:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ESgbHWyyXZkUE+Zt5y6qd3pCusxZlx2vlVaiZEg9MHY=;
+        b=qs1x37BdbYn5t6+23mL0IE+dw5g0PGcS5ldK99AKnwJhurHow1kPcdhAGd29oDAm8D
+         vZBnicg0mFy4ulUyWo0e8COjmB12/uPF+VtzOLHMl3i2Y1CA3Ok+t56Iw7roc0KjzqaL
+         oP5L7jiNCAM4qY4BkmOi/LHpeFyDNKziaX5S1OHwT9HS2QKe7wriSs4oHZJxZyRmwF+I
+         yVc/UuBYs6IkcHdWcknqLstN1X15uGDB/JZ1R29VlAT0nx8/An6hzNW9Qbqclaec5XYC
+         4dh6dw3o/hl+Q22PdhB8rlk0cLlApYHShdgEnK3Tts+cco5LAo1nulGT+ZpVyzFZBbHQ
+         SF7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ESgbHWyyXZkUE+Zt5y6qd3pCusxZlx2vlVaiZEg9MHY=;
+        b=hyt0rq1GHGTpBD4aQRVnRIb10a4gkwUUka8PA8E6Ng/QPEDDQ22jWaJCgWv0kiE1il
+         UJUuSx3hJUleB6cML8FwaUFPWu1nkrSieKhZNfdWCCC5OoeYLp4W+huJJiQ3Io34X23s
+         iiETB2VDpP5dWcxvaIDM60YrGgdY5m4odwmZFI0QIwJ/ex4RkKFCQ/2K4Y2wgfZOc+Rm
+         Aea6wmhX6bBqVqFI67vznSW/hOg8KyaJM6WQUH1KTFXkeOwJlCzqtx5meuzqeCmC7+6n
+         3fkh3vnyARTCRjgvWUtDX6ONX3mUqyCW/o9BMts6FIqMgm44lGWpvBNuNU+P7IPdL8DC
+         y8GA==
+X-Gm-Message-State: APjAAAUiRhjjXpR/JuRljBkoUTb6KipAR6tlphhJtkP8v84iAvTmSnp2
+        68ulTo52vke09lUCk6oa+x3XBILWGQZfLsW/zqk=
+X-Google-Smtp-Source: APXvYqzCDP1HlSPkjT+Ko+pskg045pRBOTrM+W3f2eEy7IcfuScVnML1cmr+MHU+++hW/8MQQKSTseULh6yeUpc2qVo=
+X-Received: by 2002:aca:1309:: with SMTP id e9mr15897662oii.7.1578989498871;
+ Tue, 14 Jan 2020 00:11:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 14 Jan 2020 09:10:33 +0100
-From:   Martin Schiller <ms@dev.tdt.de>
-To:     Jakub Kicinski <kubakici@wp.pl>
-Cc:     khc@pm.waw.pl, davem@davemloft.net, linux-x25@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] wan/hdlc_x25: fix skb handling
-Organization: TDT AG
-In-Reply-To: <20200113054421.55cd5ddc@cakuba>
-References: <20200113124551.2570-1-ms@dev.tdt.de>
- <20200113124551.2570-2-ms@dev.tdt.de> <20200113054421.55cd5ddc@cakuba>
-Message-ID: <f013ad8007d948436e85100184f82b67@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.1.5
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
+References: <20200108162211.22358-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200108162211.22358-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200113212252.GA3120@bogus>
+In-Reply-To: <20200113212252.GA3120@bogus>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 14 Jan 2020 08:11:12 +0000
+Message-ID: <CA+V-a8sP=zTU1UAbXBWCpAn0uduNnUg+JEK0-y8G-4dV4AVVGQ@mail.gmail.com>
+Subject: Re: [v3 4/6] dt-bindings: PCI: rcar: Add bindings for R-Car PCIe
+ endpoint controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-13 14:44, Jakub Kicinski wrote:
-> On Mon, 13 Jan 2020 13:45:51 +0100, Martin Schiller wrote:
->>  o call skb_reset_network_header() before hdlc->xmit()
->>  o change skb proto to HDLC (0x0019) before hdlc->xmit()
->>  o call dev_queue_xmit_nit() before hdlc->xmit()
->> 
->> This changes make it possible to trace (tcpdump) outgoing layer2
->> (ETH_P_HDLC) packets
->> 
->>  o use a copy of the skb for lapb_data_request() in x25_xmit()
-> 
-> It's not clear to me why
+Hi Rob,
 
-Well, this patch is ported form an older environment which is based on
-linux-3.4. I can't reproduce the misbehavior with actual version, so I
-will drop this part of the patch.
+thank you for the review.
 
-> 
->> This fixes the problem, that tracing layer3 (ETH_P_X25) packets
->> results in a malformed first byte of the packets.
->> 
->> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
->> ---
->>  drivers/net/wan/hdlc_x25.c | 15 +++++++++++----
->>  1 file changed, 11 insertions(+), 4 deletions(-)
->> 
->> diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
->> index b28051eba736..434e5263eddf 100644
->> --- a/drivers/net/wan/hdlc_x25.c
->> +++ b/drivers/net/wan/hdlc_x25.c
->> @@ -72,6 +72,7 @@ static int x25_data_indication(struct net_device 
->> *dev, struct sk_buff *skb)
->>  	unsigned char *ptr;
->> 
->>  	skb_push(skb, 1);
->> +	skb_reset_network_header(skb);
->> 
->>  	if (skb_cow(skb, 1))
-> 
-> This skb_cow() here is for the next handler down to have a 1 byte of
-> headroom guaranteed? It'd seem more natural to have skb_cow before the
-> push.. not that it's related to your patch.
+On Mon, Jan 13, 2020 at 9:23 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Jan 08, 2020 at 04:22:09PM +0000, Lad Prabhakar wrote:
+> > This patch adds the bindings for the R-Car PCIe endpoint driver.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../devicetree/bindings/pci/rcar-pci-ep.yaml  | 76 +++++++++++++++++++
+> >  1 file changed, 76 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+>
+> Fails 'make dt_binding_check':
+>
+> Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml: $id:
+> path/filename 'pci/rcar-pcie-ep.yaml' doesn't match actual filename
+>
+my bad fill that and post a v4.
 
-Thanks for the hint. I will move the skb_cow() before the skb_push().
-
-> 
->>  		return NET_RX_DROP;
->> @@ -88,6 +89,9 @@ static int x25_data_indication(struct net_device 
->> *dev, struct sk_buff *skb)
->>  static void x25_data_transmit(struct net_device *dev, struct sk_buff 
->> *skb)
->>  {
->>  	hdlc_device *hdlc = dev_to_hdlc(dev);
-> 
-> Please insert a new line after the variable declaration since you're
-> touching this one.
-
-OK, will do.
-
-> 
->> +	skb_reset_network_header(skb);
->> +	skb->protocol = hdlc_type_trans(skb, dev);
-
-
-I will also insert an "if (dev_nit_active(dev))" here.
-
->> +	dev_queue_xmit_nit(skb, dev);
->>  	hdlc->xmit(skb, dev); /* Ignore return value :-( */
->>  }
->> 
-
+Cheers,
+--Prabhakar Lad
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> > new file mode 100644
+> > index 000000000000..99c2a1174463
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> > @@ -0,0 +1,76 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (C) 2020 Renesas Electronics Europe GmbH - https://www.renesas.com/eu/en/
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/rcar-pcie-ep.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas R-Car PCIe Endpoint
+> > +
+> > +maintainers:
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: renesas,r8a774c0-pcie-ep
+> > +      - const: renesas,rcar-gen3-pcie-ep
+> > +
+> > +  reg:
+> > +    maxItems: 5
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: apb-base
+> > +      - const: memory0
+> > +      - const: memory1
+> > +      - const: memory2
+> > +      - const: memory3
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: pcie
+> > +
+> > +  max-functions:
+> > +    minimum: 1
+> > +    maximum: 6
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - resets
+> > +  - power-domains
+> > +  - clocks
+> > +  - clock-names
+> > +  - max-functions
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/r8a774c0-cpg-mssr.h>
+> > +    #include <dt-bindings/power/r8a774c0-sysc.h>
+> > +
+> > +     pcie0_ep: pcie-ep@fe000000 {
+> > +            compatible = "renesas,r8a774c0-pcie-ep",
+> > +                         "renesas,rcar-gen3-pcie-ep";
+> > +            reg = <0 0xfe000000 0 0x80000>,
+> > +                  <0x0 0xfe100000 0 0x100000>,
+> > +                  <0x0 0xfe200000 0 0x200000>,
+> > +                  <0x0 0x30000000 0 0x8000000>,
+> > +                  <0x0 0x38000000 0 0x8000000>;
+> > +            reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
+> > +            resets = <&cpg 319>;
+> > +            power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> > +            clocks = <&cpg CPG_MOD 319>;
+> > +            clock-names = "pcie";
+> > +            max-functions = /bits/ 8 <1>;
+> > +    };
+> > --
+> > 2.20.1
+> >
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
