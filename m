@@ -2,125 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1B8413A4D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:03:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9CB213A63A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbgANKCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:02:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50508 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729238AbgANKCd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:02:33 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EA23Pg081517;
-        Tue, 14 Jan 2020 05:02:07 -0500
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xfavytyd7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 05:02:06 -0500
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00EA075d020269;
-        Tue, 14 Jan 2020 10:01:56 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02dal.us.ibm.com with ESMTP id 2xf74p13k0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 10:01:55 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EA1sED50921896
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 10:01:54 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 935E5C6057;
-        Tue, 14 Jan 2020 10:01:54 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A37FC605A;
-        Tue, 14 Jan 2020 10:01:52 +0000 (GMT)
-Received: from skywalker.in.ibm.com (unknown [9.124.35.105])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Jan 2020 10:01:51 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v3 0/9] Fixup page directory freeing
-Date:   Tue, 14 Jan 2020 15:31:36 +0530
-Message-Id: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
+        id S1731630AbgANKKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:10:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731599AbgANKKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:10:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 280DC24681;
+        Tue, 14 Jan 2020 10:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578996614;
+        bh=/zh7hUGsbKPWP/EZmi18VLr6WqJo0rJEHGMtCmg7Y3w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pOuGDub8Nz6RcEPyZZyY+JvSel9WJB7wCX1xLwdOCMJXh8SuATieQOHojREFpgt8/
+         +HtI4Ku7CcOY/81D3JDjvNp1/0r8OB3oQC2B1A/0MZqMTvXTtALUy1mY0HT0UMixrL
+         b1fZxWWHaNO9xX638b1enwP6SEmIjDowpOTW1QDc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        Peter Chen <peter.chen@freescale.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 4.14 02/39] usb: chipidea: host: Disable port power only if previously enabled
+Date:   Tue, 14 Jan 2020 11:01:36 +0100
+Message-Id: <20200114094337.099032398@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
+References: <20200114094336.210038037@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-14_02:2020-01-13,2020-01-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=2 adultscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 phishscore=0 mlxlogscore=487 bulkscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001140090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a repost of patch series from Peter with the arch specific changes except ppc64 dropped.
-ppc64 changes are added here because we are redoing the patch series on top of ppc64 changes. This makes it
-easy to backport these changes. Only the first 3 patches need to be backported to stable. 
+From: Guenter Roeck <linux@roeck-us.net>
 
-The thing is, on anything SMP, freeing page directories should observe the
-exact same order as normal page freeing:
+commit c1ffba305dbcf3fb9ca969c20a97acbddc38f8e9 upstream.
 
- 1) unhook page/directory
- 2) TLB invalidate
- 3) free page/directory
+On shutdown, ehci_power_off() is called unconditionally to power off
+each port, even if it was never called to power on the port.
+For chipidea, this results in a call to ehci_ci_portpower() with a request
+to power off ports even if the port was never powered on.
+This results in the following warning from the regulator code.
 
-Without this, any concurrent page-table walk could end up with a Use-after-Free.
-This is esp. trivial for anything that has software page-table walkers
-(HAVE_FAST_GUP / software TLB fill) or the hardware caches partial page-walks
-(ie. caches page directories).
+WARNING: CPU: 0 PID: 182 at drivers/regulator/core.c:2596 _regulator_disable+0x1a8/0x210
+unbalanced disables for usb_otg2_vbus
+Modules linked in:
+CPU: 0 PID: 182 Comm: init Not tainted 5.4.6 #1
+Hardware name: Freescale i.MX7 Dual (Device Tree)
+[<c0313658>] (unwind_backtrace) from [<c030d698>] (show_stack+0x10/0x14)
+[<c030d698>] (show_stack) from [<c1133afc>] (dump_stack+0xe0/0x10c)
+[<c1133afc>] (dump_stack) from [<c0349098>] (__warn+0xf4/0x10c)
+[<c0349098>] (__warn) from [<c0349128>] (warn_slowpath_fmt+0x78/0xbc)
+[<c0349128>] (warn_slowpath_fmt) from [<c09f36ac>] (_regulator_disable+0x1a8/0x210)
+[<c09f36ac>] (_regulator_disable) from [<c09f374c>] (regulator_disable+0x38/0xe8)
+[<c09f374c>] (regulator_disable) from [<c0df7bac>] (ehci_ci_portpower+0x38/0xdc)
+[<c0df7bac>] (ehci_ci_portpower) from [<c0db4fa4>] (ehci_port_power+0x50/0xa4)
+[<c0db4fa4>] (ehci_port_power) from [<c0db5420>] (ehci_silence_controller+0x5c/0xc4)
+[<c0db5420>] (ehci_silence_controller) from [<c0db7644>] (ehci_stop+0x3c/0xcc)
+[<c0db7644>] (ehci_stop) from [<c0d5bdc4>] (usb_remove_hcd+0xe0/0x19c)
+[<c0d5bdc4>] (usb_remove_hcd) from [<c0df7638>] (host_stop+0x38/0xa8)
+[<c0df7638>] (host_stop) from [<c0df2f34>] (ci_hdrc_remove+0x44/0xe4)
+...
 
-Even on UP this might give issues since mmu_gather is preemptible these days.
-An interrupt or preempted task accessing user pages might stumble into the free
-page if the hardware caches page directories.
+Keeping track of the power enable state avoids the warning and traceback.
 
-This patch series fixup ppc64 and add generic MMU_GATHER changes to support the conversion of other architectures.
-I haven't added patches w.r.t other architecture because they are yet to be acked.
+Fixes: c8679a2fb8dec ("usb: chipidea: host: add portpower override")
+Cc: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Peter Chen <peter.chen@freescale.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Acked-by: Peter Chen <peter.chen@nxp.com>
+Link: https://lore.kernel.org/r/20191226155754.25451-1-linux@roeck-us.net
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+---
+ drivers/usb/chipidea/host.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Aneesh Kumar K.V (1):
-  powerpc/mmu_gather: Enable RCU_TABLE_FREE even for !SMP case
+--- a/drivers/usb/chipidea/host.c
++++ b/drivers/usb/chipidea/host.c
+@@ -37,6 +37,7 @@ static int (*orig_bus_suspend)(struct us
+ 
+ struct ehci_ci_priv {
+ 	struct regulator *reg_vbus;
++	bool enabled;
+ };
+ 
+ static int ehci_ci_portpower(struct usb_hcd *hcd, int portnum, bool enable)
+@@ -48,7 +49,7 @@ static int ehci_ci_portpower(struct usb_
+ 	int ret = 0;
+ 	int port = HCS_N_PORTS(ehci->hcs_params);
+ 
+-	if (priv->reg_vbus) {
++	if (priv->reg_vbus && enable != priv->enabled) {
+ 		if (port > 1) {
+ 			dev_warn(dev,
+ 				"Not support multi-port regulator control\n");
+@@ -64,6 +65,7 @@ static int ehci_ci_portpower(struct usb_
+ 				enable ? "enable" : "disable", ret);
+ 			return ret;
+ 		}
++		priv->enabled = enable;
+ 	}
+ 
+ 	if (enable && (ci->platdata->phy_mode == USBPHY_INTERFACE_MODE_HSIC)) {
 
-Peter Zijlstra (8):
-  mm/mmu_gather: Invalidate TLB correctly on batch allocation failure
-    and flush
-  asm-generic/tlb: Avoid potential double flush
-  asm-gemeric/tlb: Remove stray function declarations
-  asm-generic/tlb: Add missing CONFIG symbol
-  asm-generic/tlb: Rename HAVE_RCU_TABLE_FREE
-  asm-generic/tlb: Rename HAVE_MMU_GATHER_PAGE_SIZE
-  asm-generic/tlb: Rename HAVE_MMU_GATHER_NO_GATHER
-  asm-generic/tlb: Provide MMU_GATHER_TABLE_FREE
-
- arch/Kconfig                                 |  13 +-
- arch/arm/Kconfig                             |   2 +-
- arch/arm/include/asm/tlb.h                   |   4 -
- arch/arm64/Kconfig                           |   2 +-
- arch/powerpc/Kconfig                         |   5 +-
- arch/powerpc/include/asm/book3s/32/pgalloc.h |   8 --
- arch/powerpc/include/asm/book3s/64/pgalloc.h |   2 -
- arch/powerpc/include/asm/nohash/pgalloc.h    |   8 --
- arch/powerpc/include/asm/tlb.h               |  11 ++
- arch/powerpc/mm/book3s64/pgtable.c           |   7 -
- arch/s390/Kconfig                            |   4 +-
- arch/sparc/Kconfig                           |   3 +-
- arch/sparc/include/asm/tlb_64.h              |   9 ++
- arch/x86/Kconfig                             |   2 +-
- arch/x86/include/asm/tlb.h                   |   4 +-
- include/asm-generic/tlb.h                    | 120 ++++++++++-------
- mm/gup.c                                     |   2 +-
- mm/mmu_gather.c                              | 134 +++++++++++++------
- 18 files changed, 207 insertions(+), 133 deletions(-)
-
--- 
-2.24.1
 
