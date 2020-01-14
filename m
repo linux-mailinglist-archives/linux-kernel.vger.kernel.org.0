@@ -2,125 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EAF313B612
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7186A13B61A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 00:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbgANXnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 18:43:16 -0500
-Received: from mga17.intel.com ([192.55.52.151]:26645 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbgANXnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 18:43:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 15:43:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
-   d="scan'208";a="248215866"
-Received: from emkilgox-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.0.151])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Jan 2020 15:43:09 -0800
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 5/5] soundwire: intel: free all resources on hw_free()
-Date:   Tue, 14 Jan 2020 17:42:57 -0600
-Message-Id: <20200114234257.14336-6-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200114234257.14336-1-pierre-louis.bossart@linux.intel.com>
-References: <20200114234257.14336-1-pierre-louis.bossart@linux.intel.com>
+        id S1728879AbgANXqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 18:46:19 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:47370 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728757AbgANXqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 18:46:19 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irVsm-008O1i-77; Tue, 14 Jan 2020 23:46:00 +0000
+Date:   Tue, 14 Jan 2020 23:46:00 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-snps-arc@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [RFC 2/4] lib/strncpy_from_user: Remove redundant user space
+ pointer range check
+Message-ID: <20200114234600.GD8904@ZenIV.linux.org.uk>
+References: <20200114200846.29434-1-vgupta@synopsys.com>
+ <20200114200846.29434-3-vgupta@synopsys.com>
+ <CAHk-=wgoc5DaF6=WxsAcft_Lp4XUYTiRhhCJGcmM5PwEDXY6Gw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgoc5DaF6=WxsAcft_Lp4XUYTiRhhCJGcmM5PwEDXY6Gw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure all calls to the SoundWire stream API are done and involve
-callback
+On Tue, Jan 14, 2020 at 01:22:07PM -0800, Linus Torvalds wrote:
 
-Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/intel.c | 40 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+> The fact is, copying a string from user space is *very* different from
+> copying a fixed number of bytes, and that whole dance with
+> 
+>         max_addr = user_addr_max();
+> 
+> is absolutely required and necessary.
+> 
+> You completely broke string copying.
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index c498812522ab..e0c1fff7c4a0 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -550,6 +550,25 @@ static int intel_params_stream(struct sdw_intel *sdw,
- 	return -EIO;
- }
- 
-+static int intel_free_stream(struct sdw_intel *sdw,
-+			     struct snd_pcm_substream *substream,
-+			     struct snd_soc_dai *dai,
-+			     int link_id)
-+{
-+	struct sdw_intel_link_res *res = sdw->link_res;
-+	struct sdw_intel_stream_free_data free_data;
-+
-+	free_data.substream = substream;
-+	free_data.dai = dai;
-+	free_data.link_id = link_id;
-+
-+	if (res->ops && res->ops->free_stream && res->dev)
-+		return res->ops->free_stream(res->dev,
-+					     &free_data);
-+
-+	return 0;
-+}
-+
- /*
-  * bank switch routines
-  */
-@@ -817,6 +836,7 @@ static int
- intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- {
- 	struct sdw_cdns *cdns = snd_soc_dai_get_drvdata(dai);
-+	struct sdw_intel *sdw = cdns_to_intel(cdns);
- 	struct sdw_cdns_dma_data *dma;
- 	int ret;
- 
-@@ -824,12 +844,28 @@ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- 	if (!dma)
- 		return -EIO;
- 
-+	ret = sdw_deprepare_stream(dma->stream);
-+	if (ret) {
-+		dev_err(dai->dev, "sdw_deprepare_stream: failed %d", ret);
-+		return ret;
-+	}
-+
- 	ret = sdw_stream_remove_master(&cdns->bus, dma->stream);
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(dai->dev, "remove master from stream %s failed: %d\n",
- 			dma->stream->name, ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	ret = intel_free_stream(sdw, substream, dai, sdw->instance);
-+	if (ret < 0) {
-+		dev_err(dai->dev, "intel_free_stream: failed %d", ret);
-+		return ret;
-+	}
-+
-+	sdw_release_stream(dma->stream);
-+
-+	return 0;
- }
- 
- static void intel_shutdown(struct snd_pcm_substream *substream,
--- 
-2.20.1
+BTW, a quick grep through the callers has found something odd -
+static ssize_t kmemleak_write(struct file *file, const char __user *user_buf,
+                              size_t size, loff_t *ppos)
+{
+        char buf[64];
+        int buf_size;
+        int ret;
+
+        buf_size = min(size, (sizeof(buf) - 1));
+        if (strncpy_from_user(buf, user_buf, buf_size) < 0)
+                return -EFAULT;
+        buf[buf_size] = 0;
+
+What the hell?  If somebody is calling write(fd, buf, n) they'd
+better be ready to see any byte from buf[0] up to buf[n - 1]
+fetched, and if something is unmapped - deal with -EFAULT.
+Is something really doing that and if so, why does kmemleak
+try to accomodate that idiocy?
+
+The same goes for several more ->write() instances - mtrr_write(),
+armada_debugfs_crtc_reg_write() and cio_ignore_write(); IMO that's
+seriously misguided (and cio one ought use vmemdup_user() instead
+of what it's doing)...
 
