@@ -2,271 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4142E13A55F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A85913A559
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbgANKHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
+        id S1730555AbgANKG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:06:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729904AbgANKHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:07:10 -0500
+        id S1730497AbgANKGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:06:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0000624676;
-        Tue, 14 Jan 2020 10:07:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF00524676;
+        Tue, 14 Jan 2020 10:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996428;
-        bh=STI68TSEDb5ph5FMcCq7Gh050wmxkEKWPvyslTy8OiA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=owUIb/H97XzzUpAHCPD5/WcGNcwDNxMJaaiYLRhatKmmwf4qvKRnV099VYVsLZfk+
-         IpTjaucv+Qxjiy+kFcTogjbiInzLCh7O7kSFQ5nde8dQL7vNW4KFoN52WdpeJSZzTn
-         7P6xRiifIhlvpOOfsRXdfYJInR6ZRSaRbZ58MOSY=
+        s=default; t=1578996414;
+        bh=wMVcQRP82232iYT/6w3tIiCe68QFyz0NHLbAdhJripI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gonk2tnbLYgpSQ0y9dyDd/IaOgUaLfE5qlPTLjdIgUWMc7+muUFWKWKBSmVqPUQrp
+         BNXdjCRvaNNyUN4wB3xKwoGJu04txB+/nR2OpxJ/FnIxbOX8XPb6E7uInddeqqcLu/
+         T4jO0ef9rIbtX1F5lGiFm+INC1lTQXsiY3Ns1udU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.19 00/46] 4.19.96-stable review
-Date:   Tue, 14 Jan 2020 11:01:17 +0100
-Message-Id: <20200114094339.608068818@linuxfoundation.org>
+        stable@vger.kernel.org, Hillf Danton <hdanton@sina.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH 4.19 01/46] chardev: Avoid potential use-after-free in chrdev_open()
+Date:   Tue, 14 Jan 2020 11:01:18 +0100
+Message-Id: <20200114094340.695668933@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.96-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.19.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.19.96-rc1
-X-KernelTest-Deadline: 2020-01-16T09:43+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.19.96 release.
-There are 46 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+From: Will Deacon <will@kernel.org>
 
-Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
-Anything received after that time might be too late.
+commit 68faa679b8be1a74e6663c21c3a9d25d32f1c079 upstream.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.96-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-and the diffstat can be found below.
+'chrdev_open()' calls 'cdev_get()' to obtain a reference to the
+'struct cdev *' stashed in the 'i_cdev' field of the target inode
+structure. If the pointer is NULL, then it is initialised lazily by
+looking up the kobject in the 'cdev_map' and so the whole procedure is
+protected by the 'cdev_lock' spinlock to serialise initialisation of
+the shared pointer.
 
-thanks,
+Unfortunately, it is possible for the initialising thread to fail *after*
+installing the new pointer, for example if the subsequent '->open()' call
+on the file fails. In this case, 'cdev_put()' is called, the reference
+count on the kobject is dropped and, if nobody else has taken a reference,
+the release function is called which finally clears 'inode->i_cdev' from
+'cdev_purge()' before potentially freeing the object. The problem here
+is that a racing thread can happily take the 'cdev_lock' and see the
+non-NULL pointer in the inode, which can result in a refcount increment
+from zero and a warning:
 
-greg k-h
+  |  ------------[ cut here ]------------
+  |  refcount_t: addition on 0; use-after-free.
+  |  WARNING: CPU: 2 PID: 6385 at lib/refcount.c:25 refcount_warn_saturate+0x6d/0xf0
+  |  Modules linked in:
+  |  CPU: 2 PID: 6385 Comm: repro Not tainted 5.5.0-rc2+ #22
+  |  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+  |  RIP: 0010:refcount_warn_saturate+0x6d/0xf0
+  |  Code: 05 55 9a 15 01 01 e8 9d aa c8 ff 0f 0b c3 80 3d 45 9a 15 01 00 75 ce 48 c7 c7 00 9c 62 b3 c6 08
+  |  RSP: 0018:ffffb524c1b9bc70 EFLAGS: 00010282
+  |  RAX: 0000000000000000 RBX: ffff9e9da1f71390 RCX: 0000000000000000
+  |  RDX: ffff9e9dbbd27618 RSI: ffff9e9dbbd18798 RDI: ffff9e9dbbd18798
+  |  RBP: 0000000000000000 R08: 000000000000095f R09: 0000000000000039
+  |  R10: 0000000000000000 R11: ffffb524c1b9bb20 R12: ffff9e9da1e8c700
+  |  R13: ffffffffb25ee8b0 R14: 0000000000000000 R15: ffff9e9da1e8c700
+  |  FS:  00007f3b87d26700(0000) GS:ffff9e9dbbd00000(0000) knlGS:0000000000000000
+  |  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  |  CR2: 00007fc16909c000 CR3: 000000012df9c000 CR4: 00000000000006e0
+  |  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  |  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  |  Call Trace:
+  |   kobject_get+0x5c/0x60
+  |   cdev_get+0x2b/0x60
+  |   chrdev_open+0x55/0x220
+  |   ? cdev_put.part.3+0x20/0x20
+  |   do_dentry_open+0x13a/0x390
+  |   path_openat+0x2c8/0x1470
+  |   do_filp_open+0x93/0x100
+  |   ? selinux_file_ioctl+0x17f/0x220
+  |   do_sys_open+0x186/0x220
+  |   do_syscall_64+0x48/0x150
+  |   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  |  RIP: 0033:0x7f3b87efcd0e
+  |  Code: 89 54 24 08 e8 a3 f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f4
+  |  RSP: 002b:00007f3b87d259f0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+  |  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3b87efcd0e
+  |  RDX: 0000000000000000 RSI: 00007f3b87d25a80 RDI: 00000000ffffff9c
+  |  RBP: 00007f3b87d25e90 R08: 0000000000000000 R09: 0000000000000000
+  |  R10: 0000000000000000 R11: 0000000000000293 R12: 00007ffe188f504e
+  |  R13: 00007ffe188f504f R14: 00007f3b87d26700 R15: 0000000000000000
+  |  ---[ end trace 24f53ca58db8180a ]---
 
--------------
-Pseudo-Shortlog of commits:
+Since 'cdev_get()' can already fail to obtain a reference, simply move
+it over to use 'kobject_get_unless_zero()' instead of 'kobject_get()',
+which will cause the racing thread to return -ENXIO if the initialising
+thread fails unexpectedly.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.19.96-rc1
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: syzbot+82defefbbd8527e1c2cb@syzkaller.appspotmail.com
+Signed-off-by: Will Deacon <will@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191219120203.32691-1-will@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Florian Westphal <fw@strlen.de>
-    netfilter: ipset: avoid null deref when IPSET_ATTR_LINENO is present
+---
+ fs/char_dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Florian Westphal <fw@strlen.de>
-    netfilter: conntrack: dccp, sctp: handle null timeout argument
-
-Florian Westphal <fw@strlen.de>
-    netfilter: arp_tables: init netns pointer in xt_tgchk_param struct
-
-Tony Lindgren <tony@atomide.com>
-    phy: cpcap-usb: Fix flakey host idling and enumerating of devices
-
-Tony Lindgren <tony@atomide.com>
-    phy: cpcap-usb: Fix error path when no host driver is loaded
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: Fix: Don't skip endpoint descriptors with maxpacket=0
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    HID: hiddev: fix mess in hiddev_open()
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    ath10k: fix memory leak
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    rtl8xxxu: prevent leaking urb
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    scsi: bfa: release allocated memory in case of error
-
-Navid Emamdoost <navid.emamdoost@gmail.com>
-    mwifiex: pcie: Fix memory leak in mwifiex_pcie_alloc_cmdrsp_buf
-
-Ganapathi Bhat <gbhat@marvell.com>
-    mwifiex: fix possible heap overflow in mwifiex_process_country_ie()
-
-Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-    tty: always relink the port
-
-Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-    tty: link tty and port before configuring it as console
-
-Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-    serdev: Don't claim unsupported ACPI serial devices
-
-Michael Straube <straube.linux@gmail.com>
-    staging: rtl8188eu: Add device code for TP-Link TL-WN727N v5.21
-
-Ian Abbott <abbotti@mev.co.uk>
-    staging: comedi: adv_pci1710: fix AI channels 16-31 for PCI-1713
-
-Paul Cercueil <paul@crapouillou.net>
-    usb: musb: dma: Correct parameter passed to IRQ handler
-
-Paul Cercueil <paul@crapouillou.net>
-    usb: musb: Disable pullup at init
-
-Tony Lindgren <tony@atomide.com>
-    usb: musb: fix idling for suspend after disconnect interrupt
-
-Daniele Palmas <dnlplm@gmail.com>
-    USB: serial: option: add ZLP support for 0x1bc7/0x9010
-
-Malcolm Priestley <tvboxspy@gmail.com>
-    staging: vt6656: set usb_set_intfdata on driver fail.
-
-Hans de Goede <hdegoede@redhat.com>
-    gpiolib: acpi: Add honor_wakeup module-option + quirk mechanism
-
-Hans de Goede <hdegoede@redhat.com>
-    gpiolib: acpi: Turn dmi_system_id table into a generic quirk table
-
-Oliver Hartkopp <socketcan@hartkopp.net>
-    can: can_dropped_invalid_skb(): ensure an initialized headroom in outgoing CAN sk_buffs
-
-Florian Faber <faber@faberman.de>
-    can: mscan: mscan_rx_poll(): fix rx path lockup when returning from polling to irq mode
-
-Johan Hovold <johan@kernel.org>
-    can: gs_usb: gs_usb_probe(): use descriptors of current altsetting
-
-Johan Hovold <johan@kernel.org>
-    can: kvaser_usb: fix interface sanity check
-
-Wayne Lin <Wayne.Lin@amd.com>
-    drm/dp_mst: correct the shifting in DP_REMOTE_I2C_READ
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    drm/fb-helper: Round up bits_per_pixel if possible
-
-Chen-Yu Tsai <wens@csie.org>
-    drm/sun4i: tcon: Set RGB DCLK min. divider based on hardware model
-
-Arnd Bergmann <arnd@arndb.de>
-    Input: input_event - fix struct padding on sparc64
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    Input: add safety guards to input_set_keycode()
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    HID: hid-input: clear unmapped usages
-
-Marcel Holtmann <marcel@holtmann.org>
-    HID: uhid: Fix returning EPOLLOUT from uhid_char_poll
-
-Alan Stern <stern@rowland.harvard.edu>
-    HID: Fix slab-out-of-bounds read in hid_field_extract
-
-Joel Fernandes (Google) <joel@joelfernandes.org>
-    tracing: Change offset type to s32 in preempt/irq tracepoints
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    tracing: Have stack tracer compile when MCOUNT_INSN_SIZE is not defined
-
-Kaitao Cheng <pilgrimtao@gmail.com>
-    kernel/trace: Fix do not unregister tracepoints when register sched_migrate_task fail
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Add quirk for the bass speaker on Lenovo Yoga X1 7th gen
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Set EAPD control to default for ALC222
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Add new codec supported for ALCS1200A
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb-audio: Apply the sample rate quirk for Bose Companion 5
-
-Guenter Roeck <linux@roeck-us.net>
-    usb: chipidea: host: Disable port power only if previously enabled
-
-Russell King <rmk+kernel@armlinux.org.uk>
-    i2c: fix bus recovery stop mode timing
-
-Will Deacon <will@kernel.org>
-    chardev: Avoid potential use-after-free in 'chrdev_open()'
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- drivers/gpio/gpiolib-acpi.c                        | 51 ++++++++++--
- drivers/gpu/drm/drm_dp_mst_topology.c              |  2 +-
- drivers/gpu/drm/drm_fb_helper.c                    |  7 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 15 +++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |  1 +
- drivers/hid/hid-core.c                             |  6 ++
- drivers/hid/hid-input.c                            | 16 +++-
- drivers/hid/uhid.c                                 |  2 +-
- drivers/hid/usbhid/hiddev.c                        | 97 ++++++++++------------
- drivers/i2c/i2c-core-base.c                        | 13 ++-
- drivers/input/evdev.c                              | 14 ++--
- drivers/input/input.c                              | 26 +++---
- drivers/input/misc/uinput.c                        | 14 ++--
- drivers/net/can/mscan/mscan.c                      | 21 +++--
- drivers/net/can/usb/gs_usb.c                       |  4 +-
- drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c  |  2 +-
- drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c   |  2 +-
- drivers/net/wireless/ath/ath10k/usb.c              |  1 +
- drivers/net/wireless/marvell/mwifiex/pcie.c        |  4 +-
- drivers/net/wireless/marvell/mwifiex/sta_ioctl.c   | 13 ++-
- .../net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c  |  1 +
- drivers/phy/motorola/phy-cpcap-usb.c               | 35 ++++----
- drivers/scsi/bfa/bfad_attr.c                       |  4 +-
- drivers/staging/comedi/drivers/adv_pci1710.c       |  4 +-
- drivers/staging/rtl8188eu/os_dep/usb_intf.c        |  1 +
- drivers/staging/vt6656/device.h                    |  1 +
- drivers/staging/vt6656/main_usb.c                  |  1 +
- drivers/staging/vt6656/wcmd.c                      |  1 +
- drivers/tty/serdev/core.c                          | 10 +++
- drivers/tty/serial/serial_core.c                   |  1 +
- drivers/usb/chipidea/host.c                        |  4 +-
- drivers/usb/core/config.c                          | 12 ++-
- drivers/usb/musb/musb_core.c                       | 11 +++
- drivers/usb/musb/musbhsdma.c                       |  2 +-
- drivers/usb/serial/option.c                        |  8 ++
- drivers/usb/serial/usb-wwan.h                      |  1 +
- drivers/usb/serial/usb_wwan.c                      |  4 +
- fs/char_dev.c                                      |  2 +-
- include/linux/can/dev.h                            | 34 ++++++++
- include/trace/events/preemptirq.h                  |  8 +-
- include/uapi/linux/input.h                         |  1 +
- kernel/trace/trace_sched_wakeup.c                  |  4 +-
- kernel/trace/trace_stack.c                         |  5 ++
- net/ipv4/netfilter/arp_tables.c                    | 27 +++---
- net/netfilter/ipset/ip_set_core.c                  |  3 +-
- net/netfilter/nf_conntrack_proto_dccp.c            |  3 +
- net/netfilter/nf_conntrack_proto_sctp.c            |  3 +
- sound/pci/hda/patch_realtek.c                      |  5 ++
- sound/usb/quirks.c                                 |  1 +
- 50 files changed, 354 insertions(+), 158 deletions(-)
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -361,7 +361,7 @@ static struct kobject *cdev_get(struct c
+ 
+ 	if (owner && !try_module_get(owner))
+ 		return NULL;
+-	kobj = kobject_get(&p->kobj);
++	kobj = kobject_get_unless_zero(&p->kobj);
+ 	if (!kobj)
+ 		module_put(owner);
+ 	return kobj;
 
 
