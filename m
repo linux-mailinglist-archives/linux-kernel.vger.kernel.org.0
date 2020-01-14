@@ -2,93 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F66513AF08
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F1013AF0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 17:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbgANQRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 11:17:10 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36607 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbgANQRK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 11:17:10 -0500
-Received: by mail-io1-f66.google.com with SMTP id d15so14468197iog.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 08:17:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=njKesd31KBQ2xQQuRIkmN40ckuYup5IXgW1XxbAYU5Ki2x6oe+1QegIPzUrOjM86V0
-         Y9oqwKfInDrcjvlrCGmqQaM7wfH1T5qwxEIhzKytObyQV33XMNS6ZNGVvf4KznNGaG2T
-         sqij9t3CPGAIT8n8zAmDY/fe+QXSd2FKh6qAGl2/MWaO6wIq2k+5gTbsEAjoAFYx4lV2
-         cQB5SM5QfrZ0ztGyV2GzUc8fb89NWx6Ijg8QEYlkLM5s8eiYsJOVpUQLW2ZH2BiSQNWB
-         IrvIqJB3Yw9nw/EzpZ1PtWVN8mHBdBwDdisOm82jBRdyBt+nOmYcfVIeR2VfznXLT4Vr
-         4gnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=DvXT8Zim5ODpY0lzUGzZg7oghk2BSDyWCeBIzluhmgJVo+u/rVQs3GAwd4POg1dr6f
-         /2OT5C3bfxzLUGbISzDiDADDErj1J/7Hr/GBK2LkWumeTOmpYhWkb1/HS/IrfH9sKcmA
-         NRvhwUH9wYlOY6Mt9iwqEpzGEGiAsay1wWuHL9CzVqB0f0wXn4rh5Q7zVTx6Dx6SorXI
-         asiGNtRUUy0v4vWXGnnL5nfRnalaMH4Fx99k6rbiO/RqAhzz0C1sTPs4SxfxeH0rpxxA
-         w23RMwscTR6sRxIvO/I4sQU3bG5dSRDQnF5nre9o6of9lIodncnMYQFwDZQoI77fqBjd
-         78+g==
-X-Gm-Message-State: APjAAAXmfdmfsPAytuGXAyiozdqEQN/bcFKFRN+s8gLOFpyQggVjTQ4e
-        JE84mQmf3VLEBTCbzBlSu16ifLQzdOMauPz+ilc=
-X-Google-Smtp-Source: APXvYqxNMujQxG1cJ30mv86MWOwCqUWzZwOX6ivV5F4sI9+LGnfEYWHyuIycI1vf6/tzhBcGmLj9xvyS92YraDokCOQ=
-X-Received: by 2002:a6b:3a8a:: with SMTP id h132mr17330124ioa.207.1579018629087;
- Tue, 14 Jan 2020 08:17:09 -0800 (PST)
+        id S1728688AbgANQTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 11:19:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:32838 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726839AbgANQTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 11:19:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6F27DAB7D;
+        Tue, 14 Jan 2020 16:19:12 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 9840CDA730; Tue, 14 Jan 2020 17:18:57 +0100 (CET)
+Date:   Tue, 14 Jan 2020 17:18:57 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Eduard Shishkin <edward6@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] btrfs: Use larger zlib buffer for s390 hardware
+ compression
+Message-ID: <20200114161857.GD3929@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Eduard Shishkin <edward6@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200107143058.GU3929@twin.jikos.cz>
+ <20200108105103.29028-1-zaslonko@linux.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:5f43:0:0:0:0:0 with HTTP; Tue, 14 Jan 2020 08:17:08
- -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <kouevigathk@gmail.com>
-Date:   Tue, 14 Jan 2020 17:17:08 +0100
-Message-ID: <CAMpCND0U2tzarhYCtii+hnpjurT20-pokHpLUsW--PEy7cty7g@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200108105103.29028-1-zaslonko@linux.ibm.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+On Wed, Jan 08, 2020 at 11:51:03AM +0100, Mikhail Zaslonko wrote:
+> In order to benefit from s390 zlib hardware compression support,
+> increase the btrfs zlib workspace buffer size from 1 to 4 pages (if
+> s390 zlib hardware support is enabled on the machine). This brings up
+> to 60% better performance in hardware on s390 compared to the PAGE_SIZE
+> buffer and much more compared to the software zlib processing in btrfs.
+> In case of memory pressure, fall back to a single page buffer during
+> workspace allocation.
+> The data compressed with larger input buffers will still conform to zlib
+> standard and thus can be decompressed also on a systems that uses only
+> PAGE_SIZE buffer for btrfs zlib.
+> 
+> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
-
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
-
-Vielen Dank im Voraus,
-Mr. Eddy William,
-
-
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
+Reviewed-by: David Sterba <dsterba@suse.com>
