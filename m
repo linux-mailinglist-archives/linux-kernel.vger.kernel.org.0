@@ -2,84 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 685DE13A594
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 342F713A66C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbgANKJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:09:05 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44983 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731178AbgANKJA (ORCPT
+        id S1730393AbgANKL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:11:26 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36809 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732452AbgANKLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:09:00 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1irJ85-00031o-H6; Tue, 14 Jan 2020 11:08:57 +0100
-Message-ID: <d1f969346ad1758943e8f898244c69673f93f129.camel@pengutronix.de>
-Subject: Re: [PATCH] dt-bindings: reset: intel,rcu-gw: Fix
- intel,global-reset schema
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Dilip Kota <eswara.kota@linux.intel.com>
-Date:   Tue, 14 Jan 2020 11:08:57 +0100
-In-Reply-To: <20200113214515.3950-1-robh@kernel.org>
-References: <20200113214515.3950-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 14 Jan 2020 05:11:23 -0500
+X-UUID: f58a85bdee834a2784233f50c7a2359e-20200114
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=qoaZJusf4At6LIpWx4whGG9gLSgykifupaNe4/abaOs=;
+        b=DV6ztj33KRVRzI88b2CxDhD8rEy5gaUf3Yejw7kSIjzMovSxT8dlZBtUPW0RDrN67GnXLcN3M9U1fuU3zMJfdbpjjG6tQXfUzj8v7DLxGo6EMQV5GuhOvCphPAYdlLgoQKIbsNtV7IwRJY0ceEYzhjxkE/c6rML00UCdDPQJmcY=;
+X-UUID: f58a85bdee834a2784233f50c7a2359e-20200114
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <jamesjj.liao@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2077133290; Tue, 14 Jan 2020 18:11:17 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 14 Jan 2020 18:10:19 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 14 Jan 2020 18:12:00 +0800
+From:   James Liao <jamesjj.liao@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v2] arm64: dts: mt8183: Enable CPU idle-states
+Date:   Tue, 14 Jan 2020 18:11:13 +0800
+Message-ID: <1578996673-8140-1-git-send-email-jamesjj.liao@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 1B578A9546F8FDF9209DBB42AA7F3474A4986FEA89B320FDFD34373CBA93BD7F2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Mon, 2020-01-13 at 15:45 -0600, Rob Herring wrote:
-> The intel,rcu-gw binding example has an error:
-> 
-> Documentation/devicetree/bindings/reset/intel,rcu-gw.example.dt.yaml:
->   reset-controller@e0000000: intel,global-reset: [[16, 30]] is too short
-> 
-> The error isn't really correct as the problem is in how the data is
-> encoded and the schema is not fixed up by the tooling correctly.
-> However, array properties should describe the elements in the array, so
-> lets do that which fixes the error in the process.
-> 
-> Fixes: b7ab0cb00d08 ("dt-bindings: reset: Add YAML schemas for the Intel Reset controller")
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Dilip Kota <eswara.kota@linux.intel.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml b/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
-> index 246dea8a2ec9..8ac437282659 100644
-> --- a/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
-> +++ b/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
-> @@ -23,7 +23,11 @@ properties:
->      description: Global reset register offset and bit offset.
->      allOf:
->        - $ref: /schemas/types.yaml#/definitions/uint32-array
-> -      - maxItems: 2
-> +    items:
-> +      - description: Register offset
-> +      - description: Register bit offset
-> +        minimum: 0
-> +        maximum: 31
->  
->    "#reset-cells":
->      minimum: 2
-
-Thank you, applied to reset/next.
-
-regards
-Philipp
+RW5hYmxlIG1jZGktY3B1IGFuZCBtY2RpLWNsdXN0ZXIgb24gTVQ4MTgzIENQVXMuDQoNClNpZ25l
+ZC1vZmYtYnk6IEphbWVzIExpYW8gPGphbWVzamoubGlhb0BtZWRpYXRlay5jb20+DQotLS0NClRo
+aXMgcGF0Y2ggYmFzZXMgb24gdjUuNS1yYzYsIGFkZHMgaWRsZS1zdGF0ZXMgZm9yIE1UODE4MyBD
+UFVzLg0KDQogYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaSB8IDMwICsr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNlcnRp
+b25zKCspDQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4
+My5kdHNpIGIvYXJjaC9hcm02NC9ib290L2R0cy9tZWRpYXRlay9tdDgxODMuZHRzaQ0KaW5kZXgg
+MTBiMzI0Ny4uYTAyMjMyNSAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0
+ZWsvbXQ4MTgzLmR0c2kNCisrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgz
+LmR0c2kNCkBAIC03Myw2ICs3Myw3IEBADQogCQkJcmVnID0gPDB4MDAwPjsNCiAJCQllbmFibGUt
+bWV0aG9kID0gInBzY2kiOw0KIAkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDw3NDE+Ow0KKwkJCWNw
+dS1pZGxlLXN0YXRlcyA9IDwmTUNESV9DUFUgJk1DRElfQ0xVU1RFUj47DQogCQl9Ow0KIA0KIAkJ
+Y3B1MTogY3B1QDEgew0KQEAgLTgxLDYgKzgyLDcgQEANCiAJCQlyZWcgPSA8MHgwMDE+Ow0KIAkJ
+CWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQogCQkJY2FwYWNpdHktZG1pcHMtbWh6ID0gPDc0MT47
+DQorCQkJY3B1LWlkbGUtc3RhdGVzID0gPCZNQ0RJX0NQVSAmTUNESV9DTFVTVEVSPjsNCiAJCX07
+DQogDQogCQljcHUyOiBjcHVAMiB7DQpAQCAtODksNiArOTEsNyBAQA0KIAkJCXJlZyA9IDwweDAw
+Mj47DQogCQkJZW5hYmxlLW1ldGhvZCA9ICJwc2NpIjsNCiAJCQljYXBhY2l0eS1kbWlwcy1taHog
+PSA8NzQxPjsNCisJCQljcHUtaWRsZS1zdGF0ZXMgPSA8Jk1DRElfQ1BVICZNQ0RJX0NMVVNURVI+
+Ow0KIAkJfTsNCiANCiAJCWNwdTM6IGNwdUAzIHsNCkBAIC05Nyw2ICsxMDAsNyBAQA0KIAkJCXJl
+ZyA9IDwweDAwMz47DQogCQkJZW5hYmxlLW1ldGhvZCA9ICJwc2NpIjsNCiAJCQljYXBhY2l0eS1k
+bWlwcy1taHogPSA8NzQxPjsNCisJCQljcHUtaWRsZS1zdGF0ZXMgPSA8Jk1DRElfQ1BVICZNQ0RJ
+X0NMVVNURVI+Ow0KIAkJfTsNCiANCiAJCWNwdTQ6IGNwdUAxMDAgew0KQEAgLTEwNSw2ICsxMDks
+NyBAQA0KIAkJCXJlZyA9IDwweDEwMD47DQogCQkJZW5hYmxlLW1ldGhvZCA9ICJwc2NpIjsNCiAJ
+CQljYXBhY2l0eS1kbWlwcy1taHogPSA8MTAyND47DQorCQkJY3B1LWlkbGUtc3RhdGVzID0gPCZN
+Q0RJX0NQVSAmTUNESV9DTFVTVEVSPjsNCiAJCX07DQogDQogCQljcHU1OiBjcHVAMTAxIHsNCkBA
+IC0xMTMsNiArMTE4LDcgQEANCiAJCQlyZWcgPSA8MHgxMDE+Ow0KIAkJCWVuYWJsZS1tZXRob2Qg
+PSAicHNjaSI7DQogCQkJY2FwYWNpdHktZG1pcHMtbWh6ID0gPDEwMjQ+Ow0KKwkJCWNwdS1pZGxl
+LXN0YXRlcyA9IDwmTUNESV9DUFUgJk1DRElfQ0xVU1RFUj47DQogCQl9Ow0KIA0KIAkJY3B1Njog
+Y3B1QDEwMiB7DQpAQCAtMTIxLDYgKzEyNyw3IEBADQogCQkJcmVnID0gPDB4MTAyPjsNCiAJCQll
+bmFibGUtbWV0aG9kID0gInBzY2kiOw0KIAkJCWNhcGFjaXR5LWRtaXBzLW1oeiA9IDwxMDI0PjsN
+CisJCQljcHUtaWRsZS1zdGF0ZXMgPSA8Jk1DRElfQ1BVICZNQ0RJX0NMVVNURVI+Ow0KIAkJfTsN
+CiANCiAJCWNwdTc6IGNwdUAxMDMgew0KQEAgLTEyOSw2ICsxMzYsMjkgQEANCiAJCQlyZWcgPSA8
+MHgxMDM+Ow0KIAkJCWVuYWJsZS1tZXRob2QgPSAicHNjaSI7DQogCQkJY2FwYWNpdHktZG1pcHMt
+bWh6ID0gPDEwMjQ+Ow0KKwkJCWNwdS1pZGxlLXN0YXRlcyA9IDwmTUNESV9DUFUgJk1DRElfQ0xV
+U1RFUj47DQorCQl9Ow0KKw0KKwkJaWRsZS1zdGF0ZXMgew0KKwkJCWVudHJ5LW1ldGhvZCA9ICJh
+cm0scHNjaSI7DQorDQorCQkJTUNESV9DUFU6IG1jZGktY3B1IHsNCisJCQkJY29tcGF0aWJsZSA9
+ICJhcm0saWRsZS1zdGF0ZSI7DQorCQkJCWxvY2FsLXRpbWVyLXN0b3A7DQorCQkJCWFybSxwc2Np
+LXN1c3BlbmQtcGFyYW0gPSA8MHgwMDAxMDAwMT47DQorCQkJCWVudHJ5LWxhdGVuY3ktdXMgPSA8
+MjAwPjsNCisJCQkJZXhpdC1sYXRlbmN5LXVzID0gPDIwMD47DQorCQkJCW1pbi1yZXNpZGVuY3kt
+dXMgPSA8ODAwPjsNCisJCQl9Ow0KKw0KKwkJCU1DRElfQ0xVU1RFUjogbWNkaS1jbHVzdGVyIHsN
+CisJCQkJY29tcGF0aWJsZSA9ICJhcm0saWRsZS1zdGF0ZSI7DQorCQkJCWxvY2FsLXRpbWVyLXN0
+b3A7DQorCQkJCWFybSxwc2NpLXN1c3BlbmQtcGFyYW0gPSA8MHgwMTAxMDAwMT47DQorCQkJCWVu
+dHJ5LWxhdGVuY3ktdXMgPSA8MjUwPjsNCisJCQkJZXhpdC1sYXRlbmN5LXVzID0gPDQwMD47DQor
+CQkJCW1pbi1yZXNpZGVuY3ktdXMgPSA8MTMwMD47DQorCQkJfTsNCiAJCX07DQogCX07DQogDQot
+LSANCjEuOS4xDQo=
 
