@@ -2,96 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F047213A4C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:02:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BD013A570
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgANKCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:02:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51236 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726053AbgANKCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:02:24 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00EA2CpJ040439;
-        Tue, 14 Jan 2020 05:02:12 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xh8d3evj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 05:02:12 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00EA06UR019477;
-        Tue, 14 Jan 2020 10:02:07 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02wdc.us.ibm.com with ESMTP id 2xf750ahs4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Jan 2020 10:02:07 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00EA26xA43254174
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Jan 2020 10:02:06 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4ADB8C6059;
-        Tue, 14 Jan 2020 10:02:06 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB083C6055;
-        Tue, 14 Jan 2020 10:02:03 +0000 (GMT)
-Received: from skywalker.in.ibm.com (unknown [9.124.35.105])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 14 Jan 2020 10:02:03 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v3 4/9] asm-gemeric/tlb: Remove stray function declarations
-Date:   Tue, 14 Jan 2020 15:31:40 +0530
-Message-Id: <20200114100145.365527-5-aneesh.kumar@linux.ibm.com>
+        id S1730731AbgANKHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:07:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729074AbgANKHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:36 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4874724680;
+        Tue, 14 Jan 2020 10:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578996455;
+        bh=1b0Luv39zPdutEiUSX0IUUF9+gt/vZ658w3BW9a2FQ8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lxs4QmB5dpJikfFFN+hczaIxsb03Em0P7Og4SiEEQxsVXk55zATQvrfb6ghc1am3t
+         ggj3Wcv4zEhZFST9HgVY049ZtrDLdHgavE5+o3O6P8UJ0gCi1DnsGgwXzco1qFf6rR
+         kJyZ6eeVqIvxaRmfHOhBlFGeFo4xuvD48KK3JT3k=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 23/46] gpiolib: acpi: Turn dmi_system_id table into a generic quirk table
+Date:   Tue, 14 Jan 2020 11:01:40 +0100
+Message-Id: <20200114094345.178892638@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
-References: <20200114100145.365527-1-aneesh.kumar@linux.ibm.com>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-14_02:2020-01-13,2020-01-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=597 spamscore=0 bulkscore=0
- phishscore=0 suspectscore=0 adultscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001140090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-We removed the actual functions a while ago.
+commit 1ad1b54099c231aed8f6f257065c1b322583f264 upstream.
 
-Fixes: 1808d65b55e4 ("asm-generic/tlb: Remove arch_tlb*_mmu()")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Turn the existing run_edge_events_on_boot_blacklist dmi_system_id table
+into a generic quirk table, storing the quirks in the driver_data ptr.
+
+This is a preparation patch for adding other types of (DMI based) quirks.
+
+Cc: stable@vger.kernel.org
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200105160357.97154-2-hdegoede@redhat.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/asm-generic/tlb.h | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/gpio/gpiolib-acpi.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index b36b3bef5661..1a4cea5f95df 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -285,11 +285,7 @@ struct mmu_gather {
- #endif
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -24,6 +24,8 @@
+ 
+ #include "gpiolib.h"
+ 
++#define QUIRK_NO_EDGE_EVENTS_ON_BOOT		0x01l
++
+ static int run_edge_events_on_boot = -1;
+ module_param(run_edge_events_on_boot, int, 0444);
+ MODULE_PARM_DESC(run_edge_events_on_boot,
+@@ -1263,7 +1265,7 @@ static int acpi_gpio_handle_deferred_req
+ /* We must use _sync so that this runs after the first deferred_probe run */
+ late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
+ 
+-static const struct dmi_system_id run_edge_events_on_boot_blacklist[] = {
++static const struct dmi_system_id gpiolib_acpi_quirks[] = {
+ 	{
+ 		/*
+ 		 * The Minix Neo Z83-4 has a micro-USB-B id-pin handler for
+@@ -1273,7 +1275,8 @@ static const struct dmi_system_id run_ed
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "MINIX"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
+-		}
++		},
++		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+ 	},
+ 	{
+ 		/*
+@@ -1285,15 +1288,23 @@ static const struct dmi_system_id run_ed
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Wortmann_AG"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "TERRA_PAD_1061"),
+-		}
++		},
++		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+ 	},
+ 	{} /* Terminating entry */
  };
  
--void arch_tlb_gather_mmu(struct mmu_gather *tlb,
--	struct mm_struct *mm, unsigned long start, unsigned long end);
- void tlb_flush_mmu(struct mmu_gather *tlb);
--void arch_tlb_finish_mmu(struct mmu_gather *tlb,
--			 unsigned long start, unsigned long end, bool force);
- 
- static inline void __tlb_adjust_range(struct mmu_gather *tlb,
- 				      unsigned long address,
--- 
-2.24.1
+ static int acpi_gpio_setup_params(void)
+ {
++	const struct dmi_system_id *id;
++	long quirks = 0;
++
++	id = dmi_first_match(gpiolib_acpi_quirks);
++	if (id)
++		quirks = (long)id->driver_data;
++
+ 	if (run_edge_events_on_boot < 0) {
+-		if (dmi_check_system(run_edge_events_on_boot_blacklist))
++		if (quirks & QUIRK_NO_EDGE_EVENTS_ON_BOOT)
+ 			run_edge_events_on_boot = 0;
+ 		else
+ 			run_edge_events_on_boot = 1;
+
 
