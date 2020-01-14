@@ -2,88 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D92CF139E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 01:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B81DB139EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 02:00:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbgANAbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 13 Jan 2020 19:31:03 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:4948 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728838AbgANAbD (ORCPT
+        id S1729238AbgANBAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 13 Jan 2020 20:00:08 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36921 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729113AbgANBAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 13 Jan 2020 19:31:03 -0500
-X-UUID: b64d3bbc8486442fb8107ded0c55dc3a-20200114
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=9hc72qii6aEbO5HSZ/JJr0ZnpKxriy/nHTRZcH5uTGc=;
-        b=Cgc4VRZi2oDVXSOd1pVglWjNlQ2CSP8IRlENBYgN8jcFHuJ9CJccjI3v9bbaPhyGX6oELFonJdA4X07hTEY/OKTiQ2cQ6fTZ0HxfMYco6+J7SlHE6dtj+zBouiV7wXdUK5fCV7S0iJnTovpXARSS47Gw5+5fHqRe6tl/pqX2wss=;
-X-UUID: b64d3bbc8486442fb8107ded0c55dc3a-20200114
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 545209942; Tue, 14 Jan 2020 08:30:55 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
- (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 14 Jan
- 2020 08:30:00 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 14 Jan 2020 08:30:09 +0800
-Message-ID: <1578961847.21256.27.camel@mhfsdcap03>
-Subject: Re: [RESEND PATCH v5 01/11] dt-bindings: phy-mtk-tphy: add two
- optional properties for u2phy
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Kishon Vijay Abraham I <kishon@a0393678ub>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Date:   Tue, 14 Jan 2020 08:30:47 +0800
-In-Reply-To: <20200110111006.GB2220@a0393678ub>
-References: <1578448326-27455-1-git-send-email-chunfeng.yun@mediatek.com>
-         <20200110111006.GB2220@a0393678ub>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 13 Jan 2020 20:00:07 -0500
+Received: by mail-oi1-f195.google.com with SMTP id z64so10265107oia.4
+        for <linux-kernel@vger.kernel.org>; Mon, 13 Jan 2020 17:00:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fXJN2b85yGTyfLCLDYBimi22Hg8WM/nHD10wRzYfTm4=;
+        b=Ro0P7aDz6hyzXO5rfR6V0kzTF46LLJ4qA3uOcdYARDHRiMs+m3v8ojvGigkRRtK18f
+         iYunyjDgyarDDKdhiDOV78S4umEOtTK25TlY7OXR34IDbsdqAixpe7EY0dVDuZKSjBo1
+         Ind8alKZ4U0XWKoWAtzLqeFp74I0uYxcmWrqGRnyN0sR9dIhgibqbF32wD8DrF0YiHvp
+         s1CMR99X5BXdmuLKe9/6Qrz1HM18yG3IxZg2EkE3JorUutJINybSxaAMAln8n0rGPnS2
+         T2qC9lDH7wiVxZprLWg3wxO+tJvc5pG22VpStTwtXr/CQEjf1aJWVbJskCt45cC0Bk8Z
+         2PGw==
+X-Gm-Message-State: APjAAAW6MtBFpuNtw5BprTVnSPM0ML+Zh/aMVY+ycG6LGGvrveTKkhaf
+        Q06z/uTfNDNDvP0xZ9SAMK+KnwSFQA==
+X-Google-Smtp-Source: APXvYqzXw2S6y8s5CM5uOD6UWMTfHf4By9csm5iuhLieHFP1Um4mlWMxJgjQbiChEu8l8h8UDHqU4w==
+X-Received: by 2002:a05:6808:3c2:: with SMTP id o2mr15125700oie.45.1578963606483;
+        Mon, 13 Jan 2020 17:00:06 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e21sm4106780oib.16.2020.01.13.17.00.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 17:00:03 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22198d
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Mon, 13 Jan 2020 18:33:32 -0600
+Date:   Mon, 13 Jan 2020 18:33:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, vkoul@kernel.org,
+        eugen.hristev@microchip.com, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, mchehab@kernel.org,
+        lee.jones@linaro.org, radu_nicolae.pirea@upb.ro,
+        richard.genoud@gmail.com, tudor.ambarus@microchip.com,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        wg@grandegger.com, mkl@pengutronix.de, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-can@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: Re: [PATCH v2 15/17] dt-bindings: arm: add sam9x60-ek board
+Message-ID: <20200114003332.GA3401@bogus>
+References: <1578673089-3484-1-git-send-email-claudiu.beznea@microchip.com>
+ <1578673089-3484-16-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: AF61AF8D6FD7E89E3E467A138EA30DB0D5E4DFF88A35929018A5237C3BB832952000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578673089-3484-16-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDIwLTAxLTEwIGF0IDE2OjQwICswNTMwLCBLaXNob24gVmlqYXkgQWJyYWhhbSBJ
-IHdyb3RlOg0KPiBIaSwNCj4gDQo+IE9uIFdlZCwgSmFuIDA4LCAyMDIwIGF0IDA5OjUxOjU2QU0g
-KzA4MDAsIENodW5mZW5nIFl1biB3cm90ZToNCj4gPiBBZGQgdHdvIG9wdGlvbmFsIHByb3BlcnRp
-ZXMsIG9uZSBmb3IgdHVuaW5nIEotSyB2b2x0YWdlIGJ5IElOVFIsDQo+ID4gYW5vdGhlciBmb3Ig
-ZGlzY29ubmVjdCB0aHJlc2hvbGQsIGJvdGggb2YgdGhlbSBhcmUgcmVsYXRlZCB3aXRoDQo+ID4g
-Y29ubmVjdCBkZXRlY3Rpb24NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHVuZmVuZyBZdW4g
-PGNodW5mZW5nLnl1bkBtZWRpYXRlay5jb20+DQo+ID4gQWNrZWQtYnk6IFJvYiBIZXJyaW5nIDxy
-b2JoQGtlcm5lbC5vcmc+DQo+IA0KPiBQYXRjaCBkb2VzIG5vdCBhcHBseS4gSSBnZXQgdGhlIGZv
-bGxvd2luZyBlcnJvcnMNCj4gZXJyb3I6IHBhdGNoIGZhaWxlZDogRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL3BoeS9waHktbXRrLXRwaHkudHh0OjUyDQo+IGVycm9yOiBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGh5L3BoeS1tdGstdHBoeS50eHQ6IHBhdGNoIGRv
-ZXMgbm90IGFwcGx5DQo+IGVycm9yOiBEaWQgeW91IGhhbmQgZWRpdCB5b3VyIHBhdGNoPw0KPiAN
-Cj4gQ2FuIHlvdSBzZW5kIHRoZW0gYWdhaW4gaW4gdGhlIHJpZ2h0IGZvcm1hdD8NClNvcnJ5LCBJ
-J2xsIGNoZWNrIGl0Lg0KDQo+IA0KPiBUaGFua3MNCj4gS2lzaG9uDQo+ID4gLS0tDQo+ID4gdjU6
-IGFkZCBhY2tlZC1ieSBSb2INCj4gPiANCj4gPiB2NDogbm8gY2hhbmdlcw0KPiA+IA0KPiA+IHYz
-OiBjaGFuZ2UgY29tbWl0IGxvZw0KPiA+IA0KPiA+IHYyOiBjaGFuZ2UgZGVzY3JpcHRpb24NCj4g
-PiAtLS0NCj4gPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BoeS9waHktbXRr
-LXRwaHkudHh0IHwgMiArKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+
-ID4gDQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9w
-aHkvcGh5LW10ay10cGh5LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9w
-aHkvcGh5LW10ay10cGh5LnR4dA0KPiA+IGluZGV4IGE1ZjdhNGYwZGJjMS4uY2U2YWJmYmRmYmUx
-IDEwMDY0NA0KPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waHkv
-cGh5LW10ay10cGh5LnR4dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9waHkvcGh5LW10ay10cGh5LnR4dA0KPiA+IEBAIC01Miw2ICs1Miw4IEBAIE9wdGlvbmFs
-IHByb3BlcnRpZXMgKFBIWV9UWVBFX1VTQjIgcG9ydCAoY2hpbGQpIG5vZGUpOg0KPiA+ICAtIG1l
-ZGlhdGVrLGV5ZS12cnQJOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgVlJUIHJlZmVyZW5jZSB2b2x0
-YWdlDQo+ID4gIC0gbWVkaWF0ZWssZXllLXRlcm0JOiB1MzIsIHRoZSBzZWxlY3Rpb24gb2YgSFNf
-VFggVEVSTSByZWZlcmVuY2Ugdm9sdGFnZQ0KPiA+ICAtIG1lZGlhdGVrLGJjMTIJOiBib29sLCBl
-bmFibGUgQkMxMiBvZiB1MnBoeSBpZiBzdXBwb3J0IGl0DQo+ID4gKy0gbWVkaWF0ZWssZGlzY3Ro
-CTogdTMyLCB0aGUgc2VsZWN0aW9uIG9mIGRpc2Nvbm5lY3QgdGhyZXNob2xkDQo+ID4gKy0gbWVk
-aWF0ZWssaW50cgk6IHUzMiwgdGhlIHNlbGVjdGlvbiBvZiBpbnRlcm5hbCBSIChyZXNpc3RhbmNl
-KQ0KPiA+ICANCj4gPiAgRXhhbXBsZToNCj4gPiAgDQo+ID4gLS0gDQo+ID4gMi4yNC4wDQoNCg==
+On Fri, 10 Jan 2020 18:18:07 +0200, Claudiu Beznea wrote:
+> Add documentation for SAM9X60-EK board.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/arm/atmel-at91.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
+Acked-by: Rob Herring <robh@kernel.org>
