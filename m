@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D03A213A605
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9765113A59F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbgANKIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:08:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38808 "EHLO mail.kernel.org"
+        id S1731326AbgANKJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:09:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730158AbgANKH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:07:58 -0500
+        id S1729377AbgANKJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:09:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D8C72467D;
-        Tue, 14 Jan 2020 10:07:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1939A207FF;
+        Tue, 14 Jan 2020 10:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996477;
-        bh=YLLRxSU8TbjHH9MhIW8POwazjj39RFa0uNS6FY9gSTM=;
+        s=default; t=1578996563;
+        bh=Fe04CNtIFKZ403HJ8Xhk/Ben/KJctnIUWsMjXX4BxBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fRfUiPNN4mcp60ydDtTsuIGvOEwc4VkvyFs1gXm6/fvaZzz9JAU8G7++78MvHvjry
-         zAZkGfNxz4BTIGZuOUXlXJ4qfo/AHj0QRdLZD50QGpnmfWm1MdRnJ0GAzCa0zzYsYb
-         vVtAQgctFn1BHkhNgxaXTLBrKXSM9ov/8SNVl/Iw=
+        b=xXcdzU/cJUupQwy+D3WDZ1xUXd0PQSKa5kVqAz1ti7aMvueckkVb7X08bD7t5LEv/
+         L6lgdRZ9gyiIZJ4tS/ExLO+SDjSJF1JYUl1loR4uF5itGBM75as8ta7uZoLp2iNgxg
+         +5JG1xSDSHdD0k+PB+i/35ChE7r1IjnfGtKYkiPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Artur Rojek <contact@artur-rojek.eu>, Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.19 29/46] usb: musb: dma: Correct parameter passed to IRQ handler
-Date:   Tue, 14 Jan 2020 11:01:46 +0100
-Message-Id: <20200114094346.287485190@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 13/39] gpiolib: acpi: Turn dmi_system_id table into a generic quirk table
+Date:   Tue, 14 Jan 2020 11:01:47 +0100
+Message-Id: <20200114094342.117512030@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
-References: <20200114094339.608068818@linuxfoundation.org>
+In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
+References: <20200114094336.210038037@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +46,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit c80d0f4426c7fdc7efd6ae8d8b021dcfc89b4254 upstream.
+commit 1ad1b54099c231aed8f6f257065c1b322583f264 upstream.
 
-The IRQ handler was passed a pointer to a struct dma_controller, but the
-argument was then casted to a pointer to a struct musb_dma_controller.
+Turn the existing run_edge_events_on_boot_blacklist dmi_system_id table
+into a generic quirk table, storing the quirks in the driver_data ptr.
 
-Fixes: 427c4f333474 ("usb: struct device - replace bus_id with dev_name(), dev_set_name()")
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Artur Rojek <contact@artur-rojek.eu>
+This is a preparation patch for adding other types of (DMI based) quirks.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Link: https://lore.kernel.org/r/20191216161844.772-2-b-liu@ti.com
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://lore.kernel.org/r/20200105160357.97154-2-hdegoede@redhat.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musbhsdma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib-acpi.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/musb/musbhsdma.c
-+++ b/drivers/usb/musb/musbhsdma.c
-@@ -425,7 +425,7 @@ struct dma_controller *musbhs_dma_contro
- 	controller->controller.channel_abort = dma_channel_abort;
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -24,6 +24,8 @@
  
- 	if (request_irq(irq, dma_controller_irq, 0,
--			dev_name(musb->controller), &controller->controller)) {
-+			dev_name(musb->controller), controller)) {
- 		dev_err(dev, "request_irq %d failed!\n", irq);
- 		musb_dma_controller_destroy(&controller->controller);
+ #include "gpiolib.h"
  
++#define QUIRK_NO_EDGE_EVENTS_ON_BOOT		0x01l
++
+ static int run_edge_events_on_boot = -1;
+ module_param(run_edge_events_on_boot, int, 0444);
+ MODULE_PARM_DESC(run_edge_events_on_boot,
+@@ -1312,7 +1314,7 @@ static int acpi_gpio_handle_deferred_req
+ /* We must use _sync so that this runs after the first deferred_probe run */
+ late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
+ 
+-static const struct dmi_system_id run_edge_events_on_boot_blacklist[] = {
++static const struct dmi_system_id gpiolib_acpi_quirks[] = {
+ 	{
+ 		/*
+ 		 * The Minix Neo Z83-4 has a micro-USB-B id-pin handler for
+@@ -1322,7 +1324,8 @@ static const struct dmi_system_id run_ed
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "MINIX"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Z83-4"),
+-		}
++		},
++		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+ 	},
+ 	{
+ 		/*
+@@ -1334,15 +1337,23 @@ static const struct dmi_system_id run_ed
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Wortmann_AG"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "TERRA_PAD_1061"),
+-		}
++		},
++		.driver_data = (void *)QUIRK_NO_EDGE_EVENTS_ON_BOOT,
+ 	},
+ 	{} /* Terminating entry */
+ };
+ 
+ static int acpi_gpio_setup_params(void)
+ {
++	const struct dmi_system_id *id;
++	long quirks = 0;
++
++	id = dmi_first_match(gpiolib_acpi_quirks);
++	if (id)
++		quirks = (long)id->driver_data;
++
+ 	if (run_edge_events_on_boot < 0) {
+-		if (dmi_check_system(run_edge_events_on_boot_blacklist))
++		if (quirks & QUIRK_NO_EDGE_EVENTS_ON_BOOT)
+ 			run_edge_events_on_boot = 0;
+ 		else
+ 			run_edge_events_on_boot = 1;
 
 
