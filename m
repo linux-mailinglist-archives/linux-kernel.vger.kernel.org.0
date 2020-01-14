@@ -2,180 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECFEE13AB57
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:45:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD4F13AB43
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 14:44:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgANNpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 08:45:13 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33338 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728950AbgANNpJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 08:45:09 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d139so2359312wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 05:45:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=H5pgahcKzcsGLYm3HCTp6kuWUGFmaO98tCAh35M9tis=;
-        b=F1h05tkYwEuuSjvSlnbzm4t96VPN8YNHCB8meS50nK4gDMe0kaN6xKQGEaCnJZ3T/r
-         hIb3mhhPHogJG2n+GuRytmq/YYosk5hEy5A+kP6txRhIhzoinL/sxH2sPGFR7iPLtW1q
-         ekP3KPoQJdPhTALkGoxSmSENSNUeVyMJ3CtwiMkEZPzzNglU47YQbQU+ZfW4XOMv4gyb
-         26tSF4W0NRHVX7SSbeS3goI8In/XJgk0JW15vGRnkB3bEn3MCS2U5NpHBXiD4/a635YZ
-         I9yVpjK4WnVBY34C0s1mX8mf4Mjya2BXKO2FlqQthlWnMtP5t2hnARGPKmVHSH2tAdwt
-         RgKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=H5pgahcKzcsGLYm3HCTp6kuWUGFmaO98tCAh35M9tis=;
-        b=OI8fREdV+dEg+WpySpgWyQ+m9hVfYOsNvEaLH6iWQE0vEtnTb6boUQQGFp0pyzbjgI
-         wJUYQii3/NzckdSqvIrELO5tnrz/10Zn88ZPC4bkj7YzJIE6QgorZLK1kReXJDbEhezy
-         dhaYEYbc3WpvfI4PqidH0p2pIsM+QkYI/IL7HLqiCnGa3sGLzAny/cbPLaVh5AcAKuz7
-         QsG9n9s7VVGUtRmVU1cmenFlsdaSt3SxdFQd74jPUKcdrxGuBTinhCfvCHMeLVCltqyg
-         kTYSDmTRt8vtdb+3zI3fNDRS6uY4cmML26fJj7suzEPe4guW2nxX9A7vHeuqgPW1ipYW
-         O76g==
-X-Gm-Message-State: APjAAAXn9KRNdNINw9orR5sOxx3MLsi7LDANBm3ZFb87068M4hDi3t/H
-        jbUKCkTPHvpjZ7AN7kOx+gU=
-X-Google-Smtp-Source: APXvYqx9vqod9rD0/2L4fJTgpjwdJgh7w8NLI6DG2fuKwjp0n36+ytZMdJJ71TzFNprWaRa5t9fUog==
-X-Received: by 2002:a1c:e289:: with SMTP id z131mr25829140wmg.18.1579009508086;
-        Tue, 14 Jan 2020 05:45:08 -0800 (PST)
-Received: from localhost.localdomain (dslb-088-070-028-164.088.070.pools.vodafone-ip.de. [88.70.28.164])
-        by smtp.gmail.com with ESMTPSA id x10sm19361333wrp.58.2020.01.14.05.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 05:45:07 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 5/5] staging: rtl8188eu: cleanup whitespace in rtl8188e_dm.c
-Date:   Tue, 14 Jan 2020 14:44:22 +0100
-Message-Id: <20200114134422.13598-5-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114134422.13598-1-straube.linux@gmail.com>
-References: <20200114134422.13598-1-straube.linux@gmail.com>
+        id S1728864AbgANNoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 08:44:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:52428 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728809AbgANNoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 08:44:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E6841435;
+        Tue, 14 Jan 2020 05:44:31 -0800 (PST)
+Received: from [240.8.37.10] (unknown [10.37.8.240])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DA943F534;
+        Tue, 14 Jan 2020 05:44:27 -0800 (PST)
+Subject: Re: [PATCH] arm: Fix Kexec compilation issue.
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux@armlinux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20200110123125.51092-1-vincenzo.frascino@arm.com>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+Message-ID: <27d511d6-90de-02f1-733b-e177462dffab@arm.com>
+Date:   Tue, 14 Jan 2020 13:44:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20200110123125.51092-1-vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace tabs with spaces and/or remove spaces to use typical kernel
-horizontal whitespace.
+On 1/10/20 12:31 PM, Vincenzo Frascino wrote:
+> To perform the reserve_crashkernel() operation kexec uses SECTION_SIZE to
+> find a memblock in a range.
+> SECTION_SIZE is not defined for nommu systems. Trying to compile kexec in
+> these conditions results in a build error:
+> 
+>   linux/arch/arm/kernel/setup.c: In function ‘reserve_crashkernel’:
+>   linux/arch/arm/kernel/setup.c:1016:25: error: ‘SECTION_SIZE’ undeclared
+>      (first use in this function); did you mean ‘SECTIONS_WIDTH’?
+>              crash_size, SECTION_SIZE);
+>                          ^~~~~~~~~~~~
+>                          SECTIONS_WIDTH
+>   linux/arch/arm/kernel/setup.c:1016:25: note: each undeclared identifier
+>      is reported only once for each function it appears in
+>   linux/scripts/Makefile.build:265: recipe for target 'arch/arm/kernel/setup.o'
+>      failed
+> 
+> Make KEXEC depend on MMU to fix the compilation issue.
+> 
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  arch/arm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index ba75e3661a41..bc99582bdc85 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1904,7 +1904,7 @@ config XIP_DEFLATED_DATA
+>  config KEXEC
+>  	bool "Kexec system call (EXPERIMENTAL)"
+>  	depends on (!SMP || PM_SLEEP_SMP)
+> -	depends on !CPU_V7M
+> +	depends on MMU
+>  	select KEXEC_CORE
+>  	help
+>  	  kexec is a system call that implements the ability to shutdown your
+> 
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/rtl8188e_dm.c | 44 ++++++++++-----------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-index 5348db2725a1..241f55b92808 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_dm.c
-@@ -21,7 +21,7 @@
- /*  Initialize GPIO setting registers */
- static void dm_InitGPIOSetting(struct adapter *Adapter)
- {
--	u8	tmp1byte;
-+	u8 tmp1byte;
- 
- 	tmp1byte = usb_read8(Adapter, REG_GPIO_MUXCFG);
- 	tmp1byte &= (GPIOSEL_GPIO | ~GPIOSEL_ENBT);
-@@ -35,7 +35,7 @@ static void dm_InitGPIOSetting(struct adapter *Adapter)
- static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
- {
- 	struct hal_data_8188e *hal_data = Adapter->HalData;
--	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
-+	struct dm_priv *pdmpriv = &hal_data->dmpriv;
- 	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
- 
- 	/*  Init Value */
-@@ -59,38 +59,38 @@ static void Init_ODM_ComInfo_88E(struct adapter *Adapter)
- 	dm_odm->BbSwingIdxOfdmCurrent = 12;
- 	dm_odm->BbSwingFlagOfdm = false;
- 
--	pdmpriv->InitODMFlag =	ODM_RF_CALIBRATION |
--				ODM_RF_TX_PWR_TRACK;
-+	pdmpriv->InitODMFlag = ODM_RF_CALIBRATION |
-+			       ODM_RF_TX_PWR_TRACK;
- 
- 	dm_odm->SupportAbility = pdmpriv->InitODMFlag;
- }
- 
- static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
- {
--	struct mlme_ext_priv	*pmlmeext = &Adapter->mlmeextpriv;
--	struct mlme_priv	*pmlmepriv = &Adapter->mlmepriv;
-+	struct mlme_ext_priv *pmlmeext = &Adapter->mlmeextpriv;
-+	struct mlme_priv *pmlmepriv = &Adapter->mlmepriv;
- 	struct pwrctrl_priv *pwrctrlpriv = &Adapter->pwrctrlpriv;
- 	struct hal_data_8188e *hal_data = Adapter->HalData;
- 	struct odm_dm_struct *dm_odm = &hal_data->odmpriv;
--	struct dm_priv	*pdmpriv = &hal_data->dmpriv;
-+	struct dm_priv *pdmpriv = &hal_data->dmpriv;
- 	int i;
- 
--	pdmpriv->InitODMFlag =	ODM_BB_DIG |
--				ODM_BB_RA_MASK |
--				ODM_BB_DYNAMIC_TXPWR |
--				ODM_BB_FA_CNT |
--				ODM_BB_RSSI_MONITOR |
--				ODM_BB_CCK_PD |
--				ODM_BB_PWR_SAVE |
--				ODM_MAC_EDCA_TURBO |
--				ODM_RF_CALIBRATION |
--				ODM_RF_TX_PWR_TRACK;
-+	pdmpriv->InitODMFlag = ODM_BB_DIG |
-+			       ODM_BB_RA_MASK |
-+			       ODM_BB_DYNAMIC_TXPWR |
-+			       ODM_BB_FA_CNT |
-+			       ODM_BB_RSSI_MONITOR |
-+			       ODM_BB_CCK_PD |
-+			       ODM_BB_PWR_SAVE |
-+			       ODM_MAC_EDCA_TURBO |
-+			       ODM_RF_CALIBRATION |
-+			       ODM_RF_TX_PWR_TRACK;
- 	if (hal_data->AntDivCfg)
- 		pdmpriv->InitODMFlag |= ODM_BB_ANT_DIV;
- 
- 	if (Adapter->registrypriv.mp_mode == 1) {
--		pdmpriv->InitODMFlag =	ODM_RF_CALIBRATION |
--					ODM_RF_TX_PWR_TRACK;
-+		pdmpriv->InitODMFlag = ODM_RF_CALIBRATION |
-+				       ODM_RF_TX_PWR_TRACK;
- 	}
- 
- 	dm_odm->SupportAbility = pdmpriv->InitODMFlag;
-@@ -123,7 +123,7 @@ static void Update_ODM_ComInfo_88E(struct adapter *Adapter)
- 
- void rtl8188e_InitHalDm(struct adapter *Adapter)
- {
--	struct dm_priv	*pdmpriv = &Adapter->HalData->dmpriv;
-+	struct dm_priv *pdmpriv = &Adapter->HalData->dmpriv;
- 	struct odm_dm_struct *dm_odm = &Adapter->HalData->odmpriv;
- 
- 	dm_InitGPIOSetting(Adapter);
-@@ -167,7 +167,7 @@ void rtw_hal_dm_watchdog(struct adapter *Adapter)
- 
- void rtw_hal_dm_init(struct adapter *Adapter)
- {
--	struct dm_priv	*pdmpriv = &Adapter->HalData->dmpriv;
-+	struct dm_priv *pdmpriv = &Adapter->HalData->dmpriv;
- 	struct odm_dm_struct *podmpriv = &Adapter->HalData->odmpriv;
- 
- 	memset(pdmpriv, 0, sizeof(struct dm_priv));
-@@ -185,7 +185,7 @@ void rtw_hal_antdiv_rssi_compared(struct adapter *Adapter,
- 		/* select optimum_antenna for before linked => For antenna
- 		 * diversity
- 		 */
--		if (dst->Rssi >=  src->Rssi) {/* keep org parameter */
-+		if (dst->Rssi >= src->Rssi) {/* keep org parameter */
- 			src->Rssi = dst->Rssi;
- 			src->PhyInfo.Optimum_antenna =
- 				dst->PhyInfo.Optimum_antenna;
--- 
-2.24.1
-
+Cheers
+Vladimir
