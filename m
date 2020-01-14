@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8343213A569
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF39A13A603
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730697AbgANKHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:07:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
+        id S1730727AbgANKHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:07:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730681AbgANKHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:07:21 -0500
+        id S1729431AbgANKHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:07:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3F2320678;
-        Tue, 14 Jan 2020 10:07:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C86724679;
+        Tue, 14 Jan 2020 10:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996440;
-        bh=Lv120bcg/Eqbm6F5BkYFSHwxvzllsH613wmYXWHfjqE=;
+        s=default; t=1578996443;
+        bh=2m06gkz84QLde4drCqbnIjIW6b8Xjt+SP/Y7t00iEcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a3/JbDqSErfPYmnvf2A+5qSpmTOoidCmfcxLVYa5SCeCSXoJqMAy7u1Dogxk26+ET
-         egmY03+1Lf9h2HJcg/inUaIYwZ9IABm/2JM6A8DhLWg0QENx+CyzHlwm/KkexJSnOP
-         5urBzPV6wD/mV4cqbAHONMJehOGHMmMJ+cRnaJBE=
+        b=NlsUGcifsQ1gu9Fv3T+VELcbB//ZWnIX+1zodjMrL3iNWqPbV3PgEA9b7aY9EEQ1E
+         uw8GognstJY66McirMB0PKdvhQ+UEzcV0xDsfQfCplMXZkrsNd2/phMwmKXx5HIdqQ
+         ywmmegWY0WHXULlt+NdkLS5YshxIlWaUWOwDH14k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
-        Wayne Lin <Wayne.Lin@amd.com>, Lyude Paul <lyude@redhat.com>
-Subject: [PATCH 4.19 18/46] drm/dp_mst: correct the shifting in DP_REMOTE_I2C_READ
-Date:   Tue, 14 Jan 2020 11:01:35 +0100
-Message-Id: <20200114094344.232716253@linuxfoundation.org>
+        stable@vger.kernel.org, Jimmy Assarsson <extja@kvaser.com>,
+        Christer Beskow <chbe@kvaser.com>,
+        Nicklas Johansson <extnj@kvaser.com>,
+        Martin Henriksson <mh@kvaser.com>,
+        Johan Hovold <johan@kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 19/46] can: kvaser_usb: fix interface sanity check
+Date:   Tue, 14 Jan 2020 11:01:36 +0100
+Message-Id: <20200114094344.407711257@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
 References: <20200114094339.608068818@linuxfoundation.org>
@@ -43,52 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wayne Lin <Wayne.Lin@amd.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit c4e4fccc5d52d881afaac11d3353265ef4eccb8b upstream.
+commit 5660493c637c9d83786f1c9297f403eae44177b6 upstream.
 
-[Why]
-According to DP spec, it should shift left 4 digits for NO_STOP_BIT
-in REMOTE_I2C_READ message. Not 5 digits.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-In current code, NO_STOP_BIT is always set to zero which means I2C
-master is always generating a I2C stop at the end of each I2C write
-transaction while handling REMOTE_I2C_READ sideband message. This issue
-might have the generated I2C signal not meeting the requirement. Take
-random read in I2C for instance, I2C master should generate a repeat
-start to start to read data after writing the read address. This issue
-will cause the I2C master to generate a stop-start rather than a
-re-start which is not expected in I2C random read.
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-[How]
-Correct the shifting value of NO_STOP_BIT for DP_REMOTE_I2C_READ case in
-drm_dp_encode_sideband_req().
-
-Changes since v1:(https://patchwork.kernel.org/patch/11312667/)
-* Add more descriptions in commit and cc to stable
-
-Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Wayne Lin <Wayne.Lin@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20200103055001.10287-1-Wayne.Lin@amd.com
+Fixes: aec5fb2268b7 ("can: kvaser_usb: Add support for Kvaser USB hydra family")
+Cc: stable <stable@vger.kernel.org>     # 4.19
+Cc: Jimmy Assarsson <extja@kvaser.com>
+Cc: Christer Beskow <chbe@kvaser.com>
+Cc: Nicklas Johansson <extnj@kvaser.com>
+Cc: Martin Henriksson <mh@kvaser.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c |    2 +-
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -274,7 +274,7 @@ static void drm_dp_encode_sideband_req(s
- 			memcpy(&buf[idx], req->u.i2c_read.transactions[i].bytes, req->u.i2c_read.transactions[i].num_bytes);
- 			idx += req->u.i2c_read.transactions[i].num_bytes;
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c
+@@ -1590,7 +1590,7 @@ static int kvaser_usb_hydra_setup_endpoi
+ 	struct usb_endpoint_descriptor *ep;
+ 	int i;
  
--			buf[idx] = (req->u.i2c_read.transactions[i].no_stop_bit & 0x1) << 5;
-+			buf[idx] = (req->u.i2c_read.transactions[i].no_stop_bit & 0x1) << 4;
- 			buf[idx] |= (req->u.i2c_read.transactions[i].i2c_transaction_delay & 0xf);
- 			idx++;
- 		}
+-	iface_desc = &dev->intf->altsetting[0];
++	iface_desc = dev->intf->cur_altsetting;
+ 
+ 	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+ 		ep = &iface_desc->endpoint[i].desc;
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+@@ -1310,7 +1310,7 @@ static int kvaser_usb_leaf_setup_endpoin
+ 	struct usb_endpoint_descriptor *endpoint;
+ 	int i;
+ 
+-	iface_desc = &dev->intf->altsetting[0];
++	iface_desc = dev->intf->cur_altsetting;
+ 
+ 	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+ 		endpoint = &iface_desc->endpoint[i].desc;
 
 
