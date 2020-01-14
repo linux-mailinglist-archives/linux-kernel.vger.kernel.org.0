@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCB113A64E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F8213A58C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731819AbgANKKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
+        id S1731066AbgANKIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:08:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731677AbgANKKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:10:38 -0500
+        id S1731061AbgANKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:08:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6624320678;
-        Tue, 14 Jan 2020 10:10:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08A8420678;
+        Tue, 14 Jan 2020 10:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996637;
-        bh=j4koRJ49R9/AKxvnyrRZo35HoCjp+RRH2+npINBK69E=;
+        s=default; t=1578996522;
+        bh=T67fHZqidlAyh8FbzLOG1P11xKFtdBYShqTE/DNKaeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r2LQCHhEf6Ck2I/27gcIhFY83X70+WzatRWzKKiqe5a48B3iUj8SdVFdYl7KGepKr
-         e2NhMg8YPyaXNHORPNrV/gHrtdieNCH/x2yBOezNE/BiNo0kldleBxCDS23LEY878I
-         vZ+s9mWRea7SYAcTYsa9eRJv5i3cDzCJiVTB64zM=
+        b=Zq/lreziWcqXQqg6p8JG2MMaNq7OeGJUWPzv2Q+5cwzNi0KDE1GukPqz7VTPClrsd
+         gMxcTFD8ataIMnamYDIo2T5ICg1Cuk8GJpxGbKIFjU9dtvW+LNUHNGEZSv4q2HiF95
+         MPURjWIKR3DNhKdNlD3Ar/JmuPAFGhpmexhqHj+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 29/39] mwifiex: pcie: Fix memory leak in mwifiex_pcie_alloc_cmdrsp_buf
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 46/46] netfilter: ipset: avoid null deref when IPSET_ATTR_LINENO is present
 Date:   Tue, 14 Jan 2020 11:02:03 +0100
-Message-Id: <20200114094345.309549224@linuxfoundation.org>
+Message-Id: <20200114094348.890539049@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
-References: <20200114094336.210038037@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit db8fd2cde93227e566a412cf53173ffa227998bc upstream.
+commit 22dad713b8a5ff488e07b821195270672f486eb2 upstream.
 
-In mwifiex_pcie_alloc_cmdrsp_buf, a new skb is allocated which should be
-released if mwifiex_map_pci_memory() fails. The release is added.
+The set uadt functions assume lineno is never NULL, but it is in
+case of ip_set_utest().
 
-Fixes: fc3314609047 ("mwifiex: use pci_alloc/free_consistent APIs for PCIe")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Acked-by: Ganapathi Bhat <gbhat@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+syzkaller managed to generate a netlink message that calls this with
+LINENO attr present:
+
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+RIP: 0010:hash_mac4_uadt+0x1bc/0x470 net/netfilter/ipset/ip_set_hash_mac.c:104
+Call Trace:
+ ip_set_utest+0x55b/0x890 net/netfilter/ipset/ip_set_core.c:1867
+ nfnetlink_rcv_msg+0xcf2/0xfb0 net/netfilter/nfnetlink.c:229
+ netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
+ nfnetlink_rcv+0x1ba/0x460 net/netfilter/nfnetlink.c:563
+
+pass a dummy lineno storage, its easier than patching all set
+implementations.
+
+This seems to be a day-0 bug.
+
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Reported-by: syzbot+34bd2369d38707f3f4a7@syzkaller.appspotmail.com
+Fixes: a7b4f989a6294 ("netfilter: ipset: IP set core support")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/pcie.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/netfilter/ipset/ip_set_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/pcie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
-@@ -1022,8 +1022,10 @@ static int mwifiex_pcie_alloc_cmdrsp_buf
- 	}
- 	skb_put(skb, MWIFIEX_UPLD_SIZE);
- 	if (mwifiex_map_pci_memory(adapter, skb, MWIFIEX_UPLD_SIZE,
--				   PCI_DMA_FROMDEVICE))
-+				   PCI_DMA_FROMDEVICE)) {
-+		kfree_skb(skb);
- 		return -1;
-+	}
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -1666,6 +1666,7 @@ static int ip_set_utest(struct net *net,
+ 	struct ip_set *set;
+ 	struct nlattr *tb[IPSET_ATTR_ADT_MAX + 1] = {};
+ 	int ret = 0;
++	u32 lineno;
  
- 	card->cmdrsp_buf = skb;
+ 	if (unlikely(protocol_failed(attr) ||
+ 		     !attr[IPSET_ATTR_SETNAME] ||
+@@ -1682,7 +1683,7 @@ static int ip_set_utest(struct net *net,
+ 		return -IPSET_ERR_PROTOCOL;
  
+ 	rcu_read_lock_bh();
+-	ret = set->variant->uadt(set, tb, IPSET_TEST, NULL, 0, 0);
++	ret = set->variant->uadt(set, tb, IPSET_TEST, &lineno, 0, 0);
+ 	rcu_read_unlock_bh();
+ 	/* Userspace can't trigger element to be re-added */
+ 	if (ret == -EAGAIN)
 
 
