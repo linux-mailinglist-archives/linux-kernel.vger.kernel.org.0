@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AEF913A681
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 957E613A6CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbgANKLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:11:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47496 "EHLO mail.kernel.org"
+        id S1732838AbgANKNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:13:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731893AbgANKLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:11:50 -0500
+        id S1731615AbgANKNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:13:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B6D424677;
-        Tue, 14 Jan 2020 10:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63CB424676;
+        Tue, 14 Jan 2020 10:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578996709;
-        bh=B1XV/o6SJfKtoC5kFqGuPPVt02MVsT1m8qEe1Lgicmg=;
+        s=default; t=1578996818;
+        bh=UzvXOQ4JYiy/++WCb2/wCMrivUf5J+A5FNqha8RRVPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bFTwCDWI3KPpnv//pnBuqnlm2Fy1niXd3QrFS5i/FR9xice3y4hiV8rMRCRdznEd0
-         q/wyA6q1lV3dMACs2Z/Xqhi8VparNZQ8b/TPucRPBsVzu1xfOUqL3ibOiw7QHOv+8n
-         71w20itKgvdcGSHR1z4Je8oiFlDNTbhASwxFLVBw=
+        b=vbV+vopZBPmtNjTPID21IX1TgLAbQW/ni2Hb44aUFgzEMWGUeQ9o6hdbwZ+iDDCxv
+         7NbqSghaV76jQqa9+vbx9HBTMC8tkXJqH1WSPtkIiNDIGVgEqvSTMmAhLPaDIFfKw6
+         FztV1UohW4dntp8h0znDuNU/j4hqG8uFxNBnSh1Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Chris Chiu <chiu@endlessm.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 28/31] rtl8xxxu: prevent leaking urb
-Date:   Tue, 14 Jan 2020 11:02:20 +0100
-Message-Id: <20200114094345.229722756@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 4.4 19/28] staging: rtl8188eu: Add device code for TP-Link TL-WN727N v5.21
+Date:   Tue, 14 Jan 2020 11:02:21 +0100
+Message-Id: <20200114094343.412273247@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200114094334.725604663@linuxfoundation.org>
-References: <20200114094334.725604663@linuxfoundation.org>
+In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
+References: <20200114094336.845958665@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,32 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Michael Straube <straube.linux@gmail.com>
 
-commit a2cdd07488e666aa93a49a3fc9c9b1299e27ef3c upstream.
+commit 58dcc5bf4030cab548d5c98cd4cd3632a5444d5a upstream.
 
-In rtl8xxxu_submit_int_urb if usb_submit_urb fails the allocated urb
-should be released.
+This device was added to the stand-alone driver on github.
+Add it to the staging driver as well.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Chris Chiu <chiu@endlessm.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Link: https://github.com/lwfinger/rtl8188eu/commit/b9b537aa25a8
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191228143725.24455-1-straube.linux@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c |    1 +
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-+++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-@@ -5422,6 +5422,7 @@ static int rtl8xxxu_submit_int_urb(struc
- 	ret = usb_submit_urb(urb, GFP_KERNEL);
- 	if (ret) {
- 		usb_unanchor_urb(urb);
-+		usb_free_urb(urb);
- 		goto error;
- 	}
- 
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -49,6 +49,7 @@ static struct usb_device_id rtw_usb_id_t
+ 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
+ 	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
+ 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
++	{USB_DEVICE(0x2357, 0x0111)}, /* TP-Link TL-WN727N v5.21 */
+ 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
+ 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+ 	{}	/* Terminating entry */
 
 
