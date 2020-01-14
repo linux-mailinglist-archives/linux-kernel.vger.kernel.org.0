@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB0013A4D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:03:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC42C13A6B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbgANKCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:02:42 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41060 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728868AbgANKCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:02:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DyoJ2hA1fU1X63Qmz1hq0mnr1uqWmaszLSaW5lT0+iI=; b=o/xjIevWfUgEeraf8BCj8KgN3
-        YkxD+ytudJ1eE7zpSCVU/jnmToR85ngrnVeb87obRoSGaIbr1tb8xIEdBzQuDzzK3iBbIuC09Aj4n
-        rNRIFAZx8dEyQ7qa9nq/VKMa57fF/KONbVUbXtdTNQJ2o2XHE9cAmBgzcYLBfCSbD3PbRrk1wbWL/
-        7LMHJBTg+6m+86p8GW6cGfNSB5TzX9ekTKQ8gGaAOdyjh0pf1fKJ41zx/wMqtXWUbPEIv914jgJkV
-        NSZ9GHlp1SEEbflQFHRzugy8DuajSukBxpb0MgfN5FkFpCNupyrQs7b0GsGDnW7ow/+ntTLEeGz7m
-        Cb0NtJJcA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1irJ1m-0003IE-TS; Tue, 14 Jan 2020 10:02:27 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1733145AbgANKNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:13:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732558AbgANKM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:12:59 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E66793058B4;
-        Tue, 14 Jan 2020 11:00:48 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6E1A12B6AFB83; Tue, 14 Jan 2020 11:02:24 +0100 (CET)
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ACDA24679;
+        Tue, 14 Jan 2020 10:12:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578996778;
+        bh=3jVM3h6LTqfuKy2l8oK+jeAcAegMVD9D42+Lcw17tHA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZHdl7ijbDCPMsFNMkzAZD3bGVz+y8Hv0C+EEC+iKRVnxDd6s1jNbC7uYjNAEMfoYf
+         vizu6IAMP8rFO35nZP3tsvHUiNQOcZlopi97cuSZHxqCZ4hZVaz+Vev0AX37ZO9U2g
+         d71nXAzP3a4a4bnZ5xTxyeXc3DWOADeglDce4bko=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, huangwen <huangwenabc@gmail.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 22/28] mwifiex: fix possible heap overflow in mwifiex_process_country_ie()
 Date:   Tue, 14 Jan 2020 11:02:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Hewenliang <hewenliang4@huawei.com>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        bsegall@google.com, mgorman@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] idle: fix spelling mistake "iterrupts" -> "interrupts"
-Message-ID: <20200114100224.GC2844@hirez.programming.kicks-ass.net>
-References: <20200110025604.34373-1-hewenliang4@huawei.com>
- <20200113160413.5afcfbd7@gandalf.local.home>
+Message-Id: <20200114094343.972568076@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200114094336.845958665@linuxfoundation.org>
+References: <20200114094336.845958665@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200113160413.5afcfbd7@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 04:04:13PM -0500, Steven Rostedt wrote:
-> 
-> Peter,
-> 
-> I guess you could just pull this into one of your queues.
+From: Ganapathi Bhat <gbhat@marvell.com>
 
-Only because you replied, otherwise I tend to ignore such patches.
+commit 3d94a4a8373bf5f45cf5f939e88b8354dbf2311b upstream.
+
+mwifiex_process_country_ie() function parse elements of bss
+descriptor in beacon packet. When processing WLAN_EID_COUNTRY
+element, there is no upper limit check for country_ie_len before
+calling memcpy. The destination buffer domain_info->triplet is an
+array of length MWIFIEX_MAX_TRIPLET_802_11D(83). The remote
+attacker can build a fake AP with the same ssid as real AP, and
+send malicous beacon packet with long WLAN_EID_COUNTRY elemen
+(country_ie_len > 83). Attacker can  force STA connect to fake AP
+on a different channel. When the victim STA connects to fake AP,
+will trigger the heap buffer overflow. Fix this by checking for
+length and if found invalid, don not connect to the AP.
+
+This fix addresses CVE-2019-14895.
+
+Reported-by: huangwen <huangwenabc@gmail.com>
+Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/net/wireless/mwifiex/sta_ioctl.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/mwifiex/sta_ioctl.c
+@@ -229,6 +229,14 @@ static int mwifiex_process_country_ie(st
+ 			    "11D: skip setting domain info in FW\n");
+ 		return 0;
+ 	}
++
++	if (country_ie_len >
++	    (IEEE80211_COUNTRY_STRING_LEN + MWIFIEX_MAX_TRIPLET_802_11D)) {
++		mwifiex_dbg(priv->adapter, ERROR,
++			    "11D: country_ie_len overflow!, deauth AP\n");
++		return -EINVAL;
++	}
++
+ 	memcpy(priv->adapter->country_code, &country_ie[2], 2);
+ 
+ 	domain_info->country_code[0] = country_ie[2];
+@@ -272,7 +280,8 @@ int mwifiex_bss_start(struct mwifiex_pri
+ 	priv->scan_block = false;
+ 
+ 	if (bss) {
+-		mwifiex_process_country_ie(priv, bss);
++		if (mwifiex_process_country_ie(priv, bss))
++			return -EINVAL;
+ 
+ 		/* Allocate and fill new bss descriptor */
+ 		bss_desc = kzalloc(sizeof(struct mwifiex_bssdescriptor),
+
 
