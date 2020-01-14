@@ -2,126 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8186813B274
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 604E913B282
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 19:59:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgANS6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 13:58:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30876 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgANS6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:58:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 10:58:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,319,1574150400"; 
-   d="scan'208";a="249500514"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jan 2020 10:58:08 -0800
-Date:   Tue, 14 Jan 2020 10:58:08 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, jmattson@google.com,
-        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com
-Subject: Re: [RESEND PATCH v10 06/10] vmx: spp: Set up SPP paging table at
- vmentry/vmexit
-Message-ID: <20200114185808.GI16784@linux.intel.com>
-References: <20200102061319.10077-1-weijiang.yang@intel.com>
- <20200102061319.10077-7-weijiang.yang@intel.com>
- <20200110180458.GG21485@linux.intel.com>
- <20200113081050.GF12253@local-michael-cet-test.sh.intel.com>
- <20200113173358.GC1175@linux.intel.com>
- <20200114030820.GA4583@local-michael-cet-test.sh.intel.com>
+        id S1728689AbgANS7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 13:59:49 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45355 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbgANS7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 13:59:48 -0500
+Received: by mail-pg1-f193.google.com with SMTP id b9so6794042pgk.12;
+        Tue, 14 Jan 2020 10:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZLdWsGP0XHWGCxqVZhBLWctk+c6rDeF6k4vcD9DPHeI=;
+        b=i2esJgOGFaemeAJAp/5QuOJMkYpdkKC+BLVc3D4N2IEPIwfcCJcCSPc/Rp3CxvQcSX
+         8kRFU0HiBO9tAtgVGddZGvBf66yxgIoiUP2gAFr9YIvFs3e1tJCgnaRRF3+HT3F6hCVX
+         HQUUXaaol4cLeN7aKj8yFkgcOpznc1FoOoXd6AeqMXb4zSwz+GxGgcMO6ULnsUFnZfTQ
+         +uWHsyf5dvD13xhpYMo/FUR/Rs3U11m8KLSDY1X1u9UZAfhcWHvVfUfIqeJXH4qpKJlE
+         eZubYzsEvAnrRoY2zi3DmJb8WFDVO05RQQDJ1WGC8Lz+Fj0k2Jc/8s24Ix0/pXV9Txhr
+         WSwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZLdWsGP0XHWGCxqVZhBLWctk+c6rDeF6k4vcD9DPHeI=;
+        b=ovedxxpPXWGQvjcoTKshv6FTrNjOdkkdtPvUhdz7a2mDUPHojs3o/PvhIrF2rl+BZn
+         M/GavCm/LOdmmmsViPo1MG7xJ5Gge6dNZTA9QeQEy932gDu11//qWTRQQJFmqrvKGsvr
+         twb/eIs0JGB+/96RyTpMIUxk5OXQZ7PrS1osa+e+W3mB1YeIWQxqpF6wHgfbqTStVuxt
+         b0Qf6B299mfGIPBkDRc3mYtz64UxqZpjme496qRPttpqcOiR4BWStzoCAEfKkDDDIqAJ
+         dDy+BoAftl4OMqsfGgUkbjV7D+abmPZxGnPL7+1tgE85lR2DoD4O7Hq+RhqIUUEPwu0F
+         VGzw==
+X-Gm-Message-State: APjAAAWjESv2HwnwR2JTJq8gF3kZh8ZpeUhWcWtEf24erj2FcCgzo8Zt
+        0M5eX7BkpjNdamfO4ebRl/A=
+X-Google-Smtp-Source: APXvYqy/N+z69PG6y7Ebj6znXULG+UpZs19rlNT7fvG0Mt2TmO28ChC4a53hBPhfkDlB2m58VsHirQ==
+X-Received: by 2002:a63:ed56:: with SMTP id m22mr28041543pgk.261.1579028387395;
+        Tue, 14 Jan 2020 10:59:47 -0800 (PST)
+Received: from google.com ([2620:15c:211:1:3e01:2939:5992:52da])
+        by smtp.gmail.com with ESMTPSA id b4sm19392543pfd.18.2020.01.14.10.59.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 10:59:46 -0800 (PST)
+Date:   Tue, 14 Jan 2020 10:59:44 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, linux-api@vger.kernel.org,
+        oleksandr@redhat.com, Suren Baghdasaryan <surenb@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        John Dias <joaodias@google.com>
+Subject: Re: [PATCH 2/4] mm: introduce external memory hinting API
+Message-ID: <20200114185944.GA178589@google.com>
+References: <20200110213433.94739-1-minchan@kernel.org>
+ <20200110213433.94739-3-minchan@kernel.org>
+ <56ea0927-ad2e-3fbd-3366-3813330f6cec@virtuozzo.com>
+ <20200113104256.5ujbplyec2sk4onn@wittgenstein>
+ <20200113184408.GD110363@google.com>
+ <20200113191046.2tidyvc544zvchek@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200114030820.GA4583@local-michael-cet-test.sh.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200113191046.2tidyvc544zvchek@wittgenstein>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 11:08:20AM +0800, Yang Weijiang wrote:
-> On Mon, Jan 13, 2020 at 09:33:58AM -0800, Sean Christopherson wrote:
-> > On Mon, Jan 13, 2020 at 04:10:50PM +0800, Yang Weijiang wrote:
-> > > On Fri, Jan 10, 2020 at 10:04:59AM -0800, Sean Christopherson wrote:
-> > > > On Thu, Jan 02, 2020 at 02:13:15PM +0800, Yang Weijiang wrote:
-> > > > > @@ -3585,7 +3602,30 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
-> > > > >  		if ((error_code & PFERR_WRITE_MASK) &&
-> > > > >  		    spte_can_locklessly_be_made_writable(spte))
-> > > > >  		{
-> > > > > -			new_spte |= PT_WRITABLE_MASK;
-> > > > > +			/*
-> > > > > +			 * Record write protect fault caused by
-> > > > > +			 * Sub-page Protection, let VMI decide
-> > > > > +			 * the next step.
-> > > > > +			 */
-> > > > > +			if (spte & PT_SPP_MASK) {
-> > > > > +				int len = kvm_x86_ops->get_inst_len(vcpu);
+Hi Christian,
+
+On Mon, Jan 13, 2020 at 08:10:47PM +0100, Christian Brauner wrote:
+> On Mon, Jan 13, 2020 at 10:44:08AM -0800, Minchan Kim wrote:
+> > On Mon, Jan 13, 2020 at 11:42:57AM +0100, Christian Brauner wrote:
+> > > On Mon, Jan 13, 2020 at 11:47:11AM +0300, Kirill Tkhai wrote:
+> > 
+> > < snip >
+> > 
+> > > > > +SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
+> > > > > +		size_t, len_in, int, behavior, unsigned long, flags)
 > > > > 
-> > > > There's got to be a better way to handle SPP exits than adding a helper
-> > > > to retrieve the instruction length.
-> > > >
-> > > The fault instruction was skipped by kvm_skip_emulated_instruction()
-> > > before, but Paolo suggested leave the re-do or skip option to user-space
-> > > to make it flexible for write protection or write tracking, so return
-> > > length to user-space.
+> > > > I don't like the interface. The fact we have pidfd does not mean,
+> > > > we have to use it for new syscalls always. A user may want to set
+> > > > madvise for specific pid from console and pass pid as argument.
+> > > > pidfd would be an overkill in this case.
+> > > > We usually call "kill -9 pid" from console. Why shouldn't process_madvise()
+> > > > allow this?
+> > > > 
+> > > > I suggent to extend first argument to work with both pid and pidfd.
+> > > > Look at what we have for waitid(idtype, id_t id, ...) for example:
+> > > > 
+> > > >        idtype == P_PID
+> > > >               Wait for the child whose process ID matches id.
+> > > > 
+> > > >        idtype == P_PIDFD (since Linux 5.4)
+> > > >               Wait for the child referred to by the PID file descriptor specified in id.  (See pidfd_open(2) for  further  information  on
+> > > >               PID file descriptors.)
+> > > > 
+> > > > We may use @flags argument for this.
+> > > 
+> > > Sorry for chiming in just a comment. Overall, I don't particularly care
+> > > how or if you integrate pidfd here. One thing I would like to point out
+> > > is that we're working on a patch to place new features under pidfd
+> > > specific flags. This e.g. means a pidfd would be only be able to be used
+> > > for madvise operations (or getfd operations) if it was created with that
+> > > specific flag set making it easier to share them with other processes.
+> > > So if you integrate them here I would be quite thankful if you target
+> > > the patchset for the v5.7 merge window, not for v5.6.
 > > 
-> > Sorry, my comment was unclear.  I have no objection to punting the fault
-> > to userspace, it's the mechanics of how it's done that I dislike.
-> > 
-> > Specifically, (a) using run->exit_reason to propagate the SPP exit up the
-> > stack, e.g. instead of modifying affected call stacks to play nice with
-> > any exit to userspace, (b) assuming ->get_insn_len() will always be
-> > accurate, e.g. see the various caveats in skip_emulated_instruction() for
-> > both VMX and SVM, and (c) duplicating the state capture code in every
-> > location that can encounter a SPP fault.
->
-> How about calling skip_emulated_instruction() in KVM before exit to
+> > Hi Christian,
+> > Sorry but I couldn't understand your point.
+> > Could you clarify what you meant?
+> 
+> Hi Minchan,
+> 
+> Sure. When you create a pidfd, e.g. with clone3() and you'd wanted to
+> use it for madvise you'd need to set a flag like pidfd_cap_madvise or
+> pidfd_feature_madvise when you create the pidfd. Only if the pidfd was
+> created with that flag set could you use it with madvise (This does not
+> affect the permission checking you're performing here.). This has come
+> up a couple of times and becomes more relevant now that people keep
+> adding new features on top of pidfd and is similar to what we are now
+> doing with openat2().
 
-I'm confused.  It sounds like KVM_EXIT_SPP provides the instruction length
-because it skips an instruction before exiting to userspace.  But if KVM
-is is emulating an instruction, it shouldn't be doing
-{kvm_}skip_emulated_instruction(), e.g. if emulation fails due to a SPP
-violation (returns KVM_EXIT_SPP) then GUEST_RIP should still point at the
-exiting instruction.  Ditto for the fast_page_fault() case, RIP shouldn't
-be advanced.
+Thanks for the explain. When I read discussion with you and Daniel, it's
+still vague for me that what's the outcome so that it could land onto
+v5.6.(If I miss something progress on other thread, sorry about that.)
 
-What am I missing?
+I will keep Ccing you so that you may notice when this patchset could
+be merged(Please Cc me when you send your patchset for me to notice)
+So if we judge it's worth to integrate, maybe we could make a quick
+patch to use it or postpone a cycle to intergrate it if we have more
+time.
 
-> userspace, but still return the skipped instruction length, if userspace
-> would like to re-execute the instruction, it can unwind RIP or simply
-> rely on KVM?
-
-I'm not convinced the instruction length needs to be provided to userspace
-for this case.  Obviously it's not difficult to provide the info, I just
-don't understand the value added by doing so.  As above, RIP shouldn't
-need to be unwound, and blindly skipping an instruction seems like an odd
-thing for a VMI engine to do.
-
-> > What I'm hoping is that it's possible to modify the call stacks to
-> > explicitly propagate an exit to userspace and/or SPP fault, and shove all
-> > the state capture into a common location, e.g. handle_ept_violation().
-> >
-> The problem is, the state capture code in fast_page_fault() and
-> emulation case share different causes, the former is generic occurence
-> of SPP induced EPT violation, the latter is atually a "faked" one while
-> detecting emulation instruction is writing some SPP protected area, so I
-> seperated them.
-
-Can we make SPP dependent on unrestricted guest so that the only entry
-point to the emulator is through handle_ept_violation()?  And thus the
-only path to triggering KVM_EXIT_SPP would also be through
-handle_ept_violation(); (I think, might be forgetting a different emulation
-path).
-
->
-> > Side topic, assuming the userspace VMI is going to be instrospecting the
-> > faulting instruction, won't it decode the instruction?  I.e. calculate
-> > the instruction length anyways?
+Thanks.
