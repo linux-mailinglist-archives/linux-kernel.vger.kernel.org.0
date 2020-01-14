@@ -2,86 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871C113ACBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529AE13ACC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 15:57:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgANO5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 09:57:08 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:15057 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727092AbgANO5I (ORCPT
+        id S1729078AbgANO5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 09:57:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27356 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727092AbgANO5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:57:08 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579013827; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=/wDQzX9drwe6MnLxKEd1wgdmQ0ROFJy34Icy9JXF50Q=; b=QJCtwaWyhz8NxuKFgQID9vjN+t+e1K3ysfYSiiSWH6kHI5jn8ymiuXaYQRjVlV9e4CRPsADe
- gTfl2H6ghWXxns3Lbast6UomutGHo2qXDmqHUVM9XP0CnzGImWOG5PcYsLHDVnWwPrlAQOlD
- pTREJ5s2WaKrt+eRgmTBNfeiqwM=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e1dd6be.7fba760c6f48-smtp-out-n01;
- Tue, 14 Jan 2020 14:57:02 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 655D2C4479F; Tue, 14 Jan 2020 14:57:01 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from tynnyri.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 14 Jan 2020 09:57:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579013840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bRnkICnNJBIzJOH97eFHI4gLkkkXhQ+8DcPEdenNZ4Q=;
+        b=AI49oSZ5j/ILSJdXRBl6BlPC9gMf6FZte3/qmDo6+qi4KMcnaam8OYiuyJnhf0pPbvyOKV
+        H93iXuAnqOEqMY4LnTmJdBRi+K2L2C9cetFNSWLWk5dLzSe3wvGwJ0BHhyWrPtdGsVmSke
+        offpBobCMcT62owWzR1xwfbQLwM7y8w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-293-G_2eAZEZOOOvrcdG1DZZ9A-1; Tue, 14 Jan 2020 09:57:17 -0500
+X-MC-Unique: G_2eAZEZOOOvrcdG1DZZ9A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2370AC43383;
-        Tue, 14 Jan 2020 14:56:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2370AC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Ganapathi Bhat <ganapathi.bhat@nxp.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        stable <stable@vger.kernel.org>, huangwen <huangwenabc@gmail.com>
-Subject: Re: [PATCH] mwifiex: fix unbalanced locking in mwifiex_process_country_ie()
-References: <20200106224212.189763-1-briannorris@chromium.org>
-        <CA+ASDXNN5=97nhN99rPneLGSQAmQ4ULS6Kim1oxCzKWNtPkWFw@mail.gmail.com>
-Date:   Tue, 14 Jan 2020 16:56:54 +0200
-In-Reply-To: <CA+ASDXNN5=97nhN99rPneLGSQAmQ4ULS6Kim1oxCzKWNtPkWFw@mail.gmail.com>
-        (Brian Norris's message of "Mon, 6 Jan 2020 14:51:02 -0800")
-Message-ID: <87imle13yh.fsf@tynnyri.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 117DA801E78;
+        Tue, 14 Jan 2020 14:57:15 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-77.rdu2.redhat.com [10.10.124.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A4ED75DA7D;
+        Tue, 14 Jan 2020 14:57:13 +0000 (UTC)
+Subject: Re: [mm/hugetlb] c77c0a8ac4: will-it-scale.per_process_ops 15.9%
+ improvement
+To:     Michal Hocko <mhocko@kernel.org>,
+        kernel test robot <rong.a.chen@intel.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+References: <20200114085637.GA29297@shao2-debian>
+ <20200114091251.GE19428@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <bd474ca4-9f47-0ab1-f461-513789fc074d@redhat.com>
+Date:   Tue, 14 Jan 2020 09:57:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200114091251.GE19428@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> writes:
-
-> On Mon, Jan 6, 2020 at 2:43 PM Brian Norris <briannorris@chromium.org> wrote:
+On 1/14/20 4:12 AM, Michal Hocko wrote:
+> On Tue 14-01-20 16:56:37, kernel test robot wrote:
+>> Greeting,
 >>
->> We called rcu_read_lock(), so we need to call rcu_read_unlock() before
->> we return.
+>> FYI, we noticed a 15.9% improvement of will-it-scale.per_process_ops due to commit:
 >>
->> Fixes: 3d94a4a8373b ("mwifiex: fix possible heap overflow in mwifiex_process_country_ie()")
->> Cc: stable@vger.kernel.org
->> Cc: huangwen <huangwenabc@gmail.com>
->> Cc: Ganapathi Bhat <ganapathi.bhat@nxp.com>
->> Signed-off-by: Brian Norris <briannorris@chromium.org>
+>>
+>> commit: c77c0a8ac4c522638a8242fcb9de9496e3cdbb2d ("mm/hugetlb: defer freeing of huge pages if in non-task context")
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> This is more than surprising because the patch has only changed the
+> behavior for hugetlb pages freed from the (soft)interrupt context and
+> that should be a very rare event. Does the test really generate a lot of
+> those?
 >
-> I probably should have mentioned somewhere here: the bug is currently
-> in 5.5-rc and is being ported to -stable already (I'll try to head
-> that off). So this probably should have said [PATCH 5.5]. Sorry about
-> that.
+Yes, I have the same question. I was not expecting to see any
+performance impact.
 
-Ok, I'll queue this to v5.5.
+Cheers,
+Longman
 
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
