@@ -2,90 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B25513A5FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 685DE13A594
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 11:09:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730625AbgANKHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 05:07:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52696 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729238AbgANKHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 05:07:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E44BEAFAE;
-        Tue, 14 Jan 2020 10:07:06 +0000 (UTC)
-Subject: Re: [PATCH] arm64: dts: realtek: rtd16xx: Add memory reservations
-To:     linux-realtek-soc@lists.infradead.org,
-        James Tai <james.tai@realtek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20200103060441.1109-1-afaerber@suse.de>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <5c2a472c-39f7-f8e0-6df8-0d02d07990df@suse.de>
-Date:   Tue, 14 Jan 2020 11:07:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1730493AbgANKJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 05:09:05 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44983 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731178AbgANKJA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 05:09:00 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1irJ85-00031o-H6; Tue, 14 Jan 2020 11:08:57 +0100
+Message-ID: <d1f969346ad1758943e8f898244c69673f93f129.camel@pengutronix.de>
+Subject: Re: [PATCH] dt-bindings: reset: intel,rcu-gw: Fix
+ intel,global-reset schema
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Dilip Kota <eswara.kota@linux.intel.com>
+Date:   Tue, 14 Jan 2020 11:08:57 +0100
+In-Reply-To: <20200113214515.3950-1-robh@kernel.org>
+References: <20200113214515.3950-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <20200103060441.1109-1-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 03.01.20 um 07:04 schrieb Andreas Färber:
-> Reserve memory regions for RPC and TEE.
+Hi Rob,
+
+On Mon, 2020-01-13 at 15:45 -0600, Rob Herring wrote:
+> The intel,rcu-gw binding example has an error:
 > 
-> Fixes: e5a9e237608d ("arm64: dts: realtek: Add RTD1619 SoC and Realtek Mjolnir EVB")
-> Cc: James Tai <james.tai@realtek.com>
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> Documentation/devicetree/bindings/reset/intel,rcu-gw.example.dt.yaml:
+>   reset-controller@e0000000: intel,global-reset: [[16, 30]] is too short
+> 
+> The error isn't really correct as the problem is in how the data is
+> encoded and the schema is not fixed up by the tooling correctly.
+> However, array properties should describe the elements in the array, so
+> lets do that which fixes the error in the process.
+> 
+> Fixes: b7ab0cb00d08 ("dt-bindings: reset: Add YAML schemas for the Intel Reset controller")
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Dilip Kota <eswara.kota@linux.intel.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->   arch/arm64/boot/dts/realtek/rtd16xx.dtsi | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
+>  Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml b/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
+> index 246dea8a2ec9..8ac437282659 100644
+> --- a/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
+> +++ b/Documentation/devicetree/bindings/reset/intel,rcu-gw.yaml
+> @@ -23,7 +23,11 @@ properties:
+>      description: Global reset register offset and bit offset.
+>      allOf:
+>        - $ref: /schemas/types.yaml#/definitions/uint32-array
+> -      - maxItems: 2
+> +    items:
+> +      - description: Register offset
+> +      - description: Register bit offset
+> +        minimum: 0
+> +        maximum: 31
+>  
+>    "#reset-cells":
+>      minimum: 2
 
-Ping! @Realtek: Please check the numbers.
+Thank you, applied to reset/next.
 
-Thanks,
-Andreas
+regards
+Philipp
 
-> diff --git a/arch/arm64/boot/dts/realtek/rtd16xx.dtsi b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-> index 3c70a0da329e..4dc6c9f13c43 100644
-> --- a/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-> +++ b/arch/arm64/boot/dts/realtek/rtd16xx.dtsi
-> @@ -14,6 +14,25 @@
->   	#address-cells = <1>;
->   	#size-cells = <1>;
->   
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		rpc_comm: rpc@2f000 {
-> +			reg = <0x2f000 0x1000>;
-> +		};
-> +
-> +		rpc_ringbuf: rpc@1ffe000 {
-> +			reg = <0x1ffe000 0x4000>;
-> +		};
-> +
-> +		tee: tee@10100000 {
-> +			reg = <0x10100000 0xf00000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->   	cpus {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
