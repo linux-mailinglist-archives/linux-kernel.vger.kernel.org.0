@@ -2,129 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC3F13A3C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:26:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9963D13A3D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 Jan 2020 10:30:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbgANJ0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 04:26:20 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39060 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbgANJ0T (ORCPT
+        id S1728927AbgANJau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 04:30:50 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:59301 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725842AbgANJau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 04:26:19 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b137so6121844pga.6
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 01:26:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a0thWxtcKc9YM15dZdbAE3AeXYoB4GtLK4BXGH2HS3E=;
-        b=iWUptrz+rNTUSdgrIRAaDyg1wkGN/How5iOmIQtXnA+jPIGeiZhPadCACKCjLh+UdI
-         WxKjQKzxmjkL6/Zsy1BwmOlbmo4VXPq1rBW0+LJROYG/YnXFIbWvCL72qMUHf9a3X5g5
-         NaIpJsuBc3rBj9hI3Gdn5Eof6SoTsve7Zv0BOg0SU7TUfnjlnj0hp2aGWNE4nBQkvwrO
-         qzlU+6xoeum4A6lXhFclsUDbm+OWMbVr9V/mEgZUFWxy5i5tXt5R4w6IHKOjyHIsCFND
-         Jjvapz5RwQSE7KEphcEHhWiWpuM9fL6x3AHSMX1uERdIKh8NPjnNXhEKIbC5j5qBDU8x
-         ZUVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a0thWxtcKc9YM15dZdbAE3AeXYoB4GtLK4BXGH2HS3E=;
-        b=mIyOMzreYOoVUdOJrJntmV6RnxRwAZqWz7rWRN/lQ8Iz34XNQ5cWbDJr9uaL8LJW+3
-         OwGwnY6E1xF65QQrQ6aQ+azFE/J/mvnGNfO2MIGErHXrey0DT+Ks29g6poo38pQk3zBs
-         Dq0+19pkzPj7HEAGFbNsS/BxcZRmab/DGtlmJTyQcFmAQIr8raxUYZYxribF9i9Womzb
-         ZgbT9l6BketfPnVeSrG4HhEAmfN/lbnErOZq+4F2N/S0m0k9KuAVrjykwi7nwDgS9uEH
-         A2HO7vlW8WR+qNGqgeJikcnV1LjmtryHwkPLy3Pp09sksAArpAeA9FszANicbXGcBta8
-         4FeA==
-X-Gm-Message-State: APjAAAUZNXX2VKNJyrU3mmP9XnvWp2gqUKq+JyX9KtUi/PNo3WSTavSg
-        GNDT6fBkt3OO0GvKXAW4kdYEfQ==
-X-Google-Smtp-Source: APXvYqxQobfYo6GwcAO4bk/IVTqj/Zk0rz3y1sjNS0OlQ8+mVGPrXLr/Ip2uSae9HdvrhPxLlMbgtg==
-X-Received: by 2002:a62:8202:: with SMTP id w2mr24834647pfd.100.1578993979012;
-        Tue, 14 Jan 2020 01:26:19 -0800 (PST)
-Received: from localhost ([122.172.140.51])
-        by smtp.gmail.com with ESMTPSA id 200sm17798271pfz.121.2020.01.14.01.26.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Jan 2020 01:26:18 -0800 (PST)
-Date:   Tue, 14 Jan 2020 14:56:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        cristian.marussi@arm.com, peng.fan@nxp.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2] firmware: arm_scmi: Make scmi core independent of
- transport type
-Message-ID: <20200114092615.nvj6mkwkplub5ul7@vireshk-i7>
-References: <3f5567ec928e20963d729350e6d674c4acb0c7a0.1578648530.git.viresh.kumar@linaro.org>
- <CAK8P3a1MLyP4ooyEDiBF1fE0BJGocgDmO1f5Qrvn_W5eqahz8g@mail.gmail.com>
- <20200113064156.lt3xxpzygattz3he@vireshk-i7>
- <CAK8P3a2u6s4MAM_9bOqSt5NwVc4XrXs9W36tp-7rWWTXx0+pRg@mail.gmail.com>
+        Tue, 14 Jan 2020 04:30:50 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R781e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TnibyCd_1578994246;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnibyCd_1578994246)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 14 Jan 2020 17:30:46 +0800
+Subject: Re: [PATCH v7 00/10] per lruvec lru_lock for memcg
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+To:     Hugh Dickins <hughd@google.com>, hannes@cmpxchg.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, tj@kernel.org,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com
+References: <1577264666-246071-1-git-send-email-alex.shi@linux.alibaba.com>
+ <20191231150514.61c2b8c8354320f09b09f377@linux-foundation.org>
+ <944f0f6a-466a-7ce3-524c-f6db86fd0891@linux.alibaba.com>
+ <d2efad94-750b-3298-8859-84bccc6ecf06@linux.alibaba.com>
+ <alpine.LSU.2.11.2001130032170.1103@eggly.anvils>
+ <24d671ac-36ef-8883-ad94-1bd497d46783@linux.alibaba.com>
+ <alpine.LSU.2.11.2001131157500.1084@eggly.anvils>
+ <641e4c96-c79f-fbdd-9762-f4608961423c@linux.alibaba.com>
+Message-ID: <39a72184-c864-4a40-49fd-c27893dd2002@linux.alibaba.com>
+Date:   Tue, 14 Jan 2020 17:29:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2u6s4MAM_9bOqSt5NwVc4XrXs9W36tp-7rWWTXx0+pRg@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <641e4c96-c79f-fbdd-9762-f4608961423c@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-01-20, 12:36, Arnd Bergmann wrote:
-> On Mon, Jan 13, 2020 at 7:42 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 10-01-20, 12:15, Arnd Bergmann wrote:
-> > > On Fri, Jan 10, 2020 at 10:43 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > Simply dropping the __iomem isn't much better, now you get other
-> > > type mismatches.
-> >
-> > Right. So what exactly do you suggest I should do now? Drop __iomem
-> > from the structure's payload field but keep all local variables and
-> > function arguments with __iomem ?
+
+
+在 2020/1/14 下午5:14, Alex Shi 写道:
+> Anyway, although I didn't reproduced the bug. but I found a bug in my
+> debug function:
+> 	VM_BUG_ON_PAGE(lruvec_memcg(lruvec) != page->mem_cgroup, page);
 > 
-> > > > +struct scmi_chan_info {
-> > > > +       void *payload;
-> > > > +       struct device *dev;
-> > > > +       struct scmi_handle *handle;
-> > > > +       void *transport_info;
-> > > > +};
-> > >
-> > > Maybe you can wrap the scmi_chan_info inside of another
-> > > structure that contains  the payload pointer, and use container_of
-> > > to convert between them?
-> >
-> > We don't need to convert between the two of them, isn't it ? Are you
-> > referring some other field here ?
-> 
-> > > It's not obvious which parts of the structure should be shared and
-> > > which are transport specific.
-> >
-> > All transport specific information is kept in the transport specific
-> > structure which is saved here in the transport_info field. Is there
-> > something else that isn't clear ?
-> 
-> To answer all three, what I meant is that the payload pointer appears
-> to be transport specific and
+>  if !page->mem_cgroup, the bug could be triggered, so, seems it's a bug
+> for debug function, not real issue. The 9th patch should be replaced by
+> the following new patch. 
 
-I am not sure if I understood the below statement properly. Is there
-something missing from it ?
+If !page->mem_cgroup, means the page is on root_mem_cgroup, so lurvec's
+memcg is root_mem_cgroup, not NULL. that trigger the issue.
 
-> should not be part of the common
-> structure if there is generic way to access it.
 
-The scmi protocol requires a block of shared memory which is
-represented by struct scmi_shared_mem, and payload is this memory
-block itself. This block of memory is accessed throughout driver.c
-file using ioread/write commands. If payload is transport specific, so
-will be those accesses, isn't it ? Are you suggesting to move all this
-to mailbox.c (the transport specific file) instead ? I am sorry, but I
-am not able to understand how exactly you want me to reorder code here
-:(
+Hi Johannes,
 
-@Sudeep: I had a question for you though. Looks like we are doing
-ioremap() of this payload for every channel's tx/rx, why ? Why is the
-same memory area mapped that way ? Can we just map the area once for
-scmi block ?
+So I have a question about the lock_page_memcg in this scenario, Should
+we lock the page to root_mem_cgroup? or there is no needs as no tasks
+move to a leaf memcg from root?
 
--- 
-viresh
+Thanks
+Alex
