@@ -2,91 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F61713BD6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB2B513BD62
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:28:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgAOK3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 05:29:25 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39264 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729650AbgAOK3Y (ORCPT
+        id S1729809AbgAOK2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 05:28:25 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55103 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729693AbgAOK2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 05:29:24 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b137so8013861pga.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 02:29:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=GZGVdYkXGD9r067czQDmOYY3BF/KYHfnpdKqP6c88Yw=;
-        b=qjXa6TNLOt2bFuYFYscXJ1rz8enYvfZy40A1erx6lIUX9znLX5dSdk0zUHlYSjwlkk
-         tMGc4xCyzOkiulAc+BtbMCialYxXCH1KX35w6bkbpPvJV4i7DJ/emLUlQiMmdTw3GLO4
-         N5JbokL+Pa+xg4o1Dn4bBe4emDX6Mfcl0ifAENfNilUA1QOyIAXI27rD5WU6TJGbN5Xz
-         z6ld2Dz1m2kcHMAc8x2tmFGIXXQBXKJjtPs3DBFvrfIBrkvd4sxKqfkFfv+nY1gbybb7
-         Em4eEuKA7lSAsOk3+D/7F37m/MpJpqep/ZBagMP9560jqOdKLNn08PptkM10rzdGBqDt
-         aLxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GZGVdYkXGD9r067czQDmOYY3BF/KYHfnpdKqP6c88Yw=;
-        b=EI8T4suyRR++wADu7JTRZF6QfSEoCVwDtFjjo/X2+Sk/AlcBh4qQsDWZkyaDt86b1R
-         2SRhsIfp93M4jtxuMLe3S07iy1xY034fe8dFe5gODpDXLqPQEx2Z+xccXx2mUoh3mWKz
-         fQTBGIofEQgsjpYlvPrjUAzpLBcQ58LZoMvvSmYk1QSKSPWX8fmBPtHu7hFBQ1uaIv+v
-         uahalgzgxOVbH4pK2MF/OA3+aWeH1wHkYI111JVQP7jG02Y77zv+KWoyOrjLYWb+YCuJ
-         K2e3YfOdkzBS5M+/5KDQV6Apec35uKQPa84Z6a8coywQa5nmjy1Kpq86pcKEAAB0aSYI
-         60SA==
-X-Gm-Message-State: APjAAAVPEK/0e89HZhqvbBU7E6XIdb1XAa8lvpIr1Qm0Eb+ih1SuAOEP
-        9MKaKx/QUGeNzkjNwt1B6FUvsst6
-X-Google-Smtp-Source: APXvYqxAGCVejC6y4jIVoWu+VamO/gU912z2pDTtkng8WCrC9bJX7/OY1aV8VWRLTazearIqQWww9A==
-X-Received: by 2002:a63:134e:: with SMTP id 14mr32789780pgt.115.1579084163792;
-        Wed, 15 Jan 2020 02:29:23 -0800 (PST)
-Received: from ZB-PF114XEA.360buyad.local ([103.90.76.242])
-        by smtp.gmail.com with ESMTPSA id 11sm21756342pfz.25.2020.01.15.02.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 02:29:23 -0800 (PST)
-From:   Zhenzhong Duan <zhenzhong.duan@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH] iommu/vt-d: fix the wrong printing in RHSA parsing
-Date:   Wed, 15 Jan 2020 18:28:15 +0800
-Message-Id: <20200115102815.264-1-zhenzhong.duan@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Jan 2020 05:28:24 -0500
+Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id a19f27fe6dcc38b1; Wed, 15 Jan 2020 11:28:22 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     viresh.kumar@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: remove redundant call to cpufreq_update_util
+Date:   Wed, 15 Jan 2020 11:28:21 +0100
+Message-ID: <1877134.NLrey8JjuQ@kreacher>
+In-Reply-To: <1579083620-24943-1-git-send-email-vincent.guittot@linaro.org>
+References: <1579083620-24943-1-git-send-email-vincent.guittot@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When base address in RHSA structure doesn't match base address in
-each DRHD structure, the base address in last DRHD is printed out.
+On Wednesday, January 15, 2020 11:20:20 AM CET Vincent Guittot wrote:
+> With commit bef69dd87828 ("sched/cpufreq: Move the cfs_rq_util_change() call to cpufreq_update_util()")
+> update_load_avg() has become the central point for calling cpufreq (not
+> including the update of blocked load). This change helps to simplify
+> further the number of call to cpufreq_update_util() and to remove last
 
-This doesn't make sense when there are multiple DRHD units, fix it
-by printing the buggy RHSA's base address.
+s/call/calls/
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org
----
- drivers/iommu/dmar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+And the patch looks reasonable to me.
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 3acfa6a..78bb03e 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -475,7 +475,7 @@ static int dmar_parse_one_rhsa(struct acpi_dmar_header *header, void *arg)
- 		1, TAINT_FIRMWARE_WORKAROUND,
- 		"Your BIOS is broken; RHSA refers to non-existent DMAR unit at %llx\n"
- 		"BIOS vendor: %s; Ver: %s; Product Version: %s\n",
--		drhd->reg_base_addr,
-+		rhsa->base_address,
- 		dmi_get_system_info(DMI_BIOS_VENDOR),
- 		dmi_get_system_info(DMI_BIOS_VERSION),
- 		dmi_get_system_info(DMI_PRODUCT_VERSION));
--- 
-1.8.3.1
+> redundant ones. With update_load_avg(), we are now sure that
+> cpufreq_update_util() will be called after every task attachment to a
+> cfs_rq and especially after propagating this event down to the util_avg of
+> the root cfs_rq, which is the level that is used by cpufreq governors like
+> schedutil to set the frequency of a CPU.
+> 
+> The SCHED_CPUFREQ_MIGRATION flag forces an early call to cpufreq when the
+> migration happens in a cgroup whereas util_avg of root cfs_rq is not yet
+> updated and this call is duplicated with the one that happens immediately
+> after when the migration event reaches the root cfs_rq. The dedicated flag
+> SCHED_CPUFREQ_MIGRATION is now useless and can be removed. The interface of
+> attach_entity_load_avg() can also be simplified accordingly.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+> ---
+>  include/linux/sched/cpufreq.h |  1 -
+>  kernel/sched/fair.c           | 14 +++++++-------
+>  2 files changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+> index cc6bcc1e96bc..3ed5aa18593f 100644
+> --- a/include/linux/sched/cpufreq.h
+> +++ b/include/linux/sched/cpufreq.h
+> @@ -9,7 +9,6 @@
+>   */
+>  
+>  #define SCHED_CPUFREQ_IOWAIT	(1U << 0)
+> -#define SCHED_CPUFREQ_MIGRATION	(1U << 1)
+>  
+>  #ifdef CONFIG_CPU_FREQ
+>  struct cpufreq_policy;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 2d170b5da0e3..023aa42aaac7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -801,7 +801,7 @@ void post_init_entity_util_avg(struct task_struct *p)
+>  		 * For !fair tasks do:
+>  		 *
+>  		update_cfs_rq_load_avg(now, cfs_rq);
+> -		attach_entity_load_avg(cfs_rq, se, 0);
+> +		attach_entity_load_avg(cfs_rq, se);
+>  		switched_from_fair(rq, p);
+>  		 *
+>  		 * such that the next switched_to_fair() has the
+> @@ -3114,7 +3114,7 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+>  {
+>  	struct rq *rq = rq_of(cfs_rq);
+>  
+> -	if (&rq->cfs == cfs_rq || (flags & SCHED_CPUFREQ_MIGRATION)) {
+> +	if (&rq->cfs == cfs_rq) {
+>  		/*
+>  		 * There are a few boundary cases this might miss but it should
+>  		 * get called often enough that that should (hopefully) not be
+> @@ -3520,7 +3520,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+>   * Must call update_cfs_rq_load_avg() before this, since we rely on
+>   * cfs_rq->avg.last_update_time being current.
+>   */
+> -static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> +static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  {
+>  	u32 divider = LOAD_AVG_MAX - 1024 + cfs_rq->avg.period_contrib;
+>  
+> @@ -3556,7 +3556,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  
+>  	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+>  
+> -	cfs_rq_util_change(cfs_rq, flags);
+> +	cfs_rq_util_change(cfs_rq, 0);
+>  
+>  	trace_pelt_cfs_tp(cfs_rq);
+>  }
+> @@ -3614,7 +3614,7 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  		 *
+>  		 * IOW we're enqueueing a task on a new CPU.
+>  		 */
+> -		attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATION);
+> +		attach_entity_load_avg(cfs_rq, se);
+>  		update_tg_load_avg(cfs_rq, 0);
+>  
+>  	} else if (decayed) {
+> @@ -3871,7 +3871,7 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  static inline void remove_entity_load_avg(struct sched_entity *se) {}
+>  
+>  static inline void
+> -attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags) {}
+> +attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) {}
+>  static inline void
+>  detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) {}
+>  
+> @@ -10439,7 +10439,7 @@ static void attach_entity_cfs_rq(struct sched_entity *se)
+>  
+>  	/* Synchronize entity with its cfs_rq */
+>  	update_load_avg(cfs_rq, se, sched_feat(ATTACH_AGE_LOAD) ? 0 : SKIP_AGE_LOAD);
+> -	attach_entity_load_avg(cfs_rq, se, 0);
+> +	attach_entity_load_avg(cfs_rq, se);
+>  	update_tg_load_avg(cfs_rq, false);
+>  	propagate_entity_cfs_rq(se);
+>  }
+> 
+
+
+
 
