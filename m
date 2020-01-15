@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DA513B66A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5278413B669
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:10:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbgAOAKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 19:10:00 -0500
+        id S1729093AbgAOAKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 19:10:02 -0500
 Received: from mga01.intel.com ([192.55.52.88]:8662 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbgAOAJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 19:09:56 -0500
+        id S1729040AbgAOAJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 19:09:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 16:09:52 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 16:09:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
-   d="scan'208";a="273468588"
+   d="scan'208";a="273468595"
 Received: from emkilgox-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.0.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2020 16:09:50 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2020 16:09:52 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -28,11 +28,12 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Bard liao <yung-chuan.liao@linux.intel.com>,
         Rander Wang <rander.wang@linux.intel.com>,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Rander Wang <rander.wang@intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 07/10] soundwire: bus: disable pm_runtime in sdw_slave_delete
-Date:   Tue, 14 Jan 2020 18:08:41 -0600
-Message-Id: <20200115000844.14695-8-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH 08/10] soundwire: bus: fix io error when processing alert event
+Date:   Tue, 14 Jan 2020 18:08:42 -0600
+Message-Id: <20200115000844.14695-9-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
 References: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
@@ -43,32 +44,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before removing the slave device, disable pm_runtime to prevent any
-race condition with the resume being executed after the bus and slave
-devices are removed.
+From: Rander Wang <rander.wang@intel.com>
 
-Since this pm_runtime_disable() is handled in common routines,
-implementations of Slave drivers do not need to call it in their
-.remove() routine.
+There are two types of io errors when processing alert event.
 
+a) the Master detects an ALERT status for e.g. a jack event and
+invokes the implementation-defined function in the Slave driver to
+check the jack status. At this time the codec is just suspended, so io
+registers can't be accessed.
+
+b) when waking up from clock stop mode1 state, where the bus needs a
+complete re-enumeration, Slave registers can't be accessed until the
+enumeration is complete.
+
+This patch resumes the Slave device and waits for initialization
+complete when processing slave alert event, so that registers on the
+Slave can be accessed without timeouts or io errors.
+
+Signed-off-by: Rander Wang <rander.wang@intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/bus.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soundwire/bus.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 57dec61142e5..33bb273454cf 100644
+index 33bb273454cf..23bc24c8e9d1 100644
 --- a/drivers/soundwire/bus.c
 +++ b/drivers/soundwire/bus.c
-@@ -113,6 +113,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
- 	struct sdw_slave *slave = dev_to_sdw_dev(dev);
- 	struct sdw_bus *bus = slave->bus;
+@@ -890,12 +890,19 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
  
-+	pm_runtime_disable(dev);
+ 	sdw_modify_slave_status(slave, SDW_SLAVE_ALERT);
+ 
++	ret = pm_runtime_get_sync(&slave->dev);
++	if (ret < 0 && ret != -EACCES) {
++		dev_err(&slave->dev, "Failed to resume device: %d\n", ret);
++		pm_runtime_put_noidle(slave->bus->dev);
++		return ret;
++	}
 +
- 	sdw_slave_debugfs_exit(slave);
+ 	/* Read Instat 1, Instat 2 and Instat 3 registers */
+ 	ret = sdw_read(slave, SDW_SCP_INT1);
+ 	if (ret < 0) {
+ 		dev_err(slave->bus->dev,
+ 			"SDW_SCP_INT1 read failed:%d\n", ret);
+-		return ret;
++		goto io_err;
+ 	}
+ 	buf = ret;
  
- 	mutex_lock(&bus->bus_lock);
+@@ -903,7 +910,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 	if (ret < 0) {
+ 		dev_err(slave->bus->dev,
+ 			"SDW_SCP_INT2/3 read failed:%d\n", ret);
+-		return ret;
++		goto io_err;
+ 	}
+ 
+ 	do {
+@@ -983,7 +990,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 		if (ret < 0) {
+ 			dev_err(slave->bus->dev,
+ 				"SDW_SCP_INT1 write failed:%d\n", ret);
+-			return ret;
++			goto io_err;
+ 		}
+ 
+ 		/*
+@@ -994,7 +1001,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 		if (ret < 0) {
+ 			dev_err(slave->bus->dev,
+ 				"SDW_SCP_INT1 read failed:%d\n", ret);
+-			return ret;
++			goto io_err;
+ 		}
+ 		_buf = ret;
+ 
+@@ -1002,7 +1009,7 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 		if (ret < 0) {
+ 			dev_err(slave->bus->dev,
+ 				"SDW_SCP_INT2/3 read failed:%d\n", ret);
+-			return ret;
++			goto io_err;
+ 		}
+ 
+ 		/* Make sure no interrupts are pending */
+@@ -1023,6 +1030,10 @@ static int sdw_handle_slave_alerts(struct sdw_slave *slave)
+ 	if (count == SDW_READ_INTR_CLEAR_RETRY)
+ 		dev_warn(slave->bus->dev, "Reached MAX_RETRY on alert read\n");
+ 
++io_err:
++	pm_runtime_mark_last_busy(&slave->dev);
++	pm_runtime_put_autosuspend(&slave->dev);
++
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
