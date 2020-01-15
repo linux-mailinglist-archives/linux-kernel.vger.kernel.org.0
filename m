@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9151813CB90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF1A13CB95
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbgAOSDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:03:15 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:34008 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgAOSDO (ORCPT
+        id S1729199AbgAOSDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:03:53 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42135 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729008AbgAOSDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:03:14 -0500
-Received: by mail-qv1-f68.google.com with SMTP id o18so7785053qvf.1;
-        Wed, 15 Jan 2020 10:03:13 -0800 (PST)
+        Wed, 15 Jan 2020 13:03:53 -0500
+Received: by mail-qk1-f194.google.com with SMTP id z14so16502198qkg.9;
+        Wed, 15 Jan 2020 10:03:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=osz/ggz7VJhRkYPptI5hVi0oNx5Sy/qTgiYTP0ierL4=;
-        b=ui8Fmsv4s0LBXNy+LtRInuliyOxUuLIN9/b+FVJ99kvRzocJgnLgFJUFo1JXr23gLA
-         y6/F+vU7VChWpXN8XheRRiMECsU/cT4ybtNIqdtQ9y8WI0LJmE8SiDicNaXcX6FVFZP4
-         /8vHHrwY0yricWJSH8Mw2tpcCiVGG5fmFCBnR9SFb4HEEaQBFEa8EgFXTys2iRj670Xg
-         AhzGQORNJFaYR644W2VjCV9BFMafmP6+obW3rawiFmV3HJPaqzsTRcPYA9zH+3WdWDuM
-         jXlXdIjgnL2C9OiwCMVLpJFzDvA1Jg4YNktYZiTB/xWBZwI3htAnApjJIwXiir+WH3k3
-         IVpw==
+        bh=v8j4NPs/t8jElKaeEiqH1Ks7twuzOeM8Evfblr97slQ=;
+        b=oRGrLUvQA70xoZ8E8E6OvyqaQaMAL5S6uxbY4Nw4JsqOM0MrBBleSxGKcJM5sIKQkx
+         Pe3lX80eq12MepLx9/UDu/DnsQIAvm0vx9y3NVAnSzoo27mNqT9mHHrjDxEOH0a2zdnV
+         yWFshbfEZ1XrgGOn0kX63JZsItch6021VBIIE4/pFdT0rjoVoz7QrGWIdKcXdvY+m43Y
+         znXXuhYpgRy8ZgiYEfeoft4F4HSHtlN9P9kT5WoWhEdRhiDNdDRBGF1nvbTZ4hhgDOqw
+         dlynulvCtushzU+d19cERzYNtI7MOmis4aaweIizmhM6L6aadwMk3wMSHDcvd+4C2hRC
+         3GOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=osz/ggz7VJhRkYPptI5hVi0oNx5Sy/qTgiYTP0ierL4=;
-        b=o4uuCbzanDdp5aTFcgJuuLAKSF1Jrj5DtxvHiZx4U6TiUl4nUBcMVzdV8nC8i5jzm5
-         vK1y81CA3X93UejrvRcd6WJUWUnaHFsSObKeMh5b7NH8eHg+KhE1hijYmPr6zU9gYgf5
-         94USOZs+4EHSmtCb4Qir84XXecBNzXJfPeclErQdZux7yoElda5O9lIYgS2AzZrtPZee
-         8j95T2uWYUvTOcXzYh/nY9cvo8XGNpj1pwnCAOkGYwE1i+IJEyspl06gJ2rHOvD3Vt49
-         Y3zlyU89OouyTJYV+VQhnAaTglXjFGtz8DUxiV4GZZGQz+rfgXaPlyaMXRWaMk5IuUVF
-         v8Mg==
-X-Gm-Message-State: APjAAAV6Iqmjqccl1vgBbNbaR7Vn2R0AJML5XAxQfwRKTMY3/b/rzxib
-        weTLkP4+iQ6a7yIkKIEd8AY=
-X-Google-Smtp-Source: APXvYqxTKiXPS19dNN8LXHU74Qcpptxkc51lYGj+FT4An+BBwGTPo1B7csCK/2zOk5vu58RGXn45ew==
-X-Received: by 2002:a05:6214:bc3:: with SMTP id ff3mr22137281qvb.155.1579111392708;
-        Wed, 15 Jan 2020 10:03:12 -0800 (PST)
+        bh=v8j4NPs/t8jElKaeEiqH1Ks7twuzOeM8Evfblr97slQ=;
+        b=es2ZBOXgqtk4vnNE9jIFcq6DoQyfFnrOUTOjwoh/TFR+2xGXJXpkpAV6JdxvDWF2N4
+         4WXD3l6xphnzS1vvpclr7yZdMteHkB32dp4wTOPOGRwZuXDcWzJBR+sz/It2hI1+RPlG
+         N4ty52W0+7d2aBSkQy0x0nBbl6XkRF+bGYh2i+R/n/AL7Mv//nqlquay3psLyNpgbyQ3
+         kWkmYspABBvnk1M6+I4pRVXYDcCFEkpdoZyQXVCJ1KjcooPs72TRDwEnxya4my3SUcel
+         YSH2E6S84jYITeHOYLG/1KHC8KpUlfChPdA8n32fyBqHCTm5rICbtBN+R0P6uXevw3xV
+         XEQg==
+X-Gm-Message-State: APjAAAU6aRV7ucPyNIJgcEFOWQ3qHjxzoseZeXFbOJsY63ubsah6Bg/T
+        NqvazjFfZ5Gej32cw4jmRZk=
+X-Google-Smtp-Source: APXvYqxve+g7DBvTk2TiB4NiUltnK70+snbTuAg8qG5E9h2b8yvT5JOSegEnYZzjaS7xVXPmu3bWKQ==
+X-Received: by 2002:a37:68a:: with SMTP id 132mr27460404qkg.139.1579111430826;
+        Wed, 15 Jan 2020 10:03:50 -0800 (PST)
 Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id s26sm9990525qtc.43.2020.01.15.10.03.12
+        by smtp.gmail.com with ESMTPSA id i16sm8763114qkh.120.2020.01.15.10.03.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Jan 2020 10:03:12 -0800 (PST)
+        Wed, 15 Jan 2020 10:03:50 -0800 (PST)
 Subject: Re: [RFC PATCH 0/2] of: unittest: add overlay gpio test to catch gpio
  hog problem
 From:   Frank Rowand <frowand.list@gmail.com>
@@ -57,8 +57,8 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alan Tull <atull@kernel.org>
 References: <1579070828-18221-1-git-send-email-frowand.list@gmail.com>
  <578a2d41-e146-1f26-6bf4-30509ebe6941@gmail.com>
-Message-ID: <bca97c31-0268-08de-ba7d-48ea5b47e901@gmail.com>
-Date:   Wed, 15 Jan 2020 12:03:11 -0600
+Message-ID: <c6e4a61d-a6ba-ff70-4d34-5ac6740f5f22@gmail.com>
+Date:   Wed, 15 Jan 2020 12:03:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
@@ -88,7 +88,13 @@ On 1/15/20 11:28 AM, Frank Rowand wrote:
 
 < snip >
 
-(1) boot before patches
+2) boot after this patch series
+
+A small amount of verbosity added to the boot messages.
+
+The expected messages annotations are sufficient to determine
+what messages are expected to be triggered by unittest, but
+are not especially easy to read through and validate
 
 ============================================================
 
@@ -110,18 +116,18 @@ Android Bootloader - UART_DM Initialized!!!
 [350] -- portchange --
 [460] -- reset --
 [460] -- portchange --
-[590] fastboot: processing commands
-[750] fastboot: download:00f2f000
+[650] fastboot: processing commands
+[760] fastboot: download:00f30000
 [1250] fastboot: boot
 [1270] Found Appeneded Flattened Device tree
 [1270] cmdline: console=ttyMSM0,115200,n8 androidboot.hardware=qcom maxcpus=2 msm_rtb.filter=0x37 ehci-hcd.park=3 norandmaps androidboot.emmc=true androidboot.serialno=40081c41 androidboot.baseband=apq
 [1290] Updating device tree: start
-[1290] Updating device tree: done
+[1300] Updating device tree: done
 [1300] booting linux @ 0x8000, ramdisk @ 0x2000000 (9533134), tags/device tree @ 0x1e00000
-[1300] Turn off MIPI_VIDEO_PANEL.
-[1300] Continuous splash enabled, keeping panel alive.
+[1310] Turn off MIPI_VIDEO_PANEL.
+[1310] Continuous splash enabled, keeping panel alive.
 Booting Linux on physical CPU 0x0
-Linux version 5.5.0-rc2 (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #27 SMP PREEMPT Wed Jan 15 11:15:34 CST 2020
+Linux version 5.5.0-rc2-00002-gbc60035cbebc-dirty (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #26 SMP PREEMPT Wed Jan 15 11:12:23 CST 2020
 CPU: ARMv7 Processor [512f06f0] revision 0 (ARMv7), cr=10c5787d
 CPU: div instructions available: patching division code
 CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
@@ -134,7 +140,7 @@ Kernel command line: console=ttyMSM0,115200,n8 androidboot.hardware=qcom maxcpus
 Dentry cache hash table entries: 131072 (order: 7, 524288 bytes, linear)
 Inode-cache hash table entries: 65536 (order: 6, 262144 bytes, linear)
 mem auto-init: stack:off, heap alloc:off, heap free:off
-Memory: 1664564K/1967104K available (8192K kernel code, 858K rwdata, 3788K rodata, 1024K init, 268K bss, 40396K reserved, 262144K cma-reserved, 1048576K highmem)
+Memory: 1664560K/1967104K available (8192K kernel code, 859K rwdata, 3804K rodata, 1024K init, 268K bss, 40400K reserved, 262144K cma-reserved, 1048576K highmem)
 SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
 rcu: Preemptible hierarchical RCU implementation.
 	Tasks RCU enabled.
@@ -286,73 +292,191 @@ debugfs: Directory 'fc4a9000.thermal-sensor' with parent 'tsens' already present
 sdhci_msm f98a4900.sdhci: Got CD GPIO
 s1: supplied by regulator-dummy
 s1: Bringing 0uV into 675000-675000uV
-sdhci_msm f98a4900.sdhci: Got CD GPIO
 s2: supplied by regulator-dummy
 s2: Bringing 0uV into 500000-500000uV
+sdhci_msm f98a4900.sdhci: Got CD GPIO
 s3: supplied by regulator-dummy
 s3: Bringing 0uV into 500000-500000uV
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: setting system clock to 1970-01-03T12:10:11 UTC (216611)
-Duplicate name in testcase-data, renamed to "duplicate-name#1"
 s4: supplied by regulator-dummy
-### dt-test ### start of unittest - you will see error messages
 s4: Bringing 0uV into 500000-500000uV
-OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
+sdhci_msm f98a4900.sdhci: Got CD GPIO
 s5: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
 s6: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
+rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: setting system clock to 1970-01-03T12:08:21 UTC (216501)
+### dt-test ### start of unittest - you will see error messages
+### dt-test ### EXPECT \ : Duplicate name in testcase-data, renamed to "duplicate-name#1"
+Duplicate name in testcase-data, renamed to "duplicate-name#1"
 s7: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
 s8: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
+### dt-test ### EXPECT / : Duplicate name in testcase-data, renamed to "duplicate-name#1"
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
+OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
 s1: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
+OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
 s1: Bringing 0uV into 1300000-1300000uV
-OF: /testcase-data/phandle-tests/consumer-b: could not get #phandle-missing-cells for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: could not get #phandle-cells-missing for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
 s2: supplied by regulator-dummy
-OF: /testcase-data/phandle-tests/consumer-b: could not find phandle
+OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
 sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: /testcase-data/phandle-tests/consumer-b: #phandle-cells = 2 found -1
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
+OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
 s2: Bringing 0uV into 2150000-2150000uV
-platform testcase-data:testcase-device2: IRQ index 0 not found
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: could not find phandle
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
 s3: supplied by regulator-dummy
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest0/status
+OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
 s3: Bringing 0uV into 1800000-1800000uV
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest1/status
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
 l1: supplied by s1
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest2/status
+OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
 l1: Bringing 0uV into 1225000-1225000uV
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest3/status
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest5/status
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-a: #phandle-cells = 3 found -1
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-b: could not get #phandle-missing-cells for /testcase-data/phandle-tests/provider1
 l2: supplied by s3
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest6/status
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest7/status
+OF: /testcase-data/phandle-tests/consumer-b: could not get #phandle-missing-cells for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-b: could not get #phandle-missing-cells for /testcase-data/phandle-tests/provider1
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-b: could not find phandle
 l2: Bringing 0uV into 1200000-1200000uV
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/status
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/property-foo
+OF: /testcase-data/phandle-tests/consumer-b: could not find phandle
 l3: supplied by s1
-OF: overlay: node_overlaps_later_cs: #6 overlaps with #7 @/testcase-data/overlay-node/test-bus/test-unittest8
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: overlay: overlay #6 is not topmost
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-b: could not find phandle
+### dt-test ### EXPECT \ : OF: /testcase-data/phandle-tests/consumer-b: #phandle-cells = 2 found -1
 l3: Bringing 0uV into 1225000-1225000uV
+OF: /testcase-data/phandle-tests/consumer-b: #phandle-cells = 2 found -1
 l4: supplied by s1
-i2c i2c-1: Added multiplexed i2c bus 2
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest12/status
+### dt-test ### EXPECT / : OF: /testcase-data/phandle-tests/consumer-b: #phandle-cells = 2 found -1
+### dt-test ### EXPECT \ : platform testcase-data:testcase-device2: IRQ index 0 not found
 l4: Bringing 0uV into 1225000-1225000uV
-OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest13/status
-sdhci_msm f98a4900.sdhci: Got CD GPIO
+platform testcase-data:testcase-device2: IRQ index 0 not found
 l5: supplied by s2
-i2c i2c-1: Added multiplexed i2c bus 3
+### dt-test ### EXPECT / : platform testcase-data:testcase-device2: IRQ index 0 not found
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest0/status
 l5: Bringing 0uV into 1800000-1800000uV
-sdhci_msm f98a4900.sdhci: Got CD GPIO
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest0/status
 l6: supplied by s2
-l6: Bringing 0uV into 1800000-1800000uV
 sdhci_msm f98a4900.sdhci: Got CD GPIO
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest0/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest1/status
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest1/status
+l6: Bringing 0uV into 1800000-1800000uV
+l7: supplied by s2
+l7: Bringing 0uV into 1800000-1800000uV
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest1/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest2/status
+l8: supplied by regulator-dummy
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest2/status
+l8: Bringing 0uV into 1800000-1800000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest2/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest3/status
+l9: supplied by regulator-dummy
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest3/status
+l9: Bringing 0uV into 1800000-1800000uV
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest3/status
+l10: supplied by regulator-dummy
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest5/status
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest5/status
+l10: Bringing 0uV into 1800000-1800000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest5/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest6/status
+l11: supplied by s1
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest6/status
+l11: Bringing 0uV into 1300000-1300000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest6/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest7/status
+l12: supplied by s2
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest7/status
+l12: Bringing 0uV into 1800000-1800000uV
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+l13: supplied by regulator-dummy
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest7/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/status
+l13: Bringing 0uV into 1800000-1800000uV
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/status
+l14: supplied by s2
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/property-foo
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/property-foo
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+l14: Bringing 0uV into 1800000-1800000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/test-unittest8/property-foo
+### dt-test ### EXPECT \ : OF: overlay: node_overlaps_later_cs: #6 overlaps with #7 @/testcase-data/overlay-node/test-bus/test-unittest8
+### dt-test ### EXPECT \ : OF: overlay: overlay #6 is not topmost
+OF: overlay: node_overlaps_later_cs: #6 overlaps with #7 @/testcase-data/overlay-node/test-bus/test-unittest8
+OF: overlay: overlay #6 is not topmost
+### dt-test ### EXPECT / : OF: overlay: overlay #6 is not topmost
+### dt-test ### EXPECT / : OF: overlay: node_overlaps_later_cs: #6 overlaps with #7 @/testcase-data/overlay-node/test-bus/test-unittest8
+l15: supplied by s2
+### dt-test ### EXPECT \ : i2c i2c-1: Added multiplexed i2c bus 2
+i2c i2c-1: Added multiplexed i2c bus 2
+l15: Bringing 0uV into 2050000-2050000uV
+### dt-test ### EXPECT / : i2c i2c-1: Added multiplexed i2c bus 2
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest12/status
+l16: supplied by regulator-dummy
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest12/status
+l16: Bringing 0uV into 2700000-2700000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest12/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest13/status
+l17: supplied by regulator-dummy
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+l17: Bringing 0uV into 2700000-2700000uV
+OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest13/status
+l18: supplied by regulator-dummy
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest13/status
+### dt-test ### EXPECT \ : i2c i2c-1: Added multiplexed i2c bus 3
+l18: Bringing 0uV into 2850000-2850000uV
+i2c i2c-1: Added multiplexed i2c bus 3
+l19: supplied by regulator-dummy
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+l19: Bringing 0uV into 3300000-3300000uV
+### dt-test ### EXPECT / : i2c i2c-1: Added multiplexed i2c bus 3
+### dt-test ### EXPECT \ : GPIO line <<int>> (line-B-input) hogged as input
+l20: supplied by regulator-dummy
+### dt-test ### EXPECT \ : GPIO line <<int>> (line-A-input) hogged as input
+l20: Bringing 0uV into 2950000-2950000uV
+GPIO line 315 (line-B-input) hogged as input
+l21: supplied by regulator-dummy
+GPIO line 309 (line-A-input) hogged as input
+l21: Bringing 0uV into 2950000-2950000uV
+### dt-test ### EXPECT / : GPIO line <<int>> (line-A-input) hogged as input
+l22: supplied by regulator-dummy
+### dt-test ### EXPECT / : GPIO line <<int>> (line-B-input) hogged as input
+l22: Bringing 0uV into 3000000-3000000uV
+### dt-test ### EXPECT \ : GPIO line <<int>> (line-D-input) hogged as input
+l23: supplied by regulator-dummy
+GPIO line 307 (line-D-input) hogged as input
+l23: Bringing 0uV into 3000000-3000000uV
+### dt-test ### EXPECT / : GPIO line <<int>> (line-D-input) hogged as input
+l24: supplied by regulator-dummy
+### dt-test ### EXPECT \ : GPIO line <<int>> (line-C-input) hogged as input
+l24: Bringing 0uV into 3075000-3075000uV
+mmc0: SDHCI controller on f9824900.sdhci [f9824900.sdhci] using ADMA
+lvs1: supplied by s3
+### dt-test ### EXPECT / : GPIO line <<int>> (line-C-input) hogged as input
+lvs2: supplied by s3
+### dt-test ### FAIL of_unittest_overlay_gpio():2668 unittest_gpio_chip_request() called 0 times (expected 1 time)
+lvs3: supplied by s3
+sdhci_msm f98a4900.sdhci: Got CD GPIO
+5vs1: supplied by s4
+5vs2: supplied by s4
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/ride@100/track@30/incline-up
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/ride@100/track@40/incline-up
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/status
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/color
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/rate
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/hvac_2
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200
+mmc1: SDHCI controller on f98a4900.sdhci [f98a4900.sdhci] using ADMA
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_left
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_right
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/status
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/status
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/ride@100/track@30/incline-up
@@ -364,79 +488,55 @@ OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__sy
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_left
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_right
-l7: supplied by s2
-l7: Bringing 0uV into 1800000-1800000uV
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_right
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200_left
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/ride_200
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /__symbols__/hvac_2
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/rate
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/color
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/lights@40000/status
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/ride@100/track@40/incline-up
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/ride@100/track@30/incline-up
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/fairway-1/status
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/status
+### dt-test ### EXPECT \ : OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller
+### dt-test ### EXPECT \ : OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/controller/name
 OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller
-sdhci_msm f98a4900.sdhci: Got CD GPIO
 OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/controller/name
+### dt-test ### EXPECT / : OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/controller/name
+### dt-test ### EXPECT / : OF: overlay: ERROR: multiple fragments add and/or delete node /testcase-data-2/substation@100/motor-1/controller
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
+### dt-test ### EXPECT \ : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
+### dt-test ### EXPECT \ : OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/rpm_avail
+mmc1: new ultra high speed DDR50 SDHC card at address aaaa
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
-l8: supplied by regulator-dummy
+mmcblk1: mmc1:aaaa SU16G 14.8 GiB 
 OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
 OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/rpm_avail
-l8: Bringing 0uV into 1800000-1800000uV
-### dt-test ### end of unittest - 242 passed, 0 failed
-l9: supplied by regulator-dummy
+ mmcblk1: p1
+### dt-test ### EXPECT / : OF: overlay: ERROR: multiple fragments add, update, and/or delete property /testcase-data-2/substation@100/motor-1/rpm_avail
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
+### dt-test ### EXPECT / : OF: overlay: WARNING: memory leak will occur if overlay removed, property: /testcase-data-2/substation@100/motor-1/rpm_avail
+### dt-test ### end of unittest - 258 passed, 1 failed
+mmc0: new HS200 MMC card at address 0001
 ALSA device list:
-l9: Bringing 0uV into 1800000-1800000uV
   No soundcards found.
-l10: supplied by regulator-dummy
-l10: Bringing 0uV into 1800000-1800000uV
-l11: su�[    2.990221] l12: supplied by s2
-l12: Bringing 0uV into 1800000-1800000uV
+mmcblk0: mmc0:0001 SEM16[    4.341533] mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
+mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB, chardev (247:0)
 Freeing unused kernel memory: 1024K
-l13: supplied by regulator-dummy
-l13: Bringing 0uV into 1800000-1800000uV
-l14: supplied by s2
-l14: Bringing 0uV into 1800000-1800000uV
-l15: supplied by s2
-l15: Bringing 0uV into 2050000-2050000uV
-l16: supplied by regulator-dummy
-l16: Bringing 0uV into 2700000-2700000uV
-l17: supplied by regulator-dummy
-l17: Bringing 0uV into 2700000-2700000uV
-l18: supplied by regulator-dummy
-l18: Bringing 0uV into 2850000-2850000uV
-l19: supplied by regulator-dummy
-l19: Bringing 0uV into 3300000-3300000uV
-l20: supplied by regulator-dummy
-l20: Bringing 0uV into 2950000-2950000uV
-l21: supplied by regulator-dummy
-l21: Bringing 0uV into 2950000-2950000uV
 Run /init as init process
-l22: supplied by regulator-dummy
-l22: Bringing 0uV into 3000000-3000000uV
-l23: supplied by regulator-dummy
-l23: Bringing 0uV into 3000000-3000000uV
-l24: supplied by regulator-dummy
-l24: Bringing 0uV into 3075000-3075000uV
-lvs1: supplied by s3
+ mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
 mkdir: can't create directory '/bin': File exists
-mkdir: can't [    3.117387] lvs2: supplied by s3
-create directory '/dev': File exists
-lvs3: supplied by s3
-5vs1: supplied by s4
-5vs2: supplied by s4
+mkdir: can't create directory '/dev': File exists
 /init: line 25: can't create /proc/sys/kernel/hotplug: nonexistent directory
 mdev: unknown user/group 'root:uucp' on line 34
-mmc0: SDHCI controller on f9824900.sdhci [f9824900.sdhci] using ADMA
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-mmc1: SDHCI controller on f98a4900.sdhci [f98a4900.sdhci] using ADMA
-mmc0: new HS200 MMC card at address 0001
-mmcblk0: mmc0:0001 SEM16G 14.7 GiB 
-mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
-mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
-mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB, chardev (247:0)
- mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
-mmc1: new ultra high speed DDR50 SDHC card at address aaaa
-mmcblk1: mmc1:aaaa SU16G 14.8 GiB 
- mmcblk1: p1
 Attempt to mount partitions: /usr/system /usr/data
 Mounting partitions from: /dev/mmcblk0
 EXT4-fs (mmcblk0p12): mounted filesystem with ordered data mode. Opts: (null)
-random: fast init done
 EXT4-fs (mmcblk0p13): recovery complete
 EXT4-fs (mmcblk0p13): mounted filesystem with ordered data mode. Opts: (null)
-/ # 
+/ # [    5.288378] random: fast init done
+
 / # cat /proc/version
-Linux version 5.5.0-rc2 (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #27 SMP PREEMPT Wed Jan 15 11:15:34 CST 2020
+Linux version 5.5.0-rc2-00002-gbc60035cbebc-dirty (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #26 SMP PREEMPT Wed Jan 15 11:12:23 CST 2020
 / # 
