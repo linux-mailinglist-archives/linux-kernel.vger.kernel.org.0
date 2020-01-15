@@ -2,250 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB2D13C382
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:47:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A198C13C389
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgAONrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 08:47:15 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:40499 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbgAONrO (ORCPT
+        id S1728913AbgAONtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 08:49:25 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23325 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726574AbgAONtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:47:14 -0500
-Received: by mail-pj1-f66.google.com with SMTP id bg7so7723314pjb.5;
-        Wed, 15 Jan 2020 05:47:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qCxb07O3jS5MzDJ5KpEFySLAZYUkoV5oCpYOYUF2fuA=;
-        b=BpKz3ov4HpQHJOoXWclUr67slGzmMYVwSSgrOa57jr9BUR4E3B7OeMxkE75uSze3hR
-         Z0278JymCg/BE1nrzEdute+6kSsczp22VUmgzc5/YBSP0bv39/DQHrhCRwE02D5xlJJ3
-         IRJNCwrNr/a10bU+POKq0gQ8qeZ+BSYTCeGe2r9tgqMyHcm3/eG99rr3tXopHn5nFcsy
-         gEpMcfMW4aEOCUSCOcII2jaU3hCnOXDMK+4erGjJws8+FBxnxDLHHtY6zGi2y9kgHuCe
-         EBWpAi59dPYnY9XDodeluDZxo+BrvBhIkYsVrdOiBdgb9ejbt9tv5KxNdpjiLOL2P43R
-         iT4g==
+        Wed, 15 Jan 2020 08:49:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579096163;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=79M15GKwGi7t6ysWJj36dJhzxgOaifGqu7osrGbl4Jk=;
+        b=BJHXhFBinMPoncxwuRgLeMnYLek2AAbW2dtf2xovxoM33t97bsSDS4XAhLp+tIB2zQXFJa
+        VQ0J2fOWZ3h+OZ8zBqwbzp6gBEp6lC/ftNGelg8hOE2Wlu/MrG3IXhEXqsOVbVituajFmL
+        Q15kB5Cgac2OGkZqCgEEtw5ZaKQlnmw=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-pIFh2sBbMNK1YzwIrLB8Mg-1; Wed, 15 Jan 2020 08:49:21 -0500
+X-MC-Unique: pIFh2sBbMNK1YzwIrLB8Mg-1
+Received: by mail-qv1-f72.google.com with SMTP id ce17so11079467qvb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 05:49:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qCxb07O3jS5MzDJ5KpEFySLAZYUkoV5oCpYOYUF2fuA=;
-        b=Zg4j28IQ+4ZNzErCnVUfgppggSidjGsrb7nnYdHtuwALDTzLg0/Xs+TKsnuPI1AbkH
-         qUBKklFso0f/ryunpvfAjmyqOpmz47LAD23sdC+7z5sIv6zMZxMHunOc05IRKfAqlPuv
-         pWJHJO1jk+W8yHbYyplCJXCKLie40PjNXdbCdEHdDT+tc3e3yzQ1/FgkPwZZdOgRUX0A
-         ny8oP9+P5JF7e3t0g4l8nX7Zv3mVar+XhP0y5B1hy3//efZmzqMLA7unZco1S4H8DZTa
-         LvpJKCXV4toAtcR8Q/pdx9xB0mZu3gBeJHQzCBL4lCEBIO6Hp6pTHYULtwnGcJ/m+WGg
-         hhOA==
-X-Gm-Message-State: APjAAAWjHcZjyOAzeUaQ5Cdn8NgXp8XaHn+hD/z/D2Mt7Fjgs6Gvy7Ka
-        lX/cbGgGzvZzdephCldjNYA=
-X-Google-Smtp-Source: APXvYqwv7ezrYAKzSWltLFywSXn+1dKl9mNzVXU+ZOl+9ohEy1e+HVp1oNtxEnD4ZXIF0ibvfgE2KA==
-X-Received: by 2002:a17:902:a515:: with SMTP id s21mr19390176plq.177.1579096033818;
-        Wed, 15 Jan 2020 05:47:13 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d26sm20414077pgv.66.2020.01.15.05.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jan 2020 05:47:13 -0800 (PST)
-Subject: Re: [PATCH v12 3/4] watchdog: mtk_wdt: mt8183: Add reset controller
-To:     Yong Liang <yong.liang@mediatek.com>, wim@linux-watchdog.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        chang-an.chen@mediatek.com, freddy.hsin@mediatek.com,
-        jiaxin.yu@mediatek.com
-Cc:     yingjoe.chen@mediatek.com, sboyd@kernel.org
-References: <20200115085828.27791-1-yong.liang@mediatek.com>
- <20200115085828.27791-4-yong.liang@mediatek.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <18c3d0ca-a5d9-ede4-d13e-279b71272d44@roeck-us.net>
-Date:   Wed, 15 Jan 2020 05:47:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=79M15GKwGi7t6ysWJj36dJhzxgOaifGqu7osrGbl4Jk=;
+        b=aPbMqiwRyrOcS49/nwVV7PVBWlZyC/P71atJXV6PrFc7M5522fPHknd0IaofyIPHHQ
+         gcALVcT+A3MzDwhZfANQf08SbPj0O/uBWwVgLRecb8XLWYPiVlK712IdnwVXq9mh3Ivw
+         Vp16xwK4dCXtXdW29cUkbotE2IYneqjl4yDBDfEdJD8mv9ZN0qvcgdQb3Yyeq7Cf3N/7
+         0qBvvKQvmYJq1fvjRNHM3YYV/jDP1nFkRryrfu+OFwQ2ehLvi0d/mBbzT5PB01hNw4Ov
+         U7mgtaPtJ2Mjv8Rs2ewwTgcgB/2d7YfDyqzsbNvLaKKVQHTDNu/kJkaUyh/8gk0j/Dre
+         bFjw==
+X-Gm-Message-State: APjAAAUVcFnR+9wuJPPJDelAcqhYKYaGboi2mjMwBKaM7PgX0+BEg29W
+        Abim7t71f58udx1h5oyCWmytmByZ/bC6GESx0vJV5PXDrxwfoIaOdMHUkIi7RjC1fkG18QvNo8u
+        p0n0ODlntHr1+eiHN+7++QIkI
+X-Received: by 2002:a37:a685:: with SMTP id p127mr23744221qke.449.1579096161383;
+        Wed, 15 Jan 2020 05:49:21 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz42YoUKeG+vAxd7NWuh+eaZw45fe1oAMfHmK2nDoiIOLa/QZBznhzSgF9fNTakPe1VYtTTdg==
+X-Received: by 2002:a37:a685:: with SMTP id p127mr23744193qke.449.1579096161132;
+        Wed, 15 Jan 2020 05:49:21 -0800 (PST)
+Received: from redhat.com (bzq-79-183-34-164.red.bezeqint.net. [79.183.34.164])
+        by smtp.gmail.com with ESMTPSA id x27sm8332400qkx.81.2020.01.15.05.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 05:49:20 -0800 (PST)
+Date:   Wed, 15 Jan 2020 08:49:16 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Clement Leger <cleger@kalray.eu>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio_ring: Use workqueue to execute virtqueue callback
+Message-ID: <20200115084601-mutt-send-email-mst@kernel.org>
+References: <20200115120535.17454-1-cleger@kalray.eu>
 MIME-Version: 1.0
-In-Reply-To: <20200115085828.27791-4-yong.liang@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115120535.17454-1-cleger@kalray.eu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/20 12:58 AM, Yong Liang wrote:
-> From: "yong.liang" <yong.liang@mediatek.com>
-> 
-> Add reset controller API in watchdog driver.
-> Besides watchdog, MTK toprgu module alsa provide sub-system (eg, audio,
-> camera, codec and connectivity) software reset functionality.
-> 
-> Signed-off-by: yong.liang <yong.liang@mediatek.com>
-> Signed-off-by: Jiaxin Yu <jiaxin.yu@mediatek.com>
-> Reviewed-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Wed, Jan 15, 2020 at 01:05:35PM +0100, Clement Leger wrote:
+> Currently, in vring_interrupt, the vq callbacks are called directly.
+> However, these callbacks are not meant to be executed in IRQ context.
+> They do not return any irq_return_t value and some of them can do
+> locking (rpmsg_recv_done -> rpmsg_recv_single -> mutex_lock).
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+That's a bug in rpmsg. Pls fix there.
+
+> When compiled with DEBUG_ATOMIC_SLEEP, the kernel will spit out warnings
+> when such case shappen.
+> 
+> In order to allow calling these callbacks safely (without sleeping in
+> IRQ context), execute them in a workqueue if needed.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
+
+If applied this would slow data path handling of VQ events
+significantly. Teaching callbacks to return irqreturn_t
+might be a good idea, though it's not an insignificant
+amount of work.
+
 
 > ---
->   drivers/watchdog/mtk_wdt.c | 99 +++++++++++++++++++++++++++++++++++++-
->   1 file changed, 98 insertions(+), 1 deletion(-)
+>  drivers/virtio/virtio_ring.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> index 9c3d0033260d..e88aacb0404d 100644
-> --- a/drivers/watchdog/mtk_wdt.c
-> +++ b/drivers/watchdog/mtk_wdt.c
-> @@ -9,6 +9,8 @@
->    * Based on sunxi_wdt.c
->    */
->   
-> +#include <dt-bindings/reset-controller/mt8183-resets.h>
-> +#include <linux/delay.h>
->   #include <linux/err.h>
->   #include <linux/init.h>
->   #include <linux/io.h>
-> @@ -16,10 +18,11 @@
->   #include <linux/module.h>
->   #include <linux/moduleparam.h>
->   #include <linux/of.h>
-> +#include <linux/of_device.h>
->   #include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
->   #include <linux/types.h>
->   #include <linux/watchdog.h>
-> -#include <linux/delay.h>
->   
->   #define WDT_MAX_TIMEOUT		31
->   #define WDT_MIN_TIMEOUT		1
-> @@ -44,6 +47,9 @@
->   #define WDT_SWRST		0x14
->   #define WDT_SWRST_KEY		0x1209
->   
-> +#define WDT_SWSYSRST		0x18U
-> +#define WDT_SWSYS_RST_KEY	0x88000000
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 867c7ebd3f10..0e4d0e5ca227 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -183,6 +183,9 @@ struct vring_virtqueue {
+>  	/* DMA, allocation, and size information */
+>  	bool we_own_ring;
+>  
+> +	/* Work struct for vq callback handling */
+> +	struct work_struct work;
 > +
->   #define DRV_NAME		"mtk-wdt"
->   #define DRV_VERSION		"1.0"
->   
-> @@ -53,8 +59,90 @@ static unsigned int timeout;
->   struct mtk_wdt_dev {
->   	struct watchdog_device wdt_dev;
->   	void __iomem *wdt_base;
-> +	spinlock_t lock; /* protects WDT_SWSYSRST reg */
-> +	struct reset_controller_dev rcdev;
-> +};
-> +
-> +struct mtk_wdt_data {
-> +	int toprgu_sw_rst_num;
->   };
->   
-> +static const struct mtk_wdt_data mt8183_data = {
-> +	.toprgu_sw_rst_num = MT8183_TOPRGU_SW_RST_NUM,
-> +};
-> +
-> +static int toprgu_reset_update(struct reset_controller_dev *rcdev,
-> +			       unsigned long id, bool assert)
+>  #ifdef DEBUG
+>  	/* They're supposed to lock for us. */
+>  	unsigned int in_use;
+> @@ -2029,6 +2032,16 @@ static inline bool more_used(const struct vring_virtqueue *vq)
+>  	return vq->packed_ring ? more_used_packed(vq) : more_used_split(vq);
+>  }
+>  
+> +static void vring_work_handler(struct work_struct *work_struct)
 > +{
-> +	unsigned int tmp;
-> +	unsigned long flags;
-> +	struct mtk_wdt_dev *data =
-> +		 container_of(rcdev, struct mtk_wdt_dev, rcdev);
+> +	struct vring_virtqueue *vq = container_of(work_struct,
+> +						  struct vring_virtqueue,
+> +						  work);
+> +	pr_debug("virtqueue callback for %p (%p)\n", vq, vq->vq.callback);
 > +
-> +	spin_lock_irqsave(&data->lock, flags);
-> +
-> +	tmp = readl(data->wdt_base + WDT_SWSYSRST);
-> +	if (assert)
-> +		tmp |= BIT(id);
-> +	else
-> +		tmp &= ~BIT(id);
-> +	tmp |= WDT_SWSYS_RST_KEY;
-> +	writel(tmp, data->wdt_base + WDT_SWSYSRST);
-> +
-> +	spin_unlock_irqrestore(&data->lock, flags);
-> +
-> +	return 0;
+> +	vq->vq.callback(&vq->vq);
 > +}
 > +
-> +static int toprgu_reset_assert(struct reset_controller_dev *rcdev,
-> +			       unsigned long id)
-> +{
-> +	return toprgu_reset_update(rcdev, id, true);
-> +}
+>  irqreturn_t vring_interrupt(int irq, void *_vq)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+> @@ -2041,9 +2054,8 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+>  	if (unlikely(vq->broken))
+>  		return IRQ_HANDLED;
+>  
+> -	pr_debug("virtqueue callback for %p (%p)\n", vq, vq->vq.callback);
+>  	if (vq->vq.callback)
+> -		vq->vq.callback(&vq->vq);
+> +		schedule_work(&vq->work);
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -2110,6 +2122,8 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>  					vq->split.avail_flags_shadow);
+>  	}
+>  
+> +	INIT_WORK(&vq->work, vring_work_handler);
 > +
-> +static int toprgu_reset_deassert(struct reset_controller_dev *rcdev,
-> +				 unsigned long id)
-> +{
-> +	return toprgu_reset_update(rcdev, id, false);
-> +}
+>  	vq->split.desc_state = kmalloc_array(vring.num,
+>  			sizeof(struct vring_desc_state_split), GFP_KERNEL);
+>  	if (!vq->split.desc_state) {
+> @@ -2179,6 +2193,8 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> +	cancel_work_sync(&vq->work);
 > +
-> +static int toprgu_reset(struct reset_controller_dev *rcdev,
-> +			unsigned long id)
-> +{
-> +	int ret;
-> +
-> +	ret = toprgu_reset_assert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return toprgu_reset_deassert(rcdev, id);
-> +}
-> +
-> +static const struct reset_control_ops toprgu_reset_ops = {
-> +	.assert = toprgu_reset_assert,
-> +	.deassert = toprgu_reset_deassert,
-> +	.reset = toprgu_reset,
-> +};
-> +
-> +static int toprgu_register_reset_controller(struct platform_device *pdev,
-> +					    int rst_num)
-> +{
-> +	int ret;
-> +	struct mtk_wdt_dev *mtk_wdt = platform_get_drvdata(pdev);
-> +
-> +	spin_lock_init(&mtk_wdt->lock);
-> +
-> +	mtk_wdt->rcdev.owner = THIS_MODULE;
-> +	mtk_wdt->rcdev.nr_resets = rst_num;
-> +	mtk_wdt->rcdev.ops = &toprgu_reset_ops;
-> +	mtk_wdt->rcdev.of_node = pdev->dev.of_node;
-> +	ret = devm_reset_controller_register(&pdev->dev, &mtk_wdt->rcdev);
-> +	if (ret != 0)
-> +		dev_err(&pdev->dev,
-> +			"couldn't register wdt reset controller: %d\n", ret);
-> +	return ret;
-> +}
-> +
->   static int mtk_wdt_restart(struct watchdog_device *wdt_dev,
->   			   unsigned long action, void *data)
->   {
-> @@ -155,6 +243,7 @@ static int mtk_wdt_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct mtk_wdt_dev *mtk_wdt;
-> +	const struct mtk_wdt_data *wdt_data;
->   	int err;
->   
->   	mtk_wdt = devm_kzalloc(dev, sizeof(*mtk_wdt), GFP_KERNEL);
-> @@ -190,6 +279,13 @@ static int mtk_wdt_probe(struct platform_device *pdev)
->   	dev_info(dev, "Watchdog enabled (timeout=%d sec, nowayout=%d)\n",
->   		 mtk_wdt->wdt_dev.timeout, nowayout);
->   
-> +	wdt_data = of_device_get_match_data(dev);
-> +	if (wdt_data) {
-> +		err = toprgu_register_reset_controller(pdev,
-> +						       wdt_data->toprgu_sw_rst_num);
-> +		if (err)
-> +			return err;
-> +	}
->   	return 0;
->   }
->   
-> @@ -219,6 +315,7 @@ static int mtk_wdt_resume(struct device *dev)
->   
->   static const struct of_device_id mtk_wdt_dt_ids[] = {
->   	{ .compatible = "mediatek,mt6589-wdt" },
-> +	{ .compatible = "mediatek,mt8183-wdt", .data = &mt8183_data },
->   	{ /* sentinel */ }
->   };
->   MODULE_DEVICE_TABLE(of, mtk_wdt_dt_ids);
-> 
+>  	if (vq->we_own_ring) {
+>  		if (vq->packed_ring) {
+>  			vring_free_queue(vq->vq.vdev,
+> -- 
+> 2.15.0.276.g89ea799
 
