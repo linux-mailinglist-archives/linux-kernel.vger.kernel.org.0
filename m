@@ -2,222 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4FA13CC63
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB6213CC6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbgAOSnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:43:52 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:37310 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbgAOSnp (ORCPT
+        id S1729527AbgAOSo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:44:27 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:48779 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729279AbgAOSo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:43:45 -0500
-Received: by mail-pl1-f202.google.com with SMTP id t12so7328159plo.4
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 10:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=CjoqkXpvMMXTZKEQf/w0i8b/juoj1r/E3J2QNyeJ/9M=;
-        b=TqC5xz12UjURima8lfp1XbZtXfz5BlbKfHLb2rtwpYfKXcWnW1o/E0/a79pp6vPt86
-         bSy4ScDBNz2cQpHVG8SM55ZnATHhNBSHfaZe/x8JQM5OgMTOKq/iuNqAOuPi0TWhhQNr
-         rN/EqE86buKkiMeX/zrNcG8h9rjJt+XInft1rm5tA4zfYaVQpmiBEi3VFxfpETEiS3Rr
-         SIenzw0Yd04dIXL7p8WgcNWZRPe+dBVtBCa8pcSXF6WnDqDeEi44xszrKW4NT9zkySmN
-         Zaba+4T+olDYco+0wuUZcnDi1U1/VO05mBXM66N609TMTnFcACohqtJQz53c+3xau9L1
-         e99Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=CjoqkXpvMMXTZKEQf/w0i8b/juoj1r/E3J2QNyeJ/9M=;
-        b=PVvc+qHjdRxpY70tGZ9QIGwKEFO2ksmM1SozfUXnhgNU+pYO6MyYV2oYrQwcEjN77P
-         iRdMVi7VVYDO6AnKibZ4w6YYRUBS0shga6J1wO/176hRw7fhBduw2YfbmcLjY4M27rCj
-         ePBm+hjKuk9cjw+dLB9pzvM7p5+vtlna+QS9T2d8wdTvo+LPcSombq5IrhQ60QGWx01O
-         1IdiNk0w+MQOl7WFgTsaUY7ug8Kk70h7p79YSAtbUdiQtLxe/KPtyjTxchyW/eIEFsBs
-         Dhw+7stEJIjqS+EJs+IeceBFjnMblTejYU+dA8emUXRkZmP7xlEByh8g7htXQDZCZ/Ma
-         yliw==
-X-Gm-Message-State: APjAAAWCNs1oYPOwb1F7b+0VBgQjQuoio8SF3pyS3+Dmu1h98xbGjn32
-        37hUILNYLFpFaBBWOC1LNad1AXpIIFec
-X-Google-Smtp-Source: APXvYqycDVWqkbUZr8RQhY8T/gDGCqw3Zs5lR9QZEKkr7AtGovXy64qQcceBV2uWlcb4hOFSBkfp3MY1nHtd
-X-Received: by 2002:a63:181:: with SMTP id 123mr33985878pgb.36.1579113824307;
- Wed, 15 Jan 2020 10:43:44 -0800 (PST)
-Date:   Wed, 15 Jan 2020 10:43:08 -0800
-In-Reply-To: <20200115184308.162644-1-brianvv@google.com>
-Message-Id: <20200115184308.162644-10-brianvv@google.com>
-Mime-Version: 1.0
-References: <20200115184308.162644-1-brianvv@google.com>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
-Subject: [PATCH v5 bpf-next 9/9] selftests/bpf: add batch ops testing to array
- bpf map
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Brian Vazquez <brianvv@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 15 Jan 2020 13:44:26 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6CE0B21F69;
+        Wed, 15 Jan 2020 13:44:25 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 15 Jan 2020 13:44:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=3KlDlXJYP55FN2KlL735TAQHph
+        ecdn0T19PaZ/sz2EU=; b=O3qUU/HHgvK3c+ZwrOSrkOkV3J3HowBFw2ezurVez2
+        P8BlsjXTKg1/SM4s4FLgaI8M1zZIUsOMRBzh7KiwLRdME9FxF5AmGvsUOxTjQth6
+        rLnQgpzhWv1vIOB51po0CAt+AhiOP7hzSulWXznXHt9yghnoKHp8ZGGhX49SW/Vv
+        oEXwAEZ1LySG7HJD1pUFifFYULgIQ8YHzj1trvJnmNYYDkKOVScRWr5tVTAy7jaq
+        +XHbEe5boyv/wFKonXlhN5y9675YVPy275yKUYvTe1qNBdxqfitHjou5XAsy8DyY
+        cxGyEjY/CKSy+Qc5P8UGykw1/Z1E59nXLFxXF49e7QVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=3KlDlXJYP55FN2KlL
+        735TAQHphecdn0T19PaZ/sz2EU=; b=O5yLqWdKDUsbaAgoQdIT/vCuJogO+OSxU
+        pwvWeFOKYgL9g5LwJvc0hUXhYCA9S6229D9ud5gKUT/Aw5/mLnkAtjIR19l8evxU
+        ayFMTp070Sn5M2ePB+9qb1SCctpng00ewKAkIZjnb5FbF1Lgy52uGjFl5J9fOZlr
+        pbhwrQudQHyhSuaJWt9XD1YXwIIaCZruMGOT4kAgYu6lxSKiHCtkeDRXJrlBdohD
+        Kl0uFwqh8u6Xc6RYwIzhsMa+SsxjkyPeznD2B1E5fS3o0D+1ZvmlhBilfH+4YybW
+        my/FdnbCBaCV7H7cjJV3fE72uwEuiRqqLeKNdtPI+6yiHpFcDY/5g==
+X-ME-Sender: <xms:iF0fXngrJ6eBGGMJwsIT1N_BNGXy5bunTjNGd53wSM0zu340QSRxdw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdefgdduudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgurhgvshcu
+    hfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepieejrd
+    duiedtrddvudejrddvhedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgvshes
+    rghnrghrrgiivghlrdguvgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:iF0fXutXCF4QMqZj6RtX2jAD3QtOVVeiJqzpUW8SegJeDZC-GD-SVQ>
+    <xmx:iF0fXvxasAxVE3gOorzDDGZqjiTLt632KpbsQdsGIJv6O1iGo1xPew>
+    <xmx:iF0fXrbHGvviZpBbB_9O6kbdXBqjl4eOx8M6FWDwEm_EO3LCJTfGYQ>
+    <xmx:iV0fXoABTEroMU1B3inWaYEDHRzIRKa_VUrEi8wLF0fnIoPaFwYMJA>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AA11130602DE;
+        Wed, 15 Jan 2020 13:44:24 -0500 (EST)
+From:   Andres Freund <andres@anarazel.de>
+To:     Tushar Dave <tushar.n.dave@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andres Freund <andres@anarazel.de>
+Subject: [PATCH] thermal: intel_pch_thermal: Add PCI ids for Lewisburg PCH.
+Date:   Wed, 15 Jan 2020 10:44:15 -0800
+Message-Id: <20200115184415.1726953-1-andres@anarazel.de>
+X-Mailer: git-send-email 2.25.0.rc1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested bpf_map_lookup_batch() and bpf_map_update_batch()
-functionality.
+I noticed that I couldn't read the PCH temperature on my workstation
+(C620 series chipset, w/ 2x Xeon Gold 5215 CPUs) directly, but had to go
+through IPMI. Looking at the data sheet, it looks to me like the
+existing intel PCH thermal driver should work without changes for
+Lewisburg.
 
-  $ ./test_maps
-      ...
-        test_array_map_batch_ops:PASS
-      ...
+I suspect there's some other PCI id's missing. But I hope somebody at
+Intel would have an easier time figuring that out than I...
 
-Signed-off-by: Brian Vazquez <brianvv@google.com>
-Signed-off-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Andres Freund <andres@anarazel.de>
 ---
- .../bpf/map_tests/array_map_batch_ops.c       | 129 ++++++++++++++++++
- 1 file changed, 129 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/map_tests/array_map_batch_ops.c
+ drivers/thermal/intel/intel_pch_thermal.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/map_tests/array_map_batch_ops.c b/tools/testing/selftests/bpf/map_tests/array_map_batch_ops.c
-new file mode 100644
-index 0000000000000..f0a64d8ac59a5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/map_tests/array_map_batch_ops.c
-@@ -0,0 +1,129 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <string.h>
-+
-+#include <bpf/bpf.h>
-+#include <bpf/libbpf.h>
-+
-+#include <test_maps.h>
-+
-+static void map_batch_update(int map_fd, __u32 max_entries, int *keys,
-+			     int *values)
-+{
-+	int i, err;
-+	DECLARE_LIBBPF_OPTS(bpf_map_batch_opts, opts,
-+		.elem_flags = 0,
-+		.flags = 0,
-+	);
-+
-+	for (i = 0; i < max_entries; i++) {
-+		keys[i] = i;
-+		values[i] = i + 1;
-+	}
-+
-+	err = bpf_map_update_batch(map_fd, keys, values, &max_entries, &opts);
-+	CHECK(err, "bpf_map_update_batch()", "error:%s\n", strerror(errno));
-+}
-+
-+static void map_batch_verify(int *visited, __u32 max_entries,
-+			     int *keys, int *values)
-+{
-+	int i;
-+
-+	memset(visited, 0, max_entries * sizeof(*visited));
-+	for (i = 0; i < max_entries; i++) {
-+		CHECK(keys[i] + 1 != values[i], "key/value checking",
-+		      "error: i %d key %d value %d\n", i, keys[i], values[i]);
-+		visited[i] = 1;
-+	}
-+	for (i = 0; i < max_entries; i++) {
-+		CHECK(visited[i] != 1, "visited checking",
-+		      "error: keys array at index %d missing\n", i);
-+	}
-+}
-+
-+void test_array_map_batch_ops(void)
-+{
-+	struct bpf_create_map_attr xattr = {
-+		.name = "array_map",
-+		.map_type = BPF_MAP_TYPE_ARRAY,
-+		.key_size = sizeof(int),
-+		.value_size = sizeof(int),
-+	};
-+	int map_fd, *keys, *values, *visited;
-+	__u32 count, total, total_success;
-+	const __u32 max_entries = 10;
-+	bool nospace_err;
-+	__u64 batch = 0;
-+	int err, step;
-+	DECLARE_LIBBPF_OPTS(bpf_map_batch_opts, opts,
-+		.elem_flags = 0,
-+		.flags = 0,
-+	);
-+
-+	xattr.max_entries = max_entries;
-+	map_fd = bpf_create_map_xattr(&xattr);
-+	CHECK(map_fd == -1,
-+	      "bpf_create_map_xattr()", "error:%s\n", strerror(errno));
-+
-+	keys = malloc(max_entries * sizeof(int));
-+	values = malloc(max_entries * sizeof(int));
-+	visited = malloc(max_entries * sizeof(int));
-+	CHECK(!keys || !values || !visited, "malloc()", "error:%s\n",
-+	      strerror(errno));
-+
-+	/* populate elements to the map */
-+	map_batch_update(map_fd, max_entries, keys, values);
-+
-+	/* test 1: lookup in a loop with various steps. */
-+	total_success = 0;
-+	for (step = 1; step < max_entries; step++) {
-+		map_batch_update(map_fd, max_entries, keys, values);
-+		map_batch_verify(visited, max_entries, keys, values);
-+		memset(keys, 0, max_entries * sizeof(*keys));
-+		memset(values, 0, max_entries * sizeof(*values));
-+		batch = 0;
-+		total = 0;
-+		/* iteratively lookup/delete elements with 'step'
-+		 * elements each.
-+		 */
-+		count = step;
-+		nospace_err = false;
-+		while (true) {
-+			err = bpf_map_lookup_batch(map_fd,
-+						total ? &batch : NULL, &batch,
-+						keys + total,
-+						values + total,
-+						&count, &opts);
-+
-+			CHECK((err && errno != ENOENT), "lookup with steps",
-+			      "error: %s\n", strerror(errno));
-+
-+			total += count;
-+			if (err)
-+				break;
-+
-+		}
-+
-+		if (nospace_err == true)
-+			continue;
-+
-+		CHECK(total != max_entries, "lookup with steps",
-+		      "total = %u, max_entries = %u\n", total, max_entries);
-+
-+		map_batch_verify(visited, max_entries, keys, values);
-+
-+		total_success++;
-+	}
-+
-+	CHECK(total_success == 0, "check total_success",
-+	      "unexpected failure\n");
-+
-+	printf("%s:PASS\n", __func__);
-+
-+	free(keys);
-+	free(values);
-+	free(visited);
-+}
+diff --git a/drivers/thermal/intel/intel_pch_thermal.c b/drivers/thermal/intel/intel_pch_thermal.c
+index 4f0bb8f502e1..1f3ff0d489ef 100644
+--- a/drivers/thermal/intel/intel_pch_thermal.c
++++ b/drivers/thermal/intel/intel_pch_thermal.c
+@@ -23,6 +23,7 @@
+ #define PCH_THERMAL_DID_SKL_H	0xA131 /* Skylake PCH 100 series */
+ #define PCH_THERMAL_DID_CNL	0x9Df9 /* CNL PCH */
+ #define PCH_THERMAL_DID_CNL_H	0xA379 /* CNL-H PCH */
++#define PCH_THERMAL_DID_LWB	0xA1B1 /* Lewisburg PCH */
+ 
+ /* Wildcat Point-LP  PCH Thermal registers */
+ #define WPT_TEMP	0x0000	/* Temperature */
+@@ -272,6 +273,7 @@ enum board_ids {
+ 	board_wpt,
+ 	board_skl,
+ 	board_cnl,
++	board_lwb,
+ };
+ 
+ static const struct board_info {
+@@ -294,6 +296,10 @@ static const struct board_info {
+ 		.name = "pch_cannonlake",
+ 		.ops = &pch_dev_ops_wpt,
+ 	},
++	[board_lwb] = {
++		.name = "pch_lewisburg",
++		.ops = &pch_dev_ops_wpt,
++	},
+ };
+ 
+ static int intel_pch_thermal_probe(struct pci_dev *pdev,
+@@ -398,6 +404,8 @@ static const struct pci_device_id intel_pch_thermal_id[] = {
+ 		.driver_data = board_cnl, },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCH_THERMAL_DID_CNL_H),
+ 		.driver_data = board_cnl, },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCH_THERMAL_DID_LWB),
++		.driver_data = board_lwb, },
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, intel_pch_thermal_id);
 -- 
-2.25.0.rc1.283.g88dfdc4193-goog
+2.25.0.rc1
 
