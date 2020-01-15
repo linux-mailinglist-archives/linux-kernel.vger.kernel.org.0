@@ -2,77 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE32913C799
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0609613C73B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbgAOP1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:27:00 -0500
-Received: from uho.ysoft.cz ([81.19.3.130]:49264 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbgAOP1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:27:00 -0500
-X-Greylist: delayed 562 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Jan 2020 10:26:59 EST
-Received: from iota-build.ysoft.local (unknown [10.1.5.151])
-        by uho.ysoft.cz (Postfix) with ESMTP id 6BEEBA04F7;
-        Wed, 15 Jan 2020 16:17:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1579101455;
-        bh=0ULpnmAUHvffsEugGgwMjETvdEv0t9gZHoFvdALaxho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jToC03rQSGKXgTBIs++wTaE//kVMn+aU223x64vW/iQkyWk5hCUcVTiyBsIUnuEDM
-         ndUw30/zFMTthl6z+Hd0u0iWEVr/gu2CZ4QozCAC9mU2bymD8HaG2M1e/jbqVzhJxx
-         +kMYuzYOadxgttPvpfhplPFJbWsgDX6RqbYBlocU=
-From:   =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH] ARM: dts: imx6dl-yapp4: Specify USB overcurrent protection polarity
-Date:   Wed, 15 Jan 2020 16:17:28 +0100
-Message-Id: <1579101448-7247-1-git-send-email-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.1.4
+        id S1729037AbgAOPTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 10:19:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39664 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726132AbgAOPS7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 10:18:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579101538;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=O28pugdE3ji8Z7d58Dp1KejMSWnJ7EsYgUczW6n+9NY=;
+        b=F69sbxVl2NEsx/ned4ezVnMKCxGPSrNFIiYJ/XZoSnTdymVkEJF/LdY0lMfcbTVUobZo3g
+        H0OWjArCJGolmqd/hXkUbqyvFEWjap7E+Cnue/czGNmt5tFitwkBxSErAeB+mmtFKIYLvV
+        u381+/3cNNLHk0FNETQoFkxhZATMfqw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-177-q6bYgGs4Pb6_ldebLaXl3g-1; Wed, 15 Jan 2020 10:18:54 -0500
+X-MC-Unique: q6bYgGs4Pb6_ldebLaXl3g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F20318F8A0F;
+        Wed, 15 Jan 2020 15:18:49 +0000 (UTC)
+Received: from carbon (ovpn-200-25.brq.redhat.com [10.40.200.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A1E6A66842;
+        Wed, 15 Jan 2020 15:18:26 +0000 (UTC)
+Date:   Wed, 15 Jan 2020 16:18:25 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com, brouer@redhat.com
+Subject: Re: [PATCH bpf-next v2 07/10] samples/bpf: Use consistent include
+ paths for libbpf
+Message-ID: <20200115161825.351ebf23@carbon>
+In-Reply-To: <157909757639.1192265.16930011370158657444.stgit@toke.dk>
+References: <157909756858.1192265.6657542187065456112.stgit@toke.dk>
+        <157909757639.1192265.16930011370158657444.stgit@toke.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Patchwork-Bot: notify
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After reset the oc protection polarity is set to active high on imx6.
-If the polarity is not specified in device tree it is not changed.
+On Wed, 15 Jan 2020 15:12:56 +0100
+Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> wrote:
 
-The imx6dl-yapp4 platform uses an active-low oc signal so explicitly
-configure that in the device tree.
+> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>=20
+> Fix all files in samples/bpf to include libbpf header files with the bpf/
+> prefix, to be consistent with external users of the library. Also ensure
+> that all includes of exported libbpf header files (those that are exported
+> on 'make install' of the library) use bracketed includes instead of quote=
+d.
+>=20
+> To make sure no new files are introduced that doesn't include the bpf/
+> prefix in its include, remove tools/lib/bpf from the include path entirel=
+y,
+> and use tools/lib instead.
+>=20
+> Fixes: 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are taken f=
+rom selftests dir")
+> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
----
- arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+I like this change. Maybe the reason so many samples/bpf/ files
+still included "libbpf.h" was that once-upon-a-time we had a "eBPF mini
+library" in the file samples/bpf/libbpf.h that were included.
 
-diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-index b494042e2d8f..fb6ce6d662bc 100644
---- a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-+++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
-@@ -563,6 +563,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usbh1>;
- 	vbus-supply = <&reg_usb_h1_vbus>;
-+	over-current-active-low;
- 	status = "disabled";
- };
- 
-@@ -570,6 +571,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usbotg>;
- 	vbus-supply = <&reg_usb_otg_vbus>;
-+	over-current-active-low;
- 	srp-disable;
- 	hnp-disable;
- 	adp-disable;
--- 
-2.1.4
+The file was removed/renamed in:
+ https://git.kernel.org/torvalds/c/8d93045077ae
+
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+
+--=20
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
 
