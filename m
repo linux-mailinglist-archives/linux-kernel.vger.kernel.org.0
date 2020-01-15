@@ -2,119 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0175213BF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F9613BF26
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:05:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbgAOMCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:02:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:35804 "EHLO foss.arm.com"
+        id S1730237AbgAOMEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:04:10 -0500
+Received: from mga14.intel.com ([192.55.52.115]:8776 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730234AbgAOMCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:02:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38AC231B;
-        Wed, 15 Jan 2020 04:02:45 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50E1A3F534;
-        Wed, 15 Jan 2020 04:02:43 -0800 (PST)
-Date:   Wed, 15 Jan 2020 12:02:38 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     andrew.murray@arm.com, maz@kernel.org,
-        linux-kernel@vger.kernel.org, james.quinlan@broadcom.com,
-        mbrugger@suse.com, f.fainelli@gmail.com, phil@raspberrypi.org,
-        wahrenst@gmx.net, jeremy.linton@arm.com, linux-pci@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] Raspberry Pi 4 PCIe support
-Message-ID: <20200115120238.GA7233@e121166-lin.cambridge.arm.com>
-References: <20191216110113.30436-1-nsaenzjulienne@suse.de>
+        id S1726165AbgAOMEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:04:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 04:04:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,322,1574150400"; 
+   d="scan'208";a="397864941"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 15 Jan 2020 04:04:05 -0800
+Subject: Re: [PATCH v4 05/11] mmc: sdhci: Convert sdhci_set_timeout_irq() to
+ non-static
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     kishon@ti.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, tony@atomide.com
+References: <20200106110133.13791-1-faiz_abbas@ti.com>
+ <20200106110133.13791-6-faiz_abbas@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4c534ec1-d673-2875-1a44-b3f7fc400b35@intel.com>
+Date:   Wed, 15 Jan 2020 14:03:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216110113.30436-1-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200106110133.13791-6-faiz_abbas@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 12:01:06PM +0100, Nicolas Saenz Julienne wrote:
-> This series aims at providing support for Raspberry Pi 4's PCIe
-> controller, which is also shared with the Broadcom STB family of
-> devices.
+On 6/01/20 1:01 pm, Faiz Abbas wrote:
+> Export sdhci_set_timeout_irq() so that it is accessible from platform drivers.
 > 
-> There was a previous attempt to upstream this some years ago[1] but was
-> blocked as most STB PCIe integrations have a sparse DMA mapping[2] which
-> is something currently not supported by the kernel.  Luckily this is not
-> the case for the Raspberry Pi 4.
-> 
-> Note the series is based on top of linux next, as the DTS patch depends
-> on it.
-> 
-> [1] https://patchwork.kernel.org/cover/10605933/
-> [2] https://patchwork.kernel.org/patch/10605957/
-> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
 > ---
+>  drivers/mmc/host/sdhci.c | 3 ++-
+>  drivers/mmc/host/sdhci.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> Changes since v4:
->   - Rebase DTS patch
->   - Respin log2.h code into it's own series as it's still contentious
->     yet mostly unrelated to the PCIe part
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 8cc78c76bc3d..56f46bd7cdad 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -993,7 +993,7 @@ static void sdhci_set_transfer_irqs(struct sdhci_host *host)
+>  	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+>  }
+>  
+> -static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
+> +void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
+>  {
+>  	if (enable)
+>  		host->ier |= SDHCI_INT_DATA_TIMEOUT;
+> @@ -1002,6 +1002,7 @@ static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
+>  	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+>  	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_set_data_timeout_irq);
+>  
+>  static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+>  {
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 3166b3ecef89..928c6f35fcad 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -803,5 +803,6 @@ void sdhci_reset_tuning(struct sdhci_host *host);
+>  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
+>  void sdhci_abort_tuning(struct sdhci_host *host, u32 opcode);
+>  void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+> +void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable);
+>  
+>  #endif /* __SDHCI_HW_H */
 > 
-> Changes since v3:
->   - Moved all the log2.h related changes at the end of the series, as I
->     presume they will be contentious and I don't want the PCIe patches
->     to depend on them. Ultimately I think I'll respin them on their own
->     series but wanted to keep them in for this submission just for the
->     sake of continuity.
->   - Addressed small nits here and there.
-> 
-> Changes since v2:
->   - Redo register access in driver avoiding indirection while keeping
->     the naming intact
->   - Add patch editing ARM64's config
->   - Last MSI cleanups, notably removing MSIX flag
->   - Got rid of all _RB writes
->   - Got rid of all of_data
->   - Overall churn removal
->   - Address the rest of Andrew's comments
-> 
-> Changes since v1:
->   - add generic rounddown/roundup_pow_two64() patch
->   - Add MAINTAINERS patch
->   - Fix Kconfig
->   - Cleanup probe, use up to date APIs, exit on MSI failure
->   - Get rid of linux,pci-domain and other unused constructs
->   - Use edge triggered setup for MSI
->   - Cleanup MSI implementation
->   - Fix multiple cosmetic issues
->   - Remove supend/resume code
-> 
-> Jim Quinlan (3):
->   dt-bindings: PCI: Add bindings for brcmstb's PCIe device
->   PCI: brcmstb: Add Broadcom STB PCIe host controller driver
->   PCI: brcmstb: Add MSI support
-> 
-> Nicolas Saenz Julienne (3):
->   ARM: dts: bcm2711: Enable PCIe controller
->   MAINTAINERS: Add brcmstb PCIe controller
->   arm64: defconfig: Enable Broadcom's STB PCIe controller
-> 
->  .../bindings/pci/brcm,stb-pcie.yaml           |   97 ++
->  MAINTAINERS                                   |    4 +
->  arch/arm/boot/dts/bcm2711.dtsi                |   31 +-
->  arch/arm64/configs/defconfig                  |    1 +
->  drivers/pci/controller/Kconfig                |    9 +
->  drivers/pci/controller/Makefile               |    1 +
->  drivers/pci/controller/pcie-brcmstb.c         | 1007 +++++++++++++++++
->  7 files changed, 1149 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->  create mode 100644 drivers/pci/controller/pcie-brcmstb.c
 
-Applied patches [1,3,4] to pci/brcmstb, please have a look to check
-everything is in order after the minor update I included.
-
-Thanks !
-Lorenzo
