@@ -2,71 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F38A13B660
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:08:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F201713B666
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:09:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgAOAIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 19:08:40 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37890 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728656AbgAOAIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 19:08:39 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z9so12384243oth.5
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 16:08:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0caRa5XG3dj99WMQy0XFQRo3RUPxiFm3CleZQAkYe78=;
-        b=IcbpdA7fht7j1NlslV6zKKdSxqXnLItF2xQGp92KgESCpRErCyiHa82kofV6fHdfUc
-         k3wa1Hn78ZORLjp+oz0vsEsoPVqY6edDWz2/n5lY/qPaFgDJbctEi3PHfTUhQ9xA5qjg
-         bIRxgzoH0vcf+RTe7ZEtX8TNSxHdBvLZ7Skw1PdlmpZyFqmI/KsbxUk1y7NmEeSedAQL
-         bfMpmfXyEckxf/w5s5x7xnQoD/oN+vLgjiKTf8B16p3nhYxl3O15pKJe/+IaVm501GQH
-         WP2ej3a3D02lAUbX0ryCAVIhfxV+DWKSodnqzPfp1bjRore15sh/SPJgPK+5erVM47BW
-         o3Mw==
-X-Gm-Message-State: APjAAAU2BNIkR9Hj0SlqpHGLAX5WYeTfOQzwbKpZUdKqZ3wouLZIUIxI
-        yYvmNXBG2Dz63sJOxXghq7O+iRU=
-X-Google-Smtp-Source: APXvYqyiQh5RK5HH2Kgk89kiSDZT8GI6ZOMcBt8rWeFsxq7LHU28pmp2iSVKkPdnrEIq/9QrGl+u7w==
-X-Received: by 2002:a9d:de9:: with SMTP id 96mr799504ots.222.1579046918871;
-        Tue, 14 Jan 2020 16:08:38 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 15sm5111201oin.5.2020.01.14.16.08.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 16:08:38 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 2209ae
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Tue, 14 Jan 2020 18:08:37 -0600
-Date:   Tue, 14 Jan 2020 18:08:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andreas Klinger <ak@it-klinger.de>
-Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        rpi-receiver@htl-steyr.ac.at, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: devantech-srf04.yaml: add pm feature
-Message-ID: <20200115000837.GA11941@bogus>
-References: <20200109083814.GA5368@arbad>
+        id S1729021AbgAOAJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 19:09:49 -0500
+Received: from mga01.intel.com ([192.55.52.88]:8608 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728656AbgAOAJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 19:09:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 16:09:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
+   d="scan'208";a="273468560"
+Received: from emkilgox-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.0.151])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2020 16:09:42 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: [PATCH 04/10] soundwire: bus: add PM/no-PM versions of read/write functions
+Date:   Tue, 14 Jan 2020 18:08:38 -0600
+Message-Id: <20200115000844.14695-5-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
+References: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109083814.GA5368@arbad>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 9 Jan 2020 09:38:16 +0100, Andreas Klinger wrote:
-> Add GPIO line and startup time for usage of power management
-> 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> ---
->  .../iio/proximity/devantech-srf04.yaml         | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
+Add support for pm_runtime with the appropriate error checks for
+sdw_write/read functions, e.g. when pm_runtime is not supported.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Also expose internal functions without pm_runtime support, which are
+required to perform any sort of suspend/resume operation, as well as
+any enumeration tasks.
+
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ drivers/soundwire/bus.c | 68 +++++++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+index ea04cf5f5bdc..c525b9b50453 100644
+--- a/drivers/soundwire/bus.c
++++ b/drivers/soundwire/bus.c
+@@ -317,6 +317,46 @@ int sdw_fill_msg(struct sdw_msg *msg, struct sdw_slave *slave,
+ 	return 0;
+ }
+ 
++/*
++ * Read/Write IO functions.
++ * no_pm versions can only be called by the bus, e.g. while enumerating or
++ * handling suspend-resume sequences.
++ * all clients need to use the pm versions
++ */
++
++static int
++sdw_nread_no_pm(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
++{
++	struct sdw_msg msg;
++	int ret;
++
++	ret = sdw_fill_msg(&msg, slave, addr, count,
++			   slave->dev_num, SDW_MSG_FLAG_READ, val);
++	if (ret < 0)
++		return ret;
++
++	return sdw_transfer(slave->bus, &msg);
++}
++
++static int
++sdw_nwrite_no_pm(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
++{
++	struct sdw_msg msg;
++	int ret;
++
++	ret = sdw_fill_msg(&msg, slave, addr, count,
++			   slave->dev_num, SDW_MSG_FLAG_WRITE, val);
++	if (ret < 0)
++		return ret;
++
++	return sdw_transfer(slave->bus, &msg);
++}
++
++static int sdw_write_no_pm(struct sdw_slave *slave, u32 addr, u8 value)
++{
++	return sdw_nwrite_no_pm(slave, addr, 1, &value);
++}
++
+ /**
+  * sdw_nread() - Read "n" contiguous SDW Slave registers
+  * @slave: SDW Slave
+@@ -326,19 +366,17 @@ int sdw_fill_msg(struct sdw_msg *msg, struct sdw_slave *slave,
+  */
+ int sdw_nread(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
+ {
+-	struct sdw_msg msg;
+ 	int ret;
+ 
+-	ret = sdw_fill_msg(&msg, slave, addr, count,
+-			   slave->dev_num, SDW_MSG_FLAG_READ, val);
+-	if (ret < 0)
+-		return ret;
+-
+ 	ret = pm_runtime_get_sync(slave->bus->dev);
+-	if (ret < 0)
++	if (ret < 0 && ret != -EACCES) {
++		pm_runtime_put_noidle(slave->bus->dev);
+ 		return ret;
++	}
++
++	ret = sdw_nread_no_pm(slave, addr, count, val);
+ 
+-	ret = sdw_transfer(slave->bus, &msg);
++	pm_runtime_mark_last_busy(slave->bus->dev);
+ 	pm_runtime_put(slave->bus->dev);
+ 
+ 	return ret;
+@@ -354,19 +392,17 @@ EXPORT_SYMBOL(sdw_nread);
+  */
+ int sdw_nwrite(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
+ {
+-	struct sdw_msg msg;
+ 	int ret;
+ 
+-	ret = sdw_fill_msg(&msg, slave, addr, count,
+-			   slave->dev_num, SDW_MSG_FLAG_WRITE, val);
+-	if (ret < 0)
+-		return ret;
+-
+ 	ret = pm_runtime_get_sync(slave->bus->dev);
+-	if (ret < 0)
++	if (ret < 0 && ret != -EACCES) {
++		pm_runtime_put_noidle(slave->bus->dev);
+ 		return ret;
++	}
++
++	ret = sdw_nwrite_no_pm(slave, addr, count, val);
+ 
+-	ret = sdw_transfer(slave->bus, &msg);
++	pm_runtime_mark_last_busy(slave->bus->dev);
+ 	pm_runtime_put(slave->bus->dev);
+ 
+ 	return ret;
+-- 
+2.20.1
+
