@@ -2,84 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB46A13B839
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 04:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3EAC13B860
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 04:51:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbgAODlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 22:41:08 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:51867 "EHLO ozlabs.org"
+        id S1729073AbgAODvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 22:51:21 -0500
+Received: from mga11.intel.com ([192.55.52.93]:3148 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729123AbgAODlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 22:41:01 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47yClt5xcVz9sRm;
-        Wed, 15 Jan 2020 14:40:58 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579059659;
-        bh=VAvZvVR15vPdcx+T1ys/TSqLDnhWyjaURUFwoNhttGs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uMEXpdVOW+s6yy7uQLy3dBFKOFpR9lXk5oNz7VEqA5T/6TGKsiPJLEavzMeth/ou8
-         Khdhq4ge7vdj1TExB85I9q83MVgwIEKcw6YEtu/QFew6MQYcVxuJ21LCZtKARy8cHx
-         aqRdSX/1IIJJkDh+WPMv4WgHAImxQBJs3XSJmdk3gJAuDtBGKufT34sjB/pfsR0tU9
-         a8M18txb8rF9qCm1qlX5APRZkjDKgK678drMlfrNj+Ok0ryv2TOpS8ohZGvWrK9CQP
-         Eaw9v1mjtAYFBim2NA9gbhJWVWZVzQB0ZLoNVvvnUbJRHV9LKYmbjsMCi2t3HjiliA
-         haALCePNMuRIw==
-Date:   Wed, 15 Jan 2020 14:40:57 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jayshri Pawar <jpawar@cadence.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with Linus'
- tree
-Message-ID: <20200115144057.7b72d7b9@canb.auug.org.au>
-In-Reply-To: <CAMuHMdVY2W1=9paE+WpJUHprocOdutRMcNUJenn+jz9A-iv90A@mail.gmail.com>
-References: <20200110153207.70c888cd@canb.auug.org.au>
-        <CAMuHMdVY2W1=9paE+WpJUHprocOdutRMcNUJenn+jz9A-iv90A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZmWZVVMQHE/=k9OQRCnD3CJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1728884AbgAODvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 22:51:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 19:51:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,321,1574150400"; 
+   d="scan'208";a="213570974"
+Received: from unknown (HELO joy-OptiPlex-7040.sh.intel.com) ([10.239.13.9])
+  by orsmga007.jf.intel.com with ESMTP; 14 Jan 2020 19:51:18 -0800
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     alex.williamson@redhat.com, zhenyuw@linux.intel.com
+Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        kevin.tian@intel.com, peterx@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v2 0/2] use vfio_dma_rw to read/write IOVAs from CPU side
+Date:   Tue, 14 Jan 2020 22:41:32 -0500
+Message-Id: <20200115034132.2753-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZmWZVVMQHE/=k9OQRCnD3CJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+It is better for a device model to use IOVAs to read/write memory.
+And because the rw operations come from CPUs, it is not necessary to call
+vfio_pin_pages() to pin those pages.
 
-Hi Geert,
+patch 1 introduces interface vfio_dma_rw in vfio to read/write IOVAs
+without pinning user space pages.
 
-On Tue, 14 Jan 2020 09:41:57 +0100 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
->
-> For today's renesas-drivers, I'm using the attached conflict resolution.
+patch 2 let gvt switch from kvm side rw interface to vfio_dma_rw.
 
-Thanks, I will use your resolution from now on.
---=20
-Cheers,
-Stephen Rothwell
+v2 changelog:
+- rename vfio_iova_rw to vfio_dma_rw, vfio iommu driver ops .iova_rw
+to .dma_rw. (Alex).
+- change iova and len from unsigned long to dma_addr_t and size_t,
+respectively. (Alex)
+- fix possible overflow in dma->vaddr + iova - dma->iova + offset (Alex)
+- split DMAs from on page boundary to on max available size to eliminate
+  redundant searching of vfio_dma and switching mm. (Alex)
+- add a check for IOMMU_WRITE permission.
 
---Sig_/ZmWZVVMQHE/=k9OQRCnD3CJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Yan Zhao (2):
+  vfio: introduce vfio_dma_rw to read/write a range of IOVAs
+  drm/i915/gvt: subsitute kvm_read/write_guest with vfio_dma_rw
 
------BEGIN PGP SIGNATURE-----
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 26 +++--------
+ drivers/vfio/vfio.c              | 45 +++++++++++++++++++
+ drivers/vfio/vfio_iommu_type1.c  | 76 ++++++++++++++++++++++++++++++++
+ include/linux/vfio.h             |  5 +++
+ 4 files changed, 133 insertions(+), 19 deletions(-)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4eickACgkQAVBC80lX
-0Gx3WQf+ISvunKWj6CeTwh6faiTYiSC7RBDTJ+iJ1SDnsWjFH5ZpMZgW2Hk4Qwtc
-ZpV1OnJUvdl1fRMXaq1kQKPzCECio47lnHqk/GGGGpVTwcKXfOzOtva1VPoD7ba7
-lnH5ZiGF968gynqTuPP6yostnLFcor9mlbRt/ADZKB6VOmx3Ly4GUgjlkeCKh/X9
-wOEKbZYStyYeqbtyMB2j7I1bNq+Y8jC53f3dw0Pr8FNWfDVw97cUGAMTeuwK2JM4
-BHDkKz9NO87va4cXeBhAnWIoR+jnU79xLpO+cU3YMd0LLMopt2+hBg2ZbRUkAjbh
-uijM7GaGV2uFJwlczg0xUGQwmaw3tA==
-=uYy6
------END PGP SIGNATURE-----
+-- 
+2.17.1
 
---Sig_/ZmWZVVMQHE/=k9OQRCnD3CJ--
