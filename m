@@ -2,68 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A6113BD35
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C032213BD3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbgAOKPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 05:15:11 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52147 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729585AbgAOKPL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 05:15:11 -0500
-Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 071a7227e5a6e408; Wed, 15 Jan 2020 11:15:08 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Chester Lin <clin@suse.com>
-Cc:     "lenb@kernel.org" <lenb@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "erik.schmauss@intel.com" <erik.schmauss@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joey Lee <JLee@suse.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>
-Subject: Re: [RFC PATCH v2 1/3] ACPI / hotplug: Send change events for offline/online requests when eject is triggered
-Date:   Wed, 15 Jan 2020 11:15:08 +0100
-Message-ID: <1702691.vqsIMzBuNn@kreacher>
-In-Reply-To: <20200103043926.31507-2-clin@suse.com>
-References: <20200103043926.31507-1-clin@suse.com> <20200103043926.31507-2-clin@suse.com>
+        id S1729702AbgAOKRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 05:17:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:34436 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729585AbgAOKRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 05:17:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC0F031B;
+        Wed, 15 Jan 2020 02:17:32 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA53D3F6C4;
+        Wed, 15 Jan 2020 02:17:31 -0800 (PST)
+Date:   Wed, 15 Jan 2020 10:17:29 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     Steven Price <steven.price@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>, julien@xen.org
+Subject: Re: [PATCH v2] arm64: cpufeature: Export matrix and other features
+ to userspace
+Message-ID: <20200115101729.GB32549@lakrids.cambridge.arm.com>
+References: <20191216113337.13882-1-steven.price@arm.com>
+ <20200115094916.GC21692@willie-the-truck>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115094916.GC21692@willie-the-truck>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, January 3, 2020 5:40:09 AM CET Chester Lin wrote:
-> Here we change offline/online handling in device hotplug by sending change
-> events to userland as notification so that userland can have control and
-> determine when will be a good time to put them offline/online based on
-> current workload. In this approach the real offline/online opertions are
-> handed over to userland so that userland can have more time to prepare
-> before any device change actually happens.
+On Wed, Jan 15, 2020 at 09:49:17AM +0000, Will Deacon wrote:
+> On Mon, Dec 16, 2019 at 11:33:37AM +0000, Steven Price wrote:
+> > Export the features introduced as part of ARMv8.6 exposed in the
+> > ID_AA64ISAR1_EL1 and ID_AA64ZFR0_EL1 registers. This introduces the
+> > Matrix features (ARMv8.2-I8MM, ARMv8.2-F64MM and ARMv8.2-F32MM) along
+> > with BFloat16 (Armv8.2-BF16), speculation invalidation (SPECRES) and
+> > Data Gathering Hint (ARMv8.0-DGH).
+> > 
+> > Signed-off-by: Julien Grall <julien.grall@arm.com>
+> > [Added other features in those registers]
+> > Signed-off-by: Steven Price <steven.price@arm.com>
+> > ---
+> > This is a v2 of Julien's patch[1] extended to export all the new
+> > features contained within the ID_AA64ISAR1_EL1 and ID_AA64ZFR0_EL1
+> > registers.
+> > 
+> > [1] https://lore.kernel.org/linux-arm-kernel/20191025171056.30641-1-julien.grall@arm.com/
+> > 
+> >  Documentation/arm64/cpu-feature-registers.rst | 16 ++++++++++
+> >  Documentation/arm64/elf_hwcaps.rst            | 31 +++++++++++++++++++
+> >  arch/arm64/include/asm/hwcap.h                |  8 +++++
+> >  arch/arm64/include/asm/sysreg.h               | 12 +++++++
+> >  arch/arm64/include/uapi/asm/hwcap.h           |  8 +++++
+> >  arch/arm64/kernel/cpufeature.c                | 20 ++++++++++++
+> >  arch/arm64/kernel/cpuinfo.c                   |  8 +++++
+> >  7 files changed, 103 insertions(+)
+> > 
+> > diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
+> > index b6e44884e3ad..5382981533f8 100644
+> > --- a/Documentation/arm64/cpu-feature-registers.rst
+> > +++ b/Documentation/arm64/cpu-feature-registers.rst
+> > @@ -200,6 +200,14 @@ infrastructure:
+> >       +------------------------------+---------+---------+
+> >       | Name                         |  bits   | visible |
+> >       +------------------------------+---------+---------+
+> > +     | I8MM                         | [55-52] |    y    |
+> > +     +------------------------------+---------+---------+
+> > +     | DGH                          | [51-48] |    y    |
+> > +     +------------------------------+---------+---------+
+> > +     | BF16                         | [47-44] |    y    |
+> > +     +------------------------------+---------+---------+
+> > +     | SPECRES                      | [43-40] |    y    |
+> > +     +------------------------------+---------+---------+
 > 
-> All child devices under the ejection target are traversed and notified
-> hierarchically based on ACPI namespace in ascending order when an eject
-> event happens.
+> I applied this for CI testing last night, but actually I think it's broken.
+> AFAICT, the instructions introduced by SPECRES are behind an SCTLR_EL1
+> enable (EnRCTX) which defaults to disabled, so we should either be enabling
+> them before setting the HWCAP or not exposing them at all.
 > 
-> Signed-off-by: Chester Lin <clin@suse.com>
+> Given that the instructions are not broadcast and are likely to be very
+> expensive, I don't think that exposing them to EL0 is a good idea.
+> 
+> In other words, I'll drop the SPECRES parts from this patch. Sound ok?
 
-So you replace the old flow with the new one and make the new one mandatory AFAICS.
+I completely agree. We deliberately avoided adding SPECRES for those
+reasons previously:
 
-Thus if anyone has relied on the old flow, they now need to switch over.
+  https://lore.kernel.org/r/20191212144633.GE46910@lakrids.cambridge.arm.com
 
-This is unfriendly and generally unwelcome, so please avoid making changes like
-that.
-
-Instead, I would consider adding a device attribute to allow user space to
-opt in for getting offline notifications for specific individual devices (by
-setting that attribute user space would tell the kernel that it wants to
-get offline notifications for the device in question and it would take
-care of offlining it as needed).
-
-
-
+Thanks,
+Mark.
