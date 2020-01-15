@@ -2,226 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E47CD13BE91
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8BF913BEB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbgAOLep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 06:34:45 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39008 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbgAOLeo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:34:44 -0500
-Received: by mail-io1-f67.google.com with SMTP id c16so17383735ioh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 03:34:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ojzhgAl+4gWNfYdEFpF+cmgwNJMJnLz3oDiOxYEPZfU=;
-        b=igQq5nQgETtO9SXsQX/d5w5ZM34lFaR3K5RVxqxu3f9tWbirZ2mzK54lGbQJI48oQj
-         i4iLoqi1aZcOabbmLdmKo+bFHslqju/hHn6DH2cEGn88wm9PSyop5PPZq3VzIK9UCmXv
-         ohc0iecvvkOuKoQinunIfEKUP0mD4kNes9hB8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ojzhgAl+4gWNfYdEFpF+cmgwNJMJnLz3oDiOxYEPZfU=;
-        b=EVlh/xmiHjrJCy1nM8v/8EyDcTEfmzuPzMjWPNyh6VYnx2Dp3BTjoRLA7cpAMmHal+
-         131l3mQVBfSh9gSZf/+czFUTBggSZto5n8sUj6L+ZV+aY7oK1MTDq3Rsi9o3COFKgylS
-         uDSwMkFJrjx4/WZBBF0mS8HKak9vKEmykfVDwZm51Zlrii4gXAT3d64ak4nMTG33mZHc
-         1a9eHZBKzkm1xFpGYrMLddA3r7ZiNqlqCr30wN+HWuJFwXUSx/iTHlb+BjkgYqyLOfwP
-         08g9Wfx5WufJYmx0JibQlbCFQr6MdAvY8AiubIkMoHPT4b4/sL0cHuDWTeSMvpNiq3T5
-         dnrw==
-X-Gm-Message-State: APjAAAXWG94B5bWNFPIyql5JFjnsD+61rp3diEQddhXBZeg290zX1Nmi
-        hzobMfFTJkXyVA8uEqM6X9z4sIa3ZVA67PsRwXCTag==
-X-Google-Smtp-Source: APXvYqyXQxo2sXMh7CF1na9rm0gQdmLHTI1jI0nmSKq3jJK/VE/cud+yxidf/6iaxqDP9aqob4Xw39/4q2FI506v3zw=
-X-Received: by 2002:a6b:3b49:: with SMTP id i70mr21933237ioa.106.1579088083140;
- Wed, 15 Jan 2020 03:34:43 -0800 (PST)
+        id S1730158AbgAOLmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 06:42:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41998 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729900AbgAOLmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:42:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 641C1AEEE;
+        Wed, 15 Jan 2020 11:42:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9817D1E0CBC; Wed, 15 Jan 2020 12:34:55 +0100 (CET)
+Date:   Wed, 15 Jan 2020 12:34:55 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
+Message-ID: <20200115113455.GA2595@quack2.suse.cz>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-10-ira.weiny@intel.com>
+ <20200113222212.GO8247@magnolia>
+ <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
+ <20200114013004.GU8247@magnolia>
+ <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20200115063410.131692-1-hsinyi@chromium.org> <CAJZ5v0jng1hpPzYUcPj96G9c8aqNYCwDqLHyQEVC9tD=F1dObw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jng1hpPzYUcPj96G9c8aqNYCwDqLHyQEVC9tD=F1dObw@mail.gmail.com>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Wed, 15 Jan 2020 19:34:17 +0800
-Message-ID: <CAJMQK-jES7NOAga3w+pQUuoFW+dm0Uw3--SQ7S0BAARFCrT6qQ@mail.gmail.com>
-Subject: Re: [PATCH v5] reboot: support offline CPUs before reboot
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 5:49 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jan 15, 2020 at 7:35 AM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
-> >
-> > Currently system reboots uses architecture specific codes (smp_send_stop)
-> > to offline non reboot CPUs. Most architecture's implementation is looping
-> > through all non reboot online CPUs and call ipi function to each of them. Some
-> > architecture like arm64, arm, and x86... would set offline masks to cpu without
-> > really offline them. This causes some race condition and kernel warning comes
-> > out sometimes when system reboots.
-> >
-> > This patch adds a config ARCH_OFFLINE_CPUS_ON_REBOOT, which would offline cpus in
-> > migrate_to_reboot_cpu(). If non reboot cpus are all offlined here, the loop for
-> > checking online cpus would be an empty loop. If architecture don't enable this
-> > config, or some cpus somehow fails to offline, it would fallback to ipi
-> > function.
-> >
-> > Opt in this config for architectures that support CONFIG_HOTPLUG_CPU.
-> >
-> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> > ---
-> > Change from v4:
-> > * fix a few nits: naming, comments, remove Kconfig text...
-> >
-> > Change from v3:
-> > * Opt in config for architectures that support CONFIG_HOTPLUG_CPU
-> > * Merge function offline_secondary_cpus() and freeze_secondary_cpus()
-> >   with an additional flag.
->
-> This does not seem to be a very good idea, since
-> freeze_secondary_cpus() does much more than you need for reboot.
->
-> For reboot, you basically only need to do something like this AFAICS:
->
-> cpu_maps_update_begin();
->
-> for_each_online_cpu(i) {
->         if (i != cpu)
->                 _cpu_down(i, 1, CPUHP_OFFLINE);
-> }
-> cpu_hotplug_disabled++;
->
-> cpu_maps_update_done();
->
-> And you may put this into a function defined outside of CONFIG_PM_SLEEP.
->
-v2's implementation is similar to this. The conclusion in v2[1] is
-that since these 2 functions are similar, we should merge them. I'm
-fine both ways but slightly prefer v2's. Maybe wait for others to
-comment?
+On Tue 14-01-20 09:53:54, Ira Weiny wrote:
+> On Mon, Jan 13, 2020 at 05:30:04PM -0800, Darrick J. Wong wrote:
+> > > > > +		error = -EBUSY;
+> > > > > +		goto out_unlock;
+> > > > > +	}
+> > > > > +
+> > > > >  	error = filemap_write_and_wait(inode->i_mapping);
+> > > > >  	if (error)
+> > > > >  		goto out_unlock;
+> > > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > > index 631f11d6246e..6e7dc626b657 100644
+> > > > > --- a/include/linux/fs.h
+> > > > > +++ b/include/linux/fs.h
+> > > > > @@ -740,6 +740,7 @@ struct inode {
+> > > > >  #endif
+> > > > >  
+> > > > >  	void			*i_private; /* fs or device private pointer */
+> > > > > +	atomic64_t               i_mapped;
+> > > > 
+> > > > I would have expected to find this in struct address_space since the
+> > > > mapping count is a function of the address space, right?
+> > > 
+> > > I suppose but the only external call (above) would be passing an inode.  So to
+> > > me it seemed better here.
+> > 
+> > But the number of memory mappings reflects the state of the address
+> > space, not the inode.  Or maybe put another way, if I were an mm
+> > developer I would not expect to look in struct inode for mm state.
+> 
+> This is a good point...
+> 
+> > 
+> > static inline bool inode_has_mappings(struct inode *inode)
+> > {
+> > 	return atomic64_read(&inode->i_mapping->mapcount) > 0;
+> > }
+> > 
+> > OTOH if there exist other mm developers who /do/ find that storing the
+> > mmap count in struct inode is more logical, please let me know. :)
+> 
+> ...  My thinking was that the number of mappings does not matters to the mm
+> system...  However, I'm starting to think you are correct...  ;-)
+> 
+> I've made a note of it and we will see what others think.
 
-[1] https://lore.kernel.org/lkml/87muarpcwm.fsf@vitty.brq.redhat.com/
-> >
-> > Change from v2:
-> > * Add another config instead of configed by CONFIG_HOTPLUG_CPU
->
-> So why exactly is this new Kconfig option needed?
->
-> Everybody supporting CPU hotplug seems to opt in anyway.
->
-Currently we opt-in for all arch that supports HOTPLUG_CPU, but if
-some arch decides that this would make reboot slow (or maybe other
-reasons), they can choose to opt-out.
-I have only tested on arm64 and x86 for now.
-> [cut]
->
-> >
-> > -int freeze_secondary_cpus(int primary)
-> > +int freeze_secondary_cpus(int primary, bool reboot)
-> >  {
-> >         int cpu, error = 0;
-> >
-> > @@ -1237,11 +1237,13 @@ int freeze_secondary_cpus(int primary)
-> >                 if (cpu == primary)
-> >                         continue;
-> >
-> > -               if (pm_wakeup_pending()) {
-> > +#ifdef CONFIG_PM_SLEEP
-> > +               if (!reboot && pm_wakeup_pending()) {
-> >                         pr_info("Wakeup pending. Abort CPU freeze\n");
-> >                         error = -EBUSY;
-> >                         break;
-> >                 }
-> > +#endif
->
-> Please avoid using #ifdefs in function bodies.  This makes the code
-> hard to maintain in the long term.
->
-> >
-> >                 trace_suspend_resume(TPS("CPU_OFF"), cpu, true);
-> >                 error = _cpu_down(cpu, 1, CPUHP_OFFLINE);
-> > @@ -1250,7 +1252,9 @@ int freeze_secondary_cpus(int primary)
-> >                         cpumask_set_cpu(cpu, frozen_cpus);
-> >                 else {
-> >                         pr_err("Error taking CPU%d down: %d\n", cpu, error);
-> > -                       break;
-> > +                       /* When rebooting, offline as many CPUs as possible. */
-> > +                       if (!reboot)
-> > +                               break;
-> >                 }
-> >         }
-> >
-> > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > index c4d472b7f1b4..12f643b66e57 100644
-> > --- a/kernel/reboot.c
-> > +++ b/kernel/reboot.c
-> > @@ -7,6 +7,7 @@
-> >
-> >  #define pr_fmt(fmt)    "reboot: " fmt
-> >
-> > +#include <linux/cpu.h>
-> >  #include <linux/ctype.h>
-> >  #include <linux/export.h>
-> >  #include <linux/kexec.h>
-> > @@ -220,7 +221,9 @@ void migrate_to_reboot_cpu(void)
-> >         /* The boot cpu is always logical cpu 0 */
-> >         int cpu = reboot_cpu;
-> >
-> > +#if !IS_ENABLED(CONFIG_ARCH_OFFLINE_CPUS_ON_REBOOT)
-> >         cpu_hotplug_disable();
-> > +#endif
->
-> You can write this as
->
-> if (!IS_ENABLED(CONFIG_ARCH_OFFLINE_CPUS_ON_REBOOT))
->         cpu_hotplug_disable();
->
-> That's what IS_ENABLED() is there for.
->
-> >
-> >         /* Make certain the cpu I'm about to reboot on is online */
-> >         if (!cpu_online(cpu))
-> > @@ -231,6 +234,11 @@ void migrate_to_reboot_cpu(void)
-> >
-> >         /* Make certain I only run on the appropriate processor */
-> >         set_cpus_allowed_ptr(current, cpumask_of(cpu));
-> > +
-> > +#if IS_ENABLED(CONFIG_ARCH_OFFLINE_CPUS_ON_REBOOT)
-> > +       /* Offline other cpus if possible */
-> > +       freeze_secondary_cpus(cpu, true);
-> > +#endif
->
-> The above comment applies here too.
->
-> >  }
-> >
-> >  /**
-> > --
+Well, more importantly mapping != inode. There can be multiple inodes
+pointing to the same mapping (struct address_space) as is the case for
+example for block devices. So this counter definitely belongs into struct
+address_space.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
