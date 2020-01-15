@@ -2,99 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E5CF13B8D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 06:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C2213B8DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 06:14:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgAOFM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 00:12:57 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:39075 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725957AbgAOFM4 (ORCPT
+        id S1726474AbgAOFO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 00:14:27 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35053 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbgAOFO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 00:12:56 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id B5F1D2213A;
-        Wed, 15 Jan 2020 00:12:55 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 15 Jan 2020 00:12:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=D98v2uAcTult3
-        PQU33a4vT0Zg4C0UFnIOjrqJQvWS0U=; b=MCyrB0gu/NReSpXDBOtdD7GJAJxIP
-        8EGD2u+uMk/32phcTlozZmuMo9f2EHyZi4yuaD0euNDKEdzm+k8gyYn4dL+BUw1L
-        ZV29HtrYk3EypcglvWdNSnwbmGDf2itw32RuE34yO7ws/Y8uVhl9QbEOnyayUnMu
-        ypVUXGDkaQ/2mD4LA46/ATTf4/8IH/N/aUQWnZMmQkDOGdSE9LCG2Y8vUl9Ri5lm
-        2PE852Nnino/VuMwpgHAWGwzawfGbcZK0C6jy5FYcqgEjRlOz56ppuPo0ehj8aB2
-        HJK4hTT8Tj8UDgMorHshmjrYnlt0PcxoqYDPU9fd+Y3ko7rX+hjv7OPfQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=D98v2uAcTult3PQU33a4vT0Zg4C0UFnIOjrqJQvWS0U=; b=ovSfeyh/
-        wrlUhsPSArepQdaMSyXGSXsjHHCzu8oNZc7vUJ9q5uClp3zz/NkTAsuimAhBIEUc
-        K/h1VH6RFwXMaOWyATgm6XAXdShh9Yqh40+J5/jJwuTSgCE4VAtFwR1yMJbOENcE
-        /Gpmz6v0e+QNdBF0Bqqb4t/zKfX4YKqG34I5TMj/msbkJLxlYKCIyOAQuARM/FOx
-        HByuRMGMuQfx46ChMQZ0hmFM6sDaSpDbiuroqq96J7IWmgzzDVBaizly9UDMf4yk
-        VKJyVYmciPaHGuTVkSv6oKly2qk0BSAtRyJDj/oUjhx79mRE6ttH08h004dTkZ44
-        Nr8oZydiNs1fgg==
-X-ME-Sender: <xms:V58eXksWDN7NM_WbbOcXmFcFS5cRFIol_XHi1xKm0Sk9fZdGVbpnYg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtddvgdektdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
-    vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:V58eXkvYssv-rlOzE3ktd2diS5asJObVBMDtWoiF2mNxLZJI60dozQ>
-    <xmx:V58eXnRWwFx5nSbnbPi6Eaa-fNxf8WmES1Ows7A0kGBLOnwspWSmBA>
-    <xmx:V58eXk0alpgCO_llI_tyZLhkGjqpxA5YznyBrIEeByVkUUCYvselkA>
-    <xmx:V58eXhYPcIWqekD18DVSwLcp4XzmAKJDbAjPcjwtZ7A0YS8som65IA>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2C99A80066;
-        Wed, 15 Jan 2020 00:12:55 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 2/2] Input: axp20x-pek - Enable wakeup for all AXP variants
-Date:   Tue, 14 Jan 2020 23:12:53 -0600
-Message-Id: <20200115051253.32603-3-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200115051253.32603-1-samuel@sholland.org>
-References: <20200115051253.32603-1-samuel@sholland.org>
+        Wed, 15 Jan 2020 00:14:26 -0500
+Received: by mail-oi1-f196.google.com with SMTP id k4so14283100oik.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 21:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1V7MW/ylG5HH52qKYnJfjENVm5zMbyLo/1xAyipVPNU=;
+        b=Toqv6jeGfvvxWRkr5nvZFkzGlWyXW0qh9bEcuwG/GucvkAKkjZSDtLzEWNyuJz0kAn
+         3LFtDjFZjvJ7Cjg7QuoSNUcSCrCzCprhHwc/fgBE3nhH6SR9YUsAAdK89gezNLJwSh+u
+         U2JRzqaD9IF3wcMHh/XVE6mg6as3ybZqHT9UQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1V7MW/ylG5HH52qKYnJfjENVm5zMbyLo/1xAyipVPNU=;
+        b=RDjnvjYNKrwet8Bkwxdcs82u+C5untbFb6n6bu/LfFoNEVwkBzye96yLJPhIPiR2SW
+         vYL1W2Ku2wZGH4FLmRXY7DWbtQ2So8ITmdy+qYlOialJ4Y/MRa3wYWG/3haXXrNhZcBp
+         HA2aG7xs//cLhQt1o0/VGEOgMea88o6DlQUXggmgi5DRxlodSpE+TD1RZGEYSWErpusX
+         b/1KmXAey4VcnMj91nYtpKMjuy4T4qjLgCqk8NB4CtSFMDVFO84LyInow+cU84RLVdJA
+         5bn2XdX1qxpq44XUEgfrIXA/MfpWqRRgGIzHX85zK3y9GR7KMmi/2bLoB5I+k3iqSy+J
+         o26g==
+X-Gm-Message-State: APjAAAXdjviXFFLNl1Gtf2clOjyhxSYa5ey5Y4ghNMnQ8mL+Nvuh61DY
+        j+NdQal1fxMXax3IFWZhvvkorRHzy4g4Ww==
+X-Google-Smtp-Source: APXvYqx6n8vR72Y3mR4jSjGgejOzofKvuTdN3bKxqiis0/X51PRVsceOS/LP5oESybg48JHMtBhokg==
+X-Received: by 2002:aca:1309:: with SMTP id e9mr19752381oii.7.1579065264730;
+        Tue, 14 Jan 2020 21:14:24 -0800 (PST)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com. [209.85.167.180])
+        by smtp.gmail.com with ESMTPSA id q13sm6194232otc.5.2020.01.14.21.14.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jan 2020 21:14:23 -0800 (PST)
+Received: by mail-oi1-f180.google.com with SMTP id d62so14215348oia.11
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 21:14:23 -0800 (PST)
+X-Received: by 2002:aca:d0b:: with SMTP id 11mr19753910oin.71.1579065262776;
+ Tue, 14 Jan 2020 21:14:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200114033226.16786-1-gtk_ruiwang@mediatek.com> <CAPBb6MXhiNK84PuUy8=RUUeSh5j4VXw-Ar5SbZDHZAobp7xpEQ@mail.gmail.com>
+In-Reply-To: <CAPBb6MXhiNK84PuUy8=RUUeSh5j4VXw-Ar5SbZDHZAobp7xpEQ@mail.gmail.com>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Wed, 15 Jan 2020 14:14:11 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXu9+9C7iUZST_OCwfren7kggFTG41DArF6yzRa_0hf4w@mail.gmail.com>
+Message-ID: <CAPBb6MXu9+9C7iUZST_OCwfren7kggFTG41DArF6yzRa_0hf4w@mail.gmail.com>
+Subject: Re: media: mtk-vcodec: reset segment data then trig decoder
+To:     gtk_ruiwang <gtk_ruiwang@mediatek.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Longfei Wang <longfei.wang@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Maoguang Meng <maoguang.meng@mediatek.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, srv_heupstream@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are many devices, including several mobile battery-powered
-devices, using other AXP variants as their PMIC. Allow them to use
-the power key as a wakeup source.
+On Wed, Jan 15, 2020 at 12:47 PM Alexandre Courbot
+<acourbot@chromium.org> wrote:
+>
+> On Tue, Jan 14, 2020 at 12:32 PM <gtk_ruiwang@mediatek.com> wrote:
+> >
+> > From: gtk_ruiwang <gtk_ruiwang@mediatek.com>
+> >
+> > VP9 bitstream specification indicate segment data should reset to
+> > default when meet key frames, intra only frames or enable error
+> > resilience mode. So memset segmentation map buffer before every
+> > decode process is not appropriate.
+> >
+> > Reset segment data only when needed, then trig decoder hardware
+> >
+> > Signed-off-by: Rui Wang <gtk_ruiwang@mediatek.com>
+> > ---
+> >  .../platform/mtk-vcodec/vdec/vdec_vp9_if.c    | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/mtk-vcodec/vdec/vdec_vp9_if.c b/drivers/media/platform/mtk-vcodec/vdec/vdec_vp9_if.c
+> > index 24c1f0bf2147..42c9c3c98076 100644
+> > --- a/drivers/media/platform/mtk-vcodec/vdec/vdec_vp9_if.c
+> > +++ b/drivers/media/platform/mtk-vcodec/vdec/vdec_vp9_if.c
+> > @@ -110,7 +110,9 @@ struct vp9_sf_ref_fb {
+> >   * @buf_len_sz_c : size used to store cbcr plane ufo info (AP-R, VPU-W)
+> >
+> >   * @profile : profile sparsed from vpu (AP-R, VPU-W)
+> > - * @show_frame : display this frame or not (AP-R, VPU-W)
+> > + * @show_frame : [BIT(0)] display this frame or not (AP-R, VPU-W)
+> > + *     [BIT(14)] reset segment data or not (AP-R, VPU-W)
+> > + *     [BIT(15)] trig decoder hardware or not (AP-R, VPU-W)
+> >   * @show_existing_frame : inform this frame is show existing frame
+> >   *     (AP-R, VPU-W)
+> >   * @frm_to_show_idx : index to show frame (AP-R, VPU-W)
+> > @@ -494,12 +496,12 @@ static void vp9_swap_frm_bufs(struct vdec_vp9_inst *inst)
+> >                                         frm_to_show->fb->base_y.size);
+> >                 }
+> >                 if (!vp9_is_sf_ref_fb(inst, inst->cur_fb)) {
+> > -                       if (vsi->show_frame)
+> > +                       if (vsi->show_frame & BIT(0))
+> >                                 vp9_add_to_fb_disp_list(inst, inst->cur_fb);
+> >                 }
+> >         } else {
+> >                 if (!vp9_is_sf_ref_fb(inst, inst->cur_fb)) {
+> > -                       if (vsi->show_frame)
+> > +                       if (vsi->show_frame & BIT(0))
+> >                                 vp9_add_to_fb_disp_list(inst, frm_to_show->fb);
+> >                 }
+> >         }
+> > @@ -870,13 +872,22 @@ static int vdec_vp9_decode(void *h_vdec, struct mtk_vcodec_mem *bs,
+> >                                         vsi->sf_frm_sz[idx]);
+> >                         }
+> >                 }
+> > -               memset(inst->seg_id_buf.va, 0, inst->seg_id_buf.size);
+> >                 ret = vpu_dec_start(&inst->vpu, data, 3);
+> >                 if (ret) {
+> >                         mtk_vcodec_err(inst, "vpu_dec_start failed");
+> >                         goto DECODE_ERROR;
+> >                 }
+> >
+> > +               if ((vsi->show_frame & BIT(15)) &&
+> > +                   (vsi->show_frame & BIT(14))) {
+>
+> Using the new bits in this manner means this patch is not compatible
+> with the older firmware.
+>
+> On an older firmware, these bits will be 0, which means the decoder
+> will never be started. To preserve compatibility, the behavior should
+> be reversed: *do not* reset and/or start the decoder if the bits are
+> set.
+>
+> Also both bits are only used together - we should either separate the
+> data segment reset and decoder start, or rely on only one bit for
+> this.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/input/misc/axp20x-pek.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/input/misc/axp20x-pek.c b/drivers/input/misc/axp20x-pek.c
-index 0ace3fe3d7dc..1872607e87c3 100644
---- a/drivers/input/misc/axp20x-pek.c
-+++ b/drivers/input/misc/axp20x-pek.c
-@@ -279,8 +279,7 @@ static int axp20x_pek_probe_input_device(struct axp20x_pek *axp20x_pek,
- 		return error;
- 	}
- 
--	if (axp20x_pek->axp20x->variant == AXP288_ID)
--		device_init_wakeup(&pdev->dev, true);
-+	device_init_wakeup(&pdev->dev, true);
- 
- 	return 0;
- }
--- 
-2.23.0
-
+Ah, looks like I missed the fact that the decoder is still started
+even when these bits are not set. So this indeed looks
+backward-compatible. Please ignore my comment.
