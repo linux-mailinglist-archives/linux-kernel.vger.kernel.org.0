@@ -2,96 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D6D13CDF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F4113CE00
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgAOURx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 15:17:53 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44442 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbgAOURv (ORCPT
+        id S1729112AbgAOUTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 15:19:18 -0500
+Received: from orion.archlinux.org ([88.198.91.70]:51938 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOUTS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 15:17:51 -0500
-Received: by mail-ot1-f65.google.com with SMTP id h9so17208115otj.11
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 12:17:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dPd0oj72IQTr7Ho1Km4ZWXqORK+AR/nQgrcplLwpJyE=;
-        b=fpojuKnu+Wi5p9+eOGcUnK1tXz/ym+tDyQJR7fiN07JPdlNydPbQ1RuKfL9nYOO/vp
-         ktdoj1LGNeeH0tLetzt6le5Wb0WjNM3TI4p2CjOGGX+EuSOWw0DzUACfhhv8vVjFUZDe
-         W6M8jugyiYMYQ6KmvTTdLB9sA/e2SPnlatCfzz0H0tbTOuYqDFrMchmtCY6PyFUez9hR
-         OJoFqGd7eJNY1E5+nY46wPN/+WfX65rZrOFaITHNzfaWg74cclGgIH9l50y+jzJWSEL7
-         OLoPXxM4Hj1zKIsYyFEQOBs4ip5mmicI0GLmGXVjvoFJoRTGMOaPmOsh7mhiRTDNLsCU
-         UcPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dPd0oj72IQTr7Ho1Km4ZWXqORK+AR/nQgrcplLwpJyE=;
-        b=rq9/kX1EdloaxKlBA9hIed12QG8BxpN6JLlIfd8CPIHQJuiV5vJeX8QSTypEcrOuIJ
-         3XXpuBiX50q1UGHCft7pMYiHteDjlAq7xbrER2fJJ4f+UCTRgC/XVIr0z0Y7Fp4VLe8C
-         TEyBFPcp8+Fyd6BIA6kBDj39Djc+ZiapNu/i7rvsjLtOEw1ZwH7d2BBn32VwF+64STsF
-         ZYNnNXM2XRWBl2smgyKuUQO1kCFBDEz9e8rPPly95wlyNIImyR91B+XoW1Tddqj93hL2
-         woPLlrrbGvUZvg4wwXju+Lo14z4QFQvJgd45zBf7wskyniXTjCMatKdIJMAS4vR83IHE
-         SDHA==
-X-Gm-Message-State: APjAAAXCYsHq4TjLPT7wA/D8vaQHPlPvXuo3t7u/4tpK/jgnMMTI/3PO
-        3WVG+PBZZ5FE+bO+yaeA2fADln8FdvEQPGv+L1KVFA==
-X-Google-Smtp-Source: APXvYqxa2PtNKtiTJcIUathhM+5vp8w9k5zscIWT4wSuOwLkVVcCWydFq1TB1qX0u3WdgAKuekec5Tb3+clHuOZsZ0c=
-X-Received: by 2002:a9d:68d3:: with SMTP id i19mr3785693oto.71.1579119471207;
- Wed, 15 Jan 2020 12:17:51 -0800 (PST)
+        Wed, 15 Jan 2020 15:19:18 -0500
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id A4BEF182130A0D;
+        Wed, 15 Jan 2020 20:18:39 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on orion.archlinux.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.3
+X-Spam-BL-Results: 
+Received: from localhost.localdomain (unknown [IPv6:2001:8a0:f254:2300:dad6:8c60:8394:88da])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Wed, 15 Jan 2020 20:18:38 +0000 (UTC)
+From:   =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
+Subject: [PATCH] HID: logitech-dj: add support for the static device in the Powerplay mat/receiver
+Date:   Wed, 15 Jan 2020 20:18:11 +0000
+Message-Id: <20200115201811.3271284-1-lains@archlinux.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
- <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
- <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com>
-In-Reply-To: <20200115195617.GA4133@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 Jan 2020 12:17:40 -0800
-Message-ID: <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 11:56 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-[..]
-> > Even the Red Hat
-> > installation guide example shows mounting on pmem0 directly. [1]
->
-> Below that example it also says.
->
-> "When creating partitions on a pmem device to be used for direct access,
-> partitions must be aligned on page boundaries. On the Intel 64 and AMD64
-> architecture, at least 4KiB alignment for the start and end of the
-> partition, but 2MiB is the preferred alignment. By default, the parted
-> tool aligns partitions on 1MiB boundaries. For the first partition,
-> specify 2MiB as the start of the partition. If the size of the partition
-> is a multiple of 2MiB, all other partitions are also aligned."
->
-> So documentation is clearly saying dax will work with partitions as well.
-> And some user might decide to just do that.
+The Logitech G Powerplay has a lightspeed receiver with a static HID++
+device with ID 7 attached to it to. It is used to configure the led on
+the mat. For this reason I increased the max number of devices.
 
-Yes, of course but my point is that it was ambiguous.
+Signed-off-by: Filipe Laíns <lains@archlinux.org>
+---
+ drivers/hid/hid-logitech-dj.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-I'm going to take a look at how hard it would be to develop a kpartx
-fallback in udev. If that can live across the driver transition then
-maybe this can be a non-event for end users that already have that
-udev update deployed.
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index bb50d6e7745b..79294b873057 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -16,11 +16,11 @@
+ #include <asm/unaligned.h>
+ #include "hid-ids.h"
+ 
+-#define DJ_MAX_PAIRED_DEVICES			6
++#define DJ_MAX_PAIRED_DEVICES			7
+ #define DJ_MAX_NUMBER_NOTIFS			8
+ #define DJ_RECEIVER_INDEX			0
+ #define DJ_DEVICE_INDEX_MIN			1
+-#define DJ_DEVICE_INDEX_MAX			6
++#define DJ_DEVICE_INDEX_MAX			7
+ 
+ #define DJREPORT_SHORT_LENGTH			15
+ #define DJREPORT_LONG_LENGTH			32
+@@ -980,6 +980,11 @@ static void logi_hidpp_recv_queue_notif(struct hid_device *hdev,
+ 		break;
+ 	}
+ 
++	/* custom receiver device (eg. powerplay) */
++	if (hidpp_report->device_index == 7) {
++		workitem.reports_supported |= HIDPP;
++	}
++
+ 	if (workitem.type == WORKITEM_TYPE_EMPTY) {
+ 		hid_warn(hdev,
+ 			 "unusable device of type %s (0x%02x) connected on slot %d",
+-- 
+2.24.1
