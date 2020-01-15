@@ -2,106 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB8413BAD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DDE13BB15
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:29:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbgAOI2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:28:05 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45562 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726088AbgAOI2F (ORCPT
+        id S1729319AbgAOI3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:29:43 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43399 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729010AbgAOI3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:28:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579076883;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
-        b=Pl3HcE7Hrvu75Zc0j77XI1BUYpRVHzchDfJEiTSx7LgNSEN840opV3qp/BpBaW8oMZbAH6
-        IlVIrWgQVKgkVMC2LVae7wtuhIAc/LWsOlD7ze6A3PxlhO3//7Kl9j6iEFe5S9K3KDb719
-        ZDG3/GKLT/unCTs+cFUMe2sGGNxu1y8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-136-p9ScF3kkMnadRwXNd1Le3w-1; Wed, 15 Jan 2020 03:28:01 -0500
-X-MC-Unique: p9ScF3kkMnadRwXNd1Le3w-1
-Received: by mail-qv1-f72.google.com with SMTP id dw11so10457714qvb.16
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 00:28:01 -0800 (PST)
+        Wed, 15 Jan 2020 03:29:42 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so17527088ljm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 00:29:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
-        b=I7lgP0avZsS+T2/UeKs8fL10liSqYUpId+gPo9D6GJO1gTkEiiDdMwkIso4gFyfxQC
-         75OdvxyqX+kqXXvZkNdFyVHHSxrbew/WLlN5jTiMFtVE2dOjiPl9qq6S/ADUaxun2RPh
-         epYBh9nTXuRtYhXqawA9Qb1S1O6vhpDJ0GYkno1bmDMBLRbFWvA4u1UktxGNN7xtKiC6
-         7O5NA2CajUbdVLWq3HYT0oEWsKJf6YUdbcOgRG4R0AIRygRkr4H2jU3zbda1m2FBLiKS
-         oc0L1XObQtmb9D80JkN/J690IEhCoRn9Pnjxf4YyBP9VDxQncQm5mtN1k//pco2v/6Tz
-         MLoA==
-X-Gm-Message-State: APjAAAUFxJEUXj7i739hP/4sdwALffxyuUX76WDW0KhUevfKl60Y+SMD
-        hK1SZ9W2K73xv/Zfb1WYv4jV8cLhOLTBAxKn1/CcqenZ+endikN3hkRkoa+jn98B3MkMgoXf5YT
-        T9JteHtkNqtFgN32GxhZBBdc01a3ZVDLgV9tJxHOR
-X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837535qvg.197.1579076881139;
-        Wed, 15 Jan 2020 00:28:01 -0800 (PST)
-X-Google-Smtp-Source: APXvYqynnIvI5Tdl1vtJm+JFA4/fXl3/u2hfPlTaOuV5Y0yec93AWwALsaiQEu+kRVo1l9SynVVGsOGBz9NPoVfX9pQ=
-X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837524qvg.197.1579076880853;
- Wed, 15 Jan 2020 00:28:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5VaUwHFGkRCCyYNnoRV3kcKDIqfO6FWnACxA4VSWTgQ=;
+        b=VbLfD8OIPM3tlb81rz57pUA2b0yYMFjcBeOpRJjH2BobTmsF9hZ9X6GJudkXJoCQO4
+         1i0oakj3dwkGBWDS+1XSuXM1dyx4NhbiPgcbc2daN6IIW1sINzwskikA3ZDfRs6r9uSQ
+         dlFA8ob6yV38IvU96c0Sl3exwQWmRb+4aWoy5yCFjX6sPMFAl5kAbLST6QznPTu9bsOM
+         PsaDfiuh7E2MDcgXR2ucnbz4ZytXyUvZQ8E53WZNIT3KoVbox2Uo5q2ITuvfAinn2zex
+         Eqly8GvSkPR1GW1yAhErQbbFYbQpoGX8R2dLsrn/hbu6OLA4+Y0s/aEjy4Oa6wlIh4Cw
+         AWmw==
+X-Gm-Message-State: APjAAAW3J6GKYv8jY1kuScvJxGEGulffvDhrF9y6yQvI3vVL5PJrJdft
+        kFp4IlVnMgCzTpP+2fYWzgU=
+X-Google-Smtp-Source: APXvYqxSUY5emVtZALmKLDSpe3BApSwIzlIRMchObHzY0oi51jsfe+cKWvCnBZ5GSNVE8oDci5fABQ==
+X-Received: by 2002:a05:651c:204f:: with SMTP id t15mr1076704ljo.240.1579076980224;
+        Wed, 15 Jan 2020 00:29:40 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id l5sm8839600lje.1.2020.01.15.00.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 00:29:39 -0800 (PST)
+Date:   Wed, 15 Jan 2020 10:29:33 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: bd70528: Fix hour register mask
+Message-ID: <20200115082933.GA29117@localhost.localdomain>
 MIME-Version: 1.0
-From:   Ondrej Holy <oholy@redhat.com>
-Date:   Wed, 15 Jan 2020 09:27:24 +0100
-Message-ID: <CA+wuGHCr2zJKFkHyRECOLAXsijLAcQgHVoACcNbvLbXnqarOtg@mail.gmail.com>
-Subject: Weird fuse_operations.read calls with Linux 5.4
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When RTC is used in 24H mode (and it is by this driver) the maximum
+hour value is 24 in BCD. This occupies bits [5:0] - which means
+correct mask for HOUR register is 0x3f not 0x1f. Fix the mask
 
-I have been directed here from https://github.com/libfuse/libfuse/issues/488.
+Fixes: 32a4a4ebf768 ("rtc: bd70528: Initial support for ROHM bd70528 RTC")
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
 
-My issue is that with Linux Kernel 5.4, one read kernel call (e.g.
-made by cat tool) triggers two fuse_operations.read executions and in
-both cases with 0 offset even though that first read successfully
-returned some bytes.
+I just noticed this was never applied. I'd like to get this in as
+we currently have bd70528 RTC not working in few exiting releases.
+(Or it works as long as time is not set at the evening :/)
 
-For gvfs, it leads to redundant I/O operations, or to "Operation not
-supported" errors if seeking is not supported. This doesn't happen
-with Linux 5.3. Any idea what is wrong here?
+I think this once was in RTC tree but was dropped as Lee mentioned this
+belongs to MFD. Thus I dared to add the Alexandre's acked-by - please
+let me know if this is not Ok.
 
-$ strace cat /run/user/1000/gvfs/ftp\:host\=server\,user\=user/foo
-...
-openat(AT_FDCWD, "/run/user/1000/gvfs/ftp:host=server,user=user/foo",
-O_RDONLY) = 3
-fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
-fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
-mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
--1, 0) = 0x7fbc42b92000
-read(3, 0x7fbc42b93000, 131072)         = -1 EOPNOTSUPP (Operation not
-supported)
-...
+Lee, can you please pull this in so that we get the fix
+in-tree? I guess the fixes tag helps this to be included in some
+existing branches.
 
-$ /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -d
-...
-open flags: 0x8000 /ftp:host=server,user=user/foo
-   open[139679517117488] flags: 0x8000 /ftp:host=server,user=user/foo
-   unique: 8, success, outsize: 32
-unique: 10, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
-read[139679517117488] 4096 bytes from 0 flags: 0x8000
-   read[139679517117488] 20 bytes from 0
-   unique: 10, success, outsize: 36
-unique: 12, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
-read[139679517117488] 4096 bytes from 0 flags: 0x8000
-   unique: 12, error: -95 (Operation not supported), outsize: 16
-...
+ include/linux/mfd/rohm-bd70528.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-See for other information: https://gitlab.gnome.org/GNOME/gvfs/issues/441
+diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
+index 1013e60c5b25..b0109ee6dae2 100644
+--- a/include/linux/mfd/rohm-bd70528.h
++++ b/include/linux/mfd/rohm-bd70528.h
+@@ -317,7 +317,7 @@ enum {
+ #define BD70528_MASK_RTC_MINUTE		0x7f
+ #define BD70528_MASK_RTC_HOUR_24H	0x80
+ #define BD70528_MASK_RTC_HOUR_PM	0x20
+-#define BD70528_MASK_RTC_HOUR		0x1f
++#define BD70528_MASK_RTC_HOUR		0x3f
+ #define BD70528_MASK_RTC_DAY		0x3f
+ #define BD70528_MASK_RTC_WEEK		0x07
+ #define BD70528_MASK_RTC_MONTH		0x1f
+-- 
+2.21.0
 
-Regards
 
-Ondrej
---
-Ondrej Holy
-Software Engineer, Core Desktop Development
-Red Hat Czech s.r.o
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
