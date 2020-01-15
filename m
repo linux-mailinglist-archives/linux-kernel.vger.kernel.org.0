@@ -2,159 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 837CB13CBA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5565D13CBAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:07:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbgAOSGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:06:14 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42042 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729092AbgAOSGN (ORCPT
+        id S1729173AbgAOSHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:07:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31856 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729126AbgAOSHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:06:13 -0500
-Received: by mail-qt1-f193.google.com with SMTP id j5so16546955qtq.9;
-        Wed, 15 Jan 2020 10:06:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ELr/XxVqul6D20WrUY/+l7F3oFFhw69GAu+JHpk3Rbk=;
-        b=mSPCnteKMSkRqwiFoHYESYY9gfGWLfp6Wj/BRJUP4Q4KxvpnfSxnw0X2O3+zDKrdi2
-         ekhtzKXCQeB5Bs/+1KwVMaTkntDXBIcn8z87XMb0VBhZ9vRds4BnOJ1RRijlj0bhsXHM
-         MZqAwB0pn1lfKVRjzfD44HEDbEIJxlOANTTPhWK6WNDmflh7dEDPIboreBKEPBUAh3kE
-         IAx9DqhXMDYiSV+XZ3WFIbmx316U4AmPfTEFqArYRwMbcAj7g7BvaI+9n4mjdfVvUFP2
-         s0RQjCh/hK3MfGFEow+MTXJv1aobh9vIOraqaNtR1Kin1ku2oqwOpZ5jPUKyq+siMEgq
-         +tWQ==
+        Wed, 15 Jan 2020 13:07:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579111674;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7fID6vInRHrxtlo5QRMU7VPDyUEFXJHaww3fjUHk7ZA=;
+        b=WlyYWetZ0IwXHVLEwnqwOiPLIFytcnB5KJOzfEaQncJKAKCoJ1wAkKh5kcXsKknkH/ASgc
+        UR8vuFcjS/RyLshqWph+tja8UfBMj9klyUirZYSWvusAM7r1fQcodSUYL0vRlcWhawtLsz
+        skRNS8X0GHz9SJPOewTFU6lVqjGLUsQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-210-YyZxsGXrPauJoErqysFj4g-1; Wed, 15 Jan 2020 13:07:53 -0500
+X-MC-Unique: YyZxsGXrPauJoErqysFj4g-1
+Received: by mail-wr1-f72.google.com with SMTP id f15so8363629wrr.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 10:07:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ELr/XxVqul6D20WrUY/+l7F3oFFhw69GAu+JHpk3Rbk=;
-        b=o6P6EnTCuaZSr0tBobB7yb1CyQJQy+i75avetHdcLfLvhSlZRIPhgBTGLNZGWXUEVr
-         qCDwXRkx+sH557gWzBs3EK0drowdhqEIDCxtr0yVP2SzHahmy/Mxg0bxzYvAYMCYxLco
-         p27Bj7E3a9t/ylAGFj/sKqlgLuTELBlXhearyl1/RrgRQr5lYQNZa2+diHptJompcdUP
-         yBz9tom61Edd6dNQrIYt55Drgg9N5S08cE6chlzxllccxzGpszm1+jymDdIew/qyfola
-         HwqJPy2oO3LsaI7ZcWD0Zyf4aoanOHGtwSkIfFfCyOAT43Tk49gK7wWGDq6k9JEnNw9L
-         CosA==
-X-Gm-Message-State: APjAAAX1Y7CClWRwDv/055D8SB80n6uC+hQcEJjArGkuseilKvYokLLx
-        U7skErymyYvvFUjiopK35x5LtoU1GblZjvbSWsg=
-X-Google-Smtp-Source: APXvYqyxmKUFZijBXdkuTtHh/L21hbP+2dYNdVYZ+ehzOljvqjBV6f2i6/sb3FoGBrunVSLpiVTX+WlgbzOZ4rbNNQg=
-X-Received: by 2002:ac8:1385:: with SMTP id h5mr4640404qtj.59.1579111572469;
- Wed, 15 Jan 2020 10:06:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7fID6vInRHrxtlo5QRMU7VPDyUEFXJHaww3fjUHk7ZA=;
+        b=Ukz9id36lk376+tMvDOqTrvAsS/clVGA4OP8/4TDZf1SNvlMDUtKw0LilQ3CdKiOwl
+         vgJGnzEsJpn3vc2PnZlUSKrW9JopaLH79lLFj9sKsLmKPc6XwN6ONioxk7KYseyM4JfX
+         c3kpTwuCj4lbp7bb7MmycpxwogWjF/GhYjtsEoDNnqi71Pao92QkGp8o/+MRC0OJOvhR
+         e2MYeIwjE2FrttqO5AO96earRA6zX+LiFusZp0kf1wK1jJfFkRWf0bIyvmDSoD+YWjRP
+         VlWS4Q72ulSbP7tL0hmEB8ehRW4fVzGtJXnpePWH00ovRLA05XJd26517a9eWbarcq/K
+         QX9A==
+X-Gm-Message-State: APjAAAWIfiIwg2U+kOjAWS9SleRfF8MMuPQ1vJpqH4U7de/YTMTbteJu
+        tTieb2VisR1Uj3CKJzfQ/cFH7xylRy4HDDx/sqig6CbrvRNC93EvhLkyc/kgnL81FpeDk81WG56
+        aa02Mfbp0iD+BfuR2zmFBvCBA
+X-Received: by 2002:a05:600c:1003:: with SMTP id c3mr1208977wmc.120.1579111671873;
+        Wed, 15 Jan 2020 10:07:51 -0800 (PST)
+X-Google-Smtp-Source: APXvYqys82Zum91O5UUcdGXuiZO+7mBL0scxKfEu+8BKC4UyeYAh+0xj3070ENwDj1Okibs0XoRj2A==
+X-Received: by 2002:a05:600c:1003:: with SMTP id c3mr1208948wmc.120.1579111671658;
+        Wed, 15 Jan 2020 10:07:51 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:436:e17d:1fd9:d92a? ([2001:b07:6468:f312:436:e17d:1fd9:d92a])
+        by smtp.gmail.com with ESMTPSA id s65sm773973wmf.48.2020.01.15.10.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jan 2020 10:07:47 -0800 (PST)
+Subject: Re: [PATCH v2 0/5] KVM: x86: X86_FEATURE bit() cleanup
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191217213242.11712-1-sean.j.christopherson@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <d53bd488-b871-47c4-c65c-4c231eff3cf9@redhat.com>
+Date:   Wed, 15 Jan 2020 19:07:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <157909756858.1192265.6657542187065456112.stgit@toke.dk>
-In-Reply-To: <157909756858.1192265.6657542187065456112.stgit@toke.dk>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 15 Jan 2020 10:06:01 -0800
-Message-ID: <CAEf4Bza+dNoD7HbVQGtXBq=raz4DQg0yTShKZHRbCo+zHYfoSA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 00/10] tools: Use consistent libbpf include
- paths everywhere
-To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191217213242.11712-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 6:13 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@redh=
-at.com> wrote:
->
-> The recent commit 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h =
-are
-> taken from selftests dir") broke compilation against libbpf if it is inst=
-alled
-> on the system, and $INCLUDEDIR/bpf is not in the include path.
->
-> Since having the bpf/ subdir of $INCLUDEDIR in the include path has never=
- been a
-> requirement for building against libbpf before, this needs to be fixed. O=
-ne
-> option is to just revert the offending commit and figure out a different =
-way to
-> achieve what it aims for. However, this series takes a different approach=
-:
-> Changing all in-tree users of libbpf to consistently use a bpf/ prefix in
-> #include directives for header files from libbpf.
->
-> This turns out to be a somewhat invasive change in the number of files to=
-uched;
-> however, the actual changes to files are fairly trivial (most of them are=
- simply
-> made with 'sed'). Also, this approach has the advantage that it makes ext=
-ernal
-> and internal users consistent with each other, and ensures no future chan=
-ges
-> breaks things in the same way as the commit referenced above.
->
-> The series is split to make the change for one tool subdir at a time, whi=
-le
-> trying not to break the build along the way. It is structured like this:
->
-> - Patch 1-2: Trivial fixes to Makefiles for issues I discovered while cha=
-nging
->   the include paths.
->
-> - Patch 3-7: Change the include directives to use the bpf/ prefix, and up=
-dates
->   Makefiles to make sure tools/lib/ is part of the include path, but with=
-out
->   removing tools/lib/bpf
->
-> - Patch 8: Change the bpf_helpers file in libbpf itself to use the bpf/ p=
-refix
->   when including (the original source of breakage).
->
-> - Patch 9-10: Remove tools/lib/bpf from include paths to make sure we don=
-'t
->   inadvertently re-introduce includes without the bpf/ prefix.
->
-> ---
+On 17/12/19 22:32, Sean Christopherson wrote:
+> Small series to add build-time protections on reverse CPUID lookup (and
+> other usages of bit()), and to rename the misleading-generic bit() helper
+> to something that better conveys its purpose.
+> 
+> I don't love emulator changes in patch 1 as adding one-off helpers is a
+> bit silly, but IMO it's the lesser of two evils, e.g. adding dedicated
+> helpers is arguably less error prone than manually encoding a CPUID
+> lookup, and the helpers approach avoids having to include cpuid.h in the
+> emulator code.
+> 
+> v2:
+>   - Rework the assertions to use the reverse_cpuid table instead of
+>     using the last cpufeatures word (which was not at all intuitive).
+> 
+> Sean Christopherson (5):
+>   KVM: x86: Add dedicated emulator helpers for querying CPUID features
+>   KVM: x86: Move bit() helper to cpuid.h
+>   KVM: x86: Add CPUID_7_1_EAX to the reverse CPUID table
+>   KVM: x86: Expand build-time assertion on reverse CPUID usage
+>   KVM: x86: Refactor and rename bit() to feature_bit() macro
+> 
+>  arch/x86/include/asm/kvm_emulate.h |  4 +++
+>  arch/x86/kvm/cpuid.c               |  5 ++--
+>  arch/x86/kvm/cpuid.h               | 41 +++++++++++++++++++++++++----
+>  arch/x86/kvm/emulate.c             | 21 +++------------
+>  arch/x86/kvm/svm.c                 |  4 +--
+>  arch/x86/kvm/vmx/vmx.c             | 42 +++++++++++++++---------------
+>  arch/x86/kvm/x86.c                 | 18 +++++++++++++
+>  arch/x86/kvm/x86.h                 |  5 ----
+>  8 files changed, 87 insertions(+), 53 deletions(-)
+> 
 
-Thanks, Toke, for this clean up! I tested it locally for my set up:
-runqslower, bpftool, libbpf, and selftests all build fine, so it looks
-good. My only concern is with selftests/bpf Makefile, we shouldn't
-build anything outside of selftests/bpf. Let's fix that. Thanks!
+Queued, thanks.
 
->
-> Toke H=C3=B8iland-J=C3=B8rgensen (10):
->       samples/bpf: Don't try to remove user's homedir on clean
->       tools/bpf/runqslower: Fix override option for VMLINUX_BTF
->       tools/runqslower: Use consistent include paths for libbpf
->       selftests: Use consistent include paths for libbpf
->       bpftool: Use consistent include paths for libbpf
->       perf: Use consistent include paths for libbpf
->       samples/bpf: Use consistent include paths for libbpf
->       libbpf: Fix include of bpf_helpers.h when libbpf is installed on sy=
-stem
->       selftests: Remove tools/lib/bpf from include path
->       tools/runqslower: Remove tools/lib/bpf from include path
->
->
+Paolo
 
-[...]
