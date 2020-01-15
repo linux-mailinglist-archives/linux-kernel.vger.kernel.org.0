@@ -2,101 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F6013B6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 350CB13B6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:36:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgAOBag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 20:30:36 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35479 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728844AbgAOBag (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:30:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579051835;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=cq04Ga1b8xTrH17T3rkjESGzzrFCqY7RRinYPFVL2u0=;
-        b=Q7eWKs0w9E1gn14AnUZJCdjk1u2cWMfRu1SefhIc4yLM8s7FcZXMEdlN4/L6KKzqHsZQXj
-        IBj7oPVJV1Kepe539MehgjLIpixYGfY/ZnFB50Dhn9+5IRICkY4fY6Gx4ZOYjD3gPSzLTy
-        KxIEXtJFbtt+Svgt0F9vA0qez0Vf4Hk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-59-MILkH8OSOieJ7asONUSy-w-1; Tue, 14 Jan 2020 20:30:31 -0500
-X-MC-Unique: MILkH8OSOieJ7asONUSy-w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3A71C1800D78;
-        Wed, 15 Jan 2020 01:30:30 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-116-34.ams2.redhat.com [10.36.116.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B657A675AE;
-        Wed, 15 Jan 2020 01:30:26 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH] Input: synaptics - remove the LEN0049 dmi id from topbuttonpad list
-Date:   Wed, 15 Jan 2020 02:30:23 +0100
-Message-Id: <20200115013023.9710-1-benjamin.tissoires@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+        id S1728916AbgAOBfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 20:35:02 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:51052 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728882AbgAOBfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 20:35:01 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 035F420052D;
+        Wed, 15 Jan 2020 02:34:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2694D200519;
+        Wed, 15 Jan 2020 02:34:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 180BD402A8;
+        Wed, 15 Jan 2020 09:34:46 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/3] dt-bindings: pinctrl: Convert i.MX8MQ to json-schema
+Date:   Wed, 15 Jan 2020 09:30:43 +0800
+Message-Id: <1579051845-30378-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Yoga 11e is using LEN0049, but it doesn't have a trackstick.
+Convert the i.MX8MQ pinctrl binding to DT schema format using json-schema
 
-Thus, there is no need to create a software top buttons row.
-
-However, it seems that the device works under SMBus, so keep it as part
-of the smbus_pnp_ids.
-
-
-Link: https://gitlab.freedesktop.org/libinput/libinput/issues/414
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
---
-
-Hi Dmitry,
-
-Sending the patch to the list untested (sanity only), and I'll ask
-for the reporter to provide a little bit more testing.
-
-I will keep you updated when you can merge the patch.
-
-Cheers,
-Benjamin
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/input/mouse/synaptics.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since V2:
+	- the lisence should be GPL-2.0.
+---
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 36 -----------
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.yaml       | 69 ++++++++++++++++++++++
+ 2 files changed, 69 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synapt=
-ics.c
-index 1ae6f8bba9ae..7aa84f743c48 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -146,7 +146,6 @@ static const char * const topbuttonpad_pnp_ids[] =3D =
-{
- 	"LEN0042", /* Yoga */
- 	"LEN0045",
- 	"LEN0047",
--	"LEN0049",
- 	"LEN2000", /* S540 */
- 	"LEN2001", /* Edge E431 */
- 	"LEN2002", /* Edge E531 */
-@@ -166,6 +165,7 @@ static const char * const smbus_pnp_ids[] =3D {
- 	/* all of the topbuttonpad_pnp_ids are valid, we just add some extras *=
-/
- 	"LEN0048", /* X1 Carbon 3 */
- 	"LEN0046", /* X250 */
-+	"LEN0049", /* Yoga 11e */
- 	"LEN004a", /* W541 */
- 	"LEN005b", /* P50 */
- 	"LEN005e", /* T560 */
---=20
-2.24.1
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+deleted file mode 100644
+index 66de750..0000000
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-* Freescale IMX8MQ IOMUX Controller
+-
+-Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+-for common binding part and usage.
+-
+-Required properties:
+-- compatible: "fsl,imx8mq-iomuxc"
+-- reg: should contain the base physical address and size of the iomuxc
+-  registers.
+-
+-Required properties in sub-nodes:
+-- fsl,pins: each entry consists of 6 integers and represents the mux and config
+-  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+-  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+-  imx8mq-pinfunc.h under device tree source folder.  The last integer CONFIG is
+-  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Quad
+-  Reference Manual for detailed CONFIG settings.
+-
+-Examples:
+-
+-&uart1 {
+-       pinctrl-names = "default";
+-       pinctrl-0 = <&pinctrl_uart1>;
+-};
+-
+-iomuxc: pinctrl@30330000 {
+-        compatible = "fsl,imx8mq-iomuxc";
+-        reg = <0x0 0x30330000 0x0 0x10000>;
+-
+-        pinctrl_uart1: uart1grp {
+-                fsl,pins = <
+-                        MX8MQ_IOMUXC_UART1_RXD_UART1_DCE_RX             0x49
+-                        MX8MQ_IOMUXC_UART1_TXD_UART1_DCE_TX             0x49
+-                >;
+-        };
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+new file mode 100644
+index 0000000..e010808
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mq-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale IMX8MQ IOMUX Controller
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++description:
++  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
++  for common binding part and usage.
++
++properties:
++  compatible:
++    const: fsl,imx8mq-iomuxc
++
++  reg:
++    maxItems: 1
++
++# Client device subnode's properties
++patternProperties:
++  'grp$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    properties:
++      fsl,pins:
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-array
++        description:
++          each entry consists of 6 integers and represents the mux and config
++          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
++          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
++          be found in <arch/arm64/boot/dts/freescale/imx8mq-pinfunc.h>. The last
++          integer CONFIG is the pad setting value like pull-up on this pin. Please
++          refer to i.MX8M Quad Reference Manual for detailed CONFIG settings.
++
++    required:
++      - fsl,pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Pinmux controller node
++  - |
++    iomuxc: pinctrl@30330000 {
++        compatible = "fsl,imx8mq-iomuxc";
++        reg = <0x30330000 0x10000>;
++
++        pinctrl_uart1: uart1grp {
++            fsl,pins = <
++                0x234 0x49C 0x4F4 0x0 0x0	0x49
++                0x238 0x4A0 0x4F4 0x0 0x0	0x49
++            >;
++        };
++    };
++
++...
+-- 
+2.7.4
 
