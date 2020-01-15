@@ -2,108 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EBC613C879
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AFB13C83F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:44:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgAOPzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:55:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42206 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgAOPzE (ORCPT
+        id S1728904AbgAOPoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 10:44:07 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:32597 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726165AbgAOPoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:55:04 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so16495242otd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 07:55:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B7DX59sNSuvGuHSzjzaWJDesXQ6glcdz/pP97LB2HkM=;
-        b=FFxAVyr1V7JUmo0pWJl4pkl1Kr+EpGtQgG13k0lQj1/CTigJfhsRCXWTE7ETBPJAaB
-         yGBPYEcG5VpulsGNXrIz5cTbaAfUDGOSHvZZT7n80MbDRorH4FGCVQA3R5JtU12wU5I/
-         k2gmsCMn/hu0Zwe7eDcLoQweMzywvJqUtT5r93vV6dJASaxhcSX5gNC/j7sL7Erkn1sV
-         E7PaLU8NrQs5bH/Mjyau54HKB9DADOH1P5rFOB/NzWMalGXa1v59vP88KrmP/00+43xO
-         bsYr0LDlejxE6PZdsaiWL+7I0+bGkXlJf7LKnGRJGDEsyQn1M8tYFba/0KlNSYEr51x8
-         RFAw==
-X-Gm-Message-State: APjAAAUPdeqrzCVePbTiSgask0UEfkoentE3YkbhWCD3EcZORmELHx8d
-        OSGPf5i0Gw/7ttKRbQKbXEVfy90=
-X-Google-Smtp-Source: APXvYqx2pcihIVSmeCGqufVbZx1Yl++7VxWX3QPGGHijj7H5Ipsd7zodjxRl9HW/P+x8u4/g7j75Ew==
-X-Received: by 2002:a05:6830:1487:: with SMTP id s7mr3028356otq.269.1579103703272;
-        Wed, 15 Jan 2020 07:55:03 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m68sm5758004oig.50.2020.01.15.07.55.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 07:55:03 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 22040c
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Wed, 15 Jan 2020 09:43:35 -0600
-Date:   Wed, 15 Jan 2020 09:43:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mark.rutland@arm.com, vkoul@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        ulf.hansson@linaro.org, srinivas.kandagatla@linaro.org,
-        broonie@kernel.org, manivannan.sadhasivam@linaro.org,
-        andrew.smirnov@gmail.com, rjones@gateworks.com,
-        marcel.ziswiler@toradex.com, sebastien.szymanski@armadeus.com,
-        aisheng.dong@nxp.com, richard.hu@technexion.com, angus@akkea.ca,
-        cosmin.stoica@nxp.com, l.stach@pengutronix.de,
-        rabeeh@solid-run.com, leonard.crestez@nxp.com,
-        daniel.baluta@nxp.com, jun.li@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-spi@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2 4/7] dt-bindings: spi: imx: Add
- i.MX8MM/i.MX8MN/i.MX8MP compatible
-Message-ID: <20200115154335.GA15650@bogus>
-References: <1578893602-14395-1-git-send-email-Anson.Huang@nxp.com>
- <1578893602-14395-4-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578893602-14395-4-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 15 Jan 2020 10:44:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579103045;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=LQyuBEEPUt70o2BZvhKw3aWFie6bEYpzPUeONtcG+Vk=;
+        b=N8WSuKE1nOviofBhPsLUzRiihRU3xpMdsgOmt3K3WQL+6GdRUzBwUh9kh+bniATPSdhvib
+        wYLKjsDerTuAtYUds/Z2c6ZkknqgR4q2NZ05L23z0Z4fVG8eGberfcKbKQOJlgYORSLO6j
+        TAU2DqXFh6O6v8yCBeBD8QSa67CflgA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-O1Fb-8HuMO6jNb_7UiX61Q-1; Wed, 15 Jan 2020 10:44:02 -0500
+X-MC-Unique: O1Fb-8HuMO6jNb_7UiX61Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E5F9101603C;
+        Wed, 15 Jan 2020 15:44:01 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3189B675AE;
+        Wed, 15 Jan 2020 15:43:58 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] locking/rwsem: Fix kernel crash when spinning on RWSEM_OWNER_UNKNOWN
+Date:   Wed, 15 Jan 2020 10:43:36 -0500
+Message-Id: <20200115154336.8679-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 01:33:19PM +0800, Anson Huang wrote:
-> Add compatbile for imx8mm/imx8mn/imx8mp.
+The commit 91d2a812dfb9 ("locking/rwsem: Make handoff writer
+optimistically spin on owner") will allow a recently woken up waiting
+writer to spin on the owner. Unfortunately, if the owner happens to be
+RWSEM_OWNER_UNKNOWN, the code will incorrectly spin on it leading to a
+kernel crash. This is fixed by passing the proper non-spinnable bits
+to rwsem_spin_on_owner() so that RWSEM_OWNER_UNKNOWN will be treated
+as a non-spinnable target.
 
-checkpatch reports a typo.
+Fixes: 91d2a812dfb9 ("locking/rwsem: Make handoff writer optimistically spin on owner")
 
-Otherwise,
+Reported-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/rwsem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 44e68761f432..0d9b6be9ecc8 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -1226,8 +1226,8 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+ 		 * In this case, we attempt to acquire the lock again
+ 		 * without sleeping.
+ 		 */
+-		if ((wstate == WRITER_HANDOFF) &&
+-		    (rwsem_spin_on_owner(sem, 0) == OWNER_NULL))
++		if (wstate == WRITER_HANDOFF &&
++		    rwsem_spin_on_owner(sem, RWSEM_NONSPINNABLE) == OWNER_NULL)
+ 			goto trylock_again;
+ 
+ 		/* Block until there are no active lockers. */
+-- 
+2.18.1
 
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> New patch
-> ---
->  Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
-> index 2d32641..33bc58f 100644
-> --- a/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
-> +++ b/Documentation/devicetree/bindings/spi/fsl-imx-cspi.txt
-> @@ -10,7 +10,10 @@ Required properties:
->    - "fsl,imx35-cspi" for SPI compatible with the one integrated on i.MX35
->    - "fsl,imx51-ecspi" for SPI compatible with the one integrated on i.MX51
->    - "fsl,imx53-ecspi" for SPI compatible with the one integrated on i.MX53 and later Soc
-> -  - "fsl,imx8mq-ecspi" for SPI compatible with the one integrated on i.MX8M
-> +  - "fsl,imx8mq-ecspi" for SPI compatible with the one integrated on i.MX8MQ
-> +  - "fsl,imx8mm-ecspi" for SPI compatible with the one integrated on i.MX8MM
-> +  - "fsl,imx8mn-ecspi" for SPI compatible with the one integrated on i.MX8MN
-> +  - "fsl,imx8mp-ecspi" for SPI compatible with the one integrated on i.MX8MP
->  - reg : Offset and length of the register set for the device
->  - interrupts : Should contain CSPI/eCSPI interrupt
->  - clocks : Clock specifiers for both ipg and per clocks.
-> -- 
-> 2.7.4
-> 
