@@ -2,61 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4C413CF3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D8D13CF37
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:37:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbgAOVhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 16:37:19 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:60388 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729578AbgAOVhP (ORCPT
+        id S1729281AbgAOVhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 16:37:11 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:46233 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOVhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:37:15 -0500
-Received: from localhost (unknown [62.21.130.100])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 156D315A0E3E8;
-        Wed, 15 Jan 2020 13:37:11 -0800 (PST)
-Date:   Wed, 15 Jan 2020 13:35:42 -0800 (PST)
-Message-Id: <20200115.133542.149188857628032129.davem@davemloft.net>
-To:     yangpc@wangsu.com
-Cc:     edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tcp: fix marked lost packets not being retransmitted
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1578993820-2114-1-git-send-email-yangpc@wangsu.com>
-References: <1578993820-2114-1-git-send-email-yangpc@wangsu.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 15 Jan 2020 16:37:10 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 23D2DCECF2;
+        Wed, 15 Jan 2020 22:46:27 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH v4 1/3] Bluetooth: hci_qca: Add QCA Rome power off support
+ to the qca_power_shutdown()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200115085552.11483-1-rjliao@codeaurora.org>
+Date:   Wed, 15 Jan 2020 22:37:08 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        hemantg@codeaurora.org
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 15 Jan 2020 13:37:14 -0800 (PST)
+Message-Id: <EA19E723-B920-4A68-8F82-64353A663746@holtmann.org>
+References: <20191225060317.5258-1-rjliao@codeaurora.org>
+ <20200115085552.11483-1-rjliao@codeaurora.org>
+To:     Rocky Liao <rjliao@codeaurora.org>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pengcheng Yang <yangpc@wangsu.com>
-Date: Tue, 14 Jan 2020 17:23:40 +0800
+Hi Rocky,
 
-> When the packet pointed to by retransmit_skb_hint is unlinked by ACK,
-> retransmit_skb_hint will be set to NULL in tcp_clean_rtx_queue().
-> If packet loss is detected at this time, retransmit_skb_hint will be set
-> to point to the current packet loss in tcp_verify_retransmit_hint(),
-> then the packets that were previously marked lost but not retransmitted
-> due to the restriction of cwnd will be skipped and cannot be
-> retransmitted.
+> Current qca_power_shutdown() only supports wcn399x, this patch adds Rome
+> power off support to it. For Rome it just needs to pull down the bt_en
+> GPIO to power off it. This patch also replaces all the power off operation
+> in qca_close() with the unified qca_power_shutdown() call.
 > 
-> To fix this, when retransmit_skb_hint is NULL, retransmit_skb_hint can
-> be reset only after all marked lost packets are retransmitted
-> (retrans_out >= lost_out), otherwise we need to traverse from
-> tcp_rtx_queue_head in tcp_xmit_retransmit_queue().
+> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+> ---
 > 
-> Packetdrill to demonstrate:
- ...
-> Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
+> Changes in v2: None
+> Changes in v3: None
+> Changes in v4:
+>  -rebased the patch with latest code base
+>  -moved the change from qca_power_off() to qca_power_shutdown()
+>  -replaced all the power off operation in qca_close() with
+>   qca_power_shutdown()
+>  -updated commit message
+> 
+> drivers/bluetooth/hci_qca.c | 28 ++++++++++++++++------------
+> 1 file changed, 16 insertions(+), 12 deletions(-)
 
-Applied, thank you.
+patch has been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
+
