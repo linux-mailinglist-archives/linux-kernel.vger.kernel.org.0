@@ -2,119 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D227013C5DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 045DE13C5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:22:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgAOOX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:23:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62208 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726473AbgAOOX1 (ORCPT
+        id S1728986AbgAOOWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:22:12 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:59397 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgAOOWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:23:27 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FENNu0139563
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:23:26 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhbvgehq7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:23:22 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 15 Jan 2020 14:21:04 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 15 Jan 2020 14:21:01 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FEL0VD43909150
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 14:21:00 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75CA1A4060;
-        Wed, 15 Jan 2020 14:21:00 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D96C4A4064;
-        Wed, 15 Jan 2020 14:20:59 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.148.8.170])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 15 Jan 2020 14:20:59 +0000 (GMT)
-Date:   Wed, 15 Jan 2020 16:20:58 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        akpm@linux-foundation.org, sfr@canb.auug.org.au,
-        keescook@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH next] init/main.c: make some symbols static
-References: <20200115135458.71460-1-chenzhou10@huawei.com>
+        Wed, 15 Jan 2020 09:22:11 -0500
+Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MGQzj-1isYVr058v-00Gsh0; Wed, 15 Jan 2020 15:22:10 +0100
+Received: by mail-qk1-f174.google.com with SMTP id w127so15722566qkb.11;
+        Wed, 15 Jan 2020 06:22:09 -0800 (PST)
+X-Gm-Message-State: APjAAAXR0i/nw4VXfnZSlejgh4fZ2a2KfRmGN3E0gfmq0ia8/P+hmmF9
+        nUgpg7FpHYLLd9n7RfJ6jP2V9rSvBIfoZNJXwig=
+X-Google-Smtp-Source: APXvYqxx2a39ERgImZn16gvReU3L59K4NPZ7rVI6r40qbh59bC6C4RPdM9GIKIPaH4dZYMYOAUlFtEAF/+VlIcIk3y8=
+X-Received: by 2002:a37:84a:: with SMTP id 71mr26665185qki.138.1579098128765;
+ Wed, 15 Jan 2020 06:22:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200115135458.71460-1-chenzhou10@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 20011514-0016-0000-0000-000002DD909C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011514-0017-0000-0000-00003340240E
-Message-Id: <20200115142057.GE19826@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-15_02:2020-01-15,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001150116
+References: <20200114200846.29434-1-vgupta@synopsys.com> <20200114200846.29434-2-vgupta@synopsys.com>
+ <CAHk-=wjChjfOaDnGygOJpC36R6mtT7=Xf6wWTzD_wLJm=quu0Q@mail.gmail.com>
+ <CAK8P3a2ao=xBuy3XHBkdo03KEjpMHGe9ahwj-uogtkZBXsMkGw@mail.gmail.com> <20200115141224.GH8904@ZenIV.linux.org.uk>
+In-Reply-To: <20200115141224.GH8904@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 15 Jan 2020 15:21:52 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0eu-2ov-Y0EEuv_XSGUTWoyiScf5z5P=kn5S+ORhxF-A@mail.gmail.com>
+Message-ID: <CAK8P3a0eu-2ov-Y0EEuv_XSGUTWoyiScf5z5P=kn5S+ORhxF-A@mail.gmail.com>
+Subject: Re: [RFC 1/4] asm-generic/uaccess: don't define inline functions if
+ noinline lib/* in use
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:lOdPcxVLcqBDEULU954wg+G6L5Re6fTjFN9BhJpfuxlRd4a6lR4
+ hSIHFUtdbK3ItxmH/gNZwHTsPniOPTxj8q4g7Sg0TRgVIJ6HXkYStxhPEdlWHRWJx0NTd6E
+ OxbYloa5u0vc2cQ6fMPG/0QbTP86Gp5Uos7Lg0pAXCuXVJiKHIMZ3Qg6vGklUWDrQWN2vns
+ sBNaMcqUkwpiZFr+TVQyA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:CF8ls0Li9nE=:0MP2x6I/juuYaHyvrvutA8
+ koVW/HnYbXl2tpLoFALXNeZfBM5113zZ8Ayl/3ikXDiU/QHlN9J5C5SCxopTPPo6rCXtjZuca
+ x8T4cGpQcfaMZZZzCC69/9QnAge+YPkrV+/W6VV9Aw1eReYevymbqxiex9ZpYS4NCB+2Erwed
+ f6jpOZ871xncuQ/P8En2WW0rmfMPF5DGO36DlhrCTnnFPm9j6s1E6I7A1Lbv5guEKzT1tHFTJ
+ WQksl+GzfN1mJm1pnoYTAFLL986qEAazRPgiNbBnC5vrPxXq3qFpT04ZLHYIkSiixBpjs4e5B
+ mv4RwRnFDsS5ttwrri1+T86vzIPkPpD6hgrR/Q4lzJNJ08FR1ATxCmP9qPC2Z2m7RYjUe/MhV
+ 7/s0ZU7urU6DhTCW+K4nZ3m/y2rWn5cRxFvxiap+gSy2s+Ebo3kkp5h/8ch+q5Tx+oseHxPjZ
+ eB1BYo8ZiWiXpRIFQy4dLV1VM5Mzg+6p+XD3qP57OfBPfGu7Qs7Fzi1MWUgqYsw4cCK4Gpdxn
+ Kw3jNjW5bUpRqUo/VaoybI+scr5qkj4yWd9KVIPhH7AEfuazB3UjcjlZkjSPCSjvjxcyhK333
+ Wa2qeI6A4Q1yUWyTKTk0AeJ81EWpW974NPQ/GvlPcAc9ngeSVqOirIf0b/wT+So7drFt8p5GA
+ bxn8mgQoYkMujjGtxtd3+jF+7sai+OMd7U25qSbYiZacNTkjL/yWtz4AOWjD3NmGhve83yENZ
+ zOR2K1+0vcO0OodorvBFWrn1RK4aWHHoutumI9F6WcCTxibQBCsxVF9z7RVGs4R7WxRYUsZ9H
+ ZsHLQQtCPfUiE/Eth87r5mQBFylEmP78wQ/G1XbvTBnwMpBz6N236SWxlg3NIDdQqyZqzywa3
+ ODWOzLDMV5qW2FYUVIqw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(added Steven and Masami)
+On Wed, Jan 15, 2020 at 3:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Jan 15, 2020 at 10:08:31AM +0100, Arnd Bergmann wrote:
+>
+> > > I would suggest that anybody who uses asm-generic/uaccess.h needs to
+> > > simply use the generic library version.
+> >
+> > Or possibly just everybody altogether: the remaining architectures that
+> > have a custom implementation don't seem to be doing any better either.
+>
+> No go for s390.  There you really want to access userland memory in
+> larger chunks - it's oriented for block transfers.  IIRC, the insn
+> they are using has a costly setup phase, independent of the amount
+> to copy, followed by reasonably fast transfer more or less linear
+> by the size.
 
-On Wed, Jan 15, 2020 at 09:54:58PM +0800, Chen Zhou wrote:
-> Make variable xbc_namebuf and function boot_config_checksum static to
-> fix build warnings, warnings are as follows:
-> 
-> init/main.c:254:6:
-> 	warning: symbol 'xbc_namebuf' was not declared. Should it be static?
-> init/main.c:330:5:
-> 	warning: symbol 'boot_config_checksum' was not declared. Should it be static?
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-> ---
->  init/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index a77114f..3a95591 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -251,7 +251,7 @@ early_param("loglevel", loglevel);
->  
->  #ifdef CONFIG_BOOT_CONFIG
->  
-> -char xbc_namebuf[XBC_KEYLEN_MAX] __initdata;
-> +static char xbc_namebuf[XBC_KEYLEN_MAX] __initdata;
->  
->  #define rest(dst, end) ((end) > (dst) ? (end) - (dst) : 0)
->  
-> @@ -327,7 +327,7 @@ static char * __init xbc_make_cmdline(const char *key)
->  	return new_cmdline;
->  }
->  
-> -u32 boot_config_checksum(unsigned char *p, u32 size)
-> +static u32 boot_config_checksum(unsigned char *p, u32 size)
->  {
->  	u32 ret = 0;
->  
-> -- 
-> 2.7.4
-> 
+Right, I missed that one while looking through the remaining
+implementations.
 
--- 
-Sincerely yours,
-Mike.
-
+     Arnd
