@@ -2,162 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D31813BF3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B6E13BF59
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:13:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbgAOMLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:11:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:34661 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbgAOMLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:11:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 04:11:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,322,1574150400"; 
-   d="scan'208";a="219971966"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Jan 2020 04:11:13 -0800
-Received: from [10.125.252.177] (abudanko-mobl.ccr.corp.intel.com [10.125.252.177])
-        by linux.intel.com (Postfix) with ESMTP id 5EA1E580409;
-        Wed, 15 Jan 2020 04:11:07 -0800 (PST)
-Subject: Re: [PATCH v4 2/9] perf/core: open access for CAP_SYS_PERFMON
- privileged process
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Song Liu <songliubraving@fb.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Robert Richter <rric@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
- <c93309dc-b920-f5fa-f997-e8b2faf47b88@linux.intel.com>
- <20200108160713.GI2844@hirez.programming.kicks-ass.net>
- <cc239899-5c52-2fd0-286d-4bff18877937@linux.intel.com>
- <20200110140234.GO2844@hirez.programming.kicks-ass.net>
- <20200111005213.6dfd98fb36ace098004bde0e@kernel.org>
- <20200110164531.GA2598@kernel.org>
- <20200111084735.0ff01c758bfbfd0ae2e1f24e@kernel.org>
- <2B79131A-3F76-47F5-AAB4-08BCA820473F@fb.com>
- <5e191833.1c69fb81.8bc25.a88c@mx.google.com>
- <158a4033-f8d6-8af7-77b0-20e62ec913b0@linux.intel.com>
- <20200114122506.3cf442dc189a649d4736f86e@kernel.org>
- <CAADnVQLCtrvvagbbkZG4PyAKb2PWzUouxG3=nxvm8QdpgEWtGQ@mail.gmail.com>
- <81abaa29-d1be-a888-8b2f-fdf9b7e9fde8@linux.intel.com>
- <CAADnVQKddDCRV9Zp7N_TR51wc5rtRwFN-pSZHLiXDXe23+B_5Q@mail.gmail.com>
- <257a949a-b7cc-5ff1-6f1a-34bc44b1efc5@linux.intel.com>
- <20200115184538.bb8604e914dcc0eaeaf357fd@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <2610ef96-40c4-5ff1-f972-104d418a3ac8@linux.intel.com>
-Date:   Wed, 15 Jan 2020 15:11:06 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20200115184538.bb8604e914dcc0eaeaf357fd@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        id S1730996AbgAOMM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:12:58 -0500
+Received: from mail-co1nam11on2066.outbound.protection.outlook.com ([40.107.220.66]:25921
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726165AbgAOMMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:12:51 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cSEiceMOmW3KCumByskhGJ4XNqNs27PFytLrEKQQ5CIgTPo3SjolX1VSq0moGeEaK8wYKDucZXJxS8byZVMgFAoHDIyRQUnm+77XD6uMRjWcIggXQ4SV0CDJRTfzXgpCjNH4XaTlMV8y/aEzKxJwQVtCnCrniQu0aehBIS/6mRMQvbo21bRcQAvOplrSRRY6MVBv9l/B/FAi1ZFYk4yJeWcunom7tAdtt/uqyE0PvxlLnKBeqUrQ1+5YzODiGI5y867Wp99vMoiQ0hBIBSFDc2S28B53X8ulcrElVkdgwBhnJVDbrw0z36rcuQfXspsuJYkJayoceNqttD97QjzGVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JkPBTof0cTcLxzfDeiNiJ0va31UOcbnIUlWzqHwtwII=;
+ b=Vfpr257m51KDPAKtyX5dnM784WRxOBwt185UBCk5T4Z4rVl9s2wkJNrz2+ElVeLd/0I6/jittA6Ve8l8pcJGsz3frrKR5y3HU+JBosTshObu6TwIiD1dEaJ3hVY6hJByc7aeqJ81KEy8mvm9vYUb1PiG6HiZIt9O8cBhgNJGdqMEa/Sm4tjVS6GD4D6+TRNOq1z+68LBs65pOw7W3sV9p8ks+eXQ77Aj6bNFVRwg1GD/K3gsxyudx0jRxyyniyuTsvhaR4yFPxmFYJTap+5ipODNtZ2hJCyw84k4C4+AlTc5TZ1hYGRIEYO2d6RtwPtq5xs6GsMbhizGkgOMa0jM2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=silabs.onmicrosoft.com; s=selector2-silabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JkPBTof0cTcLxzfDeiNiJ0va31UOcbnIUlWzqHwtwII=;
+ b=KQvBiU3fN3WlP34BODxMGzj0nhmKJw1Bkk8UKgEpampEeCC1pCk8X9KPZWwkznyqR5fu7iiQQdyIoJQsdUTDviQjjOAOiz6dgO/iFi1RH2k5aPiOJhCHnVZhejDhKQL/VYHuxIbEt+5sFjq3Ip4Y1US+CMmDpgjZ/NrSTNrVa8k=
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com (10.255.180.22) by
+ MN2PR11MB3934.namprd11.prod.outlook.com (10.255.180.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.20; Wed, 15 Jan 2020 12:12:08 +0000
+Received: from MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::f46c:e5b4:2a85:f0bf]) by MN2PR11MB4063.namprd11.prod.outlook.com
+ ([fe80::f46c:e5b4:2a85:f0bf%4]) with mapi id 15.20.2623.018; Wed, 15 Jan 2020
+ 12:12:08 +0000
+Received: from pc-42.silabs.com (37.71.187.125) by PR2PR09CA0009.eurprd09.prod.outlook.com (2603:10a6:101:16::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.18 via Frontend Transport; Wed, 15 Jan 2020 12:12:06 +0000
+From:   =?utf-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <Jerome.Pouiller@silabs.com>
+To:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        =?utf-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <Jerome.Pouiller@silabs.com>
+Subject: [PATCH 00/65] Simplify and improve the wfx driver
+Thread-Topic: [PATCH 00/65] Simplify and improve the wfx driver
+Thread-Index: AQHVy50BYfh2z0UfGE+rivOPHKtpUQ==
+Date:   Wed, 15 Jan 2020 12:12:07 +0000
+Message-ID: <20200115121041.10863-1-Jerome.Pouiller@silabs.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: PR2PR09CA0009.eurprd09.prod.outlook.com
+ (2603:10a6:101:16::21) To MN2PR11MB4063.namprd11.prod.outlook.com
+ (2603:10b6:208:13f::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jerome.Pouiller@silabs.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.25.0
+x-originating-ip: [37.71.187.125]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3f5f6eee-1a07-4e5b-e633-08d799b423fa
+x-ms-traffictypediagnostic: MN2PR11MB3934:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR11MB3934D05FFE4C61D5882734A193370@MN2PR11MB3934.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02830F0362
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(396003)(136003)(376002)(366004)(346002)(199004)(189003)(54906003)(110136005)(86362001)(956004)(107886003)(2616005)(316002)(36756003)(71200400001)(52116002)(7696005)(478600001)(8936002)(81156014)(8676002)(4326008)(81166006)(6486002)(2906002)(26005)(66946007)(16526019)(186003)(5660300002)(66574012)(1076003)(66556008)(64756008)(66446008)(85182001)(66476007)(85202003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3934;H:MN2PR11MB4063.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: silabs.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aoUNAvXHlyg/jTyk0ju8Ic30OuLCZmMgHYnqpLXCQ1L9zeTYqCRAfDfFZw6U+kNCqijpcVu9AtFqhdMaIvgQdhc4cefpVN2+Y8uK63qSNKUj+6qqHJjNtqd69Ocy4xt/8K/WOXMdaI/E61EJ0Y7yY325hWvgUljWsbhN0tJwB/r5WAOPU3t6GaU0S4OfYwkD/3cHl6L9+vVdJj0SNYHCD1xxh4be0eRViJ4cLBnfZK6kUmvolC1EvpLikzqGGhZTNTg2zaSXCpxJ+JqvVmR2ycUWdUtsoOcdRlSSLDSlvpl7UGjFrnFn9827BbkAhQ/ObxYWWMuhcHL9ILUsI7Zg+9FcNUnBn/h61B8f534kbI/eNyA0h/lBFg0iLHIHajq+7FtRzGQANH8qbrGSpTLllhJoCtsJoT0xCN1QWbV57rTemFY4YeY9YvUdyY3hVb+6
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2915B7D3973F5144BBD9C7BE480632D6@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f5f6eee-1a07-4e5b-e633-08d799b423fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 12:12:07.8459
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yNY65ludIqcsJe7+mF+EJ0EZVjKnlyAMHUFDev0bK7WbVm/YYVJa5TFRTiNeenTbNX+oLStF/Fjwk0ztrzyQgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3934
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 15.01.2020 12:45, Masami Hiramatsu wrote:
-> On Tue, 14 Jan 2020 21:50:33 +0300
-> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
-> 
->>
->> On 14.01.2020 21:06, Alexei Starovoitov wrote:
->>> On Tue, Jan 14, 2020 at 1:47 AM Alexey Budankov
->>> <alexey.budankov@linux.intel.com> wrote:
->>>>>>
->>>>>> As we talked at RFC series of CAP_SYS_TRACING last year, I just expected
->>>>>> to open it for enabling/disabling kprobes, not for creation.
->>>>>>
->>>>>> If we can accept user who has no admin priviledge but the CAP_SYS_PERFMON,
->>>>>> to shoot their foot by their own risk, I'm OK to allow it. (Even though,
->>>>>> it should check the max number of probes to be created by something like
->>>>>> ulimit)
->>>>>> I think nowadays we have fixed all such kernel crash problems on x86,
->>>>>> but not sure for other archs, especially on the devices I can not reach.
->>>>>> I need more help to stabilize it.
->>>>>
->>>>> I don't see how enable/disable is any safer than creation.
->>>>> If there are kernel bugs in kprobes the kernel will crash anyway.
->>>>> I think such partial CAP_SYS_PERFMON would be very confusing to the users.
->>>>> CAP_* is about delegation of root privileges to non-root.
->>>>> Delegating some of it is ok, but disallowing creation makes it useless
->>>>> for bpf tracing, so we would need to add another CAP later.
->>>>> Hence I suggest to do it right away instead of breaking
->>>>> sys_perf_even_open() access into two CAPs.
->>>>>
->>>>
->>>> Alexei, Masami,
->>>>
->>>> Thanks for your meaningful input.
->>>> If we know in advance that it still can crash the system in some cases and on
->>>> some archs, even though root fully controls delegation thru CAP_SYS_PERFMON,
->>>> such delegation looks premature until the crashes are avoided. So it looks like
->>>> access to eBPF for CAP_SYS_PERFMON privileged processes is the subject for
->>>> a separate patch set.
->>>
->>> perf_event_open is always dangerous. sw cannot guarantee non-bugginess of hw.
->>
-> 
-> OK, anyway, for higher security, admin may not give CAP_SYS_PERFMON to
-> unpriviledged users, since it might allows users to analyze kernel, which
-> can lead security concerns.
-
-FWIW,
-Discovered security related hardware issues could be mitigated in software and 
-here [1] is the official procedure documented on how to follow up, so this could
-be a draft plan to approach eBPF perf_events related hardware issues, if required.
-
-[1] https://www.kernel.org/doc/html/latest/process/embargoed-hardware-issues.html
-
-> 
->> Sure, software cannot guarantee, but known software bugs could still be fixed,
->> that's what I meant.
-> 
-> Agreed, bugs must be fixed anyway.
-> 
-> Thank you,
-> 
->>> imo adding a cap just for pmc is pointless.
->>> if you add a new cap it should cover all of sys_perf_event_open syscall.
->>> subdividing it into sw vs hw counters, kprobe create vs enable, etc will
->>> be the source of ongoing confusion. nack to such cap.
->>>
->>
->> Well, as this patch set already covers complete perf_event_open functionality,
->> and also eBPF related parts too, could you please review and comment on it?
->> Does the patches 2/9 and 5/9 already bring all required extentions?
->>
->> Thanks,
->> Alexey
-> 
-> 
+RnJvbTogSsOpcsO0bWUgUG91aWxsZXIgPGplcm9tZS5wb3VpbGxlckBzaWxhYnMuY29tPgoKSGVs
+bG8gYWxsLAoKVGhpcyBwdWxsIHJlcXVlc3QgaXMgZmluYWxseSBiaWdnZXIgdGhhbiBJIGV4cGVj
+dGVkLCBzb3JyeS4KCkl0IGNvbnRhaW5zIDIgbWFpbiB0b3BpY3M6CiAgLSBTaW1wbGlmeSBoYW5k
+bGluZyBvZiBzdGF0aW9ucyBpbiBwb3dlciBzYXZlIG1vZGUuIE1vc3Qgb2YgdGhlIHdvcmsKICAg
+IHdhcyByZWR1bmRhbnQgd2l0aCBtYWM4MDIxMS4gSSBoYXZlIHNhdmVkIHBsZW50eSBvZiBsaW5l
+cyBvZiBjb2RlCiAgICBieSB1c2luZyB0aGUgbWFjODAyMTEgQVBJIGJldHRlci4KICAtIENvbnRp
+bnVlIHRvIGNsZWFybHkgc2VwYXJhdGUgaGFyZHdhcmUgaW50ZXJmYWNlIGZyb20gdGhlIHJlc3Qg
+b2YKICAgIHRoZSBkcml2ZXIuIFRoZSBiaWdnZXN0IHBhcnQgb2YgdGhpcyBjbGVhbi11cCBpcyBk
+b25lLiBJdCBpcyBub3cKICAgIHBvc3NpYmxlIHRvIGxvb2sgYXQgdGhlIHdhcm5pbmcgcmFpc2Vk
+IGJ5IHNwYXJzZSBhbmQgZml4CiAgICBzdXBwb3J0IGZvciBiaWcgZW5kaWFuIGhvc3RzLgoKSsOp
+csO0bWUgUG91aWxsZXIgKDY1KToKICBzdGFnaW5nOiB3Zng6IHJldmVydCB1bmV4cGVjdGVkIGNo
+YW5nZSBpbiBkZWJ1Z2ZzIG91dHB1dAogIHN0YWdpbmc6IHdmeDogbWFrZSBoaWZfc2NhbigpIHVz
+YWdlIGNsZWFyZXIKICBzdGFnaW5nOiB3Zng6IGFkZCBtaXNzaW5nIFBST0JFX1JFU1BfT0ZGTE9B
+RCBmZWF0dXJlCiAgc3RhZ2luZzogd2Z4OiBzZW5kIHJhdGUgcG9saWNpZXMgb25lIGJ5IG9uZQog
+IHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgaGlmX3NldF90eF9yYXRlX3JldHJ5X3BvbGljeSgpIHVz
+YWdlCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfc2V0X291dHB1dF9wb3dlcigpIHVzYWdl
+CiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfc2V0X3JjcGlfcnNzaV90aHJlc2hvbGQoKSB1
+c2FnZQogIHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgaGlmX3NldF9hcnBfaXB2NF9maWx0ZXIoKSB1
+c2FnZQogIHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgaGlmX3N0YXJ0KCkgdXNhZ2UKICBzdGFnaW5n
+OiB3Zng6IHVzZSBzcGVjaWFsaXplZCBzdHJ1Y3RzIGZvciBISUYgYXJndW1lbnRzCiAgc3RhZ2lu
+Zzogd2Z4OiByZXRyaWV2ZSBhbXBkdV9kZW5zaXR5IGZyb20gc3RhLT5odF9jYXAKICBzdGFnaW5n
+OiB3Zng6IHJldHJpZXZlIGdyZWVuZmllbGQgbW9kZSBmcm9tIHN0YS0+aHRfY2FwIGFuZCBic3Nf
+Y29uZgogIHN0YWdpbmc6IHdmeDogZHJvcCBzdHJ1Y3Qgd2Z4X2h0X2luZm8KICBzdGFnaW5nOiB3
+Zng6IGRyb3Agd2Rldi0+b3V0cHV0X3Bvd2VyCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSB3Znhf
+Y29uZmlnKCkKICBzdGFnaW5nOiB3Zng6IHJlbmFtZSB3ZnhfdXBsb2FkX2JlYWNvbigpCiAgc3Rh
+Z2luZzogd2Z4OiBzaW1wbGlmeSB3ZnhfdXBsb2FkX2FwX3RlbXBsYXRlcygpCiAgc3RhZ2luZzog
+d2Z4OiBzaW1wbGlmeSB3ZnhfdXBkYXRlX2JlYWNvbmluZygpCiAgc3RhZ2luZzogd2Z4OiBmaXgg
+X193ZnhfZmx1c2goKSB3aGVuIGRyb3AgPT0gZmFsc2UKICBzdGFnaW5nOiB3Zng6IHNpbXBsaWZ5
+IHdmeF9mbHVzaCgpCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSB1cGRhdGUgb2YgRFRJTSBwZXJp
+b2QKICBzdGFnaW5nOiB3Zng6IGRyb3Agd3ZpZi0+ZHRpbV9wZXJpb2QKICBzdGFnaW5nOiB3Zng6
+IGRyb3Agd3ZpZi0+ZW5hYmxlX2JlYWNvbgogIHN0YWdpbmc6IHdmeDogZHJvcCB3dmlmLT5jcW1f
+cnNzaV90aG9sZAogIHN0YWdpbmc6IHdmeDogZHJvcCB3dmlmLT5zZXRic3NwYXJhbXNfZG9uZQog
+IHN0YWdpbmc6IHdmeDogZHJvcCB3Znhfc2V0X2N0c193b3JrKCkKICBzdGFnaW5nOiB3Zng6IFNT
+SUQgc2hvdWxkIGJlIHByb3ZpZGVkIHRvIGhpZl9zdGFydCgpIGV2ZW4gaWYgaGlkZGVuCiAgc3Rh
+Z2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfdXBkYXRlX2llKCkKICBzdGFnaW5nOiB3Zng6IHNpbXBs
+aWZ5IGhpZl9qb2luKCkKICBzdGFnaW5nOiB3Zng6IHNpbXBsaWZ5IGhpZl9zZXRfYXNzb2NpYXRp
+b25fbW9kZSgpCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfc2V0X3VjX21jX2JjX2NvbmRp
+dGlvbigpCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfbWliX3VjX21jX2JjX2RhdGFfZnJh
+bWVfY29uZGl0aW9uCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfbWliX3NldF9kYXRhX2Zp
+bHRlcmluZwogIHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgaGlmX3NldF9kYXRhX2ZpbHRlcmluZygp
+CiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfc2V0X21hY19hZGRyX2NvbmRpdGlvbigpCiAg
+c3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZfc2V0X2NvbmZpZ19kYXRhX2ZpbHRlcigpCiAgc3Rh
+Z2luZzogd2Z4OiBzaW1wbGlmeSB3Znhfc2V0X21jYXN0X2ZpbHRlcigpCiAgc3RhZ2luZzogd2Z4
+OiBzaW1wbGlmeSB3ZnhfdXBkYXRlX2ZpbHRlcmluZygpCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlm
+eSB3Znhfc2Nhbl9jb21wbGV0ZSgpCiAgc3RhZ2luZzogd2Z4OiB1cGRhdGUgcG93ZXItc2F2ZSBw
+ZXIgaW50ZXJmYWNlCiAgc3RhZ2luZzogd2Z4OiB3aXRoIG11bHRpcGxlIHZpZnMsIGZvcmNlIFBT
+IG9ubHkgaWYgY2hhbm5lbHMgZGlmZmVycwogIHN0YWdpbmc6IHdmeDogZG8gbm90IHVwZGF0ZSB1
+YXBzZCBpZiBub3QgbmVjZXNzYXJ5CiAgc3RhZ2luZzogd2Z4OiBmaXggY2FzZSB3aGVyZSBSVFMg
+dGhyZXNob2xkIGlzIDAKICBzdGFnaW5nOiB3Zng6IGZpeCBwb3NzaWJsZSBvdmVyZmxvdyBvbiBq
+aWZmaWVzIGNvbXBhcmFpc29uCiAgc3RhZ2luZzogd2Z4OiByZW1vdmUgaGFuZGxpbmcgb2YgImVh
+cmx5X2RhdGEiCiAgc3RhZ2luZzogd2Z4OiByZWxvY2F0ZSAiYnVmZmVyZWQiIGluZm9ybWF0aW9u
+IHRvIHN0YV9wcml2CiAgc3RhZ2luZzogd2Z4OiBmaXggYnNzX2xvc3MKICBzdGFnaW5nOiB3Zng6
+IGZpeCBSQ1UgdXNhZ2UKICBzdGFnaW5nOiB3Zng6IHNpbXBsaWZ5IHdmeF9zZXRfdGltX2ltcGwo
+KQogIHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgdGhlIGxpbmstaWQgYWxsb2NhdGlvbgogIHN0YWdp
+bmc6IHdmeDogY2hlY2sgdGhhdCBubyB0eCBpcyBwZW5kaW5nIGJlZm9yZSByZWxlYXNlIHN0YQog
+IHN0YWdpbmc6IHdmeDogcmVwbGFjZSB3ZnhfdHhfZ2V0X3RpZCgpIHdpdGggaWVlZTgwMjExX2dl
+dF90aWQoKQogIHN0YWdpbmc6IHdmeDogcHNwb2xsX21hc2sgbWFrZSBubyBzZW5zZQogIHN0YWdp
+bmc6IHdmeDogc3RhIGFuZCBkdGltCiAgc3RhZ2luZzogd2Z4OiBmaXJtd2FyZSBuZXZlciByZXR1
+cm4gUFMgc3RhdHVzIGZvciBzdGF0aW9ucwogIHN0YWdpbmc6IHdmeDogc2ltcGxpZnkgd2Z4X3N1
+c3BlbmRfcmVzdW1lX21jKCkKICBzdGFnaW5nOiB3Zng6IHNpbXBsaWZ5IGhhbmRsaW5nIG9mIElF
+RUU4MDIxMV9UWF9DVExfU0VORF9BRlRFUl9EVElNCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSB3
+ZnhfcHNfbm90aWZ5X3N0YSgpCiAgc3RhZ2luZzogd2Z4OiBlbnN1cmUgdGhhdCBwYWNrZXRfaWQg
+aXMgdW5pcXVlCiAgc3RhZ2luZzogd2Z4OiByZW1vdmUgdW51c2VkIGRvX3Byb2JlCiAgc3RhZ2lu
+Zzogd2Z4OiByZW1vdmUgY2hlY2sgZm9yIGludGVyZmFjZSBzdGF0ZQogIHN0YWdpbmc6IHdmeDog
+c2ltcGxpZnkgaGlmX2hhbmRsZV90eF9kYXRhKCkKICBzdGFnaW5nOiB3Zng6IHNpbXBsaWZ5IHdm
+eF90eF9xdWV1ZV9nZXRfbnVtX3F1ZXVlZCgpCiAgc3RhZ2luZzogd2Z4OiBzaW1wbGlmeSBoaWZf
+bXVsdGlfdHhfY29uZmlybSgpCiAgc3RhZ2luZzogd2Z4OiB1cGRhdGUgVE9ETwoKIGRyaXZlcnMv
+c3RhZ2luZy93ZngvVE9ETyAgICAgICAgICB8ICAxMiArLQogZHJpdmVycy9zdGFnaW5nL3dmeC9k
+YXRhX3J4LmMgICAgIHwgIDc3ICstLS0KIGRyaXZlcnMvc3RhZ2luZy93ZngvZGF0YV90eC5jICAg
+ICB8IDMxNSArKystLS0tLS0tLS0tCiBkcml2ZXJzL3N0YWdpbmcvd2Z4L2RhdGFfdHguaCAgICAg
+fCAgMjUgLQogZHJpdmVycy9zdGFnaW5nL3dmeC9kZWJ1Zy5jICAgICAgIHwgICAyICstCiBkcml2
+ZXJzL3N0YWdpbmcvd2Z4L2hpZl9hcGlfY21kLmggfCAgIDMgKy0KIGRyaXZlcnMvc3RhZ2luZy93
+ZngvaGlmX2FwaV9taWIuaCB8ICAyMiArLQogZHJpdmVycy9zdGFnaW5nL3dmeC9oaWZfcnguYyAg
+ICAgIHwgIDIwICstCiBkcml2ZXJzL3N0YWdpbmcvd2Z4L2hpZl90eC5jICAgICAgfCAgNDkgKy0K
+IGRyaXZlcnMvc3RhZ2luZy93ZngvaGlmX3R4LmggICAgICB8ICAxMSArLQogZHJpdmVycy9zdGFn
+aW5nL3dmeC9oaWZfdHhfbWliLmggIHwgMTU3ICsrKysrLS0KIGRyaXZlcnMvc3RhZ2luZy93Zngv
+bWFpbi5jICAgICAgICB8ICAgNyArLQogZHJpdmVycy9zdGFnaW5nL3dmeC9xdWV1ZS5jICAgICAg
+IHwgMjA2ICsrKy0tLS0tLQogZHJpdmVycy9zdGFnaW5nL3dmeC9xdWV1ZS5oICAgICAgIHwgIDEw
+ICstCiBkcml2ZXJzL3N0YWdpbmcvd2Z4L3NjYW4uYyAgICAgICAgfCAgMTQgKy0KIGRyaXZlcnMv
+c3RhZ2luZy93Zngvc2Nhbi5oICAgICAgICB8ICAgNSArLQogZHJpdmVycy9zdGFnaW5nL3dmeC9z
+dGEuYyAgICAgICAgIHwgNzM1ICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogZHJpdmVy
+cy9zdGFnaW5nL3dmeC9zdGEuaCAgICAgICAgIHwgIDEzICstCiBkcml2ZXJzL3N0YWdpbmcvd2Z4
+L3dmeC5oICAgICAgICAgfCAgMjUgKy0KIDE5IGZpbGVzIGNoYW5nZWQsIDUyNiBpbnNlcnRpb25z
+KCspLCAxMTgyIGRlbGV0aW9ucygtKQoKLS0gCjIuMjUuMAoK
