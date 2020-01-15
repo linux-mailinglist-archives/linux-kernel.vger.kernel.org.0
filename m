@@ -2,115 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61ECF13B707
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C53613B6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgAOBgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 20:36:22 -0500
-Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:6077
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728874AbgAOBgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:36:21 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NktNuNMT3Ju/Gey53gyRigi8VkAqhHjzDGSQDuczQe8qnKzlqm9giYKyB7Tq43mIBKGAObRrhQAz5r1STkhH10GCzdsYgCcikrFbxIXUAg4X7vzYxMxp8RwCOKHPlBbRUt1f3d9VAeS78q5nyBloLkGK/S2mSleNgV/rrW03kxrkbpAQJRhCAh7myGYkPZaDw/f1S5w46peKEfBq9JacqKzFXt8WKExDqOgHdAzNkeug1vjKX9OUSlE7HeE9+PHjb0nlC0uq+2V/YYhoJw+HI7Ftfo4GiB02Qj3FlDNMRKpAem8/r5frTArDvNYebfd6U3er4vqw1Qs2Vc4nVZ6/Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z1nuxrESq7fkePB1iArpnxeF3UxPzHURQEWTSAgH+qM=;
- b=HhSTE8VgqYCAj8u60xTANR5uMaPurC6hBPvulGCNyu8P/l9yoV9Ouun7yt1liiey+M2q2pAP5rccim1H4UsJsiwa+J7mGwSPLp17w5bt/k8DtTfGLTyhXavdXOqi6/doMSOXSJntJSXQFdrjbdkorM1Mqv/qACnePRlaAQbnY9n2M/JUa3xU3b8zdr+rfg6Bg/btpmsvBYpFamBHJ4lqwHsjWIOcuODtKzG7DXm26z3QkZb1UYI7sx5Bp+EYpUM835TL3pInsBr+cOhAtBOzJj4Ve/MdSxTTg47aYOevn6LFIShtWoZaLC/RXjvQd7ylucEHaVYflOMrbquWD+k+VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z1nuxrESq7fkePB1iArpnxeF3UxPzHURQEWTSAgH+qM=;
- b=O/kIVoZSNfbi2++9KXkZ51J+/9iWCQL4ix3RRWlzvuYoUCgF67jP7vYhleAJi/CPUIMo5TswM+mdkrh3MrCGQrsTrYz2IRIBwfTQ38ZPYph7USTMMoJznUMwO4n2pXFm+ZnuOwjfEH9RhZ7RoxqOSnteBE/VIM6ZtBCZ8TKB30M=
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.139.151) by
- DB7PR04MB4329.eurprd04.prod.outlook.com (52.135.128.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.10; Wed, 15 Jan 2020 01:36:17 +0000
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::5cb4:81c8:1618:5ca]) by DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::5cb4:81c8:1618:5ca%7]) with mapi id 15.20.2644.015; Wed, 15 Jan 2020
- 01:36:17 +0000
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Will Deacon <will@kernel.org>
-CC:     Frank Li <frank.li@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] perf/imx_ddr: Fix cpu hotplug state cleanup
-Thread-Topic: [PATCH v2] perf/imx_ddr: Fix cpu hotplug state cleanup
-Thread-Index: AQHVyxlAKwPV4QR1v06yTm+gg+XVJqfq8ayg
-Date:   Wed, 15 Jan 2020 01:36:17 +0000
-Message-ID: <DB7PR04MB4618A6E19B905A0E19E3B316E6370@DB7PR04MB4618.eurprd04.prod.outlook.com>
-References: <ed960d212fb6bec383c7cdfc73362e5770bda9cd.1579033493.git.leonard.crestez@nxp.com>
-In-Reply-To: <ed960d212fb6bec383c7cdfc73362e5770bda9cd.1579033493.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiangqing.zhang@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 2bf563c8-29bd-40dd-7f98-08d7995b512b
-x-ms-traffictypediagnostic: DB7PR04MB4329:|DB7PR04MB4329:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB43293DBD400C135D563567E6E6370@DB7PR04MB4329.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 02830F0362
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(136003)(366004)(346002)(396003)(189003)(199004)(54906003)(71200400001)(2906002)(33656002)(4326008)(5660300002)(110136005)(66556008)(66476007)(81166006)(64756008)(86362001)(52536014)(66446008)(26005)(66946007)(81156014)(186003)(8936002)(9686003)(8676002)(478600001)(55016002)(53546011)(4744005)(316002)(76116006)(6506007)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4329;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ETefVQ4neMTBR0K5wnPFrnvLJgV4kgQRXb7wlKj6+iEVG904+fnE1GHhMAwqT6Lib8LwVrOk58GXn7NdCKLJQQX19voCMm2fp5AyFdzAwPM9YSQ5iA21cjVAF09YpRRUwMzHaBuUQcnM8EJ7YCWRGLkjYpWlu3VaAhcmvcF0EEEQMYQ9kD0GKvyU4H5wZ+DzzDdTmPhtOb2/RyO0g1S3OHcVqK7KQBGMGMTdFHVjvfYTqpHitwCEYWBNy6djumfyaPBPi4LNstPDei9vs5rG9Jw0gDglnyzhmgi3j7AYwUzt+Muav6V1IgEWMYt/uwsKo9/cfwO4h6CmGpeQuNVoBQ5IuTuEfZDeIJQVk/nA6wx90UguxZpyUCd9gM1rWd9Fc4LOvbF3WYfphmw82cp2HZO8pR2+Bv4zNE0GC94NKr45gHJleI6sUiOL61fT1PNr
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1728943AbgAOBbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 20:31:44 -0500
+Received: from mga09.intel.com ([134.134.136.24]:44895 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728844AbgAOBbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 20:31:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 17:31:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
+   d="scan'208";a="217951596"
+Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
+  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2020 17:31:41 -0800
+Date:   Wed, 15 Jan 2020 09:36:31 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        jmattson@google.com, yu.c.zhang@linux.intel.com,
+        alazar@bitdefender.com, edwin.zhai@intel.com
+Subject: Re: [RESEND PATCH v10 06/10] vmx: spp: Set up SPP paging table at
+ vmentry/vmexit
+Message-ID: <20200115013631.GA5975@local-michael-cet-test.sh.intel.com>
+References: <20200102061319.10077-1-weijiang.yang@intel.com>
+ <20200102061319.10077-7-weijiang.yang@intel.com>
+ <20200110180458.GG21485@linux.intel.com>
+ <20200113081050.GF12253@local-michael-cet-test.sh.intel.com>
+ <20200113173358.GC1175@linux.intel.com>
+ <20200114030820.GA4583@local-michael-cet-test.sh.intel.com>
+ <20200114185808.GI16784@linux.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2bf563c8-29bd-40dd-7f98-08d7995b512b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 01:36:17.7714
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9QHDZyF9P/Zhaeo0IYlRg/745lllQ8bvO83qOGT+cL+MqLlCDoL6rPx5i2kxkYzasSdH68MqgGHi6vC1pFmfew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4329
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114185808.GI16784@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IExlb25hcmQgQ3Jlc3RleiA8
-bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+DQo+IFNlbnQ6IDIwMjDE6jHUwjE1yNUgNDoyNg0KPiBU
-bzogSm9ha2ltIFpoYW5nIDxxaWFuZ3FpbmcuemhhbmdAbnhwLmNvbT47IFdpbGwgRGVhY29uIDx3
-aWxsQGtlcm5lbC5vcmc+DQo+IENjOiBGcmFuayBMaSA8ZnJhbmsubGlAbnhwLmNvbT47IE1hcmsg
-UnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+Ow0KPiBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6
-QGluZnJhZGVhZC5vcmc+OyBJbmdvIE1vbG5hciA8bWluZ29AcmVkaGF0LmNvbT47DQo+IEFybmFs
-ZG8gQ2FydmFsaG8gZGUgTWVsbyA8YWNtZUBrZXJuZWwub3JnPjsgQWxleGFuZGVyIFNoaXNoa2lu
-DQo+IDxhbGV4YW5kZXIuc2hpc2hraW5AbGludXguaW50ZWwuY29tPjsgSmlyaSBPbHNhIDxqb2xz
-YUByZWRoYXQuY29tPjsNCj4gTmFtaHl1bmcgS2ltIDxuYW1oeXVuZ0BrZXJuZWwub3JnPjsgbGlu
-dXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0ggdjJdIHBlcmYvaW14
-X2RkcjogRml4IGNwdSBob3RwbHVnIHN0YXRlIGNsZWFudXANCj4gDQo+IFRoaXMgZHJpdmVyIGFs
-bG9jYXRlcyBhIGR5bmFtaWMgY3B1IGhvdHBsdWcgc3RhdGUgYnV0IG5ldmVyIHJlbGVhc2VzIGl0
-Lg0KPiBJZiByZWxvYWRlZCBpbiBhIGxvb3AgaXQgd2lsbCBxdWlja2x5IHRyaWdnZXIgYSBXQVJO
-IG1lc3NhZ2U6DQo+IA0KPiAJIk5vIG1vcmUgZHluYW1pYyBzdGF0ZXMgYXZhaWxhYmxlIGZvciBD
-UFUgaG90cGx1ZyINCj4gDQo+IEZpeCBieSBjYWxsaW5nIGNwdWhwX3JlbW92ZV9tdWx0aV9zdGF0
-ZSBvbiByZW1vdmUgbGlrZSBzZXZlcmFsIG90aGVyIHBlcmYgcG11DQo+IGRyaXZlcnMuDQo+IA0K
-PiBBbHNvIGZpeCB0aGUgY2xlYW51cCBsb2dpYyBvbiBwcm9iZSBlcnJvciBwYXRoczogYWRkIHRo
-ZSBtaXNzaW5nDQo+IGNwdWhwX3JlbW92ZV9tdWx0aV9zdGF0ZSBjYWxsIGFuZCBwcm9wZXJseSBj
-aGVjayB0aGUgcmV0dXJuIHZhbHVlIGZyb20NCj4gY3B1aHBfc3RhdGVfYWRkX2luc3RhbnRfbm9j
-YWxscy4NCj4gDQo+IEZpeGVzOiA5YTY2ZDM2Y2M3YWMgKCJkcml2ZXJzL3BlcmY6IGlteF9kZHI6
-IEFkZCBERFIgcGVyZm9ybWFuY2UgY291bnRlcg0KPiBzdXBwb3J0IHRvIHBlcmYiKQ0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3RlekBueHAuY29tPg0KQWNr
-ZWQtYnk6IEpvYWtpbSBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+DQoNCkJlc3QgUmVn
-YXJkcywNCkpvYWtpbSBaaGFuZw0K
+On Tue, Jan 14, 2020 at 10:58:08AM -0800, Sean Christopherson wrote:
+> On Tue, Jan 14, 2020 at 11:08:20AM +0800, Yang Weijiang wrote:
+> > On Mon, Jan 13, 2020 at 09:33:58AM -0800, Sean Christopherson wrote:
+> > > On Mon, Jan 13, 2020 at 04:10:50PM +0800, Yang Weijiang wrote:
+> > > > On Fri, Jan 10, 2020 at 10:04:59AM -0800, Sean Christopherson wrote:
+> > > > > On Thu, Jan 02, 2020 at 02:13:15PM +0800, Yang Weijiang wrote:
+> > > > > > @@ -3585,7 +3602,30 @@ static bool fast_page_fault(struct kvm_vcpu *vcpu, gva_t gva, int level,
+> > > > > >  		if ((error_code & PFERR_WRITE_MASK) &&
+> > > > > >  		    spte_can_locklessly_be_made_writable(spte))
+> > > > > >  		{
+> > > > > > -			new_spte |= PT_WRITABLE_MASK;
+> > > > > > +			/*
+> > > > > > +			 * Record write protect fault caused by
+> > > > > > +			 * Sub-page Protection, let VMI decide
+> > > > > > +			 * the next step.
+> > > > > > +			 */
+> > > > > > +			if (spte & PT_SPP_MASK) {
+> > > > > > +				int len = kvm_x86_ops->get_inst_len(vcpu);
+> > > > > 
+> > > > > There's got to be a better way to handle SPP exits than adding a helper
+> > > > > to retrieve the instruction length.
+> > > > >
+> > > > The fault instruction was skipped by kvm_skip_emulated_instruction()
+> > > > before, but Paolo suggested leave the re-do or skip option to user-space
+> > > > to make it flexible for write protection or write tracking, so return
+> > > > length to user-space.
+> > > 
+> > > Sorry, my comment was unclear.  I have no objection to punting the fault
+> > > to userspace, it's the mechanics of how it's done that I dislike.
+> > > 
+> > > Specifically, (a) using run->exit_reason to propagate the SPP exit up the
+> > > stack, e.g. instead of modifying affected call stacks to play nice with
+> > > any exit to userspace, (b) assuming ->get_insn_len() will always be
+> > > accurate, e.g. see the various caveats in skip_emulated_instruction() for
+> > > both VMX and SVM, and (c) duplicating the state capture code in every
+> > > location that can encounter a SPP fault.
+> >
+> > How about calling skip_emulated_instruction() in KVM before exit to
+> 
+> I'm confused.  It sounds like KVM_EXIT_SPP provides the instruction length
+> because it skips an instruction before exiting to userspace.  But if KVM
+> is is emulating an instruction, it shouldn't be doing
+> {kvm_}skip_emulated_instruction(), e.g. if emulation fails due to a SPP
+> violation (returns KVM_EXIT_SPP) then GUEST_RIP should still point at the
+> exiting instruction.  Ditto for the fast_page_fault() case, RIP shouldn't
+> be advanced.
+There're two SPP usages, one is for write-protection the other is for
+write-tracking. If the first case is being used, KVM ignores the write
+, i.e., write to the memory is discarded. The second case is, if
+userspace is tracking memory write through SPP, then it's notified via
+KVM_EXIT_SPP but still let the write take effect by unprotecting the
+subpage, i.e., like generic 4KB access-tracking.
+
+In the first case, no necessity to re-try the faulted instruction,
+the second case, a re-try is necessary, so I would skip current instruction
+first, then if it's actually the second case, userspace should take action
+based on the instruction lenght returned.
+> 
+> What am I missing?
+>
+
+> > userspace, but still return the skipped instruction length, if userspace
+> > would like to re-execute the instruction, it can unwind RIP or simply
+> > rely on KVM?
+> 
+> I'm not convinced the instruction length needs to be provided to userspace
+> for this case.  Obviously it's not difficult to provide the info, I just
+> don't understand the value added by doing so.  As above, RIP shouldn't
+> need to be unwound, and blindly skipping an instruction seems like an odd
+> thing for a VMI engine to do.
+In the last review by Paolo, he mentioned SPP could be used in
+access-tracing manner, it's flexible to provide instruction length to
+userspace, so I removed instruction-skip in KVM but let userspace to
+decide.
+> 
+> > > What I'm hoping is that it's possible to modify the call stacks to
+> > > explicitly propagate an exit to userspace and/or SPP fault, and shove all
+> > > the state capture into a common location, e.g. handle_ept_violation().
+> > >
+> > The problem is, the state capture code in fast_page_fault() and
+> > emulation case share different causes, the former is generic occurence
+> > of SPP induced EPT violation, the latter is atually a "faked" one while
+> > detecting emulation instruction is writing some SPP protected area, so I
+> > seperated them.
+> 
+> Can we make SPP dependent on unrestricted guest so that the only entry
+> point to the emulator is through handle_ept_violation()?  And thus the
+> only path to triggering KVM_EXIT_SPP would also be through
+> handle_ept_violation(); (I think, might be forgetting a different emulation
+> path).
+> 
+I don't got your point, from my understanding, instruction emulation is
+used in several cases regarless of guest working mode. As long as any memory write happens
+e.g., string ops, port ops etc, SPP write-protection
+check should be applied to let the userspace capture the event.
+
+> >
+> > > Side topic, assuming the userspace VMI is going to be instrospecting the
+> > > faulting instruction, won't it decode the instruction?  I.e. calculate
+> > > the instruction length anyways?
