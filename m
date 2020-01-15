@@ -2,473 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5942113B738
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0860313B733
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:47:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbgAOBri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 20:47:38 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60099 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728880AbgAOBrh (ORCPT
+        id S1728931AbgAOBrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 20:47:06 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:35876 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbgAOBrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:47:37 -0500
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id CA04F21CDD;
-        Tue, 14 Jan 2020 20:47:35 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Tue, 14 Jan 2020 20:47:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Dt+uKJ
-        BD/G/0mk3DVFvNJjxqURDcyhN9lgjEFPvuBKo=; b=Zpu0iwOvf2Sigox1qSLmAR
-        8HBeDLnoliTIIC5vc7RxuaB7kGJSR5psL7MMtwdJzWYxhtr/MgK0rnLlt6wrBGJz
-        XGzyq8iOUTVIaDM5Do7wyTAYdjzmEAKYfUeJzXNJmacwlCixNgRegoEsvm5ytqvI
-        wLpCeaHc9bv9b5+MQrqUsFaseVaNl8O8b7NpqZ8zY2UhzM+VDhyHedutJYiXasBY
-        gA4FTUOyL38VaytYZFb2+8yxFq1YqhZ6QjDdH8xeuXX5EOE/XSkTp/Kc+htNxIaW
-        qbMdpqBMuEySS1WRTS93p0XWNOUMvCx6auP2os+XmCFEv35nGFaK5pN+1oN/mfgg
-        ==
-X-ME-Sender: <xms:Nm8eXkiScraceTBbMZgUHF0Eeb69MIRao1UinImGQY31SM_34W64xw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtddvgdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofggtghogfesthekredtredtjeenucfhrhhomhepofgrrhgvkhcu
-    ofgrrhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomhgrrhhmrghrvghksehinhhvih
-    hsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecuffhomhgrihhnpehinhhvihhsihgs
-    lhgvthhhihhnghhslhgrsgdrtghomhdpmhgrrhhkmhgrihhlrdhorhhgnecukfhppeelud
-    drieehrdefgedrfeefnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrghrmhgrrhgvkhes
-    ihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptd
-X-ME-Proxy: <xmx:Nm8eXhTuuYlcNkvoJoWN-PDMvQbPr_nRj7OeWafvHX2A57qOoTu7Vg>
-    <xmx:Nm8eXnFDK0QIGEcm7u9MutMOotulMbXpGY-58KaVZ9_HhxNrqxTZFg>
-    <xmx:Nm8eXplGLh6v1Ee2I1u1fonTH4EtSbxQrpV-ZXLm_wOEJCYIpQxWdg>
-    <xmx:N28eXmQOwmvS3PRYPjJVFmSILfS0QWYZ7E9kj1fxOPdUgbdqjuXuZA>
-Received: from localhost.localdomain (ip5b412221.dynamic.kabel-deutschland.de [91.65.34.33])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 81BD080059;
-        Tue, 14 Jan 2020 20:47:33 -0500 (EST)
-From:   =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>
-To:     xen-devel@lists.xenproject.org
-Cc:     =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>, Jan Beulich <jbeulich@suse.com>,
-        Simon Gaiser <simon@invisiblethingslab.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4] xen-pciback: optionally allow interrupt enable flag writes
-Date:   Wed, 15 Jan 2020 02:46:29 +0100
-Message-Id: <20200115014643.12749-1-marmarek@invisiblethingslab.com>
-X-Mailer: git-send-email 2.21.0
+        Tue, 14 Jan 2020 20:47:05 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 00F1kVaC029300, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 00F1kVaC029300
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jan 2020 09:46:31 +0800
+Received: from RTEXMB01.realtek.com.tw (172.21.6.94) by
+ RTITCAS11.realtek.com.tw (172.21.6.12) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Wed, 15 Jan 2020 09:46:31 +0800
+Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
+ RTEXMB01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 15 Jan 2020 09:46:30 +0800
+Received: from RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999]) by
+ RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999%6]) with mapi id
+ 15.01.1779.005; Wed, 15 Jan 2020 09:46:30 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to variable cond
+Thread-Topic: [PATCH] rtlwifi: rtl8188ee: remove redundant assignment to
+ variable cond
+Thread-Index: AQHVyvuETGjMBYS3AkaSVjAm0Ae8WKfqbyKA
+Date:   Wed, 15 Jan 2020 01:46:30 +0000
+Message-ID: <1579052789.2871.0.camel@realtek.com>
+References: <20200114165601.374597-1-colin.king@canonical.com>
+In-Reply-To: <20200114165601.374597-1-colin.king@canonical.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.111]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9FBABB5D96EED04FB83EA5521F5E7308@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: Invisible Things Lab
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QEMU running in a stubdom needs to be able to set INTX_DISABLE, and the
-MSI(-X) enable flags in the PCI config space. This adds an attribute
-'allow_interrupt_control' which when set for a PCI device allows writes
-to this flag(s). The toolstack will need to set this for stubdoms.
-When enabled, guest (stubdomain) will be allowed to set relevant enable
-flags, but only one at a time - i.e. it refuses to enable more than one
-of INTx, MSI, MSI-X at a time.
-
-This functionality is needed only for config space access done by device
-model (stubdomain) serving a HVM with the actual PCI device. It is not
-necessary and unsafe to enable direct access to those bits for PV domain
-with the device attached. For PV domains, there are separate protocol
-messages (XEN_PCI_OP_{enable,disable}_{msi,msix}) for this purpose.
-Those ops in addition to setting enable bits, also configure MSI(-X) in
-dom0 kernel - which is undesirable for PCI passthrough to HVM guests.
-
-This should not introduce any new security issues since a malicious
-guest (or stubdom) can already generate MSIs through other ways, see
-[1] page 8. Additionally, when qemu runs in dom0, it already have direct
-access to those bits.
-
-This is the second iteration of this feature. First was proposed as a
-direct Xen interface through a new hypercall, but ultimately it was
-rejected by the maintainer, because of mixing pciback and hypercalls for
-PCI config space access isn't a good design. Full discussion at [2].
-
-[1]: https://invisiblethingslab.com/resources/2011/Software%20Attacks%20on%20Intel%20VT-d.pdf
-[2]: https://xen.markmail.org/thread/smpgpws4umdzizze
-
-[part of the commit message and sysfs handling]
-Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
-[the rest]
-Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
----
-Changes in v4:
- - fix incorrect variable used
- - don't enable INTx when already enabled
-Changes in v3:
- - return bitmap (or negative error) from
-   xen_pcibk_get_interrupt_type(), to implicitly handle cases when
-   multiple interrupt types are already enabled - disallow enabling in
-   that case
- - add documentation
-Changes in v2:
- - introduce xen_pcibk_get_interrupt_type() to deduplicate current
-   INTx/MSI/MSI-X state check
- - fix checking MSI/MSI-X state on devices not supporting it
----
- .../ABI/testing/sysfs-driver-pciback          | 13 +++
- drivers/xen/xen-pciback/conf_space.c          | 36 ++++++++
- drivers/xen/xen-pciback/conf_space.h          |  7 ++
- .../xen/xen-pciback/conf_space_capability.c   | 88 +++++++++++++++++++
- drivers/xen/xen-pciback/conf_space_header.c   | 19 ++++
- drivers/xen/xen-pciback/pci_stub.c            | 66 ++++++++++++++
- drivers/xen/xen-pciback/pciback.h             |  1 +
- 7 files changed, 230 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-driver-pciback b/Documentation/ABI/testing/sysfs-driver-pciback
-index 6a733bfa37e6..566a11f2c12f 100644
---- a/Documentation/ABI/testing/sysfs-driver-pciback
-+++ b/Documentation/ABI/testing/sysfs-driver-pciback
-@@ -11,3 +11,16 @@ Description:
-                 #echo 00:19.0-E0:2:FF > /sys/bus/pci/drivers/pciback/quirks
-                 will allow the guest to read and write to the configuration
-                 register 0x0E.
-+
-+What:           /sys/bus/pci/drivers/pciback/allow_interrupt_control
-+Date:           Jan 2020
-+KernelVersion:  5.5
-+Contact:        xen-devel@lists.xenproject.org
-+Description:
-+                List of devices which can have interrupt control flag (INTx,
-+                MSI, MSI-X) set by a connected guest. It is meant to be set
-+                only when the guest is a stubdomain hosting device model (qemu)
-+                and the actual device is assigned to a HVM. It is not safe
-+                (similar to permissive attribute) to set for a devices assigned
-+                to a PV guest. The device is automatically removed from this
-+                list when the connected pcifront terminates.
-diff --git a/drivers/xen/xen-pciback/conf_space.c b/drivers/xen/xen-pciback/conf_space.c
-index 60111719b01f..7697001e8ffc 100644
---- a/drivers/xen/xen-pciback/conf_space.c
-+++ b/drivers/xen/xen-pciback/conf_space.c
-@@ -286,6 +286,42 @@ int xen_pcibk_config_write(struct pci_dev *dev, int offset, int size, u32 value)
- 	return xen_pcibios_err_to_errno(err);
- }
- 
-+int xen_pcibk_get_interrupt_type(struct pci_dev *dev)
-+{
-+	int err;
-+	u16 val;
-+	int ret = 0;
-+
-+	err = pci_read_config_word(dev, PCI_COMMAND, &val);
-+	if (err)
-+		return err;
-+	if (!(val & PCI_COMMAND_INTX_DISABLE))
-+		ret |= INTERRUPT_TYPE_INTX;
-+
-+	/* Do not trust dev->msi(x)_enabled here, as enabling could be done
-+	 * bypassing the pci_*msi* functions, by the qemu.
-+	 */
-+	if (dev->msi_cap) {
-+		err = pci_read_config_word(dev,
-+				dev->msi_cap + PCI_MSI_FLAGS,
-+				&val);
-+		if (err)
-+			return err;
-+		if (val & PCI_MSI_FLAGS_ENABLE)
-+			ret |= INTERRUPT_TYPE_MSI;
-+	}
-+	if (dev->msix_cap) {
-+		err = pci_read_config_word(dev,
-+				dev->msix_cap + PCI_MSIX_FLAGS,
-+				&val);
-+		if (err)
-+			return err;
-+		if (val & PCI_MSIX_FLAGS_ENABLE)
-+			ret |= INTERRUPT_TYPE_MSIX;
-+	}
-+	return ret;
-+}
-+
- void xen_pcibk_config_free_dyn_fields(struct pci_dev *dev)
- {
- 	struct xen_pcibk_dev_data *dev_data = pci_get_drvdata(dev);
-diff --git a/drivers/xen/xen-pciback/conf_space.h b/drivers/xen/xen-pciback/conf_space.h
-index 22db630717ea..6ba6aa26dcee 100644
---- a/drivers/xen/xen-pciback/conf_space.h
-+++ b/drivers/xen/xen-pciback/conf_space.h
-@@ -65,6 +65,11 @@ struct config_field_entry {
- 	void *data;
- };
- 
-+#define INTERRUPT_TYPE_NONE 0
-+#define INTERRUPT_TYPE_INTX 1
-+#define INTERRUPT_TYPE_MSI  2
-+#define INTERRUPT_TYPE_MSIX 4
-+
- extern bool xen_pcibk_permissive;
- 
- #define OFFSET(cfg_entry) ((cfg_entry)->base_offset+(cfg_entry)->field->offset)
-@@ -126,4 +131,6 @@ int xen_pcibk_config_capability_init(void);
- int xen_pcibk_config_header_add_fields(struct pci_dev *dev);
- int xen_pcibk_config_capability_add_fields(struct pci_dev *dev);
- 
-+int xen_pcibk_get_interrupt_type(struct pci_dev *dev);
-+
- #endif				/* __XEN_PCIBACK_CONF_SPACE_H__ */
-diff --git a/drivers/xen/xen-pciback/conf_space_capability.c b/drivers/xen/xen-pciback/conf_space_capability.c
-index e5694133ebe5..d3a846119974 100644
---- a/drivers/xen/xen-pciback/conf_space_capability.c
-+++ b/drivers/xen/xen-pciback/conf_space_capability.c
-@@ -189,6 +189,84 @@ static const struct config_field caplist_pm[] = {
- 	{}
- };
- 
-+static struct msi_msix_field_config {
-+	u16 enable_bit; /* bit for enabling MSI/MSI-X */
-+	int int_type; /* interrupt type for exclusiveness check */
-+} msi_field_config = {
-+	.enable_bit = PCI_MSI_FLAGS_ENABLE,
-+	.int_type = INTERRUPT_TYPE_MSI,
-+}, msix_field_config = {
-+	.enable_bit = PCI_MSIX_FLAGS_ENABLE,
-+	.int_type = INTERRUPT_TYPE_MSIX,
-+};
-+
-+static void *msi_field_init(struct pci_dev *dev, int offset)
-+{
-+	return &msi_field_config;
-+}
-+
-+static void *msix_field_init(struct pci_dev *dev, int offset)
-+{
-+	return &msix_field_config;
-+}
-+
-+static int msi_msix_flags_write(struct pci_dev *dev, int offset, u16 new_value,
-+				void *data)
-+{
-+	int err;
-+	u16 old_value;
-+	const struct msi_msix_field_config *field_config = data;
-+	const struct xen_pcibk_dev_data *dev_data = pci_get_drvdata(dev);
-+
-+	if (xen_pcibk_permissive || dev_data->permissive)
-+		goto write;
-+
-+	err = pci_read_config_word(dev, offset, &old_value);
-+	if (err)
-+		return err;
-+
-+	if (new_value == old_value)
-+		return 0;
-+
-+	if (!dev_data->allow_interrupt_control ||
-+	    (new_value ^ old_value) & ~field_config->enable_bit)
-+		return PCIBIOS_SET_FAILED;
-+
-+	if (new_value & field_config->enable_bit) {
-+		/* don't allow enabling together with other interrupt types */
-+		int int_type = xen_pcibk_get_interrupt_type(dev);
-+		if (int_type == INTERRUPT_TYPE_NONE ||
-+		    int_type == field_config->int_type)
-+			goto write;
-+		return PCIBIOS_SET_FAILED;
-+	}
-+
-+write:
-+	return pci_write_config_word(dev, offset, new_value);
-+}
-+
-+static const struct config_field caplist_msix[] = {
-+	{
-+		.offset    = PCI_MSIX_FLAGS,
-+		.size      = 2,
-+		.init      = msix_field_init,
-+		.u.w.read  = xen_pcibk_read_config_word,
-+		.u.w.write = msi_msix_flags_write,
-+	},
-+	{}
-+};
-+
-+static const struct config_field caplist_msi[] = {
-+	{
-+		.offset    = PCI_MSI_FLAGS,
-+		.size      = 2,
-+		.init      = msi_field_init,
-+		.u.w.read  = xen_pcibk_read_config_word,
-+		.u.w.write = msi_msix_flags_write,
-+	},
-+	{}
-+};
-+
- static struct xen_pcibk_config_capability xen_pcibk_config_capability_pm = {
- 	.capability = PCI_CAP_ID_PM,
- 	.fields = caplist_pm,
-@@ -197,11 +275,21 @@ static struct xen_pcibk_config_capability xen_pcibk_config_capability_vpd = {
- 	.capability = PCI_CAP_ID_VPD,
- 	.fields = caplist_vpd,
- };
-+static struct xen_pcibk_config_capability xen_pcibk_config_capability_msi = {
-+	.capability = PCI_CAP_ID_MSI,
-+	.fields = caplist_msi,
-+};
-+static struct xen_pcibk_config_capability xen_pcibk_config_capability_msix = {
-+	.capability = PCI_CAP_ID_MSIX,
-+	.fields = caplist_msix,
-+};
- 
- int xen_pcibk_config_capability_init(void)
- {
- 	register_capability(&xen_pcibk_config_capability_vpd);
- 	register_capability(&xen_pcibk_config_capability_pm);
-+	register_capability(&xen_pcibk_config_capability_msi);
-+	register_capability(&xen_pcibk_config_capability_msix);
- 
- 	return 0;
- }
-diff --git a/drivers/xen/xen-pciback/conf_space_header.c b/drivers/xen/xen-pciback/conf_space_header.c
-index 10ae24b5a76e..fb4fccb4aecc 100644
---- a/drivers/xen/xen-pciback/conf_space_header.c
-+++ b/drivers/xen/xen-pciback/conf_space_header.c
-@@ -117,6 +117,25 @@ static int command_write(struct pci_dev *dev, int offset, u16 value, void *data)
- 		pci_clear_mwi(dev);
- 	}
- 
-+	if (dev_data && dev_data->allow_interrupt_control) {
-+		if ((cmd->val ^ value) & PCI_COMMAND_INTX_DISABLE) {
-+			if (value & PCI_COMMAND_INTX_DISABLE) {
-+				pci_intx(dev, 0);
-+			} else {
-+				/* Do not allow enabling INTx together with MSI or MSI-X. */
-+				switch (xen_pcibk_get_interrupt_type(dev)) {
-+				case INTERRUPT_TYPE_NONE:
-+					pci_intx(dev, 1);
-+					break;
-+				case INTERRUPT_TYPE_INTX:
-+					break;
-+				default:
-+					return PCIBIOS_SET_FAILED;
-+				}
-+			}
-+		}
-+	}
-+
- 	cmd->val = value;
- 
- 	if (!xen_pcibk_permissive && (!dev_data || !dev_data->permissive))
-diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-index 097410a7cdb7..7af93d65ed51 100644
---- a/drivers/xen/xen-pciback/pci_stub.c
-+++ b/drivers/xen/xen-pciback/pci_stub.c
-@@ -304,6 +304,8 @@ void pcistub_put_pci_dev(struct pci_dev *dev)
- 	xen_pcibk_config_reset_dev(dev);
- 	xen_pcibk_config_free_dyn_fields(dev);
- 
-+	dev_data->allow_interrupt_control = 0;
-+
- 	xen_unregister_device_domain_owner(dev);
- 
- 	spin_lock_irqsave(&found_psdev->lock, flags);
-@@ -1431,6 +1433,65 @@ static ssize_t permissive_show(struct device_driver *drv, char *buf)
- }
- static DRIVER_ATTR_RW(permissive);
- 
-+static ssize_t allow_interrupt_control_store(struct device_driver *drv,
-+					     const char *buf, size_t count)
-+{
-+	int domain, bus, slot, func;
-+	int err;
-+	struct pcistub_device *psdev;
-+	struct xen_pcibk_dev_data *dev_data;
-+
-+	err = str_to_slot(buf, &domain, &bus, &slot, &func);
-+	if (err)
-+		goto out;
-+
-+	psdev = pcistub_device_find(domain, bus, slot, func);
-+	if (!psdev) {
-+		err = -ENODEV;
-+		goto out;
-+	}
-+
-+	dev_data = pci_get_drvdata(psdev->dev);
-+	/* the driver data for a device should never be null at this point */
-+	if (!dev_data) {
-+		err = -ENXIO;
-+		goto release;
-+	}
-+	dev_data->allow_interrupt_control = 1;
-+release:
-+	pcistub_device_put(psdev);
-+out:
-+	if (!err)
-+		err = count;
-+	return err;
-+}
-+
-+static ssize_t allow_interrupt_control_show(struct device_driver *drv,
-+					    char *buf)
-+{
-+	struct pcistub_device *psdev;
-+	struct xen_pcibk_dev_data *dev_data;
-+	size_t count = 0;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pcistub_devices_lock, flags);
-+	list_for_each_entry(psdev, &pcistub_devices, dev_list) {
-+		if (count >= PAGE_SIZE)
-+			break;
-+		if (!psdev->dev)
-+			continue;
-+		dev_data = pci_get_drvdata(psdev->dev);
-+		if (!dev_data || !dev_data->allow_interrupt_control)
-+			continue;
-+		count +=
-+		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
-+			      pci_name(psdev->dev));
-+	}
-+	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
-+	return count;
-+}
-+static DRIVER_ATTR_RW(allow_interrupt_control);
-+
- static void pcistub_exit(void)
- {
- 	driver_remove_file(&xen_pcibk_pci_driver.driver, &driver_attr_new_slot);
-@@ -1440,6 +1501,8 @@ static void pcistub_exit(void)
- 	driver_remove_file(&xen_pcibk_pci_driver.driver, &driver_attr_quirks);
- 	driver_remove_file(&xen_pcibk_pci_driver.driver,
- 			   &driver_attr_permissive);
-+	driver_remove_file(&xen_pcibk_pci_driver.driver,
-+			   &driver_attr_allow_interrupt_control);
- 	driver_remove_file(&xen_pcibk_pci_driver.driver,
- 			   &driver_attr_irq_handlers);
- 	driver_remove_file(&xen_pcibk_pci_driver.driver,
-@@ -1530,6 +1593,9 @@ static int __init pcistub_init(void)
- 	if (!err)
- 		err = driver_create_file(&xen_pcibk_pci_driver.driver,
- 					 &driver_attr_permissive);
-+	if (!err)
-+		err = driver_create_file(&xen_pcibk_pci_driver.driver,
-+					 &driver_attr_allow_interrupt_control);
- 
- 	if (!err)
- 		err = driver_create_file(&xen_pcibk_pci_driver.driver,
-diff --git a/drivers/xen/xen-pciback/pciback.h b/drivers/xen/xen-pciback/pciback.h
-index 263c059bff90..ce1077e32466 100644
---- a/drivers/xen/xen-pciback/pciback.h
-+++ b/drivers/xen/xen-pciback/pciback.h
-@@ -45,6 +45,7 @@ struct xen_pcibk_dev_data {
- 	struct list_head config_fields;
- 	struct pci_saved_state *pci_saved_state;
- 	unsigned int permissive:1;
-+	unsigned int allow_interrupt_control:1;
- 	unsigned int warned_on_write:1;
- 	unsigned int enable_intx:1;
- 	unsigned int isr_on:1; /* Whether the IRQ handler is installed. */
--- 
-2.21.0
-
+T24gVHVlLCAyMDIwLTAxLTE0IGF0IDE2OjU2ICswMDAwLCBDb2xpbiBLaW5nIHdyb3RlOg0KPiBG
+cm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiANCj4gVmFy
+aWFibGUgY29uZCBpcyBiZWluZyBhc3NpZ25lZCB3aXRoIGEgdmFsdWUgdGhhdCBpcyBuZXZlcg0K
+PiByZWFkLCBpdCBpcyBhc3NpZ25lZCBhIG5ldyB2YWx1ZSBsYXRlciBvbi4gVGhlIGFzc2lnbm1l
+bnQgaXMNCj4gcmVkdW5kYW50IGFuZCBjYW4gYmUgcmVtb3ZlZC4NCj4gDQo+IEFkZHJlc3Nlcy1D
+b3Zlcml0eTogKCJVbnVzZWQgdmFsdWUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2lu
+ZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29tPg0KDQpBY2tlZC1ieTogUGluZy1LZSBTaGloIDxw
+a3NoaWhAcmVhbHRlay5jb20+DQoNClRoYW5rIHlvdSEhDQoNCj4gLS0tDQo+IMKgZHJpdmVycy9u
+ZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9waHkuYyB8IDIgKy0NCj4gwqAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE4OGVlL3Bo
+eS5jDQo+IGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9w
+aHkuYw0KPiBpbmRleCA1Y2E5MDBmOTdkNjYuLmQxMzk4M2VjMDlhZCAxMDA2NDQNCj4gLS0tIGEv
+ZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgxODhlZS9waHkuYw0KPiAr
+KysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE4OGVlL3BoeS5j
+DQo+IEBAIC0yNjQsNyArMjY0LDcgQEAgc3RhdGljIGJvb2wgX3J0bDg4ZV9jaGVja19jb25kaXRp
+b24oc3RydWN0IGllZWU4MDIxMV9odw0KPiAqaHcsDQo+IMKgCXUzMiBfYm9hcmQgPSBydGxlZnVz
+ZS0+Ym9hcmRfdHlwZTsgLypuZWVkIGVmdXNlIGRlZmluZSovDQo+IMKgCXUzMiBfaW50ZXJmYWNl
+ID0gcnRsaGFsLT5pbnRlcmZhY2U7DQo+IMKgCXUzMiBfcGxhdGZvcm0gPSAweDA4Oy8qU3VwcG9y
+dFBsYXRmb3JtICovDQo+IC0JdTMyIGNvbmQgPSBjb25kaXRpb247DQo+ICsJdTMyIGNvbmQ7DQo+
+IMKgDQo+IMKgCWlmIChjb25kaXRpb24gPT0gMHhDRENEQ0RDRCkNCj4gwqAJCXJldHVybiB0cnVl
+Ow0K
