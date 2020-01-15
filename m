@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6A013CF53
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B088013CF57
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbgAOVnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 16:43:40 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45639 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729342AbgAOVnh (ORCPT
+        id S1730242AbgAOVnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 16:43:49 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26909 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729821AbgAOVni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:43:37 -0500
+        Wed, 15 Jan 2020 16:43:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579124616;
+        s=mimecast20190719; t=1579124617;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=8FMSdmNI02UJe5G/CRhEBPW79yJpej6yWEShxcGB8ik=;
-        b=FbcsMRnzb+PeP3Odk5OQAugQXEcPHv3+SVs1lZAbkG87Um+v+m67Ubzsb5Up77/vpTrd8y
-        he6jQ+wVYsXpxRCT9hyi/9KrsX/CimBPSySrdprCK/v6XdYLYIJoaAjEy0xCXghssSGANn
-        OkfmrKBX20mwmVQ3Q/xQfaXbn2/lLMI=
+        bh=IcawgmeP/9SOelURBigSUicEKZ7h4SFbJprPzNN3llY=;
+        b=atMEKnUeqovHIIbp9/aHRJ2ksvuBlrRezaFqVtf+5sWbh+aXlAbyRZX+0uAGy3+M63A5rw
+        3GpECgyQDSAUgFRaYr/MG0Y9YxfvHtjRQ/ScrbAFeEl8/7M+KFLwSaGhJUzNngn67PJ2cC
+        S6J1v6ZyQPOJpFTTJPFqshoTVfmUX2o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-2-zNZZaQtuOyGp3TwZv8kkFg-1; Wed, 15 Jan 2020 16:43:33 -0500
-X-MC-Unique: zNZZaQtuOyGp3TwZv8kkFg-1
+ us-mta-380-jLNrbDiXNxGqKIVUbKCaEg-1; Wed, 15 Jan 2020 16:43:33 -0500
+X-MC-Unique: jLNrbDiXNxGqKIVUbKCaEg-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAEE2107ACC4;
-        Wed, 15 Jan 2020 21:43:31 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A52F0800D5B;
+        Wed, 15 Jan 2020 21:43:32 +0000 (UTC)
 Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 230175C553;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EEF4D5C3F8;
         Wed, 15 Jan 2020 21:43:31 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -38,9 +38,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will.deacon@arm.com>
 Cc:     linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v3 1/8] locking/lockdep: Decrement irq context counters when removing lock chain
-Date:   Wed, 15 Jan 2020 16:43:06 -0500
-Message-Id: <20200115214313.13253-2-longman@redhat.com>
+Subject: [PATCH v3 2/8] locking/lockdep: Display irq_context names in /proc/lockdep_chains
+Date:   Wed, 15 Jan 2020 16:43:07 -0500
+Message-Id: <20200115214313.13253-3-longman@redhat.com>
 In-Reply-To: <20200115214313.13253-1-longman@redhat.com>
 References: <20200115214313.13253-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
@@ -49,122 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are currently three counters to track the irq context of a lock
-chain - nr_hardirq_chains, nr_softirq_chains and nr_process_chains.
-They are incremented when a new lock chain is added, but they are
-not decremented when a lock chain is removed. That causes some of the
-statistic counts reported by /proc/lockdep_stats to be incorrect.
+Currently, the irq_context field of a lock chains displayed in
+/proc/lockdep_chains is just a number. It is likely that many people
+may not know what a non-zero number means. To make the information more
+useful, print the actual irq names ("softirq" and "hardirq") instead.
 
-Fix that by decrementing the right counter when a lock chain is removed.
-
-Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/locking/lockdep.c           | 36 +++++++++++++++++++++---------
- kernel/locking/lockdep_internals.h |  6 +++++
- 2 files changed, 32 insertions(+), 10 deletions(-)
+ kernel/locking/lockdep_proc.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 32282e7112d3..b20fa6236b2a 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2299,16 +2299,24 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
- 	return 0;
- }
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index dadb7b7fba37..5e64a6ec09c2 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -128,6 +128,13 @@ static int lc_show(struct seq_file *m, void *v)
+ 	struct lock_chain *chain = v;
+ 	struct lock_class *class;
+ 	int i;
++	static const char * const irq_strs[] = {
++		[0]			     = "0",
++		[LOCK_CHAIN_HARDIRQ_CONTEXT] = "hardirq",
++		[LOCK_CHAIN_SOFTIRQ_CONTEXT] = "softirq",
++		[LOCK_CHAIN_SOFTIRQ_CONTEXT|
++		 LOCK_CHAIN_HARDIRQ_CONTEXT] = "hardirq|softirq",
++	};
  
--static void inc_chains(void)
-+static void inc_chains(int irq_context)
- {
--	if (current->hardirq_context)
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
- 		nr_hardirq_chains++;
--	else {
--		if (current->softirq_context)
--			nr_softirq_chains++;
--		else
--			nr_process_chains++;
--	}
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains++;
-+	else
-+		nr_process_chains++;
-+}
-+
-+static void dec_chains(int irq_context)
-+{
-+	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
-+		nr_hardirq_chains--;
-+	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
-+		nr_softirq_chains--;
-+	else
-+		nr_process_chains--;
- }
- 
- #else
-@@ -2324,6 +2332,10 @@ static inline void inc_chains(void)
- 	nr_process_chains++;
- }
- 
-+static void dec_chains(int irq_context)
-+{
-+	nr_process_chains--;
-+}
- #endif /* CONFIG_TRACE_IRQFLAGS */
- 
- static void
-@@ -2844,7 +2856,7 @@ static inline int add_chain_cache(struct task_struct *curr,
- 
- 	hlist_add_head_rcu(&chain->entry, hash_head);
- 	debug_atomic_inc(chain_lookup_misses);
--	inc_chains();
-+	inc_chains(chain->irq_context);
- 
- 	return 1;
- }
-@@ -3597,7 +3609,8 @@ mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- 
- static inline unsigned int task_irq_context(struct task_struct *task)
- {
--	return 2 * !!task->hardirq_context + !!task->softirq_context;
-+	return LOCK_CHAIN_HARDIRQ_CONTEXT * !!task->hardirq_context +
-+	       LOCK_CHAIN_SOFTIRQ_CONTEXT * !!task->softirq_context;
- }
- 
- static int separate_irq_context(struct task_struct *curr,
-@@ -4799,6 +4812,8 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
- 		return;
- 	/* Overwrite the chain key for concurrent RCU readers. */
- 	WRITE_ONCE(chain->chain_key, chain_key);
-+	dec_chains(chain->irq_context);
-+
- 	/*
- 	 * Note: calling hlist_del_rcu() from inside a
- 	 * hlist_for_each_entry_rcu() loop is safe.
-@@ -4820,6 +4835,7 @@ static void remove_class_from_lock_chain(struct pending_free *pf,
+ 	if (v == SEQ_START_TOKEN) {
+ 		if (nr_chain_hlocks > MAX_LOCKDEP_CHAIN_HLOCKS)
+@@ -136,7 +143,7 @@ static int lc_show(struct seq_file *m, void *v)
+ 		return 0;
  	}
- 	*new_chain = *chain;
- 	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
-+	inc_chains(new_chain->irq_context);
- #endif
- }
  
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 18d85aebbb57..53500a1dac58 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -98,6 +98,12 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
+-	seq_printf(m, "irq_context: %d\n", chain->irq_context);
++	seq_printf(m, "irq_context: %s\n", irq_strs[chain->irq_context]);
  
- #define MAX_LOCKDEP_CHAINS_BITS	16
- 
-+/*
-+ * Bit definitions for lock_chain.irq_context
-+ */
-+#define LOCK_CHAIN_SOFTIRQ_CONTEXT	(1 << 0)
-+#define LOCK_CHAIN_HARDIRQ_CONTEXT	(1 << 1)
-+
- /*
-  * Stack-trace: tightly packed array of stack backtrace
-  * addresses. Protected by the hash_lock.
+ 	for (i = 0; i < chain->depth; i++) {
+ 		class = lock_chain_get_class(chain, i);
 -- 
 2.18.1
 
