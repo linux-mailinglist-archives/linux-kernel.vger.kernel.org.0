@@ -2,121 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F06413C4D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A051913C4DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAOOD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:03:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726071AbgAOOD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:03:27 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729126AbgAOOFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:05:14 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:21808 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726165AbgAOOFO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:05:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579097113;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1n/T1HYTx3Wj9p4CFNGnVwbEfYR6X36ZeaddeQ07/js=;
+        b=HMSZ20cjbwTc3rLRP+/78QaP53VNmf8ooFNZz4zPqut3OhtLBW/Xd8hvO58t1xDKY+J8zn
+        Nb/OzM14jtOf9jdeNC7aTVkbVIgY7ghGv5XrFzYDXlSsVn7NH9XU3Pyb56nMz15tcSeFlC
+        NCjpC2+x6uiPjKKUAgBGC64E44mFdfs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-d9xR5pR-NzCKmch7BK0_fA-1; Wed, 15 Jan 2020 09:05:09 -0500
+X-MC-Unique: d9xR5pR-NzCKmch7BK0_fA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B82C5222C3;
-        Wed, 15 Jan 2020 14:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579097006;
-        bh=JirmHW6SrM9Hhd8eR0okNq08LwBENG1og0f1buqr/1Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fQaWytZ7KsNB89iwcVBDmdEt+rfMqlGGqtUg+R8Ieh2y8PCK5qUynF6pqnwoxIMbT
-         kLYBAQ7i9EurH/JL1cvPviuEvCTxl9ZCL9wzODI8sLMvDUbVqUrdV4T4MV9MbsmmmR
-         9e1OyDH3nKRPFogqMEy0l+gAhzniSWMYDe4q+wQ0=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1irjGW-0000US-UF; Wed, 15 Jan 2020 14:03:25 +0000
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 867D010AF3DA;
+        Wed, 15 Jan 2020 14:05:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF8221084200;
+        Wed, 15 Jan 2020 14:05:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com>
+References: <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com> <4467.1579020509@warthog.procyon.org.uk>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, hch@lst.de, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 15 Jan 2020 14:03:24 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 10/18] arm64: KVM/debug: use EL1&0 stage 1 translation
- regime
-In-Reply-To: <20200113163138.GP42593@e119886-lin.cambridge.arm.com>
-References: <20191220143025.33853-1-andrew.murray@arm.com>
- <20191220143025.33853-11-andrew.murray@arm.com>
- <86d0cgir74.wl-maz@kernel.org>
- <20200113163138.GP42593@e119886-lin.cambridge.arm.com>
-Message-ID: <5f141f153ceec55b4428d9c2d2dd9064@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.8
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: andrew.murray@arm.com, catalin.marinas@arm.com, will@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, sudeep.holla@arm.com, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <23357.1579097103.1@warthog.procyon.org.uk>
+Date:   Wed, 15 Jan 2020 14:05:03 +0000
+Message-ID: <23358.1579097103@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-13 16:31, Andrew Murray wrote:
-> On Sun, Dec 22, 2019 at 10:34:55AM +0000, Marc Zyngier wrote:
->> On Fri, 20 Dec 2019 14:30:17 +0000,
->> Andrew Murray <andrew.murray@arm.com> wrote:
->> >
->> > From: Sudeep Holla <sudeep.holla@arm.com>
->> >
->> > Now that we have all the save/restore mechanism in place, lets enable
->> > the translation regime used by buffer from EL2 stage 1 to EL1 stage 1
->> > on VHE systems.
->> >
->> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> > [ Reword commit, don't trap to EL2 ]
->> 
->> Not trapping to EL2 for the case where we don't allow SPE in the
->> guest is not acceptable.
->> 
->> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
->> > ---
->> >  arch/arm64/kvm/hyp/switch.c | 2 ++
->> >  1 file changed, 2 insertions(+)
->> >
->> > diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
->> > index 67b7c160f65b..6c153b79829b 100644
->> > --- a/arch/arm64/kvm/hyp/switch.c
->> > +++ b/arch/arm64/kvm/hyp/switch.c
->> > @@ -100,6 +100,7 @@ static void activate_traps_vhe(struct kvm_vcpu *vcpu)
->> >
->> >  	write_sysreg(val, cpacr_el1);
->> >
->> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
->> >  	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
->> >  }
->> >  NOKPROBE_SYMBOL(activate_traps_vhe);
->> > @@ -117,6 +118,7 @@ static void __hyp_text __activate_traps_nvhe(struct kvm_vcpu *vcpu)
->> >  		__activate_traps_fpsimd32(vcpu);
->> >  	}
->> >
->> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
->> 
->> There is a _MASK macro that can replace this '3', and is in keeping
->> with the rest of the code.
->> 
->> It still remains that it looks like the wrong place to do this, and
->> vcpu_load seems much better. Why should you write to mdcr_el2 on each
->> entry to the guest, since you know whether it has SPE enabled at the
->> point where it gets scheduled?
+Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
+
+> At least for btrfs, only unaligned extents get padding zeros.
+
+What is "unaligned" defined as?  The revised cachefiles reads and writes 256k
+blocks, except for the last - which gets rounded up to the nearest page (which
+I'm assuming will be some multiple of the direct-I/O granularity).  The actual
+size of the data is noted in an xattr so I don't need to rely on the size of
+the cachefile.
+
+> (c): A multi-device fs (btrfs) can have their own logical address mapping.
+> Meaning the bytenr returned makes no sense to end user, unless used for
+> that fs specific address space.
+
+For the purpose of cachefiles, I don't care where it is, only whether or not
+it exists.  Further, if a DIO read will return a short read when it hits a
+hole, then I only really care about detecting whether the first byte exists in
+the block.
+
+It might be cheaper, I suppose, to initiate the read and have it fail
+immediately if no data at all is present in the block than to do a separate
+ask of the filesystem.
+
+> You won't like this case either.
+> (d): Compressed extents
+> One compressed extent can represents more data than its on-disk size.
+
+Same answer as above.  Btw, since I'm using DIO reads and writes, would these
+get compressed?
+
+> And even more bad news:
+> (e): write time dedupe
+> Although no fs known has implemented it yet (btrfs used to try to
+> support that, and I guess XFS could do it in theory too), you won't
+> known when a fs could get such "awesome" feature.
+
+I'm not sure this isn't the same answer as above either, except if this
+results in parts of the file being "filled in" with blocks of zeros that I
+haven't supplied.  Couldn't this be disabled on an inode-by-inode basis, say
+with an ioctl?
+
+> > Without being able to trust the filesystem to tell me accurately what I've
+> > written into it, I have to use some other mechanism.  Currently, I've
+> > switched to storing a map in an xattr with 1 bit per 256k block, but that
+> > gets hard to use if the file grows particularly large and also has
+> > integrity consequences - though those are hopefully limited as I'm now
+> > using DIO to store data into the cache.
 > 
-> For nVHE, the only reason we'd want to change E2PB on entry/exit of 
-> guest
-> would be if the host is also using SPE. If the host is using SPE whilst
-> the vcpu is 'loaded' but we're not in the guest, then host SPE could 
-> raise
-> an interrupt - we need the E2PB bits to allow access from EL1 (host).
+> Would you like to explain why you want to know such fs internal info?
 
-My comment was of course for VHE. nVHE hardly makes use of load/put at 
-all,
-for obvious reasons.
+As Andreas pointed out, fscache+cachefiles is used to cache data locally for
+network filesystems (9p, afs, ceph, cifs, nfs).  Cached files may be sparse,
+with unreferenced blocks not currently stored in the cache.
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+I'm attempting to move to a model where I don't use bmap and don't monitor
+bit-waitqueues to find out when page flags flip on backing files so that I can
+copy data out, but rather use DIO directly to/from the network filesystem
+inode pages.
+
+Since the backing filesystem has to keep track of whether data is stored in a
+file, it would seem a shame to have to maintain a parallel copy on the same
+medium, with the coherency issues that entail.
+
+David
+
+
