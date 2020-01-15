@@ -2,102 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8BF913BEB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 050C313BE9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:37:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbgAOLmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 06:42:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41998 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729900AbgAOLmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:42:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 641C1AEEE;
-        Wed, 15 Jan 2020 11:42:08 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9817D1E0CBC; Wed, 15 Jan 2020 12:34:55 +0100 (CET)
-Date:   Wed, 15 Jan 2020 12:34:55 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
-Message-ID: <20200115113455.GA2595@quack2.suse.cz>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-10-ira.weiny@intel.com>
- <20200113222212.GO8247@magnolia>
- <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
- <20200114013004.GU8247@magnolia>
- <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
+        id S1730003AbgAOLhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 06:37:18 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:46866 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729892AbgAOLhS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:37:18 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1irgyx-0002fw-Ud; Wed, 15 Jan 2020 12:37:08 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8546E1C086F;
+        Wed, 15 Jan 2020 12:37:07 +0100 (CET)
+Date:   Wed, 15 Jan 2020 11:37:07 -0000
+From:   "tip-bot2 for Chuansheng Liu" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/urgent] x86/mce/therm_throt: Do not access uninitialized therm_work
+Cc:     Chuansheng Liu <chuansheng.liu@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200107004116.59353-1-chuansheng.liu@intel.com>
+References: <20200107004116.59353-1-chuansheng.liu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <157908822728.396.5161866899997303064.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 14-01-20 09:53:54, Ira Weiny wrote:
-> On Mon, Jan 13, 2020 at 05:30:04PM -0800, Darrick J. Wong wrote:
-> > > > > +		error = -EBUSY;
-> > > > > +		goto out_unlock;
-> > > > > +	}
-> > > > > +
-> > > > >  	error = filemap_write_and_wait(inode->i_mapping);
-> > > > >  	if (error)
-> > > > >  		goto out_unlock;
-> > > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > > > index 631f11d6246e..6e7dc626b657 100644
-> > > > > --- a/include/linux/fs.h
-> > > > > +++ b/include/linux/fs.h
-> > > > > @@ -740,6 +740,7 @@ struct inode {
-> > > > >  #endif
-> > > > >  
-> > > > >  	void			*i_private; /* fs or device private pointer */
-> > > > > +	atomic64_t               i_mapped;
-> > > > 
-> > > > I would have expected to find this in struct address_space since the
-> > > > mapping count is a function of the address space, right?
-> > > 
-> > > I suppose but the only external call (above) would be passing an inode.  So to
-> > > me it seemed better here.
-> > 
-> > But the number of memory mappings reflects the state of the address
-> > space, not the inode.  Or maybe put another way, if I were an mm
-> > developer I would not expect to look in struct inode for mm state.
-> 
-> This is a good point...
-> 
-> > 
-> > static inline bool inode_has_mappings(struct inode *inode)
-> > {
-> > 	return atomic64_read(&inode->i_mapping->mapcount) > 0;
-> > }
-> > 
-> > OTOH if there exist other mm developers who /do/ find that storing the
-> > mmap count in struct inode is more logical, please let me know. :)
-> 
-> ...  My thinking was that the number of mappings does not matters to the mm
-> system...  However, I'm starting to think you are correct...  ;-)
-> 
-> I've made a note of it and we will see what others think.
+The following commit has been merged into the ras/urgent branch of tip:
 
-Well, more importantly mapping != inode. There can be multiple inodes
-pointing to the same mapping (struct address_space) as is the case for
-example for block devices. So this counter definitely belongs into struct
-address_space.
+Commit-ID:     978370956d2046b19313659ce65ed12d5b996626
+Gitweb:        https://git.kernel.org/tip/978370956d2046b19313659ce65ed12d5b996626
+Author:        Chuansheng Liu <chuansheng.liu@intel.com>
+AuthorDate:    Tue, 07 Jan 2020 00:41:16 
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Wed, 15 Jan 2020 11:31:33 +01:00
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+x86/mce/therm_throt: Do not access uninitialized therm_work
+
+It is relatively easy to trigger the following boot splat on an Ice Lake
+client platform. The call stack is like:
+
+  kernel BUG at kernel/timer/timer.c:1152!
+
+  Call Trace:
+  __queue_delayed_work
+  queue_delayed_work_on
+  therm_throt_process
+  intel_thermal_interrupt
+  ...
+
+The reason is that a CPU's thermal interrupt is enabled prior to
+executing its hotplug onlining callback which will initialize the
+throttling workqueues.
+
+Such a race can lead to therm_throt_process() accessing an uninitialized
+therm_work, leading to the above BUG at a very early bootup stage.
+
+Therefore, unmask the thermal interrupt vector only after having setup
+the workqueues completely.
+
+ [ bp: Heavily massage commit message and correct comment formatting. ]
+
+Fixes: f6656208f04e ("x86/mce/therm_throt: Optimize notifications of thermal throttle")
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20200107004116.59353-1-chuansheng.liu@intel.com
+---
+ arch/x86/kernel/cpu/mce/therm_throt.c |  9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
+index b38010b..6c3e1c9 100644
+--- a/arch/x86/kernel/cpu/mce/therm_throt.c
++++ b/arch/x86/kernel/cpu/mce/therm_throt.c
+@@ -467,6 +467,7 @@ static int thermal_throttle_online(unsigned int cpu)
+ {
+ 	struct thermal_state *state = &per_cpu(thermal_state, cpu);
+ 	struct device *dev = get_cpu_device(cpu);
++	u32 l;
+ 
+ 	state->package_throttle.level = PACKAGE_LEVEL;
+ 	state->core_throttle.level = CORE_LEVEL;
+@@ -474,6 +475,10 @@ static int thermal_throttle_online(unsigned int cpu)
+ 	INIT_DELAYED_WORK(&state->package_throttle.therm_work, throttle_active_work);
+ 	INIT_DELAYED_WORK(&state->core_throttle.therm_work, throttle_active_work);
+ 
++	/* Unmask the thermal vector after the above workqueues are initialized. */
++	l = apic_read(APIC_LVTTHMR);
++	apic_write(APIC_LVTTHMR, l & ~APIC_LVT_MASKED);
++
+ 	return thermal_throttle_add_dev(dev, cpu);
+ }
+ 
+@@ -722,10 +727,6 @@ void intel_init_thermal(struct cpuinfo_x86 *c)
+ 	rdmsr(MSR_IA32_MISC_ENABLE, l, h);
+ 	wrmsr(MSR_IA32_MISC_ENABLE, l | MSR_IA32_MISC_ENABLE_TM1, h);
+ 
+-	/* Unmask the thermal vector: */
+-	l = apic_read(APIC_LVTTHMR);
+-	apic_write(APIC_LVTTHMR, l & ~APIC_LVT_MASKED);
+-
+ 	pr_info_once("CPU0: Thermal monitoring enabled (%s)\n",
+ 		      tm2 ? "TM2" : "TM1");
+ 
