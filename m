@@ -2,125 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF6D13CB92
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:04:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F1413CB8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbgAOSDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:03:19 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36362 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgAOSDS (ORCPT
+        id S1729081AbgAOSCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:02:17 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36776 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728931AbgAOSCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:03:18 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FHwkeD062666;
-        Wed, 15 Jan 2020 18:02:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=lxeza2C4xQinNBLY8Tn9KuOSwJaqPtPyPnh2SkUU/nw=;
- b=X6IDYVjxu8uhIlS1dYiBrx7JAbPBXfUwhdaDjmMiqvC4IHCpqXcfUYft2qzrnghqq++g
- 7HidjRwkKv15dYID4E7SE9GFuqKKxVmHBZKdrHDv767X8qAIxtqyIqP3fH+LmbdtjnoA
- 3FgTaiHvap7zgWVSWOypboA5Yzf8/d+fAR/dcbu9A9ioGEmUKZ0EfOpdTUq++laMXMCL
- 0KpxzCoH5H7gR8zZsVR3ZE++4VvReQ5bs46rVpiiWfnvfLL7MasWohBus/lAhCcCa0JK
- d58naJorccT/fyf1FeVTd3VNW57HOM7qQ+qPFhR3jq7CXeEosPzopQWpmysLlltQ1ObG TQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2xf73twpp5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 18:02:50 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FHxDgx048148;
-        Wed, 15 Jan 2020 18:00:49 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2xj1prkdg6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 18:00:49 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00FI0cl2026518;
-        Wed, 15 Jan 2020 18:00:39 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 15 Jan 2020 10:00:38 -0800
-Date:   Wed, 15 Jan 2020 21:01:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sean Young <sean@mess.org>
-Cc:     Phong Tran <tranmanphong@gmail.com>, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, allison@lohutok.net,
-        tglx@linutronix.de,
-        syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        glider@google.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media: dvb: check return value digitv_ctrl_msg
-Message-ID: <20200115180116.GA21151@kadam>
-References: <0000000000004f3d820596d8c51c@google.com>
- <20191203004138.21223-1-tranmanphong@gmail.com>
- <20200115173226.GA24471@gofer.mess.org>
+        Wed, 15 Jan 2020 13:02:17 -0500
+Received: by mail-pg1-f196.google.com with SMTP id k3so8562831pgc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 10:02:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a8LsyuIcXiV6GxZuQ/qDUpNfxej2Q4xX/Ea2X8PrBBA=;
+        b=N6MrOUcetHlWNiGjyh1yM3nRrf/N9ML4S25qtKj3wqpHhbDwS0jMWAw4uhMgDVuhB5
+         Rlw3GvcQ6y4WaFuzA5vtxCSDCUrDZXgr2XasGJSHXusRLbydOxUC61aboxuN67p4dlh9
+         m29dfH5Iy9NIZQzCZkSAotRc1UUzOe2fgeFAY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a8LsyuIcXiV6GxZuQ/qDUpNfxej2Q4xX/Ea2X8PrBBA=;
+        b=oQFKQ/mYT7RSxsMTo6mT5BxHWKRMjojHXZoHZUb5nmi3EUljosECG4IpEgA995UqAI
+         av3Q8e+sNFJGxR2UYqsR5F30CBbOvsGs5zqm66959f/75ixxwtn28R6s1gtcxbTupyOo
+         v/IDo881Kl9hcUs2i3Ccposw5WAVToheiiIzsb3D1nq4m8cTjjLaSJiBAJBXs6j+yMBm
+         lTMegy6x1wux1jJEYN26ITf4XVBrKAoPpD1BLpi5cVWoixoTyPdYnxRU1ite2ssuu40V
+         yzoG7ow8NT65xyacJ1oKPPBONBprK29/70k749U1mMX138izCVxqGWi8v9r+r0cwlwk7
+         DLQw==
+X-Gm-Message-State: APjAAAUFWi2myW7QowKbRplZPrMnfKjpbcbO9aZAV4lVrb9IP5Vps3gq
+        5n0UJi44hS5sRd18Ob2egwLBaS+3DiY=
+X-Google-Smtp-Source: APXvYqwxAlWV4lOiHqPYrRKLBE8Ht/oZ3dQOxLRzOY43DWBuxGLDaqBFGzli8uH1Ex5ck+6CwT22yg==
+X-Received: by 2002:a63:3f82:: with SMTP id m124mr34595127pga.431.1579111336473;
+        Wed, 15 Jan 2020 10:02:16 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id b24sm22297554pfo.55.2020.01.15.10.02.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jan 2020 10:02:15 -0800 (PST)
+Date:   Wed, 15 Jan 2020 10:02:14 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rocky Liao <rjliao@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        hemantg@codeaurora.org
+Subject: Re: [PATCH v4 3/3] Bluetooth: hci_qca: Enable power off/on support
+ during hci down/up for QCA Rome
+Message-ID: <20200115180214.GO89495@google.com>
+References: <20191225060317.5258-1-rjliao@codeaurora.org>
+ <20200115085552.11483-1-rjliao@codeaurora.org>
+ <20200115085552.11483-3-rjliao@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200115173226.GA24471@gofer.mess.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001150138
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001150138
+In-Reply-To: <20200115085552.11483-3-rjliao@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 05:32:26PM +0000, Sean Young wrote:
-> Hello,
+On Wed, Jan 15, 2020 at 04:55:52PM +0800, Rocky Liao wrote:
+> This patch registers hdev->shutdown() callback and also sets
+> HCI_QUIRK_NON_PERSISTENT_SETUP for QCA Rome. It will power-off the BT chip
+> during hci down and power-on/initialize the chip again during hci up. As
+> wcn399x already enabled this, this patch also removed the callback register
+> and QUIRK setting in qca_setup() for wcn399x and uniformly do this in the
+> probe() routine.
 > 
-> On Tue, Dec 03, 2019 at 07:41:38AM +0700, Phong Tran wrote:
-> > For fixing syzbot "KMSAN: uninit-value in digitv_rc_query"
-> > 
-> > In scenario testing for syzbot, failure reading from
-> > digitv_ctrl_msg() [1].
-> > 
-> > Eg:
-> > [   91.846657][ T3844] dvb-usb: bulk message failed: -22 (7/0)
-> > 
-> > digitv_rc_query() always return 0. But in this case a wrong thing happens.
-> > 
-> > Reported-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
-> > Tested-by: syzbot+6bf9606ee955b646c0e1@syzkaller.appspotmail.com
+> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+> ---
 > 
-> A fix for this was already merged I'm afraid, see commit eecc70d22ae5
-> ("media: digitv: don't continue if remote control state can't be read").
+> Changes in v2: None
+> Changes in v3: 
+>   -moved the quirk and callback register to probe()
+> Changes in v4:
+>   -rebased the patch with latest code
+>   -moved the quirk and callback register to probe() for wcn399x
+>   -updated commit message
 > 
-> > [1]: https://syzkaller.appspot.com/text?tag=CrashLog&x=16860a63600000
-> > [2]: https://groups.google.com/d/msg/syzkaller-bugs/-TXIJAZ0J9Q/T4PEUQoeAQAJ
-> > 
-> > Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> > ---
-> >  drivers/media/usb/dvb-usb/digitv.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/media/usb/dvb-usb/digitv.c b/drivers/media/usb/dvb-usb/digitv.c
-> > index dd5bb230cec1..61bc8945e6b9 100644
-> > --- a/drivers/media/usb/dvb-usb/digitv.c
-> > +++ b/drivers/media/usb/dvb-usb/digitv.c
-> > @@ -231,17 +231,21 @@ static struct rc_map_table rc_map_digitv_table[] = {
-> >  static int digitv_rc_query(struct dvb_usb_device *d, u32 *event, int *state)
-> >  {
-> >  	int i;
-> > -	u8 key[5];
-> > +	u8 key[5] = { 0 };
+>  drivers/bluetooth/hci_qca.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 > 
-> The merged commit does not change this line. Why was this changed?
-> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 1139142e8eed..3c6c6bd20177 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1569,12 +1569,7 @@ static int qca_setup(struct hci_uart *hu)
+>  		return ret;
+>  
+>  	if (qca_is_wcn399x(soc_type)) {
+> -		/* Enable NON_PERSISTENT_SETUP QUIRK to ensure to execute
+> -		 * setup for every hci up.
+> -		 */
+> -		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+>  		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
 
-It would fix the problem that key[0] is never initialized...  But the
-correct fix is to make key 4 elements long and delete key[0].
+I guess this should also move to _probe() eventually, but it's not really
+the scope of this patch.
 
-regards,
-dan carpenter
+> -		hu->hdev->shutdown = qca_power_off;
+>  
+>  		ret = qca_read_soc_version(hdev, &soc_ver, soc_type);
+>  		if (ret)
+> @@ -1813,6 +1808,7 @@ static int qca_init_regulators(struct qca_power *qca,
+>  static int qca_serdev_probe(struct serdev_device *serdev)
+>  {
+>  	struct qca_serdev *qcadev;
+> +	struct hci_dev *hdev;
+>  	const struct qca_vreg_data *data;
+>  	int err;
+>  
+> @@ -1881,7 +1877,13 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>  			clk_disable_unprepare(qcadev->susclk);
+>  	}
+>  
+> -out:	return err;
+> +out:
+> +	if (!err) {
+> +		hdev = qcadev->serdev_hu.hdev;
+> +		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+> +		hdev->shutdown = qca_power_off;
+> +	}
+> +	return err;
 
+Since there is no unwinding in case of an error I would suggest to
+change the jumps to the 'out' label further above to 'return err;'
+and change the above lines to:
+
+	hdev = qcadev->serdev_hu.hdev;
+	set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+	hdev->shutdown = qca_power_off;
+
+	return 0;
+
+This will also require to return directly when hci_uart_register_device()
+fails.
