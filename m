@@ -2,159 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B9613C084
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:19:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BEE13C0BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:23:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbgAOMTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:19:24 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:30040 "EHLO pegase1.c-s.fr"
+        id S1730380AbgAOMXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:23:39 -0500
+Received: from olimex.com ([184.105.72.32]:58453 "EHLO olimex.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731326AbgAOMTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:19:22 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 47yRFz3h5Dz9tygB;
-        Wed, 15 Jan 2020 13:19:19 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=h+HvZlR3; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 25GzTzroursl; Wed, 15 Jan 2020 13:19:19 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47yRFz2VhGz9tyg9;
-        Wed, 15 Jan 2020 13:19:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579090759; bh=KIOCAQ9Fe6n/GOOCwPq4VJ8I0eJP/U15j5u9PAAJKbw=;
-        h=From:Subject:To:Cc:Date:From;
-        b=h+HvZlR39pQWj8WY7PhUkqgnh36w4wxZPoR1IB4CB0HoI9A+01i+b7KezbVEt960O
-         Nsaohe6ktSrSNyHLKRcqHNTJjfPIxwAFqKmhkIbitLMXZu3sVGlF++CuaUn2HrWTiK
-         0mvmtrPC8XcESgtNujtaLSS5b98guM9oWpQzoGnE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9A6B18B7FE;
-        Wed, 15 Jan 2020 13:19:20 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id fG6a9xL6mZpN; Wed, 15 Jan 2020 13:19:20 +0100 (CET)
-Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.100])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 775908B774;
-        Wed, 15 Jan 2020 13:19:20 +0100 (CET)
-Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 4738864A1F; Wed, 15 Jan 2020 12:19:20 +0000 (UTC)
-Message-Id: <0eddeeb64c97b8b5ce0abd74e88d2cc0303e49c6.1579090596.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH vdsotest] Use vdso wrapper for gettimeofday()
-To:     Nathan Lynch <nathan_lynch@mentor.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Wed, 15 Jan 2020 12:19:20 +0000 (UTC)
+        id S1730283AbgAOMXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:23:39 -0500
+Received: from 94.155.250.134 ([94.155.250.134])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 04:23:28 -0800
+Subject: Re: [PATCH 2/2] drm: sun4i: hdmi: Add support for sun4i HDMI encoder
+ audio
+To:     Maxime Ripard <mripard@kernel.org>,
+        Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:DRM DRIVERS FOR ALLWINNER A10" 
+        <dri-devel@lists.freedesktop.org>, linux-sunxi@googlegroups.com
+References: <20200110141140.28527-1-stefan@olimex.com>
+ <20200110141140.28527-3-stefan@olimex.com>
+ <20200110162631.wbufz5h7nqfgd6am@gilmour.lan>
+ <f4ad41ce-e3d0-33e4-1e85-d23e557b484d@olimex.com>
+ <20200115083233.7wedmnkj4ju4eccv@gilmour.lan>
+From:   Stefan Mavrodiev <stefan@olimex.com>
+Message-ID: <03081515-efd8-f281-947a-29928c8d5923@olimex.com>
+Date:   Wed, 15 Jan 2020 14:23:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20200115083233.7wedmnkj4ju4eccv@gilmour.lan>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To properly handle errors returned by gettimeofday(), the
-DO_VDSO_CALL() macro has to be used, otherwise vdsotest
-misinterpret VDSO function return on error.
+Hi,
 
-This has gone unnoticed until now because the powerpc VDSO
-gettimeofday() always succeed, but while porting powerpc to
-generic C VDSO, the following has been encountered:
+On 1/15/20 10:32 AM, Maxime Ripard wrote:
+> Hi Stefan,
+>
+> On Tue, Jan 14, 2020 at 11:04:55AM +0200, Stefan Mavrodiev wrote:
+>> On 1/10/20 6:26 PM, Maxime Ripard wrote:
+>>> Hi,
+>>>
+>>> On Fri, Jan 10, 2020 at 04:11:40PM +0200, Stefan Mavrodiev wrote:
+>>>> Add HDMI audio support for the sun4i-hdmi encoder, used on
+>>>> the older Allwinner chips - A10, A20, A31.
+>>>>
+>>>> Most of the code is based on the BSP implementation. In it
+>>>> dditional formats are supported (S20_3LE and S24_LE), however
+>>>> there where some problems with them and only S16_LE is left.
+>>>>
+>>>> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+>>>> ---
+>>>>    drivers/gpu/drm/sun4i/Kconfig            |   1 +
+>>>>    drivers/gpu/drm/sun4i/Makefile           |   1 +
+>>>>    drivers/gpu/drm/sun4i/sun4i_hdmi.h       |  30 ++
+>>>>    drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c | 375 +++++++++++++++++++++++
+>>>>    drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c   |   4 +
+>>>>    5 files changed, 411 insertions(+)
+>>>>    create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
+>>>>
+>>>> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+>>>> index 37e90e42943f..192b732b10cd 100644
+>>>> --- a/drivers/gpu/drm/sun4i/Kconfig
+>>>> +++ b/drivers/gpu/drm/sun4i/Kconfig
+>>>> @@ -19,6 +19,7 @@ if DRM_SUN4I
+>>>>    config DRM_SUN4I_HDMI
+>>>>           tristate "Allwinner A10 HDMI Controller Support"
+>>>>           default DRM_SUN4I
+>>>> +       select SND_PCM_ELD
+>>>>           help
+>>>>    	  Choose this option if you have an Allwinner SoC with an HDMI
+>>>>    	  controller.
+>>>> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+>>>> index 0d04f2447b01..e2d82b451c36 100644
+>>>> --- a/drivers/gpu/drm/sun4i/Makefile
+>>>> +++ b/drivers/gpu/drm/sun4i/Makefile
+>>>> @@ -5,6 +5,7 @@ sun4i-frontend-y		+= sun4i_frontend.o
+>>>>    sun4i-drm-y			+= sun4i_drv.o
+>>>>    sun4i-drm-y			+= sun4i_framebuffer.o
+>>>>
+>>>> +sun4i-drm-hdmi-y		+= sun4i_hdmi_audio.o
+>>>>    sun4i-drm-hdmi-y		+= sun4i_hdmi_ddc_clk.o
+>>>>    sun4i-drm-hdmi-y		+= sun4i_hdmi_enc.o
+>>>>    sun4i-drm-hdmi-y		+= sun4i_hdmi_i2c.o
+>>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+>>>> index 7ad3f06c127e..456964e681b0 100644
+>>>> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+>>>> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
+>>>> @@ -42,7 +42,32 @@
+>>>>    #define SUN4I_HDMI_VID_TIMING_POL_VSYNC		BIT(1)
+>>>>    #define SUN4I_HDMI_VID_TIMING_POL_HSYNC		BIT(0)
+>>>>
+>>>> +#define SUN4I_HDMI_AUDIO_CTRL_REG	0x040
+>>>> +#define SUN4I_HDMI_AUDIO_CTRL_ENABLE		BIT(31)
+>>>> +#define SUN4I_HDMI_AUDIO_CTRL_RESET		BIT(30)
+>>>> +
+>>>> +#define SUN4I_HDMI_AUDIO_FMT_REG	0x048
+>>>> +#define SUN4I_HDMI_AUDIO_FMT_SRC		BIT(31)
+>>>> +#define SUN4I_HDMI_AUDIO_FMT_LAYOUT		BIT(3)
+>>>> +#define SUN4I_HDMI_AUDIO_FMT_CH_CFG(n)		(n - 1)
+>>> There's the issue multiple times in the headers, but you should wrap n
+>>> in parentheses to make sure we have no issue with precedence when
+>>> calling the macro.
+>>>
+>>>> +int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi)
+>>>> +{
+>>>> +	struct snd_soc_card *card = &sun4i_hdmi_audio_card;
+>>>> +	struct snd_soc_dai_link_component *comp;
+>>>> +	struct snd_soc_dai_link *link;
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = devm_snd_dmaengine_pcm_register(hdmi->dev,
+>>>> +					      &sun4i_hdmi_audio_pcm_config, 0);
+>>>> +	if (ret) {
+>>>> +		DRM_ERROR("Could not register PCM\n");
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	ret = devm_snd_soc_register_component(hdmi->dev,
+>>>> +					      &sun4i_hdmi_audio_component,
+>>>> +					      &sun4i_hdmi_audio_dai, 1);
+>>>> +	if (ret) {
+>>>> +		DRM_ERROR("Could not register DAI\n");
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	link = devm_kzalloc(hdmi->dev, sizeof(*link), GFP_KERNEL);
+>>>> +	if (!link)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	comp = devm_kzalloc(hdmi->dev, sizeof(*comp) * 3, GFP_KERNEL);
+>>>> +	if (!comp)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	link->cpus = &comp[0];
+>>>> +	link->codecs = &comp[1];
+>>>> +	link->platforms = &comp[2];
+>>>> +
+>>>> +	link->num_cpus = 1;
+>>>> +	link->num_codecs = 1;
+>>>> +	link->num_platforms = 1;
+>>>> +
+>>>> +	link->playback_only = 1;
+>>>> +
+>>>> +	link->name = "SUN4I-HDMI";
+>>>> +	link->stream_name = "SUN4I-HDMI PCM";
+>>>> +
+>>>> +	link->codecs->name = dev_name(hdmi->dev);
+>>>> +	link->codecs->dai_name	= sun4i_hdmi_audio_dai.name;
+>>>> +
+>>>> +	link->cpus->dai_name = dev_name(hdmi->dev);
+>>>> +
+>>>> +	link->platforms->name = dev_name(hdmi->dev);
+>>>> +
+>>>> +	link->dai_fmt = SND_SOC_DAIFMT_I2S;
+>>>> +
+>>>> +	card->dai_link = link;
+>>>> +	card->num_links = 1;
+>>>> +	card->dev = hdmi->dev;
+>>>> +
+>>>> +	snd_soc_card_set_drvdata(card, hdmi);
+>>>> +	return devm_snd_soc_register_card(hdmi->dev, card);
+>>> Out of curiosity, did you try to remove the module with that patch
+>>> applied? IIRC, these functions will overwrite the device drvdata, and
+>>> we will try to access them in unbind / remove.
+>> Actually I did not. Just tried that and you're right. The module
+>> crashes at the unbind call.  I use sun4i_hdmi struct only for
+>> regmap. Maybe create separate private structure and copy only
+>> regmap?
+> I think the issue is that:
+>
+>    - In bind, we first call dev_set_drvdata on the bound device, with a
+>      pointer to struct sun4i_hdmi as the value. The driver_data field
+>      in struct device is now a pointer to our instance of struct
+>      sun4i_hdmi.
+>
+>    - In audio create, you then call snd_soc_card_set_drvdata with a
+>      pointer to struct sun4i_hdmi as the value. The drvdata field in
+>      the struct snd_soc_card is now a pointer to our instance of struct
+>      sun4i_hdmi (so far so good).
+>
+>    - Then you call (devm_)snd_soc_register_card. One of the thing that
+>      it will do is call drv_set_drvdata on the card->dev device,
+>      setting it to our pointer to the struct snd_soc_card we provided.
+>      However, since you set card->dev to the same device than the one
+>      initially bound, this means that you just overwrote the struct
+>      sun4i_hdmi pointer with a pointer to struct snd_soc_card.
+>
+>    - The driver will operate properly, since we never really use the
+>      driver_data field, in the HDMI driver, except when...
+>
+>    - At unbind, you retrieve the driver_data field, expecting a struct
+>      sun4i_hdmi pointer, except you have a pointer to struct
+>      snd_soc_card, and everything explodes.
+>
+> I think the way to work around that would be to create a new
+> (platform_)device for the HDMI audio component, so that ASoC can work
+> on that device instead.
+>
+> This seems to be what dw-hdmi is doing here:
+> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c#L2812
+>
+> (Except that they are also using platform_data, since they have
+> multiple drivers, we wouldn't, so we can just lookup sun4i_hdmi using
+> the parent's device driver_data).
+>
+>>>> +}
+>>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+>>>> index a7c4654445c7..79ecd89fb705 100644
+>>>> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+>>>> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+>>>> @@ -114,6 +114,9 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+>>>>    		val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
+>>>>
+>>>>    	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+>>>> +
+>>>> +	if (hdmi->hdmi_audio && sun4i_hdmi_audio_create(hdmi))
+>>>> +		DRM_ERROR("Couldn't create the HDMI audio adapter\n");
+>>> So you create the audio card each time the display is enabled? I guess
+>>> this is to deal with the hotplug?
+>> Yes. See below.
+>>
+>>> I'm not sure this is the right thing to do. If I remember well, the
+>>> ELD are here precisely to let userspace know that the display is
+>>> plugged (and audio-capable) or not.
+>>>
+>>> Also, you don't remove that card in the disable, which mean that if
+>>> you end up in a situation where you would enable the display, disable
+>>> it and then enable it again, you have two audio cards now.
+>> There is issue with the hotplug. When inserting the cable, the event
+>> is detected and the hdmi encoder is enabled. Thus the card is
+>> created. However further removal and insertions are not
+>> detected.
+> I guess we would need to fix that then?
+>
+>> This is why I don't remove the card.
+>>
+>> Also I count on devm_snd_soc_register_card() to release the card.
+> I think you should really create the card all the time, and just
+> update the ELD to let the userspace know when something has been
+> created.
+>
+> And yeah, we should have a working hotplug, but that's a separate
+> story :)
 
-gettimeofday(valid, UINTPTR_MAX) (VDSO): unexpected return value 14, expected -1
-gettimeofday(valid, UINTPTR_MAX) (VDSO): exited with status 1, expected 0
-gettimeofday(valid, page (PROT_NONE)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(valid, page (PROT_NONE)) (VDSO): exited with status 1, expected 0
-gettimeofday(valid, page (PROT_READ)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(valid, page (PROT_READ)) (VDSO): exited with status 1, expected 0
-gettimeofday(UINTPTR_MAX, valid) (VDSO): unexpected return value 14, expected -1
-gettimeofday(UINTPTR_MAX, valid) (VDSO): exited with status 1, expected 0
-gettimeofday(UINTPTR_MAX, NULL) (VDSO): unexpected return value 14, expected -1
-gettimeofday(UINTPTR_MAX, NULL) (VDSO): exited with status 1, expected 0
-gettimeofday(UINTPTR_MAX, UINTPTR_MAX) (VDSO): unexpected return value 14, expected -1
-gettimeofday(UINTPTR_MAX, UINTPTR_MAX) (VDSO): exited with status 1, expected 0
-gettimeofday(UINTPTR_MAX, page (PROT_NONE)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(UINTPTR_MAX, page (PROT_NONE)) (VDSO): exited with status 1, expected 0
-gettimeofday(UINTPTR_MAX, page (PROT_READ)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(UINTPTR_MAX, page (PROT_READ)) (VDSO): exited with status 1, expected 0
-gettimeofday(page (PROT_NONE), valid) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_NONE), valid) (VDSO): exited with status 1, expected 0
-gettimeofday(page (PROT_NONE), NULL) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_NONE), NULL) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_NONE), UINTPTR_MAX) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_NONE), UINTPTR_MAX) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_NONE), page (PROT_NONE)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_NONE), page (PROT_NONE)) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_NONE), page (PROT_READ)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_NONE), page (PROT_READ)) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_READ), valid) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_READ), valid) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_READ), NULL) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_READ), NULL) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_READ), UINTPTR_MAX) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_READ), UINTPTR_MAX) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_READ), page (PROT_NONE)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_READ), page (PROT_NONE)) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday(page (PROT_READ), page (PROT_READ)) (VDSO): unexpected return value 14, expected -1
-gettimeofday(page (PROT_READ), page (PROT_READ)) (VDSO): exited with status 1, expected 0
-Failure threshold (10) reached; stopping test.
-gettimeofday/abi: 18 failures/inconsistencies encountered
+Thank you for the review. Soon I'll prepare v2.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- src/gettimeofday.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Also I'll check the hotplug issue.
 
-diff --git a/src/gettimeofday.c b/src/gettimeofday.c
-index c50ecea..472f372 100644
---- a/src/gettimeofday.c
-+++ b/src/gettimeofday.c
-@@ -54,11 +54,16 @@ static void gettimeofday_syscall_nofail(struct timeval *tv, struct timezone *tz)
- 		error(EXIT_FAILURE, errno, "SYS_gettimeofday");
- }
- 
-+static int gettimeofday_vdso_wrapper(struct timeval *tv, struct timezone *tz)
-+{
-+	return DO_VDSO_CALL(gettimeofday_vdso, int, 2, tv, tz);
-+}
-+
- static void gettimeofday_vdso_nofail(struct timeval *tv, struct timezone *tz)
- {
- 	int err;
- 
--	err = gettimeofday_vdso(tv, tz);
-+	err = gettimeofday_vdso_wrapper(tv, tz);
- 	if (err)
- 		error(EXIT_FAILURE, errno, "gettimeofday");
- }
-@@ -153,7 +158,7 @@ static void gettimeofday_bench(struct ctx *ctx, struct bench_results *res)
- 	struct timeval tv;
- 
- 	if (vdso_has_gettimeofday()) {
--		BENCH(ctx, gettimeofday_vdso(&tv, NULL),
-+		BENCH(ctx, gettimeofday_vdso_wrapper(&tv, NULL),
- 		      &res->vdso_interval);
- 	}
- 
-@@ -196,7 +201,7 @@ static void do_gettimeofday(void *arg, struct syscall_result *res)
- 	if (args->force_syscall)
- 		err = gettimeofday_syscall_wrapper(args->tv, args->tz);
- 	else
--		err = gettimeofday_vdso(args->tv, args->tz);
-+		err = gettimeofday_vdso_wrapper(args->tv, args->tz);
- 	record_syscall_result(res, err, errno);
- }
- 
--- 
-2.13.3
+>
+> Maxime
+
+Best regards,
+Stefan
 
