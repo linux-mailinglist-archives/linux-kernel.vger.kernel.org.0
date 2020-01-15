@@ -2,113 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C7C13CC3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 131A413CC46
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:42:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgAOSis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:38:48 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:56086 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729028AbgAOSir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:38:47 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id AB27D101E; Wed, 15 Jan 2020 12:38:45 -0600 (CST)
-Date:   Wed, 15 Jan 2020 12:38:45 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     eparis@redhat.com, jannh@google.com, linux-kernel@vger.kernel.org,
-        oleg@redhat.com, shallyn@cisco.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2] ptrace: reintroduce usage of subjective credentials
- in ptrace_has_cap()
-Message-ID: <20200115183845.GA25149@mail.hallyn.com>
-References: <20200115171736.16994-1-christian.brauner@ubuntu.com>
- <20200115172355.19209-1-christian.brauner@ubuntu.com>
+        id S1729199AbgAOSmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:42:01 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41907 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728949AbgAOSmB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 13:42:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so19696509ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 10:41:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iyWBDBGdPhZMQqYEB7vExUBhfJttJz4+TuTF/gXP4z8=;
+        b=EqtZjz+g7EGskQnkixkXn9XrbxTLYToHq+lcUM1leSzTLzazIwT6Rm17EJTEo2I7dn
+         /jMMXg6VTujHKsduqV5l/DgLUBmXuJjmqd4akcNhygAVtHa+vWcYPrTzl/kiuM+PacAz
+         Wz703GEgGoSEeSwRpyWsEJIXkN8U1RGXyZzNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iyWBDBGdPhZMQqYEB7vExUBhfJttJz4+TuTF/gXP4z8=;
+        b=idz68XJLi4jR6I0A+m2ADvGVS4nznmzL8Vy7bAfVyGFh5QRmfsUM2o3TI0KJrtOSqV
+         l8zPn0GqxSbxfc1ydB3bpo4NoyONxFZdnQF2+RUUuSXkTJ+6yuVtYWyGlTjX9OhzbX2T
+         SATMFeCnowtY66nHnxs2+/Q3ILRJ0M68oE2tlT/n2EVFnMyQhBSng9qt4YK7TV+qwpZ4
+         7CWva+824ClVOkGX9AbS2hf9y7HvUv2mnkNGlciHxKu9rVFNnYM4GPrUZWOLJVw5BaUg
+         KhpdxDbJsaVaJ2iorinoXjGTOZSCQNhFNcdnZCF3TQB7Ykl4MAehaEfAQUVlA/3iL44l
+         azFA==
+X-Gm-Message-State: APjAAAXxgcMcC6A7y9s/6YEs+Unzrq3CAoFD9UqHQsLc5rNjPnwC3+jU
+        PQuzsA8sMXtA+7N8dmBjN6mtSA==
+X-Google-Smtp-Source: APXvYqyqABOunYj/IZj2k+iyOWWbdohNgjhwotUJCn697R4NTNgOCDdJd8PW7LvAjczU2mx6qAtEfw==
+X-Received: by 2002:a2e:8eda:: with SMTP id e26mr2776311ljl.65.1579113717180;
+        Wed, 15 Jan 2020 10:41:57 -0800 (PST)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 21sm9598631ljv.19.2020.01.15.10.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 10:41:56 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 0/5] a few devtmpfs patches
+Date:   Wed, 15 Jan 2020 19:41:48 +0100
+Message-Id: <20200115184154.3492-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200115172355.19209-1-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 06:23:55PM +0100, Christian Brauner wrote:
-> Commit 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
-> introduced the ability to opt out of audit messages for accesses to
-> various proc files since they are not violations of policy.
-> While doing so it somehow switched the check from ns_capable() to
-> has_ns_capability{_noaudit}(). That means it switched from checking the
-> subjective credentials of the task to using the objective credentials. I
-> couldn't find the original lkml thread and so I don't know why this switch
-> was done. But it seems wrong since ptrace_has_cap() is currently only used
-> in ptrace_may_access(). And it's used to check whether the calling task
-> (subject) has the CAP_SYS_PTRACE capability in the provided user namespace
-> to operate on the target task (object). According to the cred.h comments
-> this would mean the subjective credentials of the calling task need to be
-> used.
-> This switches it to use security_capable() because we only call
-> ptrace_has_cap() in ptrace_may_access() and in there we already have a
-> stable reference to the calling tasks creds under cred_guard_mutex so
-> there's no need to go through another series of dereferences and rcu
-> locking done in ns_capable{_noaudit}().
-> 
-> Cc: Serge Hallyn <shallyn@cisco.com>
+Patch 1 fixes a mostly theoretical problem, but as this is core code,
+the pattern might be copy-pasted, so it might as well be fixed. The
+remaining ones reduce memory footprint a bit by initifying a function
+and factoring out common code.
 
-Thanks.
+Rasmus Villemoes (5):
+  devtmpfs: fix theoretical stale pointer deref in devtmpfsd()
+  devtmpfs: factor out setup part of devtmpfsd()
+  devtmpfs: simplify initialization of mount_dev
+  devtmpfs: initify a bit
+  devtmpfs: factor out common tail of devtmpfs_{create,delete}_node
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+ drivers/base/devtmpfs.c | 79 ++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 40 deletions(-)
 
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Eric Paris <eparis@redhat.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  kernel/ptrace.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index cb9ddcc08119..d146133e97f1 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -264,12 +264,13 @@ static int ptrace_check_attach(struct task_struct *child, bool ignore_state)
->  	return ret;
->  }
->  
-> -static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
-> +static int ptrace_has_cap(const struct cred *cred, struct user_namespace *ns,
-> +			  unsigned int mode)
->  {
->  	if (mode & PTRACE_MODE_NOAUDIT)
-> -		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
-> +		return security_capable(cred, ns, CAP_SYS_PTRACE, CAP_OPT_NOAUDIT);
->  	else
-> -		return has_ns_capability(current, ns, CAP_SYS_PTRACE);
-> +		return security_capable(cred, ns, CAP_SYS_PTRACE, CAP_OPT_NONE);
->  }
->  
->  /* Returns 0 on success, -errno on denial. */
-> @@ -321,7 +322,7 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
->  	    gid_eq(caller_gid, tcred->sgid) &&
->  	    gid_eq(caller_gid, tcred->gid))
->  		goto ok;
-> -	if (ptrace_has_cap(tcred->user_ns, mode))
-> +	if (ptrace_has_cap(cred, tcred->user_ns, mode))
->  		goto ok;
->  	rcu_read_unlock();
->  	return -EPERM;
-> @@ -340,7 +341,7 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
->  	mm = task->mm;
->  	if (mm &&
->  	    ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> -	     !ptrace_has_cap(mm->user_ns, mode)))
-> +	     !ptrace_has_cap(cred, mm->user_ns, mode)))
->  	    return -EPERM;
->  
->  	return security_ptrace_access_check(task, mode);
-> 
-> base-commit: b3a987b0264d3ddbb24293ebff10eddfc472f653
-> -- 
-> 2.25.0
+-- 
+2.23.0
+
