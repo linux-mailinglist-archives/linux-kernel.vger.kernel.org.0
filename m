@@ -2,77 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BA413C59E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:15:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2D313C5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbgAOOPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:15:46 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32109 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730614AbgAOOPo (ORCPT
+        id S1728912AbgAOOTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:19:38 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38139 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbgAOOTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:15:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579097743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OUWgGIVsJ8NZwOLyNUY7Hd2Km2oSlO39xhYqMQdHPRE=;
-        b=SBa2IZ4OujszdbTdvi6vrsZ8WupQHWa0QTj3+i1P7L91iJV9jGhD4dl+qCXsgW7+izJ+VA
-        8NcDvQevfqKQUlTeo8xvcEXbLsnsj8dDG8BxB2+nihCY5gzsQAfYDeRO6X852DVrkwHyAn
-        etKCTbACmZ205VmLFGDW+ysamgk6Kok=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-amsWRQ3cP4KKzpO788M-xQ-1; Wed, 15 Jan 2020 09:15:39 -0500
-X-MC-Unique: amsWRQ3cP4KKzpO788M-xQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A81BA801A05;
-        Wed, 15 Jan 2020 14:15:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 420885C545;
-        Wed, 15 Jan 2020 14:15:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200115083854.GB23039@lst.de>
-References: <20200115083854.GB23039@lst.de> <4467.1579020509@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, tytso@mit.edu, adilger.kernel@dilger.ca,
-        darrick.wong@oracle.com, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Problems with determining data presence by examining extents?
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24479.1579097734.1@warthog.procyon.org.uk>
-Date:   Wed, 15 Jan 2020 14:15:34 +0000
-Message-ID: <24480.1579097734@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        Wed, 15 Jan 2020 09:19:37 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x185so8602134pfc.5;
+        Wed, 15 Jan 2020 06:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rv/DqUwBL0cLyteq+cLEvFpPEt4GgePPdmAX2ItXChM=;
+        b=kIWJKZcsvkuUZvwRivtFvgIWWDo/Tti9TY17prXqhn8ou+0J4BFvJ8oIYES3K08qiV
+         R2Vd/rvzIe6i8Dil+hZ1hPy5ShyssowGgZBxu6/JRIa6PsjSIBRLZaXZ8XByGPpMGHXb
+         HMEh9ZxA9USfjlI/OVFGBEnv4FMtGnmgrp8YW8Bne7Sob31aw40Lz7ldLM/hNyY+ouRL
+         nO67kdJRx5Qqwd6mEg1nF2oLI06lV89EutTw90xedrb8KftavppvbuE85RQRPFz+aWLB
+         jofInZLvvseBm3dWeaCgohHSctkr/z6cg19t3fVZFRNbnLUnK+IO6HNECzCuhrooY2aC
+         7PAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rv/DqUwBL0cLyteq+cLEvFpPEt4GgePPdmAX2ItXChM=;
+        b=CavODgW43/U5eCvFO6KXXtU/lkl+g4CVa6s46dQvKvCZGCHS/G0EIg4tYW0XDFBK3x
+         ZVbWDjldpFX36VfnlFcUg4BOuIFjy32+mCwT9nvvqbMnOw0c0dpyQrvR3GCITEzhlygN
+         MG+/XXC6mP/9aToGwZCYTdO8xrRY7+GV3Jn9Bs4qRafs9oj2jfDv4sPdzx+Nu2Oxq3lx
+         qoyGDW609xzGDorCaDohM7Q7kcpSyI98Hrq8XkmHdKkbIwauUxWMPYJNWBWPm0tqJZgl
+         GaHkVCCWaNpENJ8aht0DRxRdCUJwtPLD0dcRlbZ9XEH2nFr8oddYmWDc1wUE2GXVsPLy
+         hvVA==
+X-Gm-Message-State: APjAAAXQ0gC/NpIPnpKzLBITq2Jm7iNCWg5Mh5PboJmCJnifUik+kG5R
+        O0U5Brnd9zmOjarCMO5KOIU=
+X-Google-Smtp-Source: APXvYqw/Ek4M3Mu/gGAWjG9C64Bz9YXgOVv1wSXGZqMVwUNkMRrlLduGljYrzFwonam0LSkXgoxpww==
+X-Received: by 2002:a63:534d:: with SMTP id t13mr31890500pgl.89.1579097977017;
+        Wed, 15 Jan 2020 06:19:37 -0800 (PST)
+Received: from madhuparna-HP-Notebook.nitk.ac.in ([2402:3a80:1ee8:ed72:75ba:e01f:bdbc:c547])
+        by smtp.gmail.com with ESMTPSA id p35sm21208425pgl.47.2020.01.15.06.19.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 06:19:36 -0800 (PST)
+From:   madhuparnabhowmik04@gmail.com
+To:     wei.liu@kernel.org, paul@xen.org
+Cc:     xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, paulmck@kernel.org,
+        joel@joelfernandes.org, frextrite@gmail.com,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+Subject: [PATCH] net: xen-netback: hash.c: Use built-in RCU list checking
+Date:   Wed, 15 Jan 2020 19:48:40 +0530
+Message-Id: <20200115141840.10553-1-madhuparnabhowmik04@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
 
-> The whole idea of an out of band interface is going to be racy and suffer
-> from implementation loss.  I think what you want is something similar to
-> the NFSv4.2 READ_PLUS operation - give me that if there is any and
-> otherwise tell me that there is a hole.  I think this could be a new
-> RWF_NOHOLE or similar flag, just how to return the hole size would be
-> a little awkward.  Maybe return a specific negative error code (ENODATA?)
-> and advance the iov anyway.
+list_for_each_entry_rcu has built-in RCU and lock checking.
+Pass cond argument to list_for_each_entry_rcu.
 
-Just having call_iter_read() return a short read could be made to suffice...
-provided the filesystem doesn't return data I haven't written in (which could
-cause apparent corruption) and does return data I have written in (otherwise I
-have to go back to the server).
+Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+---
+ drivers/net/xen-netback/hash.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-David
+diff --git a/drivers/net/xen-netback/hash.c b/drivers/net/xen-netback/hash.c
+index 10d580c3dea3..3f9783f70a75 100644
+--- a/drivers/net/xen-netback/hash.c
++++ b/drivers/net/xen-netback/hash.c
+@@ -51,7 +51,8 @@ static void xenvif_add_hash(struct xenvif *vif, const u8 *tag,
+ 
+ 	found = false;
+ 	oldest = NULL;
+-	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link) {
++	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link,
++				lockdep_is_held(&vif->hash.cache.lock)) {
+ 		/* Make sure we don't add duplicate entries */
+ 		if (entry->len == len &&
+ 		    memcmp(entry->tag, tag, len) == 0)
+-- 
+2.17.1
 
