@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8506A13CF0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D213B13CF25
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:33:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgAOVab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 16:30:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730177AbgAOVaa (ORCPT
+        id S1729436AbgAOVcr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 16:32:47 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:48441 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728998AbgAOVcq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 16:30:30 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FLRi7R133890;
-        Wed, 15 Jan 2020 16:30:06 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xhbpsjguf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 16:30:06 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00FLLJKp028152;
-        Wed, 15 Jan 2020 21:30:06 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04wdc.us.ibm.com with ESMTP id 2xf7520yek-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 21:30:05 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FLU42j44499386
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 21:30:05 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6D656E059;
-        Wed, 15 Jan 2020 21:30:04 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 050BB6E04C;
-        Wed, 15 Jan 2020 21:30:04 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.103.158])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jan 2020 21:30:03 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-aspeed@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, jason@lakedaemon.net, maz@kernel.org,
-        robh+dt@kernel.org, tglx@linutronix.de, joel@jms.id.au,
-        andrew@aj.id.au, eajames@linux.ibm.com
-Subject: [PATCH v6 12/12] ARM: dts: aspeed: tacoma: Enable XDMA engine
-Date:   Wed, 15 Jan 2020 15:29:50 -0600
-Message-Id: <1579123790-6894-13-git-send-email-eajames@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
-References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-15_03:2020-01-15,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=457
- impostorscore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
- suspectscore=1 malwarescore=0 priorityscore=1501 adultscore=0 spamscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001150161
+        Wed, 15 Jan 2020 16:32:46 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id D197DCECF2;
+        Wed, 15 Jan 2020 22:42:02 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH v7 0/2] add support of interrupt for host wakeup from
+ devicetree in BCM HCI driver
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20200115101243.17094-1-glaroque@baylibre.com>
+Date:   Wed, 15 Jan 2020 22:32:44 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        johan@kernel.org, nsaenzjulienne@suse.de,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Content-Transfer-Encoding: 8BIT
+Message-Id: <8F9FC361-4CF3-48EE-A88B-D6429714C8BE@holtmann.org>
+References: <20200115101243.17094-1-glaroque@baylibre.com>
+To:     Guillaume La Roque <glaroque@baylibre.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the XDMA engine node.
+Hi Guillaume,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+> add interrupts and interrupt-names properties to set host wakeup IRQ.
+> actually driver find this IRQ from host-wakeup-gpios propety
+> but some platforms are not supported gpiod_to_irq function.
+> so to have possibility to use interrupt mode we need to add interrupts
+> field in devicetree and support it in driver.
+> 
+> change sinve v6:
+> - depracate host-wakeup-gpios 
+> 
+> change sinve v5:
+> - add tags
+> 
+> change sinve v4 [1]:
+> - add patch to update Documentation
+> - use of_irq_get_byname to be more clear and move call in bcm_of_probe
+> - update commit message
+> 
+> change since v3:
+> - move on of_irq instead of platform_get_irq
+> 
+> change since v2:
+> - fix commit message
+> 
+> change since v1:
+> - rebase patch
+> 
+> [1] https://lore.kernel.org/linux-bluetooth/20191213105521.4290-1-glaroque@baylibre.com/
+> 
+> Guillaume La Roque (2):
+>  dt-bindings: net: bluetooth: add interrupts properties
+>  bluetooth: hci_bcm: enable IRQ capability from devicetree
+> 
+> .../devicetree/bindings/net/broadcom-bluetooth.txt         | 7 +++++--
+> drivers/bluetooth/hci_bcm.c                                | 3 +++
+> 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-index ff49ec7..3e6c309 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts
-@@ -800,3 +800,9 @@
- 	pinctrl-0 = <&pinctrl_lpc_default>,
- 		    <&pinctrl_lsirq_default>;
- };
-+
-+&xdma {
-+	status = "okay";
-+	/* 1G DRAM with 8M VRAM which is reserved at the top. */
-+	memory = <0xbf800000 0x00800000>;
-+};
--- 
-1.8.3.1
+both patches have been applied to bluetooth-next tree.
+
+Regards
+
+Marcel
 
