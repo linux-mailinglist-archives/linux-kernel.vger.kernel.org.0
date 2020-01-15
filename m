@@ -2,105 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8F313CC6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5780F13CC7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 19:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbgAOSpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 13:45:51 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34997 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729012AbgAOSpv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:45:51 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so1100345wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 10:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=XhG7oKm+eUCDXzWAmBj1ApEpGRAwwk7JTkSRtwr4uDc=;
-        b=SKYJhUZLU3m5uB+IwXigYsHxvV5o1M+7PQOjuaa8htp7C1d128jxoaBhSeOwMbUuZ5
-         asWpNenhoM1ou5bOufNnZam1MHduqFELyxinQh1KeJSyJE8ICbIB47RiLkeBZdpguPWq
-         NeayeqR6/qGB194gVdes9ah3JpJsuW5dMNdh8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=XhG7oKm+eUCDXzWAmBj1ApEpGRAwwk7JTkSRtwr4uDc=;
-        b=K4M3FIxbmGBRMpniSm9UAZer5S+hZ5+jDoaDYKwyUl1Egtii6w7yvMif9cK5YLiNaa
-         OtufSaMed6G7PzHkQBF9A0kqja6zkSGLuCRBrHNxpIiYKQB2mzMeuIe2QmBD9Uiea4cz
-         d2F0LkmQh+ja3GVbwVUYVj9dtb4e3dznDjdfZQHvj6CrmzgdCLRGzXt5CX/bgnlVdmjx
-         lctfi1bdeRjDj9GwymLsENMPlsjqWGZQOxd1lLnvNc6NnqFnBPXSr25JvkqDpVayCGAZ
-         PaQ1d+txUpETnVvxycIgsSHzK9buliMDw3HwVflkBjkpNddKFXUdMAhLRALaFu9cYDx0
-         bHJA==
-X-Gm-Message-State: APjAAAUvITgc+OcPODyg46ZtDW1rT7zUCIgTkFlBBiy3dlyXM0xUohsx
-        rVa5Q3DXyz5irt5p4d+IAd6hkg==
-X-Google-Smtp-Source: APXvYqxJUJuymcgl6BW34ydWB72BE5+YHoGJoQlEbVg0nk9JyqjTNyO7XAGrpWf/djrH7Rdzmj5LAA==
-X-Received: by 2002:a1c:6755:: with SMTP id b82mr1380457wmc.126.1579113948983;
-        Wed, 15 Jan 2020 10:45:48 -0800 (PST)
-Received: from revest ([37.165.158.17])
-        by smtp.gmail.com with ESMTPSA id h17sm26445192wrs.18.2020.01.15.10.45.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 10:45:48 -0800 (PST)
-Message-ID: <b88cbb1fb39175611e4b31e12a47df240a46dd48.camel@chromium.org>
-Subject: Re: [PATCH v2] ima: add the ability to query the hash of a given
- file.
-From:   Florent Revest <revest@chromium.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>, KP Singh <kpsingh@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, mjg59@google.com,
-        nramas@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Florent Revest <revest@google.com>
-Date:   Wed, 15 Jan 2020 19:45:43 +0100
-In-Reply-To: <1579113367.5032.19.camel@linux.ibm.com>
-References: <20200106162524.164650-1-revest@chromium.org>
-         <20200113104830.GA28588@google.com>
-         <1579113367.5032.19.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1729368AbgAOSqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 13:46:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729213AbgAOSqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 13:46:13 -0500
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 127D42467E;
+        Wed, 15 Jan 2020 18:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579113972;
+        bh=FOsge55tBvLYEwlzzKuLeN6gBOiH1dEahfHM7dijZEw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LSGcEUXbSKsbd9ds0arTnLwToy4tfyimSrxa9soZRGtsja83+M8zMqmVeY0dOO2Rl
+         8lRECXd1A582Qnj3rIZnjFXyMcNjwq1Kj6aEaauB2B2V6oAkYIZkgjs9XjCCdCcFmq
+         5TXRoCz1Ic0gWbSk58JVZMj87o9dkCkGQm7/9txc=
+Received: by mail-qv1-f45.google.com with SMTP id u10so7864922qvi.2;
+        Wed, 15 Jan 2020 10:46:12 -0800 (PST)
+X-Gm-Message-State: APjAAAVgXeigop/mkdmNQzEkUh6PbbA+HeSzwORBc9UVdCV0wdiK3eFP
+        gNR2JEtG5bVZcOu+P9sDLo4u7tchFxAZq7LByw==
+X-Google-Smtp-Source: APXvYqwQhjjzzNFgQnH5Gk5PRAKtRXel22AUyoHHJ3Medi+wBx9id7b4qDaR088fF4MRTSFeU19h0F3baEcf1arCNNo=
+X-Received: by 2002:a0c:f6cd:: with SMTP id d13mr26956612qvo.20.1579113971121;
+ Wed, 15 Jan 2020 10:46:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200114233857.25933-1-chris.packham@alliedtelesis.co.nz> <20200114233857.25933-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20200114233857.25933-2-chris.packham@alliedtelesis.co.nz>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 15 Jan 2020 12:45:59 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+AOiFV4Kcu=r3-kz42ZqSVR_0ZuKtnz8ak_sksW0D0wQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+AOiFV4Kcu=r3-kz42ZqSVR_0ZuKtnz8ak_sksW0D0wQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: Document binding for generic SPI multiplexer
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        anthony.derosa@syscall7.com, linux-spi <linux-spi@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2020-01-15 at 13:36 -0500, Mimi Zohar wrote:
-> On Mon, 2020-01-13 at 11:48 +0100, KP Singh wrote:
-> > On 06-Jan 17:25, Florent Revest wrote:
-> > > From: Florent Revest <revest@google.com>
-> > > 
-> > > This allows other parts of the kernel (perhaps a stacked LSM
-> > > allowing
-> > > system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the
-> > > hash
-> > > of a given file from IMA if it's present in the iint cache.
-> > > 
-> > > It's true that the existence of the hash means that it's also in
-> > > the
-> > > audit logs or in
-> > > /sys/kernel/security/ima/ascii_runtime_measurements,
-> > > but it can be difficult to pull that information out for every
-> > > subsequent exec.  This is especially true if a given host has
-> > > been up
-> > > for a long time and the file was first measured a long time ago.
-> > > 
-> > > This is based on Peter Moody's patch:
-> > >  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
-> > > 
-> > > [1] https://lkml.org/lkml/2019/9/10/393
-> > > 
-> > > Signed-off-by: Florent Revest <revest@google.com>
-> > 
-> > Thanks for adding this Florent!
-> > 
-> > Reviewed-by: KP Singh <kpsingh@chromium.org>
-> 
-> Thanks, this patch is now queued in next-integrity-testing.
+On Tue, Jan 14, 2020 at 5:39 PM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> Add binding documentation for the spi-mux driver. This allows a generic
+> multiplexer to be used to provide access to multiple SPI devices.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  .../devicetree/bindings/spi/spi-mux.yaml      | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-mux.yaml
 
-Good to hear Mimi! Thank you.
+Be sure to run 'make dt_binding_check'.
 
-I would just like to make sure that you queued the v3 of this patch
-though...? (this thread is for the v2 :) ) The v3 includes a couple of
-comments you asked for.
+>
+> diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> new file mode 100644
+> index 000000000000..1026d03a69c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
+Dual license new bindings please:
+
+(GPL-2.0-only OR BSD-2-Clause)
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/spi-mux.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic SPI Multiplexer
+> +
+> +description: |
+> +  This binding describes a SPI bus multiplexer to route the SPI chip select
+> +  signals. This can be used when you need more devices than the SPI controller
+> +  has chip selects available. An example setup is shown in ASCII art; the actual
+> +  setting of the multiplexer to a channel needs to be done by a specific SPI mux
+> +  driver.
+> +
+> +        MOSI /--------------------------------+--------+--------+--------\
+> +        MISO |/------------------------------+|-------+|-------+|-------\|
+> +         SCL ||/----------------------------+||------+||------+||------\||
+> +             |||                            |||      |||      |||      |||
+> +      +------------+                        |||      |||      |||      |||
+> +      | SoC  |||   |                      +-+++-+  +-+++-+  +-+++-+  +-+++-+
+> +      |      |||   |                      | dev |  | dev |  | dev |  | dev |
+> +      |   +--+++-+ | CS-X  +------+\      +--+--+  +--+--+  +--+--+  +--+--+
+> +      |   | SPI  +-|-------+ Mux  |\\   CS-0 |        |        |        |
+> +      |   +------+ |       +--+---+\\\-------/   CS-1 |        |        |
+> +      |            |          |    \\\----------------/   CS-2 |        |
+> +      |   +------+ |          |     \\-------------------------/   CS-3 |
+> +      |   | ?    +-|----------/      \----------------------------------/
+> +      |   +------+ |
+> +      +------------+
+> +
+> +allOf:
+> +  - $ref: "/schemas/spi/spi-controller.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    const: spi-mux
+> +
+> +  mux-control:
+> +    $ref: "/schemas/mux/mux-controller.yaml#"
+
+That file doesn't exist. If it did, it would still be wrong as that
+would be the provider side and this is the client.
+
+The correct name is also 'mux-controls'.
+
+You can assume it has a schema already and you just need to define how
+many entries it has (maxItems: 1).
+
+> +
+> +required:
+> +   - compatible
+> +   - reg
+> +   - spi-max-frequency
+> +   - mux-control
+> +
+> +examples:
+> +   - |
+> +     mux: mux-controller {
+> +       compatible = "gpio-mux";
+> +       #mux-control-cells = <0>;
+> +
+> +       mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+> +     };
+> +
+> +     spi {
+> +       spi-mux {
+
+spi-mux@0
+
+> +         compatible = "spi-mux";
+> +         #address-cells = <1>;
+> +         #size-cells = <0>;
+> +         reg = <0>;
+> +         spi-max-frequency = <100000000>;
+
+I don't think this makes sense here. The mux doesn't really have any
+frequency given the clock and data lines aren't routed thru the mux
+(though maybe that's possible if some isolation is needed).
+
+> +
+> +         mux-control = <&mux>
+> +         mux-control-names = "spi";
+
+Not documented. Drop it as it's not all that useful when there's only 1 entry.
+
+> +
+> +         spi-flash@0 {
+> +           compatible = "jedec,spi-nor";
+> +           #address-cells = <1>;
+> +           #size-cells = <1>;
+> +           reg = <0>;
+> +           spi-max-frequency = <40000000>;
+> +         };
+> +
+> +         spi-device@1 {
+> +           compatible = "spidev";
+
+Not a valid compatible.
+
+> +           reg = <1>;
+> +           spi-max-frequency = <10000000>;
+> +         };
+> +       };
+> +     };
+> --
+> 2.25.0
+>
