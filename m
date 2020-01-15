@@ -2,132 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CBF13C603
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C763C13C62C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:35:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbgAOOal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:30:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:65264 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726472AbgAOOal (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:30:41 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FER4Sx110917;
-        Wed, 15 Jan 2020 09:30:05 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xhgs6npvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 09:30:05 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00FESoBW014686;
-        Wed, 15 Jan 2020 14:30:05 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04wdc.us.ibm.com with ESMTP id 2xf751x35c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 14:30:05 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FEU4uB43647418
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 14:30:04 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ECC0B7805F;
-        Wed, 15 Jan 2020 14:30:03 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3620378060;
-        Wed, 15 Jan 2020 14:30:03 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.80.230.130])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jan 2020 14:30:02 +0000 (GMT)
-Subject: Re: [PATCH] Fix display of Maximum Memory
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Gustavo Walbon <gwalbon@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>
-References: <55f25626-20ca-0acb-3571-ff636ca4632c@linux.ibm.com>
- <41380afd-05f5-f36f-c857-041243c73ee3@c-s.fr>
-From:   Michael Bringmann <mwb@linux.ibm.com>
-Openpgp: preference=signencrypt
-Organization: IBM Linux Technology Center
-Message-ID: <eb6c4171-09b3-b8f0-6219-38757da6fc3b@linux.ibm.com>
-Date:   Wed, 15 Jan 2020 08:30:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728984AbgAOOfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:35:08 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9622 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbgAOOfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:35:07 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7E27371AF80249D83CBA;
+        Wed, 15 Jan 2020 22:35:04 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 15 Jan 2020 22:34:55 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Shuming Fan <shumingf@realtek.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ASoC: rt700: fix return value check in rt700_sdw_probe()
+Date:   Wed, 15 Jan 2020 14:30:27 +0000
+Message-ID: <20200115143027.94364-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <41380afd-05f5-f36f-c857-041243c73ee3@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-15_02:2020-01-15,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 clxscore=1011 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001150117
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 11:41 PM, Christophe Leroy wrote:
-> 
-> 
-> Le 14/01/2020 à 22:07, Michael Bringmann a écrit :
->> Correct overflow problem in calculation+display of Maximum Memory
->> value to syscfg where 32bits is insufficient.
->>
->> Signed-off-by: Michael Bringmann <mwb@linux.ibm.com>
->> ---
->>   arch/powerpc/platforms/pseries/lparcfg.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/powerpc/platforms/pseries/lparcfg.c b/arch/powerpc/platforms/pseries/lparcfg.c
->> index 4ee2594..183aeb7 100644
->> --- a/arch/powerpc/platforms/pseries/lparcfg.c
->> +++ b/arch/powerpc/platforms/pseries/lparcfg.c
->> @@ -435,12 +435,12 @@ static void parse_em_data(struct seq_file *m)
->>
->>   static void maxmem_data(struct seq_file *m)
->>   {
->> -       unsigned long maxmem = 0;
->> +       unsigned long long maxmem = 0;
-> 
-> What about using u64 instead, for readability ?
+In case of error, the function devm_regmap_init() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Okay.
-> 
->>
->> -       maxmem += drmem_info->n_lmbs * drmem_info->lmb_size;
->> -       maxmem += hugetlb_total_pages() * PAGE_SIZE;
->> +       maxmem += (unsigned long long)drmem_info->n_lmbs * (unsigned long long)drmem_info->lmb_size;
-> 
-> This line is likely too long. You only need to cast one of the two operants to force a 64 bits multiply. And using u64 would shorten the line.
-> 
-> Can both multiplications overflow ?
+Fixes: 7d2a5f9ae41e ("ASoC: rt700: add rt700 codec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/rt700-sdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes.
+diff --git a/sound/soc/codecs/rt700-sdw.c b/sound/soc/codecs/rt700-sdw.c
+index 314103601af3..a4b95425886f 100644
+--- a/sound/soc/codecs/rt700-sdw.c
++++ b/sound/soc/codecs/rt700-sdw.c
+@@ -460,8 +460,8 @@ static int rt700_sdw_probe(struct sdw_slave *slave,
+ 
+ 	regmap = devm_regmap_init(&slave->dev, NULL,
+ 		&slave->dev, &rt700_regmap);
+-	if (!regmap)
+-		return -EINVAL;
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
+ 
+ 	rt700_init(&slave->dev, sdw_regmap, regmap, slave);
 
-> 
-> Christophe
-> 
->> +       maxmem += (unsigned long long)hugetlb_total_pages() * (unsigned long long)PAGE_SIZE;
->>
->> -       seq_printf(m, "MaxMem=%ld\n", maxmem);
->> +       seq_printf(m, "MaxMem=%llu\n", maxmem);
->>   }
->>
->>   static int pseries_lparcfg_data(struct seq_file *m, void *v)
->>
-> 
 
-Thanks.
--- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.ibm.com
+
