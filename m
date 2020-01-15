@@ -2,129 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01AD13C112
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6AE213C114
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbgAOMeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:34:25 -0500
+        id S1728982AbgAOMe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:34:28 -0500
 Received: from mail-eopbgr40123.outbound.protection.outlook.com ([40.107.4.123]:20855
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726018AbgAOMeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:34:23 -0500
+        id S1726085AbgAOMe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:34:26 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lwSw2GzXc3ybvGT4L30/dM990bjk89VBZyUnZ0gVAIiBb3it3VPqBJFaLAngE60KbchkskaiH1CSyOwyHsdt94ApXql9M1bE2ypijexYvvn3xdJnLpI7GdMCWuTybdFbVUwqeH6DE0AcDma34ZBEo5zHOY7XKW97gE88qI9Fp9NYEAb5dIWSU2zKeQ1j1dRbYA8pJqXnH2NFZSZRxfngjg+Ckc7CUVQAl6vjZJAasqbCGRKS++kyfbr5vU4VYeKHWoNfYozeWKxg1mbqVx/mdISv8bFzMkOZ7BzkQ0wEsfAubofPHwl4EAApPcEpsm2cJWS+sEo16LOkYRs8VHIEKA==
+ b=HpxlPHKwkbD4dSz/pVZk7Uf2WKtJnPPeuQzoKV1fNtmI5pToTLE3Wf1nAVWchu4+YeP1CQqX2pp+iD4p5o7pqaLv0F0SKdqMylkRrxTEirnED/u4H1DGbCo1GFeQq7HwLFqQ9RfPmWLUt03ZPzU+X7S9YJNy/3us8DgRxX4pUQ1jZ2E1A29yv8w5wq4P9f5ezp/uYdecQ2K2CSaJdeidxYIPsIbNlRFb2kEy1Ab9Q6dazf6Xf15JOmyM44RF2ai+M5HBUNcs6janHWSXI1pp3VSwXfZPVfg+skxKeuewpmi0oy5kUtc1jgSNsWsjeO87VjI9dvBTde6q7rWm78f7sQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9M8wkwM8VH7vF+foXDJpeEMSeZOaQ5pZQMmK4tguDdU=;
- b=j4aciQCNI+2QDASdPoV1Cb//HFDn9zWOMPz0AnCGPy3uc4kJGVLh+sfgHrQgoSQld7/qisxM4piwHh8jKImU10dBLMqhAmqoZLxnTMfle/JePtlWFV2iP5S/t4F5Z4AyW3g7oCFhc1BOeyZfABTbfaoXV+YM+59i3o7BKNMSf1SObPIhWgNgLOs+VakymUgQ+CUuChoR3s/A55UMbEhxyBr4p1agHV9M9E2rGUOlSQ+jKiaBCTzWTtx/4+fWqCiszEC/rlryV14GhWhGgigwgWqmZb3NknSSoJzvp/RrxRzXgVe3pQLPL6GKMPUAt4ZY0q10zYdSkgvP++BmXjwzFQ==
+ bh=b0e5hvsKVP4k1Kk56nRQhdu/kgSOJ9v30lY9F0Pwy1A=;
+ b=DgUwYW5RUW21YlhoIyaq1eSt9d4TKexkn+gku7AvmcXuy9ycjv4iZcVBdTnAOgpcKoSonQumP0YtglQI0UoaVIvvU804Mqr+n0mDV73iUCS8jdSdgNvBD3L37xGdjZc838YlaiqFB4uflaHUYAXaEePFu8DvnkWCxeZR/KndEhAh6MnQIWxFR0zLEpapr9GVjwufdjXkvaijsU69oVWy4+1chJZBIEXu0AGjJK8FM2ZnK2RRsS3PR2nq4WxbtnY1U1b0+X9JVWXHdDUkwKVwCdRUwPe4GBb5LUIeIhri5i2IvH/fBkCZm4gnb0lS7FF+M/OB1AzxDarUYZJw8anZjQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
  dkim=pass header.d=toradex.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9M8wkwM8VH7vF+foXDJpeEMSeZOaQ5pZQMmK4tguDdU=;
- b=hSm4uFUBfg72IWe5g8QHlk3/4lSxqvudU92XbsAViY5aQzuGLouGkpo3KL09k7HTnV8StiGM34D8gXPWc5K3m6VKapQVJ6+jDQK5BJrmK4eey+t0DFUfzzebCBaR2cdJahYb396Har+/yKLKbIGRZz+fSkEj6CU6xTe+9tPqN1c=
+ bh=b0e5hvsKVP4k1Kk56nRQhdu/kgSOJ9v30lY9F0Pwy1A=;
+ b=Ij75ESAPg8DsarfpGQibTAo5GgXs4jeXXYNuxpxDmsn6nNyr3w4/iOKWfITkeQWoCwE+T135COraY/B9FjIAsjuAQurhmDhxxpGcwVotrvS4OIn9GKPI79ch2IrduxMcBGhE6+SJFEE/sBZvN3kTlc29R3Aj8H3k3QPQPL4vG0k=
 Received: from VI1PR05MB3279.eurprd05.prod.outlook.com (10.170.238.24) by
  AM6SPR01MB0060.eurprd05.prod.outlook.com (10.255.22.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.18; Wed, 15 Jan 2020 12:34:19 +0000
+ 15.20.2644.18; Wed, 15 Jan 2020 12:34:21 +0000
 Received: from VI1PR05MB3279.eurprd05.prod.outlook.com
  ([fe80::c14f:4592:515f:6e52]) by VI1PR05MB3279.eurprd05.prod.outlook.com
  ([fe80::c14f:4592:515f:6e52%7]) with mapi id 15.20.2623.018; Wed, 15 Jan 2020
- 12:34:19 +0000
-Received: from localhost (194.105.145.90) by PR0P264CA0039.FRAP264.PROD.OUTLOOK.COM (2603:10a6:100:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.19 via Frontend Transport; Wed, 15 Jan 2020 12:34:19 +0000
+ 12:34:21 +0000
+Received: from localhost (194.105.145.90) by PR2P264CA0019.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.19 via Frontend Transport; Wed, 15 Jan 2020 12:34:20 +0000
 From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     Igor Opanyuk <igor.opanyuk@toradex.com>,
         Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>,
         Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: [PATCH 2/3] drm/panel: pass video modes bus_flags
-Thread-Topic: [PATCH 2/3] drm/panel: pass video modes bus_flags
-Thread-Index: AQHVy6AbStXpDk/5LkG4OWGT5cIsUw==
-Date:   Wed, 15 Jan 2020 12:34:19 +0000
-Message-ID: <20200115123401.2264293-3-oleksandr.suvorov@toradex.com>
+        Fabio Estevam <festevam@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 3/3] ARM: dts: imx7-colibri: add generic RGB (DPI) panel
+Thread-Topic: [PATCH 3/3] ARM: dts: imx7-colibri: add generic RGB (DPI) panel
+Thread-Index: AQHVy6Ac56X4lthwbEG5Llfds1xgWw==
+Date:   Wed, 15 Jan 2020 12:34:21 +0000
+Message-ID: <20200115123401.2264293-4-oleksandr.suvorov@toradex.com>
 References: <20200115123401.2264293-1-oleksandr.suvorov@toradex.com>
 In-Reply-To: <20200115123401.2264293-1-oleksandr.suvorov@toradex.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: PR0P264CA0039.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:100:1::27) To VI1PR05MB3279.eurprd05.prod.outlook.com
- (2603:10a6:802:1c::24)
+x-clientproxiedby: PR2P264CA0019.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101::31)
+ To VI1PR05MB3279.eurprd05.prod.outlook.com (2603:10a6:802:1c::24)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=oleksandr.suvorov@toradex.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.24.1
 x-originating-ip: [194.105.145.90]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b0db77f6-6ac8-41bd-6b87-08d799b73ddf
+x-ms-office365-filtering-correlation-id: 30637859-925a-4466-8881-08d799b73ee0
 x-ms-traffictypediagnostic: AM6SPR01MB0060:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6SPR01MB006063733453419C03F9D662F9370@AM6SPR01MB0060.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1468;
+x-microsoft-antispam-prvs: <AM6SPR01MB00600399F936FD98B11B93ADF9370@AM6SPR01MB0060.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1107;
 x-forefront-prvs: 02830F0362
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(136003)(396003)(346002)(376002)(366004)(189003)(199004)(54906003)(52116002)(6496006)(6916009)(81156014)(316002)(66556008)(64756008)(8676002)(66446008)(66946007)(86362001)(71200400001)(44832011)(66476007)(4326008)(36756003)(16526019)(26005)(478600001)(2906002)(5660300002)(4744005)(81166006)(8936002)(186003)(1076003)(6486002)(956004)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6SPR01MB0060;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(136003)(396003)(346002)(376002)(366004)(189003)(199004)(54906003)(52116002)(6496006)(6916009)(81156014)(316002)(66556008)(64756008)(8676002)(66446008)(66946007)(7416002)(86362001)(71200400001)(44832011)(66476007)(4326008)(36756003)(16526019)(26005)(478600001)(2906002)(5660300002)(81166006)(8936002)(186003)(1076003)(6486002)(956004)(2616005)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6SPR01MB0060;H:VI1PR05MB3279.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JQlaoe3xcYC7yJuVww+w4OOugBXnimIcen+Ntbt4Z73cp503z2EEhEXh20+mQJL1VuINPo2PG007cxGxDzpnJ7aQEQq/rm6PWz93xQx29jQxf316BnJaQaFryacyjMYSGRBJldBcaxavfydJ0JT8ty7dUJkxsH6tWCQdaUu9TnPujg5LiQxWbKuY2dNI/b23BSnqc0Qz2ywTPdWjHYO7vAK/vAqufmRfsCscQ4cyd05XZaX4mkxXTg1Uqil5Xq/iJ7u0FYjBbyi8Ca57Mbg0vINwHFxngm1aUX4VmULEewbUiXjLEY5wcu31Kvs/WO69SA7QygqABnh6Ix4QJWIsIfNlS8DNt0TKXUdoQAyvebwvc0+PAOIotXesWoF3Y+IKJXDJ1VmJp2mZVed/cqbnGhPEoaBrWcW/3XsCl06FTdipO8a0qkGcTJCmrs4GOZ1W
+x-microsoft-antispam-message-info: WhYFIsF4VjdBUzIJUPqeeVo1gjQuQmPw9zQMEBh+CMQHCv9yqFQiaIvZTCZjA39nwh8mxjiZdVFdv9+ar0v0kGeYpZMbrkuG2Ko5E5/UVVFNB52eZyQ3PWRAAC4PxrqZ1GYQOTt6MCyiNkaz4cC0tKrpQSunAB/+bjbObAI9NU89p2WQz66Tgvl0MDZqSrw9Q0ilLRpcqbGsJZwQViQptr/i7iA+/0iGhBBE4CHe0P8MQS+1frO1IH8798aIdUMz9rPy6F94Q3N+AFGhTUKCdnUGZYYDjLdwGQ41T7qB01Nk+VUh/9aySbgSngQTsWYoNx38SHWLMaZZrmFsxHP7HTPF88DnL8KD6HxTUqaKRK0+70AaamvHMU0EimA6FzQFpwnjnM4LIJ/gM/eM53on6+GIO4QHK1KG50aO4zRFStS9oGMhifQgKnk/GaXWDVYjXZdiLN1DTFO5KI1Bc74VGLq1Bo53//C6g+ZHNBSFEM8Pw55w3Gd14sOQbCJRo00t
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0db77f6-6ac8-41bd-6b87-08d799b73ddf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 12:34:19.3920
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30637859-925a-4466-8881-08d799b73ee0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 12:34:21.1240
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cH1LEE6+vlaWGJJGuWGP3ZQ31KrDuLNNZWYAStcGtA1chnoE8sTPcFvHtUApEtsJKpBEUISQSNstYbO/EwOoO+QmkXmE8FcSZ1VLIwYXHcY=
+X-MS-Exchange-CrossTenant-userprincipalname: cNARAofJ42mt1LwnIXiv6Ji3jX4K/sNtc9bhqzIM5F4O+HIZw7W5BkmLLCigeeC597b5bc6RrG2/89Kwhr7nIjYZNuBqyMsTNoLhdOq6YcA=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6SPR01MB0060
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+Make panel definition generic and default to VESA VGA display timings.
 
-Make sure that the bus_flags parsed from the display timings are
-passed to the connector display info.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+
 ---
 
- drivers/gpu/drm/panel/panel-lvds.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 29 ++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/pan=
-el-lvds.c
-index 21a169aa3ae4..334a67c1a52f 100644
---- a/drivers/gpu/drm/panel/panel-lvds.c
-+++ b/drivers/gpu/drm/panel/panel-lvds.c
-@@ -101,7 +101,9 @@ static int panel_lvds_get_modes(struct drm_panel *panel=
-,
- 	connector->display_info.height_mm =3D lvds->height;
- 	drm_display_info_set_bus_formats(&connector->display_info,
- 					 &lvds->bus_format, 1);
--	connector->display_info.bus_flags =3D lvds->data_mirror
-+	drm_bus_flags_from_videomode(&lvds->video_mode,
-+				     &connector->display_info.bus_flags);
-+	connector->display_info.bus_flags |=3D lvds->data_mirror
- 					  ? DRM_BUS_FLAG_DATA_LSB_TO_MSB
- 					  : DRM_BUS_FLAG_DATA_MSB_TO_LSB;
+diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dt=
+s/imx7-colibri-eval-v3.dtsi
+index 6aa123cbdadb..af043526852e 100644
+--- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+@@ -67,9 +67,36 @@ power {
+ 	};
 =20
+ 	panel: panel {
+-		compatible =3D "edt,et057090dhu";
++		/*
++		 * edt,et057090dhu: EDT 5.7" LCD TFT
++		 * edt,et070080dh6: EDT 7.0" LCD TFT
++		 * logictechno,lt161010-2nhc: Cap. Touch Display 7" Parallel
++		 * logictechno,lt161010-2nhr: Res. Touch Display 7" Parallel
++		 * logictechno,lt170410-2whc: Cap. Touch Display 10.1" LVDS
++		 * tpk,f07a-0102: Capacitive Multi-Touch Display Fusion 7"
++		 * tpk,f10a-0102: Capacitive Multi-Touch Display Fusion 10"
++		 */
++		compatible =3D "panel-dpi";
+ 		backlight =3D <&bl>;
+ 		power-supply =3D <&reg_3v3>;
++		width-mm =3D <217>;
++		height-mm =3D <136>;
++
++		data-mapping =3D "bgr666";
++
++		panel-timing {
++			/* Default VESA VGA display timings */
++			clock-frequency =3D <25175000>;
++			hactive =3D <640>;
++			hback-porch =3D <48>;
++			hfront-porch =3D <16>;
++			hsync-len =3D <96>;
++			vactive =3D <480>;
++			vback-porch =3D <31>;
++			vfront-porch =3D <11>;
++			vsync-len =3D <2>;
++			pixelclk-active =3D <0>;
++		};
+=20
+ 		port {
+ 			panel_in: endpoint {
 --=20
 2.24.1
 
