@@ -2,79 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB59913B66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A00313B66F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 01:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbgAOAKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 19:10:07 -0500
-Received: from mga01.intel.com ([192.55.52.88]:8669 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729072AbgAOAKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 19:10:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 16:09:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
-   d="scan'208";a="273468607"
-Received: from emkilgox-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.251.0.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2020 16:09:57 -0800
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH 10/10] soundwire: bus: don't treat CMD_IGNORED as error on ClockStop
-Date:   Tue, 14 Jan 2020 18:08:44 -0600
-Message-Id: <20200115000844.14695-11-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
-References: <20200115000844.14695-1-pierre-louis.bossart@linux.intel.com>
+        id S1728877AbgAOAL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 19:11:56 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44710 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgAOAL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 19:11:56 -0500
+Received: by mail-ot1-f67.google.com with SMTP id h9so14459669otj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 16:11:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rqYwFYlybDxb7rHCNCkg0gK4e3FUvJBmLmo+IxQN78U=;
+        b=DAw0DiNPXWkYy/jOs5uSIUxLr6iU9qWd7k3XMsIaj6wTDGxJigxJrwm/GcFGj8xGS+
+         o/tKhhbT9xtAUAQN/fut0v1hsuxVtYcYky9fjwIAQHQW/072VGyVjt4yd/eZrWPY1fmL
+         clWSYwOYMj2g78h/fnejLQHZ1M0Qe8M+hdL7fFbiGuRmw1+064Pj1KLk44Sde++QinJd
+         vVozaKmIga6GWHsm+jkh23GOg8PgRoSP+tkMHSqTrlAzAOswIfGPX9aLRMoPzC42HxMK
+         1jcl1E46qJ44yhT9hLiFE9UC6KlRTCLy3jNlxlnrQnL+PEaTkLlkLDA7rojUQEDxMuGq
+         L56Q==
+X-Gm-Message-State: APjAAAXaK8ZADfFvgmbzlCoEivQFAqhM7uGtWNJkip4Ke95R1EFGDJVu
+        m+3PK/puDex0lz0GGFKivttYlho=
+X-Google-Smtp-Source: APXvYqx3hmq4EfXe42kTS0r5zIRH50rnbbcS13jmXowU00L5H9UgVHmKuUA/8Qd77PkvSm24W9Rwbg==
+X-Received: by 2002:a9d:242:: with SMTP id 60mr779590otb.253.1579047115225;
+        Tue, 14 Jan 2020 16:11:55 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h7sm5895085otk.56.2020.01.14.16.11.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 16:11:54 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 2209ae
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Tue, 14 Jan 2020 18:11:52 -0600
+Date:   Tue, 14 Jan 2020 18:11:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        mark.rutland@arm.com, s.hauer@pengutronix.de,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V2 2/3] dt-bindings: pinctrl: Convert i.MX8MM to
+ json-schema
+Message-ID: <20200115001152.GA12156@bogus>
+References: <1578629120-25793-1-git-send-email-Anson.Huang@nxp.com>
+ <1578629120-25793-2-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1578629120-25793-2-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a SoundWire link is enabled, but there are no Slave devices exposed
-in firmware tables for this link, or no Slaves in ATTACHED or ALERT
-mode, the CMD_IGNORED/-ENODATA error code on a broadcast write is
-perfectly legit.
+On Fri, Jan 10, 2020 at 12:05:19PM +0800, Anson Huang wrote:
+> Convert the i.MX8MM pinctrl binding to DT schema format using json-schema
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V1:
+>         - use "grp$" instead of "-grp$";
+>         - use space instead of tab for "ref$";
+> 	- add missed "reg" property;
+>         - remove the "maxItem" for "fsl,pins" to avoid build warning, as the item number is changable.
+> ---
+>  .../bindings/pinctrl/fsl,imx8mm-pinctrl.txt        | 36 -----------
+>  .../bindings/pinctrl/fsl,imx8mm-pinctrl.yaml       | 69 ++++++++++++++++++++++
+>  2 files changed, 69 insertions(+), 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
+> deleted file mode 100644
+> index e4e01c0..0000000
+> --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.txt
+> +++ /dev/null
+> @@ -1,36 +0,0 @@
+> -* Freescale IMX8MM IOMUX Controller
+> -
+> -Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+> -for common binding part and usage.
+> -
+> -Required properties:
+> -- compatible: "fsl,imx8mm-iomuxc"
+> -- reg: should contain the base physical address and size of the iomuxc
+> -  registers.
+> -
+> -Required properties in sub-nodes:
+> -- fsl,pins: each entry consists of 6 integers and represents the mux and config
+> -  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+> -  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+> -  <arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h>. The last integer CONFIG is
+> -  the pad setting value like pull-up on this pin.  Please refer to i.MX8M Mini
+> -  Reference Manual for detailed CONFIG settings.
+> -
+> -Examples:
+> -
+> -&uart1 {
+> -       pinctrl-names = "default";
+> -       pinctrl-0 = <&pinctrl_uart1>;
+> -};
+> -
+> -iomuxc: pinctrl@30330000 {
+> -        compatible = "fsl,imx8mm-iomuxc";
+> -        reg = <0x0 0x30330000 0x0 0x10000>;
+> -
+> -        pinctrl_uart1: uart1grp {
+> -                fsl,pins = <
+> -                        MX8MM_IOMUXC_UART1_RXD_UART1_DCE_RX             0x140
+> -                        MX8MM_IOMUXC_UART1_TXD_UART1_DCE_TX             0x140
+> -                >;
+> -        };
+> -};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml
+> new file mode 100644
+> index 0000000..a3c4275
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
 
-Filter this case to report errors and let the caller deal with the
-CMD_IGNORED case.
+Sorry, one other thing.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/bus.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+You're good with GPLv9? Plus this is a license change. Do you have 
+rights to do so as some of this comes from the old binding doc? If you 
+do, then make it:
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 3395abd2ed39..13887713f311 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -922,8 +922,12 @@ int sdw_bus_clk_stop(struct sdw_bus *bus)
- 	ret = sdw_bwrite_no_pm(bus, SDW_BROADCAST_DEV_NUM,
- 			       SDW_SCP_CTRL, SDW_SCP_CTRL_CLK_STP_NOW);
- 	if (ret < 0) {
--		dev_err(bus->dev,
--			"ClockStopNow Broadcast message failed %d", ret);
-+		if (ret == -ENODATA)
-+			dev_dbg(bus->dev,
-+				"ClockStopNow Broadcast msg ignored %d", ret);
-+		else
-+			dev_err(bus->dev,
-+				"ClockStopNow Broadcast msg failed %d", ret);
- 		return ret;
- 	}
- 
--- 
-2.20.1
+(GPL-2.0-only OR BSD-2-Clause)
 
+Rob
