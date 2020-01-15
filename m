@@ -2,71 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A1B13BA0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:02:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5620A13BA14
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:05:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbgAOHCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 02:02:35 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9176 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726018AbgAOHCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 02:02:35 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2E0C26AAF424853E4FA2;
-        Wed, 15 Jan 2020 15:02:33 +0800 (CST)
-Received: from huawei.com (10.175.107.192) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 Jan 2020
- 15:02:24 +0800
-From:   wanghongzhe <wanghongzhe@huawei.com>
-To:     <peterhuewe@gmx.de>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhangchenfeng1@huawei.com>, <wanghongzhe@huawei.com>
-Subject: [PATCH] tpm:tpm_tis_spi: set cs_change = 0 when timesout
-Date:   Tue, 15 Jan 2019 15:02:29 +0800
-Message-ID: <1547535749-23221-1-git-send-email-wanghongzhe@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.107.192]
-X-CFilter-Loop: Reflected
+        id S1729199AbgAOHFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 02:05:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41839 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOHFi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 02:05:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id w62so8060455pfw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 23:05:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pheYEBYXRUydN40/wbI1ZvK+bBwX3RUetQibpSJmnJY=;
+        b=NvUYpJrRAEoLYVNWDLCyIXnqBtZhu5T9juwnWlnFdYlwfcQphlEPKzzircApS3ZF7B
+         9b9OmmpCr4epEqhH1CboKmQk+p4BrJPEpmeM7FmdagTbPka3w94DHbv+VO+zxsOGzmaK
+         OMH3E8BaI0WET4G/4ilVhXU1z7AP3936MaP2rhruDZpKMTctBJenJU3FZAXtEQFpJjaU
+         EB/e2yjsxHhCJiKxYsGiOp4mG9+w0dhPih1uUFcfvx0dbN/FJe4bysTIlCwH4MkjINgC
+         rAtCnkzRvAZw0PewWyeRegxwzI0sgSPtJ3HbFO9xXCZxC3x3jiX5dXO7mJQAeCblPuc4
+         /YVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pheYEBYXRUydN40/wbI1ZvK+bBwX3RUetQibpSJmnJY=;
+        b=LMCUBPJcdGUdVrGkBBEJidAdNo4tT9PqPZEROqG9FDBle2zmIvWviIQB9LmzijRTaw
+         Ukksg1n1jX/91/e1XoAFp1GxdKHU72EIvyg5WG9nSFjSzNw5O8WLYLsY+T7uQlaPo485
+         wDIcRAl7rEUujUs3XzxWx/oUIpxFXSipce970817QPSPf65wVY3r5zPl/c5GGE+X18HW
+         aZzsfQdZK/lMqft1EC8HleN5gp9p3wOq/qnnB7+Lc6YHXRlVOH8oa92V32Me1QsAAMVE
+         8pWaOXImCgej4y9httbOjAauWW/+QwNAsUMr/ZCp8p5joegRSoqToeTz65tZuIHECFda
+         sF3Q==
+X-Gm-Message-State: APjAAAXXrHaXUTU4L7QPDPmz6zdHlyN/xB0fvwQAIVPWrejnLDWXV/PD
+        NZcbiQlzEpkogy3oF7HPZ2I4CA==
+X-Google-Smtp-Source: APXvYqzVGND6xq6LG8bdDE07pm1yXFpJeW17HC9m0rxajMfZLCEWDJc0iFO258V6fVljx91mfxMv/A==
+X-Received: by 2002:a65:4d46:: with SMTP id j6mr32352377pgt.63.1579071937402;
+        Tue, 14 Jan 2020 23:05:37 -0800 (PST)
+Received: from greentime-VirtualBox.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
+        by smtp.gmail.com with ESMTPSA id a2sm19196023pgv.64.2020.01.14.23.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 23:05:36 -0800 (PST)
+From:   Greentime Hu <greentime.hu@sifive.com>
+To:     green.hu@gmail.com, greentime@kernel.org, paul.walmsley@sifive.com,
+        palmer@dabbelt.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, schwab@suse.de, anup@brainfault.org
+Cc:     Greentime Hu <greentime.hu@sifive.com>
+Subject: [PATCH v4] riscv: make sure the cores stay looping in .Lsecondary_park
+Date:   Wed, 15 Jan 2020 14:54:36 +0800
+Message-Id: <20200115065436.7702-1-greentime.hu@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wang Hongzhe <wanghongzhe@huawei.com>
+The code in secondary_park is currently placed in the .init section. The
+kernel reclaims and clears this code when it finishes booting. That
+causes the cores parked in it to go to somewhere unpredictable, so we
+move this function out of init to make sure the cores stay looping there.
 
-when i reach TPM_RETRY, the cs cannot  change back to 'high'.
-So the TPM chips thinks this communication is not over.
-And next times communication cannot be effective because the
-communications mixed up with the last time.
+The instruction bgeu a0, t0, .Lsecondary_park may have "a relocation
+truncated to fit" issue during linking time. It is because that sections
+are too far to jump. Let's use tail to jump to the .Lsecondary_park.
 
-Signed-off-by: Wang Hongzhe <wanghongzhe@huawei.com>
+Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
 ---
- drivers/char/tpm/tpm_tis_spi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/riscv/kernel/head.S | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-index d1754fd..27e57bf 100644
---- a/drivers/char/tpm/tpm_tis_spi.c
-+++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -66,8 +66,15 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
- 				break;
- 		}
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index f8f996916c5b..d7820764122c 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -88,7 +88,9 @@ _start_kernel:
  
--		if (i == TPM_RETRY)
-+		if (i == TPM_RETRY) {
-+			spi_xfer->len = 1;
-+			spi_xfer->cs_change = 0;
-+			spi_message_init(&m);
-+			spi_message_add_tail(spi_xfer, &m);
-+			if (ret < 0)
-+				return ret;
- 			return -ETIMEDOUT;
-+		}
- 	}
+ #ifdef CONFIG_SMP
+ 	li t0, CONFIG_NR_CPUS
+-	bgeu a0, t0, .Lsecondary_park
++	blt a0, t0, .Lgood_cores
++	tail .Lsecondary_park
++.Lgood_cores:
+ #endif
  
- 	return 0;
+ 	/* Pick one hart to run the main boot sequence */
+@@ -217,11 +219,6 @@ relocate:
+ 	tail smp_callin
+ #endif
+ 
+-.align 2
+-.Lsecondary_park:
+-	/* We lack SMP support or have too many harts, so park this hart */
+-	wfi
+-	j .Lsecondary_park
+ END(_start)
+ 
+ #ifdef CONFIG_RISCV_M_MODE
+@@ -303,6 +300,13 @@ ENTRY(reset_regs)
+ END(reset_regs)
+ #endif /* CONFIG_RISCV_M_MODE */
+ 
++.section ".text", "ax",@progbits
++.align 2
++.Lsecondary_park:
++	/* We lack SMP support or have too many harts, so park this hart */
++	wfi
++	j .Lsecondary_park
++
+ __PAGE_ALIGNED_BSS
+ 	/* Empty zero page */
+ 	.balign PAGE_SIZE
 -- 
-1.7.12.4
+2.17.1
 
