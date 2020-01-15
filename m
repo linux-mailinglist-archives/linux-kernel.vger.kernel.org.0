@@ -2,126 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC0713CE07
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42DF013CE11
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbgAOUVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 15:21:05 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44524 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAOUVE (ORCPT
+        id S1729121AbgAOU0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 15:26:11 -0500
+Received: from mail-il1-f173.google.com ([209.85.166.173]:46220 "EHLO
+        mail-il1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOU0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 15:21:04 -0500
-Received: by mail-qt1-f195.google.com with SMTP id w8so2528452qts.11;
-        Wed, 15 Jan 2020 12:21:03 -0800 (PST)
+        Wed, 15 Jan 2020 15:26:11 -0500
+Received: by mail-il1-f173.google.com with SMTP id t17so16005299ilm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 12:26:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gQDIp0O9QnAxX4WU+TXGscN8NS1YVLXeb9VJm6V5OoY=;
-        b=lXvNNSN9x27eKkpEf42K5E/i5sPyZRkW3eo3LqB4FkqRL2DhMZDY/WSoEBtIzsiIFO
-         6hTeNRtROe0iU6UQnNsb3TtKEAH1mMcRnHXMLyL97Jbd+QORixgkcbrPsQzGsw+E6G4a
-         9S2+ztvLWxDhaAW9qLhFHdkT10B8r0eqytUvsi1g0rAGTqXJK5NkmMnMcW+Jii3vrKhO
-         QQoRSyT9nKrjDX8A/nLJ9V6K5K3GaGSANPXsfn2cVCR+qxVOBPDq0ryBazMq/JbgFueH
-         mHF6bEYqdyfW5gSH385AJ//uXNwc192o4gekyY38rOcPNZRRpQy0XJOSxA3Vx0AdLWCD
-         1f2Q==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=iQ8pBplfJf3QXQ6Cld8WTGD1ayy2UO6V8CK3FRxpWJI=;
+        b=XfaAgE8TMBjf+u8PUWX6qkWOlqTAqIapHzrmTOI9Sa5dxSIApOcHUyDHF1CYGwJ0TK
+         9gIgbcSEg/9UTPu4fkWAUAMozQ9utiowCewUDlttN1yJQoXF+xc4uC+cwfwzx9vTCVm4
+         XXV/EirUb4kr9FJY7t1DwFdA42v1eSvPbO2Ev98LmxpQATkgKiNukTQZBwoLbPmiptjE
+         KjlMf32IlGmVPgrYGyZSVEjM9SiuQsaUwP3xaArVY8pnVaOWeXrg9Lc9D5e9+ve4Ttx2
+         O80R0iGUKcpGBc8VxJcNdZRbxJY7WZSRw8CbEpP9O9nbh++r8jjdJXVfs7YMCVJ0jnq4
+         cAKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gQDIp0O9QnAxX4WU+TXGscN8NS1YVLXeb9VJm6V5OoY=;
-        b=P3YuTSfG4YvtFJxf2O7zi3zcjvEk4rxY8GC/0vZsMfqMjAyJOtl3O+3NvkaKIfrk9n
-         kYJ+DtcfEs5cVQ0nxqpU7wgEO1r1g0qmXtxMs9jAoqtbpp70GWZp+ZKJwZUxkzWSWUny
-         JdBq4cAWbt+LbRoaKlFwRcJA1SaV8zpctT8f5hlabxQHk3auMiX0NPihSkRJBtUdvSNx
-         a2/22KlxdP9lXPv296Vjbe8mdCAa4sOcOjnusHe9o3bAAQBuLJfQLCBC6R20yfo67ZS/
-         3f4ryh+M4riAtXql7alZW1h8SJpXXm5UNh1Da/qVxWRW+oQnCNio9jY5k5S159frSimg
-         O4nA==
-X-Gm-Message-State: APjAAAWfEf/AJG6GHR42QR/sseAQl3suvh0KxO0JdFRaJT6usJUGFjgy
-        gubfTmEILb21nkX5EBgjKfsBeJZRWoFPD8tu3Mw=
-X-Google-Smtp-Source: APXvYqxUasebTmpN/r6CnD4d6Jf+zUxCLRbdtypRZ2A9uy6ktTsnq+Z2WBqBWo3XYSTfOFxSuYL1Ydf+yDse6G5xqBI=
-X-Received: by 2002:ac8:4050:: with SMTP id j16mr367798qtl.171.1579119663256;
- Wed, 15 Jan 2020 12:21:03 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=iQ8pBplfJf3QXQ6Cld8WTGD1ayy2UO6V8CK3FRxpWJI=;
+        b=EEdN5VAdoXfOAsdk535JEvGcWppUDpiFLQ19Y2f79VB/18h/3z4mvWaChRHkuxoccA
+         RM6tJ2ziZnBRAxj6C0cadp3X4Q+ah9Z18Ic9XoG81bBmjlfErlfyJVvh7WqodVkeZTT4
+         n/XO96pSBP/FSiZfkeAJwk2akZoZ2a7aIcGhq4prrurfLoNET1X/5G5Om+iL5HlLILqX
+         wuInBJzV6eJgzl45Ws6YjTbjgdw6eXOHd6pI1rwdCJ8FpIoRf6hoAQmdEYspJY10A2ty
+         eNhA4ADsqSZs1HqVY3uGnzUJ9Sv0AV9zRX3El6+TdhlEfWeV9HB8isdHdABt6+f7UI2O
+         acHg==
+X-Gm-Message-State: APjAAAVZgIEkOn/f/dQseOM7LeVHeJobDMjTkgYkX3kgWix2i8giwqfm
+        d7cWiJKcUM+ZpjmlO4zVc4f2BXTbD33GFevG+6Q=
+X-Google-Smtp-Source: APXvYqyOKorj9F79h2OthPLRfItZTQrx1bIwSVZts268Srd+0UB5q3ZUgPHdhRHzsUqX8Y5yUdNQ09eUMWJm2lyDI9g=
+X-Received: by 2002:a92:1547:: with SMTP id v68mr330617ilk.58.1579119970226;
+ Wed, 15 Jan 2020 12:26:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20200115184308.162644-1-brianvv@google.com> <20200115184308.162644-8-brianvv@google.com>
-In-Reply-To: <20200115184308.162644-8-brianvv@google.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Wed, 15 Jan 2020 12:20:52 -0800
-Message-ID: <CAEf4BzYR2cNC_O6c8Fu4HtAny-XJaGafpDCMGhuj4-ubQ14vRw@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 7/9] libbpf: add libbpf support to batch ops
-To:     Brian Vazquez <brianvv@google.com>
-Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Yonghong Song <yhs@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 15 Jan 2020 14:25:59 -0600
+Message-ID: <CAHCN7xLuCqSFVnVQ-7ZWH-Dkd+w-_bJLnbSDyUip_8orhTwzZw@mail.gmail.com>
+Subject: Using Pull-up resistors on gpio-pca953x expander
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 10:43 AM Brian Vazquez <brianvv@google.com> wrote:
->
-> From: Yonghong Song <yhs@fb.com>
->
-> Added four libbpf API functions to support map batch operations:
->   . int bpf_map_delete_batch( ... )
->   . int bpf_map_lookup_batch( ... )
->   . int bpf_map_lookup_and_delete_batch( ... )
->   . int bpf_map_update_batch( ... )
->
-> Signed-off-by: Yonghong Song <yhs@fb.com>
-> ---
->  tools/lib/bpf/bpf.c      | 58 ++++++++++++++++++++++++++++++++++++++++
->  tools/lib/bpf/bpf.h      | 22 +++++++++++++++
->  tools/lib/bpf/libbpf.map |  4 +++
->  3 files changed, 84 insertions(+)
->
-> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-> index 500afe478e94a..317727d612149 100644
-> --- a/tools/lib/bpf/bpf.c
-> +++ b/tools/lib/bpf/bpf.c
-> @@ -452,6 +452,64 @@ int bpf_map_freeze(int fd)
->         return sys_bpf(BPF_MAP_FREEZE, &attr, sizeof(attr));
->  }
->
-> +static int bpf_map_batch_common(int cmd, int fd, void  *in_batch,
-> +                               void *out_batch, void *keys, void *values,
-> +                               __u32 *count,
-> +                               const struct bpf_map_batch_opts *opts)
-> +{
-> +       union bpf_attr attr = {};
+The pca953x can support pull-up resistors, and I have a pcal6416 that
+I'd like to enable them.
 
+Ideally, I was hoping there would be a way to add enable to the device
+tree, because the expander is connected to some buttons which are
+grounded when pressed.  Without pull-up resistors enabled, the buttons
+always appear to be pressed.
 
-this is not a big issue and I don't want to delay landing your
-patches, so maybe you can follow up with another patch. But this '=
-{}' part is a complete waste because you do memset below.
+Is there some way to enable them?  I see the functionality is
+available and called through gc->set_config = pca953x_gpio_set_config;
 
-> +       int ret;
-> +
-> +       if (!OPTS_VALID(opts, bpf_map_batch_opts))
-> +               return -EINVAL;
-> +
-> +       memset(&attr, 0, sizeof(attr));
-> +       attr.batch.map_fd = fd;
-> +       attr.batch.in_batch = ptr_to_u64(in_batch);
-> +       attr.batch.out_batch = ptr_to_u64(out_batch);
-> +       attr.batch.keys = ptr_to_u64(keys);
-> +       attr.batch.values = ptr_to_u64(values);
-> +       attr.batch.count = *count;
-> +       attr.batch.elem_flags  = OPTS_GET(opts, elem_flags, 0);
-> +       attr.batch.flags = OPTS_GET(opts, flags, 0);
-> +
-> +       ret = sys_bpf(cmd, &attr, sizeof(attr));
-> +       *count = attr.batch.count;
-> +
-> +       return ret;
-> +}
-> +
+I don't know enough about the API to know how to enable this.  Can
+someone give me some pointers?
 
-[...]
+Would you entertain my adding some device tree hooks to enable them?
+
+adam
