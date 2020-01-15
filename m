@@ -2,85 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFF813CD14
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 20:28:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79E9E13CD34
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 20:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgAOT17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 14:27:59 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:42767 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgAOT16 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 14:27:58 -0500
-Received: from mail-qt1-f175.google.com ([209.85.160.175]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MPXpS-1j4PGR0uxe-00Me1Z; Wed, 15 Jan 2020 20:27:57 +0100
-Received: by mail-qt1-f175.google.com with SMTP id e25so5473224qtr.13;
-        Wed, 15 Jan 2020 11:27:56 -0800 (PST)
-X-Gm-Message-State: APjAAAWLEulqIx7B7tp5+7XV2CGWmtgErwP2mtdWnqHt2rTFj6gs08RK
-        0CmYy3GVxeGnCk1MmY99qYP0JgiQ9iM7LNMTjHI=
-X-Google-Smtp-Source: APXvYqykSB0s6rvYmQe0FsRmHzo5ilui57+/PGk4XuP/nxJe8gVx9oYHNNcpJzIIHmSXoLWDH8AZDKjyw5exXlKcGs0=
-X-Received: by 2002:ac8:3a27:: with SMTP id w36mr186613qte.204.1579116476026;
- Wed, 15 Jan 2020 11:27:56 -0800 (PST)
+        id S1729259AbgAOThX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 14:37:23 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:35105 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbgAOThW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 14:37:22 -0500
+X-Greylist: delayed 831 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Jan 2020 14:37:21 EST
+Received: from localhost.localdomain ([160.80.103.126])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 00FJN41Y007665
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 15 Jan 2020 20:23:05 +0100
+From:   Andrea Mayer <andrea.mayer@uniroma2.it>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Petr Machata <petrm@mellanox.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Litao jiao <jiaolitao@raisecom.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Andrea Mayer <andrea.mayer@uniroma2.it>,
+        Paolo Lungaroni <paolo.lungaroni@cnit.it>
+Subject: [net] vxlan: fix vxlan6_get_route() adding a call to xfrm_lookup_route()
+Date:   Wed, 15 Jan 2020 20:22:31 +0100
+Message-Id: <20200115192231.3005-1-andrea.mayer@uniroma2.it>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20200115165749.145649-1-elver@google.com>
-In-Reply-To: <20200115165749.145649-1-elver@google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Jan 2020 20:27:39 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
-Message-ID: <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
-Subject: Re: [PATCH -rcu] asm-generic, kcsan: Add KCSAN instrumentation for bitops
-To:     Marco Elver <elver@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:YkKUpj3xwSkFfIAXmbpuL8nE9IJtvsIKwYN1OxMqtU+EjMlrFqq
- L8y7mP1TYaLLoj5rByrBqN68arCwTunm0jSK4POSeN/EVUzbyXjFuzs8gwKjY719nBlCZAb
- 4fc2vxqRO/aBN0ESQog6d9vPlA/UbncXUFbLJvncl1ojiUeXEP1E1/5PIqPse8FeBMhxYzP
- yCDsXkISzsvMFJvwmtR4Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BQDfpI/qFJY=:/u/Wd4aHL4TXSOo9bePzLv
- EyfYG8rEzQpepeAXYkmV5FUyJg90tkSXgEnb8tHBQzUzxD9Mz+ouAf8Fh5qfNu+wfM8L5aQZ1
- QMKNVRONvHi+fr3KKHrCma4mrZlckaGr3mNmO3z+oh5BsbsEuxT5c6P9PGGIWGTMJtFb5Paan
- 4cur8jqXT/qyslcV2JrERboJIEW5UzreBKLGmV+sIT7LuL/NJ0U7NlK1e/CJg84UKSfm+vBu7
- +8VZ1l/+LK3b0tSCu+vMe0ncBQETVlbeOugiz5FZYGGb/H9OT4LmvK5jRgg941DccBNRGKcBF
- wF2Jz4kFvcvTvhEY0IDVOGRdBVulRU/Y9Jg42rmdsrscZjtOwWq5GHzK+n/rdzMZdKYCD0ETw
- PUCodamAV7eUhqu+Fbc25fqk5Umc4uO5fHg+/AvAM8gg+/xGGTGps5HbFzCK8P78dOd/5jlTW
- z1oqhnKQwQl/dXqETFzF0/xGCqENztVuKpLjxeFik2yvnygpqlZKQSiPIHNn17+twCegvVfYd
- 0pLfpStRJDRZ9D0QvEzxSTIVlSQHzR1v3vHNsYKzvmQdz54VvAwjCZzlFsMfFyzKojdwTK8YS
- yviSSHtpQtX/c6D14R+DMw1uj+FDN5q04vuJ5bcBmMLeBdOIZMHzszS0eEA584TaBwZITqhdv
- PCv/qmvj1i+Q21X8+2U5yZpPVlXy2wEjRDLfhuET1wdD1hBIpK8i2Ftm3/gR1ygqGzFANoseh
- Jg4qMdoB+X5bjwPgquStn33B1t/uLancmkn/rUK6RQA5LoArIyMy8gMTU1USeF/hBHsUYC5st
- 5PkBEoWcch3856TFyEpYboSekzp2lXl34egokwicB1bmq/bGjrBqnJi++aXuImkfgqpUoWZU0
- Q/NPuz6eeLerxvIrgi4Q==
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 5:58 PM Marco Elver <elver@google.com> wrote:
->   * set_bit - Atomically set a bit in memory
-> @@ -26,6 +27,7 @@
->  static inline void set_bit(long nr, volatile unsigned long *addr)
->  {
->         kasan_check_write(addr + BIT_WORD(nr), sizeof(long));
-> +       kcsan_check_atomic_write(addr + BIT_WORD(nr), sizeof(long));
->         arch_set_bit(nr, addr);
->  }
+currently IPSEC cannot be used to encrypt/decrypt IPv6 vxlan traffic.
+The problem is that the vxlan module uses the vxlan6_get_route()
+function to find out the route for transmitting an IPv6 packet, which in
+turn uses ip6_dst_lookup() available in ip6_output.c.
+Unfortunately ip6_dst_lookup() does not perform any xfrm route lookup,
+so the xfrm framework cannot be used with vxlan6.
 
-It looks like you add a kcsan_check_atomic_write or kcsan_check_write directly
-next to almost any instance of kasan_check_write().
+To fix the issue above, the vxlan6_get_route() function has been patched
+by adding a missing call to xfrm_lookup_route(). Doing that, the
+vxlan6_get_route() is now capable to lookup a route taking into account
+also xfrm policies, if any.
 
-Are there any cases where we actually just need one of the two but not the
-other? If not, maybe it's better to rename the macro and have it do both things
-as needed?
+Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+Signed-off-by: Paolo Lungaroni <paolo.lungaroni@cnit.it>
+---
+ drivers/net/vxlan.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-      Arnd
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index bf04bc2e68c2..bec55a911c4f 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2306,6 +2306,11 @@ static struct dst_entry *vxlan6_get_route(struct vxlan_dev *vxlan,
+ 		return ERR_PTR(-ENETUNREACH);
+ 	}
+ 
++	ndst = xfrm_lookup_route(vxlan->net, ndst, flowi6_to_flowi(&fl6),
++				 sock6->sock->sk, 0);
++	if (IS_ERR_OR_NULL(ndst))
++		return ERR_PTR(-ENETUNREACH);
++
+ 	if (unlikely(ndst->dev == dev)) {
+ 		netdev_dbg(dev, "circular route to %pI6\n", daddr);
+ 		dst_release(ndst);
+-- 
+2.20.1
+
