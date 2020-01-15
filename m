@@ -2,151 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284B313B7B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 03:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B76113B7BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 03:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgAOCdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 21:33:31 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:60984 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728877AbgAOCdb (ORCPT
+        id S1728931AbgAOCiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 21:38:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:51656 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728862AbgAOCiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 21:33:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1579055610; x=1610591610;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=gyGLhBXlOVb74kkFm3YuptdbEXFgkQ7f0XQco2ZOrho=;
-  b=irhVHLsXGD9C3GLsm4/rJ5HBxF5NX/8dCY51jtskuWM8mVk1UHW5nsjY
-   xIBg/f0J0M65P/jfsrP8iT9bLtP9JVYbg+4zsUMUDpRF+6SyEqy+ByJUY
-   wb57Wb43NW/UlbcJCN+pyOdgBCawIebiIz7uLL8kNzKJpU341zMxnS6G4
-   yo13529quToMpMkeKGLt4/znL4SlwvSsnh8hYMbf6o1YQBfWZLMWYfWto
-   Vo+ny7KCPQglCkQJTC5sNFSXZIQ6yl0dNpMrfe49dhrg/feFCahueXafz
-   vrp1x/y7WaQH38F0M2wlaimeihx8DpQ6nAc9CD3uDX0WDQ6E3ONYh/JqL
-   Q==;
-IronPort-SDR: vnqB2gez3U2mI1uMe/5jB2TFUQ9H8d4bRqg8HhCv8FE26x0wfehyRHm9acPzncyT37uPfU0QYB
- 1bC4tnn4FylcRkYnsIZrgLhVvUw1SOIMvuyuypvjHPXA7c1wpfDu5BgaC+Ki4roIp7irLLODBy
- AdTvJ4kzj5Agz8I9J51wmzZvmuyVPyxektVKnyE1SGZNfJHoQ98AnR79xP3jTTb1BuEhCQN1Rt
- S1HfsY78/kb9obOmhicRC/Uc8dx1fSliBARE7B6Za+YPLhJKpBnAE8u/XfCBHw2bdNqdjLcDXP
- LX8=
-X-IronPort-AV: E=Sophos;i="5.70,321,1574092800"; 
-   d="scan'208";a="129009968"
-Received: from mail-mw2nam10lp2101.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.101])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2020 10:33:30 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WDwcHxnTLzCkwXivdpDQQO7QgPwLWRH+CboKZ3ZsLuBsXWeCJPD1/wePa2y/R78VGeyBrbXu/RCnsu0KnDFuYJ7fVNyzb9Hz247wXZgi/uoxD4p5kWIg7en/YSoMavRpS935zOQo+yPW+zGS3XvokLxX6wBUm25AUZuUu6gvqo0PFtHsdttnKNtdb4OD0aHdDH/mt+yPnAVYeo4w/oykaN9AdLDk7ylmngrWiiP9VG+HkeVPKc8JylJMoxGCT0+53V4lZsxYKJOyvnHSA30m4gSWDMdDwqwsZbn3iS253pYU7l+lQKreN74XeSBXdR+knKeqG/98Ng06SJzMnGneSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyGLhBXlOVb74kkFm3YuptdbEXFgkQ7f0XQco2ZOrho=;
- b=Kc2JCLwyXm9N/efxxNPBHYet1JovcFbhNqjglmJ2LO8vQHF7qwsjvhm19zSxMv9v5FXu9FAxfI6moBGZDiSQWmzFT9csjb0miyP7W6ToylSt2K7Ly/6Gt4qcLsoAVUnNNytj0gnl6eh0eBGTjRd7uN4f33VCrc/ezqKiMKe4dMd19ROZMhccWHoOfTdvLh1B1sEm+yvDYlpEjHBtFQk7ZVbHlVSjiNJOwZYVs3PugEqxNfoCaPjFlvfH5cMNS0970Wh671WNHhNI0CAlEmhZ0lFXsL2ujL5mTu9v7+UKTXbLnSSzsAKkeMvudoux3vPCfMNOdbVCf4VZLMxV6Dt0TA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyGLhBXlOVb74kkFm3YuptdbEXFgkQ7f0XQco2ZOrho=;
- b=N6zjT+y6QjrWCABhr62Tjnvt7GoJTjy87JLSltpCDVpY1KR3ouqZMBxxfJ3yZ1cqO94VAgdXDRCWWDkOCDb+pnxWpnZ0tlHVyjLkPXN1fsp14v041k3hU4m45CQvs8Wp8nm6ROVLeFtu9zB3J2g9lCJkkOAXIce1D2lxH392lYQ=
-Received: from CY1PR04MB2268.namprd04.prod.outlook.com (10.167.10.135) by
- CY1PR04MB2266.namprd04.prod.outlook.com (10.166.207.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.18; Wed, 15 Jan 2020 02:33:29 +0000
-Received: from CY1PR04MB2268.namprd04.prod.outlook.com
- ([fe80::30f9:4a94:796:3014]) by CY1PR04MB2268.namprd04.prod.outlook.com
- ([fe80::30f9:4a94:796:3014%12]) with mapi id 15.20.2644.015; Wed, 15 Jan 2020
- 02:33:28 +0000
-From:   Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-To:     Yuehaibing <yuehaibing@huawei.com>
-CC:     Chao Yu <yuchao0@huawei.com>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "chao@kernel.org" <chao@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: remove set but not used variable
- 'cs_block'
-Thread-Topic: [f2fs-dev] [PATCH -next] f2fs: remove set but not used variable
- 'cs_block'
-Thread-Index: AQHVulgQExCdjuBytUKA1yv69qLf+qfLyO2AgAAnP4CAACbggIAfDJoA
-Date:   Wed, 15 Jan 2020 02:33:28 +0000
-Message-ID: <20200115023328.bummaaa7pdnao5qk@shindev.dhcp.fujisawa.hgst.com>
-References: <20191224124359.15040-1-yuehaibing@huawei.com>
- <673efe18-d528-2e9b-6d44-a6a7a22086f3@huawei.com>
- <62ce1981-9061-f798-a65d-9599ceceb4b8@huawei.com>
- <20191226082419.ljbhystwkhp2d4gh@shindev.dhcp.fujisawa.hgst.com>
-In-Reply-To: <20191226082419.ljbhystwkhp2d4gh@shindev.dhcp.fujisawa.hgst.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shinichiro.kawasaki@wdc.com; 
-x-originating-ip: [199.255.47.12]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 339d4532-60f2-484f-4d8f-08d799634e3a
-x-ms-traffictypediagnostic: CY1PR04MB2266:
-x-microsoft-antispam-prvs: <CY1PR04MB226602172B91432F32DA7675ED370@CY1PR04MB2266.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 02830F0362
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(6506007)(53546011)(26005)(8936002)(2906002)(4326008)(86362001)(71200400001)(186003)(5660300002)(64756008)(66446008)(81156014)(81166006)(91956017)(8676002)(66476007)(76116006)(66556008)(6486002)(9686003)(44832011)(1076003)(6512007)(316002)(54906003)(478600001)(66946007)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR04MB2266;H:CY1PR04MB2268.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: a05beRjcdketrd9c2Uosu9qCxhtPRdn9deMY8zPPRJ3fscg+zE4KIQYtp+wk42f9vg1dTyh5YgBDP7+KWFD9VvxqqRf4fIbwrysaFHrQY78tuz3RFZhKdV+5DeCWw7tKlt7HU3YyrVTTO7UeXplABU+PBvIXqJR/sn1JXyaLdQrJ+KhoDA2Jziyg5EpDsLVI/MIVvbq4T26WPIkTffAbTR6Me2VsOkmevn2IHeeO5Qc/mxEustQr00QcIJN05ifTp5g2oxuWtisQYmg7kbpT1I1YDNkLU/l6RsBj95tfTJq4Ml3IqptCd8+5YiUtfU26m/i2pySeXPBZPEPUC5SvMaj8PviC5cwE0ld5Z3m3pEh21uDoI2sQfQ1o8EQrqtjG3LH6oC9KLk7UCHHdyJUDt5xp6ypggkrOQKum2+h18/SDStYqMBf+CFLewFjXfmco
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <564B674AF41E8540BE93E33C34484B50@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 339d4532-60f2-484f-4d8f-08d799634e3a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 02:33:28.8680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QX7kIdKKvuHxnFfJPEjEjq/4Ho6rlRO4ZKQA+q2xZdrvakFen2i9VUN1Hd6xTTSbE17q6EdrUNMZ+bkOlwkxO9CfFkAo8rzBR7rVx0DmRs4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR04MB2266
+        Tue, 14 Jan 2020 21:38:08 -0500
+Received: from localhost (unknown [8.46.75.2])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9836B15809987;
+        Tue, 14 Jan 2020 18:37:56 -0800 (PST)
+Date:   Tue, 14 Jan 2020 18:37:48 -0800 (PST)
+Message-Id: <20200114.183748.275989716164464774.davem@davemloft.net>
+To:     bjorn.andersson@linaro.org
+Cc:     aneela@codeaurora.org, clew@codeaurora.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] QRTR flow control improvements
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
+References: <20200114075703.2145718-1-bjorn.andersson@linaro.org>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 14 Jan 2020 18:38:07 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dec 26, 2019 / 17:24, Shin'ichiro Kawasaki wrote:
-> On Dec 26, 2019 / 14:05, Yuehaibing wrote:
-> > On 2019/12/26 11:44, Chao Yu wrote:
-> > > On 2019/12/24 20:43, YueHaibing wrote:
-> > >> fs/f2fs/segment.c: In function fix_curseg_write_pointer:
-> > >> fs/f2fs/segment.c:4485:35: warning: variable cs_block set but not us=
-ed [-Wunused-but-set-variable]
-> > >>
-> > >> It is never used since commit 362d8a920384 ("f2fs: Check
-> > >> write pointer consistency of open zones") , so remove it.
-> > >=20
-> > > Thanks for the fix!
-> > >=20
-> > > Do you mind merging this patch to original patch? as it's still
-> > > pending in dev branch.
-> >=20
-> > It's ok for me.
-> >
->=20
-> Thank you for this catch and the fix. Appreciated.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Date: Mon, 13 Jan 2020 23:56:58 -0800
 
-I have merged YueHaibing's change to the write pointer consistency fix patc=
-h
-and sent out as the v6 series. Thanks again for finding out the unused vari=
-able.
+> In order to prevent overconsumption of resources on the remote side QRTR
+> implements a flow control mechanism.
+> 
+> Move the handling of the incoming confirm_rx to the receiving process to
+> ensure incoming flow is controlled. Then implement outgoing flow
+> control, using the recommended algorithm of counting outstanding
+> non-confirmed messages and blocking when hitting a limit. The last three
+> patches refactors the node assignment and port lookup, in order to
+> remove the worker in the receive path.
 
-I was not sure if I should add Chao Yu's reviewed by tag to the patch from =
-which
-the unused variable was removed. To be strict, I didn't add the tag. Just
-another quick review by Chao will be appreciated.
-
---
-Best Regards,
-Shin'ichiro Kawasaki=
+Series applied to net-next, thank you.
