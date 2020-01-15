@@ -2,344 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D411613C2F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63E8A13C360
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbgAONbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 08:31:41 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38557 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbgAONbk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:31:40 -0500
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 02A9720007;
-        Wed, 15 Jan 2020 13:31:35 +0000 (UTC)
-Date:   Wed, 15 Jan 2020 14:40:11 +0100
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] PCI: amlogic: Use AXG PCIE and shared MIPI/PCIE
- PHYs
-Message-ID: <20200115134011.GJ1803@voidbox>
-References: <20200115122908.16954-1-repk@triplefau.lt>
- <20200115122908.16954-8-repk@triplefau.lt>
- <e86e613b-0811-bbed-1999-260b83351957@baylibre.com>
+        id S1729021AbgAONke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 08:40:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726474AbgAONke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 08:40:34 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB9D222C3;
+        Wed, 15 Jan 2020 13:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579095633;
+        bh=yEvYDgP0hc8sIQw49jsuC8Li1BERDoQiLHX4I+8npEU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=yUBid8+OSRibkxQojKsX7U3nIkQ7ueJEq+o1uKTakja28wR4D9oyApWN9B7jIKciZ
+         UOxa2zAJNDRE2yc5+w91idP+kk9v4zoYM5Q7Tz33MW0wHXmyI0h/aQf/EIxXp3jqHl
+         g2S/w8EfgByVvLY3hywPz6T2VPLlDqmXjYeTBUv8=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1iriuN-0008Ry-FJ; Wed, 15 Jan 2020 13:40:31 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e86e613b-0811-bbed-1999-260b83351957@baylibre.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 15 Jan 2020 13:40:31 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Paul Burton <paulburton@kernel.org>
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
+        chenhc@lemote.com, paul.burton@mips.com, tglx@linutronix.de,
+        jason@lakedaemon.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip: mips-cpu: Remove eoi operation
+In-Reply-To: <20200114233025.y4azwvivqo7kg7i5@pburton-laptop>
+References: <20200113101251.37471-1-jiaxun.yang@flygoat.com>
+ <20200114233025.y4azwvivqo7kg7i5@pburton-laptop>
+Message-ID: <9cd8df72fc3a7dfcdd88eb1fb56bbe35@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: paulburton@kernel.org, jiaxun.yang@flygoat.com, linux-mips@vger.kernel.org, chenhc@lemote.com, paul.burton@mips.com, tglx@linutronix.de, jason@lakedaemon.net, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 01:30:06PM +0100, Neil Armstrong wrote:
-> On 15/01/2020 13:29, Remi Pommarel wrote:
-> > Now that PCIE PHY has been introduced for AXG, the whole has_shared_phy
-> > logic can be mutualized between AXG and G12A platforms.
-> > 
-> > This also makes use of the optional MIPI/PCIE shared fonctionality PHY
-> > found on AXG platforms, which need to be used in order to have reliable
-> > PCIE communications.
-> > 
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  drivers/pci/controller/dwc/pci-meson.c | 140 ++++++++-----------------
-> >  1 file changed, 46 insertions(+), 94 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> > index 3772b02a5c55..309e75f554ac 100644
-> > --- a/drivers/pci/controller/dwc/pci-meson.c
-> > +++ b/drivers/pci/controller/dwc/pci-meson.c
-> > @@ -66,7 +66,6 @@
-> >  #define PORT_CLK_RATE			100000000UL
-> >  #define MAX_PAYLOAD_SIZE		256
-> >  #define MAX_READ_REQ_SIZE		256
-> > -#define MESON_PCIE_PHY_POWERUP		0x1c
-> >  #define PCIE_RESET_DELAY		500
-> >  #define PCIE_SHARED_RESET		1
-> >  #define PCIE_NORMAL_RESET		0
-> > @@ -81,26 +80,19 @@ enum pcie_data_rate {
-> >  struct meson_pcie_mem_res {
-> >  	void __iomem *elbi_base;
-> >  	void __iomem *cfg_base;
-> > -	void __iomem *phy_base;
-> >  };
-> >  
-> >  struct meson_pcie_clk_res {
-> >  	struct clk *clk;
-> > -	struct clk *mipi_gate;
-> >  	struct clk *port_clk;
-> >  	struct clk *general_clk;
-> >  };
-> >  
-> >  struct meson_pcie_rc_reset {
-> > -	struct reset_control *phy;
-> >  	struct reset_control *port;
-> >  	struct reset_control *apb;
-> >  };
-> >  
-> > -struct meson_pcie_param {
-> > -	bool has_shared_phy;
-> > -};
-> > -
-> >  struct meson_pcie {
-> >  	struct dw_pcie pci;
-> >  	struct meson_pcie_mem_res mem_res;
-> > @@ -108,7 +100,7 @@ struct meson_pcie {
-> >  	struct meson_pcie_rc_reset mrst;
-> >  	struct gpio_desc *reset_gpio;
-> >  	struct phy *phy;
-> > -	const struct meson_pcie_param *param;
-> > +	struct phy *shared_phy;
-> >  };
-> >  
-> >  static struct reset_control *meson_pcie_get_reset(struct meson_pcie *mp,
-> > @@ -130,13 +122,6 @@ static int meson_pcie_get_resets(struct meson_pcie *mp)
-> >  {
-> >  	struct meson_pcie_rc_reset *mrst = &mp->mrst;
-> >  
-> > -	if (!mp->param->has_shared_phy) {
-> > -		mrst->phy = meson_pcie_get_reset(mp, "phy", PCIE_SHARED_RESET);
-> > -		if (IS_ERR(mrst->phy))
-> > -			return PTR_ERR(mrst->phy);
-> > -		reset_control_deassert(mrst->phy);
-> > -	}
-> > -
-> >  	mrst->port = meson_pcie_get_reset(mp, "port", PCIE_NORMAL_RESET);
-> >  	if (IS_ERR(mrst->port))
-> >  		return PTR_ERR(mrst->port);
-> > @@ -162,22 +147,6 @@ static void __iomem *meson_pcie_get_mem(struct platform_device *pdev,
-> >  	return devm_ioremap_resource(dev, res);
-> >  }
-> >  
-> > -static void __iomem *meson_pcie_get_mem_shared(struct platform_device *pdev,
-> > -					       struct meson_pcie *mp,
-> > -					       const char *id)
-> > -{
-> > -	struct device *dev = mp->pci.dev;
-> > -	struct resource *res;
-> > -
-> > -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
-> > -	if (!res) {
-> > -		dev_err(dev, "No REG resource %s\n", id);
-> > -		return ERR_PTR(-ENXIO);
-> > -	}
-> > -
-> > -	return devm_ioremap(dev, res->start, resource_size(res));
-> > -}
-> > -
-> >  static int meson_pcie_get_mems(struct platform_device *pdev,
-> >  			       struct meson_pcie *mp)
-> >  {
-> > @@ -189,14 +158,6 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
-> >  	if (IS_ERR(mp->mem_res.cfg_base))
-> >  		return PTR_ERR(mp->mem_res.cfg_base);
-> >  
-> > -	/* Meson AXG SoC has two PCI controllers use same phy register */
-> > -	if (!mp->param->has_shared_phy) {
-> > -		mp->mem_res.phy_base =
-> > -			meson_pcie_get_mem_shared(pdev, mp, "phy");
-> > -		if (IS_ERR(mp->mem_res.phy_base))
-> > -			return PTR_ERR(mp->mem_res.phy_base);
-> > -	}
-> > -
-> >  	return 0;
-> >  }
-> >  
-> > @@ -204,20 +165,40 @@ static int meson_pcie_power_on(struct meson_pcie *mp)
-> >  {
-> >  	int ret = 0;
-> >  
-> > -	if (mp->param->has_shared_phy) {
-> > -		ret = phy_init(mp->phy);
-> > -		if (ret)
-> > -			return ret;
-> > +	ret = phy_init(mp->phy);
-> > +	if (ret)
-> > +		goto err;
-> >  
-> > -		ret = phy_power_on(mp->phy);
-> > -		if (ret) {
-> > -			phy_exit(mp->phy);
-> > -			return ret;
-> > -		}
-> > -	} else
-> > -		writel(MESON_PCIE_PHY_POWERUP, mp->mem_res.phy_base);
-> > +	ret = phy_init(mp->shared_phy);
-> > +	if (ret)
-> > +		goto exit;
-> > +
-> > +	ret = phy_power_on(mp->phy);
-> > +	if (ret)
-> > +		goto shared_exit;
-> > +
-> > +	ret = phy_power_on(mp->shared_phy);
-> > +	if (ret)
-> > +		goto power_off;
-> >  
-> >  	return 0;
-> > +
-> > +power_off:
-> > +	phy_power_off(mp->phy);
-> > +shared_exit:
-> > +	phy_exit(mp->shared_phy);
-> > +exit:
-> > +	phy_exit(mp->phy);
-> > +err:
-> > +	return ret;
-> > +}
-> > +
-> > +static void meson_pcie_power_off(struct meson_pcie *mp)
-> > +{
-> > +	phy_power_off(mp->shared_phy);
-> > +	phy_power_off(mp->phy);
-> > +	phy_exit(mp->shared_phy);
-> > +	phy_exit(mp->phy);
-> >  }
-> >  
-> >  static int meson_pcie_reset(struct meson_pcie *mp)
-> > @@ -225,16 +206,13 @@ static int meson_pcie_reset(struct meson_pcie *mp)
-> >  	struct meson_pcie_rc_reset *mrst = &mp->mrst;
-> >  	int ret = 0;
-> >  
-> > -	if (mp->param->has_shared_phy) {
-> > -		ret = phy_reset(mp->phy);
-> > -		if (ret)
-> > -			return ret;
-> > -	} else {
-> > -		reset_control_assert(mrst->phy);
-> > -		udelay(PCIE_RESET_DELAY);
-> > -		reset_control_deassert(mrst->phy);
-> > -		udelay(PCIE_RESET_DELAY);
-> > -	}
-> > +	ret = phy_reset(mp->phy);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = phy_reset(mp->shared_phy);
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	reset_control_assert(mrst->port);
-> >  	reset_control_assert(mrst->apb);
-> > @@ -286,12 +264,6 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
-> >  	if (IS_ERR(res->port_clk))
-> >  		return PTR_ERR(res->port_clk);
-> >  
-> > -	if (!mp->param->has_shared_phy) {
-> > -		res->mipi_gate = meson_pcie_probe_clock(dev, "mipi", 0);
-> > -		if (IS_ERR(res->mipi_gate))
-> > -			return PTR_ERR(res->mipi_gate);
-> > -	}
-> > -
-> >  	res->general_clk = meson_pcie_probe_clock(dev, "general", 0);
-> >  	if (IS_ERR(res->general_clk))
-> >  		return PTR_ERR(res->general_clk);
-> > @@ -562,7 +534,6 @@ static const struct dw_pcie_ops dw_pcie_ops = {
-> >  
-> >  static int meson_pcie_probe(struct platform_device *pdev)
-> >  {
-> > -	const struct meson_pcie_param *match_data;
-> >  	struct device *dev = &pdev->dev;
-> >  	struct dw_pcie *pci;
-> >  	struct meson_pcie *mp;
-> > @@ -576,18 +547,13 @@ static int meson_pcie_probe(struct platform_device *pdev)
-> >  	pci->dev = dev;
-> >  	pci->ops = &dw_pcie_ops;
-> >  
-> > -	match_data = of_device_get_match_data(dev);
-> > -	if (!match_data) {
-> > -		dev_err(dev, "failed to get match data\n");
-> > -		return -ENODEV;
-> > -	}
-> > -	mp->param = match_data;
-> > +	mp->phy = devm_phy_get(dev, "pcie");
-> > +	if (IS_ERR(mp->phy))
-> > +		return PTR_ERR(mp->phy);
-> >  
-> > -	if (mp->param->has_shared_phy) {
-> > -		mp->phy = devm_phy_get(dev, "pcie");
-> > -		if (IS_ERR(mp->phy))
-> > -			return PTR_ERR(mp->phy);
-> > -	}
-> > +	mp->shared_phy = devm_phy_optional_get(dev, "shared");
-> > +	if (IS_ERR(mp->shared_phy))
-> > +		return PTR_ERR(mp->shared_phy);
+On 2020-01-14 23:30, Paul Burton wrote:
+> Hi Jiaxun,
 > 
-> This "shared" phy doesn't appear in patch 3 (bindings) !
+> On Mon, Jan 13, 2020 at 06:12:51PM +0800, Jiaxun Yang wrote:
+>> The eoi opreation in mips_cpu_irq_controller caused chained_irq_enter
+>> falsely consider CPU IP interrupt as a FastEOI type IRQ. So the 
+>> interrupt
+>> won't be masked during in handler. Which might lead to spurious 
+>> interrupt.
+>> 
+>> Thus we simply remove eoi operation for mips_cpu_irq_controller,
+>> 
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  drivers/irqchip/irq-mips-cpu.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>> 
+>> diff --git a/drivers/irqchip/irq-mips-cpu.c 
+>> b/drivers/irqchip/irq-mips-cpu.c
+>> index 95d4fd8f7a96..0ad7f1f9a58b 100644
+>> --- a/drivers/irqchip/irq-mips-cpu.c
+>> +++ b/drivers/irqchip/irq-mips-cpu.c
+>> @@ -55,7 +55,6 @@ static struct irq_chip mips_cpu_irq_controller = {
+>>  	.irq_mask	= mask_mips_irq,
+>>  	.irq_mask_ack	= mask_mips_irq,
+>>  	.irq_unmask	= unmask_mips_irq,
+>> -	.irq_eoi	= unmask_mips_irq,
+>>  	.irq_disable	= mask_mips_irq,
+>>  	.irq_enable	= unmask_mips_irq,
+>>  };
 > 
-> Not sure it's the best way to do this, maybe you could chain the MIPI
-> phy from the PCIE phy instead, so it's the PCIE phy to enable/power/reset the
-> MIPI PHY instead of the PCIe driver.
-
-Sure will do.
-
+> This one scares me; something doesn't seem right. The irq_eoi (née eoi)
+> callback was first added way back in commit 1417836e81c0 ("[MIPS] use
+> generic_handle_irq, handle_level_irq, handle_percpu_irq"). The commit
+> message there states that the motivation was to allow use of
+> handle_percpu_irq(), and indeed handle_percpu_irq() does:
 > 
-> But still, here you don't really model the MIPI PHY, it uses way more than
-> a register in HHI... so at least you should add all the resources needed
-> if you wanted to model a true MIPI PHY. i.e. MIPI PHY registers, clocks, resets
-> & co if you want to model the MIPI PHY as is.
+>     irq_ack() (ie. mask)
+>     invoke the handler(s)
+>     irq_eoi() (ie. unmask)
+> 
+> By removing the irq_eoi callback I don't see how we'd ever unmask the
+> interrupt again..?
 
-As discussed on IRC, I will rename this as mipi-analog-phy to match the
-datasheet and at some point if some platform ever needed MIPI feature,
-a mipi-digital-phy driver that handles the registers that are not in
-HHI as well as the clocks, resets, ... could be added.
+To be completely blunt, the fact that unmask and eoi are implemented the
+same way is a clear sign that this is a bit broken.
 
-Thanks,
+irq_eoi is used if the irqchip tracks the IRQ life-cycle in HW, and it's
+not obvious that this is the case. The fact that ack is also mapped to 
+mask
+just adds to my feeling...
 
+         M.
 -- 
-Remi
-
-> 
-> Neil
-> 
-> >  
-> >  	mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> >  	if (IS_ERR(mp->reset_gpio)) {
-> > @@ -636,30 +602,16 @@ static int meson_pcie_probe(struct platform_device *pdev)
-> >  	return 0;
-> >  
-> >  err_phy:
-> > -	if (mp->param->has_shared_phy) {
-> > -		phy_power_off(mp->phy);
-> > -		phy_exit(mp->phy);
-> > -	}
-> > -
-> > +	meson_pcie_power_off(mp);
-> >  	return ret;
-> >  }
-> >  
-> > -static struct meson_pcie_param meson_pcie_axg_param = {
-> > -	.has_shared_phy = false,
-> > -};
-> > -
-> > -static struct meson_pcie_param meson_pcie_g12a_param = {
-> > -	.has_shared_phy = true,
-> > -};
-> > -
-> >  static const struct of_device_id meson_pcie_of_match[] = {
-> >  	{
-> >  		.compatible = "amlogic,axg-pcie",
-> > -		.data = &meson_pcie_axg_param,
-> >  	},
-> >  	{
-> >  		.compatible = "amlogic,g12a-pcie",
-> > -		.data = &meson_pcie_g12a_param,
-> >  	},
-> >  	{},
-> >  };
-> > 
-> 
+Jazz is not dead. It just smells funny...
