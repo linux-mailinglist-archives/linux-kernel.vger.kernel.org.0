@@ -2,58 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220A013B9D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 07:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D64213B9E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 07:48:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgAOGlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 01:41:11 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51458 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbgAOGlK (ORCPT
+        id S1729093AbgAOGsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 01:48:12 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40304 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOGsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 01:41:10 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ircMV-008YwC-Jy; Wed, 15 Jan 2020 06:41:07 +0000
-Date:   Wed, 15 Jan 2020 06:41:07 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs fixes
-Message-ID: <20200115064107.GF8904@ZenIV.linux.org.uk>
-References: <CAHk-=wgdsv1UA+QtgiJM8KQAG7N7_9iK_edchnzZYyj+nxmfLA@mail.gmail.com>
- <20200113195448.GT8904@ZenIV.linux.org.uk>
- <CAHk-=whn5qk-e-KnYr6HNe5hp45v+XyDbsA2+szXvK3gC06A2w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whn5qk-e-KnYr6HNe5hp45v+XyDbsA2+szXvK3gC06A2w@mail.gmail.com>
+        Wed, 15 Jan 2020 01:48:12 -0500
+Received: by mail-yw1-f67.google.com with SMTP id i126so10602807ywe.7;
+        Tue, 14 Jan 2020 22:48:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=F7vs1YGAJ4kzE6+yTQsSoP5REK6YTmTdG8UvUxh6zDI=;
+        b=T1uYIjGSzzOcD8CHmhPZc2STTHxF6YzXAqmc4Xtd9w23iuL0O0iyJF3hi8XPTP7SlV
+         Z/kaMS014zarex/LGAM+Jz7oQuNw5sQi0pE+Bk8X3x8ARvkd4/qL+NsTbSraKN5SLtH8
+         PdVlSiXSfQCbp7Zfc6FP/nVF78pvg2hYKW1VTIvSEjAY4TmDNSUwwu8PsfghhsTRmRN6
+         We3Vm4Pim+N8G7o5nqT6Iv6+T+LF2hbFlZ9K4qlksxdd2e396rto2gXsVoClpPYXKPtj
+         TQAmlLNMT/I4yNT6tPBxrdbW2ws/JmeyU2Phpn9RMQV9qvrmF6Nbk+3gVCByFmVwbuDR
+         1xwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=F7vs1YGAJ4kzE6+yTQsSoP5REK6YTmTdG8UvUxh6zDI=;
+        b=r1KfMqu6E+g+yVfYQTvjac2BeNY0+OvwM2UTCuKZ6RPg+ejEHoMnENN91mySjHFQMB
+         KcFfpjEMMbcKNef+cRLUt0dmvYJPucBB/NunB4e8LUVY0G9pUNVwvNFbN47ujI8kzqXV
+         ASR6ysLzw+YFuDnJw7WQmUKj6NxlBO9S843RJVNIkjVKuZZTPbAXXwUxwzI5k826krpk
+         MOgGEqMuYj+HGTnxgp7d34IuqQQQzGKRfJzVGCV7O7REV59F24FwGl950cW5chE6uKtv
+         b3MgLRdzRWnvyMzXH1l3csrit++i8hRr8i7NiEHWeDOjQeX5z7sB3rKsCL1of9rpn3Ax
+         jhCA==
+X-Gm-Message-State: APjAAAVQYvEOVgsPlG1QngzCW6XyB2Fv4b3Cz7f0Zrs6ejbdW0ytbVzL
+        ok/5kxvpotvk4mefTT15O0k=
+X-Google-Smtp-Source: APXvYqwlEMG2a2Ly55dbGBlX+2oqoAfy8VDNy0ug9Vvy3IjVXU4C4OOX0qetXw0hOa1u35vf6wmh8g==
+X-Received: by 2002:a0d:d384:: with SMTP id v126mr20207429ywd.30.1579070891164;
+        Tue, 14 Jan 2020 22:48:11 -0800 (PST)
+Received: from localhost.localdomain (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id r66sm8056738ywr.50.2020.01.14.22.48.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 14 Jan 2020 22:48:10 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alan Tull <atull@kernel.org>
+Subject: [RFC PATCH 0/2] of: unittest: add overlay gpio test to catch gpio hog problem
+Date:   Wed, 15 Jan 2020 00:47:06 -0600
+Message-Id: <1579070828-18221-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes for mountpoint_last() bugs (by converting to use of lookup_last()) +
-autofs regression fix from this cycle (caused by follow_managed() breakage
-introduced in barrier fixes series).
+From: Frank Rowand <frank.rowand@sony.com>
 
-The following changes since commit 1edc8eb2e93130e36ac74ac9c80913815a57d413:
+Geert reports that gpio hog nodes are not properly processed when
+the gpio hog node is added via an overlay reply and provides an
+RFC patch to fix the problem [1].
 
-  fs: call fsnotify_sb_delete after evict_inodes (2019-12-18 00:03:01 -0500)
+Add a unittest that shows the problem.  Unittest will report "1 failed"
+test before applying Geert's RFC patch and "0 failed" after applying
+Geert's RFC patch.
 
-are available in the git repository at:
+I did not have a development system for which it would be easy to
+experiment with applying an overlay containing a gpio hog, so I
+instead created this unittest that uses a fake gpio node.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+This series is a work in progress and I have not properly reviewed
+it yet myself.  The work behind the series has resulted in my
+following several paths and distractions, resulting in more delay
+than I would desire in continuing to review Geert's RFC patches.
+I am thus releasing these patches as an RFC so that my work
+behind the review is visible and available for Geert and other
+reviewers of his patch.
 
-for you to fetch changes up to 508c8772760d4ef9c1a044519b564710c3684fc5:
+The annotations added in patch 2/2 add a small amount of verbosity
+to the console output.  I have created a proof of concept tool to
+explore (1) how test harnesses could use the annotations and
+(2) how to make the resulting console output easier to read and
+understand as a human being.  The tool 'of_unittest_expect' is
+available at https://github.com/frowand/dt_tools
 
-  fix autofs regression caused by follow_managed() changes (2020-01-15 01:36:46 -0500)
 
-----------------------------------------------------------------
-Al Viro (2):
-      reimplement path_mountpoint() with less magic
-      fix autofs regression caused by follow_managed() changes
+[1] https://lore.kernel.org/linux-devicetree/20191230133852.5890-1-geert+renesas@glider.be/
 
- fs/namei.c            | 90 ++++++++-------------------------------------------
- fs/nfs/nfstrace.h     |  2 --
- include/linux/namei.h |  1 -
- 3 files changed, 13 insertions(+), 80 deletions(-)
+
+Frank Rowand (2):
+  of: unittest: add overlay gpio test to catch gpio hog problem
+  of: unittest: annotate warnings triggered by unittest
+
+ drivers/of/unittest-data/Makefile             |   8 +-
+ drivers/of/unittest-data/overlay_gpio_01.dts  |  23 +
+ drivers/of/unittest-data/overlay_gpio_02a.dts |  16 +
+ drivers/of/unittest-data/overlay_gpio_02b.dts |  16 +
+ drivers/of/unittest-data/overlay_gpio_03.dts  |  23 +
+ drivers/of/unittest-data/overlay_gpio_04a.dts |  16 +
+ drivers/of/unittest-data/overlay_gpio_04b.dts |  16 +
+ drivers/of/unittest.c                         | 632 ++++++++++++++++++++++++--
+ 8 files changed, 719 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_01.dts
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_02a.dts
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_02b.dts
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_03.dts
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_04a.dts
+ create mode 100644 drivers/of/unittest-data/overlay_gpio_04b.dts
+
+-- 
+Frank Rowand <frank.rowand@sony.com>
+
