@@ -2,108 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4F3313B70F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BBC13B719
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbgAOBim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 20:38:42 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:33692 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbgAOBim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:38:42 -0500
-Received: by mail-qv1-f65.google.com with SMTP id z3so6681775qvn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 17:38:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zB86OdZFDrWat1AGnvyuIwBegcKbZll1x1xYSmDEgvw=;
-        b=J6awDMxYecnt2o/Ojvc3BCaWJnm0wq3PyYUA0Q7s3NSKA7dpqaEqjXV7QvnTO+tcj0
-         osjESQGpLFAwWCTfbt7EghwM/AkRSxQ6Tkb/yiwCh64KrOvSN6SB1ZWzhXMzFgBg7zdH
-         zTyxCZ4TE5c1dy6AbhDDud03KUX85INwQBAaiUmNVYSv+MiBbjmLGQGkTb5Tdg/Kfii+
-         WXd7T1qqX0719Z79lW5Rbd8dMo5TIzdsDmPd+2vwm+raWCvSwh0RZ+pPj4rjOUEVvd3C
-         YGkqEpt0ECWUIKnMZWnh+BVBk3mJpwfzla0aKxiVgvPXS7WN9NLq40yI/ahc0spCVFgS
-         WOlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zB86OdZFDrWat1AGnvyuIwBegcKbZll1x1xYSmDEgvw=;
-        b=qHM3/y/oUhF3byVl2Ui/QzLl3zMb0d/uMy0odfAUCcWVjg26P6UOLld5Mwcg4Dufok
-         y4Po29D+bRadvvORdsAhOFPXci2FWvWu7RcKMg7b82l3AQk2MDq6xKGQ3aH2g29G6UMj
-         lFdcmAxyFe9Qk3a8P6ssBkvhuU/CodS/RLwxAbOrg1syRzsTL+aY4SMU8ofpaK89CzPd
-         8wpj09Vz/Cf76NRZ0zIrE+ZKD0vRFgCOPKU2ZxBLaVM4dPOQOmb8HSAguaMlbbb/yRMq
-         XG7CMSw/njt/mHN/Bu5eCqiihvdRLFX+hkawO4h5iCtlysqLU7Pc1St9/EUw3XQJhCIC
-         1smg==
-X-Gm-Message-State: APjAAAVtO9aVFfrvIvk+3UFF+YPfKzS35hkpUQMC7QCaSdlz1ufSJF35
-        07QykAe43skHE/ZRoRnKLjMTCQ==
-X-Google-Smtp-Source: APXvYqzJ84dtMmg3ZNWCYkkPbnG5iYq6NVXEmRYeD5xzvGgvM9WqH9u7M2ObrVuC8kJYy1hijwtLrg==
-X-Received: by 2002:a0c:d60e:: with SMTP id c14mr19493095qvj.76.1579052321155;
-        Tue, 14 Jan 2020 17:38:41 -0800 (PST)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 13sm7574112qke.85.2020.01.14.17.38.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Jan 2020 17:38:40 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH -next] mm/hotplug: silence a lockdep splat with printk()
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200114171930.9a0dbd9ae82174abf19b3df5@linux-foundation.org>
-Date:   Tue, 14 Jan 2020 20:38:39 -0500
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8093D190-00C7-43A7-B63E-E06A80D20094@lca.pw>
-References: <20200114210215.GQ19428@dhcp22.suse.cz>
- <D5CC7C52-1F08-401E-BDCA-DF617909BB9D@lca.pw>
- <20200114155339.ad5eee63b9ff38b617ee6168@linux-foundation.org>
- <DEF43337-68A2-4FDF-9B8C-795E017831DE@lca.pw>
- <20200114171930.9a0dbd9ae82174abf19b3df5@linux-foundation.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        id S1728901AbgAOBnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 20:43:32 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55416 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728844AbgAOBnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 20:43:31 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F238E1A0563;
+        Wed, 15 Jan 2020 02:43:28 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E69071A145E;
+        Wed, 15 Jan 2020 02:43:19 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 13ADE40285;
+        Wed, 15 Jan 2020 09:43:09 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will@kernel.org, abel.vesa@nxp.com,
+        bjorn.andersson@linaro.org, olof@lixom.net, maxime@cerno.tech,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V9 1/3] dt-bindings: imx: Add pinctrl binding doc for i.MX8MP
+Date:   Wed, 15 Jan 2020 09:39:06 +0800
+Message-Id: <1579052348-32167-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add binding doc for i.MX8MP pinctrl driver.
 
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes since V8:
+	- the lisence should be GPL-2.0
+---
+ .../bindings/pinctrl/fsl,imx8mp-pinctrl.yaml       | 69 ++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
 
-> On Jan 14, 2020, at 8:19 PM, Andrew Morton <akpm@linux-foundation.org> =
-wrote:
->=20
-> On Tue, 14 Jan 2020 20:02:31 -0500 Qian Cai <cai@lca.pw> wrote:
->=20
->>=20
->>=20
->>>> @@ -8290,8 +8290,10 @@ bool has_unmovable_pages(struct zone *zo
->>>> 	return false;
->>>> unmovable:
->>>> 	WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
->>>> -	if (flags & REPORT_FAILURE)
->>>> -		dump_page(pfn_to_page(pfn + iter), reason);
->>>> +	if (flags & REPORT_FAILURE) {
->>>> +		page =3D pfn_to_page(pfn + iter);
->>>=20
->>> This statement appears to be unnecessary.
->>=20
->> dump_page() in set_migratetype_isolate() needs that =E2=80=9Cpage=E2=80=
-=9D.
->=20
-> local var `page' is never used after this statement.
->=20
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+new file mode 100644
+index 0000000..2e31e12
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/fsl,imx8mp-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale IMX8MP IOMUX Controller
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++description:
++  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
++  for common binding part and usage.
++
++properties:
++  compatible:
++    const: fsl,imx8mp-iomuxc
++
++  reg:
++    maxItems: 1
++
++# Client device subnode's properties
++patternProperties:
++  'grp$':
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++
++    properties:
++      fsl,pins:
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-array
++        description:
++          each entry consists of 6 integers and represents the mux and config
++          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
++          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
++          be found in <arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h>. The last
++          integer CONFIG is the pad setting value like pull-up on this pin. Please
++          refer to i.MX8M Plus Reference Manual for detailed CONFIG settings.
++
++    required:
++      - fsl,pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Pinmux controller node
++  - |
++    iomuxc: pinctrl@30330000 {
++        compatible = "fsl,imx8mp-iomuxc";
++        reg = <0x30330000 0x10000>;
++
++        pinctrl_uart2: uart2grp {
++            fsl,pins = <
++                0x228 0x488 0x5F0 0x0 0x6	0x49
++                0x228 0x488 0x000 0x0 0x0	0x49
++            >;
++        };
++    };
++
++...
+-- 
+2.7.4
 
-The goal is to reuse the parameter of has_unmovable_pages((=E2=80=A6, =
-page, =E2=80=A6)
-as a return value, so after it returns, dump_page(page, ...) could use =
-it. I
-don=E2=80=99t see where it was defined as a local variable.
-
-This is probably a bit too hacky, so I=E2=80=99ll change =
-has_unmovable_pages()
-to either return "struct page *=E2=80=9D or NULL which is easier to =
-understand.=
