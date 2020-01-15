@@ -2,93 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6C613CE6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4064613CE7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgAOU7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 15:59:15 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:44118 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgAOU7O (ORCPT
+        id S1729388AbgAOVBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 16:01:15 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:43378 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728905AbgAOVBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 15:59:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1579121953; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4paQuRZq0NUIdHcv3ACilWGUqXPTdvt/21N1Xcd0KR8=;
-        b=dvMTh5GuNIvo92DiEWQvaumTSH3LuuU/NsgvlJAOvRud06WBnpXxE9Q9utf7JBINKULob3
-        MeQ2Q5kD9dfa3oaV/0/eqyg5IHAg2T460vaKQcNFJ5uaGKeKVCTkYUc3BHPukNXISTuuuH
-        l3NKmlN0vvEIHiXieOz6QMy0lQ1MFIA=
-Date:   Wed, 15 Jan 2020 17:58:56 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3] clocksource: Add driver for the Ingenic JZ47xx OST
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Maarten ter Huurne <maarten@treewalker.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, od@zcrc.me,
-        linux-kernel@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1579121936.3.1@crapouillou.net>
-In-Reply-To: <87y2u8xzq0.fsf@nanos.tec.linutronix.de>
-References: <1579110897.3.0@crapouillou.net>
-        <87y2u8xzq0.fsf@nanos.tec.linutronix.de>
+        Wed, 15 Jan 2020 16:01:14 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 684A8804C3;
+        Wed, 15 Jan 2020 22:01:06 +0100 (CET)
+Date:   Wed, 15 Jan 2020 22:01:04 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: sitronix,st7735r: Convert
+ to DT schema
+Message-ID: <20200115210104.GA28904@ravnborg.org>
+References: <20200115124548.3951-1-geert+renesas@glider.be>
+ <20200115124548.3951-2-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115124548.3951-2-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=gEfo2CItAAAA:8
+        a=WZHNqt2aAAAA:8 a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8 a=KKAkSRfTAAAA:8
+        a=o07Ec-Mc6pqL289OE5cA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
+        a=CjuIK1q_8ugA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=PrHl9onO2p7xFKlKy1af:22
+        a=E9Po1WZjFZOl8hwRPBS3:22 a=Vxmtnl_E_bksehYqCbjh:22
+        a=cvBusfyB2V15izCimMoJ:22 a=pHzHmUro8NiASowvMSCR:22
+        a=6VlIyEUom7LUIeUMNQJH:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert.
 
+Thanks for doing the conversion to meta-schema.
 
-Le mer., janv. 15, 2020 at 20:54, Thomas Gleixner <tglx@linutronix.de>=20
-a =E9crit :
-> Paul Cercueil <paul@crapouillou.net> writes:
->>  Le mer., janv. 15, 2020 at 18:48, Maarten ter Huurne
->>  <maarten@treewalker.org> a =E9crit :
->>>  On Wednesday, 15 January 2020 14:57:01 CET Paul Cercueil wrote:
->>>>   Le mer., janv. 15, 2020 at 14:44, Daniel Lezcano
->>>>   <daniel.lezcano@linaro.org> a =E9crit :
->>>>   > Is the JZ47xx OST really a mfd needing a regmap? (Note=20
->>>> regmap_read
->>>>   > will take a lock).
->>>>=20
->>>>   Yes, the TCU_REG_OST_TCSR register is shared with the clocks=20
->>>> driver.
->>>=20
->>>  The TCU_REG_OST_TCSR register is only used in the probe though.
->>>=20
->>>  To get the counter value from TCU_REG_OST_CNTL/TCU_REG_OST_CNTH you
->>>  could technically do it by reading the register directly, if
->>>  performance
->>>  concerns make it necessary to bypass the usual kernel=20
->>> infrastructure
->>>  for
->>>  dealing with shared registers.
->>=20
->>  In theory yes, in practice there's no easy way to do that (the
->>  underlying mmio pointer is not obtainable from the regmap), and
->>  besides, the lock is just a spinlock and not a mutex.
->=20
-> That lock still a massive contention point as clock readouts can be=20
-> pretty
-> frequent depending on workloads. Just think about tracing ...
->=20
-> So I really would avoid both the lock and that ugly 64bit readout=20
-> thing.
+On Wed, Jan 15, 2020 at 01:45:44PM +0100, Geert Uytterhoeven wrote:
+> Convert the DT binding documentation for Sitronix ST7735R displays to DT
+> schema.
+> 
+> Add a reference to the Adafruit 1.8" LCD while at it.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-The 64bit readout thing is gone in V3.
+> diff --git a/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml b/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
+> new file mode 100644
+> index 0000000000000000..21bccc91f74255e1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+Use (GPL-2.0-only OR BSD-2-Clause) for new binding files.
 
-The lock cannot go away unless we have a way to retrieve the underlying=20
-mmio pointer from the regmap, which the regmap maintainers will never=20
-accept. So I can't really change that now. Besides,=20
-drivers/clocksource/ingenic-timer.c also registers a clocksource that's=20
-read with the regmap, and nobody complained.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/sitronix,st7735r.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sitronix ST7735R Display Panels Device Tree Bindings
+> +
+> +maintainers:
+> +  - David Lechner <david@lechnology.com>
+> +
+> +description:
+> +  This binding is for display panels using a Sitronix ST7735R controller in
+> +  SPI mode.
+> +
+> +allOf:
+> +  - $ref: panel/panel-common.yaml#
 
--Paul
+I am no binding expert so I do not know how to add it.
+But the old binding described that this MUST be a child of spi.
+This is missing here.
 
-=
+Other panels using spi does not have it - so it is probarly OK.
 
+So with the license fixed:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description:
+> +          Adafruit 1.8" 160x128 Color TFT LCD (Product ID 358 or 618)
+> +        items:
+> +          - enum:
+> +              - jianda,jd-t18003-t01
+> +          - const: sitronix,st7735r
+> +
+> +  spi-max-frequency:
+> +    maximum: 32000000
+> +
+> +  dc-gpios:
+> +    maxItems: 1
+> +    description: Display data/command selection (D/CX)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - dc-gpios
+> +  - reset-gpios
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    backlight: backlight {
+> +            compatible = "gpio-backlight";
+> +            gpios = <&gpio 44 GPIO_ACTIVE_HIGH>;
+> +    };
+> +
+> +    spi {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            display@0{
+> +                    compatible = "jianda,jd-t18003-t01", "sitronix,st7735r";
+> +                    reg = <0>;
+> +                    spi-max-frequency = <32000000>;
+> +                    dc-gpios = <&gpio 43 GPIO_ACTIVE_HIGH>;
+> +                    reset-gpios = <&gpio 80 GPIO_ACTIVE_HIGH>;
+> +                    rotation = <270>;
+> +            };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ea8262509bdd21ac..3007f83bd504194a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5382,7 +5382,7 @@ M:	David Lechner <david@lechnology.com>
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+>  S:	Maintained
+>  F:	drivers/gpu/drm/tiny/st7735r.c
+> -F:	Documentation/devicetree/bindings/display/sitronix,st7735r.txt
+> +F:	Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
+>  
+>  DRM DRIVER FOR SONY ACX424AKP PANELS
+>  M:	Linus Walleij <linus.walleij@linaro.org>
+> -- 
+> 2.17.1
