@@ -2,195 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E926013BB08
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:29:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DB8413BAD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbgAOI3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:29:13 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1040 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729188AbgAOI3G (ORCPT
+        id S1728882AbgAOI2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:28:05 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:45562 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726088AbgAOI2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:29:06 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00F8Rn5V008078;
-        Wed, 15 Jan 2020 09:29:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=x+t2q3oFR0/g2C2BlDWSZ5LQ8cOF3XZQewhkJ5cwYOM=;
- b=XmTMhAP5BALer3IXtna0VSBMeosJlsVZHeDd4umTM1DaQgbw75ixQe/EJPR43iAVacNe
- ZTob3sj8auKOmZfRu2ChsRnMvIYJt6Sr3cj/kuJdJoJyLa2qI4d4Bw6r4Aq/sL3nywu+
- s6NQp8yIVOqIGM9fv4vkBj+4mnhdInbd+hqRH0iIeSHyGWgWk7sOgfuXL3CNZBHxurCZ
- z1FLNk5MjzAA/o4gQjl0T4fm8RtEIVawoREl/XH5NR0GbP8BF54vI8cnYUkEUdpEyjM0
- 6XJkAk4eUkIWY/tBSsPT0z/Z+7KxrpNMhWRq4vRBivQgLx6JQu85QQekW719/X1PUXPI YQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xf78sa27p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 09:29:00 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3FF4110002A;
-        Wed, 15 Jan 2020 09:29:00 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2D13A210777;
-        Wed, 15 Jan 2020 09:29:00 +0100 (CET)
-Received: from localhost (10.75.127.44) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan 2020 09:28:59
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-CC:     <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v3] rpmsg: core: add API to get MTU
-Date:   Wed, 15 Jan 2020 09:27:22 +0100
-Message-ID: <20200115082722.13102-1-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Jan 2020 03:28:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579076883;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
+        b=Pl3HcE7Hrvu75Zc0j77XI1BUYpRVHzchDfJEiTSx7LgNSEN840opV3qp/BpBaW8oMZbAH6
+        IlVIrWgQVKgkVMC2LVae7wtuhIAc/LWsOlD7ze6A3PxlhO3//7Kl9j6iEFe5S9K3KDb719
+        ZDG3/GKLT/unCTs+cFUMe2sGGNxu1y8=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-136-p9ScF3kkMnadRwXNd1Le3w-1; Wed, 15 Jan 2020 03:28:01 -0500
+X-MC-Unique: p9ScF3kkMnadRwXNd1Le3w-1
+Received: by mail-qv1-f72.google.com with SMTP id dw11so10457714qvb.16
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 00:28:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=adl4YTtGwDsGU3mcOyNEDPoRcVEGa1oR2kpCSJ2EC6U=;
+        b=I7lgP0avZsS+T2/UeKs8fL10liSqYUpId+gPo9D6GJO1gTkEiiDdMwkIso4gFyfxQC
+         75OdvxyqX+kqXXvZkNdFyVHHSxrbew/WLlN5jTiMFtVE2dOjiPl9qq6S/ADUaxun2RPh
+         epYBh9nTXuRtYhXqawA9Qb1S1O6vhpDJ0GYkno1bmDMBLRbFWvA4u1UktxGNN7xtKiC6
+         7O5NA2CajUbdVLWq3HYT0oEWsKJf6YUdbcOgRG4R0AIRygRkr4H2jU3zbda1m2FBLiKS
+         oc0L1XObQtmb9D80JkN/J690IEhCoRn9Pnjxf4YyBP9VDxQncQm5mtN1k//pco2v/6Tz
+         MLoA==
+X-Gm-Message-State: APjAAAUFxJEUXj7i739hP/4sdwALffxyuUX76WDW0KhUevfKl60Y+SMD
+        hK1SZ9W2K73xv/Zfb1WYv4jV8cLhOLTBAxKn1/CcqenZ+endikN3hkRkoa+jn98B3MkMgoXf5YT
+        T9JteHtkNqtFgN32GxhZBBdc01a3ZVDLgV9tJxHOR
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837535qvg.197.1579076881139;
+        Wed, 15 Jan 2020 00:28:01 -0800 (PST)
+X-Google-Smtp-Source: APXvYqynnIvI5Tdl1vtJm+JFA4/fXl3/u2hfPlTaOuV5Y0yec93AWwALsaiQEu+kRVo1l9SynVVGsOGBz9NPoVfX9pQ=
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr20837524qvg.197.1579076880853;
+ Wed, 15 Jan 2020 00:28:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-14_06:2020-01-14,2020-01-14 signatures=0
+From:   Ondrej Holy <oholy@redhat.com>
+Date:   Wed, 15 Jan 2020 09:27:24 +0100
+Message-ID: <CA+wuGHCr2zJKFkHyRECOLAXsijLAcQgHVoACcNbvLbXnqarOtg@mail.gmail.com>
+Subject: Weird fuse_operations.read calls with Linux 5.4
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return the rpmsg buffer MTU for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+Hi,
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
-V2[1] to V3
-  - fix parameter description in rpmsg_device_ops struct
+I have been directed here from https://github.com/libfuse/libfuse/issues/488.
 
-[1]: https://lore.kernel.org/patchwork/patch/1124684/
----
- drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
+My issue is that with Linux Kernel 5.4, one read kernel call (e.g.
+made by cat tool) triggers two fuse_operations.read executions and in
+both cases with 0 offset even though that first read successfully
+returned some bytes.
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e330ec4dfc33..a6ef54c4779a 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- 
-+/**
-+ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-+ * @ept: the rpmsg endpoint
-+ *
-+ * This function returns maximum buffer size available for a single message.
-+ *
-+ * Return: the maximum transmission size on success and an appropriate error
-+ * value on failure.
-+ */
-+
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_mtu)
-+		return -ENOTSUPP;
-+
-+	return ept->ops->get_mtu(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_mtu);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..e6f88ee90ff6 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_mtu:		see @rpmsg_get_mtu(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 376ebbf880d6..6e48fdf24555 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_mtu = virtio_rpmsg_get_mtu,
- };
- 
- /**
-@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+
-+	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..88d7892ca93d 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
- }
- 
-+static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
--- 
-2.17.1
+For gvfs, it leads to redundant I/O operations, or to "Operation not
+supported" errors if seeking is not supported. This doesn't happen
+with Linux 5.3. Any idea what is wrong here?
+
+$ strace cat /run/user/1000/gvfs/ftp\:host\=server\,user\=user/foo
+...
+openat(AT_FDCWD, "/run/user/1000/gvfs/ftp:host=server,user=user/foo",
+O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
+mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
+-1, 0) = 0x7fbc42b92000
+read(3, 0x7fbc42b93000, 131072)         = -1 EOPNOTSUPP (Operation not
+supported)
+...
+
+$ /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -d
+...
+open flags: 0x8000 /ftp:host=server,user=user/foo
+   open[139679517117488] flags: 0x8000 /ftp:host=server,user=user/foo
+   unique: 8, success, outsize: 32
+unique: 10, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+read[139679517117488] 4096 bytes from 0 flags: 0x8000
+   read[139679517117488] 20 bytes from 0
+   unique: 10, success, outsize: 36
+unique: 12, opcode: READ (15), nodeid: 3, insize: 80, pid: 5053
+read[139679517117488] 4096 bytes from 0 flags: 0x8000
+   unique: 12, error: -95 (Operation not supported), outsize: 16
+...
+
+See for other information: https://gitlab.gnome.org/GNOME/gvfs/issues/441
+
+Regards
+
+Ondrej
+--
+Ondrej Holy
+Software Engineer, Core Desktop Development
+Red Hat Czech s.r.o
 
