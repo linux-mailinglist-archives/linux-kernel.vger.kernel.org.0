@@ -2,61 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 360CD13CEF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:30:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D60E13CEF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 22:30:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbgAOVaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 16:30:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54350 "EHLO
+        id S1729841AbgAOVaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 16:30:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4858 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729469AbgAOVaL (ORCPT
+        by vger.kernel.org with ESMTP id S1729442AbgAOVaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 15 Jan 2020 16:30:11 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FLRVEx112841;
-        Wed, 15 Jan 2020 16:29:59 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhfeyqb16-1
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FLS7q0027002;
+        Wed, 15 Jan 2020 16:29:54 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xh8d58kdf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 16:29:58 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00FLPtYA000441;
-        Wed, 15 Jan 2020 21:29:57 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma04wdc.us.ibm.com with ESMTP id 2xf7520ydw-1
+        Wed, 15 Jan 2020 16:29:54 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00FLR7GT017572;
+        Wed, 15 Jan 2020 21:29:53 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma02dal.us.ibm.com with ESMTP id 2xf74pjj32-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 21:29:57 +0000
+        Wed, 15 Jan 2020 21:29:53 +0000
 Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FLTu9m59769220
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FLTqfC54591800
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jan 2020 21:29:56 GMT
+        Wed, 15 Jan 2020 21:29:52 GMT
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 62D386E053;
-        Wed, 15 Jan 2020 21:29:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EDBD36E050;
+        Wed, 15 Jan 2020 21:29:51 +0000 (GMT)
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 878646E050;
-        Wed, 15 Jan 2020 21:29:55 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0984F6E052;
+        Wed, 15 Jan 2020 21:29:50 +0000 (GMT)
 Received: from talon7.ibm.com (unknown [9.41.103.158])
         by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jan 2020 21:29:55 +0000 (GMT)
+        Wed, 15 Jan 2020 21:29:50 +0000 (GMT)
 From:   Eddie James <eajames@linux.ibm.com>
 To:     linux-aspeed@lists.ozlabs.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         mark.rutland@arm.com, jason@lakedaemon.net, maz@kernel.org,
         robh+dt@kernel.org, tglx@linutronix.de, joel@jms.id.au,
         andrew@aj.id.au, eajames@linux.ibm.com
-Subject: [PATCH v6 04/12] ARM: dts: aspeed: ast2600: Add SCU interrupt controllers
-Date:   Wed, 15 Jan 2020 15:29:42 -0600
-Message-Id: <1579123790-6894-5-git-send-email-eajames@linux.ibm.com>
+Subject: [PATCH v6 00/12] aspeed: Add SCU interrupt controller and XDMA engine drivers
+Date:   Wed, 15 Jan 2020 15:29:38 -0600
+Message-Id: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
-References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-15_03:2020-01-15,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 bulkscore=0 mlxlogscore=656 clxscore=1015
- suspectscore=1 malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=1
+ impostorscore=0 spamscore=0 priorityscore=1501 mlxlogscore=836 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 clxscore=1015
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
  definitions=main-2001150161
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,39 +62,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add nodes for the interrupt controllers provided by the SCU.
+This series first adds a driver to control the interrupt controller provided by
+the System Control Unit (SCU) on the AST2500 and AST2600 SOCs. The interrupts
+made available are necessary for the control of the XDMA engine embedded in the
+same Aspeed SOCs.
+This series then adds a driver to control the XDMA engine. This driver was
+previously sent to the list without support for the AST2600, and has been
+refactored significantly to enable that support. The XDMA engine performs
+automatic DMA operations between the Aspeed SOC (acting as a BMC) and a host
+processor.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
----
- arch/arm/boot/dts/aspeed-g6.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Changes since v5:
+ - Rework the XDMA locking completely; thanks Andrew Jeffrey for the help.
 
-diff --git a/arch/arm/boot/dts/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed-g6.dtsi
-index 796976d..6557212 100644
---- a/arch/arm/boot/dts/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g6.dtsi
-@@ -268,6 +268,20 @@
- 					compatible = "aspeed,ast2600-smpmem";
- 					reg = <0x180 0x40>;
- 				};
-+
-+				scu_ic0: interrupt-controller@0 {
-+					#interrupt-cells = <1>;
-+					compatible = "aspeed,ast2600-scu-ic0";
-+					interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+					interrupt-controller;
-+				};
-+
-+				scu_ic1: interrupt-controller@1 {
-+					#interrupt-cells = <1>;
-+					compatible = "aspeed,ast2600-scu-ic1";
-+					interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+					interrupt-controller;
-+				};
- 			};
- 
- 			rng: hwrng@1e6e2524 {
+Changes since v4:
+ - Fix dts documentation example for XDMA
+ - Add errno in warning for SCU failure in XDMA PCIe config
+ - Add a check for in_reset before proceeding in O_NONBLOCK case
+ - Add comments to memory sizes in the witherspoon/tacoma XDMA dts entries
+
+Changes since v3:
+ - See individual patches; just clean-up items
+
+Changes since v2:
+ - See individual patches
+ - Drop rainier dts patch
+ - In summary, remove references to VGA memory as the XDMA driver doesn't care
+   where it is. Remove SDRAM controller reference. Move user reset
+   functionality to a separate patch and make it an ioctl.
+
+Changes since v1:
+ - See individual patches
+ - In summary, first the irqchip driver switched to use the parent SCU regmap
+   rather than iomapping it's register. Secondly, the XDMA initialization
+   switched to use properties from the device tree rather than dynamically
+   calculate memory spaces, and system config.
+
+Eddie James (12):
+  dt-bindings: interrupt-controller: Add Aspeed SCU interrupt controller
+  irqchip: Add Aspeed SCU interrupt controller
+  ARM: dts: aspeed: ast2500: Add SCU interrupt controller
+  ARM: dts: aspeed: ast2600: Add SCU interrupt controllers
+  dt-bindings: soc: Add Aspeed XDMA Engine
+  soc: aspeed: Add XDMA Engine Driver
+  soc: aspeed: xdma: Add user interface
+  soc: aspeed: xdma: Add reset ioctl
+  ARM: dts: aspeed: ast2500: Add XDMA Engine
+  ARM: dts: aspeed: ast2600: Add XDMA Engine
+  ARM: dts: aspeed: witherspoon: Enable XDMA Engine
+  ARM: dts: aspeed: tacoma: Enable XDMA engine
+
+ .../interrupt-controller/aspeed,ast2xxx-scu-ic.txt |   23 +
+ .../devicetree/bindings/soc/aspeed/xdma.txt        |   40 +
+ MAINTAINERS                                        |   16 +
+ arch/arm/boot/dts/aspeed-bmc-opp-tacoma.dts        |    6 +
+ arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts   |    6 +
+ arch/arm/boot/dts/aspeed-g5.dtsi                   |   19 +
+ arch/arm/boot/dts/aspeed-g6.dtsi                   |   27 +
+ drivers/irqchip/Makefile                           |    2 +-
+ drivers/irqchip/irq-aspeed-scu-ic.c                |  239 +++++
+ drivers/soc/aspeed/Kconfig                         |    8 +
+ drivers/soc/aspeed/Makefile                        |    1 +
+ drivers/soc/aspeed/aspeed-xdma.c                   | 1025 ++++++++++++++++++++
+ .../interrupt-controller/aspeed-scu-ic.h           |   23 +
+ include/uapi/linux/aspeed-xdma.h                   |   42 +
+ 14 files changed, 1476 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2xxx-scu-ic.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+ create mode 100644 drivers/irqchip/irq-aspeed-scu-ic.c
+ create mode 100644 drivers/soc/aspeed/aspeed-xdma.c
+ create mode 100644 include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
+ create mode 100644 include/uapi/linux/aspeed-xdma.h
+
 -- 
 1.8.3.1
 
