@@ -2,113 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 497E313D229
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A20113D253
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgAPC2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:28:13 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:43013 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgAPC2M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:28:12 -0500
-Received: by mail-yb1-f194.google.com with SMTP id k15so3889183ybd.10;
-        Wed, 15 Jan 2020 18:28:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gwQsFePft3MfAfTwN78fKEDrEk3xpT6VkZlinejpxg8=;
-        b=eHvGxNYjkklmWwDAF0QtjAfJ0ddV5IbvTQmBmdI8EAMRg48lNG1u019SMzE0mJlGAz
-         95n8fNW/9/oAV6yYv6wPThFbTJ+f2826FSYvtqQ19HeRQfFqG0Xn9zsdPAZO9Y36XzFZ
-         GCr5vz918v/S90GwjGBGYwHx07RUTeZUk0qXZTKrgZKl+3ZZNAU/VM5CTVVRSDHxjW23
-         gZbeJp7HECVH7LCMnzgjt7uoMMNa0GUu3pLRtfhc3NTwaNmmNQ/AqfiJAYbGzdVadQFD
-         HmTzKx9uGHhOdLVXA+k57KMmGBD7y2sdd+q+76j9cCPsCRTNYpyJIX3z5kprP1WZV7Y5
-         PE7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gwQsFePft3MfAfTwN78fKEDrEk3xpT6VkZlinejpxg8=;
-        b=plfuW1OokFYegOVXm7fKOb8t/7TvkKPO03aEkDIRZXwG+lKmf7SSd4phfmkC9tB2+n
-         DuXBAZSynI37RUFCyzxOHHf4sNOzqVGz7dhAfPCuIs9gFBUjgDXoHX/zOA2YMH0ligGE
-         JISndXfOAGFLoalQwosyAhMqmBNNcU+Rt4QVN6/Vwiynj3URjOUBGyKqt47hB75psKYO
-         6ixmSCVMQq9tcWhu88B8gTG6ISYM1J/sBTs04V0mE96wX03mYmvXfsunJaUFXNU2nTt1
-         XO80iXSZh3zqB6MfvL2xhLMCe2KW6zD4vxJGK8+gV1SEUZHEWw/JSTIEIw6yFWVaPVhJ
-         9qKQ==
-X-Gm-Message-State: APjAAAWWHceIpvHA4s5V6KKJ/hqsRQUcUrMAKLgug/+EiuhM384YxN84
-        gJg8NN4Wv+7eNV/Nq4ekjqU=
-X-Google-Smtp-Source: APXvYqxXKXxVNGaAMW2cQS8aucaHhLtqF3hShj71i8iQx2Pa6JsI4eab9wqzgth1S0qy77qcHwC8yA==
-X-Received: by 2002:a25:e00c:: with SMTP id x12mr2216572ybg.224.1579141691642;
-        Wed, 15 Jan 2020 18:28:11 -0800 (PST)
-Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id y66sm9038746ywf.79.2020.01.15.18.28.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Jan 2020 18:28:11 -0800 (PST)
-Subject: Re: [RFC PATCH 0/3] Add device tree build information
-To:     Alexandre Torgue <alexandre.torgue@st.com>, robh+dt@kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        david@gibson.dropbear.id.au, sjg@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, devicetree-compiler@vger.kernel.org
-References: <20200113181625.3130-1-alexandre.torgue@st.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <f21ad44d-f119-2035-b4ee-16b3619879af@gmail.com>
-Date:   Wed, 15 Jan 2020 20:28:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200113181625.3130-1-alexandre.torgue@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1730151AbgAPCzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:55:23 -0500
+Received: from mga07.intel.com ([134.134.136.100]:36521 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726552AbgAPCzX (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:55:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 18:55:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,324,1574150400"; 
+   d="scan'208";a="218371842"
+Received: from kbl.sh.intel.com ([10.239.159.24])
+  by orsmga008.jf.intel.com with ESMTP; 15 Jan 2020 18:55:20 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v4 1/4] perf util: Move block_pair_cmp to block-info
+Date:   Thu, 16 Jan 2020 03:29:01 +0800
+Message-Id: <20200115192904.16798-1-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/13/20 12:16 PM, Alexandre Torgue wrote:
-> Hi,
-> 
-> The goal of this series is to add device tree build information in dtb.
-> This information can be dtb build date, where devicetree files come from,
-> who built the dtb ... Actually, same kind of information that you can find
-> in the Linux banner which is printout during kernel boot. Having the same
-> kind of information for device tree is useful for debugging and maintenance.
-> 
-> To achieve that a new option "-B" (using an argument) is added to dtc. 
-> The argument is a file containing a string with build information
-> (e.g., From Linux 5.5.0-rc1 by alex the Mon Jan 13 18:25:38 CET 2020).
-> DTC use it to append dts file with a new string property "Build-info".
-> 
-> of/fdt.c is modified to printout "Build-info" property during Kernel boot and 
-> scripts/Makefile.lib is modified to use dtc -B option during kernel make (this
-> last part could be improved for sure).
+block_pair_cmp() is a function which is used to compare
+two blocks. Moving it from builtin-diff.c to block-info.c
+to let it can be used by other builtins.
 
-Please read through the thread at:
+ v4:
+ ---
+ No change.
 
-  https://lore.kernel.org/linux-arm-kernel/550A42AC.8060104@gmail.com/
+ v3:
+ ---
+ Separate it from original patch for good tracking.
 
-which was my attempt to do something similar.
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/builtin-diff.c    | 17 -----------------
+ tools/perf/util/block-info.c | 17 +++++++++++++++++
+ tools/perf/util/block-info.h |  2 ++
+ 3 files changed, 19 insertions(+), 17 deletions(-)
 
--Frank
-
-> 
-> Regards
-> Alex
-> 
-> Alexandre Torgue (3):
->   dtc: Add dtb build information option
->   of: fdt: print dtb build information
->   scripts: Use -B dtc option to generate dtb build information.
-> 
->  drivers/of/fdt.c           |  9 +++++++
->  scripts/Makefile.lib       | 11 +++++---
->  scripts/dtc/dtc.c          | 55 +++++++++++++++++++++++++++++++++-----
->  scripts/gen_dtb_build_info | 11 ++++++++
->  4 files changed, 76 insertions(+), 10 deletions(-)
->  create mode 100755 scripts/gen_dtb_build_info
-> 
+diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+index f8b6ae557d8b..5ff1e21082cb 100644
+--- a/tools/perf/builtin-diff.c
++++ b/tools/perf/builtin-diff.c
+@@ -572,23 +572,6 @@ static void init_block_hist(struct block_hist *bh)
+ 	bh->valid = true;
+ }
+ 
+-static int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
+-{
+-	struct block_info *bi_a = a->block_info;
+-	struct block_info *bi_b = b->block_info;
+-	int cmp;
+-
+-	if (!bi_a->sym || !bi_b->sym)
+-		return -1;
+-
+-	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
+-
+-	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
+-		return 0;
+-
+-	return -1;
+-}
+-
+ static struct hist_entry *get_block_pair(struct hist_entry *he,
+ 					 struct hists *hists_pair)
+ {
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index c4b030bf6ec2..f0f38bdd496a 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -475,3 +475,20 @@ float block_info__total_cycles_percent(struct hist_entry *he)
+ 
+ 	return 0.0;
+ }
++
++int block_pair_cmp(struct hist_entry *a, struct hist_entry *b)
++{
++	struct block_info *bi_a = a->block_info;
++	struct block_info *bi_b = b->block_info;
++	int cmp;
++
++	if (!bi_a->sym || !bi_b->sym)
++		return -1;
++
++	cmp = strcmp(bi_a->sym->name, bi_b->sym->name);
++
++	if ((!cmp) && (bi_a->start == bi_b->start) && (bi_a->end == bi_b->end))
++		return 0;
++
++	return -1;
++}
+diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+index bef0d75e9819..4fa91eeae92e 100644
+--- a/tools/perf/util/block-info.h
++++ b/tools/perf/util/block-info.h
+@@ -76,4 +76,6 @@ int report__browse_block_hists(struct block_hist *bh, float min_percent,
+ 
+ float block_info__total_cycles_percent(struct hist_entry *he);
+ 
++int block_pair_cmp(struct hist_entry *a, struct hist_entry *b);
++
+ #endif /* __PERF_BLOCK_H */
+-- 
+2.17.1
 
