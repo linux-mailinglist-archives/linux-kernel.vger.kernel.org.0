@@ -2,159 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5563313C884
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C999513C893
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:59:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbgAOP4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:56:25 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37023 "EHLO
+        id S1728928AbgAOP7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 10:59:15 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37753 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgAOP4Y (ORCPT
+        with ESMTP id S1726501AbgAOP7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:56:24 -0500
+        Wed, 15 Jan 2020 10:59:14 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200115155622euoutp0296e5c4fed3383a3954ab4956bc0a3623~qGoYji4AO2656126561euoutp02v
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 15:56:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200115155622euoutp0296e5c4fed3383a3954ab4956bc0a3623~qGoYji4AO2656126561euoutp02v
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200115155912euoutp0216c794f3ee964728931afbd890dc5be4~qGq2fVNGL2903329033euoutp02O
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 15:59:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200115155912euoutp0216c794f3ee964728931afbd890dc5be4~qGq2fVNGL2903329033euoutp02O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579103782;
-        bh=XfQrDuwfMB1/RW0gP/rZygphaWkcyV/9F+qlQtlGsz0=;
+        s=mail20170921; t=1579103952;
+        bh=tlZOFhcA5K3eXyOfi9aCIy9MzGM2jqBd5MqiVtEQrME=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=EJT87qqZn043G+lRyCAE+TGe447nFmTU9kEWnurY9QBw7MdxMuvvd04eBToTUQaZP
-         XNpaqqPDjnAS4gblSdLQGOojZ9Y3fyEDu7Kt57C0XzdDkZAxFrdZSF/gP6NtB+MIiq
-         EgV7hF3gTeWBXWnpc4tTMwk6Borrrkc3NwhR8qJU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200115155622eucas1p2f01c2676156c662ae0c524fb40518570~qGoYE2iMk0833708337eucas1p2D;
-        Wed, 15 Jan 2020 15:56:22 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 06.96.60698.6263F1E5; Wed, 15
-        Jan 2020 15:56:22 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200115155621eucas1p1db3f830ef52babfd58d4bd4340d174c3~qGoXaEVMA3131631316eucas1p1D;
-        Wed, 15 Jan 2020 15:56:21 +0000 (GMT)
+        b=k+NUh030OVzWI47umVVP4tdMG6P2Sk+kY514cJRFVM8iMfJxVqsQahxV2KxY9VXmv
+         u1sdYBDXvI5Yw7LGOyKuqs4nnzY7/GKot1WrQvCh3aUHMIxX8jb3TOjIyJAsTmHnY/
+         KcEIA/xPs7J19Io0hivMNvGVe5brsHbSyt5F110g=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200115155912eucas1p1fb336d2576c52ff09108b40ee20efd21~qGq2Quqpm0918709187eucas1p1P;
+        Wed, 15 Jan 2020 15:59:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id DD.27.61286.FC63F1E5; Wed, 15
+        Jan 2020 15:59:12 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200115155911eucas1p220088bc450d966bb2f25eb0f6ebb4e16~qGq1xo2nz1037010370eucas1p2W;
+        Wed, 15 Jan 2020 15:59:11 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200115155621eusmtrp25a03846dd255ad40c2db5a3b98c31a06~qGoXZMF371584215842eusmtrp21;
-        Wed, 15 Jan 2020 15:56:21 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-ce-5e1f3626edaf
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CD.32.08375.5263F1E5; Wed, 15
-        Jan 2020 15:56:21 +0000 (GMT)
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200115155911eusmtrp1863eec411d2583ec2e23e9d1f1186848~qGq1xFoID0436504365eusmtrp1N;
+        Wed, 15 Jan 2020 15:59:11 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-aa-5e1f36cf65ad
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3F.82.08375.FC63F1E5; Wed, 15
+        Jan 2020 15:59:11 +0000 (GMT)
 Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200115155620eusmtip15e37a477548de28762c8dee44115842e~qGoWQCP9I0722007220eusmtip1n;
-        Wed, 15 Jan 2020 15:56:20 +0000 (GMT)
-Subject: Re: [PATCH 7/7] devfreq: move statistics to separate struct
-To:     Lukasz Luba <lukasz.luba@arm.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Javi Merino <javi.merino@arm.com>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Kamil Konieczny <k.konieczny@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        =?UTF-8?Q?=c3=98rjan_Eide?= <orjan.eide@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        a.hajda@samsung.com, robin.murphy@arm.com
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200115155910eusmtip2c6122f0c7e9d1c4294b3e509bdc2d3cf~qGq09fjz30449104491eusmtip2U;
+        Wed, 15 Jan 2020 15:59:10 +0000 (GMT)
+Subject: Re: [PATCH] fbcon: Adjust indentation in set_con2fb_map
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <4da95c7f-7fc7-afb5-e569-4403e705f658@samsung.com>
-Date:   Wed, 15 Jan 2020 16:56:20 +0100
+Message-ID: <02a247ea-6837-847b-c3cb-af881bc26850@samsung.com>
+Date:   Wed, 15 Jan 2020 16:59:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <d710f606-0013-ade3-904e-a56f0404eca7@arm.com>
+In-Reply-To: <CAKwvOd=DcXiA5d07bS_3qhr4F-mbsGzZic=OgomuhZchGaXeoQ@mail.gmail.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUxTQRSGM3frBS25FJEjm9pERIxbRB3UEEh4aNAHfVExUqlypQYKpLVu
-        iangBiSioiJWFAERrShIcQENiYAlCqUgiwQBRTFSFMNmIgho2wuRt2/mnP//z5kMS0oGaU/2
-        YPwhXh2viJMyztRT05hlhd/6hfLVta/n4I5HDTR+P/qNxl8vPiFxTksbjcsmTonw7eEsGl/4
-        8p3EFkuJCJuTf4hw6Rdbtbkim8Ej52sQzrJUEjg3+bQIP6zpEuEPSfcYXGmspvCrwV4a9/ak
-        MyFusqJbRUhWru8SyfJfWglZqSGVkRnv6GTpZQYkGyn13Sba7bw5mo87eJhXrwqOclaaX3QT
-        if3sUWNqAXESXRClIScWuED4frOVSUPOrIS7h6Aiq48WDqMIPnW2UsJhBMFo7iA1IymyNhF2
-        lnCFCEy5/kLTAAKDRfB148KgPiOZsfM8bgm0NXY5nEgun4Yr2TccaobbCJfOGZCdxVwwDD1O
-        dzBlE/RP1juM3LldMPypmhZ6XOHN9V7HFE7cJjiXYnIwyXlAR28OIfBCeDaQTdrDgLvKwrvG
-        HiSMHQZJzdWEwG7QX1s2/QLe8LfcLrYLHiGYTOmbVj9DUHh5ihG6NkFnw7iNWVvEMiiuWGVH
-        4EKhachLQBdoH3AVZnCBjKfXSOFaDClnJYKHH5TcLWFmUtPK75MXkVQ/azP9rG30s7bR/4+9
-        jSgD8uC1GlUMr1kbzx9ZqVGoNNr4mJX7E1SlyPYP66Zqfz1HlRP7qhDHIulcsXLCVy6hFYc1
-        x1RVCFhSOk/8JstHLhFHK44d59UJe9XaOF5ThbxYSuohXptnjZRwMYpDfCzPJ/LqmSrBOnme
-        RErznImIMHPjxnUm97H7ARELrH/q//rE5VOD4V9Ned0P5k8p/H6qwuly3c38vmAiJ9DYFqvs
-        DyrejjM79ugyQpeeWVzwMTKyRbs1ynriMZb+XpRS7J25o21nvS5zywZcF9TdPV47NZbtSu8/
-        oPVfDu0hLYu7dG+lO4rkDZ9DzM1SSqNUrAkg1RrFP6L8HKmDAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42I5/e/4XV1VM/k4g5NLZSxurTvHanH9y3NW
-        i6cTtjJbzL9yjdViy59mdosFn2awWvQ/fs1scf78BnaLs01v2C02PQbKXt41h83ic+8RRosZ
-        5/cxWSxsamG3WHvkLrvF7cYVbBb7Nh9msTj44QmrxZOHfWwOwh5r5q1h9Ng56y67x+I9L5k8
-        Nq3qZPPYvKTeo2/LKkaPz5vkAtij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62M
-        TJX07WxSUnMyy1KL9O0S9DLO7r7HVPCKo2Jz51KmBsZ+9i5GTg4JAROJNS8vMoHYQgJLGSWm
-        3RHqYuQAistIHF9fBlEiLPHnWhdbFyMXUMlrRonmo4tYQBLCAi4SZyY1sYHYIgKqEtcu3GUB
-        KWIWWMoq8fvdbhaIjt/MEtsvHgXrYBOwkpjYvooRxOYVsJP4uLEPzGYB6n719wzYRaICERKH
-        d8yCqhGUODnzCVgvp4C1RHvHMTCbWUBd4s+8S8wQtrjErSfzmSBseYntb+cwT2AUmoWkfRaS
-        lllIWmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMP63Hfu5eQfjpY3BhxgFOBiV
-        eHgz/sjFCbEmlhVX5h5ilOBgVhLhPTlDNk6INyWxsiq1KD++qDQntfgQoynQcxOZpUST84Gp
-        Ka8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA+MM2bN24WnK1eFu
-        sxw5dizaaO0SEZK0ISy+a4pwy/8fhpqXTG7HrJxxyHXKQesFZgsWXfx3q6VEXVVYSLJR3mp3
-        ZOSxL7ErJy56fGMKe3CQ4cJj0ueYKhKXM02s5Z6UZ/rAcpdkx/1w2w4NlfcHGQuTpicn/HBP
-        S/thJxF8IETIRSJDbbOvhxJLcUaioRZzUXEiAEAOZ+0VAwAA
-X-CMS-MailID: 20200115155621eucas1p1db3f830ef52babfd58d4bd4340d174c3
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djPc7oXzOTjDOZkWDx4M5vN4srX92wW
+        J/o+sFpc3jWHzeLD2xKLDxP+MzmweeycdZfdY8GmUo89E0+yedzvPs7k8XmTXABrFJdNSmpO
+        Zllqkb5dAlfG9UnaBS8VKr6c/cTWwHhVvIuRk0NCwETi05NOpi5GLg4hgRWMEouvT2aDcL4w
+        Sjz7cYkZpEpI4DOjxIV1ml2MHGAdMx4oQ9QsZ5RontcGVfOWUaJxfj2ILSzgIHHywWs2EFtE
+        IE7i7qEbjCANzAJrGSW2Ld7HApJgE7CSmNi+CijBzsErYCfxNxpkPIuAqsSu6YYgBaICERKf
+        HhxmBbF5BQQlTs58AtbIKRAo8Xv6FHYQm1lAXOLWk/lMELa8xPa3c5hBNkkIrGOXOLlsJwvE
+        ky4Stxc9YIawhSVeHd/CDmHLSJye3MMC1cAo8bfjBVT3dkaJ5ZP/sUFUWUvcOfeLDeQ6ZgFN
+        ifW79CHCjhLzHq1hg4QJn8SNt4IQR/BJTNo2nRkizCvR0SYEUa0msWHZBjaYtV07VzJPYFSa
+        heS1WUjemYXknVkIexcwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITDWn/x3/tIPx
+        66WkQ4wCHIxKPLwZf+TihFgTy4orcw8xSnAwK4nwnpwhGyfEm5JYWZValB9fVJqTWnyIUZqD
+        RUmc13jRy1ghgfTEktTs1NSC1CKYLBMHp1QDY4Uv29l7kbYLqorWWzMcnfldbPHhRxlntnsd
+        ndkst7zd2vKEnd/WnBtGoXsWuG5PLyifsTt738PaGDWOnL3XPmwu5Harf2TuOffc8cbvJX/O
+        P3q2KfVe19WDltez5/MrOjnFzhL8s0bJgm+PefLptRt5deV2em8KC3tuHp9kqfJy1oFEdUmR
+        ICWW4oxEQy3mouJEAFGhA4oxAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsVy+t/xe7rnzeTjDNqfK1o8eDObzeLK1/ds
+        Fif6PrBaXN41h83iw9sSiw8T/jM5sHnsnHWX3WPBplKPPRNPsnnc7z7O5PF5k1wAa5SeTVF+
+        aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexvVJ2gUvFSq+
+        nP3E1sB4VbyLkYNDQsBEYsYD5S5GLg4hgaWMEo0vJrFBxGUkjq8v62LkBDKFJf5c62KDqHnN
+        KPHs2ixmkISwgIPEyQev2UBsEYE4iTdHb7KAFDELrGWUmL+rnxGi4wajxL1l/WAdbAJWEhPb
+        VwEl2Dl4Bewk/kaD7GIRUJXYNd0QpEBUIELi8I5ZjCA2r4CgxMmZT1hAbE6BQInf06ewg9jM
+        AuoSf+ZdYoawxSVuPZnPBGHLS2x/O4d5AqPQLCTts5C0zELSMgtJywJGllWMIqmlxbnpucWG
+        esWJucWleel6yfm5mxiB8bXt2M/NOxgvbQw+xCjAwajEw5vxRy5OiDWxrLgy9xCjBAezkgjv
+        yRmycUK8KYmVValF+fFFpTmpxYcYTYF+m8gsJZqcD4z9vJJ4Q1NDcwtLQ3Njc2MzCyVx3g6B
+        gzFCAumJJanZqakFqUUwfUwcnFINjPnB93xfh8kp5B/6z/Yp0WDe5sMrm7gfLKr8by7etdvk
+        gkGRUSovz9NP5vvub72Wm9kge+BC0stNvyKX63Mttb21NOw2Z5K8a8jrVwx5c/cv8nXR9+gu
+        a2wMDJL/sLRwy5yFnXoqnnfcDvc2X5ki5cQ1/fzelK2myrXL6rkOlXyMkrj+4dyxE0osxRmJ
+        hlrMRcWJAH8Xo2rFAgAA
+X-CMS-MailID: 20200115155911eucas1p220088bc450d966bb2f25eb0f6ebb4e16
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191113091354eucas1p265de4985d167814f5080fbdf21b75a0a
+X-RootMTR: 20191220180738eucas1p2c5a571666d1f75812de7078ca6b84ab3
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191113091354eucas1p265de4985d167814f5080fbdf21b75a0a
-References: <20191113091336.5218-1-k.konieczny@samsung.com>
-        <CGME20191113091354eucas1p265de4985d167814f5080fbdf21b75a0a@eucas1p2.samsung.com>
-        <20191113091336.5218-8-k.konieczny@samsung.com>
-        <4942d2ad-fef7-89be-91c1-c02c319546ff@samsung.com>
-        <38350d81-e916-b386-6727-f4c85689c172@samsung.com>
-        <85a29ce4-0f89-2b50-b046-dba747208933@samsung.com>
-        <4ed6b8bf-b415-c42d-33d6-d2ed0504eaf4@samsung.com>
-        <d9d13537-f4c9-4420-c3bc-438bc87c5e6a@samsung.com>
-        <d710f606-0013-ade3-904e-a56f0404eca7@arm.com>
+X-CMS-RootMailID: 20191220180738eucas1p2c5a571666d1f75812de7078ca6b84ab3
+References: <20191218025337.35044-1-natechancellor@gmail.com>
+        <CGME20191220180738eucas1p2c5a571666d1f75812de7078ca6b84ab3@eucas1p2.samsung.com>
+        <CAKwvOd=DcXiA5d07bS_3qhr4F-mbsGzZic=OgomuhZchGaXeoQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 12/16/19 2:01 PM, Lukasz Luba wrote:
-> Hi Bartek,
+On 12/20/19 7:07 PM, Nick Desaulniers wrote:
+> On Tue, Dec 17, 2019 at 6:53 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+>>
+>> Clang warns:
+>>
+>> ../drivers/video/fbdev/core/fbcon.c:915:3: warning: misleading
+>> indentation; statement is not part of the previous 'if'
+>> [-Wmisleading-indentation]
+>>         return err;
+>>         ^
+>> ../drivers/video/fbdev/core/fbcon.c:912:2: note: previous statement is
+>> here
+>>         if (!search_fb_in_map(info_idx))
+>>         ^
+>> 1 warning generated.
+>>
+>> This warning occurs because there is a space before the tab on this
+>> line. This happens on several lines in this function; normalize them
+>> so that the indentation is consistent with the Linux kernel coding
+>> style and clang no longer warns.
+>>
+>> This warning was introduced before the beginning of git history so no
+>> fixes tab.
+>>
+>> https://github.com/ClangBuiltLinux/linux/issues/824
+>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > 
-> [added Dietmar, Robin, Andrzej (for upcoming DRM drm-misc-next)]
-> 
-> On 11/15/19 12:40 PM, Bartlomiej Zolnierkiewicz wrote:
+> Thanks for the patch!
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-[...]
-
->> Hmmm.. fixing partition_enable_opps() should be trivial but I wonder
->> why we are carrying devfreq_cooling.c code in upstream kernel at all?
-> 
-> Well, the devfreq_cooling.c is going to have a client in mainline:
-> the GPU driver - Panfrost.
-> 
-> It is already in DRM branch 'drm-misc-next':
-> https://patchwork.freedesktop.org/patch/342848/
-
-OK, thanks for explaining this.
-
-> Regarding the devfreq_cooling.c code structure.
-> I am currently working on cleaning up the devfreq cooling code and
-> adding Energy Model instead for private freq, power tables. It will be
-> in similar fashion as it is done in cpufreq_cooling. The model will
-> be also simplified so hopefully more clients would come.
-> It is under internal review and will be posted shortly.
-
-Great to hear this and thank you for working on it.
-
+Patch queued for v5.6, thanks.
+ 
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
+
+>> ---
+>>  drivers/video/fbdev/core/fbcon.c | 27 +++++++++++++--------------
+>>  1 file changed, 13 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+>> index c9235a2f42f8..9d2c43e345a4 100644
+>> --- a/drivers/video/fbdev/core/fbcon.c
+>> +++ b/drivers/video/fbdev/core/fbcon.c
+>> @@ -866,7 +866,7 @@ static int set_con2fb_map(int unit, int newidx, int user)
+>>         int oldidx = con2fb_map[unit];
+>>         struct fb_info *info = registered_fb[newidx];
+>>         struct fb_info *oldinfo = NULL;
+>> -       int found, err = 0;
+>> +       int found, err = 0;
+>>
+>>         WARN_CONSOLE_UNLOCKED();
+>>
+>> @@ -888,31 +888,30 @@ static int set_con2fb_map(int unit, int newidx, int user)
+>>
+>>         con2fb_map[unit] = newidx;
+>>         if (!err && !found)
+>> -               err = con2fb_acquire_newinfo(vc, info, unit, oldidx);
+>> -
+>> +               err = con2fb_acquire_newinfo(vc, info, unit, oldidx);
+>>
+>>         /*
+>>          * If old fb is not mapped to any of the consoles,
+>>          * fbcon should release it.
+>>          */
+>> -       if (!err && oldinfo && !search_fb_in_map(oldidx))
+>> -               err = con2fb_release_oldinfo(vc, oldinfo, info, unit, oldidx,
+>> -                                            found);
+>> +       if (!err && oldinfo && !search_fb_in_map(oldidx))
+>> +               err = con2fb_release_oldinfo(vc, oldinfo, info, unit, oldidx,
+>> +                                            found);
+>>
+>> -       if (!err) {
+>> -               int show_logo = (fg_console == 0 && !user &&
+>> -                                logo_shown != FBCON_LOGO_DONTSHOW);
+>> +       if (!err) {
+>> +               int show_logo = (fg_console == 0 && !user &&
+>> +                                logo_shown != FBCON_LOGO_DONTSHOW);
+>>
+>> -               if (!found)
+>> -                       fbcon_add_cursor_timer(info);
+>> -               con2fb_map_boot[unit] = newidx;
+>> -               con2fb_init_display(vc, info, unit, show_logo);
+>> +               if (!found)
+>> +                       fbcon_add_cursor_timer(info);
+>> +               con2fb_map_boot[unit] = newidx;
+>> +               con2fb_init_display(vc, info, unit, show_logo);
+>>         }
+>>
+>>         if (!search_fb_in_map(info_idx))
+>>                 info_idx = newidx;
+>>
+>> -       return err;
+>> +       return err;
+>>  }
+>>
+>>  /*
+>> --
+>> 2.24.1
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+>> To view this discussion on the web visit https://protect2.fireeye.com/url?k=bb9fa192-e64db737-bb9e2add-0cc47a31bee8-3ce98548f51cd7a2&u=https://groups.google.com/d/msgid/clang-built-linux/20191218025337.35044-1-natechancellor%40gmail.com.
