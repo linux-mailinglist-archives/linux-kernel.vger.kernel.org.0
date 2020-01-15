@@ -2,84 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B9D13C815
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:40:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 330AB13C823
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:41:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbgAOPk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:40:26 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41151 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbgAOPk0 (ORCPT
+        id S1729043AbgAOPlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 10:41:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43405 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726566AbgAOPlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:40:26 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r27so16440375otc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 07:40:25 -0800 (PST)
+        Wed, 15 Jan 2020 10:41:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579102878;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3l69K3PDMlJemoFXpDZpBSROJVwgjnc3IAfTJYLJE1A=;
+        b=B2m0lsnGUNo5ArHnmDUISwbD55qbMy8TzhNN0v5BspXXCVOhspRne2JEk/5YDABsnA579/
+        wrHFwbL0P9lhtSWsVnZ3QlrM0Uik6fh5cT4l3LUO9+UhuXdkU0rOvJBR4olbWyn3n+5VgD
+        dGRACogrLErhOg+PQrXOMa7IIc8cvVM=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-232-eKGJJ5gSNZ-hWf8JPkTAjQ-1; Wed, 15 Jan 2020 10:41:15 -0500
+X-MC-Unique: eKGJJ5gSNZ-hWf8JPkTAjQ-1
+Received: by mail-lj1-f198.google.com with SMTP id t11so4260898ljo.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 07:41:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h8tviBIGxzG0M2SWVlzB/ZX7WYO/ibSFmw3TBS+98tw=;
-        b=SgwYiBrKdhhG25ut6tT8bcxQoWA36p8onqcDN+kr1KJQo1cN0yKfR8gPy8GoOMRsEi
-         XK41B3+FiFFyMdrdZUOr6PSQPpIEQ+H+1XT9vIQSK6RGX5TjZ8puf2zdY5U4o4B9/Rxc
-         oQO/HMrPXYJGHtCCEO3JFuPQuUbDRU0yOy6Cyp63SfCEwPC5g8KM25SXcyn5A1CQOrCz
-         Nf6yJ/3H/OBd4kRwiTxMMwX11LwLgfTqGuUv3F/JlAVjTEnBl+hDjFiX5KjLFQ18KDt0
-         jNvUwUyOMd5Wftj2aWPDtH8ebUqlK1WKqF0f2xhzQhBkrpJDxWtlA06YV0AXlLT+529T
-         EqEA==
-X-Gm-Message-State: APjAAAVNp1UYjg2rBGKsb7Fz8XDC3t3U2fI0HkTse19V+TLuDkD4zeRB
-        LYXDkjJEt7v7B+5CiHMF2wkwTcQ=
-X-Google-Smtp-Source: APXvYqz2pjM9YdGtk0JZUAlr0e+UnkRA/VVLCliK+5NpQgHQhDV13bRu3tpcaThgiHZetdQwxIINWQ==
-X-Received: by 2002:a9d:708f:: with SMTP id l15mr3298298otj.229.1579102825031;
-        Wed, 15 Jan 2020 07:40:25 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r63sm5699368oib.56.2020.01.15.07.40.23
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=3l69K3PDMlJemoFXpDZpBSROJVwgjnc3IAfTJYLJE1A=;
+        b=WxEIXlJvvvPGt082X+bLKg1s362XVDLt38GWKi0Bz71TZgW1oysizxA+bIdoXmigGr
+         zZVf3p6eWDsdvRSRZUkgLfST87OFYee+ZyNeElMGIwGJsWlv0payMh0KLAuO45GrBB0W
+         GYpPtebiuh3kTquy9sPBhp+gLl3DZzlCSgqEwggA/nbhy+2E1Vkotj9uD9TFYfgN1qNd
+         59ZR0CfJVT0TINLQYj4QTqrEosEo+6SLGGkijNbHbyWrVwR+RKcL8pVPQrQAmW33nHrY
+         82lIQQfKbtSD/0hCDIpmztQHcynfSJ9pqsblPxkB4zumfHu28xaZzKqG6/qqqFjH72+Q
+         xcTw==
+X-Gm-Message-State: APjAAAWwdjmpj622OvlHFOUjA7RhjiHfQWC/eM6agleoGrWFkPrqC4sM
+        hbE493Y62kxFqA9DrSqPKPQ2RhBhc5ueB3+DDjfldi7jB9pBTkUcKVeX5l/CA/89eHxLYepYFfy
+        rWQxu/ybW//cfqj8n20DgNd7S
+X-Received: by 2002:a19:5e0a:: with SMTP id s10mr5018196lfb.165.1579102874487;
+        Wed, 15 Jan 2020 07:41:14 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyazUrqAH6dclikkhYZ4/DJpUS4QXtSoJ0WpysfA1lHkQWnuS6US8Z0PNCGkK1YfaYA0049DA==
+X-Received: by 2002:a19:5e0a:: with SMTP id s10mr5018171lfb.165.1579102874260;
+        Wed, 15 Jan 2020 07:41:14 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id s22sm9557271ljm.41.2020.01.15.07.41.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 07:40:24 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 220379
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Wed, 15 Jan 2020 09:40:22 -0600
-Date:   Wed, 15 Jan 2020 09:40:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, vkoul@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org,
-        srinivas.kandagatla@linaro.org, broonie@kernel.org,
-        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
-        rjones@gateworks.com, marcel.ziswiler@toradex.com,
-        sebastien.szymanski@armadeus.com, aisheng.dong@nxp.com,
-        richard.hu@technexion.com, angus@akkea.ca, cosmin.stoica@nxp.com,
-        l.stach@pengutronix.de, rabeeh@solid-run.com,
-        leonard.crestez@nxp.com, daniel.baluta@nxp.com, jun.li@nxp.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V2 1/7] dt-bindings: fsl-imx-sdma: Add
- i.MX8MM/i.MX8MN/i.MX8MP compatible string
-Message-ID: <20200115154022.GA10946@bogus>
-References: <1578893602-14395-1-git-send-email-Anson.Huang@nxp.com>
+        Wed, 15 Jan 2020 07:41:13 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id DB6C51804D6; Wed, 15 Jan 2020 16:41:12 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com, brouer@redhat.com
+Subject: Re: [PATCH bpf-next v2 07/10] samples/bpf: Use consistent include paths for libbpf
+In-Reply-To: <20200115161825.351ebf23@carbon>
+References: <157909756858.1192265.6657542187065456112.stgit@toke.dk> <157909757639.1192265.16930011370158657444.stgit@toke.dk> <20200115161825.351ebf23@carbon>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Wed, 15 Jan 2020 16:41:12 +0100
+Message-ID: <87y2u8u3qf.fsf@toke.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578893602-14395-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020 13:33:16 +0800, Anson Huang wrote:
-> Add imx8mm/imx8mn/imx8mp sdma support.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> New patch
-> ---
->  Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Jesper Dangaard Brouer <brouer@redhat.com> writes:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> On Wed, 15 Jan 2020 15:12:56 +0100
+> Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com> wrote:
+>
+>> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>>=20
+>> Fix all files in samples/bpf to include libbpf header files with the bpf/
+>> prefix, to be consistent with external users of the library. Also ensure
+>> that all includes of exported libbpf header files (those that are export=
+ed
+>> on 'make install' of the library) use bracketed includes instead of quot=
+ed.
+>>=20
+>> To make sure no new files are introduced that doesn't include the bpf/
+>> prefix in its include, remove tools/lib/bpf from the include path entire=
+ly,
+>> and use tools/lib instead.
+>>=20
+>> Fixes: 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are taken =
+from selftests dir")
+>> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>
+> I like this change. Maybe the reason so many samples/bpf/ files
+> still included "libbpf.h" was that once-upon-a-time we had a "eBPF mini
+> library" in the file samples/bpf/libbpf.h that were included.
+
+Yes, I think something similar is the case with bpf_helpers.h - that
+used to be outside libbpf, and I guess no one bothered to do a cleanup
+such as this one when it was moved...
+
+-Toke
+
