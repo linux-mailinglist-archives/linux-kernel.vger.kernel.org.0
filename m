@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 628F713BE2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA9E13BE33
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:11:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbgAOLJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 06:09:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55544 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgAOLJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:09:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id BAB13AC81;
-        Wed, 15 Jan 2020 11:09:51 +0000 (UTC)
-Subject: Re: [PATCH v1 1/4] kasan: introduce set_pmd_early_shadow()
-To:     Sergey Dyasli <sergey.dyasli@citrix.com>
-Cc:     xen-devel@lists.xen.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        George Dunlap <george.dunlap@citrix.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20200108152100.7630-1-sergey.dyasli@citrix.com>
- <20200108152100.7630-2-sergey.dyasli@citrix.com>
- <96c2414e-91fb-5a28-44bc-e30d2daabec5@citrix.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <6f643816-a7dc-f3bb-d521-b6ac104918d6@suse.com>
-Date:   Wed, 15 Jan 2020 12:09:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1729849AbgAOLLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 06:11:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38682 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgAOLLm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:11:42 -0500
+Received: by mail-lf1-f67.google.com with SMTP id r14so12400212lfm.5
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 03:11:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=x1q0YcBi92HNWIXqmG5LKm7byE3ixTdGq+QRI0HmcV8=;
+        b=cKezeXSLT0MXrBRlRI94TLzhusiY4EMmbk3Clbyqq9/qIgqz69B+jcpyvLm5TTLpmg
+         +Bf7hD2M0zVPjixClwoc54oRY4Ptm67bmEa9SgEW8fZ8D32o6fMT4QVhE9kXPpMefSwA
+         O0imyS+gFQEIkP9S5wFITD0KOhw0l7ypO2T9eIICmIe8+iMwg5BK5Yea/pjVWV3a/oMY
+         BDKrPkgRisxmwNAbkbbLCYOPxn609smtk/P6X903JPGk7D0iM9DfhIlMvtbm8doINA5N
+         y40E/sFArjw3HkCkPe2s173eDErLLx8IWHauSlmxP+Jwvb9MiWCEXTAUSjKeWxA1hDuL
+         SiFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=x1q0YcBi92HNWIXqmG5LKm7byE3ixTdGq+QRI0HmcV8=;
+        b=ZipwpqaVsp/Ejt5g6Hvfp52sxd5Nk6vWzD/qXT1zXsw8PaMBuNmTn8TZbaSBe2M0fi
+         CphL3Ok25VNv1tQfbNwIsMQc8ixvdwhAT8vIYZXL1YAhR7VDC9iXEGQqeWQrC0eRFKg7
+         mxJApNIv3jQmlYT0JKUYVciAo1ymffSL3NPssDA467G+Y1c2qqDtEAc1ewyltSb7JtHF
+         3ZW2iP4EPrlD23ZFal30KrgRm83BZzKoabR6F/YSDQcH8fgbOqzPBZX05SDZd5hXp3A4
+         MP+tirxjAiAf//QxeSTqm8rQVRIvhlUWc2YlsJMi9iHwLGVQZRuwOyCoiDFS3Vw+Ag/n
+         ffkQ==
+X-Gm-Message-State: APjAAAU9LNyyw+zq8aJAqRAL3fz4gRN5B+29YZVrJsYIMcBsRYlAllvG
+        4C0nDcoBaW5jaS+MeIcGliGSosrzYiT+aFC356g=
+X-Google-Smtp-Source: APXvYqzswhDaCjAcsfp4K2JxwT9zfgXkS12udWTmAvpKfkb+1zhmUUsZ/UhYiAs17X4oL7lCZK24BB3lS2izHLzgb7I=
+X-Received: by 2002:a19:114:: with SMTP id 20mr3970241lfb.25.1579086700776;
+ Wed, 15 Jan 2020 03:11:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <96c2414e-91fb-5a28-44bc-e30d2daabec5@citrix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:dc54:0:0:0:0:0 with HTTP; Wed, 15 Jan 2020 03:11:40
+ -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <barristerlevi@gmail.com>
+Date:   Wed, 15 Jan 2020 12:11:40 +0100
+Message-ID: <CAEJ6Che5qKOySd5u9gwe_VNx4ZxfrMTowwwGWcOTfqyiPW1GOQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.01.20 11:54, Sergey Dyasli wrote:
-> Hi Juergen,
-> 
-> On 08/01/2020 15:20, Sergey Dyasli wrote:
->> It is incorrect to call pmd_populate_kernel() multiple times for the
->> same page table. Xen notices it during kasan_populate_early_shadow():
->>
->>      (XEN) mm.c:3222:d155v0 mfn 3704b already pinned
->>
->> This happens for kasan_early_shadow_pte when USE_SPLIT_PTE_PTLOCKS is
->> enabled. Fix this by introducing set_pmd_early_shadow() which calls
->> pmd_populate_kernel() only once and uses set_pmd() afterwards.
->>
->> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
-> 
-> Looks like the plan to use set_pmd() directly has failed: it's an
-> arch-specific function and can't be used in arch-independent code
-> (as kbuild test robot has proven).
-> 
-> Do you see any way out of this other than disabling SPLIT_PTE_PTLOCKS
-> for PV KASAN?
-
-Change set_pmd_early_shadow() like the following:
-
-#ifdef CONFIG_XEN_PV
-static inline void set_pmd_early_shadow(pmd_t *pmd, pte_t *early_shadow)
-{
-	static bool pmd_populated = false;
-
-	if (likely(pmd_populated)) {
-		set_pmd(pmd, __pmd(__pa(early_shadow) | _PAGE_TABLE));
-	} else {
-		pmd_populate_kernel(&init_mm, pmd, early_shadow);
-		pmd_populated = true;
-	}
-}
-#else
-static inline void set_pmd_early_shadow(pmd_t *pmd, pte_t *early_shadow)
-{
-	pmd_populate_kernel(&init_mm, pmd, early_shadow);
-}
-#endif
-
-... and move it to include/xen/xen-ops.h and call it with
-lm_alias(kasan_early_shadow_pte) as the second parameter.
-
-
-Juergen
+0JfQtNGA0LDQstC10LnRgtC1DQoNCtCa0LDQt9Cy0LDQvCDRgdC1INCV0LTQuCDQo9C40LvRj9C8
+LiDQn9C+INC/0YDQvtGE0LXRgdC40Y8g0YHRitC8INGO0YDQuNGB0YIuINCY0YHQutCw0Lwg0LTQ
+sCDQstC4INC/0YDQtdC00LvQvtC20LANCtC90LDQuS3QsdC70LjQt9C60LjRgtC1INGA0L7QtNC9
+0LjQvdC4INC90LAg0LzQvtGPINC60LvQuNC10L3Rgi4g0KLQtSDQvdCw0YHQu9C10LTRj9Cy0LDR
+giDRgdGD0LzQsNGC0LAg0L7RgiAoOCw1INC80LjQu9C40L7QvdCwINC00L7Qu9Cw0YDQsCkNCtCU
+0L7Qu9Cw0YDQuCDQutC70LjQtdC90YLRitGCINC80Lgg0L7RgdGC0LDQstC4INCyINCx0LDQvdC6
+0LDRgtCwLCDQv9GA0LXQtNC4INC00LAg0YPQvNGA0LUuDQoNCtCa0LvQuNC10L3RgtGK0YIg0LzQ
+uCDQtSDQs9GA0LDQttC00LDQvdC40L0g0L3QsCDQstCw0YjQsNGC0LAg0YHRgtGA0LDQvdCwLCDQ
+utC+0LnRgtC+INC30LDQs9C40L3QsCDQsiDQsNCy0YLQvtC80L7QsdC40LvQvdCwDQrQutCw0YLQ
+sNGB0YLRgNC+0YTQsCDRgdGK0YEg0YHRitC/0YDRg9Cz0LDRgtCwINGB0LgNCtC4INGB0LDQvNC+
+INGB0LjQvS4g0KnQtSDQuNC80LDQvCDQv9GA0LDQstC+INC90LAgNTAlINC+0YIg0L7QsdGJ0LjR
+jyDRhNC+0L3QtCwg0LTQvtC60LDRgtC+IDUwJQ0K0LTQsCDQtSDQt9CwINGC0LXQsS4NCtCc0L7Q
+u9GPLCDRgdCy0YrRgNC20LXRgtC1INGB0LUg0YEg0LvQuNGH0L3QuNGPINC80Lgg0LjQvNC10LnQ
+uyDRgtGD0Log0LfQsCDQv9C+0LLQtdGH0LUg0LjQvdGE0L7RgNC80LDRhtC40Y86DQplZGR5d2ls
+bGlhbTAwMDJnbWFpbC5jb20NCg0K0JHQu9Cw0LPQvtC00LDRgNGPINCy0Lgg0L/RgNC10LTQstCw
+0YDQuNGC0LXQu9C90L4NCtCT0L7RgdC/0L7QtNC40L0g0JXQtNC4INCj0LjQu9GP0LwsDQoNCg0K
+DQpIZWxsbw0KDQpNeSBuYW1lIGlzIEVkZHkgV2lsbGlhbSBJIGFtIGEgbGF3eWVyIGJ5IHByb2Zl
+c3Npb24uIEkgd2lzaCB0byBvZmZlciB5b3UNCnRoZSBuZXh0IG9mIGtpbiB0byBteSBjbGllbnQu
+IFlvdSB3aWxsIGluaGVyaXQgdGhlIHN1bSBvZiAoJDguNSBNaWxsaW9uKQ0KZG9sbGFycyBteSBj
+bGllbnQgbGVmdCBpbiB0aGUgYmFuayBiZWZvcmUgaGlzIGRlYXRoLg0KDQpNeSBjbGllbnQgaXMg
+YSBjaXRpemVuIG9mIHlvdXIgY291bnRyeSB3aG8gZGllZCBpbiBhdXRvIGNyYXNoIHdpdGggaGlz
+IHdpZmUNCmFuZCBvbmx5IHNvbi4gSSB3aWxsIGJlIGVudGl0bGVkIHdpdGggNTAlIG9mIHRoZSB0
+b3RhbCBmdW5kIHdoaWxlIDUwJSB3aWxsDQpiZSBmb3IgeW91Lg0KUGxlYXNlIGNvbnRhY3QgbXkg
+cHJpdmF0ZSBlbWFpbCBoZXJlIGZvciBtb3JlIGRldGFpbHM6ZWRkeXdpbGxpYW0wMDAyZ21haWwu
+Y29tDQoNCk1hbnkgdGhhbmtzIGluIGFkdmFuY2UsDQpNci5FZGR5IFdpbGxpYW0sDQo=
