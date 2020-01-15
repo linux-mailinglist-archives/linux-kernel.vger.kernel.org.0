@@ -2,72 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB9D13C193
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0C413C105
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbgAOMrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:47:19 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55484 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729030AbgAOMrT (ORCPT
+        id S1726566AbgAOMas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:30:48 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46526 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726018AbgAOMar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:47:19 -0500
-Received: from localhost (unknown [62.21.130.100])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id CA176159E75BD;
-        Wed, 15 Jan 2020 04:47:16 -0800 (PST)
-Date:   Tue, 14 Jan 2020 11:51:27 -0800 (PST)
-Message-Id: <20200114.115127.2012708883911771822.davem@davemloft.net>
-To:     sunilmut@microsoft.com
-Cc:     netdev@vger.kernel.org, decui@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net]: hv_sock: Remove the accept port restriction
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <SN4PR2101MB08808AAFCEB4E8FC178A4B79C0340@SN4PR2101MB0880.namprd21.prod.outlook.com>
-References: <SN4PR2101MB08808AAFCEB4E8FC178A4B79C0340@SN4PR2101MB0880.namprd21.prod.outlook.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 15 Jan 2020 07:30:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579091446;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vLpGZItDdMCDJVkbunVBCSzJoxG7ezBzmb4FobfzGx0=;
+        b=e/tLpKbK+VKp5rfJfGeyaFvHkl/UVkwZknWe5Omn/Fv92mI2fXnm8X+IcqQKsliqnfvETs
+        5ZmOUseVuUzZR7CXkyp2I4Hp4mMjAJCNB4RyRtPwNktkorXskQWVuk0TXd0J+MPMskv2s6
+        Cu6T1SUNGA2MNHyFL0jbiSGVLG1k0qU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-265-Gd-Bg1RRNcStF3gOUVVkeA-1; Wed, 15 Jan 2020 07:30:44 -0500
+X-MC-Unique: Gd-Bg1RRNcStF3gOUVVkeA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8787B8024CE;
+        Wed, 15 Jan 2020 12:30:42 +0000 (UTC)
+Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 32E225C219;
+        Wed, 15 Jan 2020 12:30:30 +0000 (UTC)
+Date:   Wed, 15 Jan 2020 13:30:27 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Liu Yi L <yi.l.liu@intel.com>
+Cc:     alex.williamson@redhat.com, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kevin.tian@intel.com, joro@8bytes.org, peterx@redhat.com,
+        baolu.lu@linux.intel.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v4 11/12] samples: add vfio-mdev-pci driver
+Message-ID: <20200115133027.228452fd.cohuck@redhat.com>
+In-Reply-To: <1578398509-26453-12-git-send-email-yi.l.liu@intel.com>
+References: <1578398509-26453-1-git-send-email-yi.l.liu@intel.com>
+        <1578398509-26453-12-git-send-email-yi.l.liu@intel.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 15 Jan 2020 04:47:18 -0800 (PST)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Muthuswamy <sunilmut@microsoft.com>
-Date: Tue, 14 Jan 2020 00:52:14 +0000
+On Tue,  7 Jan 2020 20:01:48 +0800
+Liu Yi L <yi.l.liu@intel.com> wrote:
 
-> Currently, hv_sock restricts the port the guest socket can accept
-> connections on. hv_sock divides the socket port namespace into two parts
-> for server side (listening socket), 0-0x7FFFFFFF & 0x80000000-0xFFFFFFFF
-> (there are no restrictions on client port namespace). The first part
-> (0-0x7FFFFFFF) is reserved for sockets where connections can be accepted.
-> The second part (0x80000000-0xFFFFFFFF) is reserved for allocating ports
-> for the peer (host) socket, once a connection is accepted.
-> This reservation of the port namespace is specific to hv_sock and not
-> known by the generic vsock library (ex: af_vsock). This is problematic
-> because auto-binds/ephemeral ports are handled by the generic vsock
-> library and it has no knowledge of this port reservation and could
-> allocate a port that is not compatible with hv_sock (and legitimately so).
-> The issue hasn't surfaced so far because the auto-bind code of vsock
-> (__vsock_bind_stream) prior to the change 'VSOCK: bind to random port for
-> VMADDR_PORT_ANY' would start walking up from LAST_RESERVED_PORT (1023) and
-> start assigning ports. That will take a large number of iterations to hit
-> 0x7FFFFFFF. But, after the above change to randomize port selection, the
-> issue has started coming up more frequently.
-> There has really been no good reason to have this port reservation logic
-> in hv_sock from the get go. Reserving a local port for peer ports is not
-> how things are handled generally. Peer ports should reflect the peer port.
-> This fixes the issue by lifting the port reservation, and also returns the
-> right peer port. Since the code converts the GUID to the peer port (by
-> using the first 4 bytes), there is a possibility of conflicts, but that
-> seems like a reasonable risk to take, given this is limited to vsock and
-> that only applies to all local sockets.
+> This patch adds sample driver named vfio-mdev-pci. It is to wrap
+> a PCI device as a mediated device. For a pci device, once bound
+> to vfio-mdev-pci driver, user space access of this device will
+> go through vfio mdev framework. The usage of the device follows
+> mdev management method. e.g. user should create a mdev before
+> exposing the device to user-space.
 > 
-> Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
+> Benefit of this new driver would be acting as a sample driver
+> for recent changes from "vfio/mdev: IOMMU aware mediated device"
+> patchset. Also it could be a good experiment driver for future
+> device specific mdev migration support. This sample driver only
+> supports singleton iommu groups, for non-singleton iommu groups,
+> this sample driver doesn't work. It will fail when trying to assign
+> the non-singleton iommu group to VMs.
+> 
+> To use this driver:
+> a) build and load vfio-mdev-pci.ko module
+>    execute "make menuconfig" and config CONFIG_SAMPLE_VFIO_MDEV_PCI
+>    then load it with following command:
+>    > sudo modprobe vfio
+>    > sudo modprobe vfio-pci
+>    > sudo insmod samples/vfio-mdev-pci/vfio-mdev-pci.ko  
+> 
+> b) unbind original device driver
+>    e.g. use following command to unbind its original driver
+>    > echo $dev_bdf > /sys/bus/pci/devices/$dev_bdf/driver/unbind  
+> 
+> c) bind vfio-mdev-pci driver to the physical device
+>    > echo $vend_id $dev_id > /sys/bus/pci/drivers/vfio-mdev-pci/new_id  
+> 
+> d) check the supported mdev instances
+>    > ls /sys/bus/pci/devices/$dev_bdf/mdev_supported_types/  
+>      vfio-mdev-pci-type_name
+>    > ls /sys/bus/pci/devices/$dev_bdf/mdev_supported_types/\  
+>      vfio-mdev-pci-type_name/
+>      available_instances  create  device_api  devices  name
+> 
+> e)  create mdev on this physical device (only 1 instance)
+>    > echo "83b8f4f2-509f-382f-3c1e-e6bfe0fa1003" > \  
+>      /sys/bus/pci/devices/$dev_bdf/mdev_supported_types/\
+>      vfio-mdev-pci-type_name/create
+> 
+> f) passthru the mdev to guest
+>    add the following line in QEMU boot command
+>     -device vfio-pci,\
+>      sysfsdev=/sys/bus/mdev/devices/83b8f4f2-509f-382f-3c1e-e6bfe0fa1003
+> 
+> g) destroy mdev
+>    > echo 1 > /sys/bus/mdev/devices/83b8f4f2-509f-382f-3c1e-e6bfe0fa1003/\  
+>      remove
 
-Applied.
+I think much/most of those instructions should go (additionally) into
+the sample driver source. Otherwise, it's not clear to the reader why
+they should wrap the device in mdev instead of simply using a normal
+vfio-pci device.
+
+> 
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> ---
+>  samples/Kconfig                       |  10 +
+>  samples/Makefile                      |   1 +
+>  samples/vfio-mdev-pci/Makefile        |   4 +
+>  samples/vfio-mdev-pci/vfio_mdev_pci.c | 397 ++++++++++++++++++++++++++++++++++
+>  4 files changed, 412 insertions(+)
+>  create mode 100644 samples/vfio-mdev-pci/Makefile
+>  create mode 100644 samples/vfio-mdev-pci/vfio_mdev_pci.c
+> 
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 9d236c3..50d207c 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -190,5 +190,15 @@ config SAMPLE_INTEL_MEI
+>  	help
+>  	  Build a sample program to work with mei device.
+>  
+> +config SAMPLE_VFIO_MDEV_PCI
+> +	tristate "Sample driver for wrapping PCI device as a mdev"
+> +	select VFIO_PCI_COMMON
+> +	select VFIO_PCI
+
+Why does this still need to select VFIO_PCI? Shouldn't all needed
+infrastructure rather be covered by VFIO_PCI_COMMON already?
+
+> +	depends on VFIO_MDEV && VFIO_MDEV_DEVICE
+
+VFIO_MDEV_DEVICE already depends on VFIO_MDEV. But maybe also make this
+depend on PCI?
+
+> +	help
+> +	  Sample driver for wrapping a PCI device as a mdev. Once bound to
+> +	  this driver, device passthru should through mdev path.
+
+"A PCI device bound to this driver will be assigned through the
+mediated device framework."
+
+?
+
+> +
+> +	  If you don't know what to do here, say N.
+>  
+>  endif # SAMPLES
+
