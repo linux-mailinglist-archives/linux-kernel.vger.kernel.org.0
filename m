@@ -2,66 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5FE13B82D
+	by mail.lfdr.de (Postfix) with ESMTP id AD7AF13B82E
 	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 04:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAODkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 22:40:39 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:37128 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728879AbgAODkj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 22:40:39 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x18so9664813vsq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 19:40:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=drkpqV4r5dWLWeh/Ukq5CXTmFjT5tZtoP/NgpIicDAo=;
-        b=RvMhHJRy0BKcdpGOX6edsro+XuCjnHLwFr84j9/MKXcFQEi6iV9aSjUXhnyayQmDaZ
-         b/iU4wY6vWtpU1ib7BIS4Y8FTrzJc+n7neeL7qYjCl7yc6Uy3FiuHcIDupcU86VZx6GJ
-         jV8lOMJrNPdMpTUZ44ys37llBz28zb+hBWkhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=drkpqV4r5dWLWeh/Ukq5CXTmFjT5tZtoP/NgpIicDAo=;
-        b=h3Mgcf7uOyXLVAjJPXcik1O/u8by0a5uDDAgNGNQ7iDXu8my58ARFjRcEZ/1dzWa4+
-         tbimNhGCha3znT6/v82TqkMohgEgx61qAX08MM2i6n2ejwx1AnXbFtdaJr026mPGQbyG
-         M7oZVrLMWU8GK2LAY43hj0w8+oFt67I/eWSKeuaF4K0Xm4BTCoEctfiGSwXJ4BneYPeG
-         QCKC4PgXZgugDvM0nCWFpuRZg94mTZcaEpwDb+YVZy4Jo9NptloPj8+PTmEgPNNeZGGk
-         IyRQrJlHmlWRcbGLDpcl539GzO5eViw/HfxLAaBIvJJ17lSdTQlacdqXmdHOkDoTsOsY
-         z9PQ==
-X-Gm-Message-State: APjAAAVtCDbbPhFLh6YujEYTy7m/cRdNWyrpWspNDWtGza60duhxylHB
-        9DWpT/hRj4gm3n2Rn++HSBlJI/Vw+M4=
-X-Google-Smtp-Source: APXvYqy34ijEtHqJLdTJNKENchlHNtPE5sMEsjw2p0GUUtf9ZPCutFLi3YQMAIIEmw6rBV0xjdkMSA==
-X-Received: by 2002:a67:f8c8:: with SMTP id c8mr3380962vsp.196.1579059638125;
-        Tue, 14 Jan 2020 19:40:38 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id n25sm5138875vkk.56.2020.01.14.19.40.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 19:40:37 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id a12so5745457uan.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 19:40:37 -0800 (PST)
-X-Received: by 2002:ab0:254e:: with SMTP id l14mr13216859uan.91.1579059637158;
- Tue, 14 Jan 2020 19:40:37 -0800 (PST)
+        id S1729043AbgAODkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 22:40:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728879AbgAODkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 22:40:41 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E99220684;
+        Wed, 15 Jan 2020 03:40:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579059640;
+        bh=jQkpwwjW+28FAcx5qKB4T60288Dppvd4H70Y9mp+7Hg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UBu79P/8GiSHu6VT5/FpwerbSA3tigMRZXKIYq5JAo+GunMN0KSXQOO5LmekDEmcY
+         amxYsNX4qWAv1ROcGgtzR/IpEz1oyG+pSqssXFs81zzbshYVb27k/4/7abaJ1DrZnp
+         IcQuD3T9zAzny5Nek22yUUqt33VWFbE9w1GQ+F8Q=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
+        joel@joelfernandes.org,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH -tip V3 0/2] kprobes: Fix RCU warning and cleanup
+Date:   Wed, 15 Jan 2020 12:40:35 +0900
+Message-Id: <157905963533.2268.4672153983131918123.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20200109155910.907-1-swboyd@chromium.org> <20200109155910.907-2-swboyd@chromium.org>
-In-Reply-To: <20200109155910.907-2-swboyd@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 14 Jan 2020 19:40:25 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XJZCebpa_Yas_riZhdKz+Gz+dL5CMeu+8+NmWxJ92dAA@mail.gmail.com>
-Message-ID: <CAD=FV=XJZCebpa_Yas_riZhdKz+Gz+dL5CMeu+8+NmWxJ92dAA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] alarmtimer: Unregister wakeup source when module get fails
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,19 +47,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Thu, Jan 9, 2020 at 7:59 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> The alarmtimer_rtc_add_device() function creates a wakeup source and
-> then tries to grab a module reference. If that fails we return early
-> with a -1, but forget to remove the wakeup source. Cleanup this exit
-> path so we don't leave a dangling wakeup source allocated and named
-> 'alarmtimer' that will conflict with another RTC device that may be
-> registered.
->
-> Fixes: 51218298a25e ("alarmtimer: Ensure RTC module is not unloaded")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  kernel/time/alarmtimer.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+Here is v3 patches which fix suspicious RCU usage warnings
+in kprobes. In this version I just updated the series on top
+of the latest -tip and add Joel's reviewed-by tag.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thank you,
+
+---
+
+Masami Hiramatsu (2):
+      kprobes: Suppress the suspicious RCU warning on kprobes
+      kprobes: Use non RCU traversal APIs on kprobe_tables if possible
+
+
+ kernel/kprobes.c |   32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
