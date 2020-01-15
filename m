@@ -2,256 +2,424 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 783ED13BEF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AA213BF15
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:02:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbgAOLzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 06:55:03 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:17829 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730297AbgAOLzB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:55:01 -0500
-Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa1.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa1.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: yLzAlM8/Q0rumPtMnTZ3kEUzMINh4dLf9J+r8Ub30JwQEouZwgKpdgtdQZHZnmSbabaMthe8r6
- A5G3l4uQ1N3qWJk6G9h1qb7Jli3NbFIrV1YXjgHhKk/NlryzwqsuujA5xCMsA2h/xfwHtBLRHP
- WbVYqibSnqPywPWWudNK5dvmuRgkWx68nof+0kNvO4DBGUODFxZMbO8l1P9y84F4ti5tYxwk4q
- xIe12b/DF8mdxWgyt/YL4y1vGcagsKS90kaX0+8V5j+KjBnvMkpisklBoFFIHafptesgPEynWL
- EVE=
-X-IronPort-AV: E=Sophos;i="5.70,322,1574146800"; 
-   d="scan'208";a="64802524"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jan 2020 04:55:00 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 15 Jan 2020 04:54:59 -0700
-Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Wed, 15 Jan 2020 04:54:56 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <kamel.bouhara@bootlin.com>, <wsa@the-dreams.de>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <robh@kernel.org>,
-        <peda@axentia.se>, <linux@armlinux.org.uk>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [PATCH v3 6/6] ARM: at91/dt: sama5d2: add i2c gpio pinctrl
-Date:   Wed, 15 Jan 2020 13:54:22 +0200
-Message-ID: <20200115115422.17097-7-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200115115422.17097-1-codrin.ciubotariu@microchip.com>
-References: <20200115115422.17097-1-codrin.ciubotariu@microchip.com>
+        id S1730197AbgAOMCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:02:21 -0500
+Received: from mga12.intel.com ([192.55.52.136]:43537 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729892AbgAOMCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:02:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 04:02:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,322,1574150400"; 
+   d="scan'208";a="397864191"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 15 Jan 2020 04:02:15 -0800
+Subject: Re: [PATCH v4 03/11] mmc: sdhci: add support for using external DMA
+ devices
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     kishon@ti.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, tony@atomide.com
+References: <20200106110133.13791-1-faiz_abbas@ti.com>
+ <20200106110133.13791-4-faiz_abbas@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c5ca1285-2aaf-f69a-820c-8602122d2a66@intel.com>
+Date:   Wed, 15 Jan 2020 14:01:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+In-Reply-To: <20200106110133.13791-4-faiz_abbas@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+On 6/01/20 1:01 pm, Faiz Abbas wrote:
+> From: Chunyan Zhang <zhang.chunyan@linaro.org>
+> 
+> Some standard SD host controllers can support both external dma
+> controllers as well as ADMA/SDMA in which the SD host controller
+> acts as DMA master. TI's omap controller is the case as an example.
+> 
+> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> the host controller but does not have any support for external DMA
+> controllers implemented using dmaengine, meaning that custom code is
+> needed for any systems that use an external DMA controller with SDHCI.
+> 
+> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
+> 1. Map scatterlists before dmaengine_prep_slave_sg()
+> 2. Use dma_async() functions inside of the send_command() path and call
+> terminate_sync() in non-atomic context in case of an error.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-Add the i2c gpio pinctrls to support the i2c bus recovery
+Notwithstanding comments from other people:
 
-Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-[codrin.ciubotariu@microchip.com: removed gpio pull-ups]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Changes in v3:
- - removed gpio pull-ups;
-
-Changes in v2:
- - new patch;
-
- arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts   | 33 +++++++++++++++++++--
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 33 +++++++++++++++++++--
- 2 files changed, 60 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
-index ba7f3e646c26..1c24ac8019ba 100644
---- a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
-@@ -180,8 +180,11 @@
- 
- 			i2c0: i2c@f8028000 {
- 				dmas = <0>, <0>;
--				pinctrl-names = "default";
-+				pinctrl-names = "default", "gpio";
- 				pinctrl-0 = <&pinctrl_i2c0_default>;
-+				pinctrl-1 = <&pinctrl_i2c0_gpio>;
-+				sda-gpios = <&pioA PIN_PD21 GPIO_ACTIVE_HIGH>;
-+				scl-gpios = <&pioA PIN_PD22 GPIO_ACTIVE_HIGH>;
- 				status = "okay";
- 			};
- 
-@@ -198,8 +201,11 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					clocks = <&pmc PMC_TYPE_PERIPHERAL 19>;
--					pinctrl-names = "default";
-+					pinctrl-names = "default", "gpio";
- 					pinctrl-0 = <&pinctrl_flx0_default>;
-+					pinctrl-1 = <&pinctrl_flx0_gpio>;
-+					sda-gpios = <&pioA PIN_PB28 GPIO_ACTIVE_HIGH>;
-+					scl-gpios = <&pioA PIN_PB29 GPIO_ACTIVE_HIGH>;
- 					atmel,fifo-size = <16>;
- 					status = "okay";
- 				};
-@@ -226,8 +232,11 @@
- 
- 			i2c1: i2c@fc028000 {
- 				dmas = <0>, <0>;
--				pinctrl-names = "default";
-+				pinctrl-names = "default", "gpio";
- 				pinctrl-0 = <&pinctrl_i2c1_default>;
-+				pinctrl-1 = <&pinctrl_i2c1_gpio>;
-+				sda-gpios = <&pioA PIN_PC6 GPIO_ACTIVE_HIGH>;
-+				scl-gpios = <&pioA PIN_PC7 GPIO_ACTIVE_HIGH>;
- 				status = "okay";
- 
- 				at24@50 {
-@@ -244,18 +253,36 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_flx0_gpio: flx0_gpio {
-+					pinmux = <PIN_PB28__GPIO>,
-+						 <PIN_PB29__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_i2c0_default: i2c0_default {
- 					pinmux = <PIN_PD21__TWD0>,
- 						 <PIN_PD22__TWCK0>;
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2c0_gpio: i2c0_gpio {
-+					pinmux = <PIN_PD21__GPIO>,
-+						 <PIN_PD22__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_i2c1_default: i2c1_default {
- 					pinmux = <PIN_PC6__TWD1>,
- 						 <PIN_PC7__TWCK1>;
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2c1_gpio: i2c1_gpio {
-+					pinmux = <PIN_PC6__GPIO>,
-+						 <PIN_PC7__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_key_gpio_default: key_gpio_default {
- 					pinmux = <PIN_PA10__GPIO>;
- 					bias-pull-up;
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index 9d0a7fbea725..055ee53e4773 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -129,8 +129,11 @@
- 
- 			i2c0: i2c@f8028000 {
- 				dmas = <0>, <0>;
--				pinctrl-names = "default";
-+				pinctrl-names = "default", "gpio";
- 				pinctrl-0 = <&pinctrl_i2c0_default>;
-+				pinctrl-1 = <&pinctrl_i2c0_gpio>;
-+				sda-gpios = <&pioA PIN_PD21 GPIO_ACTIVE_HIGH>;
-+				scl-gpios = <&pioA PIN_PD22 GPIO_ACTIVE_HIGH>;
- 				i2c-sda-hold-time-ns = <350>;
- 				status = "okay";
- 
-@@ -331,8 +334,11 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					clocks = <&pmc PMC_TYPE_PERIPHERAL 23>;
--					pinctrl-names = "default";
-+					pinctrl-names = "default", "gpio";
- 					pinctrl-0 = <&pinctrl_flx4_default>;
-+					pinctrl-1 = <&pinctrl_flx4_gpio>;
-+					sda-gpios = <&pioA PIN_PD12 GPIO_ACTIVE_HIGH>;
-+					scl-gpios = <&pioA PIN_PD13 GPIO_ACTIVE_HIGH>;
- 					atmel,fifo-size = <16>;
- 					i2c-analog-filter;
- 					i2c-digital-filter;
-@@ -343,11 +349,14 @@
- 
- 			i2c1: i2c@fc028000 {
- 				dmas = <0>, <0>;
--				pinctrl-names = "default";
-+				pinctrl-names = "default", "gpio";
- 				pinctrl-0 = <&pinctrl_i2c1_default>;
- 				i2c-analog-filter;
- 				i2c-digital-filter;
- 				i2c-digital-filter-width-ns = <35>;
-+				pinctrl-1 = <&pinctrl_i2c1_gpio>;
-+				sda-gpios = <&pioA PIN_PD4 GPIO_ACTIVE_HIGH>;
-+				scl-gpios = <&pioA PIN_PD5 GPIO_ACTIVE_HIGH>;
- 				status = "okay";
- 
- 				at24@54 {
-@@ -441,18 +450,36 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_flx4_gpio: flx4_gpio {
-+					pinmux = <PIN_PD12__GPIO>,
-+						 <PIN_PD13__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_i2c0_default: i2c0_default {
- 					pinmux = <PIN_PD21__TWD0>,
- 						 <PIN_PD22__TWCK0>;
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2c0_gpio: i2c0_gpio {
-+					pinmux = <PIN_PD21__GPIO>,
-+						 <PIN_PD22__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_i2c1_default: i2c1_default {
- 					pinmux = <PIN_PD4__TWD1>,
- 						 <PIN_PD5__TWCK1>;
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2c1_gpio: i2c1_gpio {
-+					pinmux = <PIN_PD4__GPIO>,
-+						 <PIN_PD5__GPIO>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_i2s0_default: i2s0_default {
- 					pinmux = <PIN_PC1__I2SC0_CK>,
- 						 <PIN_PC2__I2SC0_MCK>,
--- 
-2.20.1
+> ---
+>  drivers/mmc/host/Kconfig |   3 +
+>  drivers/mmc/host/sdhci.c | 228 ++++++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.h |   8 ++
+>  3 files changed, 237 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index d06b2dfe3c95..adef971582a1 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -1040,3 +1040,6 @@ config MMC_OWL
+>  	help
+>  	  This selects support for the SD/MMC Host Controller on
+>  	  Actions Semi Owl SoCs.
+> +
+> +config MMC_SDHCI_EXTERNAL_DMA
+> +	bool
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index f6999054abcf..8cc78c76bc3d 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -10,6 +10,7 @@
+>   */
+>  
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+>  #include <linux/ktime.h>
+>  #include <linux/highmem.h>
+>  #include <linux/io.h>
+> @@ -1157,6 +1158,188 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+>  	sdhci_set_block_info(host, data);
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> +
+> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> +{
+> +	int ret = 0;
+> +	struct mmc_host *mmc = host->mmc;
+> +
+> +	host->tx_chan = dma_request_chan(mmc->parent, "tx");
+> +	if (IS_ERR(host->tx_chan)) {
+> +		ret = PTR_ERR(host->tx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request TX DMA channel.\n");
+> +		host->tx_chan = NULL;
+> +		return ret;
+> +	}
+> +
+> +	host->rx_chan = dma_request_chan(mmc->parent, "rx");
+> +	if (IS_ERR(host->rx_chan)) {
+> +		if (host->tx_chan) {
+> +			dma_release_channel(host->tx_chan);
+> +			host->tx_chan = NULL;
+> +		}
+> +
+> +		ret = PTR_ERR(host->rx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request RX DMA channel.\n");
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static struct dma_chan *sdhci_external_dma_channel(struct sdhci_host *host,
+> +						   struct mmc_data *data)
+> +{
+> +	return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+> +}
+> +
+> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> +				    struct mmc_command *cmd)
+> +{
+> +	int ret, i;
+> +	struct dma_async_tx_descriptor *desc;
+> +	struct mmc_data *data = cmd->data;
+> +	struct dma_chan *chan;
+> +	struct dma_slave_config cfg;
+> +	dma_cookie_t cookie;
+> +	int sg_cnt;
+> +
+> +	if (!host->mapbase)
+> +		return -EINVAL;
+> +
+> +	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.src_maxburst = data->blksz / 4;
+> +	cfg.dst_maxburst = data->blksz / 4;
+> +
+> +	/* Sanity check: all the SG entries must be aligned by block size. */
+> +	for (i = 0; i < data->sg_len; i++) {
+> +		if ((data->sg + i)->length % data->blksz)
+> +			return -EINVAL;
+> +	}
+> +
+> +	chan = sdhci_external_dma_channel(host, data);
+> +
+> +	ret = dmaengine_slave_config(chan, &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sg_cnt = sdhci_pre_dma_transfer(host, data, COOKIE_MAPPED);
+> +	if (sg_cnt <= 0)
+> +		return -EINVAL;
+> +
+> +	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+> +				       mmc_get_dma_dir(data),
+> +				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	desc->callback = NULL;
+> +	desc->callback_param = NULL;
+> +
+> +	cookie = dmaengine_submit(desc);
+> +	if (cookie < 0)
+> +		ret = cookie;
+> +
+> +	return ret;
+> +}
+> +
+> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> +{
+> +	if (host->tx_chan) {
+> +		dma_release_channel(host->tx_chan);
+> +		host->tx_chan = NULL;
+> +	}
+> +
+> +	if (host->rx_chan) {
+> +		dma_release_channel(host->rx_chan);
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	sdhci_switch_external_dma(host, false);
+> +}
+> +
+> +static void __sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					      struct mmc_command *cmd)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +
+> +	sdhci_initialize_data(host, data);
+> +
+> +	host->flags |= SDHCI_REQ_USE_DMA;
+> +	sdhci_set_transfer_irqs(host);
+> +
+> +	sdhci_set_block_info(host, data);
+> +}
+> +
+> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	if (!sdhci_external_dma_setup(host, cmd)) {
+> +		__sdhci_external_dma_prepare_data(host, cmd);
+> +	} else {
+> +		sdhci_external_dma_release(host);
+> +		pr_err("%s: Cannot use external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+> +		       mmc_hostname(host->mmc));
+> +		sdhci_prepare_data(host, cmd);
+> +	}
+> +}
+> +
+> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	struct dma_chan *chan;
+> +
+> +	if (!cmd->data)
+> +		return;
+> +
+> +	chan = sdhci_external_dma_channel(host, cmd->data);
+> +	if (chan)
+> +		dma_async_issue_pending(chan);
+> +}
+> +
+> +#else
+> +
+> +static inline int sdhci_external_dma_init(struct sdhci_host *host)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline void sdhci_external_dma_release(struct sdhci_host *host)
+> +{
+> +}
+> +
+> +static inline void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +						   struct mmc_command *cmd)
+> +{
+> +	/* This should never happen */
+> +	WARN_ON_ONCE(1);
+> +}
+> +
+> +static inline void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> +						   struct mmc_command *cmd)
+> +{
+> +}
+> +
+> +static inline struct dma_chan *sdhci_external_dma_channel(struct sdhci_host *host,
+> +							  struct mmc_data *data)
+> +{
+> +	return NULL;
+> +}
+> +
+> +#endif
+> +
+> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+> +{
+> +	host->use_external_dma = en;
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+> +
+>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>  				    struct mmc_request *mrq)
+>  {
+> @@ -1408,8 +1591,12 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  		sdhci_set_timeout(host, cmd);
+>  	}
+>  
+> -	if (cmd->data)
+> -		sdhci_prepare_data(host, cmd);
+> +	if (cmd->data) {
+> +		if (host->use_external_dma)
+> +			sdhci_external_dma_prepare_data(host, cmd);
+> +		else
+> +			sdhci_prepare_data(host, cmd);
+> +	}
+>  
+>  	sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+>  
+> @@ -1451,6 +1638,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  		timeout += 10 * HZ;
+>  	sdhci_mod_timer(host, cmd->mrq, timeout);
+>  
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_pre_transfer(host, cmd);
+> +
+>  	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> @@ -2675,6 +2865,17 @@ static bool sdhci_request_done(struct sdhci_host *host)
+>  	if (host->flags & SDHCI_REQ_USE_DMA) {
+>  		struct mmc_data *data = mrq->data;
+>  
+> +		if (host->use_external_dma && data &&
+> +		    (mrq->cmd->error || data->error)) {
+> +			struct dma_chan *chan = sdhci_external_dma_channel(host, data);
+> +
+> +			host->mrqs_done[i] = NULL;
+> +			spin_unlock_irqrestore(&host->lock, flags);
+> +			dmaengine_terminate_sync(chan);
+> +			spin_lock_irqsave(&host->lock, flags);
+> +			sdhci_set_mrq_done(host, mrq);
+> +		}
+> +
+>  		if (data && data->host_cookie == COOKIE_MAPPED) {
+>  			if (host->bounce_buffer) {
+>  				/*
+> @@ -3810,6 +4011,21 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  	if (sdhci_can_64bit_dma(host))
+>  		host->flags |= SDHCI_USE_64_BIT_DMA;
+>  
+> +	if (host->use_external_dma) {
+> +		ret = sdhci_external_dma_init(host);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto unreg;
+> +		/*
+> +		 * Fall back to use the DMA/PIO integrated in standard SDHCI
+> +		 * instead of external DMA devices.
+> +		 */
+> +		else if (ret)
+> +			sdhci_switch_external_dma(host, false);
+> +		/* Disable internal DMA sources */
+> +		else
+> +			host->flags &= ~(SDHCI_USE_SDMA | SDHCI_USE_ADMA);
+> +	}
+> +
+>  	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
+>  		if (host->ops->set_dma_mask)
+>  			ret = host->ops->set_dma_mask(host);
+> @@ -4290,6 +4506,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+>  		dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+>  				  host->adma_table_sz, host->align_buffer,
+>  				  host->align_addr);
+> +
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_release(host);
+> +
+>  	host->adma_table = NULL;
+>  	host->align_buffer = NULL;
+>  }
+> @@ -4335,6 +4555,7 @@ int __sdhci_add_host(struct sdhci_host *host)
+>  
+>  	pr_info("%s: SDHCI controller on %s [%s] using %s\n",
+>  		mmc_hostname(mmc), host->hw_name, dev_name(mmc_dev(mmc)),
+> +		host->use_external_dma ? "External DMA" :
+>  		(host->flags & SDHCI_USE_ADMA) ?
+>  		(host->flags & SDHCI_USE_64_BIT_DMA) ? "ADMA 64-bit" : "ADMA" :
+>  		(host->flags & SDHCI_USE_SDMA) ? "DMA" : "PIO");
+> @@ -4423,6 +4644,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+>  				  host->adma_table_sz, host->align_buffer,
+>  				  host->align_addr);
+>  
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_release(host);
+> +
+>  	host->adma_table = NULL;
+>  	host->align_buffer = NULL;
+>  }
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index fe83ece6965b..3166b3ecef89 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -487,6 +487,7 @@ struct sdhci_host {
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
+> +	phys_addr_t mapbase;	/* physical address base */
+>  	char *bounce_buffer;	/* For packing SDMA reads/writes */
+>  	dma_addr_t bounce_addr;
+>  	unsigned int bounce_buffer_size;
+> @@ -535,6 +536,7 @@ struct sdhci_host {
+>  	bool pending_reset;	/* Cmd/data reset is pending */
+>  	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
+>  	bool v4_mode;		/* Host Version 4 Enable */
+> +	bool use_external_dma;	/* Host selects to use external DMA */
+>  
+>  	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
+>  	struct mmc_command *cmd;	/* Current command */
+> @@ -564,6 +566,11 @@ struct sdhci_host {
+>  	struct timer_list timer;	/* Timer for timeouts */
+>  	struct timer_list data_timer;	/* Timer for data timeouts */
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> +	struct dma_chan *rx_chan;
+> +	struct dma_chan *tx_chan;
+> +#endif
+> +
+>  	u32 caps;		/* CAPABILITY_0 */
+>  	u32 caps1;		/* CAPABILITY_1 */
+>  	bool read_caps;		/* Capability flags have been read */
+> @@ -795,5 +802,6 @@ void sdhci_end_tuning(struct sdhci_host *host);
+>  void sdhci_reset_tuning(struct sdhci_host *host);
+>  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
+>  void sdhci_abort_tuning(struct sdhci_host *host, u32 opcode);
+> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+>  
+>  #endif /* __SDHCI_HW_H */
+> 
 
