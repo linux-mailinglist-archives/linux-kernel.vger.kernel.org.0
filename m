@@ -2,81 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2BC13BCD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 10:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E0413BCDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 10:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbgAOJxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 04:53:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34894 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729504AbgAOJxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 04:53:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C9B23AC2C;
-        Wed, 15 Jan 2020 09:52:54 +0000 (UTC)
-Date:   Wed, 15 Jan 2020 10:52:53 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
-        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm/hotplug: silence a lockdep splat with printk()
-Message-ID: <20200115095253.36e5iqn77n4exj3s@pathway.suse.cz>
-References: <20200114210215.GQ19428@dhcp22.suse.cz>
- <D5CC7C52-1F08-401E-BDCA-DF617909BB9D@lca.pw>
+        id S1729585AbgAOJyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 04:54:31 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9618 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729504AbgAOJya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 04:54:30 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 79DE1587D749E023B9B4;
+        Wed, 15 Jan 2020 17:54:29 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 15 Jan
+ 2020 17:54:23 +0800
+Subject: Re: [f2fs-dev] [PATCH -next] f2fs: remove set but not used variable
+ 'cs_block'
+To:     Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Yuehaibing <yuehaibing@huawei.com>
+CC:     "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "chao@kernel.org" <chao@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20191224124359.15040-1-yuehaibing@huawei.com>
+ <673efe18-d528-2e9b-6d44-a6a7a22086f3@huawei.com>
+ <62ce1981-9061-f798-a65d-9599ceceb4b8@huawei.com>
+ <20191226082419.ljbhystwkhp2d4gh@shindev.dhcp.fujisawa.hgst.com>
+ <20200115023328.bummaaa7pdnao5qk@shindev.dhcp.fujisawa.hgst.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <0aea7754-2114-cc78-3453-bc608bacd45a@huawei.com>
+Date:   Wed, 15 Jan 2020 17:54:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D5CC7C52-1F08-401E-BDCA-DF617909BB9D@lca.pw>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20200115023328.bummaaa7pdnao5qk@shindev.dhcp.fujisawa.hgst.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2020-01-14 16:40:49, Qian Cai wrote:
+On 2020/1/15 10:33, Shinichiro Kawasaki wrote:
+> On Dec 26, 2019 / 17:24, Shin'ichiro Kawasaki wrote:
+>> On Dec 26, 2019 / 14:05, Yuehaibing wrote:
+>>> On 2019/12/26 11:44, Chao Yu wrote:
+>>>> On 2019/12/24 20:43, YueHaibing wrote:
+>>>>> fs/f2fs/segment.c: In function fix_curseg_write_pointer:
+>>>>> fs/f2fs/segment.c:4485:35: warning: variable cs_block set but not used [-Wunused-but-set-variable]
+>>>>>
+>>>>> It is never used since commit 362d8a920384 ("f2fs: Check
+>>>>> write pointer consistency of open zones") , so remove it.
+>>>>
+>>>> Thanks for the fix!
+>>>>
+>>>> Do you mind merging this patch to original patch? as it's still
+>>>> pending in dev branch.
+>>>
+>>> It's ok for me.
+>>>
+>>
+>> Thank you for this catch and the fix. Appreciated.
 > 
+> I have merged YueHaibing's change to the write pointer consistency fix patch
+> and sent out as the v6 series. Thanks again for finding out the unused variable.
 > 
-> > On Jan 14, 2020, at 4:02 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > 
-> > Yeah, that was a long discussion with a lot of lockdep false positives.
-> > I believe I have made it clear that the console code shouldn't depend on
-> > memory allocation because that is just too fragile. If that is not
-> > possible for some reason then it has to be mentioned in the changelog.
-> > I really do not want us to add kludges to the MM code just because of
-> > printk deficiencies unless that is absolutely inevitable.
+> I was not sure if I should add Chao Yu's reviewed by tag to the patch from which
+> the unused variable was removed. To be strict, I didn't add the tag. Just
+> another quick review by Chao will be appreciated.
+
+Thanks for the revision. :)
+
+I guess Jaegeuk can merge that kind of fix into original patch, and
+meanwhile keeping old Reviewed-by tag in that patch.
+
+Thanks,
+
 > 
-> I don’t know how to convince you, but both random number generator
-> and printk() maintainers agreed to get ride of printk() with
-> zone->lock held as you can see in the approved commit mentioned
-
-I neither acked nor blocked the fix in the random generator. I believe
-that it was false positive. But the fix was trivial and I did not have
-any better solution in the pocket.
-
-
-> in this patch description because it is a whac-a-mole to fix other
-> places.
-
-This is misleading. Using printk_deferred() in
-_warn_unseeded_randomness() is whack-a-mole approach as well.
-
-The most realistic real solution is to deffer consoles into kthreads.
-It is being discussed for years. There is finally an agreement
-to get this upstream. But the priority is to add lockless ringbuffer
-first.
-
-I could understand that Michal is against hack in -mm code that
-would just hide a false positive warning.
-
-If you really need a solution before the console offload gets
-upstream then I suggest to do something really simple. For example,
-disable lockdep around the allocation in console registration code
-that is proven to produce the false positive chain.
-
-Best Regards,
-Petr
+> --
+> Best Regards,
+> Shin'ichiro Kawasaki.
+> 
