@@ -2,120 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FAED13C4BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:01:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F06413C4D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbgAOOBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:01:33 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:36398 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729697AbgAOOBY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:01:24 -0500
-X-UUID: e17ba0cc0d9142efad2d09c625ac8f73-20200115
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=oZYrr2LEPwbdNLpuKoMeOVVJNsOiZbhJJb8h4ktYfYk=;
-        b=FVmk2u9djdawoG27yWeax2/PSlVH6YSNQQlZb+JlmRRjUmcGLjCITtnmp4ilLuaxZxSCxNzstDPBaua9KoUaQg1H0fp8ZsWdg1hT5nvhO9pP5AIxLbgsO4WNTZTw3liLQ1M6JpeaWN7cFJWE9xcZhyWRx8O62mpRUxNR2B/smCQ=;
-X-UUID: e17ba0cc0d9142efad2d09c625ac8f73-20200115
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1935524702; Wed, 15 Jan 2020 22:01:13 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 15 Jan
- 2020 22:01:40 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Wed, 15 Jan 2020 22:01:23 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v8 8/8] drm/panel: support for auo,b101uan08.3 wuxga dsi video mode panel
-Date:   Wed, 15 Jan 2020 21:59:58 +0800
-Message-ID: <20200115135958.126303-9-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200115135958.126303-1-jitao.shi@mediatek.com>
-References: <20200115135958.126303-1-jitao.shi@mediatek.com>
+        id S1729147AbgAOOD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:03:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726071AbgAOOD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:03:27 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B82C5222C3;
+        Wed, 15 Jan 2020 14:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579097006;
+        bh=JirmHW6SrM9Hhd8eR0okNq08LwBENG1og0f1buqr/1Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fQaWytZ7KsNB89iwcVBDmdEt+rfMqlGGqtUg+R8Ieh2y8PCK5qUynF6pqnwoxIMbT
+         kLYBAQ7i9EurH/JL1cvPviuEvCTxl9ZCL9wzODI8sLMvDUbVqUrdV4T4MV9MbsmmmR
+         9e1OyDH3nKRPFogqMEy0l+gAhzniSWMYDe4q+wQ0=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1irjGW-0000US-UF; Wed, 15 Jan 2020 14:03:25 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 4A2ED715479501E90EC666853CA3146553CBE76094AEC6A42B2C4770B0B57D342000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 15 Jan 2020 14:03:24 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 10/18] arm64: KVM/debug: use EL1&0 stage 1 translation
+ regime
+In-Reply-To: <20200113163138.GP42593@e119886-lin.cambridge.arm.com>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-11-andrew.murray@arm.com>
+ <86d0cgir74.wl-maz@kernel.org>
+ <20200113163138.GP42593@e119886-lin.cambridge.arm.com>
+Message-ID: <5f141f153ceec55b4428d9c2d2dd9064@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: andrew.murray@arm.com, catalin.marinas@arm.com, will@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, sudeep.holla@arm.com, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QXVvLGF1byxiMTAxdWFuMDguMydzIGNvbm5lY3RvciBpcyBzYW1lIGFzIGJvZSx0djEwMXd1bS1u
-bDYuDQpUaGUgbW9zdCBjb2RlcyBjYW4gYmUgcmV1c2UuDQpTbyBhdW8sYjEwMXVhbjA4LjMgYW5k
-IGJvZSx0djEwMXd1bS1ubDYgdXNlIG9uZSBkcml2ZXIgZmlsZS4NCkFkZCB0aGUgZGlmZmVyZW50
-IHBhcnRzIGluIGRyaXZlciBkYXRhLg0KDQpTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFv
-LnNoaUBtZWRpYXRlay5jb20+DQpSZXZpZXdlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJv
-cmcub3JnPg0KLS0tDQogLi4uL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5j
-ICAgIHwgNzggKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA3OCBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2
-MTAxd3VtLW5sNi5jIGIvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWJvZS10djEwMXd1bS1u
-bDYuYw0KaW5kZXggMDEwOGJmZjI4M2M1Li41MTAwMTk0MGVhYjMgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQorKysgYi9kcml2ZXJz
-L2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQpAQCAtMzc3LDYgKzM3Nyw1
-MyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBhbmVsX2luaXRfY21kIGF1b19rZDEwMW44MF80NW5h
-X2luaXRfY21kW10gPSB7DQogCXt9LA0KIH07DQogDQorc3RhdGljIGNvbnN0IHN0cnVjdCBwYW5l
-bF9pbml0X2NtZCBhdW9fYjEwMXVhbjA4XzNfaW5pdF9jbWRbXSA9IHsNCisJX0lOSVRfREVMQVlf
-Q01EKDI0KSwNCisJX0lOSVRfRENTX0NNRCgweEIwLCAweDAxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEMwLCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEMxLCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEMyLCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEMzLCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEM0LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweEM1LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEM2LCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweEM3LCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweEM4LCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweEM5LCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweENBLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweENCLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweENDLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweENELCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweENFLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweENGLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEQwLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQx
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQyLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEQzLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEQ0LCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEQ1LCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEQ2LCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEQ3LCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEQ4LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEQ5LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweERBLCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweERCLCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweERDLCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweERELCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweERFLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweERGLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEUwLCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweEUxLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweEUyLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEUzLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEU0
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEU1LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEU2LCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEU3LCAweDQxKSwNCisJX0lOSVRfREVMQVlf
-Q01EKDE1MCksDQorCXt9LA0KK307DQorDQogc3RhdGljIGlubGluZSBzdHJ1Y3QgYm9lX3BhbmVs
-ICp0b19ib2VfcGFuZWwoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpDQogew0KIAlyZXR1cm4gY29u
-dGFpbmVyX29mKHBhbmVsLCBzdHJ1Y3QgYm9lX3BhbmVsLCBiYXNlKTsNCkBAIC02MjEsNiArNjY4
-LDM0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyBib2VfdHYxMDF3dW1fbjUzX2Rl
-c2MgPSB7DQogCS5pbml0X2NtZHMgPSBib2VfaW5pdF9jbWQsDQogfTsNCiANCitzdGF0aWMgY29u
-c3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSA9
-IHsNCisJLmNsb2NrID0gMTU5NjY3LA0KKwkuaGRpc3BsYXkgPSAxMjAwLA0KKwkuaHN5bmNfc3Rh
-cnQgPSAxMjAwICsgNjAsDQorCS5oc3luY19lbmQgPSAxMjAwICsgNjAgKyA0LA0KKwkuaHRvdGFs
-ID0gMTIwMCArIDYwICsgNCArIDgwLA0KKwkudmRpc3BsYXkgPSAxOTIwLA0KKwkudnN5bmNfc3Rh
-cnQgPSAxOTIwICsgMzQsDQorCS52c3luY19lbmQgPSAxOTIwICsgMzQgKyAyLA0KKwkudnRvdGFs
-ID0gMTkyMCArIDM0ICsgMiArIDI0LA0KKwkudnJlZnJlc2ggPSA2MCwNCisJLnR5cGUgPSBEUk1f
-TU9ERV9UWVBFX0RSSVZFUiB8IERSTV9NT0RFX1RZUEVfUFJFRkVSUkVELA0KK307DQorDQorc3Rh
-dGljIGNvbnN0IHN0cnVjdCBwYW5lbF9kZXNjIGF1b19iMTAxdWFuMDhfM19kZXNjID0gew0KKwku
-bW9kZXMgPSAmYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSwNCisJLmJwYyA9IDgsDQorCS5z
-aXplID0gew0KKwkJLndpZHRoX21tID0gMTM1LA0KKwkJLmhlaWdodF9tbSA9IDIxNiwNCisJfSwN
-CisJLmxhbmVzID0gNCwNCisJLmZvcm1hdCA9IE1JUElfRFNJX0ZNVF9SR0I4ODgsDQorCS5tb2Rl
-X2ZsYWdzID0gTUlQSV9EU0lfTU9ERV9WSURFTyB8IE1JUElfRFNJX01PREVfVklERU9fU1lOQ19Q
-VUxTRSB8DQorCQkgICAgICBNSVBJX0RTSV9NT0RFX0xQTSwNCisJLmluaXRfY21kcyA9IGF1b19i
-MTAxdWFuMDhfM19pbml0X2NtZCwNCit9Ow0KKw0KIHN0YXRpYyBpbnQgYm9lX3BhbmVsX2dldF9t
-b2RlcyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCwNCiAJCQkgICAgICAgc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcikNCiB7DQpAQCAtNzU2LDYgKzgzMSw5IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3Qgb2ZfZGV2aWNlX2lkIGJvZV9vZl9tYXRjaFtdID0gew0KIAl7IC5jb21wYXRpYmxlID0g
-ImJvZSx0djEwMXd1bS1uNTMiLA0KIAkgIC5kYXRhID0gJmJvZV90djEwMXd1bV9uNTNfZGVzYw0K
-IAl9LA0KKwl7IC5jb21wYXRpYmxlID0gImF1byxiMTAxdWFuMDguMyIsDQorCSAgLmRhdGEgPSAm
-YXVvX2IxMDF1YW4wOF8zX2Rlc2MNCisJfSwNCiAJeyAvKiBzZW50aW5lbCAqLyB9DQogfTsNCiBN
-T0RVTEVfREVWSUNFX1RBQkxFKG9mLCBib2Vfb2ZfbWF0Y2gpOw0KLS0gDQoyLjIxLjANCg==
+On 2020-01-13 16:31, Andrew Murray wrote:
+> On Sun, Dec 22, 2019 at 10:34:55AM +0000, Marc Zyngier wrote:
+>> On Fri, 20 Dec 2019 14:30:17 +0000,
+>> Andrew Murray <andrew.murray@arm.com> wrote:
+>> >
+>> > From: Sudeep Holla <sudeep.holla@arm.com>
+>> >
+>> > Now that we have all the save/restore mechanism in place, lets enable
+>> > the translation regime used by buffer from EL2 stage 1 to EL1 stage 1
+>> > on VHE systems.
+>> >
+>> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> > [ Reword commit, don't trap to EL2 ]
+>> 
+>> Not trapping to EL2 for the case where we don't allow SPE in the
+>> guest is not acceptable.
+>> 
+>> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+>> > ---
+>> >  arch/arm64/kvm/hyp/switch.c | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+>> > index 67b7c160f65b..6c153b79829b 100644
+>> > --- a/arch/arm64/kvm/hyp/switch.c
+>> > +++ b/arch/arm64/kvm/hyp/switch.c
+>> > @@ -100,6 +100,7 @@ static void activate_traps_vhe(struct kvm_vcpu *vcpu)
+>> >
+>> >  	write_sysreg(val, cpacr_el1);
+>> >
+>> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
+>> >  	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
+>> >  }
+>> >  NOKPROBE_SYMBOL(activate_traps_vhe);
+>> > @@ -117,6 +118,7 @@ static void __hyp_text __activate_traps_nvhe(struct kvm_vcpu *vcpu)
+>> >  		__activate_traps_fpsimd32(vcpu);
+>> >  	}
+>> >
+>> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
+>> 
+>> There is a _MASK macro that can replace this '3', and is in keeping
+>> with the rest of the code.
+>> 
+>> It still remains that it looks like the wrong place to do this, and
+>> vcpu_load seems much better. Why should you write to mdcr_el2 on each
+>> entry to the guest, since you know whether it has SPE enabled at the
+>> point where it gets scheduled?
+> 
+> For nVHE, the only reason we'd want to change E2PB on entry/exit of 
+> guest
+> would be if the host is also using SPE. If the host is using SPE whilst
+> the vcpu is 'loaded' but we're not in the guest, then host SPE could 
+> raise
+> an interrupt - we need the E2PB bits to allow access from EL1 (host).
 
+My comment was of course for VHE. nVHE hardly makes use of load/put at 
+all,
+for obvious reasons.
+
+         M.
+-- 
+Jazz is not dead. It just smells funny...
