@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5317D13C896
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D84A13C934
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 17:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbgAOP7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:59:17 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41803 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgAOP7Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:59:16 -0500
-Received: by mail-qt1-f193.google.com with SMTP id k40so16152499qtk.8;
-        Wed, 15 Jan 2020 07:59:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BHlo4uJGdkpMotzf6l1LEH0nK2SaURIBMqF7pq0+cPE=;
-        b=LwRP9gLUlXJubGXbdTk+FhYOQlXwRmMsHlEe55cVAnjtJ90OQMIoErVrPpruu18dlX
-         gk9SxqoS+xp621iP9KezoinvlIWqxdUruCqdIjGT0wMVd8oFC9Hg0l/mGm/aa6G5lQnS
-         myUuH1Il7L7qvg1vzJD0Vh6JhzHuENKoLY8+i/CJDR+TmGEE48+64nxI9QGLCtwwK9vi
-         7Tj+N4LP7dU3wf5k7tQAeD5e2WyyViFDeBQwyWar+u9GbQ43KtAhQveaJbuzQ9yweZvN
-         izYsaa3bnk/z3Y6bjHTITWkMD1RyD3Vg5f9jUU4DXO63KMPxIx07fcmj0nmVRg/5LRSS
-         y6Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BHlo4uJGdkpMotzf6l1LEH0nK2SaURIBMqF7pq0+cPE=;
-        b=LhpnTN02moswEOb9AfvF8UhCUM07KAotWZykBhcn9f/L9ZYjx5U5k7CNcGNyXTdWMu
-         7WAtneN34UiZm6+HrVvkrew61dXS3Uf8ie+p8luC1K8ewGur7KxHt3z5aaZ0Eg/F4xI6
-         q4hbBzg1g6O+7npB5ply+w/Mx0ChwP6zBuD2v8UAwzPMPmhIreAwPJKIlKV7ceopyhbm
-         RjYzP4gzClMgdEcf1iJDURi/brt+wRoUPoGEyGCgaR0L6QbPyKvnrNJE3vDI4tikWFAt
-         ThNi/ciqFstK+swatp6LDi1gFUeljJPiFCqy1oH+4nYFiq8pG5VWn7i0n+zsmUyAlYCP
-         UOwQ==
-X-Gm-Message-State: APjAAAU8vko+G/1NQoSxSKyOxq0awDmjfFd4xoXd7etHKn+yAEDbN0ha
-        qjbgC1XDZdXoV7nyjd4HBhU=
-X-Google-Smtp-Source: APXvYqx4Z3lHPtwvrtxcO6zVWqLJaCDt7Qbk0m1L8KWW+WW80dlHwOOW1mXWqDSr2W0Elhf4GX3+WQ==
-X-Received: by 2002:ac8:6747:: with SMTP id n7mr4221929qtp.224.1579103955239;
-        Wed, 15 Jan 2020 07:59:15 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::2:1e68])
-        by smtp.gmail.com with ESMTPSA id s1sm8496365qkm.84.2020.01.15.07.59.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Jan 2020 07:59:14 -0800 (PST)
-Date:   Wed, 15 Jan 2020 07:59:12 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     lizefan@huawei.com, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: fix function name in comment
-Message-ID: <20200115155912.GE2677547@devbig004.ftw2.facebook.com>
-References: <20200110072320.85605-1-chenzhou10@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110072320.85605-1-chenzhou10@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1728992AbgAOQZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 11:25:54 -0500
+Received: from jack.einval.com ([84.45.184.145]:37052 "EHLO mail.einval.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726483AbgAOQZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 11:25:54 -0500
+X-Greylist: delayed 1784 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Jan 2020 11:25:53 EST
+Received: from steve by mail.einval.com with local (Exim 4.92)
+        (envelope-from <steve@einval.com>)
+        id 1irl1W-00082F-CF; Wed, 15 Jan 2020 15:56:02 +0000
+From:   Steve McIntyre <steve.mcintyre@linaro.org>
+To:     alexandre.torgue@st.com
+Subject: Re: [RFC PATCH 0/3] Add device tree build information
+In-Reply-To: <20200113181625.3130-1-alexandre.torgue@st.com>
+Cc:     <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, devicetree-compiler@vger.kernel.org
+Message-Id: <E1irl1W-00082F-CF@mail.einval.com>
+Date:   Wed, 15 Jan 2020 15:56:02 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 03:23:20PM +0800, Chen Zhou wrote:
-> Function name cgroup_rstat_cpu_pop_upated() in comment should be
-> cgroup_rstat_cpu_pop_updated().
-> 
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Hi Alexandre!
 
-Applied to cgroup/for-5.6.
+alexandre.torgue@st.com wrote:
+>
+>The goal of this series is to add device tree build information in dtb.
+>This information can be dtb build date, where devicetree files come from,
+>who built the dtb ... Actually, same kind of information that you can find
+>in the Linux banner which is printout during kernel boot. Having the same
+>kind of information for device tree is useful for debugging and maintenance.
+>
+>To achieve that a new option "-B" (using an argument) is added to dtc. 
+>The argument is a file containing a string with build information
+>(e.g., From Linux 5.5.0-rc1 by alex the Mon Jan 13 18:25:38 CET 2020).
+>DTC use it to append dts file with a new string property "Build-info".
+>
+>of/fdt.c is modified to printout "Build-info" property during Kernel boot and 
+>scripts/Makefile.lib is modified to use dtc -B option during kernel make (this
+>last part could be improved for sure).
+>
+>Regards
+>Alex
+>
+>Alexandre Torgue (3):
+>  dtc: Add dtb build information option
+>  of: fdt: print dtb build information
+>  scripts: Use -B dtc option to generate dtb build information.
+>
+> drivers/of/fdt.c           |  9 +++++++
+> scripts/Makefile.lib       | 11 +++++---
+> scripts/dtc/dtc.c          | 55 +++++++++++++++++++++++++++++++++-----
+> scripts/gen_dtb_build_info | 11 ++++++++
+> 4 files changed, 76 insertions(+), 10 deletions(-)
+> create mode 100755 scripts/gen_dtb_build_info
 
-Thanks.
+Looks good to me in testing here:
+
+[    0.000000] OF: fdt: From Linux 5.5.0-rc6-00031-g95e20af9fb9c-dirty by stemci01 the Wed 15 Jan 14:33:25 GMT 2020.
+
+Tested-By: Steve McIntyre <steve.mcintyre@linaro.org>
 
 -- 
-tejun
+Steve McIntyre                                steve.mcintyre@linaro.org
+<http://www.linaro.org/> Linaro.org | Open source software for ARM SoCs
