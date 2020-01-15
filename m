@@ -2,117 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5620A13BA14
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:05:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D616213BA0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgAOHFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 02:05:38 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41839 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAOHFi (ORCPT
+        id S1729122AbgAOHEX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 02:04:23 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:36166 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgAOHEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 02:05:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w62so8060455pfw.8
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 23:05:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pheYEBYXRUydN40/wbI1ZvK+bBwX3RUetQibpSJmnJY=;
-        b=NvUYpJrRAEoLYVNWDLCyIXnqBtZhu5T9juwnWlnFdYlwfcQphlEPKzzircApS3ZF7B
-         9b9OmmpCr4epEqhH1CboKmQk+p4BrJPEpmeM7FmdagTbPka3w94DHbv+VO+zxsOGzmaK
-         OMH3E8BaI0WET4G/4ilVhXU1z7AP3936MaP2rhruDZpKMTctBJenJU3FZAXtEQFpJjaU
-         EB/e2yjsxHhCJiKxYsGiOp4mG9+w0dhPih1uUFcfvx0dbN/FJe4bysTIlCwH4MkjINgC
-         rAtCnkzRvAZw0PewWyeRegxwzI0sgSPtJ3HbFO9xXCZxC3x3jiX5dXO7mJQAeCblPuc4
-         /YVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pheYEBYXRUydN40/wbI1ZvK+bBwX3RUetQibpSJmnJY=;
-        b=LMCUBPJcdGUdVrGkBBEJidAdNo4tT9PqPZEROqG9FDBle2zmIvWviIQB9LmzijRTaw
-         Ukksg1n1jX/91/e1XoAFp1GxdKHU72EIvyg5WG9nSFjSzNw5O8WLYLsY+T7uQlaPo485
-         wDIcRAl7rEUujUs3XzxWx/oUIpxFXSipce970817QPSPf65wVY3r5zPl/c5GGE+X18HW
-         aZzsfQdZK/lMqft1EC8HleN5gp9p3wOq/qnnB7+Lc6YHXRlVOH8oa92V32Me1QsAAMVE
-         8pWaOXImCgej4y9httbOjAauWW/+QwNAsUMr/ZCp8p5joegRSoqToeTz65tZuIHECFda
-         sF3Q==
-X-Gm-Message-State: APjAAAXXrHaXUTU4L7QPDPmz6zdHlyN/xB0fvwQAIVPWrejnLDWXV/PD
-        NZcbiQlzEpkogy3oF7HPZ2I4CA==
-X-Google-Smtp-Source: APXvYqzVGND6xq6LG8bdDE07pm1yXFpJeW17HC9m0rxajMfZLCEWDJc0iFO258V6fVljx91mfxMv/A==
-X-Received: by 2002:a65:4d46:: with SMTP id j6mr32352377pgt.63.1579071937402;
-        Tue, 14 Jan 2020 23:05:37 -0800 (PST)
-Received: from greentime-VirtualBox.internal.sifive.com (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id a2sm19196023pgv.64.2020.01.14.23.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2020 23:05:36 -0800 (PST)
-From:   Greentime Hu <greentime.hu@sifive.com>
-To:     green.hu@gmail.com, greentime@kernel.org, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, schwab@suse.de, anup@brainfault.org
-Cc:     Greentime Hu <greentime.hu@sifive.com>
-Subject: [PATCH v4] riscv: make sure the cores stay looping in .Lsecondary_park
-Date:   Wed, 15 Jan 2020 14:54:36 +0800
-Message-Id: <20200115065436.7702-1-greentime.hu@sifive.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 15 Jan 2020 02:04:23 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 00F744CQ024629, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 00F744CQ024629
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jan 2020 15:04:04 +0800
+Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
+ RTITCAS11.realtek.com.tw (172.21.6.12) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Wed, 15 Jan 2020 15:04:04 +0800
+Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
+ RTEXMB04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Wed, 15 Jan 2020 15:04:03 +0800
+Received: from RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999]) by
+ RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999%6]) with mapi id
+ 15.01.1779.005; Wed, 15 Jan 2020 15:04:03 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>,
+        "Mario.Limonciello@dell.com" <Mario.Limonciello@dell.com>
+CC:     David Miller <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "pmalani@chromium.org" <pmalani@chromium.org>,
+        "grundler@chromium.org" <grundler@chromium.org>,
+        "<David.Chen7@dell.com>" <David.Chen7@Dell.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] r8152: Add MAC passthrough support to new device
+Thread-Topic: [PATCH] r8152: Add MAC passthrough support to new device
+Thread-Index: AQHVypTrvWsj1nE3Z02rCzrvB8fQNKfqGHCAgACphYCAAIjAgA==
+Date:   Wed, 15 Jan 2020 07:04:03 +0000
+Message-ID: <2eddafe6b9694a288013c3af41321ce5@realtek.com>
+References: <20200114044127.20085-1-kai.heng.feng@canonical.com>
+ <d8af34dbf4994b7b8b0bf48e81084dd0@AUSX13MPC101.AMER.DELL.COM>
+ <430A264A-27E0-489D-B7B1-8E78AAD528D7@canonical.com>
+In-Reply-To: <430A264A-27E0-489D-B7B1-8E78AAD528D7@canonical.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code in secondary_park is currently placed in the .init section. The
-kernel reclaims and clears this code when it finishes booting. That
-causes the cores parked in it to go to somewhere unpredictable, so we
-move this function out of init to make sure the cores stay looping there.
+Kai Heng Feng [mailto:kai.heng.feng@canonical.com]
+> Sent: Wednesday, January 15, 2020 2:40 PM
+[...]
+> >> Device 0xa387 also supports MAC passthrough, therefore add it to the
+> >> whitelst.
+> >
+> > Have you confirmed whether this product ID is unique to the products that
+> > support this feature or if it's also re-used in other products?
+> 
+> This is unique for Lenovo product.
+> 
+> >
+> > For Dell's devices there are very specific tests that make sure that this
+> > feature only applies on the products it is supposed to and nothing else
+> > (For example RTL8153-AD checks variant as well as effuse value)
+> > (Example two: RTL8153-BND is a Dell only part).
+> 
+> Hayes, do you know how macpassthru on Lenovo dock works?
 
-The instruction bgeu a0, t0, .Lsecondary_park may have "a relocation
-truncated to fit" issue during linking time. It is because that sections
-are too far to jump. Let's use tail to jump to the .Lsecondary_park.
+I don't sure about it.
 
-Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
----
- arch/riscv/kernel/head.S | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+The Dell's devices use the VID/PID of Realtek, so they have another way
+to check which devices support macpassthru.
 
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index f8f996916c5b..d7820764122c 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -88,7 +88,9 @@ _start_kernel:
- 
- #ifdef CONFIG_SMP
- 	li t0, CONFIG_NR_CPUS
--	bgeu a0, t0, .Lsecondary_park
-+	blt a0, t0, .Lgood_cores
-+	tail .Lsecondary_park
-+.Lgood_cores:
- #endif
- 
- 	/* Pick one hart to run the main boot sequence */
-@@ -217,11 +219,6 @@ relocate:
- 	tail smp_callin
- #endif
- 
--.align 2
--.Lsecondary_park:
--	/* We lack SMP support or have too many harts, so park this hart */
--	wfi
--	j .Lsecondary_park
- END(_start)
- 
- #ifdef CONFIG_RISCV_M_MODE
-@@ -303,6 +300,13 @@ ENTRY(reset_regs)
- END(reset_regs)
- #endif /* CONFIG_RISCV_M_MODE */
- 
-+.section ".text", "ax",@progbits
-+.align 2
-+.Lsecondary_park:
-+	/* We lack SMP support or have too many harts, so park this hart */
-+	wfi
-+	j .Lsecondary_park
-+
- __PAGE_ALIGNED_BSS
- 	/* Empty zero page */
- 	.balign PAGE_SIZE
--- 
-2.17.1
+The Lenovo use their VID/PID, so I guess they only check VID/PID.
+
+Best Regards,
+Hayes
+
+
 
