@@ -2,279 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7891313CA97
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C27B513CABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbgAORNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 12:13:36 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50566 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729259AbgAORNe (ORCPT
+        id S1729008AbgAORQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 12:16:12 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35842 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbgAORQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 12:13:34 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a5so775922wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:13:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=irVenSBk+qsWtPOnLfffjUTanFCczadJPyzi1GpXUI4=;
-        b=a//MelKGTTeEPFAZ8QADS5Z8uj/uFdQChD92Dj6apjnnBYpt9gKl/YmEguk6YRTFPv
-         SFUzm3VB9+TvPOnNrtNxJeNRxKSVNjTKfGxIotIxfbJNp4b/gR3ib679Xl3FWX2JWOal
-         acK9dmUlomW7rFWZ/X8zGHyyO8WSv8g5xez3k=
+        Wed, 15 Jan 2020 12:16:12 -0500
+Received: by mail-io1-f71.google.com with SMTP id 144so10873299iou.3
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:16:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=irVenSBk+qsWtPOnLfffjUTanFCczadJPyzi1GpXUI4=;
-        b=maeXvUQirnCbkXGpIbUNdK9Mb0oVemaZsFKG5QueSUakb1NRM4FklN4JL5NBfo0+VI
-         /CIcENrpOgd5iO659+sb45MItRQJRcAc+lI93WcanKo0KJFdHyoD7nMavpCQFU6pEiw9
-         oIlAC4FauMotlRqvflIRawW78d2Ybk84am42tFiJ9Y7Rg7HqxS80orwdMlR7SCMd88WT
-         iXyAoTi6FwH87T4VDjufkiVlrIurMUsMflviruUSeZY/mzFYS+t6XSVxT404HI0DbYpl
-         XZ+qZ4Ui9xJA0N16Z/NvwXfPoyQSN4TVrch5XnYYnIuUwqLwLkEWRcXGGVEKS4Xh0WU3
-         jX9A==
-X-Gm-Message-State: APjAAAVwUvYRpHSZckcTPmrZH1EmFieMqpEcjFtsU7y62sc3On1ipXkw
-        LJ6MZz4znXojcylk9E4Lf7/69AmauHjygQ==
-X-Google-Smtp-Source: APXvYqyq8Y0listaQwfuHlfsGtWorsrBUDEQxn03dRh8XEsYAWMqFyOm7c4bfHb/zSQJFrYZ0loj6w==
-X-Received: by 2002:a1c:48c1:: with SMTP id v184mr942072wma.5.1579108412501;
-        Wed, 15 Jan 2020 09:13:32 -0800 (PST)
-Received: from kpsingh-kernel.localdomain ([2620:0:105f:fd00:84f3:4331:4ae9:c5f1])
-        by smtp.gmail.com with ESMTPSA id d16sm26943227wrg.27.2020.01.15.09.13.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 09:13:32 -0800 (PST)
-From:   KP Singh <kpsingh@chromium.org>
-To:     linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Paul Turner <pjt@google.com>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Andrey Ignatov <rdna@fb.com>, Joe Stringer <joe@wand.net.nz>
-Subject: [PATCH bpf-next v2 10/10] bpf: lsm: Add Documentation
-Date:   Wed, 15 Jan 2020 18:13:33 +0100
-Message-Id: <20200115171333.28811-11-kpsingh@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200115171333.28811-1-kpsingh@chromium.org>
-References: <20200115171333.28811-1-kpsingh@chromium.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=O3YbhnbyZQorKGlqJaF7WScrngDyTF1HNDIoMCSO20A=;
+        b=YpQFkcA2unfwEyJw7zLAJmYGQ/jB2Ph2mSRu8//cxrHPVFBPyXEvkFEQ+QJ4980o0E
+         ygA5c+wQ9QyXhEDgQGEvCOt8XkgseaSdxroxT4WOxG/l7cPOXtNrZD9Dw/r/A9I1g1s6
+         m/H63v1wndkafeKfYm3FTGz+0+XBj+pJ2/B1aABZlOGgSiGVzk0uHC0TTK6bwDDfIQ17
+         9JDJRR3XYbynad5d2Epw8l2ee/QHUxgrA5ss26K2jgi0rDVdOpZPBlTYKn7nvcOuWew7
+         2vcctncg8iwq9zR2chiFHUUpQdsGguRjKQqTqGvQSqyfOPOSIMC/Gu7xSt+Bpj0yGby5
+         NBpA==
+X-Gm-Message-State: APjAAAVYp7sGX9Eqv2iE0DsqZ6zBZifNW9a+8mXXNIVsayImvTd6ipy9
+        pOXPPMg00lip8QKBa06xftm2J1GucL5KFpp05JJQWs1JNiXV
+X-Google-Smtp-Source: APXvYqwOsrIOXD4CEiMYP1hgJ3K2TIfgF7CXZJ/y1TnXfL6D5RtnB3/ct/weWXrmcmAmuvc5UhoxCKBFCHJfE0S+ReBYLhVTgGQH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:7f54:: with SMTP id r81mr25309079jac.121.1579108571189;
+ Wed, 15 Jan 2020 09:16:11 -0800 (PST)
+Date:   Wed, 15 Jan 2020 09:16:11 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000729d74059c30ddff@google.com>
+Subject: KASAN: use-after-free Read in snd_timer_resolution
+From:   syzbot <syzbot+2b2ef983f973e5c40943@syzkaller.appspotmail.com>
+To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KP Singh <kpsingh@google.com>
+Hello,
 
-Document how eBPF programs (BPF_PROG_TYPE_LSM) can be loaded and
-attached (BPF_LSM_MAC) to the LSM hooks.
+syzbot found the following crash on:
 
-Signed-off-by: KP Singh <kpsingh@google.com>
+HEAD commit:    e033e7d4 Merge branch 'dhowells' (patches from DavidH)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f2bb25e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b2ef983f973e5c40943
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2b2ef983f973e5c40943@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in snd_timer_resolution+0xf1/0x110  
+sound/core/timer.c:441
+Read of size 8 at addr ffff888094155800 by task syz-executor.0/18632
+
+CPU: 1 PID: 18632 Comm: syz-executor.0 Not tainted 5.5.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:639
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  snd_timer_resolution+0xf1/0x110 sound/core/timer.c:441
+  snd_seq_info_timer_read+0x95/0x2f1 sound/core/seq/seq_timer.c:480
+  snd_info_seq_show+0xcb/0x120 sound/core/info.c:363
+  seq_read+0x4ca/0x1170 fs/seq_file.c:229
+  proc_reg_read+0x1fc/0x2c0 fs/proc/inode.c:223
+  do_loop_readv_writev fs/read_write.c:714 [inline]
+  do_loop_readv_writev fs/read_write.c:701 [inline]
+  do_iter_read+0x4a4/0x660 fs/read_write.c:935
+  compat_readv+0x187/0x1f0 fs/read_write.c:1186
+  do_compat_preadv64+0x190/0x1c0 fs/read_write.c:1235
+  __do_compat_sys_preadv fs/read_write.c:1255 [inline]
+  __se_compat_sys_preadv fs/read_write.c:1249 [inline]
+  __ia32_compat_sys_preadv+0xc7/0x140 fs/read_write.c:1249
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f6da39
+Code: 00 00 00 89 d3 5b 5e 5f 5d c3 b8 80 96 98 00 eb c4 8b 04 24 c3 8b 1c  
+24 c3 8b 34 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f5d690cc EFLAGS: 00000296 ORIG_RAX: 000000000000014d
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000200017c0
+RDX: 00000000000003da RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 18631:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  __kasan_kmalloc mm/kasan/common.c:513 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
+  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
+  kmalloc include/linux/slab.h:556 [inline]
+  kzalloc include/linux/slab.h:670 [inline]
+  snd_timer_instance_new+0x4a/0x300 sound/core/timer.c:96
+  snd_seq_timer_open+0x1c0/0x590 sound/core/seq/seq_timer.c:275
+  queue_use+0xf1/0x270 sound/core/seq/seq_queue.c:489
+  snd_seq_queue_alloc+0x2c5/0x4d0 sound/core/seq/seq_queue.c:176
+  snd_seq_ioctl_create_queue+0xb0/0x330 sound/core/seq/seq_clientmgr.c:1548
+  snd_seq_kernel_client_ctl+0xf8/0x140 sound/core/seq/seq_clientmgr.c:2353
+  alloc_seq_queue.isra.0+0xdc/0x180 sound/core/seq/oss/seq_oss_init.c:357
+  snd_seq_oss_open+0x2ff/0x960 sound/core/seq/oss/seq_oss_init.c:215
+  odev_open+0x70/0x90 sound/core/seq/oss/seq_oss.c:125
+  soundcore_open+0x453/0x610 sound/sound_core.c:593
+  chrdev_open+0x245/0x6b0 fs/char_dev.c:414
+  do_dentry_open+0x4e6/0x1380 fs/open.c:797
+  vfs_open+0xa0/0xd0 fs/open.c:914
+  do_last fs/namei.c:3420 [inline]
+  path_openat+0x10df/0x4500 fs/namei.c:3537
+  do_filp_open+0x1a1/0x280 fs/namei.c:3567
+  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
+  __do_compat_sys_openat fs/open.c:1143 [inline]
+  __se_compat_sys_openat fs/open.c:1141 [inline]
+  __ia32_compat_sys_openat+0x98/0xf0 fs/open.c:1141
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 18630:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  kasan_set_free_info mm/kasan/common.c:335 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
+  __cache_free mm/slab.c:3426 [inline]
+  kfree+0x10a/0x2c0 mm/slab.c:3757
+  snd_timer_instance_free sound/core/timer.c:120 [inline]
+  snd_timer_instance_free+0x7c/0xa0 sound/core/timer.c:114
+  snd_seq_timer_close+0x99/0xe0 sound/core/seq/seq_timer.c:319
+  queue_delete+0x52/0xb0 sound/core/seq/seq_queue.c:134
+  snd_seq_queue_delete+0x4e/0x70 sound/core/seq/seq_queue.c:196
+  snd_seq_ioctl_delete_queue+0x6a/0x90 sound/core/seq/seq_clientmgr.c:1570
+  snd_seq_kernel_client_ctl+0xf8/0x140 sound/core/seq/seq_clientmgr.c:2353
+  delete_seq_queue.part.0+0xb6/0x120 sound/core/seq/oss/seq_oss_init.c:376
+  delete_seq_queue sound/core/seq/oss/seq_oss_init.c:372 [inline]
+  snd_seq_oss_release+0x116/0x150 sound/core/seq/oss/seq_oss_init.c:421
+  odev_release+0x54/0x80 sound/core/seq/oss/seq_oss.c:140
+  __fput+0x2ff/0x890 fs/file_table.c:280
+  ____fput+0x16/0x20 fs/file_table.c:313
+  task_work_run+0x145/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
+  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+  do_syscall_32_irqs_on arch/x86/entry/common.c:352 [inline]
+  do_fast_syscall_32+0xbbd/0xe16 arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+The buggy address belongs to the object at ffff888094155800
+  which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 0 bytes inside of
+  256-byte region [ffff888094155800, ffff888094155900)
+The buggy address belongs to the page:
+page:ffffea0002505540 refcount:1 mapcount:0 mapping:ffff8880aa4008c0  
+index:0x0
+raw: 00fffe0000000200 ffffea00024df348 ffffea00024af508 ffff8880aa4008c0
+raw: 0000000000000000 ffff888094155000 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888094155700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff888094155780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff888094155800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff888094155880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888094155900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- Documentation/security/bpf.rst   | 150 +++++++++++++++++++++++++++++++
- Documentation/security/index.rst |   1 +
- MAINTAINERS                      |   1 +
- 3 files changed, 152 insertions(+)
- create mode 100644 Documentation/security/bpf.rst
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/security/bpf.rst b/Documentation/security/bpf.rst
-new file mode 100644
-index 000000000000..4d115c07c370
---- /dev/null
-+++ b/Documentation/security/bpf.rst
-@@ -0,0 +1,150 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+.. Copyright 2019 Google LLC.
-+
-+==========================
-+eBPF Linux Security Module
-+==========================
-+
-+This LSM allows runtime instrumentation of the LSM hooks by privileged users to
-+implement system-wide MAC (Mandatory Access Control) and Audit policies using
-+eBPF. The LSM is privileged and stackable and requires both ``CAP_SYS_ADMIN``
-+and ``CAP_MAC_ADMIN`` for the loading of BPF programs and modification of MAC
-+policies respectively.
-+
-+eBPF Programs
-+==============
-+
-+`eBPF (extended BPF) <https://cilium.readthedocs.io/en/latest/bpf>`_ is a
-+virtual machine-like construct in the Linux Kernel allowing the execution of
-+verifiable, just-in-time compiled byte code at various points in the Kernel.
-+
-+The eBPF LSM adds a new type, ``BPF_PROG_TYPE_LSM``, of eBPF programs which
-+have the following characteristics:
-+
-+	* Multiple eBPF programs can be attached to the same LSM hook
-+	* The programs are always run after the static hooks (i.e. the ones
-+	  registered by SELinux, AppArmor, Smack etc.)
-+	* LSM hooks can return an ``-EPERM`` to indicate the decision of the
-+	  MAC policy being enforced or simply be used for auditing
-+	* If ``CONFIG_SECURITY_BPF_ENFORCE`` is enabled and a non-zero error
-+	  code is returned from the BPF program, no further BPF programs for the hook are executed
-+	* Allowing the eBPF programs to be attached to all the LSM hooks by
-+	  making :doc:`/bpf/btf` type information available for all LSM hooks
-+	  and allowing the BPF verifier to perform runtime relocations and
-+	  validation on the programs
-+
-+Structure
-+---------
-+
-+The example shows an eBPF program that can be attached to the ``file_mprotect``
-+LSM hook:
-+
-+.. c:function:: int file_mprotect(struct vm_area_struct *vma, unsigned long reqprot, unsigned long prot);
-+
-+eBPF programs that use :doc:`/bpf/btf` do not need to include kernel headers
-+for accessing information from the attached eBPF program's context. They can
-+simply declare the structures in the eBPF program and only specify the fields
-+that need to be accessed.
-+
-+.. code-block:: c
-+
-+	struct mm_struct {
-+		unsigned long start_brk, brk, start_stack;
-+	} __attribute__((preserve_access_index));
-+
-+	struct vm_area_struct {
-+		unsigned long start_brk, brk, start_stack;
-+		unsigned long vm_start, vm_end;
-+		struct mm_struct *vm_mm;
-+	} __attribute__((preserve_access_index));
-+
-+
-+.. note:: Only the size and the names of the fields must match the type in the
-+	  kernel and the order of the fields is irrelevant.
-+
-+The eBPF programs can be declared using macros similar to the ``BPF_TRACE_<N>``
-+macros defined in `tools/testing/selftests/bpf/bpf_trace_helpers.h`_. In this
-+example:
-+
-+	* The LSM hook takes 3 args so we use ``BPF_TRACE_3``
-+	* ``"lsm/file_mprotect"`` indicates the LSM hook that the program must
-+	  be attached to
-+	* ``mprotect_audit`` is the name of the eBPF program
-+
-+.. code-block:: c
-+
-+        SEC("lsm/file_mprotect")
-+        int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
-+                     unsigned long reqprot, unsigned long prot)
-+	{
-+		int is_heap;
-+
-+		is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
-+			   vma->vm_end <= vma->vm_mm->brk);
-+
-+		/*
-+		 * Return an -EPERM or write information to the perf events buffer
-+		 * for auditing
-+		 */
-+	}
-+
-+The ``__attribute__((preserve_access_index))`` is a clang feature that allows
-+the BPF verifier to update the offsets for the access at runtime using the
-+:doc:`/bpf/btf` information. Since the BPF verifier is aware of the types, it
-+also validates all the accesses made to the various types in the eBPF program.
-+
-+Loading
-+-------
-+
-+eBPP programs can be loaded with the :manpage:`bpf(2)` syscall's
-+``BPF_PROG_LOAD`` operation or more simply by using the the libbpf helper
-+``bpf_prog_load_xattr``:
-+
-+
-+.. code-block:: c
-+
-+	struct bpf_prog_load_attr attr = {
-+		.file = "./prog.o",
-+	};
-+	struct bpf_object *prog_obj;
-+	struct bpf_program *prog;
-+	int prog_fd;
-+
-+	bpf_prog_load_xattr(&attr, &prog_obj, &prog_fd);
-+
-+Attachment to LSM Hooks
-+-----------------------
-+
-+The LSM allows attachment of eBPF programs as LSM hooks using :manpage:`bpf(2)`
-+syscall's ``BPF_PROG_ATTACH`` operation or more simply by
-+using the libbpf helper ``bpf_program__attach_lsm``. In the code shown below
-+``prog`` is the eBPF program loaded using ``BPF_PROG_LOAD``:
-+
-+.. code-block:: c
-+
-+	struct bpf_link *link;
-+
-+	link = bpf_program__attach_lsm(prog);
-+
-+The program can be detached from the LSM hook by *destroying* the ``link``
-+link returned by ``bpf_program__attach_lsm``:
-+
-+.. code-block:: c
-+
-+	link->destroy();
-+
-+Examples
-+--------
-+
-+An example eBPF program can be found in
-+`tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c`_ and the corresponding
-+userspace code in
-+`tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c`_
-+
-+.. Links
-+.. _tools/testing/selftests/bpf/bpf_trace_helpers.h:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/selftests/bpf/bpf_trace_helpers.h
-+.. _tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
-+.. _tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index fc503dd689a7..844463df4547 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -5,6 +5,7 @@ Security Documentation
- .. toctree::
-    :maxdepth: 1
- 
-+   bpf
-    credentials
-    IMA-templates
-    keys/index
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5d553c2e7452..dd4c4ee151b0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3212,6 +3212,7 @@ F:	security/bpf/
- F:	include/linux/bpf_lsm.h
- F:	tools/testing/selftests/bpf/progs/lsm_mprotect_audit.c
- F:	tools/testing/selftests/bpf/prog_tests/lsm_mprotect_audit.c
-+F:	Documentation/security/bpf.rst
- 
- BROADCOM B44 10/100 ETHERNET DRIVER
- M:	Michael Chan <michael.chan@broadcom.com>
--- 
-2.20.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
