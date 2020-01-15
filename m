@@ -2,66 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7AF13B82E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 04:40:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A181413B830
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 04:40:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbgAODkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 22:40:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728879AbgAODkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 22:40:41 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E99220684;
-        Wed, 15 Jan 2020 03:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579059640;
-        bh=jQkpwwjW+28FAcx5qKB4T60288Dppvd4H70Y9mp+7Hg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UBu79P/8GiSHu6VT5/FpwerbSA3tigMRZXKIYq5JAo+GunMN0KSXQOO5LmekDEmcY
-         amxYsNX4qWAv1ROcGgtzR/IpEz1oyG+pSqssXFs81zzbshYVb27k/4/7abaJ1DrZnp
-         IcQuD3T9zAzny5Nek22yUUqt33VWFbE9w1GQ+F8Q=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Anders Roxell <anders.roxell@linaro.org>, paulmck@kernel.org,
-        joel@joelfernandes.org,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH -tip V3 0/2] kprobes: Fix RCU warning and cleanup
-Date:   Wed, 15 Jan 2020 12:40:35 +0900
-Message-Id: <157905963533.2268.4672153983131918123.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-User-Agent: StGit/0.17.1-dirty
+        id S1729074AbgAODkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 22:40:51 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:39135 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728879AbgAODku (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 14 Jan 2020 22:40:50 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 35B3C2213D;
+        Tue, 14 Jan 2020 22:40:50 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 14 Jan 2020 22:40:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=RrgydXjzryvsT0baMy3pjy0e7s
+        fLWEp3zx91v4rk8Kc=; b=odMM3ACvUNQ3DfAJebxF4yBz2RyD9enltEfZnL7exp
+        6N6++Ti9G6+t6z0frrlEnSgR+g6zaEEzBSB+A9fhW2fd0B7OriLBST4ZlXZySWGX
+        AjTkSR2M7NSSS0Wg2pBxqUhxRtbnz5t0r51xhA0Hk7ynqNPxV9yENmK8ItMHLKIS
+        Cl9EQ4niTuqj77b3MsmveiesY5C95AxOcsVwqm9HfIDSaSFEZ5zi2SDSJgSpFAVz
+        3D6HLpBaRkVaE/mfBk8i68Gc7vYfFuspnMPL0Ohmmof2gZnYYBlhfhgZ1WA7FmZU
+        FIkIgAb0on6dzBwfMjMfCn34706l/tbiuCXIkzOqwthA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=RrgydXjzryvsT0baM
+        y3pjy0e7sfLWEp3zx91v4rk8Kc=; b=FmrFlWnHD/9gvAHbizIAHNlp6PuW68wWZ
+        v7TtXZCWhjf68zqGSA6dWcmT+GxHsj8kKM8zt4IlcAQkUYZ6+z4tOahAPk7MOniL
+        ShyGAjIMt/ougC3kFKmhtV9QjxYC/s0qTWvLoQROP59FWd5qylb2D1m2qLmk1i/3
+        ReuRY1vGVM8prrNGwEqS1B3wUNmLu6KUmg5f8PwzX/K51iXrDPbLUHtv9SYSb+Qq
+        ruyztiT0LXuOVluH3bq2USj0d1/X1/4OycriNnGZGsKNxDZDQ+ZmbXhipA2HmUXn
+        5zWJO5LnIaRYK6caLA+moaYAx7dQEzBDSh1v2ODZ9GqAGbhuQ24rw==
+X-ME-Sender: <xms:wYkeXkuQ5UYKGE5zQz7osvQcXUz_DlKGbialkBce6iJMWwMwnG1Hhw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtddvgdeitdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
+    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
+    drudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghl
+    sehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:wYkeXnwa7xE63m_2A0v9m3INthDutYBqVYOMrbA3WeLlBwIcGiXxfA>
+    <xmx:wYkeXlwkdlie93T90lFGzaQJ2kuW8T1EvOE-4HV2f8PmH9o-bQibnw>
+    <xmx:wYkeXkjExHoyfk9yGp5bodHvl-Sw6bHIThkWAfvJLLe6KKALmYf4Xw>
+    <xmx:wokeXkdV5GkVqne3CpotvjeXEIm0jwwNzYtGDE7ymHzgrW1rUZcodA>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 700DD30607B4;
+        Tue, 14 Jan 2020 22:40:49 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v4 0/4] X-Powers Power Supply Improvements
+Date:   Tue, 14 Jan 2020 21:40:44 -0600
+Message-Id: <20200115034048.24901-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series adds some improvements to the axp20x_usb_power power supply
+driver to better support suspend/resume and use on mobile devices.
 
-Here is v3 patches which fix suspicious RCU usage warnings
-in kprobes. In this version I just updated the series on top
-of the latest -tip and add Joel's reviewed-by tag.
+Patch 1 is preparation for changes in following patches.
+Patch 2 allows userspace to take the power supply offline.
+Patch 3 allows userspace to control the wakeup behavior.
+Patch 4 avoids polling USB VBUS presence when possible.
 
-Thank you,
+Changes since v3:
+ - Rebase on power-supply/for-next
+ - Add Reviewed-by (1-2)
 
----
+Changes since v2:
+ - Patch 1 was merged
+ - Only check ACIN_PATH_SEL when necessary (1)
+ - Update commit message (5)
+ - Avoided reordering lines until/unless necessary (5, 7)
+ - Update comment and add ID check in axp20x_usb_power_set_property
+   (it seemed more correct than adding another comment) (6)
+ - Add Reviewed-by where there were no comments (2-4, 7-8)
 
-Masami Hiramatsu (2):
-      kprobes: Suppress the suspicious RCU warning on kprobes
-      kprobes: Use non RCU traversal APIs on kprobe_tables if possible
+Changes since v1:
+ - Add patches 1-2
+ - Shift value properly in calls to regmap_update_bits (3, 7)
+ - Use #ifdef instead of #if to avoid -Wundef warnings (4, 8)
+ - Poll once after an IRQ, instead of setting power->online in the IRQ (9)
+ - Poll once on resume, in case the state changed during suspend (9)
 
+Samuel Holland (4):
+  power: supply: axp20x_usb_power: Use a match structure
+  power: supply: axp20x_usb_power: Allow offlining
+  power: supply: axp20x_usb_power: Add wakeup control
+  power: supply: axp20x_usb_power: Only poll while offline
 
- kernel/kprobes.c |   32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ drivers/power/supply/axp20x_usb_power.c | 217 ++++++++++++++++++------
+ 1 file changed, 169 insertions(+), 48 deletions(-)
 
---
-Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+-- 
+2.23.0
+
