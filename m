@@ -2,213 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0A3413B6D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:27:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F6013B6E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 02:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgAOB1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 20:27:15 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:55249 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729077AbgAOB1N (ORCPT
+        id S1728890AbgAOBag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 20:30:36 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35479 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728844AbgAOBag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 20:27:13 -0500
-Received: by mail-pl1-f202.google.com with SMTP id f10so6029116plr.21
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 17:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=h8U2qNtEFbaq+hBB/JCIu5FRCXJjzgS5K1PNEW4ZKws=;
-        b=DdORwNw0ndB7yPDnt8tT0WEqtdwD8V4r97JqJT/LXfvkDwe5s1Q21YiAh1Gty98/b0
-         UViZadY+jCLv9/GwljHX1EpDUv/iKm4sPdChU0zjoMGyXN7zg1cbfcpgPdzbX5qTrdF/
-         dbKOqYdZjkBCfPZQQ1YxpKX6DhhfqJq+713oEumbz1oluyU8GfaKlJqBtya86kphQBPp
-         hQ6z3xF6QIrMNetm1VyXpVPsEnkMLh9SXbwVlRZzxr3OVTLRib9eqf1oTPYa4qshTYex
-         xOfkILN202JFeCcVen+QZ9LO1j+FVNwWsgKIETR7mXnbAXLRN4ALA87go3rMV94BSNjZ
-         9NZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=h8U2qNtEFbaq+hBB/JCIu5FRCXJjzgS5K1PNEW4ZKws=;
-        b=sagyJgkC6ZbDX5tZ9/0IJMJE+bN6CMods44NPmlHNGH551F5jAZBXqiKmrTAGCnBLW
-         R7svzNro0Gue9JHSEa2rR8rOJDynd8J8z/TLFs/BGFGvnGQxiysSBmBwoYGTWwxxk1/z
-         dNovTN57O8+JUuGOTYCJsQZFO/VMyy04xsd0SWQVwu/nWbXvw2qpEZ4SegJUPuB3twBj
-         4R4UOJepMuy4TF6iM/7wUCrLkBpvhFB+u4HjoGbqqh05Oq+TpYpMps1MmM89NsE1Eoob
-         bBTwFHObAQbldY06kzDuU1ugDvybhraewKZg0alM8Liw4ZbV38yFjKVz1EGe0eg5Kx1o
-         OkFg==
-X-Gm-Message-State: APjAAAXNclrnz312LaExpczU7RDEecwYklJy+1iRw2wRL5LjzX5fBXRz
-        BWw0x1mO74WVL+kMSmrhKxAknkHWc26tJ6C6cg==
-X-Google-Smtp-Source: APXvYqxmMi2/ACArgSv7fIgXtolIquE4UCUC/iP8qxu7HL4rR76nCNRpBZfD1IoYHxOtfCJxpCr2SfVY1MIWGdoxtA==
-X-Received: by 2002:a63:4b49:: with SMTP id k9mr30074514pgl.269.1579051631919;
- Tue, 14 Jan 2020 17:27:11 -0800 (PST)
-Date:   Tue, 14 Jan 2020 17:26:51 -0800
-In-Reply-To: <20200115012651.228058-1-almasrymina@google.com>
-Message-Id: <20200115012651.228058-8-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20200115012651.228058-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
-Subject: [PATCH v10 8/8] hugetlb_cgroup: Add hugetlb_cgroup reservation docs
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com, rientjes@google.com, shakeelb@google.com
-Cc:     shuah@kernel.org, almasrymina@google.com, gthelen@google.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 14 Jan 2020 20:30:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579051835;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=cq04Ga1b8xTrH17T3rkjESGzzrFCqY7RRinYPFVL2u0=;
+        b=Q7eWKs0w9E1gn14AnUZJCdjk1u2cWMfRu1SefhIc4yLM8s7FcZXMEdlN4/L6KKzqHsZQXj
+        IBj7oPVJV1Kepe539MehgjLIpixYGfY/ZnFB50Dhn9+5IRICkY4fY6Gx4ZOYjD3gPSzLTy
+        KxIEXtJFbtt+Svgt0F9vA0qez0Vf4Hk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-59-MILkH8OSOieJ7asONUSy-w-1; Tue, 14 Jan 2020 20:30:31 -0500
+X-MC-Unique: MILkH8OSOieJ7asONUSy-w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3A71C1800D78;
+        Wed, 15 Jan 2020 01:30:30 +0000 (UTC)
+Received: from plouf.redhat.com (ovpn-116-34.ams2.redhat.com [10.36.116.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B657A675AE;
+        Wed, 15 Jan 2020 01:30:26 +0000 (UTC)
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH] Input: synaptics - remove the LEN0049 dmi id from topbuttonpad list
+Date:   Wed, 15 Jan 2020 02:30:23 +0100
+Message-Id: <20200115013023.9710-1-benjamin.tissoires@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add docs for how to use hugetlb_cgroup reservations, and their behavior.
+The Yoga 11e is using LEN0049, but it doesn't have a trackstick.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+Thus, there is no need to create a software top buttons row.
 
----
+However, it seems that the device works under SMBus, so keep it as part
+of the smbus_pnp_ids.
 
-Changes in v10:
-- Clarify reparenting behavior.
-- Reword benefits of reservation limits.
-Changes in v6:
-- Updated docs to reflect the new design based on a new counter that
-tracks both reservations and faults.
 
----
- .../admin-guide/cgroup-v1/hugetlb.rst         | 103 ++++++++++++++++--
- 1 file changed, 92 insertions(+), 11 deletions(-)
+Link: https://gitlab.freedesktop.org/libinput/libinput/issues/414
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-diff --git a/Documentation/admin-guide/cgroup-v1/hugetlb.rst b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-index a3902aa253a96..00dd4daf55f19 100644
---- a/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-+++ b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-@@ -2,13 +2,6 @@
- HugeTLB Controller
- ==================
-
--The HugeTLB controller allows to limit the HugeTLB usage per control group and
--enforces the controller limit during page fault. Since HugeTLB doesn't
--support page reclaim, enforcing the limit at page fault time implies that,
--the application will get SIGBUS signal if it tries to access HugeTLB pages
--beyond its limit. This requires the application to know beforehand how much
--HugeTLB pages it would require for its use.
--
- HugeTLB controller can be created by first mounting the cgroup filesystem.
-
- # mount -t cgroup -o hugetlb none /sys/fs/cgroup
-@@ -28,10 +21,14 @@ process (bash) into it.
-
- Brief summary of control files::
-
-- hugetlb.<hugepagesize>.limit_in_bytes     # set/show limit of "hugepagesize" hugetlb usage
-- hugetlb.<hugepagesize>.max_usage_in_bytes # show max "hugepagesize" hugetlb  usage recorded
-- hugetlb.<hugepagesize>.usage_in_bytes     # show current usage for "hugepagesize" hugetlb
-- hugetlb.<hugepagesize>.failcnt		   # show the number of allocation failure due to HugeTLB limit
-+ hugetlb.<hugepagesize>.resv.limit_in_bytes            # set/show limit of "hugepagesize" hugetlb reservations
-+ hugetlb.<hugepagesize>.resv.max_usage_in_bytes        # show max "hugepagesize" hugetlb reservations and no-reserve faults
-+ hugetlb.<hugepagesize>.resv.usage_in_bytes            # show current reservations and no-reserve faults for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.resv.failcnt                   # show the number of allocation failure due to HugeTLB reservation limit
-+ hugetlb.<hugepagesize>.limit_in_bytes                 # set/show limit of "hugepagesize" hugetlb faults
-+ hugetlb.<hugepagesize>.max_usage_in_bytes             # show max "hugepagesize" hugetlb  usage recorded
-+ hugetlb.<hugepagesize>.usage_in_bytes                 # show current usage for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.failcnt                        # show the number of allocation failure due to HugeTLB usage limit
-
- For a system supporting three hugepage sizes (64k, 32M and 1G), the control
- files include::
-@@ -40,11 +37,95 @@ files include::
-   hugetlb.1GB.max_usage_in_bytes
-   hugetlb.1GB.usage_in_bytes
-   hugetlb.1GB.failcnt
-+  hugetlb.1GB.resv.limit_in_bytes
-+  hugetlb.1GB.resv.max_usage_in_bytes
-+  hugetlb.1GB.resv.usage_in_bytes
-+  hugetlb.1GB.resv.failcnt
-   hugetlb.64KB.limit_in_bytes
-   hugetlb.64KB.max_usage_in_bytes
-   hugetlb.64KB.usage_in_bytes
-   hugetlb.64KB.failcnt
-+  hugetlb.64KB.resv.limit_in_bytes
-+  hugetlb.64KB.resv.max_usage_in_bytes
-+  hugetlb.64KB.resv.usage_in_bytes
-+  hugetlb.64KB.resv.failcnt
-   hugetlb.32MB.limit_in_bytes
-   hugetlb.32MB.max_usage_in_bytes
-   hugetlb.32MB.usage_in_bytes
-   hugetlb.32MB.failcnt
-+  hugetlb.32MB.resv.limit_in_bytes
-+  hugetlb.32MB.resv.max_usage_in_bytes
-+  hugetlb.32MB.resv.usage_in_bytes
-+  hugetlb.32MB.resv.failcnt
-+
-+
-+1. Page fault accounting
-+
-+hugetlb.<hugepagesize>.limit_in_bytes
-+hugetlb.<hugepagesize>.max_usage_in_bytes
-+hugetlb.<hugepagesize>.usage_in_bytes
-+hugetlb.<hugepagesize>.failcnt
-+
-+The HugeTLB controller allows users to limit the HugeTLB usage (page fault) per
-+control group and enforces the limit during page fault. Since HugeTLB
-+doesn't support page reclaim, enforcing the limit at page fault time implies
-+that, the application will get SIGBUS signal if it tries to fault in HugeTLB
-+pages beyond its limit. Therefore the application needs to know exactly how many
-+HugeTLB pages it uses before hand, and the sysadmin needs to make sure that
-+there are enough available on the machine for all the users to avoid processes
-+getting SIGBUS.
-+
-+
-+2. Reservation accounting
-+
-+hugetlb.<hugepagesize>.resv.limit_in_bytes
-+hugetlb.<hugepagesize>.resv.max_usage_in_bytes
-+hugetlb.<hugepagesize>.resv.usage_in_bytes
-+hugetlb.<hugepagesize>.resv.failcnt
-+
-+The HugeTLB controller allows to limit the HugeTLB reservations per control
-+group and enforces the controller limit at reservation time and at the fault of
-+HugeTLB memory for which no reservation exists. Since reservation limits are
-+enforced at reservation time (on mmap or shget), reservation limits never causes
-+the application to get SIGBUS signal if the memory was reserved before hand. For
-+MAP_NORESERVE allocations, the reservation limit behaves the same as the fault
-+limit, enforcing memory usage at fault time and causing the application to
-+receive a SIGBUS if it's crossing its limit.
-+
-+Reservation limits are superior to page fault limits described above, since
-+reservation limits are enforced at reservation time (on mmap or shget), and
-+never causes the application to get SIGBUS signal if the memory was reserved
-+before hand. This allows for easier fallback to alternatives such as
-+non-HugeTLB memory for example. In the case of page fault accounting, it's very
-+hard to avoid processes getting SIGBUS since the sysadmin needs precisely know
-+the HugeTLB usage of all the tasks in the system and make sure there is enough
-+pages to satisfy all requests. Avoiding tasks getting SIGBUS on overcommited
-+systems is practically impossible with page fault accounting.
-+
-+
-+3. Caveats with shared memory
-+
-+For shared HugeTLB memory, both HugeTLB reservation and page faults are charged
-+to the first task that causes the memory to be reserved or faulted, and all
-+subsequent uses of this reserved or faulted memory is done without charging.
-+
-+Shared HugeTLB memory is only uncharged when it is unreserved or deallocated.
-+This is usually when the HugeTLB file is deleted, and not when the task that
-+caused the reservation or fault has exited.
-+
-+
-+4. Caveats with HugeTLB cgroup offline.
-+
-+When a HugeTLB cgroup goes offline with some reservations or faults still
-+charged to it, the behavior is as follows:
-+
-+- The fault charges are charged to the parent HugeTLB cgroup (reparented),
-+- the reservation charges remain on the offline HugeTLB cgroup.
-+
-+This means that if a HugeTLB cgroup gets offlined while there is still HugeTLB
-+reservations charged to it, that cgroup persists as a zombie until all HugeTLB
-+reservations are uncharged. HugeTLB reservations behave in this manner to match
-+the memory controller whose cgroups also persist as zombie until all charged
-+memory is uncharged. Also, the tracking of HugeTLB reservations is a bit more
-+complex compared to the tracking of HugeTLB faults, so it is significantly
-+harder to reparent reservations at offline time.
 --
-2.25.0.rc1.283.g88dfdc4193-goog
+
+Hi Dmitry,
+
+Sending the patch to the list untested (sanity only), and I'll ask
+for the reporter to provide a little bit more testing.
+
+I will keep you updated when you can merge the patch.
+
+Cheers,
+Benjamin
+---
+ drivers/input/mouse/synaptics.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synapt=
+ics.c
+index 1ae6f8bba9ae..7aa84f743c48 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -146,7 +146,6 @@ static const char * const topbuttonpad_pnp_ids[] =3D =
+{
+ 	"LEN0042", /* Yoga */
+ 	"LEN0045",
+ 	"LEN0047",
+-	"LEN0049",
+ 	"LEN2000", /* S540 */
+ 	"LEN2001", /* Edge E431 */
+ 	"LEN2002", /* Edge E531 */
+@@ -166,6 +165,7 @@ static const char * const smbus_pnp_ids[] =3D {
+ 	/* all of the topbuttonpad_pnp_ids are valid, we just add some extras *=
+/
+ 	"LEN0048", /* X1 Carbon 3 */
+ 	"LEN0046", /* X250 */
++	"LEN0049", /* Yoga 11e */
+ 	"LEN004a", /* W541 */
+ 	"LEN005b", /* P50 */
+ 	"LEN005e", /* T560 */
+--=20
+2.24.1
+
