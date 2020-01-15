@@ -2,163 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92A4713C392
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F5513C398
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:52:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbgAONuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 08:50:13 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48788 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbgAONuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:50:12 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E0AF1764F196C96C2BC7;
-        Wed, 15 Jan 2020 21:50:10 +0800 (CST)
-Received: from [127.0.0.1] (10.173.222.27) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 Jan 2020
- 21:49:59 +0800
-Subject: Re: [PATCH v3 29/32] KVM: arm64: GICv4.1: Allow SGIs to switch
- between HW and SW interrupts
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <Andrew.Murray@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        "Tangnianyao (ICT)" <tangnianyao@huawei.com>
-References: <20191224111055.11836-1-maz@kernel.org>
- <20191224111055.11836-30-maz@kernel.org>
- <cc5fe20c-7a0c-c266-e78a-2a85963ab20f@hisilicon.com>
- <6e24d53e-64d9-a682-6753-9e16155c7fde@huawei.com>
- <c30b23cf220a4b2965a42ea87b27285f@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <99ed8894-9d30-7dac-9826-abf95b9a5e80@huawei.com>
-Date:   Wed, 15 Jan 2020 21:49:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.0
+        id S1729045AbgAONua convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 08:50:30 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:44779 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbgAONu3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 08:50:29 -0500
+Received: from mail-qv1-f41.google.com ([209.85.219.41]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MacWq-1jOIvZ1STS-00cBGy; Wed, 15 Jan 2020 14:50:27 +0100
+Received: by mail-qv1-f41.google.com with SMTP id dc14so7338848qvb.9;
+        Wed, 15 Jan 2020 05:50:27 -0800 (PST)
+X-Gm-Message-State: APjAAAVQPx15b4AjJCGeywdptelLsYDvuGQ48fq4a10RRa0QG2HQwmE7
+        94tVMQXPfT0+x1OkwMSEj96eg0ITnaOXllAmUHM=
+X-Google-Smtp-Source: APXvYqyl7uNQv+weHDkj+4n/1x08jQKkMwbhnzB0cjncUcoprt2VN7a56hddZyTo34cvRVHUb+kjlRzLrmpR32DvACo=
+X-Received: by 2002:a0c:d788:: with SMTP id z8mr20822765qvi.211.1579096226126;
+ Wed, 15 Jan 2020 05:50:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c30b23cf220a4b2965a42ea87b27285f@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.222.27]
-X-CFilter-Loop: Reflected
+References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
+ <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
+ <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+ <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com> <20200115133838.q33p5riihsinp6c4@pali>
+In-Reply-To: <20200115133838.q33p5riihsinp6c4@pali>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 15 Jan 2020 14:50:10 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+Message-ID: <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Cc:     Namjae Jeon <linkinjeon@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:Y8h8lkSOLNjm7tnDH8hZQmI38TXya9ENaqh+Nr2XlDYvbVlqPPZ
+ +9xPSGXEAK8bs+iwj/d540d5PdsXjr6Wy3/KbHy0ZZAezmdYmuHRLdxHKSNdV5/YbojH/Q0
+ l7oD6eofrv3vtMfmuraBRNxg535jQC4YwrkvKR3hqGJQ3bGbXDHLcVw0WhL/AtlUpUFBw4g
+ HiNR8k0ivYv3ajYUkCUmg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:+bu4/c32c1g=:44YrMUmOErEQchdHl7bXCz
+ aOpSaBMkZIlqbAdiX/DFYl8YRHJmNHnVuiT1g8JyAgAtVPQQzArjv4n6KtwaBw6fGj9W/woNj
+ LJnce+RXGEsAxT9S7jlOeaz23TGLprKLm6um/JVD9d8wc1exNeMSlV6qQt1dRzaue6ZViJF40
+ izZ/bRf8MJ3sppuinfQRZmyJGdbNyKbbGP7eYtF70NJv6clczVrfAY2WZFO7KEotfXAv1I0W8
+ 7TmInzH6TdGe6Ek0ZA6BP1oQW+ktqSBcxYTP/wWtydHfMsybxfpiuUKuLG0zHiAtJUIANERMn
+ TILdQvfNUPYwQLpb/IUSEjbdzyqBePo306iF27wnXLVWgSS2Mi35V7xr3gbr1lO2LBTaSCe36
+ ZwOIgVJ9YwyhlLTEDO34xLCh3YK/DwDjteQq9k1lsyEmWkToaPv6QGXZz+3/S9HQ3Ow0mYCHs
+ QHNLqb7RE1gqzTIcWqT1+jc0NQOKiwoGrgxpPLCpgU2RSytzl6rzPaFy9D96Gor5o5jdSDob1
+ A5PAleLeS0vdH9G1hYAfwUePVXNnmXVnh+Rzp+3j3LSpTZ9GFDxh/O44cbeh9hig7w28CcFC3
+ +PJUMGSxXEP6s1sx/x/b071EJ6oj0rNyzOaim5LtzTm1ul5wo//C1Cl0eFB/hBrXzjbsKV3Hr
+ 9PrnXsFMVdAqGtQN2JV492j6kQZ8DcI7CCQrhZp7Eac8P6n16pfyJqVpoGzpIw2zsayr8rQsn
+ Pay3I9krsbE+GHTZcUJFkR0WdKur2YTaoLHLQ4vpt844LwIbalYlN5+HRjVtrgpXaYKVwi/v3
+ voBal+RL7H5lUOO9cMoIziGklKR6synGPPtcYU/neHF/qSu19IoXLfGiwTZgU9VCG6mV7QiNb
+ Heq9LyPkl4J6RxNDMMvQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Wed, Jan 15, 2020 at 2:38 PM Pali Rohár <pali.rohar@gmail.com> wrote:
+> On Wednesday 15 January 2020 22:30:59 Namjae Jeon wrote:
+> > 2020-01-15 19:10 GMT+09:00, Arnd Bergmann <arnd@arndb.de>:
 
-On 2020/1/15 21:32, Marc Zyngier wrote:
-> On 2020-01-15 03:49, Zenghui Yu wrote:
->> Hi,
->>
->> On 2020/1/15 10:49, Shaokun Zhang wrote:
->>> Hi Marc, [This is from Nianyao]
->>>
->>> On 2019/12/24 19:10, Marc Zyngier wrote:
->>>> In order to let a guest buy in the new, active-less SGIs, we
->>>> need to be able to switch between the two modes.
->>>>
->>>> Handle this by stopping all guest activity, transfer the state
->>>> from one mode to the other, and resume the guest.
->>>>
->>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>> ---
->>
->> [...]
->>
->>>> diff --git a/virt/kvm/arm/vgic/vgic-v4.c b/virt/kvm/arm/vgic/vgic-v4.c
->>>> index c2fcde104ea2..063785fd2dc7 100644
->>>> --- a/virt/kvm/arm/vgic/vgic-v4.c
->>>> +++ b/virt/kvm/arm/vgic/vgic-v4.c
->>>> @@ -97,6 +97,102 @@ static irqreturn_t vgic_v4_doorbell_handler(int 
->>>> irq, void *info)
->>>>       return IRQ_HANDLED;
->>>>   }
->>>>   +static void vgic_v4_sync_sgi_config(struct its_vpe *vpe, struct 
->>>> vgic_irq *irq)
->>>> +{
->>>> +    vpe->sgi_config[irq->intid].enabled    = irq->enabled;
->>>> +    vpe->sgi_config[irq->intid].group     = irq->group;
->>>> +    vpe->sgi_config[irq->intid].priority    = irq->priority;
->>>> +}
->>>> +
->>>> +static void vgic_v4_enable_vsgis(struct kvm_vcpu *vcpu)
->>>> +{
->>>> +    struct its_vpe *vpe = &vcpu->arch.vgic_cpu.vgic_v3.its_vpe;
->>>> +    int i;
->>>> +
->>>> +    /*
->>>> +     * With GICv4.1, every virtual SGI can be directly injected. So
->>>> +     * let's pretend that they are HW interrupts, tied to a host
->>>> +     * IRQ. The SGI code will do its magic.
->>>> +     */
->>>> +    for (i = 0; i < VGIC_NR_SGIS; i++) {
->>>> +        struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, i);
->>>> +        struct irq_desc *desc;
->>>> +        int ret;
->>>> +
->>>> +        if (irq->hw) {
->>>> +            vgic_put_irq(vcpu->kvm, irq);
->>>> +            continue;
->>>> +        }
->>>> +
->>>> +        irq->hw = true;
->>>> +        irq->host_irq = irq_find_mapping(vpe->sgi_domain, i);
->>>
->>> I think we need to check whether irq_find_mapping returns 0.
->>>
->>>> +        vgic_v4_sync_sgi_config(vpe, irq);
->>>> +        /*
->>>> +         * SGIs are initialised as disabled. Enable them if
->>>> +         * required by the rest of the VGIC init code.
->>>> +         */
->>>> +        desc = irq_to_desc(irq->host_irq);
->>>> +        ret = irq_domain_activate_irq(irq_desc_get_irq_data(desc),
->>>> +                          false);
->>>
->>> If irq->host_irq is not valid , in irq_domain_activate_irq, it will 
->>> trigger NULL pointer
->>> dereference in host kernel.
->>> I meet a problem here. When hw support GIC4.1, and host kernel is 
->>> started with
->>> kvm-arm.vgic_v4_enable=0, starting a virtual machine will trigger 
->>> NULL pointer
->>> dereference in host.
->>
->> I think the thing is that we should _not_ try to configure vSGIs at all
->> if kvm-arm.vgic_v4_enable=0 (which indicates we don't allow use of the
->> GICv4 of direct injection).
->>
->> We currently set kvm_vgic_global_state.has_gicv4_1 to true if HW support
->> GICv4.1, regardless whatever the gicv4_enable is (see patch#23 -
->> vgic_v3_probe).  I think this is what actually needs fixing.
-> 
-> Yes, my point exactly. I've pushed out a potential fix [1], and I'd be
-> grateful if you could let me know whether that fixes it for you.
+> > It is not described in the specification. I don't know exactly what
+> > the problem is because sys_tz.tz_minuteswest seems to work fine to me.
+> > It can be random garbage value ?
+> >
+> > > so if there is a choice, falling back to UTC would
+> > > be nicer.
+> >
+> > Okay.
+>
+> Arnd, what is the default value of sys_tz.tz_minuteswest? What is the
+> benefit of not using it?
+>
+> I though that timezone mount option is just an old hack when userspace
+> does not correctly set kernel's timezone and that this timezone mount
+> option should be in most cases avoided.
 
-I haven't had the appropriate HW yet.. Nianyao or Shaokun can help to
-test it tomorrow, I think.
+The main problem is that it is system-wide and initialized at boot
+time through settimeofday() to a timezone picked by the system
+administrator.
 
-> 
-> Thanks,
-> 
->          M.
-> 
-> [1] 
-> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/gic-v4.1-devel&id=b82c2ee1d3fef66fb85793965c344260f618219d 
+However, in user space, every user may set their own timezone with
+the 'TZ' variable, and the default timezone may be different inside of a
+container based on the contents of /etc/timezone in its root directory.
 
-Anyway, this looks good to me.
+> So also another question, what is benefit of having fs specific timezone
+> mount option? As it is fs specific it means that it would be used so
+> much.
 
+You can use it to access removable media that were written in
+a different timezone, or a partition that is shared with another OS
+running on the same machine but with different timezone settings.
 
-Thanks,
-Zenghui
-
+     Arnd
