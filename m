@@ -2,129 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE5913BAFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E926013BB08
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:29:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgAOI2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:28:54 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:56807 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729052AbgAOI2c (ORCPT
+        id S1729248AbgAOI3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:29:13 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1040 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729188AbgAOI3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:28:32 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200115082830epoutp043d9bb18a0df39dabcb758f9b128679f5~qAhVnpPjJ0500305003epoutp04E
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 08:28:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200115082830epoutp043d9bb18a0df39dabcb758f9b128679f5~qAhVnpPjJ0500305003epoutp04E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579076910;
-        bh=Vl3K76ctdGp141COTWoYQOF+6xn4+/PDupmo6U2ImZk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bePGKMYxmVrk6PFU3o2YN2aAq+vqaOPLkHAUBEQWFjQ/4rVom0Uj6UdsS15W7dAo3
-         iri5YH643ciSSOBh5P+SwigUyxFGHw72UXlHNv6tRVhfWsE0cKGu/B2ApVnbNV6vl4
-         iUVwkXTkLk3ztL0b6Mu3jmqlKvZLHXna3FumUNUE=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200115082829epcas1p3209c93f77c6b6fe5c33972db996af650~qAhVCsTtX1260012600epcas1p3S;
-        Wed, 15 Jan 2020 08:28:29 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47yL7c5dtpzMqYkt; Wed, 15 Jan
-        2020 08:28:28 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.6E.52419.B2DCE1E5; Wed, 15 Jan 2020 17:28:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3~qAhSXqXdQ0883908839epcas1p3y;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200115082826epsmtrp1d583802d1489ee3814aba47b6e7efccb~qAhSW6h5O0484504845epsmtrp1L;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-X-AuditID: b6c32a37-5b7ff7000001ccc3-13-5e1ecd2bd3db
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AF.4A.10238.A2DCE1E5; Wed, 15 Jan 2020 17:28:26 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200115082826epsmtip13b5ff6f257339c40dd6564ee20020d24~qAhSKhnrh0110201102epsmtip1j;
-        Wed, 15 Jan 2020 08:28:26 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, pali.rohar@gmail.com,
-        arnd@arndb.de, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH v10 14/14] staging: exfat: make staging/exfat and fs/exfat
- mutually exclusive
-Date:   Wed, 15 Jan 2020 17:24:47 +0900
-Message-Id: <20200115082447.19520-15-namjae.jeon@samsung.com>
+        Wed, 15 Jan 2020 03:29:06 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00F8Rn5V008078;
+        Wed, 15 Jan 2020 09:29:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=x+t2q3oFR0/g2C2BlDWSZ5LQ8cOF3XZQewhkJ5cwYOM=;
+ b=XmTMhAP5BALer3IXtna0VSBMeosJlsVZHeDd4umTM1DaQgbw75ixQe/EJPR43iAVacNe
+ ZTob3sj8auKOmZfRu2ChsRnMvIYJt6Sr3cj/kuJdJoJyLa2qI4d4Bw6r4Aq/sL3nywu+
+ s6NQp8yIVOqIGM9fv4vkBj+4mnhdInbd+hqRH0iIeSHyGWgWk7sOgfuXL3CNZBHxurCZ
+ z1FLNk5MjzAA/o4gQjl0T4fm8RtEIVawoREl/XH5NR0GbP8BF54vI8cnYUkEUdpEyjM0
+ 6XJkAk4eUkIWY/tBSsPT0z/Z+7KxrpNMhWRq4vRBivQgLx6JQu85QQekW719/X1PUXPI YQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xf78sa27p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jan 2020 09:29:00 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3FF4110002A;
+        Wed, 15 Jan 2020 09:29:00 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2D13A210777;
+        Wed, 15 Jan 2020 09:29:00 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan 2020 09:28:59
+ +0100
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+CC:     <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v3] rpmsg: core: add API to get MTU
+Date:   Wed, 15 Jan 2020 09:27:22 +0100
+Message-ID: <20200115082722.13102-1-arnaud.pouliquen@st.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200115082447.19520-1-namjae.jeon@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTURjm3LvdTXFxmZYHI5uXRmnMNuf0Jq6iplyowIi+yXXTi0rb3drd
-        JOuHimWyYqb9sNShKCFORcmVzRJ1VmZRpJHah78q6GN9mNmXGe16Z/XvOc/7POd5z3teKSov
-        xWKkBaydsbG0icDCRVeH4tWqtfdjs9XuHjk5X31bQpY1d2Jka9sthJyYeoqSN/pGROSj3nqM
-        /F5TTFbdm0NI7++bYnLs4yfRpnBq7mc1oHy1UxKq390uoa4/KcEol9cDqJnLsZS/J4BlSfab
-        0vMZOpexKRg2x5JbwObpia07jVuMuhS1RqVZT6YSCpY2M3rCsC1LlVlgCrZHKAppkyNIZdEc
-        R6zbkG6zOOyMIt/C2fUEY801WTVqayJHmzkHm5eYYzGnadTqJF1QeciUX/bhPWJ1Y8dq5j1I
-        CagXO0GYFOLJ8EyTX8RjOX4NQE+32gnCg/gzgK7hUbFw+ArgqdGX6KJj3NscKvQB2N3+DP1r
-        udPkA04glWL4WvjLu5Q3ROEbYXfdgIjXoPgggIGHbglfiMSNcPRKB8JjEa6E7vrmhQQZrocz
-        3R2YkLYStnUNLPBhQf6m95GEvwjiAxisG6+WCCIDfPy8LGSIhG+HvSE+Br6pLJfwDUH8BJzu
-        D72gAsDX3/QC1sInnV1iXoLi8bCzd51Ax0HfnBvwGMWXwA+zZ8XCLTJYUS4XJEroGhtCBLwc
-        Ok9/CoVScKK2BQgjOQfgxbsu5ByIrf2X0AiAByxjrJw5j+E0Vu3/H3YZLKxfQuo10PVgmx/g
-        UkBEyBTPV2TLxXQhV2T2AyhFiSjZyIUgJculi44zNovR5jAxnB/ogoOsQmOW5liCy8zajRpd
-        klarJZNTUlN0WiJaltEYmy3H82g7c4RhrIxt0YdIw2JKQGl5gvxrRMOquC1tgdUzKsMBvS+z
-        9PCOjkZka1rzGrjb2zH9IoUxnN280bknQdmeEXg1aY1j2w5Gpc/u6vFFT54aSu1/XDNW1TAZ
-        2Lc3HTuvVO59DUAF++PFpR+9rkLDoL2sMtGDXln1rrK1ZaXsfcTR7VRxOahbkqSLEH15d5IQ
-        cfm0JgG1cfQfDnTYPJQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnK7WWbk4g0mrdSz+TjrGbtG8eD2b
-        xcrVR5ksrt+9xWyxZ+9JFovLu+awWfyYXm8x8fRvJost/46wWlx6/4HFgcvj969JjB47Z91l
-        99g/dw27x+6bDWwefVtWMXp83iTncWj7G7YA9igum5TUnMyy1CJ9uwSujOZ3b5kK5rJVTP+7
-        iqmBcQ5rFyMnh4SAicS1LYuBbC4OIYHdjBL792xngkhISxw7cYa5i5EDyBaWOHy4GKLmA6PE
-        je5GdpA4m4C2xJ8toiDlIgKOEr27DrOA1DALnGaU6N74EGyOsECsxLa3K8FsFgFViblzFjOD
-        2LwCthKfN69lg9glL7F6wwGwOCdQ/MiWy+wgtpCAjcS0JyeZJjDyLWBkWMUomVpQnJueW2xY
-        YJiXWq5XnJhbXJqXrpecn7uJERykWpo7GC8viT/EKMDBqMTDq3BHNk6INbGsuDL3EKMEB7OS
-        CO/JGUAh3pTEyqrUovz4otKc1OJDjNIcLErivE/zjkUKCaQnlqRmp6YWpBbBZJk4OKUaGKPu
-        P5glLMQTsNxwSYzKP6Ngn+CCxlOGyn9rdv3L++npdlJ926HHe313Kd0Onigty/XQ6cS9LdMj
-        TP5qGU3ieiK2+LTD60MS6aIujAa8cbvDFPiPzY2cKZbXYJVxmFdtxZy1BU62q07JH8pcxW8Y
-        xBjCqGogZbpNeXfSfZ9eZU674LXLgoqMlFiKMxINtZiLihMBVqsQvE4CAAA=
-X-CMS-MailID: 20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3
-References: <20200115082447.19520-1-namjae.jeon@samsung.com>
-        <CGME20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3@epcas1p3.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-14_06:2020-01-14,2020-01-14 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make staging/exfat and fs/exfat mutually exclusive to select the one
-between two same filesystem.
+Return the rpmsg buffer MTU for sending message, so rpmsg users
+can split a long message in several sub rpmsg buffers.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- drivers/staging/exfat/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V2[1] to V3
+  - fix parameter description in rpmsg_device_ops struct
 
-diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
-index 292a19dfcaf5..9a0fccec65d9 100644
---- a/drivers/staging/exfat/Kconfig
-+++ b/drivers/staging/exfat/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config STAGING_EXFAT_FS
- 	tristate "exFAT fs support"
--	depends on BLOCK
-+	depends on BLOCK && !EXFAT_FS
- 	select NLS
- 	help
- 	  This adds support for the exFAT file system.
+[1]: https://lore.kernel.org/patchwork/patch/1124684/
+---
+ drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h   |  2 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
+ include/linux/rpmsg.h            | 10 ++++++++++
+ 4 files changed, 43 insertions(+)
+
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index e330ec4dfc33..a6ef54c4779a 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+ 
++/**
++ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
++ * @ept: the rpmsg endpoint
++ *
++ * This function returns maximum buffer size available for a single message.
++ *
++ * Return: the maximum transmission size on success and an appropriate error
++ * value on failure.
++ */
++
++ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->get_mtu)
++		return -ENOTSUPP;
++
++	return ept->ops->get_mtu(ept);
++}
++EXPORT_SYMBOL(rpmsg_get_mtu);
++
+ /*
+  * match an rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 3fc83cd50e98..e6f88ee90ff6 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
+  * @trysendto:		see @rpmsg_trysendto(), optional
+  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+  * @poll:		see @rpmsg_poll(), optional
++ * @get_mtu:		see @rpmsg_get_mtu(), optional
+  *
+  * Indirection table for the operations that a rpmsg backend should implement.
+  * In addition to @destroy_ept, the backend must at least implement @send and
+@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
+ 			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
++	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
+ };
+ 
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 376ebbf880d6..6e48fdf24555 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+ 				  int len, u32 dst);
+ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 					   u32 dst, void *data, int len);
++static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+ 
+ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.destroy_ept = virtio_rpmsg_destroy_ept,
+@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.trysend = virtio_rpmsg_trysend,
+ 	.trysendto = virtio_rpmsg_trysendto,
+ 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
++	.get_mtu = virtio_rpmsg_get_mtu,
+ };
+ 
+ /**
+@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
+ 
++static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
++{
++	struct rpmsg_device *rpdev = ept->rpdev;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++
++	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
++}
++
+ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 			     struct rpmsg_hdr *msg, unsigned int len)
+ {
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d1c018..88d7892ca93d 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+ 
++ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
++
+ #else
+ 
+ static inline int register_rpmsg_device(struct rpmsg_device *dev)
+@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 	return 0;
+ }
+ 
++static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
 -- 
 2.17.1
 
