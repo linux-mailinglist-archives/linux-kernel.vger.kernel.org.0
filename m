@@ -2,135 +2,269 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C2D13BBE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 10:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2EF613BBFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 10:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbgAOJGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 04:06:32 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44825 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729151AbgAOJGc (ORCPT
+        id S1729342AbgAOJHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 04:07:53 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40462 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729021AbgAOJHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 04:06:32 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v201so12088178lfa.11;
-        Wed, 15 Jan 2020 01:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=6AldIE67S8Ag3ULVZL8qb57JXlXSeD4TiXfBseUC3zw=;
-        b=Z+5x34kwyxz0nFpBsx92Q0nKhwW1ETXv7xfMI+K8Nl3cSq41eC3BGxeHUTT6fCUCbQ
-         6jNd8CJezyj8xVX7NnV6rbbb5qet5llzNyBEASl+wWtjcXJ1J09i/BQjVRlin2Z8/WxX
-         px9rQzg8KVyI4utYsMUzfQ/PT7GSO5w3zbqIMPla5Sop3hYyW1LwLVEmkq2GqnCiPFki
-         gUEzi/QznEr68+sYeKDSh36ogDWMIknLloOkqKEmEa0WiBq7opTtaNNCsVP0XpIPgcNk
-         anCoMtEfCP5Y5KYcanfqi/4QQjuhTvTWAoZ8qjhGVnN3PQ9LdggIpuU/RdsIXBVr9W72
-         qIiw==
+        Wed, 15 Jan 2020 04:07:52 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i23so12086765lfo.7;
+        Wed, 15 Jan 2020 01:07:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=6AldIE67S8Ag3ULVZL8qb57JXlXSeD4TiXfBseUC3zw=;
-        b=ta5Npbz+SCxmk/AQyLRqzkckvmYKx1X/+diAgjyjqW2sWCG5+ehonNyUQ/NvpvWj0/
-         RO9eXz8qGZasC0sx4tOsF8lfuIOTi7bAdGgpDe4Zv/h1iCz+RLZVSe9FWw3BE7YOrT8x
-         BEHo/ABEAwEDbpngzrKBYYfHeTk3pGTW1Ce1tharVxWnih4hHhJXG+zKJ9IuMfk/HZI7
-         r45UlwCAL3W5MLovoVlqjNWsVpKA8sCqOLSXnBzKQ4s7TalYqnucccIlGYEdPIDrAjgA
-         Q7NYhPuqBrkSr5XF20+ZYvwcJv9oKf59RYVNiox3Zic+LC+Pc7Ym1vpszpsywc8Ff38w
-         ckDw==
-X-Gm-Message-State: APjAAAUWeLMMgU7m7b0reng6MIrL9vpxMO8po79p/yM8b4JuPaBLvQwF
-        p3jGePnV3iWE2aoSqVLY7x0=
-X-Google-Smtp-Source: APXvYqzEcr7K/+984fd8BDcQrV2NM9ZufnTiP/jJatQSOrRYDNtGwYh4PyRjMXSiJ/90sron88cdgQ==
-X-Received: by 2002:ac2:46c2:: with SMTP id p2mr4030621lfo.139.1579079189701;
-        Wed, 15 Jan 2020 01:06:29 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id f22sm8879991ljh.74.2020.01.15.01.06.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 15 Jan 2020 01:06:28 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Jayshri Pawar <jpawar@cadence.com>, linux-usb@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com,
-        rogerq@ti.com, linux-kernel@vger.kernel.org, jbergsagel@ti.com,
-        nsekhar@ti.com, nm@ti.com, peter.chen@nxp.com, kurahul@cadence.com,
-        pawell@cadence.com, sparmar@cadence.com, jpawar@cadence.com
-Subject: Re: [PATCH v2] usb: cdns3: Add streams support to cadence USB3 DRD driver
-In-Reply-To: <1578733666-354-1-git-send-email-jpawar@cadence.com>
-References: <1578733666-354-1-git-send-email-jpawar@cadence.com>
-Date:   Wed, 15 Jan 2020 11:07:30 +0200
-Message-ID: <87eew16qb1.fsf@kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ASxRl7Kg7FhdxZcxno1ZXnEAPSGS0vomnYmppeZou4E=;
+        b=noxjAYnj3+cBXG5wPQGEMEJB5wUHu1SjijId9+U4HsuGwTMs0t1Qz/kbl888L30/7J
+         niUY9q6OnW/tYFX5uBg+JNQO2TZUbqWd2HkKOhI+BMpnXGXRIJsNBsq4fc6VVhH4XhJp
+         6UaBQ521J15Hivb9tllOSFEEoRYdp6F0vyKk9K3BbzSa+WVxYMbFxQfwNn6c5Kw8cW0p
+         p1h1JC4bk+elom3aS/yzQUhIftmfspPGpsSiq215WELcg735nKDhNoYkbv1Ahxn2gD80
+         FMrR0fE3G63yA9NjOo11clJIrJRa+EhJ/hEwyrmzL1CLyRkd3+uveukenhWVAUKke9Qf
+         VQww==
+X-Gm-Message-State: APjAAAVfzRBm6lr0E6C5N5h/JQLZExHf4/fp+xYu1tTx8WQEGYCfZF9I
+        C5m0/rtOrykMNYrN9j8hvVO3rcCv
+X-Google-Smtp-Source: APXvYqzWUo8yHN7J1UbllCArTe2xWn8cUHCUtl5+6DMdnyp0WhP/NlWyKDItgNssHk/HaPGJywB52g==
+X-Received: by 2002:a19:7401:: with SMTP id v1mr4320306lfe.129.1579079269545;
+        Wed, 15 Jan 2020 01:07:49 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id y8sm8786193lji.56.2020.01.15.01.07.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 01:07:49 -0800 (PST)
+Date:   Wed, 15 Jan 2020 11:07:36 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [RESEND PATCH v9 07/12] clk: bd718x7: Support ROHM BD71828 clk block
+Message-ID: <778e09c62ac7e4f57625e62ed1e1752cfc001c31.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+BD71828GW is a single-chip power management IC for battery-powered portable
+devices. Add support for controlling BD71828 clk using bd718x7 driver.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+No changes since v8
+
+ drivers/clk/Kconfig              |  6 ++---
+ drivers/clk/clk-bd718x7.c        | 38 +++++++++++++++++++++++---------
+ include/linux/mfd/rohm-bd70528.h |  6 -----
+ include/linux/mfd/rohm-bd71828.h |  4 ----
+ include/linux/mfd/rohm-bd718x7.h |  6 -----
+ 5 files changed, 31 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 45653a0e6ecd..ac5981ce2477 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -305,10 +305,10 @@ config COMMON_CLK_MMP2
+ 	  Support for Marvell MMP2 and MMP3 SoC clocks
+ 
+ config COMMON_CLK_BD718XX
+-	tristate "Clock driver for ROHM BD718x7 PMIC"
+-	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
++	tristate "Clock driver for 32K clk gates on ROHM PMICs"
++	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528 || MFD_ROHM_BD71828
+ 	help
+-	  This driver supports ROHM BD71837, ROHM BD71847 and
++	  This driver supports ROHM BD71837, ROHM BD71847, ROHM BD71828 and
+ 	  ROHM BD70528 PMICs clock gates.
+ 
+ config COMMON_CLK_FIXED_MMIO
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 33699ee1bdf3..b52e8d6f660c 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -7,12 +7,25 @@
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+-#include <linux/mfd/rohm-bd718x7.h>
+-#include <linux/mfd/rohm-bd70528.h>
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/regmap.h>
+ 
++/* clk control registers */
++/* BD70528 */
++#define BD70528_REG_OUT32K	0x2c
++/* BD71828 */
++#define BD71828_REG_OUT32K	0x4B
++/* BD71837 and BD71847 */
++#define BD718XX_REG_OUT32K	0x2E
++
++/*
++ * BD71837, BD71847, BD70528 and BD71828 all use bit [0] to clk output control
++ */
++#define CLK_OUT_EN_MASK		BIT(0)
++
++
+ struct bd718xx_clk {
+ 	struct clk_hw hw;
+ 	u8 reg;
+@@ -21,10 +34,8 @@ struct bd718xx_clk {
+ 	struct rohm_regmap_dev *mfd;
+ };
+ 
+-static int bd71837_clk_set(struct clk_hw *hw, int status)
++static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
+ {
+-	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
+-
+ 	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
+ }
+ 
+@@ -33,14 +44,16 @@ static void bd71837_clk_disable(struct clk_hw *hw)
+ 	int rv;
+ 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
+ 
+-	rv = bd71837_clk_set(hw, 0);
++	rv = bd71837_clk_set(c, 0);
+ 	if (rv)
+ 		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
+ }
+ 
+ static int bd71837_clk_enable(struct clk_hw *hw)
+ {
+-	return bd71837_clk_set(hw, 1);
++	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
++
++	return bd71837_clk_set(c, 0xffffffff);
+ }
+ 
+ static int bd71837_clk_is_enabled(struct clk_hw *hw)
+@@ -92,11 +105,15 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	case ROHM_CHIP_TYPE_BD71837:
+ 	case ROHM_CHIP_TYPE_BD71847:
+ 		c->reg = BD718XX_REG_OUT32K;
+-		c->mask = BD718XX_OUT32K_EN;
++		c->mask = CLK_OUT_EN_MASK;
++		break;
++	case ROHM_CHIP_TYPE_BD71828:
++		c->reg = BD71828_REG_OUT32K;
++		c->mask = CLK_OUT_EN_MASK;
+ 		break;
+ 	case ROHM_CHIP_TYPE_BD70528:
+-		c->reg = BD70528_REG_CLK_OUT;
+-		c->mask = BD70528_CLK_OUT_EN_MASK;
++		c->reg = BD70528_REG_OUT32K;
++		c->mask = CLK_OUT_EN_MASK;
+ 		break;
+ 	default:
+ 		dev_err(&pdev->dev, "Unknown clk chip\n");
+@@ -126,6 +143,7 @@ static const struct platform_device_id bd718x7_clk_id[] = {
+ 	{ "bd71837-clk", ROHM_CHIP_TYPE_BD71837 },
+ 	{ "bd71847-clk", ROHM_CHIP_TYPE_BD71847 },
+ 	{ "bd70528-clk", ROHM_CHIP_TYPE_BD70528 },
++	{ "bd71828-clk", ROHM_CHIP_TYPE_BD71828 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, bd718x7_clk_id);
+diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
+index 1013e60c5b25..2ad2320d0a96 100644
+--- a/include/linux/mfd/rohm-bd70528.h
++++ b/include/linux/mfd/rohm-bd70528.h
+@@ -89,10 +89,6 @@ struct bd70528_data {
+ #define BD70528_REG_GPIO3_OUT	0x52
+ #define BD70528_REG_GPIO4_OUT	0x54
+ 
+-/* clk control */
+-
+-#define BD70528_REG_CLK_OUT	0x2c
+-
+ /* RTC */
+ 
+ #define BD70528_REG_RTC_COUNT_H		0x2d
+@@ -309,8 +305,6 @@ enum {
+ 
+ #define BD70528_GPIO_IN_STATE_BASE 1
+ 
+-#define BD70528_CLK_OUT_EN_MASK 0x1
+-
+ /* RTC masks to mask out reserved bits */
+ 
+ #define BD70528_MASK_RTC_SEC		0x7f
+diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
+index eb0557eb5314..d013e03f742d 100644
+--- a/include/linux/mfd/rohm-bd71828.h
++++ b/include/linux/mfd/rohm-bd71828.h
+@@ -183,9 +183,6 @@ enum {
+ #define BD71828_REG_CHG_STATE		0x65
+ #define BD71828_REG_CHG_FULL		0xd2
+ 
+-/* CLK */
+-#define BD71828_REG_OUT32K		0x4B
+-
+ /* LEDs */
+ #define BD71828_REG_LED_CTRL		0x4A
+ #define BD71828_MASK_LED_AMBER		0x80
+@@ -417,7 +414,6 @@ enum {
+ #define BD71828_INT_RTC1_MASK				0x2
+ #define BD71828_INT_RTC2_MASK				0x4
+ 
+-#define BD71828_OUT32K_EN				0x1
+ #define BD71828_OUT_TYPE_MASK				0x2
+ #define BD71828_OUT_TYPE_OPEN_DRAIN			0x0
+ #define BD71828_OUT_TYPE_CMOS				0x2
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index 7f2dbde402a1..bee2474a8f9f 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -191,12 +191,6 @@ enum {
+ #define IRQ_ON_REQ		0x02
+ #define IRQ_STBY_REQ		0x01
+ 
+-/* BD718XX_REG_OUT32K bits */
+-#define BD718XX_OUT32K_EN	0x01
+-
+-/* BD7183XX gated clock rate */
+-#define BD718XX_CLK_RATE 32768
+-
+ /* ROHM BD718XX irqs */
+ enum {
+ 	BD718XX_INT_STBY_REQ,
+-- 
+2.21.0
 
 
-Hi,
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-Jayshri Pawar <jpawar@cadence.com> writes:
-> This patch includes streams implementation changes.
-> The current changes has been validated on FPGA platform.
->
-> Enabled streams related interrupts only for streams capable endpoints.
-> Processed  PRIME and IOT interrupts related to streams capable endpoints.
-> Based on PRIME interrupt prime_flag is set and transfer is armed
-> otherwise just adding request to the deferred request queue.
-> For streams capable endpoints preparing TD with correct stream ID.
->
-> TDL calculation:
-> Updated tdl calculation based on controller versions.
-> 1. For controller version DEV_VER_V2 :We have enabled USB_CONF2_EN_TDL_TRB
->    bit in usb_conf2 register in DMULT configuration.
->    This enables TDL calculation based on TRB, hence setting TDL in TRB.
-> 2. For controller Version < DEV_VER_V2 : Writing TDL and STDL in ep_cmd
->    register
-> 3. For controller version > DEV_VER_V2 : Writing TDL in ep_tdl register.
-
-> Writing ERDY with correct Stream ID to ep_cmd register.
-> Added stream id related information to trace logs.
->
-> Signed-off-by: Jayshri Pawar <jpawar@cadence.com>
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-> Signed-off-by: Rahul Kumar <kurahul@cadence.com>
-> ---
->
-> Version History:
-> v2: Patch generated on top of linux-next.git master branch
->
->  drivers/usb/cdns3/gadget.c | 533 +++++++++++++++++++++++++++++++++----
->  drivers/usb/cdns3/gadget.h |  26 +-
->  drivers/usb/cdns3/trace.h  |  93 ++++++-
->  3 files changed, 596 insertions(+), 56 deletions(-)
-
-This patch is enormous. Are you sure there's no way to break it down
-into smaller pieces?
-
-(Hint: there is)
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4e1lIACgkQzL64meEa
-mQYVOxAAxyx6gyof7t4YhI8gU6cxEASdvVcAhH1XX/0RYvzuGiWC1YrfS2c/rjMh
-ieX6K+QHUmi46cL8T4HosQoHgd6X8cRQKMk8y2ovvgcEi7tXj7uMMMA4UJ9eso0x
-iv1qxVX+nPZ0S4Kde9rYEhwArOYj98a4vrevT1wHbjJX7Iz0HV5U+m+qV2mLUukJ
-DlvRXmh/xJB/6O69SmW0iZe97+5EWC3nJoicKLvE8X4wPHQKbok1rGA8/K4wgjr9
-jxOmOvdvGbGQWT46Dha2OYtfhzOCd9wr00eFgtSmguIt9ZHGtMT6r4z32uKadI6b
-g4bgvrY6b+IfU23eLu5UfG+/YxeZ5mZOH0j2lG9abG27p4xb43P3p9ljVMeeOFm9
-JccVxY1IxHaYx0wgn+nyugow2YW2l+Iu9Mw6XyEcjdd2xrUMPt1+Os4USpvkOWFr
-eJPO711lQtF9SWuTqqrtEi6QMuqpXKqOgPJROHYru8sOEmMQWmD9DcrTNca1WOA0
-ks1zfCn+SfN8wxSQUkF/SEHD8XQTYAljuIpQgesp/L+Ld7xbCWM/CLgl7GcIjLQ9
-TDIbYpktx4hiLKVcfmIVrMknxe2A46nRXlYIitPdfYQeWbLFQH4tNS2TSr1FS9iQ
-Aa+09zKLoxZQ0jXwWggoXqC/60cjm4kjzDrXJ4mzlOGV2mhgJlY=
-=BZ2r
------END PGP SIGNATURE-----
---=-=-=--
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
