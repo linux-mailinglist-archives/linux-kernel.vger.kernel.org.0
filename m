@@ -2,80 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5EF913CB49
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF42113CB56
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:51:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgAORpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 12:45:55 -0500
-Received: from sauhun.de ([88.99.104.3]:39068 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbgAORpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 12:45:55 -0500
-Received: from localhost (p54B33239.dip0.t-ipconnect.de [84.179.50.57])
-        by pokefinder.org (Postfix) with ESMTPSA id C51E02C0742;
-        Wed, 15 Jan 2020 18:45:53 +0100 (CET)
-Date:   Wed, 15 Jan 2020 18:45:53 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jean Delvare <jdelvare@suse.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Subject: Re: [PATCH v2 1/4] i2c: pmcmsp: Use proper printk format for
- resource_size_t
-Message-ID: <20200115174553.GI1239@ninjato>
-References: <1578992765-1418-1-git-send-email-krzk@kernel.org>
+        id S1729045AbgAORs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 12:48:56 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49894 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729012AbgAORsz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 12:48:55 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FHmKXS053853;
+        Wed, 15 Jan 2020 17:48:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2019-08-05; bh=YbWh9/KT2LGMmOyRVkj1TC9eOP8jW/x+M/Q9ZVfRcSs=;
+ b=it64FJ854+XG7LbFSU0DKjYvxWgHHeDmSUJBpOyRfNgPJ4pf7crNKOjcBek0ht/izJWK
+ HcCw0TN5WcPt6RqlG2GFiMiUk/OdoNwh7gqaHw2fFE1SNjTR77jrEdShDtDW6Q3KOEmM
+ UCweRx/LN7But1MoV+eCZdPw78SMmotzz8+sCgeaRMzNPFk+BxP69xn3z5tH2AqTnm5V
+ 2soYlORAmIWnwMpgMBbpfh/qnEOQf5oEgyw89k05Vg23EeyLocN4hbgeCEZIQlO1fbIN
+ fSODo/tD9JmjWEPmwniL7LJamcHIkjipq2R9U9cYXx3/Gh94zgqWe5PbNn1YaxJNeBtb KA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2xf73twkr4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jan 2020 17:48:40 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FHd2Oh019577;
+        Wed, 15 Jan 2020 17:46:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2xhy21t33w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jan 2020 17:46:39 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00FHkbhc016060;
+        Wed, 15 Jan 2020 17:46:37 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Jan 2020 09:46:37 -0800
+Date:   Wed, 15 Jan 2020 20:46:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>,
+        syzbot <syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>, andreyknvl@google.com,
+        syzkaller-bugs@googlegroups.com
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] HID: hiddev: Fix race in in hiddev_disconnect()
+Message-ID: <20200115174628.zxpxbpa6bwspjajg@kili.mountain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="16qp2B0xu0fRvRD7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1578992765-1418-1-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <Pine.LNX.4.44L0.2001141100290.1593-100000@iolanthe.rowland.org>
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=978
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001150135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1034
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001150136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Syzbot reports that "hiddev" is used after it's free in hiddev_disconnect().
+The hiddev_disconnect() function sets "hiddev->exist = 0;" so
+hiddev_release() can free it as soon as we drop the "existancelock"
+lock.  This patch moves the mutex_unlock(&hiddev->existancelock) until
+after we have finished using it.
 
---16qp2B0xu0fRvRD7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reported-by: syzbot+784ccb935f9900cc7c9e@syzkaller.appspotmail.com
+Fixes: 7f77897ef2b6 ("HID: hiddev: fix potential use-after-free")
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/hid/usbhid/hiddev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
+index a970b809d778..4140dea693e9 100644
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -932,9 +932,9 @@ void hiddev_disconnect(struct hid_device *hid)
+ 	hiddev->exist = 0;
+ 
+ 	if (hiddev->open) {
+-		mutex_unlock(&hiddev->existancelock);
+ 		hid_hw_close(hiddev->hid);
+ 		wake_up_interruptible(&hiddev->wait);
++		mutex_unlock(&hiddev->existancelock);
+ 	} else {
+ 		mutex_unlock(&hiddev->existancelock);
+ 		kfree(hiddev);
+-- 
+2.11.0
 
-> +			"Unable to get memory/io address region %pap\n",
-> +			&(res->start));
-
-My first thought was "parens not needed"; not because I like being picky
-but because it doesn't look more readable to me.
-
-checkpatch agrees:
-
-CHECK: Unnecessary parentheses around res->start
-#30: FILE: drivers/i2c/busses/i2c-pmcmsp.c:278:
-+			&(res->start));
-
-
---16qp2B0xu0fRvRD7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4fT9EACgkQFA3kzBSg
-Kbb91BAAjPtROcvdlQNblLFk8PxjameI1NyWeapD6DkN0jImw+pfJ5nJFMnOu+Wh
-F6XntHHABtG0TIZrWZcaapSG2HtJBxJq1+1H00YyQMtlUqKnBsqZCcJ0qavL1Of8
-4QoH/tLRxc263i7eSKo8Q/v7NJdrfzf6SXDGj0d2uyOgHXkiBcbiw7YOeIruvgF2
-nPCAe65wsLvlS2/oVyEGjSuguyiFvkhz5y75LikWQ6KPA7mOTYYlsDFldEI0Jr0n
-Cjcp26950LR3uH6dkPnKJncyvgo+bqTCXty2VQZriONaIM2BgsziesYD6lZchTvT
-0OyNUxrFbM6ajIuwtLD5HMiQ7GmvfHRABUscFjhWutXrjyBTmLKiWlDHMsVLnYwb
-z07XxGhjmufTlBSPI4rXIZtyMv81+aQGagjZXWDwefUnsKQjilb7DFo1f5fbnsxC
-sKO/C6Pi4scgwXvUCBgok0xczp1jVE2NhVLgATIvSiGqzTaTSt0xzlIZd06bStO+
-uUBiyilC5TPyGU9npLRLvcaDg2LROH9UrTrb+vZX4qz5EOs25uMKb55F9oLtC5cc
-STUdu4uesKZgQc6xQEZ5ZoiuWiXTr/HZ6W8sBeaIO74SLgo+g4/6mtyaRBkz53u3
-vibl9z27lUGZskp0ClfuU5AD1mH0GnRTizBlJmnZIBTmmzKM5bQ=
-=cFSU
------END PGP SIGNATURE-----
-
---16qp2B0xu0fRvRD7--
