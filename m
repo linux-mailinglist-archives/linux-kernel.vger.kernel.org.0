@@ -2,16 +2,16 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D79613C4F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:09:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85CB613C4DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbgAOOJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:09:01 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:29750 "EHLO
+        id S1729213AbgAOODn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:03:43 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:17085 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726483AbgAOOJB (ORCPT
+        with ESMTP id S1729603AbgAOODm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:09:01 -0500
+        Wed, 15 Jan 2020 09:03:42 -0500
 X-UUID: d22f567e67b541a9b46df1af894cc089-20200115
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
         h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=L9+U+Oq75iPogjCd7JRwn7veHL8Rh+KJNtAjsYXDB8I=;
