@@ -2,91 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D117313C441
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC1D13C465
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbgAON5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 08:57:33 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:20812 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729360AbgAON5b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:57:31 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1729770AbgAON7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 08:59:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729256AbgAON67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 08:58:59 -0500
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 47yTRD1PgRzKmfm;
-        Wed, 15 Jan 2020 14:57:28 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id kTcyfk68cgcH; Wed, 15 Jan 2020 14:57:21 +0100 (CET)
-Date:   Thu, 16 Jan 2020 00:57:04 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200115135704.eh4atya6fwnikyll@yavin>
-References: <20200101005446.GH4203@ZenIV.linux.org.uk>
- <20200101030815.GA17593@ZenIV.linux.org.uk>
- <20200101144407.ugjwzk7zxrucaa6a@yavin.dot.cyphar.com>
- <20200101234009.GB8904@ZenIV.linux.org.uk>
- <20200102035920.dsycgxnb6ba2jhz2@yavin.dot.cyphar.com>
- <20200103014901.GC8904@ZenIV.linux.org.uk>
- <20200108031314.GE8904@ZenIV.linux.org.uk>
- <CAHk-=wgQ3yOBuK8mxpnntD8cfX-+10ba81f86BYg8MhvwpvOMg@mail.gmail.com>
- <20200110210719.ktg3l2kwjrdutlh6@yavin>
- <20200114045733.GW8904@ZenIV.linux.org.uk>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EF70222C3;
+        Wed, 15 Jan 2020 13:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579096738;
+        bh=/G/weRCXbYPuSwrN2fOcmc9IMAtSW0V+wjMZcxSDxn8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ytuEmCKm0MYbr4DkGoe+3o7uNRCJlGbBzyN9FYICsCn4CppE/loxARmvmoz3h42Zd
+         eH2gDh7+8+YPfaMiBYxAqP1E00+AMdDHCoZK7X6psiKuA0FLaczA+NAMD1rlE7dpjT
+         O23E6godf3BYjzVUVq+n0cB/xaE4WRfxm0dcYl64=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1irjCC-0000PM-CF; Wed, 15 Jan 2020 13:58:56 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3nfjay3o6o7sfgzp"
-Content-Disposition: inline
-In-Reply-To: <20200114045733.GW8904@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 15 Jan 2020 13:58:56 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     linmiaohe <linmiaohe@huawei.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        eric.auger@redhat.com, gregkh@linuxfoundation.org, will@kernel.org,
+        andre.przywara@arm.com, tglx@linutronix.de,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: get rid of var ret and out jump label in
+ kvm_arch_vcpu_ioctl_set_guest_debug()
+In-Reply-To: <ab61de3a04a74f74866683b062d0bab2@huawei.com>
+References: <ab61de3a04a74f74866683b062d0bab2@huawei.com>
+Message-ID: <728a5ea123bf6f55b1653e4ccac76175@kernel.org>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/1.3.8
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: linmiaohe@huawei.com, pbonzini@redhat.com, rkrcmar@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, christoffer.dall@arm.com, catalin.marinas@arm.com, eric.auger@redhat.com, gregkh@linuxfoundation.org, will@kernel.org, andre.przywara@arm.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2020-01-14 02:20, linmiaohe wrote:
+> Friendly ping :)
 
---3nfjay3o6o7sfgzp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Friendly reply:
 
-On 2020-01-14, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> 1) do you see any problems on your testcases with the current #fixes?
-> That's commit 7a955b7363b8 as branch tip.
+>> From: Miaohe Lin <linmiaohe@huawei.com>
+>> 
+>> The var ret and out jump label is not really needed. Clean them up.
+>> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+>> ---
+>>  arch/arm64/kvm/guest.c | 11 +++--------
+>>  1 file changed, 3 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c index 
+>> 2fff06114a8f..3b836c91609e 100644
+>> --- a/arch/arm64/kvm/guest.c
+>> +++ b/arch/arm64/kvm/guest.c
+>> @@ -834,14 +834,10 @@ int kvm_arch_vcpu_ioctl_translate(struct 
+>> kvm_vcpu *vcpu,  int kvm_arch_vcpu_ioctl_set_guest_debug(struct 
+>> kvm_vcpu *vcpu,
+>>  					struct kvm_guest_debug *dbg)
+>>  {
+>> -	int ret = 0;
+>> -
+>>  	trace_kvm_set_guest_debug(vcpu, dbg->control);
+>> 
+>> -	if (dbg->control & ~KVM_GUESTDBG_VALID_MASK) {
+>> -		ret = -EINVAL;
+>> -		goto out;
+>> -	}
+>> +	if (dbg->control & ~KVM_GUESTDBG_VALID_MASK)
+>> +		return -EINVAL;
+>> 
+>>  	if (dbg->control & KVM_GUESTDBG_ENABLE) {
+>>  		vcpu->guest_debug = dbg->control;
+>> @@ -856,8 +852,7 @@ int kvm_arch_vcpu_ioctl_set_guest_debug(struct 
+>> kvm_vcpu *vcpu,
+>>  		vcpu->guest_debug = 0;
+>>  	}
+>> 
+>> -out:
+>> -	return ret;
+>> +	return 0;
 
-I just finished testing the few cases I reported earlier and they both
-appear to be fixed with the current #work.namei branch. And I don't have
-any troubles booting whatsoever.
+I don't think there is anything wrong with the existing code.
+It may not be to your own taste, but is in keeping with a lot
+of the KVM code.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+If you were making changes to this code, I wouldn't object.
+But on its own, this is just churn.
 
---3nfjay3o6o7sfgzp
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXh8aLQAKCRCdlLljIbnQ
-El7BAP4mVcB8EHkVpb1BiYmM6aGj6dmCburCpsIPyRObtfW53wD9GQvyGsKlZef1
-tVRXIsFXbnwRaq5E9oXLf8yZ1F1nuAc=
-=l76M
------END PGP SIGNATURE-----
-
---3nfjay3o6o7sfgzp--
+         M.
+-- 
+Jazz is not dead. It just smells funny...
