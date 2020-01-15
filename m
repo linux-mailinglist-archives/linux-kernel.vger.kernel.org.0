@@ -2,107 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1166A13CFC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 23:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20BAF13CFD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 23:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgAOWIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 17:08:04 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:47053 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729016AbgAOWIE (ORCPT
+        id S1730216AbgAOWJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 17:09:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38094 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729203AbgAOWJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 17:08:04 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z124so8824095pgb.13;
-        Wed, 15 Jan 2020 14:08:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SJWP0dc8tNu8wLgOp289sHabmbIqUoct2rH5jSqMT58=;
-        b=DetHZawldPHHvcYPN8OOm8v4iwjr+CfbmF/SgvuhbeY6yzB2RxshNG003RkI5vMzRL
-         FGG2xM1d+UdEEBP4xmArKkAQ337ITqERyULuI8ReUSWl11J/81t5WrMX0KWyk3Cx0xA9
-         6TCnuKGuBSIUA+ONKYcLwf0LdE4Mr/wl6a82HzWbk+1YUrx5LN48Fmh9K2357BfAkqit
-         2SsIIwsVuE1rI6ipVLPNlgITV2SN5Goksr/HB2txOcNa5C3gEBFbq9NAwsS6Itvyc9Ip
-         R33QPOyMRe4QFugRH93Di7yJtHz6Xvfc76kCDNGX1mFuEhFl3+YUysTgwL8TRbEL6LYV
-         yotg==
+        Wed, 15 Jan 2020 17:09:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579126190;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6gHyBZ8+XeG4963OEjkw03c1ZgmrL31FuTlHZYv52rM=;
+        b=HJE2D3ZQRZBpK/IBIFWjmkHodBWv+TtKxgAkDWQGKWG7k2870qF9BRtCt3VnGswss1+V6/
+        Jxj/6SWNXG5sHeAZDqbxlMghOyECK3gDUHOMjnEdzl6eU/DpGvY9kw7Sf8ofoq4Z5ARh4V
+        xc39oBlTpFqJZz5cRXrvxlxcXBj2BDE=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-255-HlcYD_VRNtmQrQu97Ts63A-1; Wed, 15 Jan 2020 17:09:48 -0500
+X-MC-Unique: HlcYD_VRNtmQrQu97Ts63A-1
+Received: by mail-lj1-f199.google.com with SMTP id z17so4454464ljz.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 14:09:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SJWP0dc8tNu8wLgOp289sHabmbIqUoct2rH5jSqMT58=;
-        b=ovW0PsjfLBAo4ayxXArmBROBzM8e2SZ4V94SjEbOGjuAUmRtBZk5/DrSp0LHln8CrE
-         UT4knEVwuXXyG9w+XV9MTLq32zavARP7nmBrPFJ2CXXp8ANXEFPHZSUILSbcq0lKuOch
-         APCOMnyq933VGdDDUy09L5b1oDX5riwVEtENXfuKmenqQwpe7BXjsZ+f7Jt5MTGxCYOH
-         QMW0lT4EammXZpjeevOJ2UoOd+Le8QTzr+EvYfwDn/olzUOrxG2qeGet7wjg49CAi4nB
-         OEFnxTo8SZsq6mL2SZ4E7hWtgDr9oHCD39UdrqiUkTDLBuN6Biqgnx7gJCWqwSWNektr
-         beEw==
-X-Gm-Message-State: APjAAAUvr4vIPn+v1iBZZpjS5SV2mHotrGYK+7OejLU2WmIgSM5yBirX
-        ZdLS9DsBkD/kOAx/LN5x1wI=
-X-Google-Smtp-Source: APXvYqyWsg9nZ7iS/q53dd4ttLoSRT/XWe5AeXPcI5W4HjRg03CpMwcnWHrKfBz6kd+WyBp4ymUhhg==
-X-Received: by 2002:a63:2308:: with SMTP id j8mr33867384pgj.86.1579126083966;
-        Wed, 15 Jan 2020 14:08:03 -0800 (PST)
-Received: from ?IPv6:2001:4898:d8:28:acd4:5c73:b928:d080? ([2001:4898:80e8:a:2ce2:5c73:b928:d080])
-        by smtp.gmail.com with ESMTPSA id v10sm21902345pgk.24.2020.01.15.14.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jan 2020 14:08:03 -0800 (PST)
-Subject: Re: [PATCH v9 2/2] EDAC: add EDAC driver for DMC520
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     sashal@kernel.org, James Morse <james.morse@arm.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        hangl@microsoft.com, Lei Wang <lewan@microsoft.com>,
-        shji@microsoft.com, ruizhao@microsoft.com,
-        Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>, ray.jui@broadcom.com,
-        wangglei@gmail.com
-References: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
- <20200115213848.GO20975@zn.tnic>
- <3f1f28fd-2abf-2e1c-ef46-1992058b7a1a@gmail.com>
- <20200115220436.GP20975@zn.tnic>
-From:   Shiping Ji <shiping.linux@gmail.com>
-Message-ID: <6a27f387-2c52-6587-1b21-c2e52c1b2436@gmail.com>
-Date:   Wed, 15 Jan 2020 14:08:02 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=6gHyBZ8+XeG4963OEjkw03c1ZgmrL31FuTlHZYv52rM=;
+        b=bdREPIq00xGpucf70Do7Ntww9mHnLZSWtOgF7palpAr3/V06Figh97ZgnO05Au4p8s
+         i4QrbsVOHJH1+oUmthkxfK5vJPO7FBOhiViX1XRINWfMu4JLuL2xQCyfXBTisVbAIjTu
+         lDH0R8LcML9d+ErUkyR9M5CCwJLtfVYeVkHCuMNGYINUXjEZL9fbrajlAz2tLl4S1wnv
+         8Kkg+XE7DgGtAnk1kwt2l34QE3+FHkYfIun2rrScMpDB1N29fPyWkLydCPIFMBEBVQJj
+         ihktsk9d284aHucl6/HHCfB3fQTIJy2IAG7zpzROwaeuSD3sbXBJ+kzDbbcYpMoKbhFI
+         VVaw==
+X-Gm-Message-State: APjAAAX7ZiOYrOq7272DcWE788/L7A4Ukvdhbk27rfk86phh4YxX/Jl7
+        L8LvZpkVmHviZESTQtmWiZC3hD+q867m3YlQQScKvmt1SlUHrLy3CKrW0+vHPRNTww0+uPp+vqd
+        TD87LZ510skz0brt7sS8mX/uG
+X-Received: by 2002:a2e:8804:: with SMTP id x4mr309078ljh.187.1579126186246;
+        Wed, 15 Jan 2020 14:09:46 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyl9usYNPHfWl85TIz6drR9BBM82kZH5HkqsoxTXL5G4+0RjNxZ3iAMQC2ii0NABa1NGrcMXg==
+X-Received: by 2002:a2e:8804:: with SMTP id x4mr309055ljh.187.1579126186024;
+        Wed, 15 Jan 2020 14:09:46 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id r20sm9450459lfi.91.2020.01.15.14.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 14:09:45 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 970D01804D6; Wed, 15 Jan 2020 23:09:44 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH bpf-next v2 00/10] tools: Use consistent libbpf include paths everywhere
+In-Reply-To: <20200115211900.h44pvhe57szzzymc@ast-mbp.dhcp.thefacebook.com>
+References: <157909756858.1192265.6657542187065456112.stgit@toke.dk> <20200115211900.h44pvhe57szzzymc@ast-mbp.dhcp.thefacebook.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Wed, 15 Jan 2020 23:09:44 +0100
+Message-ID: <87r200tlqv.fsf@toke.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200115220436.GP20975@zn.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/2020 2:05 PM, Borislav Petkov wrote:
-> On Wed, Jan 15, 2020 at 01:49:56PM -0800, Shiping Ji wrote:
->> Lei will be the author of this driver in the git history. I could ask
->> her to send the patch again if that's the correct way to go. Please
->> confirm.
-> 
-> No need - you only have to send the patch with her From: at the
-> beginning. Btw, you make her an author in git by doing:
-> 
-> git commit --amend --author="Lei Wang <leiwang_git@outlook.com>"
-> 
-> But before you send again, let me take a look at the rest of the patch
-> first, tomorrow most likely.
-> 
-> Thx.
-> 
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Got it, I will have the followings next:
+> On Wed, Jan 15, 2020 at 03:12:48PM +0100, Toke H=C3=B8iland-J=C3=B8rgense=
+n wrote:
+>> The recent commit 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h=
+ are
+>> taken from selftests dir") broke compilation against libbpf if it is ins=
+talled
+>> on the system, and $INCLUDEDIR/bpf is not in the include path.
+>>=20
+>> Since having the bpf/ subdir of $INCLUDEDIR in the include path has neve=
+r been a
+>> requirement for building against libbpf before, this needs to be fixed. =
+One
+>> option is to just revert the offending commit and figure out a different=
+ way to
+>> achieve what it aims for. However, this series takes a different approac=
+h:
+>> Changing all in-tree users of libbpf to consistently use a bpf/ prefix in
+>> #include directives for header files from libbpf.
+>
+> I don't think such approach will work in all cases.
+> Consider the user installing libbpf headers into /home/somebody/include/b=
+pf/,
+> passing that path to -I and trying to build bpf progs
+> that do #include "bpf_helpers.h"...
+> In the current shape of libbpf everything will compile fine,
+> but after patch 8 of this series the compiler will not find bpf/bpf_helpe=
+r_defs.h.
+> So I think we have no choice, but to revert that part of Andrii's patch.
+> Note that doing #include "" for additional library headers is a common pr=
+actice.
+> There was nothing wrong about #include "bpf_helper_defs.h" in bpf_helpers=
+.h.
 
-From: Lei Wang <leiwang_git@outlook.com>
+OK, I'll take another look at that bit and see if I can get it to work
+with #include "bpf_helper_defs.h" and still function with the read-only
+tree (and avoid stale headers).
 
-<commit message>
+-Toke
 
-Signed-off-by: Lei Wang <leiwang_git@outlook.com>
-Signed-off-by: me
-
---
-Best regards,
-Shiping Ji
