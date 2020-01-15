@@ -2,111 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 053F013C445
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EE8B13C43D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 14:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbgAON4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 08:56:39 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38480 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729604AbgAON4g (ORCPT
+        id S1729320AbgAON53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 08:57:29 -0500
+Received: from zimbra2.kalray.eu ([92.103.151.219]:58188 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730070AbgAON4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 08:56:36 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y17so15849471wrh.5;
-        Wed, 15 Jan 2020 05:56:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UVc+vS25sl77DRieZ7fqDsmqFprVJrI4fDKBKV1QbSs=;
-        b=LRpnvGdzzWtUwKgyeGcGGN7KeOpl9e8FWnHjZMCHy6xvS2RmAld9JGtTRK5wpmr4Wr
-         f+68izFS//Rwjzy2ijVLI7F7bdxenZkGhvqP2Pe4MqZ5x0t4yCahrso4U28zqIMkRHMr
-         giavbBMV6yGFzf1LwFPQodHd5TaIXwJXkXp2iK6EZCjSETdMAyJLSqtfj+r97j8if8QQ
-         04zYn5zghbhZQ9g+Wu2QGrm63urnz2NEK8ylxGcqCUXkT3O/lIP+3clkdHSv28fyrZJp
-         kZS9E5BlRlN2sbrVS0vfRTMpLfhaTbICuYtHl4FjQ0oYUeHnAPac/0t+6ohMCIqy3LRR
-         wFlA==
-X-Gm-Message-State: APjAAAVASCXfzYEd7FJv3jD/qPlXT8DRKTyNg63woSkDC9kGsI6iAr7O
-        GAMMPu0gBJCewGcRHZZDX3w=
-X-Google-Smtp-Source: APXvYqyXYe4s0+Dcy7oHJR4GBgwa+hNOEdtdbuIIeeHe/ERVxkCyU9BEoy570XvbPj01KdjYPiKSMQ==
-X-Received: by 2002:adf:df90:: with SMTP id z16mr33198153wrl.273.1579096594676;
-        Wed, 15 Jan 2020 05:56:34 -0800 (PST)
-Received: from debian (41.142.6.51.dyn.plus.net. [51.6.142.41])
-        by smtp.gmail.com with ESMTPSA id r6sm25367610wrq.92.2020.01.15.05.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 05:56:33 -0800 (PST)
-Date:   Wed, 15 Jan 2020 13:56:31 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     madhuparnabhowmik04@gmail.com
-Cc:     wei.liu@kernel.org, paul@xen.org, davem@davemloft.net,
-        xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paulmck@kernel.org,
-        joel@joelfernandes.org, frextrite@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] net: xen-netbank: hash.c: Use built-in RCU list checking
-Message-ID: <20200115135631.edr2nrfkycppxcku@debian>
-References: <20200115124129.5684-1-madhuparnabhowmik04@gmail.com>
+        Wed, 15 Jan 2020 08:56:43 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 4721727E02D1;
+        Wed, 15 Jan 2020 14:56:41 +0100 (CET)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id bGMhighg2Kt6; Wed, 15 Jan 2020 14:56:40 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id CAD4327E0DA9;
+        Wed, 15 Jan 2020 14:56:40 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu CAD4327E0DA9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
+        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1579096600;
+        bh=Mkb49ll5lGBHay5dsOaWUInFYwrlRg3Wju6sxzltjj8=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=k7pT4RPqP6XTa3N+R776DYMNrg/Fug9Y/Nb9pBwHQZXDKloWwzI8VIxakgGLH3uCh
+         AGbfkyhlnC/Hna5ndxsd6imjSCJuzhexN6V8wPR4PbLtAi0LF9n0Q8favxZKRRDY+t
+         vA1BKyx/dsskazJLLAIoHdalzxXsS81sniAWS3xw=
+X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3BR-Mp-NM8_W; Wed, 15 Jan 2020 14:56:40 +0100 (CET)
+Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id B628627E02D1;
+        Wed, 15 Jan 2020 14:56:40 +0100 (CET)
+Date:   Wed, 15 Jan 2020 14:56:40 +0100 (CET)
+From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1473755958.12366773.1579096600598.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <20200115084601-mutt-send-email-mst@kernel.org>
+References: <20200115120535.17454-1-cleger@kalray.eu> <20200115084601-mutt-send-email-mst@kernel.org>
+Subject: Re: [PATCH] virtio_ring: Use workqueue to execute virtqueue
+ callback
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200115124129.5684-1-madhuparnabhowmik04@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.40.202]
+X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - GC75 (Linux)/8.8.12_GA_3794)
+Thread-Topic: virtio_ring: Use workqueue to execute virtqueue callback
+Thread-Index: S1fYa/cATg3viLmb/fEor9kiAMTFkQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the patch.
 
-There is a typo in the subject line. It should say xen-netback, not
-xen-netbank.
 
-On Wed, Jan 15, 2020 at 06:11:28PM +0530, madhuparnabhowmik04@gmail.com wrote:
-> From: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
+----- On 15 Jan, 2020, at 14:49, Michael S. Tsirkin mst@redhat.com wrote:
+
+> On Wed, Jan 15, 2020 at 01:05:35PM +0100, Clement Leger wrote:
+>> Currently, in vring_interrupt, the vq callbacks are called directly.
+>> However, these callbacks are not meant to be executed in IRQ context.
+>> They do not return any irq_return_t value and some of them can do
+>> locking (rpmsg_recv_done -> rpmsg_recv_single -> mutex_lock).
 > 
-> list_for_each_entry_rcu has built-in RCU and lock checking.
-> Pass cond argument to list_for_each_entry_rcu.
+> That's a bug in rpmsg. Pls fix there.
+
+Ok.
+
 > 
-> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>
-> ---
->  drivers/net/xen-netback/hash.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>> When compiled with DEBUG_ATOMIC_SLEEP, the kernel will spit out warnings
+>> when such case shappen.
+>> 
+>> In order to allow calling these callbacks safely (without sleeping in
+>> IRQ context), execute them in a workqueue if needed.
+>> 
+>> Signed-off-by: Clement Leger <cleger@kalray.eu>
 > 
-> diff --git a/drivers/net/xen-netback/hash.c b/drivers/net/xen-netback/hash.c
-> index 10d580c3dea3..30709bc9d170 100644
-> --- a/drivers/net/xen-netback/hash.c
-> +++ b/drivers/net/xen-netback/hash.c
-> @@ -51,7 +51,8 @@ static void xenvif_add_hash(struct xenvif *vif, const u8 *tag,
->  
->  	found = false;
->  	oldest = NULL;
-> -	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link) {
-> +	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link,
-> +							lockdep_is_held(&vif->hash.cache.lock)) {
+> If applied this would slow data path handling of VQ events
+> significantly. Teaching callbacks to return irqreturn_t
+> might be a good idea, though it's not an insignificant
+> amount of work.
 
-There are probably too many tabs here. Indentation looks wrong.
+Yes, I was expecting that it would slow down VQ event handling.
+I was not completely sure of the criticality of that.
 
-The surrounding code makes it pretty clear that the lock is already held
-by the time list_for_each_entry_rcu is called, yet the checking involved
-in lockdep_is_held is not trivial, so I'm afraid I don't consider this a
-strict improvement over the existing code.
+Thanks for your answer.
 
-If there is something I misunderstood, let me know.
-
-Wei.
-
->  		/* Make sure we don't add duplicate entries */
->  		if (entry->len == len &&
->  		    memcmp(entry->tag, tag, len) == 0)
-> @@ -102,7 +103,8 @@ static void xenvif_flush_hash(struct xenvif *vif)
->  
->  	spin_lock_irqsave(&vif->hash.cache.lock, flags);
->  
-> -	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link) {
-> +	list_for_each_entry_rcu(entry, &vif->hash.cache.list, link,
-> +							lockdep_is_held(&vif->hash.cache.lock)) {
->  		list_del_rcu(&entry->link);
->  		vif->hash.cache.count--;
->  		kfree_rcu(entry, rcu);
-> -- 
-> 2.17.1
 > 
+> 
+>> ---
+>>  drivers/virtio/virtio_ring.c | 20 ++++++++++++++++++--
+>>  1 file changed, 18 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>> index 867c7ebd3f10..0e4d0e5ca227 100644
+>> --- a/drivers/virtio/virtio_ring.c
+>> +++ b/drivers/virtio/virtio_ring.c
+>> @@ -183,6 +183,9 @@ struct vring_virtqueue {
+>>  	/* DMA, allocation, and size information */
+>>  	bool we_own_ring;
+>>  
+>> +	/* Work struct for vq callback handling */
+>> +	struct work_struct work;
+>> +
+>>  #ifdef DEBUG
+>>  	/* They're supposed to lock for us. */
+>>  	unsigned int in_use;
+>> @@ -2029,6 +2032,16 @@ static inline bool more_used(const struct vring_virtqueue
+>> *vq)
+>>  	return vq->packed_ring ? more_used_packed(vq) : more_used_split(vq);
+>>  }
+>>  
+>> +static void vring_work_handler(struct work_struct *work_struct)
+>> +{
+>> +	struct vring_virtqueue *vq = container_of(work_struct,
+>> +						  struct vring_virtqueue,
+>> +						  work);
+>> +	pr_debug("virtqueue callback for %p (%p)\n", vq, vq->vq.callback);
+>> +
+>> +	vq->vq.callback(&vq->vq);
+>> +}
+>> +
+>>  irqreturn_t vring_interrupt(int irq, void *_vq)
+>>  {
+>>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>> @@ -2041,9 +2054,8 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+>>  	if (unlikely(vq->broken))
+>>  		return IRQ_HANDLED;
+>>  
+>> -	pr_debug("virtqueue callback for %p (%p)\n", vq, vq->vq.callback);
+>>  	if (vq->vq.callback)
+>> -		vq->vq.callback(&vq->vq);
+>> +		schedule_work(&vq->work);
+>>  
+>>  	return IRQ_HANDLED;
+>>  }
+>> @@ -2110,6 +2122,8 @@ struct virtqueue *__vring_new_virtqueue(unsigned int
+>> index,
+>>  					vq->split.avail_flags_shadow);
+>>  	}
+>>  
+>> +	INIT_WORK(&vq->work, vring_work_handler);
+>> +
+>>  	vq->split.desc_state = kmalloc_array(vring.num,
+>>  			sizeof(struct vring_desc_state_split), GFP_KERNEL);
+>>  	if (!vq->split.desc_state) {
+>> @@ -2179,6 +2193,8 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+>>  {
+>>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>>  
+>> +	cancel_work_sync(&vq->work);
+>> +
+>>  	if (vq->we_own_ring) {
+>>  		if (vq->packed_ring) {
+>>  			vring_free_queue(vq->vq.vdev,
+>> --
+> > 2.15.0.276.g89ea799
