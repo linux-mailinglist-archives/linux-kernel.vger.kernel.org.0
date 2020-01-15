@@ -2,186 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188EA13C704
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9F613C711
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 16:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbgAOPJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 10:09:39 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:30782 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726562AbgAOPJi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 10:09:38 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FEw6Cs015516;
-        Wed, 15 Jan 2020 16:09:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=oY/yYuph59ZqrkV+Eznpr3R9n6eoYf1RmuTALklKNYw=;
- b=Uw26TWOQnY4Wgr1w38wQ//dX+AdZ0SGREbBKLtiOo1UrmQHp8m1cpJvf13KVNDegVbhG
- oJpMi1I3hK3ZbwRhaRzdAggRYhlDRBZyDyVI2O8VjABKx0vtCmVG3j2X8nzlTW2AxyD/
- gKkBStVz15PYnVlMUaC+Cyk7eqoenV7t+nvuhQ8J3fihVYyN6ICL16TJsNiyKaF1RInW
- JBtVz5LoClXV7D/Ui2RjvoggUaxI3XGVCP59Sm3ROpAOawPq2ca0eLc8cP+nQg3xMK2+
- oq5Pl7cjbiI1yUQVVIngyuenAXAWk96hRsp0ODXv4ihsrMhmqkmfsLKaUNzSSMB8u5eA IA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xf78sc0y4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jan 2020 16:09:34 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7398B10002A;
-        Wed, 15 Jan 2020 16:09:30 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5B51F2BC7D2;
-        Wed, 15 Jan 2020 16:09:30 +0100 (CET)
-Received: from lmecxl0889.lme.st.com (10.75.127.44) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Jan
- 2020 16:09:29 +0100
-Subject: Re: [PATCH] remoteproc: Add support for predefined notifyids
-To:     =?UTF-8?Q?Cl=c3=a9ment_Leger?= <cleger@kalray.eu>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200115102142.11229-1-cleger@kalray.eu>
- <088ceab9-f135-6e70-dcf6-f75ec46110b1@st.com>
- <79048597.12371594.1579098506802.JavaMail.zimbra@kalray.eu>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <a1116656-cf2e-c1a1-7cc3-0fe2a79f076e@st.com>
-Date:   Wed, 15 Jan 2020 16:09:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728896AbgAOPKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 10:10:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbgAOPKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 10:10:04 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C6BF2467C;
+        Wed, 15 Jan 2020 15:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579101003;
+        bh=On973BrhoR475dnZRG2cRmV2OCexuQ6TyfNxjO5OTMU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=i7TASilUBsLzntR4gZSZHePscwjsdF68olcDcQcdM8scE6YROBtjYmsEljI9tHe2M
+         iUOxZ/sCOIOCRgIwsB1WZ5dUPqbufeznera6GS1zXw+i32gBJaJMutR8k3EB7SFvRw
+         S3x/HUye5vt7l+QY3t8fn2jHtVbATxmHG+Qn96x4=
+Received: by mail-qk1-f171.google.com with SMTP id c17so15906273qkg.7;
+        Wed, 15 Jan 2020 07:10:03 -0800 (PST)
+X-Gm-Message-State: APjAAAWMLwlhCQaWk7ESs5HlVGf2YynP0EhTNVHPj+05ZiEidYSWhYoE
+        qvf9Aqofln+XHBrvfcooZpljXhYgLQQrHessrQ==
+X-Google-Smtp-Source: APXvYqztAMAd0OsajU/QPMm8GA80nrSr6KedsAz2pVVqZrrY6JN6tyfc5i2NXErAO/T/CmJxzbPlK1MdeXVIH7n8XoA=
+X-Received: by 2002:ae9:f205:: with SMTP id m5mr27937250qkg.152.1579101002403;
+ Wed, 15 Jan 2020 07:10:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <79048597.12371594.1579098506802.JavaMail.zimbra@kalray.eu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-15_02:2020-01-15,2020-01-15 signatures=0
+References: <20200114213809.27166-1-jbx6244@gmail.com> <20200114213809.27166-3-jbx6244@gmail.com>
+In-Reply-To: <20200114213809.27166-3-jbx6244@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 15 Jan 2020 09:09:50 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKhJNcrR-RjbS8eAzot5FdE=C23b272QcOj5-12EobE0w@mail.gmail.com>
+Message-ID: <CAL_JsqKhJNcrR-RjbS8eAzot5FdE=C23b272QcOj5-12EobE0w@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 3/3] dt-bindings: mmc: convert rockchip dw-mshc
+ bindings to yaml
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 14, 2020 at 3:38 PM Johan Jonker <jbx6244@gmail.com> wrote:
+>
+> Convert the Rockchip designware mobile storage host controller
+> device tree bindings to yaml.
+> Add maintainer.
+>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  49 --------
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml  | 137 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  3 files changed, 138 insertions(+), 49 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+>  create mode 100644 Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+> deleted file mode 100644
+> index 6f629b12b..000000000
+> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+> +++ /dev/null
+> @@ -1,49 +0,0 @@
+> -* Rockchip specific extensions to the Synopsys Designware Mobile
+> -  Storage Host Controller
+> -
+> -The Synopsys designware mobile storage host controller is used to interface
+> -a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
+> -differences between the core Synopsys dw mshc controller properties described
+> -by synopsys-dw-mshc.txt and the properties used by the Rockchip specific
+> -extensions to the Synopsys Designware Mobile Storage Host Controller.
+> -
+> -Required Properties:
+> -
+> -* compatible: should be
+> -       - "rockchip,rk2928-dw-mshc": for Rockchip RK2928 and following,
+> -                                                       before RK3288
+> -       - "rockchip,rk3288-dw-mshc": for Rockchip RK3288
+> -       - "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
+> -       - "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
+> -       - "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
+> -       - "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
+> -       - "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
+> -       - "rockchip,rk3368-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3368
+> -       - "rockchip,rk3399-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3399
+> -
+> -Optional Properties:
+> -* clocks: from common clock binding: if ciu-drive and ciu-sample are
+> -  specified in clock-names, should contain handles to these clocks.
+> -
+> -* clock-names: Apart from the clock-names described in synopsys-dw-mshc.txt
+> -  two more clocks "ciu-drive" and "ciu-sample" are supported. They are used
+> -  to control the clock phases, "ciu-sample" is required for tuning high-
+> -  speed modes.
+> -
+> -* rockchip,default-sample-phase: The default phase to set ciu-sample at
+> -  probing, low speeds or in case where all phases work at tuning time.
+> -  If not specified 0 deg will be used.
+> -
+> -* rockchip,desired-num-phases: The desired number of times that the host
+> -  execute tuning when needed. If not specified, the host will do tuning
+> -  for 360 times, namely tuning for each degree.
+> -
+> -Example:
+> -
+> -       rkdwmmc0@12200000 {
+> -               compatible = "rockchip,rk3288-dw-mshc";
+> -               reg = <0x12200000 0x1000>;
+> -               interrupts = <0 75 0>;
+> -               #address-cells = <1>;
+> -               #size-cells = <0>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> new file mode 100644
+> index 000000000..da16916b7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> @@ -0,0 +1,137 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip designware mobile storage host controller device tree bindings
+> +
+> +description:
+> +  Rockchip uses the Synopsys designware mobile storage host controller
+> +  to interface a SoC with storage medium such as eMMC or SD/MMC cards.
+> +  This file documents the combined properties for
 
+Strange place for a line break...
 
-On 1/15/20 3:28 PM, Clément Leger wrote:
-> Hi Arnaud,
-> 
-> ----- On 15 Jan, 2020, at 15:06, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
-> 
->> Hi Clément,
->>
->> On 1/15/20 11:21 AM, Clement Leger wrote:
->>> In order to support preallocated notify ids, if their value is
->>> equal to FW_RSC_NOTIFY_ID_ANY, then do no allocate a notify id
->>> dynamically but try to allocate the requested one. This is useful when
->>> using custom ids to bind them to custom vendor resources. For instance,
->>> it allow to assign a group of queues to a specific interrupti in order
->>> to dispatch notifications.
->>>
->>> Signed-off-by: Clement Leger <cleger@kalray.eu>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 27 +++++++++++++++++++--------
->>>  include/linux/remoteproc.h           |  1 +
->>>  2 files changed, 20 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>> b/drivers/remoteproc/remoteproc_core.c
->>> index 307df98347ba..b1485fcd0f11 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -351,14 +351,27 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->>>  	/*
->>>  	 * Assign an rproc-wide unique index for this vring
->>>  	 * TODO: assign a notifyid for rvdev updates as well
->>> -	 * TODO: support predefined notifyids (via resource table)
->>>  	 */
->>> -	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
->>> -	if (ret < 0) {
->>> -		dev_err(dev, "idr_alloc failed: %d\n", ret);
->>> -		return ret;
->>> +	if (rsc->vring[i].notifyid == FW_RSC_NOTIFY_ID_ANY) {
->>> +		ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
->>> +		if (ret < 0) {
->>> +			dev_err(dev, "idr_alloc failed: %d\n", ret);
->>> +			return ret;
->>> +		}
->>> +		notifyid = ret;
->>> +
->>> +		/* Let the rproc know the notifyid of this vring.*/
->>> +		rsc->vring[i].notifyid = notifyid;
->>> +	} else {
->>> +		/* Reserve requested notify_id */
->>> +		notifyid = rsc->vring[i].notifyid;
->>> +		ret = idr_alloc(&rproc->notifyids, rvring, notifyid,
->>> +				notifyid + 1, GFP_KERNEL);
->>> +		if (ret < 0) {
->>> +			dev_err(dev, "idr_alloc failed: %d\n", ret);
->>> +			return ret;
->>> +		}
->>>  	}
->>> -	notifyid = ret;
->>>  
->>>  	/* Potentially bump max_notifyid */
->>>  	if (notifyid > rproc->max_notifyid)
->>> @@ -366,8 +379,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->>>  
->>>  	rvring->notifyid = notifyid;
->>>  
->>> -	/* Let the rproc know the notifyid of this vring.*/
->>> -	rsc->vring[i].notifyid = notifyid;
->>>  	return 0;
->>>  }
->> The rproc_free_vring function resets the notifyid to -1 on free.
->> This could generate a side effect if the resource table is not reloaded.
-> 
-> Oh indeed, I did not thought of that. What would you recommend ?
-> If using -1 in free vring, notify ids will be reallocated at next
-> round.
-Regarding the code i'm not sure that it is useful to reset the notifyID to -1 on free.
-In current version, on alloc, the notifyID is overwriten without check.
-And as vdev status is updated, vring struct in resource table should be considered as invalid
-Except if i missed a usecase/race condition...
+> +  the core Synopsys dw mshc controller that are not already included
+> +  in the synopsys-dw-mshc-common.yaml file and the Rockchip specific
+> +  extensions.
+> +
+> +allOf:
+> +  - $ref: "synopsys-dw-mshc-common.yaml"
+> +
+> +maintainers:
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      # for Rockchip PX30
+> +      - items:
+> +          - const: rockchip,px30-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK2928 and before RK3288
+> +      - const: rockchip,rk2928-dw-mshc
+> +      # for Rockchip RK3036
+> +      - items:
+> +          - const: rockchip,rk3036-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK322x
+> +      - items:
+> +          - const: rockchip,rk3228-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK3288
+> +      - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK3328
+> +      - items:
+> +          - const: rockchip,rk3328-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK3368
+> +      - items:
+> +          - const: rockchip,rk3368-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RK3399
+> +      - items:
+> +          - const: rockchip,rk3399-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
+> +      # for Rockchip RV1108
+> +      - items:
+> +          - const: rockchip,rv1108-dw-mshc
+> +          - const: rockchip,rk3288-dw-mshc
 
-> 
-> I was also worried that it would break some existing user applications
-> which uses "0" as a notify id in vring but expect the id to be
-> allocated dynamically. With my modification, it means it will try to 
-> use "0" as a predefined id, leading to allocation failure.
-> 
-Yes this could introduce regression for firmware that sets 0 as default value.
-Probably better to introduce this patch with a new version of the resource table :)
+All the ones with fallback rockchip,rk3288-dw-mshc can be grouped as
+one items list with 'enum' for the first item.
 
-Regards
-Arnaud
->>
->>>  
->>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>> index 16ad66683ad0..dcae3394243e 100644
->>> --- a/include/linux/remoteproc.h
->>> +++ b/include/linux/remoteproc.h
->>> @@ -123,6 +123,7 @@ enum fw_resource_type {
->>>  };
->>>  
->>>  #define FW_RSC_ADDR_ANY (-1)
->>> +#define FW_RSC_NOTIFY_ID_ANY (-1)This define can also be used in
->>> rproc_free_vring
-> 
-> Indeed.
-> 
-> Thanks for your review.
-> 
-> Regards,
-> 
-> Clément
-> 
->>
->> Regards,
->> Arnaud
->>>  
->>>  /**
->>>   * struct fw_rsc_carveout - physically contiguous memory request
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 4
+> +    description:
+> +      Handle to "biu" and "ciu" clocks for the bus interface unit clock and
+> +      the card interface unit clock. If "ciu-drive" and "ciu-sample" are
+> +      specified in clock-names, it should also contain
+> +      handles to these clocks.
+> +
+> +  clock-names:
+> +    oneOf:
+> +      - items:
+> +        - const: biu
+> +        - const: ciu
+> +      - items:
+> +        - const: biu
+> +        - const: ciu
+> +        - const: ciu-drive
+> +        - const: ciu-sample
+
+Add 'minItems: 2' and you only need 1 list.
+
+> +    description:
+> +      Apart from the clock-names "biu" and "ciu" two more clocks
+> +      "ciu-drive" and "ciu-sample" are supported. They are used
+> +      to control the clock phases, "ciu-sample" is required for tuning
+> +      high speed modes.
+> +
+> +  rockchip,default-sample-phase:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - minimum: 0
+> +      - maximum: 360
+> +      - default: 0
+
+Move these 3 to the same level as 'allOf' (dropping '-').
+
+> +    description:
+> +      The default phase to set "ciu-sample" at probing,
+> +      low speeds or in case where all phases work at tuning time.
+> +      If not specified 0 deg will be used.
+> +
+> +  rockchip,desired-num-phases:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - minimum: 0
+> +      - maximum: 360
+> +      - default: 360
+> +    description:
+> +      The desired number of times that the host execute tuning when needed.
+> +      If not specified, the host will do tuning for 360 times,
+> +      namely tuning for each degree.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rk3288-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    sdmmc: dwmmc@ff0c0000 {
+> +      compatible = "rockchip,rk3288-dw-mshc";
+> +      reg = <0x0 0xff0c0000 0x0 0x4000>;
+> +      interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +      clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
+> +               <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
+> +      clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> +      resets = <&cru SRST_MMC0>;
+> +      reset-names = "reset";
+> +      fifo-depth = <0x100>;
+> +      max-frequency = <150000000>;
+
+Not documented.
+
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6ad01d71..1b16c0fdf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2240,6 +2240,7 @@ L:        linux-rockchip@lists.infradead.org
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
+>  S:     Maintained
+>  F:     Documentation/devicetree/bindings/i2c/i2c-rk3x.txt
+> +F:     Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+>  F:     arch/arm/boot/dts/rk3*
+>  F:     arch/arm/boot/dts/rv1108*
+>  F:     arch/arm/mach-rockchip/
+> --
+> 2.11.0
+>
