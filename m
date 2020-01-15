@@ -2,62 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E677913C5C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D227013C5DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:23:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgAOOUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:20:45 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8727 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728925AbgAOOUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:20:45 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5B02BC3A919C29B164B6;
-        Wed, 15 Jan 2020 22:20:41 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 15 Jan 2020
- 22:20:35 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
-        <nborisov@suse.com>
-CC:     <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] btrfs: Fix return value while kcalloc fails in btrfs_rmap_block
-Date:   Wed, 15 Jan 2020 22:20:27 +0800
-Message-ID: <20200115142027.56960-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1729240AbgAOOX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:23:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62208 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726473AbgAOOX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:23:27 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00FENNu0139563
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:23:26 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhbvgehq7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 09:23:22 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 15 Jan 2020 14:21:04 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 15 Jan 2020 14:21:01 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00FEL0VD43909150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jan 2020 14:21:00 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 75CA1A4060;
+        Wed, 15 Jan 2020 14:21:00 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D96C4A4064;
+        Wed, 15 Jan 2020 14:20:59 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.148.8.170])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 15 Jan 2020 14:20:59 +0000 (GMT)
+Date:   Wed, 15 Jan 2020 16:20:58 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Chen Zhou <chenzhou10@huawei.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        keescook@chromium.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] init/main.c: make some symbols static
+References: <20200115135458.71460-1-chenzhou10@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115135458.71460-1-chenzhou10@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 20011514-0016-0000-0000-000002DD909C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011514-0017-0000-0000-00003340240E
+Message-Id: <20200115142057.GE19826@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-15_02:2020-01-15,2020-01-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 phishscore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001150116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In btrfs_rmap_block(), if kcalloc fails, it should return
--ENOMEM instead of 0.
+(added Steven and Masami)
 
-Fixes: 767f58cdaf20 ("btrfs: Refactor btrfs_rmap_block to improve readability")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/btrfs/block-group.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jan 15, 2020 at 09:54:58PM +0800, Chen Zhou wrote:
+> Make variable xbc_namebuf and function boot_config_checksum static to
+> fix build warnings, warnings are as follows:
+> 
+> init/main.c:254:6:
+> 	warning: symbol 'xbc_namebuf' was not declared. Should it be static?
+> init/main.c:330:5:
+> 	warning: symbol 'boot_config_checksum' was not declared. Should it be static?
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+> ---
+>  init/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index a77114f..3a95591 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -251,7 +251,7 @@ early_param("loglevel", loglevel);
+>  
+>  #ifdef CONFIG_BOOT_CONFIG
+>  
+> -char xbc_namebuf[XBC_KEYLEN_MAX] __initdata;
+> +static char xbc_namebuf[XBC_KEYLEN_MAX] __initdata;
+>  
+>  #define rest(dst, end) ((end) > (dst) ? (end) - (dst) : 0)
+>  
+> @@ -327,7 +327,7 @@ static char * __init xbc_make_cmdline(const char *key)
+>  	return new_cmdline;
+>  }
+>  
+> -u32 boot_config_checksum(unsigned char *p, u32 size)
+> +static u32 boot_config_checksum(unsigned char *p, u32 size)
+>  {
+>  	u32 ret = 0;
+>  
+> -- 
+> 2.7.4
+> 
 
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index 8877af5..1485158 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -1655,7 +1655,7 @@ int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
- 	*stripe_len = io_stripe_size;
- out:
- 	free_extent_map(em);
--	return 0;
-+	return ret;
- }
- 
- static int exclude_super_stripes(struct btrfs_block_group *cache)
 -- 
-2.7.4
-
+Sincerely yours,
+Mike.
 
