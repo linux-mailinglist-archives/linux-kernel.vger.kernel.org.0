@@ -2,291 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B203913BB1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B53F13BB29
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbgAOIci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:32:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbgAOIch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:32:37 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDB62187F;
-        Wed, 15 Jan 2020 08:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579077156;
-        bh=AJyv1HZR4EHgQ2ATWhJRGP+gmuAx89Jzdjy+Kx5JWto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S3T1oBaqDC6tntUQMYVvrQOVvm4PoNHLCcm6dT2c4bq9ngC9hqWnNpR0Djn//d779
-         ZINmrLjH4ZlDVmIA+PN/HR6pE4dCNhE0xcnADbgKkQzaq334ms0vj9p66uDVhBNl5y
-         f1Jn3Lo8LiQ2vnlPTcg2SpvCvjbUGXfPcg2w4THI=
-Date:   Wed, 15 Jan 2020 09:32:33 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/2] drm: sun4i: hdmi: Add support for sun4i HDMI encoder
- audio
-Message-ID: <20200115083233.7wedmnkj4ju4eccv@gilmour.lan>
-References: <20200110141140.28527-1-stefan@olimex.com>
- <20200110141140.28527-3-stefan@olimex.com>
- <20200110162631.wbufz5h7nqfgd6am@gilmour.lan>
- <f4ad41ce-e3d0-33e4-1e85-d23e557b484d@olimex.com>
+        id S1728986AbgAOIds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:33:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37366 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbgAOIdq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 03:33:46 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so16788882wmf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 00:33:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=WpuKpiDRvGzuOKGz765acle30K2AapAgvO0dQxkTLhY=;
+        b=jNgkV9pOWBh6UAJ1PXeVfZpoCLEkrt5tE1fLX1d0hpCo+qtWxgbGVRX7MnaYc0XJ3m
+         eHw0DOLOVM3vj8nJqdCRoIqnoF8NdAX5+8VI8WDbvTU5nCl38z4y5dCewj92rilzsEM9
+         n35aDnjpZP3U0vdjmu3CzjLKybHJLZ5D1p27zms1nvGo83WD56mx1oTVDxJGwLokGSdl
+         FrUFsaOnGs4HbZLNkEQMz/3l/ojgoA3qowGgapvll6xqXQM81Yce4jvmvKnX7HHk7Cdb
+         Q1hlPFF216XNb5Urdj4tepa3NqINe+u+vbZBifcdgQUvqgW1jCBLksXOKCHbeB52Uv9X
+         rQtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=WpuKpiDRvGzuOKGz765acle30K2AapAgvO0dQxkTLhY=;
+        b=nA9aKk8EItPx+TO1LTT5BarwXLX7lwHTWZVZ5lnQpuuNh3S5w32rX4zZTf3EfP5P2J
+         9u7aMT+9fIJj6d5C4pcNXHhjNYmYt04jo9iB+KxQlpxeJTcXvPfMQHwF4UwmT2r2w4l3
+         aHXeWoL5irQmBa8gs8LA9WLeOsHHwBCTmDuvvT9aCun+ikVtFH1KHviESJYq82Wwhaer
+         a8wYw5dpuffxC1TrDphzMZ6LJnoAhhsTC2FoHctyVRdqD7Hn/vRhlb8nMplTA06clN4q
+         yxwiSj9ABVtGvuZ2yvZqL+cF27e1xOPYT5gazD2cGK/2cI5Nr0ZGH5qtAm8NKFuCmxUN
+         4GCA==
+X-Gm-Message-State: APjAAAXNbbQLONz58yRHfRuIwvnRlPZz0DfBm40TSh3qV7D2MK/J4c9W
+        t87X9La64DQJgDW4747nTNP5Kw==
+X-Google-Smtp-Source: APXvYqyTbNPBM+b0H7a+geOBj4EY/YVa2dv7LeznO4hME0KN8z55nb/XzKzrODJRYwtnGQHSFMXehQ==
+X-Received: by 2002:a1c:dcd5:: with SMTP id t204mr33506655wmg.34.1579077224548;
+        Wed, 15 Jan 2020 00:33:44 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id z123sm23648038wme.18.2020.01.15.00.33.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 00:33:43 -0800 (PST)
+Date:   Wed, 15 Jan 2020 08:34:03 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v9 02/12] dt-bindings: mfd: Document ROHM BD71828 bindings
+Message-ID: <20200115083403.GE325@dell>
+References: <cover.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+ <b58952aedd1cce08aa4d7f346007a24923bb2b64.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7lkei534qhur3fvp"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f4ad41ce-e3d0-33e4-1e85-d23e557b484d@olimex.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b58952aedd1cce08aa4d7f346007a24923bb2b64.1578644144.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 11 Jan 2020, Matti Vaittinen wrote:
 
---7lkei534qhur3fvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> ROHM BD71828 Power management IC integrates 7 buck converters, 7 LDOs,
+> a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> and a 32.768 kHz clock gate.
+> 
+> Document the dt bindings drivers are using.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> No changes since v8  
+> 
+>  .../bindings/mfd/rohm,bd71828-pmic.yaml       | 193 ++++++++++++++++++
+>  1 file changed, 193 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
 
-Hi Stefan,
+I only have patches 2-6, so I cannot help with merging.
 
-On Tue, Jan 14, 2020 at 11:04:55AM +0200, Stefan Mavrodiev wrote:
-> On 1/10/20 6:26 PM, Maxime Ripard wrote:
-> > Hi,
-> >
-> > On Fri, Jan 10, 2020 at 04:11:40PM +0200, Stefan Mavrodiev wrote:
-> > > Add HDMI audio support for the sun4i-hdmi encoder, used on
-> > > the older Allwinner chips - A10, A20, A31.
-> > >
-> > > Most of the code is based on the BSP implementation. In it
-> > > dditional formats are supported (S20_3LE and S24_LE), however
-> > > there where some problems with them and only S16_LE is left.
-> > >
-> > > Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> > > ---
-> > >   drivers/gpu/drm/sun4i/Kconfig            |   1 +
-> > >   drivers/gpu/drm/sun4i/Makefile           |   1 +
-> > >   drivers/gpu/drm/sun4i/sun4i_hdmi.h       |  30 ++
-> > >   drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c | 375 +++++++++++++++++++++++
-> > >   drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c   |   4 +
-> > >   5 files changed, 411 insertions(+)
-> > >   create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_audio.c
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-> > > index 37e90e42943f..192b732b10cd 100644
-> > > --- a/drivers/gpu/drm/sun4i/Kconfig
-> > > +++ b/drivers/gpu/drm/sun4i/Kconfig
-> > > @@ -19,6 +19,7 @@ if DRM_SUN4I
-> > >   config DRM_SUN4I_HDMI
-> > >          tristate "Allwinner A10 HDMI Controller Support"
-> > >          default DRM_SUN4I
-> > > +       select SND_PCM_ELD
-> > >          help
-> > >   	  Choose this option if you have an Allwinner SoC with an HDMI
-> > >   	  controller.
-> > > diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-> > > index 0d04f2447b01..e2d82b451c36 100644
-> > > --- a/drivers/gpu/drm/sun4i/Makefile
-> > > +++ b/drivers/gpu/drm/sun4i/Makefile
-> > > @@ -5,6 +5,7 @@ sun4i-frontend-y		+= sun4i_frontend.o
-> > >   sun4i-drm-y			+= sun4i_drv.o
-> > >   sun4i-drm-y			+= sun4i_framebuffer.o
-> > >
-> > > +sun4i-drm-hdmi-y		+= sun4i_hdmi_audio.o
-> > >   sun4i-drm-hdmi-y		+= sun4i_hdmi_ddc_clk.o
-> > >   sun4i-drm-hdmi-y		+= sun4i_hdmi_enc.o
-> > >   sun4i-drm-hdmi-y		+= sun4i_hdmi_i2c.o
-> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> > > index 7ad3f06c127e..456964e681b0 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> > > +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> > > @@ -42,7 +42,32 @@
-> > >   #define SUN4I_HDMI_VID_TIMING_POL_VSYNC		BIT(1)
-> > >   #define SUN4I_HDMI_VID_TIMING_POL_HSYNC		BIT(0)
-> > >
-> > > +#define SUN4I_HDMI_AUDIO_CTRL_REG	0x040
-> > > +#define SUN4I_HDMI_AUDIO_CTRL_ENABLE		BIT(31)
-> > > +#define SUN4I_HDMI_AUDIO_CTRL_RESET		BIT(30)
-> > > +
-> > > +#define SUN4I_HDMI_AUDIO_FMT_REG	0x048
-> > > +#define SUN4I_HDMI_AUDIO_FMT_SRC		BIT(31)
-> > > +#define SUN4I_HDMI_AUDIO_FMT_LAYOUT		BIT(3)
-> > > +#define SUN4I_HDMI_AUDIO_FMT_CH_CFG(n)		(n - 1)
-> > There's the issue multiple times in the headers, but you should wrap n
-> > in parentheses to make sure we have no issue with precedence when
-> > calling the macro.
-> >
-> > > +int sun4i_hdmi_audio_create(struct sun4i_hdmi *hdmi)
-> > > +{
-> > > +	struct snd_soc_card *card = &sun4i_hdmi_audio_card;
-> > > +	struct snd_soc_dai_link_component *comp;
-> > > +	struct snd_soc_dai_link *link;
-> > > +	int ret;
-> > > +
-> > > +	ret = devm_snd_dmaengine_pcm_register(hdmi->dev,
-> > > +					      &sun4i_hdmi_audio_pcm_config, 0);
-> > > +	if (ret) {
-> > > +		DRM_ERROR("Could not register PCM\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret = devm_snd_soc_register_component(hdmi->dev,
-> > > +					      &sun4i_hdmi_audio_component,
-> > > +					      &sun4i_hdmi_audio_dai, 1);
-> > > +	if (ret) {
-> > > +		DRM_ERROR("Could not register DAI\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	link = devm_kzalloc(hdmi->dev, sizeof(*link), GFP_KERNEL);
-> > > +	if (!link)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	comp = devm_kzalloc(hdmi->dev, sizeof(*comp) * 3, GFP_KERNEL);
-> > > +	if (!comp)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	link->cpus = &comp[0];
-> > > +	link->codecs = &comp[1];
-> > > +	link->platforms = &comp[2];
-> > > +
-> > > +	link->num_cpus = 1;
-> > > +	link->num_codecs = 1;
-> > > +	link->num_platforms = 1;
-> > > +
-> > > +	link->playback_only = 1;
-> > > +
-> > > +	link->name = "SUN4I-HDMI";
-> > > +	link->stream_name = "SUN4I-HDMI PCM";
-> > > +
-> > > +	link->codecs->name = dev_name(hdmi->dev);
-> > > +	link->codecs->dai_name	= sun4i_hdmi_audio_dai.name;
-> > > +
-> > > +	link->cpus->dai_name = dev_name(hdmi->dev);
-> > > +
-> > > +	link->platforms->name = dev_name(hdmi->dev);
-> > > +
-> > > +	link->dai_fmt = SND_SOC_DAIFMT_I2S;
-> > > +
-> > > +	card->dai_link = link;
-> > > +	card->num_links = 1;
-> > > +	card->dev = hdmi->dev;
-> > > +
-> > > +	snd_soc_card_set_drvdata(card, hdmi);
-> > > +	return devm_snd_soc_register_card(hdmi->dev, card);
-> >
-> > Out of curiosity, did you try to remove the module with that patch
-> > applied? IIRC, these functions will overwrite the device drvdata, and
-> > we will try to access them in unbind / remove.
->
-> Actually I did not. Just tried that and you're right. The module
-> crashes at the unbind call.  I use sun4i_hdmi struct only for
-> regmap. Maybe create separate private structure and copy only
-> regmap?
+My guess is that some of the other patches will have dependencies or
+be dependants of the MFD changes, thus someone else will either have
+to merge the set and send out a pull-request for the other maintainers
+to consume, or you will have to send the whole set out again. 
 
-I think the issue is that:
-
-  - In bind, we first call dev_set_drvdata on the bound device, with a
-    pointer to struct sun4i_hdmi as the value. The driver_data field
-    in struct device is now a pointer to our instance of struct
-    sun4i_hdmi.
-
-  - In audio create, you then call snd_soc_card_set_drvdata with a
-    pointer to struct sun4i_hdmi as the value. The drvdata field in
-    the struct snd_soc_card is now a pointer to our instance of struct
-    sun4i_hdmi (so far so good).
-
-  - Then you call (devm_)snd_soc_register_card. One of the thing that
-    it will do is call drv_set_drvdata on the card->dev device,
-    setting it to our pointer to the struct snd_soc_card we provided.
-    However, since you set card->dev to the same device than the one
-    initially bound, this means that you just overwrote the struct
-    sun4i_hdmi pointer with a pointer to struct snd_soc_card.
-
-  - The driver will operate properly, since we never really use the
-    driver_data field, in the HDMI driver, except when...
-
-  - At unbind, you retrieve the driver_data field, expecting a struct
-    sun4i_hdmi pointer, except you have a pointer to struct
-    snd_soc_card, and everything explodes.
-
-I think the way to work around that would be to create a new
-(platform_)device for the HDMI audio component, so that ASoC can work
-on that device instead.
-
-This seems to be what dw-hdmi is doing here:
-https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c#L2812
-
-(Except that they are also using platform_data, since they have
-multiple drivers, we wouldn't, so we can just lookup sun4i_hdmi using
-the parent's device driver_data).
-
-> > > +}
-> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> > > index a7c4654445c7..79ecd89fb705 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> > > @@ -114,6 +114,9 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
-> > >   		val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
-> > >
-> > >   	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
-> > > +
-> > > +	if (hdmi->hdmi_audio && sun4i_hdmi_audio_create(hdmi))
-> > > +		DRM_ERROR("Couldn't create the HDMI audio adapter\n");
-> >
-> > So you create the audio card each time the display is enabled? I guess
-> > this is to deal with the hotplug?
->
-> Yes. See below.
->
-> > I'm not sure this is the right thing to do. If I remember well, the
-> > ELD are here precisely to let userspace know that the display is
-> > plugged (and audio-capable) or not.
-> >
-> > Also, you don't remove that card in the disable, which mean that if
-> > you end up in a situation where you would enable the display, disable
-> > it and then enable it again, you have two audio cards now.
->
-> There is issue with the hotplug. When inserting the cable, the event
-> is detected and the hdmi encoder is enabled. Thus the card is
-> created. However further removal and insertions are not
-> detected.
-
-I guess we would need to fix that then?
-
-> This is why I don't remove the card.
->
-> Also I count on devm_snd_soc_register_card() to release the card.
-
-I think you should really create the card all the time, and just
-update the ELD to let the userspace know when something has been
-created.
-
-And yeah, we should have a working hotplug, but that's a separate
-story :)
-
-Maxime
-
---7lkei534qhur3fvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXh7OIQAKCRDj7w1vZxhR
-xSGNAQCNXFtKsLB1nNmulxiyZXc/7/SfbpDPB/OKbkP52GqFbQEA63XlCs381oP3
-sIQOwaZU0eGpZ8IU+Sse2PFWS9FNTgE=
-=hGfC
------END PGP SIGNATURE-----
-
---7lkei534qhur3fvp--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
