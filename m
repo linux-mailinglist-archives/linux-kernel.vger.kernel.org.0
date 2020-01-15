@@ -2,83 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C12E13BD44
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C05013BD4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbgAOKVt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 05:21:49 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26496 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729631AbgAOKVt (ORCPT
+        id S1729697AbgAOKX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 05:23:28 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41112 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729602AbgAOKX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 05:21:49 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-224-1qiFO4UbN9aTPeO6iSwoTA-1; Wed, 15 Jan 2020 10:21:46 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 15 Jan 2020 10:21:45 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 15 Jan 2020 10:21:45 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'ira.weiny@intel.com'" <ira.weiny@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
-Thread-Topic: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
-Thread-Index: AQHVx+xw3fI16+EnrkucPW5Ge+vrG6frihyw
-Date:   Wed, 15 Jan 2020 10:21:45 +0000
-Message-ID: <06258747f6824a35adfaa999ab4c2261@AcuMS.aculab.com>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-10-ira.weiny@intel.com>
-In-Reply-To: <20200110192942.25021-10-ira.weiny@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 15 Jan 2020 05:23:28 -0500
+Received: by mail-lf1-f65.google.com with SMTP id m30so12260078lfp.8
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 02:23:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0kDyGOaxaI1GMqThNHth9V/5VSfUUwVFewl6E0xy0nc=;
+        b=E4jE3An78Ex2CgQPVi5COQjsp0vDCZeW6pA72WOdA+dPszIB5smmk5ZEh4dswC0+er
+         OwY2CCBnl8JnyoX02lSRZpLJK2slg7BhZGnfdOXQwQN9j/Nro48Xxg0+Chv3rwmAm5Mi
+         KXIfKiTiWjOg3GKkjypiRFqPKGBWBOWc3wP5bfSNKDgTRWafDjGWwvNGaXdMMVtZ0pwy
+         viXP7tzxMcPo7JTth0XG6xK5L5A71EcSTOdGLMhHbmfsg7LPtruMwMMJR+kDpLKT8cg2
+         rdPsl9+BkssxuDwNvACevxoT4h3y7ObHKDLDGl8vSgBhdVpG7QIuvsQIP7Z7+oEQnjkR
+         20aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0kDyGOaxaI1GMqThNHth9V/5VSfUUwVFewl6E0xy0nc=;
+        b=QIQn66JFND2f7zcsf109w6wdoy8rmBW0EMK53d1EKmaT5AMJIB7YlnnsEbORTeClBa
+         9cPhDZvxdZJ/scduQJDLIQH0JbeJeGFJV3D/IWO6j1AKuNq6mdvLOXX0gD862uMVWTgH
+         pei5oyx1ud7/ZhTid93dLDFW+fgp5ODNdXDUfOTcWs65jg1S2nXh5Ne2ovZsB/xKCMwZ
+         Fxw8qi3EGAHwJqE9WLWTkv+Tr9aj2gFGPmWA2hxjgnC+tVPxALZzQwp63xrtVMWn/SG2
+         +MHNUDY3uDwEDIZ47X1JR8d+ZSlOTq10cq+XCQelTB88uX4m8bWm/ynFmFozMXOP/Ynv
+         /FaQ==
+X-Gm-Message-State: APjAAAVdfYGOUEmbd9/n+EAsi/DKYWj/83CTyP6LzLnp6MVAohFe9MZV
+        Gji5tKjOOx748cuX2sivT2duyMDOWZPu52mc6g1/7A==
+X-Google-Smtp-Source: APXvYqzoH/cbCUM9WkqwMpVkWL8950Zqu8b72maR4cxbaUVrgqLDgiiLP876Lez3Tc1YvlB2kW9QJ7yqo7qN1cw9djc=
+X-Received: by 2002:a19:5513:: with SMTP id n19mr4126113lfe.205.1579083806398;
+ Wed, 15 Jan 2020 02:23:26 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: 1qiFO4UbN9aTPeO6iSwoTA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20200114231103.85641-1-swboyd@chromium.org>
+In-Reply-To: <20200114231103.85641-1-swboyd@chromium.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 15 Jan 2020 11:23:15 +0100
+Message-ID: <CACRpkdbzqeAo9+muiTez3PjSLS3-pCocktFe2Lm8tDMVzSnr4A@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Set lockdep class for hierarchical irq domains
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Brian Masney <masneyb@onstation.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Maulik Shah <mkshah@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From ira.weiny@intel.com
-> Sent: 10 January 2020 19:30
-> 
-> Page faults need to ensure the inode mode is correct and consistent with
-> the vmf information at the time of the fault.  There is no easy way to
-> ensure the vmf information is correct if a mode change is in progress.
-> Furthermore, there is no good use case to require a mode change while
-> the file is mmap'ed.
-> 
-> Track mmap's of the file and fail the mode change if the file is
-> mmap'ed.
+On Wed, Jan 15, 2020 at 12:11 AM Stephen Boyd <swboyd@chromium.org> wrote:
 
-This seems wrong to me.
-I presume the 'mode changes' are from things like 'chmod -w ...'.
-mmap() should be no different to open().
-Only the permissions set when the file is opened count.
+> I see the following lockdep splat in the qcom pinctrl driver when
+> attempting to suspend the device.
+>
+>  ============================================
+>  WARNING: possible recursive locking detected
 
-Next you'll be stopping unlink() when a file is open :-)
+Thanks Stephen, patch applied!
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Yours,
+Linus Walleij
