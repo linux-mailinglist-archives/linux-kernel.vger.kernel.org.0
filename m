@@ -2,65 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D81AE13B782
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 03:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B9D13B784
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 03:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgAOCI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 14 Jan 2020 21:08:58 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43343 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728890AbgAOCI6 (ORCPT
+        id S1729012AbgAOCJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 14 Jan 2020 21:09:05 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43213 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728943AbgAOCJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 14 Jan 2020 21:08:58 -0500
-Received: by mail-oi1-f193.google.com with SMTP id p125so13926000oif.10
-        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 18:08:57 -0800 (PST)
+        Tue, 14 Jan 2020 21:09:05 -0500
+Received: by mail-ot1-f65.google.com with SMTP id p8so14689745oth.10
+        for <linux-kernel@vger.kernel.org>; Tue, 14 Jan 2020 18:09:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N8Jlq8P7WNZDl6XDEHlEYDBINgPTySun+7YxtjMFlfY=;
-        b=ozUgjWzRlE6j1aF8qoou4uHwbRKNqPiDLtz5VjcPJsQoy63RkKPLkuEvgKi7rEc7Ao
-         FKGoPz+unuTqVyf4KIvsqbX95steSS/HeidqUYUsPMruMYlmN9wvsVhYcCYb16jcB5CB
-         FsHj5Hq4+6p7CZKuuP8Haj8FNmaSXdM6ASI3XRUeG8uJnb1KukRDXmAM22TomF4u5kS3
-         Vn1BcUesH/+jg1pbeDgdPV7ZOGwU3pz2PTdkvMwJurr4qjMBZaO/nD0pU+Q2n6KBg54l
-         CuOJuqoVYB/adAcmFIcsJQbqo6yKQHVoyYAwxG1bjEsdkq+VZ04ewsktQSN6qGQwwXzS
-         5G2w==
+        bh=7uM5kBcx/zHaTreKqdDg8fjWc4PLFMKHCKkiwTso/jo=;
+        b=ZfxxUEdOVsywPoSBUddAsLUC+kSWA24U3zKvRAPZB2us1gRO+uO0hl4gCP/z5SdBfo
+         09dt/YGO0xyTUJuljF/d8wPJXgLPnksvkCZR0yv0P7K4kWZfhR3MajwQhQ8EniSIfKLb
+         q7CVm6QQzui7ZL1Zgz2XP6ZOYiuvlEtQUd7D6J8FJhJVbEq5gB9/gc96SF0vxQ3FlSBy
+         43nc0kTe8mEDTjobdDGvxsfdOG+xNBHpB8+3dXWQBnLFpJDCuJr8dpl4/IoediMOr/uW
+         eDoB1pUu5RHpN1wcOPoTHWRtb8fAx1psmU6N+dbuPUPtqS2J9IdN8U5pmFsDkI99qfpB
+         yCZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=N8Jlq8P7WNZDl6XDEHlEYDBINgPTySun+7YxtjMFlfY=;
-        b=Q0/XS5tMRWIPulpc+L51eV0kHNGfysGlOo1u4pDk+8Zkj71IzaYqN15XB1AO9FI8Wg
-         s9oHLTFDDHcPK329gdRwlsa+9Ao6FbsK3dhJSPGSCKO9xUO4IDhJ4LHA4RSgcHT83dDL
-         eNxVW+7it0aoSrmbIUkiBKnwZZhOx91AK4lb1YkhHNEZOKsrphZuRwEUBuVzDcv35CW3
-         tl4w6EhCYeAfsfG4CKq6aEYeCdiOUjsWlOV9fx+A6J3r5rWnZiuU4ZiZBXLiESngVza5
-         k+v6DKOZ5QGreKVqqtuTVNS2hGze1SxtQC15+qL+ZMBcRlH0qBorSXssHBf6yC+CYGw/
-         RS1Q==
-X-Gm-Message-State: APjAAAVA7ChNQ3ck2y5TVMSncn+BhuTxEA0s2W7cpgbNActnYqCEYDOf
-        k00hma7dEtu4gqc3/hFKh7+04Q==
-X-Google-Smtp-Source: APXvYqzIjOVsPgfRubsQ+EzzoXxxVbCvaq58hv//hHNkWDuHls6nGEHgvebujaTITV+hHhhW5Uopfw==
-X-Received: by 2002:aca:a883:: with SMTP id r125mr20326415oie.56.1579054137159;
-        Tue, 14 Jan 2020 18:08:57 -0800 (PST)
+        bh=7uM5kBcx/zHaTreKqdDg8fjWc4PLFMKHCKkiwTso/jo=;
+        b=gjOB7rBIK+lyZPQUA44+mBgV70T2qMOs3ctiRsejHYWRzE42Vcl2Xv706akOzsqkQD
+         qUbH4naau9gpn3N/sXBLGqW6dF38G47ms9Vye8tcqBrD+wZn6feFk+xYCDpXF0gN1dHH
+         e+7vVYZ4dMl9b+k4YfZr7OCZubhGp1uZQVPENvKlZprbPXVkpoc5UTBXo9DiF5MNEvW0
+         RPiX+5DLIQohN05SgD9PL8fHNXDU0wBvAMIxcdmAdPE1xm0RMgZgJrCEakSU79UNqQfB
+         8XFoA93cnMCtDRoSq92zLOel4evVZ1tzf+kZHNjAQUBa7AdFKh5He/vLaPcg1rGkNTPt
+         ntjQ==
+X-Gm-Message-State: APjAAAVv/syFjcVXuGs96TxJNkKZryLvRy6lTms80I2G3U1AtazdM8An
+        7QTZ8RsYeC1OaNfes+JQ1x2GTA==
+X-Google-Smtp-Source: APXvYqygvcVQdrnEonMD3gUfWOZPAA12WX1BReU9IP6tWFzw6tAB4ckJHD55Cb3XjZNKtDe4fTnLng==
+X-Received: by 2002:a9d:7c8f:: with SMTP id q15mr1123420otn.140.1579054144624;
+        Tue, 14 Jan 2020 18:09:04 -0800 (PST)
 Received: from [192.168.17.59] ([189.219.74.147])
-        by smtp.gmail.com with ESMTPSA id m185sm5223410oia.26.2020.01.14.18.08.55
+        by smtp.gmail.com with ESMTPSA id m68sm5203237oig.50.2020.01.14.18.09.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Jan 2020 18:08:56 -0800 (PST)
-Subject: Re: [PATCH 4.14 00/39] 4.14.165-stable review
+        Tue, 14 Jan 2020 18:09:03 -0800 (PST)
+Subject: Re: [PATCH 4.19 00/46] 4.19.96-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
         linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-References: <20200114094336.210038037@linuxfoundation.org>
+References: <20200114094339.608068818@linuxfoundation.org>
 From:   =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
-Message-ID: <2b143f20-a8bb-3c7b-0731-983d03d8febd@linaro.org>
-Date:   Tue, 14 Jan 2020 20:08:55 -0600
+Message-ID: <f69c24e7-fe61-7649-0ea0-b47d25ba4092@linaro.org>
+Date:   Tue, 14 Jan 2020 20:09:02 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200114094336.210038037@linuxfoundation.org>
+In-Reply-To: <20200114094339.608068818@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -72,8 +72,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello!
 
 On 1/14/20 4:01 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.165 release.
-> There are 39 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.19.96 release.
+> There are 46 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
@@ -81,9 +81,9 @@ On 1/14/20 4:01 AM, Greg Kroah-Hartman wrote:
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.165-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.96-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
 > and the diffstat can be found below.
 > 
 > thanks,
@@ -96,19 +96,19 @@ No regressions on arm64, arm, x86_64, and i386.
 Summary
 ------------------------------------------------------------------------
 
-kernel: 4.14.165-rc1
+kernel: 4.19.96-rc1
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.14.y
-git commit: e7b83c76590bff9d45ebc9dde116730878f8178b
-git describe: v4.14.164-40-ge7b83c76590b
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.164-40-ge7b83c76590b
+git branch: linux-4.19.y
+git commit: dfa0afa6c9845af29354433fb8c28e08f11733df
+git describe: v4.19.95-47-gdfa0afa6c984
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.95-47-gdfa0afa6c984
 
 
-No regressions (compared to build v4.14.164)
+No regressions (compared to build v4.19.95)
 
-No fixes (compared to build v4.14.164)
+No fixes (compared to build v4.19.95)
 
-Ran 24086 total tests in the following environments and test suites.
+Ran 20866 total tests in the following environments and test suites.
 
 Environments
 --------------
