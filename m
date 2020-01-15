@@ -2,127 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2EAD13BD8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7852013BDB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 11:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbgAOKjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 05:39:18 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:53007 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729674AbgAOKjR (ORCPT
+        id S1729782AbgAOKng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 05:43:36 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33227 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729585AbgAOKng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 05:39:17 -0500
-Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MfYHQ-1jK98e08lM-00fy1R for <linux-kernel@vger.kernel.org>; Wed, 15 Jan
- 2020 11:39:16 +0100
-Received: by mail-qk1-f181.google.com with SMTP id z76so15167024qka.2
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 02:39:15 -0800 (PST)
-X-Gm-Message-State: APjAAAUJyMhBrQCb0ijJ8fpQNRTuEJo+3tAKmD1eXCmZhyRomtJGdmp/
-        LdIuISTlBIw3TxcxH/f5Hs+nBNFEaA/VXtuqkYQ=
-X-Google-Smtp-Source: APXvYqwwMK8lTh8Q4bOX1GS6jqFFejfcqk8Cm3i2mSsSO69MRnbg256iON7w//dldQ1y9+KiSSdX5+iPUyYpK3QLxNs=
-X-Received: by 2002:a05:620a:a5b:: with SMTP id j27mr26649069qka.286.1579084754892;
- Wed, 15 Jan 2020 02:39:14 -0800 (PST)
+        Wed, 15 Jan 2020 05:43:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579085014;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Bbj9Kc2TqKCL3zhoK+YIraED9e1tRV86n2nohBIEClM=;
+        b=jKo/hsUZCQD0i9cGC1cVn62KJUCIvLtBEw+HPKy8wHEMkUQr0JqZet4NhxGKqx71RT4NQU
+        BVNPjuwKI7/KylK8ixEvcbDjetb0IN5+txRLnur4BeXBo0FSNAysGgDPYINUZmlFMPILK4
+        hibLTT9uQA94ECQwSaT18eZjnKzIyzg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-197-Jd9zGg8yM7il1o2fxgw4fw-1; Wed, 15 Jan 2020 05:43:33 -0500
+X-MC-Unique: Jd9zGg8yM7il1o2fxgw4fw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C319D1097D01;
+        Wed, 15 Jan 2020 10:43:31 +0000 (UTC)
+Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D1EDC80617;
+        Wed, 15 Jan 2020 10:43:24 +0000 (UTC)
+Date:   Wed, 15 Jan 2020 11:43:22 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Liu Yi L <yi.l.liu@intel.com>
+Cc:     alex.williamson@redhat.com, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kevin.tian@intel.com, joro@8bytes.org, peterx@redhat.com,
+        baolu.lu@linux.intel.com
+Subject: Re: [PATCH v4 02/12] vfio_pci: move
+ vfio_pci_is_vga/vfio_vga_disabled to header file
+Message-ID: <20200115114322.31644ede.cohuck@redhat.com>
+In-Reply-To: <1578398509-26453-3-git-send-email-yi.l.liu@intel.com>
+References: <1578398509-26453-1-git-send-email-yi.l.liu@intel.com>
+        <1578398509-26453-3-git-send-email-yi.l.liu@intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <1578989048-10162-1-git-send-email-peng.fan@nxp.com>
- <20200114081751.3wjbbnaem7lbnn3v@pengutronix.de> <AM0PR04MB4481A2FB7E2C56C2386297E888340@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <CAK8P3a3x55A8y9kR34zy8YyRhto8uay7PZGbDAufupiNS3+ihA@mail.gmail.com> <AM0PR04MB44813A1D55659658E3FA203188370@AM0PR04MB4481.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB44813A1D55659658E3FA203188370@AM0PR04MB4481.eurprd04.prod.outlook.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 15 Jan 2020 11:38:58 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a29=KWrhO8uu7mMS2gbeCGpkL7Q-xaaUVO2wcVD9MN93g@mail.gmail.com>
-Message-ID: <CAK8P3a29=KWrhO8uu7mMS2gbeCGpkL7Q-xaaUVO2wcVD9MN93g@mail.gmail.com>
-Subject: Re: [PATCH] soc: imx: Makefile: only build soc-imx8 when CONFIG_ARM64
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:M3WXBTgV7oMTr+ED3aDHzGcAQ7MNA0LQ1Ok0eXXCAQeJYZNjUcH
- u6YYu43a5itPzEAYlsVDYi16F9M7J3DH6oroFFGlZEubH8Vt2ER2T9iYZ732VBhpAi2pEyh
- Cn6eUyBFh9bkjnhom3Ptkvxnc70hgpY6OzswkrudMK9AEMumoHtpicOl8l9ONgioLDniBMH
- GcUavoBL2+/o9cuGNq1Eg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:g7rIzxU9364=:aiDvK4QEbUHTuBstitYR80
- rJ4AFfMet/s6XKoSTLd5mT4qq8I/yjPADNQniWWN1dhogNAiQZG9Q5DY1NQ9RLhxVbrpE9goU
- 7Vs5e7lEXzu2JyD3X9JAaHTGPE5MHeLsYbgtEHenZFcJiWlLW6QuGbpGf4MF9UY570+ElDOp+
- J8DssLcBf8xdgpYJyliP7lGE0+vKKaCanyRXvf4JwVn842vdiTWNKLxsTPz8SmqUgVpdzaJRn
- u1C7hH/+PYppfbuzANbCh3qa3KMbd0N7yPEKmFTBR757GwPlASluJlRKeQZoPiLBdNQgOmUuy
- rW2H/v6/lzwDlZQPQxc+AOtiBRFpc0YF9EFOilR7m4BTBBzTvyAI1XzJ53SZJVh8V964VhaWN
- Lv5rfJg3yhTzl0+kLiANPFeNQVTwakrEGKMAfaUpNDiW9mj2ShxUWybPv3l9RTmh7kNm4Qwdu
- 16O3whp4c6eWKD9VT11WLz8UN0bHqkRVdi7HAx7645KbiFJtjxS3yK6zkqLg+eSvcwJYHRBoe
- UdLVTjAMjmw2L1pcQbh9EixR0O0wrfV/4K1vcul1MLTX+Z/zYfXO2akCqlM3jKZiaSKbtIALd
- 6TZVvF9IsUxkFoz8CUI1hoJyipR7Suo5DEYr9piH0ASMANdu1CwyS97WGmwtlEuUvQVksQ8bz
- MyaNMcwhoeHKLYImPuaS3spBt/qx7YkxzPX64ygpNvVqR+VpeOYE14QIbiFqB6iE6pmUJ5asg
- UXh06Yiv+MjmlaB0g7TyPIre5xMs4oJAYyBMt9R8WxBXGlu3veWM92dN1mL/hmOYPUSwTtSp6
- h4+tAvIvUbiX1ziWP51ma6A1sVQ2AXAfC93JRTWS7tMo00M+CjuqcMLLNHT8cf6kd1dsGKavn
- 613JtaWo7GNXZRYgR11g==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 3:38 AM Peng Fan <peng.fan@nxp.com> wrote:
-> > Subject: Re: [PATCH] soc: imx: Makefile: only build soc-imx8 when CONFIG_ARM64
-> > On Tue, Jan 14, 2020 at 9:32 AM Peng Fan <peng.fan@nxp.com> wrote:
-> > > > Subject: Re: [PATCH] soc: imx: Makefile: only build soc-imx8 when
-> > >
-> > > There is no SOC_IMX8 currently. Need to introduce one in
-> > > arch/arm64/Kconfig.platforms. But I not see other vendors introduce
-> > > options like SOC_XX. Is this the right direction to add one in
-> > > Kconfig.platforms?
-> >
-> > I think it would be more consistent with the other platforms to have a symbol
-> > in drivers/soc/imx/Kconfig to control whether we build that driver.
->
-> Ok, I'll add Kconfig entry in drivers/soc/imx/Kconfig for various i.MX SoCs.
+On Tue,  7 Jan 2020 20:01:39 +0800
+Liu Yi L <yi.l.liu@intel.com> wrote:
 
-I was thinking of one entry for this driver.
+> This patch moves two inline functions to vfio_pci_private.h for further
+> sharing across source files. Also avoids below compiling error in further
+> code split.
+>=20
+> "error: inlining failed in call to always_inline =E2=80=98vfio_pci_is_vga=
+=E2=80=99:
+> function body not available".
 
-> > For some SoCs, we also allow running 32-bit kernels, so it would not be wrong
-> > to allow enabling the symbol on 32-bit ARM as well, but this is probably
-> > something where you want to consider the bigger picture to see if you want
-> > to support that configuration or not.
->
-> Does the current upstream kernel support 32bit kernels on ARM64 platforms
-> without vendor specific stuff. I recalled that several years ago, NXP people
-> tried to upstream 32bit kernel support, but rejected by you.
+"We want to use these functions from other files, so move them to a
+header" seems to be justification enough; why mention the compilation
+error?
 
-We have at least some Broadcom SoCs that are supported this way. As
-long as you can use the same dtb file on a regular multi_v7_defconfig
-I see no problem with doing this.
+>=20
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c         | 14 --------------
+>  drivers/vfio/pci/vfio_pci_private.h | 14 ++++++++++++++
+>  2 files changed, 14 insertions(+), 14 deletions(-)
 
-What I would like to avoid though are ports that require extra code in
-arch/arm/mach-* that is not needed for the 64-bit target, or ports to
-64-bit hardware that only run in 32-bit mode.
-
-> So Is there any plan to support 32bit kernel on AARCH64 in upstream
-> kernel?
-> Or any suggestions?
-
-I don't think there should be 32-bit kernel running in aarch64-ilp32
-mode. This was discussed way back when the aarch64-ilp32 user
-space patches first appeared.
-
-Generally speaking you are usually better off running an aarch64
-kernel using aarch32 user space, but there may be reasons for
-running an ARMv8 aarch32 kernel on the same hardware and there
-is no technical reason why this shouldn't work for a clean port.
-
-We never really supported ARMv8-aarch32 in arch/arm/ as a
-separate target, but usually building an ARMv7 kernel is close
-enough to ARMv8-aarch32 that things just work. If you would
-like to help out making ARMv7VE and ARMv8-aarch64 proper
-targets for arch/arm/, let me know and we can discuss what parts
-are missing.
-
-     Arnd
