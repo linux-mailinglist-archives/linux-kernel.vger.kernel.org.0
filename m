@@ -2,87 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F4113CE00
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D48B413CDFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 21:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbgAOUTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 15:19:18 -0500
-Received: from orion.archlinux.org ([88.198.91.70]:51938 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAOUTS (ORCPT
+        id S1729078AbgAOUSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 15:18:18 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46407 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOUSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 15:19:18 -0500
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id A4BEF182130A0D;
-        Wed, 15 Jan 2020 20:18:39 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.3 (2019-12-06) on orion.archlinux.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.3
-X-Spam-BL-Results: 
-Received: from localhost.localdomain (unknown [IPv6:2001:8a0:f254:2300:dad6:8c60:8394:88da])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Wed, 15 Jan 2020 20:18:38 +0000 (UTC)
-From:   =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
-Subject: [PATCH] HID: logitech-dj: add support for the static device in the Powerplay mat/receiver
-Date:   Wed, 15 Jan 2020 20:18:11 +0000
-Message-Id: <20200115201811.3271284-1-lains@archlinux.org>
-X-Mailer: git-send-email 2.24.1
+        Wed, 15 Jan 2020 15:18:18 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 13so16667480oij.13
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 12:18:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=15O0u5i/rLLeI7Psjs2fWQ8eJ8azzo914oeadZHzrto=;
+        b=OXrAKkozsDJCdUa00GDXLUJtmVm63lRzfQSmILcZYbGwfeqjW4w0NRXzbol7xKDTVj
+         uMeI8Mh/Nn9H8eLhrfpURsxKvTYtJC+l3VBiMba6uM8BQarOank4/CzkRi8B7tcH4ils
+         +oYeLUIYTt2CWv16u5SRFouAFi7znVK9sNRWBlpTxCrf7SFnHMm8MeC048HfzlE0NV7d
+         hX3YjB/656aDWHANIxYGh4fVQLPmgFAbEsWHDlsfy9l+3QDqTQHbS7GpNjI0QhgnAPnq
+         A9qLlOi3aPOWyoZLZcDOEKO3n/44C5Hbawyqf06fut3HicgDlrLmPNt/CAr71/X5Y9vH
+         yg2Q==
+X-Gm-Message-State: APjAAAXolyv1btJfpTS5efUB3WM9s2kNtx1q7wRHKYSqxQt/BNIniR7n
+        SS4U7IVBoWkWQm4hhV86y8aAL1s=
+X-Google-Smtp-Source: APXvYqxXry2j2Cb3sM+kvc46HsaCP1ml4u8fuBaBf20IoMb45q5GNAlDIu26wxtA0T49tB2QtQnkkA==
+X-Received: by 2002:aca:ad11:: with SMTP id w17mr1355281oie.85.1579119497200;
+        Wed, 15 Jan 2020 12:18:17 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u33sm6896014otb.49.2020.01.15.12.18.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 12:18:16 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22061a
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 15 Jan 2020 14:18:14 -0600
+Date:   Wed, 15 Jan 2020 14:18:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH v6 2/4] dt-bindings: power: add Amlogic secure power
+ domains bindings
+Message-ID: <20200115201814.GA28654@bogus>
+References: <1579087831-94965-1-git-send-email-jianxin.pan@amlogic.com>
+ <1579087831-94965-3-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579087831-94965-3-git-send-email-jianxin.pan@amlogic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Logitech G Powerplay has a lightspeed receiver with a static HID++
-device with ID 7 attached to it to. It is used to configure the led on
-the mat. For this reason I increased the max number of devices.
+On Wed, 15 Jan 2020 19:30:29 +0800, Jianxin Pan wrote:
+> Add the bindings for the Amlogic Secure power domains, controlling the
+> secure power domains.
+> 
+> The bindings targets the Amlogic A1 and C1 compatible SoCs, in which the
+> power domain registers are in secure world.
+> 
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  .../bindings/power/amlogic,meson-sec-pwrc.yaml     | 40 ++++++++++++++++++++++
+>  include/dt-bindings/power/meson-a1-power.h         | 32 +++++++++++++++++
+>  2 files changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>  create mode 100644 include/dt-bindings/power/meson-a1-power.h
+> 
 
-Signed-off-by: Filipe Laíns <lains@archlinux.org>
----
- drivers/hid/hid-logitech-dj.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index bb50d6e7745b..79294b873057 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -16,11 +16,11 @@
- #include <asm/unaligned.h>
- #include "hid-ids.h"
- 
--#define DJ_MAX_PAIRED_DEVICES			6
-+#define DJ_MAX_PAIRED_DEVICES			7
- #define DJ_MAX_NUMBER_NOTIFS			8
- #define DJ_RECEIVER_INDEX			0
- #define DJ_DEVICE_INDEX_MIN			1
--#define DJ_DEVICE_INDEX_MAX			6
-+#define DJ_DEVICE_INDEX_MAX			7
- 
- #define DJREPORT_SHORT_LENGTH			15
- #define DJREPORT_LONG_LENGTH			32
-@@ -980,6 +980,11 @@ static void logi_hidpp_recv_queue_notif(struct hid_device *hdev,
- 		break;
- 	}
- 
-+	/* custom receiver device (eg. powerplay) */
-+	if (hidpp_report->device_index == 7) {
-+		workitem.reports_supported |= HIDPP;
-+	}
-+
- 	if (workitem.type == WORKITEM_TYPE_EMPTY) {
- 		hid_warn(hdev,
- 			 "unusable device of type %s (0x%02x) connected on slot %d",
--- 
-2.24.1
+Reviewed-by: Rob Herring <robh@kernel.org>
