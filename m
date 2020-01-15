@@ -2,117 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4361F13CA37
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A05F213CA5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 18:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbgAORDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 12:03:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40130 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbgAORDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 12:03:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 42056AD88;
-        Wed, 15 Jan 2020 17:03:44 +0000 (UTC)
-Subject: Re: reiserfs broke between 4.9.205 and 4.9.208
-To:     Michael Brunnbauer <brunni@netestate.de>, Jan Kara <jack@suse.cz>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org
-References: <20200108193634.GA17390@netestate.de>
- <481c595b-46c9-0b4d-c618-a998ab6247c6@infradead.org>
- <20200109121216.GC22232@quack2.suse.cz> <20200109123041.GA14075@netestate.de>
- <20200114202112.GA23020@netestate.de>
-From:   Jeff Mahoney <jeffm@suse.com>
-Organization: SUSE Labs Data & Performance
-Message-ID: <67c8665a-25a4-72d1-7632-d2b84eb362fe@suse.com>
-Date:   Wed, 15 Jan 2020 12:03:40 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        id S1729021AbgAORHe convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 12:07:34 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:26056 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728896AbgAORHe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 12:07:34 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-175-eVLAgkoGOnKRkGAs5C3fYw-1; Wed, 15 Jan 2020 17:07:30 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 15 Jan 2020 17:07:29 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 15 Jan 2020 17:07:29 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Steven Rostedt' <rostedt@goodmis.org>
+CC:     'Vincent Guittot' <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: sched/fair: scheduler not running high priority process on idle
+ cpu
+Thread-Topic: sched/fair: scheduler not running high priority process on idle
+ cpu
+Thread-Index: AdXK8cUFXa7JpPXmQNq7oQ32S9fYHAACik4AAADJLkAAAO3PAAAmXEggAAKDBAAAAvfesAABpyOAAABDBiA=
+Date:   Wed, 15 Jan 2020 17:07:29 +0000
+Message-ID: <ab54668ad13d48da8aa43f955631ef9e@AcuMS.aculab.com>
+References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
+        <20200114115906.22f952ff@gandalf.local.home>
+        <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
+        <20200114124812.4d5355ae@gandalf.local.home>
+        <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
+        <20200115081830.036ade4e@gandalf.local.home>
+        <9f98b2dd807941a3b85d217815a4d9aa@AcuMS.aculab.com>
+ <20200115103049.06600f6e@gandalf.local.home>
+In-Reply-To: <20200115103049.06600f6e@gandalf.local.home>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <20200114202112.GA23020@netestate.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="TVCnj3kdLxRKQjDQIGSbf14fIjvdWEvCh"
+X-MC-Unique: eVLAgkoGOnKRkGAs5C3fYw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TVCnj3kdLxRKQjDQIGSbf14fIjvdWEvCh
-Content-Type: multipart/mixed; boundary="SDcbxPRT9QOmZtzMvAyqygIKNOrkbOzms"
+From Steven Rostedt
+> Sent: 15 January 2020 15:31
+...
+> > For this case an idle cpu doing a unlocked check for a processes that has
+> > been waiting 'ages' to preempt the running process may not be too
+> > expensive.
+> 
+> How do you measure a process waiting for ages on another CPU? And then
+> by the time you get the information to pull it, there's always the race
+> that the process will get the chance to run. And if you think about it,
+> by looking for a process waiting for a long time, it is likely it will
+> start to run because "ages" means it's probably close to being released.
 
---SDcbxPRT9QOmZtzMvAyqygIKNOrkbOzms
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Without a CBU (Crystal Ball Unit) you can always be unlucky.
+But once you get over the 'normal' delays for a system call you probably
+get an exponential (or is it logarithmic) distribution and the additional
+delay is likely to be at least some fraction of the time it has already waited.
 
-Hi Michael -
+While not entirely the same, but something I still need to look at further.
+This is a histogram of time taken (in ns) to send on a raw IPv4 socket.
+0k: 1874462617
+96k: 260350
+160k: 30771
+224k: 14812
+288k: 770
+352k: 593
+416k: 489
+480k: 368
+544k: 185
+608k: 63
+672k: 27
+736k: 6
+800k: 1
+864k: 2
+928k: 3
+992k: 4
+1056k: 1
+1120k: 0
+1184k: 1
+1248k: 1
+1312k: 2
+1376k: 3
+1440k: 1
+1504k: 1
+1568k: 1
+1632k: 4
+1696k: 0 (5 times)
+2016k: 1
+2080k: 0
+2144k: 1
+total: 1874771078, average 32k
 
-It looks like something must've gone sideways with the backport since
-5.5-rc6 works as expected.  I'll dig into it a bit.
+I've improved it no end by using per-thread sockets and setting
+the socket write queue size large.
+But there are still some places where it takes > 600us.
+The top end is rather more linear than one might expect.
 
--Jeff
+> > I presume the locks are in place for the migrate itself.
+> 
+> Note, by grabbing locks on another CPU will incur overhead on that
+> other CPU. I've seen huge latency caused by doing just this.
 
-On 1/14/20 3:21 PM, Michael Brunnbauer wrote:
->=20
-> hi all,
->=20
-> is this been looked into? Do you need more information?
->=20
-> Regards,
->=20
-> Michael Brunnbauer
->=20
-> On Thu, Jan 09, 2020 at 01:30:41PM +0100, Michael Brunnbauer wrote:
->>
->> Hello Jan,
->>
->> On Thu, Jan 09, 2020 at 01:12:16PM +0100, Jan Kara wrote:
->>> Also Michael, I'd like to clarify: Does 'cp -a' return any error or i=
-s it
->>> just that the kernel is spewing these annoying warnings?  Because fro=
-m the
->>> code reading I'd think that it is only the kernel spewing errors but
->>> userspace should be fine...
->>
->> Yes, 'cp -a' returns errors and files are owned by root instead of the=
- correct
->> user after copying as root.
->>
->> Regards,
->>
->> Michael Brunnbauer
+I'd have thought this would only be significant if the cache line
+ends up being used by both cpus?
 
+> > The only downside is that the process's data is likely to be in the wrong cache,
+> > but unless the original cpu becomes available just after the migrate it is
+> > probably still a win.
+> 
+> If you are doing this with just tasks that are waiting for the CPU to
+> be preemptable, then it is most likely not a win at all.
 
---=20
-Jeff Mahoney
-Director, SUSE Labs Data & Performance
+You'd need a good guess that the wait would be long.
 
+> Now, the RT tasks do have an aggressive push / pull logic, that keeps
+> track of which CPUs are running lower priority tasks and will work hard
+> to keep all RT tasks running (and aggressively migrate them). But this
+> logic still only takes place at preemption points (cond_resched(), etc).
 
---SDcbxPRT9QOmZtzMvAyqygIKNOrkbOzms--
+I guess this only 'gives away' extra RT processes.
+Rather than 'stealing' them - which is what I need.
 
---TVCnj3kdLxRKQjDQIGSbf14fIjvdWEvCh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+	David
 
------BEGIN PGP SIGNATURE-----
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAl4fRewACgkQHntLYyF5
-5bJ1ehAAsAURu9jCm+igaHx5Nz7b/mxRoA3LyZAieAoXBO/Hl1C6NgjR8OCXcNDD
-UfXqDAjSJAt63HBpxeu1BEYkNh9BP1Q2sW5eoRhUDC3N5LTSfJnpd5EDl5rtQ28g
-9HRv1zrTKsI6+MMheTBFstiZY2pZbqzQV00ZBoFUm00SoUt86F5NwbwAI6ru3mwT
-z7F4R/I9lwtpctxP6h8+dDHMmmufGDV4gdyyEUKafWsfpwqupCxMytbcyjN2RHxR
-YG+DOsGVpyuESdY9kfvqpWoDJRQE8ea/SnI3TRiasHv8yg1m+DQndAxJ2Y25JrR7
-0XlrgZf9FApmHdYmkGhiXZhYuFU57ppRoCwA62HPS/asFlvHxEzE0PCLhHFh5XcH
-yp1S8pTt/QJlCFL+99Z9ji8YOI5yPz2myVQAbMCF+4iC3EgAhf4UCI0vUa+FNF2C
-3qJ63UQLnZf9NpiCb+R02GP4EwGGUo8lOhIPNsNFE51qULOmyjFTOD/PpAiR4ShZ
-cwvi1kLw/cyc2mbfWfVlG6Z9DaRpbU/qfPzc1H+zVF4R1mdJqHyAZYZMwEcM+zLu
-Wn7is8p/tPCldnoBmqh4ssugB2AaibFu7Y4mRWkx75VSPaXoO+IbY0emQdhMTbJd
-1jBcDCBOQt12X11Z0KHg8BaPeUjNWfIgWU3Br4pBXoqtB8yAGi8=
-=vwMe
------END PGP SIGNATURE-----
-
---TVCnj3kdLxRKQjDQIGSbf14fIjvdWEvCh--
