@@ -2,70 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EEF313BAB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B85913BAB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgAOIK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:10:58 -0500
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:29677 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726100AbgAOIK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:10:58 -0500
-X-Greylist: delayed 623 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Jan 2020 03:10:58 EST
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 15 Jan
- 2020 16:10:55 +0800
-Received: from tony-HX002EA.zhaoxin.com (10.32.64.11) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 15 Jan
- 2020 16:10:53 +0800
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <x86@kernel.org>, <luto@kernel.org>,
-        <peterz@infradead.org>, <pawan.kumar.gupta@linux.intel.com>,
-        <fenghua.yu@intel.com>, <vineela.tummalapalli@intel.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     <DavidWang@zhaoxin.com>, <CooperYan@zhaoxin.com>,
-        <QiyuanWang@zhaoxin.com>, <HerryYang@zhaoxin.com>
-Subject: [PATCH] x86/cpu: Add Zhaoxin CPUs to the cpu vulnerability whitelist
-Date:   Wed, 15 Jan 2020 16:11:22 +0800
-Message-ID: <1579075882-7162-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728899AbgAOIMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:12:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgAOIMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 03:12:48 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A66324671;
+        Wed, 15 Jan 2020 08:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579075968;
+        bh=nk37Yuy3ehqNqReCRqm9scpbx9tu94gE73chRFUUDFI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QPkM+mcjlqEHMQrqDspRSuC4hK//RkTdmwh5QwN0QtLbwd5a2ARrJ3NwlortMVWFE
+         XCZbdZ7TJImM+i0LJ8jOBpXwTciBu1mMiZfTKdZxnSnQfrcAcFSPMksq9/5bvGiGDE
+         rEo2DxmgHvWoM1p0FwPlNu1OVXqurh3PBgLIIsRA=
+Date:   Wed, 15 Jan 2020 09:12:45 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 00/78] 5.4.12-stable review
+Message-ID: <20200115081245.GA2977551@kroah.com>
+References: <20200114094352.428808181@linuxfoundation.org>
+ <1d43091c-c7ff-ed26-c3f9-207a291ed157@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.32.64.11]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1d43091c-c7ff-ed26-c3f9-207a291ed157@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New Zhaoxin family 7 CPUs are not affected by SWAPGS, add these CPUs
-to the cpu vulnerability whitelist.
+On Tue, Jan 14, 2020 at 08:09:11PM -0600, Daniel Díaz wrote:
+> Hello!
+> 
+> On 1/14/20 4:00 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.12 release.
+> > There are 78 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 16 Jan 2020 09:41:58 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.12-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
 
-Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
----
- arch/x86/kernel/cpu/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks for testing all of these and letting me know.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2e4d902..3488507 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1084,6 +1084,10 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- 	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
- 	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
- 	VULNWL_HYGON(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
-+
-+	/* Zhaoxin Family 7 */
-+	VULNWL(CENTAUR, 7, X86_MODEL_ANY,       NO_SWAPGS),
-+	VULNWL(ZHAOXIN, 7, X86_MODEL_ANY,       NO_SWAPGS),
- 	{}
- };
- 
--- 
-2.7.4
-
+greg k-h
