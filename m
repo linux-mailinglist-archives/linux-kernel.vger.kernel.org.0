@@ -2,85 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A8A313CD90
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 20:58:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B64D913CD95
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 20:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbgAOT5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 14:57:07 -0500
-Received: from sauhun.de ([88.99.104.3]:41054 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbgAOT5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 14:57:07 -0500
-Received: from localhost (p54B33239.dip0.t-ipconnect.de [84.179.50.57])
-        by pokefinder.org (Postfix) with ESMTPSA id 467852C0742;
-        Wed, 15 Jan 2020 20:57:05 +0100 (CET)
-Date:   Wed, 15 Jan 2020 20:57:05 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 00/12] i2c: convert subsystem to use
- i2c_new_client_device()
-Message-ID: <20200115195704.GC23789@ninjato>
-References: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
+        id S1729663AbgAOT5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 14:57:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42652 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbgAOT5V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 14:57:21 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FJsV6a174162;
+        Wed, 15 Jan 2020 19:57:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=5ZDwyoI8+PLdwrash2W6XsD4UspgG+i2MlaqGgMjC4U=;
+ b=QJ/JIVZvc28zM+OFKfi+yCenziwV0YsPWO9EoKy/5xXTUElQFXFjsbWQoI2NyUuylp26
+ xTUhp/MjkZYKg10uugDmezyYyLoxaTPIW/1G/LFmePIcJ6xDDv9T4Va1aUYqwjtx7tBt
+ I4OnOHuby3/eoIgKToM51xBJdjuqQ2RJ0q1b58JlVzx3xL/vZy/ldno2OxgkYQOXwaKK
+ ZKir6VIQPpK2M21kItZIb8T6hxX0ZZjC8jt571fMqWevhy1EyypQh6b9LbNdAtSrY4QE
+ 4a9a67droZEHA+COn4sRjOP7LaPLxdqhcvBK+PaHjHHKk/zk7t7+2+Jh64JxDx7L/0Wu ag== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2xf73ypd47-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jan 2020 19:57:13 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00FJsaXx191225;
+        Wed, 15 Jan 2020 19:57:12 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2xhy2201yf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jan 2020 19:57:12 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00FJvABT004993;
+        Wed, 15 Jan 2020 19:57:10 GMT
+Received: from [10.159.151.219] (/10.159.151.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Jan 2020 11:57:10 -0800
+Subject: Re: [PATCH v3 2/2] SGE buffer and max_inline data must have same size
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, monis@mellanox.com,
+        dledford@redhat.com, sean.hefty@intel.com,
+        hal.rosenstock@gmail.com, linux-kernel@vger.kernel.org
+References: <1578962480-17814-1-git-send-email-rao.shoaib@oracle.com>
+ <1578962480-17814-3-git-send-email-rao.shoaib@oracle.com>
+ <20200115182721.GE25201@ziepe.ca>
+From:   Rao Shoaib <rao.shoaib@oracle.com>
+Message-ID: <93b8e890-c4a9-6050-88b7-3667c023dd34@oracle.com>
+Date:   Wed, 15 Jan 2020 11:57:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oTHb8nViIGeoXxdp"
-Content-Disposition: inline
-In-Reply-To: <20200107174748.9616-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200115182721.GE25201@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001150153
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001150153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---oTHb8nViIGeoXxdp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/15/20 10:27 AM, Jason Gunthorpe wrote:
+> On Mon, Jan 13, 2020 at 04:41:20PM -0800, rao Shoaib wrote:
+>> From: Rao Shoaib <rao.shoaib@oracle.com>
+>>
+>> SGE buffer size and max_inline data should be same. Maximum of the
+>> two values requested is used.
+>>
+>> Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
+>>   drivers/infiniband/sw/rxe/rxe_qp.c | 23 +++++++++++------------
+>>   1 file changed, 11 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/sw/rxe/rxe_qp.c b/drivers/infiniband/sw/rxe/rxe_qp.c
+>> index aeea994..41c669c 100644
+>> +++ b/drivers/infiniband/sw/rxe/rxe_qp.c
+>> @@ -235,18 +235,17 @@ static int rxe_qp_init_req(struct rxe_dev *rxe, struct rxe_qp *qp,
+>>   		return err;
+>>   	qp->sk->sk->sk_user_data = qp;
+>>   
+>> -	qp->sq.max_wr		= init->cap.max_send_wr;
+>> -	qp->sq.max_sge		= init->cap.max_send_sge;
+>> -	qp->sq.max_inline	= init->cap.max_inline_data;
+>> -
+>> -	wqe_size = max_t(int, sizeof(struct rxe_send_wqe) +
+>> -			 qp->sq.max_sge * sizeof(struct ib_sge),
+>> -			 sizeof(struct rxe_send_wqe) +
+>> -			 qp->sq.max_inline);
+>> -
+>> -	qp->sq.queue = rxe_queue_init(rxe,
+>> -				      &qp->sq.max_wr,
+>> -				      wqe_size);
+>> +	wqe_size = max_t(int, init->cap.max_send_sge * sizeof(struct ib_sge),
+>> +			 init->cap.max_inline_data);
+>> +	qp->sq.max_sge = wqe_size/sizeof(struct ib_sge);
+>> +	qp->sq.max_inline = wqe_size;
+>> +
+>> +	wqe_size += sizeof(struct rxe_send_wqe);
+> Where does this limit the user's request to RXE_MAX_WQE_SIZE ?
 
-On Tue, Jan 07, 2020 at 06:47:34PM +0100, Wolfram Sang wrote:
-> This patch series converts the I2C subsystem to use the new API. Drivers
-> have been build tested. There is one user left in the SMBus part of the
-> core which will need a seperate series because all users of this
-> function need to be checked/converted, too.
->=20
-> Except for documentation patches, the conversion has been done with a
-> coccinelle script and further simplification have been applied when
-> proofreading the patches.
->=20
-> A branch is here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/n=
-ew_client_device
->=20
-> Looking forward to comments...
+My understanding is that the user request can only specify sge's and/or 
+inline data. The check for those is made in rxe_qp_chk_cap. Since max 
+sge's and max inline data are constrained by RXE_MAX_WQE_SIZE the limit 
+is enforced.
 
-Thanks for all the quick reviews and tests \o/
+>
+> I seem to recall the if the requested max can't be satisified then
+> that is an EINVAL?
+>
+> And the init->cap should be updated with the actual allocation.
 
-Series applied to for-next, thanks!
+Since the user request for both (sge's and inline data) has been 
+satisfied I decided not to update the values in case the return values 
+are being checked. If you prefer that I update the values I can do that.
 
+Shoaib
 
---oTHb8nViIGeoXxdp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4fbpAACgkQFA3kzBSg
-KbZsuxAAlGN3Qw/NoGCVgmD5F27FU32w32SIt3btqM+Smwb8h/YywvrdIxuaElC4
-U0FVB9Nt21/V6whDPbpRqNwtf3Wld5jgpFt3GinATmO0LBrYZM0qsrAWaf9Mnnaw
-KgDuO5MOsyLhxxgsT7ak2ASe6o+QzDUOxtGJJLgjEUxAcdF7MEVinFLPA1qOgGlu
-qTPNb+z3htcdaoLIVBvUBzS6xIt8HyD2XB71db4C1TqBfdoWI/kRIWn5Fd0Bjiv4
-EmUag6Gy7G0CTw0lzmYne+gSB/U8ugzpNDTWEyns4bxTVUGgyuAdWcPomJ9Duieq
-zA2yUvTbIX/L/smIXiJcXUOwgWiozVsY+oFpDp0lpg7ZaULiuCZbmcdbil6GRfqB
-qVfn8F94w1GRCQ5lNzMTuUbTIo/4w5HFMKQY23lJ8BMI26nVQ4+6YyUoZstLLyMA
-Np0s2EAUUGGO9IdMigfaJrVW7m0ukj1Je4S9a8OAE4eVuV89o1UjNdx0O7kV4BPI
-K0YpHnEvGaEiQB3MonKIE0jUL6WA1eXUUxsgQCBoXyPx9nmz5QzANoenIPmN8PBw
-sf8NAgK8ppLrkWjmbydI2GWMFFhp4gXdGFzvrjLahMNXZsHGLyK/ad9XS6+E54RD
-GynwEX6zU+0Znoa+3I2Po2bbPBRvuHSZqES3obLnS7x/VQ8Xz1w=
-=uUCI
------END PGP SIGNATURE-----
-
---oTHb8nViIGeoXxdp--
+>
+> So more like:
+>
+>          if (init->cap.max_send_sge > RXE_MAX_SGE ||
+>             init->cap.max_inline_data > RXE_MAX_INLINE)
+>              return -EINVAL;
+>
+> 	wqe_size = max_t(int, init->cap.max_sge * sizeof(struct ib_sge),
+> 			 init->cap.max_inline_data)
+>                     sizeof(struct rxe_send_wqe);
+> 	qp->sq.max_sge = init->cap.max_send_sge = wqe_size/sizeof(struct ib_sge);
+> 	qp->sq.max_inline = init->cap.max_inline_data = wqe_size;
+> 	wqe_size += sizeof(struct rxe_send_wqe);
+>
+> Jason
