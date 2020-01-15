@@ -2,84 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A204513C8CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 17:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CC513C8DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 17:10:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbgAOQHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 11:07:55 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34809 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbgAOQHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 11:07:54 -0500
-Received: by mail-qt1-f196.google.com with SMTP id 5so16218002qtz.1;
-        Wed, 15 Jan 2020 08:07:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=46QQbf/7xY0XXnmz2tYswXMRkkq1sq4i40/0AAKflts=;
-        b=iKcqODa4BncMFy9yf967yQiQ4e1hypZ35Kspvsn9615Df5ihLYfC+Tdhv9HbRxsNG6
-         UL02ocGc692NeBS4c+vI6oDQOOgFSBACcaQK2fOITK8N9reH8U7US4ReD2OfPwUVMkty
-         RI8VFOvYzEz/PTfIlewdardpsm7e62n4vID1mAGOgCLQTUoCYxUkr1FPhb6Jg5fF2o+U
-         zwPu8Nalp/DvyF0Azf1r8rCr5SYyClR2v42p0mpWgHtTH0QSQNP7k715rTcjgEBORGKV
-         Se7uJF6XTZyf72aH46Bfh3IYUWJNecqKpADz5RqxlMjrlRZA/+AwXUlkzI90/bVgydRD
-         Gejg==
-X-Gm-Message-State: APjAAAV4Zk51tATIwafKZxff9NMp0bdmoA/A1cvHGZ8aFZmxSvJ3qcxp
-        b9V3WUOfahDzYnMpZckaFKj0YTAc
-X-Google-Smtp-Source: APXvYqwzN9XlXgiCJOHOzppCDgjC104jsqTEEFdkqciOeSGlAPVe68Kr5Xf4J+iBvOBnPUweFUNeng==
-X-Received: by 2002:aed:3fce:: with SMTP id w14mr4477223qth.0.1579104472892;
-        Wed, 15 Jan 2020 08:07:52 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id a14sm8606047qko.92.2020.01.15.08.07.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 08:07:52 -0800 (PST)
-Date:   Wed, 15 Jan 2020 11:07:50 -0500
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH RESEND] sparc/console: kill off obsolete declarations
-Message-ID: <20200115160749.GA3951901@rani.riverdale.lan>
+        id S1729025AbgAOQKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 11:10:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:39426 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726550AbgAOQKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 11:10:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 421C0328;
+        Wed, 15 Jan 2020 08:10:42 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2641B3F718;
+        Wed, 15 Jan 2020 08:10:41 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     sudeep.holla@arm.com, prime.zeng@hisilicon.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        peterz@infradead.org, mingo@kernel.org
+Subject: [PATCH] sched/topology: Assert non-NUMA topology masks don't (partially) overlap
+Date:   Wed, 15 Jan 2020 16:09:15 +0000
+Message-Id: <20200115160915.22575-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 09d3f3f0e02c ("sparc: Kill PROM console driver.") missed removing
-the declarations of the deleted prom_con structure and prom_con_init
-function from console.h. Kill them off now.
+topology.c::get_group() relies on the assumption that non-NUMA domains do
+not partially overlap. Zeng Tao pointed out in [1] that such topology
+descriptions, while completely bogus, can end up being exposed to the
+scheduler.
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
+In his example (8 CPUs, 2-node system), we end up with:
+  MC span for CPU3 == 3-7
+  MC span for CPU4 == 4-7
+
+The first pass through get_group(3, sdd@MC) will result in the following
+sched_group list:
+
+  3 -> 4 -> 5 -> 6 -> 7
+  ^                  /
+   `----------------'
+
+And a later pass through get_group(4, sdd@MC) will "corrupt" that to:
+
+  3 -> 4 -> 5 -> 6 -> 7
+       ^             /
+	`-----------'
+
+which will completely break things like 'while (sg != sd->groups)' when
+using CPU3's base sched_domain.
+
+
+There already are some architecture-specific checks in place such as
+x86/kernel/smpboot.c::topology.sane(), but this is something we can detect
+in the core scheduler, so it seems worthwhile to do so.
+
+Warn and abort the construction of the sched domains if such a broken
+topology description is detected. Note that this is somewhat
+expensive (O(t.c²), 't' non-NUMA topology levels and 'c' CPUs) and could be
+gated under SCHED_DEBUG if deemed necessary.
+
+Testing
+=======
+
+Dietmar managed to reproduce this using the following qemu incantation:
+
+  $ qemu-system-aarch64 -kernel ./Image -hda ./qemu-image-aarch64.img \
+  -append 'root=/dev/vda console=ttyAMA0 loglevel=8 sched_debug' -smp \
+  cores=8 --nographic -m 512 -cpu cortex-a53 -machine virt -numa \
+  node,cpus=0-2,nodeid=0 -numa node,cpus=3-7,nodeid=1
+
+alongside the following drivers/base/arch_topology.c hack (AIUI wouldn't be
+needed if '-smp cores=X, sockets=Y' would work with qemu):
+
+8<---
+@@ -465,6 +465,9 @@ void update_siblings_masks(unsigned int cpuid)
+ 		if (cpuid_topo->package_id != cpu_topo->package_id)
+ 			continue;
+
++		if ((cpu < 4 && cpuid > 3) || (cpu > 3 && cpuid < 4))
++			continue;
++
+ 		cpumask_set_cpu(cpuid, &cpu_topo->core_sibling);
+ 		cpumask_set_cpu(cpu, &cpuid_topo->core_sibling);
+
+8<---
+
+[1]: https://lkml.kernel.org/r/1577088979-8545-1-git-send-email-prime.zeng@hisilicon.com
+
+Reported-by: Zeng Tao <prime.zeng@hisilicon.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- include/linux/console.h | 2 --
- 1 file changed, 2 deletions(-)
+A "less intrusive" alternative is to assert the sd->groups list doesn't get
+re-written, which is a symptom of such bogus topologies. I've briefly
+tested this, you can have a look at it here:
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index d09951d5a94e..f33016b3a401 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -101,7 +101,6 @@ extern const struct consw *conswitchp;
- extern const struct consw dummy_con;	/* dummy console buffer */
- extern const struct consw vga_con;	/* VGA text console */
- extern const struct consw newport_con;	/* SGI Newport console  */
--extern const struct consw prom_con;	/* SPARC PROM console */
+  http://www.linux-arm.org/git?p=linux-vs.git;a=commit;h=e0ead72137332cbd3d69c9055ab29e6ffae5b37b
+
+fetchable via:
+  git fetch git://linux-arm.org/linux-vs mainline/topology/non_numa_overlap_sg
+---
+ kernel/sched/topology.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 6ec1e595b1d4..dfb64c08a407 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1879,6 +1879,42 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+ 	return sd;
+ }
  
- int con_is_bound(const struct consw *csw);
- int do_unregister_con_driver(const struct consw *csw);
-@@ -201,7 +200,6 @@ extern void suspend_console(void);
- extern void resume_console(void);
++/*
++ * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
++ * any two given CPUs at this (non-NUMA) topology level.
++ */
++static bool topology_span_sane(struct sched_domain_topology_level *tl,
++			      const struct cpumask *cpu_map, int cpu)
++{
++	int i;
++
++	/* NUMA levels are allowed to overlap */
++	if (tl->flags & SDTL_OVERLAP)
++		return true;
++
++	/*
++	 * Non-NUMA levels cannot partially overlap - they must be either
++	 * completely equal or completely disjoint. Otherwise we can end up
++	 * breaking the sched_group lists - i.e. a later get_group() pass
++	 * breaks the linking done for an earlier span.
++	 */
++	for_each_cpu(i, cpu_map) {
++		if (i == cpu)
++			continue;
++		/*
++		 * We should 'and' all those masks with 'cpu_map' to exactly
++		 * match the topology we're about to build, but that can only
++		 * remove CPUs, which only lessens our ability to detect
++		 * overlaps
++		 */
++		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
++		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
++			return false;
++	}
++
++	return true;
++}
++
+ /*
+  * Find the sched_domain_topology_level where all CPU capacities are visible
+  * for all CPUs.
+@@ -1975,6 +2011,9 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
+ 				has_asym = true;
+ 			}
  
- int mda_console_init(void);
--void prom_con_init(void);
++			if (WARN_ON(!topology_span_sane(tl, cpu_map, i)))
++				goto error;
++
+ 			sd = build_sched_domain(tl, cpu_map, attr, sd, dflags, i);
  
- void vcs_make_sysfs(int index);
- void vcs_remove_sysfs(int index);
+ 			if (tl == sched_domain_topology)
 -- 
-2.24.1
+2.24.0
 
