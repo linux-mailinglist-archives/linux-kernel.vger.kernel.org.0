@@ -2,79 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 981E313C18D
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A62DD13C19F
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:48:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAOMrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:47:04 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39694 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgAOMrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:47:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l2so18368729lja.6
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 04:47:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKM41qfZK+I1YPOs3sE0ln+ytjb0AeE1CS75B4GClME=;
-        b=gNMuhELwoO28aS9RrTIh/9249e1lPntBbdbAhxIt/a5SboIutP1c//C+mVDqR4q3Z6
-         /pMkgdWk4sIKijEfs9JvArrTWEUpuvIMBbByausxTy30f0TEnOA3SY2E9UGpF71fPWs0
-         vXtSTf9z1wONQDaLg03dtE9BQyn7/rBqnuAUWoy+1YpuFMnKLbokY+nXxC/aexy9WA8/
-         HlzSf1FzshN7h3ZBGJctu3Z0b65JD05cTf8n9JlFEdl+Da3o9yKthGB6O/uWsWvpswo6
-         EdjeFs8bpAwDrR6d8llwIytZHYhrCokCkbVLuXwYq60OKSkFZFHVIHr3zsX/YF1Lm910
-         ZZDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LKM41qfZK+I1YPOs3sE0ln+ytjb0AeE1CS75B4GClME=;
-        b=TMd6cg3rgasVj+q1xwZq29TvnBWbFDd0Bea4uTdgup/gRkMTfmjNRF3WGxykdMVtwv
-         AuP1kpB8QPAuHEeY/BseuDTA+7e14x7/WFZthNEcQhLsGqc/w8xm4aFPC/EA1p+7KtVa
-         VqEOiK18Diql361s1/ryHYIBVOc/SVaq9DVVCkRGrP+Q3oQ+c3EozpDjDIe5eBuI436h
-         qWbSeMfBJ/Or3cMBs3+lZdTxad824mgH6uZIaEv/llnhjwJEisVZY4Jk0EI7k9iR2Zrg
-         fYMQoI1vwxs5H2FQIxZEfWI0PngqTHWJh1X8IOeZvuDmVRx8frG4oYRQ0NrI167jI56w
-         RNew==
-X-Gm-Message-State: APjAAAWpOR0Tq1PuBLxfCvn5WtLmwsUbNN+sGr4EJBalrBSEepkpxD+k
-        jSmokc2WN4LHK7o4ea0wtaEzROxTlYv1feHTDQzlWw==
-X-Google-Smtp-Source: APXvYqxgC8+7LaK6QdmhvvjkFCM2K1oiJ6yj576t1oav2aAPfmEdhF224oj2nleQBgwhKi4di3PdkxDOsJLznvwlhHY=
-X-Received: by 2002:a2e:918c:: with SMTP id f12mr1683852ljg.66.1579092422193;
- Wed, 15 Jan 2020 04:47:02 -0800 (PST)
+        id S1729044AbgAOMsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:48:39 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47136 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbgAOMsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 07:48:39 -0500
+Received: from zn.tnic (p200300EC2F0C7700ACD7CA379FB916C9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:7700:acd7:ca37:9fb9:16c9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7CE251EC02D2;
+        Wed, 15 Jan 2020 13:48:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579092517;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RRzDcbrEYO6vPej3CmJAYWJu/0P03k1Uv077MCVlHV4=;
+        b=a/dVzqYYD8DzbPQzyqhPZ1jPExfj8MHtpPTKzMrw2VpflVtiiDPy1AOng2VBEQZoTPpVWE
+        LgAZ/HdZ6SW4Jpp5VT8VTsrcmKcRj8i7Awk9SJNVhPEyQUkjmr9b4Cg1U9EPZdWxFEXiVy
+        enp6KKhmT0Nyu++LB1vBrn6ARK6sDV8=
+Date:   Wed, 15 Jan 2020 13:48:33 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Shiping Ji <shiping.linux@gmail.com>
+Cc:     James Morse <james.morse@arm.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, sashal@kernel.org, hangl@microsoft.com,
+        Lei Wang <lewan@microsoft.com>, ruizhao@microsoft.com,
+        Scott Branden <scott.branden@broadcom.com>,
+        Yuqing Shen <yuqing.shen@broadcom.com>, ray.jui@broadcom.com,
+        wangglei@gmail.com, shji@microsoft.com
+Subject: Re: [PATCH v8 2/2] EDAC: add EDAC driver for DMC520
+Message-ID: <20200115124833.GE20975@zn.tnic>
+References: <0cc7bcfe-0dee-b78a-a0fe-52cc48c00a44@gmail.com>
 MIME-Version: 1.0
-References: <20200110035524.23511-1-rayagonda.kokatanur@broadcom.com>
-In-Reply-To: <20200110035524.23511-1-rayagonda.kokatanur@broadcom.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 15 Jan 2020 13:46:51 +0100
-Message-ID: <CACRpkdZhEQ9-d+NSB0++EEbLs3RQxfRHVubuqB-SPv130YW-SQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: iproc: Use platform_get_irq_optional() to
- avoid error message
-To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Li Jin <li.jin@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0cc7bcfe-0dee-b78a-a0fe-52cc48c00a44@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 4:55 AM Rayagonda Kokatanur
-<rayagonda.kokatanur@broadcom.com> wrote:
+On Tue, Jan 14, 2020 at 03:52:23PM -0800, Shiping Ji wrote:
+> New driver supports error detection and correction on the devices with ARM
+> DMC-520 memory controller.
+> 
+> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
+> Reviewed-by: James Morse <james.morse@arm.com>
 
-> Use platform_get_irq_optional() instead of platform_get_irq() to avoid
-> below error message during probe:
->
-> [ 0.589121] iproc-gpio 66424800.gpio: IRQ index 0 not found
->
-> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+I don't think you've understood the whole SOB chain thing yet. Previous
+submissions had
 
-Patch applied with Chris' ACK.
+Signed-off-by: Lei Wang <leiwang_git@outlook.com>
 
-Yours,
-Linus Walleij
+and her as author and you've completely removed those and made yourself
+an author because when I apply this patch, it would take the From:
+header from the mail and make it the author.
+
+But you can't simply remove her authorship... you need to read that doc
+again.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
