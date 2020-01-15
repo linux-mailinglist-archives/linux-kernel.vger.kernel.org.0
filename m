@@ -2,100 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42B4413BA4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:25:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 595F413BA68
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 08:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgAOHZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 02:25:02 -0500
-Received: from mail.dlink.ru ([178.170.168.18]:43540 "EHLO fd.dlink.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726018AbgAOHZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 02:25:01 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id AE5E11B2010A; Wed, 15 Jan 2020 10:24:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru AE5E11B2010A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1579073098; bh=9BpX60oTC+OJffotL5YslGLjv5z+sH4Lz+acJSFb43Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=rUTU0sASFGg+onSvMq/HOSMe/x/A09rwA+xpRP8HIyFGoziDMjEEiRWopY8cHrf/j
-         OPges88lZPP6KtMcrD0PvlaWYY1GxCgts/cynhy4+d2ET/4da0td/DCRfQrQAluqG1
-         G1IvfgFx0fjLFQaeu06OUSlYbaZ0KdeWEteCYENQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id 381B21B2010A;
-        Wed, 15 Jan 2020 10:24:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 381B21B2010A
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id AC6BF1B20AE9;
-        Wed, 15 Jan 2020 10:24:45 +0300 (MSK)
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Wed, 15 Jan 2020 10:24:45 +0300 (MSK)
+        id S1729246AbgAOHkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 02:40:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42775 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729212AbgAOHkE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 02:40:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y4so17376023ljj.9;
+        Tue, 14 Jan 2020 23:40:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qf+dl2KRqoOZC7hVj/drFe6KbmmX/jS0ZDQZCpfZUrw=;
+        b=Q6VKajxYsp9prAOt0LJ8gS1Y7dRU6ONsqqmOjGTgU4T2rFsGuW16ld0Ste3ZNGYnje
+         o3yD3kiIdAu2DrMVTGuKbTG9r+3p7A6ifv28KrUNke6CXKBrURQbO7IeM1Kr3XBLoTBF
+         X2qHBXfkJt8ktq4LQcz5hvAsCqUGSZmhpkNPRpOGsZQG6lIbREN/ymIVLecCZdlGbWiE
+         MIkIK6k9s2BkD0oPBEttZAmyyqmvuG+KqFfb8JQpcdd2OKfkd+qcdrJDpong4TBhFC4+
+         gv4xmZtu/0B6PL2yUMN8uCHf8gBnTkvcMZ4UPIba8nKi0MpuvtuZM4J43XkqMmq7Kjxq
+         ceLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qf+dl2KRqoOZC7hVj/drFe6KbmmX/jS0ZDQZCpfZUrw=;
+        b=AjsV/sarMWetHPQ7KkUoJ5++rJ5xyoDcKQMXZyShqelQ2AgmlTf7lOMddGNzA/ByDw
+         sP3eAVc32hYXudihOdLQcD89VYCyNpPeob/ZIFe09/fv6XAwu9ihJEJGsOWJ2CnGEbl4
+         UclG5t7FZjX6vYTLEPGTuQtER5MqqxJV+5Amk7y71Pa8vG2vR25c9/ZIVLjW1gmeTX0R
+         gmR4oYSXT+Hedn7EmkT4m+o/CUmAtlHy0uofblDYoAKpIkoALJU6NTwGvIljpXvlY2pT
+         MOQ94/XXJIFGHo+AySWNy3b027Z4KqO+JfeQDoACWkNHGyT2i7iIHd+dVcenQ3JLLdD2
+         M3lw==
+X-Gm-Message-State: APjAAAUOouLsWUQnP9iWhTOiR8A+0gza0+GjICm9s8WNVYV0jnw0jVxT
+        rmfqfgawnWJI/gS8XOPDFaY=
+X-Google-Smtp-Source: APXvYqyN0c/ZdA8ZEYIpDF2VOIKy66QHFjWzA82CgfnmipQp/CsLIT4dfat63gVv34n8Kiu6uTMBTg==
+X-Received: by 2002:a2e:b55c:: with SMTP id a28mr911954ljn.260.1579074002029;
+        Tue, 14 Jan 2020 23:40:02 -0800 (PST)
+Received: from localhost.localdomain ([185.6.236.169])
+        by smtp.googlemail.com with ESMTPSA id x23sm8388855lff.24.2020.01.14.23.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2020 23:40:01 -0800 (PST)
+From:   Maxim <bigunclemax@gmail.com>
+Cc:     bigunclemax@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: mvebu: clear irq in edge cause register before unmask edge irq
+Date:   Wed, 15 Jan 2020 10:38:11 +0300
+Message-Id: <20200115073811.24438-1-bigunclemax@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Date:   Wed, 15 Jan 2020 10:24:45 +0300
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Paul Blakey <paulb@mellanox.com>,
-        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH RFC net-next 06/19] net: dsa: tag_gswip: fix typo in tag
- name
-In-Reply-To: <0edda44f-7a75-e6c9-eec3-48259630bb3d@gmail.com>
-References: <20191230143028.27313-1-alobakin@dlink.ru>
- <20191230143028.27313-7-alobakin@dlink.ru> <20191230172209.GE13569@lunn.ch>
- <0edda44f-7a75-e6c9-eec3-48259630bb3d@gmail.com>
-User-Agent: Roundcube Webmail/1.4.0
-Message-ID: <69c888adea30f35fe36da37d76ee604e@dlink.ru>
-X-Sender: alobakin@dlink.ru
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Florian Fainelli wrote 15.01.2020 00:57:
-> On 12/30/19 9:22 AM, Andrew Lunn wrote:
->> On Mon, Dec 30, 2019 at 05:30:14PM +0300, Alexander Lobakin wrote:
->>> "gwsip" -> "gswip".
->>> 
->>> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
->> 
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
-> Likewise, this is a bug fix that should be extracted out of this GRO
-> series and a Fixes: tag be put since this has an user-visible impact
-> through /sys/class/net/*/dsa/tagging.
+From: Maxim Kiselev <bigunclemax@gmail.com>
 
-Sure, I'll pull some really important fixes (like this one and doubled
-Tx stats in tag_qca) out of this series and submit them as separate
-patches, maybe even in net-fixes tree?
+When input GPIO set from 0 to 1, the interrupt bit asserted in the GPIO
+Interrupt Cause Register (ICR) even if the corresponding interrupt
+masked in the GPIO Interrupt Mask Register.
 
-> Thanks
+Because interrupt mask register only affects assertion of the interrupt
+bits in Main Interrupt Cause Register and it does not affect the
+setting of bits in the GPIO ICR.
 
-Regards,
-ᚷ ᛖ ᚢ ᚦ ᚠ ᚱ
+So, there is problem, when we unmask interrupt with already
+asserted bit in the GPIO ICR, then false interrupt immediately occurs
+even if GPIO don't change their value since last unmask.
+
+Signed-off-by: Maxim Kiselev <bigunclemax@gmail.com>
+---
+ drivers/gpio/gpio-mvebu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 993bbeb3c006..bdae0c08f239 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -432,6 +432,7 @@ static void mvebu_gpio_edge_irq_unmask(struct irq_data *d)
+ 	u32 mask = d->mask;
+ 
+ 	irq_gc_lock(gc);
++	mvebu_gpio_write_edge_cause(mvchip, ~mask);
+ 	ct->mask_cache_priv |= mask;
+ 	mvebu_gpio_write_edge_mask(mvchip, ct->mask_cache_priv);
+ 	irq_gc_unlock(gc);
+-- 
+2.24.1
+
