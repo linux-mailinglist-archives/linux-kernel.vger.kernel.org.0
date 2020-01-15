@@ -2,515 +2,377 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0547713C578
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A7B13C5B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbgAOOOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:14:46 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40705 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729855AbgAOOOo (ORCPT
+        id S1729991AbgAOOQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:16:15 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:31128 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729247AbgAOOM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:14:44 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k25so8274367pgt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 06:14:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7g+A6EIwp3+uoUr/nE8BNmfnMZluXrSBZonY3RnkoaI=;
-        b=A7SamQuevOsKhfQnTzbBI8X6DhhQWgEDOUlldX99SNFKpiKcNQn5NyjpSU1YlNeTQe
-         w9+NYdLkKfMzZnU+Nbp2Ny3YuixtQhaPMheUtIwl51kSoQWFNX8/toXNix2salORUyhv
-         iTQV5lr2Nrs29PZ2rmR8RoTV4df/k+LXZXL7vk3nh1MDFSXcnuBiL1/aTUNmGBHzsTV4
-         IFPvGAURePGtKoGas5A9gYEOBnEEOvKgiyqzIRSPq2eA/+LIzV+dKKGtGMuOIJFO4J46
-         AvNxO9CwZkUUv1l0usGW+i1kxLcAzaysCPNN8KSKZfv9qxlO9SVuk1asKjH5Sym5uS7k
-         FbJg==
+        Wed, 15 Jan 2020 09:12:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579097576;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=saBPFAwsuv1615CQ4zI6QuQXluUkG0VYa063SwT+sFU=;
+        b=bwU+wq7bK6bq16wkenRhorCRR5kTRmdoyerVCkrGPjZEvm5hcHmQx3F0RicBAEM9L6rH4H
+        F3A8VIvQz+/it85d4Ky0vBpRBVqhQipQbp1uf2l/iEgVy2PN1GQQBcXCa+Mfj1gI9XloUC
+        glcxmAalFK3b2XJ+g5DoIPPqbpQXTKs=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-412-kp2l5SO6OFaeTgS_nwaTfA-1; Wed, 15 Jan 2020 09:12:54 -0500
+X-MC-Unique: kp2l5SO6OFaeTgS_nwaTfA-1
+Received: by mail-lj1-f200.google.com with SMTP id 126so4188997ljj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 06:12:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7g+A6EIwp3+uoUr/nE8BNmfnMZluXrSBZonY3RnkoaI=;
-        b=DW533P27jkVFPxAxjxjro4mb3aNXlpqAhYLZHHGYpGeHtWEtEXbyj3V2jKvX5OfIDD
-         YQWQf+QKxHdAQFEuQgPfrxfZUuLWKTi9QKm4b6YQ0y/32hbBYhb8/KlUnfvz/7gnsZvD
-         Koc2cKr/sgtK1nxsp98IhIxZWyYeVJUFSDLcBzjEz3H9FTVE0RoSn0RwtpEXIx5yHpnh
-         UZp5pmJ3U+LwkhBWekfVmHrTQWcnbOZ7BhqtIR+nQ0STSZQ6OSg1LEoJH8d6d2qVUEtG
-         6Q49TLGHR39VcN5/HxR/zfTHRM3zG9ndsnnL6LCyFKwuO+q85MkIJviCLp1hcQU9KvQ4
-         Ymtg==
-X-Gm-Message-State: APjAAAWLI3dy7ymrrfQhqtcJNMt93FBr3Awfbysnoj/KGcBWxzndTvy6
-        +y7Us7lQ8bvhU/MdDD+LCY3YaQ==
-X-Google-Smtp-Source: APXvYqwQQERNuRwRXlNDQbTOVSbY1x16/7bzx0riR3fwBnj/krjnxBlk2KP6r8cDUbdGEr12j6aLZw==
-X-Received: by 2002:a65:5281:: with SMTP id y1mr32541324pgp.327.1579097683100;
-        Wed, 15 Jan 2020 06:14:43 -0800 (PST)
-Received: from localhost.localdomain ([104.238.63.136])
-        by smtp.gmail.com with ESMTPSA id a15sm22591980pfh.169.2020.01.15.06.14.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 15 Jan 2020 06:14:42 -0800 (PST)
-From:   Zhangfei Gao <zhangfei.gao@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        jonathan.cameron@huawei.com, dave.jiang@intel.com,
-        grant.likely@arm.com, jean-philippe <jean-philippe@linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        ilias.apalodimas@linaro.org, francois.ozog@linaro.org,
-        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
-        "haojian . zhuang" <haojian.zhuang@linaro.org>,
-        guodong.xu@linaro.org
-Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Zhangfei Gao <zhangfei.gao@linaro.org>
-Subject: [PATCH v12 4/4] crypto: hisilicon - register zip engine to uacce
-Date:   Wed, 15 Jan 2020 22:12:48 +0800
-Message-Id: <1579097568-17542-5-git-send-email-zhangfei.gao@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579097568-17542-1-git-send-email-zhangfei.gao@linaro.org>
-References: <1579097568-17542-1-git-send-email-zhangfei.gao@linaro.org>
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=saBPFAwsuv1615CQ4zI6QuQXluUkG0VYa063SwT+sFU=;
+        b=IqpWyJRwDuhX8rwuoXRvOeMIw38F5+l7xWdeAE+EjHtPW0+bO3uA7BERMJ4kNsKopr
+         8cpJpTKJyzGfPPMu8LeeEZmQdL8YHwd5R04KMxGr8aLiclvDo7ZKsL8IKQNkdLRZGfNH
+         D0SCIiuOdIDhMlKbczadGDeH6JlPFCUc5i+EtHFoSs0StruzduvukYlSHDSYHhPw3Kif
+         KU3do2BadFbrs7L/di404PoLrH356uy5jRRipwrEz6L6H+SZQdio6gwLcEe1EdKuv8PN
+         4lVHSref0fakgC3dqNGHKJHN/QRHdUNSVWRK0SblXbePzpTy5BCnBEEgyBmE2T7FwVJu
+         rbFA==
+X-Gm-Message-State: APjAAAXIN2OuznO224OJveoE+54zzMr5yESRYGnyaglmCvdu1F+gxrLN
+        37saovLnTrQtRi85DWIKvxZaAyaDSrMNv2AMLCqnnaOyu9f7ytmlg7GhxjXaxKKys4BbZ/k8nz1
+        Yep4tajqY5Uly+NVq9xqLGNur
+X-Received: by 2002:a2e:9a11:: with SMTP id o17mr1896824lji.256.1579097572419;
+        Wed, 15 Jan 2020 06:12:52 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxOz6MLn3qRh9yjhsNOmCzgBNL6xnEKHhD/ve3KKlKsSz4BhA7JPOlVUTlzKiMwpE3+KfUf6A==
+X-Received: by 2002:a2e:9a11:: with SMTP id o17mr1896791lji.256.1579097572053;
+        Wed, 15 Jan 2020 06:12:52 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id u25sm8948959lfk.46.2020.01.15.06.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 06:12:50 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id C96A71804D6; Wed, 15 Jan 2020 15:12:48 +0100 (CET)
+Subject: [PATCH bpf-next v2 00/10] tools: Use consistent libbpf include paths
+ everywhere
+From:   =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Alexei Starovoitov <ast@kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Date:   Wed, 15 Jan 2020 15:12:48 +0100
+Message-ID: <157909756858.1192265.6657542187065456112.stgit@toke.dk>
+User-Agent: StGit/0.21
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register qm to uacce framework for user crypto driver
+The recent commit 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are
+taken from selftests dir") broke compilation against libbpf if it is installed
+on the system, and $INCLUDEDIR/bpf is not in the include path.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Since having the bpf/ subdir of $INCLUDEDIR in the include path has never been a
+requirement for building against libbpf before, this needs to be fixed. One
+option is to just revert the offending commit and figure out a different way to
+achieve what it aims for. However, this series takes a different approach:
+Changing all in-tree users of libbpf to consistently use a bpf/ prefix in
+#include directives for header files from libbpf.
+
+This turns out to be a somewhat invasive change in the number of files touched;
+however, the actual changes to files are fairly trivial (most of them are simply
+made with 'sed'). Also, this approach has the advantage that it makes external
+and internal users consistent with each other, and ensures no future changes
+breaks things in the same way as the commit referenced above.
+
+The series is split to make the change for one tool subdir at a time, while
+trying not to break the build along the way. It is structured like this:
+
+- Patch 1-2: Trivial fixes to Makefiles for issues I discovered while changing
+  the include paths.
+
+- Patch 3-7: Change the include directives to use the bpf/ prefix, and updates
+  Makefiles to make sure tools/lib/ is part of the include path, but without
+  removing tools/lib/bpf
+
+- Patch 8: Change the bpf_helpers file in libbpf itself to use the bpf/ prefix
+  when including (the original source of breakage).
+
+- Patch 9-10: Remove tools/lib/bpf from include paths to make sure we don't
+  inadvertently re-introduce includes without the bpf/ prefix.
+
 ---
- drivers/crypto/hisilicon/qm.c           | 239 +++++++++++++++++++++++++++++++-
- drivers/crypto/hisilicon/qm.h           |  11 ++
- drivers/crypto/hisilicon/zip/zip_main.c |  16 ++-
- include/uapi/misc/uacce/hisi_qm.h       |  23 +++
- 4 files changed, 281 insertions(+), 8 deletions(-)
- create mode 100644 include/uapi/misc/uacce/hisi_qm.h
 
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index d6e2497..c56d819 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -9,6 +9,9 @@
- #include <linux/log2.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-+#include <linux/uacce.h>
-+#include <linux/uaccess.h>
-+#include <uapi/misc/uacce/hisi_qm.h>
- #include "qm.h"
- 
- /* eq/aeq irq enable */
-@@ -465,9 +468,14 @@ static void qm_cq_head_update(struct hisi_qp *qp)
- 
- static void qm_poll_qp(struct hisi_qp *qp, struct hisi_qm *qm)
- {
--	struct qm_cqe *cqe = qp->cqe + qp->qp_status.cq_head;
-+	if (qp->event_cb) {
-+		qp->event_cb(qp);
-+		return;
-+	}
- 
- 	if (qp->req_cb) {
-+		struct qm_cqe *cqe = qp->cqe + qp->qp_status.cq_head;
-+
- 		while (QM_CQE_PHASE(cqe) == qp->qp_status.cqc_phase) {
- 			dma_rmb();
- 			qp->req_cb(qp, qp->sqe + qm->sqe_size *
-@@ -1269,7 +1277,7 @@ static int qm_qp_ctx_cfg(struct hisi_qp *qp, int qp_id, int pasid)
-  * @qp: The qp we want to start to run.
-  * @arg: Accelerator specific argument.
-  *
-- * After this function, qp can receive request from user. Return qp_id if
-+ * After this function, qp can receive request from user. Return 0 if
-  * successful, Return -EBUSY if failed.
-  */
- int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
-@@ -1314,7 +1322,7 @@ int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
- 
- 	dev_dbg(dev, "queue %d started\n", qp_id);
- 
--	return qp_id;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(hisi_qm_start_qp);
- 
-@@ -1440,6 +1448,214 @@ static void hisi_qm_cache_wb(struct hisi_qm *qm)
- 	}
- }
- 
-+static void qm_qp_event_notifier(struct hisi_qp *qp)
-+{
-+	wake_up_interruptible(&qp->uacce_q->wait);
-+}
-+
-+static int hisi_qm_get_available_instances(struct uacce_device *uacce)
-+{
-+	int i, ret;
-+	struct hisi_qm *qm = uacce->priv;
-+
-+	read_lock(&qm->qps_lock);
-+	for (i = 0, ret = 0; i < qm->qp_num; i++)
-+		if (!qm->qp_array[i])
-+			ret++;
-+	read_unlock(&qm->qps_lock);
-+
-+	return ret;
-+}
-+
-+static int hisi_qm_uacce_get_queue(struct uacce_device *uacce,
-+				   unsigned long arg,
-+				   struct uacce_queue *q)
-+{
-+	struct hisi_qm *qm = uacce->priv;
-+	struct hisi_qp *qp;
-+	u8 alg_type = 0;
-+
-+	qp = hisi_qm_create_qp(qm, alg_type);
-+	if (IS_ERR(qp))
-+		return PTR_ERR(qp);
-+
-+	q->priv = qp;
-+	q->uacce = uacce;
-+	qp->uacce_q = q;
-+	qp->event_cb = qm_qp_event_notifier;
-+	qp->pasid = arg;
-+
-+	return 0;
-+}
-+
-+static void hisi_qm_uacce_put_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	hisi_qm_cache_wb(qp->qm);
-+	hisi_qm_release_qp(qp);
-+}
-+
-+/* map sq/cq/doorbell to user space */
-+static int hisi_qm_uacce_mmap(struct uacce_queue *q,
-+			      struct vm_area_struct *vma,
-+			      struct uacce_qfile_region *qfr)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qm *qm = qp->qm;
-+	size_t sz = vma->vm_end - vma->vm_start;
-+	struct pci_dev *pdev = qm->pdev;
-+	struct device *dev = &pdev->dev;
-+	unsigned long vm_pgoff;
-+	int ret;
-+
-+	switch (qfr->type) {
-+	case UACCE_QFRT_MMIO:
-+		if (qm->ver == QM_HW_V2) {
-+			if (sz > PAGE_SIZE * (QM_DOORBELL_PAGE_NR +
-+			    QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE))
-+				return -EINVAL;
-+		} else {
-+			if (sz > PAGE_SIZE * QM_DOORBELL_PAGE_NR)
-+				return -EINVAL;
-+		}
-+
-+		vma->vm_flags |= VM_IO;
-+
-+		return remap_pfn_range(vma, vma->vm_start,
-+				       qm->phys_base >> PAGE_SHIFT,
-+				       sz, pgprot_noncached(vma->vm_page_prot));
-+	case UACCE_QFRT_DUS:
-+		if (sz != qp->qdma.size)
-+			return -EINVAL;
-+
-+		/*
-+		 * dma_mmap_coherent() requires vm_pgoff as 0
-+		 * restore vm_pfoff to initial value for mmap()
-+		 */
-+		vm_pgoff = vma->vm_pgoff;
-+		vma->vm_pgoff = 0;
-+		ret = dma_mmap_coherent(dev, vma, qp->qdma.va,
-+					qp->qdma.dma, sz);
-+		vma->vm_pgoff = vm_pgoff;
-+		return ret;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int hisi_qm_uacce_start_queue(struct uacce_queue *q)
-+{
-+	struct hisi_qp *qp = q->priv;
-+
-+	return hisi_qm_start_qp(qp, qp->pasid);
-+}
-+
-+static void hisi_qm_uacce_stop_queue(struct uacce_queue *q)
-+{
-+	hisi_qm_stop_qp(q->priv);
-+}
-+
-+static int qm_set_sqctype(struct uacce_queue *q, u16 type)
-+{
-+	struct hisi_qm *qm = q->uacce->priv;
-+	struct hisi_qp *qp = q->priv;
-+
-+	write_lock(&qm->qps_lock);
-+	qp->alg_type = type;
-+	write_unlock(&qm->qps_lock);
-+
-+	return 0;
-+}
-+
-+static long hisi_qm_uacce_ioctl(struct uacce_queue *q, unsigned int cmd,
-+				unsigned long arg)
-+{
-+	struct hisi_qp *qp = q->priv;
-+	struct hisi_qp_ctx qp_ctx;
-+
-+	if (cmd == UACCE_CMD_QM_SET_QP_CTX) {
-+		if (copy_from_user(&qp_ctx, (void __user *)arg,
-+				   sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+
-+		if (qp_ctx.qc_type != 0 && qp_ctx.qc_type != 1)
-+			return -EINVAL;
-+
-+		qm_set_sqctype(q, qp_ctx.qc_type);
-+		qp_ctx.id = qp->qp_id;
-+
-+		if (copy_to_user((void __user *)arg, &qp_ctx,
-+				 sizeof(struct hisi_qp_ctx)))
-+			return -EFAULT;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct uacce_ops uacce_qm_ops = {
-+	.get_available_instances = hisi_qm_get_available_instances,
-+	.get_queue = hisi_qm_uacce_get_queue,
-+	.put_queue = hisi_qm_uacce_put_queue,
-+	.start_queue = hisi_qm_uacce_start_queue,
-+	.stop_queue = hisi_qm_uacce_stop_queue,
-+	.mmap = hisi_qm_uacce_mmap,
-+	.ioctl = hisi_qm_uacce_ioctl,
-+};
-+
-+static int qm_alloc_uacce(struct hisi_qm *qm)
-+{
-+	struct pci_dev *pdev = qm->pdev;
-+	struct uacce_device *uacce;
-+	unsigned long mmio_page_nr;
-+	unsigned long dus_page_nr;
-+	struct uacce_interface interface = {
-+		.flags = UACCE_DEV_SVA,
-+		.ops = &uacce_qm_ops,
-+	};
-+
-+	strncpy(interface.name, pdev->driver->name, sizeof(interface.name));
-+
-+	uacce = uacce_alloc(&pdev->dev, &interface);
-+	if (IS_ERR(uacce))
-+		return PTR_ERR(uacce);
-+
-+	if (uacce->flags & UACCE_DEV_SVA) {
-+		qm->use_sva = true;
-+	} else {
-+		/* only consider sva case */
-+		uacce_remove(uacce);
-+		qm->uacce = NULL;
-+		return -EINVAL;
-+	}
-+
-+	uacce->is_vf = pdev->is_virtfn;
-+	uacce->priv = qm;
-+	uacce->algs = qm->algs;
-+
-+	if (qm->ver == QM_HW_V1) {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR;
-+		uacce->api_ver = HISI_QM_API_VER_BASE;
-+	} else {
-+		mmio_page_nr = QM_DOORBELL_PAGE_NR +
-+			QM_DOORBELL_SQ_CQ_BASE_V2 / PAGE_SIZE;
-+		uacce->api_ver = HISI_QM_API_VER2_BASE;
-+	}
-+
-+	dus_page_nr = (PAGE_SIZE - 1 + qm->sqe_size * QM_Q_DEPTH +
-+		       sizeof(struct qm_cqe) * QM_Q_DEPTH) >> PAGE_SHIFT;
-+
-+	uacce->qf_pg_num[UACCE_QFRT_MMIO] = mmio_page_nr;
-+	uacce->qf_pg_num[UACCE_QFRT_DUS]  = dus_page_nr;
-+
-+	qm->uacce = uacce;
-+
-+	return 0;
-+}
-+
- /**
-  * hisi_qm_get_free_qp_num() - Get free number of qp in qm.
-  * @qm: The qm which want to get free qp.
-@@ -1482,10 +1698,14 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		return -EINVAL;
- 	}
- 
-+	ret = qm_alloc_uacce(qm);
-+	if (ret < 0)
-+		dev_warn(&pdev->dev, "fail to alloc uacce (%d)\n", ret);
-+
- 	ret = pci_enable_device_mem(pdev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to enable device mem!\n");
--		return ret;
-+		goto err_remove_uacce;
- 	}
- 
- 	ret = pci_request_mem_regions(pdev, qm->dev_name);
-@@ -1494,8 +1714,9 @@ int hisi_qm_init(struct hisi_qm *qm)
- 		goto err_disable_pcidev;
- 	}
- 
--	qm->io_base = ioremap(pci_resource_start(pdev, PCI_BAR_2),
--			      pci_resource_len(qm->pdev, PCI_BAR_2));
-+	qm->phys_base = pci_resource_start(pdev, PCI_BAR_2);
-+	qm->phys_size = pci_resource_len(qm->pdev, PCI_BAR_2);
-+	qm->io_base = ioremap(qm->phys_base, qm->phys_size);
- 	if (!qm->io_base) {
- 		ret = -EIO;
- 		goto err_release_mem_regions;
-@@ -1538,6 +1759,9 @@ int hisi_qm_init(struct hisi_qm *qm)
- 	pci_release_mem_regions(pdev);
- err_disable_pcidev:
- 	pci_disable_device(pdev);
-+err_remove_uacce:
-+	uacce_remove(qm->uacce);
-+	qm->uacce = NULL;
- 
- 	return ret;
- }
-@@ -1554,6 +1778,9 @@ void hisi_qm_uninit(struct hisi_qm *qm)
- 	struct pci_dev *pdev = qm->pdev;
- 	struct device *dev = &pdev->dev;
- 
-+	uacce_remove(qm->uacce);
-+	qm->uacce = NULL;
-+
- 	if (qm->use_dma_api && qm->qdma.va) {
- 		hisi_qm_cache_wb(qm);
- 		dma_free_coherent(dev, qm->qdma.size,
-diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
-index 078b8f1..c096f80 100644
---- a/drivers/crypto/hisilicon/qm.h
-+++ b/drivers/crypto/hisilicon/qm.h
-@@ -77,6 +77,9 @@
- 
- #define HISI_ACC_SGL_SGE_NR_MAX		255
- 
-+/* page number for queue file region */
-+#define QM_DOORBELL_PAGE_NR		1
-+
- enum qp_state {
- 	QP_STOP,
- };
-@@ -162,7 +165,12 @@ struct hisi_qm {
- 	u32 error_mask;
- 	u32 msi_mask;
- 
-+	const char *algs;
- 	bool use_dma_api;
-+	bool use_sva;
-+	resource_size_t phys_base;
-+	resource_size_t phys_size;
-+	struct uacce_device *uacce;
- };
- 
- struct hisi_qp_status {
-@@ -192,10 +200,13 @@ struct hisi_qp {
- 	struct hisi_qp_ops *hw_ops;
- 	void *qp_ctx;
- 	void (*req_cb)(struct hisi_qp *qp, void *data);
-+	void (*event_cb)(struct hisi_qp *qp);
- 	struct work_struct work;
- 	struct workqueue_struct *wq;
- 
- 	struct hisi_qm *qm;
-+	u16 pasid;
-+	struct uacce_queue *uacce_q;
- };
- 
- int hisi_qm_init(struct hisi_qm *qm);
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index 853b97e..622f60b 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -11,6 +11,7 @@
- #include <linux/pci.h>
- #include <linux/seq_file.h>
- #include <linux/topology.h>
-+#include <linux/uacce.h>
- #include "zip.h"
- 
- #define PCI_DEVICE_ID_ZIP_PF		0xa250
-@@ -351,8 +352,14 @@ static void hisi_zip_set_user_domain_and_cache(struct hisi_zip *hisi_zip)
- 	writel(AXUSER_BASE, base + HZIP_BD_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_SGL_RUSER_32_63);
- 	writel(AXUSER_BASE, base + HZIP_BD_WUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
--	writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+
-+	if (hisi_zip->qm.use_sva) {
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE | AXUSER_SSV, base + HZIP_DATA_WUSER_32_63);
-+	} else {
-+		writel(AXUSER_BASE, base + HZIP_DATA_RUSER_32_63);
-+		writel(AXUSER_BASE, base + HZIP_DATA_WUSER_32_63);
-+	}
- 
- 	/* let's open all compression/decompression cores */
- 	writel(DECOMP_CHECK_ENABLE | ALL_COMP_DECOMP_EN,
-@@ -797,6 +804,7 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	qm->pdev = pdev;
- 	qm->ver = rev_id;
- 
-+	qm->algs = "zlib\ngzip";
- 	qm->sqe_size = HZIP_SQE_SIZE;
- 	qm->dev_name = hisi_zip_name;
- 	qm->fun_type = (pdev->device == PCI_DEVICE_ID_ZIP_PF) ? QM_HW_PF :
-@@ -840,6 +848,10 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	hisi_zip_add_to_list(hisi_zip);
- 
-+	ret = uacce_register(qm->uacce);
-+	if (ret)
-+		goto err_qm_uninit;
-+
- 	if (qm->fun_type == QM_HW_PF && vfs_num > 0) {
- 		ret = hisi_zip_sriov_enable(pdev, vfs_num);
- 		if (ret < 0)
-diff --git a/include/uapi/misc/uacce/hisi_qm.h b/include/uapi/misc/uacce/hisi_qm.h
-new file mode 100644
-index 0000000..6435f0b
---- /dev/null
-+++ b/include/uapi/misc/uacce/hisi_qm.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+#ifndef _UAPI_HISI_QM_H
-+#define _UAPI_HISI_QM_H
-+
-+#include <linux/types.h>
-+
-+/**
-+ * struct hisi_qp_ctx - User data for hisi qp.
-+ * @id: qp_index return to user space
-+ * @qc_type: Accelerator algorithm type
-+ */
-+struct hisi_qp_ctx {
-+	__u16 id;
-+	__u16 qc_type;
-+};
-+
-+#define HISI_QM_API_VER_BASE "hisi_qm_v1"
-+#define HISI_QM_API_VER2_BASE "hisi_qm_v2"
-+
-+/* UACCE_CMD_QM_SET_QP_CTX: Set qp algorithm type */
-+#define UACCE_CMD_QM_SET_QP_CTX	_IOWR('H', 10, struct hisi_qp_ctx)
-+
-+#endif
--- 
-2.7.4
+Toke Høiland-Jørgensen (10):
+      samples/bpf: Don't try to remove user's homedir on clean
+      tools/bpf/runqslower: Fix override option for VMLINUX_BTF
+      tools/runqslower: Use consistent include paths for libbpf
+      selftests: Use consistent include paths for libbpf
+      bpftool: Use consistent include paths for libbpf
+      perf: Use consistent include paths for libbpf
+      samples/bpf: Use consistent include paths for libbpf
+      libbpf: Fix include of bpf_helpers.h when libbpf is installed on system
+      selftests: Remove tools/lib/bpf from include path
+      tools/runqslower: Remove tools/lib/bpf from include path
+
+
+ samples/bpf/Makefile                               |    5 ++---
+ samples/bpf/cpustat_kern.c                         |    2 +-
+ samples/bpf/fds_example.c                          |    2 +-
+ samples/bpf/hbm.c                                  |    4 ++--
+ samples/bpf/hbm_kern.h                             |    4 ++--
+ samples/bpf/ibumad_kern.c                          |    2 +-
+ samples/bpf/ibumad_user.c                          |    2 +-
+ samples/bpf/lathist_kern.c                         |    2 +-
+ samples/bpf/lwt_len_hist_kern.c                    |    2 +-
+ samples/bpf/map_perf_test_kern.c                   |    4 ++--
+ samples/bpf/offwaketime_kern.c                     |    4 ++--
+ samples/bpf/offwaketime_user.c                     |    2 +-
+ samples/bpf/parse_ldabs.c                          |    2 +-
+ samples/bpf/parse_simple.c                         |    2 +-
+ samples/bpf/parse_varlen.c                         |    2 +-
+ samples/bpf/sampleip_kern.c                        |    4 ++--
+ samples/bpf/sampleip_user.c                        |    2 +-
+ samples/bpf/sock_flags_kern.c                      |    2 +-
+ samples/bpf/sockex1_kern.c                         |    2 +-
+ samples/bpf/sockex1_user.c                         |    2 +-
+ samples/bpf/sockex2_kern.c                         |    2 +-
+ samples/bpf/sockex2_user.c                         |    2 +-
+ samples/bpf/sockex3_kern.c                         |    2 +-
+ samples/bpf/spintest_kern.c                        |    4 ++--
+ samples/bpf/spintest_user.c                        |    2 +-
+ samples/bpf/syscall_tp_kern.c                      |    2 +-
+ samples/bpf/task_fd_query_kern.c                   |    2 +-
+ samples/bpf/task_fd_query_user.c                   |    2 +-
+ samples/bpf/tc_l2_redirect_kern.c                  |    2 +-
+ samples/bpf/tcbpf1_kern.c                          |    2 +-
+ samples/bpf/tcp_basertt_kern.c                     |    4 ++--
+ samples/bpf/tcp_bufs_kern.c                        |    4 ++--
+ samples/bpf/tcp_clamp_kern.c                       |    4 ++--
+ samples/bpf/tcp_cong_kern.c                        |    4 ++--
+ samples/bpf/tcp_dumpstats_kern.c                   |    4 ++--
+ samples/bpf/tcp_iw_kern.c                          |    4 ++--
+ samples/bpf/tcp_rwnd_kern.c                        |    4 ++--
+ samples/bpf/tcp_synrto_kern.c                      |    4 ++--
+ samples/bpf/tcp_tos_reflect_kern.c                 |    4 ++--
+ samples/bpf/test_cgrp2_tc_kern.c                   |    2 +-
+ samples/bpf/test_current_task_under_cgroup_kern.c  |    2 +-
+ samples/bpf/test_lwt_bpf.c                         |    2 +-
+ samples/bpf/test_map_in_map_kern.c                 |    4 ++--
+ samples/bpf/test_overhead_kprobe_kern.c            |    4 ++--
+ samples/bpf/test_overhead_raw_tp_kern.c            |    2 +-
+ samples/bpf/test_overhead_tp_kern.c                |    2 +-
+ samples/bpf/test_probe_write_user_kern.c           |    4 ++--
+ samples/bpf/trace_event_kern.c                     |    4 ++--
+ samples/bpf/trace_event_user.c                     |    2 +-
+ samples/bpf/trace_output_kern.c                    |    2 +-
+ samples/bpf/trace_output_user.c                    |    2 +-
+ samples/bpf/tracex1_kern.c                         |    4 ++--
+ samples/bpf/tracex2_kern.c                         |    4 ++--
+ samples/bpf/tracex3_kern.c                         |    4 ++--
+ samples/bpf/tracex4_kern.c                         |    4 ++--
+ samples/bpf/tracex5_kern.c                         |    4 ++--
+ samples/bpf/tracex6_kern.c                         |    2 +-
+ samples/bpf/tracex7_kern.c                         |    2 +-
+ samples/bpf/xdp1_kern.c                            |    2 +-
+ samples/bpf/xdp1_user.c                            |    4 ++--
+ samples/bpf/xdp2_kern.c                            |    2 +-
+ samples/bpf/xdp2skb_meta_kern.c                    |    2 +-
+ samples/bpf/xdp_adjust_tail_kern.c                 |    2 +-
+ samples/bpf/xdp_adjust_tail_user.c                 |    4 ++--
+ samples/bpf/xdp_fwd_kern.c                         |    2 +-
+ samples/bpf/xdp_fwd_user.c                         |    2 +-
+ samples/bpf/xdp_monitor_kern.c                     |    2 +-
+ samples/bpf/xdp_redirect_cpu_kern.c                |    2 +-
+ samples/bpf/xdp_redirect_cpu_user.c                |    2 +-
+ samples/bpf/xdp_redirect_kern.c                    |    2 +-
+ samples/bpf/xdp_redirect_map_kern.c                |    2 +-
+ samples/bpf/xdp_redirect_map_user.c                |    2 +-
+ samples/bpf/xdp_redirect_user.c                    |    2 +-
+ samples/bpf/xdp_router_ipv4_kern.c                 |    2 +-
+ samples/bpf/xdp_router_ipv4_user.c                 |    2 +-
+ samples/bpf/xdp_rxq_info_kern.c                    |    2 +-
+ samples/bpf/xdp_rxq_info_user.c                    |    4 ++--
+ samples/bpf/xdp_sample_pkts_kern.c                 |    2 +-
+ samples/bpf/xdp_sample_pkts_user.c                 |    2 +-
+ samples/bpf/xdp_tx_iptunnel_kern.c                 |    2 +-
+ samples/bpf/xdp_tx_iptunnel_user.c                 |    2 +-
+ samples/bpf/xdpsock_kern.c                         |    2 +-
+ samples/bpf/xdpsock_user.c                         |    6 +++---
+ tools/bpf/bpftool/Documentation/bpftool-gen.rst    |    2 +-
+ tools/bpf/bpftool/Makefile                         |    2 +-
+ tools/bpf/bpftool/btf.c                            |    8 ++++----
+ tools/bpf/bpftool/btf_dumper.c                     |    2 +-
+ tools/bpf/bpftool/cgroup.c                         |    2 +-
+ tools/bpf/bpftool/common.c                         |    4 ++--
+ tools/bpf/bpftool/feature.c                        |    4 ++--
+ tools/bpf/bpftool/gen.c                            |   10 +++++-----
+ tools/bpf/bpftool/jit_disasm.c                     |    2 +-
+ tools/bpf/bpftool/main.c                           |    4 ++--
+ tools/bpf/bpftool/map.c                            |    4 ++--
+ tools/bpf/bpftool/map_perf_ring.c                  |    4 ++--
+ tools/bpf/bpftool/net.c                            |    8 ++++----
+ tools/bpf/bpftool/netlink_dumper.c                 |    4 ++--
+ tools/bpf/bpftool/perf.c                           |    2 +-
+ tools/bpf/bpftool/prog.c                           |    6 +++---
+ tools/bpf/bpftool/xlated_dumper.c                  |    2 +-
+ tools/bpf/runqslower/Makefile                      |   21 ++++++++++++--------
+ tools/bpf/runqslower/runqslower.bpf.c              |    2 +-
+ tools/bpf/runqslower/runqslower.c                  |    4 ++--
+ tools/lib/bpf/bpf_helpers.h                        |    2 +-
+ tools/perf/examples/bpf/5sec.c                     |    2 +-
+ tools/perf/examples/bpf/empty.c                    |    2 +-
+ tools/perf/examples/bpf/sys_enter_openat.c         |    2 +-
+ tools/perf/include/bpf/pid_filter.h                |    2 +-
+ tools/perf/include/bpf/stdio.h                     |    2 +-
+ tools/perf/include/bpf/unistd.h                    |    2 +-
+ tools/testing/selftests/bpf/.gitignore             |    3 ++-
+ tools/testing/selftests/bpf/Makefile               |   16 ++++++++-------
+ tools/testing/selftests/bpf/bpf_tcp_helpers.h      |    4 ++--
+ tools/testing/selftests/bpf/bpf_trace_helpers.h    |    2 +-
+ tools/testing/selftests/bpf/bpf_util.h             |    2 +-
+ tools/testing/selftests/bpf/prog_tests/cpu_mask.c  |    2 +-
+ .../testing/selftests/bpf/prog_tests/perf_buffer.c |    2 +-
+ tools/testing/selftests/bpf/progs/bpf_dctcp.c      |    2 +-
+ tools/testing/selftests/bpf/progs/bpf_flow.c       |    4 ++--
+ tools/testing/selftests/bpf/progs/connect4_prog.c  |    4 ++--
+ tools/testing/selftests/bpf/progs/connect6_prog.c  |    4 ++--
+ tools/testing/selftests/bpf/progs/dev_cgroup.c     |    2 +-
+ tools/testing/selftests/bpf/progs/fentry_test.c    |    2 +-
+ tools/testing/selftests/bpf/progs/fexit_bpf2bpf.c  |    2 +-
+ .../selftests/bpf/progs/fexit_bpf2bpf_simple.c     |    2 +-
+ tools/testing/selftests/bpf/progs/fexit_test.c     |    2 +-
+ .../selftests/bpf/progs/get_cgroup_id_kern.c       |    2 +-
+ tools/testing/selftests/bpf/progs/kfree_skb.c      |    4 ++--
+ tools/testing/selftests/bpf/progs/loop1.c          |    4 ++--
+ tools/testing/selftests/bpf/progs/loop2.c          |    4 ++--
+ tools/testing/selftests/bpf/progs/loop3.c          |    4 ++--
+ tools/testing/selftests/bpf/progs/loop4.c          |    2 +-
+ tools/testing/selftests/bpf/progs/loop5.c          |    2 +-
+ tools/testing/selftests/bpf/progs/netcnt_prog.c    |    2 +-
+ tools/testing/selftests/bpf/progs/pyperf.h         |    2 +-
+ .../testing/selftests/bpf/progs/sample_map_ret0.c  |    2 +-
+ tools/testing/selftests/bpf/progs/sendmsg4_prog.c  |    4 ++--
+ tools/testing/selftests/bpf/progs/sendmsg6_prog.c  |    4 ++--
+ .../selftests/bpf/progs/socket_cookie_prog.c       |    4 ++--
+ .../selftests/bpf/progs/sockmap_parse_prog.c       |    4 ++--
+ .../selftests/bpf/progs/sockmap_tcp_msg_prog.c     |    4 ++--
+ .../selftests/bpf/progs/sockmap_verdict_prog.c     |    4 ++--
+ .../testing/selftests/bpf/progs/sockopt_inherit.c  |    2 +-
+ tools/testing/selftests/bpf/progs/sockopt_multi.c  |    2 +-
+ tools/testing/selftests/bpf/progs/sockopt_sk.c     |    2 +-
+ tools/testing/selftests/bpf/progs/strobemeta.h     |    2 +-
+ tools/testing/selftests/bpf/progs/tailcall1.c      |    2 +-
+ tools/testing/selftests/bpf/progs/tailcall2.c      |    2 +-
+ tools/testing/selftests/bpf/progs/tailcall3.c      |    2 +-
+ tools/testing/selftests/bpf/progs/tailcall4.c      |    2 +-
+ tools/testing/selftests/bpf/progs/tailcall5.c      |    2 +-
+ tools/testing/selftests/bpf/progs/tcp_rtt.c        |    2 +-
+ .../testing/selftests/bpf/progs/test_adjust_tail.c |    2 +-
+ .../selftests/bpf/progs/test_attach_probe.c        |    2 +-
+ tools/testing/selftests/bpf/progs/test_btf_haskv.c |    2 +-
+ tools/testing/selftests/bpf/progs/test_btf_newkv.c |    2 +-
+ tools/testing/selftests/bpf/progs/test_btf_nokv.c  |    2 +-
+ .../testing/selftests/bpf/progs/test_core_extern.c |    2 +-
+ .../selftests/bpf/progs/test_core_reloc_arrays.c   |    4 ++--
+ .../bpf/progs/test_core_reloc_bitfields_direct.c   |    4 ++--
+ .../bpf/progs/test_core_reloc_bitfields_probed.c   |    4 ++--
+ .../bpf/progs/test_core_reloc_existence.c          |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_flavors.c  |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_ints.c     |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_kernel.c   |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_misc.c     |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_mods.c     |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_nesting.c  |    4 ++--
+ .../bpf/progs/test_core_reloc_primitives.c         |    4 ++--
+ .../bpf/progs/test_core_reloc_ptr_as_arr.c         |    4 ++--
+ .../selftests/bpf/progs/test_core_reloc_size.c     |    4 ++--
+ .../selftests/bpf/progs/test_get_stack_rawtp.c     |    2 +-
+ .../testing/selftests/bpf/progs/test_global_data.c |    2 +-
+ .../selftests/bpf/progs/test_global_func1.c        |    2 +-
+ .../selftests/bpf/progs/test_global_func3.c        |    2 +-
+ .../selftests/bpf/progs/test_global_func5.c        |    2 +-
+ .../selftests/bpf/progs/test_global_func6.c        |    2 +-
+ .../selftests/bpf/progs/test_global_func7.c        |    2 +-
+ tools/testing/selftests/bpf/progs/test_l4lb.c      |    4 ++--
+ .../selftests/bpf/progs/test_l4lb_noinline.c       |    4 ++--
+ .../selftests/bpf/progs/test_lirc_mode2_kern.c     |    2 +-
+ .../selftests/bpf/progs/test_lwt_ip_encap.c        |    4 ++--
+ .../selftests/bpf/progs/test_lwt_seg6local.c       |    4 ++--
+ .../testing/selftests/bpf/progs/test_map_in_map.c  |    2 +-
+ tools/testing/selftests/bpf/progs/test_map_lock.c  |    2 +-
+ tools/testing/selftests/bpf/progs/test_mmap.c      |    2 +-
+ tools/testing/selftests/bpf/progs/test_obj_id.c    |    2 +-
+ tools/testing/selftests/bpf/progs/test_overhead.c  |    4 ++--
+ .../testing/selftests/bpf/progs/test_perf_buffer.c |    2 +-
+ tools/testing/selftests/bpf/progs/test_pinning.c   |    2 +-
+ .../selftests/bpf/progs/test_pinning_invalid.c     |    2 +-
+ .../testing/selftests/bpf/progs/test_pkt_access.c  |    4 ++--
+ .../selftests/bpf/progs/test_pkt_md_access.c       |    2 +-
+ .../testing/selftests/bpf/progs/test_probe_user.c  |    4 ++--
+ .../selftests/bpf/progs/test_queue_stack_map.h     |    2 +-
+ .../testing/selftests/bpf/progs/test_rdonly_maps.c |    2 +-
+ tools/testing/selftests/bpf/progs/test_seg6_loop.c |    4 ++--
+ .../bpf/progs/test_select_reuseport_kern.c         |    4 ++--
+ .../selftests/bpf/progs/test_send_signal_kern.c    |    2 +-
+ .../selftests/bpf/progs/test_sk_lookup_kern.c      |    4 ++--
+ .../selftests/bpf/progs/test_skb_cgroup_id_kern.c  |    2 +-
+ tools/testing/selftests/bpf/progs/test_skb_ctx.c   |    2 +-
+ tools/testing/selftests/bpf/progs/test_skeleton.c  |    2 +-
+ .../selftests/bpf/progs/test_sock_fields_kern.c    |    4 ++--
+ tools/testing/selftests/bpf/progs/test_spin_lock.c |    2 +-
+ .../selftests/bpf/progs/test_stacktrace_build_id.c |    2 +-
+ .../selftests/bpf/progs/test_stacktrace_map.c      |    2 +-
+ .../selftests/bpf/progs/test_sysctl_loop1.c        |    2 +-
+ .../selftests/bpf/progs/test_sysctl_loop2.c        |    2 +-
+ .../testing/selftests/bpf/progs/test_sysctl_prog.c |    2 +-
+ tools/testing/selftests/bpf/progs/test_tc_edt.c    |    4 ++--
+ tools/testing/selftests/bpf/progs/test_tc_tunnel.c |    4 ++--
+ .../bpf/progs/test_tcp_check_syncookie_kern.c      |    4 ++--
+ .../testing/selftests/bpf/progs/test_tcp_estats.c  |    2 +-
+ .../testing/selftests/bpf/progs/test_tcpbpf_kern.c |    4 ++--
+ .../selftests/bpf/progs/test_tcpnotify_kern.c      |    4 ++--
+ .../testing/selftests/bpf/progs/test_tracepoint.c  |    2 +-
+ .../testing/selftests/bpf/progs/test_tunnel_kern.c |    4 ++--
+ .../selftests/bpf/progs/test_verif_scale1.c        |    2 +-
+ .../selftests/bpf/progs/test_verif_scale2.c        |    2 +-
+ .../selftests/bpf/progs/test_verif_scale3.c        |    2 +-
+ tools/testing/selftests/bpf/progs/test_xdp.c       |    4 ++--
+ tools/testing/selftests/bpf/progs/test_xdp_loop.c  |    4 ++--
+ tools/testing/selftests/bpf/progs/test_xdp_meta.c  |    2 +-
+ .../selftests/bpf/progs/test_xdp_noinline.c        |    4 ++--
+ .../selftests/bpf/progs/test_xdp_redirect.c        |    2 +-
+ tools/testing/selftests/bpf/progs/test_xdp_vlan.c  |    4 ++--
+ tools/testing/selftests/bpf/progs/xdp_dummy.c      |    2 +-
+ .../testing/selftests/bpf/progs/xdp_redirect_map.c |    2 +-
+ tools/testing/selftests/bpf/progs/xdp_tx.c         |    2 +-
+ tools/testing/selftests/bpf/progs/xdping_kern.c    |    4 ++--
+ tools/testing/selftests/bpf/test_cpp.cpp           |    6 +++---
+ tools/testing/selftests/bpf/test_hashmap.c         |    2 +-
+ tools/testing/selftests/bpf/test_progs.h           |    2 +-
+ tools/testing/selftests/bpf/test_sock.c            |    2 +-
+ tools/testing/selftests/bpf/test_sockmap_kern.h    |    4 ++--
+ tools/testing/selftests/bpf/test_sysctl.c          |    2 +-
+ tools/testing/selftests/bpf/trace_helpers.h        |    2 +-
+ 238 files changed, 359 insertions(+), 354 deletions(-)
 
