@@ -2,72 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0678A13C5D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D610913C5DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:23:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbgAOOXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:23:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbgAOOXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:23:15 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FA0A24671;
-        Wed, 15 Jan 2020 14:23:14 +0000 (UTC)
-Date:   Wed, 15 Jan 2020 09:23:12 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Vincent Guittot' <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: sched/fair: scheduler not running high priority process on idle
- cpu
-Message-ID: <20200115092312.45159939@gandalf.local.home>
-In-Reply-To: <3960d46b3a4a4053a696a98ee6fd131d@AcuMS.aculab.com>
-References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
-        <20200114115906.22f952ff@gandalf.local.home>
-        <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
-        <20200114124812.4d5355ae@gandalf.local.home>
-        <3960d46b3a4a4053a696a98ee6fd131d@AcuMS.aculab.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729159AbgAOOXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:23:55 -0500
+Received: from forward102p.mail.yandex.net ([77.88.28.102]:58122 "EHLO
+        forward102p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726472AbgAOOXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:23:54 -0500
+Received: from mxback20o.mail.yandex.net (mxback20o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::71])
+        by forward102p.mail.yandex.net (Yandex) with ESMTP id 970DB1D40469;
+        Wed, 15 Jan 2020 17:23:51 +0300 (MSK)
+Received: from sas2-b157fac3b6f2.qloud-c.yandex.net (sas2-b157fac3b6f2.qloud-c.yandex.net [2a02:6b8:c08:b282:0:640:b157:fac3])
+        by mxback20o.mail.yandex.net (mxback/Yandex) with ESMTP id 0zS5Ncr5gy-NofWPAul;
+        Wed, 15 Jan 2020 17:23:51 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1579098231;
+        bh=4q3GUyzYikcHKr0WzP0o2oa68vnJeRYttVlZp6EFh8c=;
+        h=From:To:Subject:CC:References:Date:In-Reply-To:Message-ID;
+        b=graPXtatyA79ochr8IzVjTZkX5hXE7PDUT3xOdVErzRpvqceSF3y1aZYvZ9IgSfkj
+         YCELduUT01EOQ0JCPGr3hf4Fv0+WSlqZbQsUfT02gx4highPLNJjOKQm4U/pBRp70O
+         a9arh2YUW9XhexuBPIUw/XfKkBfUdIInHLaJw1JQ=
+Authentication-Results: mxback20o.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by sas2-b157fac3b6f2.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id ywluPV4xqO-NmWCG7hn;
+        Wed, 15 Jan 2020 17:23:49 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Date:   Wed, 15 Jan 2020 22:23:29 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <9cd8df72fc3a7dfcdd88eb1fb56bbe35@kernel.org>
+References: <20200113101251.37471-1-jiaxun.yang@flygoat.com> <20200114233025.y4azwvivqo7kg7i5@pburton-laptop> <9cd8df72fc3a7dfcdd88eb1fb56bbe35@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] irqchip: mips-cpu: Remove eoi operation
+To:     Marc Zyngier <maz@kernel.org>, Paul Burton <paulburton@kernel.org>
+CC:     linux-mips@vger.kernel.org, chenhc@lemote.com,
+        paul.burton@mips.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <C7C70199-38CC-473E-B20D-C1782F08CA2E@flygoat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Jan 2020 12:57:10 +0000
-David Laight <David.Laight@ACULAB.COM> wrote:
-
-> I'm surprised the 'normal case' for tracing function entry isn't done
-> in assembler without saving all the registers (etc).
-
-Well, it doesn't save all registers unless you ask it to. It only saves
-what the compiler mandates for "fentry" before calling C code.
-
-> For tsc stamps I think it should be possible saving just 3 registers
-> in under 32 instructions. Scaling to ns is a bit harder.
-> It's a shame the ns scaling isn't left to the reading code.
-
-Well, it could be done, as the ring buffer allows you to post process
-timestamps. You could switch to using just tsc:
-
- echo x86-tsc > /sys/kernel/tracing/trace_clock
-
-One reason that we do not post process the scaling to ns is that the
-scaling can change over time depending on the clock source, which means
-post processing will give you in accurate results. But the
-infrastructure is there to do it.
-
--- Steve
 
 
+=E4=BA=8E 2020=E5=B9=B41=E6=9C=8815=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=889=
+:40:31, Marc Zyngier <maz@kernel=2Eorg> =E5=86=99=E5=88=B0:
+>On 2020-01-14 23:30, Paul Burton wrote:
+>> Hi Jiaxun,
+>>=20
+>> On Mon, Jan 13, 2020 at 06:12:51PM +0800, Jiaxun Yang wrote:
+>>> The eoi opreation in mips_cpu_irq_controller caused
+>chained_irq_enter
+>>> falsely consider CPU IP interrupt as a FastEOI type IRQ=2E So the=20
+>>> interrupt
+>>> won't be masked during in handler=2E Which might lead to spurious=20
+>>> interrupt=2E
+>>>=20
+>>> Thus we simply remove eoi operation for mips_cpu_irq_controller,
+>>>=20
+>>> Signed-off-by: Jiaxun Yang <jiaxun=2Eyang@flygoat=2Ecom>
+>>> ---
+>>>  drivers/irqchip/irq-mips-cpu=2Ec | 1 -
+>>>  1 file changed, 1 deletion(-)
+>>>=20
+>>> diff --git a/drivers/irqchip/irq-mips-cpu=2Ec=20
+>>> b/drivers/irqchip/irq-mips-cpu=2Ec
+>>> index 95d4fd8f7a96=2E=2E0ad7f1f9a58b 100644
+>>> --- a/drivers/irqchip/irq-mips-cpu=2Ec
+>>> +++ b/drivers/irqchip/irq-mips-cpu=2Ec
+>>> @@ -55,7 +55,6 @@ static struct irq_chip mips_cpu_irq_controller =3D {
+>>>  	=2Eirq_mask	=3D mask_mips_irq,
+>>>  	=2Eirq_mask_ack	=3D mask_mips_irq,
+>>>  	=2Eirq_unmask	=3D unmask_mips_irq,
+>>> -	=2Eirq_eoi	=3D unmask_mips_irq,
+>>>  	=2Eirq_disable	=3D mask_mips_irq,
+>>>  	=2Eirq_enable	=3D unmask_mips_irq,
+>>>  };
+>>=20
+>> This one scares me; something doesn't seem right=2E The irq_eoi (n=C3=
+=A9e
+>eoi)
+>> callback was first added way back in commit 1417836e81c0 ("[MIPS] use
+>> generic_handle_irq, handle_level_irq, handle_percpu_irq")=2E The commit
+>> message there states that the motivation was to allow use of
+>> handle_percpu_irq(), and indeed handle_percpu_irq() does:
+>>=20
+>>     irq_ack() (ie=2E mask)
+>>     invoke the handler(s)
+>>     irq_eoi() (ie=2E unmask)
+>>=20
+>> By removing the irq_eoi callback I don't see how we'd ever unmask the
+>> interrupt again=2E=2E?
+>
+>To be completely blunt, the fact that unmask and eoi are implemented
+>the
+>same way is a clear sign that this is a bit broken=2E
+>
+>irq_eoi is used if the irqchip tracks the IRQ life-cycle in HW, and
+>it's
+>not obvious that this is the case=2E The fact that ack is also mapped to=
+=20
+>mask
+
+It's just a kind of hack to workaround the fact that our current percpu ir=
+q handler assumed
+all percpu irqs are edge triggered or fasteoi type=2E
+
+However MIPS processor implemented it in level triggered way=2E
+
+My solution would be add a check=2E If neither ack nor eoi exist for the c=
+hip,
+than we assume it's level triggered and process precpu irq in mask/unmask =
+way=2E
+
+Could it be a possible option?
+
+Thanks=2E
+
+>just adds to my feeling=2E=2E=2E
+>
+>         M=2E
+
+--=20
+Jiaxun Yang
