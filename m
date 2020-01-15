@@ -2,100 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE42813C6B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5BF13C6BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:57:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbgAOOz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:55:56 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:9046 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbgAOOzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:55:55 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 47yVkd1L6Qz9tylV;
-        Wed, 15 Jan 2020 15:55:53 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=WBcizLfB; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id yej87JrYwKck; Wed, 15 Jan 2020 15:55:53 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47yVkd0G7Zz9tylT;
-        Wed, 15 Jan 2020 15:55:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579100153; bh=drzSvcOTpHXGDw4v5FPxHbIJiwf/PfYcxldvnk1kSwk=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=WBcizLfBm8MCg5j0/7mTLx79/XdaaeLBVsccrdfLkd25w0FQKLPdjjv2cEs65IzaG
-         n7kbUMCh+PZxCzwPJMNrVX+L9UuptNN6BSkmJe/H8+LBkp0v3k/wUYLdqKncLAGHca
-         1HF86g2D7YcBKJ5kr3I0fUYximDPIOfMNE5i8k8k=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 82FF08B805;
-        Wed, 15 Jan 2020 15:55:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 4a6NedTi81Jj; Wed, 15 Jan 2020 15:55:54 +0100 (CET)
-Received: from [172.25.230.100] (po15451.idsi0.si.c-s.fr [172.25.230.100])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 60D828B774;
-        Wed, 15 Jan 2020 15:55:54 +0100 (CET)
-Subject: Re: [PATCH v2] Fix display of Maximum Memory
-To:     Michael Bringmann <mwb@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Gustavo Walbon <gwalbon@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>
-References: <5577aef8-1d5a-ca95-ff0a-9c7b5977e5bf@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <9a3b1c39-8c4f-6376-ff00-2e06190d0c67@c-s.fr>
-Date:   Wed, 15 Jan 2020 15:55:54 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1729012AbgAOO5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:57:16 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53340 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbgAOO5P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 09:57:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zYvfHEkAzcG6x0JYAatDwISXBtxZj7+56kXRS6nreOY=; b=hxhlUpBMsRkFVGusknWLZvV2P
+        fmooJozPgiNWV0gIxROWkfciN+O9o2snxCNwrPmc57F1o6SKlNQGDYeY1/HR+l69yEbBYSoHxw12C
+        hGzrvvL7cUfpAebtT0xv8fyGyNggD6Cj4FnDs2EPZMy0/56iDrxIVlGE+JWtBoZzPdnUsDRaUc0Y8
+        fbahBgG4MMb2jvAoJzcmPAij46QLbY0/lOS7f2gcD8S/RYeTTjE2IOkojWYxyJlrmLZphontdzyQZ
+        PxGZHunLCFhQxpvl65UZt3w2nbABTj8P88XzsKj3tlZI5wp5v/zsALxXtTqVlRcxA5a/TT7rdpXf+
+        b6q46yVBQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irk6C-00073U-S9; Wed, 15 Jan 2020 14:56:49 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CFA9E30257C;
+        Wed, 15 Jan 2020 15:55:08 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 361DD2B6C6D7F; Wed, 15 Jan 2020 15:56:45 +0100 (CET)
+Date:   Wed, 15 Jan 2020 15:56:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Steven Rostedt' <rostedt@goodmis.org>,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: sched/fair: scheduler not running high priority process on idle
+ cpu
+Message-ID: <20200115145645.GM2827@hirez.programming.kicks-ass.net>
+References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
+ <20200114115906.22f952ff@gandalf.local.home>
+ <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
+ <20200114124812.4d5355ae@gandalf.local.home>
+ <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
 MIME-Version: 1.0
-In-Reply-To: <5577aef8-1d5a-ca95-ff0a-9c7b5977e5bf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 15, 2020 at 12:44:19PM +0000, David Laight wrote:
 
+> Code that runs with a spin-lock held (or otherwise disables preemption)
+> for significant periods probably ought to be detected and warned.
+> I'm not sure of a suitable limit, 100us is probably excessive on x86.
 
-Le 15/01/2020 à 15:53, Michael Bringmann a écrit :
-> Correct overflow problem in calculation+display of Maximum Memory
-> value to syscfg where 32bits is insufficient.
-> 
-> Signed-off-by: Michael Bringmann <mwb@linux.ibm.com>
+Problem is, without CONFIG_PREEMPT_COUNT (basically only
+PREEMPT/PREEMPT_RT) we can't even tell.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+And I think we tried adding warnings to things like softirq, but then we
+get into arguments with the pure performance people on how allowing it
+longer will make their benchmarks go faster.
 
-> ---
->   arch/powerpc/platforms/pseries/lparcfg.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/pseries/lparcfg.c b/arch/powerpc/platforms/pseries/lparcfg.c
-> index e33e8bc..f00411c 100644
-> --- a/arch/powerpc/platforms/pseries/lparcfg.c
-> +++ b/arch/powerpc/platforms/pseries/lparcfg.c
-> @@ -433,12 +433,12 @@ static void parse_em_data(struct seq_file *m)
->   
->   static void maxmem_data(struct seq_file *m)
->   {
-> -	unsigned long maxmem = 0;
-> +	u64 maxmem = 0;
->   
-> -	maxmem += drmem_info->n_lmbs * drmem_info->lmb_size;
-> -	maxmem += hugetlb_total_pages() * PAGE_SIZE;
-> +	maxmem += (u64)drmem_info->n_lmbs * drmem_info->lmb_size;
-> +	maxmem += (u64)hugetlb_total_pages() * PAGE_SIZE;
->   
-> -	seq_printf(m, "MaxMem=%ld\n", maxmem);
-> +	seq_printf(m, "MaxMem=%llu\n", maxmem);
->   }
->   
->   static int pseries_lparcfg_data(struct seq_file *m, void *v)
-> 
+There really is no silver bullet here :/
