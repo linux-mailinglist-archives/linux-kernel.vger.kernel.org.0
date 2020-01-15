@@ -2,78 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B5BF13C6BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C268513C6B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 15:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgAOO5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 09:57:16 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:53340 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgAOO5P (ORCPT
+        id S1729113AbgAOO4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 09:56:49 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39817 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbgAOO4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 09:57:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zYvfHEkAzcG6x0JYAatDwISXBtxZj7+56kXRS6nreOY=; b=hxhlUpBMsRkFVGusknWLZvV2P
-        fmooJozPgiNWV0gIxROWkfciN+O9o2snxCNwrPmc57F1o6SKlNQGDYeY1/HR+l69yEbBYSoHxw12C
-        hGzrvvL7cUfpAebtT0xv8fyGyNggD6Cj4FnDs2EPZMy0/56iDrxIVlGE+JWtBoZzPdnUsDRaUc0Y8
-        fbahBgG4MMb2jvAoJzcmPAij46QLbY0/lOS7f2gcD8S/RYeTTjE2IOkojWYxyJlrmLZphontdzyQZ
-        PxGZHunLCFhQxpvl65UZt3w2nbABTj8P88XzsKj3tlZI5wp5v/zsALxXtTqVlRcxA5a/TT7rdpXf+
-        b6q46yVBQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1irk6C-00073U-S9; Wed, 15 Jan 2020 14:56:49 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CFA9E30257C;
-        Wed, 15 Jan 2020 15:55:08 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 361DD2B6C6D7F; Wed, 15 Jan 2020 15:56:45 +0100 (CET)
-Date:   Wed, 15 Jan 2020 15:56:45 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Steven Rostedt' <rostedt@goodmis.org>,
-        'Vincent Guittot' <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: sched/fair: scheduler not running high priority process on idle
- cpu
-Message-ID: <20200115145645.GM2827@hirez.programming.kicks-ass.net>
-References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
- <20200114115906.22f952ff@gandalf.local.home>
- <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
- <20200114124812.4d5355ae@gandalf.local.home>
- <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
+        Wed, 15 Jan 2020 09:56:49 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 77so16332429oty.6
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 06:56:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9gnxD+G4FNn+U8wzPNZLFG38GLzn+JUvySqC1BxpFAA=;
+        b=HlI1zILY3on/ducRsA+oeVJIV5hI/7HWu9gZHIUUVM5626hPXTidaWgOH1hVITfHRX
+         aPSkvuQItN0bzAZAteiJMAPPoYe6XhfrGt3p1b7lIPuLk9iyuML7WtOJzjgcBg1aOuLB
+         HUnpP1hL6xei7AHpHS6Qs2gAQhjmutPM4DAWBRx39u0b8wYiSj/6kG1LTpq1E3luZRyQ
+         ELGaQRrA6JBcse3yek8qPB4noBDo3BsQ1BIWGIAZH/0QN8LRnzWK/7xU9ofL7ME+brY/
+         uuIPQxfT72vRdkOn94FQMWKaCVtc4n2oarQ4CCQr+d7ef5KIfXIdw0TwTflfyaFVui3G
+         XWCQ==
+X-Gm-Message-State: APjAAAXLwuIhs0JG5Zy/vBmw/q84+x+oGUhJRKGbjtZRjkNll5pqR79y
+        nHtAyXKKr9PeBE8mwTA63EX07lM=
+X-Google-Smtp-Source: APXvYqz4VVdZZDBWgFKWAtYvU5Iagamv+xeVb+x23XkAHzdY+E/JisdAp2tWx62oHz4ofsO0lhWafw==
+X-Received: by 2002:a9d:1d02:: with SMTP id m2mr2819248otm.45.1579100207883;
+        Wed, 15 Jan 2020 06:56:47 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t9sm1607367otq.65.2020.01.15.06.56.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 06:56:46 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22040c
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 15 Jan 2020 08:56:45 -0600
+Date:   Wed, 15 Jan 2020 08:56:45 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ludovic Barre <ludovic.barre@st.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        srinivas.kandagatla@linaro.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 5/9] dt-bindings: mmc: mmci: add delay block base
+ register for sdmmc
+Message-ID: <20200115145645.GA599@bogus>
+References: <20200110134823.14882-1-ludovic.barre@st.com>
+ <20200110134823.14882-6-ludovic.barre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
+In-Reply-To: <20200110134823.14882-6-ludovic.barre@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 12:44:19PM +0000, David Laight wrote:
+On Fri, Jan 10, 2020 at 02:48:19PM +0100, Ludovic Barre wrote:
+> To support the sdr104 mode, the sdmmc variant has a
+> hardware delay block to manage the clock phase when sampling
+> data received by the card.
+> 
+> This patch adds a second base register (optional) for
+> sdmmc delay block.
+> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/mmci.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/mmci.txt b/Documentation/devicetree/bindings/mmc/mmci.txt
+> index 6d3c626e017d..4ec921e4bf34 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/mmci.txt
+> @@ -28,6 +28,8 @@ specific for ux500 variant:
+>  - st,sig-pin-fbclk       : feedback clock signal pin used.
+>  
+>  specific for sdmmc variant:
+> +- reg			 : a second base register may be defined if a delay
+> +                           block is present and used for tuning.
 
-> Code that runs with a spin-lock held (or otherwise disables preemption)
-> for significant periods probably ought to be detected and warned.
-> I'm not sure of a suitable limit, 100us is probably excessive on x86.
+Which compatibles have a 2nd reg entry?
 
-Problem is, without CONFIG_PREEMPT_COUNT (basically only
-PREEMPT/PREEMPT_RT) we can't even tell.
-
-And I think we tried adding warnings to things like softirq, but then we
-get into arguments with the pure performance people on how allowing it
-longer will make their benchmarks go faster.
-
-There really is no silver bullet here :/
+>  - st,sig-dir             : signal direction polarity used for cmd, dat0 dat123.
+>  - st,neg-edge            : data & command phase relation, generated on
+>                             sd clock falling edge.
+> -- 
+> 2.17.1
+> 
