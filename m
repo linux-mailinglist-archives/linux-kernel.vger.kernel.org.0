@@ -2,80 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C02013BB88
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:55:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F8AC13BB99
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 09:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgAOIzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 03:55:12 -0500
-Received: from mail.dlink.ru ([178.170.168.18]:57758 "EHLO fd.dlink.ru"
+        id S1729242AbgAOI4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 03:56:39 -0500
+Received: from mga04.intel.com ([192.55.52.120]:34087 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgAOIzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:55:11 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id 082191B20EA4; Wed, 15 Jan 2020 11:55:08 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 082191B20EA4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1579078509; bh=yg+Jxrgfes1yBtY1Tjp1FLRu3JE5xDeXDxzwB5HYVEo=;
-        h=From:To:Cc:Subject:Date;
-        b=qrrkNgMRFgqzznePH1dwMzoJFaBvAP+GxfualKd+TR1/h3dY8KMmL0ElDRhcTbJsc
-         bakhX0bnfjqpBiERh9BlCGjkFxhUhZNKTV8eeKvdbynOJPQcCycORGIzWlapiQlw0Z
-         CSHPLg3ZpmHhwlxFx9tHebPkjC0H6oTHydGRo9hM=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id BD6621B20857;
-        Wed, 15 Jan 2020 11:55:04 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru BD6621B20857
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id 04A171B20AE9;
-        Wed, 15 Jan 2020 11:55:04 +0300 (MSK)
-Received: from localhost.localdomain (unknown [196.196.203.126])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Wed, 15 Jan 2020 11:55:03 +0300 (MSK)
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Lobakin <alobakin@dlink.ru>
-Subject: [PATCH net] net: dsa: tag_gswip: fix typo in tagger name
-Date:   Wed, 15 Jan 2020 11:54:38 +0300
-Message-Id: <20200115085438.11948-1-alobakin@dlink.ru>
-X-Mailer: git-send-email 2.25.0
+        id S1729026AbgAOI4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 03:56:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 00:56:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,322,1574150400"; 
+   d="scan'208";a="305435177"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga001.jf.intel.com with ESMTP; 15 Jan 2020 00:56:36 -0800
+Subject: Re: [PATCH v2] mmc: sdhci: fix minimum clock rate for v3 controller
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <36180c2b31b154b482892d6c7a3c6d5f386a6a73.1579077085.git.mirq-linux@rere.qmqm.pl>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <7def4624-e1c5-6208-efaa-4f11f98fda6d@intel.com>
+Date:   Wed, 15 Jan 2020 10:55:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <36180c2b31b154b482892d6c7a3c6d5f386a6a73.1579077085.git.mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The correct name is GSWIP (Gigabit Switch IP). Typo was introduced in
-875138f81d71a ("dsa: Move tagger name into its ops structure") while
-moving tagger names to their structures.
+On 15/01/20 10:32 am, Michał Mirosław wrote:
+> For SDHCIv3+ with programmable clock mode, minimal clock frequency is
+> still base clock / max(divider). Minimal programmable clock frequency is
+> always greater than minimal divided clock frequency. Without this patch,
+> SDHCI uses out-of-spec initial frequency when multiplier is big enough:
+> 
+> mmc1: mmc_rescan_try_freq: trying to init card at 468750 Hz
+> [for 480 MHz source clock divided by 1024]
+> 
+> The code in sdhci_calc_clk() already chooses a correct SDCLK clock source.
 
-Fixes: 875138f81d71a ("dsa: Move tagger name into its ops structure")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
----
- net/dsa/tag_gswip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+source -> mode
 
-diff --git a/net/dsa/tag_gswip.c b/net/dsa/tag_gswip.c
-index b678160bbd66..408d4af390a0 100644
---- a/net/dsa/tag_gswip.c
-+++ b/net/dsa/tag_gswip.c
-@@ -104,7 +104,7 @@ static struct sk_buff *gswip_tag_rcv(struct sk_buff *skb,
- }
- 
- static const struct dsa_device_ops gswip_netdev_ops = {
--	.name = "gwsip",
-+	.name = "gswip",
- 	.proto	= DSA_TAG_PROTO_GSWIP,
- 	.xmit = gswip_tag_xmit,
- 	.rcv = gswip_tag_rcv,
--- 
-2.25.0
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: c3ed3877625f ("mmc: sdhci: add support for programmable clock mode")
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> ---
+>  v2: extend commitmsg and add comment
+> ---
+>  drivers/mmc/host/sdhci.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 96609c961465..fde510c55c89 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3903,11 +3903,11 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  	if (host->ops->get_min_clock)
+>  		mmc->f_min = host->ops->get_min_clock(host);
+>  	else if (host->version >= SDHCI_SPEC_300) {
+> -		if (host->clk_mul) {
+> -			mmc->f_min = (host->max_clk * host->clk_mul) / 1024;
+> +		if (host->clk_mul)
+>  			max_clk = host->max_clk * host->clk_mul;
+> -		} else
+> -			mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_300;
+> +		/* minimal divided clock rate is always less than minimal
+> +		 * programmable clock rate */
+
+Comment format and let's use the same terminology as the spec.
+
+		/*
+		 * Divided Clock Mode minimum clock rate is always less than
+		 * Programmable Clock Mode minimum clock rate.
+		 */
+
+> +		mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_300;
+>  	} else
+>  		mmc->f_min = host->max_clk / SDHCI_MAX_DIV_SPEC_200;
+>  
+> 
 
