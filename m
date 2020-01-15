@@ -2,85 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B2E13B96E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 07:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D6213B977
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 07:21:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgAOGTZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 15 Jan 2020 01:19:25 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:59415 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgAOGTZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 01:19:25 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 00F6J4nI010830, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 00F6J4nI010830
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 15 Jan 2020 14:19:05 +0800
-Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
- RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server (TLS) id
- 14.3.468.0; Wed, 15 Jan 2020 14:19:04 +0800
-Received: from RTEXMB04.realtek.com.tw (172.21.6.97) by
- RTEXMB03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Wed, 15 Jan 2020 14:19:04 +0800
-Received: from RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999]) by
- RTEXMB04.realtek.com.tw ([fe80::d9c5:a079:495e:b999%6]) with mapi id
- 15.01.1779.005; Wed, 15 Jan 2020 14:19:04 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Prashant Malani <pmalani@chromium.org>,
-        Grant Grundler <grundler@chromium.org>,
-        "Mario Limonciello" <mario.limonciello@dell.com>,
-        David Chen <david.chen7@dell.com>,
-        "open list:USB NETWORKING DRIVERS" <linux-usb@vger.kernel.org>,
-        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] r8152: Add MAC passthrough support to new device
-Thread-Topic: [PATCH] r8152: Add MAC passthrough support to new device
-Thread-Index: AQHVypTrvWsj1nE3Z02rCzrvB8fQNKfrP9uQ
-Date:   Wed, 15 Jan 2020 06:19:04 +0000
-Message-ID: <383516f7b54247bda694bf2a999e68f7@realtek.com>
-References: <20200114044127.20085-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20200114044127.20085-1-kai.heng.feng@canonical.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.177.214]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729099AbgAOGVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 01:21:16 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6993 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbgAOGVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 01:21:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 22:21:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,321,1574150400"; 
+   d="scan'208";a="248298629"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 14 Jan 2020 22:21:12 -0800
+Received: from [10.226.38.22] (unknown [10.226.38.22])
+        by linux.intel.com (Postfix) with ESMTP id 19E965802B0;
+        Tue, 14 Jan 2020 22:21:10 -0800 (PST)
+Subject: Re: [PATCH v6 0/2] spi: cadence-quadpsi: Add support for the Cadence
+ QSPI controller
+To:     Vignesh Raghavendra <vigneshr@ti.com>, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     robh+dt@kernel.org, dan.carpenter@oracle.com,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com
+References: <20191230074102.50982-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <860aecbc-22d3-c9ce-3570-44115d6e81b2@ti.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <1aa6033a-c9e1-579b-0916-25037c07654d@linux.intel.com>
+Date:   Wed, 15 Jan 2020 14:21:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
+In-Reply-To: <860aecbc-22d3-c9ce-3570-44115d6e81b2@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kai-Heng Feng [mailto:kai.heng.feng@canonical.com]
-> Sent: Tuesday, January 14, 2020 12:41 PM
-[...]
->  	if (le16_to_cpu(udev->descriptor.idVendor) == VENDOR_ID_LENOVO &&
-> -	    le16_to_cpu(udev->descriptor.idProduct) == 0x3082)
-> +	    (le16_to_cpu(udev->descriptor.idProduct) == 0x3082 ||
-> +	     le16_to_cpu(udev->descriptor.idProduct) == 0xa387))
+Hi,
 
-How about using
-switch (le16_to_cpu(udev->descriptor.idProduct)) {
-...
-}
+On 15/1/2020 2:13 PM, Vignesh Raghavendra wrote:
+> Hi,
+>
+> On 12/30/2019 1:11 PM, Ramuthevar,Vadivel MuruganX wrote:
+>> Add support for the Cadence QSPI controller. This controller is
+>> present in the Intel Lightning Mountain(LGM) SoCs, Altera and TI SoCs.
+>> This driver has been tested on the Intel LGM SoCs.
+>>
+>> This driver does not support generic SPI and also the implementation
+>> only supports spi-mem interface to replace the existing driver in
+>> mtd/spi-nor/cadence-quadspi.c, the existing driver only support SPI-NOR
+>> flash memory.
+>>
+>
+>
+> I am finally able to get spi-mem based cadence-quaspi driver working on
+> TI platforms with DMA and DAC mode. I have also incorporated changes to
+> disable DAC and autopolling for your intel SoC:
 
->  		set_bit(LENOVO_MACPASSTHRU, &tp->flags);
-> 
->  	if (le16_to_cpu(udev->descriptor.bcdDevice) == 0x3011 && udev->serial
-> &&
-> --
-> 2.17.1
+Thanks! a lot for the confirmation, with your changes it is working on 
+TI platform.
 
+> https://github.com/r-vignesh/linux/commits/qspi
+>
+> (Top two patches are of interest)
+>
+> I have tested both DAC and INDAC mode with s25fl flash and everything
+> seems to be fine. Could you re test the driver on your SoC? Feel free to
+> fold it into your series if everything works.
+sure, I will test on Intel SoC with your changes .
 
-Best Regards,
-Hayes
-
-
+Regards
+Vadivel
+> Regards
+> Vignesh
+>
+>
+>
