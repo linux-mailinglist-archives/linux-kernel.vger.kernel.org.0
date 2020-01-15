@@ -2,128 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8407A13C941
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 17:26:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47C1713C947
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 17:26:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbgAOQ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 11:26:33 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:58809 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgAOQ0c (ORCPT
+        id S1726566AbgAOQ0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 11:26:55 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42551 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbgAOQ0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 11:26:32 -0500
-Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id 00FGPX3G015075;
-        Thu, 16 Jan 2020 01:25:37 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 00FGPX3G015075
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1579105538;
-        bh=J3kTsJCLUXlDsDdSDZ99wjZGkzlnfm+/v4cWcQiS+NE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WuoxDDciqjiu4MKo5MqEY8TSQM4SThkmsANgntkKTxMCGwCnhE2bJUZIOJ0RqZfzP
-         tsaL/Qp2xiBMwoZp+G1xWijfjBLZzFscjuSa2BKbseciOiXwJn6EI+wdJKZT3wPVEL
-         +/pRIiFJVjRihtkSedaadBLNJOJo/Juej/uirLKu4JEi5ftuGXHSDoujktPCOS97Ce
-         +J99ar+XuUjugx2Mwb2P+1wHF4c1Bpa2fFQe68SCQZZjfP2H401OHa3VAsY+FqExUK
-         NVT9CjzyMoXayBH7NmUUmUIU8Xwn9zbKHIlTxqQkrL+kwhiTK7B9/BnT6ZR3Wi3RZ7
-         /zd3vt6Yq5EUg==
-X-Nifty-SrcIP: [126.93.102.113]
-From:   Masahiro Yamada <masahiroy@kernel.org>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Ben Hutchings <ben@decadent.org.uk>,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] builddeb: split libc headers deployment out into a function
-Date:   Thu, 16 Jan 2020 01:25:29 +0900
-Message-Id: <20200115162529.11089-7-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200115162529.11089-1-masahiroy@kernel.org>
-References: <20200115162529.11089-1-masahiroy@kernel.org>
+        Wed, 15 Jan 2020 11:26:55 -0500
+Received: by mail-qt1-f194.google.com with SMTP id j5so16244969qtq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 08:26:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BGhoOyu5VQ9UNwECtfExQGuAJzqWLNe3068aiRd3j68=;
+        b=N9MbVpGjbi4k9kiTHfugxxCqckr+FEPgRaTd1X13kFFNn75b2OUvIFegFjnLjH4MET
+         vYHvGAv/cOaMEmtOO8gVpi25xQTiXiYNaLyRqrx7nJ22WyoLjGEe9PnBvg0thLlOi5tN
+         vLSwngsRsi6ngXhfvRJQMXOtScF1i499fQboIHbYUwdCcRHcrovwlqPNkoF8l5B8C6xk
+         zwDNP+6+/F2wp5Ak918pWlHJF76FP6OC+sswqBL8ciBYxn0R5C/pVF4Y9JQCRnOJSIEw
+         k+WkZdWPlT1Nlfh6HzUYA97cC9iZdhJFTeA66t2cEmmsVdLY6n3QrGD0L/KbrRmCllm/
+         ehuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BGhoOyu5VQ9UNwECtfExQGuAJzqWLNe3068aiRd3j68=;
+        b=Asw9vTmvC1XSm08FUnX+tvTd/NMQgFWmZhkmrvVlYaRa20Epcufh0lj57OtY0DOXxa
+         RjJ1Nad5BRt93eZDOZE/Ppp7Urby0wPuqYejUn5fh82a4ghDemCwULRrWmw+bRgWflhm
+         nEDqRgTQ9tAzUY2aA8aTW7kLhVF2RUy63BGgIbeN0ghqA2yhmthaPy3EfY+xD+xvwnP8
+         5+KPY8q/O8TFAbcvTn6szCrfTLXF/n5BBaeKDHfCh1EEAhrgbZu7PGSXR1OSMjxCHZYT
+         5jddID21rz3HzTtSJvRgUkkeUkSz3y+Abi6gOf4RSJ3RMnk0ou3XO8f50agnKiMcTUsl
+         gMKA==
+X-Gm-Message-State: APjAAAVcOM5uwkru6z9q7+fuH5m/WP26u2dJOFTFG5aN/73aA6B7g8SV
+        BJSUEHM9O8+b/dW9ulEMEohvbQ==
+X-Google-Smtp-Source: APXvYqxK3fXxJYK2OHY5fNbL0IWIdwQXnxlcW9LltTOQTnJ8odVy9pqrM8Tc37VCTRCWaseM/4cyKQ==
+X-Received: by 2002:ac8:4657:: with SMTP id f23mr4369118qto.378.1579105614247;
+        Wed, 15 Jan 2020 08:26:54 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id z141sm8675109qkb.63.2020.01.15.08.26.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 15 Jan 2020 08:26:53 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1irlVN-0001qT-27; Wed, 15 Jan 2020 12:26:53 -0400
+Date:   Wed, 15 Jan 2020 12:26:53 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: RFC: hold i_rwsem until aio completes
+Message-ID: <20200115162653.GC25201@ziepe.ca>
+References: <20200114161225.309792-1-hch@lst.de>
+ <20200114192700.GC22037@ziepe.ca>
+ <20200115065614.GC21219@lst.de>
+ <20200115132428.GA25201@ziepe.ca>
+ <20200115153614.GA31296@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115153614.GA31296@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deploy user-space headers (linux-libc-dev package) in a separate
-function for readability.
+On Wed, Jan 15, 2020 at 04:36:14PM +0100, Christoph Hellwig wrote:
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+> synchronous and currently hack that up, so a version of the percpu_ref
+> that actually waits for the other references to away like we hacked
+> up various places seems to exactly suit your requirements.
 
-Changes in v2: None
+Ah, yes, sounds like a similar goal, many cases I'm thinking about
+also hack up a kref to trigger a completion to make it
+synchronous.
 
- scripts/package/builddeb | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index d149452692da..f49f41fd4c95 100755
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -88,12 +88,25 @@ deploy_kernel_headers () {
- 	ln -s /usr/src/linux-headers-$version $pdir/lib/modules/$version/build
- }
- 
-+deploy_libc_headers () {
-+	pdir=$1
-+
-+	rm -rf $pdir
-+
-+	$MAKE -f $srctree/Makefile headers
-+	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH=$pdir/usr
-+
-+	# move asm headers to /usr/include/<libc-machine>/asm to match the structure
-+	# used by Debian-based distros (to support multi-arch)
-+	host_arch=$(dpkg-architecture -a$(cat debian/arch) -qDEB_HOST_MULTIARCH)
-+	mkdir $pdir/usr/include/$host_arch
-+	mv $pdir/usr/include/asm $pdir/usr/include/$host_arch/
-+}
-+
- version=$KERNELRELEASE
- tmpdir=debian/linux-image
--libc_headers_dir=debian/linux-libc-dev
- dbg_dir=debian/linux-image-dbg
- packagename=linux-image-$version
--libc_headers_packagename=linux-libc-dev
- dbg_packagename=$packagename-dbg
- 
- if [ "$ARCH" = "um" ] ; then
-@@ -117,7 +130,7 @@ esac
- BUILD_DEBUG=$(if_enabled_echo CONFIG_DEBUG_INFO Yes)
- 
- # Setup the directory structure
--rm -rf "$tmpdir" "$libc_headers_dir" "$dbg_dir" debian/files
-+rm -rf "$tmpdir" "$dbg_dir" debian/files
- mkdir -m 755 -p "$tmpdir/DEBIAN"
- mkdir -p "$tmpdir/lib" "$tmpdir/boot"
- 
-@@ -167,16 +180,6 @@ if is_enabled CONFIG_MODULES; then
- 	fi
- fi
- 
--if [ "$ARCH" != "um" ]; then
--	$MAKE -f $srctree/Makefile headers
--	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
--	# move asm headers to /usr/include/<libc-machine>/asm to match the structure
--	# used by Debian-based distros (to support multi-arch)
--	host_arch=$(dpkg-architecture -a$(cat debian/arch) -qDEB_HOST_MULTIARCH)
--	mkdir $libc_headers_dir/usr/include/$host_arch
--	mv $libc_headers_dir/usr/include/asm $libc_headers_dir/usr/include/$host_arch/
--fi
--
- # Install the maintainer scripts
- # Note: hook scripts under /etc/kernel are also executed by official Debian
- # kernel packages, as well as kernel packages built using make-kpkg.
-@@ -206,7 +209,8 @@ if [ "$ARCH" != "um" ]; then
- 	deploy_kernel_headers debian/linux-headers
- 	create_package linux-headers-$version debian/linux-headers
- 
--	create_package "$libc_headers_packagename" "$libc_headers_dir"
-+	deploy_libc_headers debian/linux-libc-dev
-+	create_package linux-libc-dev debian/linux-libc-dev
- fi
- 
- create_package "$packagename" "$tmpdir"
--- 
-2.17.1
-
+Jason
