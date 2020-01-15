@@ -2,83 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA9E13BE33
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B222213BE39
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 12:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbgAOLLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 06:11:43 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38682 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgAOLLm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:11:42 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so12400212lfm.5
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 03:11:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=x1q0YcBi92HNWIXqmG5LKm7byE3ixTdGq+QRI0HmcV8=;
-        b=cKezeXSLT0MXrBRlRI94TLzhusiY4EMmbk3Clbyqq9/qIgqz69B+jcpyvLm5TTLpmg
-         +Bf7hD2M0zVPjixClwoc54oRY4Ptm67bmEa9SgEW8fZ8D32o6fMT4QVhE9kXPpMefSwA
-         O0imyS+gFQEIkP9S5wFITD0KOhw0l7ypO2T9eIICmIe8+iMwg5BK5Yea/pjVWV3a/oMY
-         BDKrPkgRisxmwNAbkbbLCYOPxn609smtk/P6X903JPGk7D0iM9DfhIlMvtbm8doINA5N
-         y40E/sFArjw3HkCkPe2s173eDErLLx8IWHauSlmxP+Jwvb9MiWCEXTAUSjKeWxA1hDuL
-         SiFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=x1q0YcBi92HNWIXqmG5LKm7byE3ixTdGq+QRI0HmcV8=;
-        b=ZipwpqaVsp/Ejt5g6Hvfp52sxd5Nk6vWzD/qXT1zXsw8PaMBuNmTn8TZbaSBe2M0fi
-         CphL3Ok25VNv1tQfbNwIsMQc8ixvdwhAT8vIYZXL1YAhR7VDC9iXEGQqeWQrC0eRFKg7
-         mxJApNIv3jQmlYT0JKUYVciAo1ymffSL3NPssDA467G+Y1c2qqDtEAc1ewyltSb7JtHF
-         3ZW2iP4EPrlD23ZFal30KrgRm83BZzKoabR6F/YSDQcH8fgbOqzPBZX05SDZd5hXp3A4
-         MP+tirxjAiAf//QxeSTqm8rQVRIvhlUWc2YlsJMi9iHwLGVQZRuwOyCoiDFS3Vw+Ag/n
-         ffkQ==
-X-Gm-Message-State: APjAAAU9LNyyw+zq8aJAqRAL3fz4gRN5B+29YZVrJsYIMcBsRYlAllvG
-        4C0nDcoBaW5jaS+MeIcGliGSosrzYiT+aFC356g=
-X-Google-Smtp-Source: APXvYqzswhDaCjAcsfp4K2JxwT9zfgXkS12udWTmAvpKfkb+1zhmUUsZ/UhYiAs17X4oL7lCZK24BB3lS2izHLzgb7I=
-X-Received: by 2002:a19:114:: with SMTP id 20mr3970241lfb.25.1579086700776;
- Wed, 15 Jan 2020 03:11:40 -0800 (PST)
+        id S1729947AbgAOLMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 06:12:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbgAOLMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:12:20 -0500
+Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86BF2222C3;
+        Wed, 15 Jan 2020 11:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579086739;
+        bh=mIK/ag+1db4XNG06hr1nigpUOA3zRCdBgowcA09gjVk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FNAN5eCbDbrgPScaNuiTojnyK4Ho60SU4yw5Lgp90b+YZQ1qRHVo4HblRCAqN4tDD
+         oj4s2Otc9+4ZE0fAoy2p4SpeIXuMMnNVzKYbcy9P8L2WhOJms1IFiEmApBeHBquKgv
+         Jekn+otN2qyIM++kgvuuDbIAFgoU+C99Cohb/L8A=
+Date:   Wed, 15 Jan 2020 19:12:07 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [PATCH V2 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Message-ID: <20200115111205.GB29329@T480>
+References: <1578640411-16991-1-git-send-email-peng.fan@nxp.com>
+ <1578640411-16991-3-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB7023981770D458F6D1FB546FEE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Received: by 2002:a19:dc54:0:0:0:0:0 with HTTP; Wed, 15 Jan 2020 03:11:40
- -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <barristerlevi@gmail.com>
-Date:   Wed, 15 Jan 2020 12:11:40 +0100
-Message-ID: <CAEJ6Che5qKOySd5u9gwe_VNx4ZxfrMTowwwGWcOTfqyiPW1GOQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB7023981770D458F6D1FB546FEE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-0JfQtNGA0LDQstC10LnRgtC1DQoNCtCa0LDQt9Cy0LDQvCDRgdC1INCV0LTQuCDQo9C40LvRj9C8
-LiDQn9C+INC/0YDQvtGE0LXRgdC40Y8g0YHRitC8INGO0YDQuNGB0YIuINCY0YHQutCw0Lwg0LTQ
-sCDQstC4INC/0YDQtdC00LvQvtC20LANCtC90LDQuS3QsdC70LjQt9C60LjRgtC1INGA0L7QtNC9
-0LjQvdC4INC90LAg0LzQvtGPINC60LvQuNC10L3Rgi4g0KLQtSDQvdCw0YHQu9C10LTRj9Cy0LDR
-giDRgdGD0LzQsNGC0LAg0L7RgiAoOCw1INC80LjQu9C40L7QvdCwINC00L7Qu9Cw0YDQsCkNCtCU
-0L7Qu9Cw0YDQuCDQutC70LjQtdC90YLRitGCINC80Lgg0L7RgdGC0LDQstC4INCyINCx0LDQvdC6
-0LDRgtCwLCDQv9GA0LXQtNC4INC00LAg0YPQvNGA0LUuDQoNCtCa0LvQuNC10L3RgtGK0YIg0LzQ
-uCDQtSDQs9GA0LDQttC00LDQvdC40L0g0L3QsCDQstCw0YjQsNGC0LAg0YHRgtGA0LDQvdCwLCDQ
-utC+0LnRgtC+INC30LDQs9C40L3QsCDQsiDQsNCy0YLQvtC80L7QsdC40LvQvdCwDQrQutCw0YLQ
-sNGB0YLRgNC+0YTQsCDRgdGK0YEg0YHRitC/0YDRg9Cz0LDRgtCwINGB0LgNCtC4INGB0LDQvNC+
-INGB0LjQvS4g0KnQtSDQuNC80LDQvCDQv9GA0LDQstC+INC90LAgNTAlINC+0YIg0L7QsdGJ0LjR
-jyDRhNC+0L3QtCwg0LTQvtC60LDRgtC+IDUwJQ0K0LTQsCDQtSDQt9CwINGC0LXQsS4NCtCc0L7Q
-u9GPLCDRgdCy0YrRgNC20LXRgtC1INGB0LUg0YEg0LvQuNGH0L3QuNGPINC80Lgg0LjQvNC10LnQ
-uyDRgtGD0Log0LfQsCDQv9C+0LLQtdGH0LUg0LjQvdGE0L7RgNC80LDRhtC40Y86DQplZGR5d2ls
-bGlhbTAwMDJnbWFpbC5jb20NCg0K0JHQu9Cw0LPQvtC00LDRgNGPINCy0Lgg0L/RgNC10LTQstCw
-0YDQuNGC0LXQu9C90L4NCtCT0L7RgdC/0L7QtNC40L0g0JXQtNC4INCj0LjQu9GP0LwsDQoNCg0K
-DQpIZWxsbw0KDQpNeSBuYW1lIGlzIEVkZHkgV2lsbGlhbSBJIGFtIGEgbGF3eWVyIGJ5IHByb2Zl
-c3Npb24uIEkgd2lzaCB0byBvZmZlciB5b3UNCnRoZSBuZXh0IG9mIGtpbiB0byBteSBjbGllbnQu
-IFlvdSB3aWxsIGluaGVyaXQgdGhlIHN1bSBvZiAoJDguNSBNaWxsaW9uKQ0KZG9sbGFycyBteSBj
-bGllbnQgbGVmdCBpbiB0aGUgYmFuayBiZWZvcmUgaGlzIGRlYXRoLg0KDQpNeSBjbGllbnQgaXMg
-YSBjaXRpemVuIG9mIHlvdXIgY291bnRyeSB3aG8gZGllZCBpbiBhdXRvIGNyYXNoIHdpdGggaGlz
-IHdpZmUNCmFuZCBvbmx5IHNvbi4gSSB3aWxsIGJlIGVudGl0bGVkIHdpdGggNTAlIG9mIHRoZSB0
-b3RhbCBmdW5kIHdoaWxlIDUwJSB3aWxsDQpiZSBmb3IgeW91Lg0KUGxlYXNlIGNvbnRhY3QgbXkg
-cHJpdmF0ZSBlbWFpbCBoZXJlIGZvciBtb3JlIGRldGFpbHM6ZWRkeXdpbGxpYW0wMDAyZ21haWwu
-Y29tDQoNCk1hbnkgdGhhbmtzIGluIGFkdmFuY2UsDQpNci5FZGR5IFdpbGxpYW0sDQo=
+On Tue, Jan 14, 2020 at 04:49:20PM +0000, Leonard Crestez wrote:
+> On 10.01.2020 09:17, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> > 
+> > Use imx8m_clk_hw_composite_core to simplify code.
+> > 
+> > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >   drivers/clk/imx/clk-imx8mq.c | 19 +++++--------------
+> >   1 file changed, 5 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> > index 4c0edca1a6d0..b031183ff427 100644
+> > --- a/drivers/clk/imx/clk-imx8mq.c
+> > +++ b/drivers/clk/imx/clk-imx8mq.c
+> > @@ -403,22 +403,13 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >   
+> >   	/* CORE */
+> >   	hws[IMX8MQ_CLK_A53_SRC] = imx_clk_hw_mux2("arm_a53_src", base + 0x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));
+> > -	hws[IMX8MQ_CLK_M4_SRC] = imx_clk_hw_mux2("arm_m4_src", base + 0x8080, 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));
+> > -	hws[IMX8MQ_CLK_VPU_SRC] = imx_clk_hw_mux2("vpu_src", base + 0x8100, 24, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));
+> > -	hws[IMX8MQ_CLK_GPU_CORE_SRC] = imx_clk_hw_mux2("gpu_core_src", base + 0x8180, 24, 3,  imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] = imx_clk_hw_mux2("gpu_shader_src", base + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_sels));
+> > -
+> >   	hws[IMX8MQ_CLK_A53_CG] = imx_clk_hw_gate3_flags("arm_a53_cg", "arm_a53_src", base + 0x8000, 28, CLK_IS_CRITICAL);
+> > -	hws[IMX8MQ_CLK_M4_CG] = imx_clk_hw_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
+> > -	hws[IMX8MQ_CLK_VPU_CG] = imx_clk_hw_gate3("vpu_cg", "vpu_src", base + 0x8100, 28);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_CG] = imx_clk_hw_gate3("gpu_core_cg", "gpu_core_src", base + 0x8180, 28);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_CG] = imx_clk_hw_gate3("gpu_shader_cg", "gpu_shader_src", base + 0x8200, 28);
+> > -
+> >   	hws[IMX8MQ_CLK_A53_DIV] = imx_clk_hw_divider2("arm_a53_div", "arm_a53_cg", base + 0x8000, 0, 3);
+> > -	hws[IMX8MQ_CLK_M4_DIV] = imx_clk_hw_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
+> > -	hws[IMX8MQ_CLK_VPU_DIV] = imx_clk_hw_divider2("vpu_div", "vpu_cg", base + 0x8100, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_DIV] = imx_clk_hw_divider2("gpu_core_div", "gpu_core_cg", base + 0x8180, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] = imx_clk_hw_divider2("gpu_shader_div", "gpu_shader_cg", base + 0x8200, 0, 3);
+> > +
+> > +	hws[IMX8MQ_CLK_M4_DIV] = imx8m_clk_hw_composite_core("arm_m4_div", imx8mq_arm_m4_sels, base + 0x8080);
+> > +	hws[IMX8MQ_CLK_VPU_DIV] = imx8m_clk_hw_composite_core("vpu_div", imx8mq_vpu_sels, base + 0x8100);
+> > +	hws[IMX8MQ_CLK_GPU_CORE_DIV] = imx8m_clk_hw_composite_core("gpu_core_div", imx8mq_gpu_core_sels, base + 0x8180);
+> > +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] = imx8m_clk_hw_composite("gpu_shader_div", imx8mq_gpu_shader_sels, base + 0x8200);
+> >   
+> >   	/* BUS */
+> >   	hws[IMX8MQ_CLK_MAIN_AXI] = imx8m_clk_hw_composite_critical("main_axi", imx8mq_main_axi_sels, base + 0x8800);
+> 
+> Collapsing _SRC _CG into _DIV is an useful simplification but it 
+> technically breaks DT compatibility rules.
+> 
+> Inside imx8mq.dtsi there are clock assignments for 
+> IMX8MQ_CLK_GPU_CORE_SRC and IMX8MQ_CLK_GPU_SHADER_SRC which no longer 
+> exist so those assignments don't take effect.
+
+We do not want to break existing DTBs for this case.  Patches dropped.
+
+Shawn
