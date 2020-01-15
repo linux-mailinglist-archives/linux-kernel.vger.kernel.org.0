@@ -2,70 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4204913C16B
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D88ED13C17C
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 Jan 2020 13:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbgAOMpn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 07:45:43 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44913 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729073AbgAOMpn (ORCPT
+        id S1729246AbgAOMqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 07:46:11 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:57756 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729158AbgAOMqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 07:45:43 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v201so12584449lfa.11
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 04:45:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zw7fLVZlBWPnFhNuSoVVujGBuN87u3KYLlAHzC+pN0M=;
-        b=p609hwBlIti1BDsa7AwFn6dgioFQ0T7bs0x5a9KD1WrN+GkE0lBl0ys22xowzPOQR7
-         V3lR5+PDDQjvesDRY7vNcrJl8xPPyG9qkeKXPvq9oVzBZ3FUI64ahWTx+NwqkpTi6l/2
-         GXCAV+iOUL1CkpVjVjNKo9rtmIKvr+aLjKD79JbVXlAZvE9IfzPkiuQUdBZbMuDZS/K9
-         W/81pW8YAKB/Bcu2v5tKncJV9mNNWW2hjlQ0IlP1kgKmNRp1JEmSrpGp4mOIpabiaTVq
-         vL5bFI31WSMmy9zFuO/najdCeBAdjCD8+E/Odh79W28kiLQT22RzQxGGD1U4Er2g8AvD
-         PB/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zw7fLVZlBWPnFhNuSoVVujGBuN87u3KYLlAHzC+pN0M=;
-        b=NsI/A2Dgsfl65YBgJOYUWs1ssKu2vnEHaxaz43LET3PwH7CUNQNxPhtWqbDhTHfFc1
-         o81cfthRzpcP3BGsPh3Ky5QxDZq1W424g//K6R8dCPOHIu/LKexBcerIqwtGSlOaiR9v
-         lRw6SeVs6Vc49rmRL/fM4GFAsdN+WASn8wtfPmZEnONI7opXqIcUN7eyzx8Kiz4I2D/B
-         +Mv8gfmTcoizluYl1YnA9zsYYspQiNG3t/u0itNEA5fzQ+rbd7cqfciguLeH7rnr/V7Q
-         WNlyApfIyfKGAWZI4udE/FDhOhrKMKGkgobK7fGEreG865+kJb2lHlZff6H15qMDp2eN
-         Q82Q==
-X-Gm-Message-State: APjAAAWyWJFRZEn5KxN8uGQe3wA7hGZddhXRqoi+04vrTKJ4MEIQq5yC
-        t2vgkLMuD7Dm7bmlU2+XRYwn86d/TayJWEmH/rfozw==
-X-Google-Smtp-Source: APXvYqwSaA74Wo0u94HIU5oNVPlQJPvUFTlEtrMxfPTAIykGqb3bFAFJMktSIsrWP4Hs5KTLmEsFohek2rxDoppQqCo=
-X-Received: by 2002:a19:5513:: with SMTP id n19mr4407533lfe.205.1579092339536;
- Wed, 15 Jan 2020 04:45:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20200112143312.66048-1-sachinagarwal@sachins-MacBook-2.local>
-In-Reply-To: <20200112143312.66048-1-sachinagarwal@sachins-MacBook-2.local>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 15 Jan 2020 13:45:28 +0100
-Message-ID: <CACRpkdZGkPgB7wh3bKeeu+rD4_YnXLM9aLFt-wKti2YkU7yVqQ@mail.gmail.com>
-Subject: Re: [PATCH] GPIO: vx855: fixed a typo
-To:     sachin agarwal <asachin591@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 15 Jan 2020 07:46:01 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id qclr2100Q5USYZQ01clrg9; Wed, 15 Jan 2020 13:45:58 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iri3S-0003z0-3D; Wed, 15 Jan 2020 13:45:50 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iri3S-00012X-03; Wed, 15 Jan 2020 13:45:50 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/5] drm: Add support for Okaya RH128128T
+Date:   Wed, 15 Jan 2020 13:45:43 +0100
+Message-Id: <20200115124548.3951-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 12, 2020 at 3:33 PM sachin agarwal <asachin591@gmail.com> wrote:
+	Hi all,
 
-> From: Sachin agarwal <asachin591@gmail.com>
->
-> we had written "betwee" rather than "between".
->
-> Signed-off-by: Sachin agarwal <asachin591@gmail.com>
+This patch series adds support for the Okaya RH128128T LCD to the
+existing ST7735R driver.  This is a 128x128 1.4" TFT display driven by a
+Sitronix ST7715R TFT Controller/Driver.  It is used on e.g. the Renesas
+YRSK-LCD-PMOD extension board, which is shipped with Renesas RSK+RZA1
+development boards[1], and with several other Renesas starter kits, for
+RX, Synergy, and RZ/T1 MCUs and SoCs.
 
-Patch applied.
+Changes compared to v1[2]:
+  - Convert DT bindings to DT schema,
+  - Add YRSK-LCD-PMOD reference and links,
+  - Add Reviewed-by,
+  - Split driver preparation and adding actual support in two separate
+    patches,
+  - Replace st7735r_priv.rgb by a pointer to struct st7735r_cfg,
+  - Change prefix of jd_t18003_t01_pipe_enable() and
+    jd_t18003_t01_pipe_funcs(),
+  - Update Kconfig help text,
+  - Improve file comment header.
 
-Yours,
-Linus Walleij
+This has been tested using the r7s72100-rskrza1-pmod-spi.dtso and
+r7s72100-rskrza1-pmod2-lcd.dtso DT overlays[3].
+Note that for using this on RSK+RZA1, there is a dependency on RSPI
+cs-gpios support (now in linux-next).
+With DT overlays, this also depends on DT overlays[4] and gpio-hog
+overlay support[5].
+
+Thanks!
+
+[1] https://renesasrulz.com/the_vault/f/archive-forum/4981/upgrading-to-the-renesas-rz-a1h
+[1] https://lore.kernel.org/dri-devel/20200102141246.370-1-geert+renesas@glider.be/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/renesas-overlays
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/overlays
+[5] "[PATCH/RFC 0/2] gpio: of: Add DT overlay support for GPIO hogs"
+    https://lore.kernel.org/lkml/20191230133852.5890-1-geert+renesas@glider.be/
+
+Geert Uytterhoeven (5):
+  dt-bindings: display: sitronix,st7735r: Convert to DT schema
+  dt-bindings: display: sitronix,st7735r: Add Okaya RH128128T
+  drm/mipi_dbi: Add support for display offsets
+  drm: tiny: st7735r: Prepare for adding support for more displays
+  drm: tiny: st7735r: Add support for Okaya RH128128T
+
+ .../bindings/display/sitronix,st7735r.txt     | 35 ---------
+ .../bindings/display/sitronix,st7735r.yaml    | 71 +++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ drivers/gpu/drm/drm_mipi_dbi.c                | 30 +++++---
+ drivers/gpu/drm/tiny/Kconfig                  |  8 +-
+ drivers/gpu/drm/tiny/st7735r.c                | 76 +++++++++++++++----
+ include/drm/drm_mipi_dbi.h                    | 12 +++
+ 7 files changed, 170 insertions(+), 64 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/sitronix,st7735r.txt
+ create mode 100644 Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
