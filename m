@@ -2,92 +2,377 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC4013DEAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 622B413DEAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbgAPPWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:22:18 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40401 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbgAPPWS (ORCPT
+        id S1729005AbgAPPWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:22:41 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37571 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbgAPPWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:22:18 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so19549796wrn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:22:17 -0800 (PST)
+        Thu, 16 Jan 2020 10:22:41 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f129so4242233wmf.2;
+        Thu, 16 Jan 2020 07:22:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BnEd8pZLOsNzEcf/hD74xIUCJX1M88ctHi8XzXwQaAI=;
+        b=aikWIarVLloed14F5OIMFvEyJVmKN6OF1qfz0Qdylcj3kpHqFaMomNVQyGJTGKJw8b
+         rflDWTjMRDAz6x1Ja3GzO7csaMbGtmVhLyMVWbFALyH49k/1chwMaUXnrVDYPyYvakLk
+         OeOK2qXVAcRwAiU7yevlLgGmCOZIQ4e1MXBEcpc5+pYNDh46w1kPWAvdpRATCihVHIG5
+         SkFYJ6EZe9UUkiJoJlFMQ8YoWmnE1AvtqTzWXXyDnzgReqxiEYghwiC1a4kymdCIyL5H
+         3X5bnueyXv+uLt1rn//tyFkGzV6sv28YXuAt2TVRbMfyJkJbFdmKz3o2BegU1fLP2wUu
+         UvYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FTzYumS8YOtnp3SJI0/nekGMa3Yhr59tUFnF0F2ptLU=;
-        b=NdfWRXPZ2Qj+9Ie9rMFmSzcQO6QgaHigrvVSAdbsdKebbsMNYJAc8dIBfNwgHSbZE2
-         KF12xrtz7HGwweQZh0w9/6yn+BXyeYa9cJs50Uflm6+diOYgvWPv6qFhFtmx9ocec+un
-         XjFHeM8BdOwiqozA0SZe3EVZuUU9X2AjOtXiqBWKGau1CiClMQOubaJ9mmU8fJdk1avT
-         temsNkOEi7hdXRPE3+JE43vHJFgEpcuE2Ugazi6wSyM9cV3kG/4YpEu3IV5qRFEGgXA8
-         IOTpBumXy7QqU+h4kkcBVgdt6fnRBxV4kwA6NIXEylLqP+ogUdpErIqvtiku6zeLQie/
-         7U3g==
-X-Gm-Message-State: APjAAAWDVfFKqpr5NXV+72uhbmOxT8n1ertZkyqRnBJfTHOZgt79qQNL
-        XV29p8eYTm0C/JVAJKxO1vY=
-X-Google-Smtp-Source: APXvYqzM/cpTWKsf6QyyMx22ufqT++w4rkUpgAUuSjNwYreF7woTpENfGFHaB4N9Fu9yjJ35D7NQMA==
-X-Received: by 2002:adf:dfc2:: with SMTP id q2mr3776668wrn.251.1579188136862;
-        Thu, 16 Jan 2020 07:22:16 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id u22sm31139535wru.30.2020.01.16.07.22.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 07:22:16 -0800 (PST)
-Date:   Thu, 16 Jan 2020 16:22:14 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        nathanl@linux.ibm.com, ricklind@linux.vnet.ibm.com,
-        Scott Cheloha <cheloha@linux.ibm.com>,
-        Donald Dutile <ddutile@redhat.com>
-Subject: Re: [PATCH v4] drivers/base/memory.c: cache blocks in radix tree to
- accelerate lookup
-Message-ID: <20200116152214.GX19428@dhcp22.suse.cz>
-References: <20191217193238-1-cheloha@linux.vnet.ibm.com>
- <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
- <181caae3-ffb8-c745-a4c9-1aef93ea6dd5@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <181caae3-ffb8-c745-a4c9-1aef93ea6dd5@redhat.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BnEd8pZLOsNzEcf/hD74xIUCJX1M88ctHi8XzXwQaAI=;
+        b=Kmg/Ic9cU90noK8K3G9DIHOhgvqwLgmFxJN6eLBkJZ9ME9ZHDYTu/mAJBhV23dhRUc
+         OiE/WK3C0g/uy7fkbeGPT4MtGTOC55slYyYN4oBHDn6G2TE60PbfsWWApl+XM+7CycH1
+         Zb9Ew+QRSjh4y3nOrGnVgNtfhzSErYjFVoOAqRT7XHtfy3TCiu33RDGtz2TEF4l3QW+m
+         BLwkkz/TkkDhprK0OC0siJ+JtAoCxxWZrEFuro2uKJlXxBXtTwEDcM5Ml6c8SVRXq+AI
+         /tqgAEAFNmbj1z+MQ4eNVINlgULey3Fz41iRMV0jTxSMyNApe0vO94aVuL34VLgMKHJ6
+         rzWQ==
+X-Gm-Message-State: APjAAAVxkJ5oupUchKBTSGp9I03rCAkFjvEaZOh8JB8HCjlNsbANtNer
+        UhbADP/jfS+2vHJMcU3ctlA=
+X-Google-Smtp-Source: APXvYqwKobefMQP0qBZ94XDP5YJxuDbHjTaFBdcz60Ibwj5bHmz5eOc1T0WR2+KHKPSNpU0Vnpel1w==
+X-Received: by 2002:a7b:c949:: with SMTP id i9mr6665432wml.131.1579188158655;
+        Thu, 16 Jan 2020 07:22:38 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id w8sm18193wmd.2.2020.01.16.07.22.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Jan 2020 07:22:37 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     ulf.hansson@linaro.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 1/3] dt-bindings: mmc: convert synopsys dw-mshc bindings to yaml
+Date:   Thu, 16 Jan 2020 16:22:28 +0100
+Message-Id: <20200116152230.29831-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15-01-20 20:09:48, David Hildenbrand wrote:
-> On 09.01.20 22:25, Scott Cheloha wrote:
-> > Searching for a particular memory block by id is an O(n) operation
-> > because each memory block's underlying device is kept in an unsorted
-> > linked list on the subsystem bus.
-> > 
-> > We can cut the lookup cost to O(log n) if we cache the memory blocks in
-> > a radix tree.  With a radix tree cache in place both memory subsystem
-> > initialization and memory hotplug run palpably faster on systems with a
-> > large number of memory blocks.
-> > 
-> > Signed-off-by: Scott Cheloha <cheloha@linux.ibm.com>
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Acked-by: Nathan Lynch <nathanl@linux.ibm.com>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Soooo,
-> 
-> I just learned that radix trees are nowadays only a wrapper for xarray
-> (for quite a while already!), and that the xarray interface shall be
-> used in new code.
+Current dts files with 'dwmmc' nodes are manually verified.
+In order to automate this process synopsys-dw-mshc.txt
+has to be converted to yaml. In the new setup
+synopsys-dw-mshc.yaml will inherit properties from
+mmc-controller.yaml and synopsys-dw-mshc-common.yaml.
+'dwmmc' will no longer be a valid name for a node and
+should be changed to 'mmc'.
 
-Good point. I somehow didn't realize this would add more work for a
-later code refactoring. The mapping should be pretty straightforward.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../bindings/mmc/synopsys-dw-mshc-common.yaml      |  68 ++++++++++
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   | 141 ---------------------
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.yaml  |  70 ++++++++++
+ 3 files changed, 138 insertions(+), 141 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
 
-Thanks for noticing!
-
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
+new file mode 100644
+index 000000000..890d47a87
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc-common.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys Designware Mobile Storage Host Controller Common Properties
++
++allOf:
++  - $ref: "mmc-controller.yaml#"
++
++maintainers:
++  - Ulf Hansson <ulf.hansson@linaro.org>
++
++# Everything else is described in the common file
++properties:
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: reset
++
++  clock-frequency:
++    description:
++      Should be the frequency (in Hz) of the ciu clock.  If this
++      is specified and the ciu clock is specified then we'll try to set the ciu
++      clock to this at probe time.
++
++  fifo-depth:
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      The maximum size of the tx/rx fifo's. If this property is not
++      specified, the default value of the fifo size is determined from the
++      controller registers.
++
++  card-detect-delay:
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - default: 0
++    description:
++      Delay in milli-seconds before detecting card after card
++      insert event. The default value is 0.
++
++  data-addr:
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Override fifo address with value provided by DT. The default FIFO reg
++      offset is assumed as 0x100 (version < 0x240A) and 0x200(version >= 0x240A)
++      by driver. If the controller does not follow this rule, please use
++      this property to set fifo address in device tree.
++
++  fifo-watermark-aligned:
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Data done irq is expected if data length is less than
++      watermark in PIO mode. But fifo watermark is requested to be aligned
++      with data length in some SoC so that TX/RX irq can be generated with
++      data done irq. Add this watermark quirk to mark this requirement and
++      force fifo watermark setting accordingly.
++
++  dmas:
++    maxItems: 1
++
++  dma-names:
++    const: rx-tx
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+deleted file mode 100644
+index 7e5e427a2..000000000
+--- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
++++ /dev/null
+@@ -1,141 +0,0 @@
+-* Synopsys Designware Mobile Storage Host Controller
+-
+-The Synopsys designware mobile storage host controller is used to interface
+-a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
+-differences between the core mmc properties described by mmc.txt and the
+-properties used by the Synopsys Designware Mobile Storage Host Controller.
+-
+-Required Properties:
+-
+-* compatible: should be
+-	- snps,dw-mshc: for controllers compliant with synopsys dw-mshc.
+-* #address-cells: should be 1.
+-* #size-cells: should be 0.
+-
+-# Slots (DEPRECATED): The slot specific information are contained within
+-  child-nodes with each child-node representing a supported slot. There should
+-  be atleast one child node representing a card slot. The name of the child node
+-  representing the slot is recommended to be slot@n where n is the unique number
+-  of the slot connected to the controller. The following are optional properties
+-  which can be included in the slot child node.
+-
+-	* reg: specifies the physical slot number. The valid values of this
+-	  property is 0 to (num-slots -1), where num-slots is the value
+-	  specified by the num-slots property.
+-
+-	* bus-width: as documented in mmc core bindings.
+-
+-	* wp-gpios: specifies the write protect gpio line. The format of the
+-	  gpio specifier depends on the gpio controller. If a GPIO is not used
+-	  for write-protect, this property is optional.
+-
+-	* disable-wp: If the wp-gpios property isn't present then (by default)
+-	  we'd assume that the write protect is hooked up directly to the
+-	  controller's special purpose write protect line (accessible via
+-	  the WRTPRT register).  However, it's possible that we simply don't
+-	  want write protect.  In that case specify 'disable-wp'.
+-	  NOTE: This property is not required for slots known to always
+-	  connect to eMMC or SDIO cards.
+-
+-Optional properties:
+-
+-* resets: phandle + reset specifier pair, intended to represent hardware
+-  reset signal present internally in some host controller IC designs.
+-  See Documentation/devicetree/bindings/reset/reset.txt for details.
+-
+-* reset-names: request name for using "resets" property. Must be "reset".
+-	(It will be used together with "resets" property.)
+-
+-* clocks: from common clock binding: handle to biu and ciu clocks for the
+-  bus interface unit clock and the card interface unit clock.
+-
+-* clock-names: from common clock binding: Shall be "biu" and "ciu".
+-  If the biu clock is missing we'll simply skip enabling it.  If the
+-  ciu clock is missing we'll just assume that the clock is running at
+-  clock-frequency.  It is an error to omit both the ciu clock and the
+-  clock-frequency.
+-
+-* clock-frequency: should be the frequency (in Hz) of the ciu clock.  If this
+-  is specified and the ciu clock is specified then we'll try to set the ciu
+-  clock to this at probe time.
+-
+-* fifo-depth: The maximum size of the tx/rx fifo's. If this property is not
+-  specified, the default value of the fifo size is determined from the
+-  controller registers.
+-
+-* card-detect-delay: Delay in milli-seconds before detecting card after card
+-  insert event. The default value is 0.
+-
+-* data-addr: Override fifo address with value provided by DT. The default FIFO reg
+-  offset is assumed as 0x100 (version < 0x240A) and 0x200(version >= 0x240A) by
+-  driver. If the controller does not follow this rule, please use this property
+-  to set fifo address in device tree.
+-
+-* fifo-watermark-aligned: Data done irq is expected if data length is less than
+-  watermark in PIO mode. But fifo watermark is requested to be aligned with data
+-  length in some SoC so that TX/RX irq can be generated with data done irq. Add this
+-  watermark quirk to mark this requirement and force fifo watermark setting
+-  accordingly.
+-
+-* vmmc-supply: The phandle to the regulator to use for vmmc.  If this is
+-  specified we'll defer probe until we can find this regulator.
+-
+-* dmas: List of DMA specifiers with the controller specific format as described
+-  in the generic DMA client binding. Refer to dma.txt for details.
+-
+-* dma-names: request names for generic DMA client binding. Must be "rx-tx".
+-  Refer to dma.txt for details.
+-
+-Aliases:
+-
+-- All the MSHC controller nodes should be represented in the aliases node using
+-  the following format 'mshc{n}' where n is a unique number for the alias.
+-
+-Example:
+-
+-The MSHC controller node can be split into two portions, SoC specific and
+-board specific portions as listed below.
+-
+-	dwmmc0@12200000 {
+-		compatible = "snps,dw-mshc";
+-		clocks = <&clock 351>, <&clock 132>;
+-		clock-names = "biu", "ciu";
+-		reg = <0x12200000 0x1000>;
+-		interrupts = <0 75 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		data-addr = <0x200>;
+-		fifo-watermark-aligned;
+-		resets = <&rst 20>;
+-		reset-names = "reset";
+-	};
+-
+-[board specific internal DMA resources]
+-
+-	dwmmc0@12200000 {
+-		clock-frequency = <400000000>;
+-		clock-freq-min-max = <400000 200000000>;
+-		broken-cd;
+-		fifo-depth = <0x80>;
+-		card-detect-delay = <200>;
+-		vmmc-supply = <&buck8>;
+-		bus-width = <8>;
+-		cap-mmc-highspeed;
+-		cap-sd-highspeed;
+-	};
+-
+-[board specific generic DMA request binding]
+-
+-	dwmmc0@12200000 {
+-		clock-frequency = <400000000>;
+-		clock-freq-min-max = <400000 200000000>;
+-		broken-cd;
+-		fifo-depth = <0x80>;
+-		card-detect-delay = <200>;
+-		vmmc-supply = <&buck8>;
+-		bus-width = <8>;
+-		cap-mmc-highspeed;
+-		cap-sd-highspeed;
+-		dmas = <&pdma 12>;
+-		dma-names = "rx-tx";
+-	};
+diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+new file mode 100644
+index 000000000..05f9f36dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys Designware Mobile Storage Host Controller Binding
++
++allOf:
++  - $ref: "synopsys-dw-mshc-common.yaml#"
++
++maintainers:
++  - Ulf Hansson <ulf.hansson@linaro.org>
++
++# Everything else is described in the common file
++properties:
++  compatible:
++    const: snps,dw-mshc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++    description:
++      Handle to "biu" and "ciu" clocks for the
++      bus interface unit clock and the card interface unit clock.
++
++  clock-names:
++    items:
++      - const: biu
++      - const: ciu
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    mmc@12200000 {
++      compatible = "snps,dw-mshc";
++      reg = <0x12200000 0x1000>;
++      interrupts = <0 75 0>;
++      clocks = <&clock 351>, <&clock 132>;
++      clock-names = "biu", "ciu";
++      dmas = <&pdma 12>;
++      dma-names = "rx-tx";
++      resets = <&rst 20>;
++      reset-names = "reset";
++      vmmc-supply = <&buck8>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++      broken-cd;
++      bus-width = <8>;
++      cap-mmc-highspeed;
++      cap-sd-highspeed;
++      card-detect-delay = <200>;
++      clock-freq-min-max = <400000 200000000>;
++      clock-frequency = <400000000>;
++      data-addr = <0x200>;
++      fifo-depth = <0x80>;
++      fifo-watermark-aligned;
++    };
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
+
