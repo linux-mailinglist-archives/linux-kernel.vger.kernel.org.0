@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7817713FE6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE7C013FEB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404071AbgAPXc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41678 "EHLO mail.kernel.org"
+        id S2404522AbgAPXh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:37:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403799AbgAPXcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:21 -0500
+        id S2391451AbgAPXa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:30:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D847020684;
-        Thu, 16 Jan 2020 23:32:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63FEA20748;
+        Thu, 16 Jan 2020 23:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217541;
-        bh=81KNmZ9DMcJBn4j49ZbLc7k8abGhSloqgZBSa4l0Wp8=;
+        s=default; t=1579217458;
+        bh=n5UV06eCvqp6knZf+rIRFbRYasH0bjrd4NAyhXkKu3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mXY2g8ztMjkHfttt3pZ/ULMMlv+E5smkE1fPAdiHOTVFMIDcCVYdkfztxUWSMoDb3
-         iI8xaOOj9ZdUh70R2T8/ESEczpMdf70WqYJfagmeWs4BUUuhdqPcdjKh3c/d+909VQ
-         b1HeorZCTBuoddnTPkWqh6NKaFcS04pBwku+k/gM=
+        b=FhEGYAXR41BusBGLff41y1RA4RHlUTXjQ7Ofcrqg6HgAUjkLGZkZFbeGta3/qde64
+         5v0KaGjsP8xeAK/FIZkeA6TAQAR97ObWbFUALBT0YgE87fHuYl01DFUt0ZsnENC0WX
+         FrxVgeIsYlBJIDDWcwO4wOT2R1OMAatg4/sskPnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marian Mihailescu <mihailescu2m@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4.14 41/71] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Fri, 17 Jan 2020 00:18:39 +0100
-Message-Id: <20200116231715.455460576@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: [PATCH 4.19 66/84] mtd: spi-nor: fix silent truncation in spi_nor_read()
+Date:   Fri, 17 Jan 2020 00:18:40 +0100
+Message-Id: <20200116231721.367559730@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
+References: <20200116231713.087649517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 upstream.
+commit a719a75a7761e4139dd099330d9fe3589d844f9b upstream.
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+spi_nor_read() assigns the result of 'ssize_t spi_nor_read_data()'
+to the 'int ret' variable, while 'ssize_t' is a 64-bit type and *int*
+is a 32-bit type on the 64-bit machines. This silent truncation isn't
+really valid, so fix up the variable's type.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: 59451e1233bd ("mtd: spi-nor: change return value of read/write")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/samsung/clk-exynos5420.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/spi-nor/spi-nor.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -170,6 +170,8 @@ static const unsigned long exynos5x_clk_
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1294,7 +1294,7 @@ static int spi_nor_read(struct mtd_info
+ 			size_t *retlen, u_char *buf)
+ {
+ 	struct spi_nor *nor = mtd_to_spi_nor(mtd);
+-	int ret;
++	ssize_t ret;
+ 
+ 	dev_dbg(nor->dev, "from 0x%08x, len %zd\n", (u32)from, len);
+ 
 
 
