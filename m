@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08F1B13EF3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA87313EEC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405063AbgAPRgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:36:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49296 "EHLO mail.kernel.org"
+        id S2405400AbgAPRhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:37:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404908AbgAPRfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:35:07 -0500
+        id S2405016AbgAPRfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1564246BA;
-        Thu, 16 Jan 2020 17:35:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48C6524713;
+        Thu, 16 Jan 2020 17:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196106;
-        bh=Ov1QD+YipGZ+IgMp85mXzTlYyLosc1Y4z2X4IcfjmdI=;
+        s=default; t=1579196125;
+        bh=nrkyTp04R64DK9v4TJK/K3uh8Hrme3Fh3FlyFA1d3rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0zKTI5APX7SiKpm9Ys8rPpxsS0+yGfycl0mcLgvFBjuIhHtQE9034hmDW8iK/MCVM
-         tobzP8wvPcMbhYK18XFjD18W8a8DUOD4nW0q9ZfCH0CCHMuDoEHO4YAXB5La4p46ob
-         9Upm/6Jayvr7PSvgeUcDauO9T2zBKbq19yj+HZzI=
+        b=Qp3/AtMfhs1Kk6g1DJ3XJQW20S4lwsbnpTxxh7NlN7zONqgOJB9CHhDIpyIQxLm8z
+         H5owTc8f/QmjbYcDOvZeX/81OAquEqQ6hc/3XlothL6Mcyl4PbncP1AhlteC4qPAIF
+         E7Sw7F2ZWFTt/0WPuA2wjPAdtjzsXzoyPYnpIVio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 016/251] pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
-Date:   Thu, 16 Jan 2020 12:30:50 -0500
-Message-Id: <20200116173445.21385-16-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 030/251] clk: imx7d: fix refcount leak in imx7d_clocks_init()
+Date:   Thu, 16 Jan 2020 12:31:04 -0500
+Message-Id: <20200116173445.21385-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -44,37 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 884fa25fb6e5e63ab970d612a628313bb68f37cc ]
+[ Upstream commit 5f8c183a996b76bb09748073c856e4246fd4ce95 ]
 
-The qspi_data4_b_mux[] array contains pin marks for the clock and chip
-select pins.  The qspi_data4_b_pins[] array rightfully does not contain
-the corresponding pin numbers, as the control pins are provided by a
-separate group (qspi_ctrl_b).
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx7d.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index baa98d7fe947..fcf731994811 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -3136,8 +3136,7 @@ static const unsigned int qspi_data4_b_pins[] = {
- 	RCAR_GP_PIN(6, 4),
- };
- static const unsigned int qspi_data4_b_mux[] = {
--	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
--	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
-+	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
- };
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index e7c7353a86fc..8c0c0d015132 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -415,6 +415,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx7d-anatop");
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
++	of_node_put(np);
+ 
+ 	clks[IMX7D_PLL_ARM_MAIN_SRC]  = imx_clk_mux("pll_arm_main_src", base + 0x60, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
+ 	clks[IMX7D_PLL_DRAM_MAIN_SRC] = imx_clk_mux("pll_dram_main_src", base + 0x70, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
 -- 
 2.20.1
 
