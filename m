@@ -2,116 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 802E313FB90
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B195B13FBD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389295AbgAPVbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:31:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38443 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389271AbgAPVbn (ORCPT
+        id S2388381AbgAPV60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:58:26 -0500
+Received: from gateway30.websitewelcome.com ([192.185.150.24]:30773 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729380AbgAPV6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:31:43 -0500
-Received: by mail-pl1-f195.google.com with SMTP id f20so8897722plj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 13:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CnVcYi/hHjaeb2++zB3QNjZWrPcPugEoKb4FEoIY0uc=;
-        b=e1Q+9nwivpUZ2eoLhWvQW1m6CVAfa3aaBK6UccLFGY6wRgCQaM0k2UwuA/r4xW72Fz
-         Cpa8tRIYCmLrOJczdtutg3hQgF5DQ/LN0HphoQosDw7iwLUx78p/zHtm31mmcOujIme5
-         IVDzoihrY9213l6cwwUw0YMFuljdl3ONuQPx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CnVcYi/hHjaeb2++zB3QNjZWrPcPugEoKb4FEoIY0uc=;
-        b=BEzsvqCMcxtDOMo9ezaUknSSP6PyNphACN/YCmvihIgBCVarWYq72oNdtEx6MJoBqs
-         WLXPJ1QqAf8rV3JSh6mQXMLSptmWgISDnah3b3jXJZ5GCPEy9vIkvRAuOfLLk469buxo
-         ZEG3b+LiIIIAkemKbC/pueFW4C3TQZfORt5DYjlJ7xEi42IPu5ZP9FhBkJUTVRXqCd+1
-         epZsT4yWZwyiU0wf53KGXfkgrt9Rs7E/OyLVpe3+TvGER9sdDn7Bhf6BYm7TdZJj3TH2
-         C5J7Hg3Kn8SEPU0Flo0Vfzch5BFz45r82dr9CI5FgW05l3YQfuqigOOAFbV5vVWShMwu
-         oBCw==
-X-Gm-Message-State: APjAAAXygf8Y315MuHEMd/uoEwb9L++X0p0ri8Ew882gI5iEbcgJjH3e
-        7xcnw5P2JeasCNn+lWx13fldmw==
-X-Google-Smtp-Source: APXvYqxRm1Ch7JZUpuIlMAl3bHLM9JzmakZgQeA31Fg9jI5zsQYCQR2YD2ZlLu+lzl5fVGUJRQtt3A==
-X-Received: by 2002:a17:902:8202:: with SMTP id x2mr32885787pln.314.1579210302728;
-        Thu, 16 Jan 2020 13:31:42 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id g19sm26782723pfh.134.2020.01.16.13.31.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 16 Jan 2020 13:31:42 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Evan Green <evgreen@chromium.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI/MSI: Avoid torn updates to MSI pairs
-Date:   Thu, 16 Jan 2020 13:31:28 -0800
-Message-Id: <20200116133102.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid>
-X-Mailer: git-send-email 2.24.1
+        Thu, 16 Jan 2020 16:58:25 -0500
+X-Greylist: delayed 1317 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 16:58:25 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 9DBBE2FD24F
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 15:36:27 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sCoViv3QVqNtvsCoViWjog; Thu, 16 Jan 2020 15:36:27 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eAKpUW4Y8qknkzN4AAowy2Wed9URe9xaFrVdLf7t/EI=; b=vX6fievFaA18QZ1ClygheHbXNM
+        QdTnvyNZ4p1+AAUymuJXsaetAMLpJB8ixy5m3U0VlDqut8iQMCzL8rPbI14J7rDedsJF487gyKOj4
+        jDyiwHjZrCBdOxcPnTHVCjFDY4vyIlXO2roP85bEE1YXax1uR42+DJx6PiGUom0n52ZJNG4CEJnsd
+        pPp/l7A4aiYhaJTzeSVwfqx93xWolfSwpGYZcZTpe7XhWRY/9EIZVkgHSGNMzNXEsklY8O8DniIkS
+        g31CZl/IUyXR3TQI9/4s+pAPu0Ai0SMgYtHWX11Tkw81aViB9LcTi0RAihyoHqbLD2qskeLuZ/CUN
+        lOLKjSnA==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:43810 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1isCoT-000Pu6-Im; Thu, 16 Jan 2020 15:36:25 -0600
+Date:   Thu, 16 Jan 2020 15:36:25 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: sched: cls_u32: Use flexible-array member
+Message-ID: <20200116213625.GA9294@embeddedor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1isCoT-000Pu6-Im
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:43810
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__pci_write_msi_msg() updates three registers in the device: address
-high, address low, and data. On x86 systems, address low contains
-CPU targeting info, and data contains the vector. The order of writes
-is address, then data.
+Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+presence of a "variable length array":
 
-This is problematic if an interrupt comes in after address has
-been written, but before data is updated, and the SMP affinity of
-the interrupt is changing. In this case, the interrupt targets the
-wrong vector on the new CPU.
+struct something {
+    int length;
+    u8 data[1];
+};
 
-This case is pretty easy to stumble into using xhci and CPU hotplugging.
-Create a script that targets interrupts at a set of cores and then
-offlines those cores. Put some stress on USB, and then watch xhci lose
-an interrupt and die.
+struct something *instance;
 
-Avoid this by disabling MSIs during the update.
+instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+instance->length = size;
+memcpy(instance->data, source, size);
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
+There is also 0-byte arrays. Both cases pose confusion for things like
+sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+to declare variable-length types such as the one above is a flexible array
+member[2] which need to be the last member of a structure and empty-sized:
+
+struct something {
+        int stuff;
+        u8 data[];
+};
+
+Also, by making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+unadvertenly introduced[3] to the codebase from now on.
+
+[1] https://github.com/KSPP/linux/issues/21
+[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
+ net/sched/cls_u32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Bjorn,
-I was unsure whether disabling MSIs temporarily is actually an okay
-thing to do. I considered using the mask bit, but got the impression
-that not all devices support the mask bit. Let me know if this going to
-cause problems or there's a better way. I can include the repro
-script I used to cause mayhem if needed.
-
----
- drivers/pci/msi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 6b43a5455c7af..97856ef862d68 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -328,7 +328,7 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
- 		u16 msgctl;
+diff --git a/net/sched/cls_u32.c b/net/sched/cls_u32.c
+index a0e6fac613de..5537b5b72ad5 100644
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -79,7 +79,7 @@ struct tc_u_hnode {
+ 	/* The 'ht' field MUST be the last field in structure to allow for
+ 	 * more entries allocated at end of structure.
+ 	 */
+-	struct tc_u_knode __rcu	*ht[1];
++	struct tc_u_knode __rcu	*ht[];
+ };
  
- 		pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &msgctl);
--		msgctl &= ~PCI_MSI_FLAGS_QSIZE;
-+		msgctl &= ~(PCI_MSI_FLAGS_QSIZE | PCI_MSI_FLAGS_ENABLE);
- 		msgctl |= entry->msi_attrib.multiple << 4;
- 		pci_write_config_word(dev, pos + PCI_MSI_FLAGS, msgctl);
- 
-@@ -343,6 +343,9 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
- 			pci_write_config_word(dev, pos + PCI_MSI_DATA_32,
- 					      msg->data);
- 		}
-+
-+		msgctl |= PCI_MSI_FLAGS_ENABLE;
-+		pci_write_config_word(dev, pos + PCI_MSI_FLAGS, msgctl);
- 	}
- 
- skip:
+ struct tc_u_common {
 -- 
-2.24.1
+2.23.0
 
