@@ -2,94 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A68E13F429
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4CD313F4E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390020AbgAPSrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:47:42 -0500
-Received: from mga07.intel.com ([134.134.136.100]:63927 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391802AbgAPSrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:47:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:47:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="scan'208";a="218640226"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga008.jf.intel.com with ESMTP; 16 Jan 2020 10:47:34 -0800
-Date:   Thu, 16 Jan 2020 10:47:34 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 05/12] fs: remove unneeded IS_DAX() check
-Message-ID: <20200116184733.GD24522@iweiny-DESK2.sc.intel.com>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-6-ira.weiny@intel.com>
- <20200116093807.GB8446@quack2.suse.cz>
+        id S2437104AbgAPSw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:52:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45614 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389424AbgAPSwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:52:25 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 403A7A059BCFEDDDA3A1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:52:23 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 17 Jan 2020 02:52:16 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <xuwei5@hisilicon.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] bus: hisi_lpc: Fixup IO ports addresses to avoid use-after-free in host removal
+Date:   Fri, 17 Jan 2020 02:48:34 +0800
+Message-ID: <1579200514-184352-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116093807.GB8446@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:38:07AM +0100, Jan Kara wrote:
-> On Fri 10-01-20 11:29:35, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > The IS_DAX() check in io_is_direct() causes a race between changing the
-> > DAX mode and creating the iocb flags.
-> > 
-> > Remove the check because DAX now emulates the page cache API and
-> > therefore it does not matter if the file mode is DAX or not when the
-> > iocb flags are created.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> The patch looks good to me. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+Some released ACPI FW for Huawei boards describes incorrect the port IO
+address range for child devices, in that it tells us the IO port max range
+is 0x3fff for each child device, which is not correct. The address range
+should be [e4:e8) or similar. With this incorrect upper range, the child
+device IO port resources overlap.
 
-Thanks,
-Ira
+As such, the kernel thinks that the LPC host serial device is a child of
+the IPMI device:
 
-> 
-> 								Honza
-> 
-> > ---
-> >  include/linux/fs.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index d7584bcef5d3..e11989502eac 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3365,7 +3365,7 @@ extern int file_update_time(struct file *file);
-> >  
-> >  static inline bool io_is_direct(struct file *filp)
-> >  {
-> > -	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
-> > +	return (filp->f_flags & O_DIRECT);
-> >  }
-> >  
-> >  static inline bool vma_is_dax(struct vm_area_struct *vma)
-> > -- 
-> > 2.21.0
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+root@(none)$ more /proc/ioports
+[...]
+00ffc0e3-00ffffff : hisi-lpc-ipmi.0.auto
+  00ffc0e3-00ffc0e3 : ipmi_si
+  00ffc0e4-00ffc0e4 : ipmi_si
+  00ffc0e5-00ffc0e5 : ipmi_si
+  00ffc2f7-00ffffff : serial8250.1.auto
+    00ffc2f7-00ffc2fe : serial
+root@(none)$
+
+They should both be siblings. Note that these are logical PIO addresses,
+which have a direct mapping from the FW IO port ranges.
+
+This shows up as a real issue when we enable CONFIG_KASAN and
+CONFIG_DEBUG_TEST_DRIVER_REMOVE - we see use-after-free warnings in the
+host removal path:
+
+==================================================================
+BUG: KASAN: use-after-free in release_resource+0x38/0xc8
+Read of size 8 at addr ffff0026accdbc38 by task swapper/0/1
+
+CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc6-00001-g68e186e77b5c-dirty #1593
+Hardware name: Huawei Taishan 2180 /D03, BIOS Hisilicon D03 IT20 Nemo 2.0 RC0 03/30/2018
+Call trace:
+dump_backtrace+0x0/0x290
+show_stack+0x14/0x20
+dump_stack+0xf0/0x14c
+print_address_description.isra.9+0x6c/0x3b8
+__kasan_report+0x12c/0x23c
+kasan_report+0xc/0x18
+__asan_load8+0x94/0xb8
+release_resource+0x38/0xc8
+platform_device_del.part.10+0x80/0xe0
+platform_device_unregister+0x20/0x38
+hisi_lpc_acpi_remove_subdev+0x10/0x20
+device_for_each_child+0xc8/0x128
+hisi_lpc_acpi_remove+0x4c/0xa8
+hisi_lpc_remove+0xbc/0xc0
+platform_drv_remove+0x3c/0x68
+really_probe+0x174/0x548
+driver_probe_device+0x7c/0x148
+device_driver_attach+0x94/0xa0
+__driver_attach+0xa4/0x110
+bus_for_each_dev+0xe8/0x158
+driver_attach+0x30/0x40
+bus_add_driver+0x234/0x2f0
+driver_register+0xbc/0x1d0
+__platform_driver_register+0x7c/0x88
+hisi_lpc_driver_init+0x18/0x20
+do_one_initcall+0xb4/0x258
+kernel_init_freeable+0x248/0x2c0
+kernel_init+0x10/0x118
+ret_from_fork+0x10/0x1c
+
+...
+
+The issue here is that the kernel created an incorrect parent-child
+resource dependency between two devices, and references the false parent
+node when deleting the second child device, when it had been deleted
+already.
+
+Fix up the child device resources from FW to create proper IO port
+resource relationships for broken FW.
+
+With this, the IO port layout looks more healthy:
+
+root@(none)$ more /proc/ioports
+[...]
+00ffc0e3-00ffc0e7 : hisi-lpc-ipmi.0.auto
+  00ffc0e3-00ffc0e3 : ipmi_si
+  00ffc0e4-00ffc0e4 : ipmi_si
+  00ffc0e5-00ffc0e5 : ipmi_si
+00ffc2f7-00ffc2ff : serial8250.1.auto
+  00ffc2f7-00ffc2fe : serial
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index 8101df901830..08543579eefd 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -357,6 +357,26 @@ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
+ 	return 0;
+ }
+ 
++/*
++ * Released firmware describes the IO port max address as 0x3fff, which is
++ * the max host bus address. Fixup to a proper range. This will probably
++ * never be fixed in firmware.
++ */
++static void hisi_lpc_acpi_fixup_child_resource(struct device *hostdev,
++					       struct resource *r)
++{
++	if (r->end != 0x3fff)
++		return;
++
++	if (r->start == 0xe4)
++		r->end = 0xe4 + 0x04 - 1;
++	else if (r->start == 0x2f8)
++		r->end = 0x2f8 + 0x08 - 1;
++	else
++		dev_warn(hostdev, "unrecognised resource %pR to fixup, ignoring\n",
++			 r);
++}
++
+ /*
+  * hisi_lpc_acpi_set_io_res - set the resources for a child
+  * @child: the device node to be updated the I/O resource
+@@ -418,8 +438,11 @@ static int hisi_lpc_acpi_set_io_res(struct device *child,
+ 		return -ENOMEM;
+ 	}
+ 	count = 0;
+-	list_for_each_entry(rentry, &resource_list, node)
+-		resources[count++] = *rentry->res;
++	list_for_each_entry(rentry, &resource_list, node) {
++		resources[count] = *rentry->res;
++		hisi_lpc_acpi_fixup_child_resource(hostdev, &resources[count]);
++		count++;
++	}
+ 
+ 	acpi_dev_free_resource_list(&resource_list);
+ 
+-- 
+2.17.1
+
