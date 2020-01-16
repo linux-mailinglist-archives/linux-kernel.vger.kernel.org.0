@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AEAD13FEAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D9D13FF6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404509AbgAPXhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:37:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38808 "EHLO mail.kernel.org"
+        id S2389951AbgAPXmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:42:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391107AbgAPXbG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:31:06 -0500
+        id S1730225AbgAPX0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A244D20661;
-        Thu, 16 Jan 2020 23:31:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6E042072B;
+        Thu, 16 Jan 2020 23:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217466;
-        bh=SKk62hgPbXoCxXpnUj5XJblGn1m21tA2Mh2HExM3X9s=;
+        s=default; t=1579217161;
+        bh=VlQKu8ffHZFqvPusbZ7M08UcsU6jDfW/QHF1Vj/QBxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XphB3qtSsmBFkb1WzBv3254QJ8WsHNSVtJSM7auPuSUZqoLBXlUeJ2+4APbKhC/tt
-         XnB59XPDBrmEeaPn9ULoKmkpaZ+hyMJuo2dUIHYjzsOjx05x2WxWwawF7Uv7jms70v
-         3YaIEFwr76vEwiqiLjf8vbHNbDoDGCqmkK/QfED8=
+        b=VFEK5igxvrRAA2ppCfEb+bDJ0xIwKVejefnV/6rHY/uBGlM78WWKBf4SVRXDEs5RI
+         2e7/89NvqVyYtTMLo/oaKLWrW8wxg8CRZ/VI3GPQsHtjsI+SiCTNaVwnfdd8e01S6i
+         S1qwbtgVZFc/CKVeJffvkJYE7NffiBlntIgkTTt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 10/71] arm64: Make sure permission updates happen for pmd/pud
-Date:   Fri, 17 Jan 2020 00:18:08 +0100
-Message-Id: <20200116231710.926122766@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 173/203] rtlwifi: Remove unnecessary NULL check in rtl_regd_init
+Date:   Fri, 17 Jan 2020 00:18:10 +0100
+Message-Id: <20200116231759.638842211@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,72 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laura Abbott <labbott@redhat.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 82034c23fcbc2389c73d97737f61fa2dd6526413 upstream.
+commit 091c6e9c083f7ebaff00b37ad13562d51464d175 upstream.
 
-Commit 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-disallowed block mappings for ioremap since that code does not honor
-break-before-make. The same APIs are also used for permission updating
-though and the extra checks prevent the permission updates from happening,
-even though this should be permitted. This results in read-only permissions
-not being fully applied. Visibly, this can occasionaly be seen as a failure
-on the built in rodata test when the test data ends up in a section or
-as an odd RW gap on the page table dump. Fix this by using
-pgattr_change_is_safe instead of p*d_present for determining if the
-change is permitted.
+When building with Clang + -Wtautological-pointer-compare:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
-Reported-by: Peter Robinson <pbrobinson@gmail.com>
-Fixes: 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+drivers/net/wireless/realtek/rtlwifi/regd.c:389:33: warning: comparison
+of address of 'rtlpriv->regd' equal to a null pointer is always false
+[-Wtautological-pointer-compare]
+        if (wiphy == NULL || &rtlpriv->regd == NULL)
+                              ~~~~~~~~~^~~~    ~~~~
+1 warning generated.
+
+The address of an array member is never NULL unless it is the first
+struct member so remove the unnecessary check. This was addressed in
+the staging version of the driver in commit f986978b32b3 ("Staging:
+rtlwifi: remove unnecessary NULL check").
+
+While we are here, fix the following checkpatch warning:
+
+CHECK: Comparison to NULL could be written "!wiphy"
+35: FILE: drivers/net/wireless/realtek/rtlwifi/regd.c:389:
++       if (wiphy == NULL)
+
+Fixes: 0c8173385e54 ("rtl8192ce: Add new driver")
+Link:https://github.com/ClangBuiltLinux/linux/issues/750
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/mm/mmu.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -917,13 +917,15 @@ int pud_set_huge(pud_t *pudp, phys_addr_
- {
- 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
-+	pud_t new_pud = pfn_pud(__phys_to_pfn(phys), sect_prot);
+---
+ drivers/net/wireless/realtek/rtlwifi/regd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/realtek/rtlwifi/regd.c
++++ b/drivers/net/wireless/realtek/rtlwifi/regd.c
+@@ -386,7 +386,7 @@ int rtl_regd_init(struct ieee80211_hw *h
+ 	struct wiphy *wiphy = hw->wiphy;
+ 	struct country_code_to_enum_rd *country = NULL;
  
--	/* ioremap_page_range doesn't honour BBM */
--	if (pud_present(READ_ONCE(*pudp)))
-+	/* Only allow permission changes for now */
-+	if (!pgattr_change_is_safe(READ_ONCE(pud_val(*pudp)),
-+				   pud_val(new_pud)))
- 		return 0;
+-	if (wiphy == NULL || &rtlpriv->regd == NULL)
++	if (!wiphy)
+ 		return -EINVAL;
  
- 	BUG_ON(phys & ~PUD_MASK);
--	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
-+	set_pud(pudp, new_pud);
- 	return 1;
- }
- 
-@@ -931,13 +933,15 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_
- {
- 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
-+	pmd_t new_pmd = pfn_pmd(__phys_to_pfn(phys), sect_prot);
- 
--	/* ioremap_page_range doesn't honour BBM */
--	if (pmd_present(READ_ONCE(*pmdp)))
-+	/* Only allow permission changes for now */
-+	if (!pgattr_change_is_safe(READ_ONCE(pmd_val(*pmdp)),
-+				   pmd_val(new_pmd)))
- 		return 0;
- 
- 	BUG_ON(phys & ~PMD_MASK);
--	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
-+	set_pmd(pmdp, new_pmd);
- 	return 1;
- }
- 
+ 	/* init country_code from efuse channel plan */
 
 
