@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA06813F853
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC7113F849
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407308AbgAPTRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:17:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40320 "EHLO mail.kernel.org"
+        id S2437678AbgAPTRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732674AbgAPQzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:15 -0500
+        id S1731458AbgAPQzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B53A2467A;
-        Thu, 16 Jan 2020 16:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A59D422522;
+        Thu, 16 Jan 2020 16:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193714;
-        bh=klIKoTMA6lF5peF5ulNsoGKugOg5LPRiZi3nziNWFJk=;
+        s=default; t=1579193717;
+        bh=r1TXOJ5+im7ZtJxcLkK9fAtqlGOUDTNxoiKn4bdGoiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QX7HSAm21TH7/fKsGEiXztMOGuVMkSlZL4knblr1NL+TptW4vQWoEDRBWHNBRG5v9
-         A3LfW1RFuGslOafPPsA933Wctk6MtHHWq3S7OzXGRKJFAkj2PdJYCENb6aQO4mD8Vz
-         UshUBePUqlBJIOfDUh5hvToTkcIZMefPh8zb9rKg=
+        b=iAvlw/yfBXArpMHce8av4YhNQXGC7Biqy5lRJtvEqoRzZ4GsEbbnRZNQw0K4Xk11Q
+         lsBjWr9A4J8f0yNsjJZcUSoo3xdORzZMlpYb8QaGKJegcR3UhSkBccQr4Yqs03Gq/i
+         55RYxprIwZnZ53sZtxcAg18O6cuPNGhHUcrD1jKo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Frank Rowand <frank.rowand@sony.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andy Gospodarek <gospo@broadcom.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 010/671] ARM: qcom_defconfig: Enable MAILBOX
-Date:   Thu, 16 Jan 2020 11:44:01 -0500
-Message-Id: <20200116165502.8838-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 012/671] PCI: iproc: Remove PAXC slot check to allow VF support
+Date:   Thu, 16 Jan 2020 11:44:03 -0500
+Message-Id: <20200116165502.8838-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -45,44 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
 
-[ Upstream commit 54c2678cd198f61555796bbda5e1727e6e1858f1 ]
+[ Upstream commit 4da6b4480766e5bc9c4d7bc14bf1d0939a1a5fa7 ]
 
-Problem:
-ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
-becomes unset since MAILBOX was not enabled in qcom_defconfig and is
-not otherwise selected for the dragonboard.  When the resulting
-kernel is booted the mmc device which contains the root file system
-is not available.
+Fix previous incorrect logic that limits PAXC slot number to zero only.
+In order for SRIOV/VF to work, we need to allow the slot number to be
+greater than zero.
 
-Fix:
-add CONFIG_MAILBOX to qcom_defconfig
-
-Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-added a "depends on MAILBOX")
-
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Fixes: 46560388c476c ("PCI: iproc: Allow multiple devices except on PAXC")
+Signed-off-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/configs/qcom_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/pcie-iproc.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-index 6aa7046fb91f..bd6440f23493 100644
---- a/arch/arm/configs/qcom_defconfig
-+++ b/arch/arm/configs/qcom_defconfig
-@@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
- CONFIG_MSM_IOMMU=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
-+CONFIG_MAILBOX=y
- CONFIG_REMOTEPROC=y
- CONFIG_QCOM_ADSP_PIL=y
- CONFIG_QCOM_Q6V5_PIL=y
+diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+index 3160e9342a2f..c20fd6bd68fd 100644
+--- a/drivers/pci/controller/pcie-iproc.c
++++ b/drivers/pci/controller/pcie-iproc.c
+@@ -630,14 +630,6 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct iproc_pcie *pcie,
+ 			return (pcie->base + offset);
+ 	}
+ 
+-	/*
+-	 * PAXC is connected to an internally emulated EP within the SoC.  It
+-	 * allows only one device.
+-	 */
+-	if (pcie->ep_is_internal)
+-		if (slot > 0)
+-			return NULL;
+-
+ 	return iproc_pcie_map_ep_cfg_reg(pcie, busno, slot, fn, where);
+ }
+ 
 -- 
 2.20.1
 
