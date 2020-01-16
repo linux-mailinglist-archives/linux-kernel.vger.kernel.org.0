@@ -2,121 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75EC713E031
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349C713E034
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:34:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbgAPQeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:34:01 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41129 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbgAPQeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:34:01 -0500
-Received: by mail-qk1-f195.google.com with SMTP id x129so19652345qke.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:34:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
-        b=GwCUuYmh9QjD1S8e/ph4IFxvhkUCpERtc6AcTu3gWqXtitf5wJ2atb9p813PqJs/kz
-         diK17qtqwxVd+6Ev8mT/WQvE9pNqUr8/YDafR6zPQQ8nZHNwOlplHatjrdHBOrssnqaA
-         UdyH7nKSfKwOODBp9zyV4DWUlLwrPytZ36b9GhguPbKWMLDVFPbzKvbA2OSxCq1B9jUd
-         b47rLzIiS8wVwYKQNj4Lku8sQZ9e349RK028vjMw1oqLEa1A7bj/tPSV65MPLVapHyDO
-         lASrGxoXopzQLV0kKMpI+5L/x+KT/XEFBIWVBpt+kL77+0hsqdU0BOyIufZhhs9CdxCf
-         Vv9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
-        b=jxoBjJK4u545STq5GntP5V5kQy7Uw38STax+XQrn1JBjgNF6uLnZKNggICBTbQRQGa
-         yJ6os5kw1DZ3uewn9vSEtQ+3d47eRE5dyyJtntPUpSb5C2bs+5Fzrd3fRNmX2RUcKZX/
-         gOZPK5hmI73KoMCqKT7GifVamoblvn5tu1U+vz1PTxSLuuiubOUmQcAYO6AScgUxmf3b
-         KM13waHfxP4cNFofaD0cqTsBDznyuCUsnoC8WQRV/5zVSSnuyub3FpQvFTN21hVfCtxB
-         UwIEGvdmehkxZBz5VsUaWRZY77GxwaJd1+rN8T04D/REGyj/1HOi2KCRtenaLylSbovd
-         93/A==
-X-Gm-Message-State: APjAAAXv6/fPtiND2FeVfDJMAjcsr5dGC+i6e8s/tIaTOfKxeTiCU772
-        ZE8dNIMVTOH1eNXQyqTlwASoCoAmWowvIyt5yTc=
-X-Google-Smtp-Source: APXvYqyWJN2GFU4wvaZ+ihLcFU/FzcfjEDWutuc+qax7spDb/+9FF/JZ6vGw0E6+JVEk3B/5diW8TqI/ysp4biX+yZM=
-X-Received: by 2002:ae9:e206:: with SMTP id c6mr34715696qkc.105.1579192440085;
- Thu, 16 Jan 2020 08:34:00 -0800 (PST)
+        id S1727030AbgAPQeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:34:15 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48590 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbgAPQeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:34:14 -0500
+Received: from zn.tnic (p200300EC2F0B2300140B140D62B5CC9C.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2300:140b:140d:62b5:cc9c])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4F9FC1EC0391;
+        Thu, 16 Jan 2020 17:34:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579192453;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=waSyRTZ8/lhsXH/OWB+jXSGGZbqUfyQsZNqfwd45Pyo=;
+        b=l95hx+vHGYmND/zji6oFl6ubsI9qlIfQDQcaNG6k1mwj2xsvhSmen9ZebR15aVwNP+DNFm
+        zjbixr/RHLN4IjKAeMZZFtCTdzOleHhwAdFX27ysdtf1G8jiUGrdEsx9gghr9zVqQ6ouUS
+        BhJ/nv1Mxka1+o/2Ennk/Sz0JhLnFDQ=
+Date:   Thu, 16 Jan 2020 17:34:03 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tony.luck@intel.com, x86@kernel.org
+Subject: Re: [PATCH 0/5] MCA and EDAC updates for AMD Family 19h
+Message-ID: <20200116163403.GF27148@zn.tnic>
+References: <20200110015651.14887-1-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-Received: by 2002:ac8:6c2b:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 08:33:59
- -0800 (PST)
-Reply-To: janvierlitse2019@gmail.com
-From:   Mr Janvier Litse <mrronanpectual2016@gmail.com>
-Date:   Thu, 16 Jan 2020 08:33:59 -0800
-Message-ID: <CACxeY9h6gZRRa5vNa67FwE05RDxRAM-7UDB4ijf_rcC-qOiAuA@mail.gmail.com>
-Subject: URGENT RESPOND FOR MORE DETAILS!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200110015651.14887-1-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mr Janvier Litse.
-African Development Bank
-Burkina Faso (ADB)
-Ouagadougou - Burkina Faso.
+On Fri, Jan 10, 2020 at 01:56:46AM +0000, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> Hi Boris,
+> 
+> This patchset adds MCA and EDAC support for AMD Family 19h.
+> 
+> There aren't any functional changes. Mostly we just need to add new PCI
+> IDs and a new MCA bank type. I've also included a couple of patches that
+> do away with family checks where appropriate.
+> 
+> Thanks,
+> Yazen
+> 
+> Yazen Ghannam (5):
+>   x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit McaType
+>   EDAC/mce_amd: Always load on SMCA systems
+>   x86/amd_nb: Add Family 19h PCI IDs
+>   EDAC/amd64: Add family ops for Family 19h Models 00h-0Fh
+>   EDAC/amd64: Drop some family checks for newer systems
+> 
+>  arch/x86/include/asm/mce.h    |  1 +
+>  arch/x86/kernel/amd_nb.c      |  3 ++
+>  arch/x86/kernel/cpu/mce/amd.c |  2 ++
+>  drivers/edac/amd64_edac.c     | 62 ++++++++++++++++++++---------------
+>  drivers/edac/amd64_edac.h     |  3 ++
+>  drivers/edac/mce_amd.c        | 41 ++++++++++++++++++++---
+>  include/linux/pci_ids.h       |  1 +
+>  7 files changed, 82 insertions(+), 31 deletions(-)
+> 
+> -- 
 
-Dear friend, Good Day
+Btw, I'll slap this ontop:
 
-I am writing to seek your cooperation over this business, Please due
-welcome this letter.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Thu, 16 Jan 2020 17:28:39 +0100
+Subject: [PATCH] EDAC/mce_amd: Make fam_ops static global
 
-I am Mr Janvier Litse.the director of the accounts & auditing dept .at
-the African Development Bank Ouagadougou-west Africa (A D B) With due
-respect, I have decided to contact you on a business transaction that
-will be beneficial to both of us.At the bank's lastaccounts/auditing
-evaluations, my staffs came across an old account which was being
-maintained by a foreign client who we learnt was among the deceased
-passengers of motor accident on November.. 2003, the deceased was
-unable to run this account since his death. The account has remained
-dormant without the knowledge of his family since it was put in a safe
-deposit account in the bank for future investment by the client.
+... and do not kmalloc a three-pointer struct. Which simplifies
+mce_amd_init() a bit.
 
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit accountuntil
-I discovered that it cannot be claimed since our client is a foreign
-national and we are sure that he has no next of kin here to file
-claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done.
-I decided to seek ways through which to transfer this money out of the
-bank and out of the country too.
+No functional changes.
 
-The total amount in the account is twenty eight  million three hundred
-thousand dollars (USD 28,300,000.00).with my positions as a staffs of
-the bank, I am handicapped because I can not operate foreign accounts
-and cannot lay bonafide claim over this money.The client was a foreign
-national and you will only be asked to act as his next of kin and I
-will supply you with all the necessary information and bank data to
-assist you in being able to transfer this money to any bank of your
-choice where this money could be transferred into.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ drivers/edac/mce_amd.c | 69 ++++++++++++++++++------------------------
+ 1 file changed, 30 insertions(+), 39 deletions(-)
 
-The total sum will be shared as follows: 50% for me, 50% for you and
-expenses incidental occur during the transfer will be  incured by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund transfer to your account.
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index 524c63fdad42..df95a05c9f23 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -6,7 +6,7 @@
+ 
+ #include "mce_amd.h"
+ 
+-static struct amd_decoder_ops *fam_ops;
++static struct amd_decoder_ops fam_ops;
+ 
+ static u8 xec_mask	 = 0xf;
+ 
+@@ -583,7 +583,7 @@ static void decode_mc0_mce(struct mce *m)
+ 					    : (xec ? "multimatch" : "parity")));
+ 			return;
+ 		}
+-	} else if (fam_ops->mc0_mce(ec, xec))
++	} else if (fam_ops.mc0_mce(ec, xec))
+ 		;
+ 	else
+ 		pr_emerg(HW_ERR "Corrupted MC0 MCE info?\n");
+@@ -697,7 +697,7 @@ static void decode_mc1_mce(struct mce *m)
+ 			pr_cont("Hardware Assert.\n");
+ 		else
+ 			goto wrong_mc1_mce;
+-	} else if (fam_ops->mc1_mce(ec, xec))
++	} else if (fam_ops.mc1_mce(ec, xec))
+ 		;
+ 	else
+ 		goto wrong_mc1_mce;
+@@ -831,7 +831,7 @@ static void decode_mc2_mce(struct mce *m)
+ 
+ 	pr_emerg(HW_ERR "MC2 Error: ");
+ 
+-	if (!fam_ops->mc2_mce(ec, xec))
++	if (!fam_ops.mc2_mce(ec, xec))
+ 		pr_cont(HW_ERR "Corrupted MC2 MCE info?\n");
+ }
+ 
+@@ -1130,7 +1130,8 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 	if (m->tsc)
+ 		pr_emerg(HW_ERR "TSC: %llu\n", m->tsc);
+ 
+-	if (!fam_ops)
++	/* Doesn't matter which member to test. */
++	if (!fam_ops.mc0_mce)
+ 		goto err_code;
+ 
+ 	switch (m->bank) {
+@@ -1185,10 +1186,6 @@ static int __init mce_amd_init(void)
+ 	    c->x86_vendor != X86_VENDOR_HYGON)
+ 		return -ENODEV;
+ 
+-	fam_ops = kzalloc(sizeof(struct amd_decoder_ops), GFP_KERNEL);
+-	if (!fam_ops)
+-		return -ENOMEM;
+-
+ 	if (boot_cpu_has(X86_FEATURE_SMCA)) {
+ 		xec_mask = 0x3f;
+ 		goto out;
+@@ -1196,59 +1193,58 @@ static int __init mce_amd_init(void)
+ 
+ 	switch (c->x86) {
+ 	case 0xf:
+-		fam_ops->mc0_mce = k8_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = k8_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x10:
+-		fam_ops->mc0_mce = f10h_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = f10h_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x11:
+-		fam_ops->mc0_mce = k8_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = k8_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x12:
+-		fam_ops->mc0_mce = f12h_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = f12h_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x14:
+-		fam_ops->mc0_mce = cat_mc0_mce;
+-		fam_ops->mc1_mce = cat_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = cat_mc0_mce;
++		fam_ops.mc1_mce = cat_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x15:
+ 		xec_mask = c->x86_model == 0x60 ? 0x3f : 0x1f;
+ 
+-		fam_ops->mc0_mce = f15h_mc0_mce;
+-		fam_ops->mc1_mce = f15h_mc1_mce;
+-		fam_ops->mc2_mce = f15h_mc2_mce;
++		fam_ops.mc0_mce = f15h_mc0_mce;
++		fam_ops.mc1_mce = f15h_mc1_mce;
++		fam_ops.mc2_mce = f15h_mc2_mce;
+ 		break;
+ 
+ 	case 0x16:
+ 		xec_mask = 0x1f;
+-		fam_ops->mc0_mce = cat_mc0_mce;
+-		fam_ops->mc1_mce = cat_mc1_mce;
+-		fam_ops->mc2_mce = f16h_mc2_mce;
++		fam_ops.mc0_mce = cat_mc0_mce;
++		fam_ops.mc1_mce = cat_mc1_mce;
++		fam_ops.mc2_mce = f16h_mc2_mce;
+ 		break;
+ 
+ 	case 0x17:
+ 	case 0x18:
+ 		pr_warn("Decoding supported only on Scalable MCA processors.\n");
+-		goto err_out;
+-		break;
++		return -EINVAL;
+ 
+ 	default:
+ 		printk(KERN_WARNING "Huh? What family is it: 0x%x?!\n", c->x86);
+-		goto err_out;
++		return -EINVAL;
+ 	}
+ 
+ out:
+@@ -1257,11 +1253,6 @@ static int __init mce_amd_init(void)
+ 	mce_register_decode_chain(&amd_mce_dec_nb);
+ 
+ 	return 0;
+-
+-err_out:
+-	kfree(fam_ops);
+-	fam_ops = NULL;
+-	return -EINVAL;
+ }
+ early_initcall(mce_amd_init);
+ 
+@@ -1269,7 +1260,7 @@ early_initcall(mce_amd_init);
+ static void __exit mce_amd_exit(void)
+ {
+ 	mce_unregister_decode_chain(&amd_mce_dec_nb);
+-	kfree(fam_ops);
++	memset(&fam_ops, 0, sizeof(struct amd_decoder_ops));
+ }
+ 
+ MODULE_DESCRIPTION("AMD MCE decoder");
+-- 
+2.21.0
 
-Since I work in this bank that is why you should be confident in the
-success of this transaction because you will be updated with
-information as at when desired I will wish you to keep this
-transaction secret and confidential as I am hoping to retire with my
-share of this money at the end of transaction which will be when this
-money is safety in your account. I will then come over to your country
-for sharing according to the previously agreed percentages. You might
-even have to advise me on possibilities of investment in your country
-or elsewhere of our choice. May God help you to help me to a restive
-retirement, Amen.
 
+-- 
+Regards/Gruss,
+    Boris.
 
-Please for further information and enquires feel free to contact me
-back immediately for more explanation and better  understanding.please
-contact me through this alternative email address
-(janvierlitse2019@gmail.com)
-
-I am waiting for your urgent response!!!
-Thanks and remain blessed
- Mr Janvier Litse.
-+226 54459253
+https://people.kernel.org/tglx/notes-about-netiquette
