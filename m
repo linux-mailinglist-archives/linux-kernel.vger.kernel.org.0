@@ -2,86 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C08F13FABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 21:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B77D813FAC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 21:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388077AbgAPUh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 15:37:27 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36478 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbgAPUh1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 15:37:27 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c16so20124570oic.3;
-        Thu, 16 Jan 2020 12:37:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XzWrcINvZxQSS9EFoJ8JAh0Ay/OFSJ2Xnh3lSR9maO8=;
-        b=LmnV1FaEkLTu1xywbj6yHsDT76EYg+7Q1DFseRK3v1g3eQA6DKZdwFMTJ4x+0svKzK
-         zWke3D9TZYo7+ZF/atprr5jrsAOL5dbZHrf1y610GCEUC4Cy3qNQs4+IuDpISNCkgJy1
-         zhVi9iQV+Hh9VrsmjIFD8heoBDP4gKY4fCncqRX3X6zXjKadh98OsaZNRKHn2CQDDRAT
-         5jAN3SOBqdsY7A8NwKz1907kY8aRiC59WIOFNlSQ5e1fntFyk9XZF+eTRuRoYRSUetVP
-         zqgs2v0T7k67qmDTEBwDebYsKphBTGhxWSWPGX9d9eYpP/jIXTBTjGJLXmYl6v43DMBn
-         /MgA==
-X-Gm-Message-State: APjAAAXNRw3PQuq1lR1RJrjTFocm26xhFDT5Mc/yzoidhapWd0xIi5t8
-        A6DTiFqcyANhxeoy7cHedTLllZ8gbD4vXnCJ4Flybw==
-X-Google-Smtp-Source: APXvYqwevY8vXym4/KmtJM9N/WrO3KvTg89GKTAbO5hB2oqV0y7TrCsouYiIwEBhP6IfYgqRT+pKItiYHeGjHQfeRgY=
-X-Received: by 2002:aca:cd92:: with SMTP id d140mr776903oig.68.1579207046782;
- Thu, 16 Jan 2020 12:37:26 -0800 (PST)
+        id S2388156AbgAPUmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 15:42:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387592AbgAPUmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 15:42:18 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D00820748;
+        Thu, 16 Jan 2020 20:42:17 +0000 (UTC)
+Date:   Thu, 16 Jan 2020 15:42:16 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Unresolved reference for histogram variable
+Message-ID: <20200116154216.58ca08eb@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20200116175758.88396-1-colin.king@canonical.com>
-In-Reply-To: <20200116175758.88396-1-colin.king@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 16 Jan 2020 21:37:16 +0100
-Message-ID: <CAJZ5v0hpn2mdp88B46xaaVPkHSPESadJd3A4ZwijHAW5nOidwg@mail.gmail.com>
-Subject: Re: [PATCH][next] driver core: platform: fix u32 greater or equal to
- zero comparison
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Simon Schwartz <kern.simon@theschwartz.xyz>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 6:58 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the check that a u32 variable i is >= 0 is always true because
-> the unsigned variable will never be negative, causing the loop to run
-> forever.  Fix this by changing the pre-decrement check to a zero check on
-> i followed by a decrement of i.
->
-> Addresses-Coverity: ("Unsigned compared against 0")
-> Fixes: 39cc539f90d0 ("driver core: platform: Prevent resouce overflow from causing infinite loops")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Tom,
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+I'm working on the SQL converter to the ftrace histogram interface, and
+while testing the histogram code, I found something strange.
 
-> ---
->  drivers/base/platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 864b53b3d598..7fa654f1288b 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -571,7 +571,7 @@ int platform_device_add(struct platform_device *pdev)
->                 pdev->id = PLATFORM_DEVID_AUTO;
->         }
->
-> -       while (--i >= 0) {
-> +       while (i--) {
->                 struct resource *r = &pdev->resource[i];
->                 if (r->parent)
->                         release_resource(r);
-> --
-> 2.24.0
->
+If I write the following:
+
+ # echo 'first u64 start_time u64 end_time pid_t pid u64 delta' >> synthetic_events
+ # echo 'hist:keys=pid:start=common_timestamp' > events/sched/sched_waking/trigger 
+ # echo 'hist:keys=next_pid:start2=$start,delta=common_timestamp-$start:onmatch(sched.sched_waking).trace(first,$start2,common_timestamp,next_pid,$delta)' > events/sched/sched_switch/trigger
+
+ # cat events/sched/sched_switch/hist 
+# event histogram
+#
+# trigger info: hist:keys=next_pid:vals=hitcount:start2=$start,delta=common_timestamp-$start:sort=hitcount:size=2048:clock=global:onmatch(sched.sched_waking).trace(first,$start2,common_timestamp,next_pid,$delta) [active]
+#
+
+{ next_pid:       1337 } hitcount:          1
+{ next_pid:         35 } hitcount:          1
+{ next_pid:        654 } hitcount:          1
+{ next_pid:         20 } hitcount:          1
+{ next_pid:       1392 } hitcount:          1
+{ next_pid:       1336 } hitcount:          1
+{ next_pid:         45 } hitcount:          1
+{ next_pid:         15 } hitcount:          1
+{ next_pid:        674 } hitcount:          1
+{ next_pid:         40 } hitcount:          1
+{ next_pid:          7 } hitcount:          1
+{ next_pid:         25 } hitcount:          1
+{ next_pid:         30 } hitcount:          1
+{ next_pid:         12 } hitcount:          1
+{ next_pid:       1693 } hitcount:          1
+{ next_pid:        206 } hitcount:          1
+{ next_pid:         27 } hitcount:          2
+{ next_pid:        694 } hitcount:          2
+{ next_pid:        438 } hitcount:          2
+{ next_pid:       1016 } hitcount:          3
+{ next_pid:         53 } hitcount:          4
+{ next_pid:       1688 } hitcount:          4
+{ next_pid:       1679 } hitcount:          4
+{ next_pid:       1066 } hitcount:          6
+{ next_pid:       1637 } hitcount:          6
+{ next_pid:       1635 } hitcount:         11
+{ next_pid:         11 } hitcount:         11
+{ next_pid:        196 } hitcount:         12
+{ next_pid:       1270 } hitcount:         15
+{ next_pid:       1506 } hitcount:         18
+
+Totals:
+    Hits: 116
+    Entries: 30
+    Dropped: 0
+
+
+All fine and dandy. But if I swap the two variables assignments...
+
+ from: start2=$start,delta=common_timestamp-$start
+
+ to: delta=common_timestamp-$start,start2=$start
+
+Where I assign the delta before start2, I get this:
+
+ # cat events/sched/sched_switch/hist 
+# event histogram
+#
+# trigger info: hist:keys=next_pid:vals=hitcount:delta=common_timestamp-$start,start2=$start:sort=hitcount:size=2048:clock=global:onmatch(sched.sched_waking).trace(first,$start2,common_timestamp,next_pid,$delta) [active]
+#
+
+
+Totals:
+    Hits: 0
+    Entries: 0
+    Dropped: 0
+
+
+After spending a day placing trace_printk() and printk()s in the code,
+I found the culprit, and it has to do with this line here:
+
+in resolve_var_refs():
+
+		if (self || !hist_field->read_once)
+			var_val = tracing_map_read_var(var_elt, var_idx);
+		else
+			var_val = tracing_map_read_var_once(var_elt, var_idx);
+
+
+It appears that:
+
+  start2=$start
+
+does not set the read_once() to the variable, which allows for the
+delta calculation to work. But the delta calculation has:
+
+in parse_expr():
+
+	operand1->read_once = true;
+	operand2->read_once = true;
+
+Why is that?
+
+This means that any variable used in an expression can not be use later
+on.
+
+Or should the variable be detected that it is used multiple times in
+the expression, and have the parser detect this, and just reuse the
+same variable multiple times?
+
+-- Steve
