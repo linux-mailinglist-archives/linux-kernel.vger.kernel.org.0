@@ -2,113 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A71C413FB3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FC5B13FB43
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbgAPVRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:17:03 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22572 "EHLO
+        id S2388775AbgAPVUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:20:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48127 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388584AbgAPVRB (ORCPT
+        with ESMTP id S1729005AbgAPVUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:17:01 -0500
+        Thu, 16 Jan 2020 16:20:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579209419;
+        s=mimecast20190719; t=1579209640;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=nFJ6uwOoJtC0MqewmZr1cCXqAoblceejQfDtB1E24lk=;
-        b=Zhwv/exDphH3pmR7FO/yGrR3CZ1W636shsJBD/2Dyi/4wTK7tERe8/VtNbsfFqwR5I1xag
-        b8OSr48oMt5oEqEpd9sY4iHpAEGTYiXOsklTHcZ+lDcQKUf2Y+GgiL8Xbg9YHA2sq+3IFv
-        yj0UA+OzxXsmgEqeJfK5gTLvLOFFnfo=
+        bh=OWaRr6h+fYNYUWtshSDDFH28gfR7IxTJvOjH91SRqww=;
+        b=Mti82Zxlnol8AC4xPAL4CuX28iBmgvYocu4H4SmFlvCFvJVO2Zne8/1m1nvhvT4Wsxupry
+        b7531qL9Z27b7WRjaYsQOAN9q8/r9lMxUoQ5i0/TROWAQehBs3xs99iBILoXGsxHREulSQ
+        mjme+KkZISr0PcoWzSE03pKfdfS6hsQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-322-LFIEQ6_pPeefBuYFJirb_g-1; Thu, 16 Jan 2020 16:16:58 -0500
-X-MC-Unique: LFIEQ6_pPeefBuYFJirb_g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-341-aRIPpYMsNemd0-_0kzL7SQ-1; Thu, 16 Jan 2020 16:20:38 -0500
+X-MC-Unique: aRIPpYMsNemd0-_0kzL7SQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 09E3510054E3;
-        Thu, 16 Jan 2020 21:16:55 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-90.bss.redhat.com [10.20.1.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA5F960C84;
-        Thu, 16 Jan 2020 21:16:53 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     intel-gfx@lists.freedesktop.org
-Cc:     dri-devel@lists.freedesktop.org,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Perry Yuan <pyuan@redhat.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] drm/i915: Auto detect DPCD backlight support by default
-Date:   Thu, 16 Jan 2020 16:16:12 -0500
-Message-Id: <20200116211623.53799-6-lyude@redhat.com>
-In-Reply-To: <20200116211623.53799-1-lyude@redhat.com>
-References: <20200116211623.53799-1-lyude@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 114888017CC;
+        Thu, 16 Jan 2020 21:20:36 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-12.phx2.redhat.com [10.3.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5ED1B5C545;
+        Thu, 16 Jan 2020 21:20:26 +0000 (UTC)
+Date:   Thu, 16 Jan 2020 16:20:23 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, sgrubb@redhat.com,
+        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
+        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
+        tgraf@infradead.org
+Subject: Re: [PATCH ghak25 v2 0/9] Address NETFILTER_CFG issues
+Message-ID: <20200116212023.w2ylqqmf654hwuvq@madcap2.tricolour.ca>
+References: <cover.1577830902.git.rgb@redhat.com>
+ <20200116150518.gfmzixoqagmk77rw@salvia>
+ <CAHC9VhSowSdhwaGNVfj-Paj7=38z1D-p+=EDQNUAwNJpO_tyXg@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSowSdhwaGNVfj-Paj7=38z1D-p+=EDQNUAwNJpO_tyXg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out we actually already have some companies, such as Lenovo,
-shipping machines with AMOLED screens that don't allow controlling the
-backlight through the usual PWM interface and only allow controlling it
-through the standard EDP DPCD interface. One example of one of these
-laptops is the X1 Extreme 2nd Generation.
+On 2020-01-16 14:07, Paul Moore wrote:
+> On Thu, Jan 16, 2020 at 10:05 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> > On Mon, Jan 06, 2020 at 01:54:01PM -0500, Richard Guy Briggs wrote:
+> > > There were questions about the presence and cause of unsolicited syscall events
+> > > in the logs containing NETFILTER_CFG records and sometimes unaccompanied
+> > > NETFILTER_CFG records.
+> > >
+> > > During testing at least the following list of events trigger NETFILTER_CFG
+> > > records and the syscalls related (There may be more events that will trigger
+> > > this message type.):
+> > >       init_module, finit_module: modprobe
+> > >       setsockopt: iptables-restore, ip6tables-restore, ebtables-restore
+> > >       unshare: (h?)ostnamed
+> > >       clone: libvirtd
+> > >
+> > > The syscall events unsolicited by any audit rule were found to be caused by a
+> > > missing !audit_dummy_context() check before creating a NETFILTER_CFG
+> > > record and issuing the record immediately rather than saving the
+> > > information to create the record at syscall exit.
+> > > Check !audit_dummy_context() before creating the NETFILTER_CFG record.
+> > >
+> > > The vast majority of unaccompanied records are caused by the fedora default
+> > > rule: "-a never,task" and the occasional early startup one is I believe caused
+> > > by the iptables filter table module hard linked into the kernel rather than a
+> > > loadable module. The !audit_dummy_context() check above should avoid them.
+> > >
+> > > A couple of other factors should help eliminate unaccompanied records
+> > > which include commit cb74ed278f80 ("audit: always enable syscall
+> > > auditing when supported and audit is enabled") which makes sure that
+> > > when audit is enabled, so automatically is syscall auditing, and ghak66
+> > > which addressed initializing audit before PID 1.
+> > >
+> > > Ebtables module initialization to register tables doesn't generate records
+> > > because it was never hooked in to audit.  Recommend adding audit hooks to log
+> > > this.
+> > >
+> > > Table unregistration was never logged, which is now covered.
+> > >
+> > > Seemingly duplicate records are not actually exact duplicates that are caused
+> > > by netfilter table initialization in different network namespaces from the same
+> > > syscall.  Recommend adding the network namespace ID (proc inode and dev)
+> > > to the record to make this obvious (address later with ghak79 after nsid
+> > > patches).
+> > >
+> > > See: https://github.com/linux-audit/audit-kernel/issues/25
+> > > See: https://github.com/linux-audit/audit-kernel/issues/35
+> > > See: https://github.com/linux-audit/audit-kernel/issues/43
+> > > See: https://github.com/linux-audit/audit-kernel/issues/44
+> >
+> > What tree is this batch targeted to?
+> 
+> I believe Richard was targeting this for the audit tree.
 
-Since we've got systems that need this turned on by default now to have
-backlight controls working out of the box, let's start auto-detecting it
-for systems by default based on what the VBT tells us. We do this by
-changing the default value for the enable_dpcd_backlight module param
-from 0 to -1.
+Yes, sorry Pablo, it is against audit/next based on v5.5-rc1
 
-Tested-by: AceLan Kao <acelan.kao@canonical.com>
-Tested-by: Perry Yuan <pyuan@redhat.com>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- drivers/gpu/drm/i915/i915_params.c | 2 +-
- drivers/gpu/drm/i915/i915_params.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> paul moore
 
-diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i9=
-15_params.c
-index 64009e99073d..905decc36e53 100644
---- a/drivers/gpu/drm/i915/i915_params.c
-+++ b/drivers/gpu/drm/i915/i915_params.c
-@@ -172,7 +172,7 @@ i915_param_named_unsafe(inject_probe_failure, uint, 0=
-400,
-=20
- i915_param_named(enable_dpcd_backlight, int, 0600,
- 	"Enable support for DPCD backlight control"
--	"(-1=3Duse per-VBT LFP backlight type setting, 0=3Ddisabled [default], =
-1=3Denabled)");
-+	"(-1=3Duse per-VBT LFP backlight type setting [default], 0=3Ddisabled, =
-1=3Denabled)");
-=20
- #if IS_ENABLED(CONFIG_DRM_I915_GVT)
- i915_param_named(enable_gvt, bool, 0400,
-diff --git a/drivers/gpu/drm/i915/i915_params.h b/drivers/gpu/drm/i915/i9=
-15_params.h
-index be6089e4f9e6..947d0a38fa3c 100644
---- a/drivers/gpu/drm/i915/i915_params.h
-+++ b/drivers/gpu/drm/i915/i915_params.h
-@@ -66,7 +66,7 @@ struct drm_printer;
- 	param(int, reset, 3, 0600) \
- 	param(unsigned int, inject_probe_failure, 0, 0600) \
- 	param(int, fastboot, -1, 0600) \
--	param(int, enable_dpcd_backlight, 0, 0600) \
-+	param(int, enable_dpcd_backlight, -1, 0600) \
- 	param(char *, force_probe, CONFIG_DRM_I915_FORCE_PROBE, 0400) \
- 	param(unsigned long, fake_lmem_start, 0, 0400) \
- 	/* leave bools at the end to not create holes */ \
---=20
-2.24.1
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
