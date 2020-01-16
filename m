@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5598A13F8EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D7113F8CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:21:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbgAPTV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:21:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37722 "EHLO mail.kernel.org"
+        id S2407358AbgAPTVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:21:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729496AbgAPQxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:42 -0500
+        id S1731176AbgAPQxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 883FD2176D;
-        Thu, 16 Jan 2020 16:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 565EF22522;
+        Thu, 16 Jan 2020 16:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193622;
-        bh=JJpE/7pU7nqNxioTDS0aMEeSILcg1XAsGFlPgkL1BP8=;
+        s=default; t=1579193626;
+        bh=rNQrhZDV21oaKlrh7C5bTvuE3dr16hMZ8aHHmoo8iyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=glyZlwbhoiNUG47FfY3RZ5hOtWouoPkJS28OKjiwY+S9/Adk07DUk0fNPo5ILgtza
-         QFTF9Q14yN58n+HBTp8k/LEQp7110+lsZYw5v9I3glUln66fOayJiqBXVqxDS2uep7
-         +QQ0XLP5R0Q9UYan/T7CBwlNhYs+jOAwmozf3AAI=
+        b=MFuTxxkkcTmZdz0Kk+ANFoJY5juN+8C4teZVz22RHadpfKI7je8YyQ+FLDaJn3Lxg
+         At4oNwISSIhDEswMxxO7K+nBUCExtIyf9K/XAIJUClST3oT4bhMqkeGKksUY1l5USp
+         a3qxAXquhxfamSl9IbPUBG1AUwc4sFaQzliAnMt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 157/205] scsi: bnx2i: fix potential use after free
-Date:   Thu, 16 Jan 2020 11:42:12 -0500
-Message-Id: <20200116164300.6705-157-sashal@kernel.org>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 160/205] ARM: dts: dra7: fix cpsw mdio fck clock
+Date:   Thu, 16 Jan 2020 11:42:15 -0500
+Message-Id: <20200116164300.6705-160-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -43,41 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
-[ Upstream commit 29d28f2b8d3736ac61c28ef7e20fda63795b74d9 ]
+[ Upstream commit 6af0a549c25e0d02366aa95507bfe3cad2f7b68b ]
 
-The member hba->pcidev may be used after its reference is dropped. Move the
-put function to where it is never used to avoid potential use after free
-issues.
+The DRA7 CPSW MDIO functional clock (gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0)
+is specified incorrectly, which is caused incorrect MDIO bus clock
+configuration MDCLK. The correct CPSW MDIO functional clock is
+gmac_main_clk (125MHz), which is the same as CPSW fck. Hence fix it.
 
-Fixes: a77171806515 ("[SCSI] bnx2i: Removed the reference to the netdev->base_addr")
-Link: https://lore.kernel.org/r/1573043541-19126-1-git-send-email-bianpan2016@163.com
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1faa415c9c6e ("ARM: dts: Add fck for cpsw mdio for omap variants")
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2i/bnx2i_iscsi.c | 2 +-
+ arch/arm/boot/dts/dra7-l4.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bnx2i/bnx2i_iscsi.c b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-index c5fa5f3b00e9..0b28d44d3573 100644
---- a/drivers/scsi/bnx2i/bnx2i_iscsi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-@@ -915,12 +915,12 @@ void bnx2i_free_hba(struct bnx2i_hba *hba)
- 	INIT_LIST_HEAD(&hba->ep_ofld_list);
- 	INIT_LIST_HEAD(&hba->ep_active_list);
- 	INIT_LIST_HEAD(&hba->ep_destroy_list);
--	pci_dev_put(hba->pcidev);
+diff --git a/arch/arm/boot/dts/dra7-l4.dtsi b/arch/arm/boot/dts/dra7-l4.dtsi
+index 5cac2dd58241..c3954e34835b 100644
+--- a/arch/arm/boot/dts/dra7-l4.dtsi
++++ b/arch/arm/boot/dts/dra7-l4.dtsi
+@@ -3059,7 +3059,7 @@
  
- 	if (hba->regview) {
- 		pci_iounmap(hba->pcidev, hba->regview);
- 		hba->regview = NULL;
- 	}
-+	pci_dev_put(hba->pcidev);
- 	bnx2i_free_mp_bdt(hba);
- 	bnx2i_release_free_cid_que(hba);
- 	iscsi_host_free(shost);
+ 				davinci_mdio: mdio@1000 {
+ 					compatible = "ti,cpsw-mdio","ti,davinci_mdio";
+-					clocks = <&gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0>;
++					clocks = <&gmac_main_clk>;
+ 					clock-names = "fck";
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
 -- 
 2.20.1
 
