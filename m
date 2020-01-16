@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BF313F610
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D0513F600
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388574AbgAPTBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35566 "EHLO mail.kernel.org"
+        id S2388868AbgAPRGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388625AbgAPRF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:59 -0500
+        id S2388468AbgAPRGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 165B2205F4;
-        Thu, 16 Jan 2020 17:05:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5963A214AF;
+        Thu, 16 Jan 2020 17:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194359;
-        bh=O658uSSxWwmoGFnHthtFfmzLKgcANu2grOllItCu8B8=;
+        s=default; t=1579194362;
+        bh=DQevq35eZcY/6uKjVTxzSch3yt1tNIAU/7C1wfdh/+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=isjkQwNNzSo5oMcVOIK0IC6wIcKBDlZzlTzyYoqKBBy8ZlUdvj2ZboDKyI46OfT2w
-         PlPbthE1pIElBsEhrUz8xSJU1hQ3WvkT7us+3TqcudV8zmfEaemYaNz1ERqbujG4S1
-         KmN0wvRTA/vQg0+4fHa9KeYxd2W4vpBeH7UIAZZA=
+        b=cON38ipauTLCTmc2xZEMaltTsXTg3bJgY2IrFdMHUlONEEUxdnF41imTwiYM/R9ud
+         rjjLMzPYWLe6aJsk52XsQdppn41nq1tSDToooM3Jfvd62Ls49QW5rGAlSxEQGfvJRj
+         sGYR8Mch6w8HsuuDFV+/dyuXsarLU3EkquGlcMm4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@laposte.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 296/671] staging: android: vsoc: fix copy_from_user overrun
-Date:   Thu, 16 Jan 2020 11:58:54 -0500
-Message-Id: <20200116170509.12787-33-sashal@kernel.org>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 298/671] soc: amlogic: meson-gx-pwrc-vpu: Fix power on/off register bitmask
+Date:   Thu, 16 Jan 2020 11:58:56 -0500
+Message-Id: <20200116170509.12787-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,38 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Stehlé <vincent.stehle@laposte.net>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit 060ea4271a82270be6d44e8e9aefe8f155fb5626 ]
+[ Upstream commit 2fe3b4bbc93ec30a173ebae7d2b8c530416df3af ]
 
-The `np->permission' structure is smaller than the `np' structure but
-sizeof(*np) worth of data is copied in there. Fix the size passed to
-copy_from_user() to avoid overrun.
+The register bitmask to power on/off the VPU memories was incorectly set
+to 0x2 instead of 0x3. While still working, let's use the recommended
+vendor value instead.
 
-Fixes: 3d2ec9dcd553 ("staging: Android: Add 'vsoc' driver for cuttlefish.")
-Signed-off-by: Vincent Stehlé <vincent.stehle@laposte.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 75fcb5ca4b46 ("soc: amlogic: add Meson GX VPU Domains driver")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/android/vsoc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/soc/amlogic/meson-gx-pwrc-vpu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/android/vsoc.c b/drivers/staging/android/vsoc.c
-index 22571abcaa4e..034d86869772 100644
---- a/drivers/staging/android/vsoc.c
-+++ b/drivers/staging/android/vsoc.c
-@@ -260,7 +260,8 @@ do_create_fd_scoped_permission(struct vsoc_device_region *region_p,
- 	atomic_t *owner_ptr = NULL;
- 	struct vsoc_device_region *managed_region_p;
+diff --git a/drivers/soc/amlogic/meson-gx-pwrc-vpu.c b/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
+index 6289965c42e9..05421d029dff 100644
+--- a/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
++++ b/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
+@@ -54,12 +54,12 @@ static int meson_gx_pwrc_vpu_power_off(struct generic_pm_domain *genpd)
+ 	/* Power Down Memories */
+ 	for (i = 0; i < 32; i += 2) {
+ 		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x2 << i, 0x3 << i);
++				   0x3 << i, 0x3 << i);
+ 		udelay(5);
+ 	}
+ 	for (i = 0; i < 32; i += 2) {
+ 		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x2 << i, 0x3 << i);
++				   0x3 << i, 0x3 << i);
+ 		udelay(5);
+ 	}
+ 	for (i = 8; i < 16; i++) {
+@@ -108,13 +108,13 @@ static int meson_gx_pwrc_vpu_power_on(struct generic_pm_domain *genpd)
+ 	/* Power Up Memories */
+ 	for (i = 0; i < 32; i += 2) {
+ 		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG0,
+-				   0x2 << i, 0);
++				   0x3 << i, 0);
+ 		udelay(5);
+ 	}
  
--	if (copy_from_user(&np->permission, &arg->perm, sizeof(*np)) ||
-+	if (copy_from_user(&np->permission,
-+			   &arg->perm, sizeof(np->permission)) ||
- 	    copy_from_user(&managed_fd,
- 			   &arg->managed_region_fd, sizeof(managed_fd))) {
- 		return -EFAULT;
+ 	for (i = 0; i < 32; i += 2) {
+ 		regmap_update_bits(pd->regmap_hhi, HHI_VPU_MEM_PD_REG1,
+-				   0x2 << i, 0);
++				   0x3 << i, 0);
+ 		udelay(5);
+ 	}
+ 
 -- 
 2.20.1
 
