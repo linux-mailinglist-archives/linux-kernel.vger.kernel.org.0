@@ -2,163 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A629213ED23
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E277C13ED78
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394927AbgAPSBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:01:12 -0500
-Received: from snd00005.auone-net.jp ([111.86.247.5]:62689 "EHLO
-        dmta0002.auone-net.jp" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2394878AbgAPSBK (ORCPT
+        id S2406898AbgAPSDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:03:16 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:43122 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393641AbgAPSDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:01:10 -0500
-Received: from ppp.dion.ne.jp by dmta0002.auone-net.jp with ESMTP
-          id <20200116180107663.NIUO.69338.ppp.dion.ne.jp@dmta0002.auone-net.jp>;
-          Fri, 17 Jan 2020 03:01:07 +0900
-Date:   Fri, 17 Jan 2020 03:01:07 +0900
-From:   Kusanagi Kouichi <slash@ac.auone-net.jp>
-To:     dsterba@suse.cz
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Implement lazytime
-References: <20200114085325045.JFBE.12086.ppp.dion.ne.jp@dmta0008.auone-net.jp>
- <20200114212107.GM3929@twin.jikos.cz>
- <20200115134536820.LBFZ.46476.ppp.dion.ne.jp@dmta0009.auone-net.jp>
- <20200115163128.GT3929@twin.jikos.cz>
+        Thu, 16 Jan 2020 13:03:13 -0500
+Received: by mail-io1-f71.google.com with SMTP id b25so13324481ioh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:03:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=28w+TnfQPs2OAlAHKwypZqdlk2gBKd0vMI6H+yLAPI0=;
+        b=NHMv6zJ0kZhcCv4S3BvkyVs37m8rgdirozxWPvw7XFy4sRGb0uRzdJPqtV+4q/US1Z
+         AcGYEAUf4KYJz9/bGbrPEjSCkaHunRxolo0DQvLaJ58B/IsmDf/TCcyDK0EXUoUiPUmm
+         EE/H+cfY7uOFm5ZmnWJE7UuLYDBOLaYg2GE31ruyXKYJqouBwBFe0Qxub4HDJ5c5j0YG
+         n1ZUIQCe2AhlADN7rnIN+uwpS3fd7J4D148X+ce3tEKweECrVLx6Mp2/1fuENsFZaSvu
+         7jvjswRMsRwIkxJWCQualo7169+3mPbdnDAhMEWxVmHLtW/rqdkhkbXpw31soXqi9jxu
+         XUHg==
+X-Gm-Message-State: APjAAAXPh+TD7mOB7gZeaEz3ysN27jMpumgSmrhjQvyk2Yzu2jlVbYX7
+        5OYUqn15PSyP/5TK0cAaX701svYtHcVyL3sXU90qRnXiLyxc
+X-Google-Smtp-Source: APXvYqybWgtu4NPUk+UyS4Y5Wfio5iwok+mL2fZGLaLlhsUTF1Danv1Hrt5aE7S+K8IOFvuYNfvFLaq3HY6Bplk7v2ee+RfbLs+J
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: <20200115163128.GT3929@twin.jikos.cz>
-Message-Id: <20200116180107663.NIUO.69338.ppp.dion.ne.jp@dmta0002.auone-net.jp>
+X-Received: by 2002:a92:911b:: with SMTP id t27mr4584673ild.142.1579197793181;
+ Thu, 16 Jan 2020 10:03:13 -0800 (PST)
+Date:   Thu, 16 Jan 2020 10:03:13 -0800
+In-Reply-To: <00000000000074ed27059c33dedc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e27cd059c45a3b8@google.com>
+Subject: Re: general protection fault in nft_chain_parse_hook
+From:   syzbot <syzbot+156a04714799b1d480bc@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@netfilter.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot has found a reproducer for the following crash on:
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=112c92d1e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=156a04714799b1d480bc
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110253aee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170d8159e00000
 
-On 2020-01-15 17:31:28 +0100, David Sterba wrote:
-> On Wed, Jan 15, 2020 at 10:45:36PM +0900, Kusanagi Kouichi wrote:
-> > On 2020-01-14 22:21:07 +0100, David Sterba wrote:
-> > > On Tue, Jan 14, 2020 at 05:53:24PM +0900, Kusanagi Kouichi wrote:
-> > > > I tested with xfstests and lazytime didn't cause any new failures.
-> > > 
-> > > The changelog should describe what the patch does (the 'why' part too,
-> > > but this is obvious from the subject in this case). That fstests pass
-> > > without new failures is nice but there should be a specific test for
-> > > that or instructions in the changelog how to test.
-> > 
-> > To test lazytime, I set the following variables:
-> > TEST_FS_MOUNT_OPTS="-o lazytime,space_cache=v2"
-> > MOUNT_OPTIONS="-o lazytime,space_cache=v2"
-> 
-> How did you verify that the lazy time updates were applied properly?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+156a04714799b1d480bc@syzkaller.appspotmail.com
 
-I ran the attached test.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9678 Comm: syz-executor546 Not tainted 5.5.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:nft_chain_parse_hook+0x386/0xa10  
+net/netfilter/nf_tables_api.c:1767
+Code: e8 5f 27 0e fb 41 83 fd 05 0f 87 62 05 00 00 e8 d0 25 0e fb 49 8d 7c  
+24 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
+c0 74 08 3c 03 0f 8e a6 05 00 00 44 89 e9 be 01 00
+RSP: 0018:ffffc900021370f0 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffffc900021372a0 RCX: ffffffff8666cfa1
+RDX: 0000000000000003 RSI: ffffffff8666cfb0 RDI: 0000000000000018
+RBP: ffffc900021371e0 R08: ffff88809c7ce380 R09: 0000000000000000
+R10: fffff52000426e2d R11: ffffc9000213716f R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffc900021371b8
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0063) knlGS:0000000009dfd840
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000280 CR3: 00000000a29dd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  nf_tables_addchain.constprop.0+0x1c1/0x1520  
+net/netfilter/nf_tables_api.c:1888
+  nf_tables_newchain+0x1033/0x1820 net/netfilter/nf_tables_api.c:2196
+  nfnetlink_rcv_batch+0xf42/0x17a0 net/netfilter/nfnetlink.c:433
+  nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:543 [inline]
+  nfnetlink_rcv+0x3e7/0x460 net/netfilter/nfnetlink.c:561
+  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
+  netlink_unicast+0x58c/0x7d0 net/netlink/af_netlink.c:1328
+  netlink_sendmsg+0x91c/0xea0 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:639 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:659
+  ____sys_sendmsg+0x753/0x880 net/socket.c:2330
+  ___sys_sendmsg+0x100/0x170 net/socket.c:2384
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2417
+  __compat_sys_sendmsg net/compat.c:642 [inline]
+  __do_compat_sys_sendmsg net/compat.c:649 [inline]
+  __se_compat_sys_sendmsg net/compat.c:646 [inline]
+  __ia32_compat_sys_sendmsg+0x7a/0xb0 net/compat.c:646
+  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
+  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fafa39
+Code: 00 00 00 89 d3 5b 5e 5f 5d c3 b8 80 96 98 00 eb c4 8b 04 24 c3 8b 1c  
+24 c3 8b 34 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffc60f6c EFLAGS: 00000202 ORIG_RAX: 0000000000000172
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000000002000d400
+RDX: 0000000004000000 RSI: 00000000080ea00c RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace ef2c8b24d08b7122 ]---
+RIP: 0010:nft_chain_parse_hook+0x386/0xa10  
+net/netfilter/nf_tables_api.c:1767
+Code: e8 5f 27 0e fb 41 83 fd 05 0f 87 62 05 00 00 e8 d0 25 0e fb 49 8d 7c  
+24 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84  
+c0 74 08 3c 03 0f 8e a6 05 00 00 44 89 e9 be 01 00
+RSP: 0018:ffffc900021370f0 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffffc900021372a0 RCX: ffffffff8666cfa1
+RDX: 0000000000000003 RSI: ffffffff8666cfb0 RDI: 0000000000000018
+RBP: ffffc900021371e0 R08: ffff88809c7ce380 R09: 0000000000000000
+R10: fffff52000426e2d R11: ffffc9000213716f R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffc900021371b8
+FS:  0000000000000000(0000) GS:ffff8880ae800000(0063) knlGS:0000000009dfd840
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000280 CR3: 00000000a29dd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="lazytime-test.diff"
-
-diff --git a/tests/generic/999 b/tests/generic/999
-new file mode 100755
-index 00000000..781b37c5
---- /dev/null
-+++ b/tests/generic/999
-@@ -0,0 +1,76 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2019 Kusanagi Kouichi.  All Rights Reserved.
-+#
-+# FS QA Test 999
-+#
-+# Test timestamp is persistent across umount.
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+
-+# remove previous $seqres.full before test
-+rm -f $seqres.full
-+
-+# real QA test starts here
-+
-+# Modify as appropriate.
-+_supported_fs generic
-+_supported_os Linux
-+_require_scratch
-+
-+_scratch_mkfs > /dev/null 2>&1
-+_scratch_mount
-+
-+check_persist()
-+{
-+    ls "$SCRATCH_MNT" > /dev/null
-+    before="$(stat -c '%x %y %z' "$SCRATCH_MNT")"
-+    $XFS_IO_PROG -c "$1" "$SCRATCH_MNT"
-+    _scratch_cycle_mount strictatime
-+    after="$(stat -c '%x %y %z' "$SCRATCH_MNT")"
-+    if test "$before" != "$after"
-+    then
-+	echo "timestamp didn't persist across umount."
-+	echo "ls $1"
-+	echo "before $before"
-+	echo "after  $after"
-+	exit
-+    fi
-+}
-+
-+check_persist ''
-+check_persist fsync
-+check_persist syncfs
-+check_persist sync
-+
-+"$FSSTRESS_PROG" -d "$SCRATCH_MNT" -v $(_scale_fsstress_args -n 1000 -p 2) > "$tmp".fsstress
-+find "$SCRATCH_MNT" ! -type d -exec stat -c '%x %y %z %i %F %n' '{}' + > "$tmp".before
-+_scratch_cycle_mount
-+find "$SCRATCH_MNT" ! -type d -exec stat -c '%x %y %z %i %F %n' '{}' + > "$tmp".after
-+if ! diff -u "$tmp".before "$tmp".after
-+then
-+    echo "timestamp didn't persist across umount after fsstress."
-+    cat "$tmp".fsstress
-+    exit
-+fi
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/999.out b/tests/generic/999.out
-new file mode 100644
-index 00000000..7fbc6768
---- /dev/null
-+++ b/tests/generic/999.out
-@@ -0,0 +1 @@
-+QA output created by 999
-diff --git a/tests/generic/group b/tests/generic/group
-index 6fe62505..7879eb70 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -595,3 +595,4 @@
- 590 auto prealloc preallocrw
- 591 auto quick rw pipe splice
- 592 auto quick encrypt
-+999 auto quick
-
---pf9I7BMVVzbSWLtt--
