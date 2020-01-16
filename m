@@ -2,79 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FAA13F0D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B18813F058
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392431AbgAPR1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:13 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:43271 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392379AbgAPR1C (ORCPT
+        id S2388823AbgAPSVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:21:04 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44933 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392514AbgAPR15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:02 -0500
-Received: by mail-qv1-f66.google.com with SMTP id p2so9398958qvo.10
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 09:27:01 -0800 (PST)
+        Thu, 16 Jan 2020 12:27:57 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u71so23522436lje.11;
+        Thu, 16 Jan 2020 09:27:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Paj9ZIyLKDeb3eXWIMYy+oZ8ADw3i4uQICVjpw67tFk=;
-        b=f2RCFwWZ11DI7in6/E+nFTYJ/u5RhRB+ZcKR2iC205+oCb21iMfwSFsEqOJN3H8VsI
-         QW3pUdOZLXChDAAUgzZgtfQI8uccUzbiveaULWwIGSd4S67ncfmjez1twkBLg761dJ8L
-         7GPnTtbkKaT4bKXm8l+TgIgRZbbSxG+nb1dBpwzThrY+rvMw63iVaHyQ7wZf7wWjn8/O
-         Z1zPbfaxyCtckJQLr6sU8kaAn9f5kyHg8C607d1QBUoB9E315ZuqrBB2rhElPX6mFtw2
-         ETButUBNGsuL5LQactvYsfc6mC+it7K5eh6Qy3PAKfi7J1X0BJwbktPM2/RUrZLNeCBZ
-         EseQ==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KAfEq0Wia/8z+S4bm8ISIAkLRoETrLhDzNF3CD6LfUo=;
+        b=CC0D61/ly4pXDeN66+tjpJvQRw+us91gGWNkXwaMXhXuk921z3PBxraiZLMjF1Lnuw
+         IJNmch97bvt3ZuFpG0uSWWF0iu9WHRpYjrQFyYuxnzKXxBNM9b5WUa9KbQyPE93RYjsH
+         Gy09E//nokyfyE0pzw0qdZvKQAHp+2Jbq9yy5Mtcsd5Q80cKvtIldbVKIv2WAJL2sJN0
+         3f8Vc4bV6cbNFRTaFQh9FF6zuxV8lN0ahTI0ohvHyq58FYwBsNI9MQtrka9UX8OE3IMc
+         BSZlKeXIU3LwyaKDhNhTTbs9I2Y06tGmUeki0TD7kOitLJlJLhfdcPX26NqpzwId3HDn
+         Jp2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Paj9ZIyLKDeb3eXWIMYy+oZ8ADw3i4uQICVjpw67tFk=;
-        b=kHzIOZ8rYtN+3I23UhY65YDpgdMxqHx+SkhFUNG5IgvmJY7CzLrnkq0ZWdHSkU30Vz
-         gxuwYC/guH840hJAZGx+4BpvwqqtE+wCQRPDyk2F6SfTE+h5bnCJHYwRS0SEpTM+YIVl
-         KQplDZw4VQVXZh2Wa15Ug+P3rud5owDwWo8BCZIB/bbwPUDWpPp1W5M+6s/W4C+32QhP
-         oxsUNdXaLxo95c7xlmMx1tG+QAqPy95pYUcjajEj7S1miVQckPUUaMUt4EGSbchkTvpf
-         i2rD8/v/Q9NRST+KfHyEGGPERd2fen/8tI1pSyrgC26YoHsxHKAYd375BAg5/AUvJpl9
-         qeiA==
-X-Gm-Message-State: APjAAAWzj6N7Pb4wj1RRluvTKmxX+e9g5Ri85TmP4PWB9A9w2e6PY6r8
-        Y9MlxjCFggKxksR4qEE7L3vM0A==
-X-Google-Smtp-Source: APXvYqzZRxHopdpa2Nb71ImNjP3ATvX/yf9c6C1U8lHIp75fJqIsHlTarzIHRf/cnIUmt/WlGlhBYA==
-X-Received: by 2002:ad4:5586:: with SMTP id e6mr3710258qvx.92.1579195620917;
-        Thu, 16 Jan 2020 09:27:00 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::ae73])
-        by smtp.gmail.com with ESMTPSA id v7sm11862980qtk.89.2020.01.16.09.26.59
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KAfEq0Wia/8z+S4bm8ISIAkLRoETrLhDzNF3CD6LfUo=;
+        b=VwDIRjUyD5TttKtMAdJDMQniiPDkeHGWStnDtzLoqi/X5OWMaVFlp7xzfnrWTtvHn/
+         2d00CjW2FG2VSHWMWJU2ZLSeIcqH1gUQHE4ZFBzXDJztqK515s2cIDh8hSOJrv6wP1uW
+         FjFdX/85YdOvtl/BHXkOExw5Q9kYg6OYKPJKw1ZxJkv6UiEiuoRqktVA7LLuSSBIS/AU
+         hCcC3QeizcvPxjsEoo2NgWyMjIcaUzLTz/F2s4PzIsMoKCgsQ+A9znJhIjY1sPwL7u+D
+         XWV48rweYqtdMTwxGooCS4vL35ve46D5Hk2JenYDarrXTPzWVubmVEchA7HE5Dc0N4pm
+         UZgQ==
+X-Gm-Message-State: APjAAAUqWU4cs5Ljes/X7BglECHQxWsvjNtKENNR1O8aR2UwK5/XSpzj
+        XZ3JEMDQ5JEN4c2PnfBAcN0=
+X-Google-Smtp-Source: APXvYqxRGtb4VF2mqDwJ9VTg1FQWW9gQRKo8nlEheXIkbVUsjfBcCWngFOnmK85dKlwinqOKXNcMyQ==
+X-Received: by 2002:a2e:b4cb:: with SMTP id r11mr2989831ljm.68.1579195675798;
+        Thu, 16 Jan 2020 09:27:55 -0800 (PST)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id z13sm11141629ljh.21.2020.01.16.09.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 09:26:59 -0800 (PST)
-Date:   Thu, 16 Jan 2020 12:26:59 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v2 5/6] mm: memcg/slab: cache page number in
- memcg_(un)charge_slab()
-Message-ID: <20200116172659.GE57074@cmpxchg.org>
-References: <20200109202659.752357-1-guro@fb.com>
- <20200109202659.752357-6-guro@fb.com>
+        Thu, 16 Jan 2020 09:27:55 -0800 (PST)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Thu, 16 Jan 2020 18:27:53 +0100
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
+Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
+ kfree_rcu()
+Message-ID: <20200116172753.GB23524@pc636>
+References: <20191231122241.5702-1-urezki@gmail.com>
+ <20200116011410.GC246464@google.com>
+ <20200116024126.GS2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200109202659.752357-6-guro@fb.com>
+In-Reply-To: <20200116024126.GS2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:26:58PM -0800, Roman Gushchin wrote:
-> There are many places in memcg_charge_slab() and memcg_uncharge_slab()
-> which are calculating the number of pages to charge, css references to
-> grab etc depending on the order of the slab page.
+On Wed, Jan 15, 2020 at 06:41:26PM -0800, Paul E. McKenney wrote:
+> On Wed, Jan 15, 2020 at 08:14:10PM -0500, Joel Fernandes wrote:
+> > On Tue, Dec 31, 2019 at 01:22:41PM +0100, Uladzislau Rezki (Sony) wrote:
+> > > kfree_rcu() logic can be improved further by using kfree_bulk()
+> > > interface along with "basic batching support" introduced earlier.
+> > > 
+> > > The are at least two advantages of using "bulk" interface:
+> > > - in case of large number of kfree_rcu() requests kfree_bulk()
+> > >   reduces the per-object overhead caused by calling kfree()
+> > >   per-object.
+> > > 
+> > > - reduces the number of cache-misses due to "pointer chasing"
+> > >   between objects which can be far spread between each other.
+> > > 
+> > > This approach defines a new kfree_rcu_bulk_data structure that
+> > > stores pointers in an array with a specific size. Number of entries
+> > > in that array depends on PAGE_SIZE making kfree_rcu_bulk_data
+> > > structure to be exactly one page.
+> > > 
+> > > Since it deals with "block-chain" technique there is an extra
+> > > need in dynamic allocation when a new block is required. Memory
+> > > is allocated with GFP_NOWAIT | __GFP_NOWARN flags, i.e. that
+> > > allows to skip direct reclaim under low memory condition to
+> > > prevent stalling and fails silently under high memory pressure.
+> > > 
+> > > The "emergency path" gets maintained when a system is run out
+> > > of memory. In that case objects are linked into regular list
+> > > and that is it.
+> > > 
+> > > In order to evaluate it, the "rcuperf" was run to analyze how
+> > > much memory is consumed and what is kfree_bulk() throughput.
+> > > 
+> > > Testing on the HiKey-960, arm64, 8xCPUs with below parameters:
+> > > 
+> > > CONFIG_SLAB=y
+> > > kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
+> > > 
+> > > 102898760401 ns, loops: 200000, batches: 5822, memory footprint: 158MB
+> > > 89947009882  ns, loops: 200000, batches: 6715, memory footprint: 115MB
+> > > 
+> > > rcuperf shows approximately ~12% better throughput(Total time)
+> > > in case of using "bulk" interface. The "drain logic" or its RCU
+> > > callback does the work faster that leads to better throughput.
+> > 
+> > Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > 
+> > (Vlad is going to post a v2 which fixes a debugobjects bug but that should
+> > not have any impact on testing).
 > 
-> Let's simplify the code by calculating it once and caching in the
-> local variable.
+> Very good!  Uladzislau, could you please add Joel's Tested-by in
+> your next posting?
 > 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+I will add for sure, with the a V2 version. Also, i will update the
+commit message by adding the results related to different slab cache
+usage, i mean with Joel's recent patch.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Thank you.
+
+--
+Vlad Rezki
