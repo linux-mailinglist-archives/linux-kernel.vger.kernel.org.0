@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439E413ECF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 779C613EA23
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405552AbgAPRmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:42:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59176 "EHLO mail.kernel.org"
+        id S2405627AbgAPRm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:42:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405700AbgAPRla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:30 -0500
+        id S2405715AbgAPRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623B7246B6;
-        Thu, 16 Jan 2020 17:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D64A2471D;
+        Thu, 16 Jan 2020 17:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196490;
-        bh=f74gY0E9na8zmrM+BoXB/Vj4yu0BmvUtSEC1+S/QcdM=;
+        s=default; t=1579196493;
+        bh=W9AJE54V3aSrQ/GpLadLcNvwEjQqZbfkVhhCCM7hxCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bSwUuEn+zYoPPo8c6j4hnIOELr5RdYEeECwhm62m044bLJynll8qYLrPF72LPDdbO
-         mkzTZd5U4jXA/7M3ItKTNh069xY1c7XthlvGmzMuoV+JARle24aQEqCM49GP3nJ6HB
-         lGy3o6AV0a40/dWDwSmRdihj4slRDw1MdW2iee7A=
+        b=F+/ZZRfUMANagveb4hZE74vB5FOvItKaU46sWU0NhtNUyjvgjE2QWnoznuUkGBubt
+         aFvVLkOpolt4z4kk2JB0ZC8slvtgreTA3RMGSQWzJTpDuyh0xN6st0i5cdpR1Dy522
+         LdTRN7ykXTsRJ4XgWq2U2NOUYArqLZ+NKGizbVlY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tiezhu Yang <yangtiezhu@loongson.cn>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        linux-mips@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 234/251] MIPS: Loongson: Fix return value of loongson_hwmon_init
-Date:   Thu, 16 Jan 2020 12:36:23 -0500
-Message-Id: <20200116173641.22137-194-sashal@kernel.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 236/251] net: neigh: use long type to store jiffies delta
+Date:   Thu, 16 Jan 2020 12:36:25 -0500
+Message-Id: <20200116173641.22137-196-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -47,40 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit dece3c2a320b0a6d891da6ff774ab763969b6860 ]
+[ Upstream commit 9d027e3a83f39b819e908e4e09084277a2e45e95 ]
 
-When call function hwmon_device_register failed, use the actual
-return value instead of always -ENOMEM.
+A difference of two unsigned long needs long storage.
 
-Fixes: 64f09aa967e1 ("MIPS: Loongson-3: Add CPU Hwmon platform driver")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fixes: c7fb64db001f ("[NETLINK]: Neighbour table configuration and statistics via rtnetlink")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/mips/cpu_hwmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/neighbour.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/mips/cpu_hwmon.c b/drivers/platform/mips/cpu_hwmon.c
-index 4300a558d0f3..d02214a3f8e3 100644
---- a/drivers/platform/mips/cpu_hwmon.c
-+++ b/drivers/platform/mips/cpu_hwmon.c
-@@ -155,7 +155,7 @@ static int __init loongson_hwmon_init(void)
- 
- 	cpu_hwmon_dev = hwmon_device_register(NULL);
- 	if (IS_ERR(cpu_hwmon_dev)) {
--		ret = -ENOMEM;
-+		ret = PTR_ERR(cpu_hwmon_dev);
- 		pr_err("hwmon_device_register fail!\n");
- 		goto fail_hwmon_device_register;
- 	}
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index cd85cee14bd0..6578d1f8e6c4 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -1834,8 +1834,8 @@ static int neightbl_fill_info(struct sk_buff *skb, struct neigh_table *tbl,
+ 		goto nla_put_failure;
+ 	{
+ 		unsigned long now = jiffies;
+-		unsigned int flush_delta = now - tbl->last_flush;
+-		unsigned int rand_delta = now - tbl->last_rand;
++		long flush_delta = now - tbl->last_flush;
++		long rand_delta = now - tbl->last_rand;
+ 		struct neigh_hash_table *nht;
+ 		struct ndt_config ndc = {
+ 			.ndtc_key_len		= tbl->key_len,
 -- 
 2.20.1
 
