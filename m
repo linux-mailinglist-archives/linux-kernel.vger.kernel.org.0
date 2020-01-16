@@ -2,134 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E8F13D264
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 821D913D28D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgAPDAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:00:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31480 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729130AbgAPDAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:00:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579143606;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QYDIddpraf1y7iH1YrZ3bXVk4InOC/gXpwyEqB+s6Kg=;
-        b=IO231mF6hW35fStU+BMazWebu3yMedee2DQz/xpNv3+NRLQ6G4jVA9+l0nlHKAxWnQGHA5
-        hM/KzC7QLcKBZUhy+dkbHDLEzQPh76h/G8OTj6wjJ/50O4fQk7AKljNbDr/a5n+yWWS7op
-        Z0CyAv6qRXGwe/ms4ejhjb2gHDD4YCA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-VmuSj52CP52FZ32jsTdlSA-1; Wed, 15 Jan 2020 22:00:05 -0500
-X-MC-Unique: VmuSj52CP52FZ32jsTdlSA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 66E9F107ACC7;
-        Thu, 16 Jan 2020 03:00:03 +0000 (UTC)
-Received: from x1.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 452F088898;
-        Thu, 16 Jan 2020 03:00:00 +0000 (UTC)
-Date:   Wed, 15 Jan 2020 19:59:59 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Mika =?UTF-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>
-Cc:     Yan Zhao <yan.y.zhao@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v2 1/2] vfio: introduce vfio_dma_rw to read/write a
- range of IOVAs
-Message-ID: <20200115195959.28f33078@x1.home>
-In-Reply-To: <80cf3888-2e51-3fd7-a064-213e7ded188e@nextfour.com>
-References: <20200115034132.2753-1-yan.y.zhao@intel.com>
-        <20200115035303.12362-1-yan.y.zhao@intel.com>
-        <20200115130638.6926dd08@w520.home>
-        <80cf3888-2e51-3fd7-a064-213e7ded188e@nextfour.com>
-Organization: Red Hat
+        id S1729454AbgAPDN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 22:13:59 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23725 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbgAPDN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 22:13:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 19:13:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,324,1574150400"; 
+   d="scan'208";a="398127068"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga005.jf.intel.com with ESMTP; 15 Jan 2020 19:13:55 -0800
+Date:   Thu, 16 Jan 2020 10:53:38 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Will Deacon <will@kernel.org>,
+        mark.rutland@arm.com, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        atull@kernel.org, yilun.xu@intel.com
+Subject: Re: [PATCH v6 0/2] add performance reporting support to FPGA DFL
+ drivers
+Message-ID: <20200116025338.GA15263@hao-dev>
+References: <1573622695-25607-1-git-send-email-hao.wu@intel.com>
+ <20191125033412.GB890@hao-dev>
+ <20191125080127.GC1809@willie-the-truck>
+ <20191125080839.GA6227@hao-dev>
+ <20191209024527.GA22625@hao-dev>
+ <20191216010104.GA32154@yilunxu-OptiPlex-7050>
+ <20200106023742.GA3980@hao-dev>
+ <20200114055605.GA13574@hao-dev>
+ <20200115051040.GA1389@epycbox.lan>
+ <20200115081400.GA2978927@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115081400.GA2978927@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 02:30:52 +0000
-Mika Penttil=C3=A4 <mika.penttila@nextfour.com> wrote:
+On Wed, Jan 15, 2020 at 09:14:00AM +0100, Greg KH wrote:
+> On Tue, Jan 14, 2020 at 09:10:40PM -0800, Moritz Fischer wrote:
+> > Hi Greg,
+> > 
+> > On Tue, Jan 14, 2020 at 01:56:05PM +0800, Wu Hao wrote:
+> > > On Mon, Jan 06, 2020 at 10:37:42AM +0800, Wu Hao wrote:
+> > > > On Mon, Dec 16, 2019 at 09:01:04AM +0800, Xu Yilum wrote:
+> > > > > On Mon, Dec 09, 2019 at 10:45:27AM +0800, Wu Hao wrote:
+> > > > > > On Mon, Nov 25, 2019 at 04:08:39PM +0800, Wu Hao wrote:
+> > > > > > > On Mon, Nov 25, 2019 at 08:01:28AM +0000, Will Deacon wrote:
+> > > > > > > > On Mon, Nov 25, 2019 at 11:34:12AM +0800, Wu Hao wrote:
+> > > > > > > > > Hi Will and Mark,
+> > > > > > > > > 
+> > > > > > > > > Could you please help us on review this patchset? as this patchset mainly 
+> > > > > > > > > introduced a new perf driver following the similar way as drivers/perf/*.
+> > > > > > > > 
+> > > > > > > > Why is it not under drivers/perf/, then?
+> > > > > > > 
+> > > > > > > Hi Will
+> > > > > > > 
+> > > > > > > Thanks for the quick response. This is one sub feature for DFL based FPGAs,
+> > > > > > > and we plan to put this sub feature together with others, including related
+> > > > > > > documentation. It only registers a standard perf pmu for its userspace
+> > > > > > > interfaces.
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > > This patchset has been submitted for a long time but didn't receive any
+> > > > > > > > > comment after v4. we appreciate any review comments! thanks in advance. :)
+> > > > > > > > 
+> > > > > > > > Hmm, not sure I saw the previous versions. Guessing I wasn't on cc?
+> > > > > > > 
+> > > > > > > We switched to perf API from v4, and started ccing you and Mark from v5. :)
+> > > > > > 
+> > > > > > Hi Will
+> > > > > > 
+> > > > > > Did you get a chance to look into this patchset?
+> > > > > > 
+> > > > > > Thanks
+> > > > > > Hao
+> > > > > 
+> > > > > Hi Will
+> > > > > 
+> > > > > Did you have time to look into this patchset? We have done review work
+> > > > > for FPGA part. And as a perf driver, we appreciate your comments.
+> > > > > 
+> > > > > Thanks
+> > > > > Yilun
+> > > > 
+> > > > Hi Will
+> > > > 
+> > > > Did you get a chance to look into this patchset these days? 
+> > > > 
+> > > > Actually we didn't receive any comments for a long time, if you are busy and
+> > > > don't have enough time on this, do you know if someone else could help with
+> > > > review and ack from perf driver point of view, or any other things we can do
+> > > > to speed up this? Thanks in advance! 
+> > > 
+> > > Hi Moritz
+> > > 
+> > > Looks like still no response from Will. :(
+> > > 
+> > > Do you know someone else could help?
+> > 
+> > Do you have some feedback? I'm a bit confused on what to do in such a
+> > situation, do I just take the patch if the maintainer doesn't respond
+> > for a while?
+> 
+> Resend it and say something like "please review" or the like.  With the
+> holidays and catching up from the holidays, this time of year is usually
+> very backlogged for lots of reviewers.
 
-> On 15.1.2020 22.06, Alex Williamson wrote:
-> > On Tue, 14 Jan 2020 22:53:03 -0500
-> > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > =20
-> >> vfio_dma_rw will read/write a range of user space memory pointed to by
-> >> IOVA into/from a kernel buffer without pinning the user space memory.
-> >>
-> >> TODO: mark the IOVAs to user space memory dirty if they are written in
-> >> vfio_dma_rw().
-> >>
-> >> Cc: Kevin Tian <kevin.tian@intel.com>
-> >> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> >> ---
-> >>   drivers/vfio/vfio.c             | 45 +++++++++++++++++++
-> >>   drivers/vfio/vfio_iommu_type1.c | 76 +++++++++++++++++++++++++++++++=
-++
-> >>   include/linux/vfio.h            |  5 +++
-> >>   3 files changed, 126 insertions(+)
-> >>
-> >> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> >> index c8482624ca34..8bd52bc841cf 100644
-> >> --- a/drivers/vfio/vfio.c
-> >> +++ b/drivers/vfio/vfio.c
-> >> @@ -1961,6 +1961,51 @@ int vfio_unpin_pages(struct device *dev, unsign=
-ed long *user_pfn, int npage)
-> >>   }
-> >>   EXPORT_SYMBOL(vfio_unpin_pages);
-> >>  =20
-> >> +/*
-> >> + * Read/Write a range of IOVAs pointing to user space memory into/fro=
-m a kernel
-> >> + * buffer without pinning the user space memory
-> >> + * @dev [in]  : device
-> >> + * @iova [in] : base IOVA of a user space buffer
-> >> + * @data [in] : pointer to kernel buffer
-> >> + * @len [in]  : kernel buffer length
-> >> + * @write     : indicate read or write
-> >> + * Return error code on failure or 0 on success.
-> >> + */
-> >> +int vfio_dma_rw(struct device *dev, dma_addr_t iova, void *data,
-> >> +		   size_t len, bool write)
-> >> +{
-> >> +	struct vfio_container *container;
-> >> +	struct vfio_group *group;
-> >> +	struct vfio_iommu_driver *driver;
-> >> +	int ret =3D 0; =20
->=20
-> Do you know the iova given to vfio_dma_rw() is indeed a gpa and not iova=
-=20
-> from a iommu mapping? So isn't it you actually assume all the guest is=20
-> pinned,
-> like from device assignment?
->=20
-> Or who and how is the vfio mapping added before the vfio_dma_rw() ?
+Sure, will resend this patchset soon. Thanks!
 
-vfio only knows about IOVAs, not GPAs.  It's possible that IOVAs are
-identity mapped to the GPA space, but a VM with a vIOMMU would quickly
-break any such assumption.  Pinning is also not required.  This access
-is via the CPU, not the I/O device, so we don't require the memory to
-be pinning and it potentially won't be for a non-IOMMU backed mediated
-device.  The intention here is that via the mediation of an mdev
-device, a vendor driver would already know IOVA ranges for the device
-to access via the guest driver programming of the device.  Thanks,
+Hao
 
-Alex
-
+> 
+> greg k-h
