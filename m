@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5FC13FE9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 435A113FF2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389152AbgAPXb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:31:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
+        id S2389747AbgAPX1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:27:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391415AbgAPXau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:30:50 -0500
+        id S2389852AbgAPX1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:27:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A32FC20661;
-        Thu, 16 Jan 2020 23:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 452C520684;
+        Thu, 16 Jan 2020 23:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217449;
-        bh=CzXFhGf1ZajCXWtNKPJugt7XNNQ9VS0dodzo8nUu4fA=;
+        s=default; t=1579217226;
+        bh=Xbd4Pi587JJL8ECsMUBMkasjez4+TzwBv56c6oecqBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w3SCKomVsJ11L3+yXMV94nlFQy7SeXVLTa8L+s05qEn6t2WpIoN6i8Q7T+Cpz4s2Y
-         L+6YcFa32zSmvydO3g+o38OPJWaChg6KqkwVckI+mBOTG55vkfDyut8dFZ2FSfeveA
-         0is+2quIZD12j/DCTUTOXS682tX295qcIr0A3hME=
+        b=DAUH/xj0wn65nHoB9xTIG4O8fOkUKeU8lr7vjqw33Cbd1Prc8dGNfr6PFL/ptkUwJ
+         SE6V+2CFzixnORRL1GF+3c/4tHJ8NqvIHxEhl57KRXelXxxpgXiTZFbo10bdz63vsh
+         xXBXyICZO2LLn9FUznTFxkUHNrfv513rdIYIlJAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 62/84] media: rcar-vin: Fix incorrect return statement in rvin_try_format()
-Date:   Fri, 17 Jan 2020 00:18:36 +0100
-Message-Id: <20200116231720.985507322@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 200/203] kbuild/deb-pkg: annotate libelf-dev dependency as :native
+Date:   Fri, 17 Jan 2020 00:18:37 +0100
+Message-Id: <20200116231801.576178782@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,44 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-commit a0862a40364e2f87109317e31c51c9d7bc89e33f upstream.
+[ Upstream commit 8ffdc54b6f4cd718a45802e645bb853e3a46a078 ]
 
-While refactoring code the return statement became corrupted, fix it by
-returning the correct return code.
+Cross compiling the x86 kernel on a non-x86 build machine produces
+the following error when CONFIG_UNWINDER_ORC is enabled, regardless
+of whether libelf-dev is installed or not.
 
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Fixes: 897e371389e77514 ("media: rcar-vin: simplify how formats are set and reset"
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  dpkg-checkbuilddeps: error: Unmet build dependencies: libelf-dev
+  dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
+  dpkg-buildpackage: warning: (Use -d flag to override.)
 
+Since this is a build time dependency for a build tool, we need to
+depend on the native version of libelf-dev so add the appropriate
+annotation.
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/package/mkdebian | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -196,6 +196,7 @@ static int rvin_try_format(struct rvin_d
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		goto done;
-+	ret = 0;
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index 7c230016b08d..357dc56bcf30 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -136,7 +136,7 @@ mkdir -p debian/source/
+ echo "1.0" > debian/source/format
  
- 	v4l2_fill_pix_format(pix, &format.format);
+ echo $debarch > debian/arch
+-extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev)"
++extra_build_depends=", $(if_enabled_echo CONFIG_UNWINDER_ORC libelf-dev:native)"
+ extra_build_depends="$extra_build_depends, $(if_enabled_echo CONFIG_SYSTEM_TRUSTED_KEYRING libssl-dev:native)"
  
-@@ -230,7 +231,7 @@ static int rvin_try_format(struct rvin_d
- done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
- 
--	return 0;
-+	return ret;
- }
- 
- static int rvin_querycap(struct file *file, void *priv,
+ # Generate a simple changelog template
+-- 
+2.20.1
+
 
 
