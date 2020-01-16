@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE4113F19B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A29913F19D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392190AbgAPRZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:25:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33390 "EHLO mail.kernel.org"
+        id S2392199AbgAPRZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392107AbgAPRZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:35 -0500
+        id S2392117AbgAPRZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8430246DD;
-        Thu, 16 Jan 2020 17:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E40246CA;
+        Thu, 16 Jan 2020 17:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195534;
-        bh=GaTkK/4xvNL6sxMd2wpZajtDaii9IKBLHXAmviFcU1w=;
+        s=default; t=1579195535;
+        bh=RWIpyYV2IZnnvLeNB3e+att7PsbnyepJ/57t61uI6Fc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGs4ybOOwm54+5yEoZAATDDWTSqBnxPs7bnxVX9lJO2cC5r7lnwOdimPhIeeayjrJ
-         bc/VgaODW8TLyqfw0M00Gf00RVETUA8Kd5mxxytce26s3o7DWUZovwz+22yEOh/VBY
-         FUhQnvdICKviONtVwNJRKA8PTZjP4JOAEcKF5MWM=
+        b=puucLYIkRxSJodtDQOtaDZNdDFDKlZ7GRzByUa1SpGWUdKed2bH4CMggYNJcD8PHb
+         z76lAxvutzAwo8oMABCqKPnYXuw3+luWyiqftdxEVsJy0i/57EHr+OfYrdz9uh3oZj
+         2z/IiPdurBryQzmmVqgdDDr1/NOWpzLehjgiZeiw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 129/371] powerpc/mm: Check secondary hash page table
-Date:   Thu, 16 Jan 2020 12:20:01 -0500
-Message-Id: <20200116172403.18149-72-sashal@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        nios2-dev@lists.rocketboards.org
+Subject: [PATCH AUTOSEL 4.14 130/371] nios2: ksyms: Add missing symbol exports
+Date:   Thu, 16 Jan 2020 12:20:02 -0500
+Message-Id: <20200116172403.18149-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,36 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rashmica Gupta <rashmica.g@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 790845e2f12709d273d08ea7a2af7c2593689519 ]
+[ Upstream commit 0f8ed994575429d6042cf5d7ef70081c94091587 ]
 
-We were always calling base_hpte_find() with primary = true,
-even when we wanted to check the secondary table.
+Building nios2:allmodconfig fails as follows (each symbol is only listed
+once).
 
-mpe: I broke this when refactoring Rashmica's original patch.
+ERROR: "__ashldi3" [drivers/md/dm-writecache.ko] undefined!
+ERROR: "__ashrdi3" [fs/xfs/xfs.ko] undefined!
+ERROR: "__ucmpdi2" [drivers/media/i2c/adv7842.ko] undefined!
+ERROR: "__lshrdi3" [drivers/md/dm-zoned.ko] undefined!
+ERROR: "flush_icache_range" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+ERROR: "empty_zero_page" [drivers/md/dm-mod.ko] undefined!
 
-Fixes: 1515ab932156 ("powerpc/mm: Dump hash table")
-Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+The problem is seen with gcc 7.3.0.
+
+Export the missing symbols.
+
+Fixes: 2fc8483fdcde ("nios2: Build infrastructure")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/dump_hashpagetable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/nios2/kernel/nios2_ksyms.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/powerpc/mm/dump_hashpagetable.c b/arch/powerpc/mm/dump_hashpagetable.c
-index 5c4c93dcff19..f666d74f05f5 100644
---- a/arch/powerpc/mm/dump_hashpagetable.c
-+++ b/arch/powerpc/mm/dump_hashpagetable.c
-@@ -343,7 +343,7 @@ static unsigned long hpte_find(struct pg_state *st, unsigned long ea, int psize)
+diff --git a/arch/nios2/kernel/nios2_ksyms.c b/arch/nios2/kernel/nios2_ksyms.c
+index bf2f55d10a4d..4e704046a150 100644
+--- a/arch/nios2/kernel/nios2_ksyms.c
++++ b/arch/nios2/kernel/nios2_ksyms.c
+@@ -9,12 +9,20 @@
+ #include <linux/export.h>
+ #include <linux/string.h>
  
- 	/* Look in secondary table */
- 	if (slot == -1)
--		slot = base_hpte_find(ea, psize, true, &v, &r);
-+		slot = base_hpte_find(ea, psize, false, &v, &r);
++#include <asm/cacheflush.h>
++#include <asm/pgtable.h>
++
+ /* string functions */
  
- 	/* No entry found */
- 	if (slot == -1)
+ EXPORT_SYMBOL(memcpy);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memmove);
+ 
++/* memory management */
++
++EXPORT_SYMBOL(empty_zero_page);
++EXPORT_SYMBOL(flush_icache_range);
++
+ /*
+  * libgcc functions - functions that are used internally by the
+  * compiler...  (prototypes are not correct though, but that
+@@ -31,3 +39,7 @@ DECLARE_EXPORT(__udivsi3);
+ DECLARE_EXPORT(__umoddi3);
+ DECLARE_EXPORT(__umodsi3);
+ DECLARE_EXPORT(__muldi3);
++DECLARE_EXPORT(__ucmpdi2);
++DECLARE_EXPORT(__lshrdi3);
++DECLARE_EXPORT(__ashldi3);
++DECLARE_EXPORT(__ashrdi3);
 -- 
 2.20.1
 
