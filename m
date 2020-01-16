@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9EB13E441
+	by mail.lfdr.de (Postfix) with ESMTP id EAF9C13E442
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:07:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbgAPRHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37736 "EHLO mail.kernel.org"
+        id S2389070AbgAPRHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:07:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389006AbgAPRGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:50 -0500
+        id S2389044AbgAPRG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC6D3205F4;
-        Thu, 16 Jan 2020 17:06:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6650A2081E;
+        Thu, 16 Jan 2020 17:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194410;
-        bh=rgGdzB4cVLt1R+ntLiKhZow3VesNrvHG1CWg4LPL2Ek=;
+        s=default; t=1579194417;
+        bh=9LdsUBp7qfC8M7hIx4I1cjSoYSEPj8Dn1kYaez5MelE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FOAunnuQD5J4gPd/0OTS2WFyD2mcHJpeYti0cxU2VmQQDJjqoFn4/sVNWIcBzyKs8
-         EwAYjSDgPG2uCS4UPpsCtG6fnRBpkhAQCx0OirKN13uv87fn6vJPUQ/7ksa6y+drHG
-         dvf9CW2Y8rlT//7Pp3PYRFbNT4Q84oPBmm6wogkM=
+        b=Yu2aVTu9KuYd2slD/1/jbgFdFzLhTrdsN9MQpu6gcYsu8orlCjCMjbQ1gmOobxPgI
+         +BAe2Tap+ksQqFkB38jazEBg2kidEtJ8Sl/4207Vuh3kAt4hOzlC0tjbJEEINR5dn7
+         G4lIKUX7pzp2hoIxUoXMem+C/CPdv1g+YkhCSBvw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sameeh Jubran <sameehj@amazon.com>,
-        Netanel Belgazal <netanel@amazon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 333/671] net: ena: fix ena_com_fill_hash_function() implementation
-Date:   Thu, 16 Jan 2020 11:59:31 -0500
-Message-Id: <20200116170509.12787-70-sashal@kernel.org>
+Cc:     Rakesh Pillai <pillair@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 338/671] ath10k: Fix encoding for protected management frames
+Date:   Thu, 16 Jan 2020 11:59:36 -0500
+Message-Id: <20200116170509.12787-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,33 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sameeh Jubran <sameehj@amazon.com>
+From: Rakesh Pillai <pillair@codeaurora.org>
 
-[ Upstream commit 11bd7a00c0d8ffe33d1e926f8e789b4aea787186 ]
+[ Upstream commit 42f1bc43e6a97b9ddbe976eba9bd05306c990c75 ]
 
-ena_com_fill_hash_function() didn't configure the rss->hash_func.
+Currently the protected management frames are
+not appended with the MIC_LEN which results in
+the protected management frames being encoded
+incorrectly.
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Netanel Belgazal <netanel@amazon.com>
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Add the extra space at the end of the protected
+management frames to fix this encoding error for
+the protected management frames.
+
+Tested HW: WCN3990
+Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
+
+Fixes: 1807da49733e ("ath10k: wmi: add management tx by reference support over wmi")
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath10k/wmi-tlv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
-index 005882c40262..92261c946e2a 100644
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -2093,6 +2093,7 @@ int ena_com_fill_hash_function(struct ena_com_dev *ena_dev,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+index a90990b8008d..248decb494c2 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
++++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
+@@ -2692,8 +2692,10 @@ ath10k_wmi_tlv_op_gen_mgmt_tx_send(struct ath10k *ar, struct sk_buff *msdu,
+ 	if ((ieee80211_is_action(hdr->frame_control) ||
+ 	     ieee80211_is_deauth(hdr->frame_control) ||
+ 	     ieee80211_is_disassoc(hdr->frame_control)) &&
+-	     ieee80211_has_protected(hdr->frame_control))
++	     ieee80211_has_protected(hdr->frame_control)) {
++		skb_put(msdu, IEEE80211_CCMP_MIC_LEN);
+ 		buf_len += IEEE80211_CCMP_MIC_LEN;
++	}
  
-+	rss->hash_func = func;
- 	rc = ena_com_set_hash_function(ena_dev);
- 
- 	/* Restore the old function */
+ 	buf_len = min_t(u32, buf_len, WMI_TLV_MGMT_TX_FRAME_MAX_LEN);
+ 	buf_len = round_up(buf_len, 4);
 -- 
 2.20.1
 
