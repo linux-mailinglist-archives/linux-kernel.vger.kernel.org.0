@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37D6513FD75
+	by mail.lfdr.de (Postfix) with ESMTP id AC9BD13FD76
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733130AbgAPX0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:26:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
+        id S2388548AbgAPX0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:26:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733168AbgAPXZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:25:45 -0500
+        id S2389304AbgAPXZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:25:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 116FA20684;
-        Thu, 16 Jan 2020 23:25:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0BE520684;
+        Thu, 16 Jan 2020 23:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217144;
-        bh=DxL97Mube6rfLAuMouuyK1bFCfxxgK8KTNyr1qECnpY=;
+        s=default; t=1579217154;
+        bh=fZxjk5Zp4r7tP8Qq17q36uBSyNNs0X5uJLSyVzCpkRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJ/q9Xgsjqz27KVmVkJhmKDTUGtv6gkw3YQZznru2Nxf2/NxeiBBr9qUXCQlMihCW
-         DyqlKUF4Coc14rx3RsEMR9mgH9bjG6SMFDykWrvnk2+7SL9hOz+u34U1oG+qnXpHbF
-         OSDkxxRhPsf7YSnBtLJbJtZ6LSv+q5IKCjaYB1jM=
+        b=1SYTbYuXEKov8/xQzabayMgZj4gpoONKzXHyvHZ5kqCiTucBtTAEztyEWT7PgpL2x
+         ozYX4G885eTRjBPeVGyGV/2s1HbQj338MsM26lgW6KGGobxkqLIITzqNEOddW+ghwS
+         HTRLK85m/TAOwJ5gRsJH5x4g62tTjyFgJq3c0hJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH 5.4 166/203] mtd: spi-nor: fix silent truncation in spi_nor_read()
-Date:   Fri, 17 Jan 2020 00:18:03 +0100
-Message-Id: <20200116231759.152183681@linuxfoundation.org>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 170/203] spi: rspi: Use platform_get_irq_byname_optional() for optional irqs
+Date:   Fri, 17 Jan 2020 00:18:07 +0100
+Message-Id: <20200116231759.433140321@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,34 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit a719a75a7761e4139dd099330d9fe3589d844f9b upstream.
+commit 2de860b4a7a0bd5a4b5bd3bff0e6a615495df4ba upstream.
 
-spi_nor_read() assigns the result of 'ssize_t spi_nor_read_data()'
-to the 'int ret' variable, while 'ssize_t' is a 64-bit type and *int*
-is a 32-bit type on the 64-bit machines. This silent truncation isn't
-really valid, so fix up the variable's type.
+As platform_get_irq_byname() now prints an error when the interrupt
+does not exist, scary warnings may be printed for optional interrupts:
 
-Fixes: 59451e1233bd ("mtd: spi-nor: change return value of read/write")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+    renesas_spi e6b10000.spi: IRQ rx not found
+    renesas_spi e6b10000.spi: IRQ mux not found
+
+Fix this by calling platform_get_irq_byname_optional() instead.
+Remove the no longer needed printing of platform_get_irq errors, as the
+remaining calls to platform_get_irq() and platform_get_irq_byname() take
+care of that.
+
+Fixes: 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to platform_get_irq*()")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lore.kernel.org/r/20191016143101.28738-1-geert+renesas@glider.be
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/spi-nor/spi-nor.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-rspi.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2544,7 +2544,7 @@ static int spi_nor_read(struct mtd_info
- 			size_t *retlen, u_char *buf)
- {
- 	struct spi_nor *nor = mtd_to_spi_nor(mtd);
--	int ret;
-+	ssize_t ret;
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1257,9 +1257,9 @@ static int rspi_probe(struct platform_de
+ 	ctlr->flags = ops->flags;
+ 	ctlr->dev.of_node = pdev->dev.of_node;
  
- 	dev_dbg(nor->dev, "from 0x%08x, len %zd\n", (u32)from, len);
+-	ret = platform_get_irq_byname(pdev, "rx");
++	ret = platform_get_irq_byname_optional(pdev, "rx");
+ 	if (ret < 0) {
+-		ret = platform_get_irq_byname(pdev, "mux");
++		ret = platform_get_irq_byname_optional(pdev, "mux");
+ 		if (ret < 0)
+ 			ret = platform_get_irq(pdev, 0);
+ 		if (ret >= 0)
+@@ -1270,10 +1270,6 @@ static int rspi_probe(struct platform_de
+ 		if (ret >= 0)
+ 			rspi->tx_irq = ret;
+ 	}
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "platform_get_irq error\n");
+-		goto error2;
+-	}
  
+ 	if (rspi->rx_irq == rspi->tx_irq) {
+ 		/* Single multiplexed interrupt */
 
 
