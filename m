@@ -2,137 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED3713D6F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030A113D6F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbgAPJhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 04:37:04 -0500
-Received: from mout.web.de ([212.227.15.4]:43303 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731449AbgAPJhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 04:37:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1579167405;
-        bh=m0t+4JuI/Zbb5bWxl9uCpXvHpa4Fj8lq3ztfYXq77cA=;
-        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
-        b=KIuhOSQc40KPwQrGHVmPZlI3FZviNBZdIUm+s0nezsoXQDl2vSf9rcO488yoVZ74e
-         Voi0GChGAA4AhBTzF6YeZaCztQBRitCfO/nxPcMJ4lkz2KcffcVpgcU/j5fnA9cjq/
-         rCkLkQ1oAw6rNoCblF2ZhLoHVo5X+Sxi/42Br9uo=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.6.163]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Ma2V5-1jDnr13vV1-00LlsL; Thu, 16
- Jan 2020 10:36:45 +0100
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: Re: [PATCH v10 00/14] add the latest exfat driver
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Message-ID: <7e5e56be-5b87-8f9c-60fa-134a13f8e762@web.de>
-Date:   Thu, 16 Jan 2020 10:36:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1731109AbgAPJgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 04:36:47 -0500
+Received: from mail-eopbgr80084.outbound.protection.outlook.com ([40.107.8.84]:36800
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726329AbgAPJgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 04:36:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FDt7Ephiy8QOYZtDn/jWFzOoE+yYjzcEm6mLmsJbAKpTq709JADVPbYEIdR62s8Xlpu8AJvFlM5vwPXvsepXtzAxTSm/vAMfpdcgzNc+/gbR6JpneMLa+cflg57HPhPbmTVrK2jKQdvWBhYN3nKPmla4Apc7kwzEzXHESeUM5puI/85Did1n7FfY0RsZKgY64Su9I5EwhN38cgh0odPlVvELzoU0ilDkYoKaIwWpM9cuuwSM20Ka/stfSJMP2Q7FLU2Agu/YlQEFSp5QdF5GT9VAYLvTH5QpmGBdbaRmLIw5fxMWXy0nIXUXtvC3eCboyDBs4bnoqp26yjY1gR55Wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vT4MDkCzU4NJ0bMXmF2fkl1mvzTyRAOOHOii8lGrM3g=;
+ b=UMrk0ok2xitc3tUoZzr46VO0PAbSrqHHJZiO/EiuFXV/VsgsQRDotFNkuj7wTR6YrKv5ypd4yRnRceYcknDQqdxwXFtWymSe2Rk41iDvq+4DDQJHTE2PWVcVRKaPeJibaw3zJDFpWyU4GogxA2+IM7O8ZdS1eXqjnTdFxarWmRfGVrzTDCeRSVRK/7RJAAJvfkVqSj1CoimwDvv/TyuORDE+QlIQ8diQ9ngRhc43q1uKs9TrcxWAhnfFTKZGS8YS6EkiGnXRZslMYoj1snXIoSumX7efX3rsV826il0Sl/iTHrW4l3gMmffhCtGLgM2fvB9obwkDYOY+eF+wemtgXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vT4MDkCzU4NJ0bMXmF2fkl1mvzTyRAOOHOii8lGrM3g=;
+ b=WxsMaUPQ6LH3VBILqphN2/lp8PIVHUXe69AGNTlF9lBfOb/CRJXnSSbbXq/FPrI2yMlUwSsz04GsZR/E0r0RDbRYXtxRtmYZn6nP+Wr/54NAhwX+jgungB00IC5wZ0NprjsBEhkfqp2ynxYv0dU+oVGesLc3bLycdlRy21Bn4dg=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4337.eurprd04.prod.outlook.com (52.134.124.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.10; Thu, 16 Jan 2020 09:36:43 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2623.018; Thu, 16 Jan 2020
+ 09:36:43 +0000
+Received: from localhost.localdomain (119.31.174.66) by HK2PR0302CA0022.apcprd03.prod.outlook.com (2603:1096:202::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.6 via Frontend Transport; Thu, 16 Jan 2020 09:36:39 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "info@metux.net" <info@metux.net>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "git@andred.net" <git@andred.net>, Abel Vesa <abel.vesa@nxp.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [RFC 0/4] ARM: imx: move cpu code to drivers/soc/imx
+Thread-Topic: [RFC 0/4] ARM: imx: move cpu code to drivers/soc/imx
+Thread-Index: AQHVzFB28inl/b14XEmQISgKukQ5pA==
+Date:   Thu, 16 Jan 2020 09:36:43 +0000
+Message-ID: <1579167145-1480-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR0302CA0022.apcprd03.prod.outlook.com
+ (2603:1096:202::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 20ca5246-c663-4e5c-3495-08d79a6798ce
+x-ms-traffictypediagnostic: AM0PR04MB4337:|AM0PR04MB4337:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4337EAEE51E1D018258EB00C88360@AM0PR04MB4337.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 02843AA9E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(39860400002)(136003)(366004)(199004)(189003)(8936002)(86362001)(69590400006)(71200400001)(6512007)(186003)(16526019)(52116002)(956004)(44832011)(2616005)(6486002)(26005)(6506007)(478600001)(6666004)(4326008)(7416002)(2906002)(81166006)(66556008)(81156014)(66476007)(66446008)(8676002)(110136005)(316002)(54906003)(5660300002)(36756003)(66946007)(64756008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4337;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: roH6XQYLimWGYZocYjrvI3qpNsbNXURSl45uGbzp/IWanr5s0FwlvYfIwvA4YNjfNIpo8Wao6AQk0rAmTTD6HNKyfVVYosOH4S6VWNOUPC50Okqnn1jboLMMbhCf0kYM7j1R/fzo+bMPRUEJ/J5JT4DXydPjEIRtCT4f4uoaFbcXuGtUNQSh5T4vfwOFP+Ot/P0W/V0fcgaoBXt6Bvl3U8bsOKfCl3PIwWkz+K742tlwbMKaB92LQmKxAMtCDPTRPUgI9z5x7Kq64SLy6zfrSCxJNIxkBZMUQn2Zf/Fuveywu40Ve5p86EVW0MbXeBPfg8lzXvFmkrmhr5xSTi41Et8mVKyLojsDH9kdjYMGRTY23NTbiWZHoEwJAuj/J7RhY/WyWWbdjrlnN3ccjz04xPMrppRPof4gJ2BQjFwqRBeS+OAQ6KmNF3jS3L3ByJNCQb0LDzJ2z56KyXI2qMFLOQ9yIa+CnLXdZXOFO+/xFOK5vKY8WO6rFcsmM9Jl0ecb
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:50zNE19FmdhA427OFaCmImPWk1hx7iFyaMRJzRQHP9B5a2pkKwR
- 1eci7/4M1MIlpvHhRDZQski5IhycVN86VpZ6VZz67jq7dQrPq3++i8lPriEdMuN2ARILGGX
- dbbBrXouzjMsj0HJ4i/lrSpnUWfiitDYQtOXcuy98c0ry/jiNZ+2+bi7SIiIROOIyJh2kig
- DRrUF+BB8UmwIENAbBAXg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:X+xYRvIzknU=:+J9BcHO6Rk2dJMoHpb+Z+9
- ql1kHmoGA2VLyO9dnrbaiI2Wre9aRdz8oUeOfm4zP84RACG7ERLY2UU/V8MlCIJm5/y1smGJw
- p7XekBKI/JrVV1xPUF14gLHVqQBkrMt9h/kpRMkqzXxokU7DeDjnveP7zYk8N/ffTfSnDN7++
- pxR4nIhObBcfUmK6vEFYzyNGLTIjllzgYt9cTcPmgRFm8Kki3XyVj2jhl0TeWzmjeTZRvmJrG
- +tf1lOvBlXLezRQH6RTpeU+uROe31va6SiHQJD3hI9DBIF4ueKnnHfyJKSj7KKbNdqFqPKnUf
- uq8YM+MRcOj1dlMSI4Y+7yhE+PHfR+3j+rsBmdYaYJK7FWLT4qTRr7SwOrJsM+1D12JG3+lLx
- aTReuS5qQg0j5t+H0+iuZCJOqK9kFIN17NT2F+o716kQoX7q1La7z0mRq2H4VVHM5YSKAi56m
- 9NRL9LU4TskJmdBqrFi3IgG68XOW7DXYIvdSlLWgajjIkAv5ObEXsj4Q3oI9mreJ7+/zKHF7l
- 23kHFo4ZiYDTcGZ+En8qitgTF1OgQ28ju5RcO/IYWplqXBEtEbYj7VUR4mEm5SivQjYlfZh6C
- R/i54Wy9ZZB7guB7VJ2QaYpZliujPbDDlp1mYb+bSzsUaJ57SDTVW2oHlSFXJLFJkUmWxVxZc
- TFTiZfw2IhEOsWoNqfIXApyZ+hvfl7fhuGdCKaMLNtabNbUpWwhGe6x3I1Hci6uCxkSslrU9p
- euR9gXxwT3CoN5yjtuTceVwgUk+TlbPlpME/2N5SVQzQaGxarKHHEYoE+lbfnb+GfGjKkECjk
- p9F/637tsyZJecBhoYK2zBuK4ezkg4wLdOdKBOIN3zu2jddbo1YEBUOk4wYY2B270Ts8owfuH
- gd+17UQCHCZcakF/cA/SQ91pJEbmWcVuarmh8xGZ94qiH0AZRgiZOfPLn8ymhxDNqsQqd9NZN
- a7O4I/mW05tyJHr3aIhu7MEel2Zr1wP10h/zq6EDlz9qsyZOGGQui1FU64EmW2Z2vnRmWl8hR
- nicjO7Eev9ds0fGE5rqv4LD/iH8WOtxOFJNJ9V16pZ3jkq6ygziHKdsAK9ItSQ3+KYrWRTnu4
- iYcAOwolQauPQovbrJp4zIF78CqQBE1FPnu4bDaDSoTzO3C3UrQd2TLAt76GLPp//cw0OgDNs
- 7m5WsNJFc2OCSPg23rK5wxdJmHUZcgkI+kaa1fdubhBSnW/b1vDmXW2/mt9oxngINQmL2+i0B
- ODM4Bg9j/OKs+1AtdFzq69eTqFl0QeFfTxlbqCNhSQwRPcog47tGVWwiLiVg=
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20ca5246-c663-4e5c-3495-08d79a6798ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 09:36:43.3773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oI0ELJgBIvEitywbhU953rauL8lzqXtnzPacdYWE7SJqSfazBjGKSnZ5pnzH0+59JFUOU+xxzT2bXS3w4+sOZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4337
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> We plan to treat this version as the future upstream for the code base
-> once merged, and all new features and bug fixes will go upstream first.
->
-> v10:
+From: Peng Fan <peng.fan@nxp.com>
 
-I find it interesting how the patch change log grew.
+Follow i.MX8, move the soc device register code to drivers/soc/imx
+to simplify arch/arm/mach-imx/cpu.c
 
+I planned to use similar logic as soc-imx8.c to restructure soc-imx.c
+and merged the two files into one. But not sure, so still keep
+the logic in cpu.c.
 
->  - Process length value as 1 when conversion is failed.
+There is one change is the platform devices are not under
+/sys/devices/soc0 after patch 1/4. Actually ARM64 platform
+devices are not under /sys/devices/soc0, such as i.MX8/8M.
+So it should not hurt to let the platform devices under platform dir.
 
-Would this description be nicer without the word =E2=80=9Cis=E2=80=9D?
+Peng Fan (4):
+  ARM: imx: use device_initcall for imx_soc_device_init
+  ARM: imx: cpu: drop dead code
+  ARM: imx: move cpu definitions into a header
+  soc: imx: move cpu code to drivers/soc/imx
 
+ arch/arm/mach-imx/common.h       |   1 -
+ arch/arm/mach-imx/cpu.c          | 159 -----------------------------------=
+----
+ arch/arm/mach-imx/mach-imx6q.c   |   8 +-
+ arch/arm/mach-imx/mach-imx6sl.c  |   8 +-
+ arch/arm/mach-imx/mach-imx6sx.c  |   8 +-
+ arch/arm/mach-imx/mach-imx6ul.c  |   8 +-
+ arch/arm/mach-imx/mach-imx7d.c   |   6 --
+ arch/arm/mach-imx/mach-imx7ulp.c |   2 +-
+ arch/arm/mach-imx/mxc.h          |  22 +-----
+ drivers/soc/imx/Makefile         |   3 +
+ drivers/soc/imx/soc-imx.c        | 146 +++++++++++++++++++++++++++++++++++
+ include/soc/imx/cpu.h            |  30 ++++++++
+ 12 files changed, 185 insertions(+), 216 deletions(-)
+ create mode 100644 drivers/soc/imx/soc-imx.c
+ create mode 100644 include/soc/imx/cpu.h
 
-I pointed also further software development concerns out.
-I hope that they will get corresponding constructive feedback finally.
-Other contributors are similarly waiting for =E2=80=9Ceffects=E2=80=9D acc=
-ording to
-their code review comments.
-How will communication delays evolve for the clarification of
-remaining open issues?
+--=20
+2.16.4
 
-Regards,
-Markus
