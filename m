@@ -2,106 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BD0013E324
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E9713E1B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387471AbgAPRAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387664AbgAPRAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:07 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3835520728;
-        Thu, 16 Jan 2020 17:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194007;
-        bh=Bc4a90GgNt+53UllOU4U/kOkUJVjCw2i0sdjNuCUjNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ee61mccV7pamxZN8MHNcycecMu2ToPTyStAqIqoPs0l/KrWaEjhnOUSNqI8ClycAV
-         PSZ/mn71wCPYDB8RYUGxXanrKUCRScfLuBadufaWyOnExIxDb2LYWkgwWQlbnm51SL
-         NtUdXXyEvCzllyt+3PevW5g6Fqlmrbpf4ZID+KUA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mordechay Goodstein <mordechay.goodstein@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 132/671] iwlwifi: mvm: avoid possible access out of array.
-Date:   Thu, 16 Jan 2020 11:50:41 -0500
-Message-Id: <20200116165940.10720-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+        id S1729297AbgAPQvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:51:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36052 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbgAPQvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:51:10 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k3so10179599pgc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:51:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:subject:cc:to:in-reply-to:references:message-id
+         :mime-version:content-transfer-encoding;
+        bh=WX8RB1wfJCliH8/zi+tgub32ZBfKjuIQgKJ9j2z+hKk=;
+        b=kv/rnQJpRXl8xuYnke8mUPEG7MMS88JHDJvb4E6uV0XFinTRPPD5C/d39TE0W1yLGg
+         IveHIwSKvWqF8GWIAVXys0ek01P0zlslB1NhEkYuOQTobMKrpWAalExl/JFK7yyU0Yq0
+         RN4d7oM83AIzhO/LQ+k2eKOtqcDgfMqR5K2BBoTBgPPcCQKjQY1vZxVsvLeeVpRJOZmD
+         eRQROKW+eN7NWuqRF8n1g54NyVDjBhvST3om4ni5PwBSIHk02pNmz2QDJ3oaBuELwJCe
+         7fXGPGZ2gXBewewkWEIYT5M6hJVT30iUAhLwPdqGbI+xXXqAP3MBupENf9wLl5FFPuhq
+         48fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:cc:to:in-reply-to:references
+         :message-id:mime-version:content-transfer-encoding;
+        bh=WX8RB1wfJCliH8/zi+tgub32ZBfKjuIQgKJ9j2z+hKk=;
+        b=OS5h3lxLJPjfUYM0bogoBdtKJrNYmmjHBbPkmn2HuDSO08WGrH+KVsWjTop9JU37DQ
+         3pfpLoFDhhQso12Fc1w1r7MCp2nwzkvhfHTKuMShFjfyZOe9KbK+42UEwUVRXrXBiGuo
+         Osj5mF/CGugVsd7cNDcG+GQyEwisNK+K5oAlzUEb0a+/ayqv3XPKFt8tt37XFpARVag0
+         TKfLN7+olMfTwPjCwfLA+MVqv25iAwa62e5EuS20QSGXcDyH0qkTu/pkEJlnqPjpTjEy
+         JenvDsSuZlkl+8tKYdYn/OD2d48g/6wsR35Vf9ilPt0idfuoOaJmhd3EROy3jtoTJLX8
+         Vj1A==
+X-Gm-Message-State: APjAAAXfQ0fGkCBzAxhj/DurW/vaE1hdhKZIlIr1vVgBxkhY51gc9M0T
+        Y8Iu7WMyjxFqD25SuwYTR49w5w==
+X-Google-Smtp-Source: APXvYqy27Y/ZAUAQAnIzlxv1ajCi6HqFGtLCh8M57hfohNhgC3bsmthRFBrHGcYWEFQ5TfRZ98IBsQ==
+X-Received: by 2002:a65:530d:: with SMTP id m13mr40368954pgq.351.1579193469245;
+        Thu, 16 Jan 2020 08:51:09 -0800 (PST)
+Received: from localhost ([2620:0:1000:2514:7f69:cd98:a2a2:a03d])
+        by smtp.gmail.com with ESMTPSA id s1sm24561586pgv.87.2020.01.16.08.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 08:51:08 -0800 (PST)
+Date:   Thu, 16 Jan 2020 08:51:08 -0800 (PST)
+X-Google-Original-Date: Thu, 16 Jan 2020 08:34:33 PST (-0800)
+From:   Palmer Dabbelt <palmerdabbelt@google.com>
+X-Google-Original-From: Palmer Dabbelt <palmer@dabbelt.com>
+Subject:     Re: [PATCH v10 01/19] RISC-V: Export riscv_cpuid_to_hartid_mask() API
+CC:     Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+        pbonzini@redhat.com, rkrcmar@redhat.com, graf@amazon.com,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, anup@brainfault.org,
+        kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anup Patel <Anup.Patel@wdc.com>
+To:     Anup Patel <Anup.Patel@wdc.com>
+In-Reply-To: <20191223113443.68969-2-anup.patel@wdc.com>
+References: <20191223113443.68969-2-anup.patel@wdc.com>
+  <20191223113443.68969-1-anup.patel@wdc.com>
+Message-ID: <mhng-81eb8962-4c58-4e5b-9ee1-0e6c0afb2c00@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mordechay Goodstein <mordechay.goodstein@intel.com>
+On Mon, 23 Dec 2019 03:35:19 PST (-0800), Anup Patel wrote:
+> The riscv_cpuid_to_hartid_mask() API should be exported to allow
+> building KVM RISC-V as loadable module.
+>
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> ---
+>  arch/riscv/kernel/smp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> index eb878abcaaf8..6fc7828d41e4 100644
+> --- a/arch/riscv/kernel/smp.c
+> +++ b/arch/riscv/kernel/smp.c
+> @@ -10,6 +10,7 @@
+>  
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/module.h>
+>  #include <linux/profile.h>
+>  #include <linux/smp.h>
+>  #include <linux/sched.h>
+> @@ -63,6 +64,7 @@ void riscv_cpuid_to_hartid_mask(const struct cpumask *in, struct cpumask *out)
+>  	for_each_cpu(cpu, in)
+>  		cpumask_set_cpu(cpuid_to_hartid_map(cpu), out);
+>  }
+> +EXPORT_SYMBOL_GPL(riscv_cpuid_to_hartid_mask);
+>  
+>  bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+>  {
+> -- 
+> 2.17.1
 
-[ Upstream commit b0d795a9ae558209656b18930c2b4def5f8fdfb8 ]
-
-The value in txq_id can be out of array scope,
-validate it before accessing the array.
-
-Signed-off-by: Mordechay Goodstein <mordechay.goodstein@intel.com>
-Fixes: cf961e16620f ("iwlwifi: mvm: support dqa-mode agg on non-shared queue")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index e850aa504b60..69057701641e 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -2462,7 +2462,7 @@ int iwl_mvm_sta_tx_agg_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
- 	struct iwl_mvm_sta *mvmsta = iwl_mvm_sta_from_mac80211(sta);
- 	struct iwl_mvm_tid_data *tid_data;
- 	u16 normalized_ssn;
--	int txq_id;
-+	u16 txq_id;
- 	int ret;
- 
- 	if (WARN_ON_ONCE(tid >= IWL_MAX_TID_COUNT))
-@@ -2506,17 +2506,24 @@ int iwl_mvm_sta_tx_agg_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
- 	 */
- 	txq_id = mvmsta->tid_data[tid].txq_id;
- 	if (txq_id == IWL_MVM_INVALID_QUEUE) {
--		txq_id = iwl_mvm_find_free_queue(mvm, mvmsta->sta_id,
--						 IWL_MVM_DQA_MIN_DATA_QUEUE,
--						 IWL_MVM_DQA_MAX_DATA_QUEUE);
--		if (txq_id < 0) {
--			ret = txq_id;
-+		ret = iwl_mvm_find_free_queue(mvm, mvmsta->sta_id,
-+					      IWL_MVM_DQA_MIN_DATA_QUEUE,
-+					      IWL_MVM_DQA_MAX_DATA_QUEUE);
-+		if (ret < 0) {
- 			IWL_ERR(mvm, "Failed to allocate agg queue\n");
- 			goto release_locks;
- 		}
- 
-+		txq_id = ret;
-+
- 		/* TXQ hasn't yet been enabled, so mark it only as reserved */
- 		mvm->queue_info[txq_id].status = IWL_MVM_QUEUE_RESERVED;
-+	} else if (WARN_ON(txq_id >= IWL_MAX_HW_QUEUES)) {
-+		ret = -ENXIO;
-+		IWL_ERR(mvm, "tid_id %d out of range (0, %d)!\n",
-+			tid, IWL_MAX_HW_QUEUES - 1);
-+		goto out;
-+
- 	} else if (unlikely(mvm->queue_info[txq_id].status ==
- 			    IWL_MVM_QUEUE_SHARED)) {
- 		ret = -ENXIO;
--- 
-2.20.1
-
+Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
