@@ -2,128 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E9E13F21D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C586413F280
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436752AbgAPSdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:33:09 -0500
-Received: from mga12.intel.com ([192.55.52.136]:11853 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403901AbgAPSdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:33:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:33:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="scan'208";a="259529109"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Jan 2020 10:33:04 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [RESEND PATCH] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
-Date:   Thu, 16 Jan 2020 10:31:54 -0800
-Message-Id: <20200116183154.20880-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S2392204AbgAPSfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:35:51 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34863 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407150AbgAPSfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:35:45 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j1so23782147lja.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w3m47L5Z0xI8HYh0lKryrWYdR0UgzApvsO7nDstJ484=;
+        b=zt4hUFckpv0JtJBTTBpPR0wmokiqIfW2lNyhGhC5whKAMLVPQ598lSopUqg40Dednt
+         zZo0oen6Rj98R4s2jKVEEcBxfKT/0FB5KuR3J5vOvJn4EL6sX/EUaJVb0CARHJQRzqoW
+         uKbC//iUkpteLGJZ6Dw876Fj0gC3FiXyI+hiL33ReAiBpqHjvoxIX3d8exyoXErn3ulF
+         3M+pB9l/F2YBegxvYZqVrF14OhsMBCzdgU+DFXEVcGFHUJdwod8/UsTrdWlt1M1nYU1s
+         VyiO8zEEtSJi0si67QGW4eRXclm6PYPI8n7GMfhxFHWwD8JYf5YlHLFCO3zVZZh7qZyF
+         HZOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w3m47L5Z0xI8HYh0lKryrWYdR0UgzApvsO7nDstJ484=;
+        b=iXFKu3jeLH1LXQLDWAHBae0aJnqEh/GcZ5gDz1GewSxdFxglgiOnDthEsh1O1tabse
+         vg+bRs6W3/lCD7vQPmp0vBu1oOw4TR9H67wI4xdLQcYC+aVXsqXaysU2PELK9TqXa0vQ
+         yF0Xbm1ykuGUupGUWr8WFJ6bpbOfBQ8DryqtKUgW+SiBPcHyZwDmFbPbO0wam8EOeKJo
+         eKYMwQXqo96KKuwX/2X53WKP12PJW4DPE7QVESg/hqmeLZoug+e60H5aIYd3cAzn49P5
+         c3pG1ZqCU7od8JuxGp9aDwBn/U9WE2tx7zpHISpNpcwTFM45HiY3SK1dZAc3GAEbmqoH
+         gcxw==
+X-Gm-Message-State: APjAAAURtaG/2YMR2J4R/WXogNcbhXjvGS9bs5Zxukei23XY9zgiFxDb
+        683AVbSc3aBf2pjwqtMOqshc3QgZNug=
+X-Google-Smtp-Source: APXvYqz/9p+Equ9yB2/f1ypHaf4+rn1iYRPCZicwrFKzWbSFxXdSqtv9R5Vc2x+rsOBhxB3KKZsmqg==
+X-Received: by 2002:a2e:89d0:: with SMTP id c16mr3151068ljk.228.1579199742453;
+        Thu, 16 Jan 2020 10:35:42 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id x84sm11124259lfa.97.2020.01.16.10.35.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Jan 2020 10:35:41 -0800 (PST)
+Date:   Thu, 16 Jan 2020 10:34:58 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        David Lechner <david@lechnology.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: davinci: select CONFIG_RESET_CONTROLLER
+Message-ID: <20200116183458.qsa6bk7wlfhpd4m4@localhost>
+References: <20191210195202.622734-1-arnd@arndb.de>
+ <ba94531d-1f16-b985-5638-c226bab28d5b@ti.com>
+ <1513bfee-6623-47fa-1eef-6074ba9ab3b8@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1513bfee-6623-47fa-1eef-6074ba9ab3b8@ti.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Mon, Jan 13, 2020 at 05:32:54PM +0530, Sekhar Nori wrote:
+> Hi Arnd,
+> 
+> On 11/12/19 3:42 PM, Sekhar Nori wrote:
+> > Hi Arnd,
+> > 
+> > On 11/12/19 1:21 AM, Arnd Bergmann wrote:
+> >> Selecting RESET_CONTROLLER is actually required, otherwise we
+> >> can get a link failure in the clock driver:
+> >>
+> >> drivers/clk/davinci/psc.o: In function `__davinci_psc_register_clocks':
+> >> psc.c:(.text+0x9a0): undefined reference to `devm_reset_controller_register'
+> >> drivers/clk/davinci/psc-da850.o: In function `da850_psc0_init':
+> >> psc-da850.c:(.text+0x24): undefined reference to `reset_controller_add_lookup'
+> >>
+> >> Fixes: f962396ce292 ("ARM: davinci: support multiplatform build for ARM v5")
+> >> Cc: <stable@vger.kernel.org> # v5.4
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > Assuming you are going to apply directly to ARM-SoC,
+> > 
+> > Acked-by: Sekhar Nori <nsekhar@ti.com>
+> 
+> This is not yet in Linus's master. Let me know if I should collect it
+> and send a pull request.
 
-Perf doesn't take the left period into account when auto-reload is
-enabled with fixed period sampling mode in context switch.
-Here is the ftrace when recording PEBS event with fixed period.
+It's sitting in our fixes branch and should show up in mainline in not too
+long.
 
-    #perf record -e cycles:p -c 2000000 -- ./triad_loop
 
-      //Task is scheduled out
-      triad_loop-17222 [000] d... 861765.878032: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0  //Disable global counter
-      triad_loop-17222 [000] d... 861765.878033: write_msr:
-MSR_IA32_PEBS_ENABLE(3f1), value 0       //Disable PEBS
-      triad_loop-17222 [000] d... 861765.878033: write_msr:
-MSR_P6_EVNTSEL0(186), value 40003003c    //Disable the counter
-      triad_loop-17222 [000] d... 861765.878033: rdpmc: 0, value
-fffffff82840                             //Read value of the counter
-      triad_loop-17222 [000] d... 861765.878034: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 1000f000000ff  //Re-enable global
-counter
-
-      //Task is scheduled in again
-      triad_loop-17222 [000] d... 861765.878221: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0  //Disable global counter
-      triad_loop-17222 [000] d... 861765.878222: write_msr:
-MSR_IA32_PMC0(4c1), value ffffffe17b80   //write the value to the
-counter; The value is wrong. When the task switch in again, the counter
-should starts from previous left. However, it starts from the fixed
-period -2000000 again.
-      triad_loop-17222 [000] d... 861765.878223: write_msr:
-MSR_P6_EVNTSEL0(186), value 40043003c    //enable the counter
-      triad_loop-17222 [000] d... 861765.878223: write_msr:
-MSR_IA32_PEBS_ENABLE(3f1), value 1       //enable PEBS
-      triad_loop-17222 [000] d... 861765.878223: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 1000f000000ff  //Re-enable global
-counter
-
-A special variant of intel_pmu_save_and_restart() is used for
-auto-reload, which doesn't update the hwc->period_left.
-When the monitored task scheduled in again, perf doesn't know the left
-period. The user defined fixed period is used, which is inaccurate.
-
-With auto-reload, the counter always has a negative counter value. So
-the left period is -value. Update the period_left in
-intel_pmu_save_and_restart_reload().
-
-With the patch,
-      //Task is scheduled out
-      triad_loop-3068  [000] d...   153.680459: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      triad_loop-3068  [000] d...   153.680459: write_msr:
-MSR_IA32_PEBS_ENABLE(3f1), value 0
-      triad_loop-3068  [000] d...   153.680459: write_msr:
-MSR_P6_EVNTSEL0(186), value 40003003c
-      triad_loop-3068  [000] d...   153.680459: rdpmc: 0, value
-ffffffe25cbc
-      triad_loop-3068  [000] d...   153.680460: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-      //Task is scheduled in again
-      triad_loop-3068  [000] d...   153.680644: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      triad_loop-3068  [000] d...   153.680646: write_msr:
-MSR_IA32_PMC0(4c1), value ffffffe25cbc     //The left value is written
-into the counter.
-      triad_loop-3068  [000] d...   153.680646: write_msr:
-MSR_P6_EVNTSEL0(186), value 40043003c
-      triad_loop-3068  [000] d...   153.680646: write_msr:
-MSR_IA32_PEBS_ENABLE(3f1), value 1
-      triad_loop-3068  [000] d...   153.680647: write_msr:
-MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-Fixes: d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/ds.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index ce83950036c5..e5ad97a82342 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1713,6 +1713,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
- 	old = ((s64)(prev_raw_count << shift) >> shift);
- 	local64_add(new - old + count * period, &event->count);
- 
-+	local64_set(&hwc->period_left, -new);
-+
- 	perf_event_update_userpage(event);
- 
- 	return 0;
--- 
-2.17.1
-
+-Olof
