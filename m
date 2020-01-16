@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF3D713F176
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C05913F172
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:28:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392232AbgAPR0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:26:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
+        id S2392239AbgAPR0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:26:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392139AbgAPRZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:41 -0500
+        id S2392153AbgAPRZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 921BF246BF;
-        Thu, 16 Jan 2020 17:25:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 709262053B;
+        Thu, 16 Jan 2020 17:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195541;
-        bh=K3uQlaV6PSVmkRvLY0TLcL34gXqHhh7+i0F5l/TLHtc=;
+        s=default; t=1579195545;
+        bh=Er9b+hegv+QekdwOFBDM4vu7+PTEEUZ/66FnFh24PYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A80b3Lmp+4GU1OSGbxMj+yP7MVNf7Ycw4SQgdq87YiP9a9NqeMkusIwxu/QQ3aMAy
-         ZnfDa0ItWpUKLPZoI5SEPHOvU/ynpjEm+cQ9YNMGAQfa2Ies+q+8AYg539Gc2sEv8N
-         r0YbrZwXNyjNM+HQTDJSeBKdiwfyz0Te77Cdz+Ng=
+        b=q8ciJSxw8T6ndVSKFL7k1QZLSfQtAShW25VqUgH68UPB7eZWmIHygweCX/Mk5HQ9F
+         QDEP/zCCm7Tysy6y8zLxZc2WU8PvE2RFamLSccNCQfePI1bDbGu2qZrWfendp0xIzd
+         Ee1ch0C4iVqjxiPzzFpPGI1o+ZIViglTQCrfoMNQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Sasha Levin <sashal@kernel.org>, xen-devel@lists.xenproject.org
-Subject: [PATCH AUTOSEL 4.14 134/371] xen, cpu_hotplug: Prevent an out of bounds access
-Date:   Thu, 16 Jan 2020 12:20:06 -0500
-Message-Id: <20200116172403.18149-77-sashal@kernel.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 137/371] media: ivtv: update *pos correctly in ivtv_read_pos()
+Date:   Thu, 16 Jan 2020 12:20:09 -0500
+Message-Id: <20200116172403.18149-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,34 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 201676095dda7e5b31a5e1d116d10fc22985075e ]
+[ Upstream commit f8e579f3ca0973daef263f513da5edff520a6c0d ]
 
-The "cpu" variable comes from the sscanf() so Smatch marks it as
-untrusted data.  We can't pass a higher value than "nr_cpu_ids" to
-cpu_possible() or it results in an out of bounds access.
+We had intended to update *pos, but the current code is a no-op.
 
-Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
+Fixes: 1a0adaf37c30 ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/cpu_hotplug.c | 2 +-
+ drivers/media/pci/ivtv/ivtv-fileops.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
-index b1357aa4bc55..f192b6f42da9 100644
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -54,7 +54,7 @@ static int vcpu_online(unsigned int cpu)
- }
- static void vcpu_hotplug(unsigned int cpu)
- {
--	if (!cpu_possible(cpu))
-+	if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
- 		return;
+diff --git a/drivers/media/pci/ivtv/ivtv-fileops.c b/drivers/media/pci/ivtv/ivtv-fileops.c
+index c9bd018e53de..e2b19c3eaa87 100644
+--- a/drivers/media/pci/ivtv/ivtv-fileops.c
++++ b/drivers/media/pci/ivtv/ivtv-fileops.c
+@@ -420,7 +420,7 @@ static ssize_t ivtv_read_pos(struct ivtv_stream *s, char __user *ubuf, size_t co
  
- 	switch (vcpu_online(cpu)) {
+ 	IVTV_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
+ 	if (rc > 0)
+-		pos += rc;
++		*pos += rc;
+ 	return rc;
+ }
+ 
 -- 
 2.20.1
 
