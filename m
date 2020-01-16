@@ -2,145 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1020113EA2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:43:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4C413EA2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:43:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405849AbgAPRmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:42:47 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9643 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405840AbgAPRmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:42:43 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B466F908C1939F7E015F;
-        Fri, 17 Jan 2020 01:42:40 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 Jan 2020 01:42:31 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] irqchip/mbigen: Set driver .suppress_bind_attrs to avoid remove problems
-Date:   Fri, 17 Jan 2020 01:38:43 +0800
-Message-ID: <1579196323-180137-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S2393592AbgAPRm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:42:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405855AbgAPRmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:42:54 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C14020728;
+        Thu, 16 Jan 2020 17:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579196573;
+        bh=SjvVj+je/HMlB1NOEWTRrKGFRifaS0pbyWGdTMOoztQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=B2B8Az3+sDeZ9fW1Jnz/IhYHzHvoqrauzA27Wrma3JznGfVnBFEPuGMLJAltD0166
+         qPAcU2XtFF8vI++qoZZcy9bRKgzW1/tLob+4cPCpHz5sNGLFR/Z8RYcozgt+MCFD4N
+         Jt+wpTTKe/11r7Woqa/T2YgOtSrE8zs/9JhS76I8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.4 001/174] drm/virtio: fix bounds check in virtio_gpu_cmd_get_capset()
+Date:   Thu, 16 Jan 2020 12:39:58 -0500
+Message-Id: <20200116174251.24326-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following crash can be seen for setting
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y for DT FW (which some people still use):
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hisilicon MBIGEN-V2 60080000.interrupt-controller: Failed to create mbi-gen irqdomain
-Hisilicon MBIGEN-V2: probe of 60080000.interrupt-controller failed with error -12
+[ Upstream commit 09c4b49457434fa74749ad6194ef28464d9f5df9 ]
 
-[...]
+This doesn't affect runtime because in the current code "idx" is always
+valid.
 
-Unable to handle kernel paging request at virtual address 0000000000005008
- Mem abort info:
-   ESR = 0x96000004
-   EC = 0x25: DABT (current EL), IL = 32 bits
-   SET = 0, FnV = 0
-   EA = 0, S1PTW = 0
- Data abort info:
-   ISV = 0, ISS = 0x00000004
-   CM = 0, WnR = 0
- user pgtable: 4k pages, 48-bit VAs, pgdp=0000041fb9990000
- [0000000000005008] pgd=0000000000000000
- Internal error: Oops: 96000004 [#1] PREEMPT SMP
- Modules linked in:
- CPU: 7 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc6-00002-g3fc42638a506-dirty #1622
- Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
- pstate: 40000085 (nZcv daIf -PAN -UAO)
- pc : mbigen_set_type+0x38/0x60
- lr : __irq_set_trigger+0x6c/0x188
- sp : ffff800014b4b400
- x29: ffff800014b4b400 x28: 0000000000000007
- x27: 0000000000000000 x26: 0000000000000000
- x25: ffff041fd83bd0d4 x24: ffff041fd83bd188
- x23: 0000000000000000 x22: ffff80001193ce00
- x21: 0000000000000004 x20: 0000000000000000
- x19: ffff041fd83bd000 x18: ffffffffffffffff
- x17: 0000000000000000 x16: 0000000000000000
- x15: ffff8000119098c8 x14: ffff041fb94ec91c
- x13: ffff041fb94ec1a1 x12: 0000000000000030
- x11: 0101010101010101 x10: 0000000000000040
- x9 : 0000000000000000 x8 : ffff041fb98c6680
- x7 : ffff800014b4b380 x6 : ffff041fd81636c8
- x5 : 0000000000000000 x4 : 000000000000025f
- x3 : 0000000000005000 x2 : 0000000000005008
- x1 : 0000000000000004 x0 : 0000000080000000
- Call trace:
-  mbigen_set_type+0x38/0x60
-  __setup_irq+0x744/0x900
-  request_threaded_irq+0xe0/0x198
-  pcie_pme_probe+0x98/0x118
-  pcie_port_probe_service+0x38/0x78
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  __device_attach_driver+0x90/0xb0
-  bus_for_each_drv+0x64/0xc8
-  __device_attach+0xd8/0x138
-  device_initial_probe+0x10/0x18
-  bus_probe_device+0x90/0x98
-  device_add+0x4c4/0x770
-  device_register+0x1c/0x28
-  pcie_port_device_register+0x1e4/0x4f0
-  pcie_portdrv_probe+0x34/0xd8
-  local_pci_probe+0x3c/0xa0
-  pci_device_probe+0x128/0x1c0
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  __device_attach_driver+0x90/0xb0
-  bus_for_each_drv+0x64/0xc8
-  __device_attach+0xd8/0x138
-  device_attach+0x10/0x18
-  pci_bus_add_device+0x4c/0xb8
-  pci_bus_add_devices+0x38/0x88
-  pci_host_probe+0x3c/0xc0
-  pci_host_common_probe+0xf0/0x208
-  hisi_pcie_almost_ecam_probe+0x24/0x30
-  platform_drv_probe+0x50/0xa0
-  really_probe+0xa0/0x3e0
-  driver_probe_device+0x58/0x100
-  device_driver_attach+0x6c/0x90
-  __driver_attach+0x84/0xc8
-  bus_for_each_dev+0x74/0xc8
-  driver_attach+0x20/0x28
-  bus_add_driver+0x148/0x1f0
-  driver_register+0x60/0x110
-  __platform_driver_register+0x40/0x48
-  hisi_pcie_almost_ecam_driver_init+0x1c/0x24
+First, we read from "vgdev->capsets[idx].max_size" before checking
+whether "idx" is within bounds.  And secondly the bounds check is off by
+one so we could end up reading one element beyond the end of the
+vgdev->capsets[] array.
 
-The specific problem here is that the mbigen driver real probe has failed
-as the mbigen_of_create_domain()->of_platform_device_create() call fails,
-the reason for that being that we never destroyed the platform device
-created during the remove test dry run and there is some conflict.
+Fixes: 62fb7a5e1096 ("virtio-gpu: add 3d/virgl support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180704094250.m7sgvvzg3dhcvv3h@kili.mountain
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/virtio/virtgpu_vq.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Since we generally would never want to unbind this driver, and to save
-adding a driver tear down path for that, just set the driver
-.suppress_bind_attrs member to avoid this possibility.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
-index 3f09f658e8e2..6b566bba263b 100644
---- a/drivers/irqchip/irq-mbigen.c
-+++ b/drivers/irqchip/irq-mbigen.c
-@@ -374,6 +374,7 @@ static struct platform_driver mbigen_platform_driver = {
- 		.name		= "Hisilicon MBIGEN-V2",
- 		.of_match_table	= mbigen_of_match,
- 		.acpi_match_table = ACPI_PTR(mbigen_acpi_match),
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe			= mbigen_device_probe,
- };
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index a1b3ea1ccb65..772a5a3b0ce1 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -681,11 +681,11 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ {
+ 	struct virtio_gpu_get_capset *cmd_p;
+ 	struct virtio_gpu_vbuffer *vbuf;
+-	int max_size = vgdev->capsets[idx].max_size;
++	int max_size;
+ 	struct virtio_gpu_drv_cap_cache *cache_ent;
+ 	void *resp_buf;
+ 
+-	if (idx > vgdev->num_capsets)
++	if (idx >= vgdev->num_capsets)
+ 		return -EINVAL;
+ 
+ 	if (version > vgdev->capsets[idx].max_version)
+@@ -695,6 +695,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ 	if (!cache_ent)
+ 		return -ENOMEM;
+ 
++	max_size = vgdev->capsets[idx].max_size;
+ 	cache_ent->caps_cache = kmalloc(max_size, GFP_KERNEL);
+ 	if (!cache_ent->caps_cache) {
+ 		kfree(cache_ent);
 -- 
-2.17.1
+2.20.1
 
