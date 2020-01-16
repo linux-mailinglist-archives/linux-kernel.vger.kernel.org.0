@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1234F13F0BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FFF13F0C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391610AbgAPSXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:23:43 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45528 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436563AbgAPSXh (ORCPT
+        id S2436632AbgAPSYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:24:20 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54926 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732415AbgAPSXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:23:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j42so20146710wrj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:35 -0800 (PST)
+        Thu, 16 Jan 2020 13:23:38 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b19so4779988wmj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EH2Mlebs2h/AJbindEkCjYYUOjO3EITRwzjTXRLMFFA=;
-        b=J5zSAd9eVXpfMh3JNdcZH2r72kKVb0yZkdxGbNtKTci8omN9fk0NiDXfbE+0IG6QK0
-         aIkbrdwMAuNeyJSXHsOOU+/G5oH8wPfPlv2W9J9PM7E8tT3PtKhqG+XfsNl+FSuyfi79
-         tyPnpxN58+F3EkyoXNcDdQU4IW0D+vNw/7im8CZ8CroXuEPOTZXaFDFKv9C2NyF1IGD6
-         bFozHcr3GUcpq0ACe05jT3KBGcT7ds4GX3nTwv6U0WOLg0jk4nU0QJAcHmZk6e4Vnq6Y
-         CvN8qk9spP9dVF8eelhYDKPcl22zNVPEk8WZvn0JL168qqs+r9gFLkYCmQT2EXXq7A/t
-         iDkQ==
+        bh=4U0uZCU/Rr6PoKH6pSzWhzEkWNaZ8xO84k3nCsnn5OE=;
+        b=ZyJJq+J3IE1qdbpxmR4r7mAu2xCxOpzyZwe1Nor4fwHVMuNTa1h+oCzTa9pqupE4P5
+         uLfwsK7ECwKe1yfT8tZVRI32gTINOnXMcsdjBDJyvK3m/yVtcN1Z21yPH+82SOHzxdEd
+         rJEEVbzxbyMCscSnoq9son2YPYdPRFa6EWcllUu8b+NXp/MDzgXBnIlacI3Uo1R8SWKu
+         mmr3QrWdQ8A6hIx8d2eu/spJb69OG+LPYbqn/A45Bsdmh9gwsd5CAPvCPUFN/MZly0yQ
+         Vqn4/30jBdLOlgTo2j4atlZj6x5IHeQp3DXXI3lJtUONW3AXUR3YZZRPboAt7nV6MK4r
+         r+dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EH2Mlebs2h/AJbindEkCjYYUOjO3EITRwzjTXRLMFFA=;
-        b=aq65918pVNGtnfrwCsqSyXokQHfTAhtf45F7NPiN62vkLit4ZGvS45VIxkUhSWqEBO
-         u+8WClcwomPmzCiu4t6TFwZ4n4ILVpd7VriY6IuL5GhATzVNO3FCAfstVL7udJjFIfq7
-         qFFe9Q7GhLb7kRWlXDVMoVBu0bgqta2A/6SX68oghF8/MkweWzEBZid24wCPCGwUzw3t
-         7Sz2gzU5dH0vwxQ/VSjBSdllzGKY8ewVdRBlxVKYbvYiWPfA9L4LTl+rCbSYwGKLg0hM
-         /b7HIeH+aPwoSRGmVwm0I5dDjy/dzt9WXVb/JXwwM8nqDWWV4a5jmRxIu+lz4tNlx1vi
-         NVTg==
-X-Gm-Message-State: APjAAAVa87LQNIbPB7J2NEPhPOIOVjcu+3C4sMMaoCkjSCwOoH6SDIpM
-        uSGh2xop6frVz1uaypega+6byrzzKnSdMw==
-X-Google-Smtp-Source: APXvYqw1HruZQ+bfPnoJIZTkfncXPklOofg9wHJg2ToMu2p9yNTQ1Sf4zwGU5X8hDfZjrGDAEi66kg==
-X-Received: by 2002:a5d:5708:: with SMTP id a8mr4824552wrv.79.1579199014934;
-        Thu, 16 Jan 2020 10:23:34 -0800 (PST)
+        bh=4U0uZCU/Rr6PoKH6pSzWhzEkWNaZ8xO84k3nCsnn5OE=;
+        b=ZS6Fg/R28B/B0gzRXxSx/rhgYUI3GM9Az213mTZxrsOUSYhzflcwsoeilFrPqo7JF2
+         /XXsvJdM9jZUTisBNbWod+n2Bpa8rp1xT1AichIrBY1uXVcv5PbRR324O26jJ/o8wuZJ
+         6cgSikPM6eJEXSuujgOdpeXoNOjsFycS6hjSrnEBP6wYkPib77No50sRMtydxjXTcMyg
+         oNitXqJ9dLE8OdKinWEQDlwE0ZL4MqtMNnmgFwydZRoGBrbwJEV8hff6i9MnVZQPmam8
+         twodYnRtVtOIeaOZKnh5svG8GraxL68suMj+9+KEOgo3SYNvZiuUB/dFlRb9NkAz3upC
+         m/ow==
+X-Gm-Message-State: APjAAAWfXlw+8QR0qSTQk5TNSvlRT7H6wvX2grnhphgpln5WeamrH0fk
+        HtwhaH/DgelSzlCii4NCEk1UcsTzRI92vQ==
+X-Google-Smtp-Source: APXvYqw+adYtVGwSEdwljN1ecGJm+9fFPw1JMr59kdZvVBUM2PdyipL40luf6mBM0jscUkRTI6fUwg==
+X-Received: by 2002:a7b:c84a:: with SMTP id c10mr290966wml.157.1579199016261;
+        Thu, 16 Jan 2020 10:23:36 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.33
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:34 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:35 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 09/17] clocksource/drivers/em_sti: Convert to devm_platform_ioremap_resource
-Date:   Thu, 16 Jan 2020 19:22:56 +0100
-Message-Id: <20200116182304.4926-9-daniel.lezcano@linaro.org>
+Subject: [PATCH 10/17] clocksource/drivers/em_sti: Fix variable declaration in em_sti_probe
+Date:   Thu, 16 Jan 2020 19:22:57 +0100
+Message-Id: <20200116182304.4926-10-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -61,39 +61,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-Use devm_platform_ioremap_resource() to simplify code, which
-wraps 'platform_get_resource' and 'devm_ioremap_resource' in a
-single helper.
+'irq' and 'ret' are variables of the same type and there is no
+need to use two lines.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191221173027.30716-2-tiny.windzz@gmail.com
+Link: https://lore.kernel.org/r/20191221173027.30716-3-tiny.windzz@gmail.com
 ---
- drivers/clocksource/em_sti.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clocksource/em_sti.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/clocksource/em_sti.c b/drivers/clocksource/em_sti.c
-index 9039df4f90e2..086fd5d80b99 100644
+index 086fd5d80b99..ab190dffb1ed 100644
 --- a/drivers/clocksource/em_sti.c
 +++ b/drivers/clocksource/em_sti.c
-@@ -279,7 +279,6 @@ static void em_sti_register_clockevent(struct em_sti_priv *p)
+@@ -279,8 +279,7 @@ static void em_sti_register_clockevent(struct em_sti_priv *p)
  static int em_sti_probe(struct platform_device *pdev)
  {
  	struct em_sti_priv *p;
--	struct resource *res;
- 	int irq;
- 	int ret;
+-	int irq;
+-	int ret;
++	int irq, ret;
  
-@@ -295,8 +294,7 @@ static int em_sti_probe(struct platform_device *pdev)
- 		return irq;
- 
- 	/* map memory, let base point to the STI instance */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	p->base = devm_ioremap_resource(&pdev->dev, res);
-+	p->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(p->base))
- 		return PTR_ERR(p->base);
- 
+ 	p = devm_kzalloc(&pdev->dev, sizeof(*p), GFP_KERNEL);
+ 	if (p == NULL)
 -- 
 2.17.1
 
