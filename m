@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CD3713F609
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8AB613F606
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbgAPRGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:06:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
+        id S2388844AbgAPRGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388668AbgAPRFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:54 -0500
+        id S2388496AbgAPRFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:05:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D805217F4;
-        Thu, 16 Jan 2020 17:05:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F22652087E;
+        Thu, 16 Jan 2020 17:05:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194353;
-        bh=nPZ1XTnaEG3wsEn3/9GneQYMObYjOmeffnxVFFkkbUg=;
+        s=default; t=1579194354;
+        bh=r0Hju8Iig33dMEeRa4n6KM+9Zi+E5Jv2xj51KuuocEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DCaTg6b06C8KN3Qmb0E9olqbC8JMT6V2z6zvw+g9BPtqdJFAGMJawTUgsVS64CZtO
-         LcFmBwLDU3PTcii4PpN9Lz/o0ipKfaRWQrnI5SKkXoeX6ILkxH5uG4mOP5idOuZt4X
-         Rt/grCc9LZGu+9yWtecoT2h0KZpDZcoo6a5cdUSI=
+        b=C6Eo7UUAdi9HXdazDytq3SVgvPw1KYLPhvoYeJsLFD1sIhiQ6OfSPct4CBk2huNtu
+         he4s7cj/5x7JsHZGPtsPyhwCxljNA5mkmbTAj/3dkqgkn2jjVqOzo40rapZc5OPkzK
+         nq0nUO+crNHZe4gprSdM7po0Gnv+0lUW6fb/Yz7g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 292/671] PCI: rockchip: Fix rockchip_pcie_ep_assert_intx() bitwise operations
-Date:   Thu, 16 Jan 2020 11:58:50 -0500
-Message-Id: <20200116170509.12787-29-sashal@kernel.org>
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 293/671] net: hns3: fix for vport->bw_limit overflow problem
+Date:   Thu, 16 Jan 2020 11:58:51 -0500
+Message-Id: <20200116170509.12787-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -47,40 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit c577f4a5a08bb9677e12ddafb62e2f3a901de87f ]
+[ Upstream commit 2566f10676ba996b745e138f54f3e2f974311692 ]
 
-Currently the bitwise operations on the u16 variable 'status' with
-the setting ROCKCHIP_PCIE_EP_CMD_STATUS_IS are incorrect because
-ROCKCHIP_PCIE_EP_CMD_STATUS_IS is 1UL<<19 which is wider than the
-u16 variable.
+When setting vport->bw_limit to hdev->tm_info.pg_info[0].bw_limit
+in hclge_tm_vport_tc_info_update, vport->bw_limit can be as big as
+HCLGE_ETHER_MAX_RATE (100000), which can not fit into u16 (65535).
 
-Fix this by making status a u32.
+So this patch fixes it by using u32 for vport->bw_limit.
 
-Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
+Fixes: 848440544b41 ("net: hns3: Add support of TX Scheduler & Shaper to HNS3 driver")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-rockchip-ep.c | 2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-index b8163c56a142..caf34661d38d 100644
---- a/drivers/pci/controller/pcie-rockchip-ep.c
-+++ b/drivers/pci/controller/pcie-rockchip-ep.c
-@@ -350,7 +350,7 @@ static void rockchip_pcie_ep_assert_intx(struct rockchip_pcie_ep *ep, u8 fn,
- 	struct rockchip_pcie *rockchip = &ep->rockchip;
- 	u32 r = ep->max_regions - 1;
- 	u32 offset;
--	u16 status;
-+	u32 status;
- 	u8 msg_code;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 260b1e779690..d14b7018fdf3 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -600,7 +600,7 @@ struct hclge_vport {
+ 	u16 alloc_rss_size;
  
- 	if (unlikely(ep->irq_pci_addr != ROCKCHIP_PCIE_EP_PCI_LEGACY_IRQ_ADDR ||
+ 	u16 qs_offset;
+-	u16 bw_limit;		/* VSI BW Limit (0 = disabled) */
++	u32 bw_limit;		/* VSI BW Limit (0 = disabled) */
+ 	u8  dwrr;
+ 
+ 	struct hclge_tx_vtag_cfg  txvlan_cfg;
 -- 
 2.20.1
 
