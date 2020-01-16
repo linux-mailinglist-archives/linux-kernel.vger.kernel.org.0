@@ -2,184 +2,524 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 131F913D326
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:32:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC3913D348
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:49:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730951AbgAPEcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 23:32:43 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:60023 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbgAPEcm (ORCPT
+        id S1730953AbgAPEtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 23:49:05 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39542 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729138AbgAPEtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 23:32:42 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200116043240epoutp035d4bd46835c5b5e265a2796f1e596913~qQ8tfvqNO0618406184epoutp03p
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 04:32:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200116043240epoutp035d4bd46835c5b5e265a2796f1e596913~qQ8tfvqNO0618406184epoutp03p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579149160;
-        bh=CWPW24OCUknxZ2lCY455bTwF3xNcH4PnzlBG80rCqlY=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=m+VmBaBuij+n8tC/YSFQ8bFA1DCJ6k7oXOu7DAu1WcmSMTCR7wr4AXeHLD73iwNkr
-         TUscwWEnklGtvk012Rs2qHibBsfSkVjX0iER85pXuTLFpTuHPN/0c/9jjfc9w5z6i+
-         x8icHfKySa0Ksg3OvMJqHuuWVVovb62NfekJjNNk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200116043239epcas1p176bc440c314dcb086db9fdf3dbf52ce0~qQ8tO4SkO1553415534epcas1p1U;
-        Thu, 16 Jan 2020 04:32:39 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47yrs12sHczMqYm8; Thu, 16 Jan
-        2020 04:32:37 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D9.09.52419.D57EF1E5; Thu, 16 Jan 2020 13:32:29 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f~qQ8i6Gg4s1971019710epcas1p1F;
-        Thu, 16 Jan 2020 04:32:28 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200116043228epsmtrp10889d82a7824a3fb4d60216a3639c3e2~qQ8i5jBVZ3239732397epsmtrp1Y;
-        Thu, 16 Jan 2020 04:32:28 +0000 (GMT)
-X-AuditID: b6c32a37-5b7ff7000001ccc3-95-5e1fe75d5236
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        22.BE.06569.C57EF1E5; Thu, 16 Jan 2020 13:32:28 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200116043228epsmtip2c18749c49c055ce65676c657b5c1aef9~qQ8iyasE_2995729957epsmtip2g;
-        Thu, 16 Jan 2020 04:32:28 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     cw00.choi@samsung.com, chanwoo@kernel.org, myungjoo.ham@samsung.com
-Subject: [PATCH] extcon: Remove unneeded extern keyword from extcon.h
-Date:   Thu, 16 Jan 2020 13:39:47 +0900
-Message-Id: <20200116043947.12556-1-cw00.choi@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7bCmrm7sc/k4g813RC0m3rjCYnH9y3NW
-        i8u75rBZ3G5cwebA4rFpVSebR9+WVYwenzfJBTBHZdtkpCampBYppOYl56dk5qXbKnkHxzvH
-        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
-        pRak5BRYFugVJ+YWl+al6yXn51oZGhgYmQIVJmRnbJy+kbmgQaHi9o9n7A2MLdJdjJwcEgIm
-        Ere+XmMDsYUEdjBKLN2k0MXIBWR/YpRYtfw1I4TzjVFiyZT3bDAd70+th0rsZZQ4fGAvM0T7
-        F0aJy79iQGw2AS2J/S9ugDWICChIbO59xgpiMwu4S3z40Q9WLyzgKnH7SSsLiM0ioCpxcNZU
-        sDivgJXE3d3vWCCWyUus3nCAGWSZhMBDVolHK68xQSRcJD513maEsIUlXh3fwg5hS0m87G+D
-        sqslVp48wgbR3MEosWX/BVaIhLHE/qWTgQZxAF2kKbF+lz5EWFFi5++5jBCH8km8+9rDClIi
-        IcAr0dEmBFGiLHH5wV2oEyQlFrd3QgPFQ2Jv1xUmSDjESrx+Po99AqPsLIQFCxgZVzGKpRYU
-        56anFhsWGCNH0iZGcALSMt/BuOGczyFGAQ5GJR7ejD9ycUKsiWXFlbmHGCU4mJVEeE/OkI0T
-        4k1JrKxKLcqPLyrNSS0+xGgKDL2JzFKiyfnA5JhXEm9oamRsbGxhYmhmamioJM7rugBojkB6
-        YklqdmpqQWoRTB8TB6dUA2Nb/nbxc4uetCVP00xx2OuxpaTuUOTD2ZtPv3/h4bmlojP44dtn
-        ElOjBFge8rzh/1U+q++6z3lT7QS2wHUbXXLz3k9k1zPk35pveGT3zNJQ4xSR47ydHyJnZi54
-        59MrNElZ6RDz1DJTV4Xua1vs44S2MUh8LuZMFPKtkZ7uo36upmBltIDRCyWW4oxEQy3mouJE
-        AEaChVVWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJMWRmVeSWpSXmKPExsWy7bCSvG7Mc/k4g2UftSwm3rjCYnH9y3NW
-        i8u75rBZ3G5cwebA4rFpVSebR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGVsnL6RuaBBoeL2
-        j2fsDYwt0l2MnBwSAiYS70+tZ+xi5OIQEtjNKHGq6yY7REJSYtrFo8xdjBxAtrDE4cPFEDWf
-        GCX6nh1iA6lhE9CS2P/iBpgtIqAgsbn3GSuIzSzgLdG7+wnYHGEBV4nbT1pZQGwWAVWJg7Om
-        MoPYvAJWEnd3v2OB2CUvsXrDAeYJjDwLGBlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefn
-        bmIEh4SW1g7GEyfiDzEKcDAq8fAe+CcXJ8SaWFZcmXuIUYKDWUmE9+QM2Tgh3pTEyqrUovz4
-        otKc1OJDjNIcLErivPL5xyKFBNITS1KzU1MLUotgskwcnFINjJWh1t9iJJ+d/z61J0DhdWrI
-        mm6fpVJxH3rZXRz8Z965Wl4w0SpLj+/n6lqX9dU6Si2CC4RjlIV5cixipjNd283Ytc/JUHFG
-        iVTvoeJm85bplczNgtv/xe/fYhUexfcyT7SoPsn/zdHWl5aGG44sPHZ/7ZOJguFVYWEPN9/V
-        232Jw5ojV5hZiaU4I9FQi7moOBEAXpi7mAUCAAA=
-X-CMS-MailID: 20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f
-References: <CGME20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f@epcas1p1.samsung.com>
+        Wed, 15 Jan 2020 23:49:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b137so9262253pga.6;
+        Wed, 15 Jan 2020 20:49:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NNgC8URUObjPh/YC7hnq+98De8oAXFfUTUmW2MkxkCU=;
+        b=QW4UoIBlHOeUYdmwwg4VZzqc/0D2TnvYNCLrXm55cHxmPxdXBzBJd0ppFom6yWzzc6
+         HvuPm8xa1Re6vu2y4hplGebo0+S2NZYFa+h3iiOvpx6B2BKfpF4F45Pcdd/Ie9hWj3Di
+         4w4u/gllh6Zw9sj46k9nWJvpZ5LVvGvcc/DxHJX9HsY3RNHRzm8DkSRKAx/swVRKlVJZ
+         LufkY9SasMbMB59Kp60AbBx7NTHuHd6fSV8ua/jheOS6pbhVGgyLH2VYOsMr24m1LG1j
+         OUeh5IsKVAi19kt9mEd8O2R/ri17PCQNT3rAm4fDMmG6qFdpONypzaLDz0vo3kAhHzET
+         7N4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NNgC8URUObjPh/YC7hnq+98De8oAXFfUTUmW2MkxkCU=;
+        b=EWbzagu4UefrYTNZK4RvCaL6GDumxxuekE4OEr7pgXOBXzbBRjhwsoRqr+cmpuYO65
+         3j/ZhLPXERpZoefhRq3dRz0P6/FuS55vGJET1VpYFoEy1BbkXsNE9Q+ylSSqmbwE9qNa
+         XItCvDPBItRIW8qSs9lmUlY5p1wjtnlgVHYiCBL6Jz2L8uGXbiySqspsEwa89iDGj95u
+         73BxZNSHbAbAh9he0GVxbuxUQ2W/OqeHRQOUjggnjHrziukfh0TQPaYpV0HGqg1Gp0L0
+         mSgKvOILOZvaRgHLKYouTi+z8gQNDKe8Zs63YoxEFcqqsQPG5ysTJ5y5Jl9ZjzFY3IrG
+         Mfxw==
+X-Gm-Message-State: APjAAAUqtodvEcfOXmA3WhvK6fOGzONUY5sUF/zQRMWePg6+arCRxpCT
+        KA8xz0nJWRMgV2RKz2o/zijd5O45
+X-Google-Smtp-Source: APXvYqxTTBAaexaKv26C0+W/misLuI+Zah1nh40YPpOBtcZXizsfZpT//0wBGWNjncbK4BswyNGIUA==
+X-Received: by 2002:a62:296:: with SMTP id 144mr35646687pfc.120.1579150142883;
+        Wed, 15 Jan 2020 20:49:02 -0800 (PST)
+Received: from localhost.localdomain (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id w11sm24173488pfi.77.2020.01.15.20.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 20:49:02 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     cphealy@gmail.com, rmk+kernel@armlinux.org.uk,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v3] net: phy: Maintain MDIO device and bus statistics
+Date:   Wed, 15 Jan 2020 20:48:50 -0800
+Message-Id: <20200116044856.1819-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'extern' keyword is unneeded in extcon.h because public header file
-of extcon defines the function prototype.
+We maintain global statistics for an entire MDIO bus, as well as broken
+down, per MDIO bus address statistics. Given that it is possible for
+MDIO devices such as switches to access MDIO bus addresses for which
+there is not a mdio_device instance created (therefore not a a
+corresponding device directory in sysfs either), we also maintain
+per-address statistics under the statistics folder. The layout looks
+like this:
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+/sys/class/mdio_bus/../statistics/
+	transfers
+	errrors
+	writes
+	reads
+	transfers_<addr>
+	errors_<addr>
+	writes_<addr>
+	reads_<addr>
+
+When a mdio_device instance is registered, a statistics/ folder is
+created with the tranfers, errors, writes and reads attributes which
+point to the appropriate MDIO bus statistics structure.
+
+Statistics are 64-bit unsigned quantities and maintained through the
+u64_stats_sync.h helper functions.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- include/linux/extcon.h | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Changes in v3:
 
-diff --git a/include/linux/extcon.h b/include/linux/extcon.h
-index 2bdf643d8593..1b1d77ec2114 100644
---- a/include/linux/extcon.h
-+++ b/include/linux/extcon.h
-@@ -170,7 +170,7 @@ struct extcon_dev;
-  * Following APIs get the connected state of each external connector.
-  * The 'id' argument indicates the defined external connector.
-  */
--extern int extcon_get_state(struct extcon_dev *edev, unsigned int id);
-+int extcon_get_state(struct extcon_dev *edev, unsigned int id);
+- make extensive use of dev_ext_attribute which allows us to reduce
+  the number of "show" functions down to only two, this represents a
+  51.57% reduction in text segment compared to v2. We store the
+  address and the field offset from within the structure int the
+  dev_ext_attribute "var" field and declare our structures anonymously
+- greatly remove the use of macros to ease code maintenance
+
+Changes in v2:
+
+- tracked per MDIO address statististics in separate attributes
+- global statistics sum all per MDIO address statistics instead of
+  requiring another stats structure
+
+ Documentation/ABI/testing/sysfs-bus-mdio |  63 ++++++
+ drivers/net/phy/mdio_bus.c               | 251 ++++++++++++++++++++++-
+ include/linux/phy.h                      |  11 +
+ 3 files changed, 323 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-mdio
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-mdio b/Documentation/ABI/testing/sysfs-bus-mdio
+new file mode 100644
+index 000000000000..da86efc7781b
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-mdio
+@@ -0,0 +1,63 @@
++What:          /sys/bus/mdio_bus/devices/.../statistics/
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		This folder contains statistics about global and per
++		MDIO bus address statistics.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/transfers
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of transfers for this MDIO bus.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/errors
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of transfer errors for this MDIO bus.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/writes
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of write transactions for this MDIO bus.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/reads
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of read transactions for this MDIO bus.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/transfers_<addr>
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of transfers for this MDIO bus address.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/errors_<addr>
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of transfer errors for this MDIO bus address.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/writes_<addr>
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of write transactions for this MDIO bus address.
++
++What:          /sys/bus/mdio_bus/devices/.../statistics/reads_<addr>
++Date:          January 2020
++KernelVersion: 5.6
++Contact:       netdev@vger.kernel.org
++Description:
++		Total number of read transactions for this MDIO bus address.
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index 8d753bb07227..9bb9f37f21dc 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -158,9 +158,11 @@ struct mii_bus *mdiobus_alloc_size(size_t size)
+ 	if (size)
+ 		bus->priv = (void *)bus + aligned_size;
  
+-	/* Initialise the interrupts to polling */
+-	for (i = 0; i < PHY_MAX_ADDR; i++)
++	/* Initialise the interrupts to polling and 64-bit seqcounts */
++	for (i = 0; i < PHY_MAX_ADDR; i++) {
+ 		bus->irq[i] = PHY_POLL;
++		u64_stats_init(&bus->stats[i].syncp);
++	}
+ 
+ 	return bus;
+ }
+@@ -249,9 +251,215 @@ static void mdiobus_release(struct device *d)
+ 	kfree(bus);
+ }
+ 
++struct mdio_bus_stat_attr {
++	int addr;
++	unsigned int field_offset;
++};
++
++static u64 mdio_bus_get_stat(struct mdio_bus_stats *s, unsigned int offset)
++{
++	const char *p = (const char *)s + offset;
++	unsigned int start;
++	u64 val = 0;
++
++	do {
++		start = u64_stats_fetch_begin(&s->syncp);
++		val = u64_stats_read((const u64_stats_t *)p);
++	} while (u64_stats_fetch_retry(&s->syncp, start));
++
++	return val;
++}
++
++static u64 mdio_bus_get_global_stat(struct mii_bus *bus, unsigned int offset)
++{
++	unsigned int i;
++	u64 val = 0;
++
++	for (i = 0; i < PHY_MAX_ADDR; i++)
++		val += mdio_bus_get_stat(&bus->stats[i], offset);
++
++	return val;
++}
++
++static ssize_t mdio_bus_stat_field_show(struct device *dev,
++					struct device_attribute *attr,
++					char *buf)
++{
++	struct mii_bus *bus = to_mii_bus(dev);
++	struct mdio_bus_stat_attr *sattr;
++	struct dev_ext_attribute *eattr;
++	u64 val;
++
++	eattr = container_of(attr, struct dev_ext_attribute, attr);
++	sattr = eattr->var;
++
++	if (sattr->addr < 0)
++		val = mdio_bus_get_global_stat(bus, sattr->field_offset);
++	else
++		val = mdio_bus_get_stat(&bus->stats[sattr->addr],
++					sattr->field_offset);
++
++	return sprintf(buf, "%llu\n", val);
++}
++
++static ssize_t mdio_bus_device_stat_field_show(struct device *dev,
++					       struct device_attribute *attr,
++					       char *buf)
++{
++	struct mdio_device *mdiodev = to_mdio_device(dev);
++	struct mii_bus *bus = mdiodev->bus;
++	struct mdio_bus_stat_attr *sattr;
++	struct dev_ext_attribute *eattr;
++	int addr = mdiodev->addr;
++	u64 val;
++
++	eattr = container_of(attr, struct dev_ext_attribute, attr);
++	sattr = eattr->var;
++
++	val = mdio_bus_get_stat(&bus->stats[addr], sattr->field_offset);
++
++	return sprintf(buf, "%llu\n", val);
++}
++
++#define MDIO_BUS_STATS_ATTR_DECL(field, file)				\
++static struct dev_ext_attribute dev_attr_mdio_bus_##field = {		\
++	.attr = { .attr = { .name = file, .mode = 0444 },		\
++		     .show = mdio_bus_stat_field_show,			\
++	},								\
++	.var = &((struct mdio_bus_stat_attr) {				\
++		-1, offsetof(struct mdio_bus_stats, field)		\
++	}),								\
++};									\
++static struct dev_ext_attribute dev_attr_mdio_bus_device_##field = {	\
++	.attr = { .attr = { .name = file, .mode = 0444 },		\
++		     .show = mdio_bus_device_stat_field_show,		\
++	},								\
++	.var = &((struct mdio_bus_stat_attr) {				\
++		-1, offsetof(struct mdio_bus_stats, field)		\
++	}),								\
++};
++
++#define MDIO_BUS_STATS_ATTR(field)					\
++	MDIO_BUS_STATS_ATTR_DECL(field, __stringify(field))
++
++MDIO_BUS_STATS_ATTR(transfers);
++MDIO_BUS_STATS_ATTR(errors);
++MDIO_BUS_STATS_ATTR(writes);
++MDIO_BUS_STATS_ATTR(reads);
++
++#define MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr, file)		\
++static struct dev_ext_attribute dev_attr_mdio_bus_addr_##field##_##addr = { \
++	.attr = { .attr = { .name = file, .mode = 0444 },		\
++		     .show = mdio_bus_stat_field_show,			\
++	},								\
++	.var = &((struct mdio_bus_stat_attr) {				\
++		addr, offsetof(struct mdio_bus_stats, field)		\
++	}),								\
++}
++
++#define MDIO_BUS_STATS_ADDR_ATTR(field, addr)				\
++	MDIO_BUS_STATS_ADDR_ATTR_DECL(field, addr,			\
++				 __stringify(field) "_" __stringify(addr))
++
++#define MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(addr)			\
++	MDIO_BUS_STATS_ADDR_ATTR(transfers, addr);			\
++	MDIO_BUS_STATS_ADDR_ATTR(errors, addr);				\
++	MDIO_BUS_STATS_ADDR_ATTR(writes, addr);				\
++	MDIO_BUS_STATS_ADDR_ATTR(reads, addr)				\
++
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(0);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(1);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(2);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(3);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(4);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(5);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(6);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(7);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(8);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(9);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(10);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(11);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(12);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(13);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(14);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(15);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(16);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(17);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(18);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(19);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(20);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(21);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(22);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(23);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(24);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(25);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(26);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(27);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(28);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(29);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(30);
++MDIO_BUS_STATS_ADDR_ATTR_GROUP_DECL(31);
++
++#define MDIO_BUS_STATS_ADDR_ATTR_GROUP(addr)				\
++	&dev_attr_mdio_bus_addr_transfers_##addr.attr.attr,		\
++	&dev_attr_mdio_bus_addr_errors_##addr.attr.attr,		\
++	&dev_attr_mdio_bus_addr_writes_##addr.attr.attr,		\
++	&dev_attr_mdio_bus_addr_reads_##addr.attr.attr			\
++
++static struct attribute *mdio_bus_statistics_attrs[] = {
++	&dev_attr_mdio_bus_transfers.attr.attr,
++	&dev_attr_mdio_bus_errors.attr.attr,
++	&dev_attr_mdio_bus_writes.attr.attr,
++	&dev_attr_mdio_bus_reads.attr.attr,
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(0),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(1),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(2),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(3),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(4),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(5),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(6),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(7),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(8),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(9),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(10),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(11),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(12),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(13),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(14),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(15),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(16),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(17),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(18),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(19),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(20),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(21),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(22),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(23),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(24),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(25),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(26),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(27),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(28),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(29),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(30),
++	MDIO_BUS_STATS_ADDR_ATTR_GROUP(31),
++	NULL,
++};
++
++static const struct attribute_group mdio_bus_statistics_group = {
++	.name	= "statistics",
++	.attrs	= mdio_bus_statistics_attrs,
++};
++
++static const struct attribute_group *mdio_bus_groups[] = {
++	&mdio_bus_statistics_group,
++	NULL,
++};
++
+ static struct class mdio_bus_class = {
+ 	.name		= "mdio_bus",
+ 	.dev_release	= mdiobus_release,
++	.dev_groups	= mdio_bus_groups,
+ };
+ 
+ #if IS_ENABLED(CONFIG_OF_MDIO)
+@@ -530,6 +738,24 @@ struct phy_device *mdiobus_scan(struct mii_bus *bus, int addr)
+ }
+ EXPORT_SYMBOL(mdiobus_scan);
+ 
++static void mdiobus_stats_acct(struct mdio_bus_stats *stats, bool op, int ret)
++{
++	u64_stats_update_begin(&stats->syncp);
++
++	u64_stats_inc(&stats->transfers);
++	if (ret < 0) {
++		u64_stats_inc(&stats->errors);
++		goto out;
++	}
++
++	if (op)
++		u64_stats_inc(&stats->reads);
++	else
++		u64_stats_inc(&stats->writes);
++out:
++	u64_stats_update_end(&stats->syncp);
++}
++
+ /**
+  * __mdiobus_read - Unlocked version of the mdiobus_read function
+  * @bus: the mii_bus struct
+@@ -549,6 +775,7 @@ int __mdiobus_read(struct mii_bus *bus, int addr, u32 regnum)
+ 	retval = bus->read(bus, addr, regnum);
+ 
+ 	trace_mdio_access(bus, 1, addr, regnum, retval, retval);
++	mdiobus_stats_acct(&bus->stats[addr], true, retval);
+ 
+ 	return retval;
+ }
+@@ -574,6 +801,7 @@ int __mdiobus_write(struct mii_bus *bus, int addr, u32 regnum, u16 val)
+ 	err = bus->write(bus, addr, regnum, val);
+ 
+ 	trace_mdio_access(bus, 0, addr, regnum, val, err);
++	mdiobus_stats_acct(&bus->stats[addr], false, err);
+ 
+ 	return err;
+ }
+@@ -719,8 +947,27 @@ static int mdio_uevent(struct device *dev, struct kobj_uevent_env *env)
+ 	return 0;
+ }
+ 
++static struct attribute *mdio_bus_device_statistics_attrs[] = {
++	&dev_attr_mdio_bus_device_transfers.attr.attr,
++	&dev_attr_mdio_bus_device_errors.attr.attr,
++	&dev_attr_mdio_bus_device_writes.attr.attr,
++	&dev_attr_mdio_bus_device_reads.attr.attr,
++	NULL,
++};
++
++static const struct attribute_group mdio_bus_device_statistics_group = {
++	.name	= "statistics",
++	.attrs	= mdio_bus_device_statistics_attrs,
++};
++
++static const struct attribute_group *mdio_bus_dev_groups[] = {
++	&mdio_bus_device_statistics_group,
++	NULL,
++};
++
+ struct bus_type mdio_bus_type = {
+ 	.name		= "mdio_bus",
++	.dev_groups	= mdio_bus_dev_groups,
+ 	.match		= mdio_bus_match,
+ 	.uevent		= mdio_uevent,
+ };
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 2929d0bc307f..99a87f02667f 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -22,6 +22,7 @@
+ #include <linux/timer.h>
+ #include <linux/workqueue.h>
+ #include <linux/mod_devicetable.h>
++#include <linux/u64_stats_sync.h>
+ 
+ #include <linux/atomic.h>
+ 
+@@ -212,6 +213,15 @@ struct sfp_bus;
+ struct sfp_upstream_ops;
+ struct sk_buff;
+ 
++struct mdio_bus_stats {
++	u64_stats_t transfers;
++	u64_stats_t errors;
++	u64_stats_t writes;
++	u64_stats_t reads;
++	/* Must be last, add new statistics above */
++	struct u64_stats_sync syncp;
++};
++
  /*
-  * Following APIs get the property of each external connector.
-@@ -181,10 +181,10 @@ extern int extcon_get_state(struct extcon_dev *edev, unsigned int id);
-  * for each external connector. They are used to get the capability of the
-  * property of each external connector based on the id and property.
-  */
--extern int extcon_get_property(struct extcon_dev *edev, unsigned int id,
-+int extcon_get_property(struct extcon_dev *edev, unsigned int id,
- 				unsigned int prop,
- 				union extcon_property_value *prop_val);
--extern int extcon_get_property_capability(struct extcon_dev *edev,
-+int extcon_get_property_capability(struct extcon_dev *edev,
- 				unsigned int id, unsigned int prop);
+  * The Bus class for PHYs.  Devices which provide access to
+  * PHYs should register using this structure
+@@ -224,6 +234,7 @@ struct mii_bus {
+ 	int (*read)(struct mii_bus *bus, int addr, int regnum);
+ 	int (*write)(struct mii_bus *bus, int addr, int regnum, u16 val);
+ 	int (*reset)(struct mii_bus *bus);
++	struct mdio_bus_stats stats[PHY_MAX_ADDR];
  
- /*
-@@ -196,38 +196,38 @@ extern int extcon_get_property_capability(struct extcon_dev *edev,
-  * extcon_register_notifier_all(*edev, *nb) : Register a notifier block
-  *			for all supported external connectors of the extcon.
-  */
--extern int extcon_register_notifier(struct extcon_dev *edev, unsigned int id,
-+int extcon_register_notifier(struct extcon_dev *edev, unsigned int id,
- 				struct notifier_block *nb);
--extern int extcon_unregister_notifier(struct extcon_dev *edev, unsigned int id,
-+int extcon_unregister_notifier(struct extcon_dev *edev, unsigned int id,
- 				struct notifier_block *nb);
--extern int devm_extcon_register_notifier(struct device *dev,
-+int devm_extcon_register_notifier(struct device *dev,
- 				struct extcon_dev *edev, unsigned int id,
- 				struct notifier_block *nb);
--extern void devm_extcon_unregister_notifier(struct device *dev,
-+void devm_extcon_unregister_notifier(struct device *dev,
- 				struct extcon_dev *edev, unsigned int id,
- 				struct notifier_block *nb);
- 
--extern int extcon_register_notifier_all(struct extcon_dev *edev,
-+int extcon_register_notifier_all(struct extcon_dev *edev,
- 				struct notifier_block *nb);
--extern int extcon_unregister_notifier_all(struct extcon_dev *edev,
-+int extcon_unregister_notifier_all(struct extcon_dev *edev,
- 				struct notifier_block *nb);
--extern int devm_extcon_register_notifier_all(struct device *dev,
-+int devm_extcon_register_notifier_all(struct device *dev,
- 				struct extcon_dev *edev,
- 				struct notifier_block *nb);
--extern void devm_extcon_unregister_notifier_all(struct device *dev,
-+void devm_extcon_unregister_notifier_all(struct device *dev,
- 				struct extcon_dev *edev,
- 				struct notifier_block *nb);
- 
- /*
-  * Following APIs get the extcon_dev from devicetree or by through extcon name.
-  */
--extern struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name);
--extern struct extcon_dev *extcon_find_edev_by_node(struct device_node *node);
--extern struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
-+struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name);
-+struct extcon_dev *extcon_find_edev_by_node(struct device_node *node);
-+struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
- 						     int index);
- 
- /* Following API get the name of extcon device. */
--extern const char *extcon_get_edev_name(struct extcon_dev *edev);
-+const char *extcon_get_edev_name(struct extcon_dev *edev);
- 
- #else /* CONFIG_EXTCON */
- static inline int extcon_get_state(struct extcon_dev *edev, unsigned int id)
+ 	/*
+ 	 * A lock to ensure that only one thing can read/write
 -- 
-2.17.1
+2.19.1
 
