@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F36B13EEAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCCE13EE66
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395283AbgAPSKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:10:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
+        id S2391599AbgAPRif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393161AbgAPRhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:52 -0500
+        id S2388572AbgAPRh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2400246E1;
-        Thu, 16 Jan 2020 17:37:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4012246E1;
+        Thu, 16 Jan 2020 17:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196271;
-        bh=tH7fwmpQiZPw0MyDgLkGZKtY/tukBcVLLZDmKus01K4=;
+        s=default; t=1579196275;
+        bh=Er9b+hegv+QekdwOFBDM4vu7+PTEEUZ/66FnFh24PYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o6YPiljHXWRFrNuVduKrUxi0dUSnJ8IImdk6oCJOwvN+n3gu1b2Cy/OZXrSi1F2Bj
-         4xwm3AcsgipXQhbgTzUPM7IyhHhI0GoMaEfOAixk7uCiPVvhTHXJGx004DLnZQFo03
-         yKkBqowg52L1kN6eRNfBdUakwkCpW4ETDiHtwv2E=
+        b=cJu4ewnJLHGQupC3fV7PAxuYF9CBhEYKxUS32JXK+cIVS1PCl2oXA9XokisyWU1+1
+         TFOGEuBSgFAXikQXd9pp9ocGiQ4KwEya+OeVlLPr1yeOkJndRT7pEHbdHUyvoaVKo3
+         B4zRVLOWBAmK54F0tfuKPuy4dmj8u3Mozaeidnl0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alexandre.bounine@idt.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 093/251] drivers/rapidio/rio_cm.c: fix potential oops in riocm_ch_listen()
-Date:   Thu, 16 Jan 2020 12:34:02 -0500
-Message-Id: <20200116173641.22137-53-sashal@kernel.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 096/251] media: ivtv: update *pos correctly in ivtv_read_pos()
+Date:   Thu, 16 Jan 2020 12:34:05 -0500
+Message-Id: <20200116173641.22137-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -48,40 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 5ac188b12e7cbdd92dee60877d1fac913fc1d074 ]
+[ Upstream commit f8e579f3ca0973daef263f513da5edff520a6c0d ]
 
-If riocm_get_channel() fails, then we should just return -EINVAL.
-Calling riocm_put_channel() will trigger a NULL dereference and
-generally we should call put() if the get() didn't succeed.
+We had intended to update *pos, but the current code is a no-op.
 
-Link: http://lkml.kernel.org/r/20190110130230.GB27017@kadam
-Fixes: b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging driver")
+Fixes: 1a0adaf37c30 ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matt Porter <mporter@kernel.crashing.org>
-Cc: Alexandre Bounine <alexandre.bounine@idt.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rapidio/rio_cm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/pci/ivtv/ivtv-fileops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index ef989a15aefc..b29fc258eeba 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -1215,7 +1215,9 @@ static int riocm_ch_listen(u16 ch_id)
- 	riocm_debug(CHOP, "(ch_%d)", ch_id);
+diff --git a/drivers/media/pci/ivtv/ivtv-fileops.c b/drivers/media/pci/ivtv/ivtv-fileops.c
+index c9bd018e53de..e2b19c3eaa87 100644
+--- a/drivers/media/pci/ivtv/ivtv-fileops.c
++++ b/drivers/media/pci/ivtv/ivtv-fileops.c
+@@ -420,7 +420,7 @@ static ssize_t ivtv_read_pos(struct ivtv_stream *s, char __user *ubuf, size_t co
  
- 	ch = riocm_get_channel(ch_id);
--	if (!ch || !riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
-+	if (!ch)
-+		return -EINVAL;
-+	if (!riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
- 		ret = -EINVAL;
- 	riocm_put_channel(ch);
- 	return ret;
+ 	IVTV_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
+ 	if (rc > 0)
+-		pos += rc;
++		*pos += rc;
+ 	return rc;
+ }
+ 
 -- 
 2.20.1
 
