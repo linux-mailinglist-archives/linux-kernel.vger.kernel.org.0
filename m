@@ -2,134 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6DF13DB12
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB4B13DB1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbgAPNE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 08:04:57 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45336 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgAPNE5 (ORCPT
+        id S1726853AbgAPNHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 08:07:05 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39062 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAPNHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:04:57 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j26so22516635ljc.12;
-        Thu, 16 Jan 2020 05:04:56 -0800 (PST)
+        Thu, 16 Jan 2020 08:07:05 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so21624072ioh.6;
+        Thu, 16 Jan 2020 05:07:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=oHRvLFsSZO6m5OUuYzRooxxwNZyNse+CVWLNaVKCMQQ=;
-        b=KhIVuR+gxWcwLJ11YF7kRi4tbGlMNWp6VSAL3G8rxgw4ld0+ahnopyFBMnawRh57dY
-         QGQOgxjFPdOY8xqgCCTy9z7tZjVDXJRClUKZN+mWAQxUAwiS/T1g/VjuuPxXsyzWwfTR
-         sDntahJ+pzCEqFFl+uT65etVw9Z5kuIu8jmSeuNBUBFg+hJsEw0Qy2oqi3sbJkXckvLt
-         U+rf11i1fbsW6bwoudDVzHDVrZTHRfJj90C6S5gS+kxvPAWiNR0uLzwnVK96NRr+8F4E
-         hp5QQagpjmXXy+mRgcTxjzvfTevL7unn/FnKglCD5Wouas9j0A5huVPLVgsUlk76gKBN
-         Xsyg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q7w3Z5zhPTl+MR4lc0eaFPoPD5VGPMbv1ThobG/2rJA=;
+        b=R6irsvylaAmcRarBifg51aVsBug2CzMDmQYFxn2wmIfJzPQk3AHG3U6T2d9uI+1En5
+         YlL4vBS9TH96uSkgf0QWuYG1D6uapC57qS431r1owCyaawwTXxSRmZfxC/qu2z6z9eWi
+         4+jAm9FqU9INieHvOnczQfzKYp3jRkllIrRaV+9pTXEMXkugygKDEg4zSg6gGK1cWgUg
+         nFdGUf5aTrIamcQRRgkY+l4IvpRcIYM2wItvlmRwUsZpjvdl/Bvjmzzg4nPm7xHKMJ2A
+         8MP9vzRm9adcD9G6cYVuB9r1UqHZfr8DVW5rret9w7Fr82IQlec50Di+/MJHTG+JeCMQ
+         pAYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=oHRvLFsSZO6m5OUuYzRooxxwNZyNse+CVWLNaVKCMQQ=;
-        b=UcQQL7K41cZOTJ1Nkj3owO2zhO0lXctZYTf7NSl4mopT4UOfuM7Sj6Jg1Euu9QefS5
-         QLmyHdGZjvCG6uEdRZ51FydSKCC0hVpaCkRjVBKHYBphfTaoKvfjlZ3upkT46uZB33O8
-         mMcuExGcxTq7sEAifbmxipRWC+/fc3EIYujyhgEIS6hYqSI8B4RaoHCfMIpziK3kawrt
-         UfLUWNTIkWwy1Xn2IhPmlqkY065tF/9lUDJFZ18r7eAPqY/RozTiMZ64LtkcluBVDT5s
-         aOhwZe3vYGaUIq1m24puSJTh6zCKJESQ4gLgtajL2BNoB/AYpY9ALOpNJkmpgLWv93cJ
-         nrQg==
-X-Gm-Message-State: APjAAAUVdEU718sn3k9pPV5E0xG/q3XHfnVP29QcwpqBQ+yQTb7zLijA
-        yGBTCRT98j7E/Umdfa21T6a/wV69kbYcrQ==
-X-Google-Smtp-Source: APXvYqzONfQMaakO1AnVbdh4w7e7YJyb7Q8b6QWCcufg6r22Wmoop2YYvaOEVO/wZ0Ar+VAqT2QG+w==
-X-Received: by 2002:a2e:990e:: with SMTP id v14mr2098350lji.23.1579179895377;
-        Thu, 16 Jan 2020 05:04:55 -0800 (PST)
-Received: from saruman (88-113-215-33.elisa-laajakaista.fi. [88.113.215.33])
-        by smtp.gmail.com with ESMTPSA id g15sm10634929ljl.10.2020.01.16.05.04.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Jan 2020 05:04:54 -0800 (PST)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     "Ardelean\, Alexandru" <alexandru.Ardelean@analog.com>,
-        "m.olbrich\@pengutronix.de" <m.olbrich@pengutronix.de>
-Cc:     "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bigeasy\@linutronix.de" <bigeasy@linutronix.de>,
-        "lars\@metafoo.de" <lars@metafoo.de>
-Subject: Re: [PATCH] usb: dwc3: gadget: Handle dequeuing of non queued URB gracefully
-In-Reply-To: <9d6ec804e3f1f462e5c6a43d19c83ff3493e3727.camel@analog.com>
-References: <20191106144553.16956-1-alexandru.ardelean@analog.com> <20191112144108.GA1859@pengutronix.de> <9d6ec804e3f1f462e5c6a43d19c83ff3493e3727.camel@analog.com>
-Date:   Thu, 16 Jan 2020 15:05:54 +0200
-Message-ID: <87ftgf5z65.fsf@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q7w3Z5zhPTl+MR4lc0eaFPoPD5VGPMbv1ThobG/2rJA=;
+        b=TlvzvC4nBg4AxGBZP85Q0Tq6BMJcJQ8Zk5QWSHO3iYSBE1dogdxm7KLBLYBzVvGzKc
+         4OzgtNVeZIzvW+aedo+He0vBGYXBvkliFujyCQigcCmfMGeh7SHGH+0m2KsgzxwTOZoj
+         vxp0cgUeN+aaGx44Y7LKQROk8drAV4YhgibtCib62cW8kvjVwOFSpk6zW9ffcmiJc494
+         3DdQECJBf1GyRjmJ0zTuzaFuxalvj4YBCev03ZeLeZnCyowNYaqg9gzM7V31315JBJtX
+         LBrJCrK/zbcgOBpNskw45f0WP0Fc7duRqkIUMK/3LXdZtF5umJKnLZ1tO3yJEiSD7YBg
+         ry9g==
+X-Gm-Message-State: APjAAAVUDbLbgRmib91XN7qrDlzr0+O+3CXnZ/EXhuQFAqTEvkUSQZzW
+        y55en9aCy+bCEApTV5omKl3t2fGGDPzBGuES9wc=
+X-Google-Smtp-Source: APXvYqxCf/BbBEvuekae9GypmpFkf0hOIUvRZ0aZFaj0Aq/R3jZpSRw/HzEA4qYXFwOQ1slQLQk6wmhPapqil/cpFF4=
+X-Received: by 2002:a5e:cb47:: with SMTP id h7mr24937162iok.33.1579180024240;
+ Thu, 16 Jan 2020 05:07:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20200116094707.3846565-1-masami256@gmail.com> <20200116100925.GA157179@kroah.com>
+In-Reply-To: <20200116100925.GA157179@kroah.com>
+From:   Masami Ichikawa <masami256@gmail.com>
+Date:   Thu, 16 Jan 2020 22:06:53 +0900
+Message-ID: <CACOXgS-0MXkbUQd9vAaXraW2cfc7A10HhoGfcMKy0irrrezmCA@mail.gmail.com>
+Subject: Re: [PATCH] tracing: Do not set trace clock if tracefs lockdown is in effect
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     rostedt@goodmis.org, mingo@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi,
-
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> writes:
-> On Tue, 2019-11-12 at 15:41 +0100, Michael Olbrich wrote:
->> [External]
->>=20
->> On Wed, Nov 06, 2019 at 04:45:53PM +0200, Alexandru Ardelean wrote:
->> > From: Lars-Peter Clausen <lars@metafoo.de>
->> >=20
->> > Trying to dequeue and URB that is currently not queued should be a no-
->> > op
->> > and be handled gracefully.
->> >=20
->> > Use the list field of the URB to indicate whether it is queued or not
->> > by
->> > setting it to the empty list when it is not queued.
->> >=20
->> > Handling this gracefully allows for race condition free synchronization
->> > between the complete callback being called to to a completed transfer
->> > and
->> > trying to call usb_ep_dequeue() at the same time.
->> >=20
->> > Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
->> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
->>=20
->> Thanks, no more "dwc3 fe200000.usb: request 00000000cdd42e4a was not
->> queued
->> to ep2in" messages with this patch applied.
->>=20
->> Tested-by: Michael Olbrich <m.olbrich@pengutronix.de>
->>=20
+On Thu, Jan 16, 2020 at 7:09 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> I thought I replied here, but I guess I never hit the Send button.
-> Many thanks @Michael for testing this.
+> On Thu, Jan 16, 2020 at 06:47:06PM +0900, Masami Ichikawa wrote:
+> > When trace_clock option is not set and unstable clcok detected,
+> > tracing_set_default_clock() sets trace_clock(ThinkPad A285 is one of
+> > case). In that case, if lockdown is in effect, null pointer
+> > dereference error happens in ring_buffer_set_clock().
+> >
+> > Link: https://bugzilla.redhat.com/show_bug.cgi?id=1788488
+> > Signed-off-by: Masami Ichikawa <masami256@gmail.com>
+> > ---
+> >  kernel/trace/trace.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
 >
-> I'd also use the opportunity to make this a patch-ping message.
+>
+> <formletter>
+>
+> This is not the correct way to submit patches for inclusion in the
+> stable kernel tree.  Please read:
+>     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> for how to do this properly.
+>
+> </formletter>
 
-https://lore.kernel.org/linux-usb/875zhd6pw0.fsf@kernel.org/T/#u
+Sorry, I'll resend patch without stable mailing list.
 
-=2D-=20
-balbi
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl4gX7IACgkQzL64meEa
-mQbl/xAAxg29eDM+Ua+CWApxRhTmdYgTlYT5XRtQFBHBwhuRjqVtDLVx0dQsTM9d
-+GAd0dJSWYIfYGKdNcs8F0QP+WGVd7iaW0XbtxoVQOyYA9fPyKrAuRZJ0cyB5oYP
-dFBzXHtKihWnYhYDO/vpUxv0pq8f++3ulrPMyuL3ASgzo21aiGYhSYkw0A+K7lW5
-xZhtOeEYTGtTtBm1KbT8Nf36e1Y7MNERLnswDIf/G/Mf9eZYvBChM7NldgWI0aBM
-2eZlxWfd+G2pNWuEqmSs9pccLp/iqry4m1nh6sPj3CYVRTG1fYiBs8LK/DMhkW7N
-SXaMzWfTnuyMaSpVDAKi8nS1IaZ+rbx8lqvUW58tlh19CIkljctu2MCGD87W2xEM
-g2tXDEpJQl/EpDuHqBIB65JI73JiLHML70OUUxlaJkItM2IjpDd6qVRtIdQDQGIh
-omebx8yY45K9ogM1ZmJTN87vm/ZNnSisdPZazOfWh6oD1ZnEGB5TNtRhN1ZFYMvt
-56DntYRDF9vao7UoKeTIs8IiZjaQTtf9YByQLQ7e3J5x2IjcTEQFcpDZA92QpF/V
-6iGNKJB3yInOAI5xHiEwHG5nOPUfnh/9ExqDRjzl83eooYyO9d0tb0NpdVE7mgFK
-PN0t/WDQombAOaoVYun0PREpAlLSxKGlk0gY/nXASOofBuqXglM=
-=hRcu
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Masami Ichikawa
