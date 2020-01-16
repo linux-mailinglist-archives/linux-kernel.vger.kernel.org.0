@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2280913EE5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9E813EE59
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395022AbgAPSIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:08:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54722 "EHLO mail.kernel.org"
+        id S2407003AbgAPSIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:08:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393371AbgAPRip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:38:45 -0500
+        id S2405095AbgAPRiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8994A24700;
-        Thu, 16 Jan 2020 17:38:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80683246B1;
+        Thu, 16 Jan 2020 17:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196324;
-        bh=SjCgnQ7BnPfAb6KLMBXdO1vh3hJCKyiEtdx3s+lZp8w=;
+        s=default; t=1579196330;
+        bh=8QXMs7FWZw6UiJUPyG8O/nR49W6rWYfxOuxu4nbdrU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d2TEqXIcCmUCT4FYMIoL9wYsd7Op0ZM6ovuTenlsH3NxtcLcm0Zhu2tw7Opcux+IZ
-         uTj/iBp95ZJ8Ug1r11Q/jGAkFIAvZXls/XWle90Sk3UpTMb0F4f2a1DtCGjY/M4fno
-         ySOM/+JAey0gl5pLe7SWfetJgikTwN6Hauf8AQRU=
+        b=BSmpPKRhDCOEQmsJzxXaIUV2JJVmIA+GNgOhGXGiKmlQNd7dlQobYWPgLzPNFxB4/
+         X7tFFaiyK4s/q/l71bnbE6sWJ7KANuAgUMUb4Y97NWbN1nWrCnxB0bkssYBpkikAI4
+         T0JWxCYSu7MQ+MXfp3Rjyjj2KKLUYur2UTDKGdwE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.9 127/251] iommu/vt-d: Make kernel parameter igfx_off work with vIOMMU
-Date:   Thu, 16 Jan 2020 12:34:36 -0500
-Message-Id: <20200116173641.22137-87-sashal@kernel.org>
+Cc:     Sameeh Jubran <sameehj@amazon.com>,
+        Netanel Belgazal <netanel@amazon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 131/251] net: ena: fix ena_com_fill_hash_function() implementation
+Date:   Thu, 16 Jan 2020 12:34:40 -0500
+Message-Id: <20200116173641.22137-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -48,47 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Sameeh Jubran <sameehj@amazon.com>
 
-[ Upstream commit 5daab58043ee2bca861068e2595564828f3bc663 ]
+[ Upstream commit 11bd7a00c0d8ffe33d1e926f8e789b4aea787186 ]
 
-The kernel parameter igfx_off is used by users to disable
-DMA remapping for the Intel integrated graphic device. It
-was designed for bare metal cases where a dedicated IOMMU
-is used for graphic. This doesn't apply to virtual IOMMU
-case where an include-all IOMMU is used.  This makes the
-kernel parameter work with virtual IOMMU as well.
+ena_com_fill_hash_function() didn't configure the rss->hash_func.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Suggested-by: Kevin Tian <kevin.tian@intel.com>
-Fixes: c0771df8d5297 ("intel-iommu: Export a flag indicating that the IOMMU is used for iGFX.")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Tested-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 25cc6ae87039..5c6e0a9fd2f3 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3345,9 +3345,12 @@ static int __init init_dmars(void)
- 		iommu_identity_mapping |= IDENTMAP_ALL;
+diff --git a/drivers/net/ethernet/amazon/ena/ena_com.c b/drivers/net/ethernet/amazon/ena/ena_com.c
+index 2d196d521b83..912dc09bc7a7 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -2052,6 +2052,7 @@ int ena_com_fill_hash_function(struct ena_com_dev *ena_dev,
+ 		return -EINVAL;
+ 	}
  
- #ifdef CONFIG_INTEL_IOMMU_BROKEN_GFX_WA
--	iommu_identity_mapping |= IDENTMAP_GFX;
-+	dmar_map_gfx = 0;
- #endif
++	rss->hash_func = func;
+ 	rc = ena_com_set_hash_function(ena_dev);
  
-+	if (!dmar_map_gfx)
-+		iommu_identity_mapping |= IDENTMAP_GFX;
-+
- 	check_tylersburg_isoch();
- 
- 	if (iommu_identity_mapping) {
+ 	/* Restore the old function */
 -- 
 2.20.1
 
