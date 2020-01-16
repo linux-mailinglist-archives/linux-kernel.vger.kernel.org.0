@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB03913E8DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:34:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A928F13E8D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393016AbgAPReo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:34:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42302 "EHLO mail.kernel.org"
+        id S1729673AbgAPRe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:34:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392946AbgAPRaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:30:04 -0500
+        id S2392971AbgAPRaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:30:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56E7424714;
-        Thu, 16 Jan 2020 17:30:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 465342471F;
+        Thu, 16 Jan 2020 17:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195804;
-        bh=tO9+NvN2CHz+pMQCJlzm6srVxp0TIkGcSiB03L9otBA=;
+        s=default; t=1579195808;
+        bh=r567kJllO7l6ZFL/EKiqPTZlPdMaYe+6YV6/jG8CsyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZBnNZQ9cAKG0BNNHU6cItUbCcKa8wO0YS4gNDDH2hfF/lTxCrlp0G4cUdhpDA/NGG
-         Om4efV2xfN5nDRuCI4ZTAugI48UC1eWn9jZTPHa+75C7nMf9aAb67Ph1ryNkg6X7eW
-         lvBCIxJxKu052ePwfTT9PEFovjKw7gY/6OC2vBC0=
+        b=uJ1NQ45UDW5irQ+lErE4/MYaShlyUGvwgUILbH5nnU5wOSch43wxT+6UBW5qnrUzz
+         3ESRU3okGhJkZ46+R8+BsYHM73zLajqJgM7oNT4tRRLYlB8Jq/99aw1OJ0rYA4G2no
+         5SQOqggWeT+6g3a14BqVgJ99Dksf1je2ffDZTAqU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 318/371] net: avoid possible false sharing in sk_leave_memory_pressure()
-Date:   Thu, 16 Jan 2020 12:23:10 -0500
-Message-Id: <20200116172403.18149-261-sashal@kernel.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 321/371] USB: usb-skeleton: fix use-after-free after driver unbind
+Date:   Thu, 16 Jan 2020 12:23:13 -0500
+Message-Id: <20200116172403.18149-264-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,46 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 503978aca46124cd714703e180b9c8292ba50ba7 ]
+[ Upstream commit 6353001852776e7eeaab4da78922d4c6f2b076af ]
 
-As mentioned in https://github.com/google/ktsan/wiki/READ_ONCE-and-WRITE_ONCE#it-may-improve-performance
-a C compiler can legally transform :
+The driver failed to stop its read URB on disconnect, something which
+could lead to a use-after-free in the completion handler after driver
+unbind in case the character device has been closed.
 
-if (memory_pressure && *memory_pressure)
-        *memory_pressure = 0;
-
-to :
-
-if (memory_pressure)
-        *memory_pressure = 0;
-
-Fixes: 0604475119de ("tcp: add TCPMemoryPressuresChrono counter")
-Fixes: 180d8cd942ce ("foundations of per-cgroup memory pressure controlling.")
-Fixes: 3ab224be6d69 ("[NET] CORE: Introducing new memory accounting interface.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: e7389cc9a7ff ("USB: skel_read really sucks royally")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191009170944.30057-3-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/usb-skeleton.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 90ccbbf9e6b0..03ca2f638eb4 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2165,8 +2165,8 @@ static void sk_leave_memory_pressure(struct sock *sk)
- 	} else {
- 		unsigned long *memory_pressure = sk->sk_prot->memory_pressure;
+diff --git a/drivers/usb/usb-skeleton.c b/drivers/usb/usb-skeleton.c
+index 7140d06ae04f..baf047c0be6c 100644
+--- a/drivers/usb/usb-skeleton.c
++++ b/drivers/usb/usb-skeleton.c
+@@ -575,6 +575,7 @@ static void skel_disconnect(struct usb_interface *interface)
+ 	dev->disconnected = 1;
+ 	mutex_unlock(&dev->io_mutex);
  
--		if (memory_pressure && *memory_pressure)
--			*memory_pressure = 0;
-+		if (memory_pressure && READ_ONCE(*memory_pressure))
-+			WRITE_ONCE(*memory_pressure, 0);
- 	}
- }
++	usb_kill_urb(dev->bulk_in_urb);
+ 	usb_kill_anchored_urbs(&dev->submitted);
  
+ 	/* decrement our usage count */
 -- 
 2.20.1
 
