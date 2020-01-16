@@ -2,157 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F48913F543
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:55:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD49513F569
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:56:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389349AbgAPSzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:55:00 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34492 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389222AbgAPSy5 (ORCPT
+        id S2406651AbgAPS4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:56:08 -0500
+Received: from mail-wr1-f73.google.com ([209.85.221.73]:42612 "EHLO
+        mail-wr1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437132AbgAPS4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:54:57 -0500
-Received: by mail-qk1-f193.google.com with SMTP id j9so20229236qkk.1;
-        Thu, 16 Jan 2020 10:54:56 -0800 (PST)
+        Thu, 16 Jan 2020 13:56:05 -0500
+Received: by mail-wr1-f73.google.com with SMTP id k18so9618922wrw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:56:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=P69NeR3xJbxZLi5K91OSnj1oflfK13tq5qYKZgVnyUA=;
-        b=a0BZb1CfHyVu6ryJUT4hyIFQr6IXepVmsN06Yv90dQQ2V2tiLXqGrpc9pU3y1CMp3X
-         nFQABfi7O8zu3NW3d9er05dy3Y3ksxfMI6sZtSCG5qxgpZvegTuVbCOF9HaiEjav0l+/
-         tP/vhsnQMIsMI+1SNEwJdAONbkkLS/9leyhm0EBxYf3dD9kxEA10fjakQ1o34C81UIVy
-         YkcSr1AZwlVc1FHjvRIk+gUIsauAZvUD0VpqdNrgqiKsEY66cs23/ps+cVCmRtU527wL
-         z9sgvpVclLD6jX01OreJixuBjrsOOlVmLqRphtE0BPOenKUmgh1DsKyl+JjN6jv+i/sc
-         j7qA==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=cOgDAvUwdmbi4m/kDIybPuInzN3fPgnThGH4mtCL7lc=;
+        b=QckFlUWoMtW2AkiBldnh6mGbayGKq/CdHw/K3osDep7C6pRcrJ/WPFJGVDCpblNhWw
+         Q90fngGzulhP6sBqSBG/wWhZfgUWv7rCaBNZfMGeL6sGQAjqmKSqXOteawVD8CGY2IEH
+         0ZSm0rodqL2e9xFWzAlivd1BqpMRRW7T+L+V+bt9RDPKVpEH3w8CVVSVCOyXKGTZQ+qE
+         U7K0APzNbnmJhigjqt9gzizQGveB6gawPuYR87PyjG6cqeYFVLX2NcCzy13qloF8PZYY
+         XAp8tQmBE96aJANScc7yROv6qIgyMWxwC+MqC2Ue+VRXbOKI89gkAwBBkgtstAuk8RA3
+         ANXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=P69NeR3xJbxZLi5K91OSnj1oflfK13tq5qYKZgVnyUA=;
-        b=S3oOEdZSmO0uffbXEOzoZqyk02tl68NnEiuegt9TpgxzIhhzi4EgasZ6mw607ASVp6
-         HjLx9B6AiP0fLS2KyHUMuUYoaGUxu6f0zWoMcvFk+ynUFn5UlA1E1S/jkAkXLHbMWyG6
-         AlvS7nMQrBYA42nruZRrFKoVIobp6wp+cytaDb1QjI948ciFELzQ7faD0mw07Ua14gah
-         ZtJYmLVcwUjB1F0b2/Xvh+6dzBNS5wRNMLjq7/4e+nxDmDTLnsxBvigUoOgPIH0tufe+
-         F1LkbMV3SZe6c2YZqbY8JWXWIpP0qdGYHZ7qUG7FSk0LBjrmaJ92WjUoqUTiR+Ha9hFP
-         GSEA==
-X-Gm-Message-State: APjAAAVirlQE6lBoSUkbJog9/V5Tm5GDQjslwhoPG1ICYbvzLj/sii4g
-        68ePWMllIDf7YPenuVXAP9z0OxJlbPSMcQKD9Gw=
-X-Google-Smtp-Source: APXvYqzNWrYYAnZWogF+vDlCQ/krgmXOKSWASg7iizqummxNvC02kf/Ha3rlJBGEuZ5RkdjxLtxnZTctetiAYRvq/j0=
-X-Received: by 2002:a37:a685:: with SMTP id p127mr31044074qke.449.1579200895688;
- Thu, 16 Jan 2020 10:54:55 -0800 (PST)
-MIME-Version: 1.0
-References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <157918093389.1357254.10041649215380772130.stgit@toke.dk>
-In-Reply-To: <157918093389.1357254.10041649215380772130.stgit@toke.dk>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 16 Jan 2020 10:54:44 -0800
-Message-ID: <CAEf4Bzbz47nFh4tPBn2PTi3+YiYpMDxymgf36P=ZjbuBPoCrZg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 02/11] tools/bpf/runqslower: Fix override
- option for VMLINUX_BTF
-To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=cOgDAvUwdmbi4m/kDIybPuInzN3fPgnThGH4mtCL7lc=;
+        b=T/WoADewP+NvI+DoRSHoqvl4ibHIRBZ/TL/8kZJpvMbBiwN8guq7DUQxpmrr07NuaU
+         MSCcTGv0oGpoWhrSgoDeFW+muflA+vjHY7SjezBOuwTv1dJ73koRYAR//KZa8+uQ9ud4
+         EozmFNhEHkO7qO5BwBtwMYeY4Ajlr8jk0ZHq6q02YD92JPXBamojOudyjfloz57SMRZE
+         Iqp3WEzQicDsHeuInjfXfc6zearFZ9cnK32CEToGRxK9CP04xN9/wEkie5fp2Hhho2zA
+         rJiKoUn5weckrY71POksQ3uaR8GrFXztskVijWCBqzL/kcFKCPFEenDYnLHPtBfr4+xr
+         3oDg==
+X-Gm-Message-State: APjAAAWfXm7BK7W8ELarVISdw3RoCZD3I115q9EbjumzFHyBbAYPY9gY
+        T4jKNhs+4uUwv8917U3LnVU65oSbag==
+X-Google-Smtp-Source: APXvYqzpsEMSRDQVq1aNPlZqFbi8UXaUk2BdJZw+DG8PJVVW6W3zDh/tvDagp/R+D/REv9N0G6qqzTXyCg==
+X-Received: by 2002:a5d:6b88:: with SMTP id n8mr4947132wrx.288.1579200962616;
+ Thu, 16 Jan 2020 10:56:02 -0800 (PST)
+Date:   Thu, 16 Jan 2020 19:55:29 +0100
+Message-Id: <20200116185529.11026-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+Subject: [PATCH] debugobjects: Fix various data races
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        tglx@linutronix.de, longman@redhat.com, gregkh@linuxfoundation.org,
+        Qian Cai <cai@lca.pw>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 5:23 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@redh=
-at.com> wrote:
->
-> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->
-> The runqslower tool refuses to build without a file to read vmlinux BTF
-> from. The build fails with an error message to override the location by
-> setting the VMLINUX_BTF variable if autodetection fails. However, the
-> Makefile doesn't actually work with that override - the error message is
-> still emitted.
->
-> Fix this by including the value of VMLINUX_BTF in the expansion, and only
-> emitting the error message if the *result* is empty. Also permit running
-> 'make clean' even though no VMLINUX_BTF is set.
->
-> Fixes: 9c01546d26d2 ("tools/bpf: Add runqslower tool to tools/bpf")
-> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> ---
->  tools/bpf/runqslower/Makefile |   18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/tools/bpf/runqslower/Makefile b/tools/bpf/runqslower/Makefil=
-e
-> index cff2fbcd29a8..89fb7cd30f1a 100644
-> --- a/tools/bpf/runqslower/Makefile
-> +++ b/tools/bpf/runqslower/Makefile
-> @@ -10,12 +10,14 @@ CFLAGS :=3D -g -Wall
->
->  # Try to detect best kernel BTF source
->  KERNEL_REL :=3D $(shell uname -r)
-> -ifneq ("$(wildcard /sys/kernel/btf/vmlinux)","")
-> -VMLINUX_BTF :=3D /sys/kernel/btf/vmlinux
-> -else ifneq ("$(wildcard /boot/vmlinux-$(KERNEL_REL))","")
-> -VMLINUX_BTF :=3D /boot/vmlinux-$(KERNEL_REL)
-> -else
-> -$(error "Can't detect kernel BTF, use VMLINUX_BTF to specify it explicit=
-ly")
-> +VMLINUX_BTF_PATHS :=3D $(VMLINUX_BTF) /sys/kernel/btf/vmlinux /boot/vmli=
-nux-$(KERNEL_REL)
-> +VMLINUX_BTF_PATH :=3D $(firstword $(wildcard $(VMLINUX_BTF_PATHS)))
+The counters obj_pool_free, and obj_nr_tofree, and the flag obj_freeing
+are read locklessly outside the pool_lock critical sections. If read
+with plain accesses, this would result in data races.
 
-If user specifies VMLINUX_BTF pointing to non-existing file, but the
-system has /sys/kernel/btf/vmlinux, the latter will still be used,
-which is a very surprising behavior.
+This is addressed as follows:
+* reads outside critical sections become READ_ONCE()s (pairing with
+  WRITE_ONCE()s added);
+* writes become WRITE_ONCE()s (pairing with READ_ONCE()s added); since
+  writes happen inside critical sections, only the write and not the
+  read of RMWs needs to be atomic, thus WRITE_ONCE(var, var +/- X) is
+  sufficient.
 
-Also MAKECMDGOALS feels like a fragile hack to me. How about we move
-this VMLINUX_BTF guessing (without $(error)) into vmlinux.h rule
-itself and use shell if conditional after it to check for file
-existance and print nice error. That way we'll be checking VMLINUX_BTF
-only when it's really needed.
+The data races were reported by KCSAN:
 
-> +
-> +ifeq ("$(VMLINUX_BTF_PATH)","")
-> +ifneq ($(MAKECMDGOALS),clean)
-> +$(error Could not find kernel BTF file (tried: $(VMLINUX_BTF_PATHS)). \
-> +       Try setting $$VMLINUX_BTF)
-> +endif
->  endif
->
->  abs_out :=3D $(abspath $(OUTPUT))
-> @@ -67,9 +69,9 @@ $(OUTPUT):
->         $(call msg,MKDIR,$@)
->         $(Q)mkdir -p $(OUTPUT)
->
-> -$(OUTPUT)/vmlinux.h: $(VMLINUX_BTF) | $(OUTPUT) $(BPFTOOL)
-> +$(OUTPUT)/vmlinux.h: $(VMLINUX_BTF_PATH) | $(OUTPUT) $(BPFTOOL)
->         $(call msg,GEN,$@)
-> -       $(Q)$(BPFTOOL) btf dump file $(VMLINUX_BTF) format c > $@
-> +       $(Q)$(BPFTOOL) btf dump file $(VMLINUX_BTF_PATH) format c > $@
->
->  $(OUTPUT)/libbpf.a: | $(OUTPUT)
->         $(Q)$(MAKE) $(submake_extras) -C $(LIBBPF_SRC)                   =
-      \
->
+  BUG: KCSAN: data-race in __free_object / fill_pool
+
+  write to 0xffffffff8beb04f8 of 4 bytes by interrupt on cpu 1:
+   __free_object+0x1ee/0x8e0 lib/debugobjects.c:404
+   __debug_check_no_obj_freed+0x199/0x330 lib/debugobjects.c:969
+   debug_check_no_obj_freed+0x3c/0x44 lib/debugobjects.c:994
+   slab_free_hook mm/slub.c:1422 [inline]
+
+  read to 0xffffffff8beb04f8 of 4 bytes by task 1 on cpu 2:
+   fill_pool+0x3d/0x520 lib/debugobjects.c:135
+   __debug_object_init+0x3c/0x810 lib/debugobjects.c:536
+   debug_object_init lib/debugobjects.c:591 [inline]
+   debug_object_activate+0x228/0x320 lib/debugobjects.c:677
+   debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+
+  BUG: KCSAN: data-race in __debug_object_init / fill_pool
+
+  read to 0xffffffff8beb04f8 of 4 bytes by task 10 on cpu 6:
+   fill_pool+0x3d/0x520 lib/debugobjects.c:135
+   __debug_object_init+0x3c/0x810 lib/debugobjects.c:536
+   debug_object_init_on_stack+0x39/0x50 lib/debugobjects.c:606
+   init_timer_on_stack_key kernel/time/timer.c:742 [inline]
+
+  write to 0xffffffff8beb04f8 of 4 bytes by task 1 on cpu 3:
+   alloc_object lib/debugobjects.c:258 [inline]
+   __debug_object_init+0x717/0x810 lib/debugobjects.c:544
+   debug_object_init lib/debugobjects.c:591 [inline]
+   debug_object_activate+0x228/0x320 lib/debugobjects.c:677
+   debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+
+  BUG: KCSAN: data-race in free_obj_work / free_object
+
+  read to 0xffffffff9140c190 of 4 bytes by task 10 on cpu 6:
+   free_object+0x4b/0xd0 lib/debugobjects.c:426
+   debug_object_free+0x190/0x210 lib/debugobjects.c:824
+   destroy_timer_on_stack kernel/time/timer.c:749 [inline]
+
+  write to 0xffffffff9140c190 of 4 bytes by task 93 on cpu 1:
+   free_obj_work+0x24f/0x480 lib/debugobjects.c:313
+   process_one_work+0x454/0x8d0 kernel/workqueue.c:2264
+   worker_thread+0x9a/0x780 kernel/workqueue.c:2410
+
+Signed-off-by: Marco Elver <elver@google.com>
+Reported-by: Qian Cai <cai@lca.pw>
+---
+ lib/debugobjects.c | 46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 61261195f5b6..48054dbf1b51 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -132,14 +132,18 @@ static void fill_pool(void)
+ 	struct debug_obj *obj;
+ 	unsigned long flags;
+ 
+-	if (likely(obj_pool_free >= debug_objects_pool_min_level))
++	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
+ 		return;
+ 
+ 	/*
+ 	 * Reuse objs from the global free list; they will be reinitialized
+ 	 * when allocating.
++	 *
++	 * Both obj_nr_tofree and obj_pool_free are checked locklessly; the
++	 * READ_ONCE()s pair with the WRITE_ONCE()s in pool_lock critical
++	 * sections.
+ 	 */
+-	while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
++	while (READ_ONCE(obj_nr_tofree) && (READ_ONCE(obj_pool_free) < obj_pool_min_free)) {
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+ 		/*
+ 		 * Recheck with the lock held as the worker thread might have
+@@ -148,9 +152,9 @@ static void fill_pool(void)
+ 		while (obj_nr_tofree && (obj_pool_free < obj_pool_min_free)) {
+ 			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+ 			hlist_del(&obj->node);
+-			obj_nr_tofree--;
++			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+ 			hlist_add_head(&obj->node, &obj_pool);
+-			obj_pool_free++;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		}
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+@@ -158,7 +162,7 @@ static void fill_pool(void)
+ 	if (unlikely(!obj_cache))
+ 		return;
+ 
+-	while (obj_pool_free < debug_objects_pool_min_level) {
++	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
+ 		struct debug_obj *new[ODEBUG_BATCH_SIZE];
+ 		int cnt;
+ 
+@@ -174,7 +178,7 @@ static void fill_pool(void)
+ 		while (cnt) {
+ 			hlist_add_head(&new[--cnt]->node, &obj_pool);
+ 			debug_objects_allocated++;
+-			obj_pool_free++;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		}
+ 		raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	}
+@@ -236,7 +240,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
+ 	obj = __alloc_object(&obj_pool);
+ 	if (obj) {
+ 		obj_pool_used++;
+-		obj_pool_free--;
++		WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
+ 
+ 		/*
+ 		 * Looking ahead, allocate one batch of debug objects and
+@@ -255,7 +259,7 @@ alloc_object(void *addr, struct debug_bucket *b, struct debug_obj_descr *descr)
+ 					       &percpu_pool->free_objs);
+ 				percpu_pool->obj_free++;
+ 				obj_pool_used++;
+-				obj_pool_free--;
++				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
+ 			}
+ 		}
+ 
+@@ -309,8 +313,8 @@ static void free_obj_work(struct work_struct *work)
+ 		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
+ 		hlist_del(&obj->node);
+ 		hlist_add_head(&obj->node, &obj_pool);
+-		obj_pool_free++;
+-		obj_nr_tofree--;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
++		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
+ 	}
+ 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 	return;
+@@ -324,7 +328,7 @@ static void free_obj_work(struct work_struct *work)
+ 	if (obj_nr_tofree) {
+ 		hlist_move_list(&obj_to_free, &tofree);
+ 		debug_objects_freed += obj_nr_tofree;
+-		obj_nr_tofree = 0;
++		WRITE_ONCE(obj_nr_tofree, 0);
+ 	}
+ 	raw_spin_unlock_irqrestore(&pool_lock, flags);
+ 
+@@ -375,10 +379,10 @@ static void __free_object(struct debug_obj *obj)
+ 	obj_pool_used--;
+ 
+ 	if (work) {
+-		obj_nr_tofree++;
++		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
+ 		hlist_add_head(&obj->node, &obj_to_free);
+ 		if (lookahead_count) {
+-			obj_nr_tofree += lookahead_count;
++			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + lookahead_count);
+ 			obj_pool_used -= lookahead_count;
+ 			while (lookahead_count) {
+ 				hlist_add_head(&objs[--lookahead_count]->node,
+@@ -396,15 +400,15 @@ static void __free_object(struct debug_obj *obj)
+ 			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
+ 				obj = __alloc_object(&obj_pool);
+ 				hlist_add_head(&obj->node, &obj_to_free);
+-				obj_pool_free--;
+-				obj_nr_tofree++;
++				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
++				WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
+ 			}
+ 		}
+ 	} else {
+-		obj_pool_free++;
++		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
+ 		hlist_add_head(&obj->node, &obj_pool);
+ 		if (lookahead_count) {
+-			obj_pool_free += lookahead_count;
++			WRITE_ONCE(obj_pool_free, obj_pool_free + lookahead_count);
+ 			obj_pool_used -= lookahead_count;
+ 			while (lookahead_count) {
+ 				hlist_add_head(&objs[--lookahead_count]->node,
+@@ -423,7 +427,7 @@ static void __free_object(struct debug_obj *obj)
+ static void free_object(struct debug_obj *obj)
+ {
+ 	__free_object(obj);
+-	if (!obj_freeing && obj_nr_tofree) {
++	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
+ 		WRITE_ONCE(obj_freeing, true);
+ 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
+ 	}
+@@ -982,7 +986,7 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 		debug_objects_maxchecked = objs_checked;
+ 
+ 	/* Schedule work to actually kmem_cache_free() objects */
+-	if (!obj_freeing && obj_nr_tofree) {
++	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
+ 		WRITE_ONCE(obj_freeing, true);
+ 		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
+ 	}
+@@ -1008,12 +1012,12 @@ static int debug_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
+ 	seq_printf(m, "warnings      :%d\n", debug_objects_warnings);
+ 	seq_printf(m, "fixups        :%d\n", debug_objects_fixups);
+-	seq_printf(m, "pool_free     :%d\n", obj_pool_free + obj_percpu_free);
++	seq_printf(m, "pool_free     :%d\n", READ_ONCE(obj_pool_free) + obj_percpu_free);
+ 	seq_printf(m, "pool_pcp_free :%d\n", obj_percpu_free);
+ 	seq_printf(m, "pool_min_free :%d\n", obj_pool_min_free);
+ 	seq_printf(m, "pool_used     :%d\n", obj_pool_used - obj_percpu_free);
+ 	seq_printf(m, "pool_max_used :%d\n", obj_pool_max_used);
+-	seq_printf(m, "on_free_list  :%d\n", obj_nr_tofree);
++	seq_printf(m, "on_free_list  :%d\n", READ_ONCE(obj_nr_tofree));
+ 	seq_printf(m, "objs_allocated:%d\n", debug_objects_allocated);
+ 	seq_printf(m, "objs_freed    :%d\n", debug_objects_freed);
+ 	return 0;
+-- 
+2.25.0.rc1.283.g88dfdc4193-goog
+
