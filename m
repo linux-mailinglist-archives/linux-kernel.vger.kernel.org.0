@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B2E513EF06
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E1613EEEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395241AbgAPSMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:12:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52038 "EHLO mail.kernel.org"
+        id S2393169AbgAPRhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:37:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405273AbgAPRhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:02 -0500
+        id S2404964AbgAPRhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30828246B1;
-        Thu, 16 Jan 2020 17:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F0E82468C;
+        Thu, 16 Jan 2020 17:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196221;
-        bh=i1qTzur8YcUSERvtHXzpybCkUfKo3U7F9mpu+IiXhf8=;
+        s=default; t=1579196229;
+        bh=0rB/DCX0/vZqshYz2euc0r2r572R1otNYKQa2llh8N0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=No93k2sx3Uq8TOTYGxIaCFpTWtYK6Ih5nyIrfviHMgoAxDiAfS5EYBpTlzUSyUyqR
-         Ah+3HqCWauc5ODGPYh5H7IqriSYOTgh5bxAh1sCUiplQS1IqV/mbPB19c0Yb2sM1BR
-         PdMRRFly/pWL9/tg0mGHTYU2tYmDjilnA4N9Oxj4=
+        b=gVTTm8A8dnFQNHpxUdIu/72yooPbyHY+k89zGD+36eb2EDs7sZMGVCWIn1x+4eeor
+         HLMqnaCbTdYafqkcvuVFzQW8JejO+jA/AFp4vLkpZYT6V1PfQsnGZVWQ42VDqcPSL5
+         wZUgTJ8UsmyV+56zZ2BZ2Dl8+nAP15Vqgm1zKKVw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Colin Ian King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.9 056/251] staging: most: cdev: add missing check for cdev_add failure
-Date:   Thu, 16 Jan 2020 12:33:25 -0500
-Message-Id: <20200116173641.22137-16-sashal@kernel.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 061/251] rtc: 88pm80x: fix unintended sign extension
+Date:   Thu, 16 Jan 2020 12:33:30 -0500
+Message-Id: <20200116173641.22137-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -45,45 +45,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 5ae890780e1b4d08f2c0c5d4ea96fc3928fc0ee9 ]
+[ Upstream commit fb0b322537a831b5b0cb948c56f8f958ce493d3a ]
 
-Currently the call to cdev_add is missing a check for failure. Fix this by
-checking for failure and exiting via a new error path that ensures the
-allocated comp_channel struct is kfree'd.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Detected by CoverityScan, CID#1462359 ("Unchecked return value")
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-Fixes: 9bc79bbcd0c5 ("Staging: most: add MOST driver's aim-cdev module")
+Detected by CoverityScan, CID#714646-714649 ("Unintended sign extension")
+
+Fixes: 2985c29c1964 ("rtc: Add rtc support to 88PM80X PMIC")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/most/aim-cdev/cdev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-88pm80x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/most/aim-cdev/cdev.c b/drivers/staging/most/aim-cdev/cdev.c
-index 7f51024dc5eb..e87b9ed4f37d 100644
---- a/drivers/staging/most/aim-cdev/cdev.c
-+++ b/drivers/staging/most/aim-cdev/cdev.c
-@@ -451,7 +451,9 @@ static int aim_probe(struct most_interface *iface, int channel_id,
- 	c->devno = MKDEV(major, current_minor);
- 	cdev_init(&c->cdev, &channel_fops);
- 	c->cdev.owner = THIS_MODULE;
--	cdev_add(&c->cdev, c->devno, 1);
-+	retval = cdev_add(&c->cdev, c->devno, 1);
-+	if (retval < 0)
-+		goto err_free_c;
- 	c->iface = iface;
- 	c->cfg = cfg;
- 	c->channel_id = channel_id;
-@@ -487,6 +489,7 @@ static int aim_probe(struct most_interface *iface, int channel_id,
- 	list_del(&c->list);
- error_alloc_kfifo:
- 	cdev_del(&c->cdev);
-+err_free_c:
- 	kfree(c);
- error_alloc_channel:
- 	ida_simple_remove(&minor_id, current_minor);
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index 466bf7f9a285..7da2a1fb50f8 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -116,12 +116,14 @@ static int pm80x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -144,7 +146,8 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -165,11 +168,13 @@ static int pm80x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	int ret;
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -192,12 +197,14 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 -- 
 2.20.1
 
