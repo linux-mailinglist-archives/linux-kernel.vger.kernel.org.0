@@ -2,88 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B7C13FAE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 21:55:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B89F13FB4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388243AbgAPUzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 15:55:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38385 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgAPUzz (ORCPT
+        id S2388886AbgAPVWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:22:09 -0500
+Received: from moreofthesa.me.uk ([178.238.159.109]:54642 "EHLO
+        spam.moreofthesa.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387674AbgAPVWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 15:55:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id a33so10505697pgm.5;
-        Thu, 16 Jan 2020 12:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+nCilBulwSLVUvM6NtqMw6YwyNgyJgT4OlEUrZgT6CA=;
-        b=lN43DV7LK8i3+NXeGADsv99ZF9HKYnmu8DdaMzDTCxqDQKL8H5XyC61Pmeo8S3wcOB
-         4F21xyz2Y2Uv42Yqu3sRJYkg4UG6HpUTm03p1dCnXlnD1vzErbSHtke3xVSv7WHQ7lnW
-         q0GSV+nHW9SjCZD3dIDVYVAcEPraI+VLQUFyIMQ206UntfYBkeEnLa0clG+q/fZ+tUVl
-         nNP4aEeOO1SzQb6+XKawv118M2982eAx+80u7MVC0AcJ5jDmiw/zlTEX0ZU0h09dz2Vp
-         u4QX8vaue6fiC82oMjnaA/L4GWm6pkqtp8+3zx8y6VKdWOQ1rkviuweMAYze/vaR/Zy1
-         oV/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+nCilBulwSLVUvM6NtqMw6YwyNgyJgT4OlEUrZgT6CA=;
-        b=LhZXV7pRazCIS4IH2/FygrxVoL9s9nvHMiHY9MZvfU7WlawvQFyWSLPk73i3+7/iPr
-         fzy0LekDjB3MvmVz/HsMJne7PUkqJFaqmXmZ1fMZVTAV3Z4VootDRNNI/DR2qgmOPeWs
-         HkQxutmVF4om+Lievyw7iKlCMxea/W3VByQ+GhID40iPRufUqnmTyVJ1/m4DwFpZh5d5
-         ouQJwhObWCF/7fnoacEyZxIVQld8m3vjOt3kf9YzJMAj+Ls6xu2ob4O95b9Lfw2nRq8l
-         mjO7xC6V1NCde8Q6xNaGRzIzMhC0GmPSRPCuzMVW+fKVxZV2fzXXB6DB568DHejJ4bCm
-         llOA==
-X-Gm-Message-State: APjAAAXZrIVqHgOSVHunleCQVd86pb1NT2WzralL8Fw+lNTT6F1w3Jd8
-        t97gu4xc/17a4B6/fj7LvQrjeEj6
-X-Google-Smtp-Source: APXvYqyn7OG+Hb4SYnOSjqMni2pSoLLcAsIJ9Gq6Mh7Ln+sZRMIybKzp/iSXWMqNbwt18xU4lVbDjQ==
-X-Received: by 2002:a63:f643:: with SMTP id u3mr39520879pgj.291.1579208154468;
-        Thu, 16 Jan 2020 12:55:54 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id u3sm2622614pjv.32.2020.01.16.12.55.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 12:55:54 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dsa: bcm_sf2: Configure IMP port for 2Gb/sec
-Date:   Thu, 16 Jan 2020 12:55:48 -0800
-Message-Id: <20200116205549.12353-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 16 Jan 2020 16:22:09 -0500
+X-Greylist: delayed 1087 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 16:22:08 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=moreofthesa.me.uk; s=201708; h=In-Reply-To:Message-ID:Subject:Cc:To:From:
+        Date:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:References:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0ordMptwqL+7MqYAIKv1O1Ieb3eNxf4cNX632cV3+dI=; b=RRDWFtivoFmKXXDB0m7aeAH97d
+        D5g/kj9Jnkk6taQz/jfaaxvQyIfIxxD6+/ycumnS2Ydc+8/enlTDDoaEWr6sn01LVdVvc2VVjU/B/
+        rZF6MNXbizAXZOmTdjNvtZ6xAo35wme4ZJYCgn7YaYzcpcPb3eqnNu6xvzDvLiet+n4Y8twAi3RSR
+        xiECOcwi0OdpTNY6r90HRj04PcZCHH86nRlxeH042Jiq6pYcUoJMBzi617tmybqpa72qxRS6ua6Ch
+        EXAUya72hS2nmyLQCjEUyzlg2WLaIM06dNYyILbzgxppyhFHVgtRvOwERvxvSruBfT0Qxee6C/9IX
+        ZlSZqsEw==;
+Received: from [2001:8b0:897:1650::2] (helo=moreofthesa.me.uk)
+        by spam.moreofthesa.me.uk with esmtp (Exim 4.92)
+        (envelope-from <devspam@moreofthesa.me.uk>)
+        id 1isCIx-0007Lo-QE; Thu, 16 Jan 2020 21:03:57 +0000
+Date:   Thu, 16 Jan 2020 20:55:16 +0000
+From:   Darren Salt <devspam@moreofthesa.me.uk>
+To:     linux@roeck-us.net
+Cc:     clemens@ladisch.de, jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
+Message-ID: <5838D7FEC0%devspam@moreofthesa.me.uk>
+In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
+Mail-Followup-To: linux@roeck-us.net, clemens@ladisch.de, jdelvare@suse.com, 
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Darren Salt 
+ <devspam@moreofthesa.me.uk>
+User-Agent: Messenger-Pro/2.73.6.4250 (Qt/5.11.3) (Linux-x86_64)
+X-No-Archive: no
+X-Orwell-Date: Thu, 12830 Dec 1984 20:55:16 +0000
+X-SA-Exim-Connect-IP: 2001:8b0:897:1650::2
+X-SA-Exim-Mail-From: devspam@moreofthesa.me.uk
+X-SA-Exim-Scanned: No (on spam.moreofthesa.me.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the implementation of the system reset controller we lost a setting
-that is currently applied by the bootloader and which configures the IMP
-port for 2Gb/sec, the default is 1Gb/sec. This is needed given the
-number of ports and applications we expect to run so bring back that
-setting.
+Tested-By: Darren Salt <devspam@moreofthesa.me.uk>
 
-Fixes: 01b0ac07589e ("net: dsa: bcm_sf2: Add support for optional reset controller line")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/dsa/bcm_sf2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Linux 5.4.12, Ryzen 5 1600. Patches were applied cleanly. No problems noticed in
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index e43040c9f9ee..3e8635311d0d 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -68,7 +68,7 @@ static void bcm_sf2_imp_setup(struct dsa_switch *ds, int port)
- 
- 		/* Force link status for IMP port */
- 		reg = core_readl(priv, offset);
--		reg |= (MII_SW_OR | LINK_STS);
-+		reg |= (MII_SW_OR | LINK_STS | GMII_SPEED_UP_2G);
- 		core_writel(priv, reg, offset);
- 
- 		/* Enable Broadcast, Multicast, Unicast forwarding to IMP port */
+    $ sensors k10temp-pci-00c3
+    k10temp-pci-00c3
+    Adapter: PCI adapter
+    Vcore:	  +1.11 V
+    Vsoc:	  +0.94 V
+    Tdie:	  +42.8°C  (high = +70.0°C)
+    Tctl:         +42.8°C
+    Icore:       +15.59 A
+    Isoc:    	 +12.63 A
+    
+    $
+
 -- 
-2.17.1
-
+|  _  | Darren Salt, using Debian GNU/Linux (and Android)
+| ( ) |
+|  X  | ASCII Ribbon campaign against HTML e-mail
+| / \ |
