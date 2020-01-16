@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4980813ED02
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43D5C13ED5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405802AbgAPRlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:41:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58708 "EHLO mail.kernel.org"
+        id S2405464AbgAPSCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:02:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388445AbgAPRlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:11 -0500
+        id S2393755AbgAPRlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1080246A1;
-        Thu, 16 Jan 2020 17:41:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60F5224695;
+        Thu, 16 Jan 2020 17:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196470;
-        bh=WA3U/r//9cm2sKTS9jnpmWEUYRRJqifW3XA904FrhdE=;
+        s=default; t=1579196477;
+        bh=84UuqVUC/U7vQPyeAM67rY8iJUGdvJV2Ldc+ZMfkJSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2aE75OCrjbD57022aqdVTD+EXT9PDIAX/paHSg17Dqun3eNZk7+dK2dHBkgcBs9mh
-         pwoWEaTlznjn5fnlLbD01KHiBLfpMQ0FZFw6ctNbjChGpz/zntEQhSDv1iOpRy/JIg
-         dR5rC0GlyND6S6T5IKkIMOHIOe6WBT0+TASGxciA=
+        b=Igff8lDBWVqV687rCJlhyzfkvPLBtIKQB23Kbjk3jUSVqgzQFCD0cIuOH9WjoibPo
+         gNj4tmI4F0KTQky+1gVMPhBnEMwyb838Lr/UIEvUPceB7xHIWpGYDRN03u5Ct6FcqO
+         FPPK0DBkwIpAX4rVZFLTm71qkdRiLZ2g4hUikZ0A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@in-tech.com>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 221/251] net: qca_spi: Move reset_count to struct qcaspi
-Date:   Thu, 16 Jan 2020 12:36:10 -0500
-Message-Id: <20200116173641.22137-181-sashal@kernel.org>
+Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 225/251] media: ov6650: Fix incorrect use of JPEG colorspace
+Date:   Thu, 16 Jan 2020 12:36:14 -0500
+Message-Id: <20200116173641.22137-185-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,66 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@in-tech.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-[ Upstream commit bc19c32904e36548335b35fdce6ce734e20afc0a ]
+[ Upstream commit 12500731895ef09afc5b66b86b76c0884fb9c7bf ]
 
-The reset counter is specific for every QCA700x chip. So move this
-into the private driver struct. Otherwise we get unpredictable reset
-behavior in setups with multiple QCA700x chips.
+Since its initial submission, the driver selects V4L2_COLORSPACE_JPEG
+for supported formats other than V4L2_MBUS_FMT_SBGGR8_1X8.  According
+to v4l2-compliance test program, V4L2_COLORSPACE_JPEG applies
+exclusively to V4L2_PIX_FMT_JPEG.  Since the sensor does not support
+JPEG format, fix it to always select V4L2_COLORSPACE_SRGB.
 
-Fixes: 291ab06ecf67 (net: qualcomm: new Ethernet over SPI driver for QCA7000)
-Signed-off-by: Stefan Wahren <stefan.wahren@in-tech.com>
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2f6e2404799a ("[media] SoC Camera: add driver for OV6650 sensor")
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qualcomm/qca_spi.c | 9 ++++-----
- drivers/net/ethernet/qualcomm/qca_spi.h | 1 +
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/media/i2c/soc_camera/ov6650.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
-index 21f546587e3d..31583d6f044f 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -438,7 +438,6 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
- 	u16 signature = 0;
- 	u16 spi_config;
- 	u16 wrbuf_space = 0;
--	static u16 reset_count;
+diff --git a/drivers/media/i2c/soc_camera/ov6650.c b/drivers/media/i2c/soc_camera/ov6650.c
+index 7a119466f973..e9271ad9ee4c 100644
+--- a/drivers/media/i2c/soc_camera/ov6650.c
++++ b/drivers/media/i2c/soc_camera/ov6650.c
+@@ -203,7 +203,6 @@ struct ov6650 {
+ 	unsigned long		pclk_max;	/* from resolution and format */
+ 	struct v4l2_fract	tpf;		/* as requested with s_parm */
+ 	u32 code;
+-	enum v4l2_colorspace	colorspace;
+ };
  
- 	if (event == QCASPI_EVENT_CPUON) {
- 		/* Read signature twice, if not valid
-@@ -491,13 +490,13 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
  
- 		qca->sync = QCASPI_SYNC_RESET;
- 		qca->stats.trig_reset++;
--		reset_count = 0;
-+		qca->reset_count = 0;
+@@ -515,7 +514,7 @@ static int ov6650_get_fmt(struct v4l2_subdev *sd,
+ 	mf->width	= priv->rect.width >> priv->half_scale;
+ 	mf->height	= priv->rect.height >> priv->half_scale;
+ 	mf->code	= priv->code;
+-	mf->colorspace	= priv->colorspace;
++	mf->colorspace	= V4L2_COLORSPACE_SRGB;
+ 	mf->field	= V4L2_FIELD_NONE;
+ 
+ 	return 0;
+@@ -624,11 +623,6 @@ static int ov6650_s_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 		priv->pclk_max = 8000000;
+ 	}
+ 
+-	if (code == MEDIA_BUS_FMT_SBGGR8_1X8)
+-		priv->colorspace = V4L2_COLORSPACE_SRGB;
+-	else if (code != 0)
+-		priv->colorspace = V4L2_COLORSPACE_JPEG;
+-
+ 	if (half_scale) {
+ 		dev_dbg(&client->dev, "max resolution: QCIF\n");
+ 		coma_set |= COMA_QCIF;
+@@ -685,7 +679,6 @@ static int ov6650_s_fmt(struct v4l2_subdev *sd, struct v4l2_mbus_framefmt *mf)
+ 		priv->code = code;
+ 
+ 	if (!ret) {
+-		mf->colorspace	= priv->colorspace;
+ 		mf->width = priv->rect.width >> half_scale;
+ 		mf->height = priv->rect.height >> half_scale;
+ 	}
+@@ -708,6 +701,7 @@ static int ov6650_set_fmt(struct v4l2_subdev *sd,
+ 				&mf->height, 2, H_CIF, 1, 0);
+ 
+ 	mf->field = V4L2_FIELD_NONE;
++	mf->colorspace = V4L2_COLORSPACE_SRGB;
+ 
+ 	switch (mf->code) {
+ 	case MEDIA_BUS_FMT_Y10_1X10:
+@@ -717,12 +711,10 @@ static int ov6650_set_fmt(struct v4l2_subdev *sd,
+ 	case MEDIA_BUS_FMT_YUYV8_2X8:
+ 	case MEDIA_BUS_FMT_VYUY8_2X8:
+ 	case MEDIA_BUS_FMT_UYVY8_2X8:
+-		mf->colorspace = V4L2_COLORSPACE_JPEG;
  		break;
- 	case QCASPI_SYNC_RESET:
--		reset_count++;
-+		qca->reset_count++;
- 		netdev_dbg(qca->net_dev, "sync: waiting for CPU on, count %u.\n",
--			   reset_count);
--		if (reset_count >= QCASPI_RESET_TIMEOUT) {
-+			   qca->reset_count);
-+		if (qca->reset_count >= QCASPI_RESET_TIMEOUT) {
- 			/* reset did not seem to take place, try again */
- 			qca->sync = QCASPI_SYNC_UNKNOWN;
- 			qca->stats.reset_timeout++;
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
-index 6e31a0e744a4..c48c314ca4df 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.h
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.h
-@@ -97,6 +97,7 @@ struct qcaspi {
+ 	default:
+ 		mf->code = MEDIA_BUS_FMT_SBGGR8_1X8;
+ 	case MEDIA_BUS_FMT_SBGGR8_1X8:
+-		mf->colorspace = V4L2_COLORSPACE_SRGB;
+ 		break;
+ 	}
  
- 	unsigned int intr_req;
- 	unsigned int intr_svc;
-+	u16 reset_count;
+@@ -1048,7 +1040,6 @@ static int ov6650_probe(struct i2c_client *client,
+ 	priv->rect.height = H_CIF;
+ 	priv->half_scale  = false;
+ 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
+-	priv->colorspace  = V4L2_COLORSPACE_JPEG;
  
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *device_root;
+ 	ret = ov6650_video_probe(client);
+ 	if (ret)
 -- 
 2.20.1
 
