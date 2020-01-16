@@ -2,185 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B765F13D3FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 06:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CBA13D3F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 06:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgAPFzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 00:55:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35675 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgAPFzH (ORCPT
+        id S1726933AbgAPFxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 00:53:48 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55204 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbgAPFxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 00:55:07 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so17842900wro.2;
-        Wed, 15 Jan 2020 21:55:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NGGRCbRsjloWfYF2cHg3taqwmJTEu8ejz3Fhy/MiNIg=;
-        b=FAPgEX95Okm1PYWx+lYdAYkeQZFYdkQpx4INTn3yuTeEPggTIkb+SSmpiN1DrTzTMR
-         F8YAzV3LpIE8v/+DzLESZGFiolINqohluQXIo5pP4qfGoAv4WuvIl09MTLyH/FgA1uED
-         xrvzH0NNnXsLoP7bi/MMapp889FaW2xsFrvqd9tgZSywMra+//L2O3Mv0Qxb5MadOSHP
-         jz223DZjqzt/Nu4ZBN1vXyCUZyN/lHZMeD3lyK1qC5WaiY3J1zUCz+M5X+Kbrc/ZBLL7
-         l6i3rSH3TITt2pQsDv9MJNDyHG9uJQQzOv14/uixxkDS9KoFz7btgVg7iRx2X6f/H1vU
-         VCaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NGGRCbRsjloWfYF2cHg3taqwmJTEu8ejz3Fhy/MiNIg=;
-        b=mORmB0PJPByy1cqEUlQrchJyP7gFMouicSTjwQ7+t72fWieNmPCMNTNO/5FOBY48/1
-         cYb/l8SlP8TccrcscJNysMyI8LOmsNBP3un3NJlbhDf/Uc/9ivr5FwPTRe5FNQOEDlN0
-         gl4qCFQ7lBxIFRS3G2hGzJr+P6gcC5xmaG8Q/zC+jVcpfdDiIkPK8neFNS7WN0IpRKPU
-         mjb/A3Iu5je8d+0Gc461IgIpNfkLlk1Kj6uJPoghkqIHSLN32cbolktNBVZh6m0bSOlT
-         Z5c3wKAimdus/4mAwAyIlKOjzeCASEtZTj1vIqV48buT8eKv1jm4ly0R1vCezTgc3V6R
-         8Ubg==
-X-Gm-Message-State: APjAAAUdw5UAMXCS4mDDA6WaKx4LubL2MYWVyFP9tuf4gAANyNWgzPL9
-        E0QaedYSHIOi+zAlaMrQ0RJ365RgOe0XMz5n1tQ=
-X-Google-Smtp-Source: APXvYqygaiL9IxcZBDeOlGW0IjTYd9QUt9aNCyzyH/CPff3tMmmEB2RiYIW6FqMd9/9j6NWJe0bNxet3KikGqZP6xRw=
-X-Received: by 2002:adf:d850:: with SMTP id k16mr1193679wrl.96.1579154104574;
- Wed, 15 Jan 2020 21:55:04 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1569493933.git.shengjiu.wang@nxp.com> <d728f65194e9978cbec4132b522d4fed420d704a.1569493933.git.shengjiu.wang@nxp.com>
- <CANcMJZBy=yH+4YgZWwphiE-PO6d4hzhFK3XFtpN677ZAv_N4WQ@mail.gmail.com>
-In-Reply-To: <CANcMJZBy=yH+4YgZWwphiE-PO6d4hzhFK3XFtpN677ZAv_N4WQ@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 15 Jan 2020 21:54:54 -0800
-Message-ID: <CANcMJZCuU_-Xii=YT5Rp5DAyxboptJCrpp51jForuYUpeMuhmQ@mail.gmail.com>
-Subject: Re: [PATCH V6 3/4] ASoC: pcm_dmaengine: Extract snd_dmaengine_pcm_refine_runtime_hwparams
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thu, 16 Jan 2020 00:53:48 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00G5rAQA064244;
+        Wed, 15 Jan 2020 23:53:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579153990;
+        bh=sOYcxg4iNklbKYvqwCFV5iSNCYi87ZaFpe1ow9AnDTU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YbFoQy/NnB0Fi70gEYTGrbWZ9o5nFdZJ7Z3UtPUiMe+IjeJ3qgs7+qECWuxJwjjBt
+         cDPuq/5yx6ImrbqYJ7mdLwHBmTS1FN9cNyYH4NqselWP4aCmMz14pqNkUoFkPFx4ZR
+         kgveTfWlqEChZCam07S1dGkJjO1jYmXG6qhzMtiw=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00G5rAxA039773
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Jan 2020 23:53:10 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 15
+ Jan 2020 23:53:10 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 15 Jan 2020 23:53:10 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00G5r064074235;
+        Wed, 15 Jan 2020 23:53:02 -0600
+Subject: Re: [v3 5/6] PCI: rcar: Add support for rcar PCIe controller in
+ endpoint mode
+To:     Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, lars@metafoo.de
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        <linux-pci@vger.kernel.org>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        <linux-rockchip@lists.infradead.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200108162211.22358-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200108162211.22358-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <5cf7fbe3-c7e4-8e8e-9815-a5e52a62615b@ti.com>
+Date:   Thu, 16 Jan 2020 11:25:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200108162211.22358-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 8, 2020 at 8:58 PM John Stultz <john.stultz@linaro.org> wrote:
-> On Thu, Sep 26, 2019 at 6:50 PM Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
-> >
-> > When set the runtime hardware parameters, we may need to query
-> > the capability of DMA to complete the parameters.
-> >
-> > This patch is to Extract this operation from
-> > dmaengine_pcm_set_runtime_hwparams function to a separate function
-> > snd_dmaengine_pcm_refine_runtime_hwparams, that other components
-> > which need this feature can call this function.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Reviewed-by: Nicolin Chen <nicoleotsuka@gmail.com>
->
-> As a heads up, this patch seems to be causing a regression on the HiKey board.
->
-> On boot up I'm seeing:
-> [   17.721424] hi6210_i2s f7118000.i2s: ASoC: can't open component
-> f7118000.i2s: -6
->
-> And HDMI audio isn't working. With this patch reverted, audio works again.
->
->
-> > diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
-> > index 89a05926ac73..5749a8a49784 100644
-> > --- a/sound/core/pcm_dmaengine.c
-> > +++ b/sound/core/pcm_dmaengine.c
-> > @@ -369,4 +369,87 @@ int snd_dmaengine_pcm_close_release_chan(struct snd_pcm_substream *substream)
-> ...
-> > +       ret = dma_get_slave_caps(chan, &dma_caps);
-> > +       if (ret == 0) {
-> > +               if (dma_caps.cmd_pause && dma_caps.cmd_resume)
-> > +                       hw->info |= SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME;
-> > +               if (dma_caps.residue_granularity <= DMA_RESIDUE_GRANULARITY_SEGMENT)
-> > +                       hw->info |= SNDRV_PCM_INFO_BATCH;
-> > +
-> > +               if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-> > +                       addr_widths = dma_caps.dst_addr_widths;
-> > +               else
-> > +                       addr_widths = dma_caps.src_addr_widths;
-> > +       }
->
-> It seems a failing ret from dma_get_slave_caps() here is being returned...
->
-> > +
-> > +       /*
-> > +        * If SND_DMAENGINE_PCM_DAI_FLAG_PACK is set keep
-> > +        * hw.formats set to 0, meaning no restrictions are in place.
-> > +        * In this case it's the responsibility of the DAI driver to
-> > +        * provide the supported format information.
-> > +        */
-> > +       if (!(dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK))
-> > +               /*
-> > +                * Prepare formats mask for valid/allowed sample types. If the
-> > +                * dma does not have support for the given physical word size,
-> > +                * it needs to be masked out so user space can not use the
-> > +                * format which produces corrupted audio.
-> > +                * In case the dma driver does not implement the slave_caps the
-> > +                * default assumption is that it supports 1, 2 and 4 bytes
-> > +                * widths.
-> > +                */
-> > +               for (i = SNDRV_PCM_FORMAT_FIRST; i <= SNDRV_PCM_FORMAT_LAST; i++) {
-> > +                       int bits = snd_pcm_format_physical_width(i);
-> > +
-> > +                       /*
-> > +                        * Enable only samples with DMA supported physical
-> > +                        * widths
-> > +                        */
-> > +                       switch (bits) {
-> > +                       case 8:
-> > +                       case 16:
-> > +                       case 24:
-> > +                       case 32:
-> > +                       case 64:
-> > +                               if (addr_widths & (1 << (bits / 8)))
-> > +                                       hw->formats |= pcm_format_to_bits(i);
-> > +                               break;
-> > +                       default:
-> > +                               /* Unsupported types */
-> > +                               break;
-> > +                       }
-> > +               }
-> > +
-> > +       return ret;
->
-> ... down here.
->
-> Where as in the old code...
->
-> > diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-> > index 748f5f641002..b9f147eaf7c4 100644
-> > --- a/sound/soc/soc-generic-dmaengine-pcm.c
-> > +++ b/sound/soc/soc-generic-dmaengine-pcm.c
->
-> > @@ -145,56 +140,12 @@ static int dmaengine_pcm_set_runtime_hwparams(struct snd_pcm_substream *substrea
-> >         if (pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
-> >                 hw.info |= SNDRV_PCM_INFO_BATCH;
-> >
-> > -       ret = dma_get_slave_caps(chan, &dma_caps);
-> > -       if (ret == 0) {
-> > -               if (dma_caps.cmd_pause && dma_caps.cmd_resume)
-> > -                       hw.info |= SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME;
-> > -               if (dma_caps.residue_granularity <= DMA_RESIDUE_GRANULARITY_SEGMENT)
-> > -                       hw.info |= SNDRV_PCM_INFO_BATCH;
-> > -
-> > -               if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-> > -                       addr_widths = dma_caps.dst_addr_widths;
-> > -               else
-> > -                       addr_widths = dma_caps.src_addr_widths;
-> > -       }
->
-> ...the ret from dma_get_slave_caps()  checked above, but is not
-> actually returned.
->
-> Suggestions on how to sort this out?
+Hi,
 
-Just wanted to check in on this, as I'm still seeing this regression with -rc6.
+On 08/01/20 9:52 PM, Lad Prabhakar wrote:
+> This patch adds support for rcar PCIe controller to work in endpoint mode.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/pci/controller/Kconfig        |   7 +
+>  drivers/pci/controller/Makefile       |   1 +
+>  drivers/pci/controller/pcie-rcar-ep.c | 497 ++++++++++++++++++++++++++
+>  drivers/pci/controller/pcie-rcar.h    |   6 +
+>  4 files changed, 511 insertions(+)
+>  create mode 100644 drivers/pci/controller/pcie-rcar-ep.c
+> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index b022ac5678f7..69b1c778dad4 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -61,6 +61,13 @@ config PCIE_RCAR_HOST
+>  	help
+>  	  Say Y here if you want PCIe controller support on R-Car SoCs in host mode.
+>  
+> +config PCIE_RCAR_EP
+> +	bool "Renesas R-Car PCIe endpoint controller"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	depends on PCI_ENDPOINT
+> +	help
+> +	  Say Y here if you want PCIe controller support on R-Car SoCs in endpoint mode.
+> +
+>  config PCI_HOST_COMMON
+>  	bool
+>  	select PCI_ECAM
+> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
+> index 69ba1dbf837b..61505b1fc66a 100644
+> --- a/drivers/pci/controller/Makefile
+> +++ b/drivers/pci/controller/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_PCI_AARDVARK) += pci-aardvark.o
+>  obj-$(CONFIG_PCI_TEGRA) += pci-tegra.o
+>  obj-$(CONFIG_PCI_RCAR_GEN2) += pci-rcar-gen2.o
+>  obj-$(CONFIG_PCIE_RCAR_HOST) += pcie-rcar.o pcie-rcar-host.o
+> +obj-$(CONFIG_PCIE_RCAR_EP) += pcie-rcar.o pcie-rcar-ep.o
+>  obj-$(CONFIG_PCI_HOST_COMMON) += pci-host-common.o
+>  obj-$(CONFIG_PCI_HOST_GENERIC) += pci-host-generic.o
+>  obj-$(CONFIG_PCIE_XILINX) += pcie-xilinx.o
+> diff --git a/drivers/pci/controller/pcie-rcar-ep.c b/drivers/pci/controller/pcie-rcar-ep.c
+> new file mode 100644
+> index 000000000000..40cd2aad8c3c
+> --- /dev/null
+> +++ b/drivers/pci/controller/pcie-rcar-ep.c
+> @@ -0,0 +1,497 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCIe endpoint driver for Renesas R-Car SoCs
+> + *  Copyright (c) 2020 Renesas Electronics Europe GmbH
+> + *
+> + * Author: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_pci.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci-epc.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "pcie-rcar.h"
+> +
+> +#define MAX_NR_INBOUND_MAPS	6
+> +#define MAX_NR_OUTBOUND_MAPS	4
+> +
+> +/* Structure representing the PCIe interface */
+> +struct rcar_pcie {
+> +	phys_addr_t		*ob_addr;
+> +	struct pci_epc_mem_window *ob_window;
+> +	struct pci_epc		*epc;
+> +	struct device		*dev;
+> +	void __iomem		*base;
+> +	u8			max_functions;
+> +	unsigned int		bar_to_atu[MAX_NR_INBOUND_MAPS];
+> +	unsigned long		*ib_window_map;
+> +	u32			num_ib_windows;
+> +	u32			num_ob_windows;
+> +};
+> +
+> +static void rcar_pcie_ep_hw_init(struct rcar_pcie *pcie)
+> +{
+> +	u32 val;
+> +
+> +	rcar_pci_write_reg(pcie->base, 0, PCIETCTLR);
+> +
+> +	/* Set endpoint mode */
+> +	rcar_pci_write_reg(pcie->base, 0, PCIEMSR);
+> +
+> +	/* Initialize default capabilities. */
+> +	rcar_rmw32(pcie->base, REXPCAP(0), 0xff, PCI_CAP_ID_EXP);
+> +	rcar_rmw32(pcie->base, REXPCAP(PCI_EXP_FLAGS),
+> +		   PCI_EXP_FLAGS_TYPE, PCI_EXP_TYPE_ENDPOINT << 4);
+> +	rcar_rmw32(pcie->base, RCONF(PCI_HEADER_TYPE), 0x7f,
+> +		   PCI_HEADER_TYPE_NORMAL);
+> +
+> +	/* Write out the physical slot number = 0 */
+> +	rcar_rmw32(pcie->base, REXPCAP(PCI_EXP_SLTCAP), PCI_EXP_SLTCAP_PSN, 0);
+> +
+> +	val = rcar_pci_read_reg(pcie->base, EXPCAP(1));
+> +	/* device supports fixed 128 bytes MPSS */
+> +	val &= ~GENMASK(2, 0);
+> +	/* L1 to L0 transition latency no time limit */
+> +	val |= GENMASK(11, 9);
+> +	/* L0s to L0 transistion no time limit */
+> +	val |= GENMASK(8, 6);
+> +	rcar_pci_write_reg(pcie->base, val, EXPCAP(1));
+> +
+> +	val = rcar_pci_read_reg(pcie->base, EXPCAP(2));
+> +	/* read requests size 128 bytes */
+> +	val &= ~GENMASK(14, 12);
+> +	/* payload size 128 bytes */
+> +	val &= ~GENMASK(7, 5);
+> +	/* disable relaxed ordering transaction */
+> +	val &= ~BIT(4);
+> +	rcar_pci_write_reg(pcie->base, val, EXPCAP(2));
+> +
+> +	val = rcar_pci_read_reg(pcie->base, EXPCAP(4));
+> +	/* disable ASPM control */
+> +	val &= ~GENMASK(1, 0);
+> +	rcar_pci_write_reg(pcie->base, val, EXPCAP(4));
+> +
+> +	/* Set target link speed to 5.0 GT/s */
+> +	rcar_rmw32(pcie->base, EXPCAP(12), PCI_EXP_LNKSTA_CLS,
+> +		   PCI_EXP_LNKSTA_CLS_5_0GB);
+> +
+> +	/* Set the completion timer timeout to the maximum 50ms. */
+> +	rcar_rmw32(pcie->base, TLCTLR + 1, 0x3f, 50);
+> +
+> +	/* Terminate list of capabilities (Next Capability Offset=0) */
+> +	rcar_rmw32(pcie->base, RVCCAP(0), 0xfff00000, 0);
+> +
+> +	/* flush modifications */
+> +	wmb();
+> +}
+> +
+> +static int rcar_pcie_parse_outbound_ranges(struct rcar_pcie *pcie,
+> +					   struct platform_device *pdev)
+> +{
+> +	char outbound_name[10];
+> +	struct resource *res;
+> +	unsigned int i = 0;
+> +
+> +	pcie->num_ob_windows = 0;
+> +	for (i = 0; i < MAX_NR_OUTBOUND_MAPS; i++) {
+> +		sprintf(outbound_name, "memory%u", i);
+> +		res = platform_get_resource_byname(pdev,
+> +						   IORESOURCE_MEM,
+> +						   outbound_name);
+> +		if (!res) {
+> +			dev_err(pcie->dev, "missing outbound window %u\n", i);
+> +			return -EINVAL;
+> +		}
+> +		if (!devm_request_mem_region(&pdev->dev, res->start,
+> +					     resource_size(res),
+> +					     outbound_name)) {
+> +			dev_err(pcie->dev, "Cannot request memory region %s.\n",
+> +				outbound_name);
+> +			return -EIO;
+> +		}
+> +
+> +		pcie->ob_window[i].phys_base = res->start;
+> +		pcie->ob_window[i].size = resource_size(res);
+> +		/* controller doesn't support multiple allocation
+> +		 * from same window, so set page_size to window size
+> +		 */
+> +		pcie->ob_window[i].page_size = resource_size(res);
 
-thanks
--john
+I would prefer the page_size comes from device tree. I'm also thinking
+if we should add a standard binding for specifying the outbound memory
+regions. Rob, what do you think?
+
+Thanks
+Kishon
