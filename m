@@ -2,34 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B885513F1C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB18513F192
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388228AbgAPSbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:31:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
+        id S2392044AbgAPRZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391940AbgAPRZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:25 -0500
+        id S2391950AbgAPRZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88BBB246CE;
-        Thu, 16 Jan 2020 17:25:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4C9E246D7;
+        Thu, 16 Jan 2020 17:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195524;
-        bh=mLDp92O2C3qsOQkY4HX4KZejpeluTzoGMiIMT5MAAvs=;
+        s=default; t=1579195526;
+        bh=WCmaEDtXOxvCXlwoVJUqhNOHDoGgqCruE5qN0+T7Gk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDNn2xxOTvSDUXpng/IxLk7xA98FZmuR1/poBbvF5ONqMwIZS/I4PEtGCOlnFIBvj
-         4TOJen7BIWU4O4FY7kNY9JF3cji8xlNVj5e+6HSvgqmQ7tRP/9alinnm104Z28Dbzl
-         LzRFmlifFPv3sPnFmEhqDrBRjzKYw25uFBRewGRQ=
+        b=MdE1EycBPzoit5Q4OhZo5i+3YyHqw4ybMzXHHLF9JTCq/szGLUbjtRrVixIdv+eBc
+         Bp1ATD9CObUF03VZ6rN2bd5p716PAeQmB5eF0RFBu01R2VojY0sBfGg/gu24BCM1Jk
+         s6e5U8kY0ZejcwR9ywKexezued3hf9ZVkGe+suX4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 121/371] NFS/pnfs: Bulk destroy of layouts needs to be safe w.r.t. umount
-Date:   Thu, 16 Jan 2020 12:19:53 -0500
-Message-Id: <20200116172403.18149-64-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Anand Moon <linux.amoon@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 123/371] ARM: 8847/1: pm: fix HYP/SVC mode mismatch when MCPM is used
+Date:   Thu, 16 Jan 2020 12:19:55 -0500
+Message-Id: <20200116172403.18149-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -42,92 +46,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 5085607d209102b37b169bc94d0aa39566a9842a ]
+[ Upstream commit ca70ea43f80c98582f5ffbbd1e6f4da2742da0c4 ]
 
-If a bulk layout recall or a metadata server reboot coincides with a
-umount, then holding a reference to an inode is unsafe unless we
-also hold a reference to the super block.
+MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
+perform low-level platform initialization. This results in a try to install
+HYP stubs for the second time for each CPU and results in false HYP/SVC
+mode mismatch detection. The HYP stubs are already installed at the
+beginning of the kernel initialization on the boot CPU (head.S) or in the
+secondary_startup() for other CPUs. To fix this issue MCPM code should use
+a cpu_resume() routine without HYP stubs installation.
 
-Fixes: fd9a8d7160937 ("NFSv4.1: Fix bulk recall and destroy of layouts")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
+XU3/XU4/HC1 boards.
+
+Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/pnfs.c | 33 +++++++++++++++++++++++----------
- fs/nfs/pnfs.h |  1 +
- 2 files changed, 24 insertions(+), 10 deletions(-)
+ arch/arm/common/mcpm_entry.c   |  2 +-
+ arch/arm/include/asm/suspend.h |  1 +
+ arch/arm/kernel/sleep.S        | 12 ++++++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
-index ec04cce31814..83abf3dd7351 100644
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -725,22 +725,35 @@ static int
- pnfs_layout_bulk_destroy_byserver_locked(struct nfs_client *clp,
- 		struct nfs_server *server,
- 		struct list_head *layout_list)
-+	__must_hold(&clp->cl_lock)
-+	__must_hold(RCU)
- {
- 	struct pnfs_layout_hdr *lo, *next;
- 	struct inode *inode;
+diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
+index 2b913f17d50f..c24a55b0deac 100644
+--- a/arch/arm/common/mcpm_entry.c
++++ b/arch/arm/common/mcpm_entry.c
+@@ -379,7 +379,7 @@ static int __init nocache_trampoline(unsigned long _arg)
+ 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+ 	phys_reset_t phys_reset;
  
- 	list_for_each_entry_safe(lo, next, &server->layouts, plh_layouts) {
--		if (test_bit(NFS_LAYOUT_INVALID_STID, &lo->plh_flags))
-+		if (test_bit(NFS_LAYOUT_INVALID_STID, &lo->plh_flags) ||
-+		    test_bit(NFS_LAYOUT_INODE_FREEING, &lo->plh_flags) ||
-+		    !list_empty(&lo->plh_bulk_destroy))
- 			continue;
-+		/* If the sb is being destroyed, just bail */
-+		if (!nfs_sb_active(server->super))
-+			break;
- 		inode = igrab(lo->plh_inode);
--		if (inode == NULL)
--			continue;
--		list_del_init(&lo->plh_layouts);
--		if (pnfs_layout_add_bulk_destroy_list(inode, layout_list))
--			continue;
--		rcu_read_unlock();
--		spin_unlock(&clp->cl_lock);
--		iput(inode);
-+		if (inode != NULL) {
-+			list_del_init(&lo->plh_layouts);
-+			if (pnfs_layout_add_bulk_destroy_list(inode,
-+						layout_list))
-+				continue;
-+			rcu_read_unlock();
-+			spin_unlock(&clp->cl_lock);
-+			iput(inode);
-+		} else {
-+			rcu_read_unlock();
-+			spin_unlock(&clp->cl_lock);
-+			set_bit(NFS_LAYOUT_INODE_FREEING, &lo->plh_flags);
-+		}
-+		nfs_sb_deactive(server->super);
- 		spin_lock(&clp->cl_lock);
- 		rcu_read_lock();
- 		return -EAGAIN;
-@@ -778,7 +791,7 @@ pnfs_layout_free_bulk_destroy_list(struct list_head *layout_list,
- 		/* Free all lsegs that are attached to commit buckets */
- 		nfs_commit_inode(inode, 0);
- 		pnfs_put_layout_hdr(lo);
--		iput(inode);
-+		nfs_iput_and_deactive(inode);
- 	}
- 	return ret;
- }
-diff --git a/fs/nfs/pnfs.h b/fs/nfs/pnfs.h
-index 87f144f14d1e..965d657086c8 100644
---- a/fs/nfs/pnfs.h
-+++ b/fs/nfs/pnfs.h
-@@ -99,6 +99,7 @@ enum {
- 	NFS_LAYOUT_RETURN_REQUESTED,	/* Return this layout ASAP */
- 	NFS_LAYOUT_INVALID_STID,	/* layout stateid id is invalid */
- 	NFS_LAYOUT_FIRST_LAYOUTGET,	/* Serialize first layoutget */
-+	NFS_LAYOUT_INODE_FREEING,	/* The inode is being freed */
+-	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
++	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
+ 	setup_mm_for_reboot();
+ 
+ 	__mcpm_cpu_going_down(cpu, cluster);
+diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
+index 452bbdcbcc83..506314265c6f 100644
+--- a/arch/arm/include/asm/suspend.h
++++ b/arch/arm/include/asm/suspend.h
+@@ -10,6 +10,7 @@ struct sleep_save_sp {
  };
  
- enum layoutdriver_policy_flags {
+ extern void cpu_resume(void);
++extern void cpu_resume_no_hyp(void);
+ extern void cpu_resume_arm(void);
+ extern int cpu_suspend(unsigned long, int (*)(unsigned long));
+ 
+diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+index a8257fc9cf2a..5dc8b80bb693 100644
+--- a/arch/arm/kernel/sleep.S
++++ b/arch/arm/kernel/sleep.S
+@@ -120,6 +120,14 @@ ENDPROC(cpu_resume_after_mmu)
+ 	.text
+ 	.align
+ 
++#ifdef CONFIG_MCPM
++	.arm
++THUMB(	.thumb			)
++ENTRY(cpu_resume_no_hyp)
++ARM_BE8(setend be)			@ ensure we are in BE mode
++	b	no_hyp
++#endif
++
+ #ifdef CONFIG_MMU
+ 	.arm
+ ENTRY(cpu_resume_arm)
+@@ -135,6 +143,7 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
+ 	bl	__hyp_stub_install_secondary
+ #endif
+ 	safe_svcmode_maskall r1
++no_hyp:
+ 	mov	r1, #0
+ 	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
+ 	ALT_UP_B(1f)
+@@ -163,6 +172,9 @@ ENDPROC(cpu_resume)
+ 
+ #ifdef CONFIG_MMU
+ ENDPROC(cpu_resume_arm)
++#endif
++#ifdef CONFIG_MCPM
++ENDPROC(cpu_resume_no_hyp)
+ #endif
+ 
+ 	.align 2
 -- 
 2.20.1
 
