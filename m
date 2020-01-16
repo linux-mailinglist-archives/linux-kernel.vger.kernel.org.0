@@ -2,107 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D7F13F717
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D75513F738
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:10:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437389AbgAPTJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:09:18 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46513 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388119AbgAPTJM (ORCPT
+        id S2437398AbgAPTKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:10:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48777 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbgAPTKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:09:12 -0500
-Received: by mail-oi1-f196.google.com with SMTP id 13so19824324oij.13
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
-        b=J79PjTiwui87Gtdaft875ciI4awf5xIZ2OlEVeWr6PK1j7HDrzdets/eOiB9gFbjxU
-         N8a+VDYTOh/zAoGUZWE4w1cYgXKFMyIY5mxDDqaoQWFa6T9HxfH2fP9PLUP1uKEVP7xo
-         SFvhifCBTkknEhBzZWrz1h+yDcMOzcy1CAiSWM1LLzIaCNgg2JOGV1Bsk6VwLRFyGzsl
-         3oI19Df8dP3bwMD1fbOXbUBm44Ixpu94cRB2oRYOQ/+C0gKdgTy/EpALksKs5ue92Nlt
-         bvnoL/8n6PK1nwQDhUpD7aFZSXwTnAcIEDKECZAVt2HboWTI3XccHsyHaJHIW0AO8xHe
-         C2gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
-        b=CsRu2g7814WwqSf1nTcZ6gOU3Th1DEalGAUyIJ1n93OmV/PfSJmZMjyXSdg0nB7TJ+
-         T8iia8gR6DOZAqlDSFMz08+y3SIiTJMdgxUOAtl6QHCp2SK2z1CTf9UCqGMX+0Wg9PPq
-         tjSdBgaJroy0QJLv6ZTghmFg5jdSV612UosuC2gx2wGbYsHx7VEXFrokCQx49gP75NkV
-         hK5L72/hjv+YVv9ztw9yvPONj2/zDWhI4suwQHWHad0BmdjPygPiBVSibNo/89MIGZgh
-         cwjSala56vhN2bsytGwa7nURrb3OI3KoncPXhaFgcxhoTzOjepuFswHDuOdX2KdIlri2
-         LXSw==
-X-Gm-Message-State: APjAAAWwZ4WKkMwd0lC8jaa7VgKOiIdelycp8CvvR2NgGDM2mm77Bz0C
-        vaQPWNUt5raA1+opta/q5SzU/V38W7ghEjdLefuqKw==
-X-Google-Smtp-Source: APXvYqxWT+/8vZf0zWr1Yl/badv1TRvP/1k5BqWSq6/+HNdAxAD63JMtXrBctEvUY7L00GT1BthDGiNYcFZ4grHpWxY=
-X-Received: by 2002:aca:3f54:: with SMTP id m81mr427008oia.73.1579201751684;
- Thu, 16 Jan 2020 11:09:11 -0800 (PST)
+        Thu, 16 Jan 2020 14:10:11 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1isAWt-0006N4-Si; Thu, 16 Jan 2020 19:10:07 +0000
+From:   Colin Ian King <colin.king@canonical.com>
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+To:     "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: re: cifs: Avoid doing network I/O while holding cache lock
+Message-ID: <26f61914-3c0d-4911-7f21-23967839554c@canonical.com>
+Date:   Thu, 16 Jan 2020 19:10:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com> <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
- <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com> <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
- <20200116183900.GC25291@redhat.com>
-In-Reply-To: <20200116183900.GC25291@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 16 Jan 2020 11:09:00 -0800
-Message-ID: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:39 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Thu, Jan 16, 2020 at 10:09:46AM -0800, Dan Williams wrote:
-> > On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
-> > >
-> > > Hi, Dan,
-> > >
-> > > Dan Williams <dan.j.williams@intel.com> writes:
-> > >
-> > > > I'm going to take a look at how hard it would be to develop a kpartx
-> > > > fallback in udev. If that can live across the driver transition then
-> > > > maybe this can be a non-event for end users that already have that
-> > > > udev update deployed.
-> > >
-> > > I just wanted to remind you that label-less dimms still exist, and are
-> > > still being shipped.  For those devices, the only way to subdivide the
-> > > storage is via partitioning.
-> >
-> > True, but if kpartx + udev can make this transparent then I don't
-> > think users lose any functionality. They just gain a device-mapper
-> > dependency.
->
-> So udev rules will trigger when a /dev/pmemX device shows up and run
-> kpartx which in turn will create dm-linear devices and device nodes
-> will show up in /dev/mapper/pmemXpY.
->
-> IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
-> systemd unit files are depenent on /dev/pmemXpY, these will still be
-> broken out of the box and will have to be modified to use device nodes
-> in /dev/mapper/ directory instead. Do I understand it right, Or I missed
-> the idea completely.
+Hi,
 
-No, I'd write the udev rule to create links from /dev/pmemXpY to the
-/dev/mapper device, and that rule would be gated by a new pmem device
-attribute to trigger when kpartx needs to run vs the kernel native
-partitions.
+static analysis with Coverity has detected an issue with the following
+commit:
+
+commit 03535b72873ba74e80e6938b5f772cf5b07ca76b
+Author: Paulo Alcantara (SUSE) <pc@cjr.nz>
+Date:   Wed Dec 4 17:38:03 2019 -0300
+
+    cifs: Avoid doing network I/O while holding cache lock
+
+
+
+This commit removed a memset on the vol object, causing the issue as
+reported below by Coverity:
+
+1342static struct cifs_ses *find_root_ses(struct vol_info *vi,
+1343                                      struct cifs_tcon *tcon,
+1344                                      const char *path)
+1345{
+1346        char *rpath;
+1347        int rc;
+1348        struct cache_entry *ce;
+1349        struct dfs_info3_param ref = {0};
+1350        char *mdata = NULL, *devname = NULL;
+1351        struct TCP_Server_Info *server;
+1352        struct cifs_ses *ses;
+
+    1. var_decl: Declaring variable vol without initializer.
+1353        struct smb_vol vol;
+1354
+1355        rpath = get_dfs_root(path);
+
+    2. Condition IS_ERR(rpath), taking false branch.
+1356        if (IS_ERR(rpath))
+1357                return ERR_CAST(rpath);
+1358
+1359        down_read(&htable_rw_lock);
+1360
+1361        ce = lookup_cache_entry(rpath, NULL);
+
+    3. Condition IS_ERR(ce), taking true branch.
+1362        if (IS_ERR(ce)) {
+1363                up_read(&htable_rw_lock);
+1364                ses = ERR_CAST(ce);
+
+    4. Jumping to label out.
+1365                goto out;
+1366        }
+1367
+1368        rc = setup_referral(path, ce, &ref, get_tgt_name(ce));
+1369        if (rc) {
+1370                up_read(&htable_rw_lock);
+1371                ses = ERR_PTR(rc);
+1372                goto out;
+1373        }
+1374
+1375        up_read(&htable_rw_lock);
+1376
+1377        mdata = cifs_compose_mount_options(vi->mntdata, rpath, &ref,
+1378                                           &devname);
+1379        free_dfs_info_param(&ref);
+1380
+1381        if (IS_ERR(mdata)) {
+1382                ses = ERR_CAST(mdata);
+1383                mdata = NULL;
+1384                goto out;
+1385        }
+1386
+1387        rc = cifs_setup_volume_info(&vol, mdata, devname, false);
+1388        kfree(devname);
+1389
+1390        if (rc) {
+1391                ses = ERR_PTR(rc);
+1392                goto out;
+1393        }
+1394
+1395        server = get_tcp_server(&vol);
+1396        if (!server) {
+1397                ses = ERR_PTR(-EHOSTDOWN);
+1398                goto out;
+1399        }
+1400
+1401        ses = cifs_get_smb_ses(server, &vol);
+1402
+1403out:
+
+    5. uninit_use_in_call: Using uninitialized value vol.username when
+calling cifs_cleanup_volume_info_contents.
+
+    6. uninit_use_in_call: Using uninitialized value vol.password when
+calling cifs_cleanup_volume_info_contents.
+
+    7. uninit_use_in_call: Using uninitialized value vol.domainname when
+calling cifs_cleanup_volume_info_contents.
+
+    8. uninit_use_in_call: Using uninitialized value vol.UNC when
+calling cifs_cleanup_volume_info_contents.
+
+    9. uninit_use_in_call: Using uninitialized value vol.iocharset when
+calling cifs_cleanup_volume_info_contents.
+
+ Uninitialized pointer read
+   10. uninit_use_in_call: Using uninitialized value vol.prepath when
+calling cifs_cleanup_volume_info_contents.
+
+1404        cifs_cleanup_volume_info_contents(&vol);
+1405        kfree(mdata);
+1406        kfree(rpath);
+
+The vol object is memset as a result of calling cifs_setup_volume_info()
+but this is too late for the earlier jumps to the error cleanup path at
+label out.  I did think about putting this back but it adds an
+unnecessary memset, a better fix may be return immediately or to exit
+via the kfree(mdata) at the end of the function.
+
+Not sure what is best, so I'm flagging this up as an issue that needs
+fixing.
+
+Colin
