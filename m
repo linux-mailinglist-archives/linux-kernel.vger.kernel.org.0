@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A7A513F7FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 087C313F800
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733193AbgAPQ4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:56:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42062 "EHLO mail.kernel.org"
+        id S1732663AbgAPQ41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732570AbgAPQ4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:04 -0500
+        id S1733178AbgAPQ4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:56:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E5F524680;
-        Thu, 16 Jan 2020 16:56:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB42321D56;
+        Thu, 16 Jan 2020 16:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193763;
-        bh=/LFljjM9wXtT7AF1NZ86AQkwrJppmbCRjR8pgtvV8dQ=;
+        s=default; t=1579193770;
+        bh=XZhnUCCwvm9lbZcTFOr66Eusy3wYa75mhvzEZFBPqcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DlOjce5YaXePq/0zafStpmO7pqnn1E7wWIejS4TeHwUsSj/rBw1y3OWYgdNKEp7/w
-         wEmuKEsQYdWvnIQ0zS3Df5zXR9mNcdIRUzI94e43ihN5aLMMqrQS4CS08aHT1B/ss2
-         gdfVI66jGK/+3RePGintiwcKFs7nx+GZuPuBlixs=
+        b=k4VYHuhU8jStjlhpcTaRts2XHdpbP8C9zg88cgo7nV4ULZcJ9sX9Dd8z0D/KHuYdB
+         ZOfRcUserg6SKQV4lx3/61Pk/9cbWU+nwEGaj2CxHXuExmE6gJRwlXpysFlw2gSvFL
+         PQRQAkT3cKcqWZM2ensAp2tc3M5HBS0VfqjrKOuA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 049/671] ASoC: sun8i-codec: add missing route for ADC
-Date:   Thu, 16 Jan 2020 11:44:40 -0500
-Message-Id: <20200116165502.8838-49-sashal@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 054/671] drm: rcar-du: Fix vblank initialization
+Date:   Thu, 16 Jan 2020 11:44:45 -0500
+Message-Id: <20200116165502.8838-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -44,38 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Khoruzhick <anarsoul@gmail.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 9ee325d029c4abb75716851ce38863845911d605 ]
+[ Upstream commit 3d61fe5f59dd3e6f96fc0772156d257cb04dc656 ]
 
-sun8i-codec misses a route from ADC to AIF1 Slot 0 ADC. Add it
-to the driver to avoid adding it to every dts.
+The drm_vblank_init() takes the total number of CRTCs as an argument,
+but the rcar-du driver passes a bitmask of the CRTC indices. Fix it.
 
-Fixes: eda85d1fee05d ("ASoC: sun8i-codec: Add ADC support for a33")
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 4bf8e1962f91 ("drm: Renesas R-Car Display Unit DRM driver")
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sunxi/sun8i-codec.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
-index bf615fa16dc8..a3db6a68dfe6 100644
---- a/sound/soc/sunxi/sun8i-codec.c
-+++ b/sound/soc/sunxi/sun8i-codec.c
-@@ -465,7 +465,11 @@ static const struct snd_soc_dapm_route sun8i_codec_dapm_routes[] = {
- 	{ "Right Digital DAC Mixer", "AIF1 Slot 0 Digital DAC Playback Switch",
- 	  "AIF1 Slot 0 Right"},
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 0386b454e221..6a9578159c2b 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -544,7 +544,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	 * Initialize vertical blanking interrupts handling. Start with vblank
+ 	 * disabled for all CRTCs.
+ 	 */
+-	ret = drm_vblank_init(dev, (1 << rcdu->num_crtcs) - 1);
++	ret = drm_vblank_init(dev, rcdu->num_crtcs);
+ 	if (ret < 0)
+ 		return ret;
  
--	/* ADC routes */
-+	/* ADC Routes */
-+	{ "AIF1 Slot 0 Right ADC", NULL, "ADC" },
-+	{ "AIF1 Slot 0 Left ADC", NULL, "ADC" },
-+
-+	/* ADC Mixer Routes */
- 	{ "Left Digital ADC Mixer", "AIF1 Data Digital ADC Capture Switch",
- 	  "AIF1 Slot 0 Left ADC" },
- 	{ "Right Digital ADC Mixer", "AIF1 Data Digital ADC Capture Switch",
 -- 
 2.20.1
 
