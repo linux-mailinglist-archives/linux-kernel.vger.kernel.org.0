@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A1613E46B
+	by mail.lfdr.de (Postfix) with ESMTP id C5E2A13E46C
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389367AbgAPRIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:08:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41342 "EHLO mail.kernel.org"
+        id S2389377AbgAPRIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:08:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389310AbgAPRIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:08:11 -0500
+        id S2389339AbgAPRIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:08:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F48924686;
-        Thu, 16 Jan 2020 17:08:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD6FA21D56;
+        Thu, 16 Jan 2020 17:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194490;
-        bh=/XjjuyJM66nJZY8ruIXznJGpNYS9Xd7bRF1x7oYOdMc=;
+        s=default; t=1579194493;
+        bh=dbN6Hk/xeS7pJGBNgUEA1kBcGzbGki87brQhHo3UQPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rJxnw3WiL4f436IlJC2FVyarxFu7/wONI4VOa8Xx4KQ7kxIN6IAF1gz29HRl/aSAW
-         sBncG4ROk9MGlUp3FVhIg6SEK0wpoq3BZPJh92+q3Lw+8C3ABpGLi5z/8ztPNooiP9
-         +cdgrb98m6T2DlY+NMy6t112OzF7H35ENUKDqfWs=
+        b=wkqPqmICKur3HiNo/1Y02Nb21pnAemKhRTIgSOHeTrCF4xNyQFHuh7frexjdPZRVq
+         KoYtbW5sMxXr2CSgpa6SsQJdb8ZLAJ62Ct6w4i/9VpI7K3jEJ6haAq89sX2GgDw5Ys
+         yKZxp4YQklwD63DJPjBTMGpGeXnjsaolanaIZZOs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 389/671] netvsc: unshare skb in VF rx handler
-Date:   Thu, 16 Jan 2020 12:00:27 -0500
-Message-Id: <20200116170509.12787-126-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 391/671] RDMA/uverbs: check for allocation failure in uapi_add_elm()
+Date:   Thu, 16 Jan 2020 12:00:29 -0500
+Message-Id: <20200116170509.12787-128-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,43 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 996ed04741467f6d1552440c92988b132a9487ec ]
+[ Upstream commit cac2a301c02a9b178842e22df34217da7854e588 ]
 
-The netvsc VF skb handler should make sure that skb is not
-shared. Similar logic already exists in bonding and team device
-drivers.
+If the kzalloc() fails then we should return ERR_PTR(-ENOMEM).  In the
+current code it's possible that the kzalloc() fails and the
+radix_tree_insert() inserts the NULL pointer successfully and we return
+the NULL "elm" pointer to the caller.  That results in a NULL pointer
+dereference.
 
-This is not an issue in practice because the VF devicex
-does not send up shared skb's. But the netvsc driver
-should do the right thing if it did.
-
-Fixes: 0c195567a8f6 ("netvsc: transparent VF management")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 9ed3e5f44772 ("IB/uverbs: Build the specs into a radix tree at runtime")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/hyperv/netvsc_drv.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/infiniband/core/uverbs_uapi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index 1f9f7fcdb0eb..54670c9905c7 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2004,6 +2004,12 @@ static rx_handler_result_t netvsc_vf_handle_frame(struct sk_buff **pskb)
- 	struct netvsc_vf_pcpu_stats *pcpu_stats
- 		 = this_cpu_ptr(ndev_ctx->vf_stats);
+diff --git a/drivers/infiniband/core/uverbs_uapi.c b/drivers/infiniband/core/uverbs_uapi.c
+index be854628a7c6..959a3418a192 100644
+--- a/drivers/infiniband/core/uverbs_uapi.c
++++ b/drivers/infiniband/core/uverbs_uapi.c
+@@ -17,6 +17,8 @@ static void *uapi_add_elm(struct uverbs_api *uapi, u32 key, size_t alloc_size)
+ 		return ERR_PTR(-EOVERFLOW);
  
-+	skb = skb_share_check(skb, GFP_ATOMIC);
-+	if (unlikely(!skb))
-+		return RX_HANDLER_CONSUMED;
-+
-+	*pskb = skb;
-+
- 	skb->dev = ndev;
- 
- 	u64_stats_update_begin(&pcpu_stats->syncp);
+ 	elm = kzalloc(alloc_size, GFP_KERNEL);
++	if (!elm)
++		return ERR_PTR(-ENOMEM);
+ 	rc = radix_tree_insert(&uapi->radix, key, elm);
+ 	if (rc) {
+ 		kfree(elm);
 -- 
 2.20.1
 
