@@ -2,456 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE41513FBB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A7D13FBA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:43:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbgAPVsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:48:20 -0500
-Received: from ns.lynxeye.de ([87.118.118.114]:52671 "EHLO lynxeye.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729878AbgAPVsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:48:20 -0500
-X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 16:48:19 EST
-Received: by lynxeye.de (Postfix, from userid 501)
-        id 5BB29E74222; Thu, 16 Jan 2020 22:39:45 +0100 (CET)
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on lynxeye.de
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=ALL_TRUSTED,BAYES_00,
-        URIBL_BLOCKED autolearn=ham version=3.3.1
-Received: from radon.fritz.box (a89-183-70-203.net-htp.de [89.183.70.203])
-        by lynxeye.de (Postfix) with ESMTPA id 9321AE7414D;
-        Thu, 16 Jan 2020 22:39:42 +0100 (CET)
-From:   Lucas Stach <dev@lynxeye.de>
-To:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] selinux: policydb - convert filename trans hash to rhashtable
-Date:   Thu, 16 Jan 2020 22:39:37 +0100
-Message-Id: <20200116213937.77795-1-dev@lynxeye.de>
-X-Mailer: git-send-email 2.24.1
+        id S1730953AbgAPVlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:41:10 -0500
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:42034 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730187AbgAPVlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 16:41:09 -0500
+Received: by mail-wr1-f44.google.com with SMTP id q6so20593509wro.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 13:41:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0aIJw/EJB/nlLQXs7iIn0xmTpXrtxi7CPxwm9YIYHK4=;
+        b=GOygiJ7KFkipQq0EUGjHM+N2PG+t72K/6T1+QUjZ2Pe+zQ+nKmW1ilK399XgOwP8Jw
+         jeR1YtGK6n08zt5o4PJitGjoTnZxfrdGrlYW6iAahSpTlml4Re1fbp4kDqypWDOCbomV
+         FKq/gZRmMkBSKUe6VFBEavLp9k2dN5qocjaPXdxo0qYQCWSkfLjmmFkltDICJqqXZ72f
+         P9GgqKvRS5+Ihz4jWAbKvc/mEU61hqxpASSD5FegE6aZv9TtiHldRIyIaEYfCDg1qF2A
+         McEdbX3V/aDPbWVQSGvTzknw54lsFwrT0d6lBSuAMW4QjwdHqfL9kPVFbBj7Kmwd2ZfO
+         zohA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=0aIJw/EJB/nlLQXs7iIn0xmTpXrtxi7CPxwm9YIYHK4=;
+        b=WZUQUOSlgpjNmlTOKEnU+6933JVfSc1aV2Te616DVu6F41V2nZquGFlAxg1Gau4efE
+         h/xQCZRm8KUiVZCY0zWqskOx7ITwKgTod7+zsm4Zbx8btfF01uE8NeXI0LU5bdOkrFKf
+         Bm+Z9yyZ4hOTVuSZ44Z19ys6QolSm65YYuWMkQbDPco8B7H8FUN/Eg3TQAsUwrC9pWyJ
+         tA18lm5FMSr9w3jd0MM7736p5OwIGMABpArd6ow5kLT80Wy6Wcidjf2GyTdmb5+zFp9Y
+         9gIaKWgoACoz1yL4vh0lvWi3hUwIKyNMnx+RY6uZnlfOLF2KTYZSKvTz9fryjh/9cZnd
+         k5AQ==
+X-Gm-Message-State: APjAAAUpb6iIGAGsQ2+Qgr085Ymczquu4/se3uQxQcxO9127SHs4NzfN
+        CwmDRH3QEadXqigVOtpbXw+CQ9aG3EZNDQ==
+X-Google-Smtp-Source: APXvYqzqcJ92F1npzVRU1NhwWwuYY1L1YMovLft7/PvSLw6VJrDaLLBPk/YS4s3bzYv2cuhYvsL5JA==
+X-Received: by 2002:a5d:49c7:: with SMTP id t7mr5232416wrs.369.1579210865690;
+        Thu, 16 Jan 2020 13:41:05 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f? ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
+        by smtp.googlemail.com with ESMTPSA id e16sm30940450wrs.73.2020.01.16.13.41.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 13:41:05 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] thermal: sprd: Add Spreadtrum thermal driver
+ support
+To:     Baolin Wang <baolin.wang7@gmail.com>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        amit.kucheria@verdurent.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>, freeman.liu@unisoc.com,
+        Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <8d5358a67746b2aff5f6995cabd11d0d7c9e579e.1575978484.git.baolin.wang7@gmail.com>
+ <dd3303a956e7dd5c065ac2b92b1dea7ee5d1df17.1575978484.git.baolin.wang7@gmail.com>
+ <CADBw62o3vW_hdFwcMdQFJqx2HpNhCEHOxADQO9LztzpqCVQBpg@mail.gmail.com>
+ <547d91fa-66c5-e3bb-4028-2578f070695c@linaro.org>
+ <CADBw62pcYZ_GR1OrS3VG-Y1T8CYOcL4pRzTwBt6of4ZmzhhNng@mail.gmail.com>
+ <CADBw62r5qBVt8LB+E5XoToB7FJJDH+exwzVqJ6+Eti-6eKtB-w@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b59955fe-c6c4-4fde-4551-3ba09c7ac636@linaro.org>
+Date:   Thu, 16 Jan 2020 22:41:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <CADBw62r5qBVt8LB+E5XoToB7FJJDH+exwzVqJ6+Eti-6eKtB-w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current hash is too small for current usages in, e.g. the Fedora standard
-policy. On file creates a considerable amount of CPU time is spent walking the
-the hash chains. Increasing the number of hash buckets somewhat mitigates the
-issue, but doesn't completely get rid of the long hash chains.
 
-This patch does take the bit more invasive route by converting the filename
-trans hash to a rhashtable to allow this hash to scale with load.
+Hi Baolin,
 
-fs_mark create benchmark on a SSD device, no ramdisk:
-Count          Size       Files/sec     App Overhead
-before:
-10000          512        512.3           147715
-after:
-10000          512        572.3            75141
+On 16/01/2020 09:52, Baolin Wang wrote:
+> Hi Daniel,
+> 
+> On Mon, Dec 23, 2019 at 3:48 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
+>>
+>> Hi Daniel,
+>>
+>> On Mon, Dec 23, 2019 at 3:42 PM Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>>
+>>>
+>>> Hi Baolin,
+>>>
+>>> On 23/12/2019 07:31, Baolin Wang wrote:
+>>>> Hi Rui and Daniel,
+>>>>
+>>>> On Tue, Dec 10, 2019 at 8:08 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
+>>>>>
+>>>>> From: Freeman Liu <freeman.liu@unisoc.com>
+>>>>>
+>>>>> This patch adds the support for Spreadtrum thermal sensor controller,
+>>>>> which can support maximum 8 sensors.
+>>>>>
+>>>>> Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
+>>>>> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+>>>>> ---
+>>>>> Changes from v1:
+>>>>>  - None.
+>>>>> ---
+>>>>
+>>>> Any comments for this patch? Thanks.
+>>>
+> 
+> Sorry for reminding you again, could you have a look about this patch
+> when you feel free? Thanks.
 
-filenametr_cmp(), which was the topmost function in the CPU cycle trace before
-at ~5% of the overall CPU time, is now down in the noise.
+Thanks for heads up and sorry for the delay. I began to review the
+patch, I'll send the review tomorrow.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
----
- security/selinux/ss/policydb.c | 140 +++++++++++++++++++++++----------
- security/selinux/ss/policydb.h |  14 ++--
- security/selinux/ss/services.c |  31 +-------
- 3 files changed, 109 insertions(+), 76 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index e20624a68f5d..d059317c15b6 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -34,6 +34,7 @@
- #include <linux/string.h>
- #include <linux/errno.h>
- #include <linux/audit.h>
-+#include <linux/rhashtable.h>
- #include "security.h"
- 
- #include "policydb.h"
-@@ -334,15 +335,13 @@ static int (*destroy_f[SYM_NUM]) (void *key, void *datum, void *datap) =
- 	cat_destroy,
- };
- 
--static int filenametr_destroy(void *key, void *datum, void *p)
-+static void filenametr_destroy(void *ptr, void *arg)
- {
--	struct filename_trans *ft = key;
-+	struct filename_trans *ft = ptr;
- 
- 	kfree(ft->name);
--	kfree(key);
--	kfree(datum);
-+	kfree(ft);
- 	cond_resched();
--	return 0;
- }
- 
- static int range_tr_destroy(void *key, void *datum, void *p)
-@@ -404,9 +403,9 @@ static int roles_init(struct policydb *p)
- 	return rc;
- }
- 
--static u32 filenametr_hash(struct hashtab *h, const void *k)
-+static u32 filenametr_hash(const void *data, u32 len, u32 seed)
- {
--	const struct filename_trans *ft = k;
-+	const struct filename_trans *ft = data;
- 	unsigned long hash;
- 	unsigned int byte_num;
- 	unsigned char focus;
-@@ -416,13 +415,15 @@ static u32 filenametr_hash(struct hashtab *h, const void *k)
- 	byte_num = 0;
- 	while ((focus = ft->name[byte_num++]))
- 		hash = partial_name_hash(focus, hash);
--	return hash & (h->size - 1);
-+
-+	return end_name_hash(hash);
- }
- 
--static int filenametr_cmp(struct hashtab *h, const void *k1, const void *k2)
-+static int filenametr_cmp(struct rhashtable_compare_arg *arg,
-+			  const void *obj)
- {
--	const struct filename_trans *ft1 = k1;
--	const struct filename_trans *ft2 = k2;
-+	const struct filename_trans *ft1 = arg->key;
-+	const struct filename_trans *ft2 = obj;
- 	int v;
- 
- 	v = ft1->stype - ft2->stype;
-@@ -441,6 +442,39 @@ static int filenametr_cmp(struct hashtab *h, const void *k1, const void *k2)
- 
- }
- 
-+static const struct rhashtable_params filename_trans_hashparams = {
-+	.nelem_hint		= 1024,
-+	.head_offset		= offsetof(struct filename_trans, hash_head),
-+	.obj_hashfn		= filenametr_hash,
-+	.obj_cmpfn		= filenametr_cmp,
-+};
-+
-+void policydb_filename_compute_type(struct policydb *policydb,
-+				    struct context *newcontext,
-+				    u32 stype, u32 ttype, u16 tclass,
-+				    const char *objname)
-+{
-+	struct filename_trans key, *ft;
-+
-+	/*
-+	 * Most filename trans rules are going to live in specific directories
-+	 * like /dev or /var/run.  This bitmap will quickly skip rule searches
-+	 * if the ttype does not contain any rules.
-+	 */
-+	if (!ebitmap_get_bit(&policydb->filename_trans_ttypes, ttype))
-+		return;
-+
-+	key.stype = stype;
-+	key.ttype = ttype;
-+	key.tclass = tclass;
-+	key.name = objname;
-+
-+	ft = rhashtable_lookup(&policydb->filename_trans, &key,
-+			       filename_trans_hashparams);
-+	if (ft)
-+		newcontext->type = ft->otype;
-+}
-+
- static u32 rangetr_hash(struct hashtab *h, const void *k)
- {
- 	const struct range_trans *key = k;
-@@ -494,12 +528,7 @@ static int policydb_init(struct policydb *p)
- 	if (rc)
- 		goto out;
- 
--	p->filename_trans = hashtab_create(filenametr_hash, filenametr_cmp,
--					   (1 << 10));
--	if (!p->filename_trans) {
--		rc = -ENOMEM;
--		goto out;
--	}
-+	rhashtable_init(&p->filename_trans, &filename_trans_hashparams);
- 
- 	p->range_tr = hashtab_create(rangetr_hash, rangetr_cmp, 256);
- 	if (!p->range_tr) {
-@@ -513,7 +542,7 @@ static int policydb_init(struct policydb *p)
- 
- 	return 0;
- out:
--	hashtab_destroy(p->filename_trans);
-+	rhashtable_destroy(&p->filename_trans);
- 	hashtab_destroy(p->range_tr);
- 	for (i = 0; i < SYM_NUM; i++) {
- 		hashtab_map(p->symtab[i].table, destroy_f[i], NULL);
-@@ -831,8 +860,8 @@ void policydb_destroy(struct policydb *p)
- 	}
- 	kfree(lra);
- 
--	hashtab_map(p->filename_trans, filenametr_destroy, NULL);
--	hashtab_destroy(p->filename_trans);
-+	rhashtable_free_and_destroy(&p->filename_trans, filenametr_destroy,
-+				    NULL);
- 
- 	hashtab_map(p->range_tr, range_tr_destroy, NULL);
- 	hashtab_destroy(p->range_tr);
-@@ -1878,7 +1907,6 @@ static int range_read(struct policydb *p, void *fp)
- static int filename_trans_read(struct policydb *p, void *fp)
- {
- 	struct filename_trans *ft;
--	struct filename_trans_datum *otype;
- 	char *name;
- 	u32 nel, len;
- 	__le32 buf[4];
-@@ -1893,7 +1921,6 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 	nel = le32_to_cpu(buf[0]);
- 
- 	for (i = 0; i < nel; i++) {
--		otype = NULL;
- 		name = NULL;
- 
- 		rc = -ENOMEM;
-@@ -1901,11 +1928,6 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 		if (!ft)
- 			goto out;
- 
--		rc = -ENOMEM;
--		otype = kmalloc(sizeof(*otype), GFP_KERNEL);
--		if (!otype)
--			goto out;
--
- 		/* length of the path component string */
- 		rc = next_entry(buf, fp, sizeof(u32));
- 		if (rc)
-@@ -1926,14 +1948,14 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 		ft->stype = le32_to_cpu(buf[0]);
- 		ft->ttype = le32_to_cpu(buf[1]);
- 		ft->tclass = le32_to_cpu(buf[2]);
--
--		otype->otype = le32_to_cpu(buf[3]);
-+		ft->otype = le32_to_cpu(buf[3]);
- 
- 		rc = ebitmap_set_bit(&p->filename_trans_ttypes, ft->ttype, 1);
- 		if (rc)
- 			goto out;
- 
--		rc = hashtab_insert(p->filename_trans, ft, otype);
-+		rc = rhashtable_insert_fast(&p->filename_trans, &ft->hash_head,
-+					    filename_trans_hashparams);
- 		if (rc) {
- 			/*
- 			 * Do not return -EEXIST to the caller, or the system
-@@ -1944,15 +1966,12 @@ static int filename_trans_read(struct policydb *p, void *fp)
- 			/* But free memory to avoid memory leak. */
- 			kfree(ft);
- 			kfree(name);
--			kfree(otype);
- 		}
- 	}
--	hash_eval(p->filename_trans, "filenametr");
- 	return 0;
- out:
- 	kfree(ft);
- 	kfree(name);
--	kfree(otype);
- 
- 	return rc;
- }
-@@ -3323,12 +3342,10 @@ static int range_write(struct policydb *p, void *fp)
- 	return 0;
- }
- 
--static int filename_write_helper(void *key, void *data, void *ptr)
-+static int filename_write_helper(struct filename_trans *ft,
-+				 struct policy_file *fp)
- {
- 	__le32 buf[4];
--	struct filename_trans *ft = key;
--	struct filename_trans_datum *otype = data;
--	void *fp = ptr;
- 	int rc;
- 	u32 len;
- 
-@@ -3345,7 +3362,7 @@ static int filename_write_helper(void *key, void *data, void *ptr)
- 	buf[0] = cpu_to_le32(ft->stype);
- 	buf[1] = cpu_to_le32(ft->ttype);
- 	buf[2] = cpu_to_le32(ft->tclass);
--	buf[3] = cpu_to_le32(otype->otype);
-+	buf[3] = cpu_to_le32(ft->otype);
- 
- 	rc = put_entry(buf, sizeof(u32), 4, fp);
- 	if (rc)
-@@ -3356,15 +3373,34 @@ static int filename_write_helper(void *key, void *data, void *ptr)
- 
- static int filename_trans_write(struct policydb *p, void *fp)
- {
--	u32 nel;
-+	u32 nel = 0;
- 	__le32 buf[1];
--	int rc;
-+	int rc = 0;
-+	struct rhashtable_iter iter;
- 
- 	if (p->policyvers < POLICYDB_VERSION_FILENAME_TRANS)
- 		return 0;
- 
--	nel = 0;
--	rc = hashtab_map(p->filename_trans, hashtab_cnt, &nel);
-+	rhashtable_walk_enter(&p->filename_trans, &iter);
-+	rhashtable_walk_start(&iter);
-+	for(;;) {
-+		struct filename_trans *trans;
-+
-+		trans = rhashtable_walk_next(&iter);
-+		if (!trans)
-+			break;
-+		if (IS_ERR(trans)) {
-+			if (PTR_ERR(trans) == -EAGAIN) {
-+				nel = 0;
-+				continue;
-+			}
-+			rc = PTR_ERR(trans);
-+			break;
-+		}
-+		nel++;
-+	};
-+	rhashtable_walk_stop(&iter);
-+	rhashtable_walk_exit(&iter);
- 	if (rc)
- 		return rc;
- 
-@@ -3373,7 +3409,25 @@ static int filename_trans_write(struct policydb *p, void *fp)
- 	if (rc)
- 		return rc;
- 
--	rc = hashtab_map(p->filename_trans, filename_write_helper, fp);
-+	rhashtable_walk_enter(&p->filename_trans, &iter);
-+	rhashtable_walk_start(&iter);
-+	for(;;) {
-+		struct filename_trans *trans;
-+
-+		trans = rhashtable_walk_next(&iter);
-+		if (!trans)
-+			break;
-+		if (IS_ERR(trans)) {
-+			if (PTR_ERR(trans) == -EAGAIN) {
-+				continue;
-+			}
-+			rc = PTR_ERR(trans);
-+			break;
-+		}
-+		filename_write_helper(trans, fp);
-+	};
-+	rhashtable_walk_stop(&iter);
-+	rhashtable_walk_exit(&iter);
- 	if (rc)
- 		return rc;
- 
-diff --git a/security/selinux/ss/policydb.h b/security/selinux/ss/policydb.h
-index bc56b14e2216..f1d2f5166af2 100644
---- a/security/selinux/ss/policydb.h
-+++ b/security/selinux/ss/policydb.h
-@@ -29,6 +29,7 @@
- #include "mls_types.h"
- #include "context.h"
- #include "constraint.h"
-+#include <linux/rhashtable.h>
- 
- /*
-  * A datum type is defined for each kind of symbol
-@@ -90,16 +91,14 @@ struct role_trans {
- };
- 
- struct filename_trans {
-+	struct rhash_head hash_head;
-+	u32 otype;
- 	u32 stype;		/* current process */
- 	u32 ttype;		/* parent dir context */
- 	u16 tclass;		/* class of new object */
- 	const char *name;	/* last path component */
- };
- 
--struct filename_trans_datum {
--	u32 otype;		/* expected of new object */
--};
--
- struct role_allow {
- 	u32 role;		/* current role */
- 	u32 new_role;		/* new role */
-@@ -266,7 +265,7 @@ struct policydb {
- 	/* quickly exclude lookups when parent ttype has no rules */
- 	struct ebitmap filename_trans_ttypes;
- 	/* actual set of filename_trans rules */
--	struct hashtab *filename_trans;
-+	struct rhashtable filename_trans;
- 
- 	/* bools indexed by (value - 1) */
- 	struct cond_bool_datum **bool_val_to_struct;
-@@ -318,6 +317,11 @@ extern int policydb_role_isvalid(struct policydb *p, unsigned int role);
- extern int policydb_read(struct policydb *p, void *fp);
- extern int policydb_write(struct policydb *p, void *fp);
- 
-+void policydb_filename_compute_type(struct policydb *policydb,
-+				    struct context *newcontext,
-+				    u32 stype, u32 ttype, u16 tclass,
-+				    const char *objname);
-+
- #define PERM_SYMTAB_SIZE 32
- 
- #define POLICYDB_CONFIG_MLS    1
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index a5813c7629c1..60a98d900dd3 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -1607,32 +1607,6 @@ static int compute_sid_handle_invalid_context(
- 	return -EACCES;
- }
- 
--static void filename_compute_type(struct policydb *policydb,
--				  struct context *newcontext,
--				  u32 stype, u32 ttype, u16 tclass,
--				  const char *objname)
--{
--	struct filename_trans ft;
--	struct filename_trans_datum *otype;
--
--	/*
--	 * Most filename trans rules are going to live in specific directories
--	 * like /dev or /var/run.  This bitmap will quickly skip rule searches
--	 * if the ttype does not contain any rules.
--	 */
--	if (!ebitmap_get_bit(&policydb->filename_trans_ttypes, ttype))
--		return;
--
--	ft.stype = stype;
--	ft.ttype = ttype;
--	ft.tclass = tclass;
--	ft.name = objname;
--
--	otype = hashtab_search(policydb->filename_trans, &ft);
--	if (otype)
--		newcontext->type = otype->otype;
--}
--
- static int security_compute_sid(struct selinux_state *state,
- 				u32 ssid,
- 				u32 tsid,
-@@ -1770,8 +1744,9 @@ static int security_compute_sid(struct selinux_state *state,
- 
- 	/* if we have a objname this is a file trans check so check those rules */
- 	if (objname)
--		filename_compute_type(policydb, &newcontext, scontext->type,
--				      tcontext->type, tclass, objname);
-+		policydb_filename_compute_type(policydb, &newcontext,
-+					       scontext->type, tcontext->type,
-+					       tclass, objname);
- 
- 	/* Check for class-specific changes. */
- 	if (specified & AVTAB_TRANSITION) {
 -- 
-2.24.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
