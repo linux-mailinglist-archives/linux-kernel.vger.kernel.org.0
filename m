@@ -2,75 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9C413EFF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A302E13F097
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:22:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395409AbgAPSSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:18:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33596 "EHLO mail.kernel.org"
+        id S2395526AbgAPSWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:22:39 -0500
+Received: from mga01.intel.com ([192.55.52.88]:4949 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387827AbgAPSS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:18:27 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD97820684;
-        Thu, 16 Jan 2020 18:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579198706;
-        bh=eK+zgsqPWz6GAYkJtti8rLXXAgfol0Ms7k1eGuEjvcg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uSA1/16Jv5t+QkTG5DUYDIw5GCOnYY7mMdMEHjQJg4sRtJx0p92p7BGyiz1r3y+zt
-         HIA5X6uhHXR8fQZhMAgOktn72OxXqWdijpihtIWgO3rxYSaNPqu/WwZgGkRoZGgc3f
-         iezAkiFdQPopG1zeb3Cek072wQSLs3i8/5I2lSlQ=
-Date:   Thu, 16 Jan 2020 18:18:20 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 12/15] arm64: vdso: disable Shadow Call Stack
-Message-ID: <20200116181820.GB22420@willie-the-truck>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191206221351.38241-1-samitolvanen@google.com>
- <20191206221351.38241-13-samitolvanen@google.com>
- <20200116174648.GE21396@willie-the-truck>
- <CABCJKucWusLEaLyq=Dv5pWjxcUX7Q9dL=fSstwNK4eJ_6k33=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABCJKucWusLEaLyq=Dv5pWjxcUX7Q9dL=fSstwNK4eJ_6k33=w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2395520AbgAPSWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:22:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:22:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="243378222"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2020 10:22:35 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@redhat.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, eranian@google.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH V2] perf/x86/intel: Avoid unnecessary PEBS_ENABLE MSR access in PMI
+Date:   Thu, 16 Jan 2020 10:21:12 -0800
+Message-Id: <20200116182112.20782-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:14:24AM -0800, Sami Tolvanen wrote:
-> On Thu, Jan 16, 2020 at 9:46 AM Will Deacon <will@kernel.org> wrote:
-> > Should we be removing -ffixed-x18 too, or does that not propagate here
-> > anyway?
-> 
-> No, we shouldn't touch -ffixed-x18 here. The vDSO is always built with
-> x18 reserved since commit 98cd3c3f83fbb ("arm64: vdso: Build vDSO with
-> -ffixed-x18").
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Thanks, in which case:
+The perf PMI handler, intel_pmu_handle_irq(), currently does
+unnecessary MSR accesses for PEBS_ENABLE MSR in
+__intel_pmu_enable/disable_all() when PEBS is enabled.
 
-Acked-by: Will Deacon <will@kernel.org>
+When entering the handler, global ctrl is explicitly disabled. All
+counters do not count anymore. It doesn't matter if PEBS is enabled
+or not in a PMI handler.
+Furthermore, for most cases, the cpuc->pebs_enabled is not changed in
+PMI. The PEBS status doesn't change. The PEBS_ENABLE MSR doesn't need to
+be changed either when exiting the handler.
 
-Will
+PMI throttle may change the PEBS status during PMI handler. The
+x86_pmu_stop() ends up in intel_pmu_pebs_disable() which can update
+cpuc->pebs_enabled. But the PEBS_ENABLE MSR will be updated as well when
+cpuc->enabled == 1. No need to access PEBS_ENABLE MSR again for this
+case when exiting the handler.
+
+A PMI may land after cpuc->enabled=0 in x86_pmu_disable() and
+PMI throttle may be triggered for the PMI. For this rare case,
+intel_pmu_pebs_disable() will not touch PEBS_ENABLE MSR. The patch
+explicitly disable the PEBS for this case.
+
+Use ftrace to measure the duration of intel_pmu_handle_irq() on BDX.
+   #perf record -e cycles:P -- ./tchain_edit
+
+The average duration of intel_pmu_handle_irq()
+Without the patch       1.144 us
+With the patch          1.025 us
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+Changes since V1:
+- Update description and comments
+- Handle a rare case. The PMI may land after cpuc->enabled=0 in
+  x86_pmu_disable() and PMI throttle may be triggered for the PMI.
+
+ arch/x86/events/intel/core.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index bc6468329c52..18e1132c0fd7 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -1963,6 +1963,14 @@ static __initconst const u64 knl_hw_cache_extra_regs
+  * intel_bts events don't coexist with intel PMU's BTS events because of
+  * x86_add_exclusive(x86_lbr_exclusive_lbr); there's no need to keep them
+  * disabled around intel PMU's event batching etc, only inside the PMI handler.
++ *
++ * Avoid PEBS_ENABLE MSR access in PMIs.
++ * The GLOBAL_CTRL has been disabled. All the counters do not count anymore.
++ * It doesn't matter if the PEBS is enabled or not.
++ * Usually, the PEBS status are not changed in PMIs. It's unnecessary to
++ * access PEBS_ENABLE MSR in disable_all()/enable_all().
++ * However, there are some cases which may change PEBS status, e.g. PMI
++ * throttle. The PEBS_ENABLE should be updated where the status changes.
+  */
+ static void __intel_pmu_disable_all(void)
+ {
+@@ -1972,13 +1980,12 @@ static void __intel_pmu_disable_all(void)
+ 
+ 	if (test_bit(INTEL_PMC_IDX_FIXED_BTS, cpuc->active_mask))
+ 		intel_pmu_disable_bts();
+-
+-	intel_pmu_pebs_disable_all();
+ }
+ 
+ static void intel_pmu_disable_all(void)
+ {
+ 	__intel_pmu_disable_all();
++	intel_pmu_pebs_disable_all();
+ 	intel_pmu_lbr_disable_all();
+ }
+ 
+@@ -1986,7 +1993,6 @@ static void __intel_pmu_enable_all(int added, bool pmi)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 
+-	intel_pmu_pebs_enable_all();
+ 	intel_pmu_lbr_enable_all(pmi);
+ 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL,
+ 			x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask);
+@@ -2004,6 +2010,7 @@ static void __intel_pmu_enable_all(int added, bool pmi)
+ 
+ static void intel_pmu_enable_all(int added)
+ {
++	intel_pmu_pebs_enable_all();
+ 	__intel_pmu_enable_all(added, false);
+ }
+ 
+@@ -2620,6 +2627,15 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
+ 		handled++;
+ 		x86_pmu.drain_pebs(regs);
+ 		status &= x86_pmu.intel_ctrl | GLOBAL_STATUS_TRACE_TOPAPMI;
++
++		/*
++		 * PMI may land after cpuc->enabled=0 in x86_pmu_disable() and
++		 * PMI throttle may be triggered for the PMI.
++		 * For this rare case, intel_pmu_pebs_disable() will not touch
++		 * MSR_IA32_PEBS_ENABLE. Explicitly disable the PEBS here.
++		 */
++		if (unlikely(!cpuc->enabled && !cpuc->pebs_enabled))
++			wrmsrl(MSR_IA32_PEBS_ENABLE, 0);
+ 	}
+ 
+ 	/*
+-- 
+2.17.1
+
