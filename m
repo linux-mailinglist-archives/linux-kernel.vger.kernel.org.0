@@ -2,153 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF41913FAF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C87DE13FAFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:06:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388314AbgAPVCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:02:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53377 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgAPVCm (ORCPT
+        id S2388271AbgAPVF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:05:58 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33688 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbgAPVF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:02:42 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1isCHl-00013g-0y; Thu, 16 Jan 2020 22:02:37 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7F7901C0E70;
-        Thu, 16 Jan 2020 22:02:36 +0100 (CET)
-Date:   Thu, 16 Jan 2020 21:02:36 -0000
-From:   "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit McaType
-Cc:     Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200110015651.14887-2-Yazen.Ghannam@amd.com>
-References: <20200110015651.14887-2-Yazen.Ghannam@amd.com>
+        Thu, 16 Jan 2020 16:05:58 -0500
+Received: by mail-pl1-f194.google.com with SMTP id ay11so8871700plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 13:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ztqTmZ7YiqRf6ApCzAEB+/k7Mj4yZkONfuvT5Qk/M94=;
+        b=kNW0UDv2/8wGSElhlvzmne2xJbuCS0295e/QWJQltkChHiMM1ccvnLMx/xMdgspFeW
+         8nrbCpIRigEYvOpeiF/TisClyOU6qRiuBCTQy8EX7ZA+tgJ7nE5bOQP1jkigxeN4XDl6
+         Vx3DRMKDtfdoVoDALLWwUjacsLpjnom3mXr1M//g++5lYA2wmeRABZAfZUvb9NMROtcu
+         RE8MTTE5/W5lrSwoOQmXuv9olAY2uC1UL3CCTNNk43GiuhfT+5HQ9JkMlyu4ZA6P9fl2
+         1h56C2TC6eBBPl8tCF/S/JTvfj6L4mL4QPX68YKJTHjqVHeI4pbqZF97S+wqO4lZGSWi
+         b/kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ztqTmZ7YiqRf6ApCzAEB+/k7Mj4yZkONfuvT5Qk/M94=;
+        b=jjfclDQUlqJPk9SNqGZN9UGZR05okcm8rMYXSg2Nhq7O3kNHAPWCA2mw0tCzjnU+If
+         oKfTgLI9bqytImY/7JOw2iQozZMcERMuEcGYBKC3BRoI6MxBFw1ZH90Otg2EfNBf0mVt
+         UICtLHQO41zXgUFOnJjydIHANCDoj62ODrHgOL/5NwwS6uVDgSpyehnY9SCulMe6NSWv
+         6MTJ24xOmbqGueBJ6qr1np22URH5PtF0mNwwryoR/9LCFV1+cZg8xnyBQxCn3Z5NHiYs
+         NzDuInnA7X0Mf48pIudKzltdl5ALtyWD8wlDx9echT7ZqSH3HrBXWMh1VNx/VkD3JuV5
+         tgwQ==
+X-Gm-Message-State: APjAAAUU/D0TiJIVWY6w9ukn2AzDNTfMHrQSZFrYruN2hFvufNmP3uPG
+        hMGuWV99us0XmrZORERrAcG8QbanbFo=
+X-Google-Smtp-Source: APXvYqzOFbR9rr/janV/gfdMZqa7nHLObA91eV42iB+A0tw887kkzh0tVTVAeKHb9ISe9/UMOfc39w==
+X-Received: by 2002:a17:902:d711:: with SMTP id w17mr35055534ply.303.1579208757499;
+        Thu, 16 Jan 2020 13:05:57 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id 64sm27049026pfd.48.2020.01.16.13.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 13:05:56 -0800 (PST)
+Date:   Thu, 16 Jan 2020 13:05:56 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: dump stack of victim when reaping failed
+In-Reply-To: <84fddb8e-a23b-e970-c8e9-74aa2fe2716d@i-love.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.2001161301570.101032@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.2001141519280.200484@chino.kir.corp.google.com> <20200115084336.GW19428@dhcp22.suse.cz> <9a7cbbf0-4283-f932-e422-84b4fb42a055@I-love.SAKURA.ne.jp> <alpine.DEB.2.21.2001151223040.13588@chino.kir.corp.google.com>
+ <84fddb8e-a23b-e970-c8e9-74aa2fe2716d@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Message-ID: <157920855629.396.3345590993818919194.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the ras/core branch of tip:
+On Thu, 16 Jan 2020, Tetsuo Handa wrote:
 
-Commit-ID:     89a76171bf50bd20d44338408b8c09433c302956
-Gitweb:        https://git.kernel.org/tip/89a76171bf50bd20d44338408b8c09433c302956
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Fri, 10 Jan 2020 01:56:47 
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 16 Jan 2020 17:09:02 +01:00
+> > I'm 
+> > currently tracking a stall in oom reaping where the victim doesn't always 
+> > have a lock held so we don't know where it's at in the kernel; I'm hoping 
+> > that a stack for the thread group leader will at least shed some light on 
+> > it.
+> > 
+> 
+> This change was already proposed at
+> https://lore.kernel.org/linux-mm/20180320122818.GL23100@dhcp22.suse.cz/ .
+> 
 
-x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit McaType
+Hmm, seems the patch didn't get followed up on but I obviously agree with 
+it :)
 
-Add support for a new version of the Load Store unit bank type as
-indicated by its McaType value, which will be present in future SMCA
-systems.
+> And according to that proposal, it is likely i_mmap_lock_write() in dup_mmap()
+> in copy_process(). We tried to make that lock killable but we gave it up
+> because nobody knows whether it is safe to do make it killable.
+> 
 
-Add the new (HWID, MCATYPE) tuple. Reuse the same name, since this is
-logically the same to the user.
+I haven't encountered that particular problem yet; one problem that I've 
+found is a victim holding cgroup_threadgroup_rwsem in the exit path, 
+another problem is the victim not holding any locks at all which is more 
+concerning (why isn't it making forward progress?).  This patch intends to 
+provide a clue for the latter.
 
-Also, add the new error descriptions to edac_mce_amd.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200110015651.14887-2-Yazen.Ghannam@amd.com
----
- arch/x86/include/asm/mce.h    |  1 +
- arch/x86/kernel/cpu/mce/amd.c |  2 ++
- drivers/edac/mce_amd.c        | 28 ++++++++++++++++++++++++++++
- 3 files changed, 31 insertions(+)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index c8ff6f6..4359b95 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -290,6 +290,7 @@ extern void apei_mce_report_mem_error(int corrected,
- /* These may be used by multiple smca_hwid_mcatypes */
- enum smca_bank_types {
- 	SMCA_LS = 0,	/* Load Store */
-+	SMCA_LS_V2,	/* Load Store */
- 	SMCA_IF,	/* Instruction Fetch */
- 	SMCA_L2_CACHE,	/* L2 Cache */
- 	SMCA_DE,	/* Decoder Unit */
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 5167bd2..36211b9 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -78,6 +78,7 @@ struct smca_bank_name {
- 
- static struct smca_bank_name smca_names[] = {
- 	[SMCA_LS]	= { "load_store",	"Load Store Unit" },
-+	[SMCA_LS_V2]	= { "load_store",	"Load Store Unit" },
- 	[SMCA_IF]	= { "insn_fetch",	"Instruction Fetch Unit" },
- 	[SMCA_L2_CACHE]	= { "l2_cache",		"L2 Cache" },
- 	[SMCA_DE]	= { "decode_unit",	"Decode Unit" },
-@@ -138,6 +139,7 @@ static struct smca_hwid smca_hwid_mcatypes[] = {
- 
- 	/* ZN Core (HWID=0xB0) MCA types */
- 	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFFF },
-+	{ SMCA_LS_V2,	 HWID_MCATYPE(0xB0, 0x10), 0xFFFFFF },
- 	{ SMCA_IF,	 HWID_MCATYPE(0xB0, 0x1), 0x3FFF },
- 	{ SMCA_L2_CACHE, HWID_MCATYPE(0xB0, 0x2), 0xF },
- 	{ SMCA_DE,	 HWID_MCATYPE(0xB0, 0x3), 0x1FF },
-diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index ea622c6..aa6ea53 100644
---- a/drivers/edac/mce_amd.c
-+++ b/drivers/edac/mce_amd.c
-@@ -175,6 +175,33 @@ static const char * const smca_ls_mce_desc[] = {
- 	"L2 Fill Data error",
- };
- 
-+static const char * const smca_ls2_mce_desc[] = {
-+	"An ECC error was detected on a data cache read by a probe or victimization",
-+	"An ECC error or L2 poison was detected on a data cache read by a load",
-+	"An ECC error was detected on a data cache read-modify-write by a store",
-+	"An ECC error or poison bit mismatch was detected on a tag read by a probe or victimization",
-+	"An ECC error or poison bit mismatch was detected on a tag read by a load",
-+	"An ECC error or poison bit mismatch was detected on a tag read by a store",
-+	"An ECC error was detected on an EMEM read by a load",
-+	"An ECC error was detected on an EMEM read-modify-write by a store",
-+	"A parity error was detected in an L1 TLB entry by any access",
-+	"A parity error was detected in an L2 TLB entry by any access",
-+	"A parity error was detected in a PWC entry by any access",
-+	"A parity error was detected in an STQ entry by any access",
-+	"A parity error was detected in an LDQ entry by any access",
-+	"A parity error was detected in a MAB entry by any access",
-+	"A parity error was detected in an SCB entry state field by any access",
-+	"A parity error was detected in an SCB entry address field by any access",
-+	"A parity error was detected in an SCB entry data field by any access",
-+	"A parity error was detected in a WCB entry by any access",
-+	"A poisoned line was detected in an SCB entry by any access",
-+	"A SystemReadDataError error was reported on read data returned from L2 for a load",
-+	"A SystemReadDataError error was reported on read data returned from L2 for an SCB store",
-+	"A SystemReadDataError error was reported on read data returned from L2 for a WCB store",
-+	"A hardware assertion error was reported",
-+	"A parity error was detected in an STLF, SCB EMEM entry or SRB store data by any access",
-+};
-+
- static const char * const smca_if_mce_desc[] = {
- 	"Op Cache Microtag Probe Port Parity Error",
- 	"IC Microtag or Full Tag Multi-hit Error",
-@@ -378,6 +405,7 @@ struct smca_mce_desc {
- 
- static struct smca_mce_desc smca_mce_descs[] = {
- 	[SMCA_LS]	= { smca_ls_mce_desc,	ARRAY_SIZE(smca_ls_mce_desc)	},
-+	[SMCA_LS_V2]	= { smca_ls2_mce_desc,	ARRAY_SIZE(smca_ls2_mce_desc)	},
- 	[SMCA_IF]	= { smca_if_mce_desc,	ARRAY_SIZE(smca_if_mce_desc)	},
- 	[SMCA_L2_CACHE]	= { smca_l2_mce_desc,	ARRAY_SIZE(smca_l2_mce_desc)	},
- 	[SMCA_DE]	= { smca_de_mce_desc,	ARRAY_SIZE(smca_de_mce_desc)	},
+Aside: we may also want to consider the possibility of doing immediate 
+additional oom killing if the initial victim is too small.  We rely on the 
+oom reaper to solve livelocks like this by freeing memory so that 
+allocators can drop locks that the victim depends on.  If the victim is 
+too small (we have victims <1MB because of oom_score_adj +1000!) we may 
+want to consider additional immediate oom killing because it simply won't 
+free enough memory.
