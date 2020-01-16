@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B0913FB85
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E38213FB89
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbgAPVbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:31:20 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53569 "EHLO
+        id S2388768AbgAPVbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:31:32 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53585 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389004AbgAPVbK (ORCPT
+        with ESMTP id S2389044AbgAPVbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:31:10 -0500
+        Thu, 16 Jan 2020 16:31:14 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isCjL-0001Xs-64; Thu, 16 Jan 2020 22:31:07 +0100
+        id 1isCjL-0001YA-Ka; Thu, 16 Jan 2020 22:31:07 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C55E91C198B;
-        Thu, 16 Jan 2020 22:31:01 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 141B71C1970;
+        Thu, 16 Jan 2020 22:31:02 +0100 (CET)
 Date:   Thu, 16 Jan 2020 21:31:01 -0000
-From:   "tip-bot2 for Colin Ian King" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Rajan Vaja" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/bcm2835_timer: Fix memory leak
- of timer
-Cc:     Colin Ian King <colin.king@canonical.com>,
+Subject: [tip: timers/core] clocksource/drivers/cadence-ttc: Use ttc driver as
+ platform driver
+Cc:     Rajan Vaja <rajan.vaja@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191219213246.34437-1-colin.king@canonical.com>
-References: <20191219213246.34437-1-colin.king@canonical.com>
+In-Reply-To: <1573122988-18399-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1573122988-18399-1-git-send-email-rajan.vaja@xilinx.com>
 MIME-Version: 1.0
-Message-ID: <157921026162.396.6792209915376848166.tip-bot2@tip-bot2>
+Message-ID: <157921026187.396.13367165250949261182.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,50 +49,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     2052d032c06761330bca4944bb7858b00960e868
-Gitweb:        https://git.kernel.org/tip/2052d032c06761330bca4944bb7858b00960e868
-Author:        Colin Ian King <colin.king@canonical.com>
-AuthorDate:    Thu, 19 Dec 2019 21:32:46 
+Commit-ID:     f5ac896b6a23eb46681cdbef440c1d991b04e519
+Gitweb:        https://git.kernel.org/tip/f5ac896b6a23eb46681cdbef440c1d991b04e519
+Author:        Rajan Vaja <rajan.vaja@xilinx.com>
+AuthorDate:    Thu, 07 Nov 2019 02:36:28 -08:00
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
 CommitterDate: Thu, 16 Jan 2020 19:06:57 +01:00
 
-clocksource/drivers/bcm2835_timer: Fix memory leak of timer
+clocksource/drivers/cadence-ttc: Use ttc driver as platform driver
 
-Currently when setup_irq fails the error exit path will leak the
-recently allocated timer structure.  Originally the code would
-throw a panic but a later commit changed the behaviour to return
-via the err_iounmap path and hence we now have a memory leak. Fix
-this by adding a err_timer_free error path that kfree's timer.
+Currently TTC driver is TIMER_OF_DECLARE type driver. Because of
+that, TTC driver may be initialized before other clock drivers. If
+TTC driver is dependent on that clock driver then initialization of
+TTC driver will failed.
 
-Addresses-Coverity: ("Resource Leak")
-Fixes: 524a7f08983d ("clocksource/drivers/bcm2835_timer: Convert init function to return error")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+So use TTC driver as platform driver instead of using
+TIMER_OF_DECLARE.
+
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+Tested-by: Michal Simek <michal.simek@xilinx.com>
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191219213246.34437-1-colin.king@canonical.com
+Link: https://lore.kernel.org/r/1573122988-18399-1-git-send-email-rajan.vaja@xilinx.com
 ---
- drivers/clocksource/bcm2835_timer.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-cadence-ttc.c | 26 ++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clocksource/bcm2835_timer.c b/drivers/clocksource/bcm2835_timer.c
-index 2b196cb..b235f44 100644
---- a/drivers/clocksource/bcm2835_timer.c
-+++ b/drivers/clocksource/bcm2835_timer.c
-@@ -121,7 +121,7 @@ static int __init bcm2835_timer_init(struct device_node *node)
- 	ret = setup_irq(irq, &timer->act);
- 	if (ret) {
- 		pr_err("Can't set up timer IRQ\n");
--		goto err_iounmap;
-+		goto err_timer_free;
- 	}
+diff --git a/drivers/clocksource/timer-cadence-ttc.c b/drivers/clocksource/timer-cadence-ttc.c
+index 88fe2e9..38858e1 100644
+--- a/drivers/clocksource/timer-cadence-ttc.c
++++ b/drivers/clocksource/timer-cadence-ttc.c
+@@ -15,6 +15,8 @@
+ #include <linux/of_irq.h>
+ #include <linux/slab.h>
+ #include <linux/sched_clock.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
  
- 	clockevents_config_and_register(&timer->evt, freq, 0xf, 0xffffffff);
-@@ -130,6 +130,9 @@ static int __init bcm2835_timer_init(struct device_node *node)
- 
+ /*
+  * This driver configures the 2 16/32-bit count-up timers as follows:
+@@ -464,13 +466,7 @@ static int __init ttc_setup_clockevent(struct clk *clk,
  	return 0;
+ }
  
-+err_timer_free:
-+	kfree(timer);
+-/**
+- * ttc_timer_init - Initialize the timer
+- *
+- * Initializes the timer hardware and register the clock source and clock event
+- * timers with Linux kernal timer framework
+- */
+-static int __init ttc_timer_init(struct device_node *timer)
++static int __init ttc_timer_probe(struct platform_device *pdev)
+ {
+ 	unsigned int irq;
+ 	void __iomem *timer_baseaddr;
+@@ -478,6 +474,7 @@ static int __init ttc_timer_init(struct device_node *timer)
+ 	static int initialized;
+ 	int clksel, ret;
+ 	u32 timer_width = 16;
++	struct device_node *timer = pdev->dev.of_node;
+ 
+ 	if (initialized)
+ 		return 0;
+@@ -532,4 +529,17 @@ static int __init ttc_timer_init(struct device_node *timer)
+ 	return 0;
+ }
+ 
+-TIMER_OF_DECLARE(ttc, "cdns,ttc", ttc_timer_init);
++static const struct of_device_id ttc_timer_of_match[] = {
++	{.compatible = "cdns,ttc"},
++	{},
++};
 +
- err_iounmap:
- 	iounmap(base);
- 	return ret;
++MODULE_DEVICE_TABLE(of, ttc_timer_of_match);
++
++static struct platform_driver ttc_timer_driver = {
++	.driver = {
++		.name	= "cdns_ttc_timer",
++		.of_match_table = ttc_timer_of_match,
++	},
++};
++builtin_platform_driver_probe(ttc_timer_driver, ttc_timer_probe);
