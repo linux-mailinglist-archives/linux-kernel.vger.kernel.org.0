@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F4513E7C5
+	by mail.lfdr.de (Postfix) with ESMTP id 8260E13E7C6
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392074AbgAPR1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37638 "EHLO mail.kernel.org"
+        id S2404073AbgAPR1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392476AbgAPR1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:38 -0500
+        id S2392072AbgAPR1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F257C246D3;
-        Thu, 16 Jan 2020 17:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5493A246D0;
+        Thu, 16 Jan 2020 17:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195657;
-        bh=wygwIN3lmpIrS23TwGIj4zb3LYORD77VRrH5I6tWMJs=;
+        s=default; t=1579195666;
+        bh=NAW0lDxZxbdXmUcJNQfaYox57i6EhRso58SUUQPAoK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0RKbL0L6iSb9hiKknhuSf79+jRgw41T6a0bPwLOWW+hdiP9egO4/8pdejEmM81MCA
-         EWka1JADkhgfpsGsv6wJeu0zziHAB7vU5+D1LN6cnOalhKZ7s+roI+1Kg9uJPHn5H8
-         QY5h/qPw/4BndsDRx59fTHWJljvH25GjWIvL+31E=
+        b=b6UQ89fqFHzkaP4zwBN3nQZpUFWT2+FOtQagphdzVa4d+KRz2CoHKAGPBWNL7neFo
+         vQJGczKs4NTEF9iEzBODSHVfZSxHUZXTFKxAP0BHyZZbe53thVKPDDe6TrvB21j0wr
+         oXx4D6e/aiJpiOqHHWa04Bn2raC2ZFokStg/IEtc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.14 218/371] iommu: Use right function to get group for device
-Date:   Thu, 16 Jan 2020 12:21:30 -0500
-Message-Id: <20200116172403.18149-161-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 224/371] media: vivid: fix incorrect assignment operation when setting video mode
+Date:   Thu, 16 Jan 2020 12:21:36 -0500
+Message-Id: <20200116172403.18149-167-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,40 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 57274ea25736496ee019a5c40479855b21888839 ]
+[ Upstream commit d4ec9550e4b2d2e357a46fdc65d8ef3d4d15984c ]
 
-The iommu_group_get_for_dev() will allocate a group for a
-device if it isn't in any group. This isn't the use case
-in iommu_request_dm_for_dev(). Let's use iommu_group_get()
-instead.
+The assigment of FB_VMODE_NONINTERLACE to var->vmode should be a
+bit-wise or of FB_VMODE_NONINTERLACE instead of an assignment,
+otherwise the previous clearing of the FB_VMODE_MASK bits of
+var->vmode makes no sense and is redundant.
 
-Fixes: d290f1e70d85a ("iommu: Introduce iommu_request_dm_for_dev()")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Addresses-Coverity: ("Unused value")
+Fixes: ad4e02d5081d ("[media] vivid: add a simple framebuffer device for overlay testing")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/iommu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/platform/vivid/vivid-osd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 1620a6f49989..37fe0223d07c 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1855,9 +1855,9 @@ int iommu_request_dm_for_dev(struct device *dev)
- 	int ret;
+diff --git a/drivers/media/platform/vivid/vivid-osd.c b/drivers/media/platform/vivid/vivid-osd.c
+index bdc380b14e0c..a95b7c56569e 100644
+--- a/drivers/media/platform/vivid/vivid-osd.c
++++ b/drivers/media/platform/vivid/vivid-osd.c
+@@ -167,7 +167,7 @@ static int _vivid_fb_check_var(struct fb_var_screeninfo *var, struct vivid_dev *
+ 	var->nonstd = 0;
  
- 	/* Device must already be in a group before calling this function */
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group))
--		return PTR_ERR(group);
-+	group = iommu_group_get(dev);
-+	if (!group)
-+		return -EINVAL;
+ 	var->vmode &= ~FB_VMODE_MASK;
+-	var->vmode = FB_VMODE_NONINTERLACED;
++	var->vmode |= FB_VMODE_NONINTERLACED;
  
- 	mutex_lock(&group->mutex);
- 
+ 	/* Dummy values */
+ 	var->hsync_len = 24;
 -- 
 2.20.1
 
