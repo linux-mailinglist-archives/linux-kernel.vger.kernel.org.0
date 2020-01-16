@@ -2,101 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C586413F280
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A7813F305
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:40:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392204AbgAPSfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:35:51 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34863 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407150AbgAPSfp (ORCPT
+        id S2392690AbgAPSjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:39:18 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42928 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387612AbgAPSjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:35:45 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j1so23782147lja.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:35:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w3m47L5Z0xI8HYh0lKryrWYdR0UgzApvsO7nDstJ484=;
-        b=zt4hUFckpv0JtJBTTBpPR0wmokiqIfW2lNyhGhC5whKAMLVPQ598lSopUqg40Dednt
-         zZo0oen6Rj98R4s2jKVEEcBxfKT/0FB5KuR3J5vOvJn4EL6sX/EUaJVb0CARHJQRzqoW
-         uKbC//iUkpteLGJZ6Dw876Fj0gC3FiXyI+hiL33ReAiBpqHjvoxIX3d8exyoXErn3ulF
-         3M+pB9l/F2YBegxvYZqVrF14OhsMBCzdgU+DFXEVcGFHUJdwod8/UsTrdWlt1M1nYU1s
-         VyiO8zEEtSJi0si67QGW4eRXclm6PYPI8n7GMfhxFHWwD8JYf5YlHLFCO3zVZZh7qZyF
-         HZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w3m47L5Z0xI8HYh0lKryrWYdR0UgzApvsO7nDstJ484=;
-        b=iXFKu3jeLH1LXQLDWAHBae0aJnqEh/GcZ5gDz1GewSxdFxglgiOnDthEsh1O1tabse
-         vg+bRs6W3/lCD7vQPmp0vBu1oOw4TR9H67wI4xdLQcYC+aVXsqXaysU2PELK9TqXa0vQ
-         yF0Xbm1ykuGUupGUWr8WFJ6bpbOfBQ8DryqtKUgW+SiBPcHyZwDmFbPbO0wam8EOeKJo
-         eKYMwQXqo96KKuwX/2X53WKP12PJW4DPE7QVESg/hqmeLZoug+e60H5aIYd3cAzn49P5
-         c3pG1ZqCU7od8JuxGp9aDwBn/U9WE2tx7zpHISpNpcwTFM45HiY3SK1dZAc3GAEbmqoH
-         gcxw==
-X-Gm-Message-State: APjAAAURtaG/2YMR2J4R/WXogNcbhXjvGS9bs5Zxukei23XY9zgiFxDb
-        683AVbSc3aBf2pjwqtMOqshc3QgZNug=
-X-Google-Smtp-Source: APXvYqz/9p+Equ9yB2/f1ypHaf4+rn1iYRPCZicwrFKzWbSFxXdSqtv9R5Vc2x+rsOBhxB3KKZsmqg==
-X-Received: by 2002:a2e:89d0:: with SMTP id c16mr3151068ljk.228.1579199742453;
-        Thu, 16 Jan 2020 10:35:42 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id x84sm11124259lfa.97.2020.01.16.10.35.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Jan 2020 10:35:41 -0800 (PST)
-Date:   Thu, 16 Jan 2020 10:34:58 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        David Lechner <david@lechnology.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: davinci: select CONFIG_RESET_CONTROLLER
-Message-ID: <20200116183458.qsa6bk7wlfhpd4m4@localhost>
-References: <20191210195202.622734-1-arnd@arndb.de>
- <ba94531d-1f16-b985-5638-c226bab28d5b@ti.com>
- <1513bfee-6623-47fa-1eef-6074ba9ab3b8@ti.com>
+        Thu, 16 Jan 2020 13:39:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579199952;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=m9QaZpo4ehb9dzb9uGDth8ZZA66JROBihleoP8BqvZ0=;
+        b=L+6b6EUp9Qect+NKD8MzEN0wtBLlXtZQNASb230tRgJSHBQiJlRfUyrk0Y5fdwf7mmVo49
+        F6tbXnErPsNi0lylFXIvC+3wj0Sq8Tcw0eABgqkncFAlEO4gJ5UTt0zXMZoRWfZpScRKU5
+        FOhhyBous4a8inQMh7PIeeanOU9Ds04=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-367-1KLdtB6dNpy1BWHwcYn6Kw-1; Thu, 16 Jan 2020 13:39:08 -0500
+X-MC-Unique: 1KLdtB6dNpy1BWHwcYn6Kw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 422A7800D4C;
+        Thu, 16 Jan 2020 18:39:06 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CE9480617;
+        Thu, 16 Jan 2020 18:39:01 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D15EA220A24; Thu, 16 Jan 2020 13:39:00 -0500 (EST)
+Date:   Thu, 16 Jan 2020 13:39:00 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20200116183900.GC25291@redhat.com>
+References: <20200109112447.GG27035@quack2.suse.cz>
+ <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+ <20200114203138.GA3145@redhat.com>
+ <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com>
+ <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+ <20200115195617.GA4133@redhat.com>
+ <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
+ <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
+ <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1513bfee-6623-47fa-1eef-6074ba9ab3b8@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 05:32:54PM +0530, Sekhar Nori wrote:
-> Hi Arnd,
+On Thu, Jan 16, 2020 at 10:09:46AM -0800, Dan Williams wrote:
+> On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
+> >
+> > Hi, Dan,
+> >
+> > Dan Williams <dan.j.williams@intel.com> writes:
+> >
+> > > I'm going to take a look at how hard it would be to develop a kpartx
+> > > fallback in udev. If that can live across the driver transition then
+> > > maybe this can be a non-event for end users that already have that
+> > > udev update deployed.
+> >
+> > I just wanted to remind you that label-less dimms still exist, and are
+> > still being shipped.  For those devices, the only way to subdivide the
+> > storage is via partitioning.
 > 
-> On 11/12/19 3:42 PM, Sekhar Nori wrote:
-> > Hi Arnd,
-> > 
-> > On 11/12/19 1:21 AM, Arnd Bergmann wrote:
-> >> Selecting RESET_CONTROLLER is actually required, otherwise we
-> >> can get a link failure in the clock driver:
-> >>
-> >> drivers/clk/davinci/psc.o: In function `__davinci_psc_register_clocks':
-> >> psc.c:(.text+0x9a0): undefined reference to `devm_reset_controller_register'
-> >> drivers/clk/davinci/psc-da850.o: In function `da850_psc0_init':
-> >> psc-da850.c:(.text+0x24): undefined reference to `reset_controller_add_lookup'
-> >>
-> >> Fixes: f962396ce292 ("ARM: davinci: support multiplatform build for ARM v5")
-> >> Cc: <stable@vger.kernel.org> # v5.4
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > Assuming you are going to apply directly to ARM-SoC,
-> > 
-> > Acked-by: Sekhar Nori <nsekhar@ti.com>
-> 
-> This is not yet in Linus's master. Let me know if I should collect it
-> and send a pull request.
+> True, but if kpartx + udev can make this transparent then I don't
+> think users lose any functionality. They just gain a device-mapper
+> dependency.
 
-It's sitting in our fixes branch and should show up in mainline in not too
-long.
+So udev rules will trigger when a /dev/pmemX device shows up and run
+kpartx which in turn will create dm-linear devices and device nodes
+will show up in /dev/mapper/pmemXpY.
 
+IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
+systemd unit files are depenent on /dev/pmemXpY, these will still be
+broken out of the box and will have to be modified to use device nodes
+in /dev/mapper/ directory instead. Do I understand it right, Or I missed
+the idea completely.
 
--Olof
+Vivek
+
