@@ -2,75 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D760713F98C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4FD313F9B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730935AbgAPTbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:31:43 -0500
-Received: from mga01.intel.com ([192.55.52.88]:13285 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730712AbgAPTbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:31:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 11:31:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="scan'208";a="373431363"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga004.jf.intel.com with ESMTP; 16 Jan 2020 11:31:41 -0800
-Date:   Thu, 16 Jan 2020 11:42:23 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Moger, Babu" <Babu.Moger@amd.com>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v9 00/13] selftests/resctrl: Add resctrl selftest
-Message-ID: <20200116194222.GB51626@romley-ivt3.sc.intel.com>
-References: <1576535207-2417-1-git-send-email-fenghua.yu@intel.com>
- <7aacc3e8-4072-c6b9-5d0f-f687a40ad315@amd.com>
- <CY4PR12MB1574ACDEE30CDCD8113CECA795390@CY4PR12MB1574.namprd12.prod.outlook.com>
- <20200115211749.GA51626@romley-ivt3.sc.intel.com>
- <87k15sxu3k.fsf@nanos.tec.linutronix.de>
+        id S1729317AbgAPTnw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 Jan 2020 14:43:52 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53142 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbgAPTnv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 14:43:51 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1isB3O-0008V7-83; Thu, 16 Jan 2020 20:43:42 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 87FEC101226; Thu, 16 Jan 2020 20:43:41 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Cc:     paul.burton@mips.com, luto@kernel.org,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH] MIPS: vdso: Define BUILD_VDSO32 when building a 32bit kernel
+In-Reply-To: <20190830135902.20861-3-vincenzo.frascino@arm.com>
+References: <20190830135902.20861-1-vincenzo.frascino@arm.com> <20190830135902.20861-3-vincenzo.frascino@arm.com>
+Date:   Thu, 16 Jan 2020 20:43:41 +0100
+Message-ID: <87d0bjfaqa.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k15sxu3k.fsf@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 10:55:43PM +0100, Thomas Gleixner wrote:
-> Fenghua Yu <fenghua.yu@intel.com> writes:
-> >
-> > Hi, Boris, Thomas, Ingo, et al,
-> >
-> > Any comment on this patch set?
-> 
-> No objections from my side, but you forgot to CC the relevant
-> maintainer/mailinglist for tools/testing/selftests/. CC'ed now.
+The confinement of the 32bit specific VDSO functions missed to define
+BUILD_VDSO32 when building a 32bit MIPS kernel:
 
-Thank you for your comments, Thomas!
+arch/mips/vdso/vgettimeofday.c: In function ‘__vdso_clock_gettime’:
+arch/mips/vdso/vgettimeofday.c:17:9: error: implicit declaration of function ‘__cvdso_clock_gettime32’
 
-Hi, Shuah,
+arch/mips/vdso/vgettimeofday.c: In function ‘__vdso_clock_getres’:
+arch/mips/vdso/vgettimeofday.c:39:9: error: implicit declaration of function ‘__cvdso_clock_getres_time32’
 
-Do you want me to resend the v9 resctrl selftest patches to you and
-linux-kselftest?
+Force the define for 32bit builds in the VDSO Makefile.
 
-This repository has the v9 patches:
-git://github.com/fyu1/linux resctrl_selftest
+Fixes: bf279849ad59 ("lib/vdso: Build 32 bit specific functions in the right context")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/mips/vdso/Makefile |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks.
-
--Fenghua
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -18,6 +18,10 @@ ccflags-vdso := \
+ 	$(filter -mno-loongson-%,$(KBUILD_CFLAGS)) \
+ 	-D__VDSO__
+ 
++ifndef CONFIG_64BIT
++ccflags-vdso += -DBUILD_VDSO32
++endif
++
+ ifdef CONFIG_CC_IS_CLANG
+ ccflags-vdso += $(filter --target=%,$(KBUILD_CFLAGS))
+ endif
