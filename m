@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D3813FFCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D1913FFED
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbgAPXWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:22:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
+        id S2391992AbgAPXqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:46:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733030AbgAPXWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:22:37 -0500
+        id S2390905AbgAPXWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:22:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72A162072E;
-        Thu, 16 Jan 2020 23:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11D3C2073A;
+        Thu, 16 Jan 2020 23:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216956;
-        bh=D2JDALk0Xq3IA0lFatgD2Tnhdb9kJsSbsj1r7YIGito=;
+        s=default; t=1579216932;
+        bh=tSTT7czsVqE67MSHd+OyLSOcwk2po/pfGgxNVwE0rG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sy+ZiIKDqAZHMq4pjsmUzD/unHM9HKHuyZbLUqbFvh3YXaZIe8XvRHtzfGRyb3YOm
-         WKfaUhK0LxEeoCaMz9vvnQyZwbNvKvd0wj4SY0O7l2r5AZY/jXDpCppLGyPTzrKyHa
-         bhBsiIoEraZBKItAqGsQjeScJy8uORPb/JfeN2sk=
+        b=PHYzm8UNtl16EINndx6QYrZms6VX6R1sCpJgbhRPUiCT7q2KFzMECmlVQ59JaQD2e
+         PN48xhELSsBDgBVvFF0z/cPYohnA9aQcQItCqcsQ5favOj5jA8EGZfi0ONe9aIHyqM
+         +R84ruSgTs2EcN2WythxYxMjKibIEPdDAYqdOTwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangyang Li <liyangyang20@huawei.com>,
-        Weihang Li <liweihang@hisilicon.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 073/203] RDMA/hns: Bugfix for qpc/cqc timer configuration
-Date:   Fri, 17 Jan 2020 00:16:30 +0100
-Message-Id: <20200116231750.543451509@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 079/203] bpf: skmsg, fix potential psock NULL pointer dereference
+Date:   Fri, 17 Jan 2020 00:16:36 +0100
+Message-Id: <20200116231751.508994827@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,37 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangyang Li <liyangyang20@huawei.com>
+From: John Fastabend <john.fastabend@gmail.com>
 
-commit 887803db866a7a4e1817a3cb8a3eee4e9879fed2 upstream.
+commit 8163999db445021f2651a8a47b5632483e8722ea upstream.
 
-qpc/cqc timer entry size needs one page, but currently they are fixedly
-configured to 4096, which is not appropriate in 64K page scenarios. So
-they should be modified to PAGE_SIZE.
+Report from Dan Carpenter,
 
-Fixes: 0e40dc2f70cd ("RDMA/hns: Add timer allocation support for hip08")
-Link: https://lore.kernel.org/r/1571908917-16220-3-git-send-email-liweihang@hisilicon.com
-Signed-off-by: Yangyang Li <liyangyang20@huawei.com>
-Signed-off-by: Weihang Li <liweihang@hisilicon.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+ net/core/skmsg.c:792 sk_psock_write_space()
+ error: we previously assumed 'psock' could be null (see line 790)
+
+ net/core/skmsg.c
+   789 psock = sk_psock(sk);
+   790 if (likely(psock && sk_psock_test_state(psock, SK_PSOCK_TX_ENABLED)))
+ Check for NULL
+   791 schedule_work(&psock->work);
+   792 write_space = psock->saved_write_space;
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+   793          rcu_read_unlock();
+   794          write_space(sk);
+
+Ensure psock dereference on line 792 only occurs if psock is not null.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/skmsg.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -87,8 +87,8 @@
- #define HNS_ROCE_V2_MTT_ENTRY_SZ		64
- #define HNS_ROCE_V2_CQE_ENTRY_SIZE		32
- #define HNS_ROCE_V2_SCCC_ENTRY_SZ		32
--#define HNS_ROCE_V2_QPC_TIMER_ENTRY_SZ		4096
--#define HNS_ROCE_V2_CQC_TIMER_ENTRY_SZ		4096
-+#define HNS_ROCE_V2_QPC_TIMER_ENTRY_SZ		PAGE_SIZE
-+#define HNS_ROCE_V2_CQC_TIMER_ENTRY_SZ		PAGE_SIZE
- #define HNS_ROCE_V2_PAGE_SIZE_SUPPORTED		0xFFFFF000
- #define HNS_ROCE_V2_MAX_INNER_MTPT_NUM		2
- #define HNS_ROCE_INVALID_LKEY			0x100
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -793,15 +793,18 @@ static void sk_psock_strp_data_ready(str
+ static void sk_psock_write_space(struct sock *sk)
+ {
+ 	struct sk_psock *psock;
+-	void (*write_space)(struct sock *sk);
++	void (*write_space)(struct sock *sk) = NULL;
+ 
+ 	rcu_read_lock();
+ 	psock = sk_psock(sk);
+-	if (likely(psock && sk_psock_test_state(psock, SK_PSOCK_TX_ENABLED)))
+-		schedule_work(&psock->work);
+-	write_space = psock->saved_write_space;
++	if (likely(psock)) {
++		if (sk_psock_test_state(psock, SK_PSOCK_TX_ENABLED))
++			schedule_work(&psock->work);
++		write_space = psock->saved_write_space;
++	}
+ 	rcu_read_unlock();
+-	write_space(sk);
++	if (write_space)
++		write_space(sk);
+ }
+ 
+ int sk_psock_init_strp(struct sock *sk, struct sk_psock *psock)
 
 
