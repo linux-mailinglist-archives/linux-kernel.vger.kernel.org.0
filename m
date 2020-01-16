@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E1A913E383
+	by mail.lfdr.de (Postfix) with ESMTP id 981B413E384
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388361AbgAPRC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:02:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
+        id S2388372AbgAPRC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:02:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388295AbgAPRCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:02:13 -0500
+        id S2388303AbgAPRCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:02:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E9FC2073A;
-        Thu, 16 Jan 2020 17:02:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44EF72081E;
+        Thu, 16 Jan 2020 17:02:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194132;
-        bh=pOkluVnHUm+ELhjKzSD++0rgASEdiCKf2x3XTdb8Res=;
+        s=default; t=1579194134;
+        bh=0JFl9aWLKC71Gk5dPOObiZY7H/47oVRdIQLA7yf0cs4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q1nfaltul760cPgg8VJtXsxkPdbBE4H/6pEQ6OfBkPjQPwrOlv3xtCfH/7SxhCbNF
-         Z2ATpoVEiWFYm8s6aKTOeLEYata1f+Vn+vEWL7ibqpZsTILx/hQBfiJBUjHWSHkz0q
-         Am9H8eJxuXQu3agEyYA1PAYIcO5vD+G0VzjzWcgk=
+        b=1Nix6HeXk53lSTHlxPtFU55tlS2IAdeVmmYQHKKcMz4C1WYK3o+s8n5WvJbwFIZCt
+         r0bu8RjOzoThSATFpG3YqVu+KViO9WxDbTu6YgU0r8hR5N24mLBTXrjqQkzQ5ZYKxb
+         tlGbKzqJHAWqJOUb6SF25mJSjW88aq0aQIql+RXc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 222/671] ARM: 8849/1: NOMMU: Fix encodings for PMSAv8's PRBAR4/PRLAR4
-Date:   Thu, 16 Jan 2020 11:52:11 -0500
-Message-Id: <20200116165940.10720-105-sashal@kernel.org>
+Cc:     Axel Lin <axel.lin@ingics.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.19 223/671] regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA
+Date:   Thu, 16 Jan 2020 11:52:12 -0500
+Message-Id: <20200116165940.10720-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -44,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Murzin <vladimir.murzin@arm.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit d410a8a49e3e00e07d43037e90f776d522b25a6a ]
+[ Upstream commit c25d47888f0fb3d836d68322d4aea2caf31a75a6 ]
 
-To access PRBARn, where n is referenced as a binary number:
+The wm831x_dcdc_ilim entries needs to be uA because it is used to compare
+with min_uA and max_uA.
+While at it also make the array const and change to use unsigned int.
 
-MRC p15, 0, <Rt>, c6, c8+n[3:1], 4*n[0] ; Read PRBARn into Rt
-MCR p15, 0, <Rt>, c6, c8+n[3:1], 4*n[0] ; Write Rt into PRBARn
-
-To access PRLARn, where n is referenced as a binary number:
-
-MRC p15, 0, <Rt>, c6, c8+n[3:1], 4*n[0]+1 ; Read PRLARn into Rt
-MCR p15, 0, <Rt>, c6, c8+n[3:1], 4*n[0]+1 ; Write Rt into PRLARn
-
-For PR{B,L}AR4, n is 4, n[0] is 0, n[3:1] is 2, while current encoding
-done with n[0] set to 1 which is wrong. Use proper encoding instead.
-
-Fixes: 046835b4aa22b9ab6aa0bb274e3b71047c4b887d ("ARM: 8757/1: NOMMU: Support PMSAv8 MPU")
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/head-nommu.S | 4 ++--
+ drivers/regulator/wm831x-dcdc.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
-index 326a97aa3ea0..22efcf48604c 100644
---- a/arch/arm/kernel/head-nommu.S
-+++ b/arch/arm/kernel/head-nommu.S
-@@ -441,8 +441,8 @@ M_CLASS(str	r6, [r12, #PMSAv8_RLAR_A(3)])
- 	str	r5, [r12, #PMSAv8_RBAR_A(0)]
- 	str	r6, [r12, #PMSAv8_RLAR_A(0)]
- #else
--	mcr	p15, 0, r5, c6, c10, 1			@ PRBAR4
--	mcr	p15, 0, r6, c6, c10, 2			@ PRLAR4
-+	mcr	p15, 0, r5, c6, c10, 0			@ PRBAR4
-+	mcr	p15, 0, r6, c6, c10, 1			@ PRLAR4
- #endif
- #endif
- 	ret	lr
+diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
+index 5a5bc4bb08d2..df591435d12a 100644
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -327,8 +327,8 @@ static int wm831x_buckv_get_voltage_sel(struct regulator_dev *rdev)
+ }
+ 
+ /* Current limit options */
+-static u16 wm831x_dcdc_ilim[] = {
+-	125, 250, 375, 500, 625, 750, 875, 1000
++static const unsigned int wm831x_dcdc_ilim[] = {
++	125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000
+ };
+ 
+ static int wm831x_buckv_set_current_limit(struct regulator_dev *rdev,
 -- 
 2.20.1
 
