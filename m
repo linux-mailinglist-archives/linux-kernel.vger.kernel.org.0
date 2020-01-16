@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA03613E7FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4399913E7FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392748AbgAPR3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:29:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41368 "EHLO mail.kernel.org"
+        id S2392816AbgAPR3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:29:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392728AbgAPR33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:29:29 -0500
+        id S2392773AbgAPR3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:29:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10FC22471A;
-        Thu, 16 Jan 2020 17:29:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 684FC24710;
+        Thu, 16 Jan 2020 17:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195768;
-        bh=ChIPeAG1dGINkg+Fp76gMqPv0W47WaRVmtClRrlqMlk=;
+        s=default; t=1579195777;
+        bh=2R4B2/vf3mjrXyH9tuvIXZbFvpPaJG90eTaq68jtLPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ybUbDJTbjXiN04sga+Per/y61eXyeFUUbOQPvDFW3+e//2hBlqo35ddofWKYRAYoP
-         jqa0zq8m3Gzjme7LVc7YPtfwab5czlJ/F9chOXIr5gK4u2M3GjYWjVU9WYY9Zr1x66
-         TbV4G1ca5wePhzBTOg1GtEluDedOKIjI8i3/9K94=
+        b=hjksb+TUUuU8hl4i1P4K2hn4oSz/PK4vrnojL0P34mZtpJ17Kdk19n1+Q/H3V3gGn
+         N+KNv1eHMokJVFxCukVepG5yORNX0ivdXGExvI1NC3Q1OHcqYoRgbhZhTMF/nI9Acu
+         UEDduoAU7ucMYAWnTGknhX9zr/8uYF/DJWRa3lB0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Robertson <dan@dlrobertson.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 296/371] hwmon: (shtc1) fix shtc1 and shtw1 id mask
-Date:   Thu, 16 Jan 2020 12:22:48 -0500
-Message-Id: <20200116172403.18149-239-sashal@kernel.org>
+Cc:     Filippo Sironi <sironi@amazon.de>, Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 302/371] iommu/amd: Wait for completion of IOTLB flush in attach_device
+Date:   Thu, 16 Jan 2020 12:22:54 -0500
+Message-Id: <20200116172403.18149-245-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,37 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Robertson <dan@dlrobertson.com>
+From: Filippo Sironi <sironi@amazon.de>
 
-[ Upstream commit fdc7d8e829ec755c5cfb2f5a8d8c0cdfb664f895 ]
+[ Upstream commit 0b15e02f0cc4fb34a9160de7ba6db3a4013dc1b7 ]
 
-Fix an error in the bitmaskfor the shtc1 and shtw1 bitmask used to
-retrieve the chip ID from the ID register. See section 5.7 of the shtw1
-or shtc1 datasheet for details.
+To make sure the domain tlb flush completes before the
+function returns, explicitly wait for its completion.
 
-Fixes: 1a539d372edd9832444e7a3daa710c444c014dc9 ("hwmon: add support for Sensirion SHTC1 sensor")
-Signed-off-by: Dan Robertson <dan@dlrobertson.com>
-Link: https://lore.kernel.org/r/20190905014554.21658-3-dan@dlrobertson.com
-[groeck: Reordered to be first in series and adjusted accordingly]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Fixes: 42a49f965a8d ("amd-iommu: flush domain tlb when attaching a new device")
+[joro: Added commit message and fixes tag]
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/shtc1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwmon/shtc1.c b/drivers/hwmon/shtc1.c
-index decd7df995ab..2a18539591ea 100644
---- a/drivers/hwmon/shtc1.c
-+++ b/drivers/hwmon/shtc1.c
-@@ -38,7 +38,7 @@ static const unsigned char shtc1_cmd_read_id_reg[]	       = { 0xef, 0xc8 };
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index d09c24825734..778f167be2d3 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2160,6 +2160,8 @@ static int attach_device(struct device *dev,
+ 	 */
+ 	domain_flush_tlb_pde(domain);
  
- /* constants for reading the ID register */
- #define SHTC1_ID	  0x07
--#define SHTC1_ID_REG_MASK 0x1f
-+#define SHTC1_ID_REG_MASK 0x3f
++	domain_flush_complete(domain);
++
+ 	return ret;
+ }
  
- /* delays for non-blocking i2c commands, both in us */
- #define SHTC1_NONBLOCKING_WAIT_TIME_HPM  14400
 -- 
 2.20.1
 
