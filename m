@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875C713E32C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9D613E32F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733119AbgAPRAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50082 "EHLO mail.kernel.org"
+        id S2387803AbgAPRAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:00:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387828AbgAPRA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:27 -0500
+        id S2387839AbgAPRAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A41FE20730;
-        Thu, 16 Jan 2020 17:00:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A68E24681;
+        Thu, 16 Jan 2020 17:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194027;
-        bh=she8x1KBiCi7IWGzigQznZ9S9yBiAqWacrw7nedfE+Q=;
+        s=default; t=1579194030;
+        bh=gmmjYdhVeD7er2tUkAkAiRFI6JSPKXZj5K+epVd+gqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B6WxVwnKsl1cfHpB8ES4tlUW9ZyGTV6IvV66qF6meuPktiJw9QzEvVsRJVffoS21M
-         BdWVn1Hi3SzImzVMEkB3s6/Yt+SKSwdzmtAHX3ZCC/MEgfpchS6T2pXPJqcmbtzDzq
-         SpicV9PKGB9QfSLVYbADKcNi6pisJY77coAO09k8=
+        b=2AbJg6Z/Fv9fQF23X0Z+fBQM2/zqA/G+ScwVg0cZOHzJOcBnCKpZQ3dAMw/RJpOO8
+         Fxu6ZNjjsTAf49+LT6zS8j/shgrI8qRlHwo+5hzKX82jfxTuOw75Fwp77x86qFT8YY
+         OYfJu1+o6lJWi9NBUodIaCDcqM+8Otzjm6DeGjto=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vladimir Zapolskiy <vz@mleia.com>, Sasha Levin <sashal@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 147/671] ARM: dts: lpc32xx: add required clocks property to keypad device node
-Date:   Thu, 16 Jan 2020 11:50:56 -0500
-Message-Id: <20200116165940.10720-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 150/671] ARM: dts: lpc32xx: fix ARM PrimeCell LCD controller clocks property
+Date:   Thu, 16 Jan 2020 11:50:59 -0500
+Message-Id: <20200116165940.10720-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -44,34 +44,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vladimir Zapolskiy <vz@mleia.com>
 
-[ Upstream commit 3e88bc38b9f6fe4b69cecf81badd3c19fde97f97 ]
+[ Upstream commit 30fc01bae3cda747e7d9c352b1aa51ca113c8a9d ]
 
-NXP LPC32xx keypad controller requires a clock property to be defined.
-
-The change fixes the driver initialization problem:
-
-  lpc32xx_keys 40050000.key: failed to get clock
-  lpc32xx_keys: probe of 40050000.key failed with error -2
+The originally added ARM PrimeCell PL111 clocks property misses
+the required "clcdclk" clock, which is the same as a clock to enable
+the LCD controller on NXP LPC3230 and NXP LPC3250 SoCs.
 
 Fixes: 93898eb775e5 ("arm: dts: lpc32xx: add clock properties to device nodes")
 Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/lpc32xx.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index ed0d6fb20122..d4368eeff1b9 100644
+index cfd422e7f774..9ad3df11db0d 100644
 --- a/arch/arm/boot/dts/lpc32xx.dtsi
 +++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -462,6 +462,7 @@
- 			key: key@40050000 {
- 				compatible = "nxp,lpc3220-key";
- 				reg = <0x40050000 0x1000>;
-+				clocks = <&clk LPC32XX_CLK_KEY>;
- 				interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
- 				status = "disabled";
- 			};
+@@ -142,8 +142,8 @@
+ 			compatible = "arm,pl111", "arm,primecell";
+ 			reg = <0x31040000 0x1000>;
+ 			interrupts = <14 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk LPC32XX_CLK_LCD>;
+-			clock-names = "apb_pclk";
++			clocks = <&clk LPC32XX_CLK_LCD>, <&clk LPC32XX_CLK_LCD>;
++			clock-names = "clcdclk", "apb_pclk";
+ 			status = "disabled";
+ 		};
+ 
 -- 
 2.20.1
 
