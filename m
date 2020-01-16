@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D22A913FD70
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFEC13FD5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbgAPXZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:25:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55432 "EHLO mail.kernel.org"
+        id S2388405AbgAPXZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:25:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731718AbgAPXZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:25:40 -0500
+        id S1732780AbgAPXY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:24:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3635920684;
-        Thu, 16 Jan 2020 23:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 953C52072B;
+        Thu, 16 Jan 2020 23:24:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217139;
-        bh=77/Gy00sz07sYUnF0AlWCXpY0U9NWEAYrzKzK1mqUzg=;
+        s=default; t=1579217096;
+        bh=prQ0q8gvC79NNbn3+0ntZWUuhxJax8zUKx2jk+josZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zHOG7bcNHcSp34XnlNTdeiu9EhcKbjrL51y5XPjPER9NX3nf7egatDjfG5j48MA56
-         R2cA2+sdU7ttTOsVOw3sfUmB7EOCUvRLgLzoRhGn2Lgv9vkcfL7U/34y5CB77PgmkL
-         2nwfBSRjKdFZvkAVuEd9OGmrN6GbrV809RLXHIP8=
+        b=KmgJB65sGrbsTfAhgHct6IB2/PXoK00pjUFaZEGJ+LFgP+7vAQTK6N4m8J7DcD8ji
+         vz7DiUOCAEI1ypzVuMa+5nvgbShnrF71kCDDScdzetgqNsudHQmnkdhdUWcQX22ajr
+         K+0CdGghjsflBUtJdoUhI5O+4JYsO2/gYj0C4F5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hewenliang <hewenliang4@huawei.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 5.4 137/203] tools: PCI: Fix fd leakage
-Date:   Fri, 17 Jan 2020 00:17:34 +0100
-Message-Id: <20200116231757.024280725@linuxfoundation.org>
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jonathan Yong <jonathan.yong@intel.com>
+Subject: [PATCH 5.4 138/203] PCI/PTM: Remove spurious "d" from granularity message
+Date:   Fri, 17 Jan 2020 00:17:35 +0100
+Message-Id: <20200116231757.096764620@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,31 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hewenliang <hewenliang4@huawei.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-commit 3c379a59b4795d7279d38c623e74b9790345a32b upstream.
+commit 127a7709495db52a41012deaebbb7afc231dad91 upstream.
 
-We should close fd before the return of run_test.
+The granularity message has an extra "d":
 
-Fixes: 3f2ed8134834 ("tools: PCI: Add a userspace tool to test PCI endpoint")
-Signed-off-by: Hewenliang <hewenliang4@huawei.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+  pci 0000:02:00.0: PTM enabled, 4dns granularity
+
+Remove the "d" so the message is simply "PTM enabled, 4ns granularity".
+
+Fixes: 8b2ec318eece ("PCI: Add PTM clock granularity information")
+Link: https://lore.kernel.org/r/20191106222420.10216-2-helgaas@kernel.org
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Cc: Jonathan Yong <jonathan.yong@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/pci/pcitest.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pcie/ptm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/pci/pcitest.c
-+++ b/tools/pci/pcitest.c
-@@ -129,6 +129,7 @@ static int run_test(struct pci_test *tes
+--- a/drivers/pci/pcie/ptm.c
++++ b/drivers/pci/pcie/ptm.c
+@@ -21,7 +21,7 @@ static void pci_ptm_info(struct pci_dev
+ 		snprintf(clock_desc, sizeof(clock_desc), ">254ns");
+ 		break;
+ 	default:
+-		snprintf(clock_desc, sizeof(clock_desc), "%udns",
++		snprintf(clock_desc, sizeof(clock_desc), "%uns",
+ 			 dev->ptm_granularity);
+ 		break;
  	}
- 
- 	fflush(stdout);
-+	close(fd);
- 	return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
- }
- 
 
 
