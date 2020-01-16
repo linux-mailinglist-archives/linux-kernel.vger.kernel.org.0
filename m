@@ -2,91 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD1413F8D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 875F113F94A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733066AbgAPTVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:21:17 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53078 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731179AbgAPTVO (ORCPT
+        id S2407389AbgAPTYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:24:07 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44991 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729590AbgAPTYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:21:14 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1isAhZ-0007xm-EH; Thu, 16 Jan 2020 20:21:09 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EECA41C0882;
-        Thu, 16 Jan 2020 20:21:08 +0100 (CET)
-Date:   Thu, 16 Jan 2020 19:21:08 -0000
-From:   "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/CPU/AMD: Ensure clearing of SME/SEV features is
- maintained
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: =?utf-8?q?=3C226de90a703c3c0be5a49565047905ac4e94e8f3=2E15791?=
- =?utf-8?q?25915=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
-References: =?utf-8?q?=3C226de90a703c3c0be5a49565047905ac4e94e8f3=2E157912?=
- =?utf-8?q?5915=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
+        Thu, 16 Jan 2020 14:24:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579202644;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=e8HBHJP/uq6LLcUiW9DMmgfjF72wvEE4C0oRW83XDZw=;
+        b=VcEOirFKhZ/qGMHCRLahr+bltd2l1gTxwfk5EDwDmKEoDSyWqgJEWy7o1n6L7SEvhvykxz
+        hE6uzNQaU+jZx3E9qOdEBE1+E1NV4ECevJvap0VSJnxtEuADcPMLB5NyAcL/q8EG4JOPuC
+        FWwffG4wDRPc+hjx2L9hdGdZ7pPsrdQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-246-Wpe1cMcoOoGBY_oRiv4oYg-1; Thu, 16 Jan 2020 14:24:00 -0500
+X-MC-Unique: Wpe1cMcoOoGBY_oRiv4oYg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 119012F2E;
+        Thu, 16 Jan 2020 19:23:59 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC035D9C9;
+        Thu, 16 Jan 2020 19:23:54 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C1B6B220A24; Thu, 16 Jan 2020 14:23:53 -0500 (EST)
+Date:   Thu, 16 Jan 2020 14:23:53 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20200116192353.GD25291@redhat.com>
+References: <20200114203138.GA3145@redhat.com>
+ <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com>
+ <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+ <20200115195617.GA4133@redhat.com>
+ <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
+ <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
+ <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
+ <20200116183900.GC25291@redhat.com>
+ <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <157920246871.396.11570015734463738210.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Thu, Jan 16, 2020 at 11:09:00AM -0800, Dan Williams wrote:
 
-Commit-ID:     c575dc89440e838ba27dff1a36b599dbbc8a0c18
-Gitweb:        https://git.kernel.org/tip/c575dc89440e838ba27dff1a36b599dbbc8a0c18
-Author:        Tom Lendacky <thomas.lendacky@amd.com>
-AuthorDate:    Wed, 15 Jan 2020 16:05:16 -06:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 16 Jan 2020 20:17:53 +01:00
+[..]
+> > > True, but if kpartx + udev can make this transparent then I don't
+> > > think users lose any functionality. They just gain a device-mapper
+> > > dependency.
+> >
+> > So udev rules will trigger when a /dev/pmemX device shows up and run
+> > kpartx which in turn will create dm-linear devices and device nodes
+> > will show up in /dev/mapper/pmemXpY.
+> >
+> > IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
+> > systemd unit files are depenent on /dev/pmemXpY, these will still be
+> > broken out of the box and will have to be modified to use device nodes
+> > in /dev/mapper/ directory instead. Do I understand it right, Or I missed
+> > the idea completely.
+> 
+> No, I'd write the udev rule to create links from /dev/pmemXpY to the
+> /dev/mapper device, and that rule would be gated by a new pmem device
+> attribute to trigger when kpartx needs to run vs the kernel native
+> partitions.
 
-x86/CPU/AMD: Ensure clearing of SME/SEV features is maintained
+Got it. This sounds much better.
 
-If the SME and SEV features are present via CPUID, but memory encryption
-support is not enabled (MSR 0xC001_0010[23]), the feature flags are cleared
-using clear_cpu_cap(). However, if get_cpu_cap() is later called, these
-feature flags will be reset back to present, which is not desired.
+Vivek
 
-Change from using clear_cpu_cap() to setup_clear_cpu_cap() so that the
-clearing of the flags is maintained.
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/226de90a703c3c0be5a49565047905ac4e94e8f3.1579125915.git.thomas.lendacky@amd.com
----
- arch/x86/kernel/cpu/amd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 90f75e5..62c3027 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -615,9 +615,9 @@ static void early_detect_mem_encrypt(struct cpuinfo_x86 *c)
- 		return;
- 
- clear_all:
--		clear_cpu_cap(c, X86_FEATURE_SME);
-+		setup_clear_cpu_cap(X86_FEATURE_SME);
- clear_sev:
--		clear_cpu_cap(c, X86_FEATURE_SEV);
-+		setup_clear_cpu_cap(X86_FEATURE_SEV);
- 	}
- }
- 
