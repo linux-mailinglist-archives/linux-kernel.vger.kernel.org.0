@@ -2,201 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F6ED13D4C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 07:56:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DF613D4BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 07:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbgAPG45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 01:56:57 -0500
-Received: from mo4-p04-ob.smtp.rzone.de ([85.215.255.124]:11269 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbgAPG44 (ORCPT
+        id S1729835AbgAPGzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 01:55:55 -0500
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:33317 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbgAPGzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 01:56:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1579157814;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=MRtrnJw57guEE5LArJpaKZhgNwpa4EE/ln+auVPoa8g=;
-        b=IzCOiLLNb9uIyPH/hbxj1Vo6opERlp0y06VWLeLkK8Pbj7gVmba+p74cgmUOCtrDuO
-        AHkBXJ1EqWLZW85lvGNowgwOy0icYW9+4ESpLO4x2r3/VjM/Pnb0xEmdOPx/5vDmYZOr
-        NXsg06gVkIMw1lJVU5jTWGPvcZV5vYG/BbvFMSBl797T2qtIrJSBPqegaS508E9FYZGd
-        m1x+NjHZ/Oy0i5NdE258g4xL6aLhIpjqP+ZXNpXt6/Te6XXBk/WikEul2Rlo+3t+L+Z/
-        0NbEMJbN58Ky7G03lAADoGJdCMGz4+nYO7bObXsLqQcKDMcxIB82N3Z+ge8CWHtXdzHV
-        tHZw==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPZJPScHivh"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 46.1.4 DYNA|AUTH)
-        with ESMTPSA id u04585w0G6teaBM
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Thu, 16 Jan 2020 07:55:40 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        zhangjs <zachary@baishancloud.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        Nicolai Stange <nstange@suse.de>,
-        "Peter, Matthias" <matthias.peter@bsi.bund.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        Roman Drahtmueller <draht@schaltsekun.de>,
-        Neil Horman <nhorman@redhat.com>,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v28 06/12] LRNG - add SP800-90A DRBG extension
-Date:   Thu, 16 Jan 2020 07:55:40 +0100
-Message-ID: <54845098.RitduxjIfl@tauon.chronox.de>
-In-Reply-To: <55a89cdf-e36d-fb36-29fa-46ebfb139294@infradead.org>
-References: <6157374.ptSnyUpaCn@positron.chronox.de> <12396284.QuoJzrrf7p@positron.chronox.de> <55a89cdf-e36d-fb36-29fa-46ebfb139294@infradead.org>
+        Thu, 16 Jan 2020 01:55:55 -0500
+Received: by mail-ed1-f47.google.com with SMTP id r21so17957915edq.0;
+        Wed, 15 Jan 2020 22:55:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MtnVpKpg4yme77WQSKJ0ALip8EFeD1YBGjDv6aco++Q=;
+        b=HrLyLTY38JMp/f9eq14bOZ6unkQFYufDLNo+QZ0iCm3ljF9V7b7H7HF92Jz9MKuS+C
+         /HWEJMuiMFGyzIQdVdhIjaiM7GHcAu6aNRGa/RxRs8/drjjUl/HmSuMxbFHIzCBB1jaY
+         NDhLzfBxI20lnEOhpUD4QD2vfVW0eYj5uX/+dtRf2ydlS7oeCN0kom0h1g8KKUhPFSxV
+         XpuloJ8dfYwFQYgDEWaCP395RDBy+PdAvZrc1J0JtPK/bxpb2MlHDjMrYColpPNTvJzC
+         IK1xC8OLJMME5wlOXOhadACNG2/RJIkQTU0P3jQzBAZrTrbKqwmQOz9Ry5V89XdzqpDT
+         lKug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MtnVpKpg4yme77WQSKJ0ALip8EFeD1YBGjDv6aco++Q=;
+        b=hBPnhLqCYoYxzAeiJqhGChF9NiFCN3aEMdH4ra+4z25vWGomY7YncLq9HsJbbLyUML
+         EnnhwFjoE/ZcNL9+a0ovkUN9xzVTgPZrgbbkY9LLu4+cfvJQ6yWq6FjZZ0hc53h8O8Ce
+         692CMFjkO3Vm5UJpNm41glP1kGrw+sv1/DfEkLXULp8AOgMVJNdpi6gLEUVVm2WD0DRw
+         5a47d+F5ur/jDeMyff2chg7X/EM3ZLQvYA0gA8Kw3cktM58jp4tc7uRuqQ9SAgnMMGAW
+         0KNZ9vPEi3lztfc9ALn2QwrnMRwBrmBODF75/CnR4ViTpEqaoHK6MYj39v/HsnPfSapk
+         hnpA==
+X-Gm-Message-State: APjAAAWpljKPUWNP7aR1w+AyacVDGbWeoaxvDuE0Hy7CzJKk7AA9eYPF
+        i/wwPy2nKqkvJ6sclWqIFXQfayln/DXG0tP82zc=
+X-Google-Smtp-Source: APXvYqyCBsj2+U8TE8b/WZd/7VuAcHu4x+AAHJ2ktOFKkjshdhxcCFyDFdP9LHvKHy+NaR3nytPkswm/I+lSVUuOf2s=
+X-Received: by 2002:a17:906:1b07:: with SMTP id o7mr1354122ejg.131.1579157753386;
+ Wed, 15 Jan 2020 22:55:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Received: by 2002:a05:6402:1c11:0:0:0:0 with HTTP; Wed, 15 Jan 2020 22:55:52
+ -0800 (PST)
+In-Reply-To: <CAHk-=wiqPHc=BzSYO4N=awucq0td3s9VuBkct=m-B_xZVCgzBg@mail.gmail.com>
+References: <CACMCwJLJCA2iXS0QMKKAWQv252oUcmfsNvwDNP5+4Z_9VB-rTg@mail.gmail.com>
+ <5C216684-6FDF-41B5-9F51-89DC295F6DDC@amacapital.net> <CACMCwJLogOH-nG7QEMzrXK-iJPOdzCrL05y0a6yAbtPsfdRjsQ@mail.gmail.com>
+ <CAHk-=wiqPHc=BzSYO4N=awucq0td3s9VuBkct=m-B_xZVCgzBg@mail.gmail.com>
+From:   Jari Ruusu <jari.ruusu@gmail.com>
+Date:   Thu, 16 Jan 2020 08:55:52 +0200
+Message-ID: <CACMCwJL+kdkJRfRhG6bt_ojU0UeipqxVL3vwS3ETqVEjnWL1ew@mail.gmail.com>
+Subject: Re: Fix built-in early-load Intel microcode alignment
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ashok Raj <ashok.raj@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Fenghua Yu <fenghua.yu@intel.com>, johannes.berg@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 16. Januar 2020, 01:14:35 CET schrieb Randy Dunlap:
+On 1/15/20, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> However, the most likely cause is that you have a borderline dodgy
+> system, and the microcode update then just triggers a pre-existing
+> problem.
 
-Hi Randy,
+For that particular processor model, there appears to be microcode
+updates for four steppings: 9 10 11 and 12. My model is stepping
+9, so it appears to be early commercially sold version of that
+model. Probably more problems on it than on later steppings.
 
-> On 1/15/20 2:33 AM, Stephan M=FCller wrote:
-> > CC: "Eric W. Biederman" <ebiederm@xmission.com>
-> > CC: "Alexander E. Patrakov" <patrakov@gmail.com>
-> > CC: "Ahmed S. Darwish" <darwish.07@gmail.com>
-> > CC: "Theodore Y. Ts'o" <tytso@mit.edu>
-> > CC: Willy Tarreau <w@1wt.eu>
-> > CC: Matthew Garrett <mjg59@srcf.ucam.org>
-> > CC: Vito Caputo <vcaputo@pengaru.com>
-> > CC: Andreas Dilger <adilger.kernel@dilger.ca>
-> > CC: Jan Kara <jack@suse.cz>
-> > CC: Ray Strode <rstrode@redhat.com>
-> > CC: William Jon McCann <mccann@jhu.edu>
-> > CC: zhangjs <zachary@baishancloud.com>
-> > CC: Andy Lutomirski <luto@kernel.org>
-> > CC: Florian Weimer <fweimer@redhat.com>
-> > CC: Lennart Poettering <mzxreary@0pointer.de>
-> > CC: Nicolai Stange <nstange@suse.de>
-> > Reviewed-by: Roman Drahtmueller <draht@schaltsekun.de>
-> > Tested-by: Roman Drahtm=FCller <draht@schaltsekun.de>
-> > Tested-by: Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
-> > Tested-by: Neil Horman <nhorman@redhat.com>
-> > Signed-off-by: Stephan Mueller <smueller@chronox.de>
-> > ---
-> >=20
-> >  drivers/char/lrng/Kconfig     |  11 ++
-> >  drivers/char/lrng/Makefile    |   1 +
-> >  drivers/char/lrng/lrng_drbg.c | 260 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 272 insertions(+)
-> >  create mode 100644 drivers/char/lrng/lrng_drbg.c
-> >=20
-> > diff --git a/drivers/char/lrng/Kconfig b/drivers/char/lrng/Kconfig
-> > index cb701bb0b8b6..15fb623d9d1f 100644
-> > --- a/drivers/char/lrng/Kconfig
-> > +++ b/drivers/char/lrng/Kconfig
-> > @@ -71,4 +71,15 @@ menuconfig LRNG_DRNG_SWITCH
-> >=20
-> >  	  accessible via the external interfaces. With this configuration
-> >  	  option other DRNGs can be selected and loaded at runtime.
-> >=20
-> > +if LRNG_DRNG_SWITCH
-> > +config LRNG_DRBG
-> > +	tristate "SP800-90A support for the LRNG"
-> > +	select CRYPTO_DRBG_MENU
-> > +	select CRYPTO_CMAC if CRYPTO_DRBG_CTR
->=20
-> Don't select these if CRYPTO is not already set/enabled.
-> It causes Kconfig warnings and possible build errors.
+> But it might be worth it if the intel people could check up with their
+> microcode people on this anyway - if there is _one_ report of "my
+> system locks up with newer ucode", that's one thing. But if Jari isn't
+> alone...
 
-I added "depends on CRYPTO"
->=20
-> > +	help
-> > +	  Enable the SP800-90A DRBG support for the LRNG. Once the
-> > +	  module is loaded, output from /dev/random, /dev/urandom,
-> > +	  getrandom(2), or get_random_bytes is provided by a DRBG.
-> > +endif # LRNG_DRNG_SWITCH
-> > +
-> >=20
-> >  endif # LRNG
-> >=20
-> > diff --git a/drivers/char/lrng/lrng_drbg.c b/drivers/char/lrng/lrng_drb=
-g.c
-> > new file mode 100644
-> > index 000000000000..8bf2badb1fe0
-> > --- /dev/null
-> > +++ b/drivers/char/lrng/lrng_drbg.c
-> > @@ -0,0 +1,260 @@
-> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> > +/*
-> > + * Backend for the LRNG providing the cryptographic primitives using t=
-he
-> > + * kernel crypto API and its DRBG.
-> > + *
-> > + * Copyright (C) 2016 - 2020, Stephan Mueller <smueller@chronox.de>
-> > + */
-> > +
-> > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > +
-> > +#include <crypto/drbg.h>
-> > +#include <linux/init.h>
-> > +#include <linux/module.h>
-> > +#include <linux/lrng.h>
-> > +
-> > +/*
-> > + * Define a DRBG plus a hash / MAC used to extract data from the entro=
-py
-> > pool. + * For LRNG_HASH_NAME you can use a hash or a MAC (HMAC or CMAC)
-> > of your choice + * (Note, you should use the suggested selections below
-> > -- using SHA-1 or MD5 + * is not wise). The idea is that the used cipher
-> > primitive can be selected to + * be the same as used for the DRBG. I.e.
-> > the LRNG only uses one cipher + * primitive using the same cipher
-> > implementation with the options offered in + * the following. This mean=
-s,
-> > if the CTR DRBG is selected and AES-NI is present, + * both the CTR DRBG
-> > and the selected cmac(aes) use AES-NI.
-> > + *
-> > + * The security strengths of the DRBGs are all 256 bits according to
-> > + * SP800-57 section 5.6.1.
-> > + *
-> > + * This definition is allowed to be changed.
-> > + */
-> > +#ifdef CONFIG_CRYPTO_DRBG_CTR
-> > +static unsigned int lrng_drbg_type =3D 0;
-> > +#elif defined CONFIG_CRYPTO_DRBG_HMAC
-> > +static unsigned int lrng_drbg_type =3D 1;
-> > +#elif defined CONFIG_CRYPTO_DRBG_HASH
-> > +static unsigned int lrng_drbg_type =3D 2;
-> > +#else
-> > +#error "Unknown DRBG in use"
-> > +#endif
-> > +
-> > +/* The parameter must be r/o in sysfs as otherwise races appear. */
-> > +module_param(lrng_drbg_type, uint, 0444);
-> > +MODULE_PARM_DESC(lrng_drbg_type, "DRBG type used for LRNG (0->CTR_DRBG=
-, "
-> > +				 "1->HMAC_DRBG, 2->Hash_DRBG)");
->=20
-> One line for the string, please, not split.
+I'm not alone with latest Intel microcode problems. Debian for
+example reverted microcode to older microcode version on some
+Intel processor models because of hangs on warm reboots. Those
+reverts were not for same processor model as my processor, but
+they do indicate "not everything OK" situation with latest Intel
+microcodes.
 
-Changed
+https://lists.debian.org/debian-security-announce/2019/msg00237.html
 
-Thank you.
+My laptop computer was made by Dell, and Dell has been really good
+at providing new BIOS updates (that don't require Microsoft OS to
+update). More than once they have provided new BIOS to fix some
+security flaw that was still embargoed. The information about that
+security flaw then became publically known later after embargo
+ended.
 
-Ciao
-Stephan
+Now that I have learned about the instability of latest two
+microcode updates for my laptop's processor, it isn't difficult to
+connect the dots why Dell is still shipping 3rd latest microcode
+in their latest BIOS update for that laptop computer.
 
-
+-- 
+Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
