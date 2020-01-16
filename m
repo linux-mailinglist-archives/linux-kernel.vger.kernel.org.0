@@ -2,124 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1594A13D1AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 02:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3B7A13D1B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 02:51:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbgAPBpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 20:45:47 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42218 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730153AbgAPBpr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 20:45:47 -0500
-Received: by mail-lj1-f193.google.com with SMTP id y4so20751672ljj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 17:45:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U+RQyzgBTq/ON6P2+wJSZt2wyW+FlNHJHg+NSKeDmFE=;
-        b=NUQfXiZb7391JB22uSyaFTtB4xoyTOL60AdEkWdUh9rxn3xgqHIqBIQpQ9yOWzqBXs
-         62FYnY/2uSynVunTrZJ8JYuDmTz8jZF6jOn7HOVMhJX3z4m9s9bL73CXe8BKLMOz5YIl
-         XdYCgmMNvQZ4n6Byp11D9S9bCCS57BSDMynfZrfNaOJW3E2ExHmELrlRs0lQfUqAN4DL
-         dgzBx3qRnlKImZtiOQ+nKIbLa1FIbL49mGsAeLkZYfgs75BdTKc8gPPNQiPaI1v71Lyw
-         sBSAjPQWnIw+uXBomVWjbWzV4XSeoiHgMQe1nO0SmAkMDbfva4H1eLJRCVuMFArrQrPI
-         dbFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U+RQyzgBTq/ON6P2+wJSZt2wyW+FlNHJHg+NSKeDmFE=;
-        b=fsPxyRl/HySQ/U+52Yh9zGowtzldQmW3l/jm9GqxDZLZWksifygIy+AN9PE8yD7Nvd
-         s2kVur2OkbgHnosbKfPKF0b20oT18JPPmu8sCOUxmwDsdWDy10aPn0wJ8X18EkGbQaQf
-         FYc4EKjp6A/ur3IHs9v8bB+uVJKT30baI9vGzVz6f0ETH4IO7c9tANp+80ZcmXsaDFPC
-         LN1lxc1WqeCuGJrWBjk7v0hFVFpDG4hveSN43Q0e5+aLbiHKoBhXqudts7fEpQRHrHVN
-         qbomFWbTjBIUiyQ5VWkjSVc2y64+E7URHm8KvASsikGf4wGyImOQiU22hWmnRfPyEEuR
-         kP+Q==
-X-Gm-Message-State: APjAAAVSFLdK9jbhzlX1g8lwoS8AVAV138Od2FL1XoUYtF5YrFV6OnhS
-        BD7Jxj8C9ev6YkaSrNN1Kl095Il5lqtxCwkvsPI=
-X-Google-Smtp-Source: APXvYqyS0Lev/bxVn6XJvsngSBDaCup/fvOuKS3i1TkfXUrcWrb0SPAGKurZCEgWoS1m5HQmozfoMHG2L6QpgpaGMKY=
-X-Received: by 2002:a2e:9d90:: with SMTP id c16mr669463ljj.264.1579139144680;
- Wed, 15 Jan 2020 17:45:44 -0800 (PST)
+        id S1730412AbgAPBvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 20:51:55 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37412 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729949AbgAPBvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 20:51:55 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 222A5FDB6804EAE21C5B;
+        Thu, 16 Jan 2020 09:51:53 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 16 Jan 2020 09:51:44 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <sudeep.holla@arm.com>
+CC:     <linuxarm@huawei.com>, Zeng Tao <prime.zeng@hisilicon.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] cpu-topology: Skip the exist but not possible cpu nodes
+Date:   Thu, 16 Jan 2020 09:47:35 +0800
+Message-ID: <1579139255-29262-1-git-send-email-prime.zeng@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-References: <cover.1572437285.git.vpillai@digitalocean.com>
- <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com> <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com>
- <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
- <8f9acfb3-28e0-8d3e-08e0-77f04410cf38@linux.intel.com> <1cc62dbe-348e-affa-8740-c162e1454510@linux.intel.com>
-In-Reply-To: <1cc62dbe-348e-affa-8740-c162e1454510@linux.intel.com>
-From:   Aubrey Li <aubrey.intel@gmail.com>
-Date:   Thu, 16 Jan 2020 09:45:29 +0800
-Message-ID: <CAERHkrsaXAgE4MyE6ZehZ8cSq0bVrjc5uJnE9GwLCk4dp1hS9g@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     Aubrey Li <aubrey.li@linux.intel.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dario Faggioli <dfaggioli@suse.com>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 3:33 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
->
-> On 1/14/20 7:43 PM, Li, Aubrey wrote:
-> > On 2020/1/14 23:40, Vineeth Remanan Pillai wrote:
-> >> On Mon, Jan 13, 2020 at 8:12 PM Tim Chen <tim.c.chen@linux.intel.com> wrote:
-> >>
-> >>> I also encountered kernel panic with the v4 code when taking cpu offline or online
-> >>> when core scheduler is running.  I've refreshed the previous patch, along
-> >>> with 3 other patches to fix problems related to CPU online/offline.
-> >>>
-> >>> As a side effect of the fix, each core can now operate in core-scheduling
-> >>> mode or non core-scheduling mode, depending on how many online SMT threads it has.
-> >>>
-> >>> Vineet, are you guys planning to refresh v4 and update it to v5?  Aubrey posted
-> >>> a port to the latest kernel earlier.
-> >>>
-> >> Thanks for the updated patch Tim.
-> >>
-> >> We have been testing with v4 rebased on 5.4.8 as RC kernels had given us
-> >> trouble in the past. v5 is due soon and we are planning to release v5 when
-> >> 5.5 comes out. As of now, v5 has your crash fixes and Aubrey's changes
-> >> related to load balancing.
-> >
-> > It turns out my load balancing related changes need to be refined.
-> > For example, we don't migrate task if the task's core cookie does not match
-> > with CPU's core cookie, but if the entire core is idle, we should allow task
-> > migration, something like the following:
-> >
-> > I plan to do this after my Chinese New Year holiday(Feb 3rd).
-> >
-> > Thanks,
-> > -Aubrey
-> >
->
-> Aubrey's attached patch should replace his previous patch
-> sched/fair: don't migrate task if cookie not match
->
-> I've also added a fix below for Aubrey's patch
-> sched/fair: find cookie matched idlest CPU.
->
-> Aubrey, can you merge this fix into that patch when you update
-> your patches?
+When CONFIG_NR_CPUS is smaller than the cpu nodes defined in the device
+tree, all the cpu nodes parsing will fail.
+And this is not reasonable for a legal device tree configs.
+In this patch, skip such cpu nodes rather than return an error.
 
-Thanks Tim, I'll include your fix when I update my patches.
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+---
+Changelog:
+v2->v3:
+ -Fix the Review comments by sudeep, including fix typo, remove redundant check
+ logic, change the warning print level etc.
+v1->v2:
+ -Remove redundant -ENODEV assignment in get_cpu_for_node
+ -Add comment to describe the get_cpu_for_node return values
+ -Add skip process for cpu threads
+ -Update the commit log with more detail
+---
+ drivers/base/arch_topology.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
--Aubrey
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 5fe44b3..d4302a1 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -248,6 +248,16 @@ core_initcall(free_raw_capacity);
+ #endif
+ 
+ #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
++/*
++ * This function returns the logic cpu number of the node.
++ * There are basically three kinds of return values:
++ * (1) logic cpu number which is > 0.
++ * (2) -ENODEV when the node is valid one which can be found in the device tree
++ * but there is no possible cpu nodes to match, when the CONFIG_NR_CPUS is
++ * smaller than cpus node numbers in device tree, this will happen. It's
++ * suggested to just ignore this case.
++ * (3) -1 if the node does not exist in the device tree
++ */
+ static int __init get_cpu_for_node(struct device_node *node)
+ {
+ 	struct device_node *cpu_node;
+@@ -261,7 +271,8 @@ static int __init get_cpu_for_node(struct device_node *node)
+ 	if (cpu >= 0)
+ 		topology_parse_cpu_capacity(cpu_node, cpu);
+ 	else
+-		pr_crit("Unable to find CPU node for %pOF\n", cpu_node);
++		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
++			cpu_node, cpumask_pr_args(cpu_possible_mask));
+ 
+ 	of_node_put(cpu_node);
+ 	return cpu;
+@@ -286,9 +297,8 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 				cpu_topology[cpu].package_id = package_id;
+ 				cpu_topology[cpu].core_id = core_id;
+ 				cpu_topology[cpu].thread_id = i;
+-			} else {
+-				pr_err("%pOF: Can't get CPU for thread\n",
+-				       t);
++			} else if (cpu != -ENODEV) {
++				pr_err("%pOF: Can't get CPU for thread\n", t);
+ 				of_node_put(t);
+ 				return -EINVAL;
+ 			}
+@@ -307,7 +317,7 @@ static int __init parse_core(struct device_node *core, int package_id,
+ 
+ 		cpu_topology[cpu].package_id = package_id;
+ 		cpu_topology[cpu].core_id = core_id;
+-	} else if (leaf) {
++	} else if (leaf && cpu != -ENODEV) {
+ 		pr_err("%pOF: Can't get CPU for leaf core\n", core);
+ 		return -EINVAL;
+ 	}
+-- 
+2.8.1
+
