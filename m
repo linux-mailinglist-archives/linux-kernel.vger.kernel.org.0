@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E3A13ED57
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9279B13ED40
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394804AbgAPSCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:02:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58956 "EHLO mail.kernel.org"
+        id S2394960AbgAPSBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:01:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405637AbgAPRlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:20 -0500
+        id S2405653AbgAPRl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39491246AE;
-        Thu, 16 Jan 2020 17:41:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFA3B246CF;
+        Thu, 16 Jan 2020 17:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196480;
-        bh=Yk51PWyC/332orkYl4cepqAhNFoWYHBOdBYLngvoHqw=;
+        s=default; t=1579196485;
+        bh=W5GsXPgetj+H1lgqnH7m0kOe+yhVb2jMSSzjWLFHHfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qd0AShrskAWn+jNWTQCtnyODhtyDjq7VWe7YaseEdnQOBh1dNeEkw9rAofEzLFAOq
-         sr6FufiGHaz2aDRqWf8LzVFMiGPq2Vbbbx7BnUpuREuKXcNogvJBUb8xab1KWvoXav
-         6REy0/mGeSvGQkZiC55gpV8jreqqSfiUnRtC1CYg=
+        b=FFmsvvnwHOJMuhJrQqYLWXtz1ymLaZx4NSNChg39DiL7WFTGR/Rde7SoKAQ7MKPsH
+         ndRt2nbFV5x+nHohP9toVvLgDgbc7PGyJnEOUS4YNpLY/bpmKS1myx1iO49sMW19Jc
+         6Gku5LWdVgSZzZvfro82X+0gXX63ebTR9nxKjC4U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 227/251] media: ov6650: Fix .get_fmt() V4L2_SUBDEV_FORMAT_TRY support
-Date:   Thu, 16 Jan 2020 12:36:16 -0500
-Message-Id: <20200116173641.22137-187-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 231/251] scsi: esas2r: unlock on error in esas2r_nvram_read_direct()
+Date:   Thu, 16 Jan 2020 12:36:20 -0500
+Message-Id: <20200116173641.22137-191-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,53 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 39034bb0c26b76a2c3abc54aa28c185f18b40c2f ]
+[ Upstream commit 906ca6353ac09696c1bf0892513c8edffff5e0a6 ]
 
-Commit da298c6d98d5 ("[media] v4l2: replace video op g_mbus_fmt by pad
-op get_fmt") converted a former ov6650_g_fmt() video operation callback
-to an ov6650_get_fmt() pad operation callback.  However, the converted
-function disregards a format->which flag that pad operations should
-obey and always returns active frame format settings.
+This error path is missing an unlock.
 
-That can be fixed by always responding to V4L2_SUBDEV_FORMAT_TRY with
--EINVAL, or providing the response from a pad config argument, likely
-updated by a former user call to V4L2_SUBDEV_FORMAT_TRY .set_fmt().
-Since implementation of the latter is trivial, go for it.
-
-Fixes: da298c6d98d5 ("[media] v4l2: replace video op g_mbus_fmt by pad op get_fmt")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
+Link: https://lore.kernel.org/r/20191022102324.GA27540@mwanda
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/soc_camera/ov6650.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/scsi/esas2r/esas2r_flash.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/i2c/soc_camera/ov6650.c b/drivers/media/i2c/soc_camera/ov6650.c
-index 3b118d45d433..3c959e48855c 100644
---- a/drivers/media/i2c/soc_camera/ov6650.c
-+++ b/drivers/media/i2c/soc_camera/ov6650.c
-@@ -526,10 +526,16 @@ static int ov6650_get_fmt(struct v4l2_subdev *sd,
- 	*mf = ov6650_def_fmt;
- 
- 	/* update media bus format code and frame size */
--	mf->width	= priv->rect.width >> priv->half_scale;
--	mf->height	= priv->rect.height >> priv->half_scale;
--	mf->code	= priv->code;
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		mf->width = cfg->try_fmt.width;
-+		mf->height = cfg->try_fmt.height;
-+		mf->code = cfg->try_fmt.code;
- 
-+	} else {
-+		mf->width = priv->rect.width >> priv->half_scale;
-+		mf->height = priv->rect.height >> priv->half_scale;
-+		mf->code = priv->code;
-+	}
- 	return 0;
- }
+diff --git a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
+index 7bd376d95ed5..b02ac389e6c6 100644
+--- a/drivers/scsi/esas2r/esas2r_flash.c
++++ b/drivers/scsi/esas2r/esas2r_flash.c
+@@ -1197,6 +1197,7 @@ bool esas2r_nvram_read_direct(struct esas2r_adapter *a)
+ 	if (!esas2r_read_flash_block(a, a->nvram, FLS_OFFSET_NVR,
+ 				     sizeof(struct esas2r_sas_nvram))) {
+ 		esas2r_hdebug("NVRAM read failed, using defaults");
++		up(&a->nvram_semaphore);
+ 		return false;
+ 	}
  
 -- 
 2.20.1
