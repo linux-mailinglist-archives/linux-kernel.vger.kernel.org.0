@@ -2,79 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFDD13F29C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 468E513F5C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:59:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391193AbgAPRYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:24:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390071AbgAPRND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:13:03 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17E5B246A1;
-        Thu, 16 Jan 2020 17:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194782;
-        bh=q1ncPLTAFlH3nr9CJUFHxdP7vHGcDmJ0gaWk0Z3OZhY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=riCIdXdu3VQEC1LCS2jT8uQgUmcvMk+27g5WShRaIKL2kGybv1+3TFOEz5n2ouArC
-         54C7t0LWG/poHsZASIpco/aln7e3AyXV8v2DIciY13XZXtJgJFylz80QSnNZ+5dWtx
-         DF2BslKqjqKEiknRn8cwqHUYHPczz/E1qBjsZxL0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jean Delvare <jdelvare@suse.de>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 598/671] firmware: dmi: Fix unlikely out-of-bounds read in save_mem_devices
-Date:   Thu, 16 Jan 2020 12:03:56 -0500
-Message-Id: <20200116170509.12787-335-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+        id S2437208AbgAPS7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:59:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388977AbgAPRGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=O2oB/VU8iyxVCOuhkqWCVkodRFDstN8yc7koL+Xm+D0=; b=Cs2GYr29Sk6mgBrpJMwsneQ5V
+        2veU5z/gjrHrU71aINh9D5iD1aAExRuhDprTAaEsebypTxAJchrDZhyovQdEqTYLEUugPVwtxScA8
+        DvL6qrrLxYp/bX/DR97jxt5JSBFeszY1p9bjxKvlzirZl9W8KTfZ8CfnumW22DwFFHzc/xSaiO4pt
+        i/eHG0a+mVoMhvkGAjN6bzzGB/QYCACNVbX+2jYAc1Se0Pjp7xnX+ji1f771Po7TZimDFtMSsBc/m
+        BliXxXh2T2Y25LFDPZXC6CMB/o0/Ut14ssG54q/mfJ5scEfzy1yN6o5b6BlQe6kCp29D1nJXvdhPr
+        32AAbhyKA==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1is8bQ-0008Cf-UC; Thu, 16 Jan 2020 17:06:40 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] MAINTAINERS: nouveau mailing list is moderated
+Message-ID: <2684257e-1027-1c1b-d794-78bb1864b437@infradead.org>
+Date:   Thu, 16 Jan 2020 09:06:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 81dde26de9c08bb04c4962a15608778aaffb3cf9 ]
+Mark the nouveau@ mailing list as moderated for non-subscribers.
 
-Before reading the Extended Size field, we should ensure it fits in
-the DMI record. There is already a record length check but it does
-not cover that field.
-
-It would take a seriously corrupted DMI table to hit that bug, so no
-need to worry, but we should still fix it.
-
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 6deae96b42eb ("firmware, DMI: Add function to look up a handle and return DIMM size")
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- drivers/firmware/dmi_scan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-index f2483548cde9..0dc0c78f1fdb 100644
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -407,7 +407,7 @@ static void __init save_mem_devices(const struct dmi_header *dm, void *v)
- 		bytes = ~0ull;
- 	else if (size & 0x8000)
- 		bytes = (u64)(size & 0x7fff) << 10;
--	else if (size != 0x7fff)
-+	else if (size != 0x7fff || dm->length < 0x20)
- 		bytes = (u64)size << 20;
- 	else
- 		bytes = (u64)get_unaligned((u32 *)&d[0x1C]) << 20;
--- 
-2.20.1
+--- linux-next-20200116.orig/MAINTAINERS
++++ linux-next-20200116/MAINTAINERS
+@@ -5315,7 +5315,7 @@ F:	Documentation/devicetree/bindings/dis
+ DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS
+ M:	Ben Skeggs <bskeggs@redhat.com>
+ L:	dri-devel@lists.freedesktop.org
+-L:	nouveau@lists.freedesktop.org
++L:	nouveau@lists.freedesktop.org (moderated for non-subscribers)
+ T:	git git://github.com/skeggsb/linux
+ S:	Supported
+ F:	drivers/gpu/drm/nouveau/
+@@ -16914,7 +16914,7 @@ R:	Karol Herbst <karolherbst@gmail.com>
+ R:	Pekka Paalanen <ppaalanen@gmail.com>
+ S:	Maintained
+ L:	linux-kernel@vger.kernel.org
+-L:	nouveau@lists.freedesktop.org
++L:	nouveau@lists.freedesktop.org (moderated for non-subscribers)
+ F:	kernel/trace/trace_mmiotrace.c
+ F:	include/linux/mmiotrace.h
+ F:	arch/x86/mm/kmmio.c
 
