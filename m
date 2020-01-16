@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84FE813F052
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2094D13F04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390085AbgAPSUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:20:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38514 "EHLO mail.kernel.org"
+        id S2395509AbgAPSUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:20:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392535AbgAPR17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:59 -0500
+        id S2392548AbgAPR2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82554246E6;
-        Thu, 16 Jan 2020 17:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D9BC246D9;
+        Thu, 16 Jan 2020 17:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195679;
-        bh=ymg0NxErnGtKE2uVNTzOP1nUg39rleRL/N+JyWd4kGw=;
+        s=default; t=1579195682;
+        bh=eGfSmaZhPTJNhVvCHpO8Z9PmUArk9uxu9PZFZhOuafQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qedmnn0UfE0EppD54rCdV1khCAq9Gdt2APSNAWceEUcq2mcGURI5OAFhwxBKRanwZ
-         ShZH9iZs/uoMs/6ZrW+052aBS0SrKqbQn1G4ONUhsV7H6np6cc0BAb0xXqgz08Afbc
-         /bUQq+uJ3uX+ojHUjTv5L7zbaxXHer3QlfsU673g=
+        b=RVS2WNlSAKY2G8giMvHpNtWSzPSQVXOLs7eZHVAIOdkSqBtVdN1wF34VS6tvB7zp/
+         gawmHP3Waph/Njb+/I5V+qRBAlJwi5zQs0QgorG2jKG6WaqZMaqnb4AoF+jjOgENFc
+         86m6PRtCaoSOXZlfEPfUj+MkJwgLpJsQal59ug0g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 234/371] rtc: pcf8563: Fix interrupt trigger method
-Date:   Thu, 16 Jan 2020 12:21:46 -0500
-Message-Id: <20200116172403.18149-177-sashal@kernel.org>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 236/371] drm/msm/a3xx: remove TPL1 regs from snapshot
+Date:   Thu, 16 Jan 2020 12:21:48 -0500
+Message-Id: <20200116172403.18149-179-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,36 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Rob Clark <robdclark@chromium.org>
 
-[ Upstream commit 65f662cbf829834fa4d94190eb7691e5a9cb92d8 ]
+[ Upstream commit f47bee2ba447bebc304111c16ef1e1a73a9744dd ]
 
-The PCF8563 datasheet says the interrupt line is active low and stays
-active until the events are cleared, i.e. a level trigger interrupt.
+These regs are write-only, and the hw throws a hissy-fit (ie. reboots)
+when we try to read them for GPU state snapshot, in response to a GPU
+hang.  It is rather impolite when GPU recovery triggers an insta-
+reboot, so lets remove the TPL1 registers from the snapshot.
 
-Fix the flags used to request the interrupt.
-
-Fixes: ede3e9d47cca ("drivers/rtc/rtc-pcf8563.c: add alarm support")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 7198e6b03155 drm/msm: add a3xx gpu support
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-pcf8563.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
-index 8c836c51a508..ef04472dde1d 100644
---- a/drivers/rtc/rtc-pcf8563.c
-+++ b/drivers/rtc/rtc-pcf8563.c
-@@ -605,7 +605,7 @@ static int pcf8563_probe(struct i2c_client *client,
- 	if (client->irq > 0) {
- 		err = devm_request_threaded_irq(&client->dev, client->irq,
- 				NULL, pcf8563_irq,
--				IRQF_SHARED|IRQF_ONESHOT|IRQF_TRIGGER_FALLING,
-+				IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
- 				pcf8563_driver.driver.name, client);
- 		if (err) {
- 			dev_err(&client->dev, "unable to request IRQ %d\n",
+diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+index 7791313405b5..c8671b1578c6 100644
+--- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+@@ -394,19 +394,17 @@ static const unsigned int a3xx_registers[] = {
+ 	0x2200, 0x2212, 0x2214, 0x2217, 0x221a, 0x221a, 0x2240, 0x227e,
+ 	0x2280, 0x228b, 0x22c0, 0x22c0, 0x22c4, 0x22ce, 0x22d0, 0x22d8,
+ 	0x22df, 0x22e6, 0x22e8, 0x22e9, 0x22ec, 0x22ec, 0x22f0, 0x22f7,
+-	0x22ff, 0x22ff, 0x2340, 0x2343, 0x2348, 0x2349, 0x2350, 0x2356,
+-	0x2360, 0x2360, 0x2440, 0x2440, 0x2444, 0x2444, 0x2448, 0x244d,
+-	0x2468, 0x2469, 0x246c, 0x246d, 0x2470, 0x2470, 0x2472, 0x2472,
+-	0x2474, 0x2475, 0x2479, 0x247a, 0x24c0, 0x24d3, 0x24e4, 0x24ef,
+-	0x2500, 0x2509, 0x250c, 0x250c, 0x250e, 0x250e, 0x2510, 0x2511,
+-	0x2514, 0x2515, 0x25e4, 0x25e4, 0x25ea, 0x25ea, 0x25ec, 0x25ed,
+-	0x25f0, 0x25f0, 0x2600, 0x2612, 0x2614, 0x2617, 0x261a, 0x261a,
+-	0x2640, 0x267e, 0x2680, 0x268b, 0x26c0, 0x26c0, 0x26c4, 0x26ce,
+-	0x26d0, 0x26d8, 0x26df, 0x26e6, 0x26e8, 0x26e9, 0x26ec, 0x26ec,
+-	0x26f0, 0x26f7, 0x26ff, 0x26ff, 0x2740, 0x2743, 0x2748, 0x2749,
+-	0x2750, 0x2756, 0x2760, 0x2760, 0x300c, 0x300e, 0x301c, 0x301d,
+-	0x302a, 0x302a, 0x302c, 0x302d, 0x3030, 0x3031, 0x3034, 0x3036,
+-	0x303c, 0x303c, 0x305e, 0x305f,
++	0x22ff, 0x22ff, 0x2340, 0x2343, 0x2440, 0x2440, 0x2444, 0x2444,
++	0x2448, 0x244d, 0x2468, 0x2469, 0x246c, 0x246d, 0x2470, 0x2470,
++	0x2472, 0x2472, 0x2474, 0x2475, 0x2479, 0x247a, 0x24c0, 0x24d3,
++	0x24e4, 0x24ef, 0x2500, 0x2509, 0x250c, 0x250c, 0x250e, 0x250e,
++	0x2510, 0x2511, 0x2514, 0x2515, 0x25e4, 0x25e4, 0x25ea, 0x25ea,
++	0x25ec, 0x25ed, 0x25f0, 0x25f0, 0x2600, 0x2612, 0x2614, 0x2617,
++	0x261a, 0x261a, 0x2640, 0x267e, 0x2680, 0x268b, 0x26c0, 0x26c0,
++	0x26c4, 0x26ce, 0x26d0, 0x26d8, 0x26df, 0x26e6, 0x26e8, 0x26e9,
++	0x26ec, 0x26ec, 0x26f0, 0x26f7, 0x26ff, 0x26ff, 0x2740, 0x2743,
++	0x300c, 0x300e, 0x301c, 0x301d, 0x302a, 0x302a, 0x302c, 0x302d,
++	0x3030, 0x3031, 0x3034, 0x3036, 0x303c, 0x303c, 0x305e, 0x305f,
+ 	~0   /* sentinel */
+ };
+ 
 -- 
 2.20.1
 
