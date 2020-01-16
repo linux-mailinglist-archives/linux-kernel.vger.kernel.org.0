@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A7E13E241
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:55:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4467213E247
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:55:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbgAPQzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39968 "EHLO mail.kernel.org"
+        id S1731702AbgAPQzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727030AbgAPQzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:05 -0500
+        id S1730038AbgAPQzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 082AD22464;
-        Thu, 16 Jan 2020 16:55:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7523B2467A;
+        Thu, 16 Jan 2020 16:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193704;
-        bh=bdU4W6NQUKwa38DROjElBeIEwAa7e1UupvtmZlJXjRM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MhbhV+5IxqV/Gye42s9tyuvD3p9gSzv6UwD2qIysvD8Qva7FoofrQdZiL94ZJ2TlW
-         RYepKR47FL49q+fgtKGxTUUPqO/QHnWho9uritmiImtDFTliSiLOx8J3fWlXxa5TQ0
-         5JDgD9gUnz5soFhdOborokc0UEtJAHFx+jQhdcZQ=
+        s=default; t=1579193708;
+        bh=Dslocvm6ODpusPCVvet1wWvSZrEl0x0UXS983L8p52U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PqPgYqASOvF6IIgaCAHfqQrhQ39plW94jdAYRPgAzesgXzJB/n1sW2N6V1FJA2r3X
+         92Yy2tLfcO0mwNVZ73Xh+5DHjBzu4fjsVcKdVrjZ2oT+0OqaRa+a9a4OHhCUHJt8oW
+         M6xfq5gnpL3aq4km1LrvQw5dqPgsSnNZSvSdpU40=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Rosin <peda@axentia.se>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+Cc:     Shannon Nelson <shannon.nelson@oracle.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 001/671] drm/sti: do not remove the drm_bridge that was never added
-Date:   Thu, 16 Jan 2020 11:43:52 -0500
-Message-Id: <20200116165502.8838-1-sashal@kernel.org>
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 004/671] ixgbe: don't clear IPsec sa counters on HW clearing
+Date:   Thu, 16 Jan 2020 11:43:55 -0500
+Message-Id: <20200116165502.8838-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
+References: <20200116165502.8838-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,53 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Shannon Nelson <shannon.nelson@oracle.com>
 
-[ Upstream commit 66e31a72dc38543b2d9d1ce267dc78ba9beebcfd ]
+[ Upstream commit 9e3f2f5ecee69b0f70003fb3e07639151e91de73 ]
 
-Removing the drm_bridge_remove call should avoid a NULL dereference
-during list processing in drm_bridge_remove if the error path is ever
-taken.
+The software SA record counters should not be cleared when clearing
+the hardware tables.  This causes the counters to be out of sync
+after a driver reset.
 
-The more natural approach would perhaps be to add a drm_bridge_add,
-but there are several other bridges that never call drm_bridge_add.
-Just removing the drm_bridge_remove is the easier fix.
-
-Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180806061910.29914-2-peda@axentia.se
+Fixes: 63a67fe229ea ("ixgbe: add ipsec offload add and remove SA")
+Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sti/sti_hda.c  | 1 -
- drivers/gpu/drm/sti/sti_hdmi.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index 49438337f70d..19b9b5ed1297 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
- 	return 0;
- 
- err_sysfs:
--	drm_bridge_remove(bridge);
- 	return -EINVAL;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+index b27f7a968820..49e6d66ccf80 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
+@@ -114,7 +114,6 @@ static void ixgbe_ipsec_set_rx_ip(struct ixgbe_hw *hw, u16 idx, __be32 addr[])
+  **/
+ static void ixgbe_ipsec_clear_hw_tables(struct ixgbe_adapter *adapter)
+ {
+-	struct ixgbe_ipsec *ipsec = adapter->ipsec;
+ 	struct ixgbe_hw *hw = &adapter->hw;
+ 	u32 buf[4] = {0, 0, 0, 0};
+ 	u16 idx;
+@@ -133,9 +132,6 @@ static void ixgbe_ipsec_clear_hw_tables(struct ixgbe_adapter *adapter)
+ 		ixgbe_ipsec_set_tx_sa(hw, idx, buf, 0);
+ 		ixgbe_ipsec_set_rx_sa(hw, idx, 0, buf, 0, 0, 0);
+ 	}
+-
+-	ipsec->num_rx_sa = 0;
+-	ipsec->num_tx_sa = 0;
  }
  
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 34cdc4644435..ccf718404a1c 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	return 0;
- 
- err_sysfs:
--	drm_bridge_remove(bridge);
- 	hdmi->drm_connector = NULL;
- 	return -EINVAL;
- }
+ /**
 -- 
 2.20.1
 
