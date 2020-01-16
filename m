@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D14214000D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE13314000C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390687AbgAPXUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:20:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47252 "EHLO mail.kernel.org"
+        id S2390699AbgAPXUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:20:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390682AbgAPXUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:20:36 -0500
+        id S2390664AbgAPXUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:20:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDF7620684;
-        Thu, 16 Jan 2020 23:20:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2BE2082F;
+        Thu, 16 Jan 2020 23:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216836;
-        bh=DPkjtJFTZwjg+rtZHYEvsn5NAPRUMVLLNJt/gZps5GM=;
+        s=default; t=1579216838;
+        bh=8HFTOHFdpVn8DqOi9ioDRy1zz3Sz9X+4Nb7QxL9ae6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TP0V3q9addQ0azCpM2QnD+Xq4i5DUTK0iRDs56zSq9UkylzKziDNVFGoUVtyn97aI
-         rA5tzkqdeWMUfkm+kNLn0fWNxybxgdSTNbfmJojn/OrKoaKjKlpQ9QLenVYuvEvI4J
-         Es52jTfEMUrtj6f89jkL6fsvabdokF0rbHCA/jbk=
+        b=kLaqdDo/et75HaTM8zvkgka/iQF2OF+meGY8ulxArqzrXUbf9dt2CDrc96CUgRT+6
+         vCSSkCf7iWmNDP8jqshz7gmPBCk0ENp2NGroaeJJftuhrjnaEFM6KysiEJVByk83jF
+         6DSFQLRY20lqidNu7eDCqsMGAN9+tJonUGP9FSdE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.4 039/203] scsi: smartpqi: Update attribute name to `driver_version`
-Date:   Fri, 17 Jan 2020 00:15:56 +0100
-Message-Id: <20200116231747.489735972@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 5.4 040/203] MAINTAINERS: Append missed file to the database
+Date:   Fri, 17 Jan 2020 00:15:57 +0100
+Message-Id: <20200116231747.557078308@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -43,32 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Menzel <pmenzel@molgen.mpg.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit a2bdd0c904da12b223c8d7218e98138d4e6d9f4f upstream.
+commit 44fe5cb32c7599a4059931a98794e0418619aa96 upstream.
 
-The file name in the documentation is currently incorrect, so fix it.
+When gpiolib.h internal header had been split to few, the commit 77cb907abe6c
+("gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h") in particular missed
+the MAINTAINERS database update. Do it here.
 
-Link: https://lore.kernel.org/r/fe264d62-0371-ea59-b66a-6d855290ce65@molgen.mpg.de
-Fixes: 6d90615f1346 ("scsi: smartpqi: add sysfs entries")
-Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 77cb907abe6c ("gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/scsi/smartpqi.txt |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/scsi/smartpqi.txt
-+++ b/Documentation/scsi/smartpqi.txt
-@@ -29,7 +29,7 @@ smartpqi specific entries in /sys
-   smartpqi host attributes:
-   -------------------------
-   /sys/class/scsi_host/host*/rescan
--  /sys/class/scsi_host/host*/version
-+  /sys/class/scsi_host/host*/driver_version
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6973,6 +6973,7 @@ L:	linux-acpi@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
+ F:	drivers/gpio/gpiolib-acpi.c
++F:	drivers/gpio/gpiolib-acpi.h
  
-   The host rescan attribute is a write only attribute. Writing to this
-   attribute will trigger the driver to scan for new, changed, or removed
+ GPIO IR Transmitter
+ M:	Sean Young <sean@mess.org>
 
 
