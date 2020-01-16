@@ -2,444 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E604713D496
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 07:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE7113D477
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 07:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbgAPGqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 01:46:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16666 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726872AbgAPGqi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 01:46:38 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00G6j0GG120077;
-        Thu, 16 Jan 2020 01:46:22 -0500
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhbptej3b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Jan 2020 01:46:21 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 00G6jjjX031148;
-        Thu, 16 Jan 2020 06:46:21 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma01dal.us.ibm.com with ESMTP id 2xf758evej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Jan 2020 06:46:21 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00G6kJ2D57999656
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Jan 2020 06:46:19 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4FE46E058;
-        Thu, 16 Jan 2020 06:46:19 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5404F6E053;
-        Thu, 16 Jan 2020 06:46:16 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.199.45.56])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 16 Jan 2020 06:46:16 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, peterz@infradead.org, will@kernel.org,
-        mpe@ellerman.id.au
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v4 9/9] asm-generic/tlb: Provide MMU_GATHER_TABLE_FREE
-Date:   Thu, 16 Jan 2020 12:15:31 +0530
-Message-Id: <20200116064531.483522-10-aneesh.kumar@linux.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200116064531.483522-1-aneesh.kumar@linux.ibm.com>
-References: <20200116064531.483522-1-aneesh.kumar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-16_02:2020-01-16,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- mlxscore=0 mlxlogscore=906 impostorscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=2 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001160055
+        id S1728890AbgAPGo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 01:44:26 -0500
+Received: from foss.arm.com ([217.140.110.172]:45496 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbgAPGo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 01:44:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44F7E328;
+        Wed, 15 Jan 2020 22:44:25 -0800 (PST)
+Received: from p8cg001049571a15.arm.com (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CFED83F6C4;
+        Wed, 15 Jan 2020 22:47:49 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will@kernel.org
+Cc:     mark.rutland@arm.com, david@redhat.com, cai@lca.pw,
+        logang@deltatee.com, cpandya@codeaurora.org, arunks@codeaurora.org,
+        dan.j.williams@intel.com, mgorman@techsingularity.net,
+        osalvador@suse.de, ard.biesheuvel@arm.com, steve.capper@arm.com,
+        broonie@kernel.org, valentin.schneider@arm.com,
+        Robin.Murphy@arm.com, steven.price@arm.com, suzuki.poulose@arm.com,
+        ira.weiny@intel.com, Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: [PATCH V12 0/2] arm64/mm: Enable memory hot remove
+Date:   Thu, 16 Jan 2020 12:15:33 +0530
+Message-Id: <1579157135-10360-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+This series enables memory hot remove functionality on arm64 platform. This
+is based on Linux 5.5-rc6 and particularly deals with a problem caused when
+boot memory is attempted to be removed.
 
-As described in the comment, the correct order for freeing pages is:
+On arm64 platform, it is essential to ensure that the boot time discovered
+memory couldn't be hot-removed so that,
 
- 1) unhook page
- 2) TLB invalidate page
- 3) free page
+1. FW data structures used across kexec are idempotent
+   e.g. the EFI memory map.
 
-This order equally applies to page directories.
+2. linear map or vmemmap would not have to be dynamically split, and can
+   map boot memory at a large granularity
 
-Currently there are two correct options:
+3. Avoid penalizing paths that have to walk page tables, where we can be
+   certain that the memory is not hot-removable
 
- - use tlb_remove_page(), when all page directores are full pages and
-   there are no futher contraints placed by things like software
-   walkers (HAVE_FAST_GUP).
+This problem has been extensively discussed previously during V10 version
+which can be found here (https://lkml.org/lkml/2019/10/11/233). Never the
+less this series now adds memory hotplug notifier to prevent boot memory
+offlining and thus hot remove. It also fixes a potential race condition
+which might happen while trying to dump kernel page table entries along
+with a concurrent memory hot remove operation.
 
- - use MMU_GATHER_RCU_TABLE_FREE and tlb_remove_table() when the
-   architecture does not do IPI based TLB invalidate and has
-   HAVE_FAST_GUP (or software TLB fill).
+Concurrent vmalloc() and hot-remove conflict:
 
-This however leaves architectures that don't have page based
-directories but don't need RCU in a bind. For those, provide
-MMU_GATHER_TABLE_FREE, which provides the independent batching for
-directories without the additional RCU freeing.
+As pointed out earlier on the V5 thread [2] there can be potential conflict
+between concurrent vmalloc() and memory hot-remove operation. The problem here
+is caused by inadequate locking in vmalloc() which protects installation of a
+page table page but not the page table walk or the leaf entry modification.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- arch/Kconfig               |   5 ++
- arch/arm/include/asm/tlb.h |   4 --
- include/asm-generic/tlb.h  |  72 +++++++++++-----------
- mm/mmu_gather.c            | 120 +++++++++++++++++++++++++++----------
- 4 files changed, 130 insertions(+), 71 deletions(-)
+Now free_empty_tables() and it's children functions take into account a maximum
+possible range on which it operates as a floor-ceiling boundary. This makes sure
+that no page table page is freed unless its fully within the maximum possible
+range as decided by the caller.
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index c35668fbf4d4..98de654b79b3 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -393,8 +393,12 @@ config HAVE_ARCH_JUMP_LABEL
- config HAVE_ARCH_JUMP_LABEL_RELATIVE
- 	bool
+Testing:
+
+Memory hot remove has been tested on arm64 for 4K, 16K, 64K page config
+options with all possible CONFIG_ARM64_VA_BITS and CONFIG_PGTABLE_LEVELS
+combinations.
+
+Changes in V12:
+
+- Dropped all changes introduced earlier in V11
+- Added a memory hotplug notifier to prevent boot memory offlining per David
+
+Changes in V11: (https://lkml.org/lkml/2020/1/9/1159)
+
+- Bifurcated check_hotplug_memory_range() and carved out check_hotremove_memory_range()
+- Introduced arch_memory_removable() call back while validating hot remove range
+- Introduced memblock flag MEMBLOCK_BOOT in order to track boot memory at runtime
+- Marked all boot memory ranges on arm64 with MEMBLOCK_BOOT flag while processing FDT
+- Overridden arch_memory_removable() on arm64 to reject boot memory removal requests
+- Added an WARN_ON() in arch_remove_memory() when it receives boot memory removal request
+- Added arch_memory_removable() related updates in the commit message for core hot remove
+
+Changes in V10: (https://lkml.org/lkml/2019/10/11/233)
+
+- Perform just single TLBI invalidation for PMD or PUD block mappings per Catalin
+- Added comment in free_empty_pte_table() while validating PTE level clears per Catalin
+- Added comments in free_empty_pxx_table() while checking for non-clear entries per Catalin
+
+Changes in V9: (https://lkml.org/lkml/2019/10/9/131)
+
+- Dropped ACK tags from Steve and David as this series has changed since
+- Dropped WARN(!page) in free_hotplug_page_range() per Matthew Wilcox
+- Replaced pxx_page() with virt_to_page() in free_pxx_table() per Catalin
+- Dropped page and call virt_to_page() in free_hotplug_pgtable_page()
+- Replaced sparse_vmap with free_mapped per Catalin
+- Dropped ternary operators in all unmap_hotplug_pxx_range() per Catalin
+- Collapsed all free_pxx_table() into free_empty_pxx_table() per Catalin
+
+Changes in V8: (https://lkml.org/lkml/2019/9/23/22)
+
+- Dropped the first patch (memblock_[free|remove] reorder) from the series which
+  is no longer needed for arm64 hot-remove enablement and was posted separately
+  as (https://patchwork.kernel.org/patch/11146361/)
+- Dropped vmalloc-vmemmap detection and subsequent skipping of free_empty_tables()
+- Changed free_empty_[pxx]_tables() functions which now accepts a possible maximum
+  floor-ceiling address range on which it operates. Also changed free_pxx_table()
+  functions to check against required alignment as well as maximum floor-ceiling
+  range as another prerequisite before freeing the page table page.
+- Dropped remove_pagetable(), instead call it's constituent functions directly
+
+Changes in V7: (https://lkml.org/lkml/2019/9/3/326)
+
+- vmalloc_vmemmap_overlap gets evaluated early during boot for a given config
+- free_empty_tables() gets conditionally called based on vmalloc_vmemmap_overlap
+
+Changes in V6: (https://lkml.org/lkml/2019/7/15/36)
+
+- Implemented most of the suggestions from Mark Rutland
+- Added <linux/memory_hotplug.h> in ptdump
+- remove_pagetable() now has two distinct passes over the kernel page table
+- First pass unmap_hotplug_range() removes leaf level entries at all level
+- Second pass free_empty_tables() removes empty page table pages
+- Kernel page table lock has been dropped completely
+- vmemmap_free() does not call freee_empty_tables() to avoid conflict with vmalloc()
+- All address range scanning are converted to do {} while() loop
+- Added 'unsigned long end' in __remove_pgd_mapping()
+- Callers need not provide starting pointer argument to free_[pte|pmd|pud]_table() 
+- Drop the starting pointer argument from free_[pte|pmd|pud]_table() functions
+- Fetching pxxp[i] in free_[pte|pmd|pud]_table() is wrapped around in READ_ONCE()
+- free_[pte|pmd|pud]_table() now computes starting pointer inside the function
+- Fixed TLB handling while freeing huge page section mappings at PMD or PUD level
+- Added WARN_ON(!page) in free_hotplug_page_range()
+- Added WARN_ON(![pm|pud]_table(pud|pmd)) when there is no section mapping
+
+- [PATCH 1/3] mm/hotplug: Reorder memblock_[free|remove]() calls in try_remove_memory()
+- Request earlier for separate merger (https://patchwork.kernel.org/patch/10986599/)
+- s/__remove_memory/try_remove_memory in the subject line
+- s/arch_remove_memory/memblock_[free|remove] in the subject line
+- A small change in the commit message as re-order happens now for memblock remove
+  functions not for arch_remove_memory()
+
+Changes in V5: (https://lkml.org/lkml/2019/5/29/218)
+
+- Have some agreement [1] over using memory_hotplug_lock for arm64 ptdump
+- Change 7ba36eccb3f8 ("arm64/mm: Inhibit huge-vmap with ptdump") already merged
+- Dropped the above patch from this series
+- Fixed indentation problem in arch_[add|remove]_memory() as per David
+- Collected all new Acked-by tags
  
-+config MMU_GATHER_TABLE_FREE
-+	bool
-+
- config MMU_GATHER_RCU_TABLE_FREE
- 	bool
-+	select MMU_GATHER_TABLE_FREE
+Changes in V4: (https://lkml.org/lkml/2019/5/20/19)
+
+- Implemented most of the suggestions from Mark Rutland
+- Interchanged patch [PATCH 2/4] <---> [PATCH 3/4] and updated commit message
+- Moved CONFIG_PGTABLE_LEVELS inside free_[pud|pmd]_table()
+- Used READ_ONCE() in missing instances while accessing page table entries
+- s/p???_present()/p???_none() for checking valid kernel page table entries
+- WARN_ON() when an entry is !p???_none() and !p???_present() at the same time
+- Updated memory hot-remove commit message with additional details as suggested
+- Rebased the series on 5.2-rc1 with hotplug changes from David and Michal Hocko
+- Collected all new Acked-by tags
+
+Changes in V3: (https://lkml.org/lkml/2019/5/14/197)
  
- config MMU_GATHER_PAGE_SIZE
- 	bool
-@@ -404,6 +408,7 @@ config MMU_GATHER_NO_RANGE
- 
- config MMU_GATHER_NO_GATHER
- 	bool
-+	depends on MMU_GATHER_TABLE_FREE
- 
- config ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	bool
-diff --git a/arch/arm/include/asm/tlb.h b/arch/arm/include/asm/tlb.h
-index 46a21cee3442..4d4e7b6aabff 100644
---- a/arch/arm/include/asm/tlb.h
-+++ b/arch/arm/include/asm/tlb.h
-@@ -37,10 +37,6 @@ static inline void __tlb_remove_table(void *_table)
- 
- #include <asm-generic/tlb.h>
- 
--#ifndef CONFIG_MMU_GATHER_RCU_TABLE_FREE
--#define tlb_remove_table(tlb, entry) tlb_remove_page(tlb, entry)
--#endif
--
- static inline void
- __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte, unsigned long addr)
- {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index ca0fe75b5355..f391f6b500b4 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -56,6 +56,15 @@
-  *    Defaults to flushing at tlb_end_vma() to reset the range; helps when
-  *    there's large holes between the VMAs.
-  *
-+ *  - tlb_remove_table()
-+ *
-+ *    tlb_remove_table() is the basic primitive to free page-table directories
-+ *    (__p*_free_tlb()).  In it's most primitive form it is an alias for
-+ *    tlb_remove_page() below, for when page directories are pages and have no
-+ *    additional constraints.
-+ *
-+ *    See also MMU_GATHER_TABLE_FREE and MMU_GATHER_RCU_TABLE_FREE.
-+ *
-  *  - tlb_remove_page() / __tlb_remove_page()
-  *  - tlb_remove_page_size() / __tlb_remove_page_size()
-  *
-@@ -129,17 +138,24 @@
-  *  This might be useful if your architecture has size specific TLB
-  *  invalidation instructions.
-  *
-- *  MMU_GATHER_RCU_TABLE_FREE
-+ *  MMU_GATHER_TABLE_FREE
-  *
-  *  This provides tlb_remove_table(), to be used instead of tlb_remove_page()
-- *  for page directores (__p*_free_tlb()). This provides separate freeing of
-- *  the page-table pages themselves in a semi-RCU fashion (see comment below).
-- *  Useful if your architecture doesn't use IPIs for remote TLB invalidates
-- *  and therefore doesn't naturally serialize with software page-table walkers.
-+ *  for page directores (__p*_free_tlb()).
-+ *
-+ *  Useful if your architecture has non-page page directories.
-  *
-  *  When used, an architecture is expected to provide __tlb_remove_table()
-  *  which does the actual freeing of these pages.
-  *
-+ *  MMU_GATHER_RCU_TABLE_FREE
-+ *
-+ *  Like MMU_GATHER_TABLE_FREE, and adds semi-RCU semantics to the free (see
-+ *  comment below).
-+ *
-+ *  Useful if your architecture doesn't use IPIs for remote TLB invalidates
-+ *  and therefore doesn't naturally serialize with software page-table walkers.
-+ *
-  *  MMU_GATHER_NO_RANGE
-  *
-  *  Use this if your architecture lacks an efficient flush_tlb_range().
-@@ -155,37 +171,12 @@
-  *  various ptep_get_and_clear() functions.
-  */
- 
--#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
--/*
-- * Semi RCU freeing of the page directories.
-- *
-- * This is needed by some architectures to implement software pagetable walkers.
-- *
-- * gup_fast() and other software pagetable walkers do a lockless page-table
-- * walk and therefore needs some synchronization with the freeing of the page
-- * directories. The chosen means to accomplish that is by disabling IRQs over
-- * the walk.
-- *
-- * Architectures that use IPIs to flush TLBs will then automagically DTRT,
-- * since we unlink the page, flush TLBs, free the page. Since the disabling of
-- * IRQs delays the completion of the TLB flush we can never observe an already
-- * freed page.
-- *
-- * Architectures that do not have this (PPC) need to delay the freeing by some
-- * other means, this is that means.
-- *
-- * What we do is batch the freed directory pages (tables) and RCU free them.
-- * We use the sched RCU variant, as that guarantees that IRQ/preempt disabling
-- * holds off grace periods.
-- *
-- * However, in order to batch these pages we need to allocate storage, this
-- * allocation is deep inside the MM code and can thus easily fail on memory
-- * pressure. To guarantee progress we fall back to single table freeing, see
-- * the implementation of tlb_remove_table_one().
-- *
-- */
-+#ifdef CONFIG_MMU_GATHER_TABLE_FREE
-+
- struct mmu_table_batch {
-+#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- 	struct rcu_head		rcu;
-+#endif
- 	unsigned int		nr;
- 	void			*tables[0];
- };
-@@ -195,6 +186,17 @@ struct mmu_table_batch {
- 
- extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
- 
-+#else /* !CONFIG_MMU_GATHER_HAVE_TABLE_FREE */
-+
-+/*
-+ * Without MMU_GATHER_TABLE_FREE the architecture is assumed to have page based
-+ * page directories and we can use the normal page batching to free them.
-+ */
-+#define tlb_remove_table(tlb, page) tlb_remove_page((tlb), (page))
-+
-+#endif /* CONFIG_MMU_GATHER_TABLE_FREE */
-+
-+#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- /*
-  * This allows an architecture that does not use the linux page-tables for
-  * hardware to skip the TLBI when freeing page tables.
-@@ -248,7 +250,7 @@ extern bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page,
- struct mmu_gather {
- 	struct mm_struct	*mm;
- 
--#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-+#ifdef CONFIG_MMU_GATHER_TABLE_FREE
- 	struct mmu_table_batch	*batch;
- #endif
- 
-diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-index a28c74328085..a3538cb2bcbe 100644
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -91,56 +91,106 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
- 
- #endif /* MMU_GATHER_NO_GATHER */
- 
--#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-+#ifdef CONFIG_MMU_GATHER_TABLE_FREE
- 
--/*
-- * See the comment near struct mmu_table_batch.
-- */
-+static void __tlb_remove_table_free(struct mmu_table_batch *batch)
-+{
-+	int i;
-+
-+	for (i = 0; i < batch->nr; i++)
-+		__tlb_remove_table(batch->tables[i]);
-+
-+	free_page((unsigned long)batch);
-+}
-+
-+#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- 
- /*
-- * If we want tlb_remove_table() to imply TLB invalidates.
-+ * Semi RCU freeing of the page directories.
-+ *
-+ * This is needed by some architectures to implement software pagetable walkers.
-+ *
-+ * gup_fast() and other software pagetable walkers do a lockless page-table
-+ * walk and therefore needs some synchronization with the freeing of the page
-+ * directories. The chosen means to accomplish that is by disabling IRQs over
-+ * the walk.
-+ *
-+ * Architectures that use IPIs to flush TLBs will then automagically DTRT,
-+ * since we unlink the page, flush TLBs, free the page. Since the disabling of
-+ * IRQs delays the completion of the TLB flush we can never observe an already
-+ * freed page.
-+ *
-+ * Architectures that do not have this (PPC) need to delay the freeing by some
-+ * other means, this is that means.
-+ *
-+ * What we do is batch the freed directory pages (tables) and RCU free them.
-+ * We use the sched RCU variant, as that guarantees that IRQ/preempt disabling
-+ * holds off grace periods.
-+ *
-+ * However, in order to batch these pages we need to allocate storage, this
-+ * allocation is deep inside the MM code and can thus easily fail on memory
-+ * pressure. To guarantee progress we fall back to single table freeing, see
-+ * the implementation of tlb_remove_table_one().
-+ *
-  */
--static inline void tlb_table_invalidate(struct mmu_gather *tlb)
--{
--	if (tlb_needs_table_invalidate()) {
--		/*
--		 * Invalidate page-table caches used by hardware walkers. Then
--		 * we still need to RCU-sched wait while freeing the pages
--		 * because software walkers can still be in-flight.
--		 */
--		tlb_flush_mmu_tlbonly(tlb);
--	}
--}
- 
- static void tlb_remove_table_smp_sync(void *arg)
- {
- 	/* Simply deliver the interrupt */
- }
- 
--static void tlb_remove_table_one(void *table)
-+static void tlb_remove_table_sync_one(void)
- {
- 	/*
- 	 * This isn't an RCU grace period and hence the page-tables cannot be
- 	 * assumed to be actually RCU-freed.
- 	 *
- 	 * It is however sufficient for software page-table walkers that rely on
--	 * IRQ disabling. See the comment near struct mmu_table_batch.
-+	 * IRQ disabling.
- 	 */
- 	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
--	__tlb_remove_table(table);
- }
- 
- static void tlb_remove_table_rcu(struct rcu_head *head)
- {
--	struct mmu_table_batch *batch;
--	int i;
-+	__tlb_remove_table_free(container_of(head, struct mmu_table_batch, rcu));
-+}
- 
--	batch = container_of(head, struct mmu_table_batch, rcu);
-+static void tlb_remove_table_free(struct mmu_table_batch *batch)
-+{
-+	call_rcu(&batch->rcu, tlb_remove_table_rcu);
-+}
- 
--	for (i = 0; i < batch->nr; i++)
--		__tlb_remove_table(batch->tables[i]);
-+#else /* !CONFIG_MMU_GATHER_RCU_TABLE_FREE */
- 
--	free_page((unsigned long)batch);
-+static void tlb_remove_table_sync_one(void) { }
-+
-+static void tlb_remove_table_free(struct mmu_table_batch *batch)
-+{
-+	__tlb_remove_table_free(batch);
-+}
-+
-+#endif /* CONFIG_MMU_GATHER_RCU_TABLE_FREE */
-+
-+/*
-+ * If we want tlb_remove_table() to imply TLB invalidates.
-+ */
-+static inline void tlb_table_invalidate(struct mmu_gather *tlb)
-+{
-+	if (tlb_needs_table_invalidate()) {
-+		/*
-+		 * Invalidate page-table caches used by hardware walkers. Then
-+		 * we still need to RCU-sched wait while freeing the pages
-+		 * because software walkers can still be in-flight.
-+		 */
-+		tlb_flush_mmu_tlbonly(tlb);
-+	}
-+}
-+
-+static void tlb_remove_table_one(void *table)
-+{
-+	tlb_remove_table_sync_one();
-+	__tlb_remove_table(table);
- }
- 
- static void tlb_table_flush(struct mmu_gather *tlb)
-@@ -149,7 +199,7 @@ static void tlb_table_flush(struct mmu_gather *tlb)
- 
- 	if (*batch) {
- 		tlb_table_invalidate(tlb);
--		call_rcu(&(*batch)->rcu, tlb_remove_table_rcu);
-+		tlb_remove_table_free(*batch);
- 		*batch = NULL;
- 	}
- }
-@@ -173,13 +223,21 @@ void tlb_remove_table(struct mmu_gather *tlb, void *table)
- 		tlb_table_flush(tlb);
- }
- 
--#endif /* CONFIG_MMU_GATHER_RCU_TABLE_FREE */
-+static inline void tlb_table_init(struct mmu_gather *tlb)
-+{
-+	tlb->batch = NULL;
-+}
-+
-+#else /* !CONFIG_MMU_GATHER_TABLE_FREE */
-+
-+static inline void tlb_table_flush(struct mmu_gather *tlb) { }
-+static inline void tlb_table_init(struct mmu_gather *tlb) { }
-+
-+#endif /* CONFIG_MMU_GATHER_TABLE_FREE */
- 
- static void tlb_flush_mmu_free(struct mmu_gather *tlb)
- {
--#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
- 	tlb_table_flush(tlb);
--#endif
- #ifndef CONFIG_MMU_GATHER_NO_GATHER
- 	tlb_batch_pages_flush(tlb);
- #endif
-@@ -220,9 +278,7 @@ void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
- 	tlb->batch_count = 0;
- #endif
- 
--#ifdef CONFIG_MMU_GATHER_RCU_TABLE_FREE
--	tlb->batch = NULL;
--#endif
-+	tlb_table_init(tlb);
- #ifdef CONFIG_MMU_GATHER_PAGE_SIZE
- 	tlb->page_size = 0;
- #endif
+- Implemented most of the suggestions from Mark Rutland for remove_pagetable()
+- Fixed applicable PGTABLE_LEVEL wrappers around pgtable page freeing functions
+- Replaced 'direct' with 'sparse_vmap' in remove_pagetable() with inverted polarity
+- Changed pointer names ('p' at end) and removed tmp from iterations
+- Perform intermediate TLB invalidation while clearing pgtable entries
+- Dropped flush_tlb_kernel_range() in remove_pagetable()
+- Added flush_tlb_kernel_range() in remove_pte_table() instead
+- Renamed page freeing functions for pgtable page and mapped pages
+- Used page range size instead of order while freeing mapped or pgtable pages
+- Removed all PageReserved() handling while freeing mapped or pgtable pages
+- Replaced XXX_index() with XXX_offset() while walking the kernel page table
+- Used READ_ONCE() while fetching individual pgtable entries
+- Taken overall init_mm.page_table_lock instead of just while changing an entry
+- Dropped previously added [pmd|pud]_index() which are not required anymore
+- Added a new patch to protect kernel page table race condition for ptdump
+- Added a new patch from Mark Rutland to prevent huge-vmap with ptdump
+
+Changes in V2: (https://lkml.org/lkml/2019/4/14/5)
+
+- Added all received review and ack tags
+- Split the series from ZONE_DEVICE enablement for better review
+- Moved memblock re-order patch to the front as per Robin Murphy
+- Updated commit message on memblock re-order patch per Michal Hocko
+- Dropped [pmd|pud]_large() definitions
+- Used existing [pmd|pud]_sect() instead of earlier [pmd|pud]_large()
+- Removed __meminit and __ref tags as per Oscar Salvador
+- Dropped unnecessary 'ret' init in arch_add_memory() per Robin Murphy
+- Skipped calling into pgtable_page_dtor() for linear mapping page table
+  pages and updated all relevant functions
+
+Changes in V1: (https://lkml.org/lkml/2019/4/3/28)
+
+References:
+
+[1] https://lkml.org/lkml/2019/5/28/584
+[2] https://lkml.org/lkml/2019/6/11/709
+
+Anshuman Khandual (2):
+  arm64/mm: Hold memory hotplug lock while walking for kernel page table dump
+  arm64/mm: Enable memory hot remove
+
+ arch/arm64/Kconfig              |   3 +
+ arch/arm64/include/asm/memory.h |   1 +
+ arch/arm64/mm/mmu.c             | 342 ++++++++++++++++++++++++++++++++++++++--
+ arch/arm64/mm/ptdump_debugfs.c  |   4 +
+ 4 files changed, 341 insertions(+), 9 deletions(-)
+
 -- 
-2.24.1
+2.7.4
 
