@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC8B13F7C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8E7513F7C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:13:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437496AbgAPTN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:13:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
+        id S2437486AbgAPTNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:13:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729634AbgAPQ4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:44 -0500
+        id S1731628AbgAPQ4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:56:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5501321582;
-        Thu, 16 Jan 2020 16:56:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D292051A;
+        Thu, 16 Jan 2020 16:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193803;
-        bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
+        s=default; t=1579193810;
+        bh=4SRJb8qcVjP2QHL9Zdeu2yEEZmxwQyxCQJ9qOUOh2i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJ/SqI5rqtKstaG+/zshLvZUsYZv6uJhx0HLVITsRfOO8CHIOftKpfBNQgavuWoox
-         S0XOZdE2et5MrWqaRtLzWchmww9ubbeB6fCXL9yoNuiNvvfogVz8PbcwXZn7VGXmLO
-         ELwLgsexSwSDhFGifl9Xdp16wpRtiM9Vh5KsiHiY=
+        b=JO0CLWL0HalSro0vNvrFzwYWOp+rtHdlxllymp7XPWRv8WZ2GaNxTve64bVRtSHSr
+         POBCBuDIVND3dok5r6z9LKSKaEjmLoVXGwtJMbOuadjMNQaihoS22SV9N3QEXKhWZI
+         LPRmqtRJhj4J5GNvlIkemYRujXmlB8ld3lJf3dCk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 069/671] pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
-Date:   Thu, 16 Jan 2020 11:45:00 -0500
-Message-Id: <20200116165502.8838-69-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 072/671] pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+Date:   Thu, 16 Jan 2020 11:45:03 -0500
+Message-Id: <20200116165502.8838-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -46,31 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b ]
+[ Upstream commit 124cde98f856b6206b804acbdec3b7c80f8c3427 ]
 
-The lcd0_data24_1_pins[] array contains the LCD0 D1[2-5] pin numbers,
-but the lcd0_data24_1_mux[] array lacks the corresponding pin marks.
+The tpu4_to3_mux[] array contains the TPU4TO3 pin mark, but the
+tpu4_to3_pins[] array lacks the corresponding pin number.
 
-Fixes: 06c7dd866da70f6c ("sh-pfc: r8a7740: Add LCDC0 and LCDC1 pin groups and functions")
+Add the missing pin number, for non-GPIO pin F26.
+
+Fixes: 5da4eb049de803c7 ("sh-pfc: sh73a0: Add TPU pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 1 +
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index d8077065636e..e9739dbcb356 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -2154,6 +2154,7 @@ static const unsigned int lcd0_data24_1_mux[] = {
- 	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
- 	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
- 	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
-+	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
- 	LCD0_D16_MARK, LCD0_D17_MARK, LCD0_D18_PORT163_MARK,
- 	LCD0_D19_PORT162_MARK, LCD0_D20_PORT161_MARK, LCD0_D21_PORT158_MARK,
- 	LCD0_D22_PORT160_MARK, LCD0_D23_PORT159_MARK,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index d25e6f674d0a..f8fbedb46585 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -3086,6 +3086,7 @@ static const unsigned int tpu4_to2_mux[] = {
+ };
+ static const unsigned int tpu4_to3_pins[] = {
+ 	/* TO */
++	PIN_NUMBER(6, 26),
+ };
+ static const unsigned int tpu4_to3_mux[] = {
+ 	TPU4TO3_MARK,
 -- 
 2.20.1
 
