@@ -2,112 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA90113EFC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB6A13EFE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:18:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436509AbgAPSRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:17:20 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52900 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436474AbgAPSRR (ORCPT
+        id S2407046AbgAPSR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:17:59 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:26101 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387949AbgAPSR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:17:17 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1is9hX-0003ni-5o; Thu, 16 Jan 2020 19:17:03 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 92A16101226; Thu, 16 Jan 2020 19:17:02 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH] watchdog/softlockup: Enforce that timestamp is valid on boot
-In-Reply-To: <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
-References: <20200103151032.19590-1-longman@redhat.com> <87sgkgw3xq.fsf@nanos.tec.linutronix.de> <87blr3wrqw.fsf@nanos.tec.linutronix.de> <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
-Date:   Thu, 16 Jan 2020 19:17:02 +0100
-Message-ID: <87o8v3uuzl.fsf@nanos.tec.linutronix.de>
+        Thu, 16 Jan 2020 13:17:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579198674;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=t3VlM5eWHxNK3W2wSrtp5Pl0J5UynFugOHYM0lHZotI=;
+        b=UqIe4nQ2/3lBBEF8O6bNW1YwGcWFpD98T/ymUuTAdZ/SUovgtHP33THsOUJHu5Y8fC4q5s
+        1QqAQxAJuEskoSQKd9t/eut8IcrdJd4/HmrV6esUozIz9YgRKNo1Gir11uPucMmIC7lbrj
+        TDsxPNmzyU2TnMcF2GD9VgYR56hb32E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-276-aZJcF4RYP-a0nsHacWQwpA-1; Thu, 16 Jan 2020 13:17:53 -0500
+X-MC-Unique: aZJcF4RYP-a0nsHacWQwpA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5FD4C18C35A0;
+        Thu, 16 Jan 2020 18:17:52 +0000 (UTC)
+Received: from gimli.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A8AC5C241;
+        Thu, 16 Jan 2020 18:17:49 +0000 (UTC)
+Subject: [RFC PATCH 0/3] vfio/type1: Reduce vfio_iommu.lock contention
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     yan.y.zhao@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 16 Jan 2020 11:17:49 -0700
+Message-ID: <157919849533.21002.4782774695733669879.stgit@gimli.home>
+User-Agent: StGit/0.19-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Robert reported that during boot the watchdog timestamp is set to 0 for one
-second which is the indicator for a watchdog reset.
+Hi Yan,
 
-The reason for this is that the timestamp is in seconds and the time is
-taken from sched clock and divided by ~1e9. sched clock starts at 0 which
-means that for the first second during boot the watchdog timestamp is 0,
-i.e. reset.
+I wonder if this might reduce the lock contention you're seeing in the
+vfio_dma_rw series.  These are only compile tested on my end, so I hope
+they're not too broken to test.  Thanks,
 
-Use ULONG_MAX as the reset indicator value so the watchdog works correctly
-right from the start. ULONG_MAX would only conflict with a real timestamp
-if the system reaches an uptime of 136 years on 32bit and almost eternity
-on 64bit.
+Alex
 
-Reported-by: Robert Richter <rrichter@marvell.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/watchdog.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -161,6 +161,8 @@ static void lockup_detector_update_enabl
- 
- #ifdef CONFIG_SOFTLOCKUP_DETECTOR
- 
-+#define SOFTLOCKUP_RESET	ULONG_MAX
-+
- /* Global variables, exported for sysctl */
- unsigned int __read_mostly softlockup_panic =
- 			CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE;
-@@ -272,7 +274,7 @@ notrace void touch_softlockup_watchdog_s
- 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
- 	 * gets zeroed here, so use the raw_ operation.
- 	 */
--	raw_cpu_write(watchdog_touch_ts, 0);
-+	raw_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
- 
- notrace void touch_softlockup_watchdog(void)
-@@ -296,14 +298,14 @@ void touch_all_softlockup_watchdogs(void
- 	 * the softlockup check.
- 	 */
- 	for_each_cpu(cpu, &watchdog_allowed_mask)
--		per_cpu(watchdog_touch_ts, cpu) = 0;
-+		per_cpu(watchdog_touch_ts, cpu) = SOFTLOCKUP_RESET;
- 	wq_watchdog_touch(-1);
- }
- 
- void touch_softlockup_watchdog_sync(void)
- {
- 	__this_cpu_write(softlockup_touch_sync, true);
--	__this_cpu_write(watchdog_touch_ts, 0);
-+	__this_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
- }
- 
- static int is_softlockup(unsigned long touch_ts)
-@@ -379,7 +381,7 @@ static enum hrtimer_restart watchdog_tim
- 	/* .. and repeat */
- 	hrtimer_forward_now(hrtimer, ns_to_ktime(sample_period));
- 
--	if (touch_ts == 0) {
-+	if (touch_ts == SOFTLOCKUP_RESET) {
- 		if (unlikely(__this_cpu_read(softlockup_touch_sync))) {
- 			/*
- 			 * If the time stamp was touched atomically
+Alex Williamson (3):
+      vfio/type1: Convert vfio_iommu.lock from mutex to rwsem
+      vfio/type1: Replace obvious read lock instances
+      vfio/type1: Introduce pfn_list mutex
+
+
+ drivers/vfio/vfio_iommu_type1.c |   67 ++++++++++++++++++++++++---------------
+ 1 file changed, 41 insertions(+), 26 deletions(-)
+
