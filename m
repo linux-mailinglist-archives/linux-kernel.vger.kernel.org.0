@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C52F713EEBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B4213EEB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395073AbgAPSLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:11:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53008 "EHLO mail.kernel.org"
+        id S2395186AbgAPSK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:10:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405412AbgAPRhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:37 -0500
+        id S2405433AbgAPRhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66D26207FF;
-        Thu, 16 Jan 2020 17:37:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83232207FF;
+        Thu, 16 Jan 2020 17:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196256;
-        bh=iQDNls0iKQZY7VWjwZWcjEClunbXRTdpOoezS/XgcNQ=;
+        s=default; t=1579196260;
+        bh=E1kIdxwQ9tvKVB82zvpt+3f0RLC2wtqLWGKMLnStV5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ie06dnzMhmeh5s3Qe1JQCLr408i0mZ31GPY5uC4/tIrfOgS5NWMwM/wV+BmiJiS92
-         Lja/mPMURDh+OFnQTB3gkWlHu+LXbd19fIEoVm2/qj7a5tEpK58DvmUikaGoUSysod
-         1kav48hWSrODCYyKfSdAwEchIqH5IBohjeqNym1k=
+        b=ruKwXRYZDjGISqeh8XUvQ8OhAzHXDH6XBo5FJciRv1iHuPZke9FUa7yNV8mYud+qD
+         hMya0dZ/ZGE7Ai66acc5brKwhvnNSwAyXemjp9iSQ14a+zA/oUkYLF0I4iDIN/o0vM
+         eQpG7Tgk3zKai27AocCW+4r9/JqVmjIKqJxNND+c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.9 082/251] ASoC: qcom: Fix of-node refcount unbalance in apq8016_sbc_parse_of()
-Date:   Thu, 16 Jan 2020 12:33:51 -0500
-Message-Id: <20200116173641.22137-42-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 085/251] clocksource/drivers/sun5i: Fail gracefully when clock rate is unavailable
+Date:   Thu, 16 Jan 2020 12:33:54 -0500
+Message-Id: <20200116173641.22137-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,88 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 8d1667200850f8753c0265fa4bd25c9a6e5f94ce ]
+[ Upstream commit e7e7e0d7beafebd11b0c065cd5fbc1e5759c5aab ]
 
-The apq8016 driver leaves the of-node refcount at aborting from the
-loop of for_each_child_of_node() in the error path.  Not only the
-iterator node of for_each_child_of_node(), the children nodes referred
-from it for codec and cpu have to be properly unreferenced.
+If the clock tree is not fully populated when the timer-sun5i init code
+is called, attempts to get the clock rate for the timer would fail and
+return 0.
 
-Fixes: bdb052e81f62 ("ASoC: qcom: add apq8016 sound card support")
-Cc: Patrick Lai <plai@codeaurora.org>
-Cc: Banajit Goswami <bgoswami@codeaurora.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Make the init code for both clock events and clocksource check the
+returned clock rate and fail gracefully if the result is 0, instead of
+causing a divide by 0 exception later on.
+
+Fixes: 4a59058f0b09 ("clocksource/drivers/sun5i: Refactor the current code")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/qcom/apq8016_sbc.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-sun5i.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
-index 07f91e918b23..754742018515 100644
---- a/sound/soc/qcom/apq8016_sbc.c
-+++ b/sound/soc/qcom/apq8016_sbc.c
-@@ -114,13 +114,15 @@ static struct apq8016_sbc_data *apq8016_sbc_parse_of(struct snd_soc_card *card)
- 
- 		if (!cpu || !codec) {
- 			dev_err(dev, "Can't find cpu/codec DT node\n");
--			return ERR_PTR(-EINVAL);
-+			ret = -EINVAL;
-+			goto error;
- 		}
- 
- 		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
- 		if (!link->cpu_of_node) {
- 			dev_err(card->dev, "error getting cpu phandle\n");
--			return ERR_PTR(-EINVAL);
-+			ret = -EINVAL;
-+			goto error;
- 		}
- 
- 		link->codec_of_node = of_parse_phandle(codec, "sound-dai", 0);
-@@ -132,28 +134,37 @@ static struct apq8016_sbc_data *apq8016_sbc_parse_of(struct snd_soc_card *card)
- 		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
- 		if (ret) {
- 			dev_err(card->dev, "error getting cpu dai name\n");
--			return ERR_PTR(ret);
-+			goto error;
- 		}
- 
- 		ret = snd_soc_of_get_dai_name(codec, &link->codec_dai_name);
- 		if (ret) {
- 			dev_err(card->dev, "error getting codec dai name\n");
--			return ERR_PTR(ret);
-+			goto error;
- 		}
- 
- 		link->platform_of_node = link->cpu_of_node;
- 		ret = of_property_read_string(np, "link-name", &link->name);
- 		if (ret) {
- 			dev_err(card->dev, "error getting codec dai_link name\n");
--			return ERR_PTR(ret);
-+			goto error;
- 		}
- 
- 		link->stream_name = link->name;
- 		link->init = apq8016_sbc_dai_init;
- 		link++;
-+
-+		of_node_put(cpu);
-+		of_node_put(codec);
+diff --git a/drivers/clocksource/timer-sun5i.c b/drivers/clocksource/timer-sun5i.c
+index 4f87f3e76d83..c3e96de525a2 100644
+--- a/drivers/clocksource/timer-sun5i.c
++++ b/drivers/clocksource/timer-sun5i.c
+@@ -201,6 +201,11 @@ static int __init sun5i_setup_clocksource(struct device_node *node,
  	}
  
- 	return data;
-+
-+ error:
-+	of_node_put(np);
-+	of_node_put(cpu);
-+	of_node_put(codec);
-+	return ERR_PTR(ret);
- }
+ 	rate = clk_get_rate(clk);
++	if (!rate) {
++		pr_err("Couldn't get parent clock rate\n");
++		ret = -EINVAL;
++		goto err_disable_clk;
++	}
  
- static const struct snd_soc_dapm_widget apq8016_sbc_dapm_widgets[] = {
+ 	cs->timer.base = base;
+ 	cs->timer.clk = clk;
+@@ -274,6 +279,11 @@ static int __init sun5i_setup_clockevent(struct device_node *node, void __iomem
+ 	}
+ 
+ 	rate = clk_get_rate(clk);
++	if (!rate) {
++		pr_err("Couldn't get parent clock rate\n");
++		ret = -EINVAL;
++		goto err_disable_clk;
++	}
+ 
+ 	ce->timer.base = base;
+ 	ce->timer.ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
 -- 
 2.20.1
 
