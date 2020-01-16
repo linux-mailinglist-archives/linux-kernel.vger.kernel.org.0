@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C160E13FF2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:41:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7817713FE6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390134AbgAPX10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58658 "EHLO mail.kernel.org"
+        id S2404071AbgAPXc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389952AbgAPX1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:11 -0500
+        id S2403799AbgAPXcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:32:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF2B52072E;
-        Thu, 16 Jan 2020 23:27:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D847020684;
+        Thu, 16 Jan 2020 23:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217231;
-        bh=Aytek8Oeq2kjP+SKLkIWAm/vPNoAgNEImfVwsIfTtWw=;
+        s=default; t=1579217541;
+        bh=81KNmZ9DMcJBn4j49ZbLc7k8abGhSloqgZBSa4l0Wp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Imy1OlfAx3trhATfO7DKnCXWcGfWaPaOj+W1e8HBaAOX7ZXEnTmPGssVn8XW+T5pu
-         259MY1/bdPvlhkRALjAFt27slY2t7t7DqqMyNADu/OmkwIx0dyf0WIk/o1HHNGq3r7
-         uI95ZfT4xz1/JsRFiqhN+wgaMVOiQX5nEDZPKGzw=
+        b=mXY2g8ztMjkHfttt3pZ/ULMMlv+E5smkE1fPAdiHOTVFMIDcCVYdkfztxUWSMoDb3
+         iI8xaOOj9ZdUh70R2T8/ESEczpMdf70WqYJfagmeWs4BUUuhdqPcdjKh3c/d+909VQ
+         b1HeorZCTBuoddnTPkWqh6NKaFcS04pBwku+k/gM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Sid Manning <sidneym@quicinc.com>,
-        Brian Cain <bcain@codeaurora.org>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 202/203] hexagon: work around compiler crash
+        stable@vger.kernel.org, Marian Mihailescu <mihailescu2m@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 4.14 41/71] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
 Date:   Fri, 17 Jan 2020 00:18:39 +0100
-Message-Id: <20200116231801.719032043@linuxfoundation.org>
+Message-Id: <20200116231715.455460576@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,52 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-[ Upstream commit 63e80314ab7cf4783526d2e44ee57a90514911c9 ]
+commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 upstream.
 
-Clang cannot translate the string "r30" into a valid register yet.
+Save and restore top PLL related configuration registers for big (APLL)
+and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
+were reset to default values after suspend/resume cycle and performance
+after system resume was affected when performance governor has been selected.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/755
-Link: http://lkml.kernel.org/r/20191028155722.23419-1-ndesaulniers@google.com
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: Sid Manning <sidneym@quicinc.com>
-Reviewed-by: Brian Cain <bcain@codeaurora.org>
-Cc: Allison Randal <allison@lohutok.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Richard Fontana <rfontana@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/hexagon/kernel/stacktrace.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/hexagon/kernel/stacktrace.c b/arch/hexagon/kernel/stacktrace.c
-index 35f29423fda8..5ed02f699479 100644
---- a/arch/hexagon/kernel/stacktrace.c
-+++ b/arch/hexagon/kernel/stacktrace.c
-@@ -11,8 +11,6 @@
- #include <linux/thread_info.h>
- #include <linux/module.h>
- 
--register unsigned long current_frame_pointer asm("r30");
--
- struct stackframe {
- 	unsigned long fp;
- 	unsigned long rets;
-@@ -30,7 +28,7 @@ void save_stack_trace(struct stack_trace *trace)
- 
- 	low = (unsigned long)task_stack_page(current);
- 	high = low + THREAD_SIZE;
--	fp = current_frame_pointer;
-+	fp = (unsigned long)__builtin_frame_address(0);
- 
- 	while (fp >= low && fp <= (high - sizeof(*frame))) {
- 		frame = (struct stackframe *)fp;
--- 
-2.20.1
-
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -170,6 +170,8 @@ static const unsigned long exynos5x_clk_
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	APLL_CON0,
++	KPLL_CON0,
+ 	CPLL_CON0,
+ 	DPLL_CON0,
+ 	EPLL_CON0,
 
 
