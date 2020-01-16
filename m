@@ -2,125 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C60613FC27
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2DCB13FBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389718AbgAPW0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 17:26:08 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.35]:24805 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729319AbgAPW0I (ORCPT
+        id S2389704AbgAPWE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 17:04:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53679 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729260AbgAPWE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:26:08 -0500
-X-Greylist: delayed 1358 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 17:26:07 EST
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 9D3BD1F93
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 16:03:29 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sDEfiaO5qNwe7sDEfiBDTS; Thu, 16 Jan 2020 16:03:29 -0600
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lJqbOVGeD356I6fIe5iirDZBONX68UGjE9KZh7u5oGg=; b=aWzpkYr+XHoNFKlaSNzO+UXLZZ
-        fuXnIZFQyXXrqcldKm/2ji1V6SAct69fFyXrBXeg7DVIefdRIQICEGlgT808cM5xUVN9B9jBvmfrP
-        PVpJxi5Q7VK/lJ9YvgzhA8U3n/K/J3wgIpFHTSo/GDamYhIFLe+2qz5OJIgoauc2/IskXvvyxsN6H
-        N4B9Ulm2locWbjIebP7r4PEqfdXrlRhdE8CpnJhIt9CihJjJY0mVxRXL9LUlKq2z6Y2P1O3j4SDPf
-        8ZLE35/7SbDuXJ9c4EYXbvOL3FlwQlFHyNmN4D9vqWgIvXfKiGnEIzTI3k/EIfvZFxFf4A3zp+lwe
-        +AXwiraA==;
-Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:44004 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1isDEe-000egY-Bn; Thu, 16 Jan 2020 16:03:28 -0600
-Date:   Thu, 16 Jan 2020 16:03:27 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] USB: serial: garmin_gps: Use flexible-array member
-Message-ID: <20200116220327.GA12537@embeddedor.com>
+        Thu, 16 Jan 2020 17:04:57 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1isDFy-00029r-RE; Thu, 16 Jan 2020 23:04:50 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 4D96A101226; Thu, 16 Jan 2020 23:04:50 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Vipul Kumar <vipulk0511@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>, x86@kernel.org,
+        Bin Gao <bin.gao@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
+In-Reply-To: <1576683039-5311-1-git-send-email-vipulk0511@gmail.com>
+References: <1576683039-5311-1-git-send-email-vipulk0511@gmail.com>
+Date:   Thu, 16 Jan 2020 23:04:50 +0100
+Message-ID: <87pnfjdpml.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.62
-X-Source-L: No
-X-Exim-ID: 1isDEe-000egY-Bn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:44004
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
-presence of a "variable length array":
+Vipul,
 
-struct something {
-    int length;
-    u8 data[1];
-};
+please always CC the relevant maintainers. Aside of that it's good
+practice to CC the author of a particular commit you identified.
 
-struct something *instance;
+Vipul Kumar <vipulk0511@gmail.com> writes:
 
-instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
-instance->length = size;
-memcpy(instance->data, source, size);
+> From: Vipul Kumar <vipul_kumar@mentor.com>
+>
+> 'commit f3a02ecebed7 ("x86/tsc: Set TSC_KNOWN_FREQ and TSC_RELIABLE
+> flags on Intel Atom SoCs")', causing time drift for Bay trail SoC.
+> These flags are set for SoCs having cpuid_level 0x15 or more.
+> Bay trail is having cpuid_level 0xb.
 
-There is also 0-byte arrays. Both cases pose confusion for things like
-sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
-to declare variable-length types such as the one above is a flexible array
-member[2] which need to be the last member of a structure and empty-sized:
+Which is completely irrelevant. These CPUs read their frequency from
+MSRs not from CPUID.
 
-struct something {
-        int stuff;
-        u8 data[];
-};
+> So, unset both flags to make sure the clocksource calibration can
+> be done.
 
-Also, by making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-unadvertenly introduced[3] to the codebase from now on.
+That's going to break tons of ATOM SoC based systems which have neither
+HPET not PIT.
 
-[1] https://github.com/KSPP/linux/issues/21
-[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+Aside of that on some systems HPET/PIT based calibration is not really
+more accurate than the MSR based frequency, quite the contrary.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/usb/serial/garmin_gps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can you please provide detailed data about the problem you are trying to
+solve? 'time drift' is pretty unspecific.
 
-diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
-index 633550ec3025..ffd984142171 100644
---- a/drivers/usb/serial/garmin_gps.c
-+++ b/drivers/usb/serial/garmin_gps.c
-@@ -104,7 +104,7 @@ struct garmin_packet {
- 	int               seq;
- 	/* the real size of the data array, always > 0 */
- 	int               size;
--	__u8              data[1];
-+	__u8              data[];
- };
- 
- /* structure used to keep the current state of the driver */
--- 
-2.23.0
+Thanks,
 
+        tglx
