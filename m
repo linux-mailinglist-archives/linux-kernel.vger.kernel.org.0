@@ -2,173 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D23113DBA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A34713DBAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgAPNXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 08:23:37 -0500
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:20458 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726378AbgAPNXf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:23:35 -0500
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00GDL9Qr017160;
-        Thu, 16 Jan 2020 08:23:08 -0500
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2xhb7tett0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Jan 2020 08:23:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PQOJBDqUq12s1+brHzDfx1J36jXFKre9G+ilJa+9KMADXqanR3OdBVo3S7Fy5UDF9EECoWbExyMEQcWsS5jmj0r1VaCHXDBiEtSQhyjZYMDmFe26eBK6fziW2b4AR/M4Xv9gM3hTdBX1LojQ++TZcYFE1Un4W6ApHVuqjHyyuWC7HJ/3nOPj/48sO1gHkslvPavrInZb6MphgaEZXIK8YU6n6w/yJKBepw3pNtgoGcUukZz3bEx0sX92AtrvwQbTjgcySlV1hUQVNgIEiozvTQclYLfSTVgabm0oNFP0uLiIJZzQ7nt41gbXNzvBa+a0XpB/7I7y4a/icYX75QsZgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1A0TVV0RinjTXYSceoz6tha2RJHcz9JsjpvTTIugtc=;
- b=BTwclKMiX4WEcai2BYX5vQW2YU/AITst9Kz0XDru55F1hWPBIo3x1kY59fICGdcKvcH3Tt9o4/Vu0wyuy0OennIsZru1dwMQOYzbIRKQZ1Uv1qy9VuCIA8ura6GzFlyFMp2odSAz4yx2RvGhGMyYEZXTlwUdiMghfZtN0CM82+lu+wG3hcr2lmGjIWxkt2rKHTBDjINdPMjbXQWnWg9X6PMTdJiZmj9sKOGlCJ9wuF1pntpoTidFtVOoxeztq4Km80XyVkpRW8ZSiiZ/fAIch6T75bJ0KOA9x1EFLfwlQF+Fb40UGFQFgHF4vNOeNkAAJ5S3d3IS4uaNi3pmoebw8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1A0TVV0RinjTXYSceoz6tha2RJHcz9JsjpvTTIugtc=;
- b=cfuMKh85Fcv4MxQu40HAuVRBcV1twBPtpGEtccAHN/GsvIJeaGJ1pcRdEQuqsXwrhu9UGmIdYVGJyCGwzZXpVIcsLojwMMzECh+Jghn6yXIwAFuyKAsaNdZCSZ37ryEOTiGSZGYTGsu5ZtCE725eenx6hJN3FDse4+UfB7gm/Js=
-Received: from BN3PR03CA0064.namprd03.prod.outlook.com
- (2a01:111:e400:7a4d::24) by DM6PR03MB4842.namprd03.prod.outlook.com
- (2603:10b6:5:182::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.18; Thu, 16 Jan
- 2020 13:23:07 +0000
-Received: from CY1NAM02FT018.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::208) by BN3PR03CA0064.outlook.office365.com
- (2a01:111:e400:7a4d::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20 via Frontend
- Transport; Thu, 16 Jan 2020 13:23:06 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT018.mail.protection.outlook.com (10.152.75.183) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2644.19
- via Frontend Transport; Thu, 16 Jan 2020 13:23:06 +0000
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id 00GDMrNZ023184
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 16 Jan 2020 05:22:53 -0800
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 16 Jan
- 2020 08:23:03 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 16 Jan 2020 05:23:02 -0800
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00GDMx8g025341;
-        Thu, 16 Jan 2020 08:22:59 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <bigeasy@linutronix.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Olbrich <m.olbrich@pengutronix.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH][RESEND] usb: dwc3: gadget: Handle dequeuing of non queued URB gracefully
-Date:   Thu, 16 Jan 2020 15:24:59 +0200
-Message-ID: <20200116132459.22383-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191106144553.16956-1-alexandru.ardelean@analog.com>
-References: <20191106144553.16956-1-alexandru.ardelean@analog.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(136003)(199004)(189003)(2906002)(336012)(7636002)(1076003)(54906003)(5660300002)(7696005)(86362001)(44832011)(356004)(26005)(246002)(36756003)(70586007)(186003)(478600001)(8676002)(110136005)(107886003)(966005)(70206006)(316002)(8936002)(4326008)(2616005)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB4842;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fd2d6f25-706c-4f3d-7cae-08d79a8738f0
-X-MS-TrafficTypeDiagnostic: DM6PR03MB4842:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB48421F81AD87DC874684AB17F9360@DM6PR03MB4842.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 02843AA9E0
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2sB0oHqINzvy+AWw97n3O0KD2ZfNOzKfNu+ZWRuaMKwQTSTAgdyLw9dDKLpP++uHGeqvt3sF9VFn4v71iqlN6mxCvhnmsPWSMx5dBFj0F6TJiORSf4Am2SsQ1/WuapdwEn/CCqnx5fLwEhMMK4gmOSUo1+QvS37eLQtgeS0P/zO96pByk2/nwzyAvkP9R9Js7m+MV/xPEOyLa+C3Hxvs02RR/Gpzq/pGcFugg5wuXYHelebryeeozZxEqKf3dFMQNTpKdl5+3p6ImhXY3TJL9FLnnd7V81RrbBjXSBnbpl1cLf0DrnkK+7Adsz6GI7WpdNy3BYa0zfaBeqzceEVxdmFYU3PKwcoN4UQBIMMpQ8S+spwnp3d35yJbKzwnYEBck+XBLCXIooQV06BTSOi4AlI0s2+4hWo/i0CX+3vttYZUJiAVFGSM46SCbMrHt8u9I8k9mludBQszz3r6wHN1NrpqnGxJRp+LUrffsZl9fSz0+duBopi/m6CDPWR/tAeoO5HZOnVCA2G8HIPGFAYygw==
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2020 13:23:06.0009
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd2d6f25-706c-4f3d-7cae-08d79a8738f0
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4842
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-16_04:2020-01-16,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=862 malwarescore=0 lowpriorityscore=0 mlxscore=0 clxscore=1015
- adultscore=0 phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001160114
+        id S1726950AbgAPN1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 08:27:25 -0500
+Received: from mail.loongson.cn ([114.242.206.163]:42992 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726378AbgAPN1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 08:27:23 -0500
+Received: from linux.loongson.cn (unknown [10.20.41.119])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxv92vZCBes+wFAA--.20S2;
+        Thu, 16 Jan 2020 21:27:11 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jean Delvare <jdelvare@suse.com>
+Cc:     Huacai Chen <chenhc@lemote.com>,
+        Xuefeng Li <lixuefeng@loongson.cn>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yinglu Yang <yangyinglu@loongson.cn>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2,RESEND] MIPS: Scan the DMI system information
+Date:   Thu, 16 Jan 2020 21:26:05 +0800
+Message-Id: <1579181165-2493-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9Dxv92vZCBes+wFAA--.20S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4xAw4rtFy7Zw45AF17GFg_yoWrCFy7pF
+        4DC3Z5tr4DGF17G3yfAa4xur13Zan3Wry5KFyj9347ZasxX34xJrs7GwsxAryUAr4kKa40
+        93WagF45KFZFvaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE-syl42xK
+        82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
+        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48J
+        MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
+        IF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+        6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOGQDUUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+Enable DMI scanning on the MIPS architecture, this setups DMI identifiers
+(dmi_system_id) for printing it out on task dumps and prepares DIMM entry
+information (dmi_memdev_info) from the SMBIOS table. With this patch, the
+driver can easily match various of mainboards.
 
-Trying to dequeue and URB that is currently not queued should be a no-op
-and be handled gracefully.
+In the SMBIOS reference specification, the table anchor string "_SM_" is
+present in the address range 0xF0000 to 0xFFFFF on a 16-byte boundary,
+but there exists a special case for Loongson platform, when call function
+dmi_early_remap, it should specify the start address to 0xFFFE000 due to
+it is reserved for SMBIOS and can be normally access in the BIOS.
 
-Use the list field of the URB to indicate whether it is queued or not by
-setting it to the empty list when it is not queued.
+This patch works fine on the Loongson 3A3000 platform which belongs to
+MIPS architecture and has no influence on the other architectures such
+as x86 and ARM.
 
-Handling this gracefully allows for race condition free synchronization
-between the complete callback being called to to a completed transfer and
-trying to call usb_ep_dequeue() at the same time.
-
-Tested-by: Michael Olbrich <m.olbrich@pengutronix.de>
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Co-developed-by: Yinglu Yang <yangyinglu@loongson.cn>
+Signed-off-by: Yinglu Yang <yangyinglu@loongson.cn>
+[jiaxun.yang@flygoat.com: Refine definitions and Kconfig]
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Reviewed-by: Huacai Chen <chenhc@lemote.com>
 ---
 
-* Added Michael Olbrich's Tested-by tag
-  https://lore.kernel.org/linux-usb/20191112144108.GA1859@pengutronix.de/
+v2:
+  - add SMBIOS_ENTRY_POINT_SCAN_START suggested by Jean
+  - refine definitions and Kconfig by Jiaxun
 
- drivers/usb/dwc3/gadget.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/mips/Kconfig           | 10 ++++++++++
+ arch/mips/include/asm/dmi.h | 20 ++++++++++++++++++++
+ arch/mips/kernel/setup.c    |  2 ++
+ drivers/firmware/dmi_scan.c |  6 +++++-
+ 4 files changed, 37 insertions(+), 1 deletion(-)
+ create mode 100644 arch/mips/include/asm/dmi.h
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 1b8014ab0b25..22a78eb41a5b 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -177,7 +177,7 @@ static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
- {
- 	struct dwc3			*dwc = dep->dwc;
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 4b83507..c097f78 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2773,6 +2773,16 @@ config HW_PERF_EVENTS
+ 	  Enable hardware performance counter support for perf events. If
+ 	  disabled, perf events will use software events only.
  
--	list_del(&req->list);
-+	list_del_init(&req->list);
- 	req->remaining = 0;
- 	req->needs_extra_trb = false;
- 
-@@ -847,6 +847,7 @@ static struct usb_request *dwc3_gadget_ep_alloc_request(struct usb_ep *ep,
- 	req->epnum	= dep->number;
- 	req->dep	= dep;
- 	req->status	= DWC3_REQUEST_STATUS_UNKNOWN;
-+	INIT_LIST_HEAD(&req->list);
- 
- 	trace_dwc3_alloc_request(req);
- 
-@@ -1549,6 +1550,10 @@ static int dwc3_gadget_ep_dequeue(struct usb_ep *ep,
- 
- 	spin_lock_irqsave(&dwc->lock, flags);
- 
-+	/* Not queued, nothing to do */
-+	if (list_empty(&req->list))
-+		goto out0;
++config DMI
++	default y if MACH_LOONGSON64
++	select DMI_SCAN_MACHINE_NON_EFI_FALLBACK
++	bool "Enable DMI scanning"
++	help
++	  Enabled scanning of DMI to identify machine quirks. Say Y
++	  here unless you have verified that your setup is not
++	  affected by entries in the DMI blacklist. Required by PNP
++	  BIOS code.
 +
- 	list_for_each_entry(r, &dep->pending_list, list) {
- 		if (r == req)
- 			break;
+ config SMP
+ 	bool "Multi-Processing support"
+ 	depends on SYS_SUPPORTS_SMP
+diff --git a/arch/mips/include/asm/dmi.h b/arch/mips/include/asm/dmi.h
+new file mode 100644
+index 0000000..27415a2
+--- /dev/null
++++ b/arch/mips/include/asm/dmi.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_DMI_H
++#define _ASM_DMI_H
++
++#include <linux/io.h>
++#include <linux/memblock.h>
++
++#define dmi_early_remap(x, l)		ioremap_cache(x, l)
++#define dmi_early_unmap(x, l)		iounmap(x)
++#define dmi_remap(x, l)			ioremap_cache(x, l)
++#define dmi_unmap(x)			iounmap(x)
++
++/* MIPS initialize DMI scan before SLAB is ready, so we use memblock here */
++#define dmi_alloc(l)			memblock_alloc_low(l, PAGE_SIZE)
++
++#if defined(CONFIG_MACH_LOONGSON64)
++#define SMBIOS_ENTRY_POINT_SCAN_START	0xFFFE000
++#endif
++
++#endif /* _ASM_DMI_H */
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 701f4bc..d9bd841 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -28,6 +28,7 @@
+ #include <linux/decompress/generic.h>
+ #include <linux/of_fdt.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/dmi.h>
+ 
+ #include <asm/addrspace.h>
+ #include <asm/bootinfo.h>
+@@ -800,6 +801,7 @@ void __init setup_arch(char **cmdline_p)
+ #endif
+ 
+ 	arch_mem_init(cmdline_p);
++	dmi_setup();
+ 
+ 	resource_init();
+ 	plat_smp_setup();
+diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+index 2045566..f59163c 100644
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -11,6 +11,10 @@
+ #include <asm/dmi.h>
+ #include <asm/unaligned.h>
+ 
++#ifndef SMBIOS_ENTRY_POINT_SCAN_START
++#define SMBIOS_ENTRY_POINT_SCAN_START 0xF0000
++#endif
++
+ struct kobject *dmi_kobj;
+ EXPORT_SYMBOL_GPL(dmi_kobj);
+ 
+@@ -663,7 +667,7 @@ static void __init dmi_scan_machine(void)
+ 			return;
+ 		}
+ 	} else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) {
+-		p = dmi_early_remap(0xF0000, 0x10000);
++		p = dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10000);
+ 		if (p == NULL)
+ 			goto error;
+ 
 -- 
-2.20.1
+2.1.0
 
