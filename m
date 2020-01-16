@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5509D13E7A5
+	by mail.lfdr.de (Postfix) with ESMTP id C80AE13E7A6
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392423AbgAPR1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36366 "EHLO mail.kernel.org"
+        id S2392444AbgAPR1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392321AbgAPR1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:00 -0500
+        id S2392392AbgAPR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F419246D4;
-        Thu, 16 Jan 2020 17:26:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6BF6246D3;
+        Thu, 16 Jan 2020 17:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195619;
-        bh=HEfK2KpxI9JcRyxK58/DnvyfOIJxDZIR/FRlXyEiOzA=;
+        s=default; t=1579195623;
+        bh=8iRFm89jihfp3NUUzy4kvRT0BpudT1RYy/C7LLvQQX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M+wcKfGfHxIpgRUcx6UgklASu+0dSS1r6y7UE9XUsOiB1JA3uG92WyL9USu8kDTpE
-         zHKB6ptp9Pyhw/lRe/6N3ZePXitdfXR2yaDH3IXjID3pK7n9cfZvCTSUrkf6nfdxys
-         WH7s5WDXkjbgvQwZM3eYIJkZADPtl7Hn3ELmW9S4=
+        b=AAtiSOQ6gsT+Q5CF9PJVkE9o7ubq4+Qq5E50qidI4+ipH3PDc89e2SjyJcFrIq/co
+         FKn+8lCsAZq1SQ7FuAAsM6N54D3AfkE+IyCtaeNz5G9EvkQg04Y144r6hNHwtnidby
+         IGEg5ob8xwoXYpeYuY74me1w8am2cmrIogwqLIVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Parav Pandit <parav@mellanox.com>,
-        Maxim Levitsky <mlevitsk@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 191/371] vfio/mdev: Fix aborting mdev child device removal if one fails
-Date:   Thu, 16 Jan 2020 12:21:03 -0500
-Message-Id: <20200116172403.18149-134-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 194/371] media: davinci/vpbe: array underflow in vpbe_enum_outputs()
+Date:   Thu, 16 Jan 2020 12:21:06 -0500
+Message-Id: <20200116172403.18149-137-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,75 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 6093e348a5e2475c5bb2e571346460f939998670 ]
+[ Upstream commit b72845ee5577b227131b1fef23f9d9a296621d7b ]
 
-device_for_each_child() stops executing callback function for remaining
-child devices, if callback hits an error.
-Each child mdev device is independent of each other.
-While unregistering parent device, mdev core must remove all child mdev
-devices.
-Therefore, mdev_device_remove_cb() always returns success so that
-device_for_each_child doesn't abort if one child removal hits error.
+In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
+the problem is that "temp_index" can be negative.  This patch changes
+the types to unsigned to address this array underflow bug.
 
-While at it, improve remove and unregister functions for below simplicity.
+Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
 
-There isn't need to pass forced flag pointer during mdev parent
-removal which invokes mdev_device_remove(). So simplify the flow.
-
-mdev_device_remove() is called from two paths.
-1. mdev_unregister_driver()
-     mdev_device_remove_cb()
-       mdev_device_remove()
-2. remove_store()
-     mdev_device_remove()
-
-Fixes: 7b96953bc640 ("vfio: Mediated device Core driver")
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/mdev/mdev_core.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ include/media/davinci/vpbe.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
-index 8cfa71230877..e052f62fdea7 100644
---- a/drivers/vfio/mdev/mdev_core.c
-+++ b/drivers/vfio/mdev/mdev_core.c
-@@ -150,10 +150,10 @@ static int mdev_device_remove_ops(struct mdev_device *mdev, bool force_remove)
- 
- static int mdev_device_remove_cb(struct device *dev, void *data)
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 1d3c13e36904..915af9ca4711 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -126,7 +126,7 @@ static int vpbe_enum_outputs(struct vpbe_device *vpbe_dev,
+ 			     struct v4l2_output *output)
  {
--	if (!dev_is_mdev(dev))
--		return 0;
-+	if (dev_is_mdev(dev))
-+		mdev_device_remove(dev, true);
+ 	struct vpbe_config *cfg = vpbe_dev->cfg;
+-	int temp_index = output->index;
++	unsigned int temp_index = output->index;
  
--	return mdev_device_remove(dev, data ? *(bool *)data : true);
-+	return 0;
- }
- 
- /*
-@@ -241,7 +241,6 @@ EXPORT_SYMBOL(mdev_register_device);
- void mdev_unregister_device(struct device *dev)
- {
- 	struct mdev_parent *parent;
--	bool force_remove = true;
- 
- 	mutex_lock(&parent_list_lock);
- 	parent = __find_parent_device(dev);
-@@ -255,8 +254,7 @@ void mdev_unregister_device(struct device *dev)
- 	list_del(&parent->next);
- 	class_compat_remove_link(mdev_bus_compat_class, dev, NULL);
- 
--	device_for_each_child(dev, (void *)&force_remove,
--			      mdev_device_remove_cb);
-+	device_for_each_child(dev, NULL, mdev_device_remove_cb);
- 
- 	parent_remove_sysfs_files(parent);
- 
+ 	if (temp_index >= cfg->num_outputs)
+ 		return -EINVAL;
+diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
+index 79a566d7defd..180a05e91497 100644
+--- a/include/media/davinci/vpbe.h
++++ b/include/media/davinci/vpbe.h
+@@ -92,7 +92,7 @@ struct vpbe_config {
+ 	struct encoder_config_info *ext_encoders;
+ 	/* amplifier information goes here */
+ 	struct amp_config_info *amp;
+-	int num_outputs;
++	unsigned int num_outputs;
+ 	/* Order is venc outputs followed by LCD and then external encoders */
+ 	struct vpbe_output *outputs;
+ };
 -- 
 2.20.1
 
