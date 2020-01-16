@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B9F13FE5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C1213FEAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404228AbgAPXcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42450 "EHLO mail.kernel.org"
+        id S2391442AbgAPXa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:30:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404193AbgAPXcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:45 -0500
+        id S2403838AbgAPXaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:30:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F3BD2073A;
-        Thu, 16 Jan 2020 23:32:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 486242072E;
+        Thu, 16 Jan 2020 23:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217565;
-        bh=Yr/v8JCKiAzj9Xg/55tcnrpoweVvorUmgwUtXTSr1Tk=;
+        s=default; t=1579217417;
+        bh=SI/+LUsCkOv6mqjlDDK/Lkt8c1rVlXx+mAffa9wYcvE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fPGVbqrs8VmKZC1kN4wDzKr4b89RP9FMDQkaY55Pz54r1h6KmmUDkvi1E+IApWMqs
-         FfO2G13JguDilvkuHr4/fjqwoXvqqeDGVBYQXJLXKzTAOzJYF6HjxtdP6C5EBgYVkS
-         4Ktlj/TAeLWY3CiwsuoCZ1BeoMMGV5dJNVT+dZus=
+        b=2TafAsYeW4jihm58c/c7/rv/JuoVuiuCaslH/AzN1nbo+cVqr1/1uZdjU6Ud1qba4
+         z4oy7E8eFSSCPcmHWB1wc3SOsO153E0hNQuDw3gYIv40T/jJJoJAMAYOhSUzkyiK3l
+         8IvwpVFySVN2iRnUJo3xYxREqHBinVbsGAnRTh+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 4.14 50/71] tty: serial: imx: use the sg count from dma_map_sg
-Date:   Fri, 17 Jan 2020 00:18:48 +0100
-Message-Id: <20200116231716.579154955@linuxfoundation.org>
+        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 75/84] selftests: firmware: Fix it to do root uid check and skip
+Date:   Fri, 17 Jan 2020 00:18:49 +0100
+Message-Id: <20200116231722.365608827@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
+References: <20200116231713.087649517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,33 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
 
-commit 596fd8dffb745afcebc0ec6968e17fe29f02044c upstream.
+[ Upstream commit c65e41538b04e0d64a673828745a00cb68a24371 ]
 
-The dmaengine_prep_slave_sg needs to use sg count returned
-by dma_map_sg, not use sport->dma_tx_nents, because the return
-value of dma_map_sg is not always same with "nents".
+firmware attempts to load test modules that require root access
+and fail. Fix it to check for root uid and exit with skip code
+instead.
 
-Fixes: b4cdc8f61beb ("serial: imx: add DMA support for imx6q")
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Link: https://lore.kernel.org/r/1573108875-26530-1-git-send-email-peng.fan@nxp.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Before this fix:
 
+selftests: firmware: fw_run_tests.sh
+modprobe: ERROR: could not insert 'test_firmware': Operation not permitted
+You must have the following enabled in your kernel:
+CONFIG_TEST_FIRMWARE=y
+CONFIG_FW_LOADER=y
+CONFIG_FW_LOADER_USER_HELPER=y
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+
+With this fix:
+
+selftests: firmware: fw_run_tests.sh
+skip all tests: must be run as root
+not ok 1 selftests: firmware: fw_run_tests.sh # SKIP
+
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Reviwed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/imx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/firmware/fw_lib.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -542,7 +542,7 @@ static void imx_dma_tx(struct imx_port *
- 		dev_err(dev, "DMA mapping error for TX.\n");
- 		return;
- 	}
--	desc = dmaengine_prep_slave_sg(chan, sgl, sport->dma_tx_nents,
-+	desc = dmaengine_prep_slave_sg(chan, sgl, ret,
- 					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dma_unmap_sg(dev, sgl, sport->dma_tx_nents,
+diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
+index 1cbb12e284a6..8a853ace55a2 100755
+--- a/tools/testing/selftests/firmware/fw_lib.sh
++++ b/tools/testing/selftests/firmware/fw_lib.sh
+@@ -28,6 +28,12 @@ test_modprobe()
+ 
+ check_mods()
+ {
++	local uid=$(id -u)
++	if [ $uid -ne 0 ]; then
++		echo "skip all tests: must be run as root" >&2
++		exit $ksft_skip
++	fi
++
+ 	trap "test_modprobe" EXIT
+ 	if [ ! -d $DIR ]; then
+ 		modprobe test_firmware
+-- 
+2.20.1
+
 
 
