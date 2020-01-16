@@ -2,122 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DFEF13ECB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:58:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E86DE13ECC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387715AbgAPR6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:58:12 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35135 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406471AbgAPR6J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:58:09 -0500
-Received: by mail-pg1-f195.google.com with SMTP id l24so10276277pgk.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 09:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Dxc/6KX/S9brz/lHW4Hzhowhi5VkBu+IFXygBkuYd8g=;
-        b=Bg8TrOBUqAVuyOSQls8qBNh2ejX9OIzuFNauOlz/jWXocE2eWXE+EU+BCWRs7QKInX
-         RwNdGjRmxJkcV1kyRxdEVLocROgfCywVsA+YlgwU8PgOVrz9bP7FXWtZ4EureVqFSaxB
-         Yv425m6JCXFiTy4bTXdEFHx8CE2o7RCPS0Lm61Di9hzdRGHlx4AadjmG7/xM19Z9I/BF
-         puFBfz3pe5ZNwFcqV+njed742NSap1IEcQuGKKCUDca5E7FxQZ7hHYkXM8mL74T/JAu/
-         OD6rzCuwToZSB/BspsDGMzC4xZpg4DCeess3Iwtw57S8Udn0BrsVdNvsj8sTdWDv9JTE
-         n5Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Dxc/6KX/S9brz/lHW4Hzhowhi5VkBu+IFXygBkuYd8g=;
-        b=TEuz4LY7rKe19bDUxqNO82gDD75xDHzEArsGKIirh/93HUPK3EFVG+SnUS4VYwkjd+
-         eovVapIkljDlHJ2oVLQseeczDVXG5rJx3Ni9niV0t46MsXONYjy4eJOjl+yeywWgsm90
-         ejNCurepspv+K61AdygOOcWbrwkJuQLMHcUh7DjTEz+Sz5kVLOmN/aR82PiV8fVKq48M
-         BqkJDERhODLidvKSWcC77SgW7yIMoh4RfPM6GxkT3QAKQRwuftaM8qZvGRs7z+hmB9IF
-         i4woFn4IPbgU1JatXlylWiQrVQ9PEWNouuPHZC3HEe2DKJWQDucX/pJewAqWIOz7mlzP
-         6Pjg==
-X-Gm-Message-State: APjAAAV/NtTvGc3OzysVICaOe9gTyNrpbn0lsDAFCenhrDyvjoJrbXUA
-        55TfQlIJSliQxjMkYDAryUbN+Q==
-X-Google-Smtp-Source: APXvYqz4MeG42gziTyNm2fAxWERKAJtQ+esEwOyM+kujl8hEbsltijSLF76QgD3pJJPciz/w8q3aCg==
-X-Received: by 2002:aa7:82d5:: with SMTP id f21mr39382628pfn.245.1579197488202;
-        Thu, 16 Jan 2020 09:58:08 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id a23sm27909031pfg.82.2020.01.16.09.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 09:58:07 -0800 (PST)
-Date:   Thu, 16 Jan 2020 09:58:02 -0800
-From:   Benson Leung <bleung@google.com>
-To:     torvalds@linux-foundation.org
-Cc:     bleung@kernel.org, bleung@chromium.org, bleung@google.com,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] chrome-platform fixes for v5.5-rc7
-Message-ID: <20200116175802.GA147875@google.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2394625AbgAPR6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:58:31 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:50290 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393889AbgAPR61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:58:27 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 47zBkl4Rxnz9v0MT;
+        Thu, 16 Jan 2020 18:58:23 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=PU7eTaOI; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id SjVALX4P8BV2; Thu, 16 Jan 2020 18:58:23 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47zBkl379cz9v0MQ;
+        Thu, 16 Jan 2020 18:58:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1579197503; bh=UUBKk15KITQNNRJp5evVzKMcsza8d4oSE6jeKhRMcDE=;
+        h=From:Subject:To:Cc:Date:From;
+        b=PU7eTaOIhtqxVjMZbHoIHKjqp9r3ETp1+1A3ditRGh62MKQuHKKpA1ukHm+n4/PQ8
+         KC/rDW+iuJ+YJeQ+75hFrx42zs79+bFb+B+mlB6Spffdcew/8JaUUYE+lQ+28d9Voa
+         cGAdfy+u4wFjdM2xKEN8a7q76RRkglF0nFieQvTc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 187F68B82D;
+        Thu, 16 Jan 2020 18:58:25 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Q42v6gYwsPbp; Thu, 16 Jan 2020 18:58:24 +0100 (CET)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8EC048B82C;
+        Thu, 16 Jan 2020 18:58:24 +0100 (CET)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 3689964A35; Thu, 16 Jan 2020 17:58:24 +0000 (UTC)
+Message-Id: <cover.1579196675.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v4 00/11] powerpc: switch VDSO to C implementation.
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, nathanl@linux.ibm.com,
+        arnd@arndb.de, tglx@linutronix.de, vincenzo.frascino@arm.com,
+        luto@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        x86@kernel.org
+Date:   Thu, 16 Jan 2020 17:58:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a fourth tentative to switch powerpc VDSO to generic C implementation.
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This version should work on PPC64 (untested). VDSO32 for PPC64 is
+impossible to build and has been de-activated, because the powerpc
+ASM header files for C are not prepared to build 32 bits code with CONFIG_PPC64.
 
-Hi Linus,
+powerpc is a bit special for VDSO as well as system calls in the
+way that it requires setting CR SO bit which cannot be done in C.
+Therefore, entry/exit and fallback need to be performed in ASM.
 
-The following changes since commit 856a0a6e2d09d31fd8f00cc1fc6645196a509d56:
+Note that on previous patches, a buggy version of vdsotest was used which was
+underestimating the time in gettimeofday compared to clock-get... functions.
 
-  platform/chrome: wilco_ec: fix use after free issue (2019-12-02 12:14:42 =
-+0100)
+This series applies on a merge of powerpc/merge and tip/timers/core branches,
+series "lib/vdso: Bugfix and consolidation"
+(https://lore.kernel.org/patchwork/project/lkml/list/?series=425784)
+applied after the above merge.
 
-are available in the Git repository at:
+On a powerpc8xx, with current powerpc/32 ASM VDSO:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git t=
-ags/tag-chrome-platform-fixes-for-v5.5-rc7
+gettimeofday:    vdso: 907 nsec/call
+clock-getres-realtime:    vdso: 484 nsec/call
+clock-gettime-realtime:    vdso: 899 nsec/call
 
-for you to fetch changes up to dfb9a8857f4decbba8c2206e8877e1d741ee1b47:
+The first patch adds VDSO generic C support without any changes to common code.
+Performance is as follows:
 
-  platform/chrome: wilco_ec: Fix keyboard backlight probing (2020-01-10 14:=
-57:58 -0800)
+gettimeofday:    vdso: 1211 nsec/call
+clock-getres-realtime:    vdso: 722 nsec/call
+clock-gettime-realtime:    vdso: 1216 nsec/call
 
-----------------------------------------------------------------
-platform/chrome fixes for v5.5-rc7.
+Then a few changes in the common code have allowed performance improvement. At
+the end of the series we have:
 
-One fix in the wilco_ec keyboard backlight driver
-to allow the EC driver to continue loading in the absence
-of a backlight module.
+gettimeofday:    vdso: 974 nsec/call
+clock-getres-realtime:    vdso: 545 nsec/call
+clock-gettime-realtime:    vdso: 941 nsec/call
 
-----------------------------------------------------------------
-Daniel Campello (1):
-      platform/chrome: wilco_ec: Fix keyboard backlight probing
+The final result is rather close to pure ASM VDSO:
+* 7% more on gettimeofday (9 cycles)
+* 5% more on clock-gettime-realtime (6 cycles)
+* 12% more on clock-getres-realtime (8 cycles)
 
- drivers/platform/chrome/wilco_ec/keyboard_leds.c | 28 +++++++++++++++++---=
-----
- 1 file changed, 20 insertions(+), 8 deletions(-)
+Due to the unavoidable ASM trampoline, we won't get much closer but that should be
+acceptable for a port from ASM to a generic C code (here, 1 cycle is about 7,5 ns)
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+Christophe Leroy (11):
+  powerpc/64: Don't provide time functions in compat VDSO32
+  powerpc/vdso: Switch VDSO to generic C implementation.
+  lib: vdso: only read hrtimer_res when needed in __cvdso_clock_getres()
+  powerpc/vdso: simplify __get_datapage()
+  lib: vdso: allow arches to provide vdso data pointer
+  powerpc/vdso: provide inline alternative to __get_datapage()
+  powerpc/vdso: provide vdso data pointer from the ASM caller.
+  lib: vdso: allow fixed clock mode
+  powerpc/vdso: override __arch_vdso_capable()
+  lib: vdso: Allow arches to override the ns shift operation
+  powerpc/32: provide vdso_shift_ns()
 
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/powerpc/Kconfig                         |   2 +
+ arch/powerpc/include/asm/clocksource.h       |   6 +
+ arch/powerpc/include/asm/vdso/gettimeofday.h | 117 ++++++++++++
+ arch/powerpc/include/asm/vdso/vsyscall.h     |  25 +++
+ arch/powerpc/include/asm/vdso_datapage.h     |  52 +++---
+ arch/powerpc/kernel/asm-offsets.c            |  46 +----
+ arch/powerpc/kernel/time.c                   |  91 +---------
+ arch/powerpc/kernel/vdso.c                   |  58 ++----
+ arch/powerpc/kernel/vdso32/Makefile          |  27 ++-
+ arch/powerpc/kernel/vdso32/datapage.S        |  10 +-
+ arch/powerpc/kernel/vdso32/gettimeofday.S    | 258 ++++-----------------------
+ arch/powerpc/kernel/vdso32/vdso32.lds.S      |   9 +-
+ arch/powerpc/kernel/vdso32/vgettimeofday.c   |  29 +++
+ arch/powerpc/kernel/vdso64/Makefile          |  23 ++-
+ arch/powerpc/kernel/vdso64/datapage.S        |  13 +-
+ arch/powerpc/kernel/vdso64/gettimeofday.S    | 257 ++++----------------------
+ arch/powerpc/kernel/vdso64/vdso64.lds.S      |   7 +-
+ arch/powerpc/kernel/vdso64/vgettimeofday.c   |  29 +++
+ lib/vdso/gettimeofday.c                      | 107 ++++++++---
+ 19 files changed, 457 insertions(+), 709 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/clocksource.h
+ create mode 100644 arch/powerpc/include/asm/vdso/gettimeofday.h
+ create mode 100644 arch/powerpc/include/asm/vdso/vsyscall.h
+ create mode 100644 arch/powerpc/kernel/vdso32/vgettimeofday.c
+ create mode 100644 arch/powerpc/kernel/vdso64/vgettimeofday.c
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.13.3
 
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXiCkKgAKCRBzbaomhzOw
-wl4AAP0fSaN/j6rxaGifUC52ynlL7W6prsoxIgUktxkN9z96rwEA+dOUC4XVyMZE
-RGN9zYSEp9J4ueAYQVoWRq3klHt5bAU=
-=rGzL
------END PGP SIGNATURE-----
-
---BOKacYhQ+x31HxR3--
