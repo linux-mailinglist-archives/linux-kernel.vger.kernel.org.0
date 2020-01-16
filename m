@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D891313FE7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CF213FF24
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:41:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404479AbgAPXfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:35:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41046 "EHLO mail.kernel.org"
+        id S2389244AbgAPX1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:27:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404188AbgAPXcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:04 -0500
+        id S1730261AbgAPX06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B15472077C;
-        Thu, 16 Jan 2020 23:32:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9453320684;
+        Thu, 16 Jan 2020 23:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217524;
-        bh=2WNeRsDryRBzpXQN44EbufOyKvzcVAspZ6zfgL6yVVw=;
+        s=default; t=1579217217;
+        bh=T9fqrrkfooFFhTRKTUscSsrpJdO1WsvH0QD9PwLE1V0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ShMSfBE/g4JfKIShNvTicIqVUn5Hc3MUm+0eLIw215p7dCq3FoD/I3OmZ+FoFYALZ
-         T4zynwZ1Xf0TfhiHzxtjTZOMHNCgquNGk50sOWgnwQq3LkV+VKjenSLXRDoswgk1uf
-         qDL7Zb2B9vv8JO8GJgsbqnVFQwbbHGR3hUMkRZjw=
+        b=jOTQaP+T0hMNZy1jXp0VJawZSjSL3Tx6bkz6Fbquy2yBruHj8u7FVlFhJczKMTQ60
+         6p3NCAbCkbtEaNpucFY1ztPabD+Ee8Tig1UPueZXo/E4XSITcQ2GoBivsaWBmeT13n
+         xfNsLbF2tgxjVkB6PWIne4bIedgRCZMIahBHf7hA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Luo Jiaxing <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 34/71] scsi: enclosure: Fix stale device oops with hot replug
-Date:   Fri, 17 Jan 2020 00:18:32 +0100
-Message-Id: <20200116231714.528012331@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 196/203] s390/qeth: lock the card while changing its hsuid
+Date:   Fri, 17 Jan 2020 00:18:33 +0100
+Message-Id: <20200116231801.292602782@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +44,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 529244bd1afc102ab164429d338d310d5d65e60d upstream.
+[ Upstream commit 5b6c7b55cfe26224b0f41b1c226d3534c542787f ]
 
-Doing an add/remove/add on a SCSI device in an enclosure leads to an oops
-caused by poisoned values in the enclosure device list pointers.  The
-reason is because we are keeping the enclosure device across the enclosed
-device add/remove/add but the current code is doing a
-device_add/device_del/device_add on it.  This is the wrong thing to do in
-sysfs, so fix it by not doing a device_del on the enclosure device simply
-because of a hot remove of the drive in the slot.
+qeth_l3_dev_hsuid_store() initially checks the card state, but doesn't
+take the conf_mutex to ensure that the card stays in this state while
+being reconfigured.
 
-[mkp: added missing email addresses]
+Rework the code to take this lock, and drop a redundant state check in a
+helper function.
 
-Fixes: 43d8eb9cfd0a ("[SCSI] ses: add support for enclosure component hot removal")
-Link: https://lore.kernel.org/r/1578532892.3852.10.camel@HansenPartnership.com
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reported-by: Luo Jiaxing <luojiaxing@huawei.com>
-Tested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: b333293058aa ("qeth: add support for af_iucv HiperSockets transport")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/enclosure.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/s390/net/qeth_core_main.c |  5 ----
+ drivers/s390/net/qeth_l3_sys.c    | 40 +++++++++++++++++++++----------
+ 2 files changed, 28 insertions(+), 17 deletions(-)
 
---- a/drivers/misc/enclosure.c
-+++ b/drivers/misc/enclosure.c
-@@ -419,10 +419,9 @@ int enclosure_remove_device(struct enclo
- 		cdev = &edev->component[i];
- 		if (cdev->dev == dev) {
- 			enclosure_remove_links(cdev);
--			device_del(&cdev->cdev);
- 			put_device(dev);
- 			cdev->dev = NULL;
--			return device_add(&cdev->cdev);
-+			return 0;
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 94e5b6e15ef9..5be4d800e4ba 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -3378,11 +3378,6 @@ int qeth_configure_cq(struct qeth_card *card, enum qeth_cq cq)
+ 			goto out;
  		}
+ 
+-		if (card->state != CARD_STATE_DOWN) {
+-			rc = -1;
+-			goto out;
+-		}
+-
+ 		qeth_free_qdio_queues(card);
+ 		card->options.cq = cq;
+ 		rc = 0;
+diff --git a/drivers/s390/net/qeth_l3_sys.c b/drivers/s390/net/qeth_l3_sys.c
+index 2f73b33c9347..333fd4619dc6 100644
+--- a/drivers/s390/net/qeth_l3_sys.c
++++ b/drivers/s390/net/qeth_l3_sys.c
+@@ -270,24 +270,36 @@ static ssize_t qeth_l3_dev_hsuid_store(struct device *dev,
+ 		struct device_attribute *attr, const char *buf, size_t count)
+ {
+ 	struct qeth_card *card = dev_get_drvdata(dev);
++	int rc = 0;
+ 	char *tmp;
+-	int rc;
+ 
+ 	if (!card)
+ 		return -EINVAL;
+ 
+ 	if (!IS_IQD(card))
+ 		return -EPERM;
+-	if (card->state != CARD_STATE_DOWN)
+-		return -EPERM;
+-	if (card->options.sniffer)
+-		return -EPERM;
+-	if (card->options.cq == QETH_CQ_NOTAVAILABLE)
+-		return -EPERM;
++
++	mutex_lock(&card->conf_mutex);
++	if (card->state != CARD_STATE_DOWN) {
++		rc = -EPERM;
++		goto out;
++	}
++
++	if (card->options.sniffer) {
++		rc = -EPERM;
++		goto out;
++	}
++
++	if (card->options.cq == QETH_CQ_NOTAVAILABLE) {
++		rc = -EPERM;
++		goto out;
++	}
+ 
+ 	tmp = strsep((char **)&buf, "\n");
+-	if (strlen(tmp) > 8)
+-		return -EINVAL;
++	if (strlen(tmp) > 8) {
++		rc = -EINVAL;
++		goto out;
++	}
+ 
+ 	if (card->options.hsuid[0])
+ 		/* delete old ip address */
+@@ -298,11 +310,13 @@ static ssize_t qeth_l3_dev_hsuid_store(struct device *dev,
+ 		card->options.hsuid[0] = '\0';
+ 		memcpy(card->dev->perm_addr, card->options.hsuid, 9);
+ 		qeth_configure_cq(card, QETH_CQ_DISABLED);
+-		return count;
++		goto out;
  	}
- 	return -ENODEV;
+ 
+-	if (qeth_configure_cq(card, QETH_CQ_ENABLED))
+-		return -EPERM;
++	if (qeth_configure_cq(card, QETH_CQ_ENABLED)) {
++		rc = -EPERM;
++		goto out;
++	}
+ 
+ 	snprintf(card->options.hsuid, sizeof(card->options.hsuid),
+ 		 "%-8s", tmp);
+@@ -311,6 +325,8 @@ static ssize_t qeth_l3_dev_hsuid_store(struct device *dev,
+ 
+ 	rc = qeth_l3_modify_hsuid(card, true);
+ 
++out:
++	mutex_unlock(&card->conf_mutex);
+ 	return rc ? rc : count;
+ }
+ 
+-- 
+2.20.1
+
 
 
