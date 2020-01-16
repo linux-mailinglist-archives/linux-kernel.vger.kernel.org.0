@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0358613ED43
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C821313ED9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:04:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405658AbgAPRlZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:41:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57856 "EHLO mail.kernel.org"
+        id S2406909AbgAPSEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:04:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393643AbgAPRkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:40:37 -0500
+        id S2393646AbgAPRkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:40:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAAC82473C;
-        Thu, 16 Jan 2020 17:40:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAEC224739;
+        Thu, 16 Jan 2020 17:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196437;
-        bh=qljT4y/A3k246iseBZPFaMQAh1Y9qLsRf7BctsBuqKE=;
+        s=default; t=1579196438;
+        bh=+cFd6mcGwdyIhARnkU8b67CmrIFvM30jEKSiHhqzrD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nnONuHuR5IWr8X/cMTSdSQ7hwMzAz8jzuVRrMfXV5oy2s8+7iFqQY1TlODQ4oxFpV
-         NXQoaE/Pjgmka0xermbvndzgvZOioNNO0kA1O5MwnS78LYLL+DnZemgMaGyPIJK8/H
-         9STpOFE/wRD2CNyrOqwyv4Lr7Tz74rK0qf+Lm4NU=
+        b=zXfKQ74JmnB0tr0BFbsc+ED+wBDyH0JSwXrxyQ+BqEkf8G7m9XvJb7VnH8DFkKBa4
+         f28aOC78eMsObs5fcPdvRH7gfL8JDVGW678vCpqK0WMSeJ6YvlNB5CcpDeqNubkJLg
+         aZEKPTsQy+ie4cQHnWn7nuDco6e+vfY7+w23cEvU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Filippo Sironi <sironi@amazon.de>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.9 202/251] iommu/amd: Wait for completion of IOTLB flush in attach_device
-Date:   Thu, 16 Jan 2020 12:35:51 -0500
-Message-Id: <20200116173641.22137-162-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 203/251] net: hisilicon: Fix signedness bug in hix5hd2_dev_probe()
+Date:   Thu, 16 Jan 2020 12:35:52 -0500
+Message-Id: <20200116173641.22137-163-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,35 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filippo Sironi <sironi@amazon.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 0b15e02f0cc4fb34a9160de7ba6db3a4013dc1b7 ]
+[ Upstream commit 002dfe8085255b7bf1e0758c3d195c5412d35be9 ]
 
-To make sure the domain tlb flush completes before the
-function returns, explicitly wait for its completion.
+The "priv->phy_mode" variable is an enum and in this context GCC will
+treat it as unsigned to the error handling will never trigger.
 
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
-Fixes: 42a49f965a8d ("amd-iommu: flush domain tlb when attaching a new device")
-[joro: Added commit message and fixes tag]
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 57c5bc9ad7d7 ("net: hisilicon: add hix5hd2 mac driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/hisilicon/hix5hd2_gmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index c898c70472bb..bb0448c91f67 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2113,6 +2113,8 @@ static int attach_device(struct device *dev,
- 	 */
- 	domain_flush_tlb_pde(domain);
+diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+index e69a6bed31a9..dd24c352b200 100644
+--- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
+@@ -929,7 +929,7 @@ static int hix5hd2_dev_probe(struct platform_device *pdev)
+ 		goto err_free_mdio;
  
-+	domain_flush_complete(domain);
-+
- 	return ret;
- }
- 
+ 	priv->phy_mode = of_get_phy_mode(node);
+-	if (priv->phy_mode < 0) {
++	if ((int)priv->phy_mode < 0) {
+ 		netdev_err(ndev, "not find phy-mode\n");
+ 		ret = -EINVAL;
+ 		goto err_mdiobus;
 -- 
 2.20.1
 
