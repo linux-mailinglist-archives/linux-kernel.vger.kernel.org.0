@@ -2,95 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7766913EBE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD55E13EB20
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:48:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406093AbgAPRxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:53:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727022AbgAPRpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:45:07 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 238B624767;
-        Thu, 16 Jan 2020 17:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196706;
-        bh=krZLWzFPW8uDsDaIIR1DImCnsMLd3rz+JBC8LgfUS8g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bbTUiRuuvpqvvDyPbKzoVuZBplglpcE9FLeR0GfYoydWH2bnhknZEN+RnsYP7SyeK
-         fb/4yiXV00WgKZJahBXoSVLyxItrVgPCwsyO/owbrN6D/SZiGVMnHZjRGmrQHn5EPa
-         uFe3Ads5HYc2R0/RSEqdDWiGP9OQVzwIdtTk6itQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        Steve French <smfrench@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 4.4 097/174] signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of force_sig
-Date:   Thu, 16 Jan 2020 12:41:34 -0500
-Message-Id: <20200116174251.24326-97-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
-References: <20200116174251.24326-1-sashal@kernel.org>
+        id S2394333AbgAPRsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:48:08 -0500
+Received: from mail.efficios.com ([167.114.26.124]:53310 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394319AbgAPRsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:48:04 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 12:48:03 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 71D8E244DF1;
+        Thu, 16 Jan 2020 12:41:36 -0500 (EST)
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id HX7ngnA8TMm3; Thu, 16 Jan 2020 12:41:36 -0500 (EST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.efficios.com (Postfix) with ESMTP id 1E023244EEF;
+        Thu, 16 Jan 2020 12:41:36 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1E023244EEF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1579196496;
+        bh=Ru5guD9vkjoHa8ITAqIsg69uJf3lqm/wZ2degfKpy4k=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=VNS30gzevq3SrFJjiFF4QG5kOegfaEx+QHi+syYK/vKJK4AbzXwY8hrSS3B5h4K+K
+         dc5uS1gJPj7gw4CXkSyBiD1FgwfoFBWC1W8CizZboMhlx3J6D8yVl3usGB59VFYKjq
+         +ITIVB0jXVNS1Z7m3Qs5iZYColHHXZG3CjRzG+p9qqWzHubRB4dAZ3ZOkG6P6XW3vD
+         Foi0QZgGPBy5rK75UPCQZu/oyZ5rlnGWo7srUwlY/SqiWt4Q073wXW0P1qcGmVaHzb
+         S5LxnfP8kqUCSdGG7IcRNbSbZnEN8vNkJEFio2dV6mRLO7hrKnKfet1L71PIvyiAXN
+         w0k/2e5YCVlbA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([127.0.0.1])
+        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ntsglEfqopQx; Thu, 16 Jan 2020 12:41:36 -0500 (EST)
+Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
+        by mail.efficios.com (Postfix) with ESMTP id 0761B2450C1;
+        Thu, 16 Jan 2020 12:41:36 -0500 (EST)
+Date:   Thu, 16 Jan 2020 12:41:35 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Li Zefan <lizefan@huawei.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Message-ID: <1251528473.590671.1579196495905.JavaMail.zimbra@efficios.com>
+Subject: [regression] cpuset: offlined CPUs removed from affinity masks
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.26.124]
+X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - FF72 (Linux)/8.8.15_GA_3895)
+Thread-Index: LCpgHYsKGbsNKD4rV33Ft2KJ/GZobw==
+Thread-Topic: cpuset: offlined CPUs removed from affinity masks
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+Hi,
 
-[ Upstream commit 72abe3bcf0911d69b46c1e8bdb5612675e0ac42c ]
+I noticed the following regression with CONFIG_CPUSET=y. Note that
+I am not using cpusets at all (only using the root cpuset I'm given
+at boot), it's just configured in. I am currently working on a 5.2.5
+kernel. I am simply combining use of taskset(1) (setting the affinity
+mask of a process) and cpu hotplug. The result is that with
+CONFIG_CPUSET=y, setting the affinity mask including an offline CPU number
+don't keep that CPU in the affinity mask, and it is never put back when the
+CPU comes back online. CONFIG_CPUSET=n behaves as expected, and puts back
+the CPU into the affinity mask reported to user-space when it comes back
+online.
 
-The locking in force_sig_info is not prepared to deal with a task that
-exits or execs (as sighand may change).  The is not a locking problem
-in force_sig as force_sig is only built to handle synchronous
-exceptions.
 
-Further the function force_sig_info changes the signal state if the
-signal is ignored, or blocked or if SIGNAL_UNKILLABLE will prevent the
-delivery of the signal.  The signal SIGKILL can not be ignored and can
-not be blocked and SIGNAL_UNKILLABLE won't prevent it from being
-delivered.
+* With CONFIG_CPUSET=y (unexpected behavior):
 
-So using force_sig rather than send_sig for SIGKILL is confusing
-and pointless.
+# echo 0 > /sys/devices/system/cpu/cpu1/online
 
-Because it won't impact the sending of the signal and and because
-using force_sig is wrong, replace force_sig with send_sig.
+% taskset 0x7 ./loop &
+% taskset -p $!
+pid 1341's current affinity mask: 5
 
-Cc: Namjae Jeon <namjae.jeon@samsung.com>
-Cc: Jeff Layton <jlayton@primarydata.com>
-Cc: Steve French <smfrench@gmail.com>
-Fixes: a5c3e1c725af ("Revert "cifs: No need to send SIGKILL to demux_thread during umount"")
-Fixes: e7ddee9037e7 ("cifs: disable sharing session and tcon and add new TCP sharing code")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cifs/connect.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+# echo 1 > /sys/devices/system/cpu/cpu1/online
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 63108343124a..b608ce741444 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2246,7 +2246,7 @@ cifs_put_tcp_session(struct TCP_Server_Info *server, int from_reconnect)
- 
- 	task = xchg(&server->tsk, NULL);
- 	if (task)
--		force_sig(SIGKILL, task);
-+		send_sig(SIGKILL, task, 1);
- }
- 
- static struct TCP_Server_Info *
+taskset -p $!
+pid 1341's current affinity mask: 5
+
+kill $!
+
+
+* With CONFIG_CPUSET=n (expected behavior):
+
+(Offlining CPU, then start task)
+
+# echo 0 > /sys/devices/system/cpu/cpu1/online
+
+% taskset 0x7 ./loop &
+% taskset -p $!
+pid 1358's current affinity mask: 5
+
+# echo 1 > /sys/devices/system/cpu/cpu1/online
+
+taskset -p $!
+pid 1358's current affinity mask: 7
+
+kill $!
+
+
+Test system lscpu output:
+
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+CPU(s):              32
+On-line CPU(s) list: 0-31
+Thread(s) per core:  2
+Core(s) per socket:  8
+Socket(s):           2
+NUMA node(s):        2
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               60
+Model name:          Intel Core Processor (Haswell, no TSX, IBRS)
+Stepping:            1
+CPU MHz:             2399.996
+BogoMIPS:            4799.99
+Hypervisor vendor:   KVM
+Virtualization type: full
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            4096K
+NUMA node0 CPU(s):   0-7,16-23
+NUMA node1 CPU(s):   8-15,24-31
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm cpuid_fault invpcid_single pti ibrs ibpb fsgsbase bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+
+
+
 -- 
-2.20.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
