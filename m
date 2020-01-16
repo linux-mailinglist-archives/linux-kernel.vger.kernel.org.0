@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BECA13E7C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8603113E7CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392102AbgAPR1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38092 "EHLO mail.kernel.org"
+        id S2392543AbgAPR2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:28:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404052AbgAPR1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:51 -0500
+        id S2392091AbgAPR1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EB98246E4;
-        Thu, 16 Jan 2020 17:27:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E38C9246E6;
+        Thu, 16 Jan 2020 17:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195670;
-        bh=tSUlR4tPDzSqua/yvIuaf3Ye6cFWN6b1St9+UreSkGU=;
+        s=default; t=1579195672;
+        bh=C7reEqdrP/IDmvRXJv9RU4BxtYGkVoA9w/EuMhuUhTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nojWxQOABPwnfGbRct44E9sGN2KLiiR/WIGxesvDelBkqeYn+B2MyHTiYtrFGrp/u
-         HW+k3E8nEz5ye7epX4mPZpz4fIJTjjCyX0Lr2jP5cd5P47JByJpDNcM8y4MGLBJQ7a
-         QtdhMN5n5iYvkSY9sB9loGu0X1zyXOkijAGWDwtc=
+        b=VbAjDtMWt/ubbjuGjumWa+fSQviJNnPDDx0Pwg8AR8b8MQsQ7PC2BevslxNOTSCwu
+         O8pUb21VnbmKVxqGm+SlsPrBW7EHdSNE8lVArrv28dtGxNAB4bcEvK3wHLJiNdlqQa
+         /d1nWc1ikncxS58gj2Gt2R5+x8ydFxs6dh6fbvz4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Kalderon <michal.kalderon@marvell.com>,
-        Ariel Elior <ariel.elior@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 227/371] qed: iWARP - Use READ_ONCE and smp_store_release to access ep->state
-Date:   Thu, 16 Jan 2020 12:21:39 -0500
-Message-Id: <20200116172403.18149-170-sashal@kernel.org>
+Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
+        "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 229/371] powerpc/pseries/mobility: rebuild cacheinfo hierarchy post-migration
+Date:   Thu, 16 Jan 2020 12:21:41 -0500
+Message-Id: <20200116172403.18149-172-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,78 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kalderon <michal.kalderon@marvell.com>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit 6117561e1bb30b2fe7f51e1961f34dbedd0bec8a ]
+[ Upstream commit e610a466d16a086e321f0bd421e2fc75cff28605 ]
 
-Destroy QP waits for it's ep object state to be set to CLOSED
-before proceeding. ep->state can be updated from a different
-context. Add smp_store_release/READ_ONCE to synchronize.
+It's common for the platform to replace the cache device nodes after a
+migration. Since the cacheinfo code is never informed about this, it
+never drops its references to the source system's cache nodes, causing
+it to wind up in an inconsistent state resulting in warnings and oopses
+as soon as CPU online/offline occurs after the migration, e.g.
 
-Fixes: fc4c6065e661 ("qed: iWARP implement disconnect flows")
-Signed-off-by: Ariel Elior <ariel.elior@marvell.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  cache for /cpus/l3-cache@3113(Unified) refers to cache for /cpus/l2-cache@200d(Unified)
+  WARNING: CPU: 15 PID: 86 at arch/powerpc/kernel/cacheinfo.c:176 release_cache+0x1bc/0x1d0
+  [...]
+  NIP release_cache+0x1bc/0x1d0
+  LR  release_cache+0x1b8/0x1d0
+  Call Trace:
+    release_cache+0x1b8/0x1d0 (unreliable)
+    cacheinfo_cpu_offline+0x1c4/0x2c0
+    unregister_cpu_online+0x1b8/0x260
+    cpuhp_invoke_callback+0x114/0xf40
+    cpuhp_thread_fun+0x270/0x310
+    smpboot_thread_fn+0x2c8/0x390
+    kthread+0x1b8/0x1c0
+    ret_from_kernel_thread+0x5c/0x68
+
+Using device tree notifiers won't work since we want to rebuild the
+hierarchy only after all the removals and additions have occurred and
+the device tree is in a consistent state. Call cacheinfo_teardown()
+before processing device tree updates, and rebuild the hierarchy
+afterward.
+
+Fixes: 410bccf97881 ("powerpc/pseries: Partition migration in the kernel")
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/powerpc/platforms/pseries/mobility.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-index bb09f5a9846f..38d0f62bf037 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -509,7 +509,8 @@ int qed_iwarp_destroy_qp(struct qed_hwfn *p_hwfn, struct qed_rdma_qp *qp)
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index 9739a055e5f7..2d3668acb6ef 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -23,6 +23,7 @@
+ #include <asm/machdep.h>
+ #include <asm/rtas.h>
+ #include "pseries.h"
++#include "../../kernel/cacheinfo.h"
  
- 	/* Make sure ep is closed before returning and freeing memory. */
- 	if (ep) {
--		while (ep->state != QED_IWARP_EP_CLOSED && wait_count++ < 200)
-+		while (READ_ONCE(ep->state) != QED_IWARP_EP_CLOSED &&
-+		       wait_count++ < 200)
- 			msleep(100);
+ static struct kobject *mobility_kobj;
  
- 		if (ep->state != QED_IWARP_EP_CLOSED)
-@@ -991,8 +992,6 @@ qed_iwarp_mpa_complete(struct qed_hwfn *p_hwfn,
+@@ -359,11 +360,20 @@ void post_mobility_fixup(void)
+ 	 */
+ 	cpus_read_lock();
  
- 	params.ep_context = ep;
- 
--	ep->state = QED_IWARP_EP_CLOSED;
--
- 	switch (fw_return_code) {
- 	case RDMA_RETURN_OK:
- 		ep->qp->max_rd_atomic_req = ep->cm_info.ord;
-@@ -1052,6 +1051,10 @@ qed_iwarp_mpa_complete(struct qed_hwfn *p_hwfn,
- 		break;
- 	}
- 
-+	if (fw_return_code != RDMA_RETURN_OK)
-+		/* paired with READ_ONCE in destroy_qp */
-+		smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
++	/*
++	 * It's common for the destination firmware to replace cache
++	 * nodes.  Release all of the cacheinfo hierarchy's references
++	 * before updating the device tree.
++	 */
++	cacheinfo_teardown();
 +
- 	ep->event_cb(ep->cb_context, &params);
+ 	rc = pseries_devicetree_update(MIGRATION_SCOPE);
+ 	if (rc)
+ 		printk(KERN_ERR "Post-mobility device tree update "
+ 			"failed: %d\n", rc);
  
- 	/* on passive side, if there is no associated QP (REJECT) we need to
-@@ -2069,7 +2072,9 @@ void qed_iwarp_qp_in_error(struct qed_hwfn *p_hwfn,
- 	params.status = (fw_return_code == IWARP_QP_IN_ERROR_GOOD_CLOSE) ?
- 			 0 : -ECONNRESET;
- 
--	ep->state = QED_IWARP_EP_CLOSED;
-+	/* paired with READ_ONCE in destroy_qp */
-+	smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
++	cacheinfo_rebuild();
 +
- 	spin_lock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
- 	list_del(&ep->list_entry);
- 	spin_unlock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
-@@ -2157,7 +2162,8 @@ qed_iwarp_tcp_connect_unsuccessful(struct qed_hwfn *p_hwfn,
- 	params.event = QED_IWARP_EVENT_ACTIVE_COMPLETE;
- 	params.ep_context = ep;
- 	params.cm_info = &ep->cm_info;
--	ep->state = QED_IWARP_EP_CLOSED;
-+	/* paired with READ_ONCE in destroy_qp */
-+	smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
+ 	cpus_read_unlock();
  
- 	switch (fw_return_code) {
- 	case IWARP_CONN_ERROR_TCP_CONNECT_INVALID_PACKET:
+ 	/* Possibly switch to a new RFI flush type */
 -- 
 2.20.1
 
