@@ -2,262 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 738BE13DF1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2668313DF2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgAPPrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:47:06 -0500
-Received: from mail-eopbgr20056.outbound.protection.outlook.com ([40.107.2.56]:9379
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726410AbgAPPrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:47:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eJ7H+M6jMHgN7HMw8x3aDHKaKeetyzEwYeyvHrdeFHDQTQBpHz4PmUkd3tN0zPkaP6GYDmSP/RYuyC8+goggZtge6L9Anzwp6L3KeOJzvHNQz0N/7TWLkHKDFC4AjvmIXVOhL1Drys+zVP7lLlIQpzJoz+/q41RXlwhjcBAbxPunFJCGhj22tdxFjLNRg6Va/v4s1ET0QsicQYprzkeFEgUp2QPVUSJhFMXUzcjynz6GQLmjkWjnOiODvZdY9ZyZf0ur/teCqw8q0a/9BBkGV+f0r2y/ngGS1Ew6mQKwtXuu1/4m+We+7JDmxchm0W16vJQpMY1KNaMFDvYQ2Md89A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RFLN02G/8QOA4bKdrk5WP0X5vmdssJzpZTT2IG0k9dM=;
- b=nxXDJFOhBHTQMW3YTY7SlEpt8ktHCE/ESw9unXrztQlb0I3+luP0b/2BrCf2HKQEw79HAqDxiZK1QS6fM1pocbhICHJv7a1Y+O2jhlPN/64FJu/ben5fqPb9rhFcb/lFxsJNiqodAwRQdgPuA4AMUBF947If0PGZs7im8E4MQPACfbRZ2F4v35yzIo9sgMl8fcUCf6YBb1pfnSZ3Nv8p+96wfFLBjcM3KLN0KGV2D2XLoxLW70MDraTYHBRLdpBsVExoMw8Xau8aWZ4EVC2PaGLjt/O54YcGRaVGOoNE/+xqEjS/aA+bfTP7FQ3Sc0tJuCfqXAkFpTod2FhAPFu2HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RFLN02G/8QOA4bKdrk5WP0X5vmdssJzpZTT2IG0k9dM=;
- b=PqiPiT6qwDrCtI9l3BKfq0+PGKeuryPB+J0cfMkl7yrljZRrLbk5/akf+yfPzX2iODGh7H6MRZxYUaryhElj+9PFCh1zX91QOPnqT3KV4ACmZ/ecNG5y9K1dWb29BFgEwA2bNv1NXHTZr1OdUHReXkJTb5crH3en4Mmd69mIjmY=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (52.133.14.15) by
- VI1PR05MB3408.eurprd05.prod.outlook.com (10.170.239.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Thu, 16 Jan 2020 15:47:02 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1c00:7925:d5c6:d60d%7]) with mapi id 15.20.2644.015; Thu, 16 Jan 2020
- 15:47:02 +0000
-Received: from mlx.ziepe.ca (142.68.57.212) by MN2PR05CA0044.namprd05.prod.outlook.com (2603:10b6:208:236::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.14 via Frontend Transport; Thu, 16 Jan 2020 15:47:01 +0000
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)     (envelope-from <jgg@mellanox.com>)      id 1is7MI-00064B-7W; Thu, 16 Jan 2020 11:46:58 -0400
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jason Wang <jasowang@redhat.com>
-CC:     "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-Subject: Re: [PATCH 5/5] vdpasim: vDPA device simulator
-Thread-Topic: [PATCH 5/5] vdpasim: vDPA device simulator
-Thread-Index: AQHVzGqlRPHVvNcseEuo1k66+tVAdqftb4kA
-Date:   Thu, 16 Jan 2020 15:47:01 +0000
-Message-ID: <20200116154658.GJ20978@mellanox.com>
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-6-jasowang@redhat.com>
-In-Reply-To: <20200116124231.20253-6-jasowang@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR05CA0044.namprd05.prod.outlook.com
- (2603:10b6:208:236::13) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:44::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [142.68.57.212]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: be6c7c42-ba66-4cfb-61a6-08d79a9b5401
-x-ms-traffictypediagnostic: VI1PR05MB3408:|VI1PR05MB3408:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR05MB3408E455B567BAB2EC064A9ACF360@VI1PR05MB3408.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 02843AA9E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(39860400002)(346002)(396003)(189003)(199004)(9746002)(9786002)(26005)(478600001)(186003)(8936002)(6666004)(316002)(54906003)(1076003)(2906002)(33656002)(7416002)(4326008)(6916009)(8676002)(86362001)(71200400001)(36756003)(52116002)(2616005)(66556008)(64756008)(66446008)(81166006)(66476007)(5660300002)(66946007)(81156014)(24400500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB3408;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: i0zLaRR1spDm8LThUgz4JbVSkwCx9yW68+R6nRGPImfp6jV02OAKkGfrCvfaHdADgSd/5x12/pQM2i7XzMDZ+aaLLlj4ehqiXfgZGNrltpCsOq8gOVv+uANe64IQLYeAdq9+5qjlzDhMheE814QmD3NtfgMCYTSlCJeSEyD15DU15QPcwGTmRx5Jy0F+OtEOC2s16pRMSb/TfCpZbrv+gCFP+HLcmsmi6kGOLmXG81iVZttdNtcQ/VwTji0rpeP8yDayVZBFV58gBHoA8FclT12ufnCUB4GgQbZy06psv2JAH2qrLXE62WcZ1q241hmEH2Ty2DeyPn8feXQozYcC42iRu6yb/htv63eEOAECNEy4UB5qHXDtFho+mJ6lbW8v2W32pPhjj784lbCV5i2ry8YhcKAc3MD2z+spLPDT+O7BnTn3XCTgIHICaF5H5NicWKspV2K2kE9MWKnfq0X//kWoZBGVMHnJMzBQx6Wne9oURZbGrqwHGci8XRnqgbX0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2168E1773A68F84989C86DC2620C0247@eurprd05.prod.outlook.com>
+        id S1726896AbgAPPst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:48:49 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56964 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgAPPst (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:48:49 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GFhTOE085058;
+        Thu, 16 Jan 2020 15:48:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=PaqPTMWc+RQXSpJWqh1zx/aHhm5SeMGvC6e6opMEO/Q=;
+ b=akPl5NBU+n6z2ZPGKNeCLlf4ah8QUZWKTUZs2LNb/zs5hNwC329MKk1zsG1VgrbJbTvw
+ hn+1KxdFx8k5WJw5YiQ9gTMKRbyCwCtxdkgm8RQghrg0J07x13iTv11rYB34Xp/bO3WA
+ +lPByhGPUrF4Uf4JuaXPWQlHRzWZGzLTqa6ni5jU3h6PjWMcQR3jdY/YhdAJP/poQthA
+ GmXsXxlKrutxSxn6dA59ywHQl9yMZyQ1eLl8uiv1ZV6RJtQ/tcJF8Bo3QdSCcLpW026B
+ O3dT0GCVQroLi2QcGyzB900euJUWD/sIgK9JTjHdse62oHJ2JvFIkyUGozVy25vITFxe KQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2xf73u38cn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 15:48:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GFeCuR102007;
+        Thu, 16 Jan 2020 15:48:04 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2xj1ptabvr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 15:48:03 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00GFlvtd018057;
+        Thu, 16 Jan 2020 15:47:57 GMT
+Received: from dhcp-10-154-96-54.vpn.oracle.com (/10.154.96.54)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Jan 2020 07:47:57 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v7 1/4] x86: kdump: move reserve_crashkernel_low() into
+ crash_core.c
+From:   John Donnelly <john.p.donnelly@oracle.com>
+In-Reply-To: <77c971a4-608f-ee35-40cb-77186a2ddbd1@arm.com>
+Date:   Thu, 16 Jan 2020 09:47:55 -0600
+Cc:     Dave Young <dyoung@redhat.com>, Chen Zhou <chenzhou10@huawei.com>,
+        kbuild test robot <lkp@intel.com>, horms@verge.net.au,
+        linux-doc@vger.kernel.org, catalin.marinas@arm.com,
+        bhsharma@redhat.com, xiexiuqi@huawei.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be6c7c42-ba66-4cfb-61a6-08d79a9b5401
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 15:47:01.8678
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: R8eWo2s7xcND71TcjalQWoar6IsTWNWG+8x6Wv+LFQA+Be65x5E8ah+BZ46ksCkEAoX+a5l4Y242/myE3SIn+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB3408
+Message-Id: <08C19FFB-C6FC-4BB7-A1C2-67CE6B99D2AB@oracle.com>
+References: <20191223152349.180172-1-chenzhou10@huawei.com>
+ <20191223152349.180172-2-chenzhou10@huawei.com>
+ <20191227055458.GA14893@dhcp-128-65.nay.redhat.com>
+ <09d42854-461b-e85c-ba3f-0e1173dc95b5@huawei.com>
+ <20191228093227.GA19720@dhcp-128-65.nay.redhat.com>
+ <77c971a4-608f-ee35-40cb-77186a2ddbd1@arm.com>
+To:     James Morse <james.morse@arm.com>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 08:42:31PM +0800, Jason Wang wrote:
-> This patch implements a software vDPA networking device. The datapath
-> is implemented through vringh and workqueue. The device has an on-chip
-> IOMMU which translates IOVA to PA. For kernel virtio drivers, vDPA
-> simulator driver provides dma_ops. For vhost driers, set_map() methods
-> of vdpa_config_ops is implemented to accept mappings from vhost.
+
+
+> On Jan 16, 2020, at 9:17 AM, James Morse <james.morse@arm.com> wrote:
 >=20
-> A sysfs based management interface is implemented, devices are
-> created and removed through:
+> Hi guys,
 >=20
-> /sys/devices/virtual/vdpa_simulator/netdev/{create|remove}
+> On 28/12/2019 09:32, Dave Young wrote:
+>> On 12/27/19 at 07:04pm, Chen Zhou wrote:
+>>> On 2019/12/27 13:54, Dave Young wrote:
+>>>> On 12/23/19 at 11:23pm, Chen Zhou wrote:
+>>>>> In preparation for supporting reserve_crashkernel_low in arm64 as
+>>>>> x86_64 does, move reserve_crashkernel_low() into =
+kernel/crash_core.c.
+>>>>>=20
+>>>>> Note, in arm64, we reserve low memory if and only if =
+crashkernel=3DX,low
+>>>>> is specified. Different with x86_64, don't set low memory =
+automatically.
+>>>>=20
+>>>> Do you have any reason for the difference?  I'd expect we have same
+>>>> logic if possible and remove some of the ifdefs.
+>>>=20
+>>> In x86_64, if we reserve crashkernel above 4G, then we call =
+reserve_crashkernel_low()
+>>> to reserve low memory.
+>>>=20
+>>> In arm64, to simplify, we call reserve_crashkernel_low() at the =
+beginning of reserve_crashkernel()
+>>> and then relax the arm64_dma32_phys_limit if =
+reserve_crashkernel_low() allocated something.
+>>> In this case, if reserve crashkernel below 4G there will be 256M low =
+memory set automatically
+>>> and this needs extra considerations.
+>=20
+>> Sorry that I did not read the old thread details and thought that is
+>> arch dependent.  But rethink about that, it would be better that we =
+can
+>> have same semantic about crashkernel parameters across arches.  If we
+>> make them different then it causes confusion, especially for
+>> distributions.
+>=20
+> Surely distros also want one crashkernel* string they can use on all =
+platforms without
+> having to detect the kernel version, platform or changeable memory =
+layout...
+>=20
+>=20
+>> OTOH, I thought if we reserve high memory then the low memory should =
+be
+>> needed.  There might be some exceptions, but I do not know the exact
+>> one,
+>=20
+>> can we make the behavior same, and special case those systems which
+>> do not need low memory reservation.
+>=20
+> Its tricky to work out which systems are the 'normal' ones.
+>=20
+> We don't have a fixed memory layout for arm64. Some systems have no =
+memory below 4G.
+> Others have no memory above 4G.
+>=20
+> Chen Zhou's machine has some memory below 4G, but its too precious to =
+reserve a large
+> chunk for kdump. Without any memory below 4G some of the drivers won't =
+work.
+>=20
+> I don't see what distros can set as their default for all platforms if =
+high/low are
+> mutually exclusive with the 'crashkernel=3D' in use today. How did x86 =
+navigate this, ... or
+> was it so long ago?
+>=20
+> No one else has reported a problem with the existing placement logic, =
+hence treating this
+> 'low' thing as the 'in addition' special case.
 
-This is very gross, creating a class just to get a create/remove and
-then not using the class for anything else? Yuk.
 
-> Netlink based lifecycle management could be implemented for vDPA
-> simulator as well.
+Hi,
 
-This is just begging for a netlink based approach.
+I am seeing similar  Arm crash dump issues  on  5.4 kernels  where we =
+need  rather large amount of crashkernel memory reserved that is not =
+available below 4GB ( The maximum reserved size appears to be around =
+768M ) . When I pick memory range higher than 4GB , I see  adapters that =
+fail to initialize :
 
-Certainly netlink driven removal should be an agreeable standard for
-all devices, I think.
 
-> +struct vdpasim_virtqueue {
-> +	struct vringh vring;
-> +	struct vringh_kiov iov;
-> +	unsigned short head;
-> +	bool ready;
-> +	u64 desc_addr;
-> +	u64 device_addr;
-> +	u64 driver_addr;
-> +	u32 num;
-> +	void *private;
-> +	irqreturn_t (*cb)(void *data);
-> +};
-> +
-> +#define VDPASIM_QUEUE_ALIGN PAGE_SIZE
-> +#define VDPASIM_QUEUE_MAX 256
-> +#define VDPASIM_DEVICE_ID 0x1
-> +#define VDPASIM_VENDOR_ID 0
-> +#define VDPASIM_VQ_NUM 0x2
-> +#define VDPASIM_CLASS_NAME "vdpa_simulator"
-> +#define VDPASIM_NAME "netdev"
-> +
-> +u64 vdpasim_features =3D (1ULL << VIRTIO_F_ANY_LAYOUT) |
-> +		       (1ULL << VIRTIO_F_VERSION_1)  |
-> +		       (1ULL << VIRTIO_F_IOMMU_PLATFORM);
+There is no low-memory  <4G  memory for DMA ;    =20
 
-Is not using static here intentional?
+[   11.506792] kworker/0:14: page allocation failure: order:0,=20
+mode:0x104(GFP_DMA32|__GFP_ZERO), =
+nodemask=3D(null),cpuset=3D/,mems_allowed=3D0=20
+[   11.518793] CPU: 0 PID: 150 Comm: kworker/0:14 Not tainted=20
+5.4.0-1948.3.el8uek.aarch64 #1=20
+[   11.526955] Hardware name: To be filled by O.E.M. Saber/Saber, BIOS=20=
 
-> +static void vdpasim_release_dev(struct device *_d)
-> +{
-> +	struct vdpa_device *vdpa =3D dev_to_vdpa(_d);
-> +	struct vdpasim *vdpasim =3D vdpa_to_sim(vdpa);
-> +
-> +	sysfs_remove_link(vdpasim_dev->devices_kobj, vdpasim->name);
-> +
-> +	mutex_lock(&vsim_list_lock);
-> +	list_del(&vdpasim->next);
-> +	mutex_unlock(&vsim_list_lock);
-> +
-> +	kfree(vdpasim->buffer);
-> +	kfree(vdpasim);
-> +}
+0ACKL025 01/18/2019=20
+[   11.534948] Workqueue: events work_for_cpu_fn=20
+[   11.539291] Call trace:=20
+[   11.541727]  dump_backtrace+0x0/0x18c=20
+[   11.545376]  show_stack+0x24/0x30=20
+[   11.548679]  dump_stack+0xbc/0xe0=20
+[   11.551982]  warn_alloc+0xf0/0x15c=20
+[   11.555370]  __alloc_pages_slowpath+0xb4c/0xb84=20
+[   11.559887]  __alloc_pages_nodemask+0x2d0/0x330=20
+[   11.564405]  alloc_pages_current+0x8c/0xf8=20
+[   11.568496]  ttm_bo_device_init+0x188/0x220 [ttm]=20
+[   11.573187]  drm_vram_mm_init+0x58/0x80 [drm_vram_helper]=20
+[   11.578572]  drm_vram_helper_alloc_mm+0x64/0xb0 [drm_vram_helper]=20
+[   11.584655]  ast_mm_init+0x38/0x80 [ast]=20
+[   11.588566]  ast_driver_load+0x474/0xa70 [ast]=20
+[   11.593029]  drm_dev_register+0x144/0x1c8 [drm]=20
+[   11.597573]  drm_get_pci_dev+0xa4/0x168 [drm]=20
+[   11.601919]  ast_pci_probe+0x8c/0x9c [ast]=20
+[   11.606004]  local_pci_probe+0x44/0x98=20
+[   11.609739]  work_for_cpu_fn+0x20/0x30=20
+[   11.613474]  process_one_work+0x1c4/0x41c=20
+[   11.617470]  worker_thread+0x150/0x4b0=20
+[   11.621206]  kthread+0x110/0x114=20
+[   11.624422]  ret_from_fork+0x10/0x18=20
 
-It is again a bit weird to see a realease function in a driver. This
-stuff is usually in the remove remove function.
+This failure is related to a graphics adapter.=20
 
-> +static int vdpasim_create(const guid_t *uuid)
-> +{
-> +	struct vdpasim *vdpasim, *tmp;
-> +	struct virtio_net_config *config;
-> +	struct vdpa_device *vdpa;
-> +	struct device *dev;
-> +	int ret =3D -ENOMEM;
-> +
-> +	mutex_lock(&vsim_list_lock);
-> +	list_for_each_entry(tmp, &vsim_devices_list, next) {
-> +		if (guid_equal(&tmp->uuid, uuid)) {
-> +			mutex_unlock(&vsim_list_lock);
-> +			return -EEXIST;
-> +		}
-> +	}
-> +
-> +	vdpasim =3D kzalloc(sizeof(*vdpasim), GFP_KERNEL);
-> +	if (!vdpasim)
-> +		goto err_vdpa_alloc;
-> +
-> +	vdpasim->buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	if (!vdpasim->buffer)
-> +		goto err_buffer_alloc;
-> +
-> +	vdpasim->iommu =3D vhost_iotlb_alloc(2048, 0);
-> +	if (!vdpasim->iommu)
-> +		goto err_iotlb;
-> +
-> +	config =3D &vdpasim->config;
-> +	config->mtu =3D 1500;
-> +	config->status =3D VIRTIO_NET_S_LINK_UP;
-> +	eth_random_addr(config->mac);
-> +
-> +	INIT_WORK(&vdpasim->work, vdpasim_work);
-> +	spin_lock_init(&vdpasim->lock);
-> +
-> +	guid_copy(&vdpasim->uuid, uuid);
-> +
-> +	list_add(&vdpasim->next, &vsim_devices_list);
-> +	vdpa =3D &vdpasim->vdpa;
-> +
-> +	mutex_unlock(&vsim_list_lock);
-> +
-> +	vdpa =3D &vdpasim->vdpa;
-> +	vdpa->config =3D &vdpasim_net_config_ops;
-> +	vdpa_set_parent(vdpa, &vdpasim_dev->dev);
-> +	vdpa->dev.release =3D vdpasim_release_dev;
-> +
-> +	vringh_set_iotlb(&vdpasim->vqs[0].vring, vdpasim->iommu);
-> +	vringh_set_iotlb(&vdpasim->vqs[1].vring, vdpasim->iommu);
-> +
-> +	dev =3D &vdpa->dev;
-> +	dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
-> +	set_dma_ops(dev, &vdpasim_dma_ops);
-> +
-> +	ret =3D register_vdpa_device(vdpa);
-> +	if (ret)
-> +		goto err_register;
-> +
-> +	sprintf(vdpasim->name, "%pU", uuid);
->+
-> +	ret =3D sysfs_create_link(vdpasim_dev->devices_kobj, &vdpa->dev.kobj,
-> +				vdpasim->name);
-> +	if (ret)
-> +		goto err_link;
+The more complex kdump configurations that use networking stack to NFS =
+mount a filesystem to dump to , or use ssh to copy to another machine,  =
+require more crashkernel memory reservations than perhaps the =
+=E2=80=9Cdefault*=E2=80=9D settings of  a minimal kdump that creates a =
+minimal  vmcore to local storage in  /var/crash. If crashkernel is too =
+small I get Out of Memory issues and the entire vmcore  process fails.=20=
 
-The goto err_link does the wrong unwind, once register is completed
-the error unwind is unregister & put_device, not kfree. This is why I
-recommend to always initalize the device early, and always using
-put_device during error unwinds.
 
-This whole guid thing seems unncessary when the device is immediately
-assigned a vdpa index from the ida. If you were not using syfs you'd
-just return that index from the creation netlink.
+( *default kdump setting I assume are a minimal vmcore to /var/crash =
+using primary boot device where /root is located  )=20
 
-Jason
+
+
+
+>=20
+>=20
+>>> previous discusses:
+>>> 	=
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+6_5_670&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2f=
+Pg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DjOAu1DTDpohsWszalfTCYx46eGF19=
+TSWVLchN5yBPgk&s=3DgS9BLOkmj78lP5L7SP6_VLHwvP249uWKaE2R7N7sxgM&e=3D=20
+>>> 	=
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+6_13_229&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DjOAu1DTDpohsWszalfTCYx46eGF1=
+9TSWVLchN5yBPgk&s=3DU1Nis29n3A7XSBzED53fiE4MDAv5NlxYp1UorvvBOOw&e=3D=20
+>>=20
+>> Another concern from James:
+>> "
+>> With both crashk_low_res and crashk_res, we end up with two entries =
+in /proc/iomem called
+>> "Crash kernel". Because its sorted by address, and kexec-tools stops =
+searching when it
+>> find "Crash kernel", you are always going to get the kernel placed in =
+the lower portion.
+>> "
+>>=20
+>> The kexec-tools code is iterating all "Crash kernel" ranges and add =
+them
+>> in an array.  In X86 code, it uses the higher range to locate memory.
+>=20
+> Then my hurried reading of what the user-space code does was wrong!
+>=20
+> If kexec-tools places the kernel in the low region, there may not be =
+enough memory left
+> for whatever purpose it was reserved for. This was the motivation for =
+giving it a
+> different name.
+>=20
+>=20
+> Thanks,
+>=20
+> James
+>=20
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infradead.org_=
+mailman_listinfo_kexec&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65e=
+apI_JnE&r=3Dt2fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DjOAu1DTDpohsWs=
+zalfTCYx46eGF19TSWVLchN5yBPgk&s=3Dbqp02iQDP_Ez-XvLIvj-IPHqbbZwMPlDgmEcG8vh=
+XFE&e=3D=20
+
