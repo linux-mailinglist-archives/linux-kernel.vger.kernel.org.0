@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EADFB13E78F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CDE13E790
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403993AbgAPR0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:26:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35268 "EHLO mail.kernel.org"
+        id S2404004AbgAPR0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:26:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392250AbgAPR03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:26:29 -0500
+        id S2392306AbgAPR0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:26:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34FDC246CD;
-        Thu, 16 Jan 2020 17:26:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05E4F246D3;
+        Thu, 16 Jan 2020 17:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195588;
-        bh=0FKWZpV9F/7n4Ytt8eDke0QPjCHQ1w9exMsGFljJeqY=;
+        s=default; t=1579195590;
+        bh=Uwhu3H/KgmOENkQrg66cChrMMjw4TYatdgwUWm6jwyo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DPrC15sbEyvas9cHc5yyiUPJpcih69yijeWp9OGM4Tp/5ffZ/lGu2hxZa6OUwkp7Q
-         73KPIFCJKV8AmxeRI8vxVNgtjyMcBFVo5qPevl77czCDn5oTyg3XtE1365rh0xJvkz
-         wFKqVs645ur/yegvgQzkzlMGBeoRFqyWDIQO5/3s=
+        b=UvxTwc3/qjxvPIV2ooOxIJuOPVKt1Jw4ykR8GtBoHTMHoGh6fBl9ZADz+xiygGx8U
+         uNvOJ8eK/10DYXoW0dmqBxMRy0MqiLp/Jgi1DNF3QXCb5mrQ8y4XL7/Gc/eJcdKnGh
+         gDGuNnJd1KS0dl+xc9ZqvjGZJTqFSuszTbY6Z4CE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Oltean <olteanv@gmail.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 167/371] ARM: dts: ls1021: Fix SGMII PCS link remaining down after PHY disconnect
-Date:   Thu, 16 Jan 2020 12:20:39 -0500
-Message-Id: <20200116172403.18149-110-sashal@kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 168/371] media: ov2659: fix unbalanced mutex_lock/unlock
+Date:   Thu, 16 Jan 2020 12:20:40 -0500
+Message-Id: <20200116172403.18149-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,92 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit c7861adbe37f576931650ad8ef805e0c47564b9a ]
+[ Upstream commit 384538bda10913e5c94ec5b5d34bd3075931bcf4 ]
 
-Each eTSEC MAC has its own TBI (SGMII) PCS and private MDIO bus.
-But due to a DTS oversight, both SGMII-compatible MACs of the LS1021 SoC
-are pointing towards the same internal PCS. Therefore nobody is
-controlling the internal PCS of eTSEC0.
+Avoid returning with mutex locked.
 
-Upon initial ndo_open, the SGMII link is ok by virtue of U-boot
-initialization. But upon an ifdown/ifup sequence, the code path from
-ndo_open -> init_phy -> gfar_configure_serdes does not get executed for
-the PCS of eTSEC0 (and is executed twice for MAC eTSEC1). So the SGMII
-link remains down for eTSEC0. On the LS1021A-TWR board, to signal this
-failure condition, the PHY driver keeps printing
-'803x_aneg_done: SGMII link is not ok'.
+Fixes: fa8cb6444c32 ("[media] ov2659: Don't depend on subdev API")
 
-Also, it changes compatible of mdio0 to "fsl,etsec2-mdio" to match
-mdio1 device.
-
-Fixes: 055223d4d22d ("ARM: dts: ls1021a: Enable the eTSEC ports on QDS and TWR")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-Acked-by: Li Yang <leoyang.li@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/ls1021a-twr.dts |  9 ++++++++-
- arch/arm/boot/dts/ls1021a.dtsi    | 11 ++++++++++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov2659.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a-twr.dts b/arch/arm/boot/dts/ls1021a-twr.dts
-index 44715c8ef756..72a3fc63d0ec 100644
---- a/arch/arm/boot/dts/ls1021a-twr.dts
-+++ b/arch/arm/boot/dts/ls1021a-twr.dts
-@@ -143,7 +143,7 @@
- };
- 
- &enet0 {
--	tbi-handle = <&tbi1>;
-+	tbi-handle = <&tbi0>;
- 	phy-handle = <&sgmii_phy2>;
- 	phy-connection-type = "sgmii";
- 	status = "okay";
-@@ -222,6 +222,13 @@
- 	sgmii_phy2: ethernet-phy@2 {
- 		reg = <0x2>;
- 	};
-+	tbi0: tbi-phy@1f {
-+		reg = <0x1f>;
-+		device_type = "tbi-phy";
-+	};
-+};
-+
-+&mdio1 {
- 	tbi1: tbi-phy@1f {
- 		reg = <0x1f>;
- 		device_type = "tbi-phy";
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index 2d20f60947b9..1343c86988c5 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -562,13 +562,22 @@
- 		};
- 
- 		mdio0: mdio@2d24000 {
--			compatible = "gianfar";
-+			compatible = "fsl,etsec2-mdio";
- 			device_type = "mdio";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0x0 0x2d24000 0x0 0x4000>;
- 		};
- 
-+		mdio1: mdio@2d64000 {
-+			compatible = "fsl,etsec2-mdio";
-+			device_type = "mdio";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2d64000 0x0 0x4000>,
-+			      <0x0 0x2d50030 0x0 0x4>;
-+		};
-+
- 		ptp_clock@2d10e00 {
- 			compatible = "fsl,etsec-ptp";
- 			reg = <0x0 0x2d10e00 0x0 0xb0>;
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index 44b0584eb8a6..e7768ed1ff9c 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1136,7 +1136,7 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
+ 		mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
+ 		*mf = fmt->format;
+ #else
+-		return -ENOTTY;
++		ret = -ENOTTY;
+ #endif
+ 	} else {
+ 		s64 val;
 -- 
 2.20.1
 
