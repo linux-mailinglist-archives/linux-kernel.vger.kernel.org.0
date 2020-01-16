@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A189213FE2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0DEE13FF22
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404298AbgAPXdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:33:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43144 "EHLO mail.kernel.org"
+        id S2389872AbgAPX1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:27:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404273AbgAPXdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:33:06 -0500
+        id S2388305AbgAPX0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D8D2073A;
-        Thu, 16 Jan 2020 23:33:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67D1020684;
+        Thu, 16 Jan 2020 23:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217586;
-        bh=az2890KtbyrSb9tOHkx/aXxpV+On7IOFyMfHxl+d5eg=;
+        s=default; t=1579217209;
+        bh=glpq+x/zJdkKmj8HYLHatQTZkXN+xIdD5FaHpHa3FU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wu37+i8BUcjryDR6Cuyvr+HuTecp9n4ycUODA3v2ZmEZYgqXm9skJf01k0lM8b/sF
-         MDh3rlevxefRQ+9vPaWMO7pEFVRNB1Dzp7so9ITOt4zLRcUeAhFtmE4B9+MFgtcknM
-         6jEMQJietnHOs/LP1f4QY2GkeIO50wD7MDq45eSQ=
+        b=dj0oeDqKZlymwlEjZoBOJLxVkvNm0DWPStVsuHk4XxsFS2alrUIVAzGIAvLdbh8cA
+         1wkp2QPij3c2N+sXZwnlurxoMTitaeKnOY3vxAfXe0sHajbirRfrwFUUcOGhEbZLzB
+         F3gzAUf0oq6+dSFZikPzCR0W31M1OMh5ZHBvxSS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Juerg Haefliger <juergh@canonical.com>
-Subject: [PATCH 4.14 32/71] arm64: add sentinel to kpti_safe_list
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 193/203] rxrpc: Dont take call->user_mutex in rxrpc_new_incoming_call()
 Date:   Fri, 17 Jan 2020 00:18:30 +0100
-Message-Id: <20200116231714.206616625@linuxfoundation.org>
+Message-Id: <20200116231801.081015323@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,42 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: David Howells <dhowells@redhat.com>
 
-commit 71c751f2a43fa03fae3cf5f0067ed3001a397013 upstream.
+[ Upstream commit 13b7955a0252e15265386b229b814152f109b234 ]
 
-We're missing a sentinel entry in kpti_safe_list. Thus is_midr_in_range_list()
-can walk past the end of kpti_safe_list. Depending on the contents of memory,
-this could erroneously match a CPU's MIDR, cause a data abort, or other bad
-outcomes.
+Standard kernel mutexes cannot be used in any way from interrupt or softirq
+context, so the user_mutex which manages access to a call cannot be a mutex
+since on a new call the mutex must start off locked and be unlocked within
+the softirq handler to prevent userspace interfering with a call we're
+setting up.
 
-Add the sentinel entry to avoid this.
+Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
+upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
+in dmesg for each a new call that comes in from the server.  Whilst it
+*seems* like it should be okay, since the accept path uses trylock, there
+are issues with PI boosting and marking the wrong task as the owner.
 
-Fixes: be5b299830c63ed7 ("arm64: capabilities: Add support for checks based on a list of MIDRs")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-Tested-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Juerg Haefliger <juergh@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by not taking the mutex in the softirq path at all.  It's not
+obvious that there should be any need for it as the state is set before the
+first notification is generated for the new call.
 
+There's also no particular reason why the link-assessing ping should be
+triggered inside the mutex.  It's not actually transmitted there anyway,
+but rather it has to be deferred to a workqueue.
+
+Further, I don't think that there's any particular reason that the socket
+notification needs to be done from within rx->incoming_lock, so the amount
+of time that lock is held can be shortened too and the ping prepared before
+the new call notification is sent.
+
+Fixes: 540b1c48c37a ("rxrpc: Fix deadlock between call creation and sendmsg/recvmsg")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Will Deacon <will@kernel.org>
+cc: Davidlohr Bueso <dave@stgolabs.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/rxrpc/call_accept.c | 20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -836,6 +836,7 @@ static bool unmap_kernel_at_el0(const st
- 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
- 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
- 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
-+		{ /* sentinel */ }
- 	};
- 	char const *str = "kpti command line option";
- 	bool meltdown_safe;
+diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
+index 3685b1732f65..44fa22b020ef 100644
+--- a/net/rxrpc/call_accept.c
++++ b/net/rxrpc/call_accept.c
+@@ -381,18 +381,6 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 	trace_rxrpc_receive(call, rxrpc_receive_incoming,
+ 			    sp->hdr.serial, sp->hdr.seq);
+ 
+-	/* Lock the call to prevent rxrpc_kernel_send/recv_data() and
+-	 * sendmsg()/recvmsg() inconveniently stealing the mutex once the
+-	 * notification is generated.
+-	 *
+-	 * The BUG should never happen because the kernel should be well
+-	 * behaved enough not to access the call before the first notification
+-	 * event and userspace is prevented from doing so until the state is
+-	 * appropriate.
+-	 */
+-	if (!mutex_trylock(&call->user_mutex))
+-		BUG();
+-
+ 	/* Make the call live. */
+ 	rxrpc_incoming_call(rx, call, skb);
+ 	conn = call->conn;
+@@ -433,6 +421,9 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 		BUG();
+ 	}
+ 	spin_unlock(&conn->state_lock);
++	spin_unlock(&rx->incoming_lock);
++
++	rxrpc_send_ping(call, skb);
+ 
+ 	if (call->state == RXRPC_CALL_SERVER_ACCEPTING)
+ 		rxrpc_notify_socket(call);
+@@ -444,11 +435,6 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
+ 	 */
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ 
+-	spin_unlock(&rx->incoming_lock);
+-
+-	rxrpc_send_ping(call, skb);
+-	mutex_unlock(&call->user_mutex);
+-
+ 	_leave(" = %p{%d}", call, call->debug_id);
+ 	return call;
+ 
+-- 
+2.20.1
+
 
 
