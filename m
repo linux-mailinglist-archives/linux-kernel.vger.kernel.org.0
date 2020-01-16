@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FE113FA82
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 21:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C80013FA87
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 21:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387773AbgAPUW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 15:22:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733278AbgAPUWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 15:22:55 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD922081E
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 20:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579206174;
-        bh=AWTq77yPH1eJXFHw5c/ihwZ/W+ttmiGY+qYVIL2DNXo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WjiY6Fz2v1BRFwTw8CEV+ZGeTVwybGg7qEvOG+e6kceB8oCBxevUtjC+sxHFejHAw
-         +oKShNXbfNSUG124nEjNg9pxFVCYhjNP142xTdOd2FqkhnrKlA/xPHMGsS+TxqWkRE
-         U5OV05EgZIcNAZu83S6Cza9kPCZDXt9/fFQCjNYE=
-Received: by mail-wm1-f53.google.com with SMTP id p9so5156353wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 12:22:54 -0800 (PST)
-X-Gm-Message-State: APjAAAVz0yTMhsVFSlTyDrlUjQIAT0Pa65ponkGojZ9j9DzRFBO38Xy+
-        2ObTdk4XnnLAhA1P3eflzNA5CR6bQqmtPDRULS3PMg==
-X-Google-Smtp-Source: APXvYqye2EDj0a90ApFnSVIDyfTmrBlVCmi50h4FuEffTXlFfhQYLFZAcgiL0SS3ilsUicD1HIv6uxzlc43xpc781uA=
-X-Received: by 2002:a05:600c:20c7:: with SMTP id y7mr802627wmm.21.1579206173156;
- Thu, 16 Jan 2020 12:22:53 -0800 (PST)
+        id S2387809AbgAPUZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 15:25:00 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34662 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731740AbgAPUY7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 15:24:59 -0500
+Received: by mail-qt1-f196.google.com with SMTP id 5so20027546qtz.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 12:24:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4FrKYxGLex7KY55dL8lMxEeBinvzP+LQNyH65PshZEs=;
+        b=Zp0+uBpaH3H0gdT2e0qKjUQyxwU7AyZ6QAUooOJGqKQnpYTBgwYSKuk3OGdkdOsdPY
+         t5u+d3Lapyj6ThZbdd1RCyWbjUZAcMSTQ9jNlbcv8MxMLQzY7QgQHC68cx/9d3VErCGS
+         QOTeVzPheXSW4YCSfGw5keEWNgJtybHXO17xk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4FrKYxGLex7KY55dL8lMxEeBinvzP+LQNyH65PshZEs=;
+        b=mTcypXpPwBLwDGiaoHp7E7Pzn+ByhV0R4IuxZwPhzR8J7XniGBCHz/AF4kvvbp+rmB
+         KL0Ka0LaLra5ffAw+aMtLaaLlw//G22TsdE6ecojsywtWzlIPfEzqgAs34hWMGyBC4bT
+         6flkwZ8lgiw8P7ZLZWnTYP60PW8yA/05WyB9GzZsnogNNJp0+UGRf7NSwTBQvSExwoeK
+         lPy6ZncyRrC9SiXB+Nl1Q6TFJb5sbR0nqDJSnDq6rRFwHX7sgKhhFXrsjX0Cz5EV/oPM
+         0Pjhss48SN+BOmyuAcgp3/903Y7mk4Vb/8jvJJ/HIWkB5LwpPb7KRX2UDd/IfzOFkCUo
+         kLiw==
+X-Gm-Message-State: APjAAAV3vzPRe0eqoD0mSNYNzrKFPTYWxRqvfkSKKMo6rFijzzwWxyog
+        1/g59J0AuFbGhBhllhcaGsLCKLJZ7hPGiIax2yYsPg==
+X-Google-Smtp-Source: APXvYqxHVblBPwuby3cFHXzmdBwt0WgKSD+6vUDAQK5gqjeHZSLzAhLvh0t7AUkPdufndc7Z/+2/a7B3EoY9PXIJZpQ=
+X-Received: by 2002:ac8:187b:: with SMTP id n56mr4252669qtk.173.1579206298474;
+ Thu, 16 Jan 2020 12:24:58 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1578934751.git.christophe.leroy@c-s.fr> <381e547dbb3c48fd39d6cf208033bba38ad048fb.1578934751.git.christophe.leroy@c-s.fr>
- <87ftghbpuu.fsf@nanos.tec.linutronix.de> <d2de3211-9d7c-513e-fe0f-8bdce623fb65@c-s.fr>
- <b5fddcf8-99ff-fc0d-40c0-0eb81ad4e94a@c-s.fr> <87k15rwuxm.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87k15rwuxm.fsf@nanos.tec.linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 16 Jan 2020 12:22:41 -0800
-X-Gmail-Original-Message-ID: <CALCETrWOENu2k3aGNO-oiY1Sj8=cG9mMZ8eOepHOzdu25vFVVA@mail.gmail.com>
-Message-ID: <CALCETrWOENu2k3aGNO-oiY1Sj8=cG9mMZ8eOepHOzdu25vFVVA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 08/12] lib: vdso: allow arches to provide vdso data pointer
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        X86 ML <x86@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>
+References: <CABWYdi25Y=zrfdnitT3sSgC3UqcFHfz6-N2YP7h2TJai=JH_zg@mail.gmail.com>
+ <20200109161632.GB8547@cmpxchg.org> <CABWYdi1Hs3Jgn5Rq=4X9w2+kG4mfsbGuV=8UMS=6mr=SVjOfVw@mail.gmail.com>
+ <20200115165543.GA47772@cmpxchg.org>
+In-Reply-To: <20200115165543.GA47772@cmpxchg.org>
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Thu, 16 Jan 2020 12:24:47 -0800
+Message-ID: <CABWYdi3BrQHaM_Np81W8f=EFU09cqqJARbywEvhq_XWoDqrBPw@mail.gmail.com>
+Subject: Re: Lower than expected CPU pressure in PSI
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@cloudflare.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 2:35 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> static __maybe_unused int
-> __cvdso_data_clock_gettime(clockid_t clock, struct __kernel_timespec *ts,
->                            const struct vdso_data *vd)
-> {
->         .....
-> }
->
-> static __maybe_unused int
-> __cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
-> {
->         const struct vdso_data *vd = __arch_get_vdso_data();
->
->         return __cvdso_data_clock_gettime(clock, ts, vd);
-> }
->
-> and then use __cvdso_data_clock_gettime on PPC and let the other archs
-> unmodified.
->
->
+This definitely helps! It would be nice to add this as a section here:
 
-FWIW, I did some experiments on x86 with gcc 9.2.  gcc 9.2 uses
-rip-relative accesses if I simplify the config enough and otherwise
-materializes the pointer.  Presumably it decides that the code size
-reduction is worth it if there are a lot of accesses.
+* https://www.kernel.org/doc/html/latest/accounting/psi.html
 
-I suspect that tglx's suggestion will be fine or at worst will add
-negligible overhead on x86_64.
+
+On Wed, Jan 15, 2020 at 8:55 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Fri, Jan 10, 2020 at 11:28:32AM -0800, Ivan Babrou wrote:
+> > I applied the patch on top of 5.5.0-rc3 and it's definitely better
+> > now, both competing cgroups report 500ms/s delay. Feel free to add
+> > Tested-by from me.
+>
+> Thanks, Ivan!
+>
+> > I'm still seeing /unified/system.slice at 385ms/s and /unified.slice
+> > at 372ms/s, do you have an explanation for that part? Maybe it's
+> > totally reasonable, but warrants a patch for documentation.
+>
+> Yes, this is a combination of CPU pinning and how pressure is
+> calculated in SMP systems.
+>
+> The stall times are defined as lost compute potential - which scales
+> with the number of concurrent threads - normalized to wallclock
+> time. See the "Multiple CPUs" section in kernel/sched/psi.c.
+>
+> By restricting the CPUs in system.slice, there is less compute
+> available in that group than in the parent, which means that the
+> relative loss of potential can be higher.
+>
+> It's a bit unintuitive because most cgroup metrics are plain numbers
+> that add up to bigger numbers as you go up the tree. If we exported
+> both the numerator (waste) and denominator (compute potential) here,
+> the numbers would act more conventionally, with parent numbers always
+> bigger than the child's. But because pressure is normalized to
+> wallclock time, you only see the ratio at each level, and that can
+> shrink as you go up the tree if lower levels are CPU-constrained.
+>
+> We could have exported both numbers, but for most usecases that would
+> be more confusing than helpful. And in practice it's the ratio that
+> really matters: the pressure in the leaf cgroups is high due to the
+> CPU restriction; but when you go higher up the tree and look at not
+> just the pinned tasks, but also include tasks in other groups that
+> have more CPUs available to them, the aggregate productivity at that
+> level *is* actually higher.
+>
+> I hope that helps!
