@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B27913FED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB1113FE5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391239AbgAPX3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34592 "EHLO mail.kernel.org"
+        id S2404130AbgAPXek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:34:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391231AbgAPX3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:29:10 -0500
+        id S2404292AbgAPXdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:33:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3626620684;
-        Thu, 16 Jan 2020 23:29:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8822B2072B;
+        Thu, 16 Jan 2020 23:33:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217349;
-        bh=IqO6GUM5+oe/Wr6novD80hwQbjL+DQlazjx76R8wrGg=;
+        s=default; t=1579217591;
+        bh=zUwbC1w2zhbHABY8M4rwoXqvkrgONGKbYDP+0nH1LKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EEPKfTDXqf5DnxkMj9YQMphsSUF2re98NLbVjA8p/O3yrAT1j7iBUONI71IoKVLYy
-         Wj1Llg45SHuIl9M5u2LIWv1HlA4F8Z0o5l9hZikaMZf64MlV6myNHWndm9CHLF1Ez7
-         87BLFGlw1FpfXITS4Br9uosvI7GXE2lGetitvZyY=
+        b=m7Y4IkSBJvoIz4bSnW12QveE+P6tlNbDR1IFQtgr81EM1a1PcR/eGObGnj0VuDiZz
+         Gz9HWNo+Y0ZQ7TKpDW249sSAyru9uuN+vbgfbil/cIi595VVnmfH83AxY4MAAk3iU/
+         jsUTSS6Djaf5bpwigYhH5v1qHMO3RwY7toYxhHMs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marian Mihailescu <mihailescu2m@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4.19 47/84] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Fri, 17 Jan 2020 00:18:21 +0100
-Message-Id: <20200116231719.355968824@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Swapna Manupati <swapna.manupati@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Srinivas Neeli <srinivas.neeli@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 24/71] gpio: zynq: Fix for bug in zynq_gpio_restore_context API
+Date:   Fri, 17 Jan 2020 00:18:22 +0100
+Message-Id: <20200116231712.900067453@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Swapna Manupati <swapna.manupati@xilinx.com>
 
-commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 upstream.
+commit 36f2e7207f21a83ca0054116191f119ac64583ab upstream.
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+This patch writes the inverse value of Interrupt Mask Status
+register into the Interrupt Enable register in
+zynq_gpio_restore_context API to fix the bug.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: e11de4de28c0 ("gpio: zynq: Add support for suspend resume")
+Signed-off-by: Swapna Manupati <swapna.manupati@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
+Link: https://lore.kernel.org/r/1577362338-28744-2-git-send-email-srinivas.neeli@xilinx.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/samsung/clk-exynos5420.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-zynq.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -171,6 +171,8 @@ static const unsigned long exynos5x_clk_
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -639,6 +639,8 @@ static void zynq_gpio_restore_context(st
+ 	unsigned int bank_num;
+ 
+ 	for (bank_num = 0; bank_num < gpio->p_data->max_bank; bank_num++) {
++		writel_relaxed(ZYNQ_GPIO_IXR_DISABLE_ALL, gpio->base_addr +
++				ZYNQ_GPIO_INTDIS_OFFSET(bank_num));
+ 		writel_relaxed(gpio->context.datalsw[bank_num],
+ 			       gpio->base_addr +
+ 			       ZYNQ_GPIO_DATA_LSW_OFFSET(bank_num));
+@@ -648,9 +650,6 @@ static void zynq_gpio_restore_context(st
+ 		writel_relaxed(gpio->context.dirm[bank_num],
+ 			       gpio->base_addr +
+ 			       ZYNQ_GPIO_DIRM_OFFSET(bank_num));
+-		writel_relaxed(gpio->context.int_en[bank_num],
+-			       gpio->base_addr +
+-			       ZYNQ_GPIO_INTEN_OFFSET(bank_num));
+ 		writel_relaxed(gpio->context.int_type[bank_num],
+ 			       gpio->base_addr +
+ 			       ZYNQ_GPIO_INTTYPE_OFFSET(bank_num));
+@@ -660,6 +659,9 @@ static void zynq_gpio_restore_context(st
+ 		writel_relaxed(gpio->context.int_any[bank_num],
+ 			       gpio->base_addr +
+ 			       ZYNQ_GPIO_INTANY_OFFSET(bank_num));
++		writel_relaxed(~(gpio->context.int_en[bank_num]),
++			       gpio->base_addr +
++			       ZYNQ_GPIO_INTEN_OFFSET(bank_num));
+ 	}
+ }
+ 
 
 
