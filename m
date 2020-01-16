@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 837E113FD22
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7565913FD24
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387645AbgAPXWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49936 "EHLO mail.kernel.org"
+        id S2388828AbgAPXW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:22:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388828AbgAPXWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:22:10 -0500
+        id S2390907AbgAPXWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:22:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6E922075B;
-        Thu, 16 Jan 2020 23:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C8682082F;
+        Thu, 16 Jan 2020 23:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216930;
-        bh=YHCmKvqgNloUQ1CrqSeEmRJBO0gb6SZ/9jXI8HGzTVI=;
+        s=default; t=1579216934;
+        bh=LBIl3KGH8MIU5Exw1WYg3MjvGaf/2BdugHkjvTznKk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d9wCnBwq3I8qsfM3eUwAEt18A5S+3SeTIZcUVDteF1tbf9b8FN66HGWhcr6A/6zz5
-         yMTftSC2gwP2XB2NsMwYf1zKoGGTWJuKysGL4S59esz+XzJbhFXcJoWtNcLrm8MtkV
-         T3tFP8an61TXvOqHkqmyLkrSw0XjJn9wZe6gbR7g=
+        b=fkNhBNfnzXibjA4v6rcSwoO9pZVmX9JnlsDr5fqQD1WfN6YPmj5ydkZpxbM+36dD1
+         2Ye0zE5qoG/SP0YxNqGmMOiKHXAz2xeqldh7AKs4NdeSKkHjqr+JDakRuRsXSwXTUW
+         w4PxljrOlcJU08n3/qd18aVNGa9epZoP9W1Aoh7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>
-Subject: [PATCH 5.4 078/203] bpf: Make use of probe_user_write in probe write helper
-Date:   Fri, 17 Jan 2020 00:16:35 +0100
-Message-Id: <20200116231751.315347781@linuxfoundation.org>
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>
+Subject: [PATCH 5.4 080/203] bpf: Support pre-2.25-binutils objcopy for vmlinux BTF
+Date:   Fri, 17 Jan 2020 00:16:37 +0100
+Message-Id: <20200116231751.746152866@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,49 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Stanislav Fomichev <sdf@google.com>
 
-commit eb1b66887472eaa7342305b7890ae510dd9d1a79 upstream.
+commit da5fb18225b49b97bb37c51bcbbb2990a507c364 upstream.
 
-Convert the bpf_probe_write_user() helper to probe_user_write() such that
-writes are not attempted under KERNEL_DS anymore which is buggy as kernel
-and user space pointers can have overlapping addresses. Also, given we have
-the access_ok() check inside probe_user_write(), the helper doesn't need
-to do it twice.
+If vmlinux BTF generation fails, but CONFIG_DEBUG_INFO_BTF is set,
+.BTF section of vmlinux is empty and kernel will prohibit
+BPF loading and return "in-kernel BTF is malformed".
 
-Fixes: 96ae52279594 ("bpf: Add bpf_probe_write_user BPF helper to be called in tracers")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+--dump-section argument to binutils' objcopy was added in version 2.25.
+When using pre-2.25 binutils, BTF generation silently fails. Convert
+to --only-section which is present on pre-2.25 binutils.
+
+Documentation/process/changes.rst states that binutils 2.21+
+is supported, not sure those standards apply to BPF subsystem.
+
+v2:
+* exit and print an error if gen_btf fails (John Fastabend)
+
+v3:
+* resend with Andrii's Acked-by/Tested-by tags
+
+Fixes: 341dfcf8d78ea ("btf: expose BTF info through sysfs")
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Tested-by: Andrii Nakryiko <andriin@fb.com>
 Acked-by: Andrii Nakryiko <andriin@fb.com>
-Link: https://lore.kernel.org/bpf/841c461781874c07a0ee404a454c3bc0459eed30.1572649915.git.daniel@iogearbox.net
+Cc: John Fastabend <john.fastabend@gmail.com>
+Link: https://lore.kernel.org/bpf/20191127161410.57327-1-sdf@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/bpf_trace.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ scripts/link-vmlinux.sh |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -163,7 +163,7 @@ static const struct bpf_func_proto bpf_p
- 	.arg3_type	= ARG_ANYTHING,
- };
- 
--BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
-+BPF_CALL_3(bpf_probe_write_user, void __user *, unsafe_ptr, const void *, src,
- 	   u32, size)
- {
- 	/*
-@@ -186,10 +186,8 @@ BPF_CALL_3(bpf_probe_write_user, void *,
- 		return -EPERM;
- 	if (unlikely(!nmi_uaccess_okay()))
- 		return -EPERM;
--	if (!access_ok(unsafe_ptr, size))
--		return -EPERM;
- 
--	return probe_kernel_write(unsafe_ptr, src, size);
-+	return probe_user_write(unsafe_ptr, src, size);
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -127,7 +127,8 @@ gen_btf()
+ 		cut -d, -f1 | cut -d' ' -f2)
+ 	bin_format=$(LANG=C ${OBJDUMP} -f ${1} | grep 'file format' | \
+ 		awk '{print $4}')
+-	${OBJCOPY} --dump-section .BTF=.btf.vmlinux.bin ${1} 2>/dev/null
++	${OBJCOPY} --set-section-flags .BTF=alloc -O binary \
++		--only-section=.BTF ${1} .btf.vmlinux.bin 2>/dev/null
+ 	${OBJCOPY} -I binary -O ${bin_format} -B ${bin_arch} \
+ 		--rename-section .data=.BTF .btf.vmlinux.bin ${2}
  }
+@@ -253,6 +254,10 @@ btf_vmlinux_bin_o=""
+ if [ -n "${CONFIG_DEBUG_INFO_BTF}" ]; then
+ 	if gen_btf .tmp_vmlinux.btf .btf.vmlinux.bin.o ; then
+ 		btf_vmlinux_bin_o=.btf.vmlinux.bin.o
++	else
++		echo >&2 "Failed to generate BTF for vmlinux"
++		echo >&2 "Try to disable CONFIG_DEBUG_INFO_BTF"
++		exit 1
+ 	fi
+ fi
  
- static const struct bpf_func_proto bpf_probe_write_user_proto = {
 
 
