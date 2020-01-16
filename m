@@ -2,111 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C26913DF24
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:48:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2346813DF30
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgAPPsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:48:18 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45718 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbgAPPsS (ORCPT
+        id S1726936AbgAPPs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:48:57 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43263 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgAPPs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:48:18 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b22so8469937pls.12;
-        Thu, 16 Jan 2020 07:48:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=huTcCeKRdO6T2NesAaGqeynPCc8WvA8tugh/WJ8Dtbc=;
-        b=G0x92qOpFp0qKI6nZ7kGQOhD71Zn/VDKWFJJCIrflldCLCzZXOHAORHnXkmDRhvFfy
-         5zUGA5yj0/lLifVw4OCSmPfgq29wdN92rwS5addh6NEsEpUCmxii5jch9eJdJuEKH2oD
-         CKSWUCQbU1UozBSDGofweLzCC/1HV5/Q1PI6gw4wBFCtwm5HQPV5Y56GaBXgnfcH5ZQj
-         2414/2w2MxK10PI3mHJS3cybbwxRPMQVLKh/VjbaMK/B3E3x0RJZ7WrXE2piq3FvhuTr
-         20ls3AX5kjhhCCOKeRzNx7oKXw9v3oSQtvs+QHjUrcYBdpFFvCTmmygweiAqCD1T5G8M
-         pbXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=huTcCeKRdO6T2NesAaGqeynPCc8WvA8tugh/WJ8Dtbc=;
-        b=oGCy50e5zpNSkQ8mn32rR8PP+Bk0d5FfgakGuxqizir95ZRasnL1ZsGSYadaYfLM1f
-         WBry2ZnKGAzvyBNdZFdmwZOlP94kDtdzF6gn+y6Jz2+5m1djKmDNGUTgi4EHF2goFNRy
-         u9Emindl1lIr+DBkulZcR4vPB6n88R266DJ/zuUxLuTO7y+P4MLpLSY4Dw3P/TWAikzT
-         oddg5O+3R8OXmYZTrHnn+dagnRyNhPkPWoTDKOOMcmEAD3Hrms64ieR7Z+ROYGDeDZe5
-         A1kQxKXIx9fi8iXO9TuPWGJlIj0uuiCeE9h2KrqO/8ozOjNVGhBgX0U25bAYVlFJvdCH
-         RPSg==
-X-Gm-Message-State: APjAAAXvk/OBEuZzVhalKua5dIXcr7TjIum57dgP+4mtKNZ5JvxfgcX8
-        kto8M4pWQ0mhUjNFubmf8rI6l2JN
-X-Google-Smtp-Source: APXvYqyf1XdfYZahE1H4voslQkQxT590gcKa4OeO8qRpdhQpm30jdS2BgPlQ4bM5jJxEU4tr8jUqLg==
-X-Received: by 2002:a17:90a:246c:: with SMTP id h99mr7613283pje.134.1579189697928;
-        Thu, 16 Jan 2020 07:48:17 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s13sm8048976pjp.1.2020.01.16.07.48.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Jan 2020 07:48:17 -0800 (PST)
-Date:   Thu, 16 Jan 2020 07:48:15 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Srinivas Neeli <srinivas.neeli@xilinx.com>
-Cc:     michal.simek@xilinx.com, shubhrajyoti.datta@xilinx.com,
-        sgoud@xilinx.com, wim@linux-watchdog.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        git@xilinx.com
-Subject: Re: [PATCH 1/9] watchdog: of_xilinx_wdt: Add comment to spinlock
-Message-ID: <20200116154815.GA23637@roeck-us.net>
-References: <1579181217-31127-1-git-send-email-srinivas.neeli@xilinx.com>
- <1579181217-31127-2-git-send-email-srinivas.neeli@xilinx.com>
+        Thu, 16 Jan 2020 10:48:56 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1is7O8-0003V8-IY; Thu, 16 Jan 2020 15:48:52 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rijo Thomas <Rijo-john.Thomas@amd.com>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] tee: fix memory allocation failure checks on drv_data and amdtee
+Date:   Thu, 16 Jan 2020 15:48:52 +0000
+Message-Id: <20200116154852.84532-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579181217-31127-2-git-send-email-srinivas.neeli@xilinx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 06:56:49PM +0530, Srinivas Neeli wrote:
-> From: Srinivas Goud <srinivas.goud@xilinx.com>
-> 
-> Based on checkpatch every spinlock should be documented.
-> The patch is fixing this issue:
-> ./scripts/checkpatch.pl --strict -f drivers/watchdog/of_xilinx_wdt.c
-> CHECK: spinlock_t definition without comment
-> +	spinlock_t spinlock;
+From: Colin Ian King <colin.king@canonical.com>
 
-One of the most useless feedback messages from checkpatch.
+Currently the memory allocation failure checks on drv_data and
+amdtee are using IS_ERR rather than checking for a null pointer.
+Fix these checks to use the conventional null pointer check.
 
-> 
-> Signed-off-by: Srinivas Goud <srinivas.goud@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->  drivers/watchdog/of_xilinx_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
-> index 7fe4f7c3f7ce..00549164b3d7 100644
-> --- a/drivers/watchdog/of_xilinx_wdt.c
-> +++ b/drivers/watchdog/of_xilinx_wdt.c
-> @@ -40,7 +40,7 @@
->  struct xwdt_device {
->  	void __iomem *base;
->  	u32 wdt_interval;
-> -	spinlock_t spinlock;
-> +	spinlock_t spinlock; /* spinlock for register handling */
+Addresses-Coverity: ("Dereference null return")
+Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+V2: update to apply against cryptodev-2.6 tree tip
+---
+ drivers/tee/amdtee/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I don't see the added value here. Besides, what does the lock actually do ?
-Watchdog drivers are single-open, so it seems quite difficult for any
-of the protected functions to be called multiple times. The spinlock doesn't
-disable interrupts, so register accesses by other drivers are still possible.
-What am I missing ?
+diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+index be8937eb5d43..6370bb55f512 100644
+--- a/drivers/tee/amdtee/core.c
++++ b/drivers/tee/amdtee/core.c
+@@ -446,11 +446,11 @@ static int __init amdtee_driver_init(void)
+ 	}
+ 
+ 	drv_data = kzalloc(sizeof(*drv_data), GFP_KERNEL);
+-	if (IS_ERR(drv_data))
++	if (!drv_data)
+ 		return -ENOMEM;
+ 
+ 	amdtee = kzalloc(sizeof(*amdtee), GFP_KERNEL);
+-	if (IS_ERR(amdtee)) {
++	if (!amdtee) {
+ 		rc = -ENOMEM;
+ 		goto err_kfree_drv_data;
+ 	}
+-- 
+2.24.0
 
-Guenter
-
->  	struct watchdog_device xilinx_wdt_wdd;
->  	struct clk		*clk;
->  };
-> -- 
-> 2.7.4
-> 
