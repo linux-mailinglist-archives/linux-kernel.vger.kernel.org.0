@@ -2,84 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6338113EF58
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16DCD13EF9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395389AbgAPSOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:14:41 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:43202 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395373AbgAPSOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:14:36 -0500
-Received: by mail-ua1-f68.google.com with SMTP id o42so7957170uad.10
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:14:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t4/SSgF43F8oOB5ed/Mu+sVQAJxuMOrgg0eXAd3RvzI=;
-        b=jhtLpi9WlDS+egj1OpzohuuS9pQgMd5pKXv8LVi9TmM1esvDD/PbLI6+bFwE6vYUwl
-         YbwYAIPyLL2iLWWFZ4ytb5/fY8kOXcb6A2/+9FD7Gi+C+JXHa3WLLW4PAc3A1LG6fGUB
-         fcGO38CrloQAqONKKE9kyts4coCH7PcaZdcHpdbxmqab0w+fwQS/lEgAZr4mVDvHpJYZ
-         zSX2xCdkYeoNMT4FCcjJ3ScoEaWXWSt7GQBFRFwgocvBKdk4BkZaxg5rW15RDuLSco8V
-         obn4/UfOsChIVw5BO4a6LT+gT/AarmEyS+XJlpk0+EheBerIjl/hOt6iDgKZdetSZVhc
-         J+nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t4/SSgF43F8oOB5ed/Mu+sVQAJxuMOrgg0eXAd3RvzI=;
-        b=QRdxgyuTe0s/y4LtfObxyaIyp8rJWRQl0SRSg3rv9NUL7peD2nCergVLcs7XyskU1Y
-         Ah0A2a0LR37kYeMyfejgUY9mZ5AcPlGS7dxQUyYdhXqBHy7wsvAaF5kyJnrDma23Wa2F
-         KjhdLWV189qJxeJKimDpKPGhdjfhLGal5Zc9p1nMwFvDYU26vU3EQVRrqrKFauolX+C9
-         9LU+R2+TzZwEx20CNvHMAOLM+iDg1/CAlGv1a4D4/o3k5GQacHBVwZv1rfLEjYGfbXXO
-         svNoav03zqKEjejFQQHaf2lRvtC3m0XcTJepYozx5FRSq/GubxH4vF/kvinpCOXXIACH
-         4X7Q==
-X-Gm-Message-State: APjAAAXfm0VHggWtjGnBrtDWLWY40efwIgKMAIV4n4xeDlbTHW4amgD8
-        wbz6xKlFiiH382oJ0z+ciEn7BAkI5pQAlKHJApZwug==
-X-Google-Smtp-Source: APXvYqxIIWRmLZKLxckIhAMKbhmdzDCTkxbmnPMWtT8X50l5n92iMdw1uWSvaleMeLdpwMB55APzs6jyZJod3pJATys=
-X-Received: by 2002:ab0:422:: with SMTP id 31mr20481306uav.98.1579198475361;
- Thu, 16 Jan 2020 10:14:35 -0800 (PST)
+        id S2388118AbgAPSQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:16:26 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2275 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405344AbgAPSQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:16:23 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id EF11B2307849F84166D6;
+        Thu, 16 Jan 2020 18:16:19 +0000 (GMT)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 16 Jan 2020 18:16:19 +0000
+Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 16 Jan
+ 2020 18:16:19 +0000
+Date:   Thu, 16 Jan 2020 18:16:18 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Sasha Levin <sashal@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Chuhong Yuan <hslester96@gmail.com>,
+        Brian Masney <masneyb@onstation.org>,
+        <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.19 482/671] iio: tsl2772: Use
+ devm_add_action_or_reset for tsl2772_chip_off
+Message-ID: <20200116181618.000063c2@Huawei.com>
+In-Reply-To: <20200116170509.12787-219-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
+        <20200116170509.12787-219-sashal@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191206221351.38241-1-samitolvanen@google.com> <20191206221351.38241-13-samitolvanen@google.com>
- <20200116174648.GE21396@willie-the-truck>
-In-Reply-To: <20200116174648.GE21396@willie-the-truck>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Thu, 16 Jan 2020 10:14:24 -0800
-Message-ID: <CABCJKucWusLEaLyq=Dv5pWjxcUX7Q9dL=fSstwNK4eJ_6k33=w@mail.gmail.com>
-Subject: Re: [PATCH v6 12/15] arm64: vdso: disable Shadow Call Stack
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.57]
+X-ClientProxiedBy: lhreml733-chm.china.huawei.com (10.201.108.84) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 9:46 AM Will Deacon <will@kernel.org> wrote:
-> Should we be removing -ffixed-x18 too, or does that not propagate here
-> anyway?
+On Thu, 16 Jan 2020 12:02:00 -0500
+Sasha Levin <sashal@kernel.org> wrote:
 
-No, we shouldn't touch -ffixed-x18 here. The vDSO is always built with
-x18 reserved since commit 98cd3c3f83fbb ("arm64: vdso: Build vDSO with
--ffixed-x18").
+> From: Chuhong Yuan <hslester96@gmail.com>
+> 
+> [ Upstream commit 338084135aeddb103624a6841972fb8588295cc6 ]
+> 
+> Use devm_add_action_or_reset to call tsl2772_chip_off
+> when the device is removed.
+> This also fixes the issue that the chip is turned off
+> before the device is unregistered.
+> 
+> Not marked for stable as fairly hard to hit the bug and
+> this is in the middle of a set making other cleanups
+> to the driver.  Hence will probably need explicit backporting.
 
-Sami
+Guess I was wrong and it does go on cleanly.  I took a quick
+look at current 4.19 driver and looks like it's fine on it's
+own.
+
+We need to be careful with this one in general though.
+
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for 4.19
+
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> Fixes: c06c4d793584 ("staging: iio: tsl2x7x/tsl2772: move out of staging")
+> Reviewed-by: Brian Masney <masneyb@onstation.org>
+> Tested-by: Brian Masney <masneyb@onstation.org>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/iio/light/tsl2772.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
+> index df5b2a0da96c..f2e308c6d6d7 100644
+> --- a/drivers/iio/light/tsl2772.c
+> +++ b/drivers/iio/light/tsl2772.c
+> @@ -716,6 +716,13 @@ static int tsl2772_chip_off(struct iio_dev *indio_dev)
+>  	return tsl2772_write_control_reg(chip, 0x00);
+>  }
+>  
+> +static void tsl2772_chip_off_action(void *data)
+> +{
+> +	struct iio_dev *indio_dev = data;
+> +
+> +	tsl2772_chip_off(indio_dev);
+> +}
+> +
+>  /**
+>   * tsl2772_invoke_change - power cycle the device to implement the user
+>   *                         parameters
+> @@ -1711,9 +1718,14 @@ static int tsl2772_probe(struct i2c_client *clientp,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	ret = devm_add_action_or_reset(&clientp->dev,
+> +					tsl2772_chip_off_action,
+> +					indio_dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	ret = iio_device_register(indio_dev);
+>  	if (ret) {
+> -		tsl2772_chip_off(indio_dev);
+>  		dev_err(&clientp->dev,
+>  			"%s: iio registration failed\n", __func__);
+>  		return ret;
+> @@ -1740,8 +1752,6 @@ static int tsl2772_remove(struct i2c_client *client)
+>  {
+>  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+>  
+> -	tsl2772_chip_off(indio_dev);
+> -
+>  	iio_device_unregister(indio_dev);
+>  
+>  	return 0;
+
+
