@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7662513FFFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D4913FFDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391931AbgAPXqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:46:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48742 "EHLO mail.kernel.org"
+        id S2390675AbgAPXVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390830AbgAPXV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:21:29 -0500
+        id S2388331AbgAPXVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:21:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABFA7206D9;
-        Thu, 16 Jan 2020 23:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FE27217F4;
+        Thu, 16 Jan 2020 23:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216889;
-        bh=KDv9/903esDZ2Zd4v1or1l8x4BzyIxvvyXJ7g4xgGB4=;
+        s=default; t=1579216891;
+        bh=eFuu4AkZbGFVHxSIUBlGUCNXhcBY2Ws9zphvVve1H/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vUCXoGEqzhx39krgEgOoQ5YVuTaGEyit5UhJsazSKw7Enmgyy3n2Sq1HNuRPKxsbm
-         i3s/2R1laMV3V6DrABJDku5LGm2ber6upQb0551nhF83qOLKHTyhDQjHNK24wxS444
-         ly9YPApgDGYF9k/LbvtwhpP/Wfmlv+UOxikuKHDY=
+        b=v2um/G5f67ns4aw54EHFH0NzhrDU7u0CKvDw+klWeylwZQb/CbSs68uraHnp/kIh0
+         7OySLmJH7YhxniC+8g4nUeOdNXAaWCMJ8TomHukHcy3rRs+tf/FU+NaNMf++vUhqVJ
+         kD9ywBnIPP3cl2boDfVTK1/Q94whKyQPAXDnUQRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 061/203] RDMA/hns: Prevent undefined behavior in hns_roce_set_user_sq_size()
-Date:   Fri, 17 Jan 2020 00:16:18 +0100
-Message-Id: <20200116231749.365403904@linuxfoundation.org>
+        stable@vger.kernel.org, Weihang Li <liweihang@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 5.4 062/203] RDMA/hns: remove a redundant le16_to_cpu
+Date:   Fri, 17 Jan 2020 00:16:19 +0100
+Message-Id: <20200116231749.450593412@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -43,57 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Weihang Li <liweihang@hisilicon.com>
 
-commit 515f60004ed985d2b2f03659365752e0b6142986 upstream.
+commit 9f7d7064009c37cb26eee4a83302cf077fe180d6 upstream.
 
-The "ucmd->log_sq_bb_count" variable is a user controlled variable in the
-0-255 range.  If we shift more than then number of bits in an int then
-it's undefined behavior (it shift wraps), and potentially the int could
-become negative.
+Type of ah->av.vlan is u16, there will be a problem using le16_to_cpu
+on it.
 
-Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-Link: https://lore.kernel.org/r/20190608092514.GC28890@mwanda
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 82e620d9c3a0 ("RDMA/hns: Modify the data structure of hns_roce_av")
+Signed-off-by: Weihang Li <liweihang@hisilicon.com>
+Link: https://lore.kernel.org/r/1567566885-23088-2-git-send-email-liweihang@hisilicon.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hns/hns_roce_qp.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -332,9 +332,8 @@ static int check_sq_size_with_integrity(
- 	u8 max_sq_stride = ilog2(roundup_sq_stride);
- 
- 	/* Sanity check SQ size before proceeding */
--	if ((u32)(1 << ucmd->log_sq_bb_count) > hr_dev->caps.max_wqes ||
--	     ucmd->log_sq_stride > max_sq_stride ||
--	     ucmd->log_sq_stride < HNS_ROCE_IB_MIN_SQ_STRIDE) {
-+	if (ucmd->log_sq_stride > max_sq_stride ||
-+	    ucmd->log_sq_stride < HNS_ROCE_IB_MIN_SQ_STRIDE) {
- 		ibdev_err(&hr_dev->ib_dev, "check SQ size error!\n");
- 		return -EINVAL;
- 	}
-@@ -358,13 +357,16 @@ static int hns_roce_set_user_sq_size(str
- 	u32 max_cnt;
- 	int ret;
- 
-+	if (check_shl_overflow(1, ucmd->log_sq_bb_count, &hr_qp->sq.wqe_cnt) ||
-+	    hr_qp->sq.wqe_cnt > hr_dev->caps.max_wqes)
-+		return -EINVAL;
-+
- 	ret = check_sq_size_with_integrity(hr_dev, cap, ucmd);
- 	if (ret) {
- 		ibdev_err(&hr_dev->ib_dev, "Sanity check sq size failed\n");
- 		return ret;
- 	}
- 
--	hr_qp->sq.wqe_cnt = 1 << ucmd->log_sq_bb_count;
- 	hr_qp->sq.wqe_shift = ucmd->log_sq_stride;
- 
- 	max_cnt = max(1U, cap->max_send_sge);
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -389,7 +389,7 @@ static int hns_roce_v2_post_send(struct
+ 			roce_set_field(ud_sq_wqe->byte_36,
+ 				       V2_UD_SEND_WQE_BYTE_36_VLAN_M,
+ 				       V2_UD_SEND_WQE_BYTE_36_VLAN_S,
+-				       le16_to_cpu(ah->av.vlan));
++				       ah->av.vlan);
+ 			roce_set_field(ud_sq_wqe->byte_36,
+ 				       V2_UD_SEND_WQE_BYTE_36_HOPLIMIT_M,
+ 				       V2_UD_SEND_WQE_BYTE_36_HOPLIMIT_S,
 
 
