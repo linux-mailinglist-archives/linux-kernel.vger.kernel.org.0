@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 050EA13E7CC
+	by mail.lfdr.de (Postfix) with ESMTP id 785F613E7CD
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404076AbgAPR2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:28:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38314 "EHLO mail.kernel.org"
+        id S2404101AbgAPR2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:28:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392109AbgAPR14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:56 -0500
+        id S2392545AbgAPR2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F49246D9;
-        Thu, 16 Jan 2020 17:27:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE1C9246E8;
+        Thu, 16 Jan 2020 17:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195675;
-        bh=Ct/2XnR2yQ1AOCcVTQ3w+gETfhqDcEiYJLudq2JPxyo=;
+        s=default; t=1579195680;
+        bh=Huy4XOsVPiulAFnAgmdX27OK8GZ3iQmGH+HQ4MLo9yY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qrLqUfLiYow91FMG8WyysveHRlm+Ncb8B29Ofd34q148hLTkiXZh+cqBzCLeVWJzc
-         juDIRZKu8HUYK5alG6hRAbJ1HFYIt41lYc1SJf21C8zkOgLsXNbKTa9BNfVZon6kaW
-         94/YAibeV58BBeK544eCBnW/ObAFDBgEEYuUJiCE=
+        b=WSro3t5M5L4+JiF1xDXoAqd7/CuvgMKqhJ8t6S8yjKGy1edKXpWZbZdN5m3IQ/lUb
+         gOJ/O/EjxS2SUp99WsfSbEhzdPwxwI5S5iRhKg1jpFoHF2u2egxa+sa6g7LS4IWl5H
+         7FeLDCAZHTbmsA/7pfLzNWTAtbSAnWLteIhoVgMc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        netem@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 231/371] net: netem: fix backlog accounting for corrupted GSO frames
-Date:   Thu, 16 Jan 2020 12:21:43 -0500
-Message-Id: <20200116172403.18149-174-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 235/371] rtc: pcf8563: Clear event flags and disable interrupts before requesting irq
+Date:   Thu, 16 Jan 2020 12:21:47 -0500
+Message-Id: <20200116172403.18149-178-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -46,82 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 177b8007463c4f36c9a2c7ce7aa9875a4cad9bd5 ]
+[ Upstream commit 3572e8aea3bf925dac1dbf86127657c39fe5c254 ]
 
-When GSO frame has to be corrupted netem uses skb_gso_segment()
-to produce the list of frames, and re-enqueues the segments one
-by one.  The backlog length has to be adjusted to account for
-new frames.
+Besides the alarm, the PCF8563 also has a timer triggered interrupt.
+In cases where the previous system left the timer and interrupts on,
+or somehow the bits got enabled, the interrupt would keep triggering
+as the kernel doesn't know about it.
 
-The current calculation is incorrect, leading to wrong backlog
-lengths in the parent qdisc (both bytes and packets), and
-incorrect packet backlog count in netem itself.
+Clear both the alarm and timer event flags, and disable the interrupts,
+before requesting the interrupt line.
 
-Parent backlog goes negative, netem's packet backlog counts
-all non-first segments twice (thus remaining non-zero even
-after qdisc is emptied).
-
-Move the variables used to count the adjustment into local
-scope to make 100% sure they aren't used at any stage in
-backports.
-
-Fixes: 6071bd1aa13e ("netem: Segment GSO packets on enqueue")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ede3e9d47cca ("drivers/rtc/rtc-pcf8563.c: add alarm support")
+Fixes: a45d528aab8b ("rtc: pcf8563: clear expired alarm at boot time")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_netem.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/rtc/rtc-pcf8563.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
-index 6266121a03f9..ede0a24e67eb 100644
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -431,8 +431,7 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
- 	struct netem_skb_cb *cb;
- 	struct sk_buff *skb2;
- 	struct sk_buff *segs = NULL;
--	unsigned int len = 0, last_len, prev_len = qdisc_pkt_len(skb);
--	int nb = 0;
-+	unsigned int prev_len = qdisc_pkt_len(skb);
- 	int count = 1;
- 	int rc = NET_XMIT_SUCCESS;
- 	int rc_drop = NET_XMIT_DROP;
-@@ -489,6 +488,7 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
- 			segs = netem_segment(skb, sch, to_free);
- 			if (!segs)
- 				return rc_drop;
-+			qdisc_skb_cb(segs)->pkt_len = segs->len;
- 		} else {
- 			segs = skb;
- 		}
-@@ -579,6 +579,11 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
+diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
+index ef04472dde1d..4d0b81f9805f 100644
+--- a/drivers/rtc/rtc-pcf8563.c
++++ b/drivers/rtc/rtc-pcf8563.c
+@@ -563,7 +563,6 @@ static int pcf8563_probe(struct i2c_client *client,
+ 	struct pcf8563 *pcf8563;
+ 	int err;
+ 	unsigned char buf;
+-	unsigned char alm_pending;
  
- finish_segs:
- 	if (segs) {
-+		unsigned int len, last_len;
-+		int nb = 0;
-+
-+		len = skb->len;
-+
- 		while (segs) {
- 			skb2 = segs->next;
- 			segs->next = NULL;
-@@ -594,9 +599,7 @@ static int netem_enqueue(struct sk_buff *skb, struct Qdisc *sch,
- 			}
- 			segs = skb2;
- 		}
--		sch->q.qlen += nb;
--		if (nb > 1)
--			qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
-+		qdisc_tree_reduce_backlog(sch, -nb, prev_len - len);
+ 	dev_dbg(&client->dev, "%s\n", __func__);
+ 
+@@ -587,13 +586,13 @@ static int pcf8563_probe(struct i2c_client *client,
+ 		return err;
  	}
- 	return NET_XMIT_SUCCESS;
- }
+ 
+-	err = pcf8563_get_alarm_mode(client, NULL, &alm_pending);
+-	if (err) {
+-		dev_err(&client->dev, "%s: read error\n", __func__);
++	/* Clear flags and disable interrupts */
++	buf = 0;
++	err = pcf8563_write_block_data(client, PCF8563_REG_ST2, 1, &buf);
++	if (err < 0) {
++		dev_err(&client->dev, "%s: write error\n", __func__);
+ 		return err;
+ 	}
+-	if (alm_pending)
+-		pcf8563_set_alarm_mode(client, 0);
+ 
+ 	pcf8563->rtc = devm_rtc_device_register(&client->dev,
+ 				pcf8563_driver.driver.name,
 -- 
 2.20.1
 
