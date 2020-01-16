@@ -2,184 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1ED513F61A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A72FE13F6D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:07:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437290AbgAPTB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:01:29 -0500
-Received: from mga14.intel.com ([192.55.52.115]:12875 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388807AbgAPTB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:01:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 11:01:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="scan'208";a="220465275"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.113])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2020 11:01:13 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [RESEND PATCH V3] perf/x86: Consider pinned events for group validation
-Date:   Thu, 16 Jan 2020 11:00:25 -0800
-Message-Id: <1579201225-178031-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S2388222AbgAPTHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:07:42 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35486 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388049AbgAPTHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 14:07:39 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 15so16406547lfr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EmuC4PVZIAqszrVr1XV69xZ8ppUgqhM55b6dhWz3+uk=;
+        b=sq6rBxCBy/CCxrwdHmaue9zJzhbHLCVFuzGNGljHenlF/JLCURJo0cW7HCcIzob853
+         ad8iNOfF7LvsNp4yActpwaksvIR5rR1SdBfmQKDabEl3I/66emZXHFCqfHyOU+Udbi20
+         0tAWoeLngfq3NMIbyFzU+Ex99sYkrcGxIllnCdE+f2SBzpq4080pQlPAJlMoyjZpzPhZ
+         DGGoDvZ48oTt7anYYS1ei29KQbqdWUs3CASJU/SV9rM2iPjwRMmumUYKC1mkFyvnaEte
+         mMCLHi9tI/s+qcIUCXU5476/G0zj8H79xmCp+F5wrCflAzrvYOq2DBF6Ip3cme3OPkbD
+         /K0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EmuC4PVZIAqszrVr1XV69xZ8ppUgqhM55b6dhWz3+uk=;
+        b=CpgJ5ejlhhblqRjuuh47FqWtQQ0VT3+BJ7qLqUEhV5j9Tbe/o6FRalaWmb04t9X5OX
+         FdD//7Xkja9eB/Jx0n5RRtefATlhkhF0FEzCsQvLxJQGNxGyg6TZx3Kfyotm2tUry4Fd
+         HUSFL7GXxOaroXsXkRMXaxYaWObsvuciSzTE1kPbS4PYv61J5Ps9id15MEJPYB1PB6zA
+         G5kKwaMmGaAs/hVzvcXOJXWwDdN72JZ6qd7mdbtteoMheBws6VucD9qHRGpaH48mTWA2
+         7H149crNIDZ19HOOjMLtqnpvbjIhUkFvDXYkTJv3JL+Rw7RO05Cv4TVhsWtgxW3/9++P
+         UP2Q==
+X-Gm-Message-State: APjAAAVpDgeprORavEIaT5UKae7bgo7/MXwattAH7EnXx/nP8QuuznJ2
+        RyxaD1VwnREKGCSjW4vy0eZ/qespjwFlL2mM4mjp
+X-Google-Smtp-Source: APXvYqyjq8pmunQfve4JqN7h2RHW+MxQZLns1p+JMhm7APFS43fUdBdBp+Ertu9yeaZgxNoNEEToXqGpX1HrNrUdodI=
+X-Received: by 2002:a2e:870b:: with SMTP id m11mr3237458lji.93.1579201657915;
+ Thu, 16 Jan 2020 11:07:37 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1577830902.git.rgb@redhat.com> <20200116150518.gfmzixoqagmk77rw@salvia>
+In-Reply-To: <20200116150518.gfmzixoqagmk77rw@salvia>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Jan 2020 14:07:27 -0500
+Message-ID: <CAHC9VhSowSdhwaGNVfj-Paj7=38z1D-p+=EDQNUAwNJpO_tyXg@mail.gmail.com>
+Subject: Re: [PATCH ghak25 v2 0/9] Address NETFILTER_CFG issues
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, sgrubb@redhat.com,
+        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
+        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
+        tgraf@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Jan 16, 2020 at 10:05 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> On Mon, Jan 06, 2020 at 01:54:01PM -0500, Richard Guy Briggs wrote:
+> > There were questions about the presence and cause of unsolicited syscall events
+> > in the logs containing NETFILTER_CFG records and sometimes unaccompanied
+> > NETFILTER_CFG records.
+> >
+> > During testing at least the following list of events trigger NETFILTER_CFG
+> > records and the syscalls related (There may be more events that will trigger
+> > this message type.):
+> >       init_module, finit_module: modprobe
+> >       setsockopt: iptables-restore, ip6tables-restore, ebtables-restore
+> >       unshare: (h?)ostnamed
+> >       clone: libvirtd
+> >
+> > The syscall events unsolicited by any audit rule were found to be caused by a
+> > missing !audit_dummy_context() check before creating a NETFILTER_CFG
+> > record and issuing the record immediately rather than saving the
+> > information to create the record at syscall exit.
+> > Check !audit_dummy_context() before creating the NETFILTER_CFG record.
+> >
+> > The vast majority of unaccompanied records are caused by the fedora default
+> > rule: "-a never,task" and the occasional early startup one is I believe caused
+> > by the iptables filter table module hard linked into the kernel rather than a
+> > loadable module. The !audit_dummy_context() check above should avoid them.
+> >
+> > A couple of other factors should help eliminate unaccompanied records
+> > which include commit cb74ed278f80 ("audit: always enable syscall
+> > auditing when supported and audit is enabled") which makes sure that
+> > when audit is enabled, so automatically is syscall auditing, and ghak66
+> > which addressed initializing audit before PID 1.
+> >
+> > Ebtables module initialization to register tables doesn't generate records
+> > because it was never hooked in to audit.  Recommend adding audit hooks to log
+> > this.
+> >
+> > Table unregistration was never logged, which is now covered.
+> >
+> > Seemingly duplicate records are not actually exact duplicates that are caused
+> > by netfilter table initialization in different network namespaces from the same
+> > syscall.  Recommend adding the network namespace ID (proc inode and dev)
+> > to the record to make this obvious (address later with ghak79 after nsid
+> > patches).
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/25
+> > See: https://github.com/linux-audit/audit-kernel/issues/35
+> > See: https://github.com/linux-audit/audit-kernel/issues/43
+> > See: https://github.com/linux-audit/audit-kernel/issues/44
+>
+> What tree is this batch targeted to?
 
-perf stat -M metrics relies on weak groups to reject unschedulable
-groups and run them as non-groups.
-This uses the group validation code in the kernel. Unfortunately
-that code doesn't take pinned events, such as the NMI watchdog, into
-account. So some groups can pass validation, but then later still
-never schedule.
+I believe Richard was targeting this for the audit tree.
 
-For example,
-
- $echo 1 > /proc/sys/kernel/nmi_watchdog
- $perf stat -M Page_Walks_Utilization
-
- Performance counter stats for 'system wide':
-
-     <not counted>      itlb_misses.walk_pending
-(0.00%)
-     <not counted>      dtlb_load_misses.walk_pending
-(0.00%)
-     <not counted>      dtlb_store_misses.walk_pending
-(0.00%)
-     <not counted>      ept.walk_pending
-(0.00%)
-     <not counted>      cycles
-(0.00%)
-
-       1.176613558 seconds time elapsed
-
-Current pinned events are always scheduled first. So the new group must
-can be scheduled together with current pinned events. Otherwise, it will
-never get a chance to be scheduled later.
-The trick is to pretend the current pinned events as part of the new
-group, and insert them into the fake_cpuc.
-The simulation result will tell if they can be scheduled successfully.
-The fake_cpuc never touch event state. The current pinned events will
-not be impacted.
-Disabling interrupts to prevent the events in current CPU's cpuc going
-away and getting freed.
-
-It won't catch all possible cases that cannot be scheduled, such as
-events pinned differently on different CPUs, or complicated constraints.
-The validation is based on current environment. It doesn't help on the
-case, which first create a group and then a pinned event, either.
-But for the most common case, the NMI watchdog interacting with the
-current perf metrics, it is strong enough.
-
-After applying the patch,
-
- $echo 1 > /proc/sys/kernel/nmi_watchdog
- $ perf stat -M Page_Walks_Utilization
-
- Performance counter stats for 'system wide':
-
-         2,491,910      itlb_misses.walk_pending  #      0.0
-Page_Walks_Utilization   (79.94%)
-        13,630,942      dtlb_load_misses.walk_pending
-(80.02%)
-           207,255      dtlb_store_misses.walk_pending
-(80.04%)
-                 0      ept.walk_pending
-(80.04%)
-       236,204,924      cycles
-(79.97%)
-
-       0.901785713 seconds time elapsed
-
-Reported-by: Stephane Eranian <eranian@google.com>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-
-Changes since V3:
-- Update comments (preemption is disabled as well)
-
-The V2 still only check current CPU's cpuc. Because I think we cannot
-prevent the cpuc in other CPU without a lock. Adding a lock will
-introduce extra overhead in some critical path, e.g. context switch.
-The patch is good enough for the common case. We may leave the other
-complicated cases as they are.
-
-Changes since V1:
-- Disabling interrupts to prevent the events in current CPU's cpuc
-  going away and getting freed.
-- Update comments and description
-
- arch/x86/events/core.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 43d0918..c4d9e14 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2032,9 +2032,12 @@ static int validate_event(struct perf_event *event)
-  */
- static int validate_group(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct perf_event *leader = event->group_leader;
- 	struct cpu_hw_events *fake_cpuc;
--	int ret = -EINVAL, n;
-+	struct perf_event *pinned_event;
-+	int ret = -EINVAL, n, i;
-+	unsigned long flags;
- 
- 	fake_cpuc = allocate_fake_cpuc();
- 	if (IS_ERR(fake_cpuc))
-@@ -2054,9 +2057,38 @@ static int validate_group(struct perf_event *event)
- 	if (n < 0)
- 		goto out;
- 
-+	/*
-+	 * Disable interrupts and preemption to prevent the events in this
-+	 * CPU's cpuc going away and getting freed.
-+	 */
-+	local_irq_save(flags);
-+
-+	/*
-+	 * The new group must can be scheduled together with current pinned
-+	 * events. Otherwise, it will never get a chance to be scheduled later.
-+	 *
-+	 * It won't catch all possible cases that cannot schedule, such as
-+	 * events pinned on CPU1, but the validation for a new CPU1 event
-+	 * running on other CPU. However, it's good enough to handle common
-+	 * cases like the global NMI watchdog.
-+	 */
-+	for (i = 0; i < cpuc->n_events; i++) {
-+		pinned_event = cpuc->event_list[i];
-+		if (WARN_ON_ONCE(!pinned_event))
-+			continue;
-+		if (!pinned_event->attr.pinned)
-+			continue;
-+		fake_cpuc->n_events = n;
-+		n = collect_events(fake_cpuc, pinned_event, false);
-+		if (n < 0)
-+			goto irq;
-+	}
-+
- 	fake_cpuc->n_events = 0;
- 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
- 
-+irq:
-+	local_irq_restore(flags);
- out:
- 	free_fake_cpuc(fake_cpuc);
- 	return ret;
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
