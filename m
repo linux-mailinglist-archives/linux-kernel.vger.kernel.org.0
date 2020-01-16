@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 779C613EA23
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 041EC13EA25
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405627AbgAPRm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:42:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
+        id S2405502AbgAPRm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:42:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405715AbgAPRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:33 -0500
+        id S2405739AbgAPRlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D64A2471D;
-        Thu, 16 Jan 2020 17:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5D7124724;
+        Thu, 16 Jan 2020 17:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196493;
-        bh=W9AJE54V3aSrQ/GpLadLcNvwEjQqZbfkVhhCCM7hxCM=;
+        s=default; t=1579196495;
+        bh=lqrIGMuhw2YUdZMNtbC+hPhbBIxoi+KdmiQHRp4jedg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F+/ZZRfUMANagveb4hZE74vB5FOvItKaU46sWU0NhtNUyjvgjE2QWnoznuUkGBubt
-         aFvVLkOpolt4z4kk2JB0ZC8slvtgreTA3RMGSQWzJTpDuyh0xN6st0i5cdpR1Dy522
-         LdTRN7ykXTsRJ4XgWq2U2NOUYArqLZ+NKGizbVlY=
+        b=g9jQsq3oUg98Ms9bAlSSyZT8Oq914S6Dp5Rsba9Mj4AlRb7UahjKvqGg0XBM4lTGg
+         wMngyNGbV6QeCxY4CTD7B3lXS/qRFrQVUqKGChcN/ktmZUwFQludX9U216hVHtfrWB
+         uBekmljBfm07mk1b6tZpu5w59sN8/x9dqgWg6RVE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 236/251] net: neigh: use long type to store jiffies delta
-Date:   Thu, 16 Jan 2020 12:36:25 -0500
-Message-Id: <20200116173641.22137-196-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.9 238/251] f2fs: fix potential overflow
+Date:   Thu, 16 Jan 2020 12:36:27 -0500
+Message-Id: <20200116173641.22137-198-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,35 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 9d027e3a83f39b819e908e4e09084277a2e45e95 ]
+[ Upstream commit a9af3fdcc4258af406879eca63d82e9d6baa892e ]
 
-A difference of two unsigned long needs long storage.
+In build_sit_entries(), if valid_blocks in SIT block is smaller than
+valid_blocks in journal, for below calculation:
 
-Fixes: c7fb64db001f ("[NETLINK]: Neighbour table configuration and statistics via rtnetlink")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+sbi->discard_blks += old_valid_blocks - se->valid_blocks;
+
+There will be two times potential overflow:
+- old_valid_blocks - se->valid_blocks will overflow, and be a very
+large number.
+- sbi->discard_blks += result will overflow again, comes out a correct
+result accidently.
+
+Anyway, it should be fixed.
+
+Fixes: d600af236da5 ("f2fs: avoid unneeded loop in build_sit_entries")
+Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/neighbour.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ fs/f2fs/file.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index cd85cee14bd0..6578d1f8e6c4 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -1834,8 +1834,8 @@ static int neightbl_fill_info(struct sk_buff *skb, struct neigh_table *tbl,
- 		goto nla_put_failure;
- 	{
- 		unsigned long now = jiffies;
--		unsigned int flush_delta = now - tbl->last_flush;
--		unsigned int rand_delta = now - tbl->last_rand;
-+		long flush_delta = now - tbl->last_flush;
-+		long rand_delta = now - tbl->last_rand;
- 		struct neigh_hash_table *nht;
- 		struct ndt_config ndc = {
- 			.ndtc_key_len		= tbl->key_len,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0206c8c20784..b2cccd4083b8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1267,7 +1267,7 @@ static int f2fs_write_data_page(struct page *page,
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = ((unsigned long long) i_size)
+ 							>> PAGE_SHIFT;
+-	loff_t psize = (page->index + 1) << PAGE_SHIFT;
++	loff_t psize = (loff_t)(page->index + 1) << PAGE_SHIFT;
+ 	unsigned offset = 0;
+ 	bool need_balance_fs = false;
+ 	int err = 0;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f46ac1651bd5..e3c438c8b8ce 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -980,7 +980,7 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
+ 				}
+ 				dn.ofs_in_node++;
+ 				i++;
+-				new_size = (dst + i) << PAGE_SHIFT;
++				new_size = (loff_t)(dst + i) << PAGE_SHIFT;
+ 				if (dst_inode->i_size < new_size)
+ 					f2fs_i_size_write(dst_inode, new_size);
+ 			} while (--ilen && (do_replace[i] || blkaddr[i] == NULL_ADDR));
 -- 
 2.20.1
 
