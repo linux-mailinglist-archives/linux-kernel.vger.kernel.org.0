@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DD113FF92
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A8C213FF8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:44:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbgAPXY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:24:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53414 "EHLO mail.kernel.org"
+        id S1731039AbgAPXYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:24:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733266AbgAPXYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:24:25 -0500
+        id S2387807AbgAPXYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:24:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28FE62075B;
-        Thu, 16 Jan 2020 23:24:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB0B20748;
+        Thu, 16 Jan 2020 23:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217064;
-        bh=PsSfzO05f+Oo1jRnR0rDPpL+kDOGWo5f0hc+PiXh7/0=;
+        s=default; t=1579217071;
+        bh=gXlucmQXaJRN2NvwLwtt5SNUnBMfGb5PCo9Z7vBS/hY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fr7DvOvzXsDCfLnIYXYdg3rnVQJ4MXE0ET4iPK/nEw35VojqyxP+tkS5N8pZTImod
-         f31C8kJodvF5B+1wQxiWJsFBQuarmhsRVat9egr+wpklzCXK2ywtn0qnBc6qmdrOlp
-         4r8uvL0p+2kHlCepHmFEyzwuP5GFvUziSh+aD3qw=
+        b=SWEufhi46MT9rdbTNgbJZQc5AbWDDqoG/zYK6s4qlSFhvEIakKz8ldChClTAPPK5G
+         WKhLfJVr0jyf/+KVHfXvW/lH0p/g6njOQe7RKxrPJCqBRwhH/9DM8VUOTxRGRlgPeq
+         dkeH6Y+37tyjf6L6HBqVkCBXAGWXuW/9ss+ssTwM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 5.4 133/203] PCI: aardvark: Fix PCI_EXP_RTCTL register configuration
-Date:   Fri, 17 Jan 2020 00:17:30 +0100
-Message-Id: <20200116231756.732374547@linuxfoundation.org>
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.4 136/203] PCI/PM: Clear PCIe PME Status even for legacy power management
+Date:   Fri, 17 Jan 2020 00:17:33 +0100
+Message-Id: <20200116231756.949934252@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,54 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Remi Pommarel <repk@triplefau.lt>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-commit c0f05a6ab52535c1bf5f43272eede3e11c5701a5 upstream.
+commit ec6a75ef8e33fe33f963b916fd902c52a0be33ff upstream.
 
-PCI_EXP_RTCTL is used to activate PME interrupt only, so writing into it
-should not modify other interrupts' mask. The ISR mask polarity was also
-inverted, when PCI_EXP_RTCTL_PMEIE is set PCIE_MSG_PM_PME_MASK mask bit
-should actually be cleared.
+Previously, pci_pm_resume_noirq() cleared the PME Status bit in the Root
+Status register only if the device had no driver or the driver did not
+implement legacy power management.  It should clear PME Status regardless
+of what sort of power management the driver supports, so do this before
+checking for legacy power management.
 
-Fixes: 8a3ebd8de328 ("PCI: aardvark: Implement emulated root PCI bridge config space")
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+This affects Root Ports and Root Complex Event Collectors, for which the
+usual driver is the PCIe portdrv, which implements new power management, so
+this change is just on principle, not to fix any actual defects.
+
+Fixes: a39bd851dccf ("PCI/PM: Clear PCIe PME Status bit in core, not PCIe port driver")
+Link: https://lore.kernel.org/r/20191014230016.240912-4-helgaas@kernel.org
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/pci-aardvark.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/pci/pci-driver.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -428,7 +428,7 @@ advk_pci_bridge_emul_pcie_conf_read(stru
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -941,12 +941,11 @@ static int pci_pm_resume_noirq(struct de
+ 		pci_pm_default_resume_early(pci_dev);
  
- 	case PCI_EXP_RTCTL: {
- 		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG);
--		*value = (val & PCIE_MSG_PM_PME_MASK) ? PCI_EXP_RTCTL_PMEIE : 0;
-+		*value = (val & PCIE_MSG_PM_PME_MASK) ? 0 : PCI_EXP_RTCTL_PMEIE;
- 		return PCI_BRIDGE_EMUL_HANDLED;
- 	}
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
++	pcie_pme_root_status_cleanup(pci_dev);
  
-@@ -478,10 +478,15 @@ advk_pci_bridge_emul_pcie_conf_write(str
- 			advk_pcie_wait_for_retrain(pcie);
- 		break;
+ 	if (pci_has_legacy_pm_support(pci_dev))
+ 		return pci_legacy_resume_early(dev);
  
--	case PCI_EXP_RTCTL:
--		new = (new & PCI_EXP_RTCTL_PMEIE) << 3;
--		advk_writel(pcie, new, PCIE_ISR0_MASK_REG);
-+	case PCI_EXP_RTCTL: {
-+		/* Only mask/unmask PME interrupt */
-+		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
-+			~PCIE_MSG_PM_PME_MASK;
-+		if ((new & PCI_EXP_RTCTL_PMEIE) == 0)
-+			val |= PCIE_MSG_PM_PME_MASK;
-+		advk_writel(pcie, val, PCIE_ISR0_MASK_REG);
- 		break;
-+	}
+-	pcie_pme_root_status_cleanup(pci_dev);
+-
+ 	if (drv && drv->pm && drv->pm->resume_noirq)
+ 		error = drv->pm->resume_noirq(dev);
  
- 	case PCI_EXP_RTSTA:
- 		new = (new & PCI_EXP_RTSTA_PME) >> 9;
 
 
