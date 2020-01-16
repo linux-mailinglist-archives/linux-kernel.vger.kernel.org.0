@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2403813F52D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2161A13F50C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389392AbgAPSyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:54:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40704 "EHLO mail.kernel.org"
+        id S2389299AbgAPRIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:08:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389248AbgAPRH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:07:57 -0500
+        id S1729221AbgAPRH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:07:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 545B120730;
-        Thu, 16 Jan 2020 17:07:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02616205F4;
+        Thu, 16 Jan 2020 17:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194476;
-        bh=2imUuZyJToGTz6oK6smINQHGEWTm0o6uwv3fDAo+Jr8=;
+        s=default; t=1579194477;
+        bh=hUmSvj1tlpVwnOr8GPYpzmQc/thJ3c9zDt0LIGocVDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MeNmKVAkYgThOAOYvoiTyibnYTX93ifMFJ4ICdeRjZLPo3mKBwbd2CoWWohwC7OJW
-         Lxe8zvUNAlGz+nEvAEHXKAw0XoTcHJNc2fXYVQemikblb79vvnpNnh7Eg34r66fh6W
-         jwcPb7Qw0DkYuF9HCclwy3P9nC4xXYwQU8kLIqqM=
+        b=z1xn0rdQbw953SQ1RCbBeHupI7PgdzGaVYIOe4R9Q++KNASEDSVUB9VnUiEIxNyst
+         FfNaMnTsuHFfR7/KzkyO7fOlzQDXVhJNSXpDyfNFo7ENTVS61QLOYtx6H3MhuSdikK
+         kFHFj5zS1Si4SVMXiakQU0Wsr/X99Uj0XOBO3CF4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Hines <srhines@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 379/671] misc: sgi-xp: Properly initialize buf in xpc_get_rsvd_page_pa
-Date:   Thu, 16 Jan 2020 12:00:17 -0500
-Message-Id: <20200116170509.12787-116-sashal@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 380/671] PCI: PM: Avoid possible suspend-to-idle issue
+Date:   Thu, 16 Jan 2020 12:00:18 -0500
+Message-Id: <20200116170509.12787-117-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -47,68 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit b0576f9ecb5c51e9932531d23c447b2739261841 ]
+[ Upstream commit d491f2b75237ef37d8867830ab7fad8d9659e853 ]
 
-Clang warns:
+If a PCI driver leaves the device handled by it in D0 and calls
+pci_save_state() on the device in its ->suspend() or ->suspend_late()
+callback, it can expect the device to stay in D0 over the whole
+s2idle cycle.  However, that may not be the case if there is a
+spurious wakeup while the system is suspended, because in that case
+pci_pm_suspend_noirq() will run again after pci_pm_resume_noirq()
+which calls pci_restore_state(), via pci_pm_default_resume_early(),
+so state_saved is cleared and the second iteration of
+pci_pm_suspend_noirq() will invoke pci_prepare_to_sleep() which
+may change the power state of the device.
 
-drivers/misc/sgi-xp/xpc_partition.c:73:14: warning: variable 'buf' is
-uninitialized when used within its own initialization [-Wuninitialized]
-        void *buf = buf;
-              ~~~   ^~~
-1 warning generated.
+To avoid that, add a new internal flag, skip_bus_pm, that will be set
+by pci_pm_suspend_noirq() when it runs for the first time during the
+given system suspend-resume cycle if the state of the device has
+been saved already and the device is still in D0.  Setting that flag
+will cause the next iterations of pci_pm_suspend_noirq() to set
+state_saved for pci_pm_resume_noirq(), so that it always restores the
+device state from the originally saved data, and avoid calling
+pci_prepare_to_sleep() for the device.
 
-Arnd's explanation during review:
-
-  /*
-   * Returns the physical address of the partition's reserved page through
-   * an iterative number of calls.
-   *
-   * On first call, 'cookie' and 'len' should be set to 0, and 'addr'
-   * set to the nasid of the partition whose reserved page's address is
-   * being sought.
-   * On subsequent calls, pass the values, that were passed back on the
-   * previous call.
-   *
-   * While the return status equals SALRET_MORE_PASSES, keep calling
-   * this function after first copying 'len' bytes starting at 'addr'
-   * into 'buf'. Once the return status equals SALRET_OK, 'addr' will
-   * be the physical address of the partition's reserved page. If the
-   * return status equals neither of these, an error as occurred.
-   */
-  static inline s64
-  sn_partition_reserved_page_pa(u64 buf, u64 *cookie, u64 *addr, u64 *len)
-
-  so *len is set to zero on the first call and tells the bios how many
-  bytes are accessible at 'buf', and it does get updated by the BIOS to
-  tell us how many bytes it needs, and then we allocate that and try again.
-
-Fixes: 279290294662 ("[IA64-SGI] cleanup the way XPC locates the reserved page")
-Link: https://github.com/ClangBuiltLinux/linux/issues/466
-Suggested-by: Stephen Hines <srhines@google.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 33e4f80ee69b ("ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/sgi-xp/xpc_partition.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pci-driver.c | 17 ++++++++++++++++-
+ include/linux/pci.h      |  1 +
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/sgi-xp/xpc_partition.c b/drivers/misc/sgi-xp/xpc_partition.c
-index 0c3ef6f1df54..519826ba1378 100644
---- a/drivers/misc/sgi-xp/xpc_partition.c
-+++ b/drivers/misc/sgi-xp/xpc_partition.c
-@@ -70,7 +70,7 @@ xpc_get_rsvd_page_pa(int nasid)
- 	unsigned long rp_pa = nasid;	/* seed with nasid */
- 	size_t len = 0;
- 	size_t buf_len = 0;
--	void *buf = buf;
-+	void *buf = NULL;
- 	void *buf_base = NULL;
- 	enum xp_retval (*get_partition_rsvd_page_pa)
- 		(void *, u64 *, unsigned long *, size_t *) =
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index bc1ff41ce3d3..5c9873fcbd08 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -736,6 +736,8 @@ static int pci_pm_suspend(struct device *dev)
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 
++	pci_dev->skip_bus_pm = false;
++
+ 	if (pci_has_legacy_pm_support(pci_dev))
+ 		return pci_legacy_suspend(dev, PMSG_SUSPEND);
+ 
+@@ -829,7 +831,20 @@ static int pci_pm_suspend_noirq(struct device *dev)
+ 		}
+ 	}
+ 
+-	if (!pci_dev->state_saved) {
++	if (pci_dev->skip_bus_pm) {
++		/*
++		 * The function is running for the second time in a row without
++		 * going through full resume, which is possible only during
++		 * suspend-to-idle in a spurious wakeup case.  Moreover, the
++		 * device was originally left in D0, so its power state should
++		 * not be changed here and the device register values saved
++		 * originally should be restored on resume again.
++		 */
++		pci_dev->state_saved = true;
++	} else if (pci_dev->state_saved) {
++		if (pci_dev->current_state == PCI_D0)
++			pci_dev->skip_bus_pm = true;
++	} else {
+ 		pci_save_state(pci_dev);
+ 		if (pci_power_manageable(pci_dev))
+ 			pci_prepare_to_sleep(pci_dev);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index b1f297f4b7b0..94853094b6ef 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -342,6 +342,7 @@ struct pci_dev {
+ 						   D3cold, not set for devices
+ 						   powered on/off by the
+ 						   corresponding bridge */
++	unsigned int	skip_bus_pm:1;	/* Internal: Skip bus-level PM */
+ 	unsigned int	ignore_hotplug:1;	/* Ignore hotplug events */
+ 	unsigned int	hotplug_user_indicators:1; /* SlotCtl indicators
+ 						      controlled exclusively by
 -- 
 2.20.1
 
