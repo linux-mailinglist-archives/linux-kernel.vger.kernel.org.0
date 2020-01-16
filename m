@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D10213ED72
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A85AE13EDDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:05:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393748AbgAPRk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56874 "EHLO mail.kernel.org"
+        id S2394886AbgAPSFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:05:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393568AbgAPRkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:40:02 -0500
+        id S2391115AbgAPRkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:40:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F024524725;
-        Thu, 16 Jan 2020 17:40:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEE802471A;
+        Thu, 16 Jan 2020 17:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196401;
-        bh=OPa98pr8229ebjPXj4IhS5LOxf8G/Y4/ZXRc9zvSDi0=;
+        s=default; t=1579196404;
+        bh=4HfqwWXb8SRq0x3t9Nqyyp8af0hN2DMdQ8XC9KGeH+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0CxQLyiqPomsI8VQTrVTc4Kt1HGnzfIzY6+yqcEx2sup78MIAp56T7gkFkjtgKveF
-         svs5T3Qo8rR3KuMLT4PNZETJqKk0NFnhB3hE2tttZ2nyq9vSn7G4u66EKwaWq/bNrC
-         M0JlQ5h1HFKjmBqM0T+tQWr4EkiU8Kbr/YCMvldo=
+        b=EwcwbA/sgHN2ubXLVbniE4lnvIQyWF+DzX8LIOIwaHE1A6FU8JuodKL5QbFMfK+cn
+         ApYQ5y7JP4Z59Hd7WWnkj9YLrFi3IIkQ6qgBHtR8wFtsv5Qa/d+ktWXjPO55A0KuGp
+         sya72WAeJGcPVdNJSp87vYJxTjN9XzLnk8bY1/vg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 178/251] crypto: caam - free resources in case caam_rng registration failed
-Date:   Thu, 16 Jan 2020 12:35:27 -0500
-Message-Id: <20200116173641.22137-138-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 4.9 180/251] ASoC: es8328: Fix copy-paste error in es8328_right_line_controls
+Date:   Thu, 16 Jan 2020 12:35:29 -0500
+Message-Id: <20200116173641.22137-140-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,38 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit c59a1d41672a89b5cac49db1a472ff889e35a2d2 ]
+[ Upstream commit 630742c296341a8cfe00dfd941392025ba8dd4e8 ]
 
-Check the return value of the hardware registration for caam_rng and free
-resources in case of failure.
+It seems 'es8328_rline_enum' should be used
+in es8328_right_line_controls
 
-Fixes: e24f7c9e87d4 ("crypto: caam - hwrng support")
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 567e4f98922c ("ASoC: add es8328 codec driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190815092300.68712-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/caam/caamrng.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/codecs/es8328.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index 9b92af2c7241..a77319bf221d 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -361,7 +361,10 @@ static int __init caam_rng_init(void)
- 		goto free_rng_ctx;
+diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
+index 37722194b107..6b22700842e2 100644
+--- a/sound/soc/codecs/es8328.c
++++ b/sound/soc/codecs/es8328.c
+@@ -234,7 +234,7 @@ static const struct soc_enum es8328_rline_enum =
+ 			      ARRAY_SIZE(es8328_line_texts),
+ 			      es8328_line_texts);
+ static const struct snd_kcontrol_new es8328_right_line_controls =
+-	SOC_DAPM_ENUM("Route", es8328_lline_enum);
++	SOC_DAPM_ENUM("Route", es8328_rline_enum);
  
- 	dev_info(dev, "registering rng-caam\n");
--	return hwrng_register(&caam_rng);
-+
-+	err = hwrng_register(&caam_rng);
-+	if (!err)
-+		return err;
- 
- free_rng_ctx:
- 	kfree(rng_ctx);
+ /* Left Mixer */
+ static const struct snd_kcontrol_new es8328_left_mixer_controls[] = {
 -- 
 2.20.1
 
