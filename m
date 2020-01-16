@@ -2,142 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C3413E4FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12EDD13E3CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:04:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390363AbgAPRL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:11:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390318AbgAPRLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:11:51 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2388628AbgAPREI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:04:08 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:21771 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388044AbgAPREF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:04:05 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579194245; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=jyDX0RkCRR3RXyVljn8CGp1pK1triQLesamc/wgsgLM=; b=F91F41bi6tDQ85feQfn1HvKPoczWeDUhoJrwCmNL/p7Y4b1+eFOYxUhwB4kh8bDB/gYf4o2y
+ xMvTyL84BxvOk/3AisExkcg02YfgsADlApN+gBUCe4Bu0W0E/iHhJctslBiO4NMqcf1gjq2e
+ dlWbYoU8faYjnuZYJ5IJrpmYYUk=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e209783.7fe471b55a08-smtp-out-n02;
+ Thu, 16 Jan 2020 17:04:03 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2885DC447AB; Thu, 16 Jan 2020 17:04:02 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF4E22469F;
-        Thu, 16 Jan 2020 17:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194710;
-        bh=b7J+PIPCOnyJlaPoNNjY1W5SUVeTIuhTymopR4zUOrE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ezTIBnm4W5EFU9qx9Ko+rdByuwwBXOiOf99Sn2CQY86pbfautOl4fzsVayMJS+WT
-         yS0NaAdL6P4IPKRmYvrTyur4j09iI0jJLWpi2O2ak0k59pxFC9KFGvZK9eRM24Jgbo
-         HyksPYmMAYBQ0sdar2GO0DjtHw9PHUO0HdSGKFYI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Wen Gong <wgong@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 548/671] ath10k: adjust skb length in ath10k_sdio_mbox_rx_packet
-Date:   Thu, 16 Jan 2020 12:03:06 -0500
-Message-Id: <20200116170509.12787-285-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E419C447A9;
+        Thu, 16 Jan 2020 17:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E419C447A9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Subject: [PATCH V2 0/2] Add CQHCI support for sdhci-msm
+Date:   Thu, 16 Jan 2020 22:33:09 +0530
+Message-Id: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Boichat <drinkcat@chromium.org>
+Changes since V1: (https://lkml.org/lkml/2019/12/17/455)
+	- Select MMC_CQHCI in Kconfig
+	- Making use of host->alloc_desc_size variable for allocation
+	  of ADMA table and host->desc_size for updating decriptor
+	  size dynamically.
 
-[ Upstream commit b7139960832eb56fa15d390a4b5c8c5739bd0d1a ]
+Changes since RFC (https://lkml.org/lkml/2017/8/30/313)
+	- Updated settings so that TDLBA won't get reset when
+	  CQE is enabled.
+	- Removed new compatible string and moved to supports-cqe
+	  dt flag to identify CQE support.
+	- Incorporated review comments.
 
-When the FW bundles multiple packets, pkt->act_len may be incorrect
-as it refers to the first packet only (however, the FW will only
-bundle packets that fit into the same pkt->alloc_len).
+Tested on: qcs404, sc7180
 
-Before this patch, the skb length would be set (incorrectly) to
-pkt->act_len in ath10k_sdio_mbox_rx_packet, and then later manually
-adjusted in ath10k_sdio_mbox_rx_process_packet.
+Ritesh Harjani (1):
+  mmc: sdhci-msm: Add CQHCI support for sdhci-msm
 
-The first problem is that ath10k_sdio_mbox_rx_process_packet does not
-use proper skb_put commands to adjust the length (it directly changes
-skb->len), so we end up with a mismatch between skb->head + skb->tail
-and skb->data + skb->len. This is quite serious, and causes corruptions
-in the TCP stack, as the stack tries to coalesce packets, and relies
-on skb->tail being correct (that is, skb_tail_pointer must point to
-the first byte_after_ the data).
+Veerabhadrarao Badiganti (1):
+  mmc: sdhci: Let a vendor driver supply and update ADMA descriptor size
 
-Instead of re-adjusting the size in ath10k_sdio_mbox_rx_process_packet,
-this moves the code to ath10k_sdio_mbox_rx_packet, and also add a
-bounds check, as skb_put would crash the kernel if not enough space is
-available.
+ drivers/mmc/host/Kconfig     |   1 +
+ drivers/mmc/host/sdhci-msm.c | 133 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.c     |   7 ++-
+ drivers/mmc/host/sdhci.h     |   1 +
+ 4 files changed, 139 insertions(+), 3 deletions(-)
 
-Tested with QCA6174 SDIO with firmware
-WLAN.RMH.4.4.1-00007-QCARMSWP-1.
-
-Fixes: 8530b4e7b22bc3b ("ath10k: sdio: set skb len for all rx packets")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-Signed-off-by: Wen Gong <wgong@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/ath/ath10k/sdio.c | 29 +++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
-index 686759b5613f..0ecaba824fb2 100644
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -392,16 +392,11 @@ static int ath10k_sdio_mbox_rx_process_packet(struct ath10k *ar,
- 	struct ath10k_htc_hdr *htc_hdr = (struct ath10k_htc_hdr *)skb->data;
- 	bool trailer_present = htc_hdr->flags & ATH10K_HTC_FLAG_TRAILER_PRESENT;
- 	enum ath10k_htc_ep_id eid;
--	u16 payload_len;
- 	u8 *trailer;
- 	int ret;
- 
--	payload_len = le16_to_cpu(htc_hdr->len);
--	skb->len = payload_len + sizeof(struct ath10k_htc_hdr);
--
- 	if (trailer_present) {
--		trailer = skb->data + sizeof(*htc_hdr) +
--			  payload_len - htc_hdr->trailer_len;
-+		trailer = skb->data + skb->len - htc_hdr->trailer_len;
- 
- 		eid = pipe_id_to_eid(htc_hdr->eid);
- 
-@@ -638,13 +633,31 @@ static int ath10k_sdio_mbox_rx_packet(struct ath10k *ar,
- {
- 	struct ath10k_sdio *ar_sdio = ath10k_sdio_priv(ar);
- 	struct sk_buff *skb = pkt->skb;
-+	struct ath10k_htc_hdr *htc_hdr;
- 	int ret;
- 
- 	ret = ath10k_sdio_readsb(ar, ar_sdio->mbox_info.htc_addr,
- 				 skb->data, pkt->alloc_len);
-+	if (ret)
-+		goto out;
-+
-+	/* Update actual length. The original length may be incorrect,
-+	 * as the FW will bundle multiple packets as long as their sizes
-+	 * fit within the same aligned length (pkt->alloc_len).
-+	 */
-+	htc_hdr = (struct ath10k_htc_hdr *)skb->data;
-+	pkt->act_len = le16_to_cpu(htc_hdr->len) + sizeof(*htc_hdr);
-+	if (pkt->act_len > pkt->alloc_len) {
-+		ath10k_warn(ar, "rx packet too large (%zu > %zu)\n",
-+			    pkt->act_len, pkt->alloc_len);
-+		ret = -EMSGSIZE;
-+		goto out;
-+	}
-+
-+	skb_put(skb, pkt->act_len);
-+
-+out:
- 	pkt->status = ret;
--	if (!ret)
--		skb_put(skb, pkt->act_len);
- 
- 	return ret;
- }
 -- 
-2.20.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
