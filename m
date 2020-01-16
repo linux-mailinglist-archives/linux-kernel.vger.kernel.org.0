@@ -2,60 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB95713F0C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B93E13F0BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406420AbgAPSYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:24:03 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44042 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436590AbgAPSXo (ORCPT
+        id S2406165AbgAPSXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:23:50 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45536 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392079AbgAPSXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:23:44 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q10so20177383wrm.11
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:42 -0800 (PST)
+        Thu, 16 Jan 2020 13:23:45 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j42so20147121wrj.12
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
-        b=kZSr6tlxSDSMnhpEyb/7zL0zkHF/eQHJsSEZIjt4kMNTn7yeMUkfCQpBlCmhqiVs0L
-         kaQsclQziov1CuI4PtdACm3Stz1bhl1yRQ9gXYmGBaTuV3kAw3+mqueisvUv5m6jYlRM
-         TOznzUPgDAw/04lwlnAJ8Un+fydTco+kDdceRwDBWYW/kfHaJzDRyHAaRE8hPZUg/aWv
-         Abj21FQ1ZpKllu317NhyxkQ124z8T0IygtlzAfjl8QEhVndCYngUlMc06TDR38ePDr1y
-         rg9o7NOx8WEKf247RbRlmP/oskQ5yjD8QEy82KwbWIDJldVzkKQ1wPXiZL477W9kNEdh
-         TLYA==
+        bh=KoOAq8OaTgDys4/VWmzArQlHil0lOieh7oG6QVZBgkY=;
+        b=ioVjQXd2Qo4Z301KWJyb2Jb4Z/XHp+7OAf3tiwA7n2BAZh6kjksZU5UHCS2ZaE6v3X
+         EuEJe+dXrGD+21KcePZ6guomZqc3Ctap+EF8XVLdLE21L22b5w/8i7RM6MhCrqTUz8Oi
+         B5K78zMZO8byPpBgfnAtI19SupqHiRJiTlQiIEhZunqhtmXeZCqFvPfEm6nn5TM/hmSw
+         HEK8cjswH6AGw3PfdmBkCS6n/a7hLf1YF5wUre+DmzzBYMPKzyfhFCJGwfaJauO1fJGc
+         2kpe5gHZunPAHCzkenLlhuq2ExQDdPgpVdpfZCtooIL9bTkCTdkrPgMG8PlFO4J2BdIb
+         fqsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
-        b=nU7nJGzMLrA0PLYJgo2MbdADvCZHrBIy8OFMzkZnYVW+3Ij9a0poybNICb4hRd6yi/
-         EKJ/q+BDdpYiWYPL8UDTMD964BFSS3hbQmB1gKMTaOP5d8FKrS7sr6qv3uUM8ZCfuXrA
-         X/x44+kRZBvEmwHdXlhWA6Tarme1Vlscqw9btP4MNZRyNhIeIMbX24UWh8eiDwBNVo3v
-         RjrABLqbf3XGl/7jGKmIBbyTfAsQMsfCsLR04TIoCyBLDQvgxsnZP9wcKCOdStdLk4RM
-         z++6S8T5nLj9mMKDN1ajMnr++X/Q9lWqIqF7Vhq2q+Q00J+uALoOKNOVtOL5SQ7gfYlD
-         PyXw==
-X-Gm-Message-State: APjAAAUiosBPSWgqZyOv1hdk3yyjT4cbBZkOv7KxX4/8aTuifAm6dMz4
-        LdbVT7ac1F1uuAnuq8aZzzXTRg==
-X-Google-Smtp-Source: APXvYqxYBVzqX3/EddcHNcmwFI/IL+L51NjyXmq8HQM5xvfKCgh/wFpBEMU1Qnog3sNzqLpphKL6Lw==
-X-Received: by 2002:adf:ef0b:: with SMTP id e11mr4719536wro.128.1579199022086;
-        Thu, 16 Jan 2020 10:23:42 -0800 (PST)
+        bh=KoOAq8OaTgDys4/VWmzArQlHil0lOieh7oG6QVZBgkY=;
+        b=PTiOKZOPAdVvsLiAE5rTlaYjlDfAPQDwJQf5Qc9OwGFk6tH9SNZNUsB6YuqYOMh0/v
+         cjd4GiI4Hd4O2kS5QIzVi8TcSz8mwzjCDNQAlskb+PAeSz2grJg5B22g8rOEcQAvftR2
+         lboDS0GCsw4CnOY0pROVD2L6BdLqNiOY9LLuYeYtywFYhRNM4CiJTRXi9KZu3YhtE59D
+         wEp+zrf/9Zlck12D7x3VQq62jfzWUEqK0iUZH3v4KSK3qYBo6w4Q0cAwIMnHt9hLzjJW
+         2EIjO8otnWaLBW17eRtXkz6K60/mrV9g8orkVXSLKJy39QiV7F0MNvvj/eG5d7sQY0C8
+         Ie1A==
+X-Gm-Message-State: APjAAAXF9vrOAIRxbFtkvobSFPujE8MygEIwnPQDyblbLe3smtsjiErC
+        +OKsXlY7RLjKKJIBj4Qv/v6AhQ==
+X-Google-Smtp-Source: APXvYqzzv/jX890eYDuQ6QXKZfiVQoGyGTEDAu3RSAlyWgNJVDFz+3F7dM99QEcW2Eky/avpu3f0mg==
+X-Received: by 2002:adf:ec83:: with SMTP id z3mr4580596wrn.133.1579199023357;
+        Thu, 16 Jan 2020 10:23:43 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.40
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:41 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:42 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS
-        ARM ARCHITECTURES),
-        linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
-        ARM ARCHITECTURES)
-Subject: [PATCH 14/17] clocksource/drivers/exynos_mct: Rename Exynos to lowercase
-Date:   Thu, 16 Jan 2020 19:23:01 +0100
-Message-Id: <20200116182304.4926-14-daniel.lezcano@linaro.org>
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH 15/17] clocksource/drivers/timer-microchip-pit64b: Fix sparse warning
+Date:   Thu, 16 Jan 2020 19:23:02 +0100
+Message-Id: <20200116182304.4926-15-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -65,38 +61,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Fix up inconsistent usage of upper and lowercase letters in "Exynos"
-name.
+Fix sparse warning:
+"warning: Using plain integer as NULL pointer"
 
-"EXYNOS" is not an abbreviation but a regular trademarked name.
-Therefore it should be written with lowercase letters starting with
-capital letter.
-
-The lowercase "Exynos" name is promoted by its manufacturer Samsung
-Electronics Co., Ltd., in advertisement materials and on website.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200104152107.11407-12-krzk@kernel.org
+Link: https://lore.kernel.org/r/1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com
 ---
- drivers/clocksource/exynos_mct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-microchip-pit64b.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 74cb299f5089..a267fe31ef13 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -4,7 +4,7 @@
-  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-- * EXYNOS4 MCT(Multi-Core Timer) support
-+ * Exynos4 MCT(Multi-Core Timer) support
- */
+diff --git a/drivers/clocksource/timer-microchip-pit64b.c b/drivers/clocksource/timer-microchip-pit64b.c
+index 27a389a7e078..bd63d3484838 100644
+--- a/drivers/clocksource/timer-microchip-pit64b.c
++++ b/drivers/clocksource/timer-microchip-pit64b.c
+@@ -248,6 +248,8 @@ static int __init mchp_pit64b_init_mode(struct mchp_pit64b_timer *timer,
+ 	if (!pclk_rate)
+ 		return -EINVAL;
  
- #include <linux/interrupt.h>
++	timer->mode = 0;
++
+ 	/* Try using GCLK. */
+ 	gclk_round = clk_round_rate(timer->gclk, max_rate);
+ 	if (gclk_round < 0)
+@@ -360,7 +362,7 @@ static int __init mchp_pit64b_dt_init_timer(struct device_node *node,
+ 					    bool clkevt)
+ {
+ 	u32 freq = clkevt ? MCHP_PIT64B_DEF_CE_FREQ : MCHP_PIT64B_DEF_CS_FREQ;
+-	struct mchp_pit64b_timer timer = { 0 };
++	struct mchp_pit64b_timer timer;
+ 	unsigned long clk_rate;
+ 	u32 irq = 0;
+ 	int ret;
 -- 
 2.17.1
 
