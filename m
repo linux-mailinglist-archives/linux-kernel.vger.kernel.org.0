@@ -2,56 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A68213F0C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB95713F0C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407006AbgAPSYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:24:12 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37216 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394907AbgAPSXm (ORCPT
+        id S2406420AbgAPSYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:24:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44042 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436590AbgAPSXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:23:42 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w15so20222742wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:41 -0800 (PST)
+        Thu, 16 Jan 2020 13:23:44 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q10so20177383wrm.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=i+nTHuznqMvTI3dGvU5ZxSOz65Ev7Doc/znM40iHcH0=;
-        b=W1/dDxsiZUbkeGBjQ7x4HX/hk/Kz2N1bwsRGaJSrX+feVAXRl8qVmfZVzftpuiEXdS
-         QIQQqXJAxwTo6duBATHoMzzNliJpJVMr9O9FdiTSntlS/+IcJNFdRjUGVMY2zez/HN9P
-         MFYN2HGKSISKbG8EWU2Kfj55v01wdH5FpTwKtRk3q24sXOQACKvGQqd7TxzmJf/wWsnC
-         aNlalyu1NvdI0KsedaqyaJlIuq0By8aMRU05WSIJeDGt8xN4qjjkSCvhPOxsVccOeXYF
-         VHtz9SeAff6vqfXUn/NknfISHFXVrELuf1jRqhFaaP2gSpfrZkyhvzTM1GLxR4DL4Ljm
-         Lq4A==
+        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
+        b=kZSr6tlxSDSMnhpEyb/7zL0zkHF/eQHJsSEZIjt4kMNTn7yeMUkfCQpBlCmhqiVs0L
+         kaQsclQziov1CuI4PtdACm3Stz1bhl1yRQ9gXYmGBaTuV3kAw3+mqueisvUv5m6jYlRM
+         TOznzUPgDAw/04lwlnAJ8Un+fydTco+kDdceRwDBWYW/kfHaJzDRyHAaRE8hPZUg/aWv
+         Abj21FQ1ZpKllu317NhyxkQ124z8T0IygtlzAfjl8QEhVndCYngUlMc06TDR38ePDr1y
+         rg9o7NOx8WEKf247RbRlmP/oskQ5yjD8QEy82KwbWIDJldVzkKQ1wPXiZL477W9kNEdh
+         TLYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=i+nTHuznqMvTI3dGvU5ZxSOz65Ev7Doc/znM40iHcH0=;
-        b=dDJZEvXbwStFbWTYkXPr7fqMr0u/GExDH2pnTCAms6rbNAe//GfDljIHYd+PyVxeCS
-         SAfni7CiNnKeRrb/NUbzKcB/10oCdWtyPJnzgn1d8GZq9mpB/J6GciIVCNyw9KSXCbyM
-         lz+OrlMPwX0sq9cTTITHwXoozChhhz+kjdFO7x8nRygzd0VC5xfjmPg+in9fXopysXb1
-         iTDNlsa0SagOgnku1GwConz/o+bEMbEc86AUE8IDdz+a2KQVJoeCIxcq9i5h0g0wgL52
-         VIrpjIuAFPguWw0ewhMaDQ++LwSeuPZgsesnOCjlGRYQyVLbQ7g2Dnfg1Sljbvwi+2hl
-         klYw==
-X-Gm-Message-State: APjAAAUGqZXRTiojwTI3f4AD/8Yy5+hNAKiT09zhzlWubJ6/LQr7c6Zq
-        0JiMf7ecbD0SCfsnTzTS4Ly2j9VVUOVVoA==
-X-Google-Smtp-Source: APXvYqwcA71lWUHCO7dpoC4BFPvrltTJoqpL6f6vaEmcN4Xopw1fcLZ5wGWTTC8fzxosiaiLevWJMg==
-X-Received: by 2002:adf:9427:: with SMTP id 36mr4691445wrq.166.1579199020417;
-        Thu, 16 Jan 2020 10:23:40 -0800 (PST)
+        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
+        b=nU7nJGzMLrA0PLYJgo2MbdADvCZHrBIy8OFMzkZnYVW+3Ij9a0poybNICb4hRd6yi/
+         EKJ/q+BDdpYiWYPL8UDTMD964BFSS3hbQmB1gKMTaOP5d8FKrS7sr6qv3uUM8ZCfuXrA
+         X/x44+kRZBvEmwHdXlhWA6Tarme1Vlscqw9btP4MNZRyNhIeIMbX24UWh8eiDwBNVo3v
+         RjrABLqbf3XGl/7jGKmIBbyTfAsQMsfCsLR04TIoCyBLDQvgxsnZP9wcKCOdStdLk4RM
+         z++6S8T5nLj9mMKDN1ajMnr++X/Q9lWqIqF7Vhq2q+Q00J+uALoOKNOVtOL5SQ7gfYlD
+         PyXw==
+X-Gm-Message-State: APjAAAUiosBPSWgqZyOv1hdk3yyjT4cbBZkOv7KxX4/8aTuifAm6dMz4
+        LdbVT7ac1F1uuAnuq8aZzzXTRg==
+X-Google-Smtp-Source: APXvYqxYBVzqX3/EddcHNcmwFI/IL+L51NjyXmq8HQM5xvfKCgh/wFpBEMU1Qnog3sNzqLpphKL6Lw==
+X-Received: by 2002:adf:ef0b:: with SMTP id e11mr4719536wro.128.1579199022086;
+        Thu, 16 Jan 2020 10:23:42 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.39
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:39 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:41 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 13/17] clocksource/drivers/timer-ti-dm: Fix uninitialized pointer access
-Date:   Thu, 16 Jan 2020 19:23:00 +0100
-Message-Id: <20200116182304.4926-13-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES),
+        linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES)
+Subject: [PATCH 14/17] clocksource/drivers/exynos_mct: Rename Exynos to lowercase
+Date:   Thu, 16 Jan 2020 19:23:01 +0100
+Message-Id: <20200116182304.4926-14-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -61,62 +65,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-Clean-up commit 8c82723414d5 ("clocksource/drivers/timer-ti-dm: Switch to
-platform_get_irq") caused a regression where we now try to access
-uninitialized data for timer:
+Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+name.
 
-drivers/clocksource/timer-ti-dm.c: In function 'omap_dm_timer_probe':
-drivers/clocksource/timer-ti-dm.c:798:13: warning: 'timer' may be used
-uninitialized in this function [-Wmaybe-uninitialized]
+"EXYNOS" is not an abbreviation but a regular trademarked name.
+Therefore it should be written with lowercase letters starting with
+capital letter.
 
-On boot we now get:
+The lowercase "Exynos" name is promoted by its manufacturer Samsung
+Electronics Co., Ltd., in advertisement materials and on website.
 
-Unable to handle kernel NULL pointer dereference at virtual address
-00000004
-...
-(omap_dm_timer_probe) from [<c061ac7c>] (platform_drv_probe+0x48/0x98)
-(platform_drv_probe) from [<c0618c04>] (really_probe+0x1dc/0x348)
-(really_probe) from [<c0618ef4>] (driver_probe_device+0x5c/0x160)
-
-Let's fix the issue by moving platform_get_irq to happen after timer has
-been allocated.
-
-Fixes: bc83caddf17b ("clocksource/drivers/timer-ti-dm: Switch to platform_get_irq")
-Cc: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Olof Johansson <olof@lixom.net>
-Acked-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20200106203700.21009-1-tony@atomide.com
+Link: https://lore.kernel.org/r/20200104152107.11407-12-krzk@kernel.org
 ---
- drivers/clocksource/timer-ti-dm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clocksource/exynos_mct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index bd16efb2740b..269a994d6a99 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -795,14 +795,14 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 74cb299f5089..a267fe31ef13 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -4,7 +4,7 @@
+  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+- * EXYNOS4 MCT(Multi-Core Timer) support
++ * Exynos4 MCT(Multi-Core Timer) support
+ */
  
--	timer->irq = platform_get_irq(pdev, 0);
--	if (timer->irq < 0)
--		return timer->irq;
--
- 	timer = devm_kzalloc(dev, sizeof(*timer), GFP_KERNEL);
- 	if (!timer)
- 		return  -ENOMEM;
- 
-+	timer->irq = platform_get_irq(pdev, 0);
-+	if (timer->irq < 0)
-+		return timer->irq;
-+
- 	timer->fclk = ERR_PTR(-ENODEV);
- 	timer->io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(timer->io_base))
+ #include <linux/interrupt.h>
 -- 
 2.17.1
 
