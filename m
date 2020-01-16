@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4620013F4D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57C1113F4AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389581AbgAPSwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:52:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42516 "EHLO mail.kernel.org"
+        id S2389460AbgAPRIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389439AbgAPRIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:08:34 -0500
+        id S2389443AbgAPRIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:08:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0676E2467C;
-        Thu, 16 Jan 2020 17:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28F58205F4;
+        Thu, 16 Jan 2020 17:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194513;
-        bh=QOXJQFLhX9thyDPeqKCT78Ibo5JZTuoneB29aF9mx6I=;
+        s=default; t=1579194514;
+        bh=k8GReeyE90iWoxw6ZmMi4YPvCx8AKmgbeGlh4ZYDKyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EFSFpqpQ/4gsggMeQ/YXbl/wWQFGYDbW94BbMNtGYkqA/Umb8VHA997P6DfoSPSuD
-         IuGk2c3UtpMbBWrmj0HvJ7pcYKxeR5rxDAM4fjBVXl64mXXowlZ9/uqT/BYXkSXXeV
-         lcAUsr7I3nGy1iAf99B5pJxOL8RcUDUlnW1r/ZRE=
+        b=VJniDalO1pbCuRUQLJg0M74UQn+KjrgEgmJGqwJoeCiDu4yCPchJ6A3LL9cet2Lvm
+         r2LoYsP7ox3xtyt7yVt8p6rEc6cf5p4piHjg9lZhryh8BmQSXGIXDhuvN2VgccNV3a
+         lYyI/sIuiq50w4/lxnhqIp5srS/AwTV+R8HAbgtM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Peng Fan <peng.fan@nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 407/671] firmware: arm_scmi: fix bitfield definitions for SENSOR_DESC attributes
-Date:   Thu, 16 Jan 2020 12:00:45 -0500
-Message-Id: <20200116170509.12787-144-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 408/671] firmware: arm_scmi: update rate_discrete in clock_describe_rates_get
+Date:   Thu, 16 Jan 2020 12:00:46 -0500
+Message-Id: <20200116170509.12787-145-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,45 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-[ Upstream commit 430daaf96ad133be5ce7c3a5c60e94247f7c6f71 ]
+[ Upstream commit c0759b9b5d411ab27c479125cee9bae391a96436 ]
 
-As per the SCMI specification the bitfields for SENSOR_DESC attributes
-are as follows:
-attributes_low 	[7:0] 	Number of trip points supported
-attributes_high	[15:11]	The power-of-10 multiplier in 2's-complement
-			format that is applied to the sensor units
+The boolean rate_discrete needs to be assigned to clk->rate_discrete,
+so that clock driver can distinguish between the continuous range and
+discrete rates. It uses this in scmi_clk_round_rate could get the
+rounded value if it's a continuous range.
 
-Looks like the code developed during the draft versions of the
-specification slipped through and are wrong with respect to final
-released version. Fix them by adjusting the bitfields appropriately.
-
-Fixes: 5179c523c1ea ("firmware: arm_scmi: add initial support for sensor protocol")
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 5f6c6430e904 ("firmware: arm_scmi: add initial support for clock protocol")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+[sudeep.holla: updated commit message]
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/arm_scmi/sensors.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/arm_scmi/clock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
-index b53d5cc9c9f6..c00287b5f2c2 100644
---- a/drivers/firmware/arm_scmi/sensors.c
-+++ b/drivers/firmware/arm_scmi/sensors.c
-@@ -30,10 +30,10 @@ struct scmi_msg_resp_sensor_description {
- 		__le32 id;
- 		__le32 attributes_low;
- #define SUPPORTS_ASYNC_READ(x)	((x) & BIT(31))
--#define NUM_TRIP_POINTS(x)	(((x) >> 4) & 0xff)
-+#define NUM_TRIP_POINTS(x)	((x) & 0xff)
- 		__le32 attributes_high;
- #define SENSOR_TYPE(x)		((x) & 0xff)
--#define SENSOR_SCALE(x)		(((x) >> 11) & 0x3f)
-+#define SENSOR_SCALE(x)		(((x) >> 11) & 0x1f)
- #define SENSOR_UPDATE_SCALE(x)	(((x) >> 22) & 0x1f)
- #define SENSOR_UPDATE_BASE(x)	(((x) >> 27) & 0x1f)
- 		    u8 name[SCMI_MAX_STR_SIZE];
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 30fc04e28431..0a194af92438 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -185,6 +185,8 @@ scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
+ 	if (rate_discrete)
+ 		clk->list.num_rates = tot_rate_cnt;
+ 
++	clk->rate_discrete = rate_discrete;
++
+ err:
+ 	scmi_xfer_put(handle, t);
+ 	return ret;
 -- 
 2.20.1
 
