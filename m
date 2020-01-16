@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78D1113EDFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EED413ED97
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:04:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394958AbgAPSGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:06:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56034 "EHLO mail.kernel.org"
+        id S2393647AbgAPRki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:40:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390757AbgAPRjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:39:35 -0500
+        id S2393490AbgAPRjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:39:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 447E324713;
-        Thu, 16 Jan 2020 17:39:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA3DB246D3;
+        Thu, 16 Jan 2020 17:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196375;
-        bh=5Hqvj1d0sGbjAeExLTLRYC4kjmNKiEF1Y0ULRa5GIMs=;
+        s=default; t=1579196378;
+        bh=V+XzVa+AJikBr7Z2GJK4sPMp7Mea5rGKpfqLW5wffig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ePYr0LiY0GZp33xW+oHNaUbYeQSXXjWq7kL0o0KM8olnPhyE21LX1ajmfjqwyaIkg
-         ZL+nFhzw3v9nMrPfP5Js+WNxdRqNTn4+qpsNJU75IDDboymaxQFBMefLY+hbndhZmA
-         +evKj1tzxIVrzxb2A+bnK0SayTpmTu1a2QCTPdBs=
+        b=NIt4CQZQUwvPA4CmMMlqzw5ySfSy1ifA5x/0N8BM6odICs+GISaoyTpM4boyXesYx
+         MSJWPDa3Zup3Ste70DXjW4ux5d/1n0YhK8tRpbSebp91a+9hBOchxudNkMkmTVfEI6
+         7e4wybs23wFvSXBVcXoWepDc0FO4ryIs6T5Hh//E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 160/251] dmaengine: hsu: Revert "set HSU_CH_MTSR to memory width"
-Date:   Thu, 16 Jan 2020 12:35:09 -0500
-Message-Id: <20200116173641.22137-120-sashal@kernel.org>
+Cc:     Kevin Mitchell <kevmitch@arista.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.9 162/251] iommu/amd: Make iommu_disable safer
+Date:   Thu, 16 Jan 2020 12:35:11 -0500
+Message-Id: <20200116173641.22137-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,49 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Kevin Mitchell <kevmitch@arista.com>
 
-[ Upstream commit c24a5c735f87d0549060de31367c095e8810b895 ]
+[ Upstream commit 3ddbe913e55516d3e2165d43d4d5570761769878 ]
 
-The commit
+Make it safe to call iommu_disable during early init error conditions
+before mmio_base is set, but after the struct amd_iommu has been added
+to the amd_iommu_list. For example, this happens if firmware fails to
+fill in mmio_phys in the ACPI table leading to a NULL pointer
+dereference in iommu_feature_disable.
 
-  080edf75d337 ("dmaengine: hsu: set HSU_CH_MTSR to memory width")
-
-has been mistakenly submitted. The further investigations show that
-the original code does better job since the memory side transfer size
-has never been configured by DMA users.
-
-As per latest revision of documentation: "Channel minimum transfer size
-(CHnMTSR)... For IOSF UART, maximum value that can be programmed is 64 and
-minimum value that can be programmed is 1."
-
-This reverts commit 080edf75d337d35faa6fc3df99342b10d2848d16.
-
-Fixes: 080edf75d337 ("dmaengine: hsu: set HSU_CH_MTSR to memory width")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 2c0ae1720c09c ('iommu/amd: Convert iommu initialization to state machine')
+Signed-off-by: Kevin Mitchell <kevmitch@arista.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/hsu/hsu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/amd_iommu_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/dma/hsu/hsu.c b/drivers/dma/hsu/hsu.c
-index 29d04ca71d52..15525a2b8ebd 100644
---- a/drivers/dma/hsu/hsu.c
-+++ b/drivers/dma/hsu/hsu.c
-@@ -64,10 +64,10 @@ static void hsu_dma_chan_start(struct hsu_dma_chan *hsuc)
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index 9bb8d64b6f94..c113e46fdc3a 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -383,6 +383,9 @@ static void iommu_enable(struct amd_iommu *iommu)
  
- 	if (hsuc->direction == DMA_MEM_TO_DEV) {
- 		bsr = config->dst_maxburst;
--		mtsr = config->src_addr_width;
-+		mtsr = config->dst_addr_width;
- 	} else if (hsuc->direction == DMA_DEV_TO_MEM) {
- 		bsr = config->src_maxburst;
--		mtsr = config->dst_addr_width;
-+		mtsr = config->src_addr_width;
- 	}
+ static void iommu_disable(struct amd_iommu *iommu)
+ {
++	if (!iommu->mmio_base)
++		return;
++
+ 	/* Disable command buffer */
+ 	iommu_feature_disable(iommu, CONTROL_CMDBUF_EN);
  
- 	hsu_chan_disable(hsuc);
 -- 
 2.20.1
 
