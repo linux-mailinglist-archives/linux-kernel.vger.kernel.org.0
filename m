@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFD1013E346
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4784413E349
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbgAPRBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:01:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
+        id S2387632AbgAPRBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:01:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387963AbgAPRA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:59 -0500
+        id S2387977AbgAPRBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9377A2081E;
-        Thu, 16 Jan 2020 17:00:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7114A2077B;
+        Thu, 16 Jan 2020 17:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194058;
-        bh=BIVeDkCcdsPl+1TKDpBlMJpU4E/TGWeqRij21fRbRCo=;
+        s=default; t=1579194061;
+        bh=/49kyxd0PfXibenNT+urM4vRt0IRh8RAXda1+lG3nD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hPfux9AE1B9PWKB5ichcKafeFIwjHFvP27QLeg2YCV/HzyBlRPIDcz0U3L0FSLLae
-         OooTHWYZjUh7AlFLwGjsOV2L6QWVth8/v0TfzDvBn9biU9MIGxTW971tXZIru7whh0
-         h8dCKd/WFLYjJ/oEDMd14WRVeBTUi8I+6dBkR0cU=
+        b=RLrb+5CQJsDV5tLuBAl3SwPhG4gyeqt742cQItG4ARvum05ANBosp/ylYKOvu4FB0
+         ru2dKdHWBSS0/pXHj7vA9a5mYx3qh/04gR4oz3K8n0Qhk86tk4aAQ2BKuBfX/4vVKS
+         mqOrIuDaHuNZ/Az1GsTozq/Ikak1tHa61wWPfKkI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: [PATCH AUTOSEL 4.19 171/671] drm/etnaviv: potential NULL dereference
-Date:   Thu, 16 Jan 2020 11:51:20 -0500
-Message-Id: <20200116165940.10720-54-sashal@kernel.org>
+Cc:     Wesley Sheng <wesley.sheng@microchip.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Jon Mason <jdmason@kudzu.us>, Sasha Levin <sashal@kernel.org>,
+        linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 173/671] ntb_hw_switchtec: NT req id mapping table register entry number should be 512
+Date:   Thu, 16 Jan 2020 11:51:22 -0500
+Message-Id: <20200116165940.10720-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -46,36 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Wesley Sheng <wesley.sheng@microchip.com>
 
-[ Upstream commit 9e05352340d3a3e68c144136db9810b26ebb88c3 ]
+[ Upstream commit d123fab71f63aae129aebe052664fda73131921a ]
 
-The etnaviv_gem_prime_get_sg_table() is supposed to return error
-pointers.  Otherwise it can lead to a NULL dereference when it's called
-from drm_gem_map_dma_buf().
+The number of available NT req id mapping table entries per NTB control
+register is 512. The driver mistakenly limits the number to 256.
 
-Fixes: 5f4a4a73f437 ("drm/etnaviv: fix gem_prime_get_sg_table to return new SG table")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Fix the array size of NT req id mapping table.
+
+Fixes: c082b04c9d40 ("NTB: switchtec: Add NTB hardware register definitions")
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/switchtec.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-index 0566171f8df2..f21529e635e3 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
-@@ -15,7 +15,7 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
- 	int npages = obj->size >> PAGE_SHIFT;
+diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
+index ab400af6f0ce..623719c91706 100644
+--- a/include/linux/switchtec.h
++++ b/include/linux/switchtec.h
+@@ -244,8 +244,8 @@ struct ntb_ctrl_regs {
+ 		u64 xlate_addr;
+ 	} bar_entry[6];
+ 	u32 reserved2[216];
+-	u32 req_id_table[256];
+-	u32 reserved3[512];
++	u32 req_id_table[512];
++	u32 reserved3[256];
+ 	u64 lut_entry[512];
+ } __packed;
  
- 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	return drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
- }
 -- 
 2.20.1
 
