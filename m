@@ -2,106 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8099F13DDDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E8813DDD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAPOpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 09:45:42 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53610 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726896AbgAPOpl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:45:41 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00GEcpLY005549;
-        Thu, 16 Jan 2020 15:45:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=cAWvRTc4tnP3mUhDhnDW+3UQ+nP3clmh3H0/YmypJBY=;
- b=wGmW5bVc8wFynTeJNpC56iPgHErHDq1Uu2kJ7qDr1uNGi7zjNscAAFtiwAkOYn/Zv8Ig
- z9MPLsKhMLT0CN2kx9pkkNq6Hd0/bmObIEEfIF+5oZgDGEmj/8JU27rkBnL0/311GeqC
- VNwMplUjZ3UJS/CYxay87n8RcqO/tG4S2No8sSBRUXyeRgEg6qje2sJ/m6skAa0y2SEG
- 7zfhwb2iFhT6RMoYkrKVZ0u/tYTnOcFpcIEDVjNlCxTIV+IlxKxfsnWy2HZvtcmuQ2xP
- Qu0FcHNIWpKeVSX284StUyDmINXXd9gp9yXAqzd6SIOIhMy9r6in99SpZ0br5suFhGDH Zg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xf7jpsswt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Jan 2020 15:45:32 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E01D010002A;
-        Thu, 16 Jan 2020 15:45:31 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CC0D12D3798;
-        Thu, 16 Jan 2020 15:45:31 +0100 (CET)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 16 Jan 2020 15:45:31
- +0100
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Minas Harutyunyan <hminas@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCHv2 1/2] dt-bindings: usb: dwc2: add support for STM32MP15 SoCs USB OTG HS and FS
-Date:   Thu, 16 Jan 2020 15:45:23 +0100
-Message-ID: <20200116144524.16070-2-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200116144524.16070-1-amelie.delaunay@st.com>
-References: <20200116144524.16070-1-amelie.delaunay@st.com>
+        id S1728899AbgAPOp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 09:45:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726151AbgAPOp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 09:45:28 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CDA620684;
+        Thu, 16 Jan 2020 14:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579185928;
+        bh=v9XSHMwY4zRV2HP2e0bNBZ2kNH3h9xSoS9wOX3LfJyY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lZmsfnjl/45yfEKSdW3gYOarkWTgBYTp1NCFZ0ZWJoxamfHp/pY0DZqEnA1pce2Pu
+         oiiTZ1xkqZ8GaZ4b50ORoHpdXhWGOeDXprvArZuIJdebKMHF/QZN7HcSvo/75qeVLq
+         wvEXzznDuHFyvOB8nuZCFV+KPdNA9jKDV/K+UfGY=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     mhiramat@kernel.org, Ingo Molnar <mingo@kernel.org>,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, paulmck@kernel.org,
+        joel@joelfernandes.org,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Subject: [RFT PATCH 07/13] kprobes: Use normal list traversal API if a mutex is held
+Date:   Thu, 16 Jan 2020 23:45:23 +0900
+Message-Id: <157918592332.29301.1564446199611592837.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157918584866.29301.6941815715391411338.stgit@devnote2>
+References: <157918584866.29301.6941815715391411338.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-16_04:2020-01-16,2020-01-15 signatures=0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the specific compatible string for the DWC2 IP found in the STM32MP15
-SoCs.
-STM32MP15 SoCs uses sensing comparators to detect Vbus valid levels and
-ID pin state. usb33d-supply described the regulator supplying Vbus and ID
-sensing comparators.
+Use normal list traversal API instead of rcu_read_lock,
+RCU list traversal and rcu_read_unlock pair if a mutex
+which protects the list is held in the methods of
+kprobe_insn_cache.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- Documentation/devicetree/bindings/usb/dwc2.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/kprobes.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc2.yaml b/Documentation/devicetree/bindings/usb/dwc2.yaml
-index 71cf7ba32237..0b86250b97a9 100644
---- a/Documentation/devicetree/bindings/usb/dwc2.yaml
-+++ b/Documentation/devicetree/bindings/usb/dwc2.yaml
-@@ -58,6 +58,8 @@ properties:
-       - const: st,stm32f4x9-fsotg
-       - const: st,stm32f4x9-hsotg
-       - const: st,stm32f7-hsotg
-+      - const: st,stm32mp15-fsotg
-+      - const: st,stm32mp15-hsotg
-       - const: samsung,s3c6400-hsotg
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 848c14e92ccc..09b0e33bc845 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -141,8 +141,7 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+ 	/* Since the slot array is not protected by rcu, we need a mutex */
+ 	mutex_lock(&c->mutex);
+  retry:
+-	rcu_read_lock();
+-	list_for_each_entry_rcu(kip, &c->pages, list) {
++	list_for_each_entry(kip, &c->pages, list) {
+ 		if (kip->nused < slots_per_page(c)) {
+ 			int i;
+ 			for (i = 0; i < slots_per_page(c); i++) {
+@@ -150,7 +149,6 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+ 					kip->slot_used[i] = SLOT_USED;
+ 					kip->nused++;
+ 					slot = kip->insns + (i * c->insn_size);
+-					rcu_read_unlock();
+ 					goto out;
+ 				}
+ 			}
+@@ -159,7 +157,6 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+ 			WARN_ON(1);
+ 		}
+ 	}
+-	rcu_read_unlock();
  
-   reg:
-@@ -103,6 +105,10 @@ properties:
-   vusb_a-supply:
-     description: phandle to voltage regulator of analog section.
+ 	/* If there are any garbage slots, collect it and try again. */
+ 	if (c->nr_garbage && collect_garbage_slots(c) == 0)
+@@ -244,8 +241,7 @@ void __free_insn_slot(struct kprobe_insn_cache *c,
+ 	long idx;
  
-+  vusb33d_supply:
-+    description: reference to the external VBUS and ID sensing comparators, in
-+      order to perform OTG operation, used on STM32MP15 SoCs.
-+
-   dr_mode:
-     enum: [host, peripheral, otg]
- 
--- 
-2.17.1
+ 	mutex_lock(&c->mutex);
+-	rcu_read_lock();
+-	list_for_each_entry_rcu(kip, &c->pages, list) {
++	list_for_each_entry(kip, &c->pages, list) {
+ 		idx = ((long)slot - (long)kip->insns) /
+ 			(c->insn_size * sizeof(kprobe_opcode_t));
+ 		if (idx >= 0 && idx < slots_per_page(c))
+@@ -255,7 +251,6 @@ void __free_insn_slot(struct kprobe_insn_cache *c,
+ 	WARN_ON(1);
+ 	kip = NULL;
+ out:
+-	rcu_read_unlock();
+ 	/* Mark and sweep: this may sleep */
+ 	if (kip) {
+ 		/* Check double free */
 
