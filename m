@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6120D13FF4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00BEB13FE1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:34:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391876AbgAPXld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58910 "EHLO mail.kernel.org"
+        id S2403882AbgAPXci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390056AbgAPX1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:18 -0500
+        id S2404089AbgAPXc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:32:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1165214AF;
-        Thu, 16 Jan 2020 23:27:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DF5F206D9;
+        Thu, 16 Jan 2020 23:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217238;
-        bh=IBG7E2GJGbsNjViu333rtmT2J38bDQmsbxsfWNMJyGc=;
+        s=default; t=1579217548;
+        bh=f96ZAgfD7z4kX6S1UyNF8i0p7VlaogHIyeGDEhekY8M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/e16R6o559zN/Yhz1si05CZekF9+q8UVXmAdZBVHYmrRZLnwqjB56i63hq9j/3Yh
-         Iae5nzvgoiIBFm+ghzKRYjXF1dT/kVV2TybcVTTQDFqg6awwXrxewG8CJT1y9zTR6n
-         f1fscdjYAJhRwltRQesPzP10WvbnRdDOXkmw5gZ8=
+        b=q3PuFaSPWFqxsRLyRQyUBk2i4IUbUMvytO1YbNCZ1MfNB7ORb08iOfHlzN4u+K/Jm
+         QCkpdfi6u8occE4LxAOjmbUeFIMKJNTCnlUiHVlQtG04dLrg75iv+Et+hG7y0dFvqp
+         X7JpQOAws3umUVOsbVwYb4L9DML5Lttg0RHNuRXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 186/203] riscv: export flush_icache_all to modules
-Date:   Fri, 17 Jan 2020 00:18:23 +0100
-Message-Id: <20200116231800.578347871@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 26/71] gpio: Fix error message on out-of-range GPIO in lookup table
+Date:   Fri, 17 Jan 2020 00:18:24 +0100
+Message-Id: <20200116231713.266491730@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olof Johansson <olof@lixom.net>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1833e327a5ea1d1f356fbf6ded0760c9ff4b0594 ]
+commit d935bd50dd14a7714cbdba9a76435dbb56edb1ae upstream.
 
-This is needed by LKDTM (crash dump test module), it calls
-flush_icache_range(), which on RISC-V turns into flush_icache_all(). On
-other architectures, the actual implementation is exported, so follow
-that precedence and export it here too.
+When a GPIO offset in a lookup table is out-of-range, the printed error
+message (1) does not include the actual out-of-range value, and (2)
+contains an off-by-one error in the upper bound.
 
-Fixes build of CONFIG_LKDTM that fails with:
-ERROR: "flush_icache_all" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+Avoid user confusion by also printing the actual GPIO offset, and
+correcting the upper bound of the range.
+While at it, use "%u" for unsigned int.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Sample impact:
+
+    -requested GPIO 0 is out of range [0..32] for chip e6052000.gpio
+    +requested GPIO 0 (45) is out of range [0..31] for chip e6052000.gpio
+
+Fixes: 2a3cf6a3599e9015 ("gpiolib: return -ENOENT if no GPIO mapping exists")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191127095919.4214-1-geert+renesas@glider.be
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/riscv/mm/cacheflush.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-index 3f15938dec89..c54bd3c79955 100644
---- a/arch/riscv/mm/cacheflush.c
-+++ b/arch/riscv/mm/cacheflush.c
-@@ -14,6 +14,7 @@ void flush_icache_all(void)
- {
- 	sbi_remote_fence_i(NULL);
- }
-+EXPORT_SYMBOL(flush_icache_all);
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3167,8 +3167,9 @@ static struct gpio_desc *gpiod_find(stru
  
- /*
-  * Performs an icache flush for the given MM context.  RISC-V has no direct
--- 
-2.20.1
-
+ 		if (chip->ngpio <= p->chip_hwnum) {
+ 			dev_err(dev,
+-				"requested GPIO %d is out of range [0..%d] for chip %s\n",
+-				idx, chip->ngpio, chip->label);
++				"requested GPIO %u (%u) is out of range [0..%u] for chip %s\n",
++				idx, p->chip_hwnum, chip->ngpio - 1,
++				chip->label);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
 
 
