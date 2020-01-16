@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E042E13E41A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B6E13E41D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388477AbgAPRGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:06:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35640 "EHLO mail.kernel.org"
+        id S2388890AbgAPRGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388818AbgAPRGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:01 -0500
+        id S2388832AbgAPRGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 966D421D56;
-        Thu, 16 Jan 2020 17:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0371F24673;
+        Thu, 16 Jan 2020 17:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194360;
-        bh=F4cwf9f0yORGBvxuj54EAFRFgYgXoEyXBQKX2FzdycU=;
+        s=default; t=1579194365;
+        bh=LZXc39akRF9TdNnhbcpEkxTJJQMlUphOrcUB7D1NdQs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S0zu3jqfVExMDvv5rWgMb1TfCUeSI+1RVPIHl6hojkNIdV1z4Tl8qTPeSv+HWsCZ8
-         zUTAX94kX4NagCUDAaguYPoGBnN83dArmf6gsRhnARCOKEsNJA0wdmJ0oH1BGeAYjb
-         r2yOsdKV3tNV+W+E6YWE3PDq6VYKE/ZrfZBiF4jg=
+        b=R0JHq/jmNIcyxMMIa+mvLeUzp+pG3tt6DYYavTsEGSAqoKyh+pM6vhDolSCrsd+zN
+         Y6IZOVmfMIl4EOaGPxsrMl2cLHQSYRRj+cdOEdz58mKhCZdp2YR8ZU1TITTouRo3Dj
+         y0+/P7A4RxLUcAB77DvEPYYzpsUor7TnN3AYZHwI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 297/671] PCI: dwc: Fix dw_pcie_ep_find_capability() to return correct capability offset
-Date:   Thu, 16 Jan 2020 11:58:55 -0500
-Message-Id: <20200116170509.12787-34-sashal@kernel.org>
+Cc:     Jie Liu <liujie165@huawei.com>, Qiang Ning <ningqiang1@huawei.com>,
+        Zhiqiang Liu <liuzhiqiang26@huawei.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 300/671] tipc: set sysctl_tipc_rmem and named_timeout right range
+Date:   Thu, 16 Jan 2020 11:58:58 -0500
+Message-Id: <20200116170509.12787-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -43,64 +46,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Jie Liu <liujie165@huawei.com>
 
-[ Upstream commit 421db1ab287eebe80fd203eb009ae92836c586ad ]
+[ Upstream commit 4bcd4ec1017205644a2697bccbc3b5143f522f5f ]
 
-commit beb4641a787d ("PCI: dwc: Add MSI-X callbacks handler") while
-adding MSI-X callback handler, introduced dw_pcie_ep_find_capability()
-and __dw_pcie_ep_find_next_cap() for finding the MSI and MSIX capability.
+We find that sysctl_tipc_rmem and named_timeout do not have the right minimum
+setting. sysctl_tipc_rmem should be larger than zero, like sysctl_tcp_rmem.
+And named_timeout as a timeout setting should be not less than zero.
 
-However if MSI or MSIX capability is the last capability (i.e there are
-no additional items in the capabilities list and the Next Capability
-Pointer is set to '0'), __dw_pcie_ep_find_next_cap will return '0'
-even though MSI or MSIX capability may be present because of
-incorrect ordering of the "next_cap_ptr" check. Fix it.
-
-Fixes: beb4641a787d ("PCI: dwc: Add MSI-X callbacks handler")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Fixes: cc79dd1ba9c10 ("tipc: change socket buffer overflow control to respect sk_rcvbuf")
+Fixes: a5325ae5b8bff ("tipc: add name distributor resiliency queue")
+Signed-off-by: Jie Liu <liujie165@huawei.com>
+Reported-by: Qiang Ning <ningqiang1@huawei.com>
+Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-designware-ep.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/tipc/sysctl.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 739d97080d3b..a3d07d9c598b 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -46,16 +46,19 @@ static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
- 	u8 cap_id, next_cap_ptr;
- 	u16 reg;
+diff --git a/net/tipc/sysctl.c b/net/tipc/sysctl.c
+index 1a779b1e8510..40f6d82083d7 100644
+--- a/net/tipc/sysctl.c
++++ b/net/tipc/sysctl.c
+@@ -37,6 +37,8 @@
  
-+	if (!cap_ptr)
-+		return 0;
-+
- 	reg = dw_pcie_readw_dbi(pci, cap_ptr);
--	next_cap_ptr = (reg & 0xff00) >> 8;
- 	cap_id = (reg & 0x00ff);
+ #include <linux/sysctl.h>
  
--	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
-+	if (cap_id > PCI_CAP_ID_MAX)
- 		return 0;
++static int zero;
++static int one = 1;
+ static struct ctl_table_header *tipc_ctl_hdr;
  
- 	if (cap_id == cap)
- 		return cap_ptr;
- 
-+	next_cap_ptr = (reg & 0xff00) >> 8;
- 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
- }
- 
-@@ -67,9 +70,6 @@ static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
- 	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
- 	next_cap_ptr = (reg & 0x00ff);
- 
--	if (!next_cap_ptr)
--		return 0;
--
- 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
- }
- 
+ static struct ctl_table tipc_table[] = {
+@@ -45,14 +47,16 @@ static struct ctl_table tipc_table[] = {
+ 		.data		= &sysctl_tipc_rmem,
+ 		.maxlen		= sizeof(sysctl_tipc_rmem),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1         = &one,
+ 	},
+ 	{
+ 		.procname	= "named_timeout",
+ 		.data		= &sysctl_tipc_named_timeout,
+ 		.maxlen		= sizeof(sysctl_tipc_named_timeout),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1         = &zero,
+ 	},
+ 	{}
+ };
 -- 
 2.20.1
 
