@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C661813E449
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:07:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D4413E44B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:07:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389161AbgAPRHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:07:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38792 "EHLO mail.kernel.org"
+        id S2389192AbgAPRHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:07:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389119AbgAPRHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:07:15 -0500
+        id S2389169AbgAPRH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:07:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3766021582;
-        Thu, 16 Jan 2020 17:07:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 015F12081E;
+        Thu, 16 Jan 2020 17:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194434;
-        bh=FyBl76UQeAz82dh9GowjxKLn307tVpqGB2q7gUGV/V8=;
+        s=default; t=1579194446;
+        bh=hBuBI2R1N9tqyEoCpNH88R2pYUVEAJ7+0Sj6SoGPYp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GjUaKCH/h3m/sQYDgR+rPSJNxEhwsug5b4BVQA4LdmFof7/wgqa6GqdrsW2q4/+ry
-         DQh9psbfAgO4WWujpb4hX2IPf/oqvw5xC7IMhcCWGB9F9cqjC4itCGakgsY4f5Xya+
-         I2P+67swvzDYgMD12YdeS0ev0fXi5IBPUP42X25U=
+        b=Ic5kAoWMYAX4kbzHpbFz5s0TvBiRKN7gC7mkXTflkmLNIYCKvWAPg4Fzte5MRqTyz
+         jlpzPW1v/2oiXShTIEzGVjZSHzy6EnVNQH7ne7qwa/ut8AjArxNw6vfB9fnxWx7NGZ
+         FZCcQG2NF2cPKlzk8BiEp2swTVViGH7UXNL4CuAo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 349/671] netfilter: ebtables: CONFIG_COMPAT: reject trailing data after last rule
-Date:   Thu, 16 Jan 2020 11:59:47 -0500
-Message-Id: <20200116170509.12787-86-sashal@kernel.org>
+Cc:     Jiada Wang <jiada_wang@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 357/671] thermal: rcar_gen3_thermal: fix interrupt type
+Date:   Thu, 16 Jan 2020 11:59:55 -0500
+Message-Id: <20200116170509.12787-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -46,41 +45,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-[ Upstream commit 680f6af5337c98d116e4f127cea7845339dba8da ]
+[ Upstream commit 2c0928c9e004589dc9e7672c40a38d6c4ca12701 ]
 
-If userspace provides a rule blob with trailing data after last target,
-we trigger a splat, then convert ruleset to 64bit format (with trailing
-data), then pass that to do_replace_finish() which then returns -EINVAL.
+Currently IRQF_SHARED type interrupt line is allocated, but it
+is not appropriate, as the interrupt line isn't shared between
+different devices, instead IRQF_ONESHOT is the proper type.
 
-Erroring out right away avoids the splat plus unneeded translation and
-error unwind.
+By changing interrupt type to IRQF_ONESHOT, now irq handler is
+no longer needed, as clear of interrupt status can be done in
+threaded interrupt context.
 
-Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Because IRQF_ONESHOT type interrupt line is kept disabled until
+the threaded handler has been run, so there is no need to protect
+read/write of REG_GEN3_IRQSTR with lock.
+
+Fixes: 7d4b269776ec6 ("enable hardware interrupts for trip points")
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/thermal/rcar_gen3_thermal.c | 38 +++++------------------------
+ 1 file changed, 6 insertions(+), 32 deletions(-)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 785e19afd6aa..f59230e4fc29 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2165,7 +2165,9 @@ static int compat_copy_entries(unsigned char *data, unsigned int size_user,
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 704c8ad045bb..8f553453dd7f 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -14,7 +14,6 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
+ #include <linux/thermal.h>
  
--	WARN_ON(size_remaining);
-+	if (size_remaining)
-+		return -EINVAL;
-+
- 	return state->buf_kern_offset;
+@@ -81,7 +80,6 @@ struct rcar_gen3_thermal_tsc {
+ struct rcar_gen3_thermal_priv {
+ 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
+ 	unsigned int num_tscs;
+-	spinlock_t lock; /* Protect interrupts on and off */
+ 	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
+ };
+ 
+@@ -231,38 +229,16 @@ static irqreturn_t rcar_gen3_thermal_irq(int irq, void *data)
+ {
+ 	struct rcar_gen3_thermal_priv *priv = data;
+ 	u32 status;
+-	int i, ret = IRQ_HANDLED;
++	int i;
+ 
+-	spin_lock(&priv->lock);
+ 	for (i = 0; i < priv->num_tscs; i++) {
+ 		status = rcar_gen3_thermal_read(priv->tscs[i], REG_GEN3_IRQSTR);
+ 		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQSTR, 0);
+ 		if (status)
+-			ret = IRQ_WAKE_THREAD;
++			thermal_zone_device_update(priv->tscs[i]->zone,
++						   THERMAL_EVENT_UNSPECIFIED);
+ 	}
+ 
+-	if (ret == IRQ_WAKE_THREAD)
+-		rcar_thermal_irq_set(priv, false);
+-
+-	spin_unlock(&priv->lock);
+-
+-	return ret;
+-}
+-
+-static irqreturn_t rcar_gen3_thermal_irq_thread(int irq, void *data)
+-{
+-	struct rcar_gen3_thermal_priv *priv = data;
+-	unsigned long flags;
+-	int i;
+-
+-	for (i = 0; i < priv->num_tscs; i++)
+-		thermal_zone_device_update(priv->tscs[i]->zone,
+-					   THERMAL_EVENT_UNSPECIFIED);
+-
+-	spin_lock_irqsave(&priv->lock, flags);
+-	rcar_thermal_irq_set(priv, true);
+-	spin_unlock_irqrestore(&priv->lock, flags);
+-
+ 	return IRQ_HANDLED;
  }
  
+@@ -364,8 +340,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	if (soc_device_match(r8a7795es1))
+ 		priv->thermal_init = rcar_gen3_thermal_init_r8a7795es1;
+ 
+-	spin_lock_init(&priv->lock);
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	/*
+@@ -383,9 +357,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		if (!irqname)
+ 			return -ENOMEM;
+ 
+-		ret = devm_request_threaded_irq(dev, irq, rcar_gen3_thermal_irq,
+-						rcar_gen3_thermal_irq_thread,
+-						IRQF_SHARED, irqname, priv);
++		ret = devm_request_threaded_irq(dev, irq, NULL,
++						rcar_gen3_thermal_irq,
++						IRQF_ONESHOT, irqname, priv);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
 2.20.1
 
