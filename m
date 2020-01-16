@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3107A13E429
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70FE513E42E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387578AbgAPRGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:06:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36212 "EHLO mail.kernel.org"
+        id S2388980AbgAPRGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388888AbgAPRGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:16 -0500
+        id S2388940AbgAPRGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D739124653;
-        Thu, 16 Jan 2020 17:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BB8720730;
+        Thu, 16 Jan 2020 17:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194375;
-        bh=rn4pfLKM3XRU+IxIe6/WS+j0s2MfQwOgjyTvquAUgQk=;
+        s=default; t=1579194390;
+        bh=oUxuQepRUEKu++HXwriPcKSaTS7OHkGAGIHwak+Ax6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X01f7pf7F0gXTH5zBZGMfMo0ulW8oAH7vzDtxIShecrJQlVUVIVettKkvOqrJ2zig
-         SlgZiF9OjhvWxh9rzkQa+4gakoL9cbsi0aWehsh/hbDPpYHBqDgww+Nvn/BteUpp0F
-         bjcOPS0JNx/a/11z7RtnDVgPEfMGlcyv3WGD03wg=
+        b=0XCbY8I9s+R+h5p8ABvc63bdeSbDpGO66YFThwrvm1KjqL7oW0eOAeNQbWQe+EabW
+         8tcCLeGlNEWr1O6sUwXmb7qYuicwWqIdoL/017uP503orzmQXBDMbyiny+FZk7KaMb
+         d/hs2zpJLqKXLQXvj6JNARLioI8Sakl0zu2mNs8g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 307/671] 6lowpan: Off by one handling ->nexthdr
-Date:   Thu, 16 Jan 2020 11:59:05 -0500
-Message-Id: <20200116170509.12787-44-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        Giridhar Malavali <gmalavali@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 318/671] scsi: qla2xxx: Avoid that qlt_send_resp_ctio() corrupts memory
+Date:   Thu, 16 Jan 2020 11:59:16 -0500
+Message-Id: <20200116170509.12787-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -47,39 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit f57c4bbf34439531adccd7d3a4ecc14f409c1399 ]
+[ Upstream commit a861b49273578e255426a499842cf7f465456351 ]
 
-NEXTHDR_MAX is 255.  What happens here is that we take a u8 value
-"hdr->nexthdr" from the network and then look it up in
-lowpan_nexthdr_nhcs[].  The problem is that if hdr->nexthdr is 0xff then
-we read one element beyond the end of the array so the array needs to
-be one element larger.
+The "(&ctio->u.status1.sense_data)[i]" where i >= 0 expressions in
+qlt_send_resp_ctio() are probably typos and should have been
+"(&ctio->u.status1.sense_data[4 * i])" instead. Instead of only fixing
+these typos, modify the code for storing sense data such that it becomes
+easy to read. This patch fixes a Coverity complaint about accessing an
+array outside its bounds.
 
-Fixes: 92aa7c65d295 ("6lowpan: add generic nhc layer interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
-Acked-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Cc: Giridhar Malavali <gmalavali@marvell.com>
+Fixes: be25152c0d9e ("qla2xxx: Improve T10-DIF/PI handling in driver.") # v4.11.
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/6lowpan/nhc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_target.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/6lowpan/nhc.c b/net/6lowpan/nhc.c
-index 4fa2fdda174d..9e56fb98f33c 100644
---- a/net/6lowpan/nhc.c
-+++ b/net/6lowpan/nhc.c
-@@ -18,7 +18,7 @@
- #include "nhc.h"
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index c925ca787537..95206e227730 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -2233,14 +2233,14 @@ void qlt_send_resp_ctio(struct qla_qpair *qpair, struct qla_tgt_cmd *cmd,
+ 		ctio->u.status1.scsi_status |=
+ 		    cpu_to_le16(SS_RESIDUAL_UNDER);
  
- static struct rb_root rb_root = RB_ROOT;
--static struct lowpan_nhc *lowpan_nexthdr_nhcs[NEXTHDR_MAX];
-+static struct lowpan_nhc *lowpan_nexthdr_nhcs[NEXTHDR_MAX + 1];
- static DEFINE_SPINLOCK(lowpan_nhc_lock);
+-	/* Response code and sense key */
+-	put_unaligned_le32(((0x70 << 24) | (sense_key << 8)),
+-	    (&ctio->u.status1.sense_data)[0]);
++	/* Fixed format sense data. */
++	ctio->u.status1.sense_data[0] = 0x70;
++	ctio->u.status1.sense_data[2] = sense_key;
+ 	/* Additional sense length */
+-	put_unaligned_le32(0x0a, (&ctio->u.status1.sense_data)[1]);
++	ctio->u.status1.sense_data[7] = 0xa;
+ 	/* ASC and ASCQ */
+-	put_unaligned_le32(((asc << 24) | (ascq << 16)),
+-	    (&ctio->u.status1.sense_data)[3]);
++	ctio->u.status1.sense_data[12] = asc;
++	ctio->u.status1.sense_data[13] = ascq;
  
- static int lowpan_nhc_insert(struct lowpan_nhc *nhc)
+ 	/* Memory Barrier */
+ 	wmb();
 -- 
 2.20.1
 
