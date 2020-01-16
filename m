@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3E4113FDC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DFE513FE03
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389202AbgAPX3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:29:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34156 "EHLO mail.kernel.org"
+        id S2390866AbgAPXbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389637AbgAPX26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:58 -0500
+        id S2403876AbgAPXb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157FD20684;
-        Thu, 16 Jan 2020 23:28:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 230572072B;
+        Thu, 16 Jan 2020 23:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217337;
-        bh=0OrMHnukN32l1tTlce+BD7S8E7gNYvNKNM/0qoVDPS8=;
+        s=default; t=1579217485;
+        bh=JoBAKm2P5KYRaZHWujHHUbJl6+7uf7Ch3XDLnH4jh+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HSL6+w1KfxfhRHTlLGJ8Fua+xN/fDdY3yOEJeKqubQV/tLkTQM0fqEd4gA3UDu7U1
-         wnJUFWWhdpHFtXoUpz/9zPpBalYxvZRpu0QCcSRwPuorNh9Pt38somCPguZHxiL8dm
-         26LG4GTwA7Wn4tL+d4gkudAytpV3+4/Q0xL10UMY=
+        b=xUGtjlV6z8k4+xQ+Hvo8aoqolYN7MZh1kUqjaVa1WdOJOOMhpIoHVQgu+Sb/5MnQj
+         5yR3/AyID6sEcm0QgCR6zPgUkY+830PLSzjlh7gRwLT7Qi+nITqaX7qe187vF+khHg
+         NwewvqypX4H2TM4vAKd2w4HdjEQ98J4R6r7WPp6Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Gonglei <arei.gonglei@huawei.com>,
-        virtualization@lists.linux-foundation.org,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 42/84] crypto: virtio - implement missing support for output IVs
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 18/71] dccp: Fix memleak in __feat_register_sp
 Date:   Fri, 17 Jan 2020 00:18:16 +0100
-Message-Id: <20200116231718.728089716@linuxfoundation.org>
+Message-Id: <20200116231712.074223081@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,52 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 500e6807ce93b1fdc7d5b827c5cc167cc35630db upstream.
+commit 1d3ff0950e2b40dc861b1739029649d03f591820 upstream.
 
-In order to allow for CBC to be chained, which is something that the
-CTS template relies upon, implementations of CBC need to pass the
-IV to be used for subsequent invocations via the IV buffer. This was
-not implemented yet for virtio-crypto so implement it now.
+If dccp_feat_push_change fails, we forget free the mem
+which is alloced by kmemdup in dccp_feat_clone_sp_val.
 
-Fixes: dbaf0624ffa5 ("crypto: add virtio-crypto driver")
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Gonglei <arei.gonglei@huawei.com>
-Cc: virtualization@lists.linux-foundation.org
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: e8ef967a54f4 ("dccp: Registration routines for changing feature values")
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/crypto/virtio/virtio_crypto_algs.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/dccp/feat.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/virtio/virtio_crypto_algs.c
-+++ b/drivers/crypto/virtio/virtio_crypto_algs.c
-@@ -449,6 +449,11 @@ __virtio_crypto_ablkcipher_do_req(struct
- 		goto free;
- 	}
- 	memcpy(iv, req->info, ivsize);
-+	if (!vc_sym_req->encrypt)
-+		scatterwalk_map_and_copy(req->info, req->src,
-+					 req->nbytes - AES_BLOCK_SIZE,
-+					 AES_BLOCK_SIZE, 0);
+--- a/net/dccp/feat.c
++++ b/net/dccp/feat.c
+@@ -738,7 +738,12 @@ static int __feat_register_sp(struct lis
+ 	if (dccp_feat_clone_sp_val(&fval, sp_val, sp_len))
+ 		return -ENOMEM;
+ 
+-	return dccp_feat_push_change(fn, feat, is_local, mandatory, &fval);
++	if (dccp_feat_push_change(fn, feat, is_local, mandatory, &fval)) {
++		kfree(fval.sp.vec);
++		return -ENOMEM;
++	}
 +
- 	sg_init_one(&iv_sg, iv, ivsize);
- 	sgs[num_out++] = &iv_sg;
- 	vc_sym_req->iv = iv;
-@@ -585,6 +590,10 @@ static void virtio_crypto_ablkcipher_fin
- 	struct ablkcipher_request *req,
- 	int err)
- {
-+	if (vc_sym_req->encrypt)
-+		scatterwalk_map_and_copy(req->info, req->dst,
-+					 req->nbytes - AES_BLOCK_SIZE,
-+					 AES_BLOCK_SIZE, 0);
- 	crypto_finalize_ablkcipher_request(vc_sym_req->base.dataq->engine,
- 					   req, err);
- 	kzfree(vc_sym_req->iv);
++	return 0;
+ }
+ 
+ /**
 
 
