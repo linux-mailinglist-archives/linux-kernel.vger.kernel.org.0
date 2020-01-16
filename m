@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A04C713F32C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:41:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 581F613F31F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407215AbgAPSkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53728 "EHLO mail.kernel.org"
+        id S2437042AbgAPSkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:40:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390348AbgAPRL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:11:57 -0500
+        id S2390374AbgAPRMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:12:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1631724697;
-        Thu, 16 Jan 2020 17:11:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55F7C24692;
+        Thu, 16 Jan 2020 17:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194716;
-        bh=Ykv5Omqbya/PBFt5kO//PlxFzjN08HDOhhu4rRk4zpU=;
+        s=default; t=1579194722;
+        bh=2uKuAs6naMr2zEfcsacto/qs+ruPnyQY/BEKfR1seyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F706h52fC+umY0NE8SqrkycS9SYG2hF17lHoQovdHInH0jkvJqfWBeaVEa5LP3eS0
-         29Qy020E8xJqTyffpC66RXJ8PmMM002HElDJKIVe7yzKbKxSFARJtOvNYqquAPa27a
-         VYm25FRB3pRFSOxN9bzyIM+dsID2Y4Td9mJ0Ww6Y=
+        b=CL1K8fCieIrIVrZSikx6BXGs20y81/cjZI9OC9Zghg3h9ieyDa06dlJaQf5UgYk3M
+         SnAOxAN5ezI3ht+JRKgN2SRiUaCbfSCpURbhRAXn2cdpXm1I6qEEAjnZ4oFRD6gh/Z
+         ZX3jBpt2UBi/WKqcNOzRf9uoWx0sIJJSIN9/xgeE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 553/671] bnxt_en: Increase timeout for HWRM_DBG_COREDUMP_XX commands
-Date:   Thu, 16 Jan 2020 12:03:11 -0500
-Message-Id: <20200116170509.12787-290-sashal@kernel.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 557/671] powerpc/mm/mce: Keep irqs disabled during lockless page table walk
+Date:   Thu, 16 Jan 2020 12:03:15 -0500
+Message-Id: <20200116170509.12787-294-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,48 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit 57a8730b1f7a0be7bf8a0a0bb665329074ba764f ]
+[ Upstream commit d9101bfa6adc831bda8836c4d774820553c14942 ]
 
-Firmware coredump messages take much longer than standard messages,
-so increase the timeout accordingly.
+__find_linux_mm_pte() returns a page table entry pointer after walking
+the page table without holding locks. To make it safe against a THP
+split and/or collapse, we disable interrupts around the lockless page
+table walk. However we need to keep interrupts disabled as long as we
+use the page table entry pointer that is returned.
 
-Fixes: 6c5657d085ae ("bnxt_en: Add support for ethtool get dump.")
-Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix addr_to_pfn() to do that.
+
+Fixes: ba41e1e1ccb9 ("powerpc/mce: Hookup derror (load/store) UE errors")
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+[mpe: Rearrange code slightly and tweak change log wording]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190918145328.28602-1-aneesh.kumar@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.h         | 1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/mce_power.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index f9e253b705ec..585f5aef0a45 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -527,6 +527,7 @@ struct rx_tpa_end_cmp_ext {
- #define DFLT_HWRM_CMD_TIMEOUT		500
- #define HWRM_CMD_TIMEOUT		(bp->hwrm_cmd_timeout)
- #define HWRM_RESET_TIMEOUT		((HWRM_CMD_TIMEOUT) * 4)
-+#define HWRM_COREDUMP_TIMEOUT		((HWRM_CMD_TIMEOUT) * 12)
- #define HWRM_RESP_ERR_CODE_MASK		0xffff
- #define HWRM_RESP_LEN_OFFSET		4
- #define HWRM_RESP_LEN_MASK		0xffff0000
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index cdbb8940a4ae..047024717d65 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -2833,7 +2833,7 @@ static int bnxt_hwrm_dbg_coredump_initiate(struct bnxt *bp, u16 component_id,
- 	req.component_id = cpu_to_le16(component_id);
- 	req.segment_id = cpu_to_le16(segment_id);
+diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_power.c
+index 37a110b8e7e1..ecb375040637 100644
+--- a/arch/powerpc/kernel/mce_power.c
++++ b/arch/powerpc/kernel/mce_power.c
+@@ -40,7 +40,7 @@ static unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
+ {
+ 	pte_t *ptep;
+ 	unsigned int shift;
+-	unsigned long flags;
++	unsigned long pfn, flags;
+ 	struct mm_struct *mm;
  
--	return hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
-+	return hwrm_send_message(bp, &req, sizeof(req), HWRM_COREDUMP_TIMEOUT);
+ 	if (user_mode(regs))
+@@ -50,18 +50,22 @@ static unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
+ 
+ 	local_irq_save(flags);
+ 	ptep = __find_linux_pte(mm->pgd, addr, NULL, &shift);
+-	local_irq_restore(flags);
+ 
+-	if (!ptep || pte_special(*ptep))
+-		return ULONG_MAX;
++	if (!ptep || pte_special(*ptep)) {
++		pfn = ULONG_MAX;
++		goto out;
++	}
+ 
+-	if (shift > PAGE_SHIFT) {
++	if (shift <= PAGE_SHIFT)
++		pfn = pte_pfn(*ptep);
++	else {
+ 		unsigned long rpnmask = (1ul << shift) - PAGE_SIZE;
+-
+-		return pte_pfn(__pte(pte_val(*ptep) | (addr & rpnmask)));
++		pfn = pte_pfn(__pte(pte_val(*ptep) | (addr & rpnmask)));
+ 	}
+ 
+-	return pte_pfn(*ptep);
++out:
++	local_irq_restore(flags);
++	return pfn;
  }
  
- static int bnxt_hwrm_dbg_coredump_retrieve(struct bnxt *bp, u16 component_id,
+ /* flush SLBs and reload */
 -- 
 2.20.1
 
