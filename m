@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 420AB13FD2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C22CE13FD26
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbgAPXWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:22:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50636 "EHLO mail.kernel.org"
+        id S2387828AbgAPXWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:22:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729157AbgAPXWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:22:42 -0500
+        id S2388010AbgAPXWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:22:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4691E20684;
-        Thu, 16 Jan 2020 23:22:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE7792082F;
+        Thu, 16 Jan 2020 23:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216961;
-        bh=a5YYx2ZQyypM/51X9oNyFaPwgNPW3b4jNytdJ17wumg=;
+        s=default; t=1579216942;
+        bh=q1yHEwC/VEMhllPl963JJu1jJfwfh43IvmmgiSrS8ps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rpGgf2Tb23lIU8SdMnUnbTH6sxa+3kX+UJQxLB93Muds0OW/EHzvLnKV3+86/UWbr
-         cUD7niGZeS+4u6WTFiKDXCc82YWWBFMo4gAZktD8mWQaKKSkNAFCTYwgDgiH63gpBR
-         suR6NtMdMIQaKRi4MlpxA8uGkD+2C3Y7cKYdHdrA=
+        b=U+tVr2A/0Aptjzm2Yvs/A/lXllk9AODbxfVBBlEMR++Yl4tm1/DLIYjR/UQC1J0hz
+         s5p+9xGfGNW58v8OgPRnZcT5kq7j9tVONBK44I6IXMBao7W23NDrJ8A9ru5BprhxNV
+         GfT2RLvvouOQi/0bSSlnkYfJl9/JhjJQkzcSL0vo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 065/203] RDMA/siw: Fix port number endianness in a debug message
-Date:   Fri, 17 Jan 2020 00:16:22 +0100
-Message-Id: <20200116231749.774888260@linuxfoundation.org>
+        stable@vger.kernel.org, Yangyang Li <liyangyang20@huawei.com>,
+        Weihang Li <liweihang@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 5.4 067/203] RDMA/hns: Release qp resources when failed to destroy qp
+Date:   Fri, 17 Jan 2020 00:16:24 +0100
+Message-Id: <20200116231749.970453172@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,41 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Yangyang Li <liyangyang20@huawei.com>
 
-commit 050dbddf249eee3e936b5734c30b2e1b427efdc3 upstream.
+commit d302c6e3a6895608a5856bc708c47bda1770b24d upstream.
 
-sin_port and sin6_port are big endian member variables. Convert these port
-numbers into CPU endianness before printing.
+Even if no response from hardware, we should make sure that qp related
+resources are released to avoid memory leaks.
 
-Link: https://lore.kernel.org/r/20190930231707.48259-5-bvanassche@acm.org
-Fixes: 6c52fdc244b5 ("rdma/siw: connection management")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Bernard Metzler <bmt@zurich.ibm.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 926a01dc000d ("RDMA/hns: Add QP operations support for hip08 SoC")
+Signed-off-by: Yangyang Li <liyangyang20@huawei.com>
+Signed-off-by: Weihang Li <liweihang@hisilicon.com>
+Link: https://lore.kernel.org/r/1570584110-3659-1-git-send-email-liweihang@hisilicon.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/siw/siw_cm.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/sw/siw/siw_cm.c
-+++ b/drivers/infiniband/sw/siw/siw_cm.c
-@@ -1867,14 +1867,7 @@ static int siw_listen_address(struct iw_
- 	list_add_tail(&cep->listenq, (struct list_head *)id->provider_data);
- 	cep->state = SIW_EPSTATE_LISTENING;
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -4650,16 +4650,14 @@ static int hns_roce_v2_destroy_qp_common
+ {
+ 	struct hns_roce_cq *send_cq, *recv_cq;
+ 	struct ib_device *ibdev = &hr_dev->ib_dev;
+-	int ret;
++	int ret = 0;
  
--	if (addr_family == AF_INET)
--		siw_dbg(id->device, "Listen at laddr %pI4 %u\n",
--			&(((struct sockaddr_in *)laddr)->sin_addr),
--			((struct sockaddr_in *)laddr)->sin_port);
--	else
--		siw_dbg(id->device, "Listen at laddr %pI6 %u\n",
--			&(((struct sockaddr_in6 *)laddr)->sin6_addr),
--			((struct sockaddr_in6 *)laddr)->sin6_port);
-+	siw_dbg(id->device, "Listen at laddr %pISp\n", laddr);
+ 	if (hr_qp->ibqp.qp_type == IB_QPT_RC && hr_qp->state != IB_QPS_RESET) {
+ 		/* Modify qp to reset before destroying qp */
+ 		ret = hns_roce_v2_modify_qp(&hr_qp->ibqp, NULL, 0,
+ 					    hr_qp->state, IB_QPS_RESET);
+-		if (ret) {
++		if (ret)
+ 			ibdev_err(ibdev, "modify QP to Reset failed.\n");
+-			return ret;
+-		}
+ 	}
  
- 	return 0;
+ 	send_cq = to_hr_cq(hr_qp->ibqp.send_cq);
+@@ -4715,7 +4713,7 @@ static int hns_roce_v2_destroy_qp_common
+ 		kfree(hr_qp->rq_inl_buf.wqe_list);
+ 	}
  
+-	return 0;
++	return ret;
+ }
+ 
+ static int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
+@@ -4725,11 +4723,9 @@ static int hns_roce_v2_destroy_qp(struct
+ 	int ret;
+ 
+ 	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
+-	if (ret) {
++	if (ret)
+ 		ibdev_err(&hr_dev->ib_dev, "Destroy qp 0x%06lx failed(%d)\n",
+ 			  hr_qp->qpn, ret);
+-		return ret;
+-	}
+ 
+ 	if (hr_qp->ibqp.qp_type == IB_QPT_GSI)
+ 		kfree(hr_to_hr_sqp(hr_qp));
 
 
