@@ -2,71 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA1913F65E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7F213F80E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407280AbgAPTDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:03:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388399AbgAPRCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:02:31 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73F2A2087E;
-        Thu, 16 Jan 2020 17:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194151;
-        bh=R7KkKUaYv6rkoyqNNorHo/kp3uI7wYQla8dT74bJabc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ovFVWcpFfpkftBPgqDyPdZu8s4+lbxR716c9yQtIFf30J1O0DSl39XbKbKj+awEF1
-         yigYnV47si26zmQ9Ct0G6Z0awhB7zbZat11qHjfUh0S5dAUIMH+K2q7rRgDOOSWsaM
-         /4S1H990YmpRvVc/+kNgiLFtzCmqRu3uyXxT8ok4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 235/671] rbd: clear ->xferred on error from rbd_obj_issue_copyup()
-Date:   Thu, 16 Jan 2020 11:52:24 -0500
-Message-Id: <20200116165940.10720-118-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
+        id S2387421AbgAPTOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:14:47 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38097 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732483AbgAPQ4S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:56:18 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1is8RL-0003ja-2D; Thu, 16 Jan 2020 17:56:15 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1is8RK-0003vs-9c; Thu, 16 Jan 2020 17:56:14 +0100
+Date:   Thu, 16 Jan 2020 17:56:14 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ondrej Jirman <megous@megous.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 5.4 053/205] pwm: sun4i: Fix incorrect
+ calculation of duty_cycle/period
+Message-ID: <20200116165614.a3u5x7g4qxxrm6s4@pengutronix.de>
+References: <20200116164300.6705-1-sashal@kernel.org>
+ <20200116164300.6705-53-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200116164300.6705-53-sashal@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Dryomov <idryomov@gmail.com>
+On Thu, Jan 16, 2020 at 11:40:28AM -0500, Sasha Levin wrote:
+> From: Ondrej Jirman <megous@megous.com>
+> 
+> [ Upstream commit 50cc7e3e4f26e3bf5ed74a8d061195c4d2161b8b ]
+> 
+> Since 5.4-rc1, pwm_apply_state calls ->get_state after ->apply
+> if available, and this revealed an issue with integer precision
+> when calculating duty_cycle and period for the currently set
+> state in ->get_state callback.
+> 
+> This issue manifested in broken backlight on several Allwinner
+> based devices.
+> 
+> Previously this worked, because ->apply updated the passed state
+> directly.
+> 
+> Fixes: deb9c462f4e53 ("pwm: sun4i: Don't update the state for the caller of pwm_apply_state")
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-[ Upstream commit 356889c49d84f11f446ec235bd52ca1a7d581aa0 ]
+Note that while the patch is still correct, the problem isn't that bad
+any more since commit 01ccf903edd65f6421612321648fa5a7f4b7cb10 was
+reverted.
 
-Otherwise the assert in rbd_obj_end_request() is triggered.
+So .get_state is only called once during boot where the breakage doesn't
+hurt that much.
 
-Fixes: 3da691bf4366 ("rbd: new request handling code")
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/rbd.c | 1 +
- 1 file changed, 1 insertion(+)
+I let you decide if you still want to apply this patch.
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 585378bc988c..b942f4c8cea8 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -2506,6 +2506,7 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req)
- 		ret = rbd_obj_issue_copyup(obj_req, obj_req->xferred);
- 		if (ret) {
- 			obj_req->result = ret;
-+			obj_req->xferred = 0;
- 			return true;
- 		}
- 		return false;
+Best regards
+Uwe
+
 -- 
-2.20.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
