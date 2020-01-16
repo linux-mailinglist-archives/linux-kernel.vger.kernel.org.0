@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2161A13F50C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4614913F527
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:54:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389299AbgAPRIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:08:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        id S2389383AbgAPSyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:54:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbgAPRH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:07:58 -0500
+        id S2389255AbgAPRH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:07:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02616205F4;
-        Thu, 16 Jan 2020 17:07:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46BB4206D9;
+        Thu, 16 Jan 2020 17:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194477;
-        bh=hUmSvj1tlpVwnOr8GPYpzmQc/thJ3c9zDt0LIGocVDw=;
+        s=default; t=1579194479;
+        bh=g4t8kFndCxD6s/8W5gK5vLLMfA5wtpfK7dLthKUgN6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z1xn0rdQbw953SQ1RCbBeHupI7PgdzGaVYIOe4R9Q++KNASEDSVUB9VnUiEIxNyst
-         FfNaMnTsuHFfR7/KzkyO7fOlzQDXVhJNSXpDyfNFo7ENTVS61QLOYtx6H3MhuSdikK
-         kFHFj5zS1Si4SVMXiakQU0Wsr/X99Uj0XOBO3CF4=
+        b=D3pcXu8vL+Fmw9KJui888lvTtBP+o1hP7ikuOxRqtGrzzoq3ZWihEp/1eF5Psh1NM
+         2kFGUDQs2enm32RDGAvtlVT/XVAtj5Ime2zuhj1hCRFj8t6xXawovP/PtMM8v/mZdX
+         OHSyH/XXJ7pEihAeuLszDhuGQ4F4ou0WMEdGj9xA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 380/671] PCI: PM: Avoid possible suspend-to-idle issue
-Date:   Thu, 16 Jan 2020 12:00:18 -0500
-Message-Id: <20200116170509.12787-117-sashal@kernel.org>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.19 381/671] iommu: Add missing new line for dma type
+Date:   Thu, 16 Jan 2020 12:00:19 -0500
+Message-Id: <20200116170509.12787-118-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,87 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
 
-[ Upstream commit d491f2b75237ef37d8867830ab7fad8d9659e853 ]
+[ Upstream commit 24f307d8abf79486dd3c1b645037df7d91602aaa ]
 
-If a PCI driver leaves the device handled by it in D0 and calls
-pci_save_state() on the device in its ->suspend() or ->suspend_late()
-callback, it can expect the device to stay in D0 over the whole
-s2idle cycle.  However, that may not be the case if there is a
-spurious wakeup while the system is suspended, because in that case
-pci_pm_suspend_noirq() will run again after pci_pm_resume_noirq()
-which calls pci_restore_state(), via pci_pm_default_resume_early(),
-so state_saved is cleared and the second iteration of
-pci_pm_suspend_noirq() will invoke pci_prepare_to_sleep() which
-may change the power state of the device.
+So that all types are printed in the same format.
 
-To avoid that, add a new internal flag, skip_bus_pm, that will be set
-by pci_pm_suspend_noirq() when it runs for the first time during the
-given system suspend-resume cycle if the state of the device has
-been saved already and the device is still in D0.  Setting that flag
-will cause the next iterations of pci_pm_suspend_noirq() to set
-state_saved for pci_pm_resume_noirq(), so that it always restores the
-device state from the originally saved data, and avoid calling
-pci_prepare_to_sleep() for the device.
-
-Fixes: 33e4f80ee69b ("ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fixes: c52c72d3dee81 ("iommu: Add sysfs attribyte for domain type")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-driver.c | 17 ++++++++++++++++-
- include/linux/pci.h      |  1 +
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/iommu/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index bc1ff41ce3d3..5c9873fcbd08 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -736,6 +736,8 @@ static int pci_pm_suspend(struct device *dev)
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
- 
-+	pci_dev->skip_bus_pm = false;
-+
- 	if (pci_has_legacy_pm_support(pci_dev))
- 		return pci_legacy_suspend(dev, PMSG_SUSPEND);
- 
-@@ -829,7 +831,20 @@ static int pci_pm_suspend_noirq(struct device *dev)
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index bc14825edc9c..d588b6844f5f 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -317,7 +317,7 @@ static ssize_t iommu_group_show_type(struct iommu_group *group,
+ 			type = "unmanaged\n";
+ 			break;
+ 		case IOMMU_DOMAIN_DMA:
+-			type = "DMA";
++			type = "DMA\n";
+ 			break;
  		}
  	}
- 
--	if (!pci_dev->state_saved) {
-+	if (pci_dev->skip_bus_pm) {
-+		/*
-+		 * The function is running for the second time in a row without
-+		 * going through full resume, which is possible only during
-+		 * suspend-to-idle in a spurious wakeup case.  Moreover, the
-+		 * device was originally left in D0, so its power state should
-+		 * not be changed here and the device register values saved
-+		 * originally should be restored on resume again.
-+		 */
-+		pci_dev->state_saved = true;
-+	} else if (pci_dev->state_saved) {
-+		if (pci_dev->current_state == PCI_D0)
-+			pci_dev->skip_bus_pm = true;
-+	} else {
- 		pci_save_state(pci_dev);
- 		if (pci_power_manageable(pci_dev))
- 			pci_prepare_to_sleep(pci_dev);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index b1f297f4b7b0..94853094b6ef 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -342,6 +342,7 @@ struct pci_dev {
- 						   D3cold, not set for devices
- 						   powered on/off by the
- 						   corresponding bridge */
-+	unsigned int	skip_bus_pm:1;	/* Internal: Skip bus-level PM */
- 	unsigned int	ignore_hotplug:1;	/* Ignore hotplug events */
- 	unsigned int	hotplug_user_indicators:1; /* SlotCtl indicators
- 						      controlled exclusively by
 -- 
 2.20.1
 
