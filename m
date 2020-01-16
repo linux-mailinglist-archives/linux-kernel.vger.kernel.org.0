@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD2413E330
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11A4213E332
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387836AbgAPRAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50316 "EHLO mail.kernel.org"
+        id S2387866AbgAPRAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:00:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387847AbgAPRAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:32 -0500
+        id S2387850AbgAPRAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4984C21D56;
-        Thu, 16 Jan 2020 17:00:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E9DB22525;
+        Thu, 16 Jan 2020 17:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194032;
-        bh=6Ug92YadfEZxVr0FlvxM6ejPmYEO8+O6flfaEHVSANM=;
+        s=default; t=1579194033;
+        bh=f/u8zFAjCNc6rmpGCQzhfg7rSXfsqqu01yrugzFPqnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n5KE6iQYgCQbYSXgX/M6CalYswcD/lgI3R0RbSs+ppcTISRNPQUgSRzylDLbIkFzL
-         6n+szvxBfwY8MMesK1uIdLWxAzBXhvHAJHcEx+JGAdC2/xUW7E0VoJ5VjzfWPYXF5u
-         I+jYtLSknQgIN/V+1WQV81aW4ROjXHwK0hQmxa1M=
+        b=mhAK8F9zNRfWD3lqS9+U//x/26on7daYc7kU3/vfSUu6fqkOawI1gmiZZ+akS4Fzd
+         F0Fjcio953FuUZi5Vw0yQ2zYhVLN05UL3egu2swPm7z3EBeGS+cUCVJAe2rl24T/XA
+         R0pSOIn4/KHwHn3Nnrg/xZsKUPVP1zcDE/lnuI94=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Zapolskiy <vz@mleia.com>, Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 151/671] ARM: dts: lpc32xx: phy3250: fix SD card regulator voltage
-Date:   Thu, 16 Jan 2020 11:51:00 -0500
-Message-Id: <20200116165940.10720-34-sashal@kernel.org>
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org
+Subject: [PATCH AUTOSEL 4.19 152/671] drm/xen-front: Fix mmap attributes for display buffers
+Date:   Thu, 16 Jan 2020 11:51:01 -0500
+Message-Id: <20200116165940.10720-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -42,37 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Zapolskiy <vz@mleia.com>
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-[ Upstream commit dc141b99fc36cf910a1d8d5ee30f43f2442fd1bd ]
+[ Upstream commit 24ded292a5c2ed476f01c77fee65f8320552cd27 ]
 
-The fixed voltage regulator on Phytec phyCORE-LPC3250 board, which
-supplies SD/MMC card's power, has a constant output voltage level
-of either 3.15V or 3.3V, the actual value depends on JP4 position,
-the power rail is referenced as VCC_SDIO in the board hardware manual.
+When GEM backing storage is allocated those are normal pages,
+so there is no point using pgprot_writecombine while mmaping.
+This fixes mismatch of buffer pages' memory attributes between
+the frontend and backend which may cause screen artifacts.
 
-Fixes: d06670e96267 ("arm: dts: phy3250: add SD fixed regulator")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
+
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Suggested-by: Julien Grall <julien.grall@arm.com>
+Acked-by: Julien Grall <julien.grall@arm.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190129150422.19867-1-andr2000@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/lpc3250-phy3250.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/xen/xen_drm_front_gem.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/lpc3250-phy3250.dts b/arch/arm/boot/dts/lpc3250-phy3250.dts
-index 1e1c2f517a82..ffcf78631b22 100644
---- a/arch/arm/boot/dts/lpc3250-phy3250.dts
-+++ b/arch/arm/boot/dts/lpc3250-phy3250.dts
-@@ -49,8 +49,8 @@
- 		sd_reg: regulator@2 {
- 			compatible = "regulator-fixed";
- 			regulator-name = "sd_reg";
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
- 			gpio = <&gpio 5 5 0>;
- 			enable-active-high;
- 		};
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index c85bfe7571cb..802662839e7e 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -236,8 +236,14 @@ static int gem_mmap_obj(struct xen_gem_object *xen_obj,
+ 	vma->vm_flags &= ~VM_PFNMAP;
+ 	vma->vm_flags |= VM_MIXEDMAP;
+ 	vma->vm_pgoff = 0;
+-	vma->vm_page_prot =
+-			pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
++	/*
++	 * According to Xen on ARM ABI (xen/include/public/arch-arm.h):
++	 * all memory which is shared with other entities in the system
++	 * (including the hypervisor and other guests) must reside in memory
++	 * which is mapped as Normal Inner Write-Back Outer Write-Back
++	 * Inner-Shareable.
++	 */
++	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+ 
+ 	/*
+ 	 * vm_operations_struct.fault handler will be called if CPU access
+@@ -283,8 +289,9 @@ void *xen_drm_front_gem_prime_vmap(struct drm_gem_object *gem_obj)
+ 	if (!xen_obj->pages)
+ 		return NULL;
+ 
++	/* Please see comment in gem_mmap_obj on mapping and attributes. */
+ 	return vmap(xen_obj->pages, xen_obj->num_pages,
+-		    VM_MAP, pgprot_writecombine(PAGE_KERNEL));
++		    VM_MAP, PAGE_KERNEL);
+ }
+ 
+ void xen_drm_front_gem_prime_vunmap(struct drm_gem_object *gem_obj,
 -- 
 2.20.1
 
