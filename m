@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4780413FF6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD9CE13FE79
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbgAPX0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:26:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55764 "EHLO mail.kernel.org"
+        id S2391557AbgAPXcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731354AbgAPXZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:25:50 -0500
+        id S2391544AbgAPXbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D107B2072E;
-        Thu, 16 Jan 2020 23:25:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2BB022522;
+        Thu, 16 Jan 2020 23:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217149;
-        bh=1RVsmw/AN+bMpGsTR/ZalrOfVHM0V8DoXXYrZD5lshs=;
+        s=default; t=1579217512;
+        bh=uk26Je1JebfBch9yNEDF84kYvcYTlH1CZ/ZpZ9BNG2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhl/oZSXzR9u+QDL0pzM0Crxo/vUuMN7Ra4lLJqDBkaK8pkGUMxunWoJ2i5taO3q8
-         dLJJ0COfH0keWkckhkwQJ2OGBcSQl7uqW2vm68rgvjbsSmy4a+tLbmiWsMokwukA65
-         Aoeh91GWxIyJ6V10OVgs/GWzkuR4zGbY5O+EVMiA=
+        b=jHCKvL7UQlqWcUf1TzONVbyvhBmplGnXNqwlTZYoiyewJ3LBF2JbiY4W9uYUJqGvw
+         Ey7VhLU7Tm0ij9Bp2d3OpMofLbJSB9uaGuOuFgy8eY3PHMFezqIcDgcdHWDFbnCwaO
+         5hjw0JAj0RFqjkJgQ62KJFTaiFMJ6tjiJ0G3Neqg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 5.4 168/203] spi: pxa2xx: Set controller->max_transfer_size in dma mode
+        stable@vger.kernel.org, Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bob Picco <bob.picco@oracle.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 07/71] arm64: dont open code page table entry creation
 Date:   Fri, 17 Jan 2020 00:18:05 +0100
-Message-Id: <20200116231759.290885917@linuxfoundation.org>
+Message-Id: <20200116231710.452938295@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,73 +47,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Kristina Martsenko <kristina.martsenko@arm.com>
 
-commit b2662a164f9dc48da8822e56600686d639056282 upstream.
+commit 193383043f14a398393dc18bae8380f7fe665ec3 upstream.
 
-In DMA mode we have a maximum transfer size, past that the driver
-falls back to PIO (see the check at the top of pxa2xx_spi_transfer_one).
-Falling back to PIO for big transfers defeats the point of a dma engine,
-hence set the max transfer size to inform spi clients that they need
-to do something smarter.
+Instead of open coding the generation of page table entries, use the
+macros/functions that exist for this - pfn_p*d and p*d_populate. Most
+code in the kernel already uses these macros, this patch tries to fix
+up the few places that don't. This is useful for the next patch in this
+series, which needs to change the page table entry logic, and it's
+better to have that logic in one place.
 
-This was uncovered by the drm_mipi_dbi spi panel code, which does
-large spi transfers, but stopped splitting them after:
+The KVM extended ID map is special, since we're creating a level above
+CONFIG_PGTABLE_LEVELS and the required function isn't available. Leave
+it as is and add a comment to explain it. (The normal kernel ID map code
+doesn't need this change because its page tables are created in assembly
+(__create_page_tables)).
 
-commit e143364b4c1774f68e923a5a0bb0fca28ac25888
-Author: Noralf Trønnes <noralf@tronnes.org>
-Date:   Fri Jul 19 17:59:10 2019 +0200
-
-    drm/tinydrm: Remove tinydrm_spi_max_transfer_size()
-
-After this commit the code relied on the spi core to split transfers
-into max dma-able blocks, which also papered over the PIO fallback issue.
-
-Fix this by setting the overall max transfer size to the DMA limit,
-but only when the controller runs in DMA mode.
-
-Fixes: e143364b4c17 ("drm/tinydrm: Remove tinydrm_spi_max_transfer_size()")
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Noralf Trønnes <noralf@tronnes.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>
-Reported-and-tested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-spi@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://lore.kernel.org/r/20191017064426.30814-1-daniel.vetter@ffwll.ch
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Tested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Tested-by: Bob Picco <bob.picco@oracle.com>
+Reviewed-by: Bob Picco <bob.picco@oracle.com>
+Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-pxa2xx.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/include/asm/kvm_mmu.h |    5 +++++
+ arch/arm64/include/asm/pgtable.h |    1 +
+ arch/arm64/kernel/hibernate.c    |    3 +--
+ arch/arm64/mm/mmu.c              |   14 +++++++++-----
+ 4 files changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1612,6 +1612,11 @@ static int pxa2xx_spi_fw_translate_cs(st
- 	return cs;
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -296,6 +296,11 @@ static inline bool __kvm_cpu_uses_extend
+ 	return __cpu_uses_extended_idmap();
  }
  
-+static size_t pxa2xx_spi_max_dma_transfer_size(struct spi_device *spi)
-+{
-+	return MAX_DMA_LEN;
-+}
-+
- static int pxa2xx_spi_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1717,6 +1722,8 @@ static int pxa2xx_spi_probe(struct platf
- 		} else {
- 			controller->can_dma = pxa2xx_spi_can_dma;
- 			controller->max_dma_len = MAX_DMA_LEN;
-+			controller->max_transfer_size =
-+				pxa2xx_spi_max_dma_transfer_size;
- 		}
++/*
++ * Can't use pgd_populate here, because the extended idmap adds an extra level
++ * above CONFIG_PGTABLE_LEVELS (which is 2 or 3 if we're using the extended
++ * idmap), and pgd_populate is only available if CONFIG_PGTABLE_LEVELS = 4.
++ */
+ static inline void __kvm_extend_hypmap(pgd_t *boot_hyp_pgd,
+ 				       pgd_t *hyp_pgd,
+ 				       pgd_t *merged_hyp_pgd,
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -343,6 +343,7 @@ static inline int pmd_protnone(pmd_t pmd
+ 
+ #define pud_write(pud)		pte_write(pud_pte(pud))
+ #define pud_pfn(pud)		(((pud_val(pud) & PUD_MASK) & PHYS_MASK) >> PAGE_SHIFT)
++#define pfn_pud(pfn,prot)	(__pud(((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot)))
+ 
+ #define set_pmd_at(mm, addr, pmdp, pmd)	set_pte_at(mm, addr, (pte_t *)pmdp, pmd_pte(pmd))
+ 
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -246,8 +246,7 @@ static int create_safe_exec_page(void *s
  	}
+ 
+ 	pte = pte_offset_kernel(pmd, dst_addr);
+-	set_pte(pte, __pte(virt_to_phys((void *)dst) |
+-			 pgprot_val(PAGE_KERNEL_EXEC)));
++	set_pte(pte, pfn_pte(virt_to_pfn(dst), PAGE_KERNEL_EXEC));
+ 
+ 	/*
+ 	 * Load our new page tables. A strict BBM approach requires that we
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -605,8 +605,8 @@ static void __init map_kernel(pgd_t *pgd
+ 		 * entry instead.
+ 		 */
+ 		BUG_ON(!IS_ENABLED(CONFIG_ARM64_16K_PAGES));
+-		set_pud(pud_set_fixmap_offset(pgd, FIXADDR_START),
+-			__pud(__pa_symbol(bm_pmd) | PUD_TYPE_TABLE));
++		pud_populate(&init_mm, pud_set_fixmap_offset(pgd, FIXADDR_START),
++			     lm_alias(bm_pmd));
+ 		pud_clear_fixmap();
+ 	} else {
+ 		BUG();
+@@ -721,7 +721,7 @@ int __meminit vmemmap_populate(unsigned
+ 			if (!p)
+ 				return -ENOMEM;
+ 
+-			set_pmd(pmd, __pmd(__pa(p) | PROT_SECT_NORMAL));
++			pmd_set_huge(pmd, __pa(p), __pgprot(PROT_SECT_NORMAL));
+ 		} else
+ 			vmemmap_verify((pte_t *)pmd, node, addr, next);
+ 	} while (addr = next, addr != end);
+@@ -915,15 +915,19 @@ int __init arch_ioremap_pmd_supported(vo
+ 
+ int pud_set_huge(pud_t *pud, phys_addr_t phys, pgprot_t prot)
+ {
++	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
++					pgprot_val(mk_sect_prot(prot)));
+ 	BUG_ON(phys & ~PUD_MASK);
+-	set_pud(pud, __pud(phys | PUD_TYPE_SECT | pgprot_val(mk_sect_prot(prot))));
++	set_pud(pud, pfn_pud(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
+ }
+ 
+ int pmd_set_huge(pmd_t *pmd, phys_addr_t phys, pgprot_t prot)
+ {
++	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
++					pgprot_val(mk_sect_prot(prot)));
+ 	BUG_ON(phys & ~PMD_MASK);
+-	set_pmd(pmd, __pmd(phys | PMD_TYPE_SECT | pgprot_val(mk_sect_prot(prot))));
++	set_pmd(pmd, pfn_pmd(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
+ }
  
 
 
