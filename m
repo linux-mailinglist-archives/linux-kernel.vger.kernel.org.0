@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A5E13FE4D
+	by mail.lfdr.de (Postfix) with ESMTP id CB17A13FE4E
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404443AbgAPXdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:33:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44500 "EHLO mail.kernel.org"
+        id S2391448AbgAPXdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:33:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404407AbgAPXdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:33:45 -0500
+        id S2404431AbgAPXdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:33:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25F7F20661;
-        Thu, 16 Jan 2020 23:33:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ABA120661;
+        Thu, 16 Jan 2020 23:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217624;
-        bh=Of7jH9dzjJ+n0x/GVK21C8mrksr3D2a+CNZuaImdXXE=;
+        s=default; t=1579217627;
+        bh=uxoYdEa1YMvd4QmddYEXwU+ZoyC4hc6YNpLE/Vn6OP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aWCr/GaC2Xil+/a3U7HCQquF/hyg41ufcgXrZX/YYAZ1J1K7R0VvpiZQ2DZMtjMeb
-         6A+i0aoH79GQYIMDYl9pQOx2Bp5t0xMKOx93IbA6RyXbyq4dwd9QeudOaum41mCwbq
-         xqghs9LC6vTYAszP02IhW3kxGo6zTWnbM99L3onQ=
+        b=oIU220cXWV0Xgy49AMN5zKd/HfeQ7ftR95jmtXJq2ZIRM052Qj4Hr90jUtSqyG/Go
+         Hxm+kT1dyDTTq8srywCJ5OZbm1MWydTCsIGAQqbDgmTqvGTdvGG4AsCnV3MlYNYS8y
+         OuZDOfKb6cis5I3ESbfau2GKyjyQspJIarogjQhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 58/71] spi: atmel: fix handling of cs_change set on non-last xfer
-Date:   Fri, 17 Jan 2020 00:18:56 +0100
-Message-Id: <20200116231717.550684125@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 59/71] rtlwifi: Remove unnecessary NULL check in rtl_regd_init
+Date:   Fri, 17 Jan 2020 00:18:57 +0100
+Message-Id: <20200116231717.672843476@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
 References: <20200116231709.377772748@linuxfoundation.org>
@@ -45,63 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mans Rullgard <mans@mansr.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit fed8d8c7a6dc2a76d7764842853d81c770b0788e upstream.
+commit 091c6e9c083f7ebaff00b37ad13562d51464d175 upstream.
 
-The driver does the wrong thing when cs_change is set on a non-last
-xfer in a message.  When cs_change is set, the driver deactivates the
-CS and leaves it off until a later xfer again has cs_change set whereas
-it should be briefly toggling CS off and on again.
+When building with Clang + -Wtautological-pointer-compare:
 
-This patch brings the behaviour of the driver back in line with the
-documentation and common sense.  The delay of 10 us is the same as is
-used by the default spi_transfer_one_message() function in spi.c.
-[gregory: rebased on for-5.5 from spi tree]
-Fixes: 8090d6d1a415 ("spi: atmel: Refactor spi-atmel to use SPI framework queue")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Link: https://lore.kernel.org/r/20191018153504.4249-1-gregory.clement@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+drivers/net/wireless/realtek/rtlwifi/regd.c:389:33: warning: comparison
+of address of 'rtlpriv->regd' equal to a null pointer is always false
+[-Wtautological-pointer-compare]
+        if (wiphy == NULL || &rtlpriv->regd == NULL)
+                              ~~~~~~~~~^~~~    ~~~~
+1 warning generated.
+
+The address of an array member is never NULL unless it is the first
+struct member so remove the unnecessary check. This was addressed in
+the staging version of the driver in commit f986978b32b3 ("Staging:
+rtlwifi: remove unnecessary NULL check").
+
+While we are here, fix the following checkpatch warning:
+
+CHECK: Comparison to NULL could be written "!wiphy"
+35: FILE: drivers/net/wireless/realtek/rtlwifi/regd.c:389:
++       if (wiphy == NULL)
+
+Fixes: 0c8173385e54 ("rtl8192ce: Add new driver")
+Link:https://github.com/ClangBuiltLinux/linux/issues/750
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-atmel.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/regd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -301,7 +301,6 @@ struct atmel_spi {
- 	bool			use_cs_gpios;
+--- a/drivers/net/wireless/realtek/rtlwifi/regd.c
++++ b/drivers/net/wireless/realtek/rtlwifi/regd.c
+@@ -427,7 +427,7 @@ int rtl_regd_init(struct ieee80211_hw *h
+ 	struct wiphy *wiphy = hw->wiphy;
+ 	struct country_code_to_enum_rd *country = NULL;
  
- 	bool			keep_cs;
--	bool			cs_active;
+-	if (wiphy == NULL || &rtlpriv->regd == NULL)
++	if (!wiphy)
+ 		return -EINVAL;
  
- 	u32			fifo_size;
- };
-@@ -1338,11 +1337,9 @@ static int atmel_spi_one_transfer(struct
- 				 &msg->transfers)) {
- 			as->keep_cs = true;
- 		} else {
--			as->cs_active = !as->cs_active;
--			if (as->cs_active)
--				cs_activate(as, msg->spi);
--			else
--				cs_deactivate(as, msg->spi);
-+			cs_deactivate(as, msg->spi);
-+			udelay(10);
-+			cs_activate(as, msg->spi);
- 		}
- 	}
- 
-@@ -1365,7 +1362,6 @@ static int atmel_spi_transfer_one_messag
- 	atmel_spi_lock(as);
- 	cs_activate(as, spi);
- 
--	as->cs_active = true;
- 	as->keep_cs = false;
- 
- 	msg->status = 0;
+ 	/* init country_code from efuse channel plan */
 
 
