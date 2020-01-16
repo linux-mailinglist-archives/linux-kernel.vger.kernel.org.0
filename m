@@ -2,63 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5506313F310
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B2513F398
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390512AbgAPSjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:39:51 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34684 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730014AbgAPSjo (ORCPT
+        id S2437015AbgAPSm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:42:58 -0500
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:44557 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388922AbgAPSmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:39:44 -0500
-Received: by mail-lj1-f195.google.com with SMTP id z22so23843133ljg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:39:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1NkxS1dJ4///PjDnpw3zqOnAHEcQBbdtsaoyImvFWzw=;
-        b=r+BCuOqk6DerwPHy3jM1T4vB+EtBpq4eqDuj5WdCTLhucLb9mR75gLvie4tcMoZ+2D
-         i+3VQyNa2eU4BZsH/70szQZkzCdCrYxrqyjlgBEOgH7uAus+pGgjIXiN7vvVCHrfO9Q5
-         9qhy//XHIa+yYjpT2/nnrYrzxPrBC+lxIH5VeNgkFUR6SH9DHxGO+v4EeQfEGKt+bNs7
-         ay//+Rz0Z6TZIaVm7dxqzkdC/5oA21DwhzKNoxFngX+gJbhZDOEiqcpmED0KG4wLVb0W
-         UNn7KBzcZvoPOdyxxMEFwQC1cFYQIZlRlxVgqquhyiMFYNoVvBNO6Wt7syx0eTMJZA9I
-         JVAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1NkxS1dJ4///PjDnpw3zqOnAHEcQBbdtsaoyImvFWzw=;
-        b=NB5puHLinrPNHg41Of+1Em1L7qzhx+qaudjgOBa/gQaLZfKTUrn9ECa4H31XvkAP++
-         ZYetStJyMiYpJtr8r9kY89X4P+JnmQGtUbufmNEHBQjp/yV2rCtqVd0YW5i1sffCC1Rk
-         f4KTqCVYQlaONuaDynt4AoR0Jx+R4oLz5wFryKqcI0TP3Utmb1ZlIIeyQCT5znSsQuB9
-         OMuQc2+8Ri8lEQva4OjqZj8C72szFZoFeFfeKDtVzuTKPF9LDJTF64lqIyvjHwVjM0Lw
-         Fsah/0HO1vFUEFTvTDv2G4L4WSwzU1GM11EQ9T6psrOsDbUO1sakNzCOwRagjQHqFYYx
-         E6Hw==
-X-Gm-Message-State: APjAAAVD9FXpu8D/xH29ce30i1SN31ymk+uAWANOy9xUYXq+gkGoZYvx
-        XzeDInYUmmZvq1VvcuvX4cCXCA==
-X-Google-Smtp-Source: APXvYqy1r4axnNLypvtxCDCBusTSJPvQ5bBth2V80eQ2aWR3SDteItjF5tjp00AcOpEuhWvIgDGEAg==
-X-Received: by 2002:a2e:93c5:: with SMTP id p5mr3077169ljh.192.1579199982123;
-        Thu, 16 Jan 2020 10:39:42 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id h10sm11007576ljc.39.2020.01.16.10.39.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Jan 2020 10:39:40 -0800 (PST)
-Date:   Thu, 16 Jan 2020 10:39:32 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Li Yang <leoyang.li@nxp.com>
-Cc:     arm@kernel.org, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org
-Subject: Re: [GIT PULL] soc/fsl drivers changes for next(v5.6)
-Message-ID: <20200116183932.qltqdtreeg4d2zq7@localhost>
-References: <1578608351-23289-1-git-send-email-leoyang.li@nxp.com>
+        Thu, 16 Jan 2020 13:42:53 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 8D4E6513;
+        Thu, 16 Jan 2020 13:42:52 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 16 Jan 2020 13:42:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=/7fhTR1f92cLpIrCbJ+2OWqkhpv
+        1kl/VUQPVVPmZgEc=; b=FeT3Zq8GQ8qzz7uwZ61cvMkHaF09X3eo/FpFVoHqOD3
+        fD2mUOt9ZN1aIwAIlALjLeieBa4NJV38bhYqf5lHt8/P6R0YWsGiFcsCGp8bjSUR
+        S5i+v2OLYpL3wN994Aa6eLnpfnxUUyTbZUvbUxqjSpfIq2LN8SjA06t3Aeurr63g
+        DFh3EId6sc4pd3ofGp0hCm2iQuuNFaFlTuOgifAF1YWmWiy9SJpZUZ4uCL+LTFOX
+        eJi4VkmRq21YTtPj0kWerE278gG75nGVd7DUOonrl86y4ie2zd97oESJkTDNTbbx
+        ZKDLTeMCZqgrvK4sgURIYvh0qyZLvgJjbQD3n62OZ1Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=/7fhTR
+        1f92cLpIrCbJ+2OWqkhpv1kl/VUQPVVPmZgEc=; b=OGQecjOuzXXqPotapCj+I4
+        hCuvcE20Lyo2NHyxVzMaaw5u6fApAawM44/CZ8My+gEWIpAs+A1W7yTbIl7stc4U
+        ISwGutrvWf/fY6Wmt+BLTxJ1+sYJIxqNYL8oYFngXv80cCUmI4Kgyktp6E0jpCpR
+        la10h+G6XmMbRRwLVVdI+K608MXDXZR1CuY72vVELP2tkdq2bnqgTQFu+9eyv4ml
+        TWU4fhudiNebOAXbnIIuo3/9sIsJT7wmpFBg//qGKmdnYKIMlN5gZmtAGuVO2V8U
+        L/HMsBy9jcqt7dhf/7FTqH8wbhGNS9Se5wRDTTxSRZlT7FmI2E9/H6+Ubg5IZw1w
+        ==
+X-ME-Sender: <xms:q64gXs06QPv33nJkcPtUk0Ur3ju3En2cj8wJxS3uN-QreHvl4-Pwrg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdehgdduudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
+    ejrdduiedtrddvudejrddvhedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgv
+    shesrghnrghrrgiivghlrdguvgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:q64gXtDAe7wB3ahvp589SNBrCT9khM1atZVGja4paJJTGI7rV0GEXQ>
+    <xmx:q64gXukD8ZZnxNDb3j7CjbDibL3L_2233B4CJth2LKaOHbZep9jdOA>
+    <xmx:q64gXmokCmoSG3Z4Djh47-T19UppDuXU2so7VC1b9R8rhdFOalZlKw>
+    <xmx:rK4gXuY4u1yVTdjBmqiSUv6UekfymvvUZDtRPdiw9i8O_zgjZHdeEw>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id A8DE13060840;
+        Thu, 16 Jan 2020 13:42:51 -0500 (EST)
+Date:   Thu, 16 Jan 2020 10:42:50 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Tushar Dave <tushar.n.dave@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: intel_pch_thermal: Add PCI ids for Lewisburg
+ PCH.
+Message-ID: <20200116184250.qlvc3ilx2b42czqk@alap3.anarazel.de>
+References: <20200115184415.1726953-1-andres@anarazel.de>
+ <2a5e9df32e2df27297149a577512f6b1557de241.camel@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1578608351-23289-1-git-send-email-leoyang.li@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <2a5e9df32e2df27297149a577512f6b1557de241.camel@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,45 +74,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Thu, Jan 09, 2020 at 04:19:11PM -0600, Li Yang wrote:
-> Hi soc maintainers,
-> 
-> Please merge the following new changes for soc/fsl drivers.
-> 
-> Regards,
-> Leo
-> 
-> 
-> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
-> 
->   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.6
-> 
-> for you to fetch changes up to 6e62bd36e9ad85a22d92b1adce6a0336ea549733:
-> 
->   soc: fsl: qe: remove set but not used variable 'mm_gc' (2020-01-08 16:02:48 -0600)
-> 
-> ----------------------------------------------------------------
-> NXP/FSL SoC driver updates for v5.6
-> 
-> QUICC Engine drivers
-> - Improve the QE drivers to be compatible with ARM/ARM64/PPC64
-> architectures
-> - Various cleanups to the QE drivers
+On 2020-01-16 05:53:13 -0800, Srinivas Pandruvada wrote:
+> On Wed, 2020-01-15 at 10:44 -0800, Andres Freund wrote:
+> > I noticed that I couldn't read the PCH temperature on my workstation
+> > (C620 series chipset, w/ 2x Xeon Gold 5215 CPUs) directly, but had to
+> > go
+> > through IPMI. Looking at the data sheet, it looks to me like the
+> > existing intel PCH thermal driver should work without changes for
+> > Lewisburg.
+> Does the temperature reading match with what you read via IPMI?
 
-This branch contains a cross-section of drivers, including those who are
-normally sent to other maintainers/subsystems. I don't see dependencies that
-make them a requirement/easier to merge through the SoC tree at this time --
-for example the ucc_uart driver updates are mostly independent cleanups.
+It does:
 
-Am I missing some aspect here, or should those just be merged through
-drivers/tty as other driver changes there? At the very least, we expect drivers
-that aren't merged through the normal path to have acks from those maintainers.
+root@awork3:~# ipmitool sdr|grep ^PCH
+PCH Temp         | 58 degrees C      | ok
 
-Mind following up on that? Thanks!
+andres@awork3:~$ cat /sys/class/thermal/thermal_zone0/type
+pch_lewisburg
+andres@awork3:~$ cat /sys/class/thermal/thermal_zone0/temp
+58000
 
+And if I generate some load, it rises for both:
+root@awork3:~# ipmitool sdr|grep ^PCH
+PCH Temp         | 60 degrees C      | ok
+andres@awork3:~$ cat /sys/class/thermal/thermal_zone0/temp
+60000
 
--Olof
+Regards,
+
+Andres
