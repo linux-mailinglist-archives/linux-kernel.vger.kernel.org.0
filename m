@@ -2,85 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4530313D6FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCEF513D713
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:39:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbgAPJiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 04:38:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34458 "EHLO mx2.suse.de"
+        id S1730193AbgAPJjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 04:39:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35112 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbgAPJiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 04:38:09 -0500
+        id S1726370AbgAPJjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 04:39:32 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7D042B1AB;
-        Thu, 16 Jan 2020 09:38:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 213631E0CBC; Thu, 16 Jan 2020 10:38:07 +0100 (CET)
-Date:   Thu, 16 Jan 2020 10:38:07 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 05/12] fs: remove unneeded IS_DAX() check
-Message-ID: <20200116093807.GB8446@quack2.suse.cz>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-6-ira.weiny@intel.com>
+        by mx2.suse.de (Postfix) with ESMTP id A77F1B1C2;
+        Thu, 16 Jan 2020 09:39:30 +0000 (UTC)
+Date:   Thu, 16 Jan 2020 10:39:29 +0100
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/26] docs: i2c: call it "I2C" consistently
+Message-ID: <20200116103929.366c14e0@endymion>
+In-Reply-To: <20200105225012.11701-4-luca@lucaceresoli.net>
+References: <20200105224006.10321-1-luca@lucaceresoli.net>
+        <20200105225012.11701-1-luca@lucaceresoli.net>
+        <20200105225012.11701-4-luca@lucaceresoli.net>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200110192942.25021-6-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 10-01-20 11:29:35, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Sun,  5 Jan 2020 23:49:50 +0100, Luca Ceresoli wrote:
+> Uppercase "I2C" is used almost everywhere in the docs, but the lowercase
+> version "i2c" is used somewhere. Use the uppercase form consistently.
 > 
-> The IS_DAX() check in io_is_direct() causes a race between changing the
-> DAX mode and creating the iocb flags.
-> 
-> Remove the check because DAX now emulates the page cache API and
-> therefore it does not matter if the file mode is DAX or not when the
-> iocb flags are created.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-The patch looks good to me. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Acked-by: Peter Rosin <peda@axentia.se>
 > ---
->  include/linux/fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7584bcef5d3..e11989502eac 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3365,7 +3365,7 @@ extern int file_update_time(struct file *file);
->  
->  static inline bool io_is_direct(struct file *filp)
->  {
-> -	return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
-> +	return (filp->f_flags & O_DIRECT);
->  }
->  
->  static inline bool vma_is_dax(struct vm_area_struct *vma)
-> -- 
-> 2.21.0
-> 
+>  Documentation/i2c/dev-interface.rst         | 18 +++---
+>  Documentation/i2c/dma-considerations.rst    |  2 +-
+>  Documentation/i2c/i2c-protocol.rst          |  4 +-
+>  Documentation/i2c/i2c-topology.rst          | 66 ++++++++++-----------
+>  Documentation/i2c/instantiating-devices.rst |  2 +-
+>  Documentation/i2c/old-module-parameters.rst |  6 +-
+>  Documentation/i2c/slave-interface.rst       |  4 +-
+>  Documentation/i2c/writing-clients.rst       |  4 +-
+>  8 files changed, 53 insertions(+), 53 deletions(-)
+> (...)
+
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jean Delvare
+SUSE L3 Support
