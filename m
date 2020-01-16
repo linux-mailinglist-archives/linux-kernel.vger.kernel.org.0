@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD48D13E298
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:57:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F1D13E29A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387422AbgAPQ5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43798 "EHLO mail.kernel.org"
+        id S2387457AbgAPQ5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:57:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729252AbgAPQ5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:01 -0500
+        id S1732567AbgAPQ5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 347742467C;
-        Thu, 16 Jan 2020 16:57:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C335D2467E;
+        Thu, 16 Jan 2020 16:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193821;
-        bh=PfQMiGR9EeuM30iGR1FkAL4KQGxNESmN0FOpdtWAy3s=;
+        s=default; t=1579193826;
+        bh=pkx0yXIJGjk4uDyY2N8qEi31EmVtnwYkT0qbkPSW844=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gtFiP3fDKs7RehezhbXWXGaJiv6EOTgxtzc/jj13Hkyer054qZiG3X8LW7GBF0J/0
-         ACbIgHf/m7VP3erwMwSngCp1kDkZ1tjTKH/rvmi4jGAvjK+VHF81ya2LSjJVC/fKX4
-         dzmnx5kfjXvhvqyZdjbwBi2yN2fhFdyLOhRfIiNg=
+        b=xZbLbV2Z5t8P2z3tFmpfwdCp+fqY1cYUQSGrQFwGgVX8pgXxbXQ+0nPwrWgd2jJj/
+         gtqOLDnCNUR086UnAw40NeSZovwxz6sZb6y67x/MfaPjILFjLOwxc7oNCjVYaaOUa0
+         MvQBOsKPH7Soj5wG8vag7nYhr0Dri/epvZWJzVGU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 080/671] net: hns3: fix error handling int the hns3_get_vector_ring_chain
-Date:   Thu, 16 Jan 2020 11:45:11 -0500
-Message-Id: <20200116165502.8838-80-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 084/671] clk: highbank: fix refcount leak in hb_clk_init()
+Date:   Thu, 16 Jan 2020 11:45:15 -0500
+Message-Id: <20200116165502.8838-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -44,53 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit cda69d244585bc4497d3bb878c22fe2b6ad647c1 ]
+[ Upstream commit 5eb8ba90958de1285120dae5d3a5d2b1a360b3b4 ]
 
-When hns3_get_vector_ring_chain() failed in the
-hns3_nic_init_vector_data(), it should do the error handling instead
-of return directly.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Also, cur_chain should be freed instead of chain and head->next should
-be set to NULL in error handling of hns3_get_vector_ring_chain.
-
-This patch fixes them.
-
-Fixes: 73b907a083b8 ("net: hns3: bugfix for buffer not free problem during resetting")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 26cae166cff9 ("ARM: highbank: remove custom .init_time hook")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/clk-highbank.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 9df807ec8c84..10fa7f5df57e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2605,9 +2605,10 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
- 	cur_chain = head->next;
- 	while (cur_chain) {
- 		chain = cur_chain->next;
--		devm_kfree(&pdev->dev, chain);
-+		devm_kfree(&pdev->dev, cur_chain);
- 		cur_chain = chain;
- 	}
-+	head->next = NULL;
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index 727ed8e1bb72..8e4581004695 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -293,6 +293,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+ 	/* Map system registers */
+ 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
+ 	hb_clk->reg = of_iomap(srnp, 0);
++	of_node_put(srnp);
+ 	BUG_ON(!hb_clk->reg);
+ 	hb_clk->reg += reg;
  
- 	return -ENOMEM;
- }
-@@ -2679,7 +2680,7 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
- 		ret = hns3_get_vector_ring_chain(tqp_vector,
- 						 &vector_ring_chain);
- 		if (ret)
--			return ret;
-+			goto map_ring_fail;
- 
- 		ret = h->ae_algo->ops->map_ring_to_vector(h,
- 			tqp_vector->vector_irq, &vector_ring_chain);
 -- 
 2.20.1
 
