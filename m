@@ -2,59 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A1313F0B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B8B13F0B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395567AbgAPSXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:23:34 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52332 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405290AbgAPSXW (ORCPT
+        id S2392548AbgAPSX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:23:28 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52338 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405626AbgAPSXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:23:22 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p9so4811136wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:21 -0800 (PST)
+        Thu, 16 Jan 2020 13:23:24 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p9so4811217wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bKzyTMx/EE6hYfa6xT4QOtv7PoRTzC4cnmE6saFEzZ8=;
-        b=XS5Gnet0V1x9yQqCMC2ffevRg1STQIoU0YZrQ0LLNDqr8VKtEDV2LmxCv8U5G1IlH0
-         LiJ0b9/G4Ce9rw04C7dbsDRgIXk09Mf4S1ETN8x9ktGh8+GEv4VvQdxqt4Kz62fDOMrv
-         vigDSD76YL/ic+myUUSEDRW2X7g/qP/gFEvkA8jUwZnKOcRq7XtYtTaBmDbBpxtnPoqT
-         UKK75TwQfc1HzNnj1SX6SeV2C/VAUzmbZbSxt8acPzT6nkctmkFHffvi/botExJI/1k7
-         kOXozBk422Ly/CezpH8RyWit2nLwtj2PKoKMSWO9L/l9FhB30au1JF5tYzP3s7M7KoBn
-         R/Aw==
+        bh=4qBNUmHVyRoOy7vlZauOG0eUc8Bfbdt0j+6alacEhE0=;
+        b=NXUTedlLtsx4bdIx1FC6GW0FmpKFAHbJ8HGLVfu6vmPev3O/YD/Qij1yvjqFbCW9bt
+         jho0D72anvEi9HDUxXOE/NrMq39b1RVvZKmWfaGDYAF6gkQSDwu0CU23aDInw6RpVqqM
+         xmj10EUpLsoRblMIG9j2+5k2RBcqzrYBWIPfqIKXi0SInxWxct6b0xhlx5keTPPzS1La
+         aDB3P1nfP7idaleLiZS4uwVCjbkrWfOvtTxDFEnzKleaZTFiBqhANV3R6peFTO4t50RH
+         nBOtEjABB3PmtNRxD7NUnkVCwoI/NfBdAGL9i/Qx8ay6vW4IgA/Osk024uewLn5eAn35
+         Feug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bKzyTMx/EE6hYfa6xT4QOtv7PoRTzC4cnmE6saFEzZ8=;
-        b=ft7ZfSA0bALPPuTnkPzTiEekWAGsdw8kGtUQ2XJZGTOBjAQzVK5+BhabiatzCSqN6f
-         2FHPNSmCnrfoC5CLb+ARlSPvGS9gTR3ny8lyVojMqt/msBCyNt11GMuWro0v9Zy6sCHe
-         1y9gWAvs+MZ09qy6qRyBYc0RDBzB83fYr8JkS5J+kiow+Us/k58I53DtlGZGoApGnQLr
-         Rwx3Dntyf3rm5Jn2GWUaNvfvB4KkZI2zvQHQqs1TxBggOK2jFe/tDaO9gVfsxObf1v3J
-         5SrP5GZ98rWmuXRgFzedWKBEUIW7C2nMTsPmWOAeyjcL7XpfxRlFbdqM6Ch9CKzfi1vp
-         0KMQ==
-X-Gm-Message-State: APjAAAUs1DSn9y6Lk0lwoWHj/7K/O2EEUnNpMUZ9HFkO4ttHb3k0CCOV
-        YQkA+xRe2bZSriCqJCps5qOc0A==
-X-Google-Smtp-Source: APXvYqxsdQKMHzHde+rNzloenzO/Yx4EXE3hDkjCTmoJvF84QCCFWJ1LmS1W89NN6PHrcRYRQq2ymg==
-X-Received: by 2002:a05:600c:48a:: with SMTP id d10mr315293wme.87.1579199000823;
-        Thu, 16 Jan 2020 10:23:20 -0800 (PST)
+        bh=4qBNUmHVyRoOy7vlZauOG0eUc8Bfbdt0j+6alacEhE0=;
+        b=QoTOWJ8GnJYxFqfT9XQM0TF/IF6AkNhE9fT9pc/F8y2Kp+mbfQckjILpH+tjRT04qZ
+         LVqYS9bledKQSpRyDvf4DfIP/twMXi3Kc5oJCynoAxehqnI4fwzgLyNBJGu3tU063g1J
+         tITlrVmASVunAbfWIprpvhLlnlKSftOndTtidLbhFGMsM2/IBGP3Voc7sc7ZhkdgMy0U
+         TUaHOHYwhxMWowq+NcoS4cAeIMwY2tu3nWGoeObyG8llcWPAKDfn7aGGzVnyZfq+fw9k
+         KnNsc71W+zSxvlGxQgJHwxwUf5GtnuTU2b4RsX5gzhetj0Q5myEu77b/X2ZxYXcUlLkk
+         kTWQ==
+X-Gm-Message-State: APjAAAUXpY6waj776VdiONPsxNaLzrvje7CHL2wme71Bj2n4L0RsbWyy
+        t+HcjYlYLwCTGd3FyQN3wJMLrw==
+X-Google-Smtp-Source: APXvYqxTiMTxQglBtxLCKYDa57WgpGaTuZaguSrpYzYu7WxZxlR2/85dyhvAWv4P9o9tOuiIzHUqgw==
+X-Received: by 2002:a1c:9849:: with SMTP id a70mr344890wme.76.1579199002635;
+        Thu, 16 Jan 2020 10:23:22 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.18
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:20 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:22 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH 03/17] dt-bindings: timer: renesas, cmt: Document r8a774b1 CMT support
-Date:   Thu, 16 Jan 2020 19:22:50 +0100
-Message-Id: <20200116182304.4926-3-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Guo Ren <guoren@kernel.org>
+Subject: [PATCH 04/17] clocksource: Fix Kconfig miscues
+Date:   Thu, 16 Jan 2020 19:22:51 +0100
+Message-Id: <20200116182304.4926-4-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -64,32 +61,201 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Document SoC specific bindings for RZ/G2N (r8a774b1) SoC.
+Fix lots of typo, spelling, punctuation, and grammar miscues in
+drivers/clocksource/Kconfig.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1570104229-59144-1-git-send-email-biju.das@bp.renesas.com
+Link: https://lore.kernel.org/r/4deb42a9-82f2-72f9-891f-972a9a399f4f@infradead.org
 ---
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clocksource/Kconfig | 46 ++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index a444cfc5852a..a747fabab7d3 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -29,6 +29,8 @@ Required Properties:
-     - "renesas,r8a77470-cmt1" for the 48-bit CMT1 device included in r8a77470.
-     - "renesas,r8a774a1-cmt0" for the 32-bit CMT0 device included in r8a774a1.
-     - "renesas,r8a774a1-cmt1" for the 48-bit CMT devices included in r8a774a1.
-+    - "renesas,r8a774b1-cmt0" for the 32-bit CMT0 device included in r8a774b1.
-+    - "renesas,r8a774b1-cmt1" for the 48-bit CMT devices included in r8a774b1.
-     - "renesas,r8a774c0-cmt0" for the 32-bit CMT0 device included in r8a774c0.
-     - "renesas,r8a774c0-cmt1" for the 48-bit CMT devices included in r8a774c0.
-     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index c981ff64bc13..94192fb0533e 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -88,7 +88,7 @@ config ROCKCHIP_TIMER
+ 	select TIMER_OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  Enables the support for the rockchip timer driver.
++	  Enables the support for the Rockchip timer driver.
+ 
+ config ARMADA_370_XP_TIMER
+ 	bool "Armada 370 and XP timer driver" if COMPILE_TEST
+@@ -162,13 +162,13 @@ config NPCM7XX_TIMER
+ 	select CLKSRC_MMIO
+ 	help
+ 	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx architecture,
+-	  While TIMER0 serves as clockevent and TIMER1 serves as clocksource.
++	  where TIMER0 serves as clockevent and TIMER1 serves as clocksource.
+ 
+ config CADENCE_TTC_TIMER
+ 	bool "Cadence TTC timer driver" if COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	help
+-	  Enables support for the cadence ttc driver.
++	  Enables support for the Cadence TTC driver.
+ 
+ config ASM9260_TIMER
+ 	bool "ASM9260 timer driver" if COMPILE_TEST
+@@ -190,10 +190,10 @@ config CLKSRC_DBX500_PRCMU
+ 	bool "Clocksource PRCMU Timer" if COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+-	  Use the always on PRCMU Timer as clocksource
++	  Use the always on PRCMU Timer as clocksource.
+ 
+ config CLPS711X_TIMER
+-	bool "Cirrus logic timer driver" if COMPILE_TEST
++	bool "Cirrus Logic timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	help
+ 	  Enables support for the Cirrus Logic PS711 timer.
+@@ -205,11 +205,11 @@ config ATLAS7_TIMER
+ 	  Enables support for the Atlas7 timer.
+ 
+ config MXS_TIMER
+-	bool "Mxs timer driver" if COMPILE_TEST
++	bool "MXS timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	select STMP_DEVICE
+ 	help
+-	  Enables support for the Mxs timer.
++	  Enables support for the MXS timer.
+ 
+ config PRIMA2_TIMER
+ 	bool "Prima2 timer driver" if COMPILE_TEST
+@@ -238,10 +238,10 @@ config KEYSTONE_TIMER
+ 	  Enables support for the Keystone timer.
+ 
+ config INTEGRATOR_AP_TIMER
+-	bool "Integrator-ap timer driver" if COMPILE_TEST
++	bool "Integrator-AP timer driver" if COMPILE_TEST
+ 	select CLKSRC_MMIO
+ 	help
+-	  Enables support for the Integrator-ap timer.
++	  Enables support for the Integrator-AP timer.
+ 
+ config CLKSRC_EFM32
+ 	bool "Clocksource for Energy Micro's EFM32 SoCs" if !ARCH_EFM32
+@@ -283,8 +283,8 @@ config CLKSRC_NPS
+ 	select TIMER_OF if OF
+ 	help
+ 	  NPS400 clocksource support.
+-	  Got 64 bit counter with update rate up to 1000MHz.
+-	  This counter is accessed via couple of 32 bit memory mapped registers.
++	  It has a 64-bit counter with update rate up to 1000MHz.
++	  This counter is accessed via couple of 32-bit memory-mapped registers.
+ 
+ config CLKSRC_STM32
+ 	bool "Clocksource for STM32 SoCs" if !ARCH_STM32
+@@ -305,14 +305,14 @@ config ARC_TIMERS
+ 	help
+ 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
+ 	  (ARC700 as well as ARC HS38).
+-	  TIMER0 serves as clockevent while TIMER1 provides clocksource
++	  TIMER0 serves as clockevent while TIMER1 provides clocksource.
+ 
+ config ARC_TIMERS_64BIT
+ 	bool "Support for 64-bit counters in ARC HS38 cores" if COMPILE_TEST
+ 	depends on ARC_TIMERS
+ 	select TIMER_OF
+ 	help
+-	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP)
++	  This enables 2 different 64-bit timers: RTC (for UP) and GFRC (for SMP).
+ 	  RTC is implemented inside the core, while GFRC sits outside the core in
+ 	  ARConnect IP block. Driver automatically picks one of them for clocksource
+ 	  as appropriate.
+@@ -390,7 +390,7 @@ config ARM_GLOBAL_TIMER
+ 	select TIMER_OF if OF
+ 	depends on ARM
+ 	help
+-	  This options enables support for the ARM global timer unit
++	  This option enables support for the ARM global timer unit.
+ 
+ config ARM_TIMER_SP804
+ 	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
+@@ -403,14 +403,14 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+ 	depends on ARM_GLOBAL_TIMER
+ 	default y
+ 	help
+-	 Use ARM global timer clock source as sched_clock
++	  Use ARM global timer clock source as sched_clock.
+ 
+ config ARMV7M_SYSTICK
+ 	bool "Support for the ARMv7M system time" if COMPILE_TEST
+ 	select TIMER_OF if OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  This options enables support for the ARMv7M system timer unit
++	  This option enables support for the ARMv7M system timer unit.
+ 
+ config ATMEL_PIT
+ 	bool "Atmel PIT support" if COMPILE_TEST
+@@ -460,7 +460,7 @@ config VF_PIT_TIMER
+ 	bool
+ 	select CLKSRC_MMIO
+ 	help
+-	  Support for Period Interrupt Timer on Freescale Vybrid Family SoCs.
++	  Support for Periodic Interrupt Timer on Freescale Vybrid Family SoCs.
+ 
+ config OXNAS_RPS_TIMER
+ 	bool "Oxford Semiconductor OXNAS RPS Timers driver" if COMPILE_TEST
+@@ -523,7 +523,7 @@ config SH_TIMER_MTU2
+ 	help
+ 	  This enables build of a clockevent driver for the Multi-Function
+ 	  Timer Pulse Unit 2 (MTU2) hardware available on SoCs from Renesas.
+-	  This hardware comes with 16 bit-timer registers.
++	  This hardware comes with 16-bit timer registers.
+ 
+ config RENESAS_OSTM
+ 	bool "Renesas OSTM timer driver" if COMPILE_TEST
+@@ -580,7 +580,7 @@ config CLKSRC_TANGO_XTAL
+ 	select TIMER_OF
+ 	select CLKSRC_MMIO
+ 	help
+-	  This enables the clocksource for Tango SoC
++	  This enables the clocksource for Tango SoC.
+ 
+ config CLKSRC_PXA
+ 	bool "Clocksource for PXA or SA-11x0 platform" if COMPILE_TEST
+@@ -601,14 +601,14 @@ config H8300_TMR16
+ 	depends on HAS_IOMEM
+ 	help
+ 	  This enables the 16 bits timer for the H8300 platform with the
+-	  H83069 cpu.
++	  H83069 CPU.
+ 
+ config H8300_TPU
+ 	bool "Clocksource for the H8300 platform" if COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+ 	  This enables the clocksource for the H8300 platform with the
+-	  H8S2678 cpu.
++	  H8S2678 CPU.
+ 
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+@@ -666,8 +666,8 @@ config CSKY_MP_TIMER
+ 	help
+ 	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
+ 	  system.
+-	  csky,mptimer is not only used in SMP system, it also could be used
+-	  single core system. It's not a mmio reg and it use mtcr/mfcr instruction.
++	  csky,mptimer is not only used in SMP system, it also could be used in
++	  single core system. It's not a mmio reg and it uses mtcr/mfcr instruction.
+ 
+ config GX6605S_TIMER
+ 	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
 -- 
 2.17.1
 
