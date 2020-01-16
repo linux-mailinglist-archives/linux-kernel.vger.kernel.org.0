@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D6B13EFE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:18:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DD313EFCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405047AbgAPSR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:17:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40276 "EHLO mail.kernel.org"
+        id S2404264AbgAPR3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:29:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404207AbgAPR2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:28:54 -0500
+        id S2404223AbgAPR25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1F524704;
-        Thu, 16 Jan 2020 17:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E1B32470A;
+        Thu, 16 Jan 2020 17:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195733;
-        bh=ewYn3Rzs8WG8sRJs5m3fMXgRAX3QqSzeKFi7bb7ATCc=;
+        s=default; t=1579195736;
+        bh=ZcKXNiY389qwnVB97Nh5gg7j/uHqe5GQIQymUVX9+Bs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ixNFVI8cFP9dnYjzaYbqk+CHpwqdCg4HaqTkcuU4YHmoQor2G0N6T+7e4KVYFqZmj
-         Z2wMYCZfbiWFkMc/ZgNIUF/k2GGG2oD4kbyDAdGvaWDdPtXYbgmBHR6k9gWFjENHBy
-         qvpsIOzftBb2IUhxEW/GJCtDoeAW116H2PTpVM0M=
+        b=f1cyz+9RhEz5BCCf/Uz544Z4+NHb9UcZWN/OmqXvtCbzHpvEgi9BKOW/kcz6sD9K3
+         2otR4N5f2wN+gJTV4ICjGxZf4dE7J/WwkujLHd8UiwyBs8id6u/oUcP9xQiePAlRZA
+         Kknpd8h63LiY/XywhiW2mGYg1PD5FWTGowZ7Fp8A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 272/371] dmaengine: dw: platform: Switch to acpi_dma_controller_register()
-Date:   Thu, 16 Jan 2020 12:22:24 -0500
-Message-Id: <20200116172403.18149-215-sashal@kernel.org>
+Cc:     Alexandre Kroupski <alexandre.kroupski@ingenico.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 274/371] media: atmel: atmel-isi: fix timeout value for stop streaming
+Date:   Thu, 16 Jan 2020 12:22:26 -0500
+Message-Id: <20200116172403.18149-217-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,62 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Alexandre Kroupski <alexandre.kroupski@ingenico.com>
 
-[ Upstream commit e7b8514e4d68bec21fc6385fa0a66797ddc34ac9 ]
+[ Upstream commit 623fd246bb40234fe68dd4e7c1f1f081f9c45a3d ]
 
-There is a possibility to have registered ACPI DMA controller
-while it has been gone already.
+In case of sensor malfunction, stop streaming timeout takes much longer
+than expected. This is due to conversion of time to jiffies: milliseconds
+multiplied with HZ (ticks/second) gives out a value of jiffies with 10^3
+greater. We need to also divide by 10^3 to obtain the right jiffies value.
+In other words FRAME_INTERVAL_MILLI_SEC must be in seconds in order to
+multiply by HZ and get the right jiffies value to add to the current
+jiffies for the timeout expire time.
 
-To avoid the potential crash, move to non-managed
-acpi_dma_controller_register().
-
-Fixes: 42c91ee71d6d ("dw_dmac: add ACPI support")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Link: https://lore.kernel.org/r/20190820131546.75744-8-andriy.shevchenko@linux.intel.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 195ebc43bf76 ("[media] V4L: at91: add Atmel Image Sensor Interface (ISI) support")
+Signed-off-by: Alexandre Kroupski <alexandre.kroupski@ingenico.com>
+Reviewed-by: Eugen Hristev <eugen.hristev@microchip.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/dw/platform.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/media/platform/atmel/atmel-isi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
-index 46a519e07195..b408c07662f5 100644
---- a/drivers/dma/dw/platform.c
-+++ b/drivers/dma/dw/platform.c
-@@ -87,13 +87,20 @@ static void dw_dma_acpi_controller_register(struct dw_dma *dw)
- 	dma_cap_set(DMA_SLAVE, info->dma_cap);
- 	info->filter_fn = dw_dma_acpi_filter;
+diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+index 891fa2505efa..2f962a3418f6 100644
+--- a/drivers/media/platform/atmel/atmel-isi.c
++++ b/drivers/media/platform/atmel/atmel-isi.c
+@@ -496,7 +496,7 @@ static void stop_streaming(struct vb2_queue *vq)
+ 	spin_unlock_irq(&isi->irqlock);
  
--	ret = devm_acpi_dma_controller_register(dev, acpi_dma_simple_xlate,
--						info);
-+	ret = acpi_dma_controller_register(dev, acpi_dma_simple_xlate, info);
- 	if (ret)
- 		dev_err(dev, "could not register acpi_dma_controller\n");
- }
-+
-+static void dw_dma_acpi_controller_free(struct dw_dma *dw)
-+{
-+	struct device *dev = dw->dma.dev;
-+
-+	acpi_dma_controller_free(dev);
-+}
- #else /* !CONFIG_ACPI */
- static inline void dw_dma_acpi_controller_register(struct dw_dma *dw) {}
-+static inline void dw_dma_acpi_controller_free(struct dw_dma *dw) {}
- #endif /* !CONFIG_ACPI */
- 
- #ifdef CONFIG_OF
-@@ -249,6 +256,9 @@ static int dw_remove(struct platform_device *pdev)
- {
- 	struct dw_dma_chip *chip = platform_get_drvdata(pdev);
- 
-+	if (ACPI_HANDLE(&pdev->dev))
-+		dw_dma_acpi_controller_free(chip->dw);
-+
- 	if (pdev->dev.of_node)
- 		of_dma_controller_free(pdev->dev.of_node);
- 
+ 	if (!isi->enable_preview_path) {
+-		timeout = jiffies + FRAME_INTERVAL_MILLI_SEC * HZ;
++		timeout = jiffies + (FRAME_INTERVAL_MILLI_SEC * HZ) / 1000;
+ 		/* Wait until the end of the current frame. */
+ 		while ((isi_readl(isi, ISI_STATUS) & ISI_CTRL_CDC) &&
+ 				time_before(jiffies, timeout))
 -- 
 2.20.1
 
