@@ -2,224 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6839613D23F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:38:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 045B613D243
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbgAPCiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:38:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47878 "EHLO mail.kernel.org"
+        id S1729619AbgAPCje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:39:34 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41419 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729043AbgAPCiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:38:00 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729559AbgAPCje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:39:34 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 387642084D;
-        Thu, 16 Jan 2020 02:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579142278;
-        bh=vacKQWKRT4moqnpN5dBJ+7DYc1ik3c3rNIubWECBtk0=;
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47ypLW1t7yz9sR0;
+        Thu, 16 Jan 2020 13:39:31 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1579142371;
+        bh=wwSov16NNA8eswhryaE9UVLHmePc/RJK9qgpOXHnWd4=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=M2Q9yLy6x27d7jJZuSYEBlI+q0wkTmQEqP63PDJo10kpXcDEzV3TVjfxJk9SO+itl
-         +wvAkQ9xGY4ugd6YxhnH/n4raklHRTb7R4U7analnjp42m2yZXoTEG0iAIklfrFL+B
-         lYEH1ailn+5v3RlWf+JWDQIymazllURnCDeLnrNU=
-Date:   Thu, 16 Jan 2020 11:37:49 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org
-Subject: Re: [BUGFIX PATCH] selftests: Fix pthread link option
-Message-Id: <20200116113749.3a815c124dce18028d3d7f8a@kernel.org>
-In-Reply-To: <157907976750.14189.12829891067375600434.stgit@devnote2>
-References: <157907976750.14189.12829891067375600434.stgit@devnote2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        b=DACA5Q1+K6Xubv01HoN0I+VY0B6GvNV2+HNVMUHkr3DrgLR6967Ruzl8cgBKCF3ly
+         GnPZC3QOGgAUAUh6W7XlAUEvVnDW+ff5zQl3xn8VQHI/+cMqfe00yImz54P1vgGf1j
+         ZJoWNIP/5+qVjzgxDZcT3kZNxX4blUDYygREfiNDDKeuejt7ylHj3xS+T930E40JOm
+         CgueStoiSAI4n37zEkRCPokkIg0xNHAan/3TE/xPj3pxLpwrvNGCLAKrK3hCX0n3tk
+         UMB5O+b9Fq0Yfc05pe1T17WkgvcTlvSqx2XnX5un3/9l19Lgu/alsS1Zn1ERx7DwGH
+         o6AUXH4HCfd3A==
+Date:   Thu, 16 Jan 2020 13:39:30 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the usb-gadget tree
+Message-ID: <20200116133930.74afaa91@canb.auug.org.au>
+In-Reply-To: <043cbd87-1d7d-e998-04a8-bbc9aec686df@linaro.org>
+References: <20200116070726.7e2ef8cc@canb.auug.org.au>
+        <b7ef5047-c8c3-42cc-d049-fb72563d3544@linaro.org>
+        <20200116124100.58af81d5@canb.auug.org.au>
+        <6b984328-b3f4-a23d-efb3-7e7955ad165a@linaro.org>
+        <20200116125851.474f3021@canb.auug.org.au>
+        <043cbd87-1d7d-e998-04a8-bbc9aec686df@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/8bjwNIkrgQ751QRdgJdr8ni";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Jan 2020 18:16:07 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+--Sig_/8bjwNIkrgQ751QRdgJdr8ni
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> To support pthread correctly, it is better to use -pthread
-> instead of -lpthread.
+Hi Bryan,
 
-Oops, this should be refined, since LDLIBS will not be
-passed when compiling. -pthread is complier option but
--lpthread is linker option.
+On Thu, 16 Jan 2020 02:08:55 +0000 Bryan O'Donoghue <bryan.odonoghue@linaro=
+.org> wrote:
+>
+> On 16/01/2020 01:58, Stephen Rothwell wrote:
+> >=20
+> > On Thu, 16 Jan 2020 01:45:25 +0000 Bryan O'Donoghue <bryan.odonoghue@li=
+naro.org> wrote: =20
+> >>
+> >> On 16/01/2020 01:41, Stephen Rothwell wrote: =20
+> >>> Hi Bryan,
+> >>>
+> >>> On Thu, 16 Jan 2020 01:19:22 +0000 Bryan O'Donoghue <bryan.odonoghue@=
+linaro.org> wrote: =20
+> >>>>
+> >>>> How should extra long fixes like this be divided up ? =20
+> >>>
+> >>> Just let them run on even if they are too long i.e. don't split them =
+at all. =20
+> >>
+> >> That's what's in the git commit log though isn't it ? =20
+> >=20
+> > When you add a Fixes: tag to a commit, you quote the subject line of
+> > the commit you are fixing which, by definition, is a single line.  We
+> > want to keep it that way so it can be searched for easily.
+> >=20
+> > So to create a fixes line you can use this:
+> >=20
+> > git log -1 --format=3D'Fixes: %h ("%s")' <commit being fixed>
+> >=20
+> > i.e. in this case:
+> >=20
+> > $ git log -1 --format=3D'Fixes: %h (\"%s\")' 40d133d7f5426
+> > Fixes: 40d133d7f542 ("usb: gadget: f_ncm: convert to new function inter=
+face with backward compatibility")
+> >  =20
+>=20
+> doh sorry still not seeing it
+>=20
+> git remote -v
+> usb-next	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git=20
+> (fetch)
+>=20
+> git fetch usb-next
+> git show 5b24c28cfe13
+>=20
+> that's a correctly formatted fixes right i.e. the same one as above
+>=20
+> :(
+>=20
+> not seeing the difference...
 
-Thank you,
+Now I see our confusion.  There is another version of this patch in
+Felipe's tree as a different commit (6a6ae4e8e926) which has the Fixes
+tag split ...
 
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  tools/testing/selftests/bpf/Makefile               |    2 +-
->  tools/testing/selftests/membarrier/Makefile        |    2 +-
->  tools/testing/selftests/mqueue/Makefile            |    2 +-
->  tools/testing/selftests/net/Makefile               |    4 ++--
->  .../testing/selftests/powerpc/benchmarks/Makefile  |    4 ++--
->  tools/testing/selftests/powerpc/dscr/Makefile      |    2 +-
->  tools/testing/selftests/powerpc/mm/Makefile        |    2 +-
->  tools/testing/selftests/rseq/Makefile              |    2 +-
->  tools/testing/selftests/rtc/Makefile               |    2 +-
->  tools/testing/selftests/seccomp/Makefile           |    2 +-
->  tools/testing/selftests/timers/Makefile            |    2 +-
->  tools/testing/selftests/vm/Makefile                |    2 +-
->  12 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index e2fd6f8d579c..419f58c53d12 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -22,7 +22,7 @@ CFLAGS += -g -Wall -O2 $(GENFLAGS) -I$(APIDIR) -I$(LIBDIR) -I$(BPFDIR)	\
->  	  -I$(GENDIR) -I$(TOOLSDIR) -I$(CURDIR)				\
->  	  -Dbpf_prog_load=bpf_prog_test_load				\
->  	  -Dbpf_load_program=bpf_test_load_program
-> -LDLIBS += -lcap -lelf -lrt -lpthread
-> +LDLIBS += -lcap -lelf -lrt -pthread
->  
->  # Order correspond to 'make run_tests' order
->  TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map test_progs \
-> diff --git a/tools/testing/selftests/membarrier/Makefile b/tools/testing/selftests/membarrier/Makefile
-> index 34d1c81a2324..19d657d966e3 100644
-> --- a/tools/testing/selftests/membarrier/Makefile
-> +++ b/tools/testing/selftests/membarrier/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  CFLAGS += -g -I../../../../usr/include/
-> -LDLIBS += -lpthread
-> +LDLIBS += -pthread
->  
->  TEST_GEN_PROGS := membarrier_test_single_thread \
->  		membarrier_test_multi_thread
-> diff --git a/tools/testing/selftests/mqueue/Makefile b/tools/testing/selftests/mqueue/Makefile
-> index 8a58055fc1f5..9986b778b8b3 100644
-> --- a/tools/testing/selftests/mqueue/Makefile
-> +++ b/tools/testing/selftests/mqueue/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -O2
-> -LDLIBS = -lrt -lpthread -lpopt
-> +LDLIBS = -lrt -pthread -lpopt
->  
->  TEST_GEN_PROGS := mq_open_tests mq_perf_tests
->  
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-> index a8e04d665b69..6ad8571bb0ed 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -25,5 +25,5 @@ KSFT_KHDR_INSTALL := 1
->  include ../lib.mk
->  
->  $(OUTPUT)/reuseport_bpf_numa: LDLIBS += -lnuma
-> -$(OUTPUT)/tcp_mmap: LDFLAGS += -lpthread
-> -$(OUTPUT)/tcp_inq: LDFLAGS += -lpthread
-> +$(OUTPUT)/tcp_mmap: LDFLAGS += -pthread
-> +$(OUTPUT)/tcp_inq: LDFLAGS += -pthread
-> diff --git a/tools/testing/selftests/powerpc/benchmarks/Makefile b/tools/testing/selftests/powerpc/benchmarks/Makefile
-> index d40300a65b42..0d7c82d520ce 100644
-> --- a/tools/testing/selftests/powerpc/benchmarks/Makefile
-> +++ b/tools/testing/selftests/powerpc/benchmarks/Makefile
-> @@ -11,8 +11,8 @@ $(TEST_GEN_PROGS): ../harness.c
->  
->  $(OUTPUT)/context_switch: ../utils.c
->  $(OUTPUT)/context_switch: CFLAGS += -maltivec -mvsx -mabi=altivec
-> -$(OUTPUT)/context_switch: LDLIBS += -lpthread
-> +$(OUTPUT)/context_switch: LDLIBS += -pthread
->  
-> -$(OUTPUT)/fork: LDLIBS += -lpthread
-> +$(OUTPUT)/fork: LDLIBS += -pthread
->  
->  $(OUTPUT)/exec_target: CFLAGS += -static -nostartfiles
-> diff --git a/tools/testing/selftests/powerpc/dscr/Makefile b/tools/testing/selftests/powerpc/dscr/Makefile
-> index 5df476364b4d..90c744592d1b 100644
-> --- a/tools/testing/selftests/powerpc/dscr/Makefile
-> +++ b/tools/testing/selftests/powerpc/dscr/Makefile
-> @@ -6,6 +6,6 @@ TEST_GEN_PROGS := dscr_default_test dscr_explicit_test dscr_user_test	\
->  top_srcdir = ../../../../..
->  include ../../lib.mk
->  
-> -$(OUTPUT)/dscr_default_test: LDLIBS += -lpthread
-> +$(OUTPUT)/dscr_default_test: LDLIBS += -pthread
->  
->  $(TEST_GEN_PROGS): ../harness.c
-> diff --git a/tools/testing/selftests/powerpc/mm/Makefile b/tools/testing/selftests/powerpc/mm/Makefile
-> index ed1565809d2b..4cda9b0b3dd4 100644
-> --- a/tools/testing/selftests/powerpc/mm/Makefile
-> +++ b/tools/testing/selftests/powerpc/mm/Makefile
-> @@ -20,4 +20,4 @@ $(OUTPUT)/large_vm_fork_separation: CFLAGS += -m64
->  $(OUTPUT)/tempfile:
->  	dd if=/dev/zero of=$@ bs=64k count=1
->  
-> -$(OUTPUT)/tlbie_test: LDLIBS += -lpthread
-> +$(OUTPUT)/tlbie_test: LDLIBS += -pthread
-> diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-> index d6469535630a..3a17f5b74b9c 100644
-> --- a/tools/testing/selftests/rseq/Makefile
-> +++ b/tools/testing/selftests/rseq/Makefile
-> @@ -6,7 +6,7 @@ endif
->  
->  CFLAGS += -O2 -Wall -g -I./ -I../../../../usr/include/ -L./ -Wl,-rpath=./ \
->  	  $(CLANG_FLAGS)
-> -LDLIBS += -lpthread
-> +LDLIBS += -pthread
->  
->  # Own dependencies because we only want to build against 1st prerequisite, but
->  # still track changes to header files and depend on shared object.
-> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> index de9c8566672a..d075ecfbe846 100644
-> --- a/tools/testing/selftests/rtc/Makefile
-> +++ b/tools/testing/selftests/rtc/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> -LDFLAGS += -lrt -lpthread -lm
-> +LDFLAGS += -lrt -pthread -lm
->  
->  TEST_GEN_PROGS = rtctest
->  
-> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
-> index 1760b3e39730..3e35159f709a 100644
-> --- a/tools/testing/selftests/seccomp/Makefile
-> +++ b/tools/testing/selftests/seccomp/Makefile
-> @@ -9,7 +9,7 @@ BINARIES := seccomp_bpf seccomp_benchmark
->  CFLAGS += -Wl,-no-as-needed -Wall
->  
->  seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
-> -	$(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
-> +	$(CC) $(CFLAGS) $(LDFLAGS) $< -pthread -o $@
->  
->  TEST_PROGS += $(BINARIES)
->  EXTRA_CLEAN := $(BINARIES)
-> diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
-> index 7656c7ce79d9..70461befa338 100644
-> --- a/tools/testing/selftests/timers/Makefile
-> +++ b/tools/testing/selftests/timers/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> -LDLIBS += -lrt -lpthread -lm
-> +LDLIBS += -lrt -pthread -lm
->  
->  # these are all "safe" tests that don't modify
->  # system time or require escalated privileges
-> diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-> index 7f9a8a8c31da..afb35febd7b6 100644
-> --- a/tools/testing/selftests/vm/Makefile
-> +++ b/tools/testing/selftests/vm/Makefile
-> @@ -31,6 +31,6 @@ TEST_FILES := test_vmalloc.sh
->  KSFT_KHDR_INSTALL := 1
->  include ../lib.mk
->  
-> -$(OUTPUT)/userfaultfd: LDLIBS += -lpthread
-> +$(OUTPUT)/userfaultfd: LDLIBS += -pthread
->  
->  $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
-> 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/8bjwNIkrgQ751QRdgJdr8ni
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4fzOIACgkQAVBC80lX
+0GwXoQf/Q7fcXZ24AxZZ5wvRgp2jqX4PaOKj+wNvbbYmqrsCkrnRQ2NsVsz3hxvs
+iLSXkggMlfL8AW8j2/utwI2SQ5+kwGRISkGNf7pTA+D+qbkyZVoCi+pNWCAu80+4
+4HtlMxKP3Q6gNs9uF9CFDXPX7L7EaIMbcUUIFX+VCz013sLT8w2vRewqzVXsHWxn
+Fez9vLKoYRTKw8875XWi+XXrj03AsguG+Q+miTR9k6DMuN35JkxZc+tFnBAfO9W/
+iId5mTWfDyay5r4FjjY9Oh/d7OnP5onQHnE+T+FK4QEQEQ0BTsf+s+sfdWKVw5WM
+0mYIVcy9jdWGvY5htg26JrwhopZsWA==
+=Kd58
+-----END PGP SIGNATURE-----
+
+--Sig_/8bjwNIkrgQ751QRdgJdr8ni--
