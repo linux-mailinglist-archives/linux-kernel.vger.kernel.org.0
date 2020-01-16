@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1880713F6AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:06:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C38AA13F6A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:06:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388136AbgAPRBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:01:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
+        id S2388153AbgAPRBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:01:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729782AbgAPRBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:30 -0500
+        id S2387670AbgAPRBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 586892464B;
-        Thu, 16 Jan 2020 17:01:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 764D324684;
+        Thu, 16 Jan 2020 17:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194090;
-        bh=IUzSGB77D53GljgvthFQefGhyMuKcSOamUi+WgliY20=;
+        s=default; t=1579194091;
+        bh=Vgu7OrnRpkJqobvkw4XRI1HavqMpMCUHZK0vAJPiCnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FS29KqC2UPyXhGp6t5iIkLPHTFa/3NqtUkGmsUNhF4T5cU3kaAwbGfxnlzv6KI8Sn
-         YrHknx0C9isNwGElu3oZat6ceWn+E2OcX4OkJG06mWoWKni9c/y3YwK+u/uH4AGfY2
-         uTHZ9MxoL/h3UeMZEvVPMi/87VZIUBwZHaD3sVFc=
+        b=r/TfxilhifLsWhasZBvK8b5B+GKFkjAvdCNndyV3lhxNJpcCD1eLZSaahAPiUcmxW
+         Gs48oZY7f5AxN/v4sQgB7MSPHGCfqCxjEkapHc1x/WKpgLCBm1TUae9/I55mtVmA1z
+         9ac9oPTBqjUn+WMCnLDi5pwL2x4gVbvSbF6HzoGs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 193/671] staging: r8822be: check kzalloc return or bail
-Date:   Thu, 16 Jan 2020 11:51:42 -0500
-Message-Id: <20200116165940.10720-76-sashal@kernel.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        John David Anglin <dave.anglin@bell.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 194/671] dmaengine: mv_xor: Use correct device for DMA API
+Date:   Thu, 16 Jan 2020 11:51:43 -0500
+Message-Id: <20200116165940.10720-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,39 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Robin Murphy <robin.murphy@arm.com>
 
-[ Upstream commit e4b08e16b7d9d030b6475ef48f94d734a39f3c81 ]
+[ Upstream commit 3e5daee5ecf314da33a890fabaa2404244cd2a36 ]
 
-The kzalloc() in halmac_parse_psd_data_88xx() can fail and return NULL
-so check the psd_set->data after allocation and if allocation failed
-return HALMAC_CMD_PROCESS_ERROR.
+Using dma_dev->dev for mappings before it's assigned with the correct
+device is unlikely to work as expected, and with future dma-direct
+changes, passing a NULL device may end up crashing entirely. I don't
+know enough about this hardware or the mv_xor_prep_dma_interrupt()
+operation to implement the appropriate error-handling logic that would
+have revealed those dma_map_single() calls failing on arm64 for as long
+as the driver has been enabled there, but moving the assignment earlier
+will at least make the current code operate as intended.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-drive")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 22843545b200 ("dma: mv_xor: Add support for DMA_INTERRUPT")
+Reported-by: John David Anglin <dave.anglin@bell.net>
+Tested-by: John David Anglin <dave.anglin@bell.net>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Tested-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c    | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dma/mv_xor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
-index 53f55f129a76..ec742da030db 100644
---- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
-+++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
-@@ -2466,8 +2466,11 @@ halmac_parse_psd_data_88xx(struct halmac_adapter *halmac_adapter, u8 *c2h_buf,
- 	segment_size = (u8)PSD_DATA_GET_SEGMENT_SIZE(c2h_buf);
- 	psd_set->data_size = total_size;
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 969534c1a6c6..abc8d3e0487b 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1059,6 +1059,7 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ 		mv_chan->op_in_desc = XOR_MODE_IN_DESC;
  
--	if (!psd_set->data)
-+	if (!psd_set->data) {
- 		psd_set->data = kzalloc(psd_set->data_size, GFP_KERNEL);
-+		if (!psd_set->data)
-+			return HALMAC_CMD_PROCESS_ERROR;
-+	}
+ 	dma_dev = &mv_chan->dmadev;
++	dma_dev->dev = &pdev->dev;
+ 	mv_chan->xordev = xordev;
  
- 	if (segment_id == 0)
- 		psd_set->segment_size = segment_size;
+ 	/*
+@@ -1091,7 +1092,6 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ 	dma_dev->device_free_chan_resources = mv_xor_free_chan_resources;
+ 	dma_dev->device_tx_status = mv_xor_status;
+ 	dma_dev->device_issue_pending = mv_xor_issue_pending;
+-	dma_dev->dev = &pdev->dev;
+ 
+ 	/* set prep routines based on capability */
+ 	if (dma_has_cap(DMA_INTERRUPT, dma_dev->cap_mask))
 -- 
 2.20.1
 
