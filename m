@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A1D13FDB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1A3313FDB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391049AbgAPX2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:28:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
+        id S2390858AbgAPX23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:28:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389219AbgAPX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:04 -0500
+        id S2390142AbgAPX20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:28:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B840A20684;
-        Thu, 16 Jan 2020 23:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A930120684;
+        Thu, 16 Jan 2020 23:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217284;
-        bh=101cqP0KzlxnkRcjGmNRCeYL9xUc37fL65nI2lSgZso=;
+        s=default; t=1579217306;
+        bh=X5PyMUU+RG4IUsY1i6M/W1WoIHZtq2RRh1byEbhrB2k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QkVqJtX/EYze+ZxLdWT0439N7NlwU/1PX4LtHMhhD5867fBdMRk/u4KSBZFxg0OBK
-         4NcsxW341lC+G/nvxCB0LMNIlOmogZKM/BVgAmYee4zq6wyC2wg8KEMjLWa66IFXJ6
-         V1uzimty5Dmiyd9ofgk7eviyJOQoOmF6k7MMJIxQ=
+        b=lvoZqzVOubs47D0IFPbCeLBiSqVIm3RGg5YYedTqh92KdxTZhC/WnqNkERLLSBLwE
+         elPNb8IDFYqjRLLY4kCnQiEx6DmUSNdsNmfg3loC43+CxQX1UUgUwKShwHb/+Mrvbh
+         dRSpyDiGXRfnlHJE5zK0NaZk6G7uL44qCCDMvUHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 02/84] HID: hidraw: Fix returning EPOLLOUT from hidraw_poll
-Date:   Fri, 17 Jan 2020 00:17:36 +0100
-Message-Id: <20200116231713.508100390@linuxfoundation.org>
+Subject: [PATCH 4.19 03/84] HID: hidraw, uhid: Always report EPOLLOUT
+Date:   Fri, 17 Jan 2020 00:17:37 +0100
+Message-Id: <20200116231713.677596697@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -43,46 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Jiri Kosina <jkosina@suse.cz>
 
-[ Upstream commit 9f3b61dc1dd7b81e99e7ed23776bb64a35f39e1a ]
+[ Upstream commit 9e635c2851df6caee651e589fbf937b637973c91 ]
 
-When polling a connected /dev/hidrawX device, it is useful to get the
-EPOLLOUT when writing is possible. Since writing is possible as soon as
-the device is connected, always return it.
+hidraw and uhid device nodes are always available for writing so we should
+always report EPOLLOUT and EPOLLWRNORM bits, not only in the cases when
+there is nothing to read.
 
-Right now EPOLLOUT is only returned when there are also input reports
-are available. This works if devices start sending reports when
-connected, but some HID devices might need an output report first before
-sending any input reports. This change will allow using EPOLLOUT here as
-well.
-
-Fixes: 378b80370aa1 ("hidraw: Return EPOLLOUT from hidraw_poll")
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Cc: stable@vger.kernel.org
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: be54e7461ffdc ("HID: uhid: Fix returning EPOLLOUT from uhid_char_poll")
+Fixes: 9f3b61dc1dd7b ("HID: hidraw: Fix returning EPOLLOUT from hidraw_poll")
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hidraw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/hidraw.c | 7 ++++---
+ drivers/hid/uhid.c   | 5 +++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index c75b66d58636..a025b6961896 100644
+index a025b6961896..c4ba2d28dd73 100644
 --- a/drivers/hid/hidraw.c
 +++ b/drivers/hid/hidraw.c
-@@ -260,10 +260,10 @@ static __poll_t hidraw_poll(struct file *file, poll_table *wait)
+@@ -257,13 +257,14 @@ out:
+ static __poll_t hidraw_poll(struct file *file, poll_table *wait)
+ {
+ 	struct hidraw_list *list = file->private_data;
++	__poll_t mask = EPOLLOUT | EPOLLWRNORM; /* hidraw is always writable */
  
  	poll_wait(file, &list->hidraw->wait, wait);
  	if (list->head != list->tail)
--		return EPOLLIN | EPOLLRDNORM | EPOLLOUT;
-+		return EPOLLIN | EPOLLRDNORM;
+-		return EPOLLIN | EPOLLRDNORM;
++		mask |= EPOLLIN | EPOLLRDNORM;
  	if (!list->hidraw->exist)
- 		return EPOLLERR | EPOLLHUP;
--	return 0;
-+	return EPOLLOUT | EPOLLWRNORM;
+-		return EPOLLERR | EPOLLHUP;
+-	return EPOLLOUT | EPOLLWRNORM;
++		mask |= EPOLLERR | EPOLLHUP;
++	return mask;
  }
  
  static int hidraw_open(struct inode *inode, struct file *file)
+diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+index 8508dbac2657..29e63330c1b5 100644
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -769,13 +769,14 @@ unlock:
+ static __poll_t uhid_char_poll(struct file *file, poll_table *wait)
+ {
+ 	struct uhid_device *uhid = file->private_data;
++	__poll_t mask = EPOLLOUT | EPOLLWRNORM; /* uhid is always writable */
+ 
+ 	poll_wait(file, &uhid->waitq, wait);
+ 
+ 	if (uhid->head != uhid->tail)
+-		return EPOLLIN | EPOLLRDNORM;
++		mask |= EPOLLIN | EPOLLRDNORM;
+ 
+-	return EPOLLOUT | EPOLLWRNORM;
++	return mask;
+ }
+ 
+ static const struct file_operations uhid_fops = {
 -- 
 2.20.1
 
