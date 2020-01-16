@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85B9D13E755
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E755213E75D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391881AbgAPRZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:25:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60056 "EHLO mail.kernel.org"
+        id S2391904AbgAPRZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403826AbgAPRYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:52 -0500
+        id S2391824AbgAPRY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFDFE246BF;
-        Thu, 16 Jan 2020 17:24:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A51FE246AE;
+        Thu, 16 Jan 2020 17:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195491;
-        bh=b26Sz2FnOtNNDdBBefrjpx6WRYWcTY/t6YuI1aLeYjI=;
+        s=default; t=1579195495;
+        bh=BR4bAa3sU9jTA4hgBf/kKhrT7L1DR2b3BRTZ3iHNCgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jST6uzzJQZVhUc204sES0GosujhjGRmnLHwlV5d/QXqypAcpcuR9FWwOak/Acm5Zo
-         FajQGTbPoI02NL6+hJtSmSOqXdWi8Z5Dg7OTItUYlwcWZAM7AxhdiAc/Em4d3dpvs0
-         5Qn6SLYvqcP8MdubNgrVQNSBh+ytythLAAUWiud4=
+        b=FAWRqBduZG6ms5+eyc5GmhQd/ljzUuWYFKKyQjfvuC+sJ+Mpq+2+aI47QiICaou4h
+         czCwGaP3Vn0BAuLFE5m5TlZyesdG6giHLInyK3sS7E46JyMbXfJc8KxSIzQLnYP32S
+         lXUwxawg+/KFa6XlfYINEY1pXyYh489G7cN3sTBw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 094/371] pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
-Date:   Thu, 16 Jan 2020 12:19:26 -0500
-Message-Id: <20200116172403.18149-37-sashal@kernel.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        linux-pci@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 097/371] PCI: endpoint: functions: Use memcpy_fromio()/memcpy_toio()
+Date:   Thu, 16 Jan 2020 12:19:29 -0500
+Message-Id: <20200116172403.18149-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,34 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit a4b0350047f1b10207e25e72d7cd3f7826e93769 ]
+[ Upstream commit 726dabfde6aa35a4f1508e235ae37edbbf9fbc65 ]
 
-The entry for "scifb2_data_c" in the SCIFB2 pin group array contains a
-typo, thus the group cannot be selected.
+Functions copying from/to IO addresses should use the
+memcpy_fromio()/memcpy_toio() API rather than plain memcpy().
 
-Fixes: 5088451962389924 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fix the issue detected through the sparse tool.
+
+Fixes: 349e7a85b25f ("PCI: endpoint: functions: Add an EP function to test PCI")
+Suggested-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+[lorenzo.pieralisi@arm.com: updated log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+CC: Niklas Cassel <niklas.cassel@axis.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+CC: linux-pci@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index d34982ea66bf..e4774b220040 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -5209,7 +5209,7 @@ static const char * const scifb2_groups[] = {
- 	"scifb2_data_b",
- 	"scifb2_clk_b",
- 	"scifb2_ctrl_b",
--	"scifb0_data_c",
-+	"scifb2_data_c",
- 	"scifb2_clk_c",
- 	"scifb2_data_d",
- };
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index f9308c2f22e6..c2541a772abc 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -177,7 +177,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
+ 		goto err_map_addr;
+ 	}
+ 
+-	memcpy(buf, src_addr, reg->size);
++	memcpy_fromio(buf, src_addr, reg->size);
+ 
+ 	crc32 = crc32_le(~0, buf, reg->size);
+ 	if (crc32 != reg->checksum)
+@@ -231,7 +231,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+ 	get_random_bytes(buf, reg->size);
+ 	reg->checksum = crc32_le(~0, buf, reg->size);
+ 
+-	memcpy(dst_addr, buf, reg->size);
++	memcpy_toio(dst_addr, buf, reg->size);
+ 
+ 	/*
+ 	 * wait 1ms inorder for the write to complete. Without this delay L3
 -- 
 2.20.1
 
