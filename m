@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C0E13F824
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 952F413F821
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437580AbgAPTP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:15:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
+        id S2437564AbgAPTPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbgAPQzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:50 -0500
+        id S1733098AbgAPQzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C360521D56;
-        Thu, 16 Jan 2020 16:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AA70205F4;
+        Thu, 16 Jan 2020 16:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193749;
-        bh=3NByrXuXSyoPe6ZyQRibnoFzk53sfcBbC68pP99LweI=;
+        s=default; t=1579193752;
+        bh=iTZ3/mJbUdvgbPjh50KeuMkSDpA6gvzu10MlVUhBkFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D60dxBqXNBT50pIdNepRcA5oiDmHX9VuPiJvSRpCy/zU+wuKfF7hAyL3QiAyz/Om0
-         S6kNBWzZBMAceJzWzVI+4IosvcZkXaodAjoKPLNYvYEz1kXE5llhB+seHqbrc9gicU
-         95NvEY0ONh5OlNfTOaNER9N1yrlUsrwliV2tPf30=
+        b=fY9OI06C20zNRd6kpxMKAzgl4ydmIe71Hd05zn80cwe1PczRrN03cFV7bSu8uFlz/
+         T1SIfPnPYyglFFLxuY47Hq4E3LP9A4eOOPOMrvZRu4102RcMu2rtL0T9lGfrd2Hixl
+         npwFyfOVagYsYciLNZjR/ciXRXDnWZaiBVxFEpLY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Maloy <jon.maloy@ericsson.com>,
-        Tuong Lien Tong <tuong.t.lien@dektech.com.au>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 039/671] tipc: eliminate message disordering during binding table update
-Date:   Thu, 16 Jan 2020 11:44:30 -0500
-Message-Id: <20200116165502.8838-39-sashal@kernel.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 041/671] drm/sun4i: hdmi: Fix double flag assignation
+Date:   Thu, 16 Jan 2020 11:44:32 -0500
+Message-Id: <20200116165502.8838-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -46,127 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Maloy <jon.maloy@ericsson.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-[ Upstream commit 988f3f1603d4650409db5334355cbf7b13ef50c3 ]
+[ Upstream commit 1e0ff648940e603cab6c52cf3723017d30d78f30 ]
 
-We have seen the following race scenario:
-1) named_distribute() builds a "bulk" message, containing a PUBLISH
-   item for a certain publication. This is based on the contents of
-   the binding tables's 'cluster_scope' list.
-2) tipc_named_withdraw() removes the same publication from the list,
-   bulds a WITHDRAW message and distributes it to all cluster nodes.
-3) tipc_named_node_up(), which was calling named_distribute(), sends
-   out the bulk message built under 1)
-4) The WITHDRAW message arrives at the just detected node, finds
-   no corresponding publication, and is dropped.
-5) The PUBLISH item arrives at the same node, is added to its binding
-   table, and remains there forever.
+The is_double flag is a boolean currently assigned to the value of the d
+variable, that is either 1 or 2. It means that this is_double variable is
+always set to true, even though the initial intent was to have it set to
+true when d is 2.
 
-This arrival disordering was earlier taken care of by the backlog queue,
-originally added for a different purpose, which was removed in the
-commit referred to below, but we now need a different solution.
-In this commit, we replace the rcu lock protecting the 'cluster_scope'
-list with a regular RW lock which comprises even the sending of the
-bulk message. This both guarantees both the list integrity and the
-message sending order. We will later add a commit which cleans up
-this code further.
+Fix this.
 
-Note that this commit needs recently added commit d3092b2efca1 ("tipc:
-fix unsafe rcu locking when accessing publication list") to apply
-cleanly.
-
-Fixes: 37922ea4a310 ("tipc: permit overlapping service ranges in name table")
-Reported-by: Tuong Lien Tong <tuong.t.lien@dektech.com.au>
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181021163446.29135-2-maxime.ripard@bootlin.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/name_distr.c | 18 ++++++++++--------
- net/tipc/name_table.c |  1 +
- net/tipc/name_table.h |  1 +
- 3 files changed, 12 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/tipc/name_distr.c b/net/tipc/name_distr.c
-index e0a3dd424d8c..836e629e8f4a 100644
---- a/net/tipc/name_distr.c
-+++ b/net/tipc/name_distr.c
-@@ -94,8 +94,9 @@ struct sk_buff *tipc_named_publish(struct net *net, struct publication *publ)
- 		list_add_tail_rcu(&publ->binding_node, &nt->node_scope);
- 		return NULL;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+index 3ecffa52c814..a74adec6c5dc 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
+@@ -52,7 +52,7 @@ static unsigned long sun4i_tmds_calc_divider(unsigned long rate,
+ 			    (rate - tmp_rate) < (rate - best_rate)) {
+ 				best_rate = tmp_rate;
+ 				best_m = m;
+-				is_double = d;
++				is_double = (d == 2) ? true : false;
+ 			}
+ 		}
  	}
--	list_add_tail_rcu(&publ->binding_node, &nt->cluster_scope);
--
-+	write_lock_bh(&nt->cluster_scope_lock);
-+	list_add_tail(&publ->binding_node, &nt->cluster_scope);
-+	write_unlock_bh(&nt->cluster_scope_lock);
- 	skb = named_prepare_buf(net, PUBLICATION, ITEM_SIZE, 0);
- 	if (!skb) {
- 		pr_warn("Publication distribution failure\n");
-@@ -112,11 +113,13 @@ struct sk_buff *tipc_named_publish(struct net *net, struct publication *publ)
-  */
- struct sk_buff *tipc_named_withdraw(struct net *net, struct publication *publ)
- {
-+	struct name_table *nt = tipc_name_table(net);
- 	struct sk_buff *buf;
- 	struct distr_item *item;
- 
--	list_del_rcu(&publ->binding_node);
--
-+	write_lock_bh(&nt->cluster_scope_lock);
-+	list_del(&publ->binding_node);
-+	write_unlock_bh(&nt->cluster_scope_lock);
- 	if (publ->scope == TIPC_NODE_SCOPE)
- 		return NULL;
- 
-@@ -147,7 +150,7 @@ static void named_distribute(struct net *net, struct sk_buff_head *list,
- 			ITEM_SIZE) * ITEM_SIZE;
- 	u32 msg_rem = msg_dsz;
- 
--	list_for_each_entry_rcu(publ, pls, binding_node) {
-+	list_for_each_entry(publ, pls, binding_node) {
- 		/* Prepare next buffer: */
- 		if (!skb) {
- 			skb = named_prepare_buf(net, PUBLICATION, msg_rem,
-@@ -189,11 +192,10 @@ void tipc_named_node_up(struct net *net, u32 dnode)
- 
- 	__skb_queue_head_init(&head);
- 
--	rcu_read_lock();
-+	read_lock_bh(&nt->cluster_scope_lock);
- 	named_distribute(net, &head, dnode, &nt->cluster_scope);
--	rcu_read_unlock();
--
- 	tipc_node_xmit(net, &head, dnode, 0);
-+	read_unlock_bh(&nt->cluster_scope_lock);
- }
- 
- /**
-diff --git a/net/tipc/name_table.c b/net/tipc/name_table.c
-index d72985ca1d55..89993afe0fbd 100644
---- a/net/tipc/name_table.c
-+++ b/net/tipc/name_table.c
-@@ -744,6 +744,7 @@ int tipc_nametbl_init(struct net *net)
- 
- 	INIT_LIST_HEAD(&nt->node_scope);
- 	INIT_LIST_HEAD(&nt->cluster_scope);
-+	rwlock_init(&nt->cluster_scope_lock);
- 	tn->nametbl = nt;
- 	spin_lock_init(&tn->nametbl_lock);
- 	return 0;
-diff --git a/net/tipc/name_table.h b/net/tipc/name_table.h
-index 892bd750b85f..f79066334cc8 100644
---- a/net/tipc/name_table.h
-+++ b/net/tipc/name_table.h
-@@ -100,6 +100,7 @@ struct name_table {
- 	struct hlist_head services[TIPC_NAMETBL_SIZE];
- 	struct list_head node_scope;
- 	struct list_head cluster_scope;
-+	rwlock_t cluster_scope_lock;
- 	u32 local_publ_count;
- };
- 
 -- 
 2.20.1
 
