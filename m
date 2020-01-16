@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5C013F05C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA1613F00F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390140AbgAPSVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38158 "EHLO mail.kernel.org"
+        id S2392526AbgAPR16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392072AbgAPR1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:52 -0500
+        id S2392110AbgAPR1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8142246E0;
-        Thu, 16 Jan 2020 17:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C578246EB;
+        Thu, 16 Jan 2020 17:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195671;
-        bh=qXcDlE2DPQQ8J4GRdU74EnWdqMEs2DTcyMuubdAScgw=;
+        s=default; t=1579195674;
+        bh=oZRjKA7GGnkS5D3Z+OySvQJHR7OF8LYaprgmuTMpSj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LiXsggka+upDFG1YA+0Iv+xPlGlPuvsmyB1CvQxAkaTtrrvekgIXkEmnMXzKaJGrJ
-         29iS67qKJeupV6TMMFtQUYCF4WTH9+XtbCi7L8Ygk85/aIuWoAt3kjL8kmBAH+t2PI
-         t4jveDVktkOYM8D8DUHwMpLF5iADwt9Flygw2544=
+        b=st0XS/CsQB3YY4tUoFRsxc0l5o31qvG6+abTFCqybodyOiaMb06D9J642JYzlKJCq
+         KJBgjnQBIE/thyBEvAYScVfgNdH+iyUbiWltfEKx6jljKQqLwZeOvl1yswwgSDj50x
+         EEmzTIES5JykYg68UrolHQEUW66dv/CmPHleSJRc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
-        "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 228/371] powerpc/cacheinfo: add cacheinfo_teardown, cacheinfo_rebuild
-Date:   Thu, 16 Jan 2020 12:21:40 -0500
-Message-Id: <20200116172403.18149-171-sashal@kernel.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 230/371] drm/msm/mdp5: Fix mdp5_cfg_init error return
+Date:   Thu, 16 Jan 2020 12:21:42 -0500
+Message-Id: <20200116172403.18149-173-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,69 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit d4aa219a074a5abaf95a756b9f0d190b5c03a945 ]
+[ Upstream commit fc19cbb785d7bbd1a1af26229b5240a3ab332744 ]
 
-Allow external callers to force the cacheinfo code to release all its
-references to cache nodes, e.g. before processing device tree updates
-post-migration, and to rebuild the hierarchy afterward.
+If mdp5_cfg_init fails because of an unknown major version, a null pointer
+dereference occurs.  This is because the caller of init expects error
+pointers, but init returns NULL on error.  Fix this by returning the
+expected values on error.
 
-CPU online/offline must be blocked by callers; enforce this.
-
-Fixes: 410bccf97881 ("powerpc/pseries: Partition migration in the kernel")
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 2e362e1772b8 (drm/msm/mdp5: introduce mdp5_cfg module)
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/cacheinfo.c | 21 +++++++++++++++++++++
- arch/powerpc/kernel/cacheinfo.h |  4 ++++
- 2 files changed, 25 insertions(+)
+ drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
-index a8f20e5928e1..9edb45430133 100644
---- a/arch/powerpc/kernel/cacheinfo.c
-+++ b/arch/powerpc/kernel/cacheinfo.c
-@@ -865,4 +865,25 @@ void cacheinfo_cpu_offline(unsigned int cpu_id)
- 	if (cache)
- 		cache_cpu_clear(cache, cpu_id);
- }
-+
-+void cacheinfo_teardown(void)
-+{
-+	unsigned int cpu;
-+
-+	lockdep_assert_cpus_held();
-+
-+	for_each_online_cpu(cpu)
-+		cacheinfo_cpu_offline(cpu);
-+}
-+
-+void cacheinfo_rebuild(void)
-+{
-+	unsigned int cpu;
-+
-+	lockdep_assert_cpus_held();
-+
-+	for_each_online_cpu(cpu)
-+		cacheinfo_cpu_online(cpu);
-+}
-+
- #endif /* (CONFIG_PPC_PSERIES && CONFIG_SUSPEND) || CONFIG_HOTPLUG_CPU */
-diff --git a/arch/powerpc/kernel/cacheinfo.h b/arch/powerpc/kernel/cacheinfo.h
-index 955f5e999f1b..52bd3fc6642d 100644
---- a/arch/powerpc/kernel/cacheinfo.h
-+++ b/arch/powerpc/kernel/cacheinfo.h
-@@ -6,4 +6,8 @@
- extern void cacheinfo_cpu_online(unsigned int cpu_id);
- extern void cacheinfo_cpu_offline(unsigned int cpu_id);
+diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c
+index 824067d2d427..42f0ecb0cf35 100644
+--- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c
++++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c
+@@ -635,7 +635,7 @@ struct mdp5_cfg_handler *mdp5_cfg_init(struct mdp5_kms *mdp5_kms,
+ 	if (cfg_handler)
+ 		mdp5_cfg_destroy(cfg_handler);
  
-+/* Allow migration/suspend to tear down and rebuild the hierarchy. */
-+extern void cacheinfo_teardown(void);
-+extern void cacheinfo_rebuild(void);
-+
- #endif /* _PPC_CACHEINFO_H */
+-	return NULL;
++	return ERR_PTR(ret);
+ }
+ 
+ static struct mdp5_cfg_platform *mdp5_get_config(struct platform_device *dev)
 -- 
 2.20.1
 
