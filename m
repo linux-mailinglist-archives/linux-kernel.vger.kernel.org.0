@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5D813FE84
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B27913FED9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:38:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404299AbgAPXgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:36:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40206 "EHLO mail.kernel.org"
+        id S2391239AbgAPX3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:29:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732981AbgAPXbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:31:40 -0500
+        id S2391231AbgAPX3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:29:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB608206D9;
-        Thu, 16 Jan 2020 23:31:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3626620684;
+        Thu, 16 Jan 2020 23:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217500;
-        bh=r3CjGXlTky99boRzd8VktX2hXmeXhqpzLTfCpBadJw0=;
+        s=default; t=1579217349;
+        bh=IqO6GUM5+oe/Wr6novD80hwQbjL+DQlazjx76R8wrGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RGjRAi6OFx+nzeQ8/wamB72hjvJd421KYQ1K4LV7jVa1xPGHy54PoDoh365zhJeet
-         OuKu4ctwTFAhhqgpkB5QlkFTkip4KqOiDybN2kzYlek84Ftlvdzi+E2OKiSdZw5y9E
-         92s0aytcHYAeE5d6vptiDF3X1uc1X3VGzz/nzIyo=
+        b=EEPKfTDXqf5DnxkMj9YQMphsSUF2re98NLbVjA8p/O3yrAT1j7iBUONI71IoKVLYy
+         Wj1Llg45SHuIl9M5u2LIWv1HlA4F8Z0o5l9hZikaMZf64MlV6myNHWndm9CHLF1Ez7
+         87BLFGlw1FpfXITS4Br9uosvI7GXE2lGetitvZyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olivier Moysan <olivier.moysan@st.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 23/71] ASoC: stm32: spdifrx: fix race condition in irq handler
+        stable@vger.kernel.org, Marian Mihailescu <mihailescu2m@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 4.19 47/84] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
 Date:   Fri, 17 Jan 2020 00:18:21 +0100
-Message-Id: <20200116231712.748003784@linuxfoundation.org>
+Message-Id: <20200116231719.355968824@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
+References: <20200116231713.087649517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,108 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olivier Moysan <olivier.moysan@st.com>
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-commit 86e1956af4c863d653136fd6e5694adf2054dbaa upstream.
+commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 upstream.
 
-When snd_pcm_stop() is called in interrupt routine,
-substream context may have already been released.
-Add protection on substream context.
+Save and restore top PLL related configuration registers for big (APLL)
+and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
+were reset to default values after suspend/resume cycle and performance
+after system resume was affected when performance governor has been selected.
 
-Fixes: 03e4d5d56fa5 ("ASoC: stm32: Add SPDIFRX support")
-
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-Link: https://lore.kernel.org/r/20191204154333.7152-3-olivier.moysan@st.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/stm/stm32_spdifrx.c |   24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/soc/stm/stm32_spdifrx.c
-+++ b/sound/soc/stm/stm32_spdifrx.c
-@@ -213,6 +213,7 @@
-  * @slave_config: dma slave channel runtime config pointer
-  * @phys_addr: SPDIFRX registers physical base address
-  * @lock: synchronization enabling lock
-+ * @irq_lock: prevent race condition with IRQ on stream state
-  * @cs: channel status buffer
-  * @ub: user data buffer
-  * @irq: SPDIFRX interrupt line
-@@ -233,6 +234,7 @@ struct stm32_spdifrx_data {
- 	struct dma_slave_config slave_config;
- 	dma_addr_t phys_addr;
- 	spinlock_t lock;  /* Sync enabling lock */
-+	spinlock_t irq_lock; /* Prevent race condition on stream state */
- 	unsigned char cs[SPDIFRX_CS_BYTES_NB];
- 	unsigned char ub[SPDIFRX_UB_BYTES_NB];
- 	int irq;
-@@ -646,7 +648,6 @@ static const struct regmap_config stm32_
- static irqreturn_t stm32_spdifrx_isr(int irq, void *devid)
- {
- 	struct stm32_spdifrx_data *spdifrx = (struct stm32_spdifrx_data *)devid;
--	struct snd_pcm_substream *substream = spdifrx->substream;
- 	struct platform_device *pdev = spdifrx->pdev;
- 	unsigned int cr, mask, sr, imr;
- 	unsigned int flags;
-@@ -714,14 +715,19 @@ static irqreturn_t stm32_spdifrx_isr(int
- 		regmap_update_bits(spdifrx->regmap, STM32_SPDIFRX_CR,
- 				   SPDIFRX_CR_SPDIFEN_MASK, cr);
- 
--		if (substream)
--			snd_pcm_stop(substream, SNDRV_PCM_STATE_DISCONNECTED);
-+		spin_lock(&spdifrx->irq_lock);
-+		if (spdifrx->substream)
-+			snd_pcm_stop(spdifrx->substream,
-+				     SNDRV_PCM_STATE_DISCONNECTED);
-+		spin_unlock(&spdifrx->irq_lock);
- 
- 		return IRQ_HANDLED;
- 	}
- 
--	if (err_xrun && substream)
--		snd_pcm_stop_xrun(substream);
-+	spin_lock(&spdifrx->irq_lock);
-+	if (err_xrun && spdifrx->substream)
-+		snd_pcm_stop_xrun(spdifrx->substream);
-+	spin_unlock(&spdifrx->irq_lock);
- 
- 	return IRQ_HANDLED;
- }
-@@ -730,9 +736,12 @@ static int stm32_spdifrx_startup(struct
- 				 struct snd_soc_dai *cpu_dai)
- {
- 	struct stm32_spdifrx_data *spdifrx = snd_soc_dai_get_drvdata(cpu_dai);
-+	unsigned long flags;
- 	int ret;
- 
-+	spin_lock_irqsave(&spdifrx->irq_lock, flags);
- 	spdifrx->substream = substream;
-+	spin_unlock_irqrestore(&spdifrx->irq_lock, flags);
- 
- 	ret = clk_prepare_enable(spdifrx->kclk);
- 	if (ret)
-@@ -804,8 +813,12 @@ static void stm32_spdifrx_shutdown(struc
- 				   struct snd_soc_dai *cpu_dai)
- {
- 	struct stm32_spdifrx_data *spdifrx = snd_soc_dai_get_drvdata(cpu_dai);
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&spdifrx->irq_lock, flags);
- 	spdifrx->substream = NULL;
-+	spin_unlock_irqrestore(&spdifrx->irq_lock, flags);
-+
- 	clk_disable_unprepare(spdifrx->kclk);
- }
- 
-@@ -910,6 +923,7 @@ static int stm32_spdifrx_probe(struct pl
- 	spdifrx->pdev = pdev;
- 	init_completion(&spdifrx->cs_completion);
- 	spin_lock_init(&spdifrx->lock);
-+	spin_lock_init(&spdifrx->irq_lock);
- 
- 	platform_set_drvdata(pdev, spdifrx);
- 
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -171,6 +171,8 @@ static const unsigned long exynos5x_clk_
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	APLL_CON0,
++	KPLL_CON0,
+ 	CPLL_CON0,
+ 	DPLL_CON0,
+ 	EPLL_CON0,
 
 
