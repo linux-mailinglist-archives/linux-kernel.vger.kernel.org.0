@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A201913E213
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93EBE13E215
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgAPQxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:53:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
+        id S1731030AbgAPQxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:53:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729889AbgAPQxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:23 -0500
+        id S1730917AbgAPQx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E965214AF;
-        Thu, 16 Jan 2020 16:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BB1E208C3;
+        Thu, 16 Jan 2020 16:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193602;
-        bh=7+gjoVYPKPnT4tj9n23NpvKEumOwWVHOE8EGjGny3z8=;
+        s=default; t=1579193606;
+        bh=07HOz8UvqDas42y+05OFgSsqy9xaOjUJbCnbLMwnHdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zEdj61yc2t+ravsvf4LnqutfwIn7003h+nn8QnF8aEC0+V5/Pc0A6xc5s+wMMhqwM
-         4+k0t/kHKCvnTPW7Css+TMYUhl3FWQV8afR66RPeO6/PhlTHfyM6Mdyl+CzJS6S0IN
-         aDSROM5cQyHuiPuZrIwH2inIsZ6KyFNv1WjbrgEc=
+        b=gtHX/fh8f840sICdUQazZeLf8PqkZu05msMP2LB34XybtiddDjP1HEuljJ+qWNQjq
+         OI6vC+lUjkGjfGlfFf0Y9V7U2nszwyxR1rl2TOzyCBzWWcp06F5hgEtV0ssuc9eS4i
+         JdzPSpFPRYT9P18idjpnSRo8K9a5ry0raLiP8/cI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Zheng Yongjun <zhengyongjun3@huawei.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 141/205] firmware: arm_scmi: Fix doorbell ring logic for !CONFIG_64BIT
-Date:   Thu, 16 Jan 2020 11:41:56 -0500
-Message-Id: <20200116164300.6705-141-sashal@kernel.org>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 144/205] mmc: core: fix wl1251 sdio quirks
+Date:   Thu, 16 Jan 2020 11:41:59 -0500
+Message-Id: <20200116164300.6705-144-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -45,44 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
 
-[ Upstream commit 7bd39bc6bfdf96f5df0f92199bbc1a3ee2f2adb8 ]
+[ Upstream commit 16568b4a4f0c34bd35cfadac63303c7af7812764 ]
 
-The logic to ring the scmi performance fastchannel ignores the
-value read from the doorbell register in case of !CONFIG_64BIT.
-This bug also shows up as warning with '-Wunused-but-set-variable' gcc
-flag:
+wl1251 and wl1271 have different vendor id and device id.
+So we need to handle both with sdio quirks.
 
-drivers/firmware/arm_scmi/perf.c: In function scmi_perf_fc_ring_db:
-drivers/firmware/arm_scmi/perf.c:323:7: warning: variable val set but
-			not used [-Wunused-but-set-variable]
-
-Fix the same by aligning the logic with CONFIG_64BIT as used in the
-macro SCMI_PERF_FC_RING_DB().
-
-Fixes: 823839571d76 ("firmware: arm_scmi: Make use SCMI v2.0 fastchannel for performance protocol")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Reported-by: Zheng Yongjun <zhengyongjun3@huawei.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Fixes: 884f38607897 ("mmc: core: move some sdio IDs out of quirks file")
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/arm_scmi/perf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/quirks.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
-index 4a8012e3cb8c..601af4edad5e 100644
---- a/drivers/firmware/arm_scmi/perf.c
-+++ b/drivers/firmware/arm_scmi/perf.c
-@@ -323,7 +323,7 @@ static void scmi_perf_fc_ring_db(struct scmi_fc_db_info *db)
+diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
+index 2d2d9ea8be4f..3dba15bccce2 100644
+--- a/drivers/mmc/core/quirks.h
++++ b/drivers/mmc/core/quirks.h
+@@ -119,7 +119,14 @@ static const struct mmc_fixup mmc_ext_csd_fixups[] = {
+ 	END_FIXUP
+ };
  
- 		if (db->mask)
- 			val = ioread64_hi_lo(db->addr) & db->mask;
--		iowrite64_hi_lo(db->set, db->addr);
-+		iowrite64_hi_lo(db->set | val, db->addr);
- 	}
- #endif
- }
++
+ static const struct mmc_fixup sdio_fixup_methods[] = {
++	SDIO_FIXUP(SDIO_VENDOR_ID_TI_WL1251, SDIO_DEVICE_ID_TI_WL1251,
++		   add_quirk, MMC_QUIRK_NONSTD_FUNC_IF),
++
++	SDIO_FIXUP(SDIO_VENDOR_ID_TI_WL1251, SDIO_DEVICE_ID_TI_WL1251,
++		   add_quirk, MMC_QUIRK_DISABLE_CD),
++
+ 	SDIO_FIXUP(SDIO_VENDOR_ID_TI, SDIO_DEVICE_ID_TI_WL1271,
+ 		   add_quirk, MMC_QUIRK_NONSTD_FUNC_IF),
+ 
 -- 
 2.20.1
 
