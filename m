@@ -2,95 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B22413ED04
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55FF13EE7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:10:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394614AbgAPSAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405799AbgAPRlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:50 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E405E24695;
-        Thu, 16 Jan 2020 17:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196510;
-        bh=sgOoolRsRLW4pkiLoqF6nOV5AmgG6FrkopMUr9rx9Co=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AVZ0FyDwyMvb0fDqQ/aMqhrhSSj8PNuItqlRx87z6zVMMT1o9E+YP1oUUduMvSqPA
-         nk1u4xtOclTdOyncTnAiLxXllbRGXPno4WTLfE+o5I9aFWLLkS9HMeyn8jDTWora0T
-         kJ7S0tWWiabz1fsnoIczXifIJe/kfqmBwevODtUg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 249/251] arm64: dts: juno: Fix UART frequency
-Date:   Thu, 16 Jan 2020 12:36:38 -0500
-Message-Id: <20200116173641.22137-209-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+        id S2393247AbgAPRiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:00 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42199 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405332AbgAPRhb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:31 -0500
+Received: by mail-lj1-f194.google.com with SMTP id y4so23601087ljj.9;
+        Thu, 16 Jan 2020 09:37:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=suZU8pKiTx0kVLzvrdfAKUboMnJzI6jejrwEJFaOhgo=;
+        b=QSl3ac0kH3tQptaRPYSJBi23DOf/HEN7MsCIq7hJ56/U3BquCENmm5wgCJTbCmJYCV
+         Cap70k8IV2TcDFZ89riu6fmj8VEg1F1l6qFBiD05YaaDmaNNPU0n7VxejGgsHjjvXbcp
+         L+R8jBRuCDlzUA7oh6ne4IC8b6WTP+1A7+1H5X4v+j+QvMiXPfl1CmqL2OveSiLTnA9k
+         xfHbasSx+A/eL0gVA8W8H+RwkKphERordECc+/ug+8mfy2Bs2MQ3MTVdQGLLXVZP4xTV
+         bpgdMSk7EsxHH/sULrPa/sNkUfWoutvc71lvYupsoeFgbDMYkCxN0YJM0nYWHy5HXgFL
+         Rl7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=suZU8pKiTx0kVLzvrdfAKUboMnJzI6jejrwEJFaOhgo=;
+        b=R0aF43rO4nixsYyYXLlFLNSLZUtnPpTEucFNsxMYUxqzmLMdX6rwxXi4BGG68U6qn/
+         X+wLXZldGwPxdoMO9mpF460bUrN5BM+iH8Z6LhCc2IkEVsEMmOdvZGZVFSY8t/7/EjGC
+         vS6tbYrviD3Ba/tmZmof0COsRBXwHYQoC5QnZH1nLuKD6tTqXV7JlgExzLwMcPTornlQ
+         NCgWKcC8HBjqhnZAEe//eVdrhk0/NqDUl/ApUfwvwRpk/C97taCL8LPMKIwzf2Pax3bJ
+         J09cxa6UB//BQKnM5UXUJrPQTahjR4upmract3xUBPOhdDWt9k3RLxYZocky/48N+JHZ
+         PQ9Q==
+X-Gm-Message-State: APjAAAVpqvwFZbpCI00Olvfrrtrvv28MzafY6cppp7puqzDucdeAjodC
+        3gjGopbrrrOFLsX+ZGZY7huJroSf
+X-Google-Smtp-Source: APXvYqx6JhZ2lTCM6y/kPnmCTL7amKRUaFNa9X+BN6e6g88XO6jI8mGsCFQst0153VbjUCm0r0MMvw==
+X-Received: by 2002:a2e:808a:: with SMTP id i10mr3054036ljg.151.1579196248890;
+        Thu, 16 Jan 2020 09:37:28 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id t29sm10858436lfg.84.2020.01.16.09.37.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 09:37:28 -0800 (PST)
+Subject: Re: [PATCH v4 08/14] dmaengine: tegra-apb: Fix coding style problems
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-9-digetx@gmail.com>
+ <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <134adcfb-83fb-4bb7-986e-65217bc4f821@gmail.com>
+Date:   Thu, 16 Jan 2020 20:37:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <844c4ace-d043-a908-823d-545b5b753008@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andre Przywara <andre.przywara@arm.com>
+15.01.2020 12:49, Jon Hunter пишет:
+> 
+> 
+> On 12/01/2020 17:30, Dmitry Osipenko wrote:
+>> This patch fixes few dozens of coding style problems reported by
+>> checkpatch and prettifies code where makes sense.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/dma/tegra20-apb-dma.c | 276 ++++++++++++++++++----------------
+>>  1 file changed, 144 insertions(+), 132 deletions(-)
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>> index dff21e80ffa4..7158bd3145c4 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+> 
+> ...
+> 
+>> @@ -1003,20 +1014,23 @@ static void tegra_dma_prep_wcount(struct tegra_dma_channel *tdc,
+>>  		ch_regs->csr |= len_field;
+>>  }
+>>  
+>> -static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>> -	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
+>> -	enum dma_transfer_direction direction, unsigned long flags,
+>> -	void *context)
+>> +static struct dma_async_tx_descriptor *
+>> +tegra_dma_prep_slave_sg(struct dma_chan *dc,
+>> +			struct scatterlist *sgl,
+>> +			unsigned int sg_len,
+>> +			enum dma_transfer_direction direction,
+>> +			unsigned long flags,
+>> +			void *context)
+>>  {
+>>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>> +	struct tegra_dma_sg_req *sg_req = NULL;
+>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>> +	enum dma_slave_buswidth slave_bw;
+>>  	struct tegra_dma_desc *dma_desc;
+>> -	unsigned int i;
+>> -	struct scatterlist *sg;
+>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>>  	struct list_head req_list;
+>> -	struct tegra_dma_sg_req  *sg_req = NULL;
+>> -	u32 burst_size;
+>> -	enum dma_slave_buswidth slave_bw;
+>> +	struct scatterlist *sg;
+>> +	unsigned int burst_size;
+>> +	unsigned int i;
+> 
+> This is not really consistent with the rest of the changes by having 'i'
+> and 'burst_size' on separate lines.
 
-[ Upstream commit 39a1a8941b27c37f79508426e27a2ec29829d66c ]
+The goal wasn't to squash everything into a single line, but to make
+code more readable. In this particular case the separated lines look
+better to me.
 
-Older versions of the Juno *SoC* TRM [1] recommended that the UART clock
-source should be 7.2738 MHz, whereas the *system* TRM [2] stated a more
-correct value of 7.3728 MHz. Somehow the wrong value managed to end up in
-our DT.
+>>  
+>>  	if (!tdc->config_init) {
+>>  		dev_err(tdc2dev(tdc), "DMA channel is not configured\n");
+>> @@ -1028,7 +1042,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  	}
+>>  
+>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>> -				&burst_size, &slave_bw) < 0)
+>> +			       &burst_size, &slave_bw) < 0)
+>>  		return NULL;
+>>  
+>>  	INIT_LIST_HEAD(&req_list);
+>> @@ -1074,7 +1088,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  		len = sg_dma_len(sg);
+>>  
+>>  		if ((len & 3) || (mem & 3) ||
+>> -				(len > tdc->tdma->chip_data->max_dma_count)) {
+>> +		    len > tdc->tdma->chip_data->max_dma_count) {
+>>  			dev_err(tdc2dev(tdc),
+>>  				"DMA length/memory address is not supported\n");
+>>  			tegra_dma_desc_put(tdc, dma_desc);
+>> @@ -1126,20 +1140,21 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+>>  	return &dma_desc->txd;
+>>  }
+>>  
+>> -static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>> -	struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_len,
+>> -	size_t period_len, enum dma_transfer_direction direction,
+>> -	unsigned long flags)
+>> +static struct dma_async_tx_descriptor *
+>> +tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr,
+>> +			  size_t buf_len,
+>> +			  size_t period_len,
+>> +			  enum dma_transfer_direction direction,
+>> +			  unsigned long flags)
+>>  {
+>>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>> -	struct tegra_dma_desc *dma_desc = NULL;
+>>  	struct tegra_dma_sg_req *sg_req = NULL;
+>> -	unsigned long csr, ahb_seq, apb_ptr, apb_seq;
+>> -	int len;
+>> -	size_t remain_len;
+>> -	dma_addr_t mem = buf_addr;
+>> -	u32 burst_size;
+>> +	u32 csr, ahb_seq, apb_ptr, apb_seq;
+>>  	enum dma_slave_buswidth slave_bw;
+>> +	struct tegra_dma_desc *dma_desc;
+>> +	dma_addr_t mem = buf_addr;
+>> +	unsigned int burst_size;
+>> +	size_t len, remain_len;
+>>  
+>>  	if (!buf_len || !period_len) {
+>>  		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
+>> @@ -1173,13 +1188,13 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>>  
+>>  	len = period_len;
+>>  	if ((len & 3) || (buf_addr & 3) ||
+>> -			(len > tdc->tdma->chip_data->max_dma_count)) {
+>> +	    len > tdc->tdma->chip_data->max_dma_count) {
+>>  		dev_err(tdc2dev(tdc), "Req len/mem address is not correct\n");
+>>  		return NULL;
+>>  	}
+>>  
+>>  	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+>> -				&burst_size, &slave_bw) < 0)
+>> +			       &burst_size, &slave_bw) < 0)
+>>  		return NULL;
+>>  
+>>  	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
+>> @@ -1269,7 +1284,6 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
+>>  	int ret;
+>>  
+>>  	dma_cookie_init(&tdc->dma_chan);
+>> -	tdc->config_init = false;
+> 
+> Why is this removed? Does not seem to belong in this patch.
 
-Doing a prime factorisation, a modulo divide by 115200 and trying
-to buy a 7.2738 MHz crystal at your favourite electronics dealer suggest
-that the old value was actually a typo. The actual UART clock is driven
-by a PLL, configured via a parameter in some board.txt file in the
-firmware, which reads 7.37 MHz (sic!).
-
-Fix this to correct the baud rate divisor calculation on the Juno board.
-
-[1] http://infocenter.arm.com/help/topic/com.arm.doc.ddi0515b.b/DDI0515B_b_juno_arm_development_platform_soc_trm.pdf
-[2] http://infocenter.arm.com/help/topic/com.arm.doc.100113_0000_07_en/arm_versatile_express_juno_development_platform_(v2m_juno)_technical_reference_manual_100113_0000_07_en.pdf
-
-Fixes: 71f867ec130e ("arm64: Add Juno board device tree.")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/boot/dts/arm/juno-clocks.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/arm/juno-clocks.dtsi b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-index 25352ed943e6..00bcbf7688c7 100644
---- a/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-+++ b/arch/arm64/boot/dts/arm/juno-clocks.dtsi
-@@ -8,10 +8,10 @@
-  */
- 
- 	/* SoC fixed clocks */
--	soc_uartclk: refclk7273800hz {
-+	soc_uartclk: refclk7372800hz {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <7273800>;
-+		clock-frequency = <7372800>;
- 		clock-output-names = "juno:uartclk";
- 	};
- 
--- 
-2.20.1
-
+Because initially, on driver's probe, the tdc->config_init is false for
+all channels and then tegra_dma_free_chan_resources() also sets it to
+false. Thus there is no need to re-initilize the already initialized
+variable. It's not a very good coding style if variables are
+unnecessarily initialized, you probably noticed that there are few other
+cases of removing the unneeded initializations of local variables in
+this patch.
