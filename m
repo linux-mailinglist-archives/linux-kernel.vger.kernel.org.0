@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F9213FFC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B93C13FFA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:45:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387884AbgAPXp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:45:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51014 "EHLO mail.kernel.org"
+        id S1728596AbgAPXXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:23:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390974AbgAPXXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:23:01 -0500
+        id S1731268AbgAPXXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:23:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3F0A20684;
-        Thu, 16 Jan 2020 23:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488642073A;
+        Thu, 16 Jan 2020 23:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216981;
-        bh=9TP65DmAZOyP+WVUXv3LqkBhonR0W5m6WbRnSaordVc=;
+        s=default; t=1579216983;
+        bh=NwfYSZRZH0kb1dydif8obU3YW+j3+UU9L10pLsDIZwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RDq4g8LDL+K1i9InSb7iscvkyClJ2eFoU6MFAgnJcDmw547oI0JFFZAYef/lr4ik0
-         VwSXfORNYSSqdlZdHZpbmTLP/rgDpbkWZkewNQYzBMYaLmWCy4yTLmDsnIREVmrpMo
-         YIvLwkt4HLovxoHjQpkwwp5PJdeLgwKM3ibaNMO8=
+        b=le5dEZcbTRbXzlhvnxoFWm/MHTltHZ2f0c7PBiVUSJZ6DE9vNbDHTdc7RiuUxvyK2
+         GXWNovWRWAkTZwgUroRFoC4oOhiND8Y5mRWAUfnERuxPdwUwgRy/NTrCXkBdRPMj2N
+         YvLa+htAISoSza5h8LTg/sqXnd45X/F0kS3E3EX8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
-        kbuild test robot <lkp@intel.com>,
+        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 099/203] crypto: hisilicon - select NEED_SG_DMA_LENGTH in qm Kconfig
-Date:   Fri, 17 Jan 2020 00:16:56 +0100
-Message-Id: <20200116231754.278397020@linuxfoundation.org>
+Subject: [PATCH 5.4 100/203] crypto: arm64/aes-neonbs - add return value of skcipher_walk_done() in __xts_crypt()
+Date:   Fri, 17 Jan 2020 00:16:57 +0100
+Message-Id: <20200116231754.355010543@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,32 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhou Wang <wangzhou1@hisilicon.com>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-commit b981744ef04f7e8cb6931edab50021fff3c8077e upstream.
+commit 9b537997b669c42cec67893538037e8d1c83c91c upstream.
 
-To avoid compile error in some platforms, select NEED_SG_DMA_LENGTH in
-qm Kconfig.
+A warning is found by the static code analysis tool:
+  "Identical condition 'err', second condition is always false"
 
-Fixes: dfed0098ab91 ("crypto: hisilicon - add hardware SGL support")
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-Reported-by: kbuild test robot <lkp@intel.com>
+Fix this by adding return value of skcipher_walk_done().
+
+Fixes: 67cfa5d3b721 ("crypto: arm64/aes-neonbs - implement ciphertext stealing for XTS")
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/hisilicon/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/crypto/aes-neonbs-glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -17,6 +17,7 @@ config CRYPTO_DEV_HISI_SEC
- config CRYPTO_DEV_HISI_QM
- 	tristate
- 	depends on ARM64 && PCI && PCI_MSI
-+	select NEED_SG_DMA_LENGTH
- 	help
- 	  HiSilicon accelerator engines use a common queue management
- 	  interface. Specific engine driver may use this module.
+--- a/arch/arm64/crypto/aes-neonbs-glue.c
++++ b/arch/arm64/crypto/aes-neonbs-glue.c
+@@ -384,7 +384,7 @@ static int __xts_crypt(struct skcipher_r
+ 			goto xts_tail;
+ 
+ 		kernel_neon_end();
+-		skcipher_walk_done(&walk, nbytes);
++		err = skcipher_walk_done(&walk, nbytes);
+ 	}
+ 
+ 	if (err || likely(!tail))
 
 
