@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BACA13EF53
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2926213EE22
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395337AbgAPSOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:14:21 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:52395 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390873AbgAPRe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:34:57 -0500
-X-Originating-IP: 90.65.102.129
-Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 99D0DC0006;
-        Thu, 16 Jan 2020 17:34:55 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] ARM: dts: at91: at91sam9n12: switch to new sckc bindings
-Date:   Thu, 16 Jan 2020 18:34:53 +0100
-Message-Id: <20200116173453.427267-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200116173453.427267-1-alexandre.belloni@bootlin.com>
-References: <20200116173453.427267-1-alexandre.belloni@bootlin.com>
+        id S2394983AbgAPSHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:07:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393439AbgAPRjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:39:10 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA9E724700;
+        Thu, 16 Jan 2020 17:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579196350;
+        bh=CPfwDNy1xAd9rZ4cs5BD+7Xze0X8gxbRUSw9BiBcjrk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UfIsov0nAk1AzTJ+SGs/oixzUrGA+nJVBET4F6owA9l1TrXSXk1kR11OdqS/e5pJ1
+         JWgGXeKjQyHves5X/BS68ataqVKS7PLLO9R7WuRfzR69htheQUHzV7wD9SiqmzpoE6
+         JmCUiRhu7zTQQaUaJ4xJLqb+bXvZqqG+qkfQa29Q=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 144/251] spi: spi-fsl-spi: call spi_finalize_current_message() at the end
+Date:   Thu, 16 Jan 2020 12:34:53 -0500
+Message-Id: <20200116173641.22137-104-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
+References: <20200116173641.22137-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the child nodes of the sckc as they are not necessary anymore.
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[ Upstream commit 44a042182cb1e9f7916e015c836967bf638b33c4 ]
+
+spi_finalize_current_message() shall be called once all
+actions are finished, otherwise the last actions might
+step over a newly started transfer.
+
+Fixes: c592becbe704 ("spi: fsl-(e)spi: migrate to generic master queueing")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/at91sam9n12.dtsi | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+ drivers/spi/spi-fsl-spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9n12.dtsi b/arch/arm/boot/dts/at91sam9n12.dtsi
-index d6eacb2e3792..3a3e3e05fa13 100644
---- a/arch/arm/boot/dts/at91sam9n12.dtsi
-+++ b/arch/arm/boot/dts/at91sam9n12.dtsi
-@@ -409,28 +409,11 @@ pit: timer@fffffe30 {
- 				clocks = <&mck>;
- 			};
+diff --git a/drivers/spi/spi-fsl-spi.c b/drivers/spi/spi-fsl-spi.c
+index 8b290d9d7935..5419de19859a 100644
+--- a/drivers/spi/spi-fsl-spi.c
++++ b/drivers/spi/spi-fsl-spi.c
+@@ -408,7 +408,6 @@ static int fsl_spi_do_one_msg(struct spi_master *master,
+ 	}
  
--			sckc@fffffe50 {
-+			clk32k: sckc@fffffe50 {
- 				compatible = "atmel,at91sam9x5-sckc";
- 				reg = <0xfffffe50 0x4>;
--
--				slow_osc: slow_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-osc";
--					#clock-cells = <0>;
--					clocks = <&slow_xtal>;
--				};
--
--				slow_rc_osc: slow_rc_osc {
--					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--					#clock-cells = <0>;
--					clock-frequency = <32768>;
--					clock-accuracy = <50000000>;
--				};
--
--				clk32k: slck {
--					compatible = "atmel,at91sam9x5-clk-slow";
--					#clock-cells = <0>;
--					clocks = <&slow_rc_osc>, <&slow_osc>;
--				};
-+				clocks = <&slow_xtal>;
-+				#clock-cells = <0>;
- 			};
+ 	m->status = status;
+-	spi_finalize_current_message(master);
  
- 			mmc0: mmc@f0008000 {
+ 	if (status || !cs_change) {
+ 		ndelay(nsecs);
+@@ -416,6 +415,7 @@ static int fsl_spi_do_one_msg(struct spi_master *master,
+ 	}
+ 
+ 	fsl_spi_setup_transfer(spi, NULL);
++	spi_finalize_current_message(master);
+ 	return 0;
+ }
+ 
 -- 
-2.24.1
+2.20.1
 
