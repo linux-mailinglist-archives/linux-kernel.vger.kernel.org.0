@@ -2,120 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BBA213D201
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6A213D207
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:15:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbgAPCPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:15:32 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:5033 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730783AbgAPCPb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:15:31 -0500
-X-UUID: c232e647f3b049a79a401bee8796f0a8-20200116
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=x3qlvVjA+1w0zdnvIBDb63N00F9OElYvDcvNejnWj1k=;
-        b=ukPNW743mG1ol5zw6UA/g5DtX0+C0JSDNvgrT2V8KyYnUw3+HuTT5u7rCdVL8eCZ30/bVAV1mik8Pwb76bTeYFB1UapOmHWZLkw+KR5Y5ncLE6boKDA3p6HFqNsvPTMiJ6SCaLOcmZe6rzm03xsaObyr7rujRxqGmKTNi5fA8Rg=;
-X-UUID: c232e647f3b049a79a401bee8796f0a8-20200116
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 840595207; Thu, 16 Jan 2020 10:15:26 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 16 Jan
- 2020 10:15:52 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Thu, 16 Jan 2020 10:14:30 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v9 5/5] drm/panel: support for auo,b101uan08.3 wuxga dsi video mode panel
-Date:   Thu, 16 Jan 2020 10:15:11 +0800
-Message-ID: <20200116021511.22675-6-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200116021511.22675-1-jitao.shi@mediatek.com>
-References: <20200116021511.22675-1-jitao.shi@mediatek.com>
+        id S1730919AbgAPCPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:15:46 -0500
+Received: from mail-eopbgr60072.outbound.protection.outlook.com ([40.107.6.72]:55367
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730202AbgAPCPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:15:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c/j9gNwJKJ4p/xGAb/EYagmUEWJTCmNBgqXktEuySJWDwPpYIHzdZO5k9dYaOHcx9OgqdO3Zoq9WJR6olrQiRN1WF1baMpCqcLPSnB1DpEFt1fz5BjRHXrUUUn0oo4ZXhWCeg8Cdsv6IvqcY9a+boVMkjMcf2L9X3GEuCK1V2gIrl7EmgBtX3C0PEaQ613RDe199XWELdER5SLpZyHY1K3mF5kcQSHkywhPa3enBQlipGZpARbuToPgaqJuFKd+XCaDzj3g0QVr3sGNI9G51EtCDmvgK/zcSnVDlB2IpOHh8P14iRsBUGmrdNLQhQPNwRan1bdp8xTytW9uiriXikA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mk8wqONt0m5VutgAp1dDRQ1onFLZAHSZSFGDHYgXc1I=;
+ b=NlKM+ybPZtiRltEc3orZLG5xuIkdf7Lw5dk15rL60mzhHGDEXYXliGnC2nLjgTRGUY4WlUD8kGjgW+LVBsVyQquNt7UHVmNB36DIu7oESYSRXAS+1I4wjIb3h46H8oDWbqhdi6i4KOpXv3cBOUNbR9eaTNMQFAgXp95asOmk7cB60Rhm/0IpFXnxttrXAgz0g8PYClL3r4JfKlcMkkEI6VcKVWmFtvKKijVKfwtQc5goWsaGohEa4UTs8qiMrMgb2PyOjNO6IUxI2CuNBrBnYA2uezU2s7Iaj6f6G7hrU/g4g/txvD85payEUCVicv5XLe+D8Ra4UBXMOJZD0psBKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mk8wqONt0m5VutgAp1dDRQ1onFLZAHSZSFGDHYgXc1I=;
+ b=lDmTDI3pkRvoop9Nn1ANEmmdsqZiuAxAK6KpWdw8AFofDO9RVVFyuNkIGteDs/ScszXF1R/Ex1RpqRdj+V4jD7nhb7KOLxYMSQLrCrAD4O38LopcmweO/PNI6qmyWDPuBrpRQM1OHDQjAL8XlZ76jIZmaFRv571ncPIiTRL3SbA=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6289.eurprd04.prod.outlook.com (20.179.35.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.20; Thu, 16 Jan 2020 02:15:42 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2623.018; Thu, 16 Jan 2020
+ 02:15:42 +0000
+Received: from localhost.localdomain (119.31.174.66) by HK2PR0302CA0012.apcprd03.prod.outlook.com (2603:1096:202::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.6 via Frontend Transport; Thu, 16 Jan 2020 02:15:36 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 0/4] clk: imx: imx8m: introduce imx8m_clk_hw_composite_core
+Thread-Topic: [PATCH V3 0/4] clk: imx: imx8m: introduce
+ imx8m_clk_hw_composite_core
+Thread-Index: AQHVzBLaTlW3Hwqw+ku5LVRzcstOhQ==
+Date:   Thu, 16 Jan 2020 02:15:42 +0000
+Message-ID: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR0302CA0012.apcprd03.prod.outlook.com
+ (2603:1096:202::22) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8181c590-83c3-4a5c-58ca-08d79a29fc87
+x-ms-traffictypediagnostic: AM0PR04MB6289:|AM0PR04MB6289:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB6289984E9B5EE15A87383EEF88360@AM0PR04MB6289.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 02843AA9E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(396003)(136003)(366004)(189003)(199004)(478600001)(4326008)(5660300002)(316002)(54906003)(110136005)(8936002)(81166006)(81156014)(8676002)(36756003)(6512007)(71200400001)(69590400006)(16526019)(6636002)(26005)(6506007)(186003)(86362001)(52116002)(64756008)(956004)(6666004)(66946007)(66476007)(6486002)(66556008)(44832011)(66446008)(2616005)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6289;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 84aZxjSKhi+ihad2GpR/THb8HU+EzE/LakfJBYDnzwqXcA0WxqwakRqS+Yn0in7FFm624A53SVRrZ87ybzJ158kRQeCRz75bgoryu6hwfOAhxv+ntEs9EIZS8unb5Ce7KrdBepp68TZOp3cjXwtL6hamJQ7IEW/Czpl2LlPt17hc71OvAWhjSInBsMeniLb9Q+INVom1UoPC/N0ro0KY6MYgymcSlhurSvyQqbRaIBj+EiLsKJdPhUAQs5Qm/0RlsHr44ADRkMQL7KwKTC0H2jdfj4irTpfSRmaVmj50T/aVnJq5b5jXstiXAkAoGcz7syX2pUQmsXszB2K5xoYACp0S4uyXW0V9FimlEbw5wGgLz/IjBgWlsn1Se4VHOghYNmnPGRdLeoNdSR/oPRtZn+Tu4kOQ6Dpx5yRtuLiui+5BHPYPmJmvWv3++uL9vTMAFLv8jiUhXOmBNnUg+0JfgIJu0fovonv4snKK5h8hPMsVRmka6S0VVRg0L+e9AuTSf/UNKsjXfQXDV3Rf2r46yA==
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: CCE803169FB42EFBDFD24E123096C487210EB1B57222C47804A6D756F52EC3C02000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8181c590-83c3-4a5c-58ca-08d79a29fc87
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 02:15:42.0917
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ia+cxtc1zzL7zi/SnTatGMrxUx96vCXijzwI1Ob1MOXax+oxVoDPdrZfLVbazcSXCoYQ7c89YNGvoQP+pvzVkQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6289
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QXVvLGF1byxiMTAxdWFuMDguMydzIGNvbm5lY3RvciBpcyBzYW1lIGFzIGJvZSx0djEwMXd1bS1u
-bDYuDQpUaGUgbW9zdCBjb2RlcyBjYW4gYmUgcmV1c2UuDQpTbyBhdW8sYjEwMXVhbjA4LjMgYW5k
-IGJvZSx0djEwMXd1bS1ubDYgdXNlIG9uZSBkcml2ZXIgZmlsZS4NCkFkZCB0aGUgZGlmZmVyZW50
-IHBhcnRzIGluIGRyaXZlciBkYXRhLg0KDQpTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFv
-LnNoaUBtZWRpYXRlay5jb20+DQpSZXZpZXdlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJv
-cmcub3JnPg0KLS0tDQogLi4uL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5j
-ICAgIHwgNzggKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA3OCBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2
-MTAxd3VtLW5sNi5jIGIvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWJvZS10djEwMXd1bS1u
-bDYuYw0KaW5kZXggZTc3ZWE1NzdkOTNhLi4wMWZhZjg1OTc3MDAgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQorKysgYi9kcml2ZXJz
-L2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQpAQCAtMzc3LDYgKzM3Nyw1
-MyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBhbmVsX2luaXRfY21kIGF1b19rZDEwMW44MF80NW5h
-X2luaXRfY21kW10gPSB7DQogCXt9LA0KIH07DQogDQorc3RhdGljIGNvbnN0IHN0cnVjdCBwYW5l
-bF9pbml0X2NtZCBhdW9fYjEwMXVhbjA4XzNfaW5pdF9jbWRbXSA9IHsNCisJX0lOSVRfREVMQVlf
-Q01EKDI0KSwNCisJX0lOSVRfRENTX0NNRCgweEIwLCAweDAxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEMwLCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEMxLCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEMyLCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEMzLCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEM0LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweEM1LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEM2LCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweEM3LCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweEM4LCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweEM5LCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweENBLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweENCLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweENDLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweENELCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweENFLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweENGLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEQwLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQx
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQyLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEQzLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEQ0LCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEQ1LCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEQ2LCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEQ3LCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEQ4LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEQ5LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweERBLCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweERCLCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweERDLCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweERELCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweERFLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweERGLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEUwLCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweEUxLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweEUyLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEUzLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEU0
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEU1LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEU2LCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEU3LCAweDQxKSwNCisJX0lOSVRfREVMQVlf
-Q01EKDE1MCksDQorCXt9LA0KK307DQorDQogc3RhdGljIGlubGluZSBzdHJ1Y3QgYm9lX3BhbmVs
-ICp0b19ib2VfcGFuZWwoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpDQogew0KIAlyZXR1cm4gY29u
-dGFpbmVyX29mKHBhbmVsLCBzdHJ1Y3QgYm9lX3BhbmVsLCBiYXNlKTsNCkBAIC02MjEsNiArNjY4
-LDM0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyBib2VfdHYxMDF3dW1fbjUzX2Rl
-c2MgPSB7DQogCS5pbml0X2NtZHMgPSBib2VfaW5pdF9jbWQsDQogfTsNCiANCitzdGF0aWMgY29u
-c3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSA9
-IHsNCisJLmNsb2NrID0gMTU5NjY3LA0KKwkuaGRpc3BsYXkgPSAxMjAwLA0KKwkuaHN5bmNfc3Rh
-cnQgPSAxMjAwICsgNjAsDQorCS5oc3luY19lbmQgPSAxMjAwICsgNjAgKyA0LA0KKwkuaHRvdGFs
-ID0gMTIwMCArIDYwICsgNCArIDgwLA0KKwkudmRpc3BsYXkgPSAxOTIwLA0KKwkudnN5bmNfc3Rh
-cnQgPSAxOTIwICsgMzQsDQorCS52c3luY19lbmQgPSAxOTIwICsgMzQgKyAyLA0KKwkudnRvdGFs
-ID0gMTkyMCArIDM0ICsgMiArIDI0LA0KKwkudnJlZnJlc2ggPSA2MCwNCisJLnR5cGUgPSBEUk1f
-TU9ERV9UWVBFX0RSSVZFUiB8IERSTV9NT0RFX1RZUEVfUFJFRkVSUkVELA0KK307DQorDQorc3Rh
-dGljIGNvbnN0IHN0cnVjdCBwYW5lbF9kZXNjIGF1b19iMTAxdWFuMDhfM19kZXNjID0gew0KKwku
-bW9kZXMgPSAmYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSwNCisJLmJwYyA9IDgsDQorCS5z
-aXplID0gew0KKwkJLndpZHRoX21tID0gMTM1LA0KKwkJLmhlaWdodF9tbSA9IDIxNiwNCisJfSwN
-CisJLmxhbmVzID0gNCwNCisJLmZvcm1hdCA9IE1JUElfRFNJX0ZNVF9SR0I4ODgsDQorCS5tb2Rl
-X2ZsYWdzID0gTUlQSV9EU0lfTU9ERV9WSURFTyB8IE1JUElfRFNJX01PREVfVklERU9fU1lOQ19Q
-VUxTRSB8DQorCQkgICAgICBNSVBJX0RTSV9NT0RFX0xQTSwNCisJLmluaXRfY21kcyA9IGF1b19i
-MTAxdWFuMDhfM19pbml0X2NtZCwNCit9Ow0KKw0KIHN0YXRpYyBpbnQgYm9lX3BhbmVsX2dldF9t
-b2RlcyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCwNCiAJCQkgICAgICAgc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcikNCiB7DQpAQCAtNzU2LDYgKzgzMSw5IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3Qgb2ZfZGV2aWNlX2lkIGJvZV9vZl9tYXRjaFtdID0gew0KIAl7IC5jb21wYXRpYmxlID0g
-ImJvZSx0djEwMXd1bS1uNTMiLA0KIAkgIC5kYXRhID0gJmJvZV90djEwMXd1bV9uNTNfZGVzYw0K
-IAl9LA0KKwl7IC5jb21wYXRpYmxlID0gImF1byxiMTAxdWFuMDguMyIsDQorCSAgLmRhdGEgPSAm
-YXVvX2IxMDF1YW4wOF8zX2Rlc2MNCisJfSwNCiAJeyAvKiBzZW50aW5lbCAqLyB9DQogfTsNCiBN
-T0RVTEVfREVWSUNFX1RBQkxFKG9mLCBib2Vfb2ZfbWF0Y2gpOw0KLS0gDQoyLjIxLjANCg==
+From: Peng Fan <peng.fan@nxp.com>
+
+
+Leonard,
+ Please help review this V3 patchset.
+
+V3:
+ Add CLK_SET_RATE_NO_REPARENT and CLK_OPS_PARENT_ENABLE for core
+ Avoid break DT for i.MX8MQ
+
+V2:
+ Rename imx8m_clk_hw_core_composite to imx8m_clk_hw_composite_core
+ Add Abel's tag
+
+To i.MX8M family, there are different types of clock slices,
+bus/core/ip and etc. Currently, the imx8m_clk_hw_composite
+api could only handle bus and ip clock slice, it could
+not handle core slice. The difference is core slice not have
+pre divider and the width of post divider is 3 bits.
+
+To simplify code and reuse imx8m_clk_hw_composite, introduce a
+flag IMX_COMPOSITE_CORE to differentiate the slices.
+
+With this new helper, we could simplify i.MX8M SoC clk drivers.
+
+Peng Fan (4):
+  clk: imx: composite-8m: add imx8m_clk_hw_composite_core
+  clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+  clk: imx: imx8mm: use imx8m_clk_hw_composite_core
+  clk: imx: imx8mn: use imx8m_clk_hw_composite_core
+
+ drivers/clk/imx/clk-composite-8m.c | 18 ++++++++++++++----
+ drivers/clk/imx/clk-imx8mm.c       | 17 +++++------------
+ drivers/clk/imx/clk-imx8mn.c       | 10 +++-------
+ drivers/clk/imx/clk-imx8mq.c       | 22 ++++++++--------------
+ drivers/clk/imx/clk.h              | 13 +++++++++++--
+ 5 files changed, 41 insertions(+), 39 deletions(-)
+
+--=20
+2.16.4
 
