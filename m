@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109C513E420
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3031113E423
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388915AbgAPRGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:06:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36032 "EHLO mail.kernel.org"
+        id S2388610AbgAPRGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388849AbgAPRGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:10 -0500
+        id S2388856AbgAPRGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC62B217F4;
-        Thu, 16 Jan 2020 17:06:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C26122464;
+        Thu, 16 Jan 2020 17:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194369;
-        bh=1x2w+RPyrf+ZZrsGYp6rPWeEaOjsIov9fvJqcD52Iv4=;
+        s=default; t=1579194370;
+        bh=hoAeHIin1PajjGGMU+rPtuGTtkB/3qcEtajll6KHLEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ob3+9ZdR78jq3N9zBghbo+1LqhDKocSHknHrfW0jJbVPVCBdztDYbn14x/PxcLAX3
-         7FWMNCxH06rChXEEJI/8zcxsZ2zPvxsBvzyM9+U+HINxcarFGPkar3UhgT0UCoomgH
-         Uy8QbdH27+YCM+kSEVKhPkKT1DZy+x4/sPxJUNBU=
+        b=PAKkcPX+IIpHcW5zz9L3xyOec+vxJ9oDjidgIQtoStG8mdb9NLCJuFXS36P60f09x
+         mZESbGWDLtHE1UaIIxz3/JW29W81M/NB5zw50pTdw7SMhFEHjs4omZfNu+nWXcxK3/
+         jUaWyhnjQfG0HhGBF2ei6l90xn/y0KZh95ctLvq8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 303/671] net: hns3: fix loop condition of hns3_get_tx_timeo_queue_info()
-Date:   Thu, 16 Jan 2020 11:59:01 -0500
-Message-Id: <20200116170509.12787-40-sashal@kernel.org>
+Cc:     Ben Hutchings <ben@decadent.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 304/671] powerpc: vdso: Make vdso32 installation conditional in vdso_install
+Date:   Thu, 16 Jan 2020 11:59:02 -0500
+Message-Id: <20200116170509.12787-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,37 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit fa6c4084b98b82c98cada0f0d5c9f8577579f962 ]
+[ Upstream commit ff6d27823f619892ab96f7461764840e0d786b15 ]
 
-In function hns3_get_tx_timeo_queue_info(), it should use
-netdev->num_tx_queues, instead of netdve->real_num_tx_queues
-as the loop limitation.
+The 32-bit vDSO is not needed and not normally built for 64-bit
+little-endian configurations.  However, the vdso_install target still
+builds and installs it.  Add the same config condition as is normally
+used for the build.
 
-Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e0d005916994 ("powerpc/vdso: Disable building the 32-bit VDSO ...")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 10fa7f5df57e..3eb8b85f6afb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1464,7 +1464,7 @@ static bool hns3_get_tx_timeo_queue_info(struct net_device *ndev)
- 	int i;
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index e43321f46a3b..8954108df457 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -412,7 +412,9 @@ vdso_install:
+ ifdef CONFIG_PPC64
+ 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso64 $@
+ endif
++ifdef CONFIG_VDSO32
+ 	$(Q)$(MAKE) $(build)=arch/$(ARCH)/kernel/vdso32 $@
++endif
  
- 	/* Find the stopped queue the same way the stack does */
--	for (i = 0; i < ndev->real_num_tx_queues; i++) {
-+	for (i = 0; i < ndev->num_tx_queues; i++) {
- 		struct netdev_queue *q;
- 		unsigned long trans_start;
- 
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
 -- 
 2.20.1
 
