@@ -2,180 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3A513F9B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D760713F98C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:31:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbgAPTm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:42:28 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38923 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgAPTm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:42:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so8777418plp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:42:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PFk9Ww9wHyG/mGKuMkvNxlgsu1IrcTOB3b5gPJlm5Ns=;
-        b=POCZQAy+iwGnHOKPR8OvVPQsopftG4tZaYrk/pzjtQELHQG/VDMfN8I4P1LbP0KaF1
-         n6gQTY9alExU9jYzgebtFaInDr2k4FgVphM8ajj4VABjeUL4iOU/oK62hYgfkwCfqVFd
-         B0NWHdMS4BaYqTaOaJ7q+PFXvYxNzqxJTCyX7A8Qz4xfGtxwqclA5xZWHZUYvE+8TWDL
-         QxCmb4+hH85eeUk5Gy9M8tPFX003zbY2DN/OJfSvRW/2HA7oeM3FoPJqPsTuN7qf0UA0
-         ja58UNwK9DuHeQcPIPoYdyJCYlT+e9JY3uRaS8UDwHDdtxekdgG85VZNTUlTCkJnqnlP
-         0Zlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PFk9Ww9wHyG/mGKuMkvNxlgsu1IrcTOB3b5gPJlm5Ns=;
-        b=GTGdSL4O4nRewqdQ1LxiV2PxjuGYQjaVXpM1Ns236NnYFIa4JvhUvT2f5mfW11G9wZ
-         vcKBFkdwefIsNDiW8lWzZtj7qoBrWJeaOSyhzmS1936hl371twRrNBxkOKmpfNNC2t+H
-         9lHCud2WcJ76Dyeh7xh1jz+pyvzgFiNa5lcvrTHVVrC9mnN3j7KBdti69wP5w2JHOv7v
-         CotZvIpvEjwCij15RI5DVK85VInwn55Tc/eEu6I2trUhYq0ZPCIo0ovnOs1CAbZTxRv4
-         Kgz5PrxBfmH8PfDwnNWQLoVXfFWIJlpvDp66ZqeM5sww4fUhI+H+4lyeU4IxF45epjaA
-         bgiw==
-X-Gm-Message-State: APjAAAViWlZk1YhiMrKlKtYJYjTx90Kw09hJg4nqgfOclL+Uu2hylMZK
-        9mFQf1b4x1KI0VaWTZrTgxrw/A==
-X-Google-Smtp-Source: APXvYqyfzdH6AdQ3U0a7W1IHpaCVKTHGEmR9j0qB/e7Mxj7850qWW4OV8jMGqyXEMwtEaOmvHrDkOA==
-X-Received: by 2002:a17:902:b58d:: with SMTP id a13mr25541359pls.283.1579203746544;
-        Thu, 16 Jan 2020 11:42:26 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id y6sm25729361pgc.10.2020.01.16.11.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 11:42:25 -0800 (PST)
-Date:   Thu, 16 Jan 2020 11:42:21 -0800
-From:   Benson Leung <bleung@google.com>
-To:     Prashant Malani <pmalani@chromium.org>
-Cc:     enric.balletbo@collabora.com, groeck@chromium.org,
-        bleung@chromium.org, lee.jones@linaro.org, sre@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] mfd: cros_ec: Add cros-usbpd-notify subdevice
-Message-ID: <20200116194221.GA208460@google.com>
-References: <20200114232219.93171-1-pmalani@chromium.org>
- <20200114232219.93171-2-pmalani@chromium.org>
+        id S1730935AbgAPTbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:31:43 -0500
+Received: from mga01.intel.com ([192.55.52.88]:13285 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730712AbgAPTbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 14:31:42 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 11:31:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="373431363"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga004.jf.intel.com with ESMTP; 16 Jan 2020 11:31:41 -0800
+Date:   Thu, 16 Jan 2020 11:42:23 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Moger, Babu" <Babu.Moger@amd.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v9 00/13] selftests/resctrl: Add resctrl selftest
+Message-ID: <20200116194222.GB51626@romley-ivt3.sc.intel.com>
+References: <1576535207-2417-1-git-send-email-fenghua.yu@intel.com>
+ <7aacc3e8-4072-c6b9-5d0f-f687a40ad315@amd.com>
+ <CY4PR12MB1574ACDEE30CDCD8113CECA795390@CY4PR12MB1574.namprd12.prod.outlook.com>
+ <20200115211749.GA51626@romley-ivt3.sc.intel.com>
+ <87k15sxu3k.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200114232219.93171-2-pmalani@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87k15sxu3k.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 15, 2020 at 10:55:43PM +0100, Thomas Gleixner wrote:
+> Fenghua Yu <fenghua.yu@intel.com> writes:
+> >
+> > Hi, Boris, Thomas, Ingo, et al,
+> >
+> > Any comment on this patch set?
+> 
+> No objections from my side, but you forgot to CC the relevant
+> maintainer/mailinglist for tools/testing/selftests/. CC'ed now.
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for your comments, Thomas!
 
-Hi Prashant, Hi Lee,
+Hi, Shuah,
 
-On Tue, Jan 14, 2020 at 03:22:20PM -0800, Prashant Malani wrote:
-> Add the cros-usbpd-notify driver as a subdevice on platforms that
-> support the EC_FEATURE_USB_PD EC feature flag and don't have the
-> ACPI PD notification device defined.
->=20
-> This driver allows other cros-ec devices to receive PD event
-> notifications from the Chrome OS Embedded Controller (EC) via a
-> notification chain.
->=20
-> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+Do you want me to resend the v9 resctrl selftest patches to you and
+linux-kselftest?
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+This repository has the v9 patches:
+git://github.com/fyu1/linux resctrl_selftest
 
+Thanks.
 
-> ---
->=20
-> Changes in v6:
-> - No changes.
->=20
-> Changes in v5:
-> - Updated the IS_ENABLED() check to check for CONFIG_OF instead of
->   !CONFIG_ACPI according to upstream comments.
->=20
-> Changes in v4:
-> - Removed #ifndef usage; instead, moved cros-usbpd-notify to a separate
->   mfd_cell and used an IS_ENABLED() check.
-> - Changed commit title and description slightly to reflect change in
->   code.
->  drivers/mfd/cros_ec_dev.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->=20
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index c4b977a5dd966..d0c28a4c10ad0 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2014 Google, Inc.
->   */
-> =20
-> +#include <linux/kconfig.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/cros_ec.h>
->  #include <linux/module.h>
-> @@ -87,6 +88,10 @@ static const struct mfd_cell cros_usbpd_charger_cells[=
-] =3D {
->  	{ .name =3D "cros-usbpd-logger", },
->  };
-> =20
-> +static const struct mfd_cell cros_usbpd_notify_cells[] =3D {
-> +	{ .name =3D "cros-usbpd-notify", },
-> +};
-> +
->  static const struct cros_feature_to_cells cros_subdevices[] =3D {
->  	{
->  		.id		=3D EC_FEATURE_CEC,
-> @@ -202,6 +207,23 @@ static int ec_device_probe(struct platform_device *p=
-dev)
->  		}
->  	}
-> =20
-> +	/*
-> +	 * The PD notifier driver cell is separate since it only needs to be
-> +	 * explicitly added on platforms that don't have the PD notifier ACPI
-> +	 * device entry defined.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_OF)) {
-> +		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
-> +			retval =3D mfd_add_hotplug_devices(ec->dev,
-> +					cros_usbpd_notify_cells,
-> +					ARRAY_SIZE(cros_usbpd_notify_cells));
-> +			if (retval)
-> +				dev_err(ec->dev,
-> +					"failed to add PD notify devices: %d\n",
-> +					retval);
-> +		}
-> +	}
-> +
->  	/*
->  	 * The following subdevices cannot be detected by sending the
->  	 * EC_FEATURE_GET_CMD to the Embedded Controller device.
-> --=20
-> 2.25.0.341.g760bfbb309-goog
->=20
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXiC8nQAKCRBzbaomhzOw
-wmOVAQCmOfXEIqYrEhqII0PhhILhzQoQbL7FnSHrZAA7Glms1gD/beJW7RUQ4vJQ
-sytu0LNykPKlEOZFifYLnTyxRqm3VgM=
-=83lm
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
+-Fenghua
