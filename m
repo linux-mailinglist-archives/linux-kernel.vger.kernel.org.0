@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8DE13F71B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B30113F710
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:09:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437353AbgAPTJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:09:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50868 "EHLO mail.kernel.org"
+        id S2437332AbgAPTJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:09:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387901AbgAPRAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:47 -0500
+        id S2387912AbgAPRAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C33F12081E;
-        Thu, 16 Jan 2020 17:00:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 631C620728;
+        Thu, 16 Jan 2020 17:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194046;
-        bh=xA+l6yP73ifLFVlAz9wZfD4T/1XC+Ndg4kgXYC9vli8=;
+        s=default; t=1579194049;
+        bh=7V3lyqBiGL4vQkI761fYQKlukMOauXF22sAU02BMDnY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fny+5s2xOHRVmWEXV1Wd6Kb324UrpLmoCPaxFOZSRvpDEkmlv+28hDea+kIaRSpEn
-         G0nCxYs7pe3a2ysAUieFOMOZ3hzKESyhSsdPEakKlwLpbOo3KIwL1owe7rYrPVaNmy
-         8Pfb1J4hHGlm/3vQce9ezFfXyp9W7IpwPLSBGe8A=
+        b=noDs72Lq+wC4vKO40wFrhwTqMHZ8qF8ggaxiq1NLjfKRRjdnM7sb6/io8dCAYiSjX
+         ExGqjxw9n0ekrdHey5G1VnUZSh7eT0ucSlZYF6TJ0RkR71aRqiM/yoaO0PyPxJjMZg
+         +8n6hmzwu9MSCMQT8hTbEq7dTA+stSedlOQczhN0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Karsten Graul <kgraul@linux.ibm.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 162/671] net/smc: original socket family in inet_sock_diag
-Date:   Thu, 16 Jan 2020 11:51:11 -0500
-Message-Id: <20200116165940.10720-45-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 164/671] rtc: 88pm80x: fix unintended sign extension
+Date:   Thu, 16 Jan 2020 11:51:13 -0500
+Message-Id: <20200116165940.10720-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -46,54 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 232dc8ef647658a5352da807d9e994e0e03b43cd ]
+[ Upstream commit fb0b322537a831b5b0cb948c56f8f958ce493d3a ]
 
-Commit ed75986f4aae ("net/smc: ipv6 support for smc_diag.c") changed the
-value of the diag_family field. The idea was to indicate the family of
-the IP address in the inet_diag_sockid field. But the change makes it
-impossible to distinguish an inet_sock_diag response message from SMC
-sock_diag response. This patch restores the original behaviour and sends
-AF_SMC as value of the diag_family field.
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Fixes: ed75986f4aae ("net/smc: ipv6 support for smc_diag.c")
-Reported-by: Eugene Syromiatnikov <esyr@redhat.com>
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by casting the u8 value to an unsigned long before the shift.
+
+Detected by CoverityScan, CID#714646-714649 ("Unintended sign extension")
+
+Fixes: 2985c29c1964 ("rtc: Add rtc support to 88PM80X PMIC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_diag.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/rtc/rtc-88pm80x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
-index dbf64a93d68a..371b4cf31fcd 100644
---- a/net/smc/smc_diag.c
-+++ b/net/smc/smc_diag.c
-@@ -38,6 +38,7 @@ static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock *sk)
- {
- 	struct smc_sock *smc = smc_sk(sk);
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index cab293cb2bf0..1fc48ebd3cd0 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -114,12 +114,14 @@ static int pm80x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
  
-+	r->diag_family = sk->sk_family;
- 	if (!smc->clcsock)
- 		return;
- 	r->id.idiag_sport = htons(smc->clcsock->sk->sk_num);
-@@ -45,14 +46,12 @@ static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock *sk)
- 	r->id.idiag_if = smc->clcsock->sk->sk_bound_dev_if;
- 	sock_diag_save_cookie(sk, r->id.idiag_cookie);
- 	if (sk->sk_protocol == SMCPROTO_SMC) {
--		r->diag_family = PF_INET;
- 		memset(&r->id.idiag_src, 0, sizeof(r->id.idiag_src));
- 		memset(&r->id.idiag_dst, 0, sizeof(r->id.idiag_dst));
- 		r->id.idiag_src[0] = smc->clcsock->sk->sk_rcv_saddr;
- 		r->id.idiag_dst[0] = smc->clcsock->sk->sk_daddr;
- #if IS_ENABLED(CONFIG_IPV6)
- 	} else if (sk->sk_protocol == SMCPROTO_SMC6) {
--		r->diag_family = PF_INET6;
- 		memcpy(&r->id.idiag_src, &smc->clcsock->sk->sk_v6_rcv_saddr,
- 		       sizeof(smc->clcsock->sk->sk_v6_rcv_saddr));
- 		memcpy(&r->id.idiag_dst, &smc->clcsock->sk->sk_v6_daddr,
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -137,7 +139,8 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -158,11 +161,13 @@ static int pm80x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	int ret;
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -185,12 +190,14 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 -- 
 2.20.1
 
