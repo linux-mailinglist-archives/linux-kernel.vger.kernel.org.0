@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7405813FD2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D746C13FD44
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:24:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390703AbgAPXXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:23:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50984 "EHLO mail.kernel.org"
+        id S1731572AbgAPXYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:24:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390953AbgAPXW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:22:59 -0500
+        id S1729794AbgAPXX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:23:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E6B22072E;
-        Thu, 16 Jan 2020 23:22:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC201206D9;
+        Thu, 16 Jan 2020 23:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216978;
-        bh=MNpadv6oG1yu1rgMedCa6a7fBv1EwM++aYTJQL9Y5y0=;
+        s=default; t=1579217035;
+        bh=zxMwx2OtgXRt1znZy60Yrg+tBGsBd59R2bQKe67uDE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yM9l2XLEhhsEKmIt8+eyS2uVK4SiINKVXSNy0Vtkm4Zh/RU+9N6eWCJieMdQoxFRw
-         GmczjIpT4V9l441TXNoEnYuvaBA1jHMFkQRC+HLQekHuSUYWASrFXNMJT8bAvuov2t
-         XoyJVW98ZiA+UhKCS8Obl0PPFiVhd+A+1s8h0Ap8=
+        b=CPxCudQ8sbjoRp1c9qRHf9ORESqhCcA70eyZJrYJhms6EvLSb0Y5X3Ueh7IWr08ry
+         xbch6Xx0vNddMqi37h746pDJvab/+62KoRYdMt2AtJtMkQkClBgBTJranqOEl9iUb2
+         CTTH7pKkJRDFpMIrBNVRuOdkynuYWCln5rbsllvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phani Kiran Hemadri <phemadri@marvell.com>,
-        Srikanth Jampala <jsrikanth@marvell.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 098/203] crypto: cavium/nitrox - fix firmware assignment to AE cores
-Date:   Fri, 17 Jan 2020 00:16:55 +0100
-Message-Id: <20200116231754.201070520@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jamie Heilman <jamie@audible.transient.net>,
+        Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 5.4 105/203] nfsd: Fix cld_net->cn_tfm initialization
+Date:   Fri, 17 Jan 2020 00:17:02 +0100
+Message-Id: <20200116231754.736665919@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,49 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phani Kiran Hemadri <phemadri@marvell.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-commit 6a97a99db848748d582d79447f7c9c330ce1688e upstream.
+commit 18b9a895e652979b70f9c20565394a69354dfebc upstream.
 
-This patch fixes assigning UCD block number of Asymmetric crypto
-firmware to AE cores of CNN55XX device.
+Don't assign an error pointer to cld_net->cn_tfm, otherwise an oops will
+occur in nfsd4_remove_cld_pipe().
 
-Fixes: a7268c4d4205 ("crypto: cavium/nitrox - Add support for loading asymmetric crypto firmware")
-Signed-off-by: Phani Kiran Hemadri <phemadri@marvell.com>
-Reviewed-by: Srikanth Jampala <jsrikanth@marvell.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Also, move the initialization of cld_net->cn_tfm so that it occurs after
+the check to see if nfsdcld is running.  This is necessary because
+nfsd4_client_tracking_init() looks for -ETIMEDOUT to determine whether
+to use the "old" nfsdcld tracking ops.
+
+Fixes: 6ee95d1c8991 ("nfsd: add support for upcall version 2")
+Reported-by: Jamie Heilman <jamie@audible.transient.net>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/nitrox/nitrox_main.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/nfsd/nfs4recover.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-@@ -103,8 +103,7 @@ static void write_to_ucd_unit(struct nit
- 	offset = UCD_UCODE_LOAD_BLOCK_NUM;
- 	nitrox_write_csr(ndev, offset, block_num);
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -1578,6 +1578,7 @@ nfsd4_cld_tracking_init(struct net *net)
+ 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+ 	bool running;
+ 	int retries = 10;
++	struct crypto_shash *tfm;
  
--	code_size = ucode_size;
--	code_size = roundup(code_size, 8);
-+	code_size = roundup(ucode_size, 16);
- 	while (code_size) {
- 		data = ucode_data[i];
- 		/* write 8 bytes at a time */
-@@ -220,11 +219,11 @@ static int nitrox_load_fw(struct nitrox_
+ 	status = nfs4_cld_state_init(net);
+ 	if (status)
+@@ -1586,11 +1587,6 @@ nfsd4_cld_tracking_init(struct net *net)
+ 	status = __nfsd4_init_cld_pipe(net);
+ 	if (status)
+ 		goto err_shutdown;
+-	nn->cld_net->cn_tfm = crypto_alloc_shash("sha256", 0, 0);
+-	if (IS_ERR(nn->cld_net->cn_tfm)) {
+-		status = PTR_ERR(nn->cld_net->cn_tfm);
+-		goto err_remove;
+-	}
  
- 	/* write block number and firmware length
- 	 * bit:<2:0> block number
--	 * bit:3 is set SE uses 32KB microcode
--	 * bit:3 is clear SE uses 64KB microcode
-+	 * bit:3 is set AE uses 32KB microcode
-+	 * bit:3 is clear AE uses 64KB microcode
- 	 */
- 	core_2_eid_val.value = 0ULL;
--	core_2_eid_val.ucode_blk = 0;
-+	core_2_eid_val.ucode_blk = 2;
- 	if (ucode_size <= CNN55XX_UCD_BLOCK_SIZE)
- 		core_2_eid_val.ucode_len = 1;
- 	else
+ 	/*
+ 	 * rpc pipe upcalls take 30 seconds to time out, so we don't want to
+@@ -1607,6 +1603,12 @@ nfsd4_cld_tracking_init(struct net *net)
+ 		status = -ETIMEDOUT;
+ 		goto err_remove;
+ 	}
++	tfm = crypto_alloc_shash("sha256", 0, 0);
++	if (IS_ERR(tfm)) {
++		status = PTR_ERR(tfm);
++		goto err_remove;
++	}
++	nn->cld_net->cn_tfm = tfm;
+ 
+ 	status = nfsd4_cld_get_version(nn);
+ 	if (status == -EOPNOTSUPP)
 
 
