@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87DF313FDF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3490113FE05
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391473AbgAPXbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:31:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37472 "EHLO mail.kernel.org"
+        id S2404083AbgAPXb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:31:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404043AbgAPXad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:30:33 -0500
+        id S2404103AbgAPXaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:30:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7673206D9;
-        Thu, 16 Jan 2020 23:30:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E639206D9;
+        Thu, 16 Jan 2020 23:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217432;
-        bh=ok15enOupA5W/wMO7U7KSrXVmeBc2HMpZ4pSkfou/bw=;
+        s=default; t=1579217434;
+        bh=f4TxQLy3Mhny7mtPzUFHT8lgsurK/XC2ANZvQ3SRims=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xDimKJ8+cXQTsC/HfZImhvelEnhj6Sv+44RSGlvwyNm52riX7Q3Lwj5Ve4kgBV0P8
-         Mn3Zlcr3cZI992oJELns7sImmqwJyqfKJjw8LdUfwMyG9+RYNYH9wH1e8xORE6H4y+
-         fq39SxpTVBA4enV1DYDP+Aqk0WU+iMEbnVkYTssM=
+        b=lI72m9lq7UBDVaqMJiRL0GB44XW3WLVhOp5eateLFSofSDq8NGl0f0B4t4qA42HFd
+         tpn3XIAOrWtL7MUO0ClQvKxjhd0aPJl/OMfc6mCuJYENyPp0P6VDNTk59Ki9dd7XyS
+         eEOV5gXND+7SdpScS7rblRFim4d+8OVXzGnK8Iyo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
+        stable@vger.kernel.org,
+        Alexander Barabash <alexander.barabash@dell.com>,
+        Dave Jiang <dave.jiang@intel.com>,
         Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 80/84] dmaengine: k3dma: Avoid null pointer traversal
-Date:   Fri, 17 Jan 2020 00:18:54 +0100
-Message-Id: <20200116231722.885728900@linuxfoundation.org>
+Subject: [PATCH 4.19 81/84] ioat: ioat_alloc_ring() failure handling.
+Date:   Fri, 17 Jan 2020 00:18:55 +0100
+Message-Id: <20200116231722.980630735@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -43,64 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+From: Alexander.Barabash@dell.com <Alexander.Barabash@dell.com>
 
-[ Upstream commit 2f42e05b942fe2fbfb9bbc6e34e1dd8c3ce4f3a4 ]
+[ Upstream commit b0b5ce1010ffc50015eaec72b0028aaae3f526bb ]
 
-In some cases we seem to submit two transactions in a row, which
-causes us to lose track of the first. If we then cancel the
-request, we may still get an interrupt, which traverses a null
-ds_run value.
+If dma_alloc_coherent() returns NULL in ioat_alloc_ring(), ring
+allocation must not proceed.
 
-So try to avoid starting a new transaction if the ds_run value
-is set.
+Until now, if the first call to dma_alloc_coherent() in
+ioat_alloc_ring() returned NULL, the processing could proceed, failing
+with NULL-pointer dereferencing further down the line.
 
-While this patch avoids the null pointer crash, I've had some
-reports of the k3dma driver still getting confused, which
-suggests the ds_run/ds_done value handling still isn't quite
-right. However, I've not run into an issue recently with it
-so I think this patch is worth pushing upstream to avoid the
-crash.
-
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-[add ss tag]
-Link: https://lore.kernel.org/r/20191218190906.6641-1-john.stultz@linaro.org
+Signed-off-by: Alexander Barabash <alexander.barabash@dell.com>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Link: https://lore.kernel.org/r/75e9c0e84c3345d693c606c64f8b9ab5@x13pwhopdag1307.AMER.DELL.COM
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/k3dma.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/dma/ioat/dma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index 6bfa217ed6d0..ba3c3791f9dc 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -222,9 +222,11 @@ static irqreturn_t k3_dma_int_handler(int irq, void *dev_id)
- 			c = p->vchan;
- 			if (c && (tc1 & BIT(i))) {
- 				spin_lock_irqsave(&c->vc.lock, flags);
--				vchan_cookie_complete(&p->ds_run->vd);
--				p->ds_done = p->ds_run;
--				p->ds_run = NULL;
-+				if (p->ds_run != NULL) {
-+					vchan_cookie_complete(&p->ds_run->vd);
-+					p->ds_done = p->ds_run;
-+					p->ds_run = NULL;
-+				}
- 				spin_unlock_irqrestore(&c->vc.lock, flags);
- 			}
- 			if (c && (tc2 & BIT(i))) {
-@@ -264,6 +266,10 @@ static int k3_dma_start_txd(struct k3_dma_chan *c)
- 	if (BIT(c->phy->idx) & k3_dma_get_chan_stat(d))
- 		return -EAGAIN;
+diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
+index 23fb2fa04000..b94cece58b98 100644
+--- a/drivers/dma/ioat/dma.c
++++ b/drivers/dma/ioat/dma.c
+@@ -388,10 +388,11 @@ ioat_alloc_ring(struct dma_chan *c, int order, gfp_t flags)
  
-+	/* Avoid losing track of  ds_run if a transaction is in flight */
-+	if (c->phy->ds_run)
-+		return -EAGAIN;
-+
- 	if (vd) {
- 		struct k3_dma_desc_sw *ds =
- 			container_of(vd, struct k3_dma_desc_sw, vd);
+ 		descs->virt = dma_alloc_coherent(to_dev(ioat_chan),
+ 						 SZ_2M, &descs->hw, flags);
+-		if (!descs->virt && (i > 0)) {
++		if (!descs->virt) {
+ 			int idx;
+ 
+ 			for (idx = 0; idx < i; idx++) {
++				descs = &ioat_chan->descs[idx];
+ 				dma_free_coherent(to_dev(ioat_chan), SZ_2M,
+ 						  descs->virt, descs->hw);
+ 				descs->virt = NULL;
 -- 
 2.20.1
 
