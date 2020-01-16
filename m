@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B765513E972
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1DC213E976
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393217AbgAPRhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:37:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52866 "EHLO mail.kernel.org"
+        id S2393255AbgAPRiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405380AbgAPRhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:31 -0500
+        id S2405398AbgAPRhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1106C246C8;
-        Thu, 16 Jan 2020 17:37:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65C47246C3;
+        Thu, 16 Jan 2020 17:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196250;
-        bh=QZCARvEMUr1zPyIifMPAW1+PRX3vQYXWdpQCzacwjtE=;
+        s=default; t=1579196253;
+        bh=7aLUV/g52m7e9KvwN151imfLZFO56mEPatkTBzlxJew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vRcKR/4W84JBeKZ+MqOW6RcnKU4yQBx3U2bbrxrB/6K2DX4LrAJpd33CNDTTMMe4z
-         riR9TmQvMDmn/vEgb4yWXl2z76PMpw8oS4VJimb8rOXX1RX6kauhm5f/9PJo07FQVD
-         y+kaGfBJjfQcaCi/YW7N82EYyyJPgHTDsZiP6IR4=
+        b=NfhmHNut/gzpdegu5a68vX7jQrLqM6KJ2kfK0FKIha6WSlk4t2PeTvTjH5jd5nWfu
+         qe2S4GI+so6pF2CQfTHr50Un3GWrqNtyOQcHXc22kS17E4XOxmrpqQJRijGhGCNOzM
+         e5WphU2J3L67MW/zeiLkIlYa/Krk0tx3tQG36fp8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 078/251] regulator: pv88090: Fix array out-of-bounds access
-Date:   Thu, 16 Jan 2020 12:33:47 -0500
-Message-Id: <20200116173641.22137-38-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 080/251] drm/nouveau/bios/ramcfg: fix missing parentheses when calculating RON
+Date:   Thu, 16 Jan 2020 12:33:49 -0500
+Message-Id: <20200116173641.22137-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -42,34 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit a5455c9159414748bed4678184bf69989a4f7ba3 ]
+[ Upstream commit 13649101a25c53c87f4ab98a076dfe61f3636ab1 ]
 
-Fix off-by-one while iterating current_limits array.
-The valid index should be 0 ~ n_current_limits -1.
+Currently, the expression for calculating RON is always going to result
+in zero no matter the value of ram->mr[1] because the ! operator has
+higher precedence than the shift >> operator.  I believe the missing
+parentheses around the expression before appying the ! operator will
+result in the desired result.
 
-Fixes: c90456e36d9c ("regulator: pv88090: new regulator driver")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+[ Note, not tested ]
+
+Detected by CoveritScan, CID#1324005 ("Operands don't affect result")
+
+Fixes: c25bf7b6155c ("drm/nouveau/bios/ramcfg: Separate out RON pull value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/pv88090-regulator.c | 2 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/pv88090-regulator.c b/drivers/regulator/pv88090-regulator.c
-index 421641175352..789652c9b014 100644
---- a/drivers/regulator/pv88090-regulator.c
-+++ b/drivers/regulator/pv88090-regulator.c
-@@ -157,7 +157,7 @@ static int pv88090_set_current_limit(struct regulator_dev *rdev, int min,
- 	int i;
- 
- 	/* search for closest to maximum */
--	for (i = info->n_current_limits; i >= 0; i--) {
-+	for (i = info->n_current_limits - 1; i >= 0; i--) {
- 		if (min <= info->current_limits[i]
- 			&& max >= info->current_limits[i]) {
- 			return regmap_update_bits(rdev->regmap,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
+index 60ece0a8a2e1..1d2d6bae73cd 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gddr3.c
+@@ -87,7 +87,7 @@ nvkm_gddr3_calc(struct nvkm_ram *ram)
+ 		WR  = (ram->next->bios.timing[2] & 0x007f0000) >> 16;
+ 		/* XXX: Get these values from the VBIOS instead */
+ 		DLL = !(ram->mr[1] & 0x1);
+-		RON = !(ram->mr[1] & 0x300) >> 8;
++		RON = !((ram->mr[1] & 0x300) >> 8);
+ 		break;
+ 	default:
+ 		return -ENOSYS;
 -- 
 2.20.1
 
