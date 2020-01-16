@@ -2,104 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A7813F305
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5506313F310
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:40:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392690AbgAPSjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:39:18 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42928 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387612AbgAPSjN (ORCPT
+        id S2390512AbgAPSjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:39:51 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34684 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730014AbgAPSjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:39:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579199952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=m9QaZpo4ehb9dzb9uGDth8ZZA66JROBihleoP8BqvZ0=;
-        b=L+6b6EUp9Qect+NKD8MzEN0wtBLlXtZQNASb230tRgJSHBQiJlRfUyrk0Y5fdwf7mmVo49
-        F6tbXnErPsNi0lylFXIvC+3wj0Sq8Tcw0eABgqkncFAlEO4gJ5UTt0zXMZoRWfZpScRKU5
-        FOhhyBous4a8inQMh7PIeeanOU9Ds04=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-367-1KLdtB6dNpy1BWHwcYn6Kw-1; Thu, 16 Jan 2020 13:39:08 -0500
-X-MC-Unique: 1KLdtB6dNpy1BWHwcYn6Kw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 422A7800D4C;
-        Thu, 16 Jan 2020 18:39:06 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CE9480617;
-        Thu, 16 Jan 2020 18:39:01 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id D15EA220A24; Thu, 16 Jan 2020 13:39:00 -0500 (EST)
-Date:   Thu, 16 Jan 2020 13:39:00 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200116183900.GC25291@redhat.com>
-References: <20200109112447.GG27035@quack2.suse.cz>
- <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com>
- <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com>
- <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com>
- <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
- <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
- <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
+        Thu, 16 Jan 2020 13:39:44 -0500
+Received: by mail-lj1-f195.google.com with SMTP id z22so23843133ljg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:39:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1NkxS1dJ4///PjDnpw3zqOnAHEcQBbdtsaoyImvFWzw=;
+        b=r+BCuOqk6DerwPHy3jM1T4vB+EtBpq4eqDuj5WdCTLhucLb9mR75gLvie4tcMoZ+2D
+         i+3VQyNa2eU4BZsH/70szQZkzCdCrYxrqyjlgBEOgH7uAus+pGgjIXiN7vvVCHrfO9Q5
+         9qhy//XHIa+yYjpT2/nnrYrzxPrBC+lxIH5VeNgkFUR6SH9DHxGO+v4EeQfEGKt+bNs7
+         ay//+Rz0Z6TZIaVm7dxqzkdC/5oA21DwhzKNoxFngX+gJbhZDOEiqcpmED0KG4wLVb0W
+         UNn7KBzcZvoPOdyxxMEFwQC1cFYQIZlRlxVgqquhyiMFYNoVvBNO6Wt7syx0eTMJZA9I
+         JVAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1NkxS1dJ4///PjDnpw3zqOnAHEcQBbdtsaoyImvFWzw=;
+        b=NB5puHLinrPNHg41Of+1Em1L7qzhx+qaudjgOBa/gQaLZfKTUrn9ECa4H31XvkAP++
+         ZYetStJyMiYpJtr8r9kY89X4P+JnmQGtUbufmNEHBQjp/yV2rCtqVd0YW5i1sffCC1Rk
+         f4KTqCVYQlaONuaDynt4AoR0Jx+R4oLz5wFryKqcI0TP3Utmb1ZlIIeyQCT5znSsQuB9
+         OMuQc2+8Ri8lEQva4OjqZj8C72szFZoFeFfeKDtVzuTKPF9LDJTF64lqIyvjHwVjM0Lw
+         Fsah/0HO1vFUEFTvTDv2G4L4WSwzU1GM11EQ9T6psrOsDbUO1sakNzCOwRagjQHqFYYx
+         E6Hw==
+X-Gm-Message-State: APjAAAVD9FXpu8D/xH29ce30i1SN31ymk+uAWANOy9xUYXq+gkGoZYvx
+        XzeDInYUmmZvq1VvcuvX4cCXCA==
+X-Google-Smtp-Source: APXvYqy1r4axnNLypvtxCDCBusTSJPvQ5bBth2V80eQ2aWR3SDteItjF5tjp00AcOpEuhWvIgDGEAg==
+X-Received: by 2002:a2e:93c5:: with SMTP id p5mr3077169ljh.192.1579199982123;
+        Thu, 16 Jan 2020 10:39:42 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id h10sm11007576ljc.39.2020.01.16.10.39.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Jan 2020 10:39:40 -0800 (PST)
+Date:   Thu, 16 Jan 2020 10:39:32 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     arm@kernel.org, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: Re: [GIT PULL] soc/fsl drivers changes for next(v5.6)
+Message-ID: <20200116183932.qltqdtreeg4d2zq7@localhost>
+References: <1578608351-23289-1-git-send-email-leoyang.li@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <1578608351-23289-1-git-send-email-leoyang.li@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:09:46AM -0800, Dan Williams wrote:
-> On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
-> >
-> > Hi, Dan,
-> >
-> > Dan Williams <dan.j.williams@intel.com> writes:
-> >
-> > > I'm going to take a look at how hard it would be to develop a kpartx
-> > > fallback in udev. If that can live across the driver transition then
-> > > maybe this can be a non-event for end users that already have that
-> > > udev update deployed.
-> >
-> > I just wanted to remind you that label-less dimms still exist, and are
-> > still being shipped.  For those devices, the only way to subdivide the
-> > storage is via partitioning.
+Hi,
+
+On Thu, Jan 09, 2020 at 04:19:11PM -0600, Li Yang wrote:
+> Hi soc maintainers,
 > 
-> True, but if kpartx + udev can make this transparent then I don't
-> think users lose any functionality. They just gain a device-mapper
-> dependency.
+> Please merge the following new changes for soc/fsl drivers.
+> 
+> Regards,
+> Leo
+> 
+> 
+> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+> 
+>   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.6
+> 
+> for you to fetch changes up to 6e62bd36e9ad85a22d92b1adce6a0336ea549733:
+> 
+>   soc: fsl: qe: remove set but not used variable 'mm_gc' (2020-01-08 16:02:48 -0600)
+> 
+> ----------------------------------------------------------------
+> NXP/FSL SoC driver updates for v5.6
+> 
+> QUICC Engine drivers
+> - Improve the QE drivers to be compatible with ARM/ARM64/PPC64
+> architectures
+> - Various cleanups to the QE drivers
 
-So udev rules will trigger when a /dev/pmemX device shows up and run
-kpartx which in turn will create dm-linear devices and device nodes
-will show up in /dev/mapper/pmemXpY.
+This branch contains a cross-section of drivers, including those who are
+normally sent to other maintainers/subsystems. I don't see dependencies that
+make them a requirement/easier to merge through the SoC tree at this time --
+for example the ucc_uart driver updates are mostly independent cleanups.
 
-IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
-systemd unit files are depenent on /dev/pmemXpY, these will still be
-broken out of the box and will have to be modified to use device nodes
-in /dev/mapper/ directory instead. Do I understand it right, Or I missed
-the idea completely.
+Am I missing some aspect here, or should those just be merged through
+drivers/tty as other driver changes there? At the very least, we expect drivers
+that aren't merged through the normal path to have acks from those maintainers.
 
-Vivek
+Mind following up on that? Thanks!
 
+
+-Olof
