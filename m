@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCBD913F26D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:35:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D50913F25D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:34:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436819AbgAPSfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:35:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59130 "EHLO mail.kernel.org"
+        id S2436745AbgAPSey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391759AbgAPRYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:30 -0500
+        id S1729635AbgAPRYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94A22468C;
-        Thu, 16 Jan 2020 17:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE12224684;
+        Thu, 16 Jan 2020 17:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195470;
-        bh=Ca2p8DNoMXob7icSzwKcl58j33wUZmcSn58UVWCZP9k=;
+        s=default; t=1579195473;
+        bh=UvvU2ACvuYDR0k0CFkDRQnXCIO/igM/KM/2IdQE1i8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WAhkSFSB02E79pXX7QAk0nAmiVODBs+ucQfsuBF4gZBPWundYdflf01mpSX5NlUmG
-         SzSCsJ5ZHpQjBq8yAbD4mk9VBto6brgRzDS0Ggkmi9iJmnJk+yrMRpNQZ6Gl6cujXM
-         LzO+oNacrlERuDMU1Eof65npOpKkJRiUFLHc0Mu0=
+        b=mtrupOC15eWroqE8Gz4QSAL5gbfI8ogpc1G2NToM9ow2/F0XgH7TApXU/FPg2h7Kr
+         aCPCK4+7NGxC3R4z802LHK7OyK9xD28ssjuUQktCKjvzqJhUJ7ZHwggclxNMIHBIWO
+         dq9u29cWahlRy+kt4hdHcblgAad1L1C7ZYQFueDQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vladimir Zapolskiy <vz@mleia.com>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 077/371] ARM: dts: lpc32xx: fix ARM PrimeCell LCD controller variant
-Date:   Thu, 16 Jan 2020 12:19:09 -0500
-Message-Id: <20200116172403.18149-20-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 079/371] ARM: dts: lpc32xx: phy3250: fix SD card regulator voltage
+Date:   Thu, 16 Jan 2020 12:19:11 -0500
+Message-Id: <20200116172403.18149-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,32 +44,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vladimir Zapolskiy <vz@mleia.com>
 
-[ Upstream commit 7a0790a4121cbcd111cc537cdc801c46ccb789ee ]
+[ Upstream commit dc141b99fc36cf910a1d8d5ee30f43f2442fd1bd ]
 
-ARM PrimeCell PL111 LCD controller is found on On NXP LPC3230
-and LPC3250 SoCs variants, the original reference in compatible
-property to an older one ARM PrimeCell PL110 is invalid.
+The fixed voltage regulator on Phytec phyCORE-LPC3250 board, which
+supplies SD/MMC card's power, has a constant output voltage level
+of either 3.15V or 3.3V, the actual value depends on JP4 position,
+the power rail is referenced as VCC_SDIO in the board hardware manual.
 
-Fixes: e04920d9efcb3 ("ARM: LPC32xx: DTS files for device tree conversion")
+Fixes: d06670e96267 ("arm: dts: phy3250: add SD fixed regulator")
 Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/lpc3250-phy3250.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index 9f9386c926d1..a08ebc950923 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -139,7 +139,7 @@
+diff --git a/arch/arm/boot/dts/lpc3250-phy3250.dts b/arch/arm/boot/dts/lpc3250-phy3250.dts
+index b7bd3a110a8d..dd0bdf765599 100644
+--- a/arch/arm/boot/dts/lpc3250-phy3250.dts
++++ b/arch/arm/boot/dts/lpc3250-phy3250.dts
+@@ -49,8 +49,8 @@
+ 		sd_reg: regulator@2 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "sd_reg";
+-			regulator-min-microvolt = <1800000>;
+-			regulator-max-microvolt = <1800000>;
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
+ 			gpio = <&gpio 5 5 0>;
+ 			enable-active-high;
  		};
- 
- 		clcd: clcd@31040000 {
--			compatible = "arm,pl110", "arm,primecell";
-+			compatible = "arm,pl111", "arm,primecell";
- 			reg = <0x31040000 0x1000>;
- 			interrupts = <14 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clk LPC32XX_CLK_LCD>;
 -- 
 2.20.1
 
