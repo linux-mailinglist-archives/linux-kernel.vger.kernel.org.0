@@ -2,85 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D8D13F445
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FADA13F2A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436743AbgAPSsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:48:33 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:52606 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389726AbgAPRJp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:09:45 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1is8e8-0006kl-62; Thu, 16 Jan 2020 18:09:28 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id 9EA5C101226; Thu, 16 Jan 2020 18:09:27 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, luto@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, peterz@infradead.org,
-        fenghua.yu@intel.com, vineela.tummalapalli@intel.com,
-        linux-kernel@vger.kernel.org
-Cc:     DavidWang@zhaoxin.com, CooperYan@zhaoxin.com,
-        QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com
-Subject: Re: [PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2
-In-Reply-To: <1579146434-2668-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-References: <1579146434-2668-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-Date:   Thu, 16 Jan 2020 18:09:27 +0100
-Message-ID: <87r1zzuy48.fsf@nanos.tec.linutronix.de>
+        id S2392979AbgAPSgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731064AbgAPRYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:07 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E86E92467E;
+        Thu, 16 Jan 2020 17:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579195446;
+        bh=H1T6LjV2D4eXJEq/ijMOoL4ohIrsq8dhmZAkozEToKc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yJn33VrFJLtWXothSygmNxHi7B+H+HGp+C0sHXMz3/HCe77KS1v2HgCQt89zlDtSt
+         /+w+/xDf6z40ouQdGcy5R6bM5LcZcR1ZWyFuQGHkMX+OA6LM3P2t2AUoEimupwgc/Q
+         WbFZjP1HxBM2KVMhaStOkyMJtRmXVvjlzQbXqA1A=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 058/371] media: s5p-jpeg: Correct step and max values for V4L2_CID_JPEG_RESTART_INTERVAL
+Date:   Thu, 16 Jan 2020 12:18:50 -0500
+Message-Id: <20200116172403.18149-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony,
+From: Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>
 
-Tony W Wang-oc <TonyWWang-oc@zhaoxin.com> writes:
+[ Upstream commit 19c624c6b29e244c418f8b44a711cbf5e82e3cd4 ]
 
-> @@ -1023,6 +1023,7 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
->  #define MSBDS_ONLY		BIT(5)
->  #define NO_SWAPGS		BIT(6)
->  #define NO_ITLB_MULTIHIT	BIT(7)
-> +#define NO_SPECTRE_V2		BIT(8)
->  
->  #define VULNWL(_vendor, _family, _model, _whitelist)	\
->  	{ X86_VENDOR_##_vendor, _family, _model, X86_FEATURE_ANY, _whitelist }
-> @@ -1084,6 +1085,10 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
->  	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
->  	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
->  	VULNWL_HYGON(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
-> +
-> +	/* Zhaoxin Family 7 */
-> +	VULNWL(CENTAUR,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
-> +	VULNWL(ZHAOXIN,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
->  	{}
->  };
->  
-> @@ -1116,7 +1121,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
->  		return;
->  
->  	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
-> -	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-> +
-> +	if (!cpu_matches(NO_SPECTRE_V2))
-> +		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
+This commit corrects max and step values for v4l2 control for
+V4L2_CID_JPEG_RESTART_INTERVAL. Max should be 0xffff and step should be 1.
+It was found by using v4l2-compliance tool and checking result of
+VIDIOC_QUERY_EXT_CTRL/QUERYMENU test.
+Previously it was complaining that step was bigger than difference
+between max and min.
 
-That's way better. But as you might have noticed yourself this conflicts
-with the other patch which excludes these machines from the SWAPGS bug.
+Fixes: 15f4bc3b1f42 ("[media] s5p-jpeg: Add JPEG controls support")
 
-Granted it's a trivial conflict, but maintainers are not there to mop up
-the mess others create. So the right thing here is to resend both
-patches as a patch series with the conflict properly resolved.
+Signed-off-by: Pawe? Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 4568e68e15fa..85a5e33600c0 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2005,7 +2005,7 @@ static int s5p_jpeg_controls_create(struct s5p_jpeg_ctx *ctx)
+ 
+ 		v4l2_ctrl_new_std(&ctx->ctrl_handler, &s5p_jpeg_ctrl_ops,
+ 				  V4L2_CID_JPEG_RESTART_INTERVAL,
+-				  0, 3, 0xffff, 0);
++				  0, 0xffff, 1, 0);
+ 		if (ctx->jpeg->variant->version == SJPEG_S5P)
+ 			mask = ~0x06; /* 422, 420 */
+ 	}
+-- 
+2.20.1
 
-        tglx
