@@ -2,76 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1870913FBF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C60613FC27
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389691AbgAPWCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 17:02:53 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:44979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387539AbgAPWCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:02:53 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47zJ8q4lk1z9sSn;
-        Fri, 17 Jan 2020 09:02:51 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579212171;
-        bh=pv8Q3HOS38HCAHqBfnCQ+EVnANNpsImx4iZ8jwZYnXg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=cWuckLUjN8I4uSwaAr0c3c74m+C6/n1WaOYmH/Xm4fc3xGz9sfh8RLtE6UWtPq0J6
-         6Q9DkQfCsh52jokK6pqzPsD+WFIOCDdT7GxtpdFfNvh6XdKZoKDNEMxZsN988TKLo6
-         RszM57KT7ZGOVdiyXnNECc7KC39yPpMUMXhTrHL50ACacGRwUiFQQhJi8ly5VuOyBv
-         lUP1c89HiI46bPyz8QwUAh+H4i0WWQcvWFbOmE/T5D5X8HA6mCfpFFOQjSZeroNUtf
-         eKzN4iMD+e9+rj8HYnA+zG2cDciNtQ05728gTTMguJnavHMQpc+druZv+CBPpP6uVn
-         2ouWRYKh1kdBA==
-Date:   Fri, 17 Jan 2020 09:02:48 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the selinux tree
-Message-ID: <20200117090248.392f40cb@canb.auug.org.au>
+        id S2389718AbgAPW0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 17:26:08 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.35]:24805 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729319AbgAPW0I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 17:26:08 -0500
+X-Greylist: delayed 1358 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 17:26:07 EST
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 9D3BD1F93
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 16:03:29 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sDEfiaO5qNwe7sDEfiBDTS; Thu, 16 Jan 2020 16:03:29 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=lJqbOVGeD356I6fIe5iirDZBONX68UGjE9KZh7u5oGg=; b=aWzpkYr+XHoNFKlaSNzO+UXLZZ
+        fuXnIZFQyXXrqcldKm/2ji1V6SAct69fFyXrBXeg7DVIefdRIQICEGlgT808cM5xUVN9B9jBvmfrP
+        PVpJxi5Q7VK/lJ9YvgzhA8U3n/K/J3wgIpFHTSo/GDamYhIFLe+2qz5OJIgoauc2/IskXvvyxsN6H
+        N4B9Ulm2locWbjIebP7r4PEqfdXrlRhdE8CpnJhIt9CihJjJY0mVxRXL9LUlKq2z6Y2P1O3j4SDPf
+        8ZLE35/7SbDuXJ9c4EYXbvOL3FlwQlFHyNmN4D9vqWgIvXfKiGnEIzTI3k/EIfvZFxFf4A3zp+lwe
+        +AXwiraA==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:44004 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1isDEe-000egY-Bn; Thu, 16 Jan 2020 16:03:28 -0600
+Date:   Thu, 16 Jan 2020 16:03:27 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] USB: serial: garmin_gps: Use flexible-array member
+Message-ID: <20200116220327.GA12537@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aoVM0yRI4n8jIqPaFIoDWjX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1isDEe-000egY-Bn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:44004
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/aoVM0yRI4n8jIqPaFIoDWjX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+presence of a "variable length array":
 
-Hi all,
+struct something {
+    int length;
+    u8 data[1];
+};
 
-Commit
+struct something *instance;
 
-  6bae00459f0c ("selinux: do not allocate ancillary buffer on first load")
+instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+instance->length = size;
+memcpy(instance->data, source, size);
 
-is missing a Signed-off-by from its committer.
+There is also 0-byte arrays. Both cases pose confusion for things like
+sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+to declare variable-length types such as the one above is a flexible array
+member[2] which need to be the last member of a structure and empty-sized:
 
---=20
-Cheers,
-Stephen Rothwell
+struct something {
+        int stuff;
+        u8 data[];
+};
 
---Sig_/aoVM0yRI4n8jIqPaFIoDWjX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Also, by making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+unadvertenly introduced[3] to the codebase from now on.
 
------BEGIN PGP SIGNATURE-----
+[1] https://github.com/KSPP/linux/issues/21
+[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4g3YgACgkQAVBC80lX
-0GzYrAf/XbUUZrpbMXNJH0bUpse3RM/zNAdAYlY4/KSp2a3NEwtJyOSNAt8DcLXN
-8y8WLyWIxlhS4UT/9LSnBix7NpsZM+Iesy01qEbAMoeQ1Y7/sMeD6Dyu2Uu33kSb
-AtXVTeqOMs6go9rgA6SAFsnXvLYHc08cJl07HfdGqLzY4A6Em1Aj/Gce2PucnPLH
-hsZ/2w6hINnuf0FhOSvy4X/nm24WHZO435ZTD4o1YSYi2kNr5ieHqrkd6E4quYKa
-mGw5cFlwX+j5S+gWUUrSndap5tmrSFNFsk0tjFabPWLJImkGW3OFgdOos9tI3qGj
-/rkqMC7ajtEW8RWrLzZtFviqV7AkYA==
-=GTbr
------END PGP SIGNATURE-----
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/serial/garmin_gps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---Sig_/aoVM0yRI4n8jIqPaFIoDWjX--
+diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
+index 633550ec3025..ffd984142171 100644
+--- a/drivers/usb/serial/garmin_gps.c
++++ b/drivers/usb/serial/garmin_gps.c
+@@ -104,7 +104,7 @@ struct garmin_packet {
+ 	int               seq;
+ 	/* the real size of the data array, always > 0 */
+ 	int               size;
+-	__u8              data[1];
++	__u8              data[];
+ };
+ 
+ /* structure used to keep the current state of the driver */
+-- 
+2.23.0
+
