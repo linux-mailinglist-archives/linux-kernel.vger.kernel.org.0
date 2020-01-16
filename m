@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E576F13EE31
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D2313EE91
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393415AbgAPRjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:39:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54166 "EHLO mail.kernel.org"
+        id S2395074AbgAPSJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404926AbgAPRiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:38:21 -0500
+        id S2393336AbgAPRiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C175246C3;
-        Thu, 16 Jan 2020 17:38:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD8DC246E1;
+        Thu, 16 Jan 2020 17:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196300;
-        bh=mwhEdmkbM4fEVCkSGlL/oVNz+TJTmE1F+zNFLP58JAo=;
+        s=default; t=1579196305;
+        bh=ZqBmkNKNIAGdrCvpviL0rMZ9lGAJ38uw6Vtvogqa+MA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZPvTlbZZ/syx30DLB0QTbO024K8h+0dPPeTi/TcOryEqfXkSJeX3R5QB/tGqOqu7D
-         wZ6wCXSCoh2T3VD52KPBblfB1756sqyabhdEyeBCfVKtL6L3sd+LeWm8w0YqzhY+fU
-         KiANTn5rviG/xFiHVTj9b5oRjgBWPusLz1tnEkwg=
+        b=eT0Hhc1FUQFF+UKAqfl3zOC4dXhhn4Gmlz2C55dbK005x/JrJiZbBPuHj/Vef61yt
+         2ikqrNRQUOObtL247Y5sYk8eh42bWZ6tTLNEt2gWWkrfdIJmZsSOY5oMfKmVd/1HGB
+         225hc/z8e5DzBWyZ5G0E2FctOXtykMsKn/pwjw9A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Sperl <kernel@martin.sperl.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 111/251] spi: bcm2835aux: fix driver to not allow 65535 (=-1) cs-gpios
-Date:   Thu, 16 Jan 2020 12:34:20 -0500
-Message-Id: <20200116173641.22137-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 114/251] ARM: pxa: ssp: Fix "WARNING: invalid free of devm_ allocated data"
+Date:   Thu, 16 Jan 2020 12:34:23 -0500
+Message-Id: <20200116173641.22137-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -47,59 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Sperl <kernel@martin.sperl.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 509c583620e9053e43d611bf1614fc3d3abafa96 ]
+[ Upstream commit 9ee8578d953023cc57e7e736ae48502c707c0210 ]
 
-The original driver by default defines num_chipselects as -1.
-This actually allicates an array of 65535 entries in
-of_spi_register_master.
+Since commit 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
+kfree, iounmap, clk_put etc are not needed anymore in remove path.
 
-There is a side-effect for buggy device trees that (contrary to
-dt-binding documentation) have no cs-gpio defined.
-
-This mode was never supported by the driver due to limitations
-of native cs and additional code complexity and is explicitly
-not stated to be implemented.
-
-To keep backwards compatibility with such buggy DTs we limit
-the number of chip_selects to 1, as for all practical purposes
-it is only ever realistic to use a single chip select in
-native cs mode without negative side-effects.
-
-Fixes: 1ea29b39f4c812ec ("spi: bcm2835aux: add bcm2835 auxiliary spi device...")
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+[ commit message spelling fix ]
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-bcm2835aux.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/plat-pxa/ssp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index 5c89bbb05441..e075712c501e 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -416,7 +416,18 @@ static int bcm2835aux_spi_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, master);
- 	master->mode_bits = (SPI_CPOL | SPI_CS_HIGH | SPI_NO_CS);
- 	master->bits_per_word_mask = SPI_BPW_MASK(8);
--	master->num_chipselect = -1;
-+	/* even though the driver never officially supported native CS
-+	 * allow a single native CS for legacy DT support purposes when
-+	 * no cs-gpio is configured.
-+	 * Known limitations for native cs are:
-+	 * * multiple chip-selects: cs0-cs2 are all simultaniously asserted
-+	 *     whenever there is a transfer -  this even includes SPI_NO_CS
-+	 * * SPI_CS_HIGH: is ignores - cs are always asserted low
-+	 * * cs_change: cs is deasserted after each spi_transfer
-+	 * * cs_delay_usec: cs is always deasserted one SCK cycle after
-+	 *     a spi_transfer
-+	 */
-+	master->num_chipselect = 1;
- 	master->transfer_one = bcm2835aux_spi_transfer_one;
- 	master->handle_err = bcm2835aux_spi_handle_err;
- 	master->prepare_message = bcm2835aux_spi_prepare_message;
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index b92673efffff..97bd43c16cd8 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -230,18 +230,12 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 
+ static int pxa_ssp_remove(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct ssp_device *ssp;
+ 
+ 	ssp = platform_get_drvdata(pdev);
+ 	if (ssp == NULL)
+ 		return -ENODEV;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, resource_size(res));
+-
+-	clk_put(ssp->clk);
+-
+ 	mutex_lock(&ssp_lock);
+ 	list_del(&ssp->node);
+ 	mutex_unlock(&ssp_lock);
 -- 
 2.20.1
 
