@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D130C13EF46
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F1B13EF3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395296AbgAPSNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:13:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49172 "EHLO mail.kernel.org"
+        id S2405063AbgAPRgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404823AbgAPRfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:35:03 -0500
+        id S2404908AbgAPRfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D3F3246A1;
-        Thu, 16 Jan 2020 17:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1564246BA;
+        Thu, 16 Jan 2020 17:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196102;
-        bh=Elx75ZoziRcWQxYB+5OsFGbfB+A2fuv9iTxGFqKZcIo=;
+        s=default; t=1579196106;
+        bh=Ov1QD+YipGZ+IgMp85mXzTlYyLosc1Y4z2X4IcfjmdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tURNdOMMkAEIqCshP6LD33tmo8oAUultY+T77VhPJ/beSJ06531e1UMrfItKKE2IS
-         Kf+CMjKL09VPCFe1Se3GHpiUN237AY7Ow90yHLAbhrJeb2WLYSCe/i2ToGnkEnbUE3
-         8g3ZDtqJN2BKJUL6XzJ+cL0Vi6mCZRifZPsQzq4k=
+        b=0zKTI5APX7SiKpm9Ys8rPpxsS0+yGfycl0mcLgvFBjuIhHtQE9034hmDW8iK/MCVM
+         tobzP8wvPcMbhYK18XFjD18W8a8DUOD4nW0q9ZfCH0CCHMuDoEHO4YAXB5La4p46ob
+         9Upm/6Jayvr7PSvgeUcDauO9T2zBKbq19yj+HZzI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 013/251] net: phy: Fix not to call phy_resume() if PHY is not attached
-Date:   Thu, 16 Jan 2020 12:30:47 -0500
-Message-Id: <20200116173445.21385-13-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 016/251] pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
+Date:   Thu, 16 Jan 2020 12:30:50 -0500
+Message-Id: <20200116173445.21385-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -43,66 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit ef1b5bf506b1f0ee3edc98533e1f3ecb105eb46a ]
+[ Upstream commit 884fa25fb6e5e63ab970d612a628313bb68f37cc ]
 
-This patch fixes an issue that mdio_bus_phy_resume() doesn't call
-phy_resume() if the PHY is not attached.
+The qspi_data4_b_mux[] array contains pin marks for the clock and chip
+select pins.  The qspi_data4_b_pins[] array rightfully does not contain
+the corresponding pin numbers, as the control pins are provided by a
+separate group (qspi_ctrl_b).
 
-Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 3289fd910c4a..487d0372a444 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -80,7 +80,7 @@ static LIST_HEAD(phy_fixup_list);
- static DEFINE_MUTEX(phy_fixup_lock);
- 
- #ifdef CONFIG_PM
--static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
-+static bool mdio_bus_phy_may_suspend(struct phy_device *phydev, bool suspend)
- {
- 	struct device_driver *drv = phydev->mdio.dev.driver;
- 	struct phy_driver *phydrv = to_phy_driver(drv);
-@@ -92,10 +92,11 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
- 	/* PHY not attached? May suspend if the PHY has not already been
- 	 * suspended as part of a prior call to phy_disconnect() ->
- 	 * phy_detach() -> phy_suspend() because the parent netdev might be the
--	 * MDIO bus driver and clock gated at this point.
-+	 * MDIO bus driver and clock gated at this point. Also may resume if
-+	 * PHY is not attached.
- 	 */
- 	if (!netdev)
--		return !phydev->suspended;
-+		return suspend ? !phydev->suspended : phydev->suspended;
- 
- 	/* Don't suspend PHY if the attached netdev parent may wakeup.
- 	 * The parent may point to a PCI device, as in tg3 driver.
-@@ -125,7 +126,7 @@ static int mdio_bus_phy_suspend(struct device *dev)
- 	if (phydev->attached_dev && phydev->adjust_link)
- 		phy_stop_machine(phydev);
- 
--	if (!mdio_bus_phy_may_suspend(phydev))
-+	if (!mdio_bus_phy_may_suspend(phydev, true))
- 		return 0;
- 
- 	return phy_suspend(phydev);
-@@ -136,7 +137,7 @@ static int mdio_bus_phy_resume(struct device *dev)
- 	struct phy_device *phydev = to_phy_device(dev);
- 	int ret;
- 
--	if (!mdio_bus_phy_may_suspend(phydev))
-+	if (!mdio_bus_phy_may_suspend(phydev, false))
- 		goto no_resume;
- 
- 	ret = phy_resume(phydev);
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index baa98d7fe947..fcf731994811 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -3136,8 +3136,7 @@ static const unsigned int qspi_data4_b_pins[] = {
+ 	RCAR_GP_PIN(6, 4),
+ };
+ static const unsigned int qspi_data4_b_mux[] = {
+-	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
+-	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
++	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
+ };
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
 -- 
 2.20.1
 
