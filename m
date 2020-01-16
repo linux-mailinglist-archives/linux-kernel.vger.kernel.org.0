@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6997313E297
+	by mail.lfdr.de (Postfix) with ESMTP id DD48D13E298
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:57:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbgAPQ5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:57:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43664 "EHLO mail.kernel.org"
+        id S2387422AbgAPQ5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:57:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733307AbgAPQ45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:57 -0500
+        id S1729252AbgAPQ5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29AF52467E;
-        Thu, 16 Jan 2020 16:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 347742467C;
+        Thu, 16 Jan 2020 16:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193817;
-        bh=o9D02xT1OERTo13eksDUa5Rx6rszZDH9yPUsA+RIBYE=;
+        s=default; t=1579193821;
+        bh=PfQMiGR9EeuM30iGR1FkAL4KQGxNESmN0FOpdtWAy3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pQwnD516Ug8e6PtVP1gsQnBta7eDMZKBWY3j4ar0jQADGCMZkn/1e0lXc68PZeEdX
-         8SEOfZPwUYMnan4AIPHC7VPbmR7ssbtCNyM8pgoJkKh/8hXIzlbY7W8Ht9s2uM6XGP
-         LSgdGRDP2W0ZLrq4gNtjH36qv+IemmwVPnR2xWSQ=
+        b=gtFiP3fDKs7RehezhbXWXGaJiv6EOTgxtzc/jj13Hkyer054qZiG3X8LW7GBF0J/0
+         ACbIgHf/m7VP3erwMwSngCp1kDkZ1tjTKH/rvmi4jGAvjK+VHF81ya2LSjJVC/fKX4
+         dzmnx5kfjXvhvqyZdjbwBi2yN2fhFdyLOhRfIiNg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 077/671] pinctrl: sh-pfc: r8a77995: Remove bogus SEL_PWM[0-3]_3 configurations
-Date:   Thu, 16 Jan 2020 11:45:08 -0500
-Message-Id: <20200116165502.8838-77-sashal@kernel.org>
+Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 080/671] net: hns3: fix error handling int the hns3_get_vector_ring_chain
+Date:   Thu, 16 Jan 2020 11:45:11 -0500
+Message-Id: <20200116165502.8838-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -44,43 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit e28dc3f09c9d2555a9bd982f0847988591052226 ]
+[ Upstream commit cda69d244585bc4497d3bb878c22fe2b6ad647c1 ]
 
-While the SEL_PWM[0-3] fields in the Module Select Register 0 support 4
-possible configurations per PWM pin, only the first 3 are valid.
+When hns3_get_vector_ring_chain() failed in the
+hns3_nic_init_vector_data(), it should do the error handling instead
+of return directly.
 
-Replace the invalid and unused configurations for SEL_PWM[0-3]_3 by
-dummies.
+Also, cur_chain should be freed instead of chain and head->next should
+be set to NULL in error handling of hns3_get_vector_ring_chain.
 
-Fixes: 794a6711764658a1 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This patch fixes them.
+
+Fixes: 73b907a083b8 ("net: hns3: bugfix for buffer not free problem during resetting")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index adade5b7ffbc..337c80bde8f9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -391,10 +391,10 @@ FM(IP12_31_28)	IP12_31_28 \
- #define MOD_SEL0_27		FM(SEL_MSIOF3_0)	FM(SEL_MSIOF3_1)
- #define MOD_SEL0_26		FM(SEL_HSCIF3_0)	FM(SEL_HSCIF3_1)
- #define MOD_SEL0_25		FM(SEL_SCIF4_0)		FM(SEL_SCIF4_1)
--#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		FM(SEL_PWM0_3)
--#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		FM(SEL_PWM1_3)
--#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		FM(SEL_PWM2_3)
--#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		FM(SEL_PWM3_3)
-+#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		F_(0, 0)
-+#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		F_(0, 0)
-+#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		F_(0, 0)
-+#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		F_(0, 0)
- #define MOD_SEL0_15		FM(SEL_IRQ_0_0)		FM(SEL_IRQ_0_1)
- #define MOD_SEL0_14		FM(SEL_IRQ_1_0)		FM(SEL_IRQ_1_1)
- #define MOD_SEL0_13		FM(SEL_IRQ_2_0)		FM(SEL_IRQ_2_1)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 9df807ec8c84..10fa7f5df57e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2605,9 +2605,10 @@ static int hns3_get_vector_ring_chain(struct hns3_enet_tqp_vector *tqp_vector,
+ 	cur_chain = head->next;
+ 	while (cur_chain) {
+ 		chain = cur_chain->next;
+-		devm_kfree(&pdev->dev, chain);
++		devm_kfree(&pdev->dev, cur_chain);
+ 		cur_chain = chain;
+ 	}
++	head->next = NULL;
+ 
+ 	return -ENOMEM;
+ }
+@@ -2679,7 +2680,7 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 		ret = hns3_get_vector_ring_chain(tqp_vector,
+ 						 &vector_ring_chain);
+ 		if (ret)
+-			return ret;
++			goto map_ring_fail;
+ 
+ 		ret = h->ae_algo->ops->map_ring_to_vector(h,
+ 			tqp_vector->vector_irq, &vector_ring_chain);
 -- 
 2.20.1
 
