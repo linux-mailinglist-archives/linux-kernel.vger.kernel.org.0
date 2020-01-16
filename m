@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD1413F090
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC9813F0A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404039AbgAPR10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
+        id S2436551AbgAPSXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:23:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392438AbgAPR1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:15 -0500
+        id S2392450AbgAPR1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1424246E4;
-        Thu, 16 Jan 2020 17:27:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CB90246D3;
+        Thu, 16 Jan 2020 17:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195634;
-        bh=IyVJUUC11dLAa8QrMgvrk1esYZLPoNn9NBnYfWYJU3E=;
+        s=default; t=1579195637;
+        bh=8ulGqGGgG/KSl86q7oAlWShVtHvVkhPD+22UvMfrX/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hWC/8f6jJxMzRiewypC+dKDJ8UBiL3JHgDqwI53Qp5jSnecCKBkPT4GLQIoRC5ETH
-         E2996D4XYaAh5T8tbeeOVx8gHZ3u3+qC5ngc+8VnI2CSx9vgmmtjCfajCXI5m/pwCP
-         0n5Piv8nf7d74QLUMDWq/cfpJlOjnYbUrSk4+aWQ=
+        b=kKnR8yxAGl2TMXtgW5W9Y5YV18p+77jaHz8KsmXFhs/NIRr/3ggNGzczLZX2QQlM8
+         R7/650OK2FRTlAv9uuUWvRDGJdGZOCH985kfPSvOMQo6ISYQpxmw2jVPo8PBZVePXS
+         JUgj7itcrdn8E8aKalq4rzm21zNnWzHCou81m2BQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.14 201/371] kdb: do a sanity check on the cpu in kdb_per_cpu()
-Date:   Thu, 16 Jan 2020 12:21:13 -0500
-Message-Id: <20200116172403.18149-144-sashal@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Javi Merino <javi.merino@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 203/371] thermal: cpu_cooling: Actually trace CPU load in thermal_power_cpu_get_power
+Date:   Thu, 16 Jan 2020 12:21:15 -0500
+Message-Id: <20200116172403.18149-146-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,36 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit b586627e10f57ee3aa8f0cfab0d6f7dc4ae63760 ]
+[ Upstream commit bf45ac18b78038e43af3c1a273cae4ab5704d2ce ]
 
-The "whichcpu" comes from argv[3].  The cpu_online() macro looks up the
-cpu in a bitmap of online cpus, but if the value is too high then it
-could read beyond the end of the bitmap and possibly Oops.
+The CPU load values passed to the thermal_power_cpu_get_power
+tracepoint are zero for all CPUs, unless, unless the
+thermal_power_cpu_limit tracepoint is enabled too:
 
-Fixes: 5d5314d6795f ("kdb: core for kgdb back end (1 of 2)")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+  irq/41-rockchip-98    [000] ....   290.972410: thermal_power_cpu_get_power:
+  cpus=0000000f freq=1800000 load={{0x0,0x0,0x0,0x0}} dynamic_power=4815
+
+vs
+
+  irq/41-rockchip-96    [000] ....    95.773585: thermal_power_cpu_get_power:
+  cpus=0000000f freq=1800000 load={{0x56,0x64,0x64,0x5e}} dynamic_power=4959
+  irq/41-rockchip-96    [000] ....    95.773596: thermal_power_cpu_limit:
+  cpus=0000000f freq=408000 cdev_state=10 power=416
+
+There seems to be no good reason for omitting the CPU load information
+depending on another tracepoint. My guess is that the intention was to
+check whether thermal_power_cpu_get_power is (still) enabled, however
+'load_cpu != NULL' already indicates that it was at least enabled when
+cpufreq_get_requested_power() was entered, there seems little gain
+from omitting the assignment if the tracepoint was just disabled, so
+just remove the check.
+
+Fixes: 6828a4711f99 ("thermal: add trace events to the power allocator governor")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Javi Merino <javi.merino@kernel.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/kdb/kdb_main.c | 2 +-
+ drivers/thermal/cpu_cooling.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index 993db6b2348e..15d902daeef6 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -2634,7 +2634,7 @@ static int kdb_per_cpu(int argc, const char **argv)
- 		diag = kdbgetularg(argv[3], &whichcpu);
- 		if (diag)
- 			return diag;
--		if (!cpu_online(whichcpu)) {
-+		if (whichcpu >= nr_cpu_ids || !cpu_online(whichcpu)) {
- 			kdb_printf("cpu %ld is not online\n", whichcpu);
- 			return KDB_BADCPUNUM;
- 		}
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index 908a8014cf76..aed995ec2c90 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -514,7 +514,7 @@ static int cpufreq_get_requested_power(struct thermal_cooling_device *cdev,
+ 			load = 0;
+ 
+ 		total_load += load;
+-		if (trace_thermal_power_cpu_limit_enabled() && load_cpu)
++		if (load_cpu)
+ 			load_cpu[i] = load;
+ 
+ 		i++;
 -- 
 2.20.1
 
