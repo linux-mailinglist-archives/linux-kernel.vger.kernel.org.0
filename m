@@ -2,105 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B0A413DEDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:34:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12FF413DEF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgAPPed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:34:33 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47002 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726151AbgAPPed (ORCPT
+        id S1726973AbgAPPiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:38:00 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34769 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgAPPiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:34:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579188871;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kK6Km6s43/DeUxpqxgZHiJ00km9z23ARb6cNGp/MiO8=;
-        b=B7zGVFYyekbp5ZfYtaG9QBMZakdMzfjk3UH5jaIqhgHf3qlahSmcnZnke5+y5Tuxdz7/xy
-        zY4AXSZuobkcUTZhz6qcX+1QT/dap6GqD5HUqONnymDKwZEvFea6VzW6dRqfuK83uDTBZD
-        z+srj6mYGIuHLcgQUEFaBAAb3zX5G1Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-SKgw51c0PAWxiyIY-SCsiA-1; Thu, 16 Jan 2020 10:34:28 -0500
-X-MC-Unique: SKgw51c0PAWxiyIY-SCsiA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39D0A1005516;
-        Thu, 16 Jan 2020 15:34:22 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22EA65C28F;
-        Thu, 16 Jan 2020 15:34:21 +0000 (UTC)
-Subject: Re: [PATCH v2] watchdog: Fix possible soft lockup warning at bootup
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robert Richter <rrichter@marvell.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20200103151032.19590-1-longman@redhat.com>
- <87sgkgw3xq.fsf@nanos.tec.linutronix.de>
- <87blr3wrqw.fsf@nanos.tec.linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <bf71e29f-ae5a-aad0-758d-53293e2105b4@redhat.com>
-Date:   Thu, 16 Jan 2020 10:34:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 16 Jan 2020 10:38:00 -0500
+Received: by mail-ua1-f68.google.com with SMTP id 1so7791474uao.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NzUD1zwU0rAYKh4GeaUEkzHO0hgVckdO3UlIrWCkJwk=;
+        b=ckWYYhKcKb2dT7sxw5ofXkMuaW2T6G0oFm+4I1V6e8zX5MefXp/STLeCkdZBNxk9MI
+         neLrSF/Zm+xkeIuUx/p6cIwda217LAvMkqRheBadA9nNimTzyZTSrfmaqOR/CMoqkegg
+         CsFoks/mMk2fK8FTgIa5gL7BHICvFOGcuj+LkBtrD96/RZcjo1sqeEpKX/vgbz5R7ufx
+         y09r1/bp77UukJ7tvo0ZDo19yuZ7IP4uvq8igqiZatyxQjyY5x9Vc5WRgOn1D7EqO6EU
+         xIPvGJt7CgkVt3kAyfGVCrGwBQ1+yzgUzkdriZQppQLw8BZT/wupfBCRLzxV1Kd0utFa
+         0qqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NzUD1zwU0rAYKh4GeaUEkzHO0hgVckdO3UlIrWCkJwk=;
+        b=Gm5UbdbaX5cOZHsUXtPjf6QBGxUIhLvhu4iwg/N3KqNg6KhvYbCQDPCDDhCP+AXsY4
+         cTRGrN2SzICkQyhM237/X63J6ajMHL3LSPw9RXcyDZ6h19E+7fnkN73pYt0PMymKJ1v6
+         4im4uVyKxvsBwIe83gNGdglHtwxkdp77aiX1LrKYbwg+VGipErR0KX6VY9CS8oJ1My4e
+         b+UXhUxQGeCXt3p57b10p7bZtKCDivTi7+7XDjFKTMTPG0yrJWGaWrNpc+kduWHxTXHz
+         ddSYPHdyyrhJCx6HvAmVNwbbK0of8gDp0i/EeTY6rXkFUG6x+0qoYmXewFJnskvrWQ2U
+         nTqg==
+X-Gm-Message-State: APjAAAXxomJlLe8dXB4W6dAsF2GB3jxG/f8GqnI5McezbCcNrzHZCt4H
+        d0iOPqR8nUNaDbrminYMegb4+tlQQOxonuGtPENyuQ==
+X-Google-Smtp-Source: APXvYqxIHUm57SaE/1DYL+57dh4bMqtXOA4yP6vvoIGdM8To9YtT6rURJfc0cAe4IX6fBKyQ0iXse1GSG+37snCem2w=
+X-Received: by 2002:ab0:5510:: with SMTP id t16mr19495257uaa.15.1579189079583;
+ Thu, 16 Jan 2020 07:37:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87blr3wrqw.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <1578893602-14395-1-git-send-email-Anson.Huang@nxp.com> <1578893602-14395-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1578893602-14395-2-git-send-email-Anson.Huang@nxp.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 16 Jan 2020 16:37:23 +0100
+Message-ID: <CAPDyKFqbWrj5XruJW3ooQSzw51YAg2ukrjdBdkBx1szTU=5DJA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/7] dt-bindings: mmc: fsl-imx-esdhc: add i.MX8MP
+ compatible string
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        rjones@gateworks.com,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        sebastien.szymanski@armadeus.com,
+        Aisheng Dong <aisheng.dong@nxp.com>, richard.hu@technexion.com,
+        angus@akkea.ca, cosmin.stoica@nxp.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rabeeh Khoury <rabeeh@solid-run.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>, jun.li@nxp.com,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dmaengine@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-spi@vger.kernel.org, dl-linux-imx <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 6:44 AM, Thomas Gleixner wrote:
-> Thomas Gleixner <tglx@linutronix.de> writes:
+On Mon, 13 Jan 2020 at 06:37, Anson Huang <Anson.Huang@nxp.com> wrote:
 >
-> Added ARM64 and ThunderX folks 
+> Add compatible string for imx8mp
 >
->> Waiman Long <longman@redhat.com> writes:
->>> By adding some instrumentation code, it was found that for cpu 14,
->>> watchdog_enable() was called early with a timestamp of 1. That activates
->>> the watchdog time checking logic. It was also found that the monotonic
->>> time measured during the smp_init() phase runs much slower than the
->>> real elapsed time as shown by the below debug printf output:
->>>
->>>   [    1.138522] run_queues, watchdog_timer_fn: now =  170000000
->>>   [   25.519391] run_queues, watchdog_timer_fn: now = 4170000000
->>>
->>> In this particular case, it took about 24.4s of elapsed time for the
->>> clock to advance 4s which is the soft expiration time that is required
->>> to trigger the calling of watchdog_timer_fn(). That clock slowdown
->>> stopped once the smp_init() call was done and the clock time ran at
->>> the same rate as the elapsed time afterward.
-> And looking at this with a more awake brain, the root cause is pretty
-> obvious.
->
-> sched_clock() advances by 24 seconds, but clock MONOTONIC on which the
-> watchdog timer is based does not. As the timestamps you printed have 7
-> trailing zeros, it's pretty clear that timekeeping is still jiffies
-> based at this point and HZ is set to 100.
->
-> So while bringing up the non-boot CPUs the boot CPU loses ~2000 timer
-> interrupts. That needs to be fixed and not papered over.
->
-You are right that the root-causing effort wasn't complete and I took
-the easy way out. As I have limited knowledge on how the timer code
-work, I was not sure how to start further investigation at that time.
-Your insight gives me a hint on where to start now. So I will dig
-further in to see what causes this.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Thanks,
-Longman
+Applied for next, thanks!
 
+Kind regards
+Uffe
+
+
+> ---
+> New patch
+> ---
+>  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt
+> index 2fb466c..c93643f 100644
+> --- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt
+> @@ -21,6 +21,7 @@ Required properties:
+>                "fsl,imx8mq-usdhc"
+>                "fsl,imx8mm-usdhc"
+>                "fsl,imx8mn-usdhc"
+> +              "fsl,imx8mp-usdhc"
+>                "fsl,imx8qxp-usdhc"
+>
+>  Optional properties:
+> --
+> 2.7.4
+>
