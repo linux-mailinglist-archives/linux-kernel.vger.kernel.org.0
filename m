@@ -2,129 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16DCD13EF9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA90113EFC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:17:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbgAPSQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:16:26 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2275 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405344AbgAPSQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:16:23 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id EF11B2307849F84166D6;
-        Thu, 16 Jan 2020 18:16:19 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 16 Jan 2020 18:16:19 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 16 Jan
- 2020 18:16:19 +0000
-Date:   Thu, 16 Jan 2020 18:16:18 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Sasha Levin <sashal@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        Chuhong Yuan <hslester96@gmail.com>,
-        Brian Masney <masneyb@onstation.org>,
-        <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.19 482/671] iio: tsl2772: Use
- devm_add_action_or_reset for tsl2772_chip_off
-Message-ID: <20200116181618.000063c2@Huawei.com>
-In-Reply-To: <20200116170509.12787-219-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
-        <20200116170509.12787-219-sashal@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S2436509AbgAPSRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:17:20 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:52900 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436474AbgAPSRR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:17:17 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1is9hX-0003ni-5o; Thu, 16 Jan 2020 19:17:03 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id 92A16101226; Thu, 16 Jan 2020 19:17:02 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH] watchdog/softlockup: Enforce that timestamp is valid on boot
+In-Reply-To: <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
+References: <20200103151032.19590-1-longman@redhat.com> <87sgkgw3xq.fsf@nanos.tec.linutronix.de> <87blr3wrqw.fsf@nanos.tec.linutronix.de> <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
+Date:   Thu, 16 Jan 2020 19:17:02 +0100
+Message-ID: <87o8v3uuzl.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml733-chm.china.huawei.com (10.201.108.84) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 12:02:00 -0500
-Sasha Levin <sashal@kernel.org> wrote:
+Robert reported that during boot the watchdog timestamp is set to 0 for one
+second which is the indicator for a watchdog reset.
 
-> From: Chuhong Yuan <hslester96@gmail.com>
-> 
-> [ Upstream commit 338084135aeddb103624a6841972fb8588295cc6 ]
-> 
-> Use devm_add_action_or_reset to call tsl2772_chip_off
-> when the device is removed.
-> This also fixes the issue that the chip is turned off
-> before the device is unregistered.
-> 
-> Not marked for stable as fairly hard to hit the bug and
-> this is in the middle of a set making other cleanups
-> to the driver.  Hence will probably need explicit backporting.
+The reason for this is that the timestamp is in seconds and the time is
+taken from sched clock and divided by ~1e9. sched clock starts at 0 which
+means that for the first second during boot the watchdog timestamp is 0,
+i.e. reset.
 
-Guess I was wrong and it does go on cleanly.  I took a quick
-look at current 4.19 driver and looks like it's fine on it's
-own.
+Use ULONG_MAX as the reset indicator value so the watchdog works correctly
+right from the start. ULONG_MAX would only conflict with a real timestamp
+if the system reaches an uptime of 136 years on 32bit and almost eternity
+on 64bit.
 
-We need to be careful with this one in general though.
+Reported-by: Robert Richter <rrichter@marvell.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/watchdog.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for 4.19
-
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> Fixes: c06c4d793584 ("staging: iio: tsl2x7x/tsl2772: move out of staging")
-> Reviewed-by: Brian Masney <masneyb@onstation.org>
-> Tested-by: Brian Masney <masneyb@onstation.org>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/iio/light/tsl2772.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-> index df5b2a0da96c..f2e308c6d6d7 100644
-> --- a/drivers/iio/light/tsl2772.c
-> +++ b/drivers/iio/light/tsl2772.c
-> @@ -716,6 +716,13 @@ static int tsl2772_chip_off(struct iio_dev *indio_dev)
->  	return tsl2772_write_control_reg(chip, 0x00);
->  }
->  
-> +static void tsl2772_chip_off_action(void *data)
-> +{
-> +	struct iio_dev *indio_dev = data;
-> +
-> +	tsl2772_chip_off(indio_dev);
-> +}
-> +
->  /**
->   * tsl2772_invoke_change - power cycle the device to implement the user
->   *                         parameters
-> @@ -1711,9 +1718,14 @@ static int tsl2772_probe(struct i2c_client *clientp,
->  	if (ret < 0)
->  		return ret;
->  
-> +	ret = devm_add_action_or_reset(&clientp->dev,
-> +					tsl2772_chip_off_action,
-> +					indio_dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	ret = iio_device_register(indio_dev);
->  	if (ret) {
-> -		tsl2772_chip_off(indio_dev);
->  		dev_err(&clientp->dev,
->  			"%s: iio registration failed\n", __func__);
->  		return ret;
-> @@ -1740,8 +1752,6 @@ static int tsl2772_remove(struct i2c_client *client)
->  {
->  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
->  
-> -	tsl2772_chip_off(indio_dev);
-> -
->  	iio_device_unregister(indio_dev);
->  
->  	return 0;
-
-
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -161,6 +161,8 @@ static void lockup_detector_update_enabl
+ 
+ #ifdef CONFIG_SOFTLOCKUP_DETECTOR
+ 
++#define SOFTLOCKUP_RESET	ULONG_MAX
++
+ /* Global variables, exported for sysctl */
+ unsigned int __read_mostly softlockup_panic =
+ 			CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE;
+@@ -272,7 +274,7 @@ notrace void touch_softlockup_watchdog_s
+ 	 * Preemption can be enabled.  It doesn't matter which CPU's timestamp
+ 	 * gets zeroed here, so use the raw_ operation.
+ 	 */
+-	raw_cpu_write(watchdog_touch_ts, 0);
++	raw_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
+ }
+ 
+ notrace void touch_softlockup_watchdog(void)
+@@ -296,14 +298,14 @@ void touch_all_softlockup_watchdogs(void
+ 	 * the softlockup check.
+ 	 */
+ 	for_each_cpu(cpu, &watchdog_allowed_mask)
+-		per_cpu(watchdog_touch_ts, cpu) = 0;
++		per_cpu(watchdog_touch_ts, cpu) = SOFTLOCKUP_RESET;
+ 	wq_watchdog_touch(-1);
+ }
+ 
+ void touch_softlockup_watchdog_sync(void)
+ {
+ 	__this_cpu_write(softlockup_touch_sync, true);
+-	__this_cpu_write(watchdog_touch_ts, 0);
++	__this_cpu_write(watchdog_touch_ts, SOFTLOCKUP_RESET);
+ }
+ 
+ static int is_softlockup(unsigned long touch_ts)
+@@ -379,7 +381,7 @@ static enum hrtimer_restart watchdog_tim
+ 	/* .. and repeat */
+ 	hrtimer_forward_now(hrtimer, ns_to_ktime(sample_period));
+ 
+-	if (touch_ts == 0) {
++	if (touch_ts == SOFTLOCKUP_RESET) {
+ 		if (unlikely(__this_cpu_read(softlockup_touch_sync))) {
+ 			/*
+ 			 * If the time stamp was touched atomically
