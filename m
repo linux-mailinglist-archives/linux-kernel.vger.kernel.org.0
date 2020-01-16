@@ -2,184 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2308913ECDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:59:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481BD13ECF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394743AbgAPR7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:59:12 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34334 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394723AbgAPR7I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:59:08 -0500
-Received: by mail-ed1-f66.google.com with SMTP id l8so19738719edw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 09:59:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ownIKscCoJ0ifHnW+WtXLNIaHz3TKTKB9xX6VT8y1A8=;
-        b=f44+CoWj4lO/C+QdvGojAgqPOI4YZ5boSw/hGgMBaiTA4H+d+tLuOpWvF99HpOOy3A
-         iqkPKL8kBRo9t8ns8InBbiB/zCzzOxaT0N7uBbkLZGBFz8f/SvuTmzL5s/PgsrFmPg76
-         Bjtkflj/Fk1zbC/Vt4uT8Aa+gjWLtXgUcFpMY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ownIKscCoJ0ifHnW+WtXLNIaHz3TKTKB9xX6VT8y1A8=;
-        b=qV98hMd0yGFSyTeECaO+Cv2Bchta8ZC60JpFC/hvfQpEUPbZ1iuL5PfYl32B7Och93
-         RtKcFYS++tWdal0RmPu/kbyIYoFrrOz842wHP90taHDIol/q+tJuNtOapSs4d+/9gG2M
-         qwLQmfVrh96MFjQzNbH5CqKaWnCqGLqvbNR99tRS4gDYUa6pZ738RJ2xc0pLp7Sy3fld
-         vlqqh86kyEf1ajIGck70Z0H1aMuKEBzefCw/IvUPseFePnaMcO6g4Wx1DK8CUj4/GnVl
-         UNHwtmY4ps9+mdEPR8r80yMm9oeGTthlk3QOgCJ9EemADZUkaT02oIFQPJnncHIvk+/X
-         Sy9w==
-X-Gm-Message-State: APjAAAVSSwbDJ4rvb56v3NQ29gHlFEhuBm4mhkffcFPwRZpVnP8h0P3c
-        /2Nw55Qvt++TSZnesGeqVDKbvifXNV4=
-X-Google-Smtp-Source: APXvYqw4PTotrGhk2VAOEhyS3ZV29hZJWI/gUNyedOEjBfJkvCixcYNhB9g+Jdp0Q9shEYA7I5SGvg==
-X-Received: by 2002:a17:906:33db:: with SMTP id w27mr4168230eja.347.1579197545699;
-        Thu, 16 Jan 2020 09:59:05 -0800 (PST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id k26sm902652edv.13.2020.01.16.09.59.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 09:59:05 -0800 (PST)
-Received: by mail-ed1-f42.google.com with SMTP id l8so19738641edw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 09:59:04 -0800 (PST)
-X-Received: by 2002:a05:6402:1547:: with SMTP id p7mr37597769edx.73.1579197544298;
- Thu, 16 Jan 2020 09:59:04 -0800 (PST)
+        id S2394779AbgAPR7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:59:54 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:43863 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394768AbgAPR7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:59:51 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 47zBmN5N54z9v4gc;
+        Thu, 16 Jan 2020 18:59:48 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=SD6U3h6U; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id EJWppnBr9WvY; Thu, 16 Jan 2020 18:59:48 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47zBmN44pnz9v4gT;
+        Thu, 16 Jan 2020 18:59:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1579197588; bh=IindQu42iENkFluTxFQueQVsDRT1L9tio2zY26H9ooU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SD6U3h6UXcUuVSAFLlW6xTpgLah4GnfwkGmyYPfYMJEZ80vWz5QKjLUAJrqbLUTPG
+         FHu5B9HP7RgOIk7EhNh31YeJb4FEx+y8aJnktskyHe7iF3+iFf5JvawY+g5g9uqjxF
+         PgKwNxeR1X6+lUsmGgkzOI/BXQUo3iKSj9by4vDk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 43AEF8B82C;
+        Thu, 16 Jan 2020 18:59:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id x7-gj-n_L5z9; Thu, 16 Jan 2020 18:59:50 +0100 (CET)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BFD998B82A;
+        Thu, 16 Jan 2020 18:59:49 +0100 (CET)
+Subject: Re: [PATCH vdsotest] Use vdso wrapper for gettimeofday()
+To:     Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <0eddeeb64c97b8b5ce0abd74e88d2cc0303e49c6.1579090596.git.christophe.leroy@c-s.fr>
+ <871rrzjq5j.fsf@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <01e576b8-fe93-1026-5b39-f878297d6835@c-s.fr>
+Date:   Thu, 16 Jan 2020 18:59:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <20191217005424.226858-1-swboyd@chromium.org> <CAD=FV=UQAgd2R=ykTCnBZuOvFFKoWu4o-3Rq=GEdrc1KKSi9cQ@mail.gmail.com>
- <20191220231040.GA11384@bogus> <5e12cc29.1c69fb81.fe838.d5f3@mx.google.com>
-In-Reply-To: <5e12cc29.1c69fb81.fe838.d5f3@mx.google.com>
-From:   Andrey Pronin <apronin@chromium.org>
-Date:   Thu, 16 Jan 2020 09:58:52 -0800
-X-Gmail-Original-Message-ID: <CAP7wa8Lfgm5h5j0jvkYP+sFHnz6jRb1m8fCi-8AvPmNqfupenw@mail.gmail.com>
-Message-ID: <CAP7wa8Lfgm5h5j0jvkYP+sFHnz6jRb1m8fCi-8AvPmNqfupenw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: tpm: Convert cr50 binding to YAML
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <871rrzjq5j.fsf@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 5, 2020 at 9:57 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Rob Herring (2019-12-20 15:10:40)
-> > On Tue, Dec 17, 2019 at 09:45:02AM -0800, Doug Anderson wrote:
-> > > On Mon, Dec 16, 2019 at 4:54 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> > > > diff --git a/Documentation/devicetree/bindings/security/tpm/google,cr50.yaml b/Documentation/devicetree/bindings/security/tpm/google,cr50.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..8bfff0e757af
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/security/tpm/google,cr50.yaml
-> > > > @@ -0,0 +1,52 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/tpm/google,cr50.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: H1 Secure Microcontroller with Cr50 Firmware on SPI Bus
-> > > > +
-> > > > +description:
-> > > > +  H1 Secure Microcontroller running Cr50 firmware provides several functions,
-> > > > +  including TPM-like functionality. It communicates over SPI using the FIFO
-> > > > +  protocol described in the PTP Spec, section 6.
-> > > > +
-> > > > +maintainers:
-> > > > +  - Andrey Pronin <apronin@chromium.org>
-> > >
-> > > Does Andrey agree to be the maintainer here?
->
-> I Cced Andrey in hopes of eliciting a response.
-
-Yes, I finally can confirm I agree to be the maintainer.
-
->
-> > >
-> > >
-> > > I'd like to see if we can delete most of what you've written here.
-> > > Specifically in "spi/spi-controller.yaml" you can see a really nice
-> > > description of what SPI devices ought to look like.  Can we just
-> > > reference that?  To do that I _think_ we actually need to break that
-> > > description into a separate YAML file and then include it from there
-> > > and here.  Maybe someone on the list can confirm or we can just post
-> > > some patches for that?
->
-> I'm not sure what to do here.
->
-> > >
-> > >
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: google,cr50
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > >
-> > > I'm curious if you need a minItems here.  ...and if we don't somehow
-> > > include it, should we follow 'spi-controller.yaml' and treat this like
-> > > an int?
-> >
-> > Really, just 'true' is sufficient as you can't say which CS number it is
-> > here.
->
-> Ok.
->
-> > >
-> > >
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - spi-max-frequency
-> > >
-> > > Technically spi-max-frequency might not be required (the SPI binding
-> > > doesn't list it as such), but I guess it was before...
-> >
-> > Generally, we expect a device knows its max and this should only be used
-> > it a board has a lower value. However, sometimes there's exceptions.
-> >
-> > Shouldn't really be debate here unless the old binding doc was wrong.
->
-> The old binding doc had it as required and the spi framework seems to
-> bail out if this property isn't specified (see of_spi_parse_dt() for
-> more details).
->
-> >
-> > >
-> > >
-> > > > +  - interrupts
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > > > +    spi {
-> > > > +      #address-cells = <0x1>;
-> > > > +      #size-cells = <0x0>;
-> > > > +      tpm@0 {
-> > > > +          compatible = "google,cr50";
-> > > > +          reg = <0>;
-> > > > +          spi-max-frequency = <800000>;
-> > > > +          interrupts = <50 IRQ_TYPE_EDGE_RISING>;
-> > >
-> > > I would tend to prefer seeing the interrupt parent in the example
-> > > since it's pretty likely that the GPIO controller isn't the overall
-> > > parent and likely that our interrupt is a GPIO.  I'm not sure the
-> > > convention, though.
-> >
-> > Example is fine, but shouldn't be in the schema.
->
-> Ok. Will add an interrupt parent like
->
->         interrupt-parent = <&gpio_controller>;
->
 
 
--- 
-Andrey
+Le 16/01/2020 à 17:56, Nathan Lynch a écrit :
+> Hi Christophe,
+> 
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> To properly handle errors returned by gettimeofday(), the
+>> DO_VDSO_CALL() macro has to be used, otherwise vdsotest
+>> misinterpret VDSO function return on error.
+>>
+>> This has gone unnoticed until now because the powerpc VDSO
+>> gettimeofday() always succeed, but while porting powerpc to
+>> generic C VDSO, the following has been encountered:
+> 
+> Thanks for this, I'll review it soon.
+> 
+> Can you point me to patches for the powerpc generic vdso work?
+> 
+
+Sure.
+
+v3 is at 
+https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=152867
+
+I added you in v4 destinees.
+
+Christophe
