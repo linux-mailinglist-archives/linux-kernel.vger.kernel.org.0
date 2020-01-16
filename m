@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE34B13E4C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EE113E4C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:10:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390044AbgAPRKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:10:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48412 "EHLO mail.kernel.org"
+        id S2390051AbgAPRKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:10:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389911AbgAPRKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:10:23 -0500
+        id S2389925AbgAPRKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:10:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B356205F4;
-        Thu, 16 Jan 2020 17:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22F2624685;
+        Thu, 16 Jan 2020 17:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194622;
-        bh=GxpxSfn4Aog9jObkkwzJClYhMneNU3fTJqn+IXbCiGo=;
+        s=default; t=1579194623;
+        bh=w1jX+ttb2O1VrMqXuDjPtF6jrBRp+Hy3JQ3mwfxfj/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wyz+O5Rwk/jbC8uaAyi+p+7sltSdczBBFyYQEAZ9cSDrEjrm3czSklo4fgikssVbQ
-         uFK52lkIgZ4Cv4p3oIVftIMLGNRGO8dfzkOJsXi5VdUZpmMlKaoo1qJVaaSEhUah66
-         qckkt7DThFaicMLB7iDYDm5RlT8fMqtANF+saWjQ=
+        b=h/B2fNxaEO8MFblqCSQ0idG3j6BvFzEKjn8m7185f6exYBJG9SNh/r3QCbvhUE3qo
+         OJ8wZ3ZFOfQTf9nN5Fhbj3qqlYXDI3glwH7dVvb4E5+AXcDr2rHcZCO8Tq/0YtB4YF
+         9WTFG2phXIMgDuhJ2JmFEx4mmzN/jOo/RT6fOn3U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        Brandon Cazander <brandon.cazander@multapplied.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 483/671] net: fix bpf_xdp_adjust_head regression for generic-XDP
-Date:   Thu, 16 Jan 2020 12:02:01 -0500
-Message-Id: <20200116170509.12787-220-sashal@kernel.org>
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 484/671] spi: bcm-qspi: Fix BSPI QUAD and DUAL mode support when using flex mode
+Date:   Thu, 16 Jan 2020 12:02:02 -0500
+Message-Id: <20200116170509.12787-221-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,55 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
 
-[ Upstream commit 065af355470519bd184019a93ac579f22b036045 ]
+[ Upstream commit 79629d0f7ce5b38515c1716911a0181f01b91102 ]
 
-When generic-XDP was moved to a later processing step by commit
-458bf2f224f0 ("net: core: support XDP generic on stacked devices.")
-a regression was introduced when using bpf_xdp_adjust_head.
+Fix data transfer width settings based on DT field 'spi-rx-bus-width'
+to configure BSPI in single, dual or quad mode by using data width
+and not the command width.
 
-The issue is that after this commit the skb->network_header is now
-changed prior to calling generic XDP and not after. Thus, if the header
-is changed by XDP (via bpf_xdp_adjust_head), then skb->network_header
-also need to be updated again.  Fix by calling skb_reset_network_header().
+Fixes: 5f195ee7d830c ("spi: bcm-qspi: Implement the spi_mem interface")
 
-Fixes: 458bf2f224f0 ("net: core: support XDP generic on stacked devices.")
-Reported-by: Brandon Cazander <brandon.cazander@multapplied.net>
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Link: https://lore.kernel.org/r/1565086070-28451-1-git-send-email-rayagonda.kokatanur@broadcom.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/dev.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/spi/spi-bcm-qspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 935fe158cfaf..73ebacabfde8 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4349,12 +4349,17 @@ static u32 netif_receive_generic_xdp(struct sk_buff *skb,
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index 584bcb018a62..285a6f463013 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -354,7 +354,7 @@ static int bcm_qspi_bspi_set_flex_mode(struct bcm_qspi *qspi,
+ {
+ 	int bpc = 0, bpp = 0;
+ 	u8 command = op->cmd.opcode;
+-	int width  = op->cmd.buswidth ? op->cmd.buswidth : SPI_NBITS_SINGLE;
++	int width = op->data.buswidth ? op->data.buswidth : SPI_NBITS_SINGLE;
+ 	int addrlen = op->addr.nbytes;
+ 	int flex_mode = 1;
  
- 	act = bpf_prog_run_xdp(xdp_prog, xdp);
+@@ -992,7 +992,7 @@ static int bcm_qspi_exec_mem_op(struct spi_mem *mem,
+ 	if (mspi_read)
+ 		return bcm_qspi_mspi_exec_mem_op(spi, op);
  
-+	/* check if bpf_xdp_adjust_head was used */
- 	off = xdp->data - orig_data;
--	if (off > 0)
--		__skb_pull(skb, off);
--	else if (off < 0)
--		__skb_push(skb, -off);
--	skb->mac_header += off;
-+	if (off) {
-+		if (off > 0)
-+			__skb_pull(skb, off);
-+		else if (off < 0)
-+			__skb_push(skb, -off);
-+
-+		skb->mac_header += off;
-+		skb_reset_network_header(skb);
-+	}
+-	ret = bcm_qspi_bspi_set_mode(qspi, op, -1);
++	ret = bcm_qspi_bspi_set_mode(qspi, op, 0);
  
- 	/* check if bpf_xdp_adjust_tail was used. it can only "shrink"
- 	 * pckt.
+ 	if (!ret)
+ 		ret = bcm_qspi_bspi_exec_mem_op(spi, op);
 -- 
 2.20.1
 
