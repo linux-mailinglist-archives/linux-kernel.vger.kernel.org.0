@@ -2,87 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E28313E0D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE3213E2CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:58:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbgAPQpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:45:53 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45668 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729654AbgAPQps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:45:48 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x1so19670047qkl.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:45:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=wvt8smsg1HL/HROaSH1vcUPejygGWroBMJD9sx4u7EQ=;
-        b=gx0Q5k/vJ3zGnE2w0yfnD8HiYO/z+498mW+4yPeOc0Yx9qHVU3cchwAzkAhZWAZtQ2
-         DKvZby1uWKPceCAPp9gIUK95GtVIGDBi314APQmyR/w1SsXmzeVpor7loLQ8oP29VxGA
-         xuBQwbfPSZutI7MJpYp6sW0mvqoNQOzhWLOzU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=wvt8smsg1HL/HROaSH1vcUPejygGWroBMJD9sx4u7EQ=;
-        b=V7DOs1WdmviCMYRCGXPSd18ruh1MLbRYUFnMQwodpUHoNrVozGs1hDzMW+6u7FXIZi
-         Zam1CmC97zbF9FVi0Fzi++xm1y5LvxvmLJpgZu52SfvRK19z0Y4e9DgUKPo0Li/sgytq
-         PG66sdq4fn3OfuHRVs5Y/3DqtgveZasMh2xd7K/Wb9a2iTla0FkpWDfmCVt2XHhu7+iy
-         dZ8BTCNeUinf5KxnCTQ7xcBzSlC+7GxpT75D9pwNE59RwhCx1Q4Eu9sdu5BZCY9QsLkN
-         zoMRiH/HSPA8lcKGekJT8Gpmx0DSdQ/3WoXmbfuL/BEBh+kuC3vieWm0mYGoCiziCGoL
-         uMXw==
-X-Gm-Message-State: APjAAAUJbTDdlJJHt4F75LnNMpqj9Qigl1uuvRmlBna9nSx6NcWiW7bR
-        cDXr1BfkBRs5TTY4kU7g77py6A==
-X-Google-Smtp-Source: APXvYqxNm5u/3SanIpSyF46ty0cpiVkf7U7YOWJtvaCzMM84yx+2kbF6335YW3J2CNQkQ2x2hO3EqA==
-X-Received: by 2002:a37:7d01:: with SMTP id y1mr8317444qkc.452.1579193147715;
-        Thu, 16 Jan 2020 08:45:47 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id n4sm11195152qti.55.2020.01.16.08.45.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 08:45:46 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Thu, 16 Jan 2020 11:45:45 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Vince Weaver <vincent.weaver@maine.edu>
-cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] perf: correctly handle failed perf_get_aux_event() (was:
- Re: [perf] perf_event_open() sometimes returning 0)
-In-Reply-To: <alpine.DEB.2.21.2001061307460.24675@macbook-air>
-Message-ID: <alpine.DEB.2.21.2001161144590.29041@macbook-air>
-References: <alpine.DEB.2.21.2001021349390.11372@macbook-air> <alpine.DEB.2.21.2001021418590.11372@macbook-air> <20200106120338.GC9630@lakrids.cambridge.arm.com> <alpine.DEB.2.21.2001061307460.24675@macbook-air>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1733212AbgAPQ6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:58:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387557AbgAPQ5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:49 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4388D24684;
+        Thu, 16 Jan 2020 16:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579193869;
+        bh=iQaqarOnsYefb85HkAU/PcRkM1Wu80tYmegtL2PbKtM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UfhSDU4EjfERfQMG5HVKvxb+ZlDoG+Pi/zFoEr439Hg/9WBd+1bWD6rg038K9V22a
+         crcuOk49yjF5/Ysk1ksXn1WXeM8ghKxrFVr80MkRVZCfSYgUtX4AEgeuIG6wsZUcLD
+         QkUlrFI2S/XVIFVtZ2rzSoocpof5V49F08aOgETk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Raju Rangoju <rajur@chelsio.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 114/671] RDMA/iw_cxgb4: Fix the unchecked ep dereference
+Date:   Thu, 16 Jan 2020 11:45:45 -0500
+Message-Id: <20200116165502.8838-114-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
+References: <20200116165502.8838-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 6 Jan 2020, Vince Weaver wrote:
+From: Raju Rangoju <rajur@chelsio.com>
 
-> On Mon, 6 Jan 2020, Mark Rutland wrote:
-> 
-> > On Thu, Jan 02, 2020 at 02:22:47PM -0500, Vince Weaver wrote:
-> > > On Thu, 2 Jan 2020, Vince Weaver wrote:
-> > > 
-> > Vince, does the below (untested) patch work for you?
-> 
-> 
-> yes, this patch fixes things for me.
-> 
-> Tested-by: Vince Weaver <vincent.weaver@maine.edu>
-> 
+[ Upstream commit 3352976c892301fd576a2e9ff0ac7337b2e2ca48 ]
 
-is this patch going to make it upstream?  It's a fairly major correctness 
-bug with perf_event_open().
+The patch 944661dd97f4: "RDMA/iw_cxgb4: atomically lookup ep and get a
+reference" from May 6, 2016, leads to the following Smatch complaint:
 
-Vince
+    drivers/infiniband/hw/cxgb4/cm.c:2953 terminate()
+    error: we previously assumed 'ep' could be null (see line 2945)
+
+Fixes: 944661dd97f4 ("RDMA/iw_cxgb4: atomically lookup ep and get a reference")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/hw/cxgb4/cm.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 4dcc92d11609..1b3d014fa1d6 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -2947,15 +2947,18 @@ static int terminate(struct c4iw_dev *dev, struct sk_buff *skb)
+ 
+ 	ep = get_ep_from_tid(dev, tid);
+ 
+-	if (ep && ep->com.qp) {
+-		pr_warn("TERM received tid %u qpid %u\n",
+-			tid, ep->com.qp->wq.sq.qid);
+-		attrs.next_state = C4IW_QP_STATE_TERMINATE;
+-		c4iw_modify_qp(ep->com.qp->rhp, ep->com.qp,
+-			       C4IW_QP_ATTR_NEXT_STATE, &attrs, 1);
++	if (ep) {
++		if (ep->com.qp) {
++			pr_warn("TERM received tid %u qpid %u\n", tid,
++				ep->com.qp->wq.sq.qid);
++			attrs.next_state = C4IW_QP_STATE_TERMINATE;
++			c4iw_modify_qp(ep->com.qp->rhp, ep->com.qp,
++				       C4IW_QP_ATTR_NEXT_STATE, &attrs, 1);
++		}
++
++		c4iw_put_ep(&ep->com);
+ 	} else
+ 		pr_warn("TERM received tid %u no ep/qp\n", tid);
+-	c4iw_put_ep(&ep->com);
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
+
