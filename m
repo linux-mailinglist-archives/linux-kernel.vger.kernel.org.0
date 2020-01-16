@@ -2,105 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB2A13DCF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:09:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 561CC13DD01
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:09:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgAPOIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 09:08:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbgAPOIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:08:13 -0500
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 542042077B;
-        Thu, 16 Jan 2020 14:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579183692;
-        bh=ZxkxbPI6NB+qslqenM1VguIV+ka+agAz0tPoV5Dlv88=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Sbzl/C+9E3Romi6TePNREX+gQjoxYwdnxEMR5vQElQWkvqLhrESPM7k0bHWBgn+yU
-         vyISsyebITJCQPzWBfQ5JvKfbuoe64kto7/6FeFhrlhLPKYtqMoaVu2nPuDGHJo/ZJ
-         +RKjDnua8QaOG0KpT7pgHsA1qYXlXKt5d0POj8pY=
-Received: by mail-qv1-f41.google.com with SMTP id p2so9081493qvo.10;
-        Thu, 16 Jan 2020 06:08:12 -0800 (PST)
-X-Gm-Message-State: APjAAAW10FJekrDLhMacg1cHGoNRmB59ZXurautAxIiyCU9lcd5UENZU
-        x0FImTcTuvOO/vfnXPSDSFWt7ffi3E9CLTW6Dw==
-X-Google-Smtp-Source: APXvYqx0fiWdQh99DDa9iyjEeQMVJwq4um15JGwrzKiS3meVyPIMlcnqQ5A6IgAke6Qr+dljfrbL0MMk6QxnsO93Q3k=
-X-Received: by 2002:a0c:f68f:: with SMTP id p15mr2644594qvn.79.1579183691461;
- Thu, 16 Jan 2020 06:08:11 -0800 (PST)
+        id S1726973AbgAPOJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 09:09:21 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50622 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbgAPOJR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 09:09:17 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200116140915euoutp01b6a61f5b94216753943790eef9243af7~qY0I5luMv0568405684euoutp01C
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 14:09:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200116140915euoutp01b6a61f5b94216753943790eef9243af7~qY0I5luMv0568405684euoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579183755;
+        bh=69xJ+NJNadV7CrxpklCC1bU+SrtNBIUwyuB6JcFUzKg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=pBqZa7n0P/QI7rrAVLr+/EWjSzc27JzUOOMAuzfHvNzUhvcYTTDcYrmt1zjmfDCTI
+         ZlJ8oAf5MtUUOn7WV4siC27ZIGb8HP6gLYMCT2a96Coq9Gprgf4kof8JE9mODeNZju
+         3rwpP0L75B+BsPifwQG9GIEzW0pnSy6i6DTmsLyw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200116140915eucas1p1ce402d249818a74e542d46edd3bbfc43~qY0Ioo23_0528405284eucas1p1q;
+        Thu, 16 Jan 2020 14:09:15 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id CD.ED.60698.B8E602E5; Thu, 16
+        Jan 2020 14:09:15 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200116140914eucas1p1a62794ad40589e818614176ea8e817ff~qY0IXBpYY1316013160eucas1p1P;
+        Thu, 16 Jan 2020 14:09:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200116140914eusmtrp230bddac5d1bb8bd58cccd32652088fb0~qY0IWbTYr0998609986eusmtrp2O;
+        Thu, 16 Jan 2020 14:09:14 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-a6-5e206e8b58bb
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.FF.08375.A8E602E5; Thu, 16
+        Jan 2020 14:09:14 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200116140914eusmtip14959d6d6b1b6d26f0aaf3a5e0380de4a~qY0H-Aj3x0112701127eusmtip1D;
+        Thu, 16 Jan 2020 14:09:14 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrzej Hajda <a.hajda@samsung.com>, b.zolnierkie@samsung.com
+Subject: [PATCH 0/6] video: fbdev: controlfb: small cleanup
+Date:   Thu, 16 Jan 2020 15:08:54 +0100
+Message-Id: <20200116140900.26363-1-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200114213809.27166-1-jbx6244@gmail.com> <20200114213809.27166-2-jbx6244@gmail.com>
- <CAL_JsqJ0QJ9uG9NY7vMGG00G4Jfk2mXS4OPdUzEaRVaCP++GzQ@mail.gmail.com> <203e9217-9aa8-b65e-4411-2d9b23c1362a@gmail.com>
-In-Reply-To: <203e9217-9aa8-b65e-4411-2d9b23c1362a@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 16 Jan 2020 08:07:59 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+cJd0Ht+4FNX9RjbZL2vHjF90+G-v05XuyxrT7Ng15sA@mail.gmail.com>
-Message-ID: <CAL_Jsq+cJd0Ht+4FNX9RjbZL2vHjF90+G-v05XuyxrT7Ng15sA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/3] dt-bindings: mmc: convert synopsys dw-mshc
- bindings to yaml
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduzned3uPIU4g0+L2CxurTvHarFxxnpW
+        iytf37NZnOj7wGpxedccNgdWj/vdx5k8+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK+N8yymm
+        gldsFWfPdTE2MB5j7WLk4JAQMJHYPSWgi5GLQ0hgBaPEynMtbBDOF0aJozdXMEM4nxklPiy4
+        wdjFyAnWMWPFZSaIxHJGibk/etnhWl5/ms0GUsUmYCUxsX0VWIeIQILEiukzGEH2MQs4SjT3
+        84GEhQWsJR4fXwxWwiKgKjH5xRtmEJtXwFZi18d5TBDL5CW2fvvEChEXlDg58wkLiM0MFG/e
+        OhvsOgmB22wSH7b8YoVocJFoarjKDmELS7w6vgXKlpH4v3M+E0TDOkaJvx0voLq3M0osn/yP
+        DaLKWuLOuV9sEJdqSqzfpQ8JJEeJp0/CIUw+iRtvBSFu4JOYtG06M0SYV6KjTQhihprEhmUb
+        2GC2du1cyQxhe0g8/vEH7BohgViJszu+M09gVJiF5LNZSD6bhXDCAkbmVYziqaXFuempxcZ5
+        qeV6xYm5xaV56XrJ+bmbGIEJ5PS/4193MO77k3SIUYCDUYmH90OIQpwQa2JZcWXuIUYJDmYl
+        Ed6TM2TjhHhTEiurUovy44tKc1KLDzFKc7AoifMaL3oZKySQnliSmp2aWpBaBJNl4uCUamB0
+        4V+d+ulvuLHz05ikyoy/HFt887+IN8/2uaz1x7c14f7EsoI1H8wnJ9uEL5V3+b3HzFPDqH7F
+        2eIVuyxqPzy8/+7V6wDtvp6qlY+UJS4ecr2ttkEzarGtY5IhVx2L1PWvsx0X3pRSKVgdG5Jd
+        lryTfanPm9fnL6wLCfSfsM907qS0g1XnQl2VWIozEg21mIuKEwFnnnATHAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrALMWRmVeSWpSXmKPExsVy+t/xu7pdeQpxBg+/61ncWneO1WLjjPWs
+        Fle+vmezONH3gdXi8q45bA6sHve7jzN59G1ZxejxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWR
+        nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsb5llNMBa/YKs6e62JsYDzG2sXIySEh
+        YCIxY8Vlpi5GLg4hgaWMEosv7WTuYuQASshIHF9fBlEjLPHnWhcbRM0nRonWaTcYQRJsAlYS
+        E9tXgdkiAkkSnQ0nmUFsZgFniVm3HjGB2MIC1hKPjy8Gq2ERUJWY/OINWA2vgK3Ero/zmCAW
+        yEts/faJFSIuKHFy5hMWiDnyEs1bZzNPYOSbhSQ1C0lqASPTKkaR1NLi3PTcYkO94sTc4tK8
+        dL3k/NxNjMDQ3Xbs5+YdjJc2Bh9iFOBgVOLhnRGkECfEmlhWXJl7iFGCg1lJhPfkDNk4Id6U
+        xMqq1KL8+KLSnNTiQ4ymQMdOZJYSTc4HxlVeSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS
+        1OzU1ILUIpg+Jg5OqQbGrit5Qld1X1jqP9P3+C9/ImDWnIyIEmWu0p2fF4rfeVGkH7996VXh
+        wNRDy+zKt51r7m+6Z113I8f1euiSwONBTT+O/HzsV2HpeOz6tmliuos/6fnm8//sS/y37e2T
+        8+5B/Hq812PCq+qkP4Xl3J2tMEnvz/G9abLTNI4wHuicPEXqXOdyg+kzlViKMxINtZiLihMB
+        AQf//nMCAAA=
+X-CMS-MailID: 20200116140914eucas1p1a62794ad40589e818614176ea8e817ff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200116140914eucas1p1a62794ad40589e818614176ea8e817ff
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200116140914eucas1p1a62794ad40589e818614176ea8e817ff
+References: <CGME20200116140914eucas1p1a62794ad40589e818614176ea8e817ff@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 6:00 AM Johan Jonker <jbx6244@gmail.com> wrote:
->
-> See below.
->
-> On 1/15/20 4:18 PM, Rob Herring wrote:
-> > On Tue, Jan 14, 2020 at 3:38 PM Johan Jonker <jbx6244@gmail.com> wrote:
-> >>
->
-> > [...]
-> >
-> >> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> >> new file mode 100644
-> >> index 000000000..6f85a21d0
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
-> >> @@ -0,0 +1,88 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Synopsys Designware Mobile Storage Host Controller Binding
->
-> [..]
->
-> >> +examples:
-> >> +  # The MSHC controller node can be split into two portions, SoC specific and
-> >> +  # board specific portions as listed below.
-> >
->
->
-> > This split doesn't work because the examples are built and validated
-> > now. It may happen to because all the props are optional, but the
-> > board hunk goes unchecked. So please combine.
-> >
->
-> Hi,
->
-> I have no knowledge about this particular hardware to give a realistic
-> example. Could someone advise here? Or should I just use the first
-> example for now?
+Hi,
 
-Just combine the first part and one of the the 2 board hunks. I don't
-think having 2 board examples with the only diff being the dma
-properties adds much value.
+Small cleanup for controlfb driver:
 
-Rob
+- fix sparse warnings
+- remove not working module support
+- add COMPILE_TEST support
+- remove redundant function prototypes
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (6):
+  video: fbdev: controlfb: fix sparse warning about using incorrect type
+  video: fbdev: controlfb: remove obsolete module support
+  video: fbdev: controlfb: add COMPILE_TEST support
+  video: fbdev: controlfb: remove function prototypes part #1
+  video: fbdev: controlfb: remove function prototypes part #2
+  video: fbdev: controlfb: remove function prototypes part #3
+
+ drivers/video/fbdev/Kconfig     |   2 +-
+ drivers/video/fbdev/controlfb.c | 810 +++++++++++++++-----------------
+ 2 files changed, 383 insertions(+), 429 deletions(-)
+
+-- 
+2.24.1
+
