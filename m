@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8493313FFF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A8813FFE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392078AbgAPXqt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:46:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
+        id S2389078AbgAPXWH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:22:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388331AbgAPXVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:21:37 -0500
+        id S1731091AbgAPXWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:22:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22146206D9;
-        Thu, 16 Jan 2020 23:21:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E78D8206D9;
+        Thu, 16 Jan 2020 23:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216896;
-        bh=DpGXwf5WCT68h30EiLxwSBUtzxw2I203M5y/g0r7J7M=;
+        s=default; t=1579216920;
+        bh=5bcddGU/Va4SZO+m0ROMNEmaa/9dzkcl53QDbDcLyJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rEaTDQ6yf4XXxMOfuXBr5JUsrWWpZdQXUzeQQ8VrkfpQEWUC0DjErLHIk/UOR+RtS
-         gzv6lv5P1C3jdCviBfAgLFxVYZMkiaZZ8NMKeUPu+tCIimid47QgxsnYDODoWJJVCp
-         dgsaE/apwYpoQTdFXu/Dm6en3u+Lqdah+EugS/wc=
+        b=v915p1OIvnBe/EIq+mvM8PUwpv7xudOeDkWpx5++0kCHAibKotTwfIDRKcEc85Uen
+         zb559z8MFBTkDMUvyWRsuOlWl/MLGYNXjR9+xBt0pENnhOSBJnoWUXWpzZWyKiMNwl
+         vMGzyeTLl67YV7SzOBDp7lWwEiG86oSiLq9JbCp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Zhang <markz@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 064/203] RDMA/counter: Prevent QP counter manual binding in auto mode
-Date:   Fri, 17 Jan 2020 00:16:21 +0100
-Message-Id: <20200116231749.667062189@linuxfoundation.org>
+Subject: [PATCH 5.4 066/203] RDMA/hns: Fix build error again
+Date:   Fri, 17 Jan 2020 00:16:23 +0100
+Message-Id: <20200116231749.868494985@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,64 +43,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Zhang <markz@mellanox.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 663912a6378a34fd4f43b8d873f0c6c6322d9d0e upstream.
+commit d5b60e26e86a463ca83bb5ec502dda6ea685159e upstream.
 
-If auto mode is configured, manual counter allocation and QP bind is not
-allowed.
+This is not the first attempt to fix building random configurations,
+unfortunately the attempt in commit a07fc0bb483e ("RDMA/hns: Fix build
+error") caused a new problem when CONFIG_INFINIBAND_HNS_HIP06=m and
+CONFIG_INFINIBAND_HNS_HIP08=y:
 
-Fixes: 1bd8e0a9d0fd ("RDMA/counter: Allow manual mode configuration support")
-Link: https://lore.kernel.org/r/20190916071154.20383-3-leon@kernel.org
-Signed-off-by: Mark Zhang <markz@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+drivers/infiniband/hw/hns/hns_roce_main.o:(.rodata+0xe60): undefined reference to `__this_module'
+
+Revert commits a07fc0bb483e ("RDMA/hns: Fix build error") and
+a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment") to get back to
+the previous state, then fix the issues described there differently, by
+adding more specific dependencies: INFINIBAND_HNS can now only be built-in
+if at least one of HNS or HNS3 are built-in, and the individual back-ends
+are only available if that code is reachable from the main driver.
+
+Fixes: a07fc0bb483e ("RDMA/hns: Fix build error")
+Fixes: a3e2d4c7e766 ("RDMA/hns: remove obsolete Kconfig comment")
+Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+Fixes: 08805fdbeb2d ("RDMA/hns: Split hw v1 driver from hns roce driver")
+Link: https://lore.kernel.org/r/20191007211826.3361202-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/counters.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hns/Kconfig  |   17 ++++++++++++++---
+ drivers/infiniband/hw/hns/Makefile |    8 ++++++--
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/core/counters.c
-+++ b/drivers/infiniband/core/counters.c
-@@ -466,10 +466,15 @@ static struct rdma_counter *rdma_get_cou
- int rdma_counter_bind_qpn(struct ib_device *dev, u8 port,
- 			  u32 qp_num, u32 counter_id)
- {
-+	struct rdma_port_counter *port_counter;
- 	struct rdma_counter *counter;
- 	struct ib_qp *qp;
- 	int ret;
+--- a/drivers/infiniband/hw/hns/Kconfig
++++ b/drivers/infiniband/hw/hns/Kconfig
+@@ -1,23 +1,34 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config INFINIBAND_HNS
+-	bool "HNS RoCE Driver"
++	tristate "HNS RoCE Driver"
+ 	depends on NET_VENDOR_HISILICON
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
++	depends on (HNS_DSAF && HNS_ENET) || HNS3
+ 	---help---
+ 	  This is a RoCE/RDMA driver for the Hisilicon RoCE engine. The engine
+ 	  is used in Hisilicon Hip06 and more further ICT SoC based on
+ 	  platform device.
  
-+	port_counter = &dev->port_data[port].port_counter;
-+	if (port_counter->mode.mode == RDMA_COUNTER_MODE_AUTO)
-+		return -EINVAL;
++	  To compile HIP06 or HIP08 driver as module, choose M here.
 +
- 	qp = rdma_counter_get_qp(dev, qp_num);
- 	if (!qp)
- 		return -ENOENT;
-@@ -506,6 +511,7 @@ err:
- int rdma_counter_bind_qpn_alloc(struct ib_device *dev, u8 port,
- 				u32 qp_num, u32 *counter_id)
- {
-+	struct rdma_port_counter *port_counter;
- 	struct rdma_counter *counter;
- 	struct ib_qp *qp;
- 	int ret;
-@@ -513,9 +519,13 @@ int rdma_counter_bind_qpn_alloc(struct i
- 	if (!rdma_is_port_valid(dev, port))
- 		return -EINVAL;
+ config INFINIBAND_HNS_HIP06
+-	tristate "Hisilicon Hip06 Family RoCE support"
++	bool "Hisilicon Hip06 Family RoCE support"
+ 	depends on INFINIBAND_HNS && HNS && HNS_DSAF && HNS_ENET
++	depends on INFINIBAND_HNS=m || (HNS_DSAF=y && HNS_ENET=y)
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip06 and
+ 	  Hip07 SoC. These RoCE engines are platform devices.
  
--	if (!dev->port_data[port].port_counter.hstats)
-+	port_counter = &dev->port_data[port].port_counter;
-+	if (!port_counter->hstats)
- 		return -EOPNOTSUPP;
- 
-+	if (port_counter->mode.mode == RDMA_COUNTER_MODE_AUTO)
-+		return -EINVAL;
++	  To compile this driver, choose Y here: if INFINIBAND_HNS is m, this
++	  module will be called hns-roce-hw-v1
 +
- 	qp = rdma_counter_get_qp(dev, qp_num);
- 	if (!qp)
- 		return -ENOENT;
+ config INFINIBAND_HNS_HIP08
+-	tristate "Hisilicon Hip08 Family RoCE support"
++	bool "Hisilicon Hip08 Family RoCE support"
+ 	depends on INFINIBAND_HNS && PCI && HNS3
++	depends on INFINIBAND_HNS=m || HNS3=y
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip08 SoC.
+ 	  The RoCE engine is a PCI device.
++
++	  To compile this driver, choose Y here: if INFINIBAND_HNS is m, this
++	  module will be called hns-roce-hw-v2.
+--- a/drivers/infiniband/hw/hns/Makefile
++++ b/drivers/infiniband/hw/hns/Makefile
+@@ -9,8 +9,12 @@ hns-roce-objs := hns_roce_main.o hns_roc
+ 	hns_roce_ah.o hns_roce_hem.o hns_roce_mr.o hns_roce_qp.o \
+ 	hns_roce_cq.o hns_roce_alloc.o hns_roce_db.o hns_roce_srq.o hns_roce_restrack.o
+ 
++ifdef CONFIG_INFINIBAND_HNS_HIP06
+ hns-roce-hw-v1-objs := hns_roce_hw_v1.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS_HIP06) += hns-roce-hw-v1.o
++obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v1.o
++endif
+ 
++ifdef CONFIG_INFINIBAND_HNS_HIP08
+ hns-roce-hw-v2-objs := hns_roce_hw_v2.o hns_roce_hw_v2_dfx.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS_HIP08) += hns-roce-hw-v2.o
++obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v2.o
++endif
 
 
