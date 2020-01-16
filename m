@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCE913E9FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:41:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A4AD13ECF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390795AbgAPRlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57420 "EHLO mail.kernel.org"
+        id S2405510AbgAPRmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:42:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393608AbgAPRkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:40:19 -0500
+        id S2390521AbgAPRkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:40:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F397F24718;
-        Thu, 16 Jan 2020 17:40:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2C5C2470F;
+        Thu, 16 Jan 2020 17:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196419;
-        bh=NH7YmaENed7733PiOVCPiTH7DV/SfeLsD2y7DmbM7Ug=;
+        s=default; t=1579196424;
+        bh=SHRQrnJKDSOOsQpXFHmVHP/r6ZAAF9ckpFPKx8D5VNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VOgx0pKIUgwMnYxNz2Nkx+vLHAZ55zodK+qnEHQmm5jXNnqjbMYRMVO+f8fCzKY4E
-         rgPM25/jxGM7UEkMOt7j7GlTTG9IJOcHOt1c/DcL4BzOG3sDBOrwX6MmmyYLHOmKKC
-         TjsC5ZJOp6kj5IfXHFqt5WcdYBD6ToxWxXQKykPc=
+        b=neFmv6hVu/rTSu7ErUgDwzOCU7RLfsMibd5Vme86SqsK7+iHvBK4X894m6n9Rt5HD
+         ScVNcvatJmYGvnIKX20avpRiSl8v+WcTWCb+8ZA7u8IlFMp+MrpC3nPnEwnAzhJUPl
+         309Yyf4GGzFSpLzMgm1fDYS/WvEsMDXufMDDuBlc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        laokz <laokz@foxmail.com>, Stefani Seibold <stefani@seibold.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg KH <greg@kroah.com>, Kees Cook <keescook@chromium.org>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 189/251] Partially revert "kfifo: fix kfifo_alloc() and kfifo_init()"
-Date:   Thu, 16 Jan 2020 12:35:38 -0500
-Message-Id: <20200116173641.22137-149-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, greybus-dev@lists.linaro.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.9 193/251] staging: greybus: light: fix a couple double frees
+Date:   Thu, 16 Jan 2020 12:35:42 -0500
+Message-Id: <20200116173641.22137-153-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -46,60 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit ab9bb6318b0967671e0c9b6537c1537d51ca4f45 ]
+[ Upstream commit 329101244f214952606359d254ae883b7109e1a5 ]
 
-Commit dfe2a77fd243 ("kfifo: fix kfifo_alloc() and kfifo_init()") made
-the kfifo code round the number of elements up.  That was good for
-__kfifo_alloc(), but it's actually wrong for __kfifo_init().
+The problem is in gb_lights_request_handler().  If we get a request to
+change the config then we release the light with gb_lights_light_release()
+and re-allocated it.  However, if the allocation fails part way through
+then we call gb_lights_light_release() again.  This can lead to a couple
+different double frees where we haven't cleared out the original values:
 
-The difference? __kfifo_alloc() will allocate the rounded-up number of
-elements, but __kfifo_init() uses an allocation done by the caller.  We
-can't just say "use more elements than the caller allocated", and have
-to round down.
+	gb_lights_light_v4l2_unregister(light);
+	...
+	kfree(light->channels);
+	kfree(light->name);
 
-The good news? All the normal cases will be using power-of-two arrays
-anyway, and most users of kfifo's don't use kfifo_init() at all, but one
-of the helper macros to declare a KFIFO that enforce the proper
-power-of-two behavior.  But it looks like at least ibmvscsis might be
-affected.
+I also made a small change to how we set "light->channels_count = 0;".
+The original code handled this part fine and did not cause a use after
+free but it was sort of complicated to read.
 
-The bad news? Will Deacon refers to an old thread and points points out
-that the memory ordering in kfifo's is questionable.  See
-
-  https://lore.kernel.org/lkml/20181211034032.32338-1-yuleixzhang@tencent.com/
-
-for more.
-
-Fixes: dfe2a77fd243 ("kfifo: fix kfifo_alloc() and kfifo_init()")
-Reported-by: laokz <laokz@foxmail.com>
-Cc: Stefani Seibold <stefani@seibold.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg KH <greg@kroah.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Will Deacon <will@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Rui Miguel Silva <rmfrfs@gmail.com>
+Link: https://lore.kernel.org/r/20190829122839.GA20116@mwanda
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/kfifo.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/greybus/light.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/lib/kfifo.c b/lib/kfifo.c
-index 90ba1eb1df06..a94227c55551 100644
---- a/lib/kfifo.c
-+++ b/lib/kfifo.c
-@@ -82,7 +82,8 @@ int __kfifo_init(struct __kfifo *fifo, void *buffer,
+diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+index 9f01427f35f9..1cb82cc28aa7 100644
+--- a/drivers/staging/greybus/light.c
++++ b/drivers/staging/greybus/light.c
+@@ -1102,21 +1102,21 @@ static void gb_lights_channel_release(struct gb_channel *channel)
+ static void gb_lights_light_release(struct gb_light *light)
  {
- 	size /= esize;
+ 	int i;
+-	int count;
  
--	size = roundup_pow_of_two(size);
-+	if (!is_power_of_2(size))
-+		size = rounddown_pow_of_two(size);
+ 	light->ready = false;
  
- 	fifo->in = 0;
- 	fifo->out = 0;
+-	count = light->channels_count;
+-
+ 	if (light->has_flash)
+ 		gb_lights_light_v4l2_unregister(light);
++	light->has_flash = false;
+ 
+-	for (i = 0; i < count; i++) {
++	for (i = 0; i < light->channels_count; i++)
+ 		gb_lights_channel_release(&light->channels[i]);
+-		light->channels_count--;
+-	}
++	light->channels_count = 0;
++
+ 	kfree(light->channels);
++	light->channels = NULL;
+ 	kfree(light->name);
++	light->name = NULL;
+ }
+ 
+ static void gb_lights_release(struct gb_lights *glights)
 -- 
 2.20.1
 
