@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2039313E267
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:56:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 973DB13E266
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbgAPQzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:55:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40620 "EHLO mail.kernel.org"
+        id S1731651AbgAPQzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:55:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732705AbgAPQzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:24 -0500
+        id S1732792AbgAPQzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7078D2464B;
-        Thu, 16 Jan 2020 16:55:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFC6122522;
+        Thu, 16 Jan 2020 16:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193723;
-        bh=PFjH3ZbA6H/pJdTWTzfP5SXvIjQF07uUkr1TpxSry/w=;
+        s=default; t=1579193724;
+        bh=bbNkedQdnDzdtuUlAZ2NagqN5EXVfxVOs37adHQ4BEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1528iOCwCWfLHPCqt11PdHIE93YqIzzPQdVhopacYOz78WsIPIsGZCIWLtppJV1UE
-         GMOLvluRsCUSLNvxuYE6sQwTgHixoNiVQIvKDWgKkmJStToZpEEF5j/uI9StXJRrQh
-         aFEYZU0DLif7EcDpcNhapxQ7O6avoGN678z1Z7jc=
+        b=nZJzo/G2HLWjfXwgiP9E493ETgx21Y3sJQQMlGULYOk0ku3sqXHLc1FULYRJhaSOk
+         GvpzDlidoGbFLCvofUxpRZsOyG8XwBh8wezrnGs4bGbAbH3dgvdo45cwofUSGJ8QDE
+         41KE4O0128ytpB0k4MmpZzNTig7sTOznomoVaOVc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.19 017/671] ASoC: wm9712: fix unused variable warning
-Date:   Thu, 16 Jan 2020 11:44:08 -0500
-Message-Id: <20200116165502.8838-17-sashal@kernel.org>
+Cc:     Houlong Wei <houlong.wei@mediatek.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 018/671] mailbox: mediatek: Add check for possible failure of kzalloc
+Date:   Thu, 16 Jan 2020 11:44:09 -0500
+Message-Id: <20200116165502.8838-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -45,45 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Houlong Wei <houlong.wei@mediatek.com>
 
-[ Upstream commit 18380dcc52cc8965e5144ce33fdfad7e168679a5 ]
+[ Upstream commit 9f0a0a381c5db56e7922dbeea6831f27db58372f ]
 
-The 'ret' variable is now only used in an #ifdef, and causes a
-warning if it is declared outside of that block:
+The patch 623a6143a845("mailbox: mediatek: Add Mediatek CMDQ driver")
+introduce the following static checker warning:
+  drivers/mailbox/mtk-cmdq-mailbox.c:366 cmdq_mbox_send_data()
+  error: potential null dereference 'task'.  (kzalloc returns null)
 
-sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
-sound/soc/codecs/wm9712.c:641:6: error: unused variable 'ret' [-Werror=unused-variable]
-
-Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm9712.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mailbox/mtk-cmdq-mailbox.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
-index ade34c26ad2f..e873baa9e778 100644
---- a/sound/soc/codecs/wm9712.c
-+++ b/sound/soc/codecs/wm9712.c
-@@ -638,13 +638,14 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
- {
- 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
- 	struct regmap *regmap;
--	int ret;
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index aec46d5d3506..f7cc29c00302 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -363,6 +363,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+ 	WARN_ON(cmdq->suspended);
  
- 	if (wm9712->mfd_pdata) {
- 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
- 		regmap = wm9712->mfd_pdata->regmap;
- 	} else {
- #ifdef CONFIG_SND_SOC_AC97_BUS
-+		int ret;
+ 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
++	if (!task)
++		return -ENOMEM;
 +
- 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
- 						      WM9712_VENDOR_ID_MASK);
- 		if (IS_ERR(wm9712->ac97)) {
+ 	task->cmdq = cmdq;
+ 	INIT_LIST_HEAD(&task->list_entry);
+ 	task->pa_base = pkt->pa_base;
 -- 
 2.20.1
 
