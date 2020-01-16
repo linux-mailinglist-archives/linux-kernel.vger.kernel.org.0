@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD81513FF73
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:43:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EAD13FE7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391222AbgAPXnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:43:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55832 "EHLO mail.kernel.org"
+        id S2391708AbgAPXgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:36:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388798AbgAPXZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:25:52 -0500
+        id S2404084AbgAPXb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B61B2072B;
-        Thu, 16 Jan 2020 23:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 828DC214AF;
+        Thu, 16 Jan 2020 23:31:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217151;
-        bh=7BLELcTNyCfBKHTFKFJlpFdOhdtiSw/TYEphuGMitYQ=;
+        s=default; t=1579217517;
+        bh=FFqAA6SNsYplqYslGXzhazbin7/n7h1wWcwSQB08lDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UPjJbdu305z/Cymjgj82eKdi3suG0TgS64wjWfsx+VDtBvNE5Fh9149E6biRIrals
-         Nt44IOWgb/kHeFiSczrQDC4FCA2zSZdOqisnzDWLbf5gYsjxoLA190jbMxqYK1z0SZ
-         +5PlS+Whyt5ESSsQ7lWrm35VBlOD0rxANs1bRVBI=
+        b=kT6ZzoFOYnRPq/FdxN3ljVh1nCOo5KPB4FNshO/5o2j6bdvvT/OcnC0rC53iWOKUY
+         xxqh2kyYg9etbsZ59nGQw/aPnBoG2p9+OC9NezWkQuUKstFoMKRQNIoM1QKZKx6tGS
+         o5AF/7I3qRpxLlEffzg5+FxvRdX/TDJ5nJin/JG8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 169/203] spi: atmel: fix handling of cs_change set on non-last xfer
-Date:   Fri, 17 Jan 2020 00:18:06 +0100
-Message-Id: <20200116231759.362763989@linuxfoundation.org>
+        stable@vger.kernel.org, Hanjun Guo <hanjun.guo@linaro.org>,
+        Lei Li <lious.lilei@hisilicon.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 09/71] arm64: Enforce BBM for huge IO/VMAP mappings
+Date:   Fri, 17 Jan 2020 00:18:07 +0100
+Message-Id: <20200116231710.759661967@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mans Rullgard <mans@mansr.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit fed8d8c7a6dc2a76d7764842853d81c770b0788e upstream.
+commit 15122ee2c515a253b0c66a3e618bc7ebe35105eb upstream.
 
-The driver does the wrong thing when cs_change is set on a non-last
-xfer in a message.  When cs_change is set, the driver deactivates the
-CS and leaves it off until a later xfer again has cs_change set whereas
-it should be briefly toggling CS off and on again.
+ioremap_page_range doesn't honour break-before-make and attempts to put
+down huge mappings (using p*d_set_huge) over the top of pre-existing
+table entries. This leads to us leaking page table memory and also gives
+rise to TLB conflicts and spurious aborts, which have been seen in
+practice on Cortex-A75.
 
-This patch brings the behaviour of the driver back in line with the
-documentation and common sense.  The delay of 10 us is the same as is
-used by the default spi_transfer_one_message() function in spi.c.
-[gregory: rebased on for-5.5 from spi tree]
-Fixes: 8090d6d1a415 ("spi: atmel: Refactor spi-atmel to use SPI framework queue")
-Signed-off-by: Mans Rullgard <mans@mansr.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Link: https://lore.kernel.org/r/20191018153504.4249-1-gregory.clement@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Until this has been resolved, refuse to put block mappings when the
+existing entry is found to be present.
+
+Fixes: 324420bf91f60 ("arm64: add support for ioremap() block mappings")
+Reported-by: Hanjun Guo <hanjun.guo@linaro.org>
+Reported-by: Lei Li <lious.lilei@hisilicon.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/spi/spi-atmel.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ arch/arm64/mm/mmu.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -302,7 +302,6 @@ struct atmel_spi {
- 	bool			use_cs_gpios;
- 
- 	bool			keep_cs;
--	bool			cs_active;
- 
- 	u32			fifo_size;
- };
-@@ -1374,11 +1373,9 @@ static int atmel_spi_one_transfer(struct
- 				 &msg->transfers)) {
- 			as->keep_cs = true;
- 		} else {
--			as->cs_active = !as->cs_active;
--			if (as->cs_active)
--				cs_activate(as, msg->spi);
--			else
--				cs_deactivate(as, msg->spi);
-+			cs_deactivate(as, msg->spi);
-+			udelay(10);
-+			cs_activate(as, msg->spi);
- 		}
- 	}
- 
-@@ -1401,7 +1398,6 @@ static int atmel_spi_transfer_one_messag
- 	atmel_spi_lock(as);
- 	cs_activate(as, spi);
- 
--	as->cs_active = true;
- 	as->keep_cs = false;
- 
- 	msg->status = 0;
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -917,6 +917,11 @@ int pud_set_huge(pud_t *pudp, phys_addr_
+ {
+ 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
++
++	/* ioremap_page_range doesn't honour BBM */
++	if (pud_present(READ_ONCE(*pudp)))
++		return 0;
++
+ 	BUG_ON(phys & ~PUD_MASK);
+ 	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
+@@ -926,6 +931,11 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_
+ {
+ 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
+ 					pgprot_val(mk_sect_prot(prot)));
++
++	/* ioremap_page_range doesn't honour BBM */
++	if (pmd_present(READ_ONCE(*pmdp)))
++		return 0;
++
+ 	BUG_ON(phys & ~PMD_MASK);
+ 	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
+ 	return 1;
 
 
