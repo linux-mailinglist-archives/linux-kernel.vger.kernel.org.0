@@ -2,97 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7514D140171
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 02:30:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C84814017E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 02:38:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388267AbgAQB3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 20:29:52 -0500
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:54065 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730070AbgAQB3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 20:29:49 -0500
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 17 Jan
- 2020 09:29:46 +0800
-Received: from [10.32.64.11] (10.32.64.11) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 17 Jan
- 2020 09:29:39 +0800
-Subject: Re: [PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from
- SPECTRE_V2
-To:     Thomas Gleixner <tglx@linutronix.de>, <mingo@redhat.com>,
-        <bp@alien8.de>, <hpa@zytor.com>, <x86@kernel.org>,
-        <luto@kernel.org>, <pawan.kumar.gupta@linux.intel.com>,
-        <peterz@infradead.org>, <fenghua.yu@intel.com>,
-        <vineela.tummalapalli@intel.com>, <linux-kernel@vger.kernel.org>
-CC:     <DavidWang@zhaoxin.com>, <CooperYan@zhaoxin.com>,
-        <QiyuanWang@zhaoxin.com>, <HerryYang@zhaoxin.com>
-References: <1579146434-2668-1-git-send-email-TonyWWang-oc@zhaoxin.com>
- <87r1zzuy48.fsf@nanos.tec.linutronix.de>
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Message-ID: <b61738fe-4a2f-db39-4740-8c4a4ee5d91d@zhaoxin.com>
-Date:   Fri, 17 Jan 2020 09:29:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388479AbgAQBiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 20:38:23 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9180 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730720AbgAQBiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 20:38:23 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7529E2450DA21B6F08DA;
+        Fri, 17 Jan 2020 09:38:20 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 17 Jan 2020
+ 09:38:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ast@kernel.org>, <daniel@iogearbox.net>, <kafai@fb.com>,
+        <songliubraving@fb.com>, <yhs@fb.com>, <andriin@fb.com>,
+        <brianvv@google.com>
+CC:     <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH bpf-next] bpf: Remove set but not used variable 'first_key'
+Date:   Thu, 16 Jan 2020 22:53:00 +0800
+Message-ID: <20200116145300.59056-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <87r1zzuy48.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.32.64.11]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+kernel/bpf/syscall.c: In function generic_map_lookup_batch:
+kernel/bpf/syscall.c:1339:7: warning: variable first_key set but not used [-Wunused-but-set-variable]
+
+It is never used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ kernel/bpf/syscall.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 0d94d36..c26a714 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1336,7 +1336,6 @@ int generic_map_lookup_batch(struct bpf_map *map,
+ 	void *buf, *buf_prevkey, *prev_key, *key, *value;
+ 	int err, retry = MAP_LOOKUP_RETRIES;
+ 	u32 value_size, cp, max_count;
+-	bool first_key = false;
+ 
+ 	if (attr->batch.elem_flags & ~BPF_F_LOCK)
+ 		return -EINVAL;
+@@ -1365,7 +1364,6 @@ int generic_map_lookup_batch(struct bpf_map *map,
+ 	}
+ 
+ 	err = -EFAULT;
+-	first_key = false;
+ 	prev_key = NULL;
+ 	if (ubatch && copy_from_user(buf_prevkey, ubatch, map->key_size))
+ 		goto free_buf;
+-- 
+2.7.4
 
 
-On 17/01/2020 01:09, Thomas Gleixner wrote:
-> Tony,
-> 
-> Tony W Wang-oc <TonyWWang-oc@zhaoxin.com> writes:
-> 
->> @@ -1023,6 +1023,7 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
->>  #define MSBDS_ONLY		BIT(5)
->>  #define NO_SWAPGS		BIT(6)
->>  #define NO_ITLB_MULTIHIT	BIT(7)
->> +#define NO_SPECTRE_V2		BIT(8)
->>  
->>  #define VULNWL(_vendor, _family, _model, _whitelist)	\
->>  	{ X86_VENDOR_##_vendor, _family, _model, X86_FEATURE_ANY, _whitelist }
->> @@ -1084,6 +1085,10 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
->>  	/* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't work */
->>  	VULNWL_AMD(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
->>  	VULNWL_HYGON(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
->> +
->> +	/* Zhaoxin Family 7 */
->> +	VULNWL(CENTAUR,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
->> +	VULNWL(ZHAOXIN,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
->>  	{}
->>  };
->>  
->> @@ -1116,7 +1121,9 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
->>  		return;
->>  
->>  	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
->> -	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
->> +
->> +	if (!cpu_matches(NO_SPECTRE_V2))
->> +		setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
-> 
-> That's way better. But as you might have noticed yourself this conflicts
-> with the other patch which excludes these machines from the SWAPGS bug.
-> 
-> Granted it's a trivial conflict, but maintainers are not there to mop up
-> the mess others create. So the right thing here is to resend both
-> patches as a patch series with the conflict properly resolved.
-> 
-
-Sorry for this conflict. Will resend these two patches as a patch set.
-
-Sincerely
-TonyWWang-oc
