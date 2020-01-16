@@ -2,91 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A1613FBD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3077313FBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:59:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388242AbgAPV6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:58:06 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34361 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729380AbgAPV6G (ORCPT
+        id S2388549AbgAPV6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:58:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33637 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388409AbgAPV6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:58:06 -0500
-Received: by mail-vs1-f67.google.com with SMTP id g15so13691680vsf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 13:58:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=90kSKrsPpbCluN0U4RDiVNxyzvDrsXuzgr4VAEgKFuc=;
-        b=VNVb2CG8c3HkjMqddLo98y3OPZa+WSPTAgoYdSf7FbWI5WNi3wnlLK0p32BzwbDJkl
-         DxW3dVwqqXEzvQDJ/t2t8XVh7UcdBnxl57fQBAwB07GY+Kc5s2di8Ti7bcTy/S2/pe8U
-         ishyY7KqIu0u9X9VZYcJD0ArT3LnkwpSs93Icdin/XOuAUh49RrudpoY+q52GTTYSx40
-         GpnMdqP6bRbODHeQRjbKNwwaXhmlW1mB68/yoKkEelegSKWRaD4DkiQa+ct5BY9CQ8b+
-         WhW5jUQJ1e+6OM3m0IRmGb8dXhOkx9FNog8QbWSOqQkVjep7R9pRuyilDTthUXsbS/HD
-         LriA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=90kSKrsPpbCluN0U4RDiVNxyzvDrsXuzgr4VAEgKFuc=;
-        b=KEkNnaUhOKkzLdXcA5i1GVSycc9i45LRPAvjr+qjJzrmWSTEF7m9/sSXS9XDKwKqDm
-         bDcu1UF/MS6VcAJ7jdLhik9v4KeYQH0wux/mc59T8Ig6VZbF8Wnm0u81z4tSNKnmSzg/
-         Z7M2y7p/0K8g59dvL1950+GMvBuKlcSeM7vBVywVi6ikS5UCvZG98MfvbPHI2+gY0IM8
-         +hI3z3QMMGdh0zOytrLpuchhTuyZ+p5mxtyIleBQ8AiP8elREM4tE347X9K+5+ihbfn1
-         678JX6R6WiyZF4PMYnUaXZbImydQk3KyfPCqmsj5gozednWCDlGboNr6Zo9oCTTuE1DM
-         Iw6A==
-X-Gm-Message-State: APjAAAUaK2LCpOKRi1iXk31gCJK/6V1kw8qSa9/BkEUeRWRepEfBEi5H
-        k6aPW0CG/SckVQH/oAOtXzBNDzYnDRAFBUFt4dQs6w==
-X-Google-Smtp-Source: APXvYqzrUqH5/W2UZ+FeXG0hZr7Tack1J9k9eB9pBix6w41rOK+OkTqsOrnRDdc5aMPEGFoHQeXxcn/0tewoHbFlgSg=
-X-Received: by 2002:a67:ae43:: with SMTP id u3mr3413809vsh.44.1579211884786;
- Thu, 16 Jan 2020 13:58:04 -0800 (PST)
+        Thu, 16 Jan 2020 16:58:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579211912;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NLaw4B7huFIwZYCLSPZwzOsmw0wrqPy7mWFaVTWj5mc=;
+        b=iTHCSL4XQZtr2LJ6hNcct0R6FH3PJLW/CO93NlfU1I/CWBgo3Oq0/+6HbHiTumh2vd8OD5
+        yu7bGV1I64Ls1rmRElrHLTuPO5ZH9qytCCNlB6U6a9ZUTNhyMjI7nAe0twm6i9AGgQFBXn
+        upaPUHlpLB6ixGHPDi6XtpcEsWp73uE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-325-lfqB6_TkP7qCQUyQ7P3ndA-1; Thu, 16 Jan 2020 16:58:31 -0500
+X-MC-Unique: lfqB6_TkP7qCQUyQ7P3ndA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5FD52100550E;
+        Thu, 16 Jan 2020 21:58:30 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F4617DB4F;
+        Thu, 16 Jan 2020 21:58:19 +0000 (UTC)
+Date:   Fri, 17 Jan 2020 05:58:14 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Peter Xu <peterx@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH] sched/isolation: isolate from handling managed interrupt
+Message-ID: <20200116215814.GA24827@ming.t460p>
+References: <20200116094806.25372-1-ming.lei@redhat.com>
+ <875zhbwqmm.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191206221351.38241-1-samitolvanen@google.com> <20191206221351.38241-15-samitolvanen@google.com>
- <20200116182414.GC22420@willie-the-truck>
-In-Reply-To: <20200116182414.GC22420@willie-the-truck>
-From:   Sami Tolvanen <samitolvanen@google.com>
-Date:   Thu, 16 Jan 2020 13:57:53 -0800
-Message-ID: <CABCJKucnitMPUv+NhZu4bscz9qs1qB9TXR1OP-ychFO0LQ4v_g@mail.gmail.com>
-Subject: Re: [PATCH v6 14/15] arm64: implement Shadow Call Stack
-To:     Will Deacon <will@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875zhbwqmm.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:24 AM Will Deacon <will@kernel.org> wrote:
-> >       .macro  irq_stack_entry
-> >       mov     x19, sp                 // preserve the original sp
-> > +#ifdef CONFIG_SHADOW_CALL_STACK
-> > +     mov     x20, x18                // preserve the original shadow stack
-> > +#endif
->
-> Hmm, not sure about corrupting x20 here. Doesn't it hold the PMR value from
-> kernel_entry?
+Hi Thomas,
 
-You're right, and it's used in el1_irq after irq_handler if
-CONFIG_ARM64_PSEUDO_NMI is enabled. Thanks for pointing this out.
-Looks like one of x24-x29 should be safe here, and the comment needs
-to be updated to explain why x20-x23 shouldn't be corrupted.
+On Thu, Jan 16, 2020 at 01:08:17PM +0100, Thomas Gleixner wrote:
+> Ming,
+> 
+> Ming Lei <ming.lei@redhat.com> writes:
+> 
+> > @@ -212,12 +213,29 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+> >  {
+> >  	struct irq_desc *desc = irq_data_to_desc(data);
+> >  	struct irq_chip *chip = irq_data_get_irq_chip(data);
+> > +	const struct cpumask *housekeeping_mask =
+> > +		housekeeping_cpumask(HK_FLAG_MANAGED_IRQ);
+> >  	int ret;
+> > +	cpumask_var_t tmp_mask = (struct cpumask *)mask;
+> >  
+> >  	if (!chip || !chip->irq_set_affinity)
+> >  		return -EINVAL;
+> >  
+> > -	ret = chip->irq_set_affinity(data, mask, force);
+> > +	zalloc_cpumask_var(&tmp_mask, GFP_ATOMIC);
+> 
+> I clearly told you:
+> 
+>     "That's wrong. This code is called with interrupts disabled, so
+>      GFP_KERNEL is wrong. And NO, we won't do a GFP_ATOMIC allocation
+>      here."
+> 
+> Is that last sentence unclear in any way?
 
-Sami
+Yeah, it is clear.
+
+But GFP_ATOMIC is usually allowed in atomic context, could you
+explain it a bit why it can't be done in this case?
+
+We still can fallback to current behavior if the allocation
+fails.
+
+Or could you suggest to solve the issue in other way if GFP_ATOMIC
+can't be done?
+
+
+Thanks,
+Ming
+
