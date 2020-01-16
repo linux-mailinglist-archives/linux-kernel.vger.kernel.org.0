@@ -2,159 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B96F13DD17
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D997D13DD21
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbgAPOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 09:11:43 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:46777 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbgAPOLn (ORCPT
+        id S1726885AbgAPONR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 09:13:17 -0500
+Received: from www413.your-server.de ([88.198.28.140]:38972 "EHLO
+        www413.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgAPONP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:11:43 -0500
-Received: by mail-qk1-f194.google.com with SMTP id r14so19148911qke.13
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 06:11:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E4TXCvIZZmY4SQCWQzeLR1MFoYNB31lrG2Qln+AaBO4=;
-        b=JFr3/SZ3UQPbE6tN0WIDrmGEvvrNPfsLSUjntfSPf4H8CaB9Ec8m1JVzlwKdxQI7bR
-         3Wf7o15qkWvfU2BrXgUqDa/P5/s3JU86YwmHmVDJgHJVZpC48Wq+GwpiH70SVGZXzNCW
-         tUB0BZs20iU/qGmkxxbEKTg+rfI7uWyRi6HD7SwwKfn6eeOx5NXa2L4khYzmYqdU/Q73
-         XJzZwnq1+SkVZNFtHtVAhdji1nJv/bWhk/VqEp4wX7VCiTOc5nBu+Cv/vpBioS4yMhnI
-         nFwmiDzAw7e0YnFmBSZ6FJ2C6Eprq+qfGs/8uk/SzOBENKSHugI2ZSccx15T3V2aqTrv
-         rb8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E4TXCvIZZmY4SQCWQzeLR1MFoYNB31lrG2Qln+AaBO4=;
-        b=J3Igr384+D5IPRCwG4ArhhYfqnJ4dIRG/0J2RgMx+DRE1fSJNCb1vR2dxr/FmNlQ7h
-         Z3kGkLwFYBN2t5mcV9oXmhLVsQQ58agOQihvJkJZQHyygn4qyx+BnGG0LSXWGridxYZe
-         gTPbNAJjLTlk6ghRv3pW00kQAkw16J7QY9QzWUrZoPHIFAsnjoTY6AQJ0Ff+d7VgPVWU
-         xeqb4g6xUJFNLGS8BOQYP4THxXTHz8AiMMMByAcKspyQylqNqfll7PKI8F/6ArtSZePC
-         LDzjFYqvjcy9YGB29WUf8mhD65ZiKksdBh6tBhVDVcg9qV4W2bJHo27KcN/wXSCFp2+H
-         L2XA==
-X-Gm-Message-State: APjAAAVLt/R1Eym5rReWfXpmeyVq/VXMaz9ChApLUtV5gVt/5DqyXmea
-        3yF53TolQMV8BeLetsLRKhIf7A==
-X-Google-Smtp-Source: APXvYqx6uZpu4GcW1N0sXEyw9K5yx2S6JPwxGtld6dzchDnf5W2zeuoRuG/8THysf1WiLlTh8VyUTg==
-X-Received: by 2002:a37:5fc2:: with SMTP id t185mr32372460qkb.271.1579183901908;
-        Thu, 16 Jan 2020 06:11:41 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id g53sm11292147qtk.76.2020.01.16.06.11.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Jan 2020 06:11:41 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1is5s4-0003yp-CZ; Thu, 16 Jan 2020 10:11:40 -0400
-Date:   Thu, 16 Jan 2020 10:11:40 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ralph Campbell <rcampbell@nvidia.com>
-Cc:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Skeggs <bskeggs@redhat.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v6 4/6] mm/mmu_notifier: add mmu_interval_notifier_find()
-Message-ID: <20200116141140.GA10759@ziepe.ca>
-References: <20200113224703.5917-1-rcampbell@nvidia.com>
- <20200113224703.5917-5-rcampbell@nvidia.com>
- <20200114124956.GN20978@mellanox.com>
- <528c1cff-608c-d342-1e72-90d780555204@nvidia.com>
+        Thu, 16 Jan 2020 09:13:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=cyberus-technology.de; s=default1911; h=Content-Transfer-Encoding:
+        MIME-Version:Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=U59tM/hjwBCgD+03ck/n2U6z9Uy02xUfGBDeEOA+9LE=; b=WyfDzBV5WGLSUyUA00FBOniqR
+        a9Gq85FImZoxDN+FVmHJM5WPuqtJNqSsD7kYaZBj+s4Xmy2Moas2+2QSyFhUZRMngFEhPt126BPHs
+        VnubuCv0JkpbhMzQgHPjWcyx+EBkqC55WkOp/Qv6pUL7FEAZZj4562jJAxepMlTyXqC2tcussZZet
+        BhBpEM4nKD5cZcSXKd7aCjUGXwUQHfmhJK6MX7wyDTb0BS09cdgDXghuEgkfnX3DEkGXMvuotYy+L
+        WYPxWE6bc2Y9rg3nrk0tJ/JFR3VnBOLRGdMI3Syz1AeuJdHqHo117g4GSOBcZfk+fwb9HrLGwqvSx
+        K4ZCQ+DNA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+        by www413.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <julian.stecklina@cyberus-technology.de>)
+        id 1is5tQ-0002lH-BY; Thu, 16 Jan 2020 15:13:04 +0100
+Received: from [2a02:8106:231:700:38db:ba68:aa3a:bbaa] (helo=localhost.localdomain)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <julian.stecklina@cyberus-technology.de>)
+        id 1is5tQ-0008eN-2d; Thu, 16 Jan 2020 15:13:04 +0100
+Message-ID: <9b32e225ee680e61716e300eb1ed8387599cc0dd.camel@cyberus-technology.de>
+Subject: Re: [RFC PATCH 4/4] drm/i915/gvt: move public gvt headers out into
+ global include
+From:   Julian Stecklina <julian.stecklina@cyberus-technology.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     intel-gvt-dev@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        zhiyuan.lv@intel.com, hang.yuan@intel.com,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Thomas Prescher <thomas.prescher@cyberus-technology.de>
+Date:   Thu, 16 Jan 2020 15:13:01 +0100
+In-Reply-To: <20200115152215.GA3830321@kroah.com>
+References: <4079ce7c26a2d2a3c7e0828ed1ea6008d6e2c805.camel@cyberus-technology.de>
+         <20200109171357.115936-1-julian.stecklina@cyberus-technology.de>
+         <20200109171357.115936-5-julian.stecklina@cyberus-technology.de>
+         <20200115152215.GA3830321@kroah.com>
+Organization: Cyberus Technology GmbH
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <528c1cff-608c-d342-1e72-90d780555204@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: julian.stecklina@cyberus-technology.de
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25697/Thu Jan 16 12:42:45 2020)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 02:05:24PM -0800, Ralph Campbell wrote:
-> 
-> On 1/14/20 4:49 AM, Jason Gunthorpe wrote:
-> > On Mon, Jan 13, 2020 at 02:47:01PM -0800, Ralph Campbell wrote:
-> > > diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> > > index 47ad9cc89aab..4efecc0f13cb 100644
-> > > +++ b/mm/mmu_notifier.c
-> > > @@ -1171,6 +1171,39 @@ void mmu_interval_notifier_update(struct mmu_interval_notifier *mni,
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(mmu_interval_notifier_update);
-> > > +struct mmu_interval_notifier *mmu_interval_notifier_find(struct mm_struct *mm,
-> > > +				const struct mmu_interval_notifier_ops *ops,
-> > > +				unsigned long start, unsigned long last)
-> > > +{
-> > > +	struct mmu_notifier_mm *mmn_mm = mm->mmu_notifier_mm;
-> > > +	struct interval_tree_node *node;
-> > > +	struct mmu_interval_notifier *mni;
-> > > +	struct mmu_interval_notifier *res = NULL;
-> > > +
-> > > +	spin_lock(&mmn_mm->lock);
-> > > +	node = interval_tree_iter_first(&mmn_mm->itree, start, last);
-> > > +	if (node) {
-> > > +		mni = container_of(node, struct mmu_interval_notifier,
-> > > +				   interval_tree);
-> > > +		while (true) {
-> > > +			if (mni->ops == ops) {
-> > > +				res = mni;
-> > > +				break;
-> > > +			}
-> > > +			node = interval_tree_iter_next(&mni->interval_tree,
-> > > +						       start, last);
-> > > +			if (!node)
-> > > +				break;
-> > > +			mni = container_of(node, struct mmu_interval_notifier,
-> > > +					   interval_tree);
-> > > +		}
-> > > +	}
-> > > +	spin_unlock(&mmn_mm->lock);
+Hi Greg, Christoph,
+
+On Wed, 2020-01-15 at 16:22 +0100, Greg KH wrote:
+> On Thu, Jan 09, 2020 at 07:13:57PM +0200, Julian Stecklina wrote:
+> > Now that the GVT interface to hypervisors does not depend on i915/GVT
+> > internals anymore, we can move the headers to the global include/.
 > > 
-> > This doesn't seem safe at all, here we are returning a pointer to
-> > memory from the interval tree with out any kind of lifetime
-> > protection.
+> > This makes out-of-tree modules for hypervisor integration possible.
 > 
-> It is memory that the driver has allocated and has full control over
-> the lifetime since the driver does all the insertions and removals.
-> The driver does have to hold the HW page table lock so lookups are
-> synchronized with interval insertions and removals and page table
-> entry insertions and removals.
+> What kind of out-of-tree modules do you need/want for this?
 
-No.. the ->release is async, so having the driver hold a lock around
-all the mmu_interval_ APIS still doesn't make it safe. The element
-could be on the defered list and it could become freed at any moment.
+The mediated virtualization support in the i915 driver needs a backend to the
+hypervisor. There is currently one backend for KVM in the tree
+(drivers/gpu/drm/i915/gvt/kvmgt.c) and at least 3 other hypervisor backends out
+of tree in various states of development that I know of. We are currently
+developing one of these.
 
-> > If the interval tree is read it must be left in the read lock state
-> > until the caller is done with the pointer.
-> > 
-> > .. and this poses all sorts of questions about consistency with items
-> > on the deferred list. Should find return an item undergoing deletion?
 > 
-> I don't think so. The deferred operations are all complete when
-> mmu_interval_read_begin() returns, and the sequence number check
-> with mmu_interval_read_retry() guarantees there have been no changes
-> while not holding the driver page table lock and calling hmm_range_fault().
+> Also, as Christoph said, adding exports for functions that are not used
+> by anything within the kernel tree itself is not ok, that's not how we
+> work.
 
-It seems very dangerous to say, on one hand, that the driver is
-serialized because it holds a lock around all mmu_interval_* calls,
-while on the other saying that on rare edge cases find does not return
-a result that matches the serial-program-order sequence.
+The exports are used by the KVM hypervisor backend. The patchset I sent
+basically decouples KVMGT from i915 driver internals. So personally I would
+count this as a benefit in itself.
 
-This seems like a way to create bugs.
+There is already an indirection in place that looks like it is intended to
+decouple the hypervisor backends from the i915 driver core: intel_gvt_ops. This
+is a struct of function pointers that the hypervisor backend uses to talk to the
+GPU mediator code.
 
-For instance, if find is consistent with the defered list then it will
-not return any element that has a pending deletion and the above issue
-with lifetime wouldn't happen.
+Unfortunately, this struct doesn't cover all usecases and the KVM hypervisor
+backend directly touches the i915 devices' internal state in very few places. My
+current solution was to wrap these accesses in accessor functions and
+EXPORT_SYMBOL_GPL them.
 
-However, I'm still not sure that providing an API tha requires the
-driver to provide tricky locking is the best idea. This basically says
-that if a driver uses find then every single other call to
-mmu_interval_* must be serialized with a single lock.
+If the more acceptable solution is to add more function pointers to
+intel_gvt_ops instead of exporting symbols, I'm happy to go along this route.
 
-Jason
+> And why do they somehow have to be out of the tree?  We want them in the
+> tree, and so should you, as it will save you time and money if they are.
+
+I also want these hypervisor backends in the tree, but from a development
+workflow having the ability to build them as a out-of-tree modules is very
+convenient. I guess this is also true for the developers working on the other
+hypervisor backends.
+
+When I looked at the status quo in i915/gvt a couple of weeks ago, it seemed
+like it would be a win for everyone. Let me just clearly say that we have no
+intention of doing binary blob drivers. :)
+
+Thanks,
+Julian
+
+[1] 
+https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/i915/gvt/gvt.h#L555
+
