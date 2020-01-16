@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C05913F172
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:28:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF6A13F15B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392239AbgAPR0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:26:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
+        id S2392264AbgAPR0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392153AbgAPRZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:45 -0500
+        id S2392066AbgAPRZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 709262053B;
-        Thu, 16 Jan 2020 17:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50B2F24653;
+        Thu, 16 Jan 2020 17:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195545;
-        bh=Er9b+hegv+QekdwOFBDM4vu7+PTEEUZ/66FnFh24PYQ=;
+        s=default; t=1579195550;
+        bh=cptCo7/ZT7TtmpKLsgFyIEJ5nLFSH3EM9lZa+qr5o60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8ciJSxw8T6ndVSKFL7k1QZLSfQtAShW25VqUgH68UPB7eZWmIHygweCX/Mk5HQ9F
-         QDEP/zCCm7Tysy6y8zLxZc2WU8PvE2RFamLSccNCQfePI1bDbGu2qZrWfendp0xIzd
-         Ee1ch0C4iVqjxiPzzFpPGI1o+ZIViglTQCrfoMNQ=
+        b=tqP5K5udl3NIzEsuknOGV3YA+cgjcP12b1eQqix13iVBf1Pw4Echsv7X5t1NdUeuC
+         /IrcsOexWtIqE5STYaXRH3L658qzWkv5HhuhRPovVTVIrZuwDQldIik5bzsDDKf3Qm
+         Nj4NC+edHwUxl0cEtDj3iwwxkeMu4Wc/P1gAV6Dk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 137/371] media: ivtv: update *pos correctly in ivtv_read_pos()
-Date:   Thu, 16 Jan 2020 12:20:09 -0500
-Message-Id: <20200116172403.18149-80-sashal@kernel.org>
+Cc:     Axel Lin <axel.lin@ingics.com>, "Andrew F . Davis" <afd@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 141/371] regulator: tps65086: Fix tps65086_ldoa1_ranges for selector 0xB
+Date:   Thu, 16 Jan 2020 12:20:13 -0500
+Message-Id: <20200116172403.18149-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,34 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit f8e579f3ca0973daef263f513da5edff520a6c0d ]
+[ Upstream commit e69b394703e032e56a140172440ec4f9890b536d ]
 
-We had intended to update *pos, but the current code is a no-op.
+selector 0xB (1011) should be 2.6V rather than 2.7V, fit ix.
 
-Fixes: 1a0adaf37c30 ("V4L/DVB (5345): ivtv driver for Conexant cx23416/cx23415 MPEG encoder/decoder")
+Table 5-4. LDOA1 Output Voltage Options
+VID Bits VOUT VID Bits VOUT VID Bits VOUT VID Bits VOUT
+0000     1.35 0100     1.8  1000     2.3  1100     2.85
+0001     1.5  0101     1.9  1001     2.4  1101     3.0
+0010     1.6  0110     2.0  1010     2.5  1110     3.3
+0011     1.7  0111     2.1  1011     2.6  1111     Not Used
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: d2a2e729a666 ("regulator: tps65086: Add regulator driver for the TPS65086 PMIC")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/ivtv/ivtv-fileops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/tps65086-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/pci/ivtv/ivtv-fileops.c b/drivers/media/pci/ivtv/ivtv-fileops.c
-index c9bd018e53de..e2b19c3eaa87 100644
---- a/drivers/media/pci/ivtv/ivtv-fileops.c
-+++ b/drivers/media/pci/ivtv/ivtv-fileops.c
-@@ -420,7 +420,7 @@ static ssize_t ivtv_read_pos(struct ivtv_stream *s, char __user *ubuf, size_t co
- 
- 	IVTV_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
- 	if (rc > 0)
--		pos += rc;
-+		*pos += rc;
- 	return rc;
- }
+diff --git a/drivers/regulator/tps65086-regulator.c b/drivers/regulator/tps65086-regulator.c
+index 45e96e154690..5a5e9b5bf4be 100644
+--- a/drivers/regulator/tps65086-regulator.c
++++ b/drivers/regulator/tps65086-regulator.c
+@@ -90,8 +90,8 @@ static const struct regulator_linear_range tps65086_buck345_25mv_ranges[] = {
+ static const struct regulator_linear_range tps65086_ldoa1_ranges[] = {
+ 	REGULATOR_LINEAR_RANGE(1350000, 0x0, 0x0, 0),
+ 	REGULATOR_LINEAR_RANGE(1500000, 0x1, 0x7, 100000),
+-	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xA, 100000),
+-	REGULATOR_LINEAR_RANGE(2700000, 0xB, 0xD, 150000),
++	REGULATOR_LINEAR_RANGE(2300000, 0x8, 0xB, 100000),
++	REGULATOR_LINEAR_RANGE(2850000, 0xC, 0xD, 150000),
+ 	REGULATOR_LINEAR_RANGE(3300000, 0xE, 0xE, 0),
+ };
  
 -- 
 2.20.1
