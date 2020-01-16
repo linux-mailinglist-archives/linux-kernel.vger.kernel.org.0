@@ -2,167 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82BA113D2F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B0113D304
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730583AbgAPD6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:58:35 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:28584 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729110AbgAPD6f (ORCPT
+        id S1730753AbgAPEG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 23:06:29 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57878 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729048AbgAPEG2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:58:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579147113;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fnpkRDpghqTM1NwZ+1iPPc1hcGS89vCuP7+AdZ3c4v4=;
-        b=Y2wrTsHlqkiDLOBvQvZLw9I38bxprVJmcit7zZNQkGqQD2MCv8TM+neqiAvi/J/l+gs2+7
-        2Wpa/0ZxrfAHwCz/aAVcK7Rpx3Ty87tXaGfBMgN77Gm4f930Gy/ToSN+yhoBrELTkwjl/K
-        F5CaM9ORSeGoPp9AEpNj3vL+kN7/diU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-411-JWNlj9uUPTWbRf_tHKI_-g-1; Wed, 15 Jan 2020 22:58:32 -0500
-X-MC-Unique: JWNlj9uUPTWbRf_tHKI_-g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 18125183B532;
-        Thu, 16 Jan 2020 03:58:31 +0000 (UTC)
-Received: from x1.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BEA25C28C;
-        Thu, 16 Jan 2020 03:58:27 +0000 (UTC)
-Date:   Wed, 15 Jan 2020 20:58:27 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Mika =?UTF-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>
-Cc:     Yan Zhao <yan.y.zhao@intel.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v2 1/2] vfio: introduce vfio_dma_rw to read/write a
- range of IOVAs
-Message-ID: <20200115205827.2249201c@x1.home>
-In-Reply-To: <7528cfff-2512-538e-4e44-85f0a0b0130a@nextfour.com>
-References: <20200115034132.2753-1-yan.y.zhao@intel.com>
-        <20200115035303.12362-1-yan.y.zhao@intel.com>
-        <20200115130638.6926dd08@w520.home>
-        <80cf3888-2e51-3fd7-a064-213e7ded188e@nextfour.com>
-        <20200115195959.28f33078@x1.home>
-        <7528cfff-2512-538e-4e44-85f0a0b0130a@nextfour.com>
-Organization: Red Hat
+        Wed, 15 Jan 2020 23:06:28 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00G3xQ1v124597;
+        Thu, 16 Jan 2020 04:01:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=uKDNCB63FyMaskGVot3YarGxZwgjqh7FukgNd7alg8A=;
+ b=LI85uRZyi8UFbncNHRWnlG+OHXGlk5Mcl50KED7wwNhWSv8KS838yoDQCbtqIw/CG+CQ
+ 81qjagYHkmFAvfbezJ3/7ZrmnHG9wtxFs6yObz9/ps7EPtU4AbcxKfQbIkKE+u9qhBr+
+ gJvzNck2qf1jaWQmEkH/8uizlS50FWHBJe0UY4ps6FeJSt0ZGcp3ssQp5OsGQ0Pb311l
+ N8yFMFkvO+avJY/lZOotuMy8Mj9itZhbzsiAOd4RUSegNJ8PSh6xXWhjejmGp8CoOyRX
+ SQ02dQ1Yg+UPssyrMyUJuDBHjMuohvp+acCo9kiUOFJQUs62VHely7XWsZQ642yG0Xk0 nQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xf73yr1tg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 04:01:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00G3wWa8175503;
+        Thu, 16 Jan 2020 04:01:46 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2xj61kusae-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 04:01:46 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00G41Z9l011886;
+        Thu, 16 Jan 2020 04:01:35 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Jan 2020 20:01:34 -0800
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>,
+        stable@vger.kernel.org, Joe Eykholt <jeykholt@cisco.com>,
+        Mike Christie <michaelc@cs.wisc.edu>,
+        Abhijeet Joglekar <abjoglek@cisco.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fnic: fix invalid stack access
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20200107201602.4096790-1-arnd@arndb.de>
+Date:   Wed, 15 Jan 2020 23:01:31 -0500
+In-Reply-To: <20200107201602.4096790-1-arnd@arndb.de> (Arnd Bergmann's message
+        of "Tue, 7 Jan 2020 21:15:49 +0100")
+Message-ID: <yq1lfq8nj6s.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160031
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=971 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 03:15:58 +0000
-Mika Penttil=C3=A4 <mika.penttila@nextfour.com> wrote:
 
-> On 16.1.2020 4.59, Alex Williamson wrote:
-> > On Thu, 16 Jan 2020 02:30:52 +0000
-> > Mika Penttil=C3=A4 <mika.penttila@nextfour.com> wrote:
-> > =20
-> >> On 15.1.2020 22.06, Alex Williamson wrote: =20
-> >>> On Tue, 14 Jan 2020 22:53:03 -0500
-> >>> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> >>>    =20
-> >>>> vfio_dma_rw will read/write a range of user space memory pointed to =
-by
-> >>>> IOVA into/from a kernel buffer without pinning the user space memory.
-> >>>>
-> >>>> TODO: mark the IOVAs to user space memory dirty if they are written =
-in
-> >>>> vfio_dma_rw().
-> >>>>
-> >>>> Cc: Kevin Tian <kevin.tian@intel.com>
-> >>>> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> >>>> ---
-> >>>>    drivers/vfio/vfio.c             | 45 +++++++++++++++++++
-> >>>>    drivers/vfio/vfio_iommu_type1.c | 76 ++++++++++++++++++++++++++++=
-+++++
-> >>>>    include/linux/vfio.h            |  5 +++
-> >>>>    3 files changed, 126 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> >>>> index c8482624ca34..8bd52bc841cf 100644
-> >>>> --- a/drivers/vfio/vfio.c
-> >>>> +++ b/drivers/vfio/vfio.c
-> >>>> @@ -1961,6 +1961,51 @@ int vfio_unpin_pages(struct device *dev, unsi=
-gned long *user_pfn, int npage)
-> >>>>    }
-> >>>>    EXPORT_SYMBOL(vfio_unpin_pages);
-> >>>>   =20
-> >>>> +/*
-> >>>> + * Read/Write a range of IOVAs pointing to user space memory into/f=
-rom a kernel
-> >>>> + * buffer without pinning the user space memory
-> >>>> + * @dev [in]  : device
-> >>>> + * @iova [in] : base IOVA of a user space buffer
-> >>>> + * @data [in] : pointer to kernel buffer
-> >>>> + * @len [in]  : kernel buffer length
-> >>>> + * @write     : indicate read or write
-> >>>> + * Return error code on failure or 0 on success.
-> >>>> + */
-> >>>> +int vfio_dma_rw(struct device *dev, dma_addr_t iova, void *data,
-> >>>> +		   size_t len, bool write)
-> >>>> +{
-> >>>> +	struct vfio_container *container;
-> >>>> +	struct vfio_group *group;
-> >>>> +	struct vfio_iommu_driver *driver;
-> >>>> +	int ret =3D 0; =20
-> >> Do you know the iova given to vfio_dma_rw() is indeed a gpa and not io=
-va
-> >> from a iommu mapping? So isn't it you actually assume all the guest is
-> >> pinned,
-> >> like from device assignment?
-> >>
-> >> Or who and how is the vfio mapping added before the vfio_dma_rw() ? =20
-> > vfio only knows about IOVAs, not GPAs.  It's possible that IOVAs are
-> > identity mapped to the GPA space, but a VM with a vIOMMU would quickly
-> > break any such assumption.  Pinning is also not required.  This access
-> > is via the CPU, not the I/O device, so we don't require the memory to
-> > be pinning and it potentially won't be for a non-IOMMU backed mediated
-> > device.  The intention here is that via the mediation of an mdev
-> > device, a vendor driver would already know IOVA ranges for the device
-> > to access via the guest driver programming of the device.  Thanks,
-> >
-> > Alex =20
->=20
-> Thanks Alex... you mean IOVA is in the case of iommu already a=20
-> iommu-translated address to a user space VA in VM host space?
+Arnd,
 
-The user (QEMU in the case of device assignment) performs ioctls to map
-user VAs to IOVAs for the device.  With IOMMU backing the VAs are
-pinned to get HPA and the IOVA to HPA mappings are programmed into the
-IOMMU.  Thus the device accesses the IOVA to get to the HPA, which is
-the backing for the VA.  In this case we're simply using the IOVA to
-lookup the VA and access it with the CPU directly.  The IOMMU isn't
-involved, but we're still performing an access as if we were the device
-doing a DMA. Let me know if that doesn't answer your question.
+> gcc -O3 warns that some local variables are not properly initialized:
+>
+> drivers/scsi/fnic/vnic_dev.c: In function 'fnic_dev_hang_notify':
+> drivers/scsi/fnic/vnic_dev.c:511:16: error: 'a0' is used uninitialized
+> in this function [-Werror=uninitialized] vdev->args[0] = *a0;
 
-> How does it get to hold on that? What piece of meditation is responsible=
-=20
-> for this?
+Applied to 5.5/scsi-fixes, thanks!
 
-It's device specific.  The mdev vendor driver is mediating a specific
-hardware device where user accesses to MMIO on the device configures
-DMA targets.  The mediation needs to trap those accesses in order to
-pin page and program the real hardware with real physical addresses (be
-they HPA or host-IOVAs depending on the host IOMMU config) to perform
-those DMAs.  For cases where the CPU might choose to perform some sort
-of virtual DMA on behalf of the device itself, this interface would be
-used.  Thanks,
-
-Alex
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
