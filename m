@@ -2,63 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4978513D85F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 11:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE20213D834
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 11:50:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbgAPKvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 05:51:24 -0500
-Received: from verein.lst.de ([213.95.11.211]:55329 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726187AbgAPKvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 05:51:12 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0DE4F68B20; Thu, 16 Jan 2020 11:51:09 +0100 (CET)
-Date:   Thu, 16 Jan 2020 11:51:08 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, arnd@arndb.de
-Subject: Re: [PATCH v10 00/14] add the latest exfat driver
-Message-ID: <20200116105108.GA16924@lst.de>
-References: <CGME20200115082818epcas1p4892a99345626188afd111ee263132458@epcas1p4.samsung.com> <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115094732.bou23s3bduxpnr4k@pali>
+        id S1726369AbgAPKum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 05:50:42 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33360 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAPKul (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 05:50:41 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00GAoV3N006287;
+        Thu, 16 Jan 2020 04:50:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579171831;
+        bh=ARpeFSvEQvv2QH/Fv93pfZ16NpaDOAet0C0uZscJMv8=;
+        h=From:To:CC:Subject:Date;
+        b=GNMuVgbBqrGiszvnkqSj9Mw7YMJfGJbskpV4GwZTX59NBNyFSRpl15DHvbZ0mEFaK
+         bp9gc4SCdFeViIA52uGcpFeUXUUzDhXIGmILT8MEk4KM61WRQQWQ2ZeK/bvxA6mM+C
+         SLVFw4tP1gATVB+o9bkZKMlANn7Cb9Ir8KWV0UeI=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00GAoU9N088065
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 16 Jan 2020 04:50:30 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 16
+ Jan 2020 04:50:30 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 16 Jan 2020 04:50:30 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00GAoRdS000589;
+        Thu, 16 Jan 2020 04:50:27 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <adrian.hunter@intel.com>, <kishon@ti.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <ulf.hansson@linaro.org>,
+        <faiz_abbas@ti.com>, <tony@atomide.com>
+Subject: [PATCH v5 00/10] Port am335x and am437x devices to sdhci-omap
+Date:   Thu, 16 Jan 2020 16:21:44 +0530
+Message-ID: <20200116105154.7685-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200115094732.bou23s3bduxpnr4k@pali>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 10:47:32AM +0100, Pali Rohár wrote:
-> Next steps for future:
-> 
-> * De-duplicate cache code between fat and exfat. Currently fs/exfat
->   cache code is heavily copy-paste of fs/fat cache code.
+The following add driver patches for porting TI's am335x and am437x devices to
+the sdhci-omap driver.
 
-As said before I don't think this should be a merge blocker.  I actually
-see this more of an experiment as the sharing might make things worse.
-But at least it is worth giving it a try.
+Patches 1-4 Add Support for external DMA to the sdhci driver.
 
-> * De-duplicate UTF-16 functions. Currently fs/exfat has e.g. helper
->   functions for surrogate pairs copy-paste from fs/nls.
+Patches 5-7 refactor the sdhci_set_timeout() function and use it disable
+data timeout interrupt for erase commands
 
-If you looked into that can you post a list of suspected duplicates?
+Patches 8-9 add new compatibles for am335x and am43xx devices to the
+sdhci-omap driver.
 
-> 
-> * Unify EXFAT_DEFAULT_IOCHARSET and FAT_DEFAULT_IOCHARSET. Or maybe
->   unify it with other filesystems too.
+Patch 10 implements special reset required for am335x and am437x
+devices.
 
-For the initial merge I think they should be kept separate, as
-referencing other file systems Kconfig variable is confusing.
-Investingating if we could a single common one sounds like a good idea,
-though.
+DT changes will be posted as a separate series.
 
-> * After applying this patch series, remote staging exfat implementation.
+Tested on: am335x-evm, am335x-boneblack, am335x-bonegreen-wireless,
+am335x-sk, am335x-bone, am437x-idk, am43xx-gp-evm, am43xx-epos-evm.
 
-I think Greg wants to do that separately.  I still hope we can do that
-in the same merge window, though.
+v5:
+1. Patch 3 now uses the dma_submit_error() API instead of checking the
+   cookie on its own.
+2. Dropped the patch adding ti,needs-special-reset property to
+   sdhci-omap. Using a flag in the driver instead.
+3. Minor spacing changes.
+
+v4:
+1. Made the factoring out of initialize_data, block_info and mrqs_done as a
+   separate patch
+2. Replaced the patch introducing the quirk to disable DTO during erase
+   operations to a set_timeout() callback in sdhci-omap
+3. Ported the ti,needs-special-reset property from omap_hsmmc to sdhci-omap.
+4. Minor style changes.
+
+v3:
+1. Dropped patch 1 because the tasklet was removed by Adrian in an
+   earlier series.
+2. Added dma bindings in sdhci-omap as optional properties.
+3. Rebased on top of latest mainline.
+
+v2:
+1. sdhci is using two bottom halves. One threaded_rq for card detect and a
+   tasklet for finishing mmc requests. Patch 1 removes the tasklet and
+   moves its function to the threaded_irq. This enables me to
+   terminate_sync() in sdhci_request_done()
+
+2. Factored out common code for between the normal adn external dma case
+
+3. Using existing API sdhci_data_timeout_irq for disabling DTO during
+   erase commands.
+
+4. Fixed subject line for dt-bindings patch
+
+Chunyan Zhang (3):
+  dt-bindings: sdhci-omap: Add properties for using external dma
+  mmc: sdhci: add support for using external DMA devices
+  mmc: sdhci-omap: Add using external dma
+
+Faiz Abbas (7):
+  mmc: sdhci: Factor out some operations set to their own functions
+  mmc: sdhci: Convert sdhci_set_timeout_irq() to non-static
+  mmc: sdhci: Refactor sdhci_set_timeout()
+  mmc: sdhci-omap: Disable data timeout interrupt during erase
+  dt-bindings: sdhci-omap: Add am335x and am437x specific bindings
+  mmc: sdhci-omap: Add am335x and am437x specific compatibles
+  mmc: sdhci-omap: Add special reset capability
+
+ .../devicetree/bindings/mmc/sdhci-omap.txt    |  11 +
+ drivers/mmc/host/Kconfig                      |   4 +
+ drivers/mmc/host/sdhci-omap.c                 |  60 ++-
+ drivers/mmc/host/sdhci.c                      | 353 +++++++++++++++---
+ drivers/mmc/host/sdhci.h                      |  10 +
+ 5 files changed, 380 insertions(+), 58 deletions(-)
+
+-- 
+2.19.2
+
