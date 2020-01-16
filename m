@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27B9513F917
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:23:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A7613F910
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbgAPTWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37204 "EHLO mail.kernel.org"
+        id S1731795AbgAPTWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:22:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730785AbgAPQxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:22 -0500
+        id S1730878AbgAPQxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 180C721582;
-        Thu, 16 Jan 2020 16:53:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 343BC2176D;
+        Thu, 16 Jan 2020 16:53:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193601;
-        bh=N/YR52bu4YthFVAa+5FgcQ9s5xNLJKWMWEoOcKzJk1I=;
+        s=default; t=1579193603;
+        bh=F9CnNPMiYGhc4/q6hw9QUNtDZtY/v7pM+nnOx9qb4BY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G2pwyp/HQWyer/lVeItJwC/TINEI4T5Cd9QPyTaamsKkesN3WXv6L36+yMzQPktAy
-         q2Ee9wR654qwsgw1CJ6T0aFNNlFxxME0EgUhbx42FlL+1jk4BVzNEblWGaFVQnM9qK
-         RN6n1kB5w55b7FCaCK9/00bO0MC32hV9OMpUVFB8=
+        b=VGAK2YEjv7J6ltKm/5XP1QQDEMUhU1/Zxg4EhcAxi9HWMZfZ/9efR5JrOP9vSnzJx
+         36NK2tHMFxE5ZIrm6Q7zkNXGaGqIcxq8OvG7b24J8S+yaoMybjXsySPzWg7ptJ6jXg
+         uXRZjN1HrPQLR1NI/YR38UdVedUwlE1SFkMVa5e8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 140/205] NFSv4.x: Handle bad/dead sessions correctly in nfs41_sequence_process()
-Date:   Thu, 16 Jan 2020 11:41:55 -0500
-Message-Id: <20200116164300.6705-140-sashal@kernel.org>
+Cc:     Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 142/205] iwlwifi: mvm: fix support for single antenna diversity
+Date:   Thu, 16 Jan 2020 11:41:57 -0500
+Message-Id: <20200116164300.6705-142-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -42,118 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-[ Upstream commit 5c441544f045e679afd6c3c6d9f7aaf5fa5f37b0 ]
+[ Upstream commit bb99ff9baa02beb9216c86678999342197c849cc ]
 
-If the server returns a bad or dead session error, the we don't want
-to update the session slot number, but just immediately schedule
-recovery and allow it to proceed.
+When the single antenna diversity support was sent upstream, only some
+definitions were sent, due to a bad revert.
 
-We can/should then remove handling in other places
+Fix this by adding the actual code.
 
-Fixes: 3453d5708b33 ("NFSv4.1: Avoid false retries when RPC calls are interrupted")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: 5952e0ec3f05 ("iwlwifi: mvm: add support for single antenna diversity")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index caacf5e7f5e1..a591aaf31071 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -521,9 +521,7 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
- 		case -NFS4ERR_DEADSESSION:
- 		case -NFS4ERR_SEQ_FALSE_RETRY:
- 		case -NFS4ERR_SEQ_MISORDERED:
--			dprintk("%s ERROR: %d Reset session\n", __func__,
--				errorcode);
--			nfs4_schedule_session_recovery(clp->cl_session, errorcode);
-+			/* Handled in nfs41_sequence_process() */
- 			goto wait_on_recovery;
- #endif /* defined(CONFIG_NFS_V4_1) */
- 		case -NFS4ERR_FILE_OPEN:
-@@ -782,6 +780,7 @@ static int nfs41_sequence_process(struct rpc_task *task,
- 	struct nfs4_session *session;
- 	struct nfs4_slot *slot = res->sr_slot;
- 	struct nfs_client *clp;
-+	int status;
- 	int ret = 1;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index d9eb2b286438..c59cbb8cbdd7 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -514,6 +514,18 @@ static int iwl_send_phy_cfg_cmd(struct iwl_mvm *mvm)
+ 	struct iwl_phy_cfg_cmd phy_cfg_cmd;
+ 	enum iwl_ucode_type ucode_type = mvm->fwrt.cur_fw_img;
  
- 	if (slot == NULL)
-@@ -793,8 +792,13 @@ static int nfs41_sequence_process(struct rpc_task *task,
- 	session = slot->table->session;
- 
- 	trace_nfs4_sequence_done(session, res);
-+
-+	status = res->sr_status;
-+	if (task->tk_status == -NFS4ERR_DEADSESSION)
-+		status = -NFS4ERR_DEADSESSION;
-+
- 	/* Check the SEQUENCE operation status */
--	switch (res->sr_status) {
-+	switch (status) {
- 	case 0:
- 		/* Mark this sequence number as having been acked */
- 		nfs4_slot_sequence_acked(slot, slot->seq_nr);
-@@ -866,6 +870,10 @@ static int nfs41_sequence_process(struct rpc_task *task,
- 		 */
- 		slot->seq_nr = slot->seq_nr_highest_sent;
- 		goto out_retry;
-+	case -NFS4ERR_BADSESSION:
-+	case -NFS4ERR_DEADSESSION:
-+	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
-+		goto session_recover;
- 	default:
- 		/* Just update the slot sequence no. */
- 		slot->seq_done = 1;
-@@ -876,8 +884,10 @@ static int nfs41_sequence_process(struct rpc_task *task,
- out_noaction:
- 	return ret;
- session_recover:
--	nfs4_schedule_session_recovery(session, res->sr_status);
--	goto retry_nowait;
-+	nfs4_schedule_session_recovery(session, status);
-+	dprintk("%s ERROR: %d Reset session\n", __func__, status);
-+	nfs41_sequence_free_slot(res);
-+	goto out;
- retry_new_seq:
- 	++slot->seq_nr;
- retry_nowait:
-@@ -2188,7 +2198,6 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
- 		case -NFS4ERR_BAD_HIGH_SLOT:
- 		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
- 		case -NFS4ERR_DEADSESSION:
--			nfs4_schedule_session_recovery(server->nfs_client->cl_session, err);
- 			return -EAGAIN;
- 		case -NFS4ERR_STALE_CLIENTID:
- 		case -NFS4ERR_STALE_STATEID:
-@@ -7820,6 +7829,15 @@ nfs41_same_server_scope(struct nfs41_server_scope *a,
- static void
- nfs4_bind_one_conn_to_session_done(struct rpc_task *task, void *calldata)
- {
-+	struct nfs41_bind_conn_to_session_args *args = task->tk_msg.rpc_argp;
-+	struct nfs_client *clp = args->client;
-+
-+	switch (task->tk_status) {
-+	case -NFS4ERR_BADSESSION:
-+	case -NFS4ERR_DEADSESSION:
-+		nfs4_schedule_session_recovery(clp->cl_session,
-+				task->tk_status);
++	if (iwl_mvm_has_unified_ucode(mvm) &&
++	    !mvm->trans->cfg->tx_with_siso_diversity) {
++		return 0;
++	} else if (mvm->trans->cfg->tx_with_siso_diversity) {
++		/*
++		 * TODO: currently we don't set the antenna but letting the NIC
++		 * to decide which antenna to use. This should come from BIOS.
++		 */
++		phy_cfg_cmd.phy_cfg =
++			cpu_to_le32(FW_PHY_CFG_CHAIN_SAD_ENABLED);
 +	}
- }
++
+ 	/* Set parameters */
+ 	phy_cfg_cmd.phy_cfg = cpu_to_le32(iwl_mvm_get_phy_config(mvm));
  
- static const struct rpc_call_ops nfs4_bind_one_conn_to_session_ops = {
-@@ -8867,8 +8885,6 @@ static int nfs41_reclaim_complete_handle_errors(struct rpc_task *task, struct nf
- 	case -NFS4ERR_BADSESSION:
- 	case -NFS4ERR_DEADSESSION:
- 	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
--		nfs4_schedule_session_recovery(clp->cl_session,
--				task->tk_status);
- 		break;
- 	default:
- 		nfs4_schedule_lease_recovery(clp);
+@@ -1344,12 +1356,12 @@ int iwl_mvm_up(struct iwl_mvm *mvm)
+ 		ret = iwl_send_phy_db_data(mvm->phy_db);
+ 		if (ret)
+ 			goto error;
+-
+-		ret = iwl_send_phy_cfg_cmd(mvm);
+-		if (ret)
+-			goto error;
+ 	}
+ 
++	ret = iwl_send_phy_cfg_cmd(mvm);
++	if (ret)
++		goto error;
++
+ 	ret = iwl_mvm_send_bt_init_conf(mvm);
+ 	if (ret)
+ 		goto error;
 -- 
 2.20.1
 
