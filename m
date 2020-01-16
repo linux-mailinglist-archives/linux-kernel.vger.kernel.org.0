@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E2613FDE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 071E313FDF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403878AbgAPXaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:30:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36836 "EHLO mail.kernel.org"
+        id S2391481AbgAPXbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:31:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403798AbgAPXaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:30:13 -0500
+        id S2403809AbgAPXaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:30:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5819F2072E;
-        Thu, 16 Jan 2020 23:30:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB16820748;
+        Thu, 16 Jan 2020 23:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217412;
-        bh=5Yo15wUtY4GrEG5p7ZLwqs+m6oyTVZUgg2cKeRyUZ5s=;
+        s=default; t=1579217415;
+        bh=McUFwkqgq1B3keNDLMTz9JF50vJdyj1xjoKR7hsJxRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CXx6Z2jTZJTmRPVi6E+WU3u+aII31Vrug0rtH5bRXj52gyPkByD+hNIHaNcZSFzW9
-         CvuNxVE5w4T9d8TNk7FVi3xIJQvCuk0u3yRNk2UA6vIbvJt80M4X9GeGUS7/H6jYPU
-         5PMR2OtCeRt3tJyRa8Hd1i6gqy8xyJvEuXT78Mx4=
+        b=QLhX2Eli/sRTYqtRlqr0Z/UY0APAqckQscbnZxW6csJRa3tZb5IPMquX4/8xiT7N0
+         b+BjAAqkpSqSzNoV4Pp6DiKfSr0d67xM3FWZafxkhul2vJ/2WW0pNay+HTMZrO4oVU
+         UCKkGneS9A2G7SVevgvwK9ed/kgKi/2pAAUJt9XQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johnson Chen <johnsonch.chen@moxa.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 73/84] gpio: mpc8xxx: Add platform device to gpiochip->parent
-Date:   Fri, 17 Jan 2020 00:18:47 +0100
-Message-Id: <20200116231722.139540483@linuxfoundation.org>
+Subject: [PATCH 4.19 74/84] scsi: libcxgbi: fix NULL pointer dereference in cxgbi_device_destroy()
+Date:   Fri, 17 Jan 2020 00:18:48 +0100
+Message-Id: <20200116231722.252819169@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -44,37 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johnson CH Chen (陳昭勳) <JohnsonCH.Chen@moxa.com>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 322f6a3182d42df18059a89c53b09d33919f755e ]
+[ Upstream commit 71482fde704efdd8c3abe0faf34d922c61e8d76b ]
 
-Dear Linus Walleij,
+If cxgb4i_ddp_init() fails then cdev->cdev2ppm will be NULL, so add a check
+for NULL pointer before dereferencing it.
 
-In old kernels, some APIs still try to use parent->of_node from struct gpio_chip,
-and it could be resulted in kernel panic because parent is NULL. Adding platform
-device to gpiochip->parent can fix this problem.
-
-Signed-off-by: Johnson Chen <johnsonch.chen@moxa.com>
-Link: https://patchwork.kernel.org/patch/11234609
-Link: https://lore.kernel.org/r/HK0PR01MB3521489269F76467DFD7843FFA450@HK0PR01MB3521.apcprd01.prod.exchangelabs.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/1576676731-3068-1-git-send-email-varun@chelsio.com
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/cxgbi/libcxgbi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 3f10f9599f2c..1899d172590b 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -317,6 +317,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	gc = &mpc8xxx_gc->gc;
-+	gc->parent = &pdev->dev;
- 
- 	if (of_property_read_bool(np, "little-endian")) {
- 		ret = bgpio_init(gc, &pdev->dev, 4,
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index cd2c247d6d0c..559d8bda4cca 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -121,7 +121,8 @@ static inline void cxgbi_device_destroy(struct cxgbi_device *cdev)
+ 		"cdev 0x%p, p# %u.\n", cdev, cdev->nports);
+ 	cxgbi_hbas_remove(cdev);
+ 	cxgbi_device_portmap_cleanup(cdev);
+-	cxgbi_ppm_release(cdev->cdev2ppm(cdev));
++	if (cdev->cdev2ppm)
++		cxgbi_ppm_release(cdev->cdev2ppm(cdev));
+ 	if (cdev->pmap.max_connect)
+ 		cxgbi_free_big_mem(cdev->pmap.port_csk);
+ 	kfree(cdev);
 -- 
 2.20.1
 
