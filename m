@@ -2,89 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE3A13E02C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75EC713E031
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:34:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbgAPQds convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 Jan 2020 11:33:48 -0500
-Received: from mailoutvs21.siol.net ([185.57.226.212]:54468 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726151AbgAPQds (ORCPT
+        id S1726983AbgAPQeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:34:01 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41129 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbgAPQeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:33:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 20B0F523B22;
-        Thu, 16 Jan 2020 17:33:46 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5RtdmHMpsPgp; Thu, 16 Jan 2020 17:33:45 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C6669523B46;
-        Thu, 16 Jan 2020 17:33:45 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 808C9523B22;
-        Thu, 16 Jan 2020 17:33:45 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: add OrangePi 3 with eMMC
-Date:   Thu, 16 Jan 2020 17:33:45 +0100
-Message-ID: <12435330.uLZWGnKmhe@jernej-laptop>
-In-Reply-To: <20200116122944.sgl2fgxf5mrg6i52@gilmour.lan>
-References: <20200115194216.173117-1-jernej.skrabec@siol.net> <4200557.LvFx2qVVIh@jernej-laptop> <20200116122944.sgl2fgxf5mrg6i52@gilmour.lan>
+        Thu, 16 Jan 2020 11:34:01 -0500
+Received: by mail-qk1-f195.google.com with SMTP id x129so19652345qke.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:34:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=GwCUuYmh9QjD1S8e/ph4IFxvhkUCpERtc6AcTu3gWqXtitf5wJ2atb9p813PqJs/kz
+         diK17qtqwxVd+6Ev8mT/WQvE9pNqUr8/YDafR6zPQQ8nZHNwOlplHatjrdHBOrssnqaA
+         UdyH7nKSfKwOODBp9zyV4DWUlLwrPytZ36b9GhguPbKWMLDVFPbzKvbA2OSxCq1B9jUd
+         b47rLzIiS8wVwYKQNj4Lku8sQZ9e349RK028vjMw1oqLEa1A7bj/tPSV65MPLVapHyDO
+         lASrGxoXopzQLV0kKMpI+5L/x+KT/XEFBIWVBpt+kL77+0hsqdU0BOyIufZhhs9CdxCf
+         Vv9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=oa0bZQpkEyjcs7ABeeOu5qKY4d6etbTg8GwEpE2lwx4=;
+        b=jxoBjJK4u545STq5GntP5V5kQy7Uw38STax+XQrn1JBjgNF6uLnZKNggICBTbQRQGa
+         yJ6os5kw1DZ3uewn9vSEtQ+3d47eRE5dyyJtntPUpSb5C2bs+5Fzrd3fRNmX2RUcKZX/
+         gOZPK5hmI73KoMCqKT7GifVamoblvn5tu1U+vz1PTxSLuuiubOUmQcAYO6AScgUxmf3b
+         KM13waHfxP4cNFofaD0cqTsBDznyuCUsnoC8WQRV/5zVSSnuyub3FpQvFTN21hVfCtxB
+         UwIEGvdmehkxZBz5VsUaWRZY77GxwaJd1+rN8T04D/REGyj/1HOi2KCRtenaLylSbovd
+         93/A==
+X-Gm-Message-State: APjAAAXv6/fPtiND2FeVfDJMAjcsr5dGC+i6e8s/tIaTOfKxeTiCU772
+        ZE8dNIMVTOH1eNXQyqTlwASoCoAmWowvIyt5yTc=
+X-Google-Smtp-Source: APXvYqyWJN2GFU4wvaZ+ihLcFU/FzcfjEDWutuc+qax7spDb/+9FF/JZ6vGw0E6+JVEk3B/5diW8TqI/ysp4biX+yZM=
+X-Received: by 2002:ae9:e206:: with SMTP id c6mr34715696qkc.105.1579192440085;
+ Thu, 16 Jan 2020 08:34:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+Received: by 2002:ac8:6c2b:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 08:33:59
+ -0800 (PST)
+Reply-To: janvierlitse2019@gmail.com
+From:   Mr Janvier Litse <mrronanpectual2016@gmail.com>
+Date:   Thu, 16 Jan 2020 08:33:59 -0800
+Message-ID: <CACxeY9h6gZRRa5vNa67FwE05RDxRAM-7UDB4ijf_rcC-qOiAuA@mail.gmail.com>
+Subject: URGENT RESPOND FOR MORE DETAILS!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne četrtek, 16. januar 2020 ob 13:29:44 CET je Maxime Ripard napisal(a):
-> On Thu, Jan 16, 2020 at 12:10:58AM +0100, Jernej Škrabec wrote:
-> > Hi!
-> > 
-> > Dne sreda, 15. januar 2020 ob 22:57:31 CET je Rob Herring napisal(a):
-> > > On Wed, Jan 15, 2020 at 1:42 PM Jernej Skrabec <jernej.skrabec@siol.net>
-> > 
-> > wrote:
-> > > > OrangePi 3 can optionally have eMMC. Add a compatible for it.
-> > > 
-> > > Is this just a population option or a different board layout? If the
-> > > former, I don't think you need a new compatible, just add/enable a
-> > > node for the eMMC.
-> > 
-> > I have only board with eMMC but I imagine it's the former. Even so,
-> > current
-> > approach with Allwinner boards is to have two different board DT files,
-> > one for each variant. This can be seen from
-> > Documentation/devicetree/bindings/arm/ sunxi.yaml which has a lot of
-> > compatibles ending with "-emmc". I guess reason for that is to avoid
-> > having MMC controller being powered on for no reason.
-> The main reason for that is that those populating options can be
-> conflicting. For example, last week we discussed an issue about the
-> eMMC being on the same pin set than an SPI flash, both options being
-> available.
-> 
-> The solution Andre suggested then was to let the eMMC be disabled, and
-> have the bootloader probe the emmc, and if found, enable
-> it. Otherwise, it means that you have a SPI flash (and enable it).
-> 
-> I guess a similar solution would apply here.
+From: Mr Janvier Litse.
+African Development Bank
+Burkina Faso (ADB)
+Ouagadougou - Burkina Faso.
 
-From what I can tell from schematic, pins are dedicated for eMMC.
+Dear friend, Good Day
 
-So what solution do you suggest? Put eMMC node in original OrangePi 3 DT and 
-set status to disabled?
+I am writing to seek your cooperation over this business, Please due
+welcome this letter.
 
-Best regards,
-Jernej
+I am Mr Janvier Litse.the director of the accounts & auditing dept .at
+the African Development Bank Ouagadougou-west Africa (A D B) With due
+respect, I have decided to contact you on a business transaction that
+will be beneficial to both of us.At the bank's lastaccounts/auditing
+evaluations, my staffs came across an old account which was being
+maintained by a foreign client who we learnt was among the deceased
+passengers of motor accident on November.. 2003, the deceased was
+unable to run this account since his death. The account has remained
+dormant without the knowledge of his family since it was put in a safe
+deposit account in the bank for future investment by the client.
+
+Since his demise, even the members of his family haven't applied for
+claims over this fund and it has been in the safe deposit accountuntil
+I discovered that it cannot be claimed since our client is a foreign
+national and we are sure that he has no next of kin here to file
+claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to be done.
+I decided to seek ways through which to transfer this money out of the
+bank and out of the country too.
+
+The total amount in the account is twenty eight  million three hundred
+thousand dollars (USD 28,300,000.00).with my positions as a staffs of
+the bank, I am handicapped because I can not operate foreign accounts
+and cannot lay bonafide claim over this money.The client was a foreign
+national and you will only be asked to act as his next of kin and I
+will supply you with all the necessary information and bank data to
+assist you in being able to transfer this money to any bank of your
+choice where this money could be transferred into.
+
+The total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur during the transfer will be  incured by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund transfer to your account.
+
+Since I work in this bank that is why you should be confident in the
+success of this transaction because you will be updated with
+information as at when desired I will wish you to keep this
+transaction secret and confidential as I am hoping to retire with my
+share of this money at the end of transaction which will be when this
+money is safety in your account. I will then come over to your country
+for sharing according to the previously agreed percentages. You might
+even have to advise me on possibilities of investment in your country
+or elsewhere of our choice. May God help you to help me to a restive
+retirement, Amen.
 
 
+Please for further information and enquires feel free to contact me
+back immediately for more explanation and better  understanding.please
+contact me through this alternative email address
+(janvierlitse2019@gmail.com)
 
+I am waiting for your urgent response!!!
+Thanks and remain blessed
+ Mr Janvier Litse.
++226 54459253
