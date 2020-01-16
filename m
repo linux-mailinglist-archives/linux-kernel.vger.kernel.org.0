@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA4D13F37B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:44:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0778A13F347
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:41:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389525AbgAPRLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:11:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52142 "EHLO mail.kernel.org"
+        id S2389960AbgAPRLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:11:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389964AbgAPRL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:11:28 -0500
+        id S2390260AbgAPRLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:11:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 321B42468B;
-        Thu, 16 Jan 2020 17:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B00B92468F;
+        Thu, 16 Jan 2020 17:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194688;
-        bh=uiasfpaw3t7cNNMG2O+qQHIqHKAg3oUJaJRg0Vu++lE=;
+        s=default; t=1579194692;
+        bh=0a+6w6SG03FCjdjf/SOOSVff7mcP52e5n90AJXyPAjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T8IzHwxo0HD0xqFeJjJQSjE9jWBDlrUlZ8xtY1OOoYpTP+ZsOF1sRASr++1lo6gn7
-         hEjz7DQ6eCF+k7v+nVGgET/J5bkm1wHPNtPRxCh9rowGKD7kOihnoqu12V6scXafsG
-         LBcHzUV/M018bSFez1VliUJOCJtRxIcoMV6ncuUY=
+        b=nuOkIJGPppRvzIeS5EcggoKKMcLUBZMRvi7Q58+huG0XS3Oh30JS9Ef4kANGW2V/G
+         QFzD3JPTsoEF27fRDi/lzQXuVaYwuQrlqAhMEmumso8ETF/3EvJo+Puf7SO/Vd6WFQ
+         bzO8Pk5099wyq0lBRmJGK8q9owfvAlqEDM3NM0cY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleh Kravchenko <oleg@kaa.org.ua>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 531/671] led: triggers: Fix dereferencing of null pointer
-Date:   Thu, 16 Jan 2020 12:02:49 -0500
-Message-Id: <20200116170509.12787-268-sashal@kernel.org>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 534/671] rtlwifi: Fix file release memory leak
+Date:   Thu, 16 Jan 2020 12:02:52 -0500
+Message-Id: <20200116170509.12787-271-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,40 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleh Kravchenko <oleg@kaa.org.ua>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit 4016ba85880b252365d11bc7dc899450f2c73ad7 ]
+[ Upstream commit 4c3e48794dec7cb568974ba3bf2ab62b9c45ca3e ]
 
-Error was detected by PVS-Studio:
-V522 Dereferencing of the null pointer 'led_cdev->trigger' might take place.
+When using single_open() for opening, single_release() should be
+used instead of seq_release(), otherwise there is a memory leak.
 
-Fixes: 2282e125a406 ("leds: triggers: let struct led_trigger::activate() return an error code")
-Signed-off-by: Oleh Kravchenko <oleg@kaa.org.ua>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+This is detected by Coccinelle semantic patch.
+
+Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/leds/led-triggers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index e4cb3811e82a..005b839f6eb9 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -171,11 +171,11 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- 		trig->deactivate(led_cdev);
- err_activate:
+diff --git a/drivers/net/wireless/realtek/rtlwifi/debug.c b/drivers/net/wireless/realtek/rtlwifi/debug.c
+index d70385be9976..498994041bbc 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/debug.c
++++ b/drivers/net/wireless/realtek/rtlwifi/debug.c
+@@ -109,7 +109,7 @@ static const struct file_operations file_ops_common = {
+ 	.open = dl_debug_open_common,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = seq_release,
++	.release = single_release,
+ };
  
--	led_cdev->trigger = NULL;
--	led_cdev->trigger_data = NULL;
- 	write_lock_irqsave(&led_cdev->trigger->leddev_list_lock, flags);
- 	list_del(&led_cdev->trig_list);
- 	write_unlock_irqrestore(&led_cdev->trigger->leddev_list_lock, flags);
-+	led_cdev->trigger = NULL;
-+	led_cdev->trigger_data = NULL;
- 	led_set_brightness(led_cdev, LED_OFF);
- 	kfree(event);
- 
+ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
 -- 
 2.20.1
 
