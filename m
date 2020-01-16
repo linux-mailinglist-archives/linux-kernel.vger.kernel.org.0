@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C8AE13E388
+	by mail.lfdr.de (Postfix) with ESMTP id D5F2613E389
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388426AbgAPRCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:02:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55228 "EHLO mail.kernel.org"
+        id S2388437AbgAPRCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:02:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388375AbgAPRC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:02:28 -0500
+        id S1730518AbgAPRCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:02:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DBF22073A;
-        Thu, 16 Jan 2020 17:02:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4392321582;
+        Thu, 16 Jan 2020 17:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194147;
-        bh=N/kyBEfQWkq0Pn0UNjKmxITDICB0c0Y8/CBAvgyWKnw=;
+        s=default; t=1579194150;
+        bh=6azb/Fy2UuEvrdC3qRPeiBm9IqHqfM9HwCsIylrmiDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FO7I9312jQOovwSX213/fzl1PY432guloubZOL2cUKuhKYzvhRwxT9KWWD0I66K+q
-         Nnemh8TT8DRHLoUJLK7KLxPjx1G/VtDc7wKJyO+bmud5pTiHQbAkiCvRtuf7BbPj2q
-         dKPbxXxuurLOAjZnyHVL81uwcOaW01F1G554EgWA=
+        b=ubjj413BVog6aJwzSwQpp+1ngXkGGb5ty0jjIlVdLblD+e/LxXTP3mmVAaCPlNxb/
+         vBr48Scl3pGbbHu/3k3gUDb6vWFWvSokozmN0tUGEOrUAARPh9iiTGtjAXiF9Qi2N6
+         n1sGaW1dEB2bSxpFkW7mYiBMWA/VwWOgyDetufmI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
-        Nikita Danilov <nikita.danilov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 232/671] net: aquantia: fixed instack structure overflow
-Date:   Thu, 16 Jan 2020 11:52:21 -0500
-Message-Id: <20200116165940.10720-115-sashal@kernel.org>
+Cc:     Akihiro Tsukada <tskd08@gmail.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 234/671] media: dvb/earth-pt1: fix wrong initialization for demod blocks
+Date:   Thu, 16 Jan 2020 11:52:23 -0500
+Message-Id: <20200116165940.10720-117-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -45,55 +43,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Russkikh <Igor.Russkikh@aquantia.com>
+From: Akihiro Tsukada <tskd08@gmail.com>
 
-[ Upstream commit 8006e3730b6e900319411e35cee85b4513d298df ]
+[ Upstream commit 15d90a6ae98e6d2c68497b44a491cb9efbb98ab1 ]
 
-This is a real stack undercorruption found by kasan build.
+earth-pt1 driver was decomposed/restructured by the commit b732539efdba
+("media: dvb: earth-pt1: decompose pt1 driver into sub drivers"),
+but it introduced a problem regarding concurrent streaming:
+Opening a new terrestial stream stops the reception of an existing,
+already-opened satellite stream.
 
-The issue did no harm normally because it only overflowed
-2 bytes after `bitary` array which on most architectures
-were mapped into `err` local.
+The demod IC in earth-pt1 boards contains 2 pairs of terr. and sat. blocks,
+supporting 4 concurrent demodulations, and the above problem was because
+the config of a terr. block contained whole reset/init of the pair blocks,
+thus each open() of a terrestrial frontend wrongly cleared the config of
+its peer satellite block of the demod.
+This whole/pair reset should be executed earlier and not on each open().
 
-Fixes: bab6de8fd180 ("net: ethernet: aquantia: Atlantic A0 and B0 specific functions.")
-Signed-off-by: Nikita Danilov <nikita.danilov@aquantia.com>
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b732539efdba ("media: dvb: earth-pt1: decompose pt1 driver into sub drivers")
+
+Signed-off-by: Akihiro Tsukada <tskd08@gmail.com>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c | 4 ++--
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/pci/pt1/pt1.c | 54 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
-index 97addfa6f895..dab5891b9714 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
-@@ -207,8 +207,8 @@ static int hw_atl_a0_hw_rss_set(struct aq_hw_s *self,
- 	u32 i = 0U;
- 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
- 	int err = 0;
--	u16 bitary[(HW_ATL_A0_RSS_REDIRECTION_MAX *
--					HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
-+	u16 bitary[1 + (HW_ATL_A0_RSS_REDIRECTION_MAX *
-+		   HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
+diff --git a/drivers/media/pci/pt1/pt1.c b/drivers/media/pci/pt1/pt1.c
+index 7f878fc41b7e..93fecffb36ee 100644
+--- a/drivers/media/pci/pt1/pt1.c
++++ b/drivers/media/pci/pt1/pt1.c
+@@ -200,16 +200,10 @@ static const u8 va1j5jf8007t_25mhz_configs[][2] = {
+ static int config_demod(struct i2c_client *cl, enum pt1_fe_clk clk)
+ {
+ 	int ret;
+-	u8 buf[2] = {0x01, 0x80};
+ 	bool is_sat;
+ 	const u8 (*cfg_data)[2];
+ 	int i, len;
  
- 	memset(bitary, 0, sizeof(bitary));
+-	ret = i2c_master_send(cl, buf, 2);
+-	if (ret < 0)
+-		return ret;
+-	usleep_range(30000, 50000);
+-
+ 	is_sat = !strncmp(cl->name, TC90522_I2C_DEV_SAT,
+ 			  strlen(TC90522_I2C_DEV_SAT));
+ 	if (is_sat) {
+@@ -260,6 +254,46 @@ static int config_demod(struct i2c_client *cl, enum pt1_fe_clk clk)
+ 	return 0;
+ }
  
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index 51cd1f98bcf0..c4f914a29c38 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -192,8 +192,8 @@ static int hw_atl_b0_hw_rss_set(struct aq_hw_s *self,
- 	u32 i = 0U;
- 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
- 	int err = 0;
--	u16 bitary[(HW_ATL_B0_RSS_REDIRECTION_MAX *
--					HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
-+	u16 bitary[1 + (HW_ATL_B0_RSS_REDIRECTION_MAX *
-+		   HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
++/*
++ * Init registers for (each pair of) terrestrial/satellite block in demod.
++ * Note that resetting terr. block also resets its peer sat. block as well.
++ * This function must be called before configuring any demod block
++ * (before pt1_wakeup(), fe->ops.init()).
++ */
++static int pt1_demod_block_init(struct pt1 *pt1)
++{
++	struct i2c_client *cl;
++	u8 buf[2] = {0x01, 0x80};
++	int ret;
++	int i;
++
++	/* reset all terr. & sat. pairs first */
++	for (i = 0; i < PT1_NR_ADAPS; i++) {
++		cl = pt1->adaps[i]->demod_i2c_client;
++		if (strncmp(cl->name, TC90522_I2C_DEV_TER,
++			    strlen(TC90522_I2C_DEV_TER)))
++			continue;
++
++		ret = i2c_master_send(cl, buf, 2);
++		if (ret < 0)
++			return ret;
++		usleep_range(30000, 50000);
++	}
++
++	for (i = 0; i < PT1_NR_ADAPS; i++) {
++		cl = pt1->adaps[i]->demod_i2c_client;
++		if (strncmp(cl->name, TC90522_I2C_DEV_SAT,
++			    strlen(TC90522_I2C_DEV_SAT)))
++			continue;
++
++		ret = i2c_master_send(cl, buf, 2);
++		if (ret < 0)
++			return ret;
++		usleep_range(30000, 50000);
++	}
++	return 0;
++}
++
+ static void pt1_write_reg(struct pt1 *pt1, int reg, u32 data)
+ {
+ 	writel(data, pt1->regs + reg * 4);
+@@ -987,6 +1021,10 @@ static int pt1_init_frontends(struct pt1 *pt1)
+ 			goto tuner_release;
+ 	}
  
- 	memset(bitary, 0, sizeof(bitary));
++	ret = pt1_demod_block_init(pt1);
++	if (ret < 0)
++		goto fe_unregister;
++
+ 	return 0;
+ 
+ tuner_release:
+@@ -1245,6 +1283,10 @@ static int pt1_resume(struct device *dev)
+ 	pt1_update_power(pt1);
+ 	usleep_range(1000, 2000);
+ 
++	ret = pt1_demod_block_init(pt1);
++	if (ret < 0)
++		goto resume_err;
++
+ 	for (i = 0; i < PT1_NR_ADAPS; i++)
+ 		dvb_frontend_reinitialise(pt1->adaps[i]->fe);
  
 -- 
 2.20.1
