@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A291140027
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C7FF14001B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:48:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391969AbgAPXsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:48:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46320 "EHLO mail.kernel.org"
+        id S2390604AbgAPXUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390557AbgAPXUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:20:05 -0500
+        id S2390565AbgAPXUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:20:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4425420684;
-        Thu, 16 Jan 2020 23:20:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C32052072B;
+        Thu, 16 Jan 2020 23:20:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216804;
-        bh=ckysY9VFPlutJpqEixPVARo8XPz0dfrhu8xT4lrUIk4=;
+        s=default; t=1579216807;
+        bh=yiFbhYZs4OakPil0W1cRjf0MHa+WDnry7VTabF4Vsrc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFXSap95MzF7ioYoHPKiRMGRSf1r/B5u6Az3bROSAQj/hyhb4OkWV+DJ2DIDfATD0
-         Hr09HOymHrNg44qhSaRiAz+TcbycW++lsydPzk0t3GlSDPLhdpd72VokYV/EEnrnzP
-         OA3SVDZFdhvJjLXrdZU0gshdu1fggNrOVNXCI0d0=
+        b=13xuKyqR4JSLz5EUokm/4Ke6SmbMmWvd2vVooiwopuNPGRrAMN20Y3wFR9ZXUzJtW
+         r0QnCpkgUuZDBSxO7Zoy4O4rLp56c5SsE21D9j187Msxs3w2EKZ7x3gyW9o5VWhoVR
+         7B5CZ/JgE3NmwjllLqxI2eWg8z7/d1KIbrfw7gQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5.4 026/203] gpio: Fix error message on out-of-range GPIO in lookup table
-Date:   Fri, 17 Jan 2020 00:15:43 +0100
-Message-Id: <20200116231746.724719077@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 5.4 027/203] PM / devfreq: tegra: Add COMMON_CLK dependency
+Date:   Fri, 17 Jan 2020 00:15:44 +0100
+Message-Id: <20200116231746.779254239@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,46 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit d935bd50dd14a7714cbdba9a76435dbb56edb1ae upstream.
+commit 5fdb0684b5b0f41402161f068d3d84bf6ed1c3f4 upstream.
 
-When a GPIO offset in a lookup table is out-of-range, the printed error
-message (1) does not include the actual out-of-range value, and (2)
-contains an off-by-one error in the upper bound.
+Compile-testing this driver fails if CONFIG_COMMON_CLK is not set:
 
-Avoid user confusion by also printing the actual GPIO offset, and
-correcting the upper bound of the range.
-While at it, use "%u" for unsigned int.
+drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_target':
+tegra30-devfreq.c:(.text+0x164): undefined reference to `clk_set_min_rate'
 
-Sample impact:
-
-    -requested GPIO 0 is out of range [0..32] for chip e6052000.gpio
-    +requested GPIO 0 (45) is out of range [0..31] for chip e6052000.gpio
-
-Fixes: 2a3cf6a3599e9015 ("gpiolib: return -ENOENT if no GPIO mapping exists")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191127095919.4214-1-geert+renesas@glider.be
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 35f8dbc72721 ("PM / devfreq: tegra: Enable COMPILE_TEST for the driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/devfreq/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4328,8 +4328,9 @@ static struct gpio_desc *gpiod_find(stru
- 
- 		if (chip->ngpio <= p->chip_hwnum) {
- 			dev_err(dev,
--				"requested GPIO %d is out of range [0..%d] for chip %s\n",
--				idx, chip->ngpio, chip->label);
-+				"requested GPIO %u (%u) is out of range [0..%u] for chip %s\n",
-+				idx, p->chip_hwnum, chip->ngpio - 1,
-+				chip->label);
- 			return ERR_PTR(-EINVAL);
- 		}
- 
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -99,6 +99,7 @@ config ARM_TEGRA_DEVFREQ
+ 		ARCH_TEGRA_210_SOC || \
+ 		COMPILE_TEST
+ 	select PM_OPP
++	depends on COMMON_CLK
+ 	help
+ 	  This adds the DEVFREQ driver for the Tegra family of SoCs.
+ 	  It reads ACTMON counters of memory controllers and adjusts the
 
 
