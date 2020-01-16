@@ -2,54 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D972313F0B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A1313F0B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391090AbgAPSXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:23:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42758 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404147AbgAPSXV (ORCPT
+        id S2395567AbgAPSXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:23:34 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52332 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405290AbgAPSXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:23:21 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q6so20092016wro.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:19 -0800 (PST)
+        Thu, 16 Jan 2020 13:23:22 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p9so4811136wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WVBFXvcdikb0EBWWJxfXewbVknSl3HJfok0bccJ1mn4=;
-        b=Njjn073vtyfRWfMNpPGNi87b1AlndHTlUqb9WEz+a0nVmP9EmYLfdnzHPd8SR882/9
-         f4h490mf9MDOOWFOjnjLFRyovB2m/se99jUSBTuF6dfQEDi0EAz1YUesw2VKrvm3hA3r
-         1TryQ1o4STVDnzwEgV5zxMXqPzbtTkqFhOmLFEU9p0ZGV+g8MbBRtLOlzbY+K1nP9g0x
-         mzCfYyO+V7t7xocl8WReElIcALjBVce4N5vmnOy6SbLYTuC2raTpwQQHpOcnWKFqS1J1
-         zSyfi+OkDgHSl9lDezpfk4T9t20Iu4cao5a5DrAwvFT8yzxkZitKYZp4VACru9f75f9t
-         OFOQ==
+        bh=bKzyTMx/EE6hYfa6xT4QOtv7PoRTzC4cnmE6saFEzZ8=;
+        b=XS5Gnet0V1x9yQqCMC2ffevRg1STQIoU0YZrQ0LLNDqr8VKtEDV2LmxCv8U5G1IlH0
+         LiJ0b9/G4Ce9rw04C7dbsDRgIXk09Mf4S1ETN8x9ktGh8+GEv4VvQdxqt4Kz62fDOMrv
+         vigDSD76YL/ic+myUUSEDRW2X7g/qP/gFEvkA8jUwZnKOcRq7XtYtTaBmDbBpxtnPoqT
+         UKK75TwQfc1HzNnj1SX6SeV2C/VAUzmbZbSxt8acPzT6nkctmkFHffvi/botExJI/1k7
+         kOXozBk422Ly/CezpH8RyWit2nLwtj2PKoKMSWO9L/l9FhB30au1JF5tYzP3s7M7KoBn
+         R/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WVBFXvcdikb0EBWWJxfXewbVknSl3HJfok0bccJ1mn4=;
-        b=hvz4ZzH8ub1GLD6OPM0HPepElFIAXcKJH2+IReeI18czTNzJiuu7x6h72k9JZq/kBE
-         e8sn0BvfB/uHCnNNV7tiWJlVVqYmwTImuPtzsGpRrUIV7eoM/fWK5+ds6uhoU/ZNYLDR
-         1XAyGkC3RcRGkIFjPL4+y/19Dt2dtTjrwgBdvpaqUpAqtYEyBtC3+sYmGDrIygO3o2ZP
-         KjAZAeA7JYitpTVwRTNxapHghqGWu4vjabEYvpV2u3o4Y2gDXss5mjwUmsTRMkwv63SY
-         s2zDhl6abNbGJck06vu8vNsww8HfY3p3v4KcfPin2kzqpi4C7BCh0fVxAu54MPnsnx9l
-         uV5w==
-X-Gm-Message-State: APjAAAWg/lAZZHUKj8WEq9lKyezia7Szu1LW+Tst2JLHz3MNal0E1Sa9
-        uxF1xqYZ85TFwJ9YQ+nGop3nSQ==
-X-Google-Smtp-Source: APXvYqyMTwkevn7sxHDKUSBLpxLkM1qNdB7oXIfmvE5EDXBsvQiY79VoCtwItpMAusX3iVNqFblewA==
-X-Received: by 2002:adf:db41:: with SMTP id f1mr4768994wrj.392.1579198998646;
-        Thu, 16 Jan 2020 10:23:18 -0800 (PST)
+        bh=bKzyTMx/EE6hYfa6xT4QOtv7PoRTzC4cnmE6saFEzZ8=;
+        b=ft7ZfSA0bALPPuTnkPzTiEekWAGsdw8kGtUQ2XJZGTOBjAQzVK5+BhabiatzCSqN6f
+         2FHPNSmCnrfoC5CLb+ARlSPvGS9gTR3ny8lyVojMqt/msBCyNt11GMuWro0v9Zy6sCHe
+         1y9gWAvs+MZ09qy6qRyBYc0RDBzB83fYr8JkS5J+kiow+Us/k58I53DtlGZGoApGnQLr
+         Rwx3Dntyf3rm5Jn2GWUaNvfvB4KkZI2zvQHQqs1TxBggOK2jFe/tDaO9gVfsxObf1v3J
+         5SrP5GZ98rWmuXRgFzedWKBEUIW7C2nMTsPmWOAeyjcL7XpfxRlFbdqM6Ch9CKzfi1vp
+         0KMQ==
+X-Gm-Message-State: APjAAAUs1DSn9y6Lk0lwoWHj/7K/O2EEUnNpMUZ9HFkO4ttHb3k0CCOV
+        YQkA+xRe2bZSriCqJCps5qOc0A==
+X-Google-Smtp-Source: APXvYqxsdQKMHzHde+rNzloenzO/Yx4EXE3hDkjCTmoJvF84QCCFWJ1LmS1W89NN6PHrcRYRQq2ymg==
+X-Received: by 2002:a05:600c:48a:: with SMTP id d10mr315293wme.87.1579199000823;
+        Thu, 16 Jan 2020 10:23:20 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.16
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:17 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:20 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 02/17] clocksource: Fix Kconfig indentation
-Date:   Thu, 16 Jan 2020 19:22:49 +0100
-Message-Id: <20200116182304.4926-2-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH 03/17] dt-bindings: timer: renesas, cmt: Document r8a774b1 CMT support
+Date:   Thu, 16 Jan 2020 19:22:50 +0100
+Message-Id: <20200116182304.4926-3-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -59,77 +64,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+Document SoC specific bindings for RZ/G2N (r8a774b1) SoC.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191120134236.15959-1-krzk@kernel.org
+Link: https://lore.kernel.org/r/1570104229-59144-1-git-send-email-biju.das@bp.renesas.com
 ---
- drivers/clocksource/Kconfig | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 5fdd76cb1768..c981ff64bc13 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -470,7 +470,7 @@ config OXNAS_RPS_TIMER
- 	  This enables support for the Oxford Semiconductor OXNAS RPS timers.
- 
- config SYS_SUPPORTS_SH_CMT
--        bool
-+	bool
- 
- config MTK_TIMER
- 	bool "Mediatek timer driver" if COMPILE_TEST
-@@ -490,13 +490,13 @@ config SPRD_TIMER
- 	  Enables support for the Spreadtrum timer driver.
- 
- config SYS_SUPPORTS_SH_MTU2
--        bool
-+	bool
- 
- config SYS_SUPPORTS_SH_TMU
--        bool
-+	bool
- 
- config SYS_SUPPORTS_EM_STI
--        bool
-+	bool
- 
- config CLKSRC_JCORE_PIT
- 	bool "J-Core PIT timer driver" if COMPILE_TEST
-@@ -591,21 +591,21 @@ config CLKSRC_PXA
- 	  platforms.
- 
- config H8300_TMR8
--        bool "Clockevent timer for the H8300 platform" if COMPILE_TEST
--        depends on HAS_IOMEM
-+	bool "Clockevent timer for the H8300 platform" if COMPILE_TEST
-+	depends on HAS_IOMEM
- 	help
- 	  This enables the 8 bits timer for the H8300 platform.
- 
- config H8300_TMR16
--        bool "Clockevent timer for the H83069 platform" if COMPILE_TEST
--        depends on HAS_IOMEM
-+	bool "Clockevent timer for the H83069 platform" if COMPILE_TEST
-+	depends on HAS_IOMEM
- 	help
- 	  This enables the 16 bits timer for the H8300 platform with the
- 	  H83069 cpu.
- 
- config H8300_TPU
--        bool "Clocksource for the H8300 platform" if COMPILE_TEST
--        depends on HAS_IOMEM
-+	bool "Clocksource for the H8300 platform" if COMPILE_TEST
-+	depends on HAS_IOMEM
- 	help
- 	  This enables the clocksource for the H8300 platform with the
- 	  H8S2678 cpu.
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index a444cfc5852a..a747fabab7d3 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -29,6 +29,8 @@ Required Properties:
+     - "renesas,r8a77470-cmt1" for the 48-bit CMT1 device included in r8a77470.
+     - "renesas,r8a774a1-cmt0" for the 32-bit CMT0 device included in r8a774a1.
+     - "renesas,r8a774a1-cmt1" for the 48-bit CMT devices included in r8a774a1.
++    - "renesas,r8a774b1-cmt0" for the 32-bit CMT0 device included in r8a774b1.
++    - "renesas,r8a774b1-cmt1" for the 48-bit CMT devices included in r8a774b1.
+     - "renesas,r8a774c0-cmt0" for the 32-bit CMT0 device included in r8a774c0.
+     - "renesas,r8a774c0-cmt1" for the 48-bit CMT devices included in r8a774c0.
+     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
 -- 
 2.17.1
 
