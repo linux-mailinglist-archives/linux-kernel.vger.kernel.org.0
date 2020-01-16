@@ -2,154 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB4C13D210
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:16:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C0AB13D21E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:21:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbgAPCQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:16:08 -0500
-Received: from mail-eopbgr60050.outbound.protection.outlook.com ([40.107.6.50]:34693
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730202AbgAPCQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:16:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H/azFUfv9NF3uRLqpzWNYUtFRA8GPEqVNBihW0KM3OsBC3VL9++Q2uuWeIli08JclpqSsNG1tFfNEvHCiO5lEdN/Vo2VCWVhPSvOouJSp2CjzGQPTc263/+hYGqce7wQDEAn4CSJX/iugikhFJ4/oh5kJLS5VMG0zWxhFSwkqYeQ72oz9IBcFOHM49J4ySKKygq+ICD3trA5+E0FvMc3lEmhsIqglEzDNZFCadi+JxNg1sYSS0aiO+ROTrcsp8HvXrgHw0YVgK+buLkuqtXe1jaAbFME81eSYbL9GgYxJRc2EHeFJKgrf0K2oBsxw31agCg5e+fxHacskS1zxrSDqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V9hHpYc1QTxFufeaor7kzXYM5HTjA4lTlgvKy/9O2tQ=;
- b=Q8xXgfxGDZA9aWXbKgC1y30Lh4jA+qvjYyD22KykKIWaF6KiEOWrznM8UegHagzrFthHGnGHfAD+2kxkqqrbpfOi/XDGNI8fupEQm9u3SeuIrbeUdIpp1HpvWNTndYzsAmsFdksmZ0brAVgYPNvjhOwU2tL7ojv3RJGedzU/9UKqvD/cS3O7BLL7NQlBB+0j1vy9cxXqnNMuJrj9eQMAPSLamgRlVc6uW9xlvxbcNJCKMdQr4/zkr5eD/s4hQPe56WKxasolffEwkS642lqojHyFU035k+kL6BUWyK2t81JpyhunmH60tHux8c0SgX5E/Fjz1tYN7oSYRCKibc28sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V9hHpYc1QTxFufeaor7kzXYM5HTjA4lTlgvKy/9O2tQ=;
- b=DZkM1P92ep4ChLBVv95udBvtplGSfoMcs+3sazXrtqWuWJJ8hTRQ8NTcPMCyvYYdmBfw7+LCxnE9xOjP4xA6EW5EwMiVMX2cfasaRLQtr1yvFFzRfBrhmL+Dnm4UaejamyrQyx5mUkhU7VQX0g9bMrklqvDbEf6qca/myUESTec=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6289.eurprd04.prod.outlook.com (20.179.35.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.20; Thu, 16 Jan 2020 02:16:05 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2623.018; Thu, 16 Jan 2020
- 02:16:05 +0000
-Received: from localhost.localdomain (119.31.174.66) by HK2PR0302CA0012.apcprd03.prod.outlook.com (2603:1096:202::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.6 via Frontend Transport; Thu, 16 Jan 2020 02:16:00 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3 4/4] clk: imx: imx8mn: use imx8m_clk_hw_composite_core
-Thread-Topic: [PATCH V3 4/4] clk: imx: imx8mn: use imx8m_clk_hw_composite_core
-Thread-Index: AQHVzBLnUi048CdOXUiCDlIwVfTEcg==
-Date:   Thu, 16 Jan 2020 02:16:05 +0000
-Message-ID: <1579140562-8060-5-git-send-email-peng.fan@nxp.com>
-References: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR0302CA0012.apcprd03.prod.outlook.com
- (2603:1096:202::22) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fc14da0a-fb52-492f-2731-08d79a2a0a56
-x-ms-traffictypediagnostic: AM0PR04MB6289:|AM0PR04MB6289:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB62898B4299EE0C583E95C58E88360@AM0PR04MB6289.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:361;
-x-forefront-prvs: 02843AA9E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(396003)(136003)(366004)(189003)(199004)(478600001)(4326008)(5660300002)(316002)(54906003)(110136005)(8936002)(81166006)(81156014)(8676002)(36756003)(6512007)(71200400001)(69590400006)(16526019)(6636002)(26005)(6506007)(186003)(86362001)(52116002)(64756008)(956004)(66946007)(66476007)(6486002)(66556008)(44832011)(66446008)(2616005)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6289;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: G/15dWIM+PLYiB3jl6lbWH9SK1fu2lMHYChn3Ca4w6P2tHGg3dC1+UuU4QekqzPviW5BFb8uCVIFs2DOMfrNiVhq9DjcAAWL/iuv6vpFpw66mnUXTJoRCb8+paERLzrXSW2SGlNUw/iHW6InG0Fcq1YAFKL9CxZ/6jA1+MmxlHG/f+qFDVlPp6eO+fxJ8WfORJ99n3PsZNNF9wQTnCQPpt00c//eDGqDIJ17QHuqk9+vioYzdV+hoWVyGyKB35bNBxSMFozMLKHfV4rFGszSUBkqU1cJtqM6uvhkCA0bwjSf9s7MHS7vehvxihHvmDwnTu0PHYBskf0C3sHSGxE0szJOcu++ZYYyoUrhWV00AZW1/86/caxuj2jgnATrlVjOdqxFb9IzONz4iMW9E4bzQAGsbQUmk3s10RVEEtCEwU9vVNDJPIWUjg6MkPR6ieAnT+yH9gNQ9zAAN2o00mQz8CMqFrXiu0iiiEuitm/sIAJAjrr7ZSlTLXtoCxpfrKljcnWlaTXWQ7jSNBFly9a3OQ==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729043AbgAPCVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:21:15 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37348 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgAPCVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:21:15 -0500
+Received: by mail-pg1-f193.google.com with SMTP id q127so9104901pga.4;
+        Wed, 15 Jan 2020 18:21:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I18TcJc5J/5NVytSTHAB8Z9j/dAkt1uAP5HlQjHDlpo=;
+        b=m5mxi5gDBbNGkmrb4O4cBeW9Wp+NHvF04ZoWB+ieyGTqgESvip6ncAgsQZ5cdUZw6d
+         rlV6q8TorGLfvXU/Oc7rY787vQ9/ssHVfut7bUP3sjeCmuyae2xNbeYZ1n1bjV4tM0kr
+         oS4R4rdx1U5OyY9QnFDQd5miR6V+oH79ZozOp0rvMFBweo3NtjQTzKZHt1LcnXDFUw5c
+         xRC6XjSZX23xwBNN6LFlspUepSgHw8zj9G8w7MEzRm0GG3Ip0nm3bLfAl9jmdwGMbzAM
+         L6UST2VxC70IzZrqN5HFJaaHuPzyuDD7OP++qhhgtsc1zielD0rQQR+1roSyjJ7KPnJq
+         oc5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=I18TcJc5J/5NVytSTHAB8Z9j/dAkt1uAP5HlQjHDlpo=;
+        b=A//fMBacV5MAmVL9rJfqsfJ8I416AHiomhfuHKAino9B9yQHx84UxwlUMtgqHOIp6A
+         kV168u6VtDQWG1RS+/URF1hrejdh488+UY0KvpgqSPrssa7U9ZftsTfUxRhUOWkocBjs
+         GautP/bYV49XCH8gGN6R/9rDhJHr3Pa9UlAJzAEi1h6EFLBHNYKg50yMVmdbN3hJHw8x
+         IAyjtsH6JjU225Mi6m14mcjzjOFlrN6WN8z4NsF1g1R3CRL4TS5TxqjenMUqoC1K4QKS
+         WnH/BFKchnqgdwKv9wEWJBvltaPbB8Z0WdUKyoHFUnLcQGfBOwTpaql59IPi7PJPBAI8
+         eEag==
+X-Gm-Message-State: APjAAAW+l32fiGL7yrGsgv0W/6nlQogTAF0Baqi2fYY4oIkCRiZaQLZG
+        jIjpFJ13/CyK3duTd0sq8qXb5ofC6OJ2pA==
+X-Google-Smtp-Source: APXvYqw1qJ4Hp/CIKT/m4U/3NgQfylWNU9Vs05nDBK6X5UEO087z+6bsU4xUIQXXciGQQdj+ipOvLA==
+X-Received: by 2002:a62:e80b:: with SMTP id c11mr35222354pfi.28.1579141274223;
+        Wed, 15 Jan 2020 18:21:14 -0800 (PST)
+Received: from xps.lan ([103.125.232.133])
+        by smtp.gmail.com with ESMTPSA id u23sm23073232pfm.29.2020.01.15.18.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 18:21:13 -0800 (PST)
+From:   YunQiang Su <syq@debian.org>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Laurent Vivier <laurent@vivier.eu>
+Cc:     YunQiang Su <ysu@wavecomp.com>
+Subject: [PATCH v2] binfmt_misc: pass info about P flag by AT_FLAGS
+Date:   Thu, 16 Jan 2020 10:20:49 +0800
+Message-Id: <20200116022049.164659-1-syq@debian.org>
+X-Mailer: git-send-email 2.25.0.rc1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc14da0a-fb52-492f-2731-08d79a2a0a56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 02:16:05.0975
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xAGg5xxK2KHEbdN5A8BHGkKFODLlQRuYCqJntCZxnGtSxeQeJu4V2bgqt8SvtFMDyFxzedciGEr6qPDSnqfQQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6289
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+From: YunQiang Su <ysu@wavecomp.com>
 
-Use imx8m_clk_hw_composite_core to simplify code.
+Currently program invoked by binfmt_misc cannot be aware about whether
+P flag, aka preserve path is enabled.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Some applications like qemu need to know since it has 2 use case:
+  1. call by hand, like: qemu-mipsel-static test.app OPTION
+     so, qemu have to assume that P option is not enabled.
+  2. call by binfmt_misc. If qemu cannot know about whether P flag is
+     enabled, distribution's have to set qemu without P flag, and
+     binfmt_misc call qemu like:
+       qemu-mipsel-static /absolute/path/to/test.app OPTION
+     even test.app is not called by absoulute path, like
+       ./relative/path/to/test.app
+
+This patch passes this information by the 3rd bits of unused AT_FLAGS.
+Then, in qemu, we can get this info by:
+   getauxval(AT_FLAGS) & (1<<3)
+
+v1->v2:
+  not enable kdebug
+
+See: https://bugs.launchpad.net/qemu/+bug/1818483
+Signed-off-by: YunQiang Su <ysu@wavecomp.com>
 ---
- drivers/clk/imx/clk-imx8mn.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/binfmt_elf.c         | 6 +++++-
+ fs/binfmt_elf_fdpic.c   | 6 +++++-
+ fs/binfmt_misc.c        | 2 ++
+ include/linux/binfmts.h | 4 ++++
+ 4 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index c5e7316b4c66..ce2ba3dce483 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -413,15 +413,11 @@ static int imx8mn_clocks_probe(struct platform_device=
- *pdev)
-=20
- 	/* CORE */
- 	hws[IMX8MN_CLK_A53_SRC] =3D imx_clk_hw_mux2("arm_a53_src", base + 0x8000,=
- 24, 3, imx8mn_a53_sels, ARRAY_SIZE(imx8mn_a53_sels));
--	hws[IMX8MN_CLK_GPU_CORE_SRC] =3D imx_clk_hw_mux2("gpu_core_src", base + 0=
-x8180, 24, 3,  imx8mn_gpu_core_sels, ARRAY_SIZE(imx8mn_gpu_core_sels));
--	hws[IMX8MN_CLK_GPU_SHADER_SRC] =3D imx_clk_hw_mux2("gpu_shader_src", base=
- + 0x8200, 24, 3, imx8mn_gpu_shader_sels,  ARRAY_SIZE(imx8mn_gpu_shader_sel=
-s));
- 	hws[IMX8MN_CLK_A53_CG] =3D imx_clk_hw_gate3("arm_a53_cg", "arm_a53_src", =
-base + 0x8000, 28);
--	hws[IMX8MN_CLK_GPU_CORE_CG] =3D imx_clk_hw_gate3("gpu_core_cg", "gpu_core=
-_src", base + 0x8180, 28);
--	hws[IMX8MN_CLK_GPU_SHADER_CG] =3D imx_clk_hw_gate3("gpu_shader_cg", "gpu_=
-shader_src", base + 0x8200, 28);
--
- 	hws[IMX8MN_CLK_A53_DIV] =3D imx_clk_hw_divider2("arm_a53_div", "arm_a53_c=
-g", base + 0x8000, 0, 3);
--	hws[IMX8MN_CLK_GPU_CORE_DIV] =3D imx_clk_hw_divider2("gpu_core_div", "gpu=
-_core_cg", base + 0x8180, 0, 3);
--	hws[IMX8MN_CLK_GPU_SHADER_DIV] =3D imx_clk_hw_divider2("gpu_shader_div", =
-"gpu_shader_cg", base + 0x8200, 0, 3);
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index f4713ea76e82..d33ee07d7f57 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -178,6 +178,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	unsigned char k_rand_bytes[16];
+ 	int items;
+ 	elf_addr_t *elf_info;
++	elf_addr_t flags = 0;
+ 	int ei_index;
+ 	const struct cred *cred = current_cred();
+ 	struct vm_area_struct *vma;
+@@ -252,7 +253,10 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+ 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+-	NEW_AUX_ENT(AT_FLAGS, 0);
++	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
++		flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
++	}
++	NEW_AUX_ENT(AT_FLAGS, flags);
+ 	NEW_AUX_ENT(AT_ENTRY, e_entry);
+ 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
+ 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index 240f66663543..5ad8fdb3babe 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+ 	char __user *u_platform, *u_base_platform, *p;
+ 	int loop;
+ 	int nr;	/* reset for each csp adjustment */
++	unsigned long flags = 0;
+ 
+ #ifdef CONFIG_MMU
+ 	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
+@@ -647,7 +648,10 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+ 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
+ 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
+ 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
+-	NEW_AUX_ENT(AT_FLAGS,	0);
++	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
++		flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
++	}
++	NEW_AUX_ENT(AT_FLAGS,	flags);
+ 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
+ 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
+ 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index cdb45829354d..3f41b667b241 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -158,6 +158,8 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 		retval = remove_arg_zero(bprm);
+ 		if (retval)
+ 			goto ret;
++	} else {
++		bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
+ 	}
+ 
+ 	if (fmt->flags & MISC_FMT_OPEN_BINARY) {
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index b40fc633f3be..265b80d5fd6f 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -78,6 +78,10 @@ struct linux_binprm {
+ #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
+ #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
+ 
++/* if preserve the argv0 for the interpreter  */
++#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
++#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 << BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
 +
-+	hws[IMX8MN_CLK_GPU_CORE_DIV] =3D imx8m_clk_hw_composite_core("gpu_core_di=
-v", imx8mn_gpu_core_sels, base + 0x8180);
-+	hws[IMX8MN_CLK_GPU_SHADER_DIV] =3D imx8m_clk_hw_composite_core("gpu_shade=
-r_div", imx8mn_gpu_shader_sels, base + 0x8200);
-=20
- 	/* BUS */
- 	hws[IMX8MN_CLK_MAIN_AXI] =3D imx8m_clk_hw_composite_critical("main_axi", =
-imx8mn_main_axi_sels, base + 0x8800);
---=20
-2.16.4
+ /* Function parameter for binfmt->coredump */
+ struct coredump_params {
+ 	const kernel_siginfo_t *siginfo;
+-- 
+2.25.0.rc1
 
