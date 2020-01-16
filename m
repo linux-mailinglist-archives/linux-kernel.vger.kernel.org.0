@@ -2,84 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456BB13DEC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EAF613DF5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgAPP3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:29:10 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35711 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbgAPP3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:29:09 -0500
-Received: by mail-io1-f65.google.com with SMTP id h8so22242650iob.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:29:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
-        b=0s0D+UFaDYK6xrnqFY4RWZ85Cw7sAB42ZD2xHfNT4EsZ8JKtak1k8ZZJkGlzDu2xjs
-         vtiRoN3kZV35k2FNoji6lV3M3AXln6xx0pK6i1QWFcPPwk1zFP66wOQBx2kK/zDvHhqP
-         wJKpoeJBgZaKuLE3NQoKBI0Nk21N+Yda0ZXBE+ftxkdvzkhdDxnsYvHDhVcVMtfwf80A
-         SEMW5nm1fVcomadiPkmyRAoAMT58nuqIKsSvI7sj6dzPm7wkj89fWecNSQETVuwX1Psw
-         NH6k2NcvHyJJsBxf2A49ORcsV5O0eI1qiKcVaQUi+E8RIdKbSMzTsZWgLuZfgE4h8HjD
-         EV2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
-        b=swdPVRs7UKXP9PZGizcs2yweCTbuWEXK4SeozH3Cvh3K6TEcWoiX0XUK/qD7GLKht2
-         9YZPsS9wQQhzgNKRdul/wrkZeFYQVSkRl/YceX0LGcJmDWBcCPAGMLx2bZaJ8JPbKn7B
-         EPi4q1Rw5rUH3GokkUUIPyaRcFp+cZeGNgoDvdPMW9ij+e524PDYhJUUd68exGXDY7If
-         nZ6etV5s37z/pWfeqS8gRKkfZUwCrUOJIO6Ffb5EibMPrnRryoplOzuSiSOeUXKyCdiO
-         wrzZnCcLCjE7OOwpWAmfT7n9s/1bwOneuzk/mHJ0XrbCT3rkWbCpYbqK7P6hi/pcbdKJ
-         8a+A==
-X-Gm-Message-State: APjAAAWqaYhROEx9O2A558mB+N28JCLWgnel64aHWiuUCXRSRbF0Cg8o
-        eKQ+gIU3aNpnidpq1Q6KEIPRNQ==
-X-Google-Smtp-Source: APXvYqyq+mjlgPuHivk2+TNQ161jCn6GCai4KGnDmwom0xMohe+U1BAqMlNQy9ae2riH2dgDMe5KUQ==
-X-Received: by 2002:a02:8587:: with SMTP id d7mr28917545jai.39.1579188548882;
-        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b7sm2870279ioq.39.2020.01.16.07.29.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
-Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200116134946.184711-1-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
-Date:   Thu, 16 Jan 2020 08:29:07 -0700
+        id S1726970AbgAPP5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:57:16 -0500
+Received: from mga14.intel.com ([192.55.52.115]:54160 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726741AbgAPP5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:57:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 07:57:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,326,1574150400"; 
+   d="scan'208";a="274042229"
+Received: from frederic-mobl1.amr.corp.intel.com (HELO [10.251.150.187]) ([10.251.150.187])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jan 2020 07:57:14 -0800
+Subject: Re: [alsa-devel] [PATCH] soundwire: cadence: fix kernel-doc parameter
+ descriptions
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20200114233124.13888-1-pierre-louis.bossart@linux.intel.com>
+ <20200116120459.GP2818@vkoul-mobl> <20200116120918.GR2818@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <bd2dc7aa-d626-6efc-9ba2-9212a23855c4@linux.intel.com>
+Date:   Thu, 16 Jan 2020 08:27:13 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20200116134946.184711-1-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200116120918.GR2818@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 6:49 AM, Stefano Garzarella wrote:
-> io_uring_poll() sets EPOLLOUT flag if there is space in the
-> SQ ring, then we should wakeup threads waiting for EPOLLOUT
-> events when we expose the new SQ head to the userspace.
+
+
+On 1/16/20 6:09 AM, Vinod Koul wrote:
+> On 16-01-20, 17:35, Vinod Koul wrote:
+>> On 14-01-20, 17:31, Pierre-Louis Bossart wrote:
+>>> Fix previous update, bad git merge likely. oops.
+>>
+>> Applied, thanks
 > 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
+> Btw I still have these warns on my next with W=1
 > 
-> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+> drivers/soundwire/intel_init.c:193:7: warning: no previous prototype for ‘sdw_intel_init’ [-Wmissing-prototypes]
+>   void *sdw_intel_init(acpi_handle *parent_handle, struct sdw_intel_res *res)
+>         ^~~~~~~~~~~~~~
+> drivers/soundwire/cadence_master.c:1022: warning: Function parameter or member 'clock_stop_exit' not described in 'sdw_cdns_init'
+>    LD [M]  drivers/soundwire/soundwire-cadence.o
+> drivers/soundwire/intel_init.c:214: warning: Function parameter or member 'ctx' not described in 'sdw_intel_exit'
+> drivers/soundwire/intel_init.c:214: warning: Excess function parameter 'arg' description in 'sdw_intel_exit'
 
-I honestly think it'd be better to have separate waits for in/out poll,
-the below patch will introduce some unfortunate cacheline traffic
-between the submitter and completer side.
-
--- 
-Jens Axboe
-
+All of this is replaced by new code already submitted for review. try 
+our SOF upstream/soundwire branch and you'll see.
