@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD6713FDDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7D813FE06
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:32:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403787AbgAPXaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36078 "EHLO mail.kernel.org"
+        id S2404175AbgAPXcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391366AbgAPX3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:29:54 -0500
+        id S2391482AbgAPXbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 390C9206D9;
-        Thu, 16 Jan 2020 23:29:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D12420661;
+        Thu, 16 Jan 2020 23:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217393;
-        bh=EpbH0jM1qqpILirwYTaP+35s+uBkOLXxHRMn5MSJZVs=;
+        s=default; t=1579217505;
+        bh=h+byEWvsgdhemHu13KACwa/7kqTpPFzXgZyL0H2/qjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myQTrWUZaU3IoFb/iKIO8Ov1JDg1g+Gk85GCfGCVAOo3nXhTULW2i/bZsx+ottcrB
-         zrdioCB7LkxE89/91uQv5XmfGOOHIAddc4EEcsPQYNtGbubrgtjo+Do1xUsi6sHb2i
-         6h/So6lMFfqpBlDowSJBhR80ciebuGqUEvixHDyA=
+        b=jKrMYGtGA0bso20U8ZQs7SzMVbycSCqkQwjpwQk3BLjBUMF9hsPFW/++FFCkbCJZR
+         1yGHMGJF00oa1jL45+3qnAaCahiZb8GBMdNT3T4EDl8cW4RFNGsGyws1FGiFp4vocW
+         54cEJWHqe3+fOr/CQFUBIMEJYko4GS+WNUgw5VTo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 28/84] s390/qeth: fix false reporting of VNIC CHAR config failure
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        "David S. Miller" <davem@davemloft.net>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH 4.14 04/71] ethtool: reduce stack usage with clang
 Date:   Fri, 17 Jan 2020 00:18:02 +0100
-Message-Id: <20200116231716.994739626@linuxfoundation.org>
+Message-Id: <20200116231710.044940260@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandra Winter <wintera@linux.ibm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 68c57bfd52836e31bff33e5e1fc64029749d2c35 upstream.
+commit 3499e87ea0413ee5b2cc028f4c8ed4d424bc7f98 upstream.
 
-Symptom: Error message "Configuring the VNIC characteristics failed"
-in dmesg whenever an OSA interface on z15 is set online.
+clang inlines the dev_ethtool() more aggressively than gcc does, leading
+to a larger amount of used stack space:
 
-The VNIC characteristics get re-programmed when setting a L2 device
-online. This follows the selected 'wanted' characteristics - with the
-exception that the INVISIBLE characteristic unconditionally gets
-switched off.
+net/core/ethtool.c:2536:24: error: stack frame size of 1216 bytes in function 'dev_ethtool' [-Werror,-Wframe-larger-than=]
 
-For devices that don't support INVISIBLE (ie. OSA), the resulting
-IO failure raises a noisy error message
-("Configuring the VNIC characteristics failed").
-For IQD, INVISIBLE is off by default anyways.
+Marking the sub-functions that require the most stack space as
+noinline_for_stack gives us reasonable behavior on all compilers.
 
-So don't unnecessarily special-case the INVISIBLE characteristic, and
-thereby suppress the misleading error message on OSA devices.
-
-Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
-Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
-Reviewed-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/net/qeth_l2_main.c |    1 -
- 1 file changed, 1 deletion(-)
+ net/core/ethtool.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -2367,7 +2367,6 @@ static void qeth_l2_vnicc_init(struct qe
- 	error = qeth_l2_vnicc_recover_timeout(card, QETH_VNICC_LEARNING,
- 					      timeout);
- 	chars_tmp = card->options.vnicc.wanted_chars ^ QETH_VNICC_DEFAULT;
--	chars_tmp |= QETH_VNICC_BRIDGE_INVISIBLE;
- 	chars_len = sizeof(card->options.vnicc.wanted_chars) * BITS_PER_BYTE;
- 	for_each_set_bit(i, &chars_tmp, chars_len) {
- 		vnicc = BIT(i);
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -2343,9 +2343,10 @@ static int ethtool_set_tunable(struct ne
+ 	return ret;
+ }
+ 
+-static int ethtool_get_per_queue_coalesce(struct net_device *dev,
+-					  void __user *useraddr,
+-					  struct ethtool_per_queue_op *per_queue_opt)
++static noinline_for_stack int
++ethtool_get_per_queue_coalesce(struct net_device *dev,
++			       void __user *useraddr,
++			       struct ethtool_per_queue_op *per_queue_opt)
+ {
+ 	u32 bit;
+ 	int ret;
+@@ -2375,9 +2376,10 @@ static int ethtool_get_per_queue_coalesc
+ 	return 0;
+ }
+ 
+-static int ethtool_set_per_queue_coalesce(struct net_device *dev,
+-					  void __user *useraddr,
+-					  struct ethtool_per_queue_op *per_queue_opt)
++static noinline_for_stack int
++ethtool_set_per_queue_coalesce(struct net_device *dev,
++			       void __user *useraddr,
++			       struct ethtool_per_queue_op *per_queue_opt)
+ {
+ 	u32 bit;
+ 	int i, ret = 0;
+@@ -2434,7 +2436,7 @@ roll_back:
+ 	return ret;
+ }
+ 
+-static int ethtool_set_per_queue(struct net_device *dev,
++static int noinline_for_stack ethtool_set_per_queue(struct net_device *dev,
+ 				 void __user *useraddr, u32 sub_cmd)
+ {
+ 	struct ethtool_per_queue_op per_queue_opt;
 
 
