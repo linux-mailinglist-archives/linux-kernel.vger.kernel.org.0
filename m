@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFCF13E983
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B5613E988
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404996AbgAPRiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53336 "EHLO mail.kernel.org"
+        id S2393348AbgAPRia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393207AbgAPRhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:47 -0500
+        id S2393214AbgAPRhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E905246DC;
-        Thu, 16 Jan 2020 17:37:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C738246E4;
+        Thu, 16 Jan 2020 17:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196267;
-        bh=0JFl9aWLKC71Gk5dPOObiZY7H/47oVRdIQLA7yf0cs4=;
+        s=default; t=1579196272;
+        bh=RA0gC3u+M4VuPADWnkOULAiiEkP0hcTg7uSzVZvtwbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R3km5Y5OAfwX7PhZ0QvUTvjQTV+DLTPa6+jYqGFjlnJdK4Ox5ggh4A9xc8TA+si0P
-         JK8puC2/Ikq4tokEz0TkoKaUB1nfAkQKMzxlG/mBKMjOO6m/cfXckhfiQpGaVUtcZW
-         I1sqgWl9kQ8WjIBr4c6WhpxiIZh030UroRyDz+yY=
+        b=Ck2lYohBpaXGjfVJSCZ6l+vD8hwLTmP03PpWiOxZ26Ez58WwCHeV1DeCLhOWj3rO0
+         MqI3T6Ir1YfnzL0MQ/L3o0sYcW4tACNqzyodYJacefg4CzK2zGc2acBGfom15NaVth
+         km+2hwH4a1hkJPs2vPSkRK4TOzu6Jl9d2xG3MJmg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Axel Lin <axel.lin@ingics.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.9 090/251] regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA
-Date:   Thu, 16 Jan 2020 12:33:59 -0500
-Message-Id: <20200116173641.22137-50-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>, xen-devel@lists.xenproject.org
+Subject: [PATCH AUTOSEL 4.9 094/251] xen, cpu_hotplug: Prevent an out of bounds access
+Date:   Thu, 16 Jan 2020 12:34:03 -0500
+Message-Id: <20200116173641.22137-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,38 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c25d47888f0fb3d836d68322d4aea2caf31a75a6 ]
+[ Upstream commit 201676095dda7e5b31a5e1d116d10fc22985075e ]
 
-The wm831x_dcdc_ilim entries needs to be uA because it is used to compare
-with min_uA and max_uA.
-While at it also make the array const and change to use unsigned int.
+The "cpu" variable comes from the sscanf() so Smatch marks it as
+untrusted data.  We can't pass a higher value than "nr_cpu_ids" to
+cpu_possible() or it results in an out of bounds access.
 
-Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: d68d82afd4c8 ("xen: implement CPU hotplugging")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/wm831x-dcdc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/cpu_hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
-index 5a5bc4bb08d2..df591435d12a 100644
---- a/drivers/regulator/wm831x-dcdc.c
-+++ b/drivers/regulator/wm831x-dcdc.c
-@@ -327,8 +327,8 @@ static int wm831x_buckv_get_voltage_sel(struct regulator_dev *rdev)
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index f4e59c445964..17054d695411 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -53,7 +53,7 @@ static int vcpu_online(unsigned int cpu)
  }
+ static void vcpu_hotplug(unsigned int cpu)
+ {
+-	if (!cpu_possible(cpu))
++	if (cpu >= nr_cpu_ids || !cpu_possible(cpu))
+ 		return;
  
- /* Current limit options */
--static u16 wm831x_dcdc_ilim[] = {
--	125, 250, 375, 500, 625, 750, 875, 1000
-+static const unsigned int wm831x_dcdc_ilim[] = {
-+	125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000
- };
- 
- static int wm831x_buckv_set_current_limit(struct regulator_dev *rdev,
+ 	switch (vcpu_online(cpu)) {
 -- 
 2.20.1
 
