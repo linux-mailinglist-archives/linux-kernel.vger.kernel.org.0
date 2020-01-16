@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8040813ED93
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:04:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A2313ED11
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394833AbgAPSD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:03:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57946 "EHLO mail.kernel.org"
+        id S2405732AbgAPRle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:41:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405570AbgAPRkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:40:42 -0500
+        id S2393674AbgAPRkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:40:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E60F24713;
-        Thu, 16 Jan 2020 17:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C99C420684;
+        Thu, 16 Jan 2020 17:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196441;
-        bh=1WBwtBFd/S4ZThNyRSXh2J58uFNS4zT9LBSOajQ34ak=;
+        s=default; t=1579196444;
+        bh=sqN9Ia28wx00eEWZy/Rnbw2Pe3jh79jsaCmiTr1yRgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZIWwam/41KaBySxHjPyGgf80ZlyS/zk25FppkSNHBK3qWuJbsmlFB0qratz8+9BPG
-         no5EqXGhWWVN4fwuyzc+9k591g02oeouvysQpy/+RPWBca8jOhJILlyZETvS7TjSFF
-         Zh9ejVs4TEz6eH7yrSOSLEeOJW14+2qOrvMxJnq4=
+        b=fe+1XHfvoYKzPge4CU59RyEbdjgA/zw81HBzv/THFfB0swNARKsuAuDS6CfkiRosu
+         oPb+dC6otTDYqWdqAn1vTAYffnnFrsOO9muOIYIeprAbpRNEuLz9TtIZl4CzDWYEIk
+         EovAZujRvOJo4UI44AYbVesQziQPNAZbuNX60eJM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH AUTOSEL 4.9 205/251] net: stmmac: dwmac-meson8b: Fix signedness bug in probe
-Date:   Thu, 16 Jan 2020 12:35:54 -0500
-Message-Id: <20200116173641.22137-165-sashal@kernel.org>
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 207/251] net: ethernet: stmmac: Fix signedness bug in ipq806x_gmac_of_parse()
+Date:   Thu, 16 Jan 2020 12:35:56 -0500
+Message-Id: <20200116173641.22137-167-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -49,33 +47,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f10210517a2f37feea2edf85eb34c98977265c16 ]
+[ Upstream commit 231042181dc9d6122c6faba64e99ccb25f13cc6c ]
 
-The "dwmac->phy_mode" is an enum and in this context GCC treats it as
-an unsigned int so the error handling is never triggered.
+The "gmac->phy_mode" variable is an enum and in this context GCC will
+treat it as an unsigned int so the error handling will never be
+triggered.
 
-Fixes: 566e82516253 ("net: stmmac: add a glue driver for the Amlogic Meson 8b / GXBB DWMAC")
+Fixes: b1c17215d718 ("stmmac: add ipq806x glue layer")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-index f356a44bcb81..6704d3e0392d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -280,7 +280,7 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+index 866444b6c82f..11a4a81b0397 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
+@@ -203,7 +203,7 @@ static int ipq806x_gmac_of_parse(struct ipq806x_gmac *gmac)
+ 	struct device *dev = &gmac->pdev->dev;
  
- 	dwmac->pdev = pdev;
- 	dwmac->phy_mode = of_get_phy_mode(pdev->dev.of_node);
--	if (dwmac->phy_mode < 0) {
-+	if ((int)dwmac->phy_mode < 0) {
- 		dev_err(&pdev->dev, "missing phy-mode property\n");
- 		ret = -EINVAL;
- 		goto err_remove_config_dt;
+ 	gmac->phy_mode = of_get_phy_mode(dev->of_node);
+-	if (gmac->phy_mode < 0) {
++	if ((int)gmac->phy_mode < 0) {
+ 		dev_err(dev, "missing phy mode property\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.20.1
 
