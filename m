@@ -2,73 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5A813D274
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F26BC13D290
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbgAPDF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:05:28 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:60397 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730707AbgAPDFW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:05:22 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0TnrFiO5_1579143916;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnrFiO5_1579143916)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Jan 2020 11:05:16 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-To:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, willy@infradead.org,
-        shakeelb@google.com, hannes@cmpxchg.org
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: [PATCH v8 10/10] mm/memcg: add debug checking in lock_page_memcg
-Date:   Thu, 16 Jan 2020 11:05:09 +0800
-Message-Id: <1579143909-156105-11-git-send-email-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1579143909-156105-1-git-send-email-alex.shi@linux.alibaba.com>
-References: <1579143909-156105-1-git-send-email-alex.shi@linux.alibaba.com>
+        id S1729691AbgAPDOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 22:14:14 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39380 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729472AbgAPDOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 22:14:11 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D32D92D23A1DF1A05B8C;
+        Thu, 16 Jan 2020 11:14:08 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 16 Jan 2020 11:13:58 +0800
+From:   Xuefeng Wang <wxf.wang@hisilicon.com>
+To:     <arnd@arndb.de>, <akpm@linux-foundation.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH 0/2] mm/thp: rework the pmd protect changing flow
+Date:   Thu, 16 Jan 2020 11:09:15 +0800
+Message-ID: <1579144157-7736-1-git-send-email-wxf.wang@hisilicon.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This extra irq disable/enable and BUG_ON checking costs 5% readtwice
-performance on a 2 socket * 26 cores * HT box. So put it into
-CONFIG_PROVE_LOCKING.
+On KunPeng920 board. When changing permission of a large range region,
+pmdp_invalidate() takes about 65% in profile (with hugepages) in JIT tool.
+Kernel will flush tlb twice: first flush happens in pmdp_invalidate, second
+flush happens at the end of change_protect_range(). The first pmdp_invalidate
+is not necessary if the hardware support atomic pmdp changing. The atomic
+changing pimd to zero can prevent the hardware from update asynchronous.
+So reconstruct it and remove the first pmdp_invalidate. And the second tlb
+flush can make sure the new tlb entry valid.
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: cgroups@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
----
- mm/memcontrol.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This patch series add a pmdp_modify_prot transaction abstraction firstly.
+Then add pmdp_modify_prot_start() in arm64, which uses pmdp_huge_get_and_clear()
+to atomically fetch the pmd and zero the entry.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index a567fd868739..4ad1b4d2eb1e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2029,6 +2029,12 @@ struct mem_cgroup *lock_page_memcg(struct page *page)
- 	if (unlikely(!memcg))
- 		return NULL;
- 
-+#ifdef CONFIG_PROVE_LOCKING
-+	local_irq_save(flags);
-+	might_lock(&memcg->move_lock);
-+	local_irq_restore(flags);
-+#endif
-+
- 	if (atomic_read(&memcg->moving_account) <= 0)
- 		return memcg;
- 
+After rework, the mprotect can get 3~13 times performace gain in range
+64M to 512M on KunPeng920:
+
+4K granule/THP on
+memory size(M)	64	128	256	320	448	512
+pre-patch		0.77	1.40	2.64	3.23	4.49	5.10
+post-patch		0.20	0.23	0.28	0.31	0.37	0.39
+
+Xuefeng Wang (2):
+  mm: add helpers pmdp_modify_prot_start/commit
+  arm64: mm: rework the pmd protect changing flow
+
+ arch/arm64/include/asm/pgtable.h | 14 +++++++++++++
+ include/asm-generic/pgtable.h    | 35 ++++++++++++++++++++++++++++++++
+ mm/huge_memory.c                 | 19 ++++++++---------
+ 3 files changed, 57 insertions(+), 11 deletions(-)
+
 -- 
-1.8.3.1
+2.17.1
 
