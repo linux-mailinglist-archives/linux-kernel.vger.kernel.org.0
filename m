@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C7413F921
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B9513F917
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437756AbgAPTXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:23:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37098 "EHLO mail.kernel.org"
+        id S1730878AbgAPTWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:22:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730742AbgAPQxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:19 -0500
+        id S1730785AbgAPQxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F84820730;
-        Thu, 16 Jan 2020 16:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 180C721582;
+        Thu, 16 Jan 2020 16:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193598;
-        bh=mEQ/YlD3A4QQywGbZn/iryMQxyRD6r1oKnXwOfcjIB0=;
+        s=default; t=1579193601;
+        bh=N/YR52bu4YthFVAa+5FgcQ9s5xNLJKWMWEoOcKzJk1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XS08i3O7QuV3zGhxVSh54U5qxJ631PAJg8uDo96MCIn1qO/TW8LladCJzm5r5i97t
-         ZkXezyuQ/4ZI0YuW2qCZRfpZAbtj570oY3zIg6/YCdlz2Idq/TxoZkkcgFn9Hcre9h
-         uMnFSIOfRelXEkuos6gW3UlrnowNh1DTmi0vv88w=
+        b=G2pwyp/HQWyer/lVeItJwC/TINEI4T5Cd9QPyTaamsKkesN3WXv6L36+yMzQPktAy
+         q2Ee9wR654qwsgw1CJ6T0aFNNlFxxME0EgUhbx42FlL+1jk4BVzNEblWGaFVQnM9qK
+         RN6n1kB5w55b7FCaCK9/00bO0MC32hV9OMpUVFB8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hoang Le <hoang.h.le@dektech.com.au>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.4 137/205] tipc: update mon's self addr when node addr generated
-Date:   Thu, 16 Jan 2020 11:41:52 -0500
-Message-Id: <20200116164300.6705-137-sashal@kernel.org>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 140/205] NFSv4.x: Handle bad/dead sessions correctly in nfs41_sequence_process()
+Date:   Thu, 16 Jan 2020 11:41:55 -0500
+Message-Id: <20200116164300.6705-140-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -45,89 +42,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoang Le <hoang.h.le@dektech.com.au>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 46cb01eeeb86fca6afe24dda1167b0cb95424e29 ]
+[ Upstream commit 5c441544f045e679afd6c3c6d9f7aaf5fa5f37b0 ]
 
-In commit 25b0b9c4e835 ("tipc: handle collisions of 32-bit node address
-hash values"), the 32-bit node address only generated after one second
-trial period expired. However the self's addr in struct tipc_monitor do
-not update according to node address generated. This lead to it is
-always zero as initial value. As result, sorting algorithm using this
-value does not work as expected, neither neighbor monitoring framework.
+If the server returns a bad or dead session error, the we don't want
+to update the session slot number, but just immediately schedule
+recovery and allow it to proceed.
 
-In this commit, we add a fix to update self's addr when 32-bit node
-address generated.
+We can/should then remove handling in other places
 
-Fixes: 25b0b9c4e835 ("tipc: handle collisions of 32-bit node address hash values")
-Acked-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Hoang Le <hoang.h.le@dektech.com.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3453d5708b33 ("NFSv4.1: Avoid false retries when RPC calls are interrupted")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/monitor.c | 15 +++++++++++++++
- net/tipc/monitor.h |  1 +
- net/tipc/net.c     |  2 ++
- 3 files changed, 18 insertions(+)
+ fs/nfs/nfs4proc.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
-index 6a6eae88442f..58708b4c7719 100644
---- a/net/tipc/monitor.c
-+++ b/net/tipc/monitor.c
-@@ -665,6 +665,21 @@ void tipc_mon_delete(struct net *net, int bearer_id)
- 	kfree(mon);
- }
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index caacf5e7f5e1..a591aaf31071 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -521,9 +521,7 @@ static int nfs4_do_handle_exception(struct nfs_server *server,
+ 		case -NFS4ERR_DEADSESSION:
+ 		case -NFS4ERR_SEQ_FALSE_RETRY:
+ 		case -NFS4ERR_SEQ_MISORDERED:
+-			dprintk("%s ERROR: %d Reset session\n", __func__,
+-				errorcode);
+-			nfs4_schedule_session_recovery(clp->cl_session, errorcode);
++			/* Handled in nfs41_sequence_process() */
+ 			goto wait_on_recovery;
+ #endif /* defined(CONFIG_NFS_V4_1) */
+ 		case -NFS4ERR_FILE_OPEN:
+@@ -782,6 +780,7 @@ static int nfs41_sequence_process(struct rpc_task *task,
+ 	struct nfs4_session *session;
+ 	struct nfs4_slot *slot = res->sr_slot;
+ 	struct nfs_client *clp;
++	int status;
+ 	int ret = 1;
  
-+void tipc_mon_reinit_self(struct net *net)
-+{
-+	struct tipc_monitor *mon;
-+	int bearer_id;
+ 	if (slot == NULL)
+@@ -793,8 +792,13 @@ static int nfs41_sequence_process(struct rpc_task *task,
+ 	session = slot->table->session;
+ 
+ 	trace_nfs4_sequence_done(session, res);
 +
-+	for (bearer_id = 0; bearer_id < MAX_BEARERS; bearer_id++) {
-+		mon = tipc_monitor(net, bearer_id);
-+		if (!mon)
-+			continue;
-+		write_lock_bh(&mon->lock);
-+		mon->self->addr = tipc_own_addr(net);
-+		write_unlock_bh(&mon->lock);
-+	}
-+}
++	status = res->sr_status;
++	if (task->tk_status == -NFS4ERR_DEADSESSION)
++		status = -NFS4ERR_DEADSESSION;
 +
- int tipc_nl_monitor_set_threshold(struct net *net, u32 cluster_size)
+ 	/* Check the SEQUENCE operation status */
+-	switch (res->sr_status) {
++	switch (status) {
+ 	case 0:
+ 		/* Mark this sequence number as having been acked */
+ 		nfs4_slot_sequence_acked(slot, slot->seq_nr);
+@@ -866,6 +870,10 @@ static int nfs41_sequence_process(struct rpc_task *task,
+ 		 */
+ 		slot->seq_nr = slot->seq_nr_highest_sent;
+ 		goto out_retry;
++	case -NFS4ERR_BADSESSION:
++	case -NFS4ERR_DEADSESSION:
++	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
++		goto session_recover;
+ 	default:
+ 		/* Just update the slot sequence no. */
+ 		slot->seq_done = 1;
+@@ -876,8 +884,10 @@ static int nfs41_sequence_process(struct rpc_task *task,
+ out_noaction:
+ 	return ret;
+ session_recover:
+-	nfs4_schedule_session_recovery(session, res->sr_status);
+-	goto retry_nowait;
++	nfs4_schedule_session_recovery(session, status);
++	dprintk("%s ERROR: %d Reset session\n", __func__, status);
++	nfs41_sequence_free_slot(res);
++	goto out;
+ retry_new_seq:
+ 	++slot->seq_nr;
+ retry_nowait:
+@@ -2188,7 +2198,6 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
+ 		case -NFS4ERR_BAD_HIGH_SLOT:
+ 		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
+ 		case -NFS4ERR_DEADSESSION:
+-			nfs4_schedule_session_recovery(server->nfs_client->cl_session, err);
+ 			return -EAGAIN;
+ 		case -NFS4ERR_STALE_CLIENTID:
+ 		case -NFS4ERR_STALE_STATEID:
+@@ -7820,6 +7829,15 @@ nfs41_same_server_scope(struct nfs41_server_scope *a,
+ static void
+ nfs4_bind_one_conn_to_session_done(struct rpc_task *task, void *calldata)
  {
- 	struct tipc_net *tn = tipc_net(net);
-diff --git a/net/tipc/monitor.h b/net/tipc/monitor.h
-index 2a21b93e0d04..ed63d2e650b0 100644
---- a/net/tipc/monitor.h
-+++ b/net/tipc/monitor.h
-@@ -77,6 +77,7 @@ int __tipc_nl_add_monitor(struct net *net, struct tipc_nl_msg *msg,
- 			  u32 bearer_id);
- int tipc_nl_add_monitor_peer(struct net *net, struct tipc_nl_msg *msg,
- 			     u32 bearer_id, u32 *prev_node);
-+void tipc_mon_reinit_self(struct net *net);
- 
- extern const int tipc_max_domain_size;
- #endif
-diff --git a/net/tipc/net.c b/net/tipc/net.c
-index 85707c185360..2de3cec9929d 100644
---- a/net/tipc/net.c
-+++ b/net/tipc/net.c
-@@ -42,6 +42,7 @@
- #include "node.h"
- #include "bcast.h"
- #include "netlink.h"
-+#include "monitor.h"
- 
- /*
-  * The TIPC locking policy is designed to ensure a very fine locking
-@@ -136,6 +137,7 @@ static void tipc_net_finalize(struct net *net, u32 addr)
- 	tipc_set_node_addr(net, addr);
- 	tipc_named_reinit(net);
- 	tipc_sk_reinit(net);
-+	tipc_mon_reinit_self(net);
- 	tipc_nametbl_publish(net, TIPC_CFG_SRV, addr, addr,
- 			     TIPC_CLUSTER_SCOPE, 0, addr);
++	struct nfs41_bind_conn_to_session_args *args = task->tk_msg.rpc_argp;
++	struct nfs_client *clp = args->client;
++
++	switch (task->tk_status) {
++	case -NFS4ERR_BADSESSION:
++	case -NFS4ERR_DEADSESSION:
++		nfs4_schedule_session_recovery(clp->cl_session,
++				task->tk_status);
++	}
  }
+ 
+ static const struct rpc_call_ops nfs4_bind_one_conn_to_session_ops = {
+@@ -8867,8 +8885,6 @@ static int nfs41_reclaim_complete_handle_errors(struct rpc_task *task, struct nf
+ 	case -NFS4ERR_BADSESSION:
+ 	case -NFS4ERR_DEADSESSION:
+ 	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
+-		nfs4_schedule_session_recovery(clp->cl_session,
+-				task->tk_status);
+ 		break;
+ 	default:
+ 		nfs4_schedule_lease_recovery(clp);
 -- 
 2.20.1
 
