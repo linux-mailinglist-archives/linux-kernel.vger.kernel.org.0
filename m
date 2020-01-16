@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F02C313F1A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1C013F1A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393489AbgAPS3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:29:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33994 "EHLO mail.kernel.org"
+        id S2407060AbgAPS3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392032AbgAPRZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:48 -0500
+        id S2391692AbgAPRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF7BC2464B;
-        Thu, 16 Jan 2020 17:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 470262081E;
+        Thu, 16 Jan 2020 17:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195547;
-        bh=yUHjz8v7EmxVjnEM2/tMfJCWMjVBEjwAlwO/UMnTXH8=;
+        s=default; t=1579195557;
+        bh=gRRExTBOxk0GsxlIZLGBj4g129fbjoNxN9f9p6V1jf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ch2s3W0njf021Rpl0z3OAWDkjspSjK3KlFICN16C5AY5Mg9jEFF65OU0Ykf5SCm5C
-         RV+QrtFzZ6wanb8c96cp7Zt8moub8PjAfADT0SzoTtpHkX4hjMFcr5W3MJlFNb1gmI
-         r3Tk2GgC+ANYx4lOxCvZ6SCCt9l339RP2LDjAr7k=
+        b=lIw9quMUrsYu60LMElBVp9AFIOVhfzd5qKA+hmmkqFG2OPqT08eV2iOKiF2Iy6M8w
+         7XwX+RzyIFjXAsmW6Fy4rGOWjt4anyLdcspXhYPiHfYWTwuhLV7b5WqJJOl/JtrsPP
+         f81Y9/ocjBneqNobVbNXGQNoEqhWQCRI9csIClq4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 139/371] media: wl128x: Fix an error code in fm_download_firmware()
-Date:   Thu, 16 Jan 2020 12:20:11 -0500
-Message-Id: <20200116172403.18149-82-sashal@kernel.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 145/371] arm64: dts: allwinner: a64: Add missing PIO clocks
+Date:   Thu, 16 Jan 2020 12:20:17 -0500
+Message-Id: <20200116172403.18149-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,38 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-[ Upstream commit ef4bb63dc1f7213c08e13f6943c69cd27f69e4a3 ]
+[ Upstream commit 562bf19611c000cb7219431c3cc78aa60c2b371e ]
 
-We forgot to set "ret" on this error path.
+The pinctrl binding mandates that we have the three clocks fed into the PIO
+described.
 
-Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+Even though the old case is still supported for backward compatibility, we
+should update our DTs to fix this.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 6bc37fac30cf ("arm64: dts: add Allwinner A64 SoC .dtsi")
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/radio/wl128x/fmdrv_common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index 26895ae42fcf..2d20d908e280 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -1271,8 +1271,9 @@ static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
- 
- 		switch (action->type) {
- 		case ACTION_SEND_COMMAND:	/* Send */
--			if (fmc_send_cmd(fmdev, 0, 0, action->data,
--						action->size, NULL, NULL))
-+			ret = fmc_send_cmd(fmdev, 0, 0, action->data,
-+					   action->size, NULL, NULL);
-+			if (ret)
- 				goto rel_fw;
- 
- 			cmd_cnt++;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 8c8db1b057df..788a6f8c5994 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -274,7 +274,8 @@
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu 58>;
++			clocks = <&ccu 58>, <&osc24M>, <&rtc 0>;
++			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			#gpio-cells = <3>;
+ 			interrupt-controller;
 -- 
 2.20.1
 
