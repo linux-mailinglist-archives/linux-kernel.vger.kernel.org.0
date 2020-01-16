@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A3413FCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1172713FD0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389549AbgAPXUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:20:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46274 "EHLO mail.kernel.org"
+        id S2390803AbgAPXVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:21:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390543AbgAPXUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:20:02 -0500
+        id S2389488AbgAPXVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:21:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D21352073A;
-        Thu, 16 Jan 2020 23:20:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F85F2072B;
+        Thu, 16 Jan 2020 23:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216802;
-        bh=zRGvNmywoR/9q+AHuoeFvd//FzZkNZYoznVN35C7pjk=;
+        s=default; t=1579216875;
+        bh=OJr/ByO9TRbCM9xgvCxyO58tS8jx1apSCf0bS3fx80w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nzzoEQhI2xrFNurbBjwhrRb86g8IcvgcrGZ7inrkv1yVLcCzDvoH+F04iUW5EUk5k
-         LapCoAme1GZ3v8sUNqMClrvDOZITPMsJbCcIAp38tkuwM4YeFIP39W8E/K4ISXO9L5
-         RLpRIrhsRLgs+5BbYzTzYJQEWxXHUZH9V1tr3qMQ=
+        b=tLgBwiULRTiBv0MYfwQiilXs79t29C1de+YxvK8xA1miMW1116+GGrZU493kjcA7C
+         bnqwyzZjfm9ZGmvI5psbynaaEc4sOp5enXxh4QU7Echw08YlucTRpOrAEEWwrNBbVQ
+         cHSX1duwovQegvgVHKB8c0s6W3dmFhSmJ4bqLpdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.4 025/203] scsi: mpt3sas: Fix double free in attach error handling
-Date:   Fri, 17 Jan 2020 00:15:42 +0100
-Message-Id: <20200116231746.670187422@linuxfoundation.org>
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH 5.4 029/203] drm/tegra: Fix ordering of cleanup code
+Date:   Fri, 17 Jan 2020 00:15:46 +0100
+Message-Id: <20200116231746.894208763@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,43 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Thierry Reding <treding@nvidia.com>
 
-commit ee560e7bbab0c10cf3f0e71997fbc354ab2ee5cb upstream.
+commit 051172e8c1ceef8749f19faacc1d3bef65d20d8d upstream.
 
-The caller also calls _base_release_memory_pools() on error so it leads to
-a number of double frees:
+Commit Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after
+initialization") changed the initialization order of the IOMMU related
+bits but didn't update the cleanup path accordingly. This asymmetry can
+cause failures during error recovery.
 
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->chain_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->hpr_lookup' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->internal_lookup' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->pcie_sgl_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_free_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_post_free_array_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->reply_post_free_dma_pool' double freed
-drivers/scsi/mpt3sas/mpt3sas_base.c:7207 mpt3sas_base_attach() warn: 'ioc->sense_dma_pool' double freed
-
-Fixes: 74522a92bbf0 ("scsi: mpt3sas: Optimize I/O memory consumption in driver.")
-Link: https://lore.kernel.org/r/20191203093652.gyntgvnkw2udatyc@kili.mountain
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: b9f8b09ce256 ("drm/tegra: Setup shared IOMMU domain after initialization")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -5234,7 +5234,6 @@ _base_allocate_memory_pools(struct MPT3S
- 					&ct->chain_buffer_dma);
- 			if (!ct->chain_buffer) {
- 				ioc_err(ioc, "chain_lookup: pci_pool_alloc failed\n");
--				_base_release_memory_pools(ioc);
- 				goto out;
- 			}
- 		}
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -201,19 +201,19 @@ hub:
+ 	if (tegra->hub)
+ 		tegra_display_hub_cleanup(tegra->hub);
+ device:
+-	host1x_device_exit(device);
+-fbdev:
+-	drm_kms_helper_poll_fini(drm);
+-	tegra_drm_fb_free(drm);
+-config:
+-	drm_mode_config_cleanup(drm);
+-
+ 	if (tegra->domain) {
+ 		mutex_destroy(&tegra->mm_lock);
+ 		drm_mm_takedown(&tegra->mm);
+ 		put_iova_domain(&tegra->carveout.domain);
+ 		iova_cache_put();
+ 	}
++
++	host1x_device_exit(device);
++fbdev:
++	drm_kms_helper_poll_fini(drm);
++	tegra_drm_fb_free(drm);
++config:
++	drm_mode_config_cleanup(drm);
+ domain:
+ 	if (tegra->domain)
+ 		iommu_domain_free(tegra->domain);
 
 
