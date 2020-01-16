@@ -2,130 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA63013E26E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:56:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2534F13E09E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733136AbgAPQz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbgAPQzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:40 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D4DE214AF;
-        Thu, 16 Jan 2020 16:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193739;
-        bh=LHmIffoarcO4UGzeOXpDU+X/XkVbG5AvRE/bVGXREaI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vk1VFZd/wreID4VxEmxWG7v1NubeBw4+DkDRJaqeroHBy4rtHtkJcAELN8HjDN+Hn
-         VcJohB08AVoll4Kg4AURlij3F36jJPxwH4cZxlyZL6rdZvutiQOCyq9DZ9PbuvAJcO
-         M7ZD2yCFe6l+MbJcAc1lbl/FffE/dZELbRu1Lpoo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Spencer E. Olson" <olsonse@umich.edu>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 031/671] staging: comedi: ni_mio_common: protect register write overflow
-Date:   Thu, 16 Jan 2020 11:44:22 -0500
-Message-Id: <20200116165502.8838-31-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+        id S1729380AbgAPQof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:44:35 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34537 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728899AbgAPQob (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:44:31 -0500
+Received: by mail-qk1-f193.google.com with SMTP id j9so19746390qkk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:44:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4y7BXaK3p6Ev3rLxUss//ZBuzibYMlRBSCu9vxh8o1Y=;
+        b=BSL9HYg6dKP4eDQO8ZxgXD3fUPn57epnIYfd8yF5xp1iPMgE/zFnY+UYwobWOthu0J
+         nlV6y0MM6WFUEPMD9BshpweVInH9ZUgnc+uJ/uaCO5JdW8saMWTw8J+IcQ2qnbzV/Bmn
+         hkUEhT9/o5uSxWH1Rf18F/jfpcQmgkm3ktLphptZDrakZem0/OOFuriVYYOib4jnTj1l
+         d8ffmDMGHGUdlao/hClAbQlxxjvJ8EPxKWsSB+jJihR+ltOH99Pu3ZD8hJevNOS8nQyo
+         B+YpBEPippvdXesV6mjvcPDThp3TPrvnNdEr/vCc1Enbw8pOYNbFY0udN7g57aZnhsFo
+         hhFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4y7BXaK3p6Ev3rLxUss//ZBuzibYMlRBSCu9vxh8o1Y=;
+        b=p0oJnP3HooQ2i9knuSZ7zwCEeKE9FWJ/uzE2a8zs4auGVBc1tqUs8Xz4O7ikZ66oQa
+         InDoJzrPC/noLOxB7TUpiEbC1QNOlI3M4bIjCaLWthASL09oqmm00TrTwGaYHKdsP9Oo
+         i7oaemoiGY7kG0tX8P2VfGSUND/vN9njagBQiyUwxYalYiERwzv4+FMfIW7c6vLE+iSG
+         horq/T3uM2feuZEzR94opDe4cCOAULbqTIB2l1wRq8+RdbHcsnQZo6r25cR3tPLuUSKU
+         eZAi+zatjoDkQrLAjlyLKz/RF2szFa6blRqhOWm1LYOtM93rAO12I5crIVmHH1TlTT5t
+         hzyw==
+X-Gm-Message-State: APjAAAV7YDN6xNR+7g0SbgDUBaoRK91SxqO8WaMldwfGDA8uGtQpAOJG
+        C4ZfJh6PWBx5okR+nq9RwYE5uA==
+X-Google-Smtp-Source: APXvYqzmh8bO/hET09TGMCFDXvlQk2DI1M84T9VpwtnCHyzmMAPYH3MdTYzKU2zFnxSiP5ohjWtXuQ==
+X-Received: by 2002:a37:4905:: with SMTP id w5mr16900444qka.267.1579193070001;
+        Thu, 16 Jan 2020 08:44:30 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::ae73])
+        by smtp.gmail.com with ESMTPSA id b81sm10334905qkc.135.2020.01.16.08.44.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 08:44:29 -0800 (PST)
+Date:   Thu, 16 Jan 2020 11:44:28 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH v2 2/6] mm: kmem: cleanup memcg_kmem_uncharge_memcg()
+ arguments
+Message-ID: <20200116164428.GB57074@cmpxchg.org>
+References: <20200109202659.752357-1-guro@fb.com>
+ <20200109202659.752357-3-guro@fb.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109202659.752357-3-guro@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Spencer E. Olson" <olsonse@umich.edu>
+On Thu, Jan 09, 2020 at 12:26:55PM -0800, Roman Gushchin wrote:
+> Drop the unused page argument and put the memcg pointer at the first
+> place. This make the function consistent with its peers:
+> __memcg_kmem_uncharge_memcg(), memcg_kmem_charge_memcg(), etc.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit 1cbca5852d6c16e85a21487a15d211195aacd4a1 ]
-
-Fixes two problems introduced as early as
-commit 03aef4b6dc12  ("Staging: comedi: add ni_mio_common code"):
-(1) Ensures that the last four bits of NISTC_RTSI_TRIGB_OUT_REG register is
-    not unduly overwritten on e-series devices.  On e-series devices, the
-    first three of the last four bits are reserved.  The last bit defines
-    the output selection of the RGOUT0 pin, otherwise known as
-    RTSI_Sub_Selection.  For m-series devices, these last four bits are
-    indeed used as the output selection of the RTSI7 pin (and the
-    RTSI_Sub_Selection bit for the RGOUT0 pin is moved to the
-    RTSI_Trig_Direction register.
-(2) Allows all 4 RTSI_BRD lines to be treated as valid sources for RTSI
-    lines.
-
-This patch also cleans up the ni_get_rtsi_routing command for readability.
-
-Fixes: 03aef4b6dc12  ("Staging: comedi: add ni_mio_common code")
-Signed-off-by: Spencer E. Olson <olsonse@umich.edu>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../staging/comedi/drivers/ni_mio_common.c    | 24 +++++++++++++------
- 1 file changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
-index d799b1b55de3..747518c29542 100644
---- a/drivers/staging/comedi/drivers/ni_mio_common.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_common.c
-@@ -4984,7 +4984,10 @@ static int ni_valid_rtsi_output_source(struct comedi_device *dev,
- 	case NI_RTSI_OUTPUT_G_SRC0:
- 	case NI_RTSI_OUTPUT_G_GATE0:
- 	case NI_RTSI_OUTPUT_RGOUT0:
--	case NI_RTSI_OUTPUT_RTSI_BRD_0:
-+	case NI_RTSI_OUTPUT_RTSI_BRD(0):
-+	case NI_RTSI_OUTPUT_RTSI_BRD(1):
-+	case NI_RTSI_OUTPUT_RTSI_BRD(2):
-+	case NI_RTSI_OUTPUT_RTSI_BRD(3):
- 		return 1;
- 	case NI_RTSI_OUTPUT_RTSI_OSC:
- 		return (devpriv->is_m_series) ? 1 : 0;
-@@ -5005,11 +5008,18 @@ static int ni_set_rtsi_routing(struct comedi_device *dev,
- 		devpriv->rtsi_trig_a_output_reg |= NISTC_RTSI_TRIG(chan, src);
- 		ni_stc_writew(dev, devpriv->rtsi_trig_a_output_reg,
- 			      NISTC_RTSI_TRIGA_OUT_REG);
--	} else if (chan < 8) {
-+	} else if (chan < NISTC_RTSI_TRIG_NUM_CHAN(devpriv->is_m_series)) {
- 		devpriv->rtsi_trig_b_output_reg &= ~NISTC_RTSI_TRIG_MASK(chan);
- 		devpriv->rtsi_trig_b_output_reg |= NISTC_RTSI_TRIG(chan, src);
- 		ni_stc_writew(dev, devpriv->rtsi_trig_b_output_reg,
- 			      NISTC_RTSI_TRIGB_OUT_REG);
-+	} else if (chan != NISTC_RTSI_TRIG_OLD_CLK_CHAN) {
-+		/* probably should never reach this, since the
-+		 * ni_valid_rtsi_output_source above errors out if chan is too
-+		 * high
-+		 */
-+		dev_err(dev->class_dev, "%s: unknown rtsi channel\n", __func__);
-+		return -EINVAL;
- 	}
- 	return 2;
- }
-@@ -5025,12 +5035,12 @@ static unsigned int ni_get_rtsi_routing(struct comedi_device *dev,
- 	} else if (chan < NISTC_RTSI_TRIG_NUM_CHAN(devpriv->is_m_series)) {
- 		return NISTC_RTSI_TRIG_TO_SRC(chan,
- 					      devpriv->rtsi_trig_b_output_reg);
--	} else {
--		if (chan == NISTC_RTSI_TRIG_OLD_CLK_CHAN)
--			return NI_RTSI_OUTPUT_RTSI_OSC;
--		dev_err(dev->class_dev, "bug! should never get here?\n");
--		return 0;
-+	} else if (chan == NISTC_RTSI_TRIG_OLD_CLK_CHAN) {
-+		return NI_RTSI_OUTPUT_RTSI_OSC;
- 	}
-+
-+	dev_err(dev->class_dev, "%s: unknown rtsi channel\n", __func__);
-+	return -EINVAL;
- }
- 
- static int ni_rtsi_insn_config(struct comedi_device *dev,
--- 
-2.20.1
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
