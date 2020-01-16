@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2FA713EFDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:18:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 572CF13EFB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:17:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393252AbgAPSRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40556 "EHLO mail.kernel.org"
+        id S2404307AbgAPR3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:29:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404253AbgAPR3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:29:03 -0500
+        id S2404271AbgAPR3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:29:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39659246FC;
-        Thu, 16 Jan 2020 17:29:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8EBC246EE;
+        Thu, 16 Jan 2020 17:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195742;
-        bh=7VfQO9ZHJ8yQoCe1ayEZQ4PCtEclkhVMbtwss1+KNpg=;
+        s=default; t=1579195744;
+        bh=NH7YmaENed7733PiOVCPiTH7DV/SfeLsD2y7DmbM7Ug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=unL8YjmuExZMASV3330PgDjwSSRjUpYojhHvxSFiZaT/UMq5Y/5D1umLByPSvEJ41
-         GIlqhA806ODCjI+KNZIIUwkKO4hxWwZEjQMtreTOpZ+Mio7GHa2zLgjJMXSv1ktUI1
-         Q374bYQptw5AlcmsgMdyY6OleHyFZ7WYYzmOWD+w=
+        b=V53zVZv7lWpgdqIDY4Hl2WkI8a37SzzcG4pgDZe2ex7HvoULkiyM1HYaWOerEeKjo
+         yrTPPSItEFXT1/pKlxm4tEMKETS8uOY6nrk7EExwMgWCvDL7sc1YVl89FXK8Ibanof
+         XFanbJuTmO2ujH9GHd07SYZqKsagzrPl9M4W7QT8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 277/371] iommu/mediatek: Fix iova_to_phys PA start for 4GB mode
-Date:   Thu, 16 Jan 2020 12:22:29 -0500
-Message-Id: <20200116172403.18149-220-sashal@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        laokz <laokz@foxmail.com>, Stefani Seibold <stefani@seibold.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg KH <greg@kroah.com>, Kees Cook <keescook@chromium.org>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 279/371] Partially revert "kfifo: fix kfifo_alloc() and kfifo_init()"
+Date:   Thu, 16 Jan 2020 12:22:31 -0500
+Message-Id: <20200116172403.18149-222-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,94 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yong Wu <yong.wu@mediatek.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 76ce65464fcd2c21db84391572b7938b716aceb0 ]
+[ Upstream commit ab9bb6318b0967671e0c9b6537c1537d51ca4f45 ]
 
-In M4U 4GB mode, the physical address is remapped as below:
+Commit dfe2a77fd243 ("kfifo: fix kfifo_alloc() and kfifo_init()") made
+the kfifo code round the number of elements up.  That was good for
+__kfifo_alloc(), but it's actually wrong for __kfifo_init().
 
-CPU Physical address:
+The difference? __kfifo_alloc() will allocate the rounded-up number of
+elements, but __kfifo_init() uses an allocation done by the caller.  We
+can't just say "use more elements than the caller allocated", and have
+to round down.
 
-====================
+The good news? All the normal cases will be using power-of-two arrays
+anyway, and most users of kfifo's don't use kfifo_init() at all, but one
+of the helper macros to declare a KFIFO that enforce the proper
+power-of-two behavior.  But it looks like at least ibmvscsis might be
+affected.
 
-0      1G       2G     3G       4G     5G
-|---A---|---B---|---C---|---D---|---E---|
-+--I/O--+------------Memory-------------+
+The bad news? Will Deacon refers to an old thread and points points out
+that the memory ordering in kfifo's is questionable.  See
 
-IOMMU output physical address:
- =============================
+  https://lore.kernel.org/lkml/20181211034032.32338-1-yuleixzhang@tencent.com/
 
-                                4G      5G     6G      7G      8G
-                                |---E---|---B---|---C---|---D---|
-                                +------------Memory-------------+
+for more.
 
-The Region 'A'(I/O) can not be mapped by M4U; For Region 'B'/'C'/'D', the
-bit32 of the CPU physical address always is needed to set, and for Region
-'E', the CPU physical address keep as is. something looks like this:
-CPU PA         ->    M4U OUTPUT PA
-0x4000_0000          0x1_4000_0000 (Add bit32)
-0x8000_0000          0x1_8000_0000 ...
-0xc000_0000          0x1_c000_0000 ...
-0x1_0000_0000        0x1_0000_0000 (No change)
-
-Additionally, the iommu consumers always use the CPU phyiscal address.
-
-The PA in the iova_to_phys that is got from v7s always is u32, But
-from the CPU point of view, PA only need add BIT(32) when PA < 0x4000_0000.
-
-Fixes: 30e2fccf9512 ("iommu/mediatek: Enlarge the validate PA range
-for 4GB mode")
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: dfe2a77fd243 ("kfifo: fix kfifo_alloc() and kfifo_init()")
+Reported-by: laokz <laokz@foxmail.com>
+Cc: Stefani Seibold <stefani@seibold.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg KH <greg@kroah.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/mtk_iommu.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ lib/kfifo.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index c30f62700431..0f99e95a1a73 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -115,6 +115,30 @@ struct mtk_iommu_domain {
+diff --git a/lib/kfifo.c b/lib/kfifo.c
+index 90ba1eb1df06..a94227c55551 100644
+--- a/lib/kfifo.c
++++ b/lib/kfifo.c
+@@ -82,7 +82,8 @@ int __kfifo_init(struct __kfifo *fifo, void *buffer,
+ {
+ 	size /= esize;
  
- static struct iommu_ops mtk_iommu_ops;
+-	size = roundup_pow_of_two(size);
++	if (!is_power_of_2(size))
++		size = rounddown_pow_of_two(size);
  
-+/*
-+ * In M4U 4GB mode, the physical address is remapped as below:
-+ *
-+ * CPU Physical address:
-+ * ====================
-+ *
-+ * 0      1G       2G     3G       4G     5G
-+ * |---A---|---B---|---C---|---D---|---E---|
-+ * +--I/O--+------------Memory-------------+
-+ *
-+ * IOMMU output physical address:
-+ *  =============================
-+ *
-+ *                                 4G      5G     6G      7G      8G
-+ *                                 |---E---|---B---|---C---|---D---|
-+ *                                 +------------Memory-------------+
-+ *
-+ * The Region 'A'(I/O) can NOT be mapped by M4U; For Region 'B'/'C'/'D', the
-+ * bit32 of the CPU physical address always is needed to set, and for Region
-+ * 'E', the CPU physical address keep as is.
-+ * Additionally, The iommu consumers always use the CPU phyiscal address.
-+ */
-+#define MTK_IOMMU_4GB_MODE_REMAP_BASE	 0x40000000
-+
- static LIST_HEAD(m4ulist);	/* List all the M4U HWs */
- 
- #define for_each_m4u(data)	list_for_each_entry(data, &m4ulist, list)
-@@ -404,7 +428,7 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
- 	pa = dom->iop->iova_to_phys(dom->iop, iova);
- 	spin_unlock_irqrestore(&dom->pgtlock, flags);
- 
--	if (data->enable_4GB)
-+	if (data->enable_4GB && pa < MTK_IOMMU_4GB_MODE_REMAP_BASE)
- 		pa |= BIT_ULL(32);
- 
- 	return pa;
+ 	fifo->in = 0;
+ 	fifo->out = 0;
 -- 
 2.20.1
 
