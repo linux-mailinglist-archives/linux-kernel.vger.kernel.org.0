@@ -2,91 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 290C113F452
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CE013F4E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437024AbgAPSs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:48:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38374 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390036AbgAPSsv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:48:51 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u2so4920338wmc.3;
-        Thu, 16 Jan 2020 10:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=W6L5M8NGDU85SsLDQmYbLaPSihnBnJlX3fanr790LTQ=;
-        b=M2ncpFHVDkDQJXFmSFyILtg5dfcgBMwp+/GDwfV0ypOJ3vRQp74CewosmQhXTj7EdA
-         TK1BjIlnP/mh+uYnRk77S/ysqHcbubzppvOap7bkqwZ09LK+pMxYdyA75Yx/NorPI4rj
-         XCP+iEcl2TmRooOl3ZAGi1kJcq4tU/dX8636my5k00oyhmBwN5ezSxXkEJjNJjy1u+tY
-         wIT+JqJw1sCuCCFy8N2CoaCSW2NM8iJbG4eaWe6UkXTXUn6ydkC3ws3cDEjfilCtqemD
-         /1FYY92btOopD1j1Jnv2q90KRWgiddRpdZhIBhXLxm5XGNLmUxJMdlEI51Ecvjls/uwB
-         yZHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=W6L5M8NGDU85SsLDQmYbLaPSihnBnJlX3fanr790LTQ=;
-        b=V0owF16lujqJ0riKGVAj19c4pKakKzkjN5PrRwNlV7MWdp/QNbit4j72+KqYi/9PLM
-         ksr7imVAFsQ5hj2FE2iBjmimZNFRRVBQ2aaXFY7oTgZrIkSWvjG6OV3e7jEKiTSkt/AQ
-         YvootNORMago/yoOBfjJO6ZFqmGd+C1hO+6fWbNmSuVqf8Ek5PX6MI7RryD3xr1Bh7oL
-         DYcpRM83rplELk65bSqp35WblYmOErIbwmoSDW56/XPRzfSXdjIu9qCfeV+xvX9iHCW0
-         A0o+U7EFH/DVvkTUUbZiezecmB6PLzI2DuLWPakFt9c095SV52KqcyYrs9HJhS+UhhyH
-         UMPQ==
-X-Gm-Message-State: APjAAAWikHLx8fKDsw2k8+XX8ar+24WljUcISIx8QGkQBqKxQEwUVTnO
-        VusnYsA9X1dp6c3JLmqteWI=
-X-Google-Smtp-Source: APXvYqxhkMJzX4Sq/b4oFH8dHiEfu0uRVsCPQXLvta8K0yXhLaMLfpTTKQzh6yknwnzeizGJswmEAQ==
-X-Received: by 2002:a1c:628b:: with SMTP id w133mr438122wmb.25.1579200529189;
-        Thu, 16 Jan 2020 10:48:49 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2dbe:4a00:e092:254d:41ed:2e49])
-        by smtp.gmail.com with ESMTPSA id n67sm6090068wmf.46.2020.01.16.10.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:48:48 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Joe Perches <joe@perches.com>, kernel@pengutronix.de,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND] MAINTAINERS: fix style in RESET CONTROLLER FRAMEWORK
-Date:   Thu, 16 Jan 2020 19:48:36 +0100
-Message-Id: <20200116184836.10256-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S2437120AbgAPSwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:52:41 -0500
+Received: from mga01.intel.com ([192.55.52.88]:8245 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437111AbgAPSwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:52:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:52:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="214192638"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2020 10:52:36 -0800
+Date:   Thu, 16 Jan 2020 10:52:36 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200116185235.GE24522@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+ <20200116053935.GB8235@magnolia>
+ <20200116175501.GC24522@iweiny-DESK2.sc.intel.com>
+ <20200116180421.GD8235@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116180421.GD8235@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 37859277374d ("MAINTAINERS: add reset controller framework
-keywords") slips in some formatting with spaces instead of tabs, which
-./scripts/checkpatch.pl -f MAINTAINERS complains about:
+On Thu, Jan 16, 2020 at 10:04:21AM -0800, Darrick J. Wong wrote:
+> On Thu, Jan 16, 2020 at 09:55:02AM -0800, Ira Weiny wrote:
+> > On Wed, Jan 15, 2020 at 09:39:35PM -0800, Darrick J. Wong wrote:
+> > > On Wed, Jan 15, 2020 at 02:38:21PM -0800, Ira Weiny wrote:
+> > > > On Wed, Jan 15, 2020 at 12:10:50PM -0800, Dan Williams wrote:
+> > > > > On Wed, Jan 15, 2020 at 11:45 AM Ira Weiny <ira.weiny@intel.com> wrote:
+> > > > > >
+> > > > > > On Wed, Jan 15, 2020 at 09:38:34AM -0800, Darrick J. Wong wrote:
+> > > > > > > On Wed, Jan 15, 2020 at 12:37:15PM +0100, Jan Kara wrote:
+> > > > > > > > On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
+> > > > > > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > > > > >
+> > > > 
+> > 
+> > [snip]
+> > 
+> > > > 
+> > > > Sure, but for now I think referencing mmap for details on MAP_SYNC works.
+> > > > 
+> > > > I suspect that we may have some word smithing once I get this series in and we
+> > > > submit a change to the statx man page itself.  Can I move forward with the
+> > > > following for this patch?
+> > > > 
+> > > > <quote>
+> > > > STATX_ATTR_DAX
+> > > > 
+> > > >         The file is in the DAX (cpu direct access) state.  DAX state
+> > > 
+> > > Hmm, now that I see it written out, I <cough> kind of like "DAX mode"
+> > > better now. :/
+> > > 
+> > > "The file is in DAX (CPU direct access) mode.  DAX mode attempts..."
+> > 
+> > Sure...  now you tell me...  ;-)
+> > 
+> > Seriously, we could use mode here in the man page as this is less confusing to
+> > say "DAX mode".
+> > 
+> > But I think the code should still use 'state' because mode is just too
+> > overloaded.  You were not the only one who was thrown by my use of mode and I
+> > don't want that confusion when we look at this code 2 weeks from now...
+> > 
+> > https://www.reddit.com/r/ProgrammerHumor/comments/852og2/only_god_knows/
+> > 
+> > ;-)
+> 
+> Ok, let's leave it alone for now then.
 
-  WARNING: MAINTAINERS entries use one tab after TYPE:
-  #14047: FILE: MAINTAINERS:14047:
-  +K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
+Cool could I get a reviewed by?
 
-Fixes: 37859277374d ("MAINTAINERS: add reset controller framework keywords")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on v5.5-rc6 and next-20200116
-Philipp, please pick this patch.
+And Jan is this reword of the man page/commit ok to keep your reviewed by?
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> I'm not even sure what 'DAX' stands for.  Direct Access to ...
+> Professor Xavier? 8-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d2aa9db61ab6..83eae48ad4f2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14067,7 +14067,7 @@ F:	include/dt-bindings/reset/
- F:	include/linux/reset.h
- F:	include/linux/reset/
- F:	include/linux/reset-controller.h
--K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
-+K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
- 
- RESTARTABLE SEQUENCES SUPPORT
- M:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
--- 
-2.17.1
+That is pronounced 'Direct A'Xes'  you know, for chopping wood!
 
+Thanks everyone,
+Ira
+
+> 
+> > > 
+> > > >         attempts to minimize software cache effects for both I/O and
+> > > >         memory mappings of this file.  It requires a file system which
+> > > >         has been configured to support DAX.
+> > > > 
+> > > >         DAX generally assumes all accesses are via cpu load / store
+> > > >         instructions which can minimize overhead for small accesses, but
+> > > >         may adversely affect cpu utilization for large transfers.
+> > > > 
+> > > >         File I/O is done directly to/from user-space buffers and memory
+> > > >         mapped I/O may be performed with direct memory mappings that
+> > > >         bypass kernel page cache.
+> > > > 
+> > > >         While the DAX property tends to result in data being transferred
+> > > >         synchronously, it does not give the same guarantees of
+> > > >         synchronous I/O where data and the necessary metadata are
+> > > >         transferred together.
+> > > 
+> > > (I'm frankly not sure that synchronous I/O actually guarantees that the
+> > > metadata has hit stable storage...)
+> > 
+> > I'll let you and Dan work this one out...  ;-)
+> 
+> Hehe.  I think the wording here is fine.
+> 
+> --D
+> 
+> > Ira
+> > 
