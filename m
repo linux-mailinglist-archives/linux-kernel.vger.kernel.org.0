@@ -2,104 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70E813F7CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D23D413F806
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388743AbgAPTOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:14:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47507 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2437490AbgAPTN5 (ORCPT
+        id S2387591AbgAPTOZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:14:25 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:32859 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387581AbgAPTOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:13:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579202036;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dfJAU7RaHy4HkG5bX3qzQ3Wzr16UrjmMEFK9k1V7IkQ=;
-        b=YjWDNDUNaEK3ir3JdxHeu1DbYBW0GcyEZ4EtpIAngmxICCqN4agf+V4c/l/9lizUqMusYy
-        76aE9S5GY/SjKDdUvf5pV6LqmHuvCvXtFdsPUvbok5OvFatwfW+j7P6EZRr0U8ocJf6N7o
-        lYhTcfwkJ7rCPnprRj/uCkEOEAqiJQo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-412-_pqLLkqMPlaIidvTIzRJPg-1; Thu, 16 Jan 2020 14:13:52 -0500
-X-MC-Unique: _pqLLkqMPlaIidvTIzRJPg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7299107ACC7;
-        Thu, 16 Jan 2020 19:13:50 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 923CC60C63;
-        Thu, 16 Jan 2020 19:13:49 +0000 (UTC)
-Subject: Re: [PATCH v2] watchdog: Fix possible soft lockup warning at bootup
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rrichter@marvell.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <87ftgffc9z.fsf@nanos.tec.linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7168b0aa-4904-4246-0de5-3906df13b5c8@redhat.com>
-Date:   Thu, 16 Jan 2020 14:13:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 16 Jan 2020 14:14:20 -0500
+Received: by mail-ot1-f67.google.com with SMTP id b18so20448567otp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:14:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f1ec9yhp1dLONmQKLtmwYwMMUOtHKCG6eqQo9yTWOQE=;
+        b=tjR/NKn0q3EA4RnTi7zRPuL2CnnATS9QiR01PM5V7TguFQjl8XMyYYbuiB0h+PaAyL
+         2mWFlexZtBGWaRHE1l/eDerYxMnSRZkEVa7mQN303/IsuWBnREPU9VnxvN+2mccyTf+U
+         ivR4d/OfGEfI/MGabJdc01KlnApU3VtdNEcNDtrrviJ+voEdpi3Hwy8QpiYnE4h/ySzp
+         SUxr5itBgVLxELli6Gf1HHBzlNAT4NyPLxK70kyZUc18XIeSsYbffmk/2jVlvLTeNA9f
+         uZwzb36vx/o05XGXLqGklzW4rPZTcWt278uxoIn5T9zZjN8fBMNMgHwa6NW3OIihk827
+         SehQ==
+X-Gm-Message-State: APjAAAWJRx25CSN1wrq/LOXVPP0qXbnyOGVPbC1VMog+tBEpQUiTuY+p
+        Z5TOA7/tFcJHQ2Gw4L15k0ZBecMV
+X-Google-Smtp-Source: APXvYqxCVZvS+hcwZyaQ8EN93Shuq119tS13lLpIU10Y6crf5AINrb13+07pnLHE2CL0IuPdgOzuPg==
+X-Received: by 2002:a9d:d0b:: with SMTP id 11mr3423196oti.287.1579202059276;
+        Thu, 16 Jan 2020 11:14:19 -0800 (PST)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id p184sm6961975oic.40.2020.01.16.11.14.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 11:14:18 -0800 (PST)
+Received: by mail-oi1-f182.google.com with SMTP id d62so19825847oia.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:14:18 -0800 (PST)
+X-Received: by 2002:aca:a9c5:: with SMTP id s188mr486067oie.154.1579202058353;
+ Thu, 16 Jan 2020 11:14:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87ftgffc9z.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+References: <1578608351-23289-1-git-send-email-leoyang.li@nxp.com> <20200116183932.qltqdtreeg4d2zq7@localhost>
+In-Reply-To: <20200116183932.qltqdtreeg4d2zq7@localhost>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Thu, 16 Jan 2020 13:14:07 -0600
+X-Gmail-Original-Message-ID: <CADRPPNQm2ZK+trtKCo2Mjr+ga2vKCR4hWMoFXd3AMMxRQZ_4ZA@mail.gmail.com>
+Message-ID: <CADRPPNQm2ZK+trtKCo2Mjr+ga2vKCR4hWMoFXd3AMMxRQZ_4ZA@mail.gmail.com>
+Subject: Re: [GIT PULL] soc/fsl drivers changes for next(v5.6)
+To:     Olof Johansson <olof@lixom.net>
+Cc:     arm@kernel.org, soc@kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 2:10 PM, Thomas Gleixner wrote:
-> Waiman Long <longman@redhat.com> writes:
+On Thu, Jan 16, 2020 at 12:41 PM Olof Johansson <olof@lixom.net> wrote:
 >
->> On 1/16/20 11:57 AM, Thomas Gleixner wrote:
->>>> So your theory the MONOTONIC clock runs differently/wrongly could
->>>> explain that (assuming this drives the sched clock). Though, I am
->>> No. sched_clock() is separate. It uses a raw timestamp (in your case
->>> from the ARM arch timer) and converts it to something which is close =
-to
->>> proper time. So my assumption was based on the printout Waiman had:
->>>
->>>  [ 1... ] CPU.... watchdog_fn now  170000000
->>>  [ 25.. ] CPU.... watchdog_fn now 4170000000
->>>
->>> I assumed that now comes from ktime_get() or something like
->>> that. Waiman?
->> I printed out the now parameter of the=C2=A0 __hrtimer_run_queues() ca=
-ll.
-> Yes. That's clock MONOTONIC.
+> Hi,
 >
->> So from the timer perspective, it is losing time. For watchdog, the so=
-ft
->> expiry time is 4s. The watchdog function won't be called until the
->> timer's time advances 4s or more. That corresponds to about 24s in
->> timestamp time for that particular class of systems.
-> Right. And assumed that the firmware call is the culprit this has an
-> explanation.
+> On Thu, Jan 09, 2020 at 04:19:11PM -0600, Li Yang wrote:
+> > Hi soc maintainers,
+> >
+> > Please merge the following new changes for soc/fsl drivers.
+> >
+> > Regards,
+> > Leo
+> >
+> >
+> > The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+> >
+> >   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.6
+> >
+> > for you to fetch changes up to 6e62bd36e9ad85a22d92b1adce6a0336ea549733:
+> >
+> >   soc: fsl: qe: remove set but not used variable 'mm_gc' (2020-01-08 16:02:48 -0600)
+> >
+> > ----------------------------------------------------------------
+> > NXP/FSL SoC driver updates for v5.6
+> >
+> > QUICC Engine drivers
+> > - Improve the QE drivers to be compatible with ARM/ARM64/PPC64
+> > architectures
+> > - Various cleanups to the QE drivers
 >
-> Could you please take sched_clock() timestamps before and after the
-> firmware call which kicks the secondary CPUs into life to verify that?
+> This branch contains a cross-section of drivers, including those who are
+> normally sent to other maintainers/subsystems. I don't see dependencies that
+> make them a requirement/easier to merge through the SoC tree at this time --
+> for example the ucc_uart driver updates are mostly independent cleanups.
 >
-> They should sum up to the amount of time which gets lost accross
-> smp_init().
+> Am I missing some aspect here, or should those just be merged through
+> drivers/tty as other driver changes there? At the very least, we expect drivers
+> that aren't merged through the normal path to have acks from those maintainers.
+>
+> Mind following up on that? Thanks!
 
-Sure, I will do that after I get hold of the arm64 system that can
-reproduce the issue. That system is currently used by another engineer.
+Hi Olof,
 
-Cheers,
-Longman
+Some of the driver cleanups are dependent to core QE changes.  Some
+maybe not but could have contextual dependency with other patches.  I
+will be easier to have them all go in from the same place.  We have
+collected the ack and confirmation from all the related maintainers.
+For the ucc_uart it is not a formal ack.  Quoted the confirmation from
+Greg below:
 
+"On Wed, Nov 13, 2019 at 12:24:09PM +0100, Rasmus Villemoes wrote:
+> On 13/11/2019 12.19, gregkh@linuxfoundation.org wrote:
+> >
+> > This is a note to let you know that I've just added the patch titled
+> >
+> >     serial: ucc_uart: explicitly include soc/fsl/cpm.h
+>
+> So, I was planning on having all 47 patches go through Li Yang's tree,
+> I think it's easier that way. So if it's not too late, can you drop
+> those six "serial: ucc_uart:" (numbered 28/47 through 33/47) patches
+> and instead give your ok (not necessarily a formal ack if you don't
+> have time to do a review) to Li Yang picking them up?
+
+That's fine, all are now dropped from my tree.  Li Yang, feel free to
+take them in your tree if you want to.
+
+greg k-h"
+
+Regards,
+Leo
