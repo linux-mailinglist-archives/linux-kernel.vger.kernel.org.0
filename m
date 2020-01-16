@@ -2,67 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9438013DAAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30CFC13DAA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:54:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbgAPM4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:56:43 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41436 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726018AbgAPM4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:56:43 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EAAFBB592AAA10E88C27;
-        Thu, 16 Jan 2020 20:56:40 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 16 Jan 2020 20:56:31 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <johannes@sipsolutions.net>, <davem@davemloft.net>
-CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] mac80111: fix build error without CONFIG_ATH11K_DEBUGFS
-Date:   Thu, 16 Jan 2020 20:51:55 +0800
-Message-ID: <20200116125155.166749-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726827AbgAPMwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:52:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:49018 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726160AbgAPMwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 07:52:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 632251396;
+        Thu, 16 Jan 2020 04:52:20 -0800 (PST)
+Received: from [10.37.9.112] (unknown [10.37.9.112])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 020443F6C4;
+        Thu, 16 Jan 2020 04:52:18 -0800 (PST)
+Subject: Re: [PATCH v2] arm64: cpufeature: Export matrix and other features to
+ userspace
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>, julien@xen.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20191216113337.13882-1-steven.price@arm.com>
+ <20200115094916.GC21692@willie-the-truck>
+ <20200115095810.GD21692@willie-the-truck>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <87d09890-146c-a9ce-a8d9-13baaa30068d@arm.com>
+Date:   Thu, 16 Jan 2020 12:52:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200115095810.GD21692@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_ATH11K_DEBUGFS is n, build fails:
+On 15/01/2020 09:58, Will Deacon wrote:
+> On Wed, Jan 15, 2020 at 09:49:17AM +0000, Will Deacon wrote:
+>> In other words, I'll drop the SPECRES parts from this patch. Sound ok?
 
-drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function ath11k_dbg_sta_open_htt_peer_stats:
-drivers/net/wireless/ath/ath11k/debugfs_sta.c:416:4: error: struct ath11k has no member named debug
-  ar->debug.htt_stats.stats_req = stats_req;
-      ^~
-and many more similar messages.
+Yes, sounds like a good idea based on what Mark linked to. The diff 
+below looks right to me.
 
-Select ATH11K_DEBUGFS under config MAC80211_DEBUGFS to fix this.
+Thanks,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- net/mac80211/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Steve
 
-diff --git a/net/mac80211/Kconfig b/net/mac80211/Kconfig
-index 0c93b1b..0f2c2b8 100644
---- a/net/mac80211/Kconfig
-+++ b/net/mac80211/Kconfig
-@@ -77,6 +77,7 @@ config MAC80211_LEDS
- 
- config MAC80211_DEBUGFS
- 	bool "Export mac80211 internals in DebugFS"
-+	select ATH11K_DEBUGFS
- 	depends on MAC80211 && DEBUG_FS
- 	---help---
- 	  Select this to see extensive information about
--- 
-2.7.4
+> 
+> Diff below.
+> 
+> Will
+> 
+> --->8
+> 
+> diff --git a/Documentation/arm64/cpu-feature-registers.rst b/Documentation/arm64/cpu-feature-registers.rst
+> index 5382981533f8..27877d25dd9b 100644
+> --- a/Documentation/arm64/cpu-feature-registers.rst
+> +++ b/Documentation/arm64/cpu-feature-registers.rst
+> @@ -206,8 +206,6 @@ infrastructure:
+>        +------------------------------+---------+---------+
+>        | BF16                         | [47-44] |    y    |
+>        +------------------------------+---------+---------+
+> -     | SPECRES                      | [43-40] |    y    |
+> -     +------------------------------+---------+---------+
+>        | SB                           | [39-36] |    y    |
+>        +------------------------------+---------+---------+
+>        | FRINTTS                      | [35-32] |    y    |
+> diff --git a/Documentation/arm64/elf_hwcaps.rst b/Documentation/arm64/elf_hwcaps.rst
+> index 183ba86ad46e..4fafc57d8e73 100644
+> --- a/Documentation/arm64/elf_hwcaps.rst
+> +++ b/Documentation/arm64/elf_hwcaps.rst
+> @@ -232,10 +232,6 @@ HWCAP2_DGH
+>   
+>       Functionality implied by ID_AA64ISAR1_EL1.DGH == 0b0001.
+>   
+> -HWCAP2_SPECRES
+> -
+> -    Functionality implied by ID_AA64ISAR1_EL1.SPECRES == 0b0001.
+> -
+>   4. Unused AT_HWCAP bits
+>   -----------------------
+>   
+> diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
+> index ac7180b2c20b..fcb390ea29ea 100644
+> --- a/arch/arm64/include/asm/hwcap.h
+> +++ b/arch/arm64/include/asm/hwcap.h
+> @@ -93,7 +93,6 @@
+>   #define KERNEL_HWCAP_I8MM		__khwcap2_feature(I8MM)
+>   #define KERNEL_HWCAP_DGH		__khwcap2_feature(DGH)
+>   #define KERNEL_HWCAP_BF16		__khwcap2_feature(BF16)
+> -#define KERNEL_HWCAP_SPECRES		__khwcap2_feature(SPECRES)
+>   
+>   /*
+>    * This yields a mask that user programs can use to figure out what
+> diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+> index 8f3f1b66f7b2..e6dad5924703 100644
+> --- a/arch/arm64/include/uapi/asm/hwcap.h
+> +++ b/arch/arm64/include/uapi/asm/hwcap.h
+> @@ -72,6 +72,5 @@
+>   #define HWCAP2_I8MM		(1 << 13)
+>   #define HWCAP2_BF16		(1 << 14)
+>   #define HWCAP2_DGH		(1 << 15)
+> -#define HWCAP2_SPECRES		(1 << 16)
+>   
+>   #endif /* _UAPI__ASM_HWCAP_H */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 9164ee5351a4..c88f8fb80e2e 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -138,7 +138,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_I8MM_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_DGH_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_BF16_SHIFT, 4, 0),
+> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_SPECRES_SHIFT, 4, 0),
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_SPECRES_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_SB_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FRINTTS_SHIFT, 4, 0),
+>   	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
+> @@ -1678,7 +1678,6 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 2, CAP_HWCAP, KERNEL_HWCAP_ILRCPC),
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_FRINTTS_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_FRINT),
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_SB_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_SB),
+> -	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_SPECRES_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_SPECRES),
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_BF16_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_BF16),
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_DGH_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_DGH),
+>   	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_I8MM_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, KERNEL_HWCAP_I8MM),
+> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> index c689e26889c7..9013b224591a 100644
+> --- a/arch/arm64/kernel/cpuinfo.c
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -91,7 +91,6 @@ static const char *const hwcap_str[] = {
+>   	"i8mm",
+>   	"bf16",
+>   	"dgh",
+> -	"specres",
+>   	NULL
+>   };
+>   
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
