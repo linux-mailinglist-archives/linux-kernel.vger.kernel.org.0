@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3E413FF8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8825713FF84
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:43:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391674AbgAPXnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:43:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53800 "EHLO mail.kernel.org"
+        id S1730393AbgAPXYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:24:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388071AbgAPXYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:24:40 -0500
+        id S2388667AbgAPXYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:24:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A913E2072B;
-        Thu, 16 Jan 2020 23:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0947E2072B;
+        Thu, 16 Jan 2020 23:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217079;
-        bh=CtoeY/iV094Q9xMkZINh314p/7c2W56mhxr/mjN84fA=;
+        s=default; t=1579217086;
+        bh=qMB28diCAzSFUtPOZijghXqt0dH6fNQmDLWrq0PeClw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NSrPPIBK6Vi7+PRM3HY5qAAw8/anWPn9MM3Vb3dNecaVRq1aW6dAdxK4aJPWRkgkp
-         aeTyLAWyxnQQTqcYd7YFr1rceYaIFfmN43qMuFmlH/jxWALBosB+Ee0Y6jBgUxOQ7v
-         6oYVCW6ADhAaAeCXwXnfSwrObIF/gtQ4ban8qhEY=
+        b=YwR5cIieijALdDyIMnGDSGK5P12Xn8m/0nlDU5L0BTMrEf9xfdTNmRt1jycQAWwwY
+         CTzD4JmtmD9b2rzkdwAAPgnxuyvLKF37Z5gL8T/2bLFHPVT18mZX5liwE6vkY10OKK
+         zqLnF0hqGGgFGuvRxALLlhQohWd+ReXZXJE4SsbM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 123/203] PCI: pciehp: Do not disable interrupt twice on suspend
-Date:   Fri, 17 Jan 2020 00:17:20 +0100
-Message-Id: <20200116231756.034414476@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaojie Yuan <xiaojie.yuan@amd.com>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 5.4 126/203] drm/amdgpu/discovery: reserve discovery data at the top of VRAM
+Date:   Fri, 17 Jan 2020 00:17:23 +0100
+Message-Id: <20200116231756.243240407@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -46,100 +44,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Xiaojie Yuan <xiaojie.yuan@amd.com>
 
-commit 75fcc0ce72e5cea2e357cdde858216c5bad40442 upstream.
+commit 5f6a556f98de425fcb7928456839a06f02156633 upstream.
 
-We try to keep PCIe hotplug ports runtime suspended when entering system
-suspend. Because the PCIe portdrv sets the DPM_FLAG_NEVER_SKIP flag, the PM
-core always calls system suspend/resume hooks even if the device is left
-runtime suspended. Since PCIe hotplug driver re-used the same function for
-both runtime suspend and system suspend, it ended up disabling hotplug
-interrupt twice and the second time following was printed:
+IP Discovery data is TMR fenced by the latest PSP BL,
+so we need to reserve this region.
 
-  pciehp 0000:03:01.0:pcie204: pcie_do_write_cmd: no response from device
+Tested on navi10/12/14 with VBIOS integrated with latest PSP BL.
 
-Prevent this from happening by checking whether the device is already
-runtime suspended when the system suspend hook is called.
+v2: use DISCOVERY_TMR_SIZE macro as bo size
+    use amdgpu_bo_create_kernel_at() to allocate bo
 
-Fixes: 9c62f0bfb832 ("PCI: pciehp: Implement runtime PM callbacks")
-Link: https://lore.kernel.org/r/20191029170022.57528-1-mika.westerberg@linux.intel.com
-Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Xiaojie Yuan <xiaojie.yuan@amd.com>
+Reviewed-by: Hawking Zhang <Hawking.Zhang@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp_core.c |   25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h           |    1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c |    4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.h |    2 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c       |   17 +++++++++++++++++
+ drivers/gpu/drm/amd/include/discovery.h       |    1 -
+ 5 files changed, 22 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -253,7 +253,7 @@ static bool pme_is_native(struct pcie_de
- 	return pcie_ports_native || host->native_pme;
- }
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+@@ -813,6 +813,7 @@ struct amdgpu_device {
+ 	uint8_t				*bios;
+ 	uint32_t			bios_size;
+ 	struct amdgpu_bo		*stolen_vga_memory;
++	struct amdgpu_bo		*discovery_memory;
+ 	uint32_t			bios_scratch_reg_offset;
+ 	uint32_t			bios_scratch[AMDGPU_BIOS_NUM_SCRATCH];
  
--static int pciehp_suspend(struct pcie_device *dev)
-+static void pciehp_disable_interrupt(struct pcie_device *dev)
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+@@ -136,7 +136,7 @@ static int amdgpu_discovery_read_binary(
  {
- 	/*
- 	 * Disable hotplug interrupt so that it does not trigger
-@@ -261,7 +261,19 @@ static int pciehp_suspend(struct pcie_de
- 	 */
- 	if (pme_is_native(dev))
- 		pcie_disable_interrupt(get_service_data(dev));
-+}
+ 	uint32_t *p = (uint32_t *)binary;
+ 	uint64_t vram_size = (uint64_t)RREG32(mmRCC_CONFIG_MEMSIZE) << 20;
+-	uint64_t pos = vram_size - BINARY_MAX_SIZE;
++	uint64_t pos = vram_size - DISCOVERY_TMR_SIZE;
+ 	unsigned long flags;
  
-+#ifdef CONFIG_PM_SLEEP
-+static int pciehp_suspend(struct pcie_device *dev)
-+{
+ 	while (pos < vram_size) {
+@@ -179,7 +179,7 @@ int amdgpu_discovery_init(struct amdgpu_
+ 	uint16_t checksum;
+ 	int r;
+ 
+-	adev->discovery = kzalloc(BINARY_MAX_SIZE, GFP_KERNEL);
++	adev->discovery = kzalloc(DISCOVERY_TMR_SIZE, GFP_KERNEL);
+ 	if (!adev->discovery)
+ 		return -ENOMEM;
+ 
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.h
+@@ -24,6 +24,8 @@
+ #ifndef __AMDGPU_DISCOVERY__
+ #define __AMDGPU_DISCOVERY__
+ 
++#define DISCOVERY_TMR_SIZE  (64 << 10)
++
+ int amdgpu_discovery_init(struct amdgpu_device *adev);
+ void amdgpu_discovery_fini(struct amdgpu_device *adev);
+ int amdgpu_discovery_reg_base_init(struct amdgpu_device *adev);
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -1730,6 +1730,20 @@ int amdgpu_ttm_init(struct amdgpu_device
+ 				    NULL, &stolen_vga_buf);
+ 	if (r)
+ 		return r;
++
 +	/*
-+	 * If the port is already runtime suspended we can keep it that
-+	 * way.
++	 * reserve one TMR (64K) memory at the top of VRAM which holds
++	 * IP Discovery data and is protected by PSP.
 +	 */
-+	if (dev_pm_smart_suspend_and_suspended(&dev->port->dev))
-+		return 0;
++	r = amdgpu_bo_create_kernel_at(adev,
++				       adev->gmc.real_vram_size - DISCOVERY_TMR_SIZE,
++				       DISCOVERY_TMR_SIZE,
++				       AMDGPU_GEM_DOMAIN_VRAM,
++				       &adev->discovery_memory,
++				       NULL);
++	if (r)
++		return r;
 +
-+	pciehp_disable_interrupt(dev);
- 	return 0;
- }
+ 	DRM_INFO("amdgpu: %uM of VRAM memory ready\n",
+ 		 (unsigned) (adev->gmc.real_vram_size / (1024 * 1024)));
  
-@@ -279,6 +291,7 @@ static int pciehp_resume_noirq(struct pc
- 
- 	return 0;
- }
-+#endif
- 
- static int pciehp_resume(struct pcie_device *dev)
- {
-@@ -292,6 +305,12 @@ static int pciehp_resume(struct pcie_dev
- 	return 0;
- }
- 
-+static int pciehp_runtime_suspend(struct pcie_device *dev)
-+{
-+	pciehp_disable_interrupt(dev);
-+	return 0;
-+}
+@@ -1794,6 +1808,9 @@ void amdgpu_ttm_late_init(struct amdgpu_
+ 	void *stolen_vga_buf;
+ 	/* return the VGA stolen memory (if any) back to VRAM */
+ 	amdgpu_bo_free_kernel(&adev->stolen_vga_memory, NULL, &stolen_vga_buf);
 +
- static int pciehp_runtime_resume(struct pcie_device *dev)
- {
- 	struct controller *ctrl = get_service_data(dev);
-@@ -318,10 +337,12 @@ static struct pcie_port_service_driver h
- 	.remove		= pciehp_remove,
++	/* return the IP Discovery TMR memory back to VRAM */
++	amdgpu_bo_free_kernel(&adev->discovery_memory, NULL, NULL);
+ }
  
- #ifdef	CONFIG_PM
-+#ifdef	CONFIG_PM_SLEEP
- 	.suspend	= pciehp_suspend,
- 	.resume_noirq	= pciehp_resume_noirq,
- 	.resume		= pciehp_resume,
--	.runtime_suspend = pciehp_suspend,
-+#endif
-+	.runtime_suspend = pciehp_runtime_suspend,
- 	.runtime_resume	= pciehp_runtime_resume,
- #endif	/* PM */
- };
+ /**
+--- a/drivers/gpu/drm/amd/include/discovery.h
++++ b/drivers/gpu/drm/amd/include/discovery.h
+@@ -25,7 +25,6 @@
+ #define _DISCOVERY_H_
+ 
+ #define PSP_HEADER_SIZE                 256
+-#define BINARY_MAX_SIZE                 (64 << 10)
+ #define BINARY_SIGNATURE                0x28211407
+ #define DISCOVERY_TABLE_SIGNATURE       0x53445049
+ 
 
 
