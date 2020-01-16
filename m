@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE1113F04A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A560013F029
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395490AbgAPSUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:20:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
+        id S2392568AbgAPR21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:28:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404161AbgAPR2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:28:16 -0500
+        id S2404186AbgAPR2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7501246D3;
-        Thu, 16 Jan 2020 17:28:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A4C246EB;
+        Thu, 16 Jan 2020 17:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195695;
-        bh=2u7BtLgtzx59wyjnHmS5AT0soYb0wPEABHnLUDY6OSg=;
+        s=default; t=1579195699;
+        bh=joScUPhdfCP23b6S5EFY5hYk38+64+HbNEWlfegz5v4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOWbV9rQGDq0jBE2rXgYTSNFCNvEzDrfDyHyT/vKMA/zcrPH6uCxZhy5TvT6xfgru
-         +sgjTfkfQKNI/wYgnpCaj7VuhSn++m/MlXMUEomT+JEa8pI3b7pdwHauICoevgObNw
-         TEaJk+b/ZHFfTPMt5J8QCqHLyME7pdt0m2wQ8Xho=
+        b=dIHaJUG+ZrMTkQL0gCzkvwnPhvPyJfpY1NUMDnuRo6N6DO3uwdaeuduefFZrpTqEb
+         2XUHJ9FnvJ3z1bupMIfRs9081um3ey+GxQmbITH/OfFhiu18wvYM59FRR9DiyuMoha
+         Ixaclaq5HcLwa6b1WuyKmhx7bKaLkEpTwJ44v/LY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 245/371] devres: allow const resource arguments
-Date:   Thu, 16 Jan 2020 12:21:57 -0500
-Message-Id: <20200116172403.18149-188-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 248/371] scsi: libfc: fix null pointer dereference on a null lport
+Date:   Thu, 16 Jan 2020 12:22:00 -0500
+Message-Id: <20200116172403.18149-191-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,61 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 9dea44c91469512d346e638694c22c30a5273992 ]
+[ Upstream commit 41a6bf6529edd10a6def42e3b2c34a7474bcc2f5 ]
 
-devm_ioremap_resource() does not currently take 'const' arguments,
-which results in a warning from the first driver trying to do it
-anyway:
+Currently if lport is null then the null lport pointer is dereference when
+printing out debug via the FC_LPORT_DB macro. Fix this by using the more
+generic FC_LIBFC_DBG debug macro instead that does not use lport.
 
-drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
-drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-  priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
-                                                 ^~~~~~~~~~~~~~~~~~~
-
-Change the prototype to allow it, as there is no real reason not to.
-
-Fixes: 9bb2e0452508 ("gpio: amd: Make resource struct const")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20190628150049.1108048-1-arnd@arndb.de
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviwed-By: Enrico Weigelt <info@metux.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Addresses-Coverity: ("Dereference after null check")
+Fixes: 7414705ea4ae ("libfc: Add runtime debugging with debug_logging module parameter")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/device.h | 3 ++-
- lib/devres.c           | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/scsi/libfc/fc_exch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 66fe271c2544..0b2e67014a83 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -682,7 +682,8 @@ extern unsigned long devm_get_free_pages(struct device *dev,
- 					 gfp_t gfp_mask, unsigned int order);
- extern void devm_free_pages(struct device *dev, unsigned long addr);
+diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+index 42bcf7f3a0f9..6ba257cbc6d9 100644
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -2603,7 +2603,7 @@ void fc_exch_recv(struct fc_lport *lport, struct fc_frame *fp)
  
--void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
-+void __iomem *devm_ioremap_resource(struct device *dev,
-+				    const struct resource *res);
- 
- /* allows to add/remove a custom action to devres stack */
- int devm_add_action(struct device *dev, void (*action)(void *), void *data);
-diff --git a/lib/devres.c b/lib/devres.c
-index 5f2aedd58bc5..40a8b12a8b6b 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -132,7 +132,8 @@ EXPORT_SYMBOL(devm_iounmap);
-  *	if (IS_ERR(base))
-  *		return PTR_ERR(base);
-  */
--void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
-+void __iomem *devm_ioremap_resource(struct device *dev,
-+				    const struct resource *res)
- {
- 	resource_size_t size;
- 	const char *name;
+ 	/* lport lock ? */
+ 	if (!lport || lport->state == LPORT_ST_DISABLED) {
+-		FC_LPORT_DBG(lport, "Receiving frames for an lport that "
++		FC_LIBFC_DBG("Receiving frames for an lport that "
+ 			     "has not been initialized correctly\n");
+ 		fc_frame_free(fp);
+ 		return;
 -- 
 2.20.1
 
