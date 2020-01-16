@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B9C13EA12
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C96BB13ECFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405256AbgAPRlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58762 "EHLO mail.kernel.org"
+        id S2393624AbgAPRl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405614AbgAPRlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:15 -0500
+        id S2388438AbgAPRlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4DCC246AE;
-        Thu, 16 Jan 2020 17:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEB202467C;
+        Thu, 16 Jan 2020 17:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196474;
-        bh=V3GbiHcfk6BfHbV+lS0V0Esc5dLq3FYLB6Xqf/5iltk=;
+        s=default; t=1579196476;
+        bh=uCIp6mD10XteebAJ2I2AXoP9KgVklKyDJoPbZYmlV6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRtmCXPrXBbQbDSKBbV3zGaN96SWAIiROzYjRp7CcUx66LdJGO5XMPvY1crZfHJJm
-         lRXCP7Yv0NyK4Aiif89TLtpNDnskq46F1YF+W+Xba1h5MsHs4rNwM1y3A4+Wg6FeZ9
-         +k8VI0+QaKrFotEylE8d3wJnLN8NLs5mRqC+QAJY=
+        b=e0l4BfVvRGzZLA6Cp597VU4/vUFgtFonh9FF0XvAtC9o7ZfTSDAi/5eg5q2KzMxTI
+         5m9PUQ/OPw+uF6ahLrnWw+/hLM4asMkKHsCoR8/+/SVFbW9PXjFeoF8lp5nnGOGiOy
+         hsxYif7O34qtmDdeeBs2UfSjJwvMXD/rehJFKgr4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Alexander.Barabash@dell.com" <Alexander.Barabash@dell.com>,
-        Alexander Barabash <alexander.barabash@dell.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 223/251] ioat: ioat_alloc_ring() failure handling.
-Date:   Thu, 16 Jan 2020 12:36:12 -0500
-Message-Id: <20200116173641.22137-183-sashal@kernel.org>
+Cc:     Lorenzo Bianconi <lorenzo@kernel.org>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 224/251] mt7601u: fix bbp version check in mt7601u_wait_bbp_ready
+Date:   Thu, 16 Jan 2020 12:36:13 -0500
+Message-Id: <20200116173641.22137-184-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -45,43 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Alexander.Barabash@dell.com" <Alexander.Barabash@dell.com>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-[ Upstream commit b0b5ce1010ffc50015eaec72b0028aaae3f526bb ]
+[ Upstream commit 15e14f76f85f4f0eab3b8146e1cd3c58ce272823 ]
 
-If dma_alloc_coherent() returns NULL in ioat_alloc_ring(), ring
-allocation must not proceed.
+Fix bbp ready check in mt7601u_wait_bbp_ready. The issue is reported by
+coverity with the following error:
 
-Until now, if the first call to dma_alloc_coherent() in
-ioat_alloc_ring() returned NULL, the processing could proceed, failing
-with NULL-pointer dereferencing further down the line.
+Logical vs. bitwise operator
+The expression's value does not depend on the operands; inadvertent use
+of the wrong operator is a likely logic error.
 
-Signed-off-by: Alexander Barabash <alexander.barabash@dell.com>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-Link: https://lore.kernel.org/r/75e9c0e84c3345d693c606c64f8b9ab5@x13pwhopdag1307.AMER.DELL.COM
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Addresses-Coverity-ID: 1309441 ("Logical vs. bitwise operator")
+Fixes: c869f77d6abb ("add mt7601u driver")
+Acked-by: Jakub Kicinski <kubakici@wp.pl>
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ioat/dma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt7601u/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/ioat/dma.c b/drivers/dma/ioat/dma.c
-index 49386ce04bf5..1389f0582e29 100644
---- a/drivers/dma/ioat/dma.c
-+++ b/drivers/dma/ioat/dma.c
-@@ -394,10 +394,11 @@ ioat_alloc_ring(struct dma_chan *c, int order, gfp_t flags)
+diff --git a/drivers/net/wireless/mediatek/mt7601u/phy.c b/drivers/net/wireless/mediatek/mt7601u/phy.c
+index ca09a5d4305e..71a47459bf8a 100644
+--- a/drivers/net/wireless/mediatek/mt7601u/phy.c
++++ b/drivers/net/wireless/mediatek/mt7601u/phy.c
+@@ -221,7 +221,7 @@ int mt7601u_wait_bbp_ready(struct mt7601u_dev *dev)
  
- 		descs->virt = dma_alloc_coherent(to_dev(ioat_chan),
- 						 SZ_2M, &descs->hw, flags);
--		if (!descs->virt && (i > 0)) {
-+		if (!descs->virt) {
- 			int idx;
+ 	do {
+ 		val = mt7601u_bbp_rr(dev, MT_BBP_REG_VERSION);
+-		if (val && ~val)
++		if (val && val != 0xff)
+ 			break;
+ 	} while (--i);
  
- 			for (idx = 0; idx < i; idx++) {
-+				descs = &ioat_chan->descs[idx];
- 				dma_free_coherent(to_dev(ioat_chan), SZ_2M,
- 						  descs->virt, descs->hw);
- 				descs->virt = NULL;
 -- 
 2.20.1
 
