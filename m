@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1946913FDBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB18013FDC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731109AbgAPX2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:28:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
+        id S2390047AbgAPX3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:29:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731940AbgAPX2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:46 -0500
+        id S2389191AbgAPX3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:29:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01DBA2072E;
-        Thu, 16 Jan 2020 23:28:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A02142072E;
+        Thu, 16 Jan 2020 23:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217325;
-        bh=LLWDbMEtQlHQaEFDZtOJvHJuT8Dp4yXK03QRPw7cZK0=;
+        s=default; t=1579217352;
+        bh=AYrrjajashVILVcw4LRRvqc3zeVs4tG/2WfuTQkxp74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/aiM66NxrIN0QlsxTR038+PRKsnNofimEWfg9dClCjd3z+0Beha0EldYmWZlAqun
-         bFkp+ujUFRdMQNOWSIp/pio6rETfpIiypzvTD4jvcKtjqyX9Lz3Lo0Iphz+JBbut1S
-         x6HI9713ubzVqPLi8Yl+CeJAMPfzeDBzf8CdSUck=
+        b=RVr50ibTXadI7DbHWd2A4HsX9iWlE9YiLs8LZIVNkLbz0+rrKwS6aikUuhqsCdmPe
+         mi0tAp0aihK3jkiePaVwHNj6dDieEvOZba2PRt9iBOGNS5x1aF6/J7ti7jvnbkvu5F
+         47xSRmHHK8Xyt+9IuFK6BCtBXwDTKJTKok4mQsZw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 29/84] s390/qeth: Fix vnicc_is_in_use if rx_bcast not set
-Date:   Fri, 17 Jan 2020 00:18:03 +0100
-Message-Id: <20200116231717.121482627@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 30/84] cifs: Adjust indentation in smb2_open_file
+Date:   Fri, 17 Jan 2020 00:18:04 +0100
+Message-Id: <20200116231717.245025122@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -44,42 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandra Winter <wintera@linux.ibm.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit e8a66d800471e2df7f0b484e2e46898b21d1fa82 upstream.
+commit 7935799e041ae10d380d04ea23868240f082bd11 upstream.
 
-Symptom: After vnicc/rx_bcast has been manually set to 0,
-	bridge_* sysfs parameters can still be set or written.
-Only occurs on HiperSockets, as OSA doesn't support changing rx_bcast.
+Clang warns:
 
-Vnic characteristics and bridgeport settings are mutually exclusive.
-rx_bcast defaults to 1, so manually setting it to 0 should disable
-bridge_* parameters.
+../fs/cifs/smb2file.c:70:3: warning: misleading indentation; statement
+is not part of the previous 'if' [-Wmisleading-indentation]
+         if (oparms->tcon->use_resilient) {
+         ^
+../fs/cifs/smb2file.c:66:2: note: previous statement is here
+        if (rc)
+        ^
+1 warning generated.
 
-Instead it makes sense here to check the supported mask. If the card
-does not support vnicc at all, bridge commands are always allowed.
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
 
-Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
-Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 592fafe644bf ("Add resilienthandles mount parm")
+Link: https://github.com/ClangBuiltLinux/linux/issues/826
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/net/qeth_l2_main.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/cifs/smb2file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -2285,8 +2285,7 @@ int qeth_l2_vnicc_get_timeout(struct qet
- /* check if VNICC is currently enabled */
- bool qeth_l2_vnicc_is_in_use(struct qeth_card *card)
- {
--	/* if everything is turned off, VNICC is not active */
--	if (!card->options.vnicc.cur_chars)
-+	if (!card->options.vnicc.sup_chars)
- 		return false;
- 	/* default values are only OK if rx_bcast was not enabled by user
- 	 * or the card is offline.
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -67,7 +67,7 @@ smb2_open_file(const unsigned int xid, s
+ 		goto out;
+ 
+ 
+-	 if (oparms->tcon->use_resilient) {
++	if (oparms->tcon->use_resilient) {
+ 		nr_ioctl_req.Timeout = 0; /* use server default (120 seconds) */
+ 		nr_ioctl_req.Reserved = 0;
+ 		rc = SMB2_ioctl(xid, oparms->tcon, fid->persistent_fid,
 
 
