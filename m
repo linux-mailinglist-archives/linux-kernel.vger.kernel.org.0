@@ -2,85 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BD2913D237
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A8F13D240
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:41:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbgAPCc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:32:59 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34215 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729043AbgAPCc7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:32:59 -0500
-Received: by mail-io1-f66.google.com with SMTP id z193so20097269iof.1
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 18:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ZMxDPPtpfyDr16DAViPOjphNjCxUKCyR951nmWvnX+0=;
-        b=RqbHK8VoNCXEI+hIdHVL/MC88sR1q4OPTXukFJTkCL/S7mLSBkvaWjPbEO2L6KiNFE
-         FhJusyzBBdV6kQ+a+YlTrvqU1YKNRBO4mhi1ULYHYxGkptEAQoBXJsH3mv+FHZHbmjUA
-         lwLqyjkVstTa24clYlsBGKvyucNtx5Vu6wGV8j+2BRaOcMvQaU0kKYIPj29mQIn+/36R
-         0NiXjAbEOA0a3MXvPd8ZyKRp5YExsJTzMX6AD+vrtGPu2uRtZKQQS4IIkgAk7HSgJtC8
-         tVDjeI9PNc+AZ/kdpwMMxAEqhSUELgnJcgLO+//z3PFC0Cx1sEcLfqiWo4CIiUoIzZFy
-         uz5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ZMxDPPtpfyDr16DAViPOjphNjCxUKCyR951nmWvnX+0=;
-        b=aqWvt4PDqDxLUDYVgUOSlWLSJSFwW0XKX9xorftxM86i2S1RDdUoqyVK7Tgz79KQaO
-         oqCRyB6+AViPWbaY3Qm3Y2mBWV+M9sDUT0x2eBLvPy480j3UX1QtInhk9+o4mnLDMBP/
-         sEs2+jx0eYrxPl8U7K7A/bk30nMeQQopp9Hha3aZXrxEGfoqq4acFAYH1jJDtsj+idqO
-         W7z4MtV1e1NYARKltBLbaDWOPWzHCcrcSyk1zbQ8//WYBDX36bdK/PIvJQdOD7aKgrI0
-         xA0K8++NKqr9LtMUhv20h2ewOEe0jlIecj+PB9rATpAY2PbGKae5SoKamhLKx2Kiga+q
-         P/pw==
-X-Gm-Message-State: APjAAAVoL8ociPyJpcwkZGojhaC1iNk0XrQnpCC1INTkLqkwIGmnA8E3
-        axH8Ch4Q851hMtjAHpP+KP/VEA==
-X-Google-Smtp-Source: APXvYqyh+g2Hzupz8itLKiU78z1Ffu3lm87KUi123IE5FELOjy2k517AvOgTd2cAPDjAJzP0F4bC4Q==
-X-Received: by 2002:a6b:e004:: with SMTP id z4mr24598779iog.235.1579141978190;
-        Wed, 15 Jan 2020 18:32:58 -0800 (PST)
-Received: from localhost ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id z15sm6458956ill.20.2020.01.15.18.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 18:32:57 -0800 (PST)
-Date:   Wed, 15 Jan 2020 18:32:55 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Greentime Hu <greentime.hu@sifive.com>, anup@brainfault.org
-cc:     green.hu@gmail.com, greentime@kernel.org, palmer@dabbelt.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        schwab@suse.de
-Subject: Re: [PATCH v4] riscv: make sure the cores stay looping in
- .Lsecondary_park
-In-Reply-To: <20200115065436.7702-1-greentime.hu@sifive.com>
-Message-ID: <alpine.DEB.2.21.9999.2001151832001.98477@viisi.sifive.com>
-References: <20200115065436.7702-1-greentime.hu@sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1729541AbgAPCi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:38:26 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8730 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729043AbgAPCi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:38:26 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B62D1671B6D0CA2B582D;
+        Thu, 16 Jan 2020 10:38:23 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 16 Jan 2020 10:38:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] regulator: vqmmc-ipq4019: Fix platform_no_drv_owner.cocci warnings
+Date:   Thu, 16 Jan 2020 02:33:44 +0000
+Message-ID: <20200116023344.163592-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Jan 2020, Greentime Hu wrote:
+Remove .owner field if calls are used which set it automatically
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
 
-> The code in secondary_park is currently placed in the .init section. The
-> kernel reclaims and clears this code when it finishes booting. That
-> causes the cores parked in it to go to somewhere unpredictable, so we
-> move this function out of init to make sure the cores stay looping there.
-> 
-> The instruction bgeu a0, t0, .Lsecondary_park may have "a relocation
-> truncated to fit" issue during linking time. It is because that sections
-> are too far to jump. Let's use tail to jump to the .Lsecondary_park.
-> 
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/regulator/vqmmc-ipq4019-regulator.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks, queued for v5.5-rc.  Anup's Reviewed-by: has been dropped since 
-the patch changed significantly - Anup, if you are still happy with it, 
-please reply with another Reviewed-by:.  Thanks,
+diff --git a/drivers/regulator/vqmmc-ipq4019-regulator.c b/drivers/regulator/vqmmc-ipq4019-regulator.c
+index 685b585b39a1..6d5ae25d08d1 100644
+--- a/drivers/regulator/vqmmc-ipq4019-regulator.c
++++ b/drivers/regulator/vqmmc-ipq4019-regulator.c
+@@ -91,7 +91,6 @@ static struct platform_driver ipq4019_regulator_driver = {
+ 	.probe = ipq4019_regulator_probe,
+ 	.driver = {
+ 		.name = "vqmmc-ipq4019-regulator",
+-		.owner = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(regulator_ipq4019_of_match),
+ 	},
+ };
 
 
-- Paul
+
