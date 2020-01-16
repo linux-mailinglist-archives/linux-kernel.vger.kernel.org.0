@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CABEC13F6C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D01B713F6BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:06:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388370AbgAPTHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:07:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
+        id S2407259AbgAPTGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:06:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730172AbgAPRBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:24 -0500
+        id S2387495AbgAPRB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DB752077B;
-        Thu, 16 Jan 2020 17:01:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0319821582;
+        Thu, 16 Jan 2020 17:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194083;
-        bh=4rsPsug2hH4OP9DXtOETkYKx2Y264/RLBnDXf25S6G4=;
+        s=default; t=1579194087;
+        bh=tvYjhdGG/mNMo4H1UoE0B3fWCG3cdfeEEw8tNd+7JHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tmz37ShPvrDqcYAM7pSvsQ7q+SzBb+mtL6Gzo13VbCFCbDA/RtcpaZW9OFa9ceb6M
-         CbEMznfjxdPa7asf/SkOmlMPFzTMymH5t2USOeTjAMIXQdUFdM450hfHg61cdzFJLT
-         SaknxPBEjewa6DnkkKH0pmMyqwJLxMIc5J0E9rgA=
+        b=M2bStPI7KLfUHBotrPbSt+6gfLdLZljOYdwOy+lbVntTI6gXum4Z11EuVkJGxbUBQ
+         Rtjyy4YZCJdvhOV33aKW65Jqe4tq3a+87/QF6KEOXejP2bCg7pBp0DzUTKP1UZPCGU
+         pvzU8guJIbnnG8Q/Ihn7FX5YIG19aXC4Rxnkf2Y0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 188/671] media: sh: migor: Include missing dma-mapping header
-Date:   Thu, 16 Jan 2020 11:51:37 -0500
-Message-Id: <20200116165940.10720-71-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 191/671] mdio_bus: Fix PTR_ERR() usage after initialization to constant
+Date:   Thu, 16 Jan 2020 11:51:40 -0500
+Message-Id: <20200116165940.10720-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -44,38 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 5c88ee02932a964096cbbcc7c9f38b78d230bacb ]
+[ Upstream commit 780feae7eb69388c8d8b661cda6706b0dc0f642b ]
 
-Since the removal of the stale soc_camera headers, Migo-R board fails to
-build due to missing dma-mapping include directive.
+Fix coccinelle warning:
 
-Include missing dma-mapping.h header in Migo-R board file to fix the build
-error.
+./drivers/net/phy/mdio_bus.c:51:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
+./drivers/net/phy/mdio_bus.c:52:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
 
-Fixes: a50c7738e8ae ("media: sh: migor: Remove stale soc_camera include")
+fix this by using IS_ERR before PTR_ERR
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sh/boards/mach-migor/setup.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/mdio_bus.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/sh/boards/mach-migor/setup.c b/arch/sh/boards/mach-migor/setup.c
-index 254f2c662703..6cd3cd468047 100644
---- a/arch/sh/boards/mach-migor/setup.c
-+++ b/arch/sh/boards/mach-migor/setup.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2008 Magnus Damm
-  */
- #include <linux/clkdev.h>
-+#include <linux/dma-mapping.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index c5588d4508f9..5c89a310359d 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -56,11 +56,12 @@ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
+ 		gpiod = fwnode_get_named_gpiod(&mdiodev->dev.of_node->fwnode,
+ 					       "reset-gpios", 0, GPIOD_OUT_LOW,
+ 					       "PHY reset");
+-	if (PTR_ERR(gpiod) == -ENOENT ||
+-	    PTR_ERR(gpiod) == -ENOSYS)
+-		gpiod = NULL;
+-	else if (IS_ERR(gpiod))
+-		return PTR_ERR(gpiod);
++	if (IS_ERR(gpiod)) {
++		if (PTR_ERR(gpiod) == -ENOENT || PTR_ERR(gpiod) == -ENOSYS)
++			gpiod = NULL;
++		else
++			return PTR_ERR(gpiod);
++	}
+ 
+ 	mdiodev->reset = gpiod;
+ 
 -- 
 2.20.1
 
