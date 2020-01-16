@@ -2,63 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1550113D9ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 510B413D9FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgAPM11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:27:27 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38050 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgAPM10 (ORCPT
+        id S1726371AbgAPM34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:29:56 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41930 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbgAPM3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:27:26 -0500
-Received: from localhost (82-95-191-104.ip.xs4all.nl [82.95.191.104])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6FAC815B52F09;
-        Thu, 16 Jan 2020 04:27:24 -0800 (PST)
-Date:   Thu, 16 Jan 2020 04:27:22 -0800 (PST)
-Message-Id: <20200116.042722.153124126288244814.davem@davemloft.net>
-To:     zhangshaokun@hisilicon.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jinyuqi@huawei.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        edumazet@google.com, guoyang2@huawei.com
-Subject: Re: [PATCH] net: optimize cmpxchg in ip_idents_reserve
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1579058620-26684-1-git-send-email-zhangshaokun@hisilicon.com>
-References: <1579058620-26684-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 16 Jan 2020 04:27:26 -0800 (PST)
+        Thu, 16 Jan 2020 07:29:53 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200116122951euoutp01d6423d8323c1b322aae69212e3ca7d41~qXdW4a_Uu1741017410euoutp01d
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 12:29:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200116122951euoutp01d6423d8323c1b322aae69212e3ca7d41~qXdW4a_Uu1741017410euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579177791;
+        bh=9smxSwk2JX5E045fPogk/LSOgeGj4lDoUVspfYuU4Do=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=YckGHTbVL3T7wB1KdbCl4YZU9uniSHNyenKBea0AsCvjA0O2WQndPWEr/QQ3CK/l4
+         iVWAEbZRV8CqCsNdiRXXRuAffP/Kjk1TLIHSkqs+KcbZjtugcQ12PVWwquFgjJn6nX
+         ZUhRvyJ+GwquixbiCOafq3eCA2kYsz1soMlOsnMA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200116122951eucas1p1a80018be5cd8fc18e358f6a72b71ce62~qXdWghTn71717617176eucas1p1V;
+        Thu, 16 Jan 2020 12:29:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id DC.2F.60698.F37502E5; Thu, 16
+        Jan 2020 12:29:51 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49~qXdWMkQMn1718617186eucas1p1c;
+        Thu, 16 Jan 2020 12:29:51 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200116122951eusmtrp22589902b42e5cdb84cbbe6668e393695~qXdWL78CO1149911499eusmtrp2E;
+        Thu, 16 Jan 2020 12:29:51 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-d8-5e20573fb24e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E2.32.08375.F37502E5; Thu, 16
+        Jan 2020 12:29:51 +0000 (GMT)
+Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200116122950eusmtip1fe10a41302d87854f36386f1033f69ec~qXdVjUpIb0460004600eusmtip1b;
+        Thu, 16 Jan 2020 12:29:50 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-ide@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH 0/3] ide/MIPS/docs: remove no longer used au1xxx-ide driver
+Date:   Thu, 16 Jan 2020 13:29:35 +0100
+Message-Id: <20200116122938.20789-1-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87r24QpxBjfnSFhsnLGe1eLJgXZG
+        iznnW1gsJp74xGKxsG0Ji8WxHY+YLC7vmsNm0blpK6NF3+tjzBaX9qg4cHlsWXmTyWPTqk42
+        j6Mr1zJ5LO6bzOrx+shDFo++LasYPT5vkgtgj+KySUnNySxLLdK3S+DKeHK0nblgPXfFzPk3
+        mRoYb3N0MXJySAiYSDS032DuYuTiEBJYwShx/dJ8FgjnC6PE4+6jbBDOZ0aJL+vXs8O0vLx8
+        ECqxnFHi7+fTjHAtU5sPsoJUsQlYSUxsXwWWEBHYzSjx8/lusC3MAhMYJfadmcAMUiUs4C1x
+        o+kWE4jNIqAqsae7kw3E5hWwlZi24BLUPnmJrd8+sULEBSVOznzCAmIzA8Wbt84GGyohMI9d
+        4uW0+8wQDS4SV48th7KFJV4d3wI1SEbi/875TBAN64AO73gB1b2dUWL55H9sEFXWEnfO/QKy
+        OYBWaEqs36UPEXaUaOk9CBaWEOCTuPFWEOIIPolJ26YzQ4R5JTrahCCq1SQ2LNvABrO2a+dK
+        qHM8JP5dmA8WFxKIlZh4/injBEaFWUhem4XktVkINyxgZF7FKJ5aWpybnlpsnJdarlecmFtc
+        mpeul5yfu4kRmKJO/zv+dQfjvj9JhxgFOBiVeHg/hCjECbEmlhVX5h5ilOBgVhLhPTlDNk6I
+        NyWxsiq1KD++qDQntfgQozQHi5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkGxu2sR0v/rbt9
+        gOHFm2fq7NW3z1UpTiufd3PftG79eqFPUYfSVxQlsV/Z/fi/9ibDf882Plt/qvNu4bpZ9kof
+        01xcJgjolkYnis2JrPR6qbXFvVshcp5tUQRXcp74p+aFVx7unFRUknfqtcWMT1ekDli0OPyx
+        vKP27vay3C+xUvYrPxz4ZSoQ0KTEUpyRaKjFXFScCACDGjezTQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42I5/e/4XV37cIU4g/0zWCw2zljPavHkQDuj
+        xZzzLSwWE098YrFY2LaExeLYjkdMFpd3zWGz6Ny0ldGi7/UxZotLe1QcuDy2rLzJ5LFpVSeb
+        x9GVa5k8FvdNZvV4feQhi0ffllWMHp83yQWwR+nZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY
+        6hkam8daGZkq6dvZpKTmZJalFunbJehlPDnazlywnrti5vybTA2Mtzm6GDk5JARMJF5ePsjW
+        xcjFISSwlFHiad8y9i5GDqCEjMTx9WUQNcISf651QdV8YpTYsuMYE0iCTcBKYmL7KkaQhIjA
+        fkaJyQsPMIE4zAJTGCVWnGkFqxIW8Ja40XQLzGYRUJXY093JBmLzCthKTFtwiR1ihbzE1m+f
+        WCHighInZz5hAbGZgeLNW2czT2Dkm4UkNQtJagEj0ypGkdTS4tz03GJDveLE3OLSvHS95Pzc
+        TYzAuNh27OfmHYyXNgYfYhTgYFTi4Z0RpBAnxJpYVlyZe4hRgoNZSYT35AzZOCHelMTKqtSi
+        /Pii0pzU4kOMpkDHTmSWEk3OB8ZsXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs1NSC
+        1CKYPiYOTqkGRsdWNe5117p1pdPn3zpsJ7c1tbz+8n3DowsuBchqr++xD1NobXsZ/3Vq0OnD
+        Z+U/rf1p93VBAJ+rE1OHecm6ete7a8ReiTAeOvW3PH7lDY9Ol21v5gtLBGTbx2xyLKy8s93p
+        Zf/24E0ebfZcQY93eaiuK1HX3PUrdQ7X/rfTPp4NvBEyjdejRImlOCPRUIu5qDgRADDN8euh
+        AgAA
+X-CMS-MailID: 20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49
+References: <CGME20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Date: Wed, 15 Jan 2020 11:23:40 +0800
+Hi,
 
-> From: Yuqi Jin <jinyuqi@huawei.com>
-> 
-> atomic_try_cmpxchg is called instead of atomic_cmpxchg that can reduce
-> the access number of the global variable @p_id in the loop. Let's
-> optimize it for performance.
-> 
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-> Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Yang Guo <guoyang2@huawei.com>
-> Signed-off-by: Yuqi Jin <jinyuqi@huawei.com>
-> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Commit 54ff4a1d1732 ("MIPS: Alchemy: pata_platform for DB1200")
+from year 2014 converted the only user of au1xxx-ide IDE host
+driver (MIPS Alchemy DB1200 platform) to use pata_platform libata
+host driver instead. This patch series removes dead au1xxx-ide
+driver code & co.
 
-I doubt this makes any measurable improvement in performance.
+Since patch #2 depends on patch #1 (and it is also the best to
+apply patch #3 after driver code removal) it would be probably
+easiest to merge everything through MIPS tree (after getting
+necessary ACKs, from David for the first patch and Jonathan for
+the third one).
 
-If you can document a specific measurable improvement under
-a useful set of circumstances for real usage, then put those
-details into the commit message and resubmit.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Otherwise, I'm not applying this, sorry.
+
+Bartlomiej Zolnierkiewicz (3):
+  ide: remove no longer used au1xxx-ide driver
+  MIPS: Alchemy: remove no longer used au1xxx_ide.h header
+  docs: mips: remove no longer needed au1xxx_ide.rst documentation
+
+ Documentation/mips/au1xxx_ide.rst             | 130 ----
+ Documentation/mips/index.rst                  |   2 -
+ .../mips/include/asm/mach-au1x00/au1xxx_ide.h | 178 ------
+ drivers/ide/Kconfig                           |  17 -
+ drivers/ide/Makefile                          |   2 -
+ drivers/ide/au1xxx-ide.c                      | 597 ------------------
+ 6 files changed, 926 deletions(-)
+ delete mode 100644 Documentation/mips/au1xxx_ide.rst
+ delete mode 100644 arch/mips/include/asm/mach-au1x00/au1xxx_ide.h
+ delete mode 100644 drivers/ide/au1xxx-ide.c
+
+-- 
+2.24.1
+
