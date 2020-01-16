@@ -2,79 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1C013F1A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5581B13F27D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407060AbgAPS3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391692AbgAPRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:57 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 470262081E;
-        Thu, 16 Jan 2020 17:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195557;
-        bh=gRRExTBOxk0GsxlIZLGBj4g129fbjoNxN9f9p6V1jf4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lIw9quMUrsYu60LMElBVp9AFIOVhfzd5qKA+hmmkqFG2OPqT08eV2iOKiF2Iy6M8w
-         7XwX+RzyIFjXAsmW6Fy4rGOWjt4anyLdcspXhYPiHfYWTwuhLV7b5WqJJOl/JtrsPP
-         f81Y9/ocjBneqNobVbNXGQNoEqhWQCRI9csIClq4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 145/371] arm64: dts: allwinner: a64: Add missing PIO clocks
-Date:   Thu, 16 Jan 2020 12:20:17 -0500
-Message-Id: <20200116172403.18149-88-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+        id S2404374AbgAPSfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:35:42 -0500
+Received: from out28-169.mail.aliyun.com ([115.124.28.169]:48065 "EHLO
+        out28-169.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391234AbgAPRYY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:24 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.4379025|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0410911-0.00614125-0.952768;DS=CONTINUE|ham_system_inform|0.0827478-0.254777-0.662475;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03267;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GdEQRsw_1579195452;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GdEQRsw_1579195452)
+          by smtp.aliyun-inc.com(10.147.40.2);
+          Fri, 17 Jan 2020 01:24:18 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mips-creator-ci20-dev@googlegroups.com, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, jhogan@kernel.org,
+        mark.rutland@arm.com, syq@debian.org, ralf@linux-mips.org,
+        rick.tyliu@ingenic.com, jason@lakedaemon.net,
+        keescook@chromium.org, geert+renesas@glider.be, krzk@kernel.org,
+        paul@crapouillou.net, prasannatsmkumar@gmail.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
+        ebiederm@xmission.com, hns@goldelico.com, paul@boddie.org.uk
+Subject: Introduce SMP support for CI20 (based on JZ4780) v2.
+Date:   Fri, 17 Jan 2020 01:23:42 +0800
+Message-Id: <1579195429-59828-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-
-[ Upstream commit 562bf19611c000cb7219431c3cc78aa60c2b371e ]
-
-The pinctrl binding mandates that we have the three clocks fed into the PIO
-described.
-
-Even though the old case is still supported for backward compatibility, we
-should update our DTs to fix this.
-
-Fixes: 6bc37fac30cf ("arm64: dts: add Allwinner A64 SoC .dtsi")
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 8c8db1b057df..788a6f8c5994 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -274,7 +274,8 @@
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu 58>;
-+			clocks = <&ccu 58>, <&osc24M>, <&rtc 0>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			#gpio-cells = <3>;
- 			interrupt-controller;
--- 
-2.20.1
+Introduce SMP support for MIPS Creator CI20, which is
+based on Ingenic JZ4780 SoC.
 
