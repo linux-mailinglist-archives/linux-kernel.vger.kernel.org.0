@@ -2,118 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72FE13F6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:07:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4D7F13F717
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:09:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388222AbgAPTHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:07:42 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35486 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388049AbgAPTHj (ORCPT
+        id S2437389AbgAPTJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:09:18 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46513 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388119AbgAPTJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:07:39 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 15so16406547lfr.2
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:07:38 -0800 (PST)
+        Thu, 16 Jan 2020 14:09:12 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 13so19824324oij.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:09:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EmuC4PVZIAqszrVr1XV69xZ8ppUgqhM55b6dhWz3+uk=;
-        b=sq6rBxCBy/CCxrwdHmaue9zJzhbHLCVFuzGNGljHenlF/JLCURJo0cW7HCcIzob853
-         ad8iNOfF7LvsNp4yActpwaksvIR5rR1SdBfmQKDabEl3I/66emZXHFCqfHyOU+Udbi20
-         0tAWoeLngfq3NMIbyFzU+Ex99sYkrcGxIllnCdE+f2SBzpq4080pQlPAJlMoyjZpzPhZ
-         DGGoDvZ48oTt7anYYS1ei29KQbqdWUs3CASJU/SV9rM2iPjwRMmumUYKC1mkFyvnaEte
-         mMCLHi9tI/s+qcIUCXU5476/G0zj8H79xmCp+F5wrCflAzrvYOq2DBF6Ip3cme3OPkbD
-         /K0A==
+        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
+        b=J79PjTiwui87Gtdaft875ciI4awf5xIZ2OlEVeWr6PK1j7HDrzdets/eOiB9gFbjxU
+         N8a+VDYTOh/zAoGUZWE4w1cYgXKFMyIY5mxDDqaoQWFa6T9HxfH2fP9PLUP1uKEVP7xo
+         SFvhifCBTkknEhBzZWrz1h+yDcMOzcy1CAiSWM1LLzIaCNgg2JOGV1Bsk6VwLRFyGzsl
+         3oI19Df8dP3bwMD1fbOXbUBm44Ixpu94cRB2oRYOQ/+C0gKdgTy/EpALksKs5ue92Nlt
+         bvnoL/8n6PK1nwQDhUpD7aFZSXwTnAcIEDKECZAVt2HboWTI3XccHsyHaJHIW0AO8xHe
+         C2gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EmuC4PVZIAqszrVr1XV69xZ8ppUgqhM55b6dhWz3+uk=;
-        b=CpgJ5ejlhhblqRjuuh47FqWtQQ0VT3+BJ7qLqUEhV5j9Tbe/o6FRalaWmb04t9X5OX
-         FdD//7Xkja9eB/Jx0n5RRtefATlhkhF0FEzCsQvLxJQGNxGyg6TZx3Kfyotm2tUry4Fd
-         HUSFL7GXxOaroXsXkRMXaxYaWObsvuciSzTE1kPbS4PYv61J5Ps9id15MEJPYB1PB6zA
-         G5kKwaMmGaAs/hVzvcXOJXWwDdN72JZ6qd7mdbtteoMheBws6VucD9qHRGpaH48mTWA2
-         7H149crNIDZ19HOOjMLtqnpvbjIhUkFvDXYkTJv3JL+Rw7RO05Cv4TVhsWtgxW3/9++P
-         UP2Q==
-X-Gm-Message-State: APjAAAVpDgeprORavEIaT5UKae7bgo7/MXwattAH7EnXx/nP8QuuznJ2
-        RyxaD1VwnREKGCSjW4vy0eZ/qespjwFlL2mM4mjp
-X-Google-Smtp-Source: APXvYqyjq8pmunQfve4JqN7h2RHW+MxQZLns1p+JMhm7APFS43fUdBdBp+Ertu9yeaZgxNoNEEToXqGpX1HrNrUdodI=
-X-Received: by 2002:a2e:870b:: with SMTP id m11mr3237458lji.93.1579201657915;
- Thu, 16 Jan 2020 11:07:37 -0800 (PST)
+        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
+        b=CsRu2g7814WwqSf1nTcZ6gOU3Th1DEalGAUyIJ1n93OmV/PfSJmZMjyXSdg0nB7TJ+
+         T8iia8gR6DOZAqlDSFMz08+y3SIiTJMdgxUOAtl6QHCp2SK2z1CTf9UCqGMX+0Wg9PPq
+         tjSdBgaJroy0QJLv6ZTghmFg5jdSV612UosuC2gx2wGbYsHx7VEXFrokCQx49gP75NkV
+         hK5L72/hjv+YVv9ztw9yvPONj2/zDWhI4suwQHWHad0BmdjPygPiBVSibNo/89MIGZgh
+         cwjSala56vhN2bsytGwa7nURrb3OI3KoncPXhaFgcxhoTzOjepuFswHDuOdX2KdIlri2
+         LXSw==
+X-Gm-Message-State: APjAAAWwZ4WKkMwd0lC8jaa7VgKOiIdelycp8CvvR2NgGDM2mm77Bz0C
+        vaQPWNUt5raA1+opta/q5SzU/V38W7ghEjdLefuqKw==
+X-Google-Smtp-Source: APXvYqxWT+/8vZf0zWr1Yl/badv1TRvP/1k5BqWSq6/+HNdAxAD63JMtXrBctEvUY7L00GT1BthDGiNYcFZ4grHpWxY=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr427008oia.73.1579201751684;
+ Thu, 16 Jan 2020 11:09:11 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1577830902.git.rgb@redhat.com> <20200116150518.gfmzixoqagmk77rw@salvia>
-In-Reply-To: <20200116150518.gfmzixoqagmk77rw@salvia>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 16 Jan 2020 14:07:27 -0500
-Message-ID: <CAHC9VhSowSdhwaGNVfj-Paj7=38z1D-p+=EDQNUAwNJpO_tyXg@mail.gmail.com>
-Subject: Re: [PATCH ghak25 v2 0/9] Address NETFILTER_CFG issues
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, sgrubb@redhat.com,
-        omosnace@redhat.com, fw@strlen.de, twoerner@redhat.com,
-        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
-        tgraf@infradead.org
+References: <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+ <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+ <20200115195617.GA4133@redhat.com> <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
+ <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com> <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
+ <20200116183900.GC25291@redhat.com>
+In-Reply-To: <20200116183900.GC25291@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 16 Jan 2020 11:09:00 -0800
+Message-ID: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:05 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> On Mon, Jan 06, 2020 at 01:54:01PM -0500, Richard Guy Briggs wrote:
-> > There were questions about the presence and cause of unsolicited syscall events
-> > in the logs containing NETFILTER_CFG records and sometimes unaccompanied
-> > NETFILTER_CFG records.
-> >
-> > During testing at least the following list of events trigger NETFILTER_CFG
-> > records and the syscalls related (There may be more events that will trigger
-> > this message type.):
-> >       init_module, finit_module: modprobe
-> >       setsockopt: iptables-restore, ip6tables-restore, ebtables-restore
-> >       unshare: (h?)ostnamed
-> >       clone: libvirtd
-> >
-> > The syscall events unsolicited by any audit rule were found to be caused by a
-> > missing !audit_dummy_context() check before creating a NETFILTER_CFG
-> > record and issuing the record immediately rather than saving the
-> > information to create the record at syscall exit.
-> > Check !audit_dummy_context() before creating the NETFILTER_CFG record.
-> >
-> > The vast majority of unaccompanied records are caused by the fedora default
-> > rule: "-a never,task" and the occasional early startup one is I believe caused
-> > by the iptables filter table module hard linked into the kernel rather than a
-> > loadable module. The !audit_dummy_context() check above should avoid them.
-> >
-> > A couple of other factors should help eliminate unaccompanied records
-> > which include commit cb74ed278f80 ("audit: always enable syscall
-> > auditing when supported and audit is enabled") which makes sure that
-> > when audit is enabled, so automatically is syscall auditing, and ghak66
-> > which addressed initializing audit before PID 1.
-> >
-> > Ebtables module initialization to register tables doesn't generate records
-> > because it was never hooked in to audit.  Recommend adding audit hooks to log
-> > this.
-> >
-> > Table unregistration was never logged, which is now covered.
-> >
-> > Seemingly duplicate records are not actually exact duplicates that are caused
-> > by netfilter table initialization in different network namespaces from the same
-> > syscall.  Recommend adding the network namespace ID (proc inode and dev)
-> > to the record to make this obvious (address later with ghak79 after nsid
-> > patches).
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/25
-> > See: https://github.com/linux-audit/audit-kernel/issues/35
-> > See: https://github.com/linux-audit/audit-kernel/issues/43
-> > See: https://github.com/linux-audit/audit-kernel/issues/44
+On Thu, Jan 16, 2020 at 10:39 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> What tree is this batch targeted to?
+> On Thu, Jan 16, 2020 at 10:09:46AM -0800, Dan Williams wrote:
+> > On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
+> > >
+> > > Hi, Dan,
+> > >
+> > > Dan Williams <dan.j.williams@intel.com> writes:
+> > >
+> > > > I'm going to take a look at how hard it would be to develop a kpartx
+> > > > fallback in udev. If that can live across the driver transition then
+> > > > maybe this can be a non-event for end users that already have that
+> > > > udev update deployed.
+> > >
+> > > I just wanted to remind you that label-less dimms still exist, and are
+> > > still being shipped.  For those devices, the only way to subdivide the
+> > > storage is via partitioning.
+> >
+> > True, but if kpartx + udev can make this transparent then I don't
+> > think users lose any functionality. They just gain a device-mapper
+> > dependency.
+>
+> So udev rules will trigger when a /dev/pmemX device shows up and run
+> kpartx which in turn will create dm-linear devices and device nodes
+> will show up in /dev/mapper/pmemXpY.
+>
+> IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
+> systemd unit files are depenent on /dev/pmemXpY, these will still be
+> broken out of the box and will have to be modified to use device nodes
+> in /dev/mapper/ directory instead. Do I understand it right, Or I missed
+> the idea completely.
 
-I believe Richard was targeting this for the audit tree.
-
--- 
-paul moore
-www.paul-moore.com
+No, I'd write the udev rule to create links from /dev/pmemXpY to the
+/dev/mapper device, and that rule would be gated by a new pmem device
+attribute to trigger when kpartx needs to run vs the kernel native
+partitions.
