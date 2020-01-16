@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A43FE13EEAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986CE13EE8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:10:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395299AbgAPSKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:10:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53256 "EHLO mail.kernel.org"
+        id S2405022AbgAPRi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393125AbgAPRhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:46 -0500
+        id S1730625AbgAPRht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7859A246DB;
-        Thu, 16 Jan 2020 17:37:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29B6E246BB;
+        Thu, 16 Jan 2020 17:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196266;
-        bh=FeTWHdpvBDTIIq6Cc4JwoyeiwKCZmDFPfiY6d1lavtg=;
+        s=default; t=1579196269;
+        bh=RWIpyYV2IZnnvLeNB3e+att7PsbnyepJ/57t61uI6Fc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XHxl9FtcgP9218af1ZFmAFN90WICjE5OvCdmfe79RlQd9fhtn/BBucYRg75EMi+00
-         YbmB11Epz89MsWNtnis5NPD3KxL52lRKagVzRidpFAsgj9z7/v2D6sl1Ln4kOCHawz
-         tCfi/f5gl8Ic6KzN/8Oc9Baj+CMwFMGnTxIKx+jw=
+        b=nJah1n52NlryBaU4+vpwsl4GFFDC9CYrNa/Lk838sn55R/QYxNqWuY05H65DZCNVp
+         gYHuprTMeChkmyNgT9gA2xEA5j++n4avgnF5vpmw1VkQHoKtkzP0jp8hOPQheKIUbR
+         cX1tpoTXgqXZldnLZfOBKxpmKsgVxhMIe9emsV5U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 089/251] ARM: 8848/1: virt: Align GIC version check with arm64 counterpart
-Date:   Thu, 16 Jan 2020 12:33:58 -0500
-Message-Id: <20200116173641.22137-49-sashal@kernel.org>
+        nios2-dev@lists.rocketboards.org
+Subject: [PATCH AUTOSEL 4.9 091/251] nios2: ksyms: Add missing symbol exports
+Date:   Thu, 16 Jan 2020 12:34:00 -0500
+Message-Id: <20200116173641.22137-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -45,38 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Murzin <vladimir.murzin@arm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 9db043d36bd379f4cc99054c079de0dabfc38d03 ]
+[ Upstream commit 0f8ed994575429d6042cf5d7ef70081c94091587 ]
 
-arm64 has got relaxation on GIC version check at early boot stage due
-to update of the GIC architecture let's align ARM with that.
+Building nios2:allmodconfig fails as follows (each symbol is only listed
+once).
 
-To help backports (even though the code was correct at the time of writing)
-Fixes: e59941b9b381 ("ARM: 8527/1: virt: enable GICv3 system registers")
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+ERROR: "__ashldi3" [drivers/md/dm-writecache.ko] undefined!
+ERROR: "__ashrdi3" [fs/xfs/xfs.ko] undefined!
+ERROR: "__ucmpdi2" [drivers/media/i2c/adv7842.ko] undefined!
+ERROR: "__lshrdi3" [drivers/md/dm-zoned.ko] undefined!
+ERROR: "flush_icache_range" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+ERROR: "empty_zero_page" [drivers/md/dm-mod.ko] undefined!
+
+The problem is seen with gcc 7.3.0.
+
+Export the missing symbols.
+
+Fixes: 2fc8483fdcde ("nios2: Build infrastructure")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/hyp-stub.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/nios2/kernel/nios2_ksyms.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/kernel/hyp-stub.S b/arch/arm/kernel/hyp-stub.S
-index 15d073ae5da2..f5e5e3e19659 100644
---- a/arch/arm/kernel/hyp-stub.S
-+++ b/arch/arm/kernel/hyp-stub.S
-@@ -179,8 +179,8 @@ ARM_BE8(orr	r7, r7, #(1 << 25))     @ HSCTLR.EE
- 	@ Check whether GICv3 system registers are available
- 	mrc	p15, 0, r7, c0, c1, 1	@ ID_PFR1
- 	ubfx	r7, r7, #28, #4
--	cmp	r7, #1
--	bne	2f
-+	teq	r7, #0
-+	beq	2f
+diff --git a/arch/nios2/kernel/nios2_ksyms.c b/arch/nios2/kernel/nios2_ksyms.c
+index bf2f55d10a4d..4e704046a150 100644
+--- a/arch/nios2/kernel/nios2_ksyms.c
++++ b/arch/nios2/kernel/nios2_ksyms.c
+@@ -9,12 +9,20 @@
+ #include <linux/export.h>
+ #include <linux/string.h>
  
- 	@ Enable system register accesses
- 	mrc	p15, 4, r7, c12, c9, 5	@ ICC_HSRE
++#include <asm/cacheflush.h>
++#include <asm/pgtable.h>
++
+ /* string functions */
+ 
+ EXPORT_SYMBOL(memcpy);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memmove);
+ 
++/* memory management */
++
++EXPORT_SYMBOL(empty_zero_page);
++EXPORT_SYMBOL(flush_icache_range);
++
+ /*
+  * libgcc functions - functions that are used internally by the
+  * compiler...  (prototypes are not correct though, but that
+@@ -31,3 +39,7 @@ DECLARE_EXPORT(__udivsi3);
+ DECLARE_EXPORT(__umoddi3);
+ DECLARE_EXPORT(__umodsi3);
+ DECLARE_EXPORT(__muldi3);
++DECLARE_EXPORT(__ucmpdi2);
++DECLARE_EXPORT(__lshrdi3);
++DECLARE_EXPORT(__ashldi3);
++DECLARE_EXPORT(__ashrdi3);
 -- 
 2.20.1
 
