@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C3513F27F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2645313F257
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:34:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403811AbgAPSfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:35:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58834 "EHLO mail.kernel.org"
+        id S2403775AbgAPRYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:24:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391752AbgAPRYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:25 -0500
+        id S2391658AbgAPRY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B6E2467E;
-        Thu, 16 Jan 2020 17:24:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55A41246A6;
+        Thu, 16 Jan 2020 17:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195464;
-        bh=QWtqO8cKmXuOe/GJohipsedM7ZuIUCFySx/QbStoT4c=;
+        s=default; t=1579195466;
+        bh=E9/Ww4y9YdhwMmYXt1K5PyyFf1xMnzDhgJe1u5TnmNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vyUlcp7Nne416IXNVikdneKWTNmEI59A03QD1+HEKx3Xv3/UYCfoqpNLVLKgB+eyV
-         rUQhAoyzpKPStc3OV+/8Fp2CkRVaroy3HrP1SLT7TYOKiub60utlMvtTGovu6vF1BO
-         bwcfP/6gmEPsiEDCno/9XHAG3qac7dtNWs42URsI=
+        b=d3X+mpznovlpSqXyDlIX7PqbrDlAJW7ZGwF96H4yU8ufABeB1zbwB8R97mMomPMFE
+         dDHc7r5sFOa6F9y3zc63FQ35gA5Iw9pXxyEozuC9akk9+8xTqPMUKkW1DE+3ATAb+J
+         RS71I7P0cUArUrgrE9OSSvthB1NxTM3RxIyCRfhs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Liu Jian <liujian56@huawei.com>,
-        Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 072/371] driver: uio: fix possible use-after-free in __uio_register_device
-Date:   Thu, 16 Jan 2020 12:19:04 -0500
-Message-Id: <20200116172403.18149-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 074/371] driver core: Do not resume suppliers under device_links_write_lock()
+Date:   Thu, 16 Jan 2020 12:19:06 -0500
+Message-Id: <20200116172403.18149-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,56 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Jian <liujian56@huawei.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 221a1f4ac12d2ab46246c160b2e00d1b1160d5d9 ]
+[ Upstream commit 5db25c9eb893df8f6b93c1d97b8006d768e1b6f5 ]
 
-In uio_dev_add_attributes() error handing case, idev is used after
-device_unregister(), in which 'idev' has been released, touch idev cause
-use-after-free.
+It is incorrect to call pm_runtime_get_sync() under
+device_links_write_lock(), because it may end up trying to take
+device_links_read_lock() while resuming the target device and that
+will deadlock in the non-SRCU case, so avoid that by resuming the
+supplier device in device_link_add() before calling
+device_links_write_lock().
 
-Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are open")
-Signed-off-by: Liu Jian <liujian56@huawei.com>
-Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+Fixes: 21d5c57b3726 ("PM / runtime: Use device links")
+Fixes: baa8809f6097 ("PM / runtime: Optimize the use of device links")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/uio/uio.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/base/core.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 4e9b0ff79b13..7c18536a3742 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -944,6 +944,7 @@ int __uio_register_device(struct module *owner,
- 		return ret;
- 	}
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 2b0a1054535c..93c2fc58013e 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -180,11 +180,20 @@ struct device_link *device_link_add(struct device *consumer,
+ 				    struct device *supplier, u32 flags)
+ {
+ 	struct device_link *link;
++	bool rpm_put_supplier = false;
  
-+	device_initialize(&idev->dev);
- 	idev->dev.devt = MKDEV(uio_major, idev->minor);
- 	idev->dev.class = &uio_class;
- 	idev->dev.parent = parent;
-@@ -954,7 +955,7 @@ int __uio_register_device(struct module *owner,
- 	if (ret)
- 		goto err_device_create;
+ 	if (!consumer || !supplier ||
+ 	    ((flags & DL_FLAG_STATELESS) && (flags & DL_FLAG_AUTOREMOVE)))
+ 		return NULL;
  
--	ret = device_register(&idev->dev);
-+	ret = device_add(&idev->dev);
- 	if (ret)
- 		goto err_device_create;
++	if (flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) {
++		if (pm_runtime_get_sync(supplier) < 0) {
++			pm_runtime_put_noidle(supplier);
++			return NULL;
++		}
++		rpm_put_supplier = true;
++	}
++
+ 	device_links_write_lock();
+ 	device_pm_lock();
  
-@@ -986,9 +987,10 @@ int __uio_register_device(struct module *owner,
- err_request_irq:
- 	uio_dev_del_attributes(idev);
- err_uio_dev_add_attributes:
--	device_unregister(&idev->dev);
-+	device_del(&idev->dev);
- err_device_create:
- 	uio_free_minor(idev);
-+	put_device(&idev->dev);
- 	return ret;
+@@ -209,13 +218,8 @@ struct device_link *device_link_add(struct device *consumer,
+ 
+ 	if (flags & DL_FLAG_PM_RUNTIME) {
+ 		if (flags & DL_FLAG_RPM_ACTIVE) {
+-			if (pm_runtime_get_sync(supplier) < 0) {
+-				pm_runtime_put_noidle(supplier);
+-				kfree(link);
+-				link = NULL;
+-				goto out;
+-			}
+ 			link->rpm_active = true;
++			rpm_put_supplier = false;
+ 		}
+ 		pm_runtime_new_link(consumer);
+ 		/*
+@@ -286,6 +290,10 @@ struct device_link *device_link_add(struct device *consumer,
+  out:
+ 	device_pm_unlock();
+ 	device_links_write_unlock();
++
++	if (rpm_put_supplier)
++		pm_runtime_put(supplier);
++
+ 	return link;
  }
- EXPORT_SYMBOL_GPL(__uio_register_device);
+ EXPORT_SYMBOL_GPL(device_link_add);
 -- 
 2.20.1
 
