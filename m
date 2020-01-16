@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C0D613FF5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BAED13FE78
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390371AbgAPXm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:42:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57576 "EHLO mail.kernel.org"
+        id S2404186AbgAPXcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389546AbgAPX0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:26:42 -0500
+        id S2388848AbgAPXbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 006D32072E;
-        Thu, 16 Jan 2020 23:26:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E645D20684;
+        Thu, 16 Jan 2020 23:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217202;
-        bh=kX37GmXtMftvg79iJNrFFU0voest/XQlIMKKYxjKyew=;
+        s=default; t=1579217507;
+        bh=0Sj61wdwXAjuc7aRI9NN2NGUCyBAc+0Yv3dWyujHqAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VIe2GhJ0wQhOqlk1P/gR0FQkK4EoATZuf6umEDng9Ur/O2nr3zzlzhXZIkpe+CTvr
-         jFGwj3j5ulVC8Jpa5xaK6rAwm6XJ/5ujSds9ryZei8RrVD5r6sI8CGJHV1MC0rhbxo
-         PV3TYQD1N1phlmSAbcSFEyPXIgvPoqEK/VprTdr4=
+        b=fmuncUzdfk+EMBB5i5jweIaJXZjqpa2c8vTqx4Qhn54iLeApvoG0hXd+KiJlEIG6X
+         CmLZtOP7n+w1S5tgbYKSNxykZQAoH/YK1Jry8ynH/TW+L5sAZ6yGXyPaNGg5weJnx/
+         WVpEQlapUOkESSpNYkfvVVidXJsOrg86/mWJ1vkE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huanpeng Xin <huanpeng.xin@unisoc.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 165/203] spi: sprd: Fix the incorrect SPI register
-Date:   Fri, 17 Jan 2020 00:18:02 +0100
-Message-Id: <20200116231759.082586236@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Eric Dumazet <edumazet@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miles Chen <miles.chen@mediatek.com>
+Subject: [PATCH 4.14 05/71] fs/select: avoid clang stack usage warning
+Date:   Fri, 17 Jan 2020 00:18:03 +0100
+Message-Id: <20200116231710.184490597@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +51,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huanpeng Xin <huanpeng.xin@unisoc.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 5e9c5236b7b86779b53b762f7e66240c3f18314b upstream.
+commit ad312f95d41c9de19313c51e388c4984451c010f upstream.
 
-The original code used an incorrect SPI register to initialize the SPI
-controller in sprd_spi_init_hw(), thus fix it.
+The select() implementation is carefully tuned to put a sensible amount
+of data on the stack for holding a copy of the user space fd_set, but
+not too large to risk overflowing the kernel stack.
 
-Fixes: e7d973a31c24 ("spi: sprd: Add SPI driver for Spreadtrum SC9860")
-Signed-off-by: Huanpeng Xin <huanpeng.xin@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
-Link: https://lore.kernel.org/r/b4f7f89ec0fdc595335687bfbd9f962213bc4a1d.1575443510.git.baolin.wang7@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+When building a 32-bit kernel with clang, we need a little more space
+than with gcc, which often triggers a warning:
+
+  fs/select.c:619:5: error: stack frame size of 1048 bytes in function 'core_sys_select' [-Werror,-Wframe-larger-than=]
+  int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+
+I experimentally found that for 32-bit ARM, reducing the maximum stack
+usage by 64 bytes keeps us reliably under the warning limit again.
+
+Link: http://lkml.kernel.org/r/20190307090146.1874906-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-sprd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/poll.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/spi/spi-sprd.c
-+++ b/drivers/spi/spi-sprd.c
-@@ -674,7 +674,7 @@ static void sprd_spi_init_hw(struct sprd
- 	u16 word_delay, interval;
- 	u32 val;
- 
--	val = readl_relaxed(ss->base + SPRD_SPI_CTL7);
-+	val = readl_relaxed(ss->base + SPRD_SPI_CTL0);
- 	val &= ~(SPRD_SPI_SCK_REV | SPRD_SPI_NG_TX | SPRD_SPI_NG_RX);
- 	/* Set default chip selection, clock phase and clock polarity */
- 	val |= ss->hw_mode & SPI_CPHA ? SPRD_SPI_NG_RX : SPRD_SPI_NG_TX;
+--- a/include/linux/poll.h
++++ b/include/linux/poll.h
+@@ -15,7 +15,11 @@
+ extern struct ctl_table epoll_table[]; /* for sysctl */
+ /* ~832 bytes of stack space used max in sys_select/sys_poll before allocating
+    additional memory. */
++#ifdef __clang__
++#define MAX_STACK_ALLOC 768
++#else
+ #define MAX_STACK_ALLOC 832
++#endif
+ #define FRONTEND_STACK_ALLOC	256
+ #define SELECT_STACK_ALLOC	FRONTEND_STACK_ALLOC
+ #define POLL_STACK_ALLOC	FRONTEND_STACK_ALLOC
 
 
