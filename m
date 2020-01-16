@@ -2,175 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6915113D5F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 09:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1D613D601
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 09:37:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731078AbgAPIav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 03:30:51 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52698 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbgAPIav (ORCPT
+        id S1731187AbgAPIhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 03:37:36 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59476 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726864AbgAPIhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 03:30:51 -0500
-Received: by mail-pj1-f65.google.com with SMTP id a6so1202585pjh.2;
-        Thu, 16 Jan 2020 00:30:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PRD6aeufLSd46od9AzCBC//aqtaStUZLDGOKGtSVPRE=;
-        b=FggrzmcfUxGIJSa3geWjNxYL4+CEFhT7P/fxy7SEYin7E8xeo3A9XygBO9kjb2n0E+
-         gVwbZbyE6Mvar8FK2QVTSKXxQ6j/pwH8YZH/hjhKFjIfEjJc2T4b5e42PhZRuU/4mZyc
-         YYi6c5eIi94a3DvgGQoIEElGlCWiJ1YQdXrhVRvO+TwLFfd/9/jqWep7s/pmc3CrC+3m
-         wV7xy1FvASlYZRH/7a/zyVP8guxAn+z3JPu2ay67O9EszexVbVmypIAgJzSZJG+6AB8n
-         hfBZGZMqgfj9PYEso1aQ+Rzas4r6mJu+OXVG3OOmgTbd4bnsnD21bDN5KZr3UVEbD3FP
-         W2BA==
+        Thu, 16 Jan 2020 03:37:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579163854;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=x5EZSe+9Pt81JQl4mryCnHZI8SvnSuTdiu5y1K9dQzI=;
+        b=T+xMzKjikTRtoru8fwSuW4Hi5/qw48xswuEcj/X1OpRUV4HLkC5WtgEbmvaiR8K+RbE3Ls
+        JLfS0w75QU/btINasbN5Q7v8Uh6Erz7y8YnXfQ/Xo+XfNzIUprEN9h6W44qLfGBwEj7jQs
+        OhADWhp9U8+dxnJu/MoqihiqsSekZ0U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-199-huQ7vMJcPeSfqUiPq1gvTA-1; Thu, 16 Jan 2020 03:37:33 -0500
+X-MC-Unique: huQ7vMJcPeSfqUiPq1gvTA-1
+Received: by mail-wr1-f70.google.com with SMTP id i9so9006163wru.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 00:37:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=PRD6aeufLSd46od9AzCBC//aqtaStUZLDGOKGtSVPRE=;
-        b=RsNoa6EPFBQWXhOwIRshsXSdE+H1pqPpVGuAxB1Oi2XjikJzPa5SfcipWQ7x4RJmIR
-         osexnV5dXH50HWf5aQ7VWPuzUAHxTTYdraFS44oLHfVZkrnESmU+iV6JOZh8+CcY6Y8f
-         eJR4az/jvqqAixdXfohaeSTF5OqHshnqihs6uH496lYycK7+boJxqHUIheaGyfThMvSq
-         WIOwYZtFSDgemv6/DoPdKd0rzJ4d3beNTE8TINyoaSj7Dt8jy0hLzb8ise9io+4TkLe6
-         0PVFH24S8p0YhXMrhvd1xO4JKuYAXEPjhQe2WQstRx+5d9tgm6jcLkRQrwtfl8vjONz+
-         SzGQ==
-X-Gm-Message-State: APjAAAUyTg2pI2u1xTfkkgHWhwt+K39P/LYlrtF8XeBxPxAQjoSDJ4Ag
-        HLPCJ2K7JAJA9FsKEkjdmvv8PNmK6freWw==
-X-Google-Smtp-Source: APXvYqweeOU4USwlRuwhMJ38zJ0vYKCTyawhwg7skQD3cW4OokmktruOFDl7FFPKS4Hg3FkZEK4TYA==
-X-Received: by 2002:a17:90a:c78f:: with SMTP id gn15mr5534469pjb.88.1579163450116;
-        Thu, 16 Jan 2020 00:30:50 -0800 (PST)
-Received: from xps.lan ([103.125.232.133])
-        by smtp.gmail.com with ESMTPSA id l10sm2509108pjy.5.2020.01.16.00.30.46
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=x5EZSe+9Pt81JQl4mryCnHZI8SvnSuTdiu5y1K9dQzI=;
+        b=dXi+VUicbK8jEM2yI4QDLN2Zg91wcIEO6bGOQXAQEl9TjmWJOXVXgYYAwrPXIJJSsj
+         ju/ZOqjjUDwj5LFYc2NSCQLiWEK8MEU4exCGKaLOLRnLUqVbpVe1/s5sWL0zw8t78RS7
+         cZHbEJq+pSA6lbRrbTRLcypPQacMWiJ9M1+hkLXOTrd4LihXkva9XDoA+WdiJ4kvH5Lm
+         FMFIavOYLYTa435usosrS1QyUSqGrVCfMh3lNI3mM4VImVuLp3AlVuYRaKJqLVf8m8xO
+         vpMKsZ8MLmaU66tNhYDhfCCchSWmqnabluPV/yGo7Ar6NSoEni0SWTHdbT6JPaSGqXVp
+         C1rw==
+X-Gm-Message-State: APjAAAX4oqbECm4liUEUM0vHy7cvGS9bYBrsOBRHXxJ5zVsOOF1tEijF
+        CwY1DXZhdCmFb61iVXr49iOsW2YYgyZMPqi5k3/LtaVTHQF7gZGPywqkOUSEsPfjEJ2yaitTvUD
+        L6yljatxXL8U0u+fXrJu/WUJb
+X-Received: by 2002:a05:600c:149:: with SMTP id w9mr4684891wmm.132.1579163852039;
+        Thu, 16 Jan 2020 00:37:32 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxAS0c5V9EBFob+4qrLfpmDyD0TOeBaQJ7jQklcM2mmRbvfERzK+oeo9lfKXgGGs+WtPAgdmg==
+X-Received: by 2002:a05:600c:149:: with SMTP id w9mr4684872wmm.132.1579163851810;
+        Thu, 16 Jan 2020 00:37:31 -0800 (PST)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id e18sm28618279wrr.95.2020.01.16.00.37.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 00:30:49 -0800 (PST)
-From:   YunQiang Su <syq@debian.org>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, viro@zeniv.linux.org.uk,
-        laurent@vivier.eu
-Cc:     YunQiang Su <ysu@wavecomp.com>
-Subject: [PATCH v3] binfmt_misc: pass info about P flag by AT_FLAGS
-Date:   Thu, 16 Jan 2020 16:30:31 +0800
-Message-Id: <20200116083031.174367-1-syq@debian.org>
-X-Mailer: git-send-email 2.25.0.rc1
+        Thu, 16 Jan 2020 00:37:31 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Subject: Re: [PATCH RFC 2/3] x86/kvm/hyper-v: move VMX controls sanitization out of nested_enable_evmcs()
+In-Reply-To: <A93CDB6E-0E46-4AA8-9B45-8F2EE3C723F5@oracle.com>
+References: <20200115171014.56405-1-vkuznets@redhat.com> <20200115171014.56405-3-vkuznets@redhat.com> <A93CDB6E-0E46-4AA8-9B45-8F2EE3C723F5@oracle.com>
+Date:   Thu, 16 Jan 2020 09:37:29 +0100
+Message-ID: <87a76niypi.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YunQiang Su <ysu@wavecomp.com>
+Liran Alon <liran.alon@oracle.com> writes:
 
-Currently program invoked by binfmt_misc cannot be aware about whether
-P flag, aka preserve path is enabled.
+>> On 15 Jan 2020, at 19:10, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>> 
+>> With fine grained VMX feature enablement QEMU>=4.2 tries to do KVM_SET_MSRS
+>> with default (matching CPU model) values and in case eVMCS is also enabled,
+>> fails.
+>> 
+>> It would be possible to drop VMX feature filtering completely and make
+>> this a guest's responsibility: if it decides to use eVMCS it should know
+>> which fields are available and which are not. Hyper-V mostly complies to
+>> this, however, there is at least one problematic control:
+>> SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES
+>> which Hyper-V enables. As there is no 'apic_addr_field' in eVMCS, we
+>> fail to handle this properly in KVM. It is unclear how this is supposed
+>> to work, genuine Hyper-V doesn't expose the control so it is possible that
+>> this is just a bug (in Hyper-V).
+>
+> Have you tried contacted someone at Hyper-V team about this?
+>
 
-Some applications like qemu need to know since it has 2 use case:
-  1. call by hand, like: qemu-mipsel-static test.app OPTION
-     so, qemu have to assume that P option is not enabled.
-  2. call by binfmt_misc. If qemu cannot know about whether P flag is
-     enabled, distribution's have to set qemu without P flag, and
-     binfmt_misc call qemu like:
-       qemu-mipsel-static /absolute/path/to/test.app OPTION
-     even test.app is not called by absoulute path, like
-       ./relative/path/to/test.app
+Yes, I have.
 
-This patch passes this information by the 0st bits of unused AT_FLAGS.
-Then, in qemu, we can get this info by:
-   getauxval(AT_FLAGS) & (1<<0)
+>> 
+>> Move VMX controls sanitization from nested_enable_evmcs() to vmx_get_msr(),
+>> this allows userspace to keep setting controls it wants and at the same
+>> time hides them from the guest.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>> arch/x86/kvm/vmx/evmcs.c | 38 ++++++++++++++++++++++++++++++++------
+>> arch/x86/kvm/vmx/evmcs.h |  1 +
+>> arch/x86/kvm/vmx/vmx.c   | 10 ++++++++--
+>> 3 files changed, 41 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
+>> index 89c3e0caf39f..b5d6582ba589 100644
+>> --- a/arch/x86/kvm/vmx/evmcs.c
+>> +++ b/arch/x86/kvm/vmx/evmcs.c
+>> @@ -346,6 +346,38 @@ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
+>>        return 0;
+>> }
+>> 
+>> +void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata)
+>> +{
+>> +	u32 ctl_low = (u32)*pdata, ctl_high = (u32)(*pdata >> 32);
+>
+> Nit: I dislike defining & initialising multiple local vars on same line.
+>
+>> +	/*
+>> +	 * Enlightened VMCS doesn't have certain fields, make sure we don't
+>> +	 * expose unsupported controls to L1.
+>> +	 */
+>> +
+>> +	switch (msr_index) {
+>> +	case MSR_IA32_VMX_PINBASED_CTLS:
+>> +	case MSR_IA32_VMX_TRUE_PINBASED_CTLS:
+>> +		ctl_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+>> +		break;
+>> +	case MSR_IA32_VMX_EXIT_CTLS:
+>> +	case MSR_IA32_VMX_TRUE_EXIT_CTLS:
+>> +		ctl_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
+>> +		break;
+>> +	case MSR_IA32_VMX_ENTRY_CTLS:
+>> +	case MSR_IA32_VMX_TRUE_ENTRY_CTLS:
+>> +		ctl_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+>> +		break;
+>> +	case MSR_IA32_VMX_PROCBASED_CTLS2:
+>> +		ctl_high &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
+>> +		break;
+>> +	case MSR_IA32_VMX_VMFUNC:
+>> +		ctl_low &= ~EVMCS1_UNSUPPORTED_VMFUNC;
+>> +		break;
+>> +	}
+>> +
+>> +	*pdata = ctl_low | ((u64)ctl_high << 32);
+>> +}
+>> +
+>> int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+>> 			uint16_t *vmcs_version)
+>> {
+>> @@ -356,11 +388,5 @@ int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+>> 	if (vmcs_version)
+>> 		*vmcs_version = nested_get_evmcs_version(vcpu);
+>> 
+>> -	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+>> -	vmx->nested.msrs.entry_ctls_high &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
+>> -	vmx->nested.msrs.exit_ctls_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
+>> -	vmx->nested.msrs.secondary_ctls_high &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
+>> -	vmx->nested.msrs.vmfunc_controls &= ~EVMCS1_UNSUPPORTED_VMFUNC;
+>> -
+>> 	return 0;
+>> }
+>> diff --git a/arch/x86/kvm/vmx/evmcs.h b/arch/x86/kvm/vmx/evmcs.h
+>> index 07ebf6882a45..b88d9807a796 100644
+>> --- a/arch/x86/kvm/vmx/evmcs.h
+>> +++ b/arch/x86/kvm/vmx/evmcs.h
+>> @@ -201,5 +201,6 @@ bool nested_enlightened_vmentry(struct kvm_vcpu *vcpu, u64 *evmcs_gpa);
+>> uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu);
+>> int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+>> 			uint16_t *vmcs_version);
+>> +void nested_evmcs_filter_control_msr(u32 msr_index, u64 *pdata);
+>> 
+>> #endif /* __KVM_X86_VMX_EVMCS_H */
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index e3394c839dea..8eb74618b8d8 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -1849,8 +1849,14 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>> 	case MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:
+>> 		if (!nested_vmx_allowed(vcpu))
+>> 			return 1;
+>> -		return vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index,
+>> -				       &msr_info->data);
+>> +		if (vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index,
+>> +				    &msr_info->data))
+>> +			return 1;
+>> +		if (!msr_info->host_initiated &&
+>> +		    vmx->nested.enlightened_vmcs_enabled)
+>> +			nested_evmcs_filter_control_msr(msr_info->index,
+>> +							&msr_info->data);
+>> +		break;
+>
+> Nit: It seems more elegant to me to put the call to nested_evmcs_filter_control_msr() inside vmx_get_vmx_msr().
+>
 
-v2->v3:
-  define a new AT_FLAGS_PRESERVE_ARGV0 as (1<<0), so now we use 0st bit.
+Sure, will move it there (in case we actually decide to merge this)
 
-v1->v2:
-  not enable kdebug
+> The patch itself makes sense to me and looks correct.
+> Reviewed-by: Liran Alon <liran.alon@oracle.com>
 
-See: https://bugs.launchpad.net/qemu/+bug/1818483
-Signed-off-by: YunQiang Su <ysu@wavecomp.com>
----
- fs/binfmt_elf.c         | 6 +++++-
- fs/binfmt_elf_fdpic.c   | 6 +++++-
- fs/binfmt_misc.c        | 2 ++
- include/linux/binfmts.h | 4 ++++
- 4 files changed, 16 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index f4713ea76e82..c4efff74223f 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -178,6 +178,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	unsigned char k_rand_bytes[16];
- 	int items;
- 	elf_addr_t *elf_info;
-+	elf_addr_t flags = 0;
- 	int ei_index;
- 	const struct cred *cred = current_cred();
- 	struct vm_area_struct *vma;
-@@ -252,7 +253,10 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
--	NEW_AUX_ENT(AT_FLAGS, 0);
-+	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
-+		flags |= AT_FLAGS_PRESERVE_ARGV0;
-+	}
-+	NEW_AUX_ENT(AT_FLAGS, flags);
- 	NEW_AUX_ENT(AT_ENTRY, e_entry);
- 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 240f66663543..c89a4630efad 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	char __user *u_platform, *u_base_platform, *p;
- 	int loop;
- 	int nr;	/* reset for each csp adjustment */
-+	unsigned long flags = 0;
- 
- #ifdef CONFIG_MMU
- 	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
-@@ -647,7 +648,10 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
- 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
--	NEW_AUX_ENT(AT_FLAGS,	0);
-+	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
-+		flags |= AT_FLAGS_PRESERVE_ARGV0;
-+	}
-+	NEW_AUX_ENT(AT_FLAGS,	flags);
- 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
- 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..cb14e9bbf00f 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -158,6 +158,8 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		retval = remove_arg_zero(bprm);
- 		if (retval)
- 			goto ret;
-+	} else {
-+		bprm->interp_flags |= AT_FLAGS_PRESERVE_ARGV0;
- 	}
- 
- 	if (fmt->flags & MISC_FMT_OPEN_BINARY) {
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index b40fc633f3be..380a30a46db1 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -78,6 +78,10 @@ struct linux_binprm {
- #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
- #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
- 
-+/* if preserve the argv0 for the interpreter  */
-+#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
-+#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
-+
- /* Function parameter for binfmt->coredump */
- struct coredump_params {
- 	const kernel_siginfo_t *siginfo;
 -- 
-2.25.0.rc1
+Vitaly
 
