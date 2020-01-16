@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F21413FFF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A023D13FFE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392059AbgAPXqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:46:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
+        id S2390892AbgAPXWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:22:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729624AbgAPXVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:21:48 -0500
+        id S1731984AbgAPXVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:21:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D078A2077C;
-        Thu, 16 Jan 2020 23:21:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C9220684;
+        Thu, 16 Jan 2020 23:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216908;
-        bh=4QuQBs/y2wtwL6SKyn0ignYxYeQE9C0+uY2gTmS+OEY=;
+        s=default; t=1579216915;
+        bh=+NWel1XDc0nVhEjZEKuLMD5HJ5Mm8G7/Xz0caA0IHO8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q66Qc8a/TKR8xnb1geFdOgRfdZnhD6EpmBZZjD3mbQzVGJ6ZpBvWU2GTKp9nOClNd
-         Mbz62iVC5LiBEmJAUy8Krd7KcTX7AzKFnTKuVFHlTldaCPm03r1HhuTicrsEtxJbkx
-         f+ZnuVksLxMWzNpxH+BZkJ7WvusklB+cktpxeO7o=
+        b=T8RbaMF/gWoCFzeG8PCVZDF+yK36JqfzfLzMwpzwsiWzQXHHnYTwvV0/mBNWaUVL/
+         0zm4QGagiD+V8/a42X3MYfgpzDD+egJEH4YXsV7f9I5Ilf7LXr6MN5hz3/Ehmtu5u2
+         tXFL8wnU2OZNJqd1IVMmh38mfBus91Q+hauvJOF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 5.4 053/203] netfilter: nf_tables_offload: release flow_rule on error from commit path
-Date:   Fri, 17 Jan 2020 00:16:10 +0100
-Message-Id: <20200116231748.608901770@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 5.4 056/203] ASoC: simple_card_utils.h: Add missing include
+Date:   Fri, 17 Jan 2020 00:16:13 +0100
+Message-Id: <20200116231748.878130122@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -42,65 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-commit 23403cd8898dbc9808d3eb2f63bc1db8a340b751 upstream.
+commit 4bbee14d8e5487e3d2662138e3767cf4678cdf57 upstream.
 
-If hardware offload commit path fails, release all flow_rule objects.
+When debug is enabled compiler cannot find the definition of
+clk_get_rate resulting in the following error:
 
-Fixes: c9626a2cbdb2 ("netfilter: nf_tables: add hardware offload support")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+./include/sound/simple_card_utils.h:168:40: note: previous implicit
+declaration of ‘clk_get_rate’ was here
+   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
+./include/sound/simple_card_utils.h:168:3: note: in expansion of macro
+‘dev_dbg’
+   dev_dbg(dev, "%s clk %luHz\n", name, clk_get_rate(dai->clk));
+
+Fix this by including the appropriate header.
+
+Fixes: 0580dde59438686d ("ASoC: simple-card-utils: add asoc_simple_debug_info()")
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20191009153615.32105-2-daniel.baluta@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_offload.c |   26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ include/sound/simple_card_utils.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/netfilter/nf_tables_offload.c
-+++ b/net/netfilter/nf_tables_offload.c
-@@ -358,14 +358,14 @@ int nft_flow_rule_offload_commit(struct
- 				continue;
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -8,6 +8,7 @@
+ #ifndef __SIMPLE_CARD_UTILS_H
+ #define __SIMPLE_CARD_UTILS_H
  
- 			if (trans->ctx.flags & NLM_F_REPLACE ||
--			    !(trans->ctx.flags & NLM_F_APPEND))
--				return -EOPNOTSUPP;
--
-+			    !(trans->ctx.flags & NLM_F_APPEND)) {
-+				err = -EOPNOTSUPP;
-+				break;
-+			}
- 			err = nft_flow_offload_rule(trans->ctx.chain,
- 						    nft_trans_rule(trans),
- 						    nft_trans_flow_rule(trans),
- 						    FLOW_CLS_REPLACE);
--			nft_flow_rule_destroy(nft_trans_flow_rule(trans));
- 			break;
- 		case NFT_MSG_DELRULE:
- 			if (!(trans->ctx.chain->flags & NFT_CHAIN_HW_OFFLOAD))
-@@ -379,7 +379,23 @@ int nft_flow_rule_offload_commit(struct
- 		}
++#include <linux/clk.h>
+ #include <sound/soc.h>
  
- 		if (err)
--			return err;
-+			break;
-+	}
-+
-+	list_for_each_entry(trans, &net->nft.commit_list, list) {
-+		if (trans->ctx.family != NFPROTO_NETDEV)
-+			continue;
-+
-+		switch (trans->msg_type) {
-+		case NFT_MSG_NEWRULE:
-+			if (!(trans->ctx.chain->flags & NFT_CHAIN_HW_OFFLOAD))
-+				continue;
-+
-+			nft_flow_rule_destroy(nft_trans_flow_rule(trans));
-+			break;
-+		default:
-+			break;
-+		}
- 	}
- 
- 	return err;
+ #define asoc_simple_init_hp(card, sjack, prefix) \
 
 
