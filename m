@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D45813F8AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8E113F883
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437591AbgAPTUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:20:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38430 "EHLO mail.kernel.org"
+        id S1731819AbgAPQyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:54:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731508AbgAPQyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:54:07 -0500
+        id S1731591AbgAPQyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:54:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D936A21582;
-        Thu, 16 Jan 2020 16:54:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B19F02467A;
+        Thu, 16 Jan 2020 16:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193646;
-        bh=/N7dXcgnUL4QvYlzGgdYmk0bhnECzleSvnWAkrNYoY0=;
+        s=default; t=1579193650;
+        bh=VsiVaUIh0pNlZPFYJ+bvDcyc+g43VIn3QVMdYDIDnf0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N9rcyNVLIax+ZqYdb+/OIGPT8CtwoFp3NGpNHqSCFUaRa0Vf52CriV/oZSTs1Ik8W
-         MWQOcdrt1Eegg+n+C4dOj6srYh3JZdWJpNeB145URxh5wXUz2Rl3/qIXmY1we8byFW
-         PNZYnqvoGNVpeRdW23MN2/qKh/C0pm7DSt0nXyn8=
+        b=TAo9uKnbUHVHuohLJ8KAgndzD94DgenMvHX4XC1PvWKvimZL20adSDOOqMwT4Fdqr
+         QAH8uXdHgU3ZlaKHYR9/AfgKaFo6to1RUDbbQvtbph/GCRn6kEZo59jyCEIbWxvzi+
+         x8z19pfmP8lWClPlfb2NPxWLQfmeXNCLI3LS62DA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Wilck <mwilck@suse.com>, David Bond <dbond@suse.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 177/205] scsi: qla2xxx: fix rports not being mark as lost in sync fabric scan
-Date:   Thu, 16 Jan 2020 11:42:32 -0500
-Message-Id: <20200116164300.6705-177-sashal@kernel.org>
+Cc:     Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yonghong Song <yhs@fb.com>, Sasha Levin <sashal@kernel.org>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 180/205] libbpf: Fix Makefile' libbpf symbol mismatch diagnostic
+Date:   Thu, 16 Jan 2020 11:42:35 -0500
+Message-Id: <20200116164300.6705-180-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -44,49 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Wilck <mwilck@suse.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-[ Upstream commit d341e9a8f2cffe4000c610225c629f62c7489c74 ]
+[ Upstream commit b568405856906ee4d9ba6284fd36f2928653a623 ]
 
-In qla2x00_find_all_fabric_devs(), fcport->flags & FCF_LOGIN_NEEDED is a
-necessary condition for logging into new rports, but not for dropping lost
-ones.
+Fix Makefile's diagnostic diff output when there is LIBBPF_API-versioned
+symbols mismatch.
 
-Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
-Link: https://lore.kernel.org/r/20191122221912.20100-2-martin.wilck@suse.com
-Tested-by: David Bond <dbond@suse.com>
-Signed-off-by: Martin Wilck <mwilck@suse.com>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1bd63524593b ("libbpf: handle symbol versioning properly for libbpf.a")
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Yonghong Song <yhs@fb.com>
+Link: https://lore.kernel.org/bpf/20191127200134.1360660-1-andriin@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_init.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/lib/bpf/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 80f276d67c14..9ffaa920fc8f 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -5891,8 +5891,7 @@ qla2x00_find_all_fabric_devs(scsi_qla_host_t *vha)
- 		if (test_bit(LOOP_RESYNC_NEEDED, &vha->dpc_flags))
- 			break;
- 
--		if ((fcport->flags & FCF_FABRIC_DEVICE) == 0 ||
--		    (fcport->flags & FCF_LOGIN_NEEDED) == 0)
-+		if ((fcport->flags & FCF_FABRIC_DEVICE) == 0)
- 			continue;
- 
- 		if (fcport->scan_state == QLA_FCPORT_SCAN) {
-@@ -5915,7 +5914,8 @@ qla2x00_find_all_fabric_devs(scsi_qla_host_t *vha)
- 			}
- 		}
- 
--		if (fcport->scan_state == QLA_FCPORT_FOUND)
-+		if (fcport->scan_state == QLA_FCPORT_FOUND &&
-+		    (fcport->flags & FCF_LOGIN_NEEDED) != 0)
- 			qla24xx_fcport_handle_login(vha, fcport);
- 	}
- 	return (rval);
+diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+index 56ce6292071b..33e2638ef7f0 100644
+--- a/tools/lib/bpf/Makefile
++++ b/tools/lib/bpf/Makefile
+@@ -215,7 +215,7 @@ check_abi: $(OUTPUT)libbpf.so
+ 		     "versioned symbols in $^ ($(VERSIONED_SYM_COUNT))." \
+ 		     "Please make sure all LIBBPF_API symbols are"	 \
+ 		     "versioned in $(VERSION_SCRIPT)." >&2;		 \
+-		readelf -s --wide $(OUTPUT)libbpf-in.o |		 \
++		readelf -s --wide $(BPF_IN_SHARED) |			 \
+ 		    cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |	 \
+ 		    awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}'|   \
+ 		    sort -u > $(OUTPUT)libbpf_global_syms.tmp;		 \
 -- 
 2.20.1
 
