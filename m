@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3774F13FD1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C0413FD0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390885AbgAPXWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:22:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49486 "EHLO mail.kernel.org"
+        id S2390827AbgAPXV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:21:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388340AbgAPXVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:21:53 -0500
+        id S2390810AbgAPXVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:21:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A54D5206D9;
-        Thu, 16 Jan 2020 23:21:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CEAD20684;
+        Thu, 16 Jan 2020 23:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216913;
-        bh=TK8UhmeaSYuBE2n/WDEOSS7O5CO8iTAHK/6H7NHM8Y4=;
+        s=default; t=1579216884;
+        bh=CODGFaDMfu5utrqevmW4YohwWqC+gBcwGWeVRKV/k6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dr0nS2fNPUMAkcqzSG5KjhJ4EN+q4q7cdY9v+AKw/3bsLdfw2vUDXi8JEiEAVL0ZB
-         hd2qxv/TRtcoE8GqyjOfDpwXoM3e1y0h2HZuM+OcyJrFOR05NX9uiyqIL6jCMI13Se
-         WnvdK6hOpTFaqCu69ltxp9CrAQwdW9uIpCVjY+Nc=
+        b=hvqVsAzpTS9QylhXNWO34Pft9l5hoEq0/JWZnKqKeeAgVhZxBNrbx/9dGMJQdVb2L
+         rv1bNT5iWQXLo6Mwwpr0ClRW62MXY6AXMSmndkyz9PEIWTXVQGJxe5hpaQ69svryOX
+         H6fzMCqrQ9mN3lHmAZoEPZXrGWXU9/kP02ef7VYw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 055/203] ASoC: dt-bindings: mt8183: add missing update
-Date:   Fri, 17 Jan 2020 00:16:12 +0100
-Message-Id: <20200116231748.781128530@linuxfoundation.org>
+Subject: [PATCH 5.4 059/203] ASoC: core: Fix compile warning with CONFIG_DEBUG_FS=n
+Date:   Fri, 17 Jan 2020 00:16:16 +0100
+Message-Id: <20200116231749.178483016@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -43,36 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzung-Bi Shih <tzungbi@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 7cf2804775f8a388411624b3e768e55d08711e9d upstream.
+commit bd0b609e0c3362cb167c51d4bd4330d79fc00987 upstream.
 
-Headset codec is optional.  Add missing update to DT binding document.
+Paper over a compile warning:
+  sound/soc/soc-pcm.c:1185:8: warning: unused variable ‘name’
 
-Fixes: a962a809e5e4 ("ASoC: mediatek: mt8183: make headset codec optional")
-Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
-Link: https://lore.kernel.org/r/20190920112320.166052-1-tzungbi@google.com
+Fixes: 0632fa042541 ("ASoC: core: Fix pcm code debugfs error")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lore.kernel.org/r/20191107134833.1502-1-tiwai@suse.de
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/soc-pcm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt
-+++ b/Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt
-@@ -2,9 +2,11 @@ MT8183 with MT6358, TS3A227 and MAX98357
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1148,7 +1148,9 @@ static int dpcm_be_connect(struct snd_so
+ {
+ 	struct snd_soc_dpcm *dpcm;
+ 	unsigned long flags;
++#ifdef CONFIG_DEBUG_FS
+ 	char *name;
++#endif
  
- Required properties:
- - compatible : "mediatek,mt8183_mt6358_ts3a227_max98357"
--- mediatek,headset-codec: the phandles of ts3a227 codecs
- - mediatek,platform: the phandle of MT8183 ASoC platform
- 
-+Optional properties:
-+- mediatek,headset-codec: the phandles of ts3a227 codecs
-+
- Example:
- 
- 	sound {
+ 	/* only add new dpcms */
+ 	for_each_dpcm_be(fe, stream, dpcm) {
 
 
