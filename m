@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0EC113FEFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4381213FF21
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390414AbgAPXj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:39:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32874 "EHLO mail.kernel.org"
+        id S2387575AbgAPX1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:27:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391079AbgAPX2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:19 -0500
+        id S2389521AbgAPX0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E5E520684;
-        Thu, 16 Jan 2020 23:28:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 314C72072B;
+        Thu, 16 Jan 2020 23:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217298;
-        bh=zYyQCYQDckUrS/kpMNPDCdFrFdG67epaAPuttfXLJ8c=;
+        s=default; t=1579217197;
+        bh=SVJmoXEarOoz5TtLX6oxSO0j1YGh+KQ936Pf8K3ZsFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kVYn9eh/mZiBb23EWX9JsJPrwIkRcbmVAndLnNEqxNqVj6mIRqsjApDk+OJcl/o6A
-         BK4M0LNC+C1ylEsFbEMKFhGdR4ccGnHB5Z8912+8BvAHqXigSbP+wEdMy0LyrbuRCx
-         dfXsHysC+c5AkqvoFeW5HBL5UTnQ9EwJW7vtv+QM=
+        b=nxm0riow8nzwN5DGMDqoj+vb/dc5/leX4lBhFERzbwDL1v2roru+JTIxBni2jf0xK
+         looqw+MGqPR99jiWvvfaALkJEK/OfCKbWxbYIRo5zaKyYOPzkAKLs7+vr+by9eHwgd
+         6j1fKHq3+8v0duWNFcuyZW70eEJ7wINWbJOx91NM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.19 25/84] iommu: Remove device link to group on failure
-Date:   Fri, 17 Jan 2020 00:17:59 +0100
-Message-Id: <20200116231716.623652200@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 5.4 163/203] ubifs: Fixed missed le64_to_cpu() in journal
+Date:   Fri, 17 Jan 2020 00:18:00 +0100
+Message-Id: <20200116231758.943679715@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,32 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Derrick <jonathan.derrick@intel.com>
+From: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 
-commit 7d4e6ccd1fb09dbfbc49746ca82bd5c25ad4bfe4 upstream.
+commit df22b5b3ecc6233e33bd27f67f14c0cd1b5a5897 upstream.
 
-This adds the missing teardown step that removes the device link from
-the group when the device addition fails.
+In the ubifs_jnl_write_inode() functon, it calls ubifs_iget()
+with xent->inum. The xent->inum is __le64, but the ubifs_iget()
+takes native cpu endian.
 
-Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-Fixes: 797a8b4d768c5 ("iommu: Handle default domain attach failure")
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+I think that this should be changed to passing le64_to_cpu(xent->inum)
+to fix the following sparse warning:
+
+fs/ubifs/journal.c:902:58: warning: incorrect type in argument 2 (different base types)
+fs/ubifs/journal.c:902:58:    expected unsigned long inum
+fs/ubifs/journal.c:902:58:    got restricted __le64 [usertype] inum
+
+Fixes: 7959cf3a7506 ("ubifs: journal: Handle xattrs like files")
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/iommu.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ubifs/journal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -650,6 +650,7 @@ err_put_group:
- 	mutex_unlock(&group->mutex);
- 	dev->iommu_group = NULL;
- 	kobject_put(group->devices_kobj);
-+	sysfs_remove_link(group->devices_kobj, device->name);
- err_free_name:
- 	kfree(device->name);
- err_remove_link:
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -899,7 +899,7 @@ int ubifs_jnl_write_inode(struct ubifs_i
+ 			fname_name(&nm) = xent->name;
+ 			fname_len(&nm) = le16_to_cpu(xent->nlen);
+ 
+-			xino = ubifs_iget(c->vfs_sb, xent->inum);
++			xino = ubifs_iget(c->vfs_sb, le64_to_cpu(xent->inum));
+ 			if (IS_ERR(xino)) {
+ 				err = PTR_ERR(xino);
+ 				ubifs_err(c, "dead directory entry '%s', error %d",
 
 
