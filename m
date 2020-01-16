@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763EC13E369
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72FD513E36F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:02:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387540AbgAPRB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:01:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53330 "EHLO mail.kernel.org"
+        id S2388244AbgAPRCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:02:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388175AbgAPRBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:46 -0500
+        id S2387862AbgAPRBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EE2D24679;
-        Thu, 16 Jan 2020 17:01:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A736207FF;
+        Thu, 16 Jan 2020 17:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194105;
-        bh=rbXhNOxvUazaqZblzdZbObXJnK/bJaRavdGDm0WRNxc=;
+        s=default; t=1579194113;
+        bh=mj3HslSb1a5eU9nWcmhRgwdvOAOv8VDJJFtg0QffIwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P3QGIB0wSiETyjTOok4TTqinLCQ5lAEeiREPvSi4o5NxkQOpV4kapFC5PxhhKPvUZ
-         vf3F7PdI/PVdDe6vcQDS4RL2uPtKcGOrLfcYetXP94tpH9V+a9vslQBmclgOeKvBm1
-         8t4FNM5NlG3Zn3kAhkk5vGZtW28ZqHernD66VhzE=
+        b=Fe7OK/c5wdkbYM1XiWYj2W+Plp7dIN660SmjMxlXLpvLhwXiJ+lvZBDjfFHUJbYz+
+         uzNjIH5ih//4VFE5A2/2rlOqXTQStiMSW3lVJEt3tA26W6quvxTl7xPng2lcerWqnY
+         pqH0UP2xWtYAd/pZ4njIX22p/FH/K4kVLOvrd06c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 204/671] drm/nouveau: fix missing break in switch statement
-Date:   Thu, 16 Jan 2020 11:51:53 -0500
-Message-Id: <20200116165940.10720-87-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 209/671] staging: rtlwifi: Use proper enum for return in halmac_parse_psd_data_88xx
+Date:   Thu, 16 Jan 2020 11:51:58 -0500
+Message-Id: <20200116165940.10720-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -45,38 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 785cf1eeafa23ec63f426d322401054d13abe2a3 ]
+[ Upstream commit e8edc32d70a4e09160835792eb5d1af71a0eec14 ]
 
-The NOUVEAU_GETPARAM_PCI_DEVICE case is missing a break statement and falls
-through to the following NOUVEAU_GETPARAM_BUS_TYPE case and may end up
-re-assigning the getparam->value to an undesired value. Fix this by adding
-in the missing break.
+Clang warns:
 
-Detected by CoverityScan, CID#1460507 ("Missing break in switch")
+drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c:2472:11:
+warning: implicit conversion from enumeration type 'enum
+halmac_cmd_process_status' to different enumeration type 'enum
+halmac_ret_status' [-Wenum-conversion]
+                        return HALMAC_CMD_PROCESS_ERROR;
+                        ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
 
-Fixes: 359088d5b8ec ("drm/nouveau: remove trivial cases of nvxx_device() usage")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fix this by using the proper enum for allocation failures,
+HALMAC_RET_MALLOC_FAIL, which is used in the rest of this file.
+
+Fixes: e4b08e16b7d9 ("staging: r8822be: check kzalloc return or bail")
+Link: https://github.com/ClangBuiltLinux/linux/issues/375
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_abi16.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_abi16.c b/drivers/gpu/drm/nouveau/nouveau_abi16.c
-index e67a471331b5..6ec745873bc5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_abi16.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_abi16.c
-@@ -214,6 +214,7 @@ nouveau_abi16_ioctl_getparam(ABI16_IOCTL_ARGS)
- 			WARN_ON(1);
- 			break;
- 		}
-+		break;
- 	case NOUVEAU_GETPARAM_FB_SIZE:
- 		getparam->value = drm->gem.vram_available;
- 		break;
+diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+index ec742da030db..ddbeff8224ab 100644
+--- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
++++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+@@ -2469,7 +2469,7 @@ halmac_parse_psd_data_88xx(struct halmac_adapter *halmac_adapter, u8 *c2h_buf,
+ 	if (!psd_set->data) {
+ 		psd_set->data = kzalloc(psd_set->data_size, GFP_KERNEL);
+ 		if (!psd_set->data)
+-			return HALMAC_CMD_PROCESS_ERROR;
++			return HALMAC_RET_MALLOC_FAIL;
+ 	}
+ 
+ 	if (segment_id == 0)
 -- 
 2.20.1
 
