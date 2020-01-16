@@ -2,121 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B529113DA92
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B2713DA94
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:49:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgAPMsU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 Jan 2020 07:48:20 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46442 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbgAPMsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:48:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 04:48:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,326,1574150400"; 
-   d="scan'208";a="257343252"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2020 04:48:18 -0800
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 16 Jan 2020 04:48:18 -0800
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 16 Jan 2020 04:48:18 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.197]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.203]) with mapi id 14.03.0439.000;
- Thu, 16 Jan 2020 20:48:16 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-CC:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
-Subject: RE: [PATCH v4 04/12] vfio_pci: make common functions be extern
-Thread-Topic: [PATCH v4 04/12] vfio_pci: make common functions be extern
-Thread-Index: AQHVxVT1ZgpJigc+lU2otv7lw0J4t6frE/6AgAI3QTA=
-Date:   Thu, 16 Jan 2020 12:48:16 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A183F99@SHSMSX104.ccr.corp.intel.com>
-References: <1578398509-26453-1-git-send-email-yi.l.liu@intel.com>
-        <1578398509-26453-5-git-send-email-yi.l.liu@intel.com>
- <20200115115605.2014c01f.cohuck@redhat.com>
-In-Reply-To: <20200115115605.2014c01f.cohuck@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWNkMjEyMmQtOGE4Ni00ZjdkLWI5NjctODE4OTc3OTBhZTJiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRElpZ1wvd3NqRnVibzY4NnluZCt3WmgrWm0xbjBBakpsdE9qcEtXdXROVzY5WndjdXdCWHJXSGdcL1JwOVVabjNGIn0=
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726933AbgAPMtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:49:04 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42385 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgAPMtE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 07:49:04 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so15466026lfl.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 04:49:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=NvAZUv5ZGB55ThY+bLBf8tvOip6guzklAz3av6cc2wU=;
+        b=pzPRpUaFq6hGmg4Jytkeq7qKNJwk1GqXOLvze+JmjjhDjWruTp4NhzB7aId5yYoTq6
+         UC3pFcJ3A5X0ZWAgysbsoWyLHFs5E2a/eOk4sY3EnoGxY+kMINMlE4Y3egO/a5ScpAaL
+         ttrOfq9JAvQrc9/egZVK3NPY6ymdpdzOTWD+LvDu3nejEBvqKoNKSmk3ZrjLBtmVferv
+         7Wj2kuqFWaoQ+UiSMcnfxMXayYALHthkSIpineZ8ANAuS68Np/yWzjdNz3lJC6VUzVYv
+         NJmw47WVXdJ6kc9XAxLAlMPp0BoBsacMIvYZb+e5+zWkx5CLzXqJzBV5iNodfvf3+FPM
+         f+6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=NvAZUv5ZGB55ThY+bLBf8tvOip6guzklAz3av6cc2wU=;
+        b=gv5tsMxK8G8HbPEZf2/9EDCg8F6Nic/EwnT7AtpHejgSJfDNjqHKXb7vYzmLN7b5wY
+         obnZMxGqR/LKbX/1ey2IMRe+2B9inGTQStqZHIXZBe+7X0bMU2xsw9++hahSv6g2hV+N
+         KcVROmCdfmiWFcQhEsl2McgdH0VQBR9joAXb7FaVD9bNxPrzfc4A3LN/yQ40mKeJmT8W
+         2U4KshGa8/nfhSZ3YzAWA2OG7xMuLNrfRG+NRgdHaykotvVR50GmPc/nr0KfL3jIkyMj
+         o1uwWUWKJHh5FjrSiiCTG5DJnG2EzfDDhXijAmh/UsN5wlu0JATZJPPJxatMuQwBiZan
+         F4gA==
+X-Gm-Message-State: APjAAAX5PylhrbfzIZBBMQ3AcuWZ95X9Dd1vhgzAWvuW5US0QQvJT3d5
+        GpxzAE3hfHiHPpHkvXN01umMW9oOgEC7QvDtjQE=
+X-Google-Smtp-Source: APXvYqybYl6Ku/CdIQouxCDedCK6ea3VRCmInEFSklj/hW45cOJf6Dy0ylTtCasMqKD+DLry9LN9C49Yk60PtJ/T3ns=
+X-Received: by 2002:a05:6512:307:: with SMTP id t7mr2311399lfp.199.1579178941720;
+ Thu, 16 Jan 2020 04:49:01 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:ab3:6e4e:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 04:49:01
+ -0800 (PST)
+Reply-To: mr.mahmouda@yahoo.com
+From:   "Mr.Mahmoud Abbas" <stefanfrank171@gmail.com>
+Date:   Thu, 16 Jan 2020 12:49:01 +0000
+Message-ID: <CACdvmFycBwE9a3S482wXqfOM8w-_XiRcn-hj=xicKajS4hqBeg@mail.gmail.com>
+Subject: I am only contacting you as a foreigner because this money can not be
+ approved to a local person here.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Cornelia Huck [mailto:cohuck@redhat.com]
-> Sent: Wednesday, January 15, 2020 6:56 PM
-> To: Liu, Yi L <yi.l.liu@intel.com>
-> Subject: Re: [PATCH v4 04/12] vfio_pci: make common functions be extern
-> 
-> On Tue,  7 Jan 2020 20:01:41 +0800
-> Liu Yi L <yi.l.liu@intel.com> wrote:
-> 
-> > This patch makes the common functions (module agnostic functions) in
-> > vfio_pci.c to be extern. So that such functions could be moved to a
-> > common source file.
-> >
-> > *) vfio_pci_set_vga_decode
-> > *) vfio_pci_probe_power_state
-> > *) vfio_pci_set_power_state
-> > *) vfio_pci_enable
-> > *) vfio_pci_disable
-> > *) vfio_pci_refresh_config
-> > *) vfio_pci_register_dev_region
-> > *) vfio_pci_ioctl
-> > *) vfio_pci_read
-> > *) vfio_pci_write
-> > *) vfio_pci_mmap
-> > *) vfio_pci_request
-> > *) vfio_pci_err_handlers
-> > *) vfio_pci_reflck_attach
-> > *) vfio_pci_reflck_put
-> > *) vfio_pci_fill_ids
-> 
-> I find it a bit hard to understand what "module agnostic functions" are supposed to
-> be. The functions you want to move seem to be some "basic"
-> functions that can be shared between normal vfio-pci and vfio-mdev-pci... maybe
-> talk about "functions that provide basic vfio functionality for pci devices" and also
-> mention the mdev part?
-> 
-> [My rationale behind complaining about the commit messages is that if I look at this
-> change in a year from now, I want to be able to know why and to what end that
-> change was made.]
+--=20
+Dear Friend,
 
-Right, agreed with your comments. I'll change the commit message accordingly
-per your suggestion.
+I am Mr.Mahmoud Abbas, the accountant personal confident to Dr. S=C3=B2ng W=
+=C3=A1ng
+who died together with his wife Dr. Mrs. Lee W=C3=A1ng in a plane crash on =
+the
+1st Oct. 2003 on their way to attend wedding in Boston. Dr. S=C3=B2ng W=C3=
+=A1ng, is
+an Chinese, a physician and industrialist, he died without having any
+beneficiary to his assets including his account here in Burkina Faso which
+he opened in one of the Bank in the year 2000 as his personal savings for
+the purpose of expansion and development of his company before his untimely
+death in 2003.
 
-Thanks,
-Yi Liu
+The amount involved is (USD 10,500,000.00) Ten Million Five Hundred
+Thousand USD, no other person knows about this account, I am contacting you
+for us to transfer this funds to your account as the beneficiary,) but I
+don't know any foreigner, I am only contacting you as a foreigner because
+this money can not be approved to a local person here.
 
-> >
-> > Cc: Kevin Tian <kevin.tian@intel.com>
-> > Cc: Lu Baolu <baolu.lu@linux.intel.com>
-> > Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> > ---
-> >  drivers/vfio/pci/vfio_pci.c         | 30 +++++++++++++-----------------
-> >  drivers/vfio/pci/vfio_pci_private.h | 15 +++++++++++++++
-> >  2 files changed, 28 insertions(+), 17 deletions(-)
+Reply urgently so that I will inform you the next step to take urgently.
 
+Sincerely,
+
+Mr.Mahmoud Abbas.
+
+Reply to this e-mail addess:mr.mahmouda@yahoo.com
