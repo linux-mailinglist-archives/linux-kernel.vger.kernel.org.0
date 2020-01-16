@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F2B413FF49
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D79A513FE5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391183AbgAPXl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:41:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59002 "EHLO mail.kernel.org"
+        id S2391666AbgAPXez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:34:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388327AbgAPX1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:21 -0500
+        id S2403813AbgAPXcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:32:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C32B2072E;
-        Thu, 16 Jan 2020 23:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8588206D9;
+        Thu, 16 Jan 2020 23:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217240;
-        bh=Jas9M4NC9WttapCSqzQTQUihydt2rWA4eNC4cFlbr/U=;
+        s=default; t=1579217573;
+        bh=X/RhwB3ltoFu/o5xwb831LGVLfW0AvB+9BD9HsiGhGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E6dG6kMPEferV7By1oYWzHYBKqkqpknzGd0KlmkVzqgK0Ir0BcaGS6lh1BNngwYdI
-         cSUFFW+J4XkgHCjmAb8wdq5UpmVBPKdNMdwCq59yTOE2+xztyZi2H3wq+6fkH+s/IY
-         IKCfk0Hb9cE9O7zo0eW5VMC+ZprYbqcSo8zpnHgk=
+        b=qQ6xv1REYmW+K82Ppkh1EuSx9J75afdn7dzFllnxEsT+dACqlwT0Ad87DKiTZ8D51
+         zVZf7SLkLepBmlDbcxfAOKYAAw2uta+8kBAUFb/XSsvoqMfR6DfGPWbYOTRPB1F1fM
+         w3eWNJomQk+LALr9z7g9tNqaZ7RRByqKvK6588qY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vladimir Kondratiev <vladimir.kondratiev@intel.com>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 187/203] mips: cacheinfo: report shared CPU map
-Date:   Fri, 17 Jan 2020 00:18:24 +0100
-Message-Id: <20200116231800.650807790@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 27/71] hsr: reset network header when supervision frame is created
+Date:   Fri, 17 Jan 2020 00:18:25 +0100
+Message-Id: <20200116231713.384983535@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,83 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 3b1313eb32c499d46dc4c3e896d19d9564c879c4 ]
+commit 3ed0a1d563903bdb4b4c36c58c4d9c1bcb23a6e6 upstream.
 
-Report L1 caches as shared per core; L2 - per cluster.
+The supervision frame is L2 frame.
+When supervision frame is created, hsr module doesn't set network header.
+If tap routine is enabled, dev_queue_xmit_nit() is called and it checks
+network_header. If network_header pointer wasn't set(or invalid),
+it resets network_header and warns.
+In order to avoid unnecessary warning message, resetting network_header
+is needed.
 
-This fixes "perf" that went crazy if shared_cpu_map attribute not
-reported on sysfs, in form of
+Test commands:
+    ip netns add nst
+    ip link add veth0 type veth peer name veth1
+    ip link add veth2 type veth peer name veth3
+    ip link set veth1 netns nst
+    ip link set veth3 netns nst
+    ip link set veth0 up
+    ip link set veth2 up
+    ip link add hsr0 type hsr slave1 veth0 slave2 veth2
+    ip a a 192.168.100.1/24 dev hsr0
+    ip link set hsr0 up
+    ip netns exec nst ip link set veth1 up
+    ip netns exec nst ip link set veth3 up
+    ip netns exec nst ip link add hsr1 type hsr slave1 veth1 slave2 veth3
+    ip netns exec nst ip a a 192.168.100.2/24 dev hsr1
+    ip netns exec nst ip link set hsr1 up
+    tcpdump -nei veth0
 
-/sys/devices/system/cpu/cpu*/cache/index*/shared_cpu_list
-/sys/devices/system/cpu/cpu*/cache/index*/shared_cpu_map
+Splat looks like:
+[  175.852292][    C3] protocol 88fb is buggy, dev veth0
 
-Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
-Signed-off-by: Paul Burton <paulburton@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/mips/kernel/cacheinfo.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ net/hsr/hsr_device.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/kernel/cacheinfo.c b/arch/mips/kernel/cacheinfo.c
-index f777e44653d5..47312c529410 100644
---- a/arch/mips/kernel/cacheinfo.c
-+++ b/arch/mips/kernel/cacheinfo.c
-@@ -50,6 +50,25 @@ static int __init_cache_level(unsigned int cpu)
- 	return 0;
- }
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -281,6 +281,8 @@ static void send_hsr_supervision_frame(s
+ 			    skb->dev->dev_addr, skb->len) <= 0)
+ 		goto out;
+ 	skb_reset_mac_header(skb);
++	skb_reset_network_header(skb);
++	skb_reset_transport_header(skb);
  
-+static void fill_cpumask_siblings(int cpu, cpumask_t *cpu_map)
-+{
-+	int cpu1;
-+
-+	for_each_possible_cpu(cpu1)
-+		if (cpus_are_siblings(cpu, cpu1))
-+			cpumask_set_cpu(cpu1, cpu_map);
-+}
-+
-+static void fill_cpumask_cluster(int cpu, cpumask_t *cpu_map)
-+{
-+	int cpu1;
-+	int cluster = cpu_cluster(&cpu_data[cpu]);
-+
-+	for_each_possible_cpu(cpu1)
-+		if (cpu_cluster(&cpu_data[cpu1]) == cluster)
-+			cpumask_set_cpu(cpu1, cpu_map);
-+}
-+
- static int __populate_cache_leaves(unsigned int cpu)
- {
- 	struct cpuinfo_mips *c = &current_cpu_data;
-@@ -57,14 +76,20 @@ static int __populate_cache_leaves(unsigned int cpu)
- 	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
- 
- 	if (c->icache.waysize) {
-+		/* L1 caches are per core */
-+		fill_cpumask_siblings(cpu, &this_leaf->shared_cpu_map);
- 		populate_cache(dcache, this_leaf, 1, CACHE_TYPE_DATA);
-+		fill_cpumask_siblings(cpu, &this_leaf->shared_cpu_map);
- 		populate_cache(icache, this_leaf, 1, CACHE_TYPE_INST);
- 	} else {
- 		populate_cache(dcache, this_leaf, 1, CACHE_TYPE_UNIFIED);
- 	}
- 
--	if (c->scache.waysize)
-+	if (c->scache.waysize) {
-+		/* L2 cache is per cluster */
-+		fill_cpumask_cluster(cpu, &this_leaf->shared_cpu_map);
- 		populate_cache(scache, this_leaf, 2, CACHE_TYPE_UNIFIED);
-+	}
- 
- 	if (c->tcache.waysize)
- 		populate_cache(tcache, this_leaf, 3, CACHE_TYPE_UNIFIED);
--- 
-2.20.1
-
+ 	if (hsrVer > 0) {
+ 		hsr_tag = skb_put(skb, sizeof(struct hsr_tag));
 
 
