@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8260E13E7C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BECA13E7C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404073AbgAPR1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37938 "EHLO mail.kernel.org"
+        id S2392102AbgAPR1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392072AbgAPR1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:47 -0500
+        id S2404052AbgAPR1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5493A246D0;
-        Thu, 16 Jan 2020 17:27:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EB98246E4;
+        Thu, 16 Jan 2020 17:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195666;
-        bh=NAW0lDxZxbdXmUcJNQfaYox57i6EhRso58SUUQPAoK8=;
+        s=default; t=1579195670;
+        bh=tSUlR4tPDzSqua/yvIuaf3Ye6cFWN6b1St9+UreSkGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b6UQ89fqFHzkaP4zwBN3nQZpUFWT2+FOtQagphdzVa4d+KRz2CoHKAGPBWNL7neFo
-         vQJGczKs4NTEF9iEzBODSHVfZSxHUZXTFKxAP0BHyZZbe53thVKPDDe6TrvB21j0wr
-         oXx4D6e/aiJpiOqHHWa04Bn2raC2ZFokStg/IEtc=
+        b=nojWxQOABPwnfGbRct44E9sGN2KLiiR/WIGxesvDelBkqeYn+B2MyHTiYtrFGrp/u
+         HW+k3E8nEz5ye7epX4mPZpz4fIJTjjCyX0Lr2jP5cd5P47JByJpDNcM8y4MGLBJQ7a
+         QtdhMN5n5iYvkSY9sB9loGu0X1zyXOkijAGWDwtc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 224/371] media: vivid: fix incorrect assignment operation when setting video mode
-Date:   Thu, 16 Jan 2020 12:21:36 -0500
-Message-Id: <20200116172403.18149-167-sashal@kernel.org>
+Cc:     Michal Kalderon <michal.kalderon@marvell.com>,
+        Ariel Elior <ariel.elior@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 227/371] qed: iWARP - Use READ_ONCE and smp_store_release to access ep->state
+Date:   Thu, 16 Jan 2020 12:21:39 -0500
+Message-Id: <20200116172403.18149-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,39 +44,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Michal Kalderon <michal.kalderon@marvell.com>
 
-[ Upstream commit d4ec9550e4b2d2e357a46fdc65d8ef3d4d15984c ]
+[ Upstream commit 6117561e1bb30b2fe7f51e1961f34dbedd0bec8a ]
 
-The assigment of FB_VMODE_NONINTERLACE to var->vmode should be a
-bit-wise or of FB_VMODE_NONINTERLACE instead of an assignment,
-otherwise the previous clearing of the FB_VMODE_MASK bits of
-var->vmode makes no sense and is redundant.
+Destroy QP waits for it's ep object state to be set to CLOSED
+before proceeding. ep->state can be updated from a different
+context. Add smp_store_release/READ_ONCE to synchronize.
 
-Addresses-Coverity: ("Unused value")
-Fixes: ad4e02d5081d ("[media] vivid: add a simple framebuffer device for overlay testing")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: fc4c6065e661 ("qed: iWARP implement disconnect flows")
+Signed-off-by: Ariel Elior <ariel.elior@marvell.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vivid/vivid-osd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/vivid/vivid-osd.c b/drivers/media/platform/vivid/vivid-osd.c
-index bdc380b14e0c..a95b7c56569e 100644
---- a/drivers/media/platform/vivid/vivid-osd.c
-+++ b/drivers/media/platform/vivid/vivid-osd.c
-@@ -167,7 +167,7 @@ static int _vivid_fb_check_var(struct fb_var_screeninfo *var, struct vivid_dev *
- 	var->nonstd = 0;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+index bb09f5a9846f..38d0f62bf037 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -509,7 +509,8 @@ int qed_iwarp_destroy_qp(struct qed_hwfn *p_hwfn, struct qed_rdma_qp *qp)
  
- 	var->vmode &= ~FB_VMODE_MASK;
--	var->vmode = FB_VMODE_NONINTERLACED;
-+	var->vmode |= FB_VMODE_NONINTERLACED;
+ 	/* Make sure ep is closed before returning and freeing memory. */
+ 	if (ep) {
+-		while (ep->state != QED_IWARP_EP_CLOSED && wait_count++ < 200)
++		while (READ_ONCE(ep->state) != QED_IWARP_EP_CLOSED &&
++		       wait_count++ < 200)
+ 			msleep(100);
  
- 	/* Dummy values */
- 	var->hsync_len = 24;
+ 		if (ep->state != QED_IWARP_EP_CLOSED)
+@@ -991,8 +992,6 @@ qed_iwarp_mpa_complete(struct qed_hwfn *p_hwfn,
+ 
+ 	params.ep_context = ep;
+ 
+-	ep->state = QED_IWARP_EP_CLOSED;
+-
+ 	switch (fw_return_code) {
+ 	case RDMA_RETURN_OK:
+ 		ep->qp->max_rd_atomic_req = ep->cm_info.ord;
+@@ -1052,6 +1051,10 @@ qed_iwarp_mpa_complete(struct qed_hwfn *p_hwfn,
+ 		break;
+ 	}
+ 
++	if (fw_return_code != RDMA_RETURN_OK)
++		/* paired with READ_ONCE in destroy_qp */
++		smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
++
+ 	ep->event_cb(ep->cb_context, &params);
+ 
+ 	/* on passive side, if there is no associated QP (REJECT) we need to
+@@ -2069,7 +2072,9 @@ void qed_iwarp_qp_in_error(struct qed_hwfn *p_hwfn,
+ 	params.status = (fw_return_code == IWARP_QP_IN_ERROR_GOOD_CLOSE) ?
+ 			 0 : -ECONNRESET;
+ 
+-	ep->state = QED_IWARP_EP_CLOSED;
++	/* paired with READ_ONCE in destroy_qp */
++	smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
++
+ 	spin_lock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
+ 	list_del(&ep->list_entry);
+ 	spin_unlock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
+@@ -2157,7 +2162,8 @@ qed_iwarp_tcp_connect_unsuccessful(struct qed_hwfn *p_hwfn,
+ 	params.event = QED_IWARP_EVENT_ACTIVE_COMPLETE;
+ 	params.ep_context = ep;
+ 	params.cm_info = &ep->cm_info;
+-	ep->state = QED_IWARP_EP_CLOSED;
++	/* paired with READ_ONCE in destroy_qp */
++	smp_store_release(&ep->state, QED_IWARP_EP_CLOSED);
+ 
+ 	switch (fw_return_code) {
+ 	case IWARP_CONN_ERROR_TCP_CONNECT_INVALID_PACKET:
 -- 
 2.20.1
 
