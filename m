@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8415513E733
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:24:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 946A613E736
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391695AbgAPRYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:24:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58156 "EHLO mail.kernel.org"
+        id S2391746AbgAPRYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:24:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391228AbgAPRYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:09 -0500
+        id S2391723AbgAPRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA56D24684;
-        Thu, 16 Jan 2020 17:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB2F524684;
+        Thu, 16 Jan 2020 17:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195448;
-        bh=8JNZbyGhx3IWm4yjWkvDnV+8UHOchZf0Zt+UWJSIZgc=;
+        s=default; t=1579195459;
+        bh=bYxSH8GfVHB3PUAM4GpW1DZVUUfAFBPIypwps27JDa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgXiShcBKhUMqtjaFnA8y5+5E/U7ynppYAz4yIvdbcxKf4ywuHdJ6KOfBlBToqu2d
-         vMGki43iN1KApn2qL/JkDyUuNSio/Xhb+loOB0F+AUu1xqHMOIeRnftoWrM3JMnh5N
-         KwsZSQOU5yejyu939Cg/Pp6U7rcACNnTm7/HHsl0=
+        b=A48zrwgnKE3rjMCLJm0Rg3k6arXHHPXzDN1ZiIpQCvX1HIF1VxXlVFwdOKL4uTzrI
+         2GFISlth7txKmuh1/1urBpypByHIpeBhO3a4AnU+1wCY6Z+Q/IKdxpt4d+jyjggXpO
+         DZbNkAFZy5MhD2vCTWRQBQ1tVRf/KsUuTvXKmo+8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 060/371] crypto: brcm - Fix some set-but-not-used warning
-Date:   Thu, 16 Jan 2020 12:18:52 -0500
-Message-Id: <20200116172403.18149-3-sashal@kernel.org>
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 068/371] net/mlx5: Take lock with IRQs disabled to avoid deadlock
+Date:   Thu, 16 Jan 2020 12:19:00 -0500
+Message-Id: <20200116172403.18149-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,63 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Moni Shoua <monis@mellanox.com>
 
-[ Upstream commit 707d0cf8f7cff6dfee9197002859912310532c4f ]
+[ Upstream commit 33814e5d127e21f53b52e17b0722c1b57d4f4d29 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+The lock in qp_table might be taken from process context or from
+interrupt context. This may lead to a deadlock unless it is taken with
+IRQs disabled.
 
-drivers/crypto/bcm/cipher.c: In function 'handle_ahash_req':
-drivers/crypto/bcm/cipher.c:720:15: warning:
- variable 'chunk_start' set but not used [-Wunused-but-set-variable]
+Discovered by lockdep
 
-drivers/crypto/bcm/cipher.c: In function 'spu_rx_callback':
-drivers/crypto/bcm/cipher.c:1679:31: warning:
- variable 'areq' set but not used [-Wunused-but-set-variable]
+================================
+WARNING: inconsistent lock state
+4.20.0-rc6
+--------------------------------
+inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W}
 
-drivers/crypto/bcm/cipher.c:1678:22: warning:
- variable 'ctx' set but not used [-Wunused-but-set-variable]
+python/12572 [HC1[1]:SC0[0]:HE0:SE1] takes:
+00000000052a4df4 (&(&table->lock)->rlock#2){?.+.}, /0x50 [mlx5_core]
+{HARDIRQ-ON-W} state was registered at:
+  _raw_spin_lock+0x33/0x70
+  mlx5_get_rsc+0x1a/0x50 [mlx5_core]
+  mlx5_ib_eqe_pf_action+0x493/0x1be0 [mlx5_ib]
+  process_one_work+0x90c/0x1820
+  worker_thread+0x87/0xbb0
+  kthread+0x320/0x3e0
+  ret_from_fork+0x24/0x30
+irq event stamp: 103928
+hardirqs last  enabled at (103927): [] nk+0x1a/0x1c
+hardirqs last disabled at (103928): [] unk+0x1a/0x1c
+softirqs last  enabled at (103924): [] tcp_sendmsg+0x31/0x40
+softirqs last disabled at (103922): [] 80
 
-Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&(&table->lock)->rlock#2);
+
+    lock(&(&table->lock)->rlock#2);
+
+ *** DEADLOCK ***
+
+Fixes: 032080ab43ac ("IB/mlx5: Lock QP during page fault handling")
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/bcm/cipher.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/qp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
-index 84422435f39b..279e907590e9 100644
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -718,7 +718,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
- 	 */
- 	unsigned int new_data_len;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/qp.c b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+index 5f091c6ea049..b92d5690287b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+@@ -44,14 +44,15 @@ static struct mlx5_core_rsc_common *mlx5_get_rsc(struct mlx5_core_dev *dev,
+ {
+ 	struct mlx5_qp_table *table = &dev->priv.qp_table;
+ 	struct mlx5_core_rsc_common *common;
++	unsigned long flags;
  
--	unsigned int chunk_start = 0;
-+	unsigned int __maybe_unused chunk_start = 0;
- 	u32 db_size;	 /* Length of data field, incl gcm and hash padding */
- 	int pad_len = 0; /* total pad len, including gcm, hash, stat padding */
- 	u32 data_pad_len = 0;	/* length of GCM/CCM padding */
-@@ -1676,8 +1676,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
- 	struct spu_hw *spu = &iproc_priv.spu;
- 	struct brcm_message *mssg = msg;
- 	struct iproc_reqctx_s *rctx;
--	struct iproc_ctx_s *ctx;
--	struct crypto_async_request *areq;
- 	int err = 0;
+-	spin_lock(&table->lock);
++	spin_lock_irqsave(&table->lock, flags);
  
- 	rctx = mssg->ctx;
-@@ -1687,8 +1685,6 @@ static void spu_rx_callback(struct mbox_client *cl, void *msg)
- 		err = -EFAULT;
- 		goto cb_finish;
- 	}
--	areq = rctx->parent;
--	ctx = rctx->ctx;
+ 	common = radix_tree_lookup(&table->tree, rsn);
+ 	if (common)
+ 		atomic_inc(&common->refcount);
  
- 	/* process the SPU status */
- 	err = spu->spu_status_process(rctx->msg_buf.rx_stat);
+-	spin_unlock(&table->lock);
++	spin_unlock_irqrestore(&table->lock, flags);
+ 
+ 	if (!common) {
+ 		mlx5_core_warn(dev, "Async event for bogus resource 0x%x\n",
 -- 
 2.20.1
 
