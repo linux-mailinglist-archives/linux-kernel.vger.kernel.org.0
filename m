@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C589513F286
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 675A213F297
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391719AbgAPRYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:24:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58350 "EHLO mail.kernel.org"
+        id S2436853AbgAPSg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:36:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391693AbgAPRYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:14 -0500
+        id S2391701AbgAPRYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8599E2468E;
-        Thu, 16 Jan 2020 17:24:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C286724690;
+        Thu, 16 Jan 2020 17:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195453;
-        bh=OvR6d+GuurWj3pV1jLo6SNT47v2bz6Kyw8Ptl/ssFBE=;
+        s=default; t=1579195454;
+        bh=DD5b3OtEOuYFjYuUz0V1Ew0UTKdSxEIPHB7MzvFpuk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZlMex3M1vYNkcbd5Y5tA4vIlW6w1K52Ud0pYUr7azPzgjIUjX3npzCg+Xubx/ZMv5
-         F+ZyzuMG59TpFJdYFFtOHUBaYOVT7WoE64a5REZC1GaOJ47CrO0qi5mBgIwNdbCf2P
-         JlyRzg+HR608yxui7JPB7b465w0nL02zJcfCJbN0=
+        b=DpqtVad4Nv93wAgq8gyksdsvlmz0G/HFyVRwxiowH32zAFfv8VY/rPt1WjwGgydYj
+         1iVTeuE5NQ4GQpvDCeAfyR64DN8lpUtr5hYez3OFzJBt2VEkHFoxaPoNp/Dyl+Iwtf
+         uFs+fsmNffchnUmtYFdHAoBynFAgfWmRIEdal0e0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 063/371] IB/iser: Pass the correct number of entries for dma mapped SGL
-Date:   Thu, 16 Jan 2020 12:18:55 -0500
-Message-Id: <20200116172403.18149-6-sashal@kernel.org>
+Cc:     Eric Wong <e@80x24.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Sylvain Chouleur <sylvain.chouleur@intel.com>,
+        Patrick McDermott <patrick.mcdermott@libiquity.com>,
+        linux-rtc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 064/371] rtc: cmos: ignore bogus century byte
+Date:   Thu, 16 Jan 2020 12:18:56 -0500
+Message-Id: <20200116172403.18149-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,59 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Eric Wong <e@80x24.org>
 
-[ Upstream commit 57b26497fabe1b9379b59fbc7e35e608e114df16 ]
+[ Upstream commit 2a4daadd4d3e507138f8937926e6a4df49c6bfdc ]
 
-ib_dma_map_sg() augments the SGL into a 'dma mapped SGL'. This process may
-change the number of entries and the lengths of each entry.
+Older versions of Libreboot and Coreboot had an invalid value
+(`3' in my case) in the century byte affecting the GM45 in
+the Thinkpad X200.  Not everybody's updated their firmwares,
+and Linux <= 4.2 was able to read the RTC without problems,
+so workaround this by ignoring invalid values.
 
-Code that touches dma_address is iterating over the 'dma mapped SGL' and
-must use dma_nents which returned from ib_dma_map_sg().
+Fixes: 3c217e51d8a272b9 ("rtc: cmos: century support")
 
-ib_sg_to_pages() and ib_map_mr_sg() are using dma_address so they must use
-dma_nents.
-
-Fixes: 39405885005a ("IB/iser: Port to new fast registration API")
-Fixes: bfe066e256d5 ("IB/iser: Reuse ib_sg_to_pages")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Acked-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Sylvain Chouleur <sylvain.chouleur@intel.com>
+Cc: Patrick McDermott <patrick.mcdermott@libiquity.com>
+Cc: linux-rtc@vger.kernel.org
+Signed-off-by: Eric Wong <e@80x24.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/iser/iser_memory.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/rtc/rtc-mc146818-lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/iser/iser_memory.c b/drivers/infiniband/ulp/iser/iser_memory.c
-index 322209d5ff58..19883169e7b7 100644
---- a/drivers/infiniband/ulp/iser/iser_memory.c
-+++ b/drivers/infiniband/ulp/iser/iser_memory.c
-@@ -240,8 +240,8 @@ int iser_fast_reg_fmr(struct iscsi_iser_task *iser_task,
- 	page_vec->npages = 0;
- 	page_vec->fake_mr.page_size = SIZE_4K;
- 	plen = ib_sg_to_pages(&page_vec->fake_mr, mem->sg,
--			      mem->size, NULL, iser_set_page);
--	if (unlikely(plen < mem->size)) {
-+			      mem->dma_nents, NULL, iser_set_page);
-+	if (unlikely(plen < mem->dma_nents)) {
- 		iser_err("page vec too short to hold this SG\n");
- 		iser_data_buf_dump(mem, device->ib_device);
- 		iser_dump_page_vec(page_vec);
-@@ -450,10 +450,10 @@ static int iser_fast_reg_mr(struct iscsi_iser_task *iser_task,
+diff --git a/drivers/rtc/rtc-mc146818-lib.c b/drivers/rtc/rtc-mc146818-lib.c
+index 2f1772a358ca..18a6f15e313d 100644
+--- a/drivers/rtc/rtc-mc146818-lib.c
++++ b/drivers/rtc/rtc-mc146818-lib.c
+@@ -82,7 +82,7 @@ unsigned int mc146818_get_time(struct rtc_time *time)
+ 	time->tm_year += real_year - 72;
+ #endif
  
- 	ib_update_fast_reg_key(mr, ib_inc_rkey(mr->rkey));
+-	if (century)
++	if (century > 20)
+ 		time->tm_year += (century - 19) * 100;
  
--	n = ib_map_mr_sg(mr, mem->sg, mem->size, NULL, SIZE_4K);
--	if (unlikely(n != mem->size)) {
-+	n = ib_map_mr_sg(mr, mem->sg, mem->dma_nents, NULL, SIZE_4K);
-+	if (unlikely(n != mem->dma_nents)) {
- 		iser_err("failed to map sg (%d/%d)\n",
--			 n, mem->size);
-+			 n, mem->dma_nents);
- 		return n < 0 ? n : -EINVAL;
- 	}
- 
+ 	/*
 -- 
 2.20.1
 
