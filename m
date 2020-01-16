@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F76D13E799
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7162313E79E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392355AbgAPR04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35976 "EHLO mail.kernel.org"
+        id S2392390AbgAPR1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392316AbgAPR0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:26:49 -0500
+        id S2392343AbgAPR0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:26:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1DA1246C8;
-        Thu, 16 Jan 2020 17:26:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9607246D4;
+        Thu, 16 Jan 2020 17:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195609;
-        bh=UzWpqtykFIuIk/3wDH9HC2fhJkTy90NGFF7wu0Zh//A=;
+        s=default; t=1579195614;
+        bh=k/giQLTQHP1E1fL/X5OrnR5YwPGCnPWgGQwz2XUq7mA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1KlyXxOKgsbY7xHC2pbfKDP3YnPEJ3Y7jOuSp2vbu6j/OkHqe2rw/nO5/9txqcEcu
-         WP8qpx6Sr/vyPpAL2QaN2KjEjZBUGQsZf+0llD3i63D5+dYsbmw7ld3U4Fmdqj+ZyS
-         F0Ce0NehMDGQgk4Zmi3d+sSQzx+kjghiOXOALQ0M=
+        b=T/OVRGSbb2t4OHUE+SbV9ZQo8KjxysCDZhO8IH81xGtQtyqcuGDX4qiBz4dE81qvJ
+         bV8owEcCZ2fAXhTN1vk5t0mz14jv6OWY3WqawCfryoz4lzQqa9WQ6oK/QoWls5vbAq
+         b30+PxUCpvQHHI73LZrUVYfAIGE/1jomSVkdTKhE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sameeh Jubran <sameehj@amazon.com>,
-        Arthur Kiyanovski <akiyano@amazon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 183/371] net: ena: fix: Free napi resources when ena_up() fails
-Date:   Thu, 16 Jan 2020 12:20:55 -0500
-Message-Id: <20200116172403.18149-126-sashal@kernel.org>
+Cc:     Pan Bian <bianpan2016@163.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 187/371] mmc: core: fix possible use after free of host
+Date:   Thu, 16 Jan 2020 12:20:59 -0500
+Message-Id: <20200116172403.18149-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,36 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sameeh Jubran <sameehj@amazon.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit b287cdbd1cedfc9606682c6e02b58d00ff3a33ae ]
+[ Upstream commit 8e1943af2986db42bee2b8dddf49a36cdb2e9219 ]
 
-ena_up() calls ena_init_napi() but does not call ena_del_napi() in
-case of failure. This causes a segmentation fault upon rmmod when
-netif_napi_del() is called. Fix this bug by calling ena_del_napi()
-before returning error from ena_up().
+In the function mmc_alloc_host, the function put_device is called to
+release allocated resources when mmc_gpio_alloc fails. Finally, the
+function pointed by host->class_dev.class->dev_release (i.e.,
+mmc_host_classdev_release) is used to release resources including the
+host structure. However, after put_device, host is used and released
+again. Resulting in a use-after-free bug.
 
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1ed217194488 ("mmc: core: fix error path in mmc_host_alloc")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/core/host.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index d22b138c2b09..518ff393a026 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1796,6 +1796,7 @@ static int ena_up(struct ena_adapter *adapter)
- err_setup_tx:
- 	ena_free_io_irq(adapter);
- err_req_irq:
-+	ena_del_napi(adapter);
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index ad88deb2e8f3..3740fb0052a4 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -376,8 +376,6 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *dev)
  
- 	return rc;
- }
+ 	if (mmc_gpio_alloc(host)) {
+ 		put_device(&host->class_dev);
+-		ida_simple_remove(&mmc_host_ida, host->index);
+-		kfree(host);
+ 		return NULL;
+ 	}
+ 
 -- 
 2.20.1
 
