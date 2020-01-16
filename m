@@ -2,109 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B780713D2B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F012E13D2BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:32:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbgAPDa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:30:56 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40852 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgAPDa4 (ORCPT
+        id S1729347AbgAPDcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 22:32:45 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:45353 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726513AbgAPDcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:30:56 -0500
-Received: by mail-yb1-f194.google.com with SMTP id l197so2287551ybf.7;
-        Wed, 15 Jan 2020 19:30:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=5hCR7l+IGjuAIghwhgN04Y/kSevJvkdqqxO3+5DqDlw=;
-        b=KHBzuXl79SLLfI07GT7wSJ59Fu+Hf5+n7nBcA03SAtoRLqF4M9q6YLaEGCWnUHfsVH
-         OccsEPIuvRg3Y32BWv5+rlysndItQ0Jq85VfgKGbiBkpKtROjzHRFq4rkQ4c5Rg1P8Wd
-         xH/sw94CEVWp4jOLP7bEgoHKoCqDIvfAC38IEBFybUtmGvlmGJ1Kr1WFb7ErY/ip/piJ
-         EUsfy0v7fLYnjvbImfg9eIfTlGMhZrOuHzfqy4MqNID+k4zq/8lPfxUjK40fTxqLT7S0
-         Mizp0IMIs42TIJT/etldE+qzz+WFZ0nNwfCydlSxxzsCD4Ob1dyHghuMoL6/7t75WFkc
-         5+9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=5hCR7l+IGjuAIghwhgN04Y/kSevJvkdqqxO3+5DqDlw=;
-        b=ZVdhixKwvToatpmwHYf6PMNB4zppDj79PEF+5o/Y6Ad+tWRh1rZpHLXH8SYrwuwegQ
-         c0131zgyyGXL2SjrWn08iAhtmCVQu1spxk0WQiIGtgqEThUfFvueUdXHmRX+TavBCkza
-         flzyZeDyELbi+3ocPstwW3QqT4I0uKA//kqwyisY4J7HhXlua7HwO3pqGHaHKy5AMU/d
-         Dj1Lq+XkGCW+p646sPqP1ghsiwiZ6ExVoFAlatQXC3lf81EQ+MFdf5Ju6jv/FNEIB2uG
-         wS9Is/0/hZpVENG8Ug45buBQwRDTknReXsb+0yxioc6Y37J7rHO+Xw3p+4pO0S96m7HU
-         RJZQ==
-X-Gm-Message-State: APjAAAUKRgs3Ov1F+C526n6BqLk/wCHZd9Lrj8aHaf+9z2AavPCu3wKE
-        zVLEimSgrrm6U7wHMkW5A6q/hmc/urFf4g==
-X-Google-Smtp-Source: APXvYqxZpZD+KGfqIelCMRxWJ7fQdK7H7zxQmKWaH+hTRB8O/y5kahyWjkpw+Bk/XmNsVz82yixwww==
-X-Received: by 2002:a25:c589:: with SMTP id v131mr20721253ybe.490.1579145454751;
-        Wed, 15 Jan 2020 19:30:54 -0800 (PST)
-Received: from hunterzg-yangtiant6900c-00 ([95.179.219.143])
-        by smtp.gmail.com with ESMTPSA id t3sm9685156ywi.18.2020.01.15.19.30.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 Jan 2020 19:30:54 -0800 (PST)
-Date:   Thu, 16 Jan 2020 11:30:44 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     siva.kallam@broadcom.com, prashant@broadcom.com,
-        mchan@broadcom.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] driver: tg3: fix potential UAF in
- tigon3_dma_hwbug_workaround()
-Message-ID: <20200116033044.GA2783@hunterzg-yangtiant6900c-00>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 15 Jan 2020 22:32:45 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TnrNwaZ_1579145561;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnrNwaZ_1579145561)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 16 Jan 2020 11:32:42 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: remove unused guest_enter
+Date:   Thu, 16 Jan 2020 11:32:39 +0800
+Message-Id: <1579145559-168038-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In tigon3_dma_hwbug_workaround(), pskb is first stored in skb. And this
-function is to store new_skb into pskb at the end. However, in the error
-paths when new_skb is freed by dev_kfree_skb_any(), stroing new_skb to pskb
-should be prevented.
+After commit 61bd0f66ff92 ("KVM: PPC: Book3S HV: Fix guest time accounting
+with VIRT_CPU_ACCOUNTING_GEN"), no one use this function anymore, So better
+to remove it.
 
-And freeing skb with dev_consume_skb_any() should be executed after storing
-new_skb to pskb, because freeing skb will free pskb (alias).
-
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 ---
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index ca3aa12..dbfac26 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -7826,6 +7826,7 @@ static int tigon3_dma_hwbug_workaround(struct tg3_napi *tnapi,
- 
- 	if (!new_skb) {
- 		ret = -1;
-+		goto new_skb_err;
- 	} else {
- 		/* New SKB is guaranteed to be linear. */
- 		new_addr = pci_map_single(tp->pdev, new_skb->data, new_skb->len,
-@@ -7834,6 +7835,7 @@ static int tigon3_dma_hwbug_workaround(struct tg3_napi *tnapi,
- 		if (pci_dma_mapping_error(tp->pdev, new_addr)) {
- 			dev_kfree_skb_any(new_skb);
- 			ret = -1;
-+			goto new_skb_err;
- 		} else {
- 			u32 save_entry = *entry;
- 
-@@ -7849,12 +7851,14 @@ static int tigon3_dma_hwbug_workaround(struct tg3_napi *tnapi,
- 				tg3_tx_skb_unmap(tnapi, save_entry, -1);
- 				dev_kfree_skb_any(new_skb);
- 				ret = -1;
-+				goto new_skb_err;
- 			}
- 		}
- 	}
- 
--	dev_consume_skb_any(skb);
- 	*pskb = new_skb;
-+	dev_consume_skb_any(skb);
-+new_skb_err:
- 	return ret;
+ include/linux/context_tracking.h | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+index 64ec82851aa3..8150f5ac176c 100644
+--- a/include/linux/context_tracking.h
++++ b/include/linux/context_tracking.h
+@@ -154,15 +154,6 @@ static inline void guest_exit_irqoff(void)
  }
+ #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
  
+-static inline void guest_enter(void)
+-{
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	guest_enter_irqoff();
+-	local_irq_restore(flags);
+-}
+-
+ static inline void guest_exit(void)
+ {
+ 	unsigned long flags;
+-- 
+1.8.3.1
+
