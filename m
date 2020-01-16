@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE6613F6F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9287013F6E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391378AbgAPTIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:08:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
+        id S2388026AbgAPRBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:01:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387966AbgAPRBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:00 -0500
+        id S1732843AbgAPRBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BEA520730;
-        Thu, 16 Jan 2020 17:00:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4766E24679;
+        Thu, 16 Jan 2020 17:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194060;
-        bh=UUbtdtYPxr1Fu2Ab0dI1KWoUNyTnq3mp4rCOTqYE0Cc=;
+        s=default; t=1579194064;
+        bh=xTh3euvaVVF5AgmqiVdq5sDTR7kmFZgmADYOgqlF4xE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DLdZDnCLjA1nqHtFqVY7Ml1JYHighXnlOLb5vc5aGMBfCM3yUpW/uGtuf2d7jClxs
-         492zZ5BUKsnes4el8LJsXW0WbUOh2Og7U7/57uXvoLNW7XWno1/9dbFzcBDPxtUgL0
-         4rj7RMgXpfWvEaALJDEYsaAjO4IkbbJ8jYZH0uYk=
+        b=SGek7LsJNc3Ry5COhP05OQ2nSo1uIJyy3rKt70WtSXabgHcFq3aV0qQ8sH11MdJ4n
+         kf1VHZmgJasaPBh/ub9/UOtwdL1pMGFERnSdVznOXkqM3lMYXNdEXMbnhVPVZsZ0w1
+         eHzFAFvgSygNPsV49/bZn6URRF7i1C6PY+ymG2eU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Selles <paul.selles@microchip.com>,
-        Wesley Sheng <wesley.sheng@microchip.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>, Sasha Levin <sashal@kernel.org>,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 172/671] ntb_hw_switchtec: debug print 64bit aligned crosslink BAR Numbers
-Date:   Thu, 16 Jan 2020 11:51:21 -0500
-Message-Id: <20200116165940.10720-55-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 175/671] pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
+Date:   Thu, 16 Jan 2020 11:51:24 -0500
+Message-Id: <20200116165940.10720-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -45,37 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Selles <paul.selles@microchip.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit cce8e04cf79e47809455215744685e8eb56f94bb ]
+[ Upstream commit a4b0350047f1b10207e25e72d7cd3f7826e93769 ]
 
-Switchtec NTB crosslink BARs are 64bit addressed but they are printed as
-32bit addressed BARs. Fix debug log to increment the BAR numbers by 2 to
-reflect the 64bit address alignment.
+The entry for "scifb2_data_c" in the SCIFB2 pin group array contains a
+typo, thus the group cannot be selected.
 
-Fixes: 017525018202 ("ntb_hw_switchtec: Add initialization code for crosslink")
-Signed-off-by: Paul Selles <paul.selles@microchip.com>
-Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
+Fixes: 5088451962389924 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 5ee5f40b4dfc..9916bc5b6759 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -1120,7 +1120,7 @@ static int crosslink_enum_partition(struct switchtec_ntb *sndev,
- 
- 		dev_dbg(&sndev->stdev->dev,
- 			"Crosslink BAR%d addr: %llx\n",
--			i, bar_addr);
-+			i*2, bar_addr);
- 
- 		if (bar_addr != bar_space * i)
- 			continue;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 6236ac55c65d..9eb860c8f917 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -5239,7 +5239,7 @@ static const char * const scifb2_groups[] = {
+ 	"scifb2_data_b",
+ 	"scifb2_clk_b",
+ 	"scifb2_ctrl_b",
+-	"scifb0_data_c",
++	"scifb2_data_c",
+ 	"scifb2_clk_c",
+ 	"scifb2_data_d",
+ };
 -- 
 2.20.1
 
