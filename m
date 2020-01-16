@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB5A13E34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:01:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D1EC13E34D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733284AbgAPRBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51618 "EHLO mail.kernel.org"
+        id S2388038AbgAPRBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:01:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387981AbgAPRBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:03 -0500
+        id S2388005AbgAPRBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8DAC20728;
-        Thu, 16 Jan 2020 17:01:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B3BD20730;
+        Thu, 16 Jan 2020 17:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194062;
-        bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+        s=default; t=1579194066;
+        bh=Z/6Je7W6tQDJpYaxxR+scce6bDJ+iS9rauUEIqMWV8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rhn7f5d7BK9xyxAuDI38B20k/1+fVbw3LWM+nrnTv3J58nqMb6iizwQTCkHoxoVJP
-         jqXqJGDkQleRD8cTpmZHCemqF0oqY4bHzsY2/WmOBZ0X9d8OI7hII65ftTgCGJUMME
-         dN4AWSYn10YXEN4+JMB5VN9xXW0yCoglTNTkiyIE=
+        b=bECPDVjFJVAvfEd2NXV5FNxW/DDw07T70MN0ZEpXED+pDrtB2a8pgx3X0h1X/5z+F
+         SLLX9zRLPihoRr2OnKpRKN6/lM61V5OCMRz7Zjq/LJWZE8YGl5p/zfAnJWniICmTcf
+         UL0Q7XtROrWX3MT03i5Gsto0o3hQU7amEr54AE8A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 174/671] pinctrl: sh-pfc: emev2: Add missing pinmux functions
-Date:   Thu, 16 Jan 2020 11:51:23 -0500
-Message-Id: <20200116165940.10720-57-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 177/671] pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
+Date:   Thu, 16 Jan 2020 11:51:26 -0500
+Message-Id: <20200116165940.10720-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -46,78 +46,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
+[ Upstream commit 0e6e448bdcf896d001a289a6112a704542d51516 ]
 
-The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
-but no pinmux functions refer to them, hence they can not be selected.
+There are two pin groups for the FSIC SPDIF signal, but the FSIC pin
+group array lists only one, and it refers to a nonexistent group.
 
-Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+Fixes: 2ecd4154c906b7d6 ("sh-pfc: sh73a0: Add FSI pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04d7df6..eafd8edbcbe9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
- 	"dtv_b",
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index f8fbedb46585..6dca760f9f28 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -3367,7 +3367,8 @@ static const char * const fsic_groups[] = {
+ 	"fsic_sclk_out",
+ 	"fsic_data_in",
+ 	"fsic_data_out",
+-	"fsic_spdif",
++	"fsic_spdif_0",
++	"fsic_spdif_1",
  };
  
-+static const char * const err_rst_reqb_groups[] = {
-+	"err_rst_reqb",
-+};
-+
-+static const char * const ext_clki_groups[] = {
-+	"ext_clki",
-+};
-+
- static const char * const iic0_groups[] = {
- 	"iic0",
- };
-@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
- 	"yuv3",
- };
- 
-+static const char * const lowpwr_groups[] = {
-+	"lowpwr",
-+};
-+
- static const char * const ntsc_groups[] = {
- 	"ntsc_clk",
- 	"ntsc_data",
-@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
- 	"pwm1",
- };
- 
-+static const char * const ref_clko_groups[] = {
-+	"ref_clko",
-+};
-+
- static const char * const sd_groups[] = {
- 	"sd_cki",
- };
-@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(cam),
- 	SH_PFC_FUNCTION(cf),
- 	SH_PFC_FUNCTION(dtv),
-+	SH_PFC_FUNCTION(err_rst_reqb),
-+	SH_PFC_FUNCTION(ext_clki),
- 	SH_PFC_FUNCTION(iic0),
- 	SH_PFC_FUNCTION(iic1),
- 	SH_PFC_FUNCTION(jtag),
- 	SH_PFC_FUNCTION(lcd),
-+	SH_PFC_FUNCTION(lowpwr),
- 	SH_PFC_FUNCTION(ntsc),
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(ref_clko),
- 	SH_PFC_FUNCTION(sd),
- 	SH_PFC_FUNCTION(sdi0),
- 	SH_PFC_FUNCTION(sdi1),
+ static const char * const fsid_groups[] = {
 -- 
 2.20.1
 
