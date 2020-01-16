@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D8413F3CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0800813F3EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:46:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390034AbgAPRKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:10:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
+        id S2390778AbgAPSqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:46:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389905AbgAPRKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:10:21 -0500
+        id S2389931AbgAPRKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:10:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1A1324684;
-        Thu, 16 Jan 2020 17:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A22324684;
+        Thu, 16 Jan 2020 17:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194620;
-        bh=2oal85QJQmFK27RIhexDkWAXpYE3elUidpuhTil+uP4=;
+        s=default; t=1579194625;
+        bh=4a7Sk8SWFDzfmkMN30hHFPwBDh9o5W9TF2o7WnL/dco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oSr4kwOxfqPfZ/WYzBaNSfAC7vHrRBYZo8wtIzjDU82FXRR1vaMmU/jf3Ier0YxK1
-         xmyaYlNouynMauaEHrYMZSqWd930APeYcZ9tV2o7YMUnfzmy0VcoCRGT4o/RR5+zkP
-         9dpAJfNvpqfjtPlaXlIvpFqJUhqRGA+I/6OShuDk=
+        b=tD22/1xzrGP//aTgHVdcZIihYdesZpZU0JdVUauRDUqGHTnXnukJViigSAy+fF1dk
+         eaE4aMRJBIQ/BlA2Qq1nVGLsKoni8QsB/d4iN1cJ20pFGkH2injtHtqEacKaffxk1Q
+         V5XFuvmr49Hk/Oj6AdkJH2rGh6gsZdgBZsgAMWDQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 482/671] iio: tsl2772: Use devm_add_action_or_reset for tsl2772_chip_off
-Date:   Thu, 16 Jan 2020 12:02:00 -0500
-Message-Id: <20200116170509.12787-219-sashal@kernel.org>
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 485/671] cxgb4: smt: Add lock for atomic_dec_and_test
+Date:   Thu, 16 Jan 2020 12:02:03 -0500
+Message-Id: <20200116170509.12787-222-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -46,70 +45,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 338084135aeddb103624a6841972fb8588295cc6 ]
+[ Upstream commit 4a8937b83892cb69524291cae6cdabad4a8be033 ]
 
-Use devm_add_action_or_reset to call tsl2772_chip_off
-when the device is removed.
-This also fixes the issue that the chip is turned off
-before the device is unregistered.
+The atomic_dec_and_test() is not safe because it is
+outside of locks.
+Move the locks of t4_smte_free() to its caller,
+cxgb4_smt_release() to protect the atomic decrement.
 
-Not marked for stable as fairly hard to hit the bug and
-this is in the middle of a set making other cleanups
-to the driver.  Hence will probably need explicit backporting.
-
+Fixes: 3bdb376e6944 ("cxgb4: introduce SMT ops to prepare for SMAC rewrite support")
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Fixes: c06c4d793584 ("staging: iio: tsl2x7x/tsl2772: move out of staging")
-Reviewed-by: Brian Masney <masneyb@onstation.org>
-Tested-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/light/tsl2772.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/smt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-index df5b2a0da96c..f2e308c6d6d7 100644
---- a/drivers/iio/light/tsl2772.c
-+++ b/drivers/iio/light/tsl2772.c
-@@ -716,6 +716,13 @@ static int tsl2772_chip_off(struct iio_dev *indio_dev)
- 	return tsl2772_write_control_reg(chip, 0x00);
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/smt.c b/drivers/net/ethernet/chelsio/cxgb4/smt.c
+index 7b2207a2a130..9b3f4205cb4d 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/smt.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/smt.c
+@@ -98,11 +98,9 @@ static struct smt_entry *find_or_alloc_smte(struct smt_data *s, u8 *smac)
+ 
+ static void t4_smte_free(struct smt_entry *e)
+ {
+-	spin_lock_bh(&e->lock);
+ 	if (atomic_read(&e->refcnt) == 0) {  /* hasn't been recycled */
+ 		e->state = SMT_STATE_UNUSED;
+ 	}
+-	spin_unlock_bh(&e->lock);
  }
  
-+static void tsl2772_chip_off_action(void *data)
-+{
-+	struct iio_dev *indio_dev = data;
-+
-+	tsl2772_chip_off(indio_dev);
-+}
-+
  /**
-  * tsl2772_invoke_change - power cycle the device to implement the user
-  *                         parameters
-@@ -1711,9 +1718,14 @@ static int tsl2772_probe(struct i2c_client *clientp,
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = devm_add_action_or_reset(&clientp->dev,
-+					tsl2772_chip_off_action,
-+					indio_dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = iio_device_register(indio_dev);
- 	if (ret) {
--		tsl2772_chip_off(indio_dev);
- 		dev_err(&clientp->dev,
- 			"%s: iio registration failed\n", __func__);
- 		return ret;
-@@ -1740,8 +1752,6 @@ static int tsl2772_remove(struct i2c_client *client)
+@@ -112,8 +110,10 @@ static void t4_smte_free(struct smt_entry *e)
+  */
+ void cxgb4_smt_release(struct smt_entry *e)
  {
- 	struct iio_dev *indio_dev = i2c_get_clientdata(client);
++	spin_lock_bh(&e->lock);
+ 	if (atomic_dec_and_test(&e->refcnt))
+ 		t4_smte_free(e);
++	spin_unlock_bh(&e->lock);
+ }
+ EXPORT_SYMBOL(cxgb4_smt_release);
  
--	tsl2772_chip_off(indio_dev);
--
- 	iio_device_unregister(indio_dev);
- 
- 	return 0;
 -- 
 2.20.1
 
