@@ -2,40 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A0B13F795
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0EA13F79C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:13:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387446AbgAPQ5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:57:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43886 "EHLO mail.kernel.org"
+        id S2387783AbgAPTNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:13:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387423AbgAPQ5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:06 -0500
+        id S2387435AbgAPQ5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30A752467D;
-        Thu, 16 Jan 2020 16:57:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4758921D56;
+        Thu, 16 Jan 2020 16:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193825;
-        bh=8tl6avoclmnYqs2n1VijeIdE5boQXiaiZbXvYV5dn8w=;
+        s=default; t=1579193828;
+        bh=avXqc5KA2Ev0UHhePAXgSI1BiUN8Gtq0LGx8b4d8lvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BUaNaNp6UviBnSe/WcATossOGVTVyHgrhuVNCgXOdjqRDcSkWqP0gPi53CmoFMgPj
-         fBx5NF7S10QtSCDOakYk9CyOsdKEvWSsQKHOmHM+GovcRDmr3SWGyy172DiOcwRbPd
-         5d6lrGZnP8t/tLWHiThAO6cDRrVQjYWe0ApvaEPU=
+        b=fQuu39//UnvNtYgGNrcYIKUJdRjZ2X46YRQRbeGxzotjB63gURHJ4eFvXCqSAj3is
+         zIpyiWZLpSqdzoI150rSsSBaqP2rJZMiDXVGmuYyor9WzWituPdRCq0JS3oTrcp0+a
+         JNh18Gru/vH3Xcpc4R1zEwiMU0fnzv5MaaaVuOx4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rik van Riel <riel@surriel.com>, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 083/671] fork,memcg: fix crash in free_thread_stack on memcg charge fail
-Date:   Thu, 16 Jan 2020 11:45:14 -0500
-Message-Id: <20200116165502.8838-83-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 085/671] clk: qoriq: fix refcount leak in clockgen_init()
+Date:   Thu, 16 Jan 2020 11:45:16 -0500
+Message-Id: <20200116165502.8838-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -48,93 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 5eed6f1dff87bfb5e545935def3843edf42800f2 ]
+[ Upstream commit 70af6c5b5270e8101f318c4b69cc98a726edfab9 ]
 
-Commit 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting") will
-result in fork failing if allocating a kernel stack for a task in
-dup_task_struct exceeds the kernel memory allowance for that cgroup.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Unfortunately, it also results in a crash.
-
-This is due to the code jumping to free_stack and calling
-free_thread_stack when the memcg kernel stack charge fails, but without
-tsk->stack pointing at the freshly allocated stack.
-
-This in turn results in the vfree_atomic in free_thread_stack oopsing
-with a backtrace like this:
-
-#5 [ffffc900244efc88] die at ffffffff8101f0ab
- #6 [ffffc900244efcb8] do_general_protection at ffffffff8101cb86
- #7 [ffffc900244efce0] general_protection at ffffffff818ff082
-    [exception RIP: llist_add_batch+7]
-    RIP: ffffffff8150d487  RSP: ffffc900244efd98  RFLAGS: 00010282
-    RAX: 0000000000000000  RBX: ffff88085ef55980  RCX: 0000000000000000
-    RDX: ffff88085ef55980  RSI: 343834343531203a  RDI: 343834343531203a
-    RBP: ffffc900244efd98   R8: 0000000000000001   R9: ffff8808578c3600
-    R10: 0000000000000000  R11: 0000000000000001  R12: ffff88029f6c21c0
-    R13: 0000000000000286  R14: ffff880147759b00  R15: 0000000000000000
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
- #8 [ffffc900244efda0] vfree_atomic at ffffffff811df2c7
- #9 [ffffc900244efdb8] copy_process at ffffffff81086e37
-#10 [ffffc900244efe98] _do_fork at ffffffff810884e0
-#11 [ffffc900244eff10] sys_vfork at ffffffff810887ff
-#12 [ffffc900244eff20] do_syscall_64 at ffffffff81002a43
-    RIP: 000000000049b948  RSP: 00007ffcdb307830  RFLAGS: 00000246
-    RAX: ffffffffffffffda  RBX: 0000000000896030  RCX: 000000000049b948
-    RDX: 0000000000000000  RSI: 00007ffcdb307790  RDI: 00000000005d7421
-    RBP: 000000000067370f   R8: 00007ffcdb3077b0   R9: 000000000001ed00
-    R10: 0000000000000008  R11: 0000000000000246  R12: 0000000000000040
-    R13: 000000000000000f  R14: 0000000000000000  R15: 000000000088d018
-    ORIG_RAX: 000000000000003a  CS: 0033  SS: 002b
-
-The simplest fix is to assign tsk->stack right where it is allocated.
-
-Link: http://lkml.kernel.org/r/20181214231726.7ee4843c@imladris.surriel.com
-Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 0dfc86b3173f ("clk: qoriq: Move chip-specific knowledge into driver")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/fork.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/clk/clk-qoriq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 8cb5cd7c97e1..5718c5decc55 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -230,8 +230,10 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
- 	 * free_thread_stack() can be called in interrupt context,
- 	 * so cache the vm_struct.
- 	 */
--	if (stack)
-+	if (stack) {
- 		tsk->stack_vm_area = find_vm_area(stack);
-+		tsk->stack = stack;
-+	}
- 	return stack;
- #else
- 	struct page *page = alloc_pages_node(node, THREADINFO_GFP,
-@@ -268,7 +270,10 @@ static struct kmem_cache *thread_stack_cache;
- static unsigned long *alloc_thread_stack_node(struct task_struct *tsk,
- 						  int node)
- {
--	return kmem_cache_alloc_node(thread_stack_cache, THREADINFO_GFP, node);
-+	unsigned long *stack;
-+	stack = kmem_cache_alloc_node(thread_stack_cache, THREADINFO_GFP, node);
-+	tsk->stack = stack;
-+	return stack;
- }
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 8abc5c8cb8b8..a0713b2a12f3 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1389,6 +1389,7 @@ static void __init clockgen_init(struct device_node *np)
+ 				pr_err("%s: Couldn't map %pOF regs\n", __func__,
+ 				       guts);
+ 			}
++			of_node_put(guts);
+ 		}
  
- static void free_thread_stack(struct task_struct *tsk)
+ 	}
 -- 
 2.20.1
 
