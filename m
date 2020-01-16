@@ -2,91 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E43A13F5FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1ED513F61A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393973AbgAPTAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:00:41 -0500
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:36968 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388663AbgAPTAe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:00:34 -0500
-Received: by mail-ot1-f54.google.com with SMTP id k14so20397691otn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:00:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hyY7WW4dkzBjOHFiSnAhU1ifhGoPr9kB/eLuIeGz0AE=;
-        b=EpBa46mhq3trk26FcvFYoKtZjmGqAVcQNC2FqB83DK2AEwcz5ZAZRcA7G2qxqCBe2v
-         spthb+qWYr0doMCPKJgZNFYsI9vaoC8Cc6vnMZ8iuHDvJBEwav4YoPOwkfaSraMKqn1Q
-         wZFKvwIn4SGUeVqQalUpjEV+t8ebTaC4gVyt4qT1NOQjk38K2LCLNCI9ytq8C/SaNF4d
-         IPczja3VhYWvyWWQRB28Lm4Vt+YXn+G0s4fWjOzXaHehV4zOAcavIaOkWy+fq0aY84Si
-         oNrR1oPx1BKc6yKRhSsOhg/Iz6CVJUFne5JoiHzq80OqL1H3x6xL8iNFzqjNEKLpd57o
-         mP/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hyY7WW4dkzBjOHFiSnAhU1ifhGoPr9kB/eLuIeGz0AE=;
-        b=R8Lo2Zn4CRbPWWcT8nYY4DJqGCR6MjvXE1EsZ75z0NOX9cMsqVAqEV9FBuRny5v1O0
-         gC+JrY7HGM1otVOul9a2H+Cj7+KXJ83fwgDBF9RVM7NQi7p1G0jhTOr7FnNjs8niG7zL
-         lCKXYSJkr3NLVkCgGr6ZFyGAmGltydJTgqZ0EuMURtLg9IxYaEzk2rXwo2oi5WiKMzgV
-         Z3w4bW3Ci7hzbN+fRK6iAVmljqo+IRlqCnUGFKoJmefApSxcdNQ5W91J9XXmKrf8o2Z3
-         Tokmv6TJ3RPbi9Ms7JSIXAxwVcXTNpD6nW3HoW+UyLebhuC68biqmUkEsJRxzGearYiS
-         vy9A==
-X-Gm-Message-State: APjAAAX9dkt5BKjPSMeXBGSPt1bUJcv2czD+dAUlhZAummJ/0lh6jhy0
-        4ripkNUinrtMLSoS1aU1IQf4cB6vx3iLNv/vvk0sbA==
-X-Google-Smtp-Source: APXvYqzrvSvdKS//HZyQp4z4fTTVNqnffvcAgM8KAmX5p4p0X7P0vOiAdo0qA176cJ9JED9JCVoDcyalIs648b+sTEY=
-X-Received: by 2002:a9d:7410:: with SMTP id n16mr3307988otk.23.1579201233339;
- Thu, 16 Jan 2020 11:00:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20200115162512.70807-1-elver@google.com> <20200116174344.GV2935@paulmck-ThinkPad-P72>
-In-Reply-To: <20200116174344.GV2935@paulmck-ThinkPad-P72>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 16 Jan 2020 20:00:22 +0100
-Message-ID: <CANpmjNP5=ZyrnueXnYJU-ZN7VUgwnG5w4GFVLja9oN1LfHFpjg@mail.gmail.com>
-Subject: Re: [PATCH -rcu v2] kcsan: Make KCSAN compatible with lockdep
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Qian Cai <cai@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
+        id S2437290AbgAPTB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:01:29 -0500
+Received: from mga14.intel.com ([192.55.52.115]:12875 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388807AbgAPTB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 14:01:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 11:01:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="220465275"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.113])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2020 11:01:13 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH V3] perf/x86: Consider pinned events for group validation
+Date:   Thu, 16 Jan 2020 11:00:25 -0800
+Message-Id: <1579201225-178031-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 at 18:43, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> On Wed, Jan 15, 2020 at 05:25:12PM +0100, Marco Elver wrote:
-> > We must avoid any recursion into lockdep if KCSAN is enabled on
-> > utilities used by lockdep. One manifestation of this is corrupting
-> > lockdep's IRQ trace state (if TRACE_IRQFLAGS). Fix this by:
-> >
-> > 1. Using raw_local_irq{save,restore} in kcsan_setup_watchpoint().
-> > 2. Disabling lockdep in kcsan_report().
-> >
-> > Tested with:
-> >
-> >   CONFIG_LOCKDEP=y
-> >   CONFIG_DEBUG_LOCKDEP=y
-> >   CONFIG_TRACE_IRQFLAGS=y
-> >
-> > Where previously, the following warning (and variants with different
-> > stack traces) was consistently generated, with the fix introduced in
-> > this patch, the warning cannot be reproduced.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Qian, thank you for testing!
+perf stat -M metrics relies on weak groups to reject unschedulable
+groups and run them as non-groups.
+This uses the group validation code in the kernel. Unfortunately
+that code doesn't take pinned events, such as the NMI watchdog, into
+account. So some groups can pass validation, but then later still
+never schedule.
 
-> I added Vlad's ack and Qian's Tested-by and queued this.  Thank you all!
+For example,
 
-Thank you, Paul!
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
 
--- Marco
+ Performance counter stats for 'system wide':
+
+     <not counted>      itlb_misses.walk_pending
+(0.00%)
+     <not counted>      dtlb_load_misses.walk_pending
+(0.00%)
+     <not counted>      dtlb_store_misses.walk_pending
+(0.00%)
+     <not counted>      ept.walk_pending
+(0.00%)
+     <not counted>      cycles
+(0.00%)
+
+       1.176613558 seconds time elapsed
+
+Current pinned events are always scheduled first. So the new group must
+can be scheduled together with current pinned events. Otherwise, it will
+never get a chance to be scheduled later.
+The trick is to pretend the current pinned events as part of the new
+group, and insert them into the fake_cpuc.
+The simulation result will tell if they can be scheduled successfully.
+The fake_cpuc never touch event state. The current pinned events will
+not be impacted.
+Disabling interrupts to prevent the events in current CPU's cpuc going
+away and getting freed.
+
+It won't catch all possible cases that cannot be scheduled, such as
+events pinned differently on different CPUs, or complicated constraints.
+The validation is based on current environment. It doesn't help on the
+case, which first create a group and then a pinned event, either.
+But for the most common case, the NMI watchdog interacting with the
+current perf metrics, it is strong enough.
+
+After applying the patch,
+
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $ perf stat -M Page_Walks_Utilization
+
+ Performance counter stats for 'system wide':
+
+         2,491,910      itlb_misses.walk_pending  #      0.0
+Page_Walks_Utilization   (79.94%)
+        13,630,942      dtlb_load_misses.walk_pending
+(80.02%)
+           207,255      dtlb_store_misses.walk_pending
+(80.04%)
+                 0      ept.walk_pending
+(80.04%)
+       236,204,924      cycles
+(79.97%)
+
+       0.901785713 seconds time elapsed
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+Changes since V3:
+- Update comments (preemption is disabled as well)
+
+The V2 still only check current CPU's cpuc. Because I think we cannot
+prevent the cpuc in other CPU without a lock. Adding a lock will
+introduce extra overhead in some critical path, e.g. context switch.
+The patch is good enough for the common case. We may leave the other
+complicated cases as they are.
+
+Changes since V1:
+- Disabling interrupts to prevent the events in current CPU's cpuc
+  going away and getting freed.
+- Update comments and description
+
+ arch/x86/events/core.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 43d0918..c4d9e14 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2032,9 +2032,12 @@ static int validate_event(struct perf_event *event)
+  */
+ static int validate_group(struct perf_event *event)
+ {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	struct perf_event *leader = event->group_leader;
+ 	struct cpu_hw_events *fake_cpuc;
+-	int ret = -EINVAL, n;
++	struct perf_event *pinned_event;
++	int ret = -EINVAL, n, i;
++	unsigned long flags;
+ 
+ 	fake_cpuc = allocate_fake_cpuc();
+ 	if (IS_ERR(fake_cpuc))
+@@ -2054,9 +2057,38 @@ static int validate_group(struct perf_event *event)
+ 	if (n < 0)
+ 		goto out;
+ 
++	/*
++	 * Disable interrupts and preemption to prevent the events in this
++	 * CPU's cpuc going away and getting freed.
++	 */
++	local_irq_save(flags);
++
++	/*
++	 * The new group must can be scheduled together with current pinned
++	 * events. Otherwise, it will never get a chance to be scheduled later.
++	 *
++	 * It won't catch all possible cases that cannot schedule, such as
++	 * events pinned on CPU1, but the validation for a new CPU1 event
++	 * running on other CPU. However, it's good enough to handle common
++	 * cases like the global NMI watchdog.
++	 */
++	for (i = 0; i < cpuc->n_events; i++) {
++		pinned_event = cpuc->event_list[i];
++		if (WARN_ON_ONCE(!pinned_event))
++			continue;
++		if (!pinned_event->attr.pinned)
++			continue;
++		fake_cpuc->n_events = n;
++		n = collect_events(fake_cpuc, pinned_event, false);
++		if (n < 0)
++			goto irq;
++	}
++
+ 	fake_cpuc->n_events = 0;
+ 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
+ 
++irq:
++	local_irq_restore(flags);
+ out:
+ 	free_fake_cpuc(fake_cpuc);
+ 	return ret;
+-- 
+2.7.4
+
