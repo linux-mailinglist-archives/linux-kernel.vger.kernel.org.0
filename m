@@ -2,272 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C51D313DECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:33:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27ECC13DED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:33:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgAPPcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:32:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53708 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbgAPPcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:32:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A696B6A2E0;
-        Thu, 16 Jan 2020 15:32:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EBF3C1E06F1; Thu, 16 Jan 2020 16:32:06 +0100 (CET)
-Date:   Thu, 16 Jan 2020 16:32:06 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     yu kuai <yukuai3@huawei.com>
-Cc:     hch@infradead.org, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, houtao1@huawei.com,
-        zhengbin13@huawei.com, yi.zhang@huawei.com
-Subject: Re: [RFC] iomap: fix race between readahead and direct write
-Message-ID: <20200116153206.GF8446@quack2.suse.cz>
-References: <20200116063601.39201-1-yukuai3@huawei.com>
+        id S1727043AbgAPPcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:32:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37774 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbgAPPcV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:32:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=btpuE5el854pPVMkucdDwUyA1UK49wikjaZy8pvlJf4=; b=DWw9xsYlMFSmLwJKj2qIrn9uK
+        oqaSMAq8l49S0Y1yqdy71gCjwLrXApec2DDqFP/XWpGQaiMsxx+5o9vzFhzhKWLkb9f9daBUaPkCD
+        E1VG96ftncTg0dzK15FgO+A3YS1cUPwBLa7Uv9btkguS0mNI0bUOturzSNjIrWKzZqnew73TDgFzZ
+        FJczEou0zZNa/u/gYcEJQuAJb4DC7WV76lppOGQu591MyIDyylMMRYNUCgjWLdyhiD5z2Af4Z4T5I
+        lIiZ7VKM3XLI8MJaRop99NMpGNkOBIdS3ue29HA/SmRLDMVXLvnboBe1u7OzXX4+geQKdp+TNpFD3
+        rb6pzU6MQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1is783-0006O7-BT; Thu, 16 Jan 2020 15:32:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3C013302524;
+        Thu, 16 Jan 2020 16:30:35 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C15792B6D7721; Thu, 16 Jan 2020 16:32:12 +0100 (CET)
+Date:   Thu, 16 Jan 2020 16:32:12 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v3 1/8] locking/lockdep: Decrement irq context counters
+ when removing lock chain
+Message-ID: <20200116153212.GS2827@hirez.programming.kicks-ass.net>
+References: <20200115214313.13253-1-longman@redhat.com>
+ <20200115214313.13253-2-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200116063601.39201-1-yukuai3@huawei.com>
+In-Reply-To: <20200115214313.13253-2-longman@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 16-01-20 14:36:01, yu kuai wrote:
-> I noticed that generic/418 test may fail with small probability. And with
-> futher investiation, it can be reproduced with:
+On Wed, Jan 15, 2020 at 04:43:06PM -0500, Waiman Long wrote:
+> There are currently three counters to track the irq context of a lock
+> chain - nr_hardirq_chains, nr_softirq_chains and nr_process_chains.
+> They are incremented when a new lock chain is added, but they are
+> not decremented when a lock chain is removed. That causes some of the
+> statistic counts reported by /proc/lockdep_stats to be incorrect.
 > 
-> ./src/dio-invalidate-cache -wp -b 4096 -n 8 -i 1 -f filename
-> ./src/dio-invalidate-cache -wt -b 4096-n 8 -i 1 -f filename
+> Fix that by decrementing the right counter when a lock chain is removed.
 > 
-> The failure is because direct write wrote none-zero but buffer read got
-> zero.
-> 
-> In the process of buffer read, if the page do not exist, readahead will
-> be triggered.  __do_page_cache_readahead() will allocate page first. Next,
-> if the file block is unwritten(or hole), iomap_begin() will set iomap->type
-> to IOMAP_UNWRITTEN(or IOMAP_HOLE). Then, iomap_readpages_actor() will add
-> page to page cache. Finally, iomap_readpage_actor() will zero the page.
-> 
-> However, there is no lock or serialization between initializing iomap and
-> adding page to page cache against direct write. If direct write happen to
-> fininsh between them, the type of iomap should be IOMAP_MAPPED instead of
-> IOMAP_UNWRITTEN or IOMAP_HOLE. And the page will end up zeroed out in page
-> cache, while on-disk page hold the data of direct write.
-> 
-> | thread 1                    | thread 2                   |
-> | --------------------------  | -------------------------- |
-> | generic_file_buffered_read  |                            |
-> |  ondemand_readahead         |                            |
-> |   read_pages                |                            |
-> |    iomap_readpages          |                            |
-> |     iomap_apply             |                            |
-> |      xfs_read_iomap_begin   |                            |
-> |                             | xfs_file_dio_aio_write     |
-> |                             |  iomap_dio_rw              |
-> |                             |   ioamp_apply              |
-> |     ioamp_readpages_actor   |                            |
-> |      iomap_next_page        |                            |
-> |       add_to_page_cache_lru |                            |
-> |      iomap_readpage_actor   |                            |
-> |       zero_user             |                            |
-> |    iomap_set_range_uptodate |                            |
-> |                             | generic_file_buffered_read |
-> |                             |  copy_page_to_iter        |
-
-Thanks for the report and the patch. But the data integrity when mixing
-buffered and direct IO like this is best effort only. We definitely do not
-want to sacrifice performance of common cases or code complexity to make
-cases like this work reliably.
-
-								Honza
-
-> For consequences, the content in the page is zero while the content in the
-> disk is not.
-> 
-> I tried to fix the problem by moving "add to page cache" before
-> iomap_begin(). However, performance might be worse since iomap_begin()
-> will be called for each page. I tested the performance for sequential
-> read with fio:
-> 
-> kernel version: v5.5-rc6
-> platform: arm64, 96 cpu
-> fio version: fio-3.15-2
-> test cmd:
-> fio -filename=/mnt/testfile -rw=read -bs=4k -size=20g -direct=0 -fsync=0
-> -numjobs=1 / 32 -ioengine=libaio -name=test -ramp_time=10 -runtime=120
-> test result:
-> |                  | without patch MiB/s | with patch MiB/s |
-> | ---------------- | ------------------- | ---------------- |
-> | ssd, numjobs=1   | 512                 | 512              |
-> | ssd, numjobs=32  | 3615                | 3714             |
-> | nvme, numjobs=1  | 1167                | 1118             |
-> | nvme, numjobs=32 | 3679                | 3606             |
-> 
-> Test result shows that the impact on performance is minimal.
-> 
-> Signed-off-by: yu kuai <yukuai3@huawei.com>
+> Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  fs/iomap/buffered-io.c | 104 ++++++++++++++++++++---------------------
->  1 file changed, 52 insertions(+), 52 deletions(-)
+>  kernel/locking/lockdep.c           | 36 +++++++++++++++++++++---------
+>  kernel/locking/lockdep_internals.h |  6 +++++
+>  2 files changed, 32 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 828444e14d09..ccfa1a52d966 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -329,26 +329,44 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
->  	return pos - orig_pos + plen;
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 32282e7112d3..b20fa6236b2a 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -2299,16 +2299,24 @@ static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
+>  	return 0;
 >  }
 >  
-> -int
-> -iomap_readpage(struct page *page, const struct iomap_ops *ops)
-> +static int
-> +do_iomap_readpage_apply(
-> +	loff_t				offset,
-> +	int				flag,
-> +	const struct iomap_ops		*ops,
-> +	struct iomap_readpage_ctx	*ctx,
-> +	iomap_actor_t			actor,
-> +	bool				fatal)
+> -static void inc_chains(void)
+> +static void inc_chains(int irq_context)
 >  {
-> -	struct iomap_readpage_ctx ctx = { .cur_page = page };
-> -	struct inode *inode = page->mapping->host;
-> -	unsigned poff;
-> -	loff_t ret;
-> -
-> -	trace_iomap_readpage(page->mapping->host, 1);
-> +	unsigned int			poff;
-> +	loff_t				ret;
-> +	struct page			*page = ctx->cur_page;
-> +	struct inode			*inode = page->mapping->host;
->  
->  	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
-> -		ret = iomap_apply(inode, page_offset(page) + poff,
-> -				PAGE_SIZE - poff, 0, ops, &ctx,
-> -				iomap_readpage_actor);
-> +		ret = iomap_apply(inode, offset + poff, PAGE_SIZE - poff,
-> +				  flag, ops, ctx, actor);
->  		if (ret <= 0) {
->  			WARN_ON_ONCE(ret == 0);
-> +			if (fatal)
-> +				return ret;
->  			SetPageError(page);
-> -			break;
-> +			return 0;
->  		}
->  	}
-> +	return ret;
+> -	if (current->hardirq_context)
+> +	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
+>  		nr_hardirq_chains++;
+> -	else {
+> -		if (current->softirq_context)
+> -			nr_softirq_chains++;
+> -		else
+> -			nr_process_chains++;
+> -	}
+> +	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
+> +		nr_softirq_chains++;
+> +	else
+> +		nr_process_chains++;
 > +}
 > +
-> +
-> +int
-> +iomap_readpage(struct page *page, const struct iomap_ops *ops)
+> +static void dec_chains(int irq_context)
 > +{
-> +	struct iomap_readpage_ctx ctx = { .cur_page = page };
-> +
-> +	trace_iomap_readpage(page->mapping->host, 1);
-> +
-> +	do_iomap_readpage_apply(page_offset(page), 0, ops, &ctx,
-> +				iomap_readpage_actor, false);
->  
->  	if (ctx.bio) {
->  		submit_bio(ctx.bio);
-> @@ -395,34 +413,6 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
->  	return NULL;
+> +	if (irq_context & LOCK_CHAIN_HARDIRQ_CONTEXT)
+> +		nr_hardirq_chains--;
+> +	else if (irq_context & LOCK_CHAIN_SOFTIRQ_CONTEXT)
+> +		nr_softirq_chains--;
+> +	else
+> +		nr_process_chains--;
 >  }
 >  
-> -static loff_t
-> -iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> -{
-> -	struct iomap_readpage_ctx *ctx = data;
-> -	loff_t done, ret;
-> -
-> -	for (done = 0; done < length; done += ret) {
-> -		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
-> -			if (!ctx->cur_page_in_bio)
-> -				unlock_page(ctx->cur_page);
-> -			put_page(ctx->cur_page);
-> -			ctx->cur_page = NULL;
-> -		}
-> -		if (!ctx->cur_page) {
-> -			ctx->cur_page = iomap_next_page(inode, ctx->pages,
-> -					pos, length, &done);
-> -			if (!ctx->cur_page)
-> -				break;
-> -			ctx->cur_page_in_bio = false;
-> -		}
-> -		ret = iomap_readpage_actor(inode, pos + done, length - done,
-> -				ctx, iomap, srcmap);
-> -	}
-> -
-> -	return done;
-> -}
-> -
->  int
->  iomap_readpages(struct address_space *mapping, struct list_head *pages,
->  		unsigned nr_pages, const struct iomap_ops *ops)
-> @@ -433,22 +423,32 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
->  	};
->  	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
->  	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
-> -	loff_t length = last - pos + PAGE_SIZE, ret = 0;
-> +	loff_t length = last - pos + PAGE_SIZE, ret = 0, done;
->  
->  	trace_iomap_readpages(mapping->host, nr_pages);
->  
-> -	while (length > 0) {
-> -		ret = iomap_apply(mapping->host, pos, length, 0, ops,
-> -				&ctx, iomap_readpages_actor);
-> +	for (done = 0; done < length; done += PAGE_SIZE) {
-> +		if (ctx.cur_page) {
-> +			if (!ctx.cur_page_in_bio)
-> +				unlock_page(ctx.cur_page);
-> +			put_page(ctx.cur_page);
-> +			ctx.cur_page = NULL;
-> +		}
-> +		ctx.cur_page = iomap_next_page(mapping->host, ctx.pages,
-> +					       pos, length, &done);
-> +		if (!ctx.cur_page)
-> +			break;
-> +		ctx.cur_page_in_bio = false;
-> +
-> +		ret = do_iomap_readpage_apply(pos+done, 0, ops, &ctx,
-> +					      iomap_readpage_actor, true);
->  		if (ret <= 0) {
-> -			WARN_ON_ONCE(ret == 0);
-> -			goto done;
-> +			done = ret;
-> +			break;
->  		}
-> -		pos += ret;
-> -		length -= ret;
-> +
->  	}
-> -	ret = 0;
-> -done:
-> +
->  	if (ctx.bio)
->  		submit_bio(ctx.bio);
->  	if (ctx.cur_page) {
-> @@ -461,8 +461,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
->  	 * Check that we didn't lose a page due to the arcance calling
->  	 * conventions..
->  	 */
-> -	WARN_ON_ONCE(!ret && !list_empty(ctx.pages));
-> -	return ret;
-> +	WARN_ON_ONCE((done == length) && !list_empty(ctx.pages));
-> +	return done;
+>  #else
+> @@ -2324,6 +2332,10 @@ static inline void inc_chains(void)
+>  	nr_process_chains++;
 >  }
->  EXPORT_SYMBOL_GPL(iomap_readpages);
 >  
-> -- 
-> 2.17.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +static void dec_chains(int irq_context)
+> +{
+> +	nr_process_chains--;
+> +}
+>  #endif /* CONFIG_TRACE_IRQFLAGS */
+>  
+
+Is there really need for two versions of those functions? Would the
+@irq_context argument not always be 0 in the CONFIG_TRACE_IRQFLAGS=n
+case?
