@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A2F13FDA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8FF13FDA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390202AbgAPX1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:27:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59544 "EHLO mail.kernel.org"
+        id S2390163AbgAPX13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:27:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390267AbgAPX1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:35 -0500
+        id S1730992AbgAPX1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:27:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A066B2072E;
-        Thu, 16 Jan 2020 23:27:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3544120684;
+        Thu, 16 Jan 2020 23:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217255;
-        bh=2slIPSeN0K9COdPi9pHFU+IzZRcSjCu1x7KhCyX6gMQ=;
+        s=default; t=1579217233;
+        bh=p9B0uT2oHpZTVWWgC2Fc08MdyScnRBmnaT96Qf13I7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l418/EnECoOQeNJBryjRavVU3r8TUpZWpS7NX1F9LjZ/Zru4611wzNJGYoScEepWW
-         33ZPLt8TNFFwS5Uw4z608/+OPj0FwhKuAGPPHPMGUf2qSmfnOiX1F4YG1eNF3ARB5Q
-         C8l1piM8eRwhoMjstcWwQTbdF3yVIF3mEZZfku+w=
+        b=SNftGDSOOH5oKt6mQxaZC563AsXI2ssYZzxY+c2Je9GoxuLXT+wcHVNFL/RS2aeYX
+         DJvb8vMTS5q1I0Slm3G3m7kWTIukZv+WTxIJjAzAtyNzEs575Pygj9r5D5aRzXKxdN
+         xLnR6lcYz8mMDWa1Fuj/CaKD3DVSHLqy0dNhXpX4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 183/203] scsi: target/iblock: Fix protection error with blocks greater than 512B
-Date:   Fri, 17 Jan 2020 00:18:20 +0100
-Message-Id: <20200116231800.360412824@linuxfoundation.org>
+Subject: [PATCH 5.4 185/203] rseq/selftests: Turn off timeout setting
+Date:   Fri, 17 Jan 2020 00:18:22 +0100
+Message-Id: <20200116231800.506910692@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -46,50 +51,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-[ Upstream commit e4dc9a4c31fe10d1751c542702afc85be8a5c56a ]
+[ Upstream commit af9cb29c5488381083b0b5ccdfb3cd931063384a ]
 
-The sector size of the block layer is 512 bytes, but integrity interval
-size might be different (in case of 4K block size of the media). At the
-initiator side the virtual start sector is the one that was originally
-submitted by the block layer (512 bytes) for the Reftag usage. The
-initiator converts the Reftag to integrity interval units and sends it to
-the target. So the target virtual start sector should be calculated at
-integrity interval units. prepare_fn() and complete_fn() don't remap
-correctly the Reftag when using incorrect units of the virtual start
-sector, which leads to the following protection error at the device:
+As the rseq selftests can run for a long period of time, disable the
+timeout that the general selftests have.
 
-"blk_update_request: protection error, dev sdb, sector 2048 op 0x0:(READ)
-flags 0x10000 phys_seg 1 prio class 0"
-
-To fix that, set the seed in integrity interval units.
-
-Link: https://lore.kernel.org/r/1576078562-15240-1-git-send-email-israelr@mellanox.com
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_iblock.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/rseq/settings | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 tools/testing/selftests/rseq/settings
 
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index 6949ea8bc387..51ffd5c002de 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -646,7 +646,9 @@ iblock_alloc_bip(struct se_cmd *cmd, struct bio *bio,
- 	}
- 
- 	bip->bip_iter.bi_size = bio_integrity_bytes(bi, bio_sectors(bio));
--	bip_set_seed(bip, bio->bi_iter.bi_sector);
-+	/* virtual start sector must be in integrity interval units */
-+	bip_set_seed(bip, bio->bi_iter.bi_sector >>
-+				  (bi->interval_exp - SECTOR_SHIFT));
- 
- 	pr_debug("IBLOCK BIP Size: %u Sector: %llu\n", bip->bip_iter.bi_size,
- 		 (unsigned long long)bip->bip_iter.bi_sector);
+diff --git a/tools/testing/selftests/rseq/settings b/tools/testing/selftests/rseq/settings
+new file mode 100644
+index 000000000000..e7b9417537fb
+--- /dev/null
++++ b/tools/testing/selftests/rseq/settings
+@@ -0,0 +1 @@
++timeout=0
 -- 
 2.20.1
 
