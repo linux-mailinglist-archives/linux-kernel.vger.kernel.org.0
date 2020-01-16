@@ -2,52 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C32C13DBDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:30:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA00B13DBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbgAPNab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 08:30:31 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:40984 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbgAPNaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:30:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=g1qwtKIRjlBajTodzOst5ddyTTUcuYWbTRPXsMESids=; b=2ECly9xqL7ZjMne7Gw+M+ysy1d
-        /7HZ35Le8voRmEzt+T0tpSwyIwWvia+UREroW3r0qd9euHylc6hvW07tf9i1WAnOMBjG9az1NP8+h
-        jAUuZ5HNpRekdP7lp0ZyAEqbepMWpqGADpnWeBI124VKpmHIdwcsCWDO7eOGAMs9OOrg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1is5EA-00054x-2R; Thu, 16 Jan 2020 14:30:26 +0100
-Date:   Thu, 16 Jan 2020 14:30:26 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        f.fainelli@gmail.com, hkallweit1@gmail.com
-Subject: Re: [PATCH 1/4] net: phy: adin: const-ify static data
-Message-ID: <20200116133026.GB19046@lunn.ch>
-References: <20200116091454.16032-1-alexandru.ardelean@analog.com>
- <20200116091454.16032-2-alexandru.ardelean@analog.com>
+        id S1729081AbgAPNah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 08:30:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34367 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729019AbgAPNag (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 08:30:36 -0500
+Received: by mail-wm1-f65.google.com with SMTP id w5so7168065wmi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 05:30:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=00a+Q4mRpgzQBV1cPIKAh4zjIphnbswAUhTHY9znNH4=;
+        b=iTCAlZeCQ7uKek41RyttwGtPeyePxTcuNs5Lg0PW4h0I/E3sHCuQ94y++nt1VdUqtr
+         2A+KBexpEoP+z1CQEQ8I65w9PYBtwYTj7YGiA28ER3HXaGy0pTUrHLwkPzhX996SQOTt
+         UV2nj6IgmrOdrpoFy+US97/zmPbjPyXPcHpMjqJ0/FwdN+Br46B3MD5wQJGOYksSPGut
+         aaVkSK4Q9h3v5mNDvmihWCZhX17PRkiKLcQ7hR7JccTInRCTcU5JK0MahEbXYKdF+zhz
+         9D8o3HVIO1rxG/wFPvHVy1E2DdUmAc+Ws1RYc+Uyk8ZNqklrwOcgAWyTEJ1cRtPV//m/
+         /nKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=00a+Q4mRpgzQBV1cPIKAh4zjIphnbswAUhTHY9znNH4=;
+        b=E6SjIBPa80nqLN6CqzD4/+wX65DPb+RHr5ZHld9usS8XJRwd5h6uYZe1nAiF+vHkEz
+         lQm7YBjO2uuNqsDQYVEhaVy04EzgG9b9YimmtN5Hs8YrAf+Tm93n7FBatpas2joif2Kc
+         bwbJl1uNrdjQrCjU77GUmqzYgLYiH/O6PRlo+jCjOnn86Xh2ZvQePo18y7JWThWQHZbp
+         Uoly3fZvA0+lq4KAk0Etd67KKPNoisg6WKJ6CUP5pgV5YIgkVh4UOZZYpMnWixMBWwiH
+         MjVv2EwTiK/WCDDH54WLbhYNBzEID0Dv+QvEu8bxtGNCAMtGc4QA4SpP4I001wUULoBJ
+         Pc3Q==
+X-Gm-Message-State: APjAAAV01mjWPVCvbioCT83+pxd0WfAmzQUYhz9ey12zM49eoTbA8h/0
+        9rOEbMq8UOAEQ+dTMawPcZr7lQ==
+X-Google-Smtp-Source: APXvYqyqW5SAwtM3InQeq3J80Yv0ePNzerEYYhqvdq4g+a9Hcq6N6diGySL/l1tecHCD81O0kGt8WA==
+X-Received: by 2002:a1c:7d92:: with SMTP id y140mr5740908wmc.145.1579181434697;
+        Thu, 16 Jan 2020 05:30:34 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id o4sm28987915wrw.97.2020.01.16.05.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 05:30:33 -0800 (PST)
+Date:   Thu, 16 Jan 2020 13:30:48 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, radu_nicolae.pirea@upb.ro,
+        richard.genoud@gmail.com, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: atmel-tcb: remove wildcard
+Message-ID: <20200116133048.GO325@dell>
+References: <1578997397-23165-1-git-send-email-claudiu.beznea@microchip.com>
+ <1578997397-23165-2-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200116091454.16032-2-alexandru.ardelean@analog.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1578997397-23165-2-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:14:51AM +0200, Alexandru Ardelean wrote:
-> Some bits of static data should have been made const from the start.
-> This change adds the const qualifier where appropriate.
+On Tue, 14 Jan 2020, Claudiu Beznea wrote:
+
+> Remove wildcard and use the available compatibles.
 > 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/atmel-tcb.txt | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-    Andrew
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
