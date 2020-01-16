@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157C113FDAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD3713FD9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390374AbgAPX14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:27:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60106 "EHLO mail.kernel.org"
+        id S2388673AbgAPXZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:25:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389683AbgAPX1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:52 -0500
+        id S1733020AbgAPXZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:25:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A611A206D9;
-        Thu, 16 Jan 2020 23:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE5BC2072B;
+        Thu, 16 Jan 2020 23:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217272;
-        bh=JoBAKm2P5KYRaZHWujHHUbJl6+7uf7Ch3XDLnH4jh+4=;
+        s=default; t=1579217115;
+        bh=nihXBOFluQniosqvBT9Ave0NS8Z6fso164nYyKINBoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqX+SHcjL0tKvM3UYLcofCvRTMGi98szLhMlBbBx6laqFaykFhZKejQKA/itG5LmZ
-         /7HVpgRj/ippCzIGV13IDMDN3cFnStiWoiGEwDNjd8nbrtTpqVHYmlVM/u0Ll7/jU4
-         xKGub3kfF+wwhR8kX7Z67Z6770SIVa6HhApXwWkY=
+        b=PbJ9JiAyFx6K0kBqel2Q/n5vFMhD0lil5PijPU4boqif99pLLn6sDZicfmWreSyMy
+         ISrLoRGfFsKv689kvH9NbaYgvzsWLr3pupgRjgv7wwtq6UHyYXntBfeA09/bwTei8s
+         ojjRMhYCJjLbhzg1qTct6+bVA6jFWqpjzb0r0UKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.19 15/84] dccp: Fix memleak in __feat_register_sp
-Date:   Fri, 17 Jan 2020 00:17:49 +0100
-Message-Id: <20200116231715.417447306@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 5.4 154/203] media: coda: fix deadlock between decoder picture run and start command
+Date:   Fri, 17 Jan 2020 00:17:51 +0100
+Message-Id: <20200116231758.296412614@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
 
-commit 1d3ff0950e2b40dc861b1739029649d03f591820 upstream.
+commit a3fd80198de6ab98a205cf7fb148d88e9e1c44bb upstream.
 
-If dccp_feat_push_change fails, we forget free the mem
-which is alloced by kmemdup in dccp_feat_clone_sp_val.
+The BIT decoder picture run temporarily locks the bitstream mutex while
+the coda device mutex is locked, to refill the bitstream ring buffer.
+Consequently, the decoder start command, which locks both mutexes when
+flushing the bitstream ring buffer, must lock the coda device mutex
+first as well, to avoid an ABBA deadlock.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e8ef967a54f4 ("dccp: Registration routines for changing feature values")
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: e7fd95849b3c ("media: coda: flush bitstream ring buffer on decoder restart")
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dccp/feat.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/dccp/feat.c
-+++ b/net/dccp/feat.c
-@@ -738,7 +738,12 @@ static int __feat_register_sp(struct lis
- 	if (dccp_feat_clone_sp_val(&fval, sp_val, sp_len))
- 		return -ENOMEM;
+---
+ drivers/media/platform/coda/coda-common.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -1084,16 +1084,16 @@ static int coda_decoder_cmd(struct file
  
--	return dccp_feat_push_change(fn, feat, is_local, mandatory, &fval);
-+	if (dccp_feat_push_change(fn, feat, is_local, mandatory, &fval)) {
-+		kfree(fval.sp.vec);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
- }
- 
- /**
+ 	switch (dc->cmd) {
+ 	case V4L2_DEC_CMD_START:
+-		mutex_lock(&ctx->bitstream_mutex);
+ 		mutex_lock(&dev->coda_mutex);
++		mutex_lock(&ctx->bitstream_mutex);
+ 		coda_bitstream_flush(ctx);
+-		mutex_unlock(&dev->coda_mutex);
+ 		dst_vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
+ 					 V4L2_BUF_TYPE_VIDEO_CAPTURE);
+ 		vb2_clear_last_buffer_dequeued(dst_vq);
+ 		ctx->bit_stream_param &= ~CODA_BIT_STREAM_END_FLAG;
+ 		coda_fill_bitstream(ctx, NULL);
+ 		mutex_unlock(&ctx->bitstream_mutex);
++		mutex_unlock(&dev->coda_mutex);
+ 		break;
+ 	case V4L2_DEC_CMD_STOP:
+ 		stream_end = false;
 
 
