@@ -2,166 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C07D13D97B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADB9513D981
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:01:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbgAPMBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:01:01 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37789 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgAPMBA (ORCPT
+        id S1726884AbgAPMB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:01:26 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46149 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbgAPMBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:01:00 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f129so3513078wmf.2;
-        Thu, 16 Jan 2020 04:00:58 -0800 (PST)
+        Thu, 16 Jan 2020 07:01:25 -0500
+Received: by mail-ua1-f66.google.com with SMTP id l6so7528862uap.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 04:01:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K45x8SHvjhN/SqzbB8kaaG/ZwA6tE8xnF2TMFaLqgWo=;
-        b=qCzhhL1fyhuF4uJ30kAHFGAgukb2dvuIkZZpSFnV9Bvopy1uHd2JmGaTH/DeCT9jyv
-         zEUV7VfHwdLK6lkcDTsPPilyk7vBAk66Hv5ZqEtNm5rvhSmQFJNwXylpl/1Bzs0Imv54
-         Rql4Hhs2Qoq6nyXXVoyhzL+DHoBZKRWba01HL4UK/mcUTyOescWybJpHAQgDx/pXVWSy
-         sJYb4yzMCfKhh+CdyHvrc37xdZ2akspJyGCpvLnT7IdhY/SV04oZpEBReXF04SJJVP6x
-         J28UY9KUlAdKPgt5lH0M4MEw2dkG7DX7hH3Y0T5ZXy89bOP8Cr4xXFmOEGzUCW/onAH+
-         sjIQ==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=0I+PreediRVMEWgWGPoXFPj3GLqhFhozrkL+77ZQpRU=;
+        b=gqsNeMXibvD5pjGv+eufAr9mZXSTPrGaBu4g5jxfECy3ZUkebpMyurVJKBzZ243OkS
+         uA83Y2MknX+rVgNwclTRwlSo+Q+pag+0972ylL77pEp2+BtZZSVYmIwsu/YviQ5Fwn2W
+         GwRsVl5j7rkZJp6Z0v9+/kaMGDEQHJtamMKrs7usWqSZP5BPE9N6nxjKvCe/n/x5F8KY
+         C0YI9KpE1ZDF8x1kK/3AtShRp2yfxFAeCk7r/Uu09Yv3O7zywhHrky42g6ZTtnu1VbYx
+         6wAFIRojVwk+QW9LjfIA/5iKn2rQwMnzT0YQ8eTiT0n3Zcu7Is8BzGA5UmGmb4EiZSpZ
+         UbPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K45x8SHvjhN/SqzbB8kaaG/ZwA6tE8xnF2TMFaLqgWo=;
-        b=IL5RZwnGKf5k5RqpSNUUj6fwEXdi3p/8leqEZtlTIYw5L/yKdUhCNaWXlF+NdiknrQ
-         3qqkeLcJSAt42pKIJwpGoSoQKsDMDToxuNJLDiUcXl3xxZ8HYIr1aaQkFPeZkffDo4zB
-         SGhZKljaYP2ucbidq7Zz1OJL50c0QsWZlM9aEYhjJKNKeij5OwcQ++GJcb8teYBNYPXs
-         INBjiSzCO41wD1iP2qTyNWOciFD1oMgPj6GBaWjJr1lUW9Tj2NRDkA9moREkxCeXPZCl
-         q7jhY2pZSYrq3DRJ85SR1is8lSfCqrxmlep8+xTUR2ro2Z3aIBSkJed7f5EGG9Nb8UzD
-         3djg==
-X-Gm-Message-State: APjAAAWKaNL9NS927ThJUawuLg/CbnUfFv/YDXnEUBvxSJIEGizrQCAo
-        3sc1ZuJbzWKEXosCmEMufbs=
-X-Google-Smtp-Source: APXvYqxSG6XX0qeAUXiXclajDgAqCIR4Vw2T5QnvgyIxq5EiuPtxzO1/xghNLthqCFKePTImdZDOOg==
-X-Received: by 2002:a7b:cb86:: with SMTP id m6mr5686130wmi.51.1579176057805;
-        Thu, 16 Jan 2020 04:00:57 -0800 (PST)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id n8sm28902799wrx.42.2020.01.16.04.00.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 04:00:57 -0800 (PST)
-Subject: Re: [RFC PATCH v1 2/3] dt-bindings: mmc: convert synopsys dw-mshc
- bindings to yaml
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-References: <20200114213809.27166-1-jbx6244@gmail.com>
- <20200114213809.27166-2-jbx6244@gmail.com>
- <CAL_JsqJ0QJ9uG9NY7vMGG00G4Jfk2mXS4OPdUzEaRVaCP++GzQ@mail.gmail.com>
-From:   Johan Jonker <jbx6244@gmail.com>
-Message-ID: <203e9217-9aa8-b65e-4411-2d9b23c1362a@gmail.com>
-Date:   Thu, 16 Jan 2020 13:00:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=0I+PreediRVMEWgWGPoXFPj3GLqhFhozrkL+77ZQpRU=;
+        b=LMa9ORpd9/DkvohsvPQk9eCKvF63onf770P9PU/aKuUGe5maPz7KeY2vt7h5ufhK8/
+         i5rtQJPGsf/FdskIh6PDVKVCP3M0f+gYzhg/qzNY/V8dSYllKQWNKTwEVvUVRobi3IL2
+         fQg1XGfLWP46+zkDKVpxMaaNtwlfDsZ2aBfCwBG9ALXFdp2z+PKfUTlL2N+fsHuhMFhZ
+         mtff45euLkgEEWaJVrTik7MMSsnH486zygG4JiaG9n1kEh/pPxcieT3XMfa6vk52YzZi
+         KcVzbXqQuLwIr/H4m2QAhmuldC+gKC8Kq5ARGeiCibr1pQ6T+m30eJOo4JfBbAgzfayy
+         Cnbw==
+X-Gm-Message-State: APjAAAWNUzt5b+sKocgW3yhjZxRlV6hbZbY0Zz9zHiLNorFuFVfFtEY4
+        +XOJA+6xeVhFVlGDRKeN3pfSIfytW6OhaZqKbAw=
+X-Google-Smtp-Source: APXvYqwzd/2VRVcdwTDqkBKGvAYxtCJGuE/jgPQ/S45lBHGmusaGccyZMI91viUdgk9/AusK/HlUoj7H5NFWr6ROIdE=
+X-Received: by 2002:ab0:7411:: with SMTP id r17mr17777951uap.31.1579176083996;
+ Thu, 16 Jan 2020 04:01:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ0QJ9uG9NY7vMGG00G4Jfk2mXS4OPdUzEaRVaCP++GzQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: sebastient766@gmail.com
+Received: by 2002:a67:e2c1:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 04:01:23
+ -0800 (PST)
+From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
+Date:   Thu, 16 Jan 2020 04:01:23 -0800
+X-Google-Sender-Auth: B8Vr8IFc8qoQgViWAO9xkC2_nXc
+Message-ID: <CAKsTvF5Q0zF23oJE8TuGayDd+PnTNQQgtt_QCAcahbwp+9YR3w@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-See below.
+FROM MR.S=C3=89BASTIEN TONI
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA
 
-On 1/15/20 4:18 PM, Rob Herring wrote:
-> On Tue, Jan 14, 2020 at 3:38 PM Johan Jonker <jbx6244@gmail.com> wrote:
->>
+Dear Friend,
 
-> [...]
-> 
->> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
->> new file mode 100644
->> index 000000000..6f85a21d0
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml
->> @@ -0,0 +1,88 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Synopsys Designware Mobile Storage Host Controller Binding
+With due respect, I have decided to contact you on
+transubstantiation  that will be beneficial to both of us. At the
+bank last account and  auditing evaluation, my staffs came across an
+old account which was being maintained by a foreign client who we
+learn was among the deceased passengers of motor accident on
+November.2003, the deceased was unable to run this account since his
+death. Theaccount has  remained dormant without the knowledge of his
+family since it was put in a  safe deposit account in the bank for
+future investment by the client.
 
-[..]
-
->> +examples:
->> +  # The MSHC controller node can be split into two portions, SoC specific and
->> +  # board specific portions as listed below.
-> 
+Since his demise, even the members of his family haven't applied for
+claims  over this fund and it has been in the safe deposit account
+until I  discovered that it cannot be claimed since our client
+isaforeign nationaland we are sure that he has no next of kin here to
+file claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to bedone. I
+decided to seek ways through which to transfer this money out of the
+bank  and out of the country too.
 
 
-> This split doesn't work because the examples are built and validated
-> now. It may happen to because all the props are optional, but the
-> board hunk goes unchecked. So please combine.
-> 
+The total amount in the account is 18.6 million with my positions as
+staffs  of the bank, I am handicapped because I cannot operate foreign
+accounts and  cannot lay debonair claim over this money. The client
+was a foreign  national and you will only be asked to act as his next
+of kin and I will  supply you with all the necessary information and
+bank data to assist you in being able to transfer this money to any
+bank of your  choice where this money could be transferred into.The
+total sum will be shared as follows: 50% for me, 50% for you and
+expenses incidental occur  during the transfer will be incur by both
+of us. The transfer is risk free on both sides hence you are going to
+follow my instruction till the fund  transfer to your account. Since I
+work in this bank that is why you should  be confident in the success
+of this transaction because you will be updated with information as at
+when desired.
 
-Hi,
+I will wish you to keep this transaction secret and confidential as I
+am  hoping to retire with my share of this money at the end of
+transaction  which will be when this money is safety in your account.
+I will then come over to your country for sharing according to the
+previously agreed percentages. You might even have to advise me on
+possibilities of investment in your country or elsewhere of our
+choice. May  God help you to help me to a restive retirement, Amen,And
+You have to  contact me through my private e-mail
+at(sebastient766@gmail.com)Please for further information and inquires
+feel free to contact me back immediately for more explanation and
+better  understanding I want you to assure me your capability of
+handling this  project with trust by providing me your following
+information details such as:
 
-I have no knowledge about this particular hardware to give a realistic
-example. Could someone advise here? Or should I just use the first
-example for now?
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:.....................
+(6)YOUR COUNTRY:.....................
 
-Thanks
-
->> +  - |
->> +    dwmmc0@12200000 {
->> +      compatible = "snps,dw-mshc";
->> +      clocks = <&clock 351>, <&clock 132>;
->> +      clock-names = "biu", "ciu";
->> +      reg = <0x12200000 0x1000>;
->> +      interrupts = <0 75 0>;
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +      data-addr = <0x200>;
->> +      fifo-watermark-aligned;
->> +      resets = <&rst 20>;
->> +      reset-names = "reset";
->> +    };
->> +  # [board specific internal DMA resources]
->> +  - |
->> +    dwmmc0@12200000 {
->> +      clock-frequency = <400000000>;
->> +      clock-freq-min-max = <400000 200000000>;
->> +      broken-cd;
->> +      fifo-depth = <0x80>;
->> +      card-detect-delay = <200>;
->> +      vmmc-supply = <&buck8>;
->> +      bus-width = <8>;
->> +      cap-mmc-highspeed;
->> +      cap-sd-highspeed;
->> +    };
->> +  # [board specific generic DMA request binding]
->> +  - |
->> +    dwmmc0@12200000 {
->> +      clock-frequency = <400000000>;
->> +      clock-freq-min-max = <400000 200000000>;
->> +      broken-cd;
->> +      fifo-depth = <0x80>;
->> +      card-detect-delay = <200>;
->> +      vmmc-supply = <&buck8>;
->> +      bus-width = <8>;
->> +      cap-mmc-highspeed;
->> +      cap-sd-highspeed;
->> +      dmas = <&pdma 12>;
->> +      dma-names = "rx-tx";
->> +    };
->> --
->> 2.11.0
->>
-
+Yours sincerely,
+Mr.S=C3=A9bastien Toni
