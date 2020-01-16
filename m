@@ -2,76 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A955913FCD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E46C13FD86
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:27:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389827AbgAPXS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:18:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38982 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729351AbgAPXS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:18:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 77so21015769oty.6;
-        Thu, 16 Jan 2020 15:18:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=9EAHGBuNSiTZ5l+4zkY1z64r39UtR5n6bdLL5+4kKYw=;
-        b=b+jUIvN1fqe2yQJwN17tm5K0bnCqpeKpHEZDNXmoHmjsv9r37u4aySrAV/wv3DZbEM
-         k08SjMNPSN35gUQ5uS5vbXgwyNpELMmjvOdWCi94jpFhh6RVp4YxD5pNAAJRWsqC749Z
-         4ohQTOxvL6cqTdv64SEBY3evPYWmFvJiT+zpJFG7StueOVAF7w5tWRR6w+92nTNIcBgm
-         9NXQOtGx8hkraHvyb8dyQ9p8/xe1OelU8427903oLzI04+SD+bvR4cmQpLALkogrC8C0
-         BGMOdvgRZOOweTqDHXbDHnsd4w8ZNAs3omCeckUnt6eoKC3fj8FgSg/e6QfZ0liGV4Cb
-         HHAw==
-X-Gm-Message-State: APjAAAWqPFCo7dBuQFTILnZPnpC42hulTz1vuSuk3mmiM96FaqpgrHwl
-        nooz4NeHNR+Z7s9Jo6dn6emE0Y5KFrf9MWK5gOsC96y5
-X-Google-Smtp-Source: APXvYqwUZi+VXujTD0dJq+O3DBa1rtWtuoNRma2EaFrjX1F544jKaMnrJ4XSyslqHMl0UHvJxJbc4yTEuKlc5uInp7I=
-X-Received: by 2002:a05:6830:1e67:: with SMTP id m7mr4139324otr.262.1579216706411;
- Thu, 16 Jan 2020 15:18:26 -0800 (PST)
+        id S1732879AbgAPX0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:26:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388801AbgAPX0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:18 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D67F820684;
+        Thu, 16 Jan 2020 23:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579217178;
+        bh=A6436PZoUeMYCaPwbbuffN8Sf6L/qwVP+r2XQSU7Uwg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=C4BZmuHvgubTJEIK05NTPiB41uRpzBqeKR/LqvDV8uzKDFhR86RI/M55Ygn1Of2v/
+         54btpxESy2WfITZ1JBkFoK5Ykq6zLT0sWyS4gTjcbXp7AVViwaRRaQ+EtiUykQc/M5
+         +p5aKVX2W8Q7N85p6SirLRUV/iB8l5lR8F0dVWyY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 5.4 179/203] rtc: brcmstb-waketimer: add missed clk_disable_unprepare
+Date:   Fri, 17 Jan 2020 00:18:16 +0100
+Message-Id: <20200116231800.071360519@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 17 Jan 2020 00:18:15 +0100
-Message-ID: <CAJZ5v0gx+Om02PH6t74R0d2F_sPZwncOSMWrhA0Yx77=xdpCyA@mail.gmail.com>
-Subject: [GIT PULL] Power management fix for v5.5-rc7
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Chuhong Yuan <hslester96@gmail.com>
 
-Please pull from the tag
+commit 94303f8930ed78aea0f189b703c9d79fff9555d7 upstream.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-5.5-rc7
+This driver forgets to disable and unprepare clock when remove.
+Add a call to clk_disable_unprepare to fix it.
 
-with top-most commit 57388a2ccb6c2f554fee39772886c69b796dde53
+Fixes: c4f07ecee22e ("rtc: brcmstb-waketimer: Add Broadcom STB wake-timer")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Link: https://lore.kernel.org/r/20191105160043.20018-1-hslester96@gmail.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
- cpuidle: teo: Fix intervals[] array indexing bug
+---
+ drivers/rtc/rtc-brcmstb-waketimer.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-on top of commit b3a987b0264d3ddbb24293ebff10eddfc472f653
+--- a/drivers/rtc/rtc-brcmstb-waketimer.c
++++ b/drivers/rtc/rtc-brcmstb-waketimer.c
+@@ -277,6 +277,7 @@ static int brcmstb_waketmr_remove(struct
+ 	struct brcmstb_waketmr *timer = dev_get_drvdata(&pdev->dev);
+ 
+ 	unregister_reboot_notifier(&timer->reboot_notifier);
++	clk_disable_unprepare(timer->clk);
+ 
+ 	return 0;
+ }
 
- Linux 5.5-rc6
 
-to receive a power management fix for 5.5-rc7.
-
-This fixes a coding mistake in the teo cpuidle governor causing data
-to be written beyond the last array element (Ikjoon Jang).
-
-Thanks!
-
-
----------------
-
-Ikjoon Jang (1):
-      cpuidle: teo: Fix intervals[] array indexing bug
-
----------------
-
- drivers/cpuidle/governors/teo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
