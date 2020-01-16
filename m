@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0BE13E414
+	by mail.lfdr.de (Postfix) with ESMTP id 88CAC13E415
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388808AbgAPRF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:05:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34882 "EHLO mail.kernel.org"
+        id S2388816AbgAPRF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:05:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388684AbgAPRFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:43 -0500
+        id S2388782AbgAPRFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:05:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89FDF2077B;
-        Thu, 16 Jan 2020 17:05:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E122192A;
+        Thu, 16 Jan 2020 17:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194342;
-        bh=xybzNEW3gagGYev3jsj1LC82FcimqtoXS0anepIdcYE=;
+        s=default; t=1579194350;
+        bh=O1gW2xHsT7KaiHvrJKm6nT3L0TVBbK/KXOUm2+acMbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HewKpN7KRq4Qbjd1xle3+98nQcRAMDVp632EIn9fSghPr0/hue6vi7/Xhw/2LhRxp
-         Ml+2mBFB+BGaIgU9zZd+Xw3oqgYn+jqImcmqSznkPh/FxGCWpq1bSRVQYa1rtdnSYQ
-         ZxqpyROlJBfCsqzmsGbxFXnMnWBdAP/mL6PJaEkI=
+        b=B3GwyvOAj9UNB4FflPr+LajT6Wo4n8p+8WbBk3bznxObKNARx7pA7Y3tYKJtjEo6g
+         SU2NwpTbJvx0nDOvJuWT+6mNjvzGQ5t9UG3585jK1I0npTqTJKMtKrwCSh1gcWR2ZW
+         feq2FL3pi0Uhp/cP4QRmTvyAC17X9hTXf/UM8lh0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 285/671] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
-Date:   Thu, 16 Jan 2020 11:58:43 -0500
-Message-Id: <20200116170509.12787-22-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 290/671] brcmfmac: fix leak of mypkt on error return path
+Date:   Thu, 16 Jan 2020 11:58:48 -0500
+Message-Id: <20200116170509.12787-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,40 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Gonzalez <marc.w.gonzalez@free.fr>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit c0ee0e43c049a13d11e913edf875e4ee376dc84b ]
+[ Upstream commit a927e8d8ab57e696800e20cf09a72b7dfe3bbebb ]
 
-See similar issue solved by commit 5f2420ed2189
-("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
+Currently if the call to brcmf_sdiod_set_backplane_window fails then
+error return path leaks mypkt. Fix this by returning by a new
+error path labelled 'out' that calls brcmu_pkt_buf_free_skb to free
+mypkt.  Also remove redundant check on err before calling
+brcmf_sdiod_skbuff_write.
 
-Without this patch, PCIe PHY init fails:
-
-qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
-phy phy-1c06000.phy.0: phy init failed --> -16
-
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Fixes: b5f5f525c547 ("clk: qcom: Add MSM8998 Global Clock Control (GCC) driver")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Addresses-Coverity: ("Resource Leak")
+Fixes: a7c3aa1509e2 ("brcmfmac: Remove brcmf_sdiod_addrprep()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8998.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 4e23973b6cd1..772a08101ddf 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2144,7 +2144,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+index d2f788d88668..710dc59c5d34 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+@@ -617,15 +617,13 @@ int brcmf_sdiod_send_buf(struct brcmf_sdio_dev *sdiodev, u8 *buf, uint nbytes)
  
- static struct clk_branch gcc_pcie_0_pipe_clk = {
- 	.halt_reg = 0x6b018,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x6b018,
- 		.enable_mask = BIT(0),
+ 	err = brcmf_sdiod_set_backplane_window(sdiodev, addr);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	addr &= SBSDIO_SB_OFT_ADDR_MASK;
+ 	addr |= SBSDIO_SB_ACCESS_2_4B_FLAG;
+ 
+-	if (!err)
+-		err = brcmf_sdiod_skbuff_write(sdiodev, sdiodev->func2, addr,
+-					       mypkt);
+-
++	err = brcmf_sdiod_skbuff_write(sdiodev, sdiodev->func2, addr, mypkt);
++out:
+ 	brcmu_pkt_buf_free_skb(mypkt);
+ 
+ 	return err;
 -- 
 2.20.1
 
