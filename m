@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4CA13FB93
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E02D13FB98
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389330AbgAPVbv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:31:51 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53553 "EHLO
+        id S2389420AbgAPVcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:32:05 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53539 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388956AbgAPVbI (ORCPT
+        with ESMTP id S2388928AbgAPVbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:31:08 -0500
+        Thu, 16 Jan 2020 16:31:06 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isCjE-0001Vu-6T; Thu, 16 Jan 2020 22:31:00 +0100
+        id 1isCjE-0001Vx-BV; Thu, 16 Jan 2020 22:31:00 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A81821C198B;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EC5121C198C;
         Thu, 16 Jan 2020 22:30:59 +0100 (CET)
 Date:   Thu, 16 Jan 2020 21:30:59 -0000
-From:   "tip-bot2 for Claudiu Beznea" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Krzysztof Kozlowski" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/timer-microchip-pit64b: Fix
- sparse warning
-Cc:     kbuild test robot <lkp@intel.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+Subject: [tip: timers/core] clocksource/drivers/exynos_mct: Rename Exynos to lowercase
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <20200104152107.11407-12-krzk@kernel.org>
+References: <20200104152107.11407-12-krzk@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157921025951.396.5929727901438281211.tip-bot2@tip-bot2>
+Message-ID: <157921025976.396.18086306162133727374.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,45 +47,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     b9c60a741f06eda56d12c7216accb317b74266b4
-Gitweb:        https://git.kernel.org/tip/b9c60a741f06eda56d12c7216accb317b74266b4
-Author:        Claudiu Beznea <claudiu.beznea@microchip.com>
-AuthorDate:    Mon, 06 Jan 2020 11:58:08 +02:00
+Commit-ID:     4ad35346da9cb99c02a4c5e99633c36f8f344be0
+Gitweb:        https://git.kernel.org/tip/4ad35346da9cb99c02a4c5e99633c36f8f344be0
+Author:        Krzysztof Kozlowski <krzk@kernel.org>
+AuthorDate:    Sat, 04 Jan 2020 16:20:58 +01:00
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
 CommitterDate: Thu, 16 Jan 2020 19:09:02 +01:00
 
-clocksource/drivers/timer-microchip-pit64b: Fix sparse warning
+clocksource/drivers/exynos_mct: Rename Exynos to lowercase
 
-Fix sparse warning:
-"warning: Using plain integer as NULL pointer"
+Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+name.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+"EXYNOS" is not an abbreviation but a regular trademarked name.
+Therefore it should be written with lowercase letters starting with
+capital letter.
+
+The lowercase "Exynos" name is promoted by its manufacturer Samsung
+Electronics Co., Ltd., in advertisement materials and on website.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1578304688-14882-1-git-send-email-claudiu.beznea@microchip.com
+Link: https://lore.kernel.org/r/20200104152107.11407-12-krzk@kernel.org
 ---
- drivers/clocksource/timer-microchip-pit64b.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-microchip-pit64b.c b/drivers/clocksource/timer-microchip-pit64b.c
-index 27a389a..bd63d34 100644
---- a/drivers/clocksource/timer-microchip-pit64b.c
-+++ b/drivers/clocksource/timer-microchip-pit64b.c
-@@ -248,6 +248,8 @@ static int __init mchp_pit64b_init_mode(struct mchp_pit64b_timer *timer,
- 	if (!pclk_rate)
- 		return -EINVAL;
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 74cb299..a267fe3 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -4,7 +4,7 @@
+  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+- * EXYNOS4 MCT(Multi-Core Timer) support
++ * Exynos4 MCT(Multi-Core Timer) support
+ */
  
-+	timer->mode = 0;
-+
- 	/* Try using GCLK. */
- 	gclk_round = clk_round_rate(timer->gclk, max_rate);
- 	if (gclk_round < 0)
-@@ -360,7 +362,7 @@ static int __init mchp_pit64b_dt_init_timer(struct device_node *node,
- 					    bool clkevt)
- {
- 	u32 freq = clkevt ? MCHP_PIT64B_DEF_CE_FREQ : MCHP_PIT64B_DEF_CS_FREQ;
--	struct mchp_pit64b_timer timer = { 0 };
-+	struct mchp_pit64b_timer timer;
- 	unsigned long clk_rate;
- 	u32 irq = 0;
- 	int ret;
+ #include <linux/interrupt.h>
