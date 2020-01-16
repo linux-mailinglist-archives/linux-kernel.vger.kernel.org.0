@@ -2,73 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80AC113D1BE
+	by mail.lfdr.de (Postfix) with ESMTP id 0D83E13D1BD
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 02:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbgAPByS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 20:54:18 -0500
-Received: from mga18.intel.com ([134.134.136.126]:31675 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729949AbgAPByQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 20:54:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 17:54:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,323,1574150400"; 
-   d="scan'208";a="225795988"
-Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.138])
-  by orsmga003.jf.intel.com with ESMTP; 15 Jan 2020 17:54:13 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Remove unnecessary WARN_ON_ONCE()
-Date:   Thu, 16 Jan 2020 09:52:36 +0800
-Message-Id: <20200116015236.4458-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730468AbgAPByO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 20:54:14 -0500
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:39969 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729949AbgAPByO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 20:54:14 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Tnr.RhS_1579139650;
+Received: from 30.5.115.118(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0Tnr.RhS_1579139650)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 16 Jan 2020 09:54:11 +0800
+Subject: Re: [PATCH 1/3] firmware: arm_sdei: fix possible deadlock
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1577110975-54782-1-git-send-email-zhangliguang@linux.alibaba.com>
+From:   =?UTF-8?B?5Lmx55+z?= <zhangliguang@linux.alibaba.com>
+Message-ID: <a00c53ef-aed4-ac26-6cfe-8d4cc6daa7f8@linux.alibaba.com>
+Date:   Thu, 16 Jan 2020 09:54:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <1577110975-54782-1-git-send-email-zhangliguang@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Address field in device TLB invalidation descriptor is qualified
-by the S field. If S field is zero, a single page at page address
-specified by address [63:12] is requested to be invalidated. If S
-field is set, the least significant bit in the address field with
-value 0b (say bit N) indicates the invalidation address range. The
-spec doesn't require the address [N - 1, 0] to be cleared, hence
-remove the unnecessary WARN_ON_ONCE().
+Hi James,
 
-Otherwise, the caller might set "mask = MAX_AGAW_PFN_WIDTH" in order
-to invalidating all the cached mappings on an endpoint, and below
-overflow error will be triggered.
+Sorry for the late reply, this problem was found by code review.
 
-[...]
-UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1354:3
-shift exponent 64 is too large for 64-bit type 'long long unsigned int'
-[...]
 
-Reported-and-tested-by: Frank <fgndev@posteo.de>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/dmar.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 613b7153905d..071bb42bbbc5 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1354,7 +1354,6 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 	struct qi_desc desc;
- 
- 	if (mask) {
--		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
- 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
- 		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
- 	} else
--- 
-2.17.1
+luanshi
 
+ÔÚ 2019/12/23 22:22, luanshi Ð´µÀ:
+> From: Liguang Zhang <zhangliguang@linux.alibaba.com>
+>
+> We call sdei_reregister_event() with sdei_list_lock held but
+> _sdei_event_register() and sdei_event_destroy() also acquires
+> sdei_list_lock thus creating A-A deadlock.
+>
+> Fixes: da351827240e ("firmware: arm_sdei: Add support for CPU and system power states")
+> Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+> ---
+>   drivers/firmware/arm_sdei.c | 17 ++++++++---------
+>   1 file changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/firmware/arm_sdei.c b/drivers/firmware/arm_sdei.c
+> index a479023..b122927 100644
+> --- a/drivers/firmware/arm_sdei.c
+> +++ b/drivers/firmware/arm_sdei.c
+> @@ -651,20 +651,19 @@ static int sdei_reregister_event(struct sdei_event *event)
+>   
+>   	lockdep_assert_held(&sdei_events_lock);
+>   
+> -	err = _sdei_event_register(event);
+> +	err = sdei_api_event_register(event->event_num,
+> +				       sdei_entry_point,
+> +				       event->registered,
+> +				       SDEI_EVENT_REGISTER_RM_ANY, 0);
+>   	if (err) {
+>   		pr_err("Failed to re-register event %u\n", event->event_num);
+> -		sdei_event_destroy(event);
+> +		list_del(&event->list);
+> +		kfree(event->registered);
+>   		return err;
+>   	}
+>   
+> -	if (event->reenable) {
+> -		if (event->type == SDEI_EVENT_TYPE_SHARED)
+> -			err = sdei_api_event_enable(event->event_num);
+> -		else
+> -			err = sdei_do_cross_call(_local_event_enable, event);
+> -	}
+> -
+> +	if (event->reenable)
+> +		err = sdei_api_event_enable(event->event_num);
+>   	if (err)
+>   		pr_err("Failed to re-enable event %u\n", event->event_num);
+>   
