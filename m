@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C8E113F883
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:19:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18FB213F89A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731819AbgAPQyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:54:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
+        id S2437573AbgAPTTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:19:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731591AbgAPQyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:54:11 -0500
+        id S1731611AbgAPQyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:54:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B19F02467A;
-        Thu, 16 Jan 2020 16:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E86812176D;
+        Thu, 16 Jan 2020 16:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193650;
-        bh=VsiVaUIh0pNlZPFYJ+bvDcyc+g43VIn3QVMdYDIDnf0=;
+        s=default; t=1579193651;
+        bh=OzFODw4fgcmPhpz8E8cgdKYNHhUMu9ketHJs8OPWZQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAo9uKnbUHVHuohLJ8KAgndzD94DgenMvHX4XC1PvWKvimZL20adSDOOqMwT4Fdqr
-         QAH8uXdHgU3ZlaKHYR9/AfgKaFo6to1RUDbbQvtbph/GCRn6kEZo59jyCEIbWxvzi+
-         x8z19pfmP8lWClPlfb2NPxWLQfmeXNCLI3LS62DA=
+        b=b7ifsK/NcQq8eYKGbGo/0xDU7rp/wLTiVeRLW/B0Ofg6KoujqKPNzFGY/3z9vSM3R
+         eR6gxRXOEin3hNHlb95Ykf3xySSkexWancXvfpJQ3j8nF4W4YDYCUKbmAOKskOrlR7
+         5CoKFzUR1aQn+Sq8EMvlY+Zik2MpPySEY1txYZso=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>, Sasha Levin <sashal@kernel.org>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 180/205] libbpf: Fix Makefile' libbpf symbol mismatch diagnostic
-Date:   Thu, 16 Jan 2020 11:42:35 -0500
-Message-Id: <20200116164300.6705-180-sashal@kernel.org>
+Cc:     Christian Lamparter <chunkeey@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 181/205] ath9k: use iowrite32 over __raw_writel
+Date:   Thu, 16 Jan 2020 11:42:36 -0500
+Message-Id: <20200116164300.6705-181-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -44,36 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrii Nakryiko <andriin@fb.com>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-[ Upstream commit b568405856906ee4d9ba6284fd36f2928653a623 ]
+[ Upstream commit 22d0d5ae7a089967e9295a06694aa3e8a812b15e ]
 
-Fix Makefile's diagnostic diff output when there is LIBBPF_API-versioned
-symbols mismatch.
+This patch changes the ath9k_pci_owl_loader to use the
+same iowrite32 memory accessor that ath9k_pci is using
+to communicate with the PCI(e) chip.
 
-Fixes: 1bd63524593b ("libbpf: handle symbol versioning properly for libbpf.a")
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Yonghong Song <yhs@fb.com>
-Link: https://lore.kernel.org/bpf/20191127200134.1360660-1-andriin@fb.com
+This will fix endian issues that came up during testing
+with loaned AVM Fritz!Box 7360 (Lantiq MIPS SoCs + AR9287).
+
+Fixes: 5a4f2040fd07 ("ath9k: add loader for AR92XX (and older) pci(e)")
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/Makefile | 2 +-
+ drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-index 56ce6292071b..33e2638ef7f0 100644
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@ -215,7 +215,7 @@ check_abi: $(OUTPUT)libbpf.so
- 		     "versioned symbols in $^ ($(VERSIONED_SYM_COUNT))." \
- 		     "Please make sure all LIBBPF_API symbols are"	 \
- 		     "versioned in $(VERSION_SCRIPT)." >&2;		 \
--		readelf -s --wide $(OUTPUT)libbpf-in.o |		 \
-+		readelf -s --wide $(BPF_IN_SHARED) |			 \
- 		    cut -d "@" -f1 | sed 's/_v[0-9]_[0-9]_[0-9].*//' |	 \
- 		    awk '/GLOBAL/ && /DEFAULT/ && !/UND/ {print $$8}'|   \
- 		    sort -u > $(OUTPUT)libbpf_global_syms.tmp;		 \
+diff --git a/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c b/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
+index 159490f5a111..60731e07f681 100644
+--- a/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
++++ b/drivers/net/wireless/ath/ath9k/ath9k_pci_owl_loader.c
+@@ -84,7 +84,7 @@ static int ath9k_pci_fixup(struct pci_dev *pdev, const u16 *cal_data,
+ 			val = swahb32(val);
+ 		}
+ 
+-		__raw_writel(val, mem + reg);
++		iowrite32(val, mem + reg);
+ 		usleep_range(100, 120);
+ 	}
+ 
 -- 
 2.20.1
 
