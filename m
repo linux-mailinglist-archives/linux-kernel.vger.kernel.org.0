@@ -2,71 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4515113DAAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B0A13DA9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:51:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgAPMy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:54:59 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39986 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726018AbgAPMy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:54:59 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9BBD9299CC308E0F7886;
-        Thu, 16 Jan 2020 20:54:57 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 16 Jan 2020 20:54:47 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <bskeggs@redhat.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] drm/nouveau: fix build error without CONFIG_IOMMU_API
-Date:   Thu, 16 Jan 2020 20:50:10 +0800
-Message-ID: <20200116125010.166572-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1726714AbgAPMvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:51:44 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:25747 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbgAPMvm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 07:51:42 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id 00GCp0LM004484;
+        Thu, 16 Jan 2020 21:51:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com 00GCp0LM004484
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1579179061;
+        bh=fMZaburuU4urQ/r10xZu/T0T7Qs+Nao/bvyk3yFijQU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BN5twPSBRxD8vQeyMWYE8Z7obDb8ZNKD+aM0tNUKCByY/VVLDFgyHybtXtLFkuyzZ
+         KHWywEldhCGuTNJtt3tKTKmdR/oQuRAFilnwfPN7L3ot5oAiOxJD6lagF0Oyy/06Py
+         kTKXEYKl3n3Rn47Nv2uIfPwYLLahE/xBsyVKpO9SSusZjkP/Ypjov/NdBFUWmvQMYy
+         ATDnjikpaTBT6OYp03V+aRoL7Nr3D2AwcVC2Bi76naqZncMyG74MbIrmSKkLz0w3xA
+         T6TSk0JXXcvX9/JRrOxd/6vpKNBTKzed1RfcUwoQjVFlpNo2yqEqTZ35Ob8ZPBTQB8
+         Gs13PZVEMgNDA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: uniphier: add reset-names to NAND controller node
+Date:   Thu, 16 Jan 2020 21:50:44 +0900
+Message-Id: <20200116125045.17581-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_IOMMU_API is n, build fails:
+The Denali NAND controller IP has separate reset control for the
+controller core and registers.
 
-vers/gpu/drm/nouveau/nvkm/subdev/ltc/gp10b.c:37:9: error: implicit declaration of function dev_iommu_fwspec_get; did you mean iommu_fwspec_free? [-Werror=implicit-function-declaration]
-  spec = dev_iommu_fwspec_get(device->dev);
-         ^~~~~~~~~~~~~~~~~~~~
-         iommu_fwspec_free
-drivers/gpu/drm/nouveau/nvkm/subdev/ltc/gp10b.c:37:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-  spec = dev_iommu_fwspec_get(device->dev);
-       ^
-drivers/gpu/drm/nouveau/nvkm/subdev/ltc/gp10b.c:39:17: error: struct iommu_fwspec has no member named ids
-   u32 sid = spec->ids[0] & 0xffff;
+Add the reset-names, and one more phandle accordingly. This is the
+approved DT-binding.
 
-Seletc IOMMU_API under config DRM_NOUVEAU to fix this.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/gpu/drm/nouveau/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
-index 9c990266..ce03693 100644
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -2,6 +2,7 @@
- config DRM_NOUVEAU
- 	tristate "Nouveau (NVIDIA) cards"
- 	depends on DRM && PCI && MMU
-+	select IOMMU_API
- 	select FW_LOADER
- 	select DRM_KMS_HELPER
- 	select DRM_TTM
+ arch/arm/boot/dts/uniphier-ld4.dtsi  | 3 ++-
+ arch/arm/boot/dts/uniphier-pro4.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-pro5.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 ++-
+ arch/arm/boot/dts/uniphier-sld8.dtsi | 3 ++-
+ 5 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/uniphier-ld4.dtsi b/arch/arm/boot/dts/uniphier-ld4.dtsi
+index 58cd4e8fa5be..64ec46c72a4c 100644
+--- a/arch/arm/boot/dts/uniphier-ld4.dtsi
++++ b/arch/arm/boot/dts/uniphier-ld4.dtsi
+@@ -410,7 +410,8 @@
+ 			pinctrl-0 = <&pinctrl_nand>;
+ 			clock-names = "nand", "nand_x", "ecc";
+ 			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+-			resets = <&sys_rst 2>;
++			reset-names = "nand", "reg";
++			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/uniphier-pro4.dtsi b/arch/arm/boot/dts/uniphier-pro4.dtsi
+index 7f64e5a616d6..2ec04d7972ef 100644
+--- a/arch/arm/boot/dts/uniphier-pro4.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro4.dtsi
+@@ -600,7 +600,8 @@
+ 			pinctrl-0 = <&pinctrl_nand>;
+ 			clock-names = "nand", "nand_x", "ecc";
+ 			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+-			resets = <&sys_rst 2>;
++			reset-names = "nand", "reg";
++			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/uniphier-pro5.dtsi b/arch/arm/boot/dts/uniphier-pro5.dtsi
+index eff74717b37c..ea3961f920a0 100644
+--- a/arch/arm/boot/dts/uniphier-pro5.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro5.dtsi
+@@ -465,7 +465,8 @@
+ 			pinctrl-0 = <&pinctrl_nand>;
+ 			clock-names = "nand", "nand_x", "ecc";
+ 			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+-			resets = <&sys_rst 2>;
++			reset-names = "nand", "reg";
++			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 
+ 		emmc: sdhc@68400000 {
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 4eddbb8d7fca..13b0d4a7741f 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -773,7 +773,8 @@
+ 			pinctrl-0 = <&pinctrl_nand>;
+ 			clock-names = "nand", "nand_x", "ecc";
+ 			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+-			resets = <&sys_rst 2>;
++			reset-names = "nand", "reg";
++			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/uniphier-sld8.dtsi b/arch/arm/boot/dts/uniphier-sld8.dtsi
+index cbebb6e4c616..4fc6676f5486 100644
+--- a/arch/arm/boot/dts/uniphier-sld8.dtsi
++++ b/arch/arm/boot/dts/uniphier-sld8.dtsi
+@@ -414,7 +414,8 @@
+ 			pinctrl-0 = <&pinctrl_nand>;
+ 			clock-names = "nand", "nand_x", "ecc";
+ 			clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
+-			resets = <&sys_rst 2>;
++			reset-names = "nand", "reg";
++			resets = <&sys_rst 2>, <&sys_rst 2>;
+ 		};
+ 	};
+ };
 -- 
-2.7.4
+2.17.1
 
