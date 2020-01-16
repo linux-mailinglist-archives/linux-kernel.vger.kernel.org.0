@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C661F13FD72
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB3B13FD7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbgAPX0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:26:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55542 "EHLO mail.kernel.org"
+        id S2389442AbgAPX0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:26:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388865AbgAPXZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:25:42 -0500
+        id S2387878AbgAPX0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E0BC206D9;
-        Thu, 16 Jan 2020 23:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20DEE2072E;
+        Thu, 16 Jan 2020 23:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217142;
-        bh=aMZfEZ9WPffdZ40h5Px2Fl5qTJYWmpilN2V1ex5ejwI=;
+        s=default; t=1579217168;
+        bh=Zi6tO6mU0v33uTz5M1Fntb6V4rUxEWSn1hKg1MFqfl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lAAuS22cLd0ySbvcNIjSZVyFeaw6k2BejhjE/GeXkzGh97ciwnMsA9PFvZB87F5HB
-         V5KvmPkhbC5eMWZF7LEjTdBtoHXpOSk/Vi6yoi4rvf26ZOXQsApyZeE2HK6ZCI3eti
-         jAmikQvg/+RnlDk+KYBjeblNVKCYCJov+nj6UoII=
+        b=tlF1HcMNn+6evalcj6HlgpfQOuTTLrVxef9i9FLC/KOHFJOHbKcHeptQ/tSuoYHYn
+         ZujUk61GKfSsC/WQp4HnZkKWVyM7gWe03Un/hYiW9lsbsZkgLIP6kx3XkRWzvkUYhd
+         oJqRzuw4/DENyCMNeUhTWkDtoEI54xvUnN4sq0VM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Eddie James <eajames@linux.ibm.com>,
+        stable@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 5.4 157/203] media: aspeed-video: Fix memory leaks in aspeed_video_probe
-Date:   Fri, 17 Jan 2020 00:17:54 +0100
-Message-Id: <20200116231758.521169123@linuxfoundation.org>
+Subject: [PATCH 5.4 158/203] media: hantro: Set H264 FIELDPIC_FLAG_E flag correctly
+Date:   Fri, 17 Jan 2020 00:17:55 +0100
+Message-Id: <20200116231758.591113128@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -47,38 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Jonas Karlman <jonas@kwiboo.se>
 
-commit c3df30a01da4955e04fa068c503cd784b31dad92 upstream.
+commit a2cbf80a842add9663522bf898cf13cb2ac4e423 upstream.
 
-In the implementation of aspeed_video_probe() the allocated memory for
-video should be released if either devm_ioremap_resource()
-or aspeed_video_init() or aspeed_video_setup_video() fails. Replace
-kzalloc() with devm_kzalloc to avoid explicit release for video.
+The FIELDPIC_FLAG_E bit should be set when field_pic_flag exists in stream,
+it is currently set based on field_pic_flag of current frame.
+The PIC_FIELDMODE_E bit is correctly set based on the field_pic_flag.
 
-Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Reviewed-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+Fix this by setting the FIELDPIC_FLAG_E bit when frame_mbs_only is not set.
+
+Fixes: dea0a82f3d22 ("media: hantro: Add support for H264 decoding on G1")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/aspeed-video.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/media/hantro/hantro_g1_h264_dec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/aspeed-video.c
-+++ b/drivers/media/platform/aspeed-video.c
-@@ -1658,7 +1658,8 @@ static int aspeed_video_probe(struct pla
- {
- 	int rc;
- 	struct resource *res;
--	struct aspeed_video *video = kzalloc(sizeof(*video), GFP_KERNEL);
-+	struct aspeed_video *video =
-+		devm_kzalloc(&pdev->dev, sizeof(*video), GFP_KERNEL);
+--- a/drivers/staging/media/hantro/hantro_g1_h264_dec.c
++++ b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+@@ -63,7 +63,7 @@ static void set_params(struct hantro_ctx
+ 	/* always use the matrix sent from userspace */
+ 	reg |= G1_REG_DEC_CTRL2_TYPE1_QUANT_E;
  
- 	if (!video)
- 		return -ENOMEM;
+-	if (slices[0].flags &  V4L2_H264_SLICE_FLAG_FIELD_PIC)
++	if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
+ 		reg |= G1_REG_DEC_CTRL2_FIELDPIC_FLAG_E;
+ 	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL2);
+ 
 
 
