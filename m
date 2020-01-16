@@ -2,94 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C58A813D293
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA7513D288
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbgAPDOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:14:18 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9626 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729486AbgAPDOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:14:12 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9E354639AE2689F3FF6F;
-        Thu, 16 Jan 2020 11:14:08 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 16 Jan 2020 11:13:59 +0800
-From:   Xuefeng Wang <wxf.wang@hisilicon.com>
-To:     <arnd@arndb.de>, <akpm@linux-foundation.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH 2/2] arm64: mm: rework the pmd protect changing flow
-Date:   Thu, 16 Jan 2020 11:09:17 +0800
-Message-ID: <1579144157-7736-3-git-send-email-wxf.wang@hisilicon.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1579144157-7736-1-git-send-email-wxf.wang@hisilicon.com>
-References: <1579144157-7736-1-git-send-email-wxf.wang@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        id S1729188AbgAPDNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 22:13:48 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:39480 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgAPDNr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 22:13:47 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9AB842008710;
+        Wed, 15 Jan 2020 19:13:46 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9AB842008710
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1579144426;
+        bh=V3Ds4RpgBxSwsUsJpJvIRuEhKzlSSaeueHPFqpvVuyQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qD2RbvB8PrVXz8ZIup03tpVcqZ62lIeoP3YA0CMdl0d9DH2DnPWS0bBCUb2UJf/og
+         Rjg68tIQ5D7iriC25H5esuK0XaJqqpnexBjF9STs/C23xVPy2NrWGui6KxvftZNT5O
+         HnWCdb6vRAfxxivGnlGemmfBxQ/sD3YCyzq3habU=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dvyukov@google.com,
+        James.Bottomley@HansenPartnership.com, arnd@arndb.de,
+        linux-integrity@vger.kernel.org
+Cc:     dhowells@redhat.com, sashal@kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH] IMA: inconsistent lock state in ima_process_queued_keys
+Date:   Wed, 15 Jan 2020 19:13:42 -0800
+Message-Id: <20200116031342.3418-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On KunPeng920 board. When changing permission of a large range region,
-pmdp_invalidate() takes about 65% in profile (with hugepages) in JIT tool.
-Kernel will flush tlb twice: first flush happens in pmdp_invalidate, second
-flush happens at the end of change_protect_range(). The first pmdp_invalidate
-is not necessary if the hardware support atomic pmdp changing. The atomic
-changing pimd to zero can prevent the hardware from update asynchronous.
-So reconstruct it and remove the first pmdp_invalidate. And the second tlb
-flush can make sure the new tlb entry valid.
+ima_queued_keys() is called from a non-interrupt context, but
+ima_process_queued_keys() may be called from both an interrupt
+context (ima_timer_handler) and non-interrupt context
+(ima_update_policy). Since the spinlock named ima_keys_lock is used
+in both ima_queued_keys() and ima_process_queued_keys(),
+irq version of the spinlock macros, spin_lock_irqsave() and
+spin_unlock_irqrestore(), should be used[1].
 
-Add pmdp_modify_prot_start() in arm64, which uses pmdp_huge_get_and_clear()
-to fetch the pmd and zero entry, preventing racing of any hardware updates.
+This patch fixes the "inconsistent lock state" issue caused by
+using the non-irq version of the spinlock macros in ima_queue_key()
+and ima_process_queued_keys().
 
-After rework, the mprotect can get 3~13 times performace gain in range
-64M to 512M.
+[1] Documentation/locking/spinlocks.rst
 
-4K granule/THP on
-memory size(M)	64	128	256	320	448	512
-pre-patch		0.77	1.40	2.64	3.23	4.49	5.10
-post-patch		0.20	0.23	0.28	0.31	0.37	0.39
-
-Signed-off-by: Xuefeng Wang <wxf.wang@hisilicon.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Reported-by: syzbot <syzbot+a4a503d7f37292ae1664@syzkaller.appspotmail.com>
+Suggested-by: Dmitry Vyukov <dvyukov@google.com>
+Fixes: 8f5d2d06f217 ("IMA: Defined timer to free queued keys")
+Fixes: 9fb38e76b5f1 ("IMA: Define workqueue for early boot key measurements")
 ---
- arch/arm64/include/asm/pgtable.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ security/integrity/ima/ima_asymmetric_keys.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index cd5de0e40bfa..bccdaa5bd5f2 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -769,6 +769,20 @@ static inline pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index 61e478f9e819..381f51708e7b 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -103,17 +103,18 @@ static bool ima_queue_key(struct key *keyring, const void *payload,
+ {
+ 	bool queued = false;
+ 	struct ima_key_entry *entry;
++	unsigned long flags;
  
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+#define __HAVE_ARCH_PMDP_MODIFY_PROT_TRANSACTION
-+static inline pmd_t pmdp_modify_prot_start(struct vm_area_struct *vma,
-+						unsigned long addr,
-+						pmd_t *pmdp)
-+{
-+	/*
-+	 * Atomic change pmd to zero, prevent the hardware from update
-+	 * aynchronously update it.
-+	 */
-+	return pmdp_huge_get_and_clear(vma->vm_mm, addr, pmdp);
-+}
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+
- /*
-  * ptep_set_wrprotect - mark read-only while trasferring potential hardware
-  * dirty status (PTE_DBM && !PTE_RDONLY) to the software PTE_DIRTY bit.
+ 	entry = ima_alloc_key_entry(keyring, payload, payload_len);
+ 	if (!entry)
+ 		return false;
+ 
+-	spin_lock(&ima_keys_lock);
++	spin_lock_irqsave(&ima_keys_lock, flags);
+ 	if (!ima_process_keys) {
+ 		list_add_tail(&entry->list, &ima_keys);
+ 		queued = true;
+ 	}
+-	spin_unlock(&ima_keys_lock);
++	spin_unlock_irqrestore(&ima_keys_lock, flags);
+ 
+ 	if (!queued)
+ 		ima_free_key_entry(entry);
+@@ -131,6 +132,7 @@ void ima_process_queued_keys(void)
+ {
+ 	struct ima_key_entry *entry, *tmp;
+ 	bool process = false;
++	unsigned long flags;
+ 
+ 	if (ima_process_keys)
+ 		return;
+@@ -141,12 +143,12 @@ void ima_process_queued_keys(void)
+ 	 * First one setting the ima_process_keys flag to true will
+ 	 * process the queued keys.
+ 	 */
+-	spin_lock(&ima_keys_lock);
++	spin_lock_irqsave(&ima_keys_lock, flags);
+ 	if (!ima_process_keys) {
+ 		ima_process_keys = true;
+ 		process = true;
+ 	}
+-	spin_unlock(&ima_keys_lock);
++	spin_unlock_irqrestore(&ima_keys_lock, flags);
+ 
+ 	if (!process)
+ 		return;
 -- 
 2.17.1
 
