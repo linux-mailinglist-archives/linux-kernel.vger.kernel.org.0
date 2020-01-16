@@ -2,131 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B27C813DC1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3ADB13DC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgAPNeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 08:34:25 -0500
-Received: from mail-vi1eur05on2136.outbound.protection.outlook.com ([40.107.21.136]:15052
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726362AbgAPNeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:34:25 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RzZVoCxfYJ2A0OPz73+Ta/3PFTYwXDJ8Pf2UUjKO2c8CBYSN0+XTJaMUpPkqyS9FO+sb3j4ychZ0+mVQtpExTXWZNyJZiLAGRWXmo52RICj42apP5eOAvLV9fYpwUVq5nZo3CWbvaWn45cJSQujJJnxpR5J6BWMdvVYnr+bVGDvsVJPMzEefJAhxzY7DA1GGExDaq3XxriNBUQyZsepX1XV7BDrJHhJu5EBhmoZuGYaR6zsBlTo9a63HqNuz+8uV7YgjfpZWDaouHAEb3y1U3PUkO4EAlYFU8xJixjlX9J57aOPTgyIH79zQm9AKL3TATjx5WtndKRsySOp/DtTLtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mtYMwBJ3zQ4610/BNfjKw0TdmqMIdtDEpXtX1DeQgUA=;
- b=VHBQaDU0WuzceODM5MS/0Y7t+lQqO+9bNMdVO6PxBGemrd517d7w00IHoO25A6WwhwD5yGj5Jg95QGFOG4duCiMYOlF0TEK/jyyGsDOjV34By8HsVaZXuhVsL+h3UsIgBKmV0Mw6DqfOASmP1DzDlnVLc7zNBusOoeE3naN96tr5OhQR/BITlhzbdC28KYY0Gxx4I23khJtdamkCOmX+HUJvFhQP/PwsbGHPyXF6Ed/xso5SGJsUbS2nuEo44E6y0NOAQVltB7GCDSnLyPCHSkMUoOb8n3nKeChKUqy9YFbIjcNsQ5VP2FBi1yFDRU2DvnkQnP0an+3T/gvJ47Sj0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mtYMwBJ3zQ4610/BNfjKw0TdmqMIdtDEpXtX1DeQgUA=;
- b=jbG0SmCkZ5brFjXDWsrlcptfRdxXCr9h+WDcMGPMt7LUX0ZVSkF6gzDXAjEvAC5tBqY5T2R2WmMbU/TJBEr8kL5Y+1upQs1vPKuAJvL4uG7LzLmjKrez2atg2ZHIQkC/DSkAXVz7lKKWiwwwcDRbWnJVpodBsn+Goqs2Wz/iObA=
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com (52.134.66.158) by
- DB3PR0202MB3404.eurprd02.prod.outlook.com (52.134.68.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.13; Thu, 16 Jan 2020 13:34:20 +0000
-Received: from DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::cd85:a8a5:da14:db13]) by DB3PR0202MB3434.eurprd02.prod.outlook.com
- ([fe80::cd85:a8a5:da14:db13%7]) with mapi id 15.20.2623.017; Thu, 16 Jan 2020
- 13:34:19 +0000
-Received: from [192.168.13.3] (213.112.138.4) by HE1PR0102CA0067.eurprd01.prod.exchangelabs.com (2603:10a6:7:7d::44) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20 via Frontend Transport; Thu, 16 Jan 2020 13:34:19 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Jean Delvare <jdelvare@suse.de>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 26/26] docs: i2c: rename sections so the overall picture
- is clearer
-Thread-Topic: [PATCH 26/26] docs: i2c: rename sections so the overall picture
- is clearer
-Thread-Index: AQHVxGXNDNQyASjxnESfoQNX0mbuZqftG5eAgAANv4CAADEpAA==
-Date:   Thu, 16 Jan 2020 13:34:19 +0000
-Message-ID: <4a3a9917-5f20-2ad2-3fcb-5e9e252a2a3d@axentia.se>
-References: <20200105224006.10321-1-luca@lucaceresoli.net>
- <20200106074905.14438-1-luca@lucaceresoli.net>
- <20200116104907.3f2de4d0@endymion>
- <7809c0c2-1d83-cc95-b258-644ea8315f86@lucaceresoli.net>
-In-Reply-To: <7809c0c2-1d83-cc95-b258-644ea8315f86@lucaceresoli.net>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-x-originating-ip: [213.112.138.4]
-x-clientproxiedby: HE1PR0102CA0067.eurprd01.prod.exchangelabs.com
- (2603:10a6:7:7d::44) To DB3PR0202MB3434.eurprd02.prod.outlook.com
- (2603:10a6:8:5::30)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4d5ec4b7-6f01-4c0b-fe7c-08d79a88ca53
-x-ms-traffictypediagnostic: DB3PR0202MB3404:
-x-microsoft-antispam-prvs: <DB3PR0202MB34040C48D322085CFD449D4EBC360@DB3PR0202MB3404.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 02843AA9E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39830400003)(396003)(376002)(136003)(199004)(189003)(66476007)(4326008)(5660300002)(53546011)(66446008)(8936002)(64756008)(66556008)(6486002)(2616005)(508600001)(316002)(31696002)(186003)(16526019)(86362001)(31686004)(110136005)(81166006)(956004)(81156014)(2906002)(8676002)(36756003)(54906003)(52116002)(66946007)(71200400001)(26005)(16576012);DIR:OUT;SFP:1102;SCL:1;SRVR:DB3PR0202MB3404;H:DB3PR0202MB3434.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Cu3HpU5sRsZJZ2//3BWE77bD+sgkfap3omoAa5tOz4bYYAl54SqjyTXyNiF2WKSmwwarhClmdx7YY3Kv6uUNyalAGTZ0rCNJRJ7jJQjiYlYrXW88y2BOeLaw7hmGiRPZYu91E4/mrhpLUnkfjaJHexiV62MLWQQlsk0GHFx3QMc+m1dDUD+sVFTJ1QU5JZXf2FQAnYd9+s7SiuJrTKikwPokNCD5Bp2sA3GtFgR9a0DK7ifwnu/cSQYciIos6E9CG9ws6ZK6E1D8XBG3mOQNxWpZ7Sj2tLr6BHf/EQ+6HIfdU39mxtkms0igRyvLLJgV8a8tkeEfj8VJPLuLt0Zq+4bN03iGvcgTNqcOeRY0Y/KyMKcCYifN5aGJVXxdD4Ur/gcmbXunO3AUViXbKQZpdpLRGKF8HTJ+AtdgodHE2viMm4WHR8nA7y3M2oDqdWwL
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <94D8EA0D7FA6F947B6A39B1D514FEC28@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728600AbgAPNeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 08:34:44 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52836 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbgAPNeo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 08:34:44 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so3792065wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 05:34:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QtPyC/5p5fFl79SmMpibqLDmNc1MXfc3i8FVTmRXxY4=;
+        b=2E+gh1uNWm/VWRP5c4HosrqtLKLEd1mp/+d4ESSl8k02hNIo1fYjaqaSX91pF9o5CE
+         Hxhs4Hh+KQCDB1UqiZsejrzLt0sehxr6vDwMevfrm3La3OSiAapflsD3qnlUFpV9Ei6O
+         t0px1PUvt73fR4gyXCYqGa74rgdC7ASKgb+3GzpNHSNTpXhLbfTVElkXrCsAInPtJERE
+         HYP9ceN4wQ+HsL4xFKGDtE2UGvjJ+O6lI3BMXijI0D1mjT54/gmdJDjytiFZKszWcksB
+         lOyKRWif7x5m1Yv/4dLcDQnZcDZSrziR2kW24j+thC8AKUdCXEUpC+oRwDKbtfKAEjTQ
+         ASyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QtPyC/5p5fFl79SmMpibqLDmNc1MXfc3i8FVTmRXxY4=;
+        b=lZfAzuU1zKaCK9mlYmEGoH1sIFVRIwuZbtdCGEcQ3iCHMnX1czFVd5KS/4R3LRZgMa
+         ul38WIRvuFZKCQs2QcJCsGE4roLlO8WNe6nh9w3XwuWLxm5AB+575PnmtcjAp/l71U1H
+         BJVSPU44C2Q15FsErFB6fGobaBQF83ENu56aNAtG75C9ouims0pD7HQms0z9X/BjPIiU
+         7SudKVxPKwsUYAxB3NEbFLGETKZ8pkiSdgavqfekHdyYjiXwYpys8+TvWak1ztTBn4t2
+         O99ZrS4LqZVlFRYmm3HFw9HQW4Vo6QA70FLGKEaBKuW1SFSHbvHPc843VKDZUW2r9T8w
+         06kQ==
+X-Gm-Message-State: APjAAAVQUayB/67uk3cDIm+3GrmxQ7fFljHDN/IGD941S/YrU6vQ77Zl
+        KxmkKRgrotWS0DUPcvNtsz1uAw==
+X-Google-Smtp-Source: APXvYqwyXZIhtncChOUGHGiCrARJeNxtzMGJHUvOAcFvGzVR3EUGHYZmiobbkAAaHt1+ReO9f0bnig==
+X-Received: by 2002:a1c:a50e:: with SMTP id o14mr6038812wme.2.1579181681898;
+        Thu, 16 Jan 2020 05:34:41 -0800 (PST)
+Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x14sm162559wmj.42.2020.01.16.05.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 05:34:41 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     mchehab@kernel.org, hans.verkuil@cisco.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-media@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] media: meson: vdec: Add VP9 decoding support
+Date:   Thu, 16 Jan 2020 14:34:32 +0100
+Message-Id: <20200116133437.2443-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d5ec4b7-6f01-4c0b-fe7c-08d79a88ca53
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 13:34:19.8695
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: w2QgKR0IXhT43OZnQAs3oW3JuXmiuYjN4oN07MSDnTJcHuTAE8XeNycQXnScNRml
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0202MB3404
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAyMC0wMS0xNiAxMTozOCwgTHVjYSBDZXJlc29saSB3cm90ZToNCj4gSGkgSmVhbiwgUGV0
-ZXIsDQo+IA0KPiB0aGFua3MgYm90aCBmb3IgeW91ciByZXZpZXdzLg0KPiANCj4gT24gMTYvMDEv
-MjAgMTA6NDksIEplYW4gRGVsdmFyZSB3cm90ZToNCj4+IE9uIE1vbiwgIDYgSmFuIDIwMjAgMDg6
-NDk6MDUgKzAxMDAsIEx1Y2EgQ2VyZXNvbGkgd3JvdGU6DQo+Pj4gU29tZSBvZiB0aGUgc2VjdGlv
-biBuYW1lcyBhcmUgbm90IHZlcnkgY2xlYXIuIFJlYWRpbmcgdGhvc2UgbmFtZXMgaW4gdGhlDQo+
-Pj4gaW5kZXgucnN0IHBhZ2UgZG9lcyBub3QgaGVscCBtdWNoIGluIGdyYXNwaW5nIHdoYXQgdGhl
-IGNvbnRlbnQgaXMgc3VwcG9zZWQNCj4+PiB0byBiZS4NCj4+Pg0KPj4+IFJlbmFtZSB0aG9zZSBz
-ZWN0aW9ucyB0byBjbGFyaWZ5IHRoZWlyIGNvbnRlbnQsIGVzcGVjaWFsbHkgd2hlbiByZWFkaW5n
-DQo+Pj4gdGhlIGluZGV4IHBhZ2UuDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBMdWNhIENlcmVz
-b2xpIDxsdWNhQGx1Y2FjZXJlc29saS5uZXQ+DQo+Pj4gQWNrZWQtYnk6IFBldGVyIFJvc2luIDxw
-ZWRhQGF4ZW50aWEuc2U+DQo+Pj4gLS0tDQo+Pj4NCj4+PiBOb3RlOiBoZXJlIGNoZWNrcGF0Y2gg
-Y29tcGxhaW5zOg0KPj4+DQo+Pj4gICBXQVJOSU5HOiBNaXNzaW5nIG9yIG1hbGZvcm1lZCBTUERY
-LUxpY2Vuc2UtSWRlbnRpZmllciB0YWcgaW4gbGluZSAxDQo+Pj4NCj4+PiBUaGFzJ3MgYmVjYXVz
-ZSB0aG9zZSBmaWxlcyBoYXZlIG5vIGxpY2Vuc2UgbGluZS4gSSB3b3VsZCBnbGFkbHkgYWRkIGEN
-Cj4+PiBwcm9wZXIgbGljZW5zZSBsaW5lLCBidXQgd2hhdCBpdCB0aGUgY29ycmVjdCBsaWNlbnNl
-IGhlcmU/IFNob3VsZCBJIGFzayB0aGUNCj4+PiBhdXRob3JzPyBHUEx2Mi1vbmx5IGFzIHRoZSBr
-ZXJuZWwgZGVmYXVsdD8NCj4+Pg0KPj4+IEknZCBhcHByZWNpYXRlIGEgZ3VpZGFuY2UgaGVyZSwg
-dGhhbmtzIGluIGFkdmFuY2UuDQo+Pg0KPj4gSSBkb24ndCB0aGluayB3ZSBuZWVkIGEgbGljZW5z
-ZSBmb3Igc3VjaCBkb2N1bWVudGF0aW9uIGZpbGVzLCBzbyBJDQo+PiB3b3VsZCBqdXN0IGlnbm9y
-ZSBjaGVja3BhdGNoLg0KPiANCj4gVGhhdCdzIE9LIGZvciBtZS4NCj4gDQo+Pj4gZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vaTJjL3N1bW1hcnkucnN0IGIvRG9jdW1lbnRhdGlvbi9pMmMvc3Vt
-bWFyeS5yc3QNCj4+PiBpbmRleCBmYzY5ZDk1NjdkOWQuLmFlM2JiYjlmZDhmMSAxMDA2NDQNCj4+
-PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2kyYy9zdW1tYXJ5LnJzdA0KPj4+ICsrKyBiL0RvY3VtZW50
-YXRpb24vaTJjL3N1bW1hcnkucnN0DQo+Pj4gQEAgLTEsNiArMSw2IEBADQo+Pj4gLT09PT09PT09
-PT09PT0NCj4+PiAtSTJDIGFuZCBTTUJ1cw0KPj4+IC09PT09PT09PT09PT09DQo+Pj4gKz09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPj4+ICtJbnRyb2R1Y3Rpb25zIHRvIEkyQyBhbmQg
-U01CdXMNCj4+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+Pg0KPj4gSSB3b3Vs
-ZCB1c2UgIkludHJvZHVjdGlvbiIsIHNpbmd1bGFyLg0KPiANCj4gTWUgdG9vISBGaXggcXVldWVk
-IGZvciB2Mi4NCj4gDQo+IFBldGVyLCBJIGFzc3VtZSBJIGNhbiBrZWVwIHlvdXIgQWNrZWQtYnkg
-aW4gdjIgd2l0aCB0aGlzIHNtYWxsIGNoYW5nZS4NCg0KVGhhdCdzIGZpbmUuDQoNCkNoZWVycywN
-ClBldGVyDQo=
+Hello,
+
+This patchset aims to bring VP9 decoding support to Amlogic GXL, G12A & SM1
+platforms for the amlogic stateful video decoder driver.
+
+With this, it passes v4l2-compliance with streaming on Amlogic G12A and
+Amlogic SM1 SoCs successfully using the stream at [1] with a fixed
+pyv4l2compliance script for VP9 at [2].
+
+The original script kept the IVF headers in the stream, confusing the
+decoder. The fixed script only extracts the payload from the IVF container.
+
+The decoder has been tested using the Google CTS TestVectorsIttiam VP9 yuv420
+samples and the VP9 Decoder Performance streams at [5], decoding all streams from
+Profile 0 and 2 up to Level 4.1, with 10bit downsampling to 8bit.
+
+This patchset depends on :
+- H.264 and compliance at [4]
+
+Changes since v2 at [6]:
+- Rebased on H.264 and compliance at [4]
+
+Changes since v1 at [3]:
+- Fixed compliance for delta frame resize, but proper ref keeping is broken
+- Added warns for delta frame resize, to be fixed in a following patchset
+- Added VP9 probabilities parsing and transformation support to decore the VP9 performance streams
+- Fixed refs keeping, avoid deleting necessary refs for next frame
+- Properly used the kernel clamp_val() macros
+- Zeroed the workspace to avoid refs handling glitches
+- Add lock around the flush & stop to avoid race between IRQ and drain/stop
+
+[1] https://github.com/superna9999/pyv4l2compliance/raw/tests/output/Jellyfish_1080_10s_5MB.vp9.hdr
+[2] https://github.com/superna9999/pyv4l2compliance
+[3] https://lore.kernel.org/linux-media/
+[4] https://lore.kernel.org/linux-media/20200116133025.1903-1-narmstrong@baylibre.com
+[5] https://www.webmproject.org/vp9/levels/
+[6] https://lore.kernel.org/linux-media/20191217111939.10387-1-narmstrong@baylibre.com
+
+The compliance log is:
+# v4l2-compliance --stream-from-hdr Jellyfish_1080_10s_5MB.vp9.hdr -s 200
+v4l2-compliance SHA: 7ead0e1856b89f2e19369af452bb03fd0cd16793, 64 bits
+
+Compliance test for meson-vdec device /dev/video0:
+
+Driver Info:
+	Driver name      : meson-vdec
+	Card type        : Amlogic Video Decoder
+	Bus info         : platform:meson-vdec
+	Driver version   : 5.5.0
+	Capabilities     : 0x84204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x04204000
+		Video Memory-to-Memory Multiplanar
+		Streaming
+		Extended Pix Format
+	Detected Stateful Decoder
+
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 2 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+	test VIDIOC_EXPBUF: OK
+	test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK (Not Supported)
+	test blocking wait: OK
+	Video Capture Multiplanar: Captured 198 buffers   
+	test MMAP (select): OK
+	Video Capture Multiplanar: Captured 198 buffers   
+	test MMAP (epoll): OK
+	test USERPTR (select): OK (Not Supported)
+	test DMABUF: Cannot test, specify --expbuf-device
+
+Total for meson-vdec device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
+
+Maxime Jourdan (4):
+  media: meson: vdec: add helpers for lossless framebuffer compression
+    buffers
+  media: meson: vdec: add common HEVC decoder support
+  media: meson: vdec: add VP9 input support
+  media: meson: vdec: add VP9 decoder support
+
+Neil Armstrong (1):
+  media: meson: vdec: align stride on 32 bytes
+
+ drivers/staging/media/meson/vdec/Makefile     |    4 +-
+ .../media/meson/vdec/codec_hevc_common.c      |  285 +++
+ .../media/meson/vdec/codec_hevc_common.h      |   77 +
+ drivers/staging/media/meson/vdec/codec_vp9.c  | 2139 +++++++++++++++++
+ drivers/staging/media/meson/vdec/codec_vp9.h  |   13 +
+ drivers/staging/media/meson/vdec/esparser.c   |  142 +-
+ drivers/staging/media/meson/vdec/hevc_regs.h  |  218 ++
+ drivers/staging/media/meson/vdec/vdec.c       |   15 +-
+ .../staging/media/meson/vdec/vdec_helpers.c   |   35 +-
+ .../staging/media/meson/vdec/vdec_helpers.h   |    4 +
+ drivers/staging/media/meson/vdec/vdec_hevc.c  |  231 ++
+ drivers/staging/media/meson/vdec/vdec_hevc.h  |   13 +
+ .../staging/media/meson/vdec/vdec_platform.c  |   38 +
+ 13 files changed, 3201 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/staging/media/meson/vdec/codec_hevc_common.c
+ create mode 100644 drivers/staging/media/meson/vdec/codec_hevc_common.h
+ create mode 100644 drivers/staging/media/meson/vdec/codec_vp9.c
+ create mode 100644 drivers/staging/media/meson/vdec/codec_vp9.h
+ create mode 100644 drivers/staging/media/meson/vdec/hevc_regs.h
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_hevc.c
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_hevc.h
+
+-- 
+2.22.0
+
