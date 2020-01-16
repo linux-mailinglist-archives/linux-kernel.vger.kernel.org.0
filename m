@@ -2,92 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B5B13FF07
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41AFA13FF3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391496AbgAPXj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:39:56 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36242 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391259AbgAPXjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:39:53 -0500
-Received: from zn.tnic (p200300EC2F0B23005181490C10C27842.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2300:5181:490c:10c2:7842])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2391122AbgAPXlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:41:01 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:29535 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391751AbgAPXkP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:40:15 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579218014; h=Message-Id: Date: Subject: To: From: Sender;
+ bh=woslbLm1gjtzm5ew1VVzOuguIL3JLQBdJQJckmH6FtA=; b=DRJo3JvDFIDqJOno04eRzeVudwwqYe14uKQ45HaRwdwLxcWNhIWucjsFgO/P+IN5AEmcH/wG
+ bT9mVgzrxxUGhXl9zJhCMfMkZeaSRAVMVJ9K4zhdIHdBmZOQoIaN0vc1x4YUzvCyuZKRG/IZ
+ 9zcit4q4L1BjyR3TjiIvNDdwqKw=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e20f45b.7f257e987f80-smtp-out-n03;
+ Thu, 16 Jan 2020 23:40:11 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 78724C433CB; Thu, 16 Jan 2020 23:40:11 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 604831EC0391;
-        Fri, 17 Jan 2020 00:39:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579217991;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=XdVmCwBwt//oBCkhqjb8tTmVc8IASboW33NxVb/IAfY=;
-        b=YPQzpgi+jN4kZUdorP3ZJjH+er8RY33Mgz3mEO1/YW2ZWPSDNgpTJlvsWjrCMAitTl9XT/
-        S0Sq0petU47LCGnEwBKNo3nt10UVJmhSlpFpqCG/VG6kxtes4xbGlY6i3y5+6I8hMtx03k
-        7U+lqdV/g+LomdBjPT+bN37wjTKpVAY=
-Date:   Fri, 17 Jan 2020 00:39:39 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Shiping Ji <shiping.linux@gmail.com>
-Cc:     James Morse <james.morse@arm.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sashal@kernel.org, hangl@microsoft.com,
-        Lei Wang <lewan@microsoft.com>, ruizhao@microsoft.com,
-        shji@microsoft.com, Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>, ray.jui@broadcom.com,
-        wangglei@gmail.com
-Subject: Re: [PATCH v9 1/2] dt-bindings: edac: arm-dmc520.txt
-Message-ID: <20200116233939.GI27148@zn.tnic>
-References: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        (Authenticated sender: vgutta)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DB611C43383;
+        Thu, 16 Jan 2020 23:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB611C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
+From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, vinod.koul@linaro.org,
+        psodagud@codeaurora.org, tsoni@codeaurora.org,
+        jshriram@codeaurora.org, tdas@codeaurora.org,
+        vnkgutta@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Add device tree and clock drivers for SM8250 SoC
+Date:   Thu, 16 Jan 2020 15:39:47 -0800
+Message-Id: <1579217994-22219-1-git-send-email-vnkgutta@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 06:32:27AM -0800, Shiping Ji wrote:
-> This is the device tree bindings for new EDAC driver dmc520_edac.c.
-> 
-> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
-> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
+This series adds device tree support and clock drivers support
+for SM8250 SoC.
+As part of the device tree, the sm8250 dts file has basic nodes
+like CPU, PSCI, intc, timer and clock controller.
 
-So for this patch, v2 had Rui Zhao as an author:
+Required clock controller driver and RPMH cloks are added to
+support peripherals like USB.
 
-https://lkml.kernel.org/r/BN7PR08MB5572B3388B2D7DC8F6C7F285AE4C0@BN7PR08MB5572.namprd08.prod.outlook.com
+All this configuration is added to support SM8250 to boot up to the
+serial console.
 
-v3 got Lei as an author:
+This patchset depends on one of the RPMH clock driver fix
+https://patchwork.kernel.org/patch/11318949/
 
-https://lkml.kernel.org/r/CY1PR0401MB1244062C1738B09D6100F202860A0@CY1PR0401MB1244.namprd04.prod.outlook.com
+Taniya Das (6):
+  dt-bindings: clock: Add RPMHCC bindings for SM8250
+  clk: qcom: rpmh: Add support for RPMH clocks on SM8250
+  clk: qcom: clk-alpha-pll: Refactor and cleanup trion PLL
+  clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs
+  dt-bindings: clock: Add SM8250 GCC clock bindings
+  clk: qcom: gcc: Add global clock controller driver for SM8250
 
-and now it is you.
+Venkata Narendra Kumar Gutta (1):
+  arm64: dts: qcom: sm8250: Add sm8250 dts file
 
-So when you send next time, think about who's going to be the author.
-
-> +     line numbers. The valid interrupt names are the followings:
-
-WARNING: 'followings' may be misspelled - perhaps 'following'?
-#51: FILE: Documentation/devicetree/bindings/edac/arm-dmc520.txt:10:
-+     line numbers. The valid interrupt names are the followings:
-
-Please integrate scripts/checkpatch.pl into your patch creation
-workflow. Some of the warnings/errors *actually* make sense.
-
-Also, this patch throws this other checkpatch warning:
-
-WARNING: DT bindings should be in DT schema format. See: Documentation/devicetree/writing-schema.rst
-
-but since Rob reviewed it, I'm going to assume checkpatch is wrong here.
-
-Thx.
+ .../devicetree/bindings/clock/qcom,gcc.yaml        |    1 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/sm8250-mtp.dts            |   29 +
+ arch/arm64/boot/dts/qcom/sm8250.dtsi               |  450 +++
+ drivers/clk/qcom/Kconfig                           |    7 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  259 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   12 +
+ drivers/clk/qcom/clk-rpmh.c                        |   25 +-
+ drivers/clk/qcom/gcc-sm8250.c                      | 3720 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8250.h        |  271 ++
+ include/dt-bindings/clock/qcom,rpmh.h              |    4 +-
+ 13 files changed, 4731 insertions(+), 50 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8250-mtp.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8250.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
