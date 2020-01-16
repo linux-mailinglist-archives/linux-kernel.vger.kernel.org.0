@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F2613E389
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D9013E3F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388437AbgAPRCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:02:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
+        id S2388577AbgAPRFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:05:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730518AbgAPRCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:02:31 -0500
+        id S2388409AbgAPRCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:02:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4392321582;
-        Thu, 16 Jan 2020 17:02:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B1342073A;
+        Thu, 16 Jan 2020 17:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194150;
-        bh=6azb/Fy2UuEvrdC3qRPeiBm9IqHqfM9HwCsIylrmiDY=;
+        s=default; t=1579194152;
+        bh=NMtzhIfJOHOAtmyYoR7QWOqYodHl2omDYrFFEDvuwAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ubjj413BVog6aJwzSwQpp+1ngXkGGb5ty0jjIlVdLblD+e/LxXTP3mmVAaCPlNxb/
-         vBr48Scl3pGbbHu/3k3gUDb6vWFWvSokozmN0tUGEOrUAARPh9iiTGtjAXiF9Qi2N6
-         n1sGaW1dEB2bSxpFkW7mYiBMWA/VwWOgyDetufmI=
+        b=CgPPZVwAfS9d11fp0NkTA/Jgbn0Krawh8k5y2ZBdcxTN4tGBNg2CldsugaXHHCwB+
+         W71uTEhMdEtMnOtIf5+sNay+i19fUER2BngReOmDNz88DnrBKamIppkzAYhE9ODf+c
+         6PLrmjLanKL4aRccmOW2vGiolBEoQoywNfP7CLrs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Akihiro Tsukada <tskd08@gmail.com>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 234/671] media: dvb/earth-pt1: fix wrong initialization for demod blocks
-Date:   Thu, 16 Jan 2020 11:52:23 -0500
-Message-Id: <20200116165940.10720-117-sashal@kernel.org>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sinan Kaya <okaya@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 236/671] PCI: Fix "try" semantics of bus and slot reset
+Date:   Thu, 16 Jan 2020 11:52:25 -0500
+Message-Id: <20200116165940.10720-119-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,122 +44,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akihiro Tsukada <tskd08@gmail.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-[ Upstream commit 15d90a6ae98e6d2c68497b44a491cb9efbb98ab1 ]
+[ Upstream commit ddefc033eecf23f1e8b81d0663c5db965adf5516 ]
 
-earth-pt1 driver was decomposed/restructured by the commit b732539efdba
-("media: dvb: earth-pt1: decompose pt1 driver into sub drivers"),
-but it introduced a problem regarding concurrent streaming:
-Opening a new terrestial stream stops the reception of an existing,
-already-opened satellite stream.
+The commit referenced below introduced device locking around save and
+restore of state for each device during a PCI bus "try" reset, making it
+decidely non-"try" and prone to deadlock in the event that a device is
+already locked.  Restore __pci_reset_bus() and __pci_reset_slot() to their
+advertised locking semantics by pushing the save and restore functions into
+the branch where the entire tree is already locked.  Extend the helper
+function names with "_locked" and update the comment to reflect this
+calling requirement.
 
-The demod IC in earth-pt1 boards contains 2 pairs of terr. and sat. blocks,
-supporting 4 concurrent demodulations, and the above problem was because
-the config of a terr. block contained whole reset/init of the pair blocks,
-thus each open() of a terrestrial frontend wrongly cleared the config of
-its peer satellite block of the demod.
-This whole/pair reset should be executed earlier and not on each open().
-
-Fixes: b732539efdba ("media: dvb: earth-pt1: decompose pt1 driver into sub drivers")
-
-Signed-off-by: Akihiro Tsukada <tskd08@gmail.com>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: b014e96d1abb ("PCI: Protect pci_error_handlers->reset_notify() usage with device_lock()")
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Sinan Kaya <okaya@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/pci/pt1/pt1.c | 54 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 6 deletions(-)
+ drivers/pci/pci.c | 54 +++++++++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/media/pci/pt1/pt1.c b/drivers/media/pci/pt1/pt1.c
-index 7f878fc41b7e..93fecffb36ee 100644
---- a/drivers/media/pci/pt1/pt1.c
-+++ b/drivers/media/pci/pt1/pt1.c
-@@ -200,16 +200,10 @@ static const u8 va1j5jf8007t_25mhz_configs[][2] = {
- static int config_demod(struct i2c_client *cl, enum pt1_fe_clk clk)
- {
- 	int ret;
--	u8 buf[2] = {0x01, 0x80};
- 	bool is_sat;
- 	const u8 (*cfg_data)[2];
- 	int i, len;
- 
--	ret = i2c_master_send(cl, buf, 2);
--	if (ret < 0)
--		return ret;
--	usleep_range(30000, 50000);
--
- 	is_sat = !strncmp(cl->name, TC90522_I2C_DEV_SAT,
- 			  strlen(TC90522_I2C_DEV_SAT));
- 	if (is_sat) {
-@@ -260,6 +254,46 @@ static int config_demod(struct i2c_client *cl, enum pt1_fe_clk clk)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index c9f51fc24563..57a87a001b4f 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5039,39 +5039,42 @@ static int pci_slot_trylock(struct pci_slot *slot)
  	return 0;
  }
  
+-/* Save and disable devices from the top of the tree down */
+-static void pci_bus_save_and_disable(struct pci_bus *bus)
 +/*
-+ * Init registers for (each pair of) terrestrial/satellite block in demod.
-+ * Note that resetting terr. block also resets its peer sat. block as well.
-+ * This function must be called before configuring any demod block
-+ * (before pt1_wakeup(), fe->ops.init()).
++ * Save and disable devices from the top of the tree down while holding
++ * the @dev mutex lock for the entire tree.
 + */
-+static int pt1_demod_block_init(struct pt1 *pt1)
-+{
-+	struct i2c_client *cl;
-+	u8 buf[2] = {0x01, 0x80};
-+	int ret;
-+	int i;
-+
-+	/* reset all terr. & sat. pairs first */
-+	for (i = 0; i < PT1_NR_ADAPS; i++) {
-+		cl = pt1->adaps[i]->demod_i2c_client;
-+		if (strncmp(cl->name, TC90522_I2C_DEV_TER,
-+			    strlen(TC90522_I2C_DEV_TER)))
-+			continue;
-+
-+		ret = i2c_master_send(cl, buf, 2);
-+		if (ret < 0)
-+			return ret;
-+		usleep_range(30000, 50000);
-+	}
-+
-+	for (i = 0; i < PT1_NR_ADAPS; i++) {
-+		cl = pt1->adaps[i]->demod_i2c_client;
-+		if (strncmp(cl->name, TC90522_I2C_DEV_SAT,
-+			    strlen(TC90522_I2C_DEV_SAT)))
-+			continue;
-+
-+		ret = i2c_master_send(cl, buf, 2);
-+		if (ret < 0)
-+			return ret;
-+		usleep_range(30000, 50000);
-+	}
-+	return 0;
-+}
-+
- static void pt1_write_reg(struct pt1 *pt1, int reg, u32 data)
++static void pci_bus_save_and_disable_locked(struct pci_bus *bus)
  {
- 	writel(data, pt1->regs + reg * 4);
-@@ -987,6 +1021,10 @@ static int pt1_init_frontends(struct pt1 *pt1)
- 			goto tuner_release;
+ 	struct pci_dev *dev;
+ 
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+-		pci_dev_lock(dev);
+ 		pci_dev_save_and_disable(dev);
+-		pci_dev_unlock(dev);
+ 		if (dev->subordinate)
+-			pci_bus_save_and_disable(dev->subordinate);
++			pci_bus_save_and_disable_locked(dev->subordinate);
  	}
+ }
  
-+	ret = pt1_demod_block_init(pt1);
-+	if (ret < 0)
-+		goto fe_unregister;
-+
- 	return 0;
+ /*
+- * Restore devices from top of the tree down - parent bridges need to be
+- * restored before we can get to subordinate devices.
++ * Restore devices from top of the tree down while holding @dev mutex lock
++ * for the entire tree.  Parent bridges need to be restored before we can
++ * get to subordinate devices.
+  */
+-static void pci_bus_restore(struct pci_bus *bus)
++static void pci_bus_restore_locked(struct pci_bus *bus)
+ {
+ 	struct pci_dev *dev;
  
- tuner_release:
-@@ -1245,6 +1283,10 @@ static int pt1_resume(struct device *dev)
- 	pt1_update_power(pt1);
- 	usleep_range(1000, 2000);
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+-		pci_dev_lock(dev);
+ 		pci_dev_restore(dev);
+-		pci_dev_unlock(dev);
+ 		if (dev->subordinate)
+-			pci_bus_restore(dev->subordinate);
++			pci_bus_restore_locked(dev->subordinate);
+ 	}
+ }
  
-+	ret = pt1_demod_block_init(pt1);
-+	if (ret < 0)
-+		goto resume_err;
-+
- 	for (i = 0; i < PT1_NR_ADAPS; i++)
- 		dvb_frontend_reinitialise(pt1->adaps[i]->fe);
+-/* Save and disable devices from the top of the tree down */
+-static void pci_slot_save_and_disable(struct pci_slot *slot)
++/*
++ * Save and disable devices from the top of the tree down while holding
++ * the @dev mutex lock for the entire tree.
++ */
++static void pci_slot_save_and_disable_locked(struct pci_slot *slot)
+ {
+ 	struct pci_dev *dev;
+ 
+@@ -5080,26 +5083,25 @@ static void pci_slot_save_and_disable(struct pci_slot *slot)
+ 			continue;
+ 		pci_dev_save_and_disable(dev);
+ 		if (dev->subordinate)
+-			pci_bus_save_and_disable(dev->subordinate);
++			pci_bus_save_and_disable_locked(dev->subordinate);
+ 	}
+ }
+ 
+ /*
+- * Restore devices from top of the tree down - parent bridges need to be
+- * restored before we can get to subordinate devices.
++ * Restore devices from top of the tree down while holding @dev mutex lock
++ * for the entire tree.  Parent bridges need to be restored before we can
++ * get to subordinate devices.
+  */
+-static void pci_slot_restore(struct pci_slot *slot)
++static void pci_slot_restore_locked(struct pci_slot *slot)
+ {
+ 	struct pci_dev *dev;
+ 
+ 	list_for_each_entry(dev, &slot->bus->devices, bus_list) {
+ 		if (!dev->slot || dev->slot != slot)
+ 			continue;
+-		pci_dev_lock(dev);
+ 		pci_dev_restore(dev);
+-		pci_dev_unlock(dev);
+ 		if (dev->subordinate)
+-			pci_bus_restore(dev->subordinate);
++			pci_bus_restore_locked(dev->subordinate);
+ 	}
+ }
+ 
+@@ -5158,17 +5160,15 @@ static int __pci_reset_slot(struct pci_slot *slot)
+ 	if (rc)
+ 		return rc;
+ 
+-	pci_slot_save_and_disable(slot);
+-
+ 	if (pci_slot_trylock(slot)) {
++		pci_slot_save_and_disable_locked(slot);
+ 		might_sleep();
+ 		rc = pci_reset_hotplug_slot(slot->hotplug, 0);
++		pci_slot_restore_locked(slot);
+ 		pci_slot_unlock(slot);
+ 	} else
+ 		rc = -EAGAIN;
+ 
+-	pci_slot_restore(slot);
+-
+ 	return rc;
+ }
+ 
+@@ -5254,17 +5254,15 @@ static int __pci_reset_bus(struct pci_bus *bus)
+ 	if (rc)
+ 		return rc;
+ 
+-	pci_bus_save_and_disable(bus);
+-
+ 	if (pci_bus_trylock(bus)) {
++		pci_bus_save_and_disable_locked(bus);
+ 		might_sleep();
+ 		rc = pci_bridge_secondary_bus_reset(bus->self);
++		pci_bus_restore_locked(bus);
+ 		pci_bus_unlock(bus);
+ 	} else
+ 		rc = -EAGAIN;
+ 
+-	pci_bus_restore(bus);
+-
+ 	return rc;
+ }
  
 -- 
 2.20.1
