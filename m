@@ -2,84 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EDD13E3CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:04:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B0213E4FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbgAPREI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:04:08 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:21771 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388044AbgAPREF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:04:05 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579194245; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=jyDX0RkCRR3RXyVljn8CGp1pK1triQLesamc/wgsgLM=; b=F91F41bi6tDQ85feQfn1HvKPoczWeDUhoJrwCmNL/p7Y4b1+eFOYxUhwB4kh8bDB/gYf4o2y
- xMvTyL84BxvOk/3AisExkcg02YfgsADlApN+gBUCe4Bu0W0E/iHhJctslBiO4NMqcf1gjq2e
- dlWbYoU8faYjnuZYJ5IJrpmYYUk=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e209783.7fe471b55a08-smtp-out-n02;
- Thu, 16 Jan 2020 17:04:03 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2885DC447AB; Thu, 16 Jan 2020 17:04:02 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S2390375AbgAPRMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:12:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389018AbgAPRLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:11:55 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: vbadigan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E419C447A9;
-        Thu, 16 Jan 2020 17:03:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E419C447A9
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-To:     ulf.hansson@linaro.org, adrian.hunter@intel.com
-Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, cang@codeaurora.org,
-        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Subject: [PATCH V2 0/2] Add CQHCI support for sdhci-msm
-Date:   Thu, 16 Jan 2020 22:33:09 +0530
-Message-Id: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 940B7246A0;
+        Thu, 16 Jan 2020 17:11:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579194714;
+        bh=VMxSnVGIwtCxxKxJeP4Q7uYMqhofEoA/E2CG4sUyupk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SS3pvIaWr+Qn337e2vDzM/2ty4g/E64EzKklydR6RvACrWTAtwEuS9cVsAj5Y+Ipl
+         8uIOs607aGyzDEVYSpvPQKSZdho6kwbUJR4EG+Rn3DLerDvVDh0+0kkIA/GHrLtDzv
+         yDaLga0PK34QPBFdWhPlCnYkavfcun8F8UvlHUXI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Gerd Rausch <gerd.rausch@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Subject: [PATCH AUTOSEL 4.19 551/671] net/rds: Fix 'ib_evt_handler_call' element in 'rds_ib_stat_names'
+Date:   Thu, 16 Jan 2020 12:03:09 -0500
+Message-Id: <20200116170509.12787-288-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since V1: (https://lkml.org/lkml/2019/12/17/455)
-	- Select MMC_CQHCI in Kconfig
-	- Making use of host->alloc_desc_size variable for allocation
-	  of ADMA table and host->desc_size for updating decriptor
-	  size dynamically.
+From: Gerd Rausch <gerd.rausch@oracle.com>
 
-Changes since RFC (https://lkml.org/lkml/2017/8/30/313)
-	- Updated settings so that TDLBA won't get reset when
-	  CQE is enabled.
-	- Removed new compatible string and moved to supports-cqe
-	  dt flag to identify CQE support.
-	- Incorporated review comments.
+[ Upstream commit 05a82481a3024b94db00b8c816bb3d526b5209e0 ]
 
-Tested on: qcs404, sc7180
+All entries in 'rds_ib_stat_names' are stringified versions
+of the corresponding "struct rds_ib_statistics" element
+without the "s_"-prefix.
 
-Ritesh Harjani (1):
-  mmc: sdhci-msm: Add CQHCI support for sdhci-msm
+Fix entry 'ib_evt_handler_call' to do the same.
 
-Veerabhadrarao Badiganti (1):
-  mmc: sdhci: Let a vendor driver supply and update ADMA descriptor size
+Fixes: f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
+Signed-off-by: Gerd Rausch <gerd.rausch@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/rds/ib_stats.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/mmc/host/Kconfig     |   1 +
- drivers/mmc/host/sdhci-msm.c | 133 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci.c     |   7 ++-
- drivers/mmc/host/sdhci.h     |   1 +
- 4 files changed, 139 insertions(+), 3 deletions(-)
-
+diff --git a/net/rds/ib_stats.c b/net/rds/ib_stats.c
+index 9252ad126335..ac46d8961b61 100644
+--- a/net/rds/ib_stats.c
++++ b/net/rds/ib_stats.c
+@@ -42,7 +42,7 @@ DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
+ static const char *const rds_ib_stat_names[] = {
+ 	"ib_connect_raced",
+ 	"ib_listen_closed_stale",
+-	"s_ib_evt_handler_call",
++	"ib_evt_handler_call",
+ 	"ib_tasklet_call",
+ 	"ib_tx_cq_event",
+ 	"ib_tx_ring_full",
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+2.20.1
+
