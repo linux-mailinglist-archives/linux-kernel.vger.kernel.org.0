@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2600B13FEC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:38:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8CA13FF64
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391388AbgAPXaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:30:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35988 "EHLO mail.kernel.org"
+        id S2389413AbgAPX03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:26:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403750AbgAPX3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:29:52 -0500
+        id S2388660AbgAPX0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:26:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEAB12072B;
-        Thu, 16 Jan 2020 23:29:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B396F20684;
+        Thu, 16 Jan 2020 23:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217391;
-        bh=2WNeRsDryRBzpXQN44EbufOyKvzcVAspZ6zfgL6yVVw=;
+        s=default; t=1579217166;
+        bh=JSkYMwublXIioF8nYCwyNBtuKyaSoZ5SYFQ1WufBYiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVUvR4rxX9J18mq0RvWSmKzpmm19jhT36IUZO0OR3Ev2eMviRqGcu4eynIOLsyuyy
-         j6U0rChSmZiscnnJUQr9u6A3AHoKxhCHqd52rsiRZmbkF/bv2U2mtDGZKxIfmKatcj
-         fWuGro8gfANf2kQDleYSSf5t94CWEfxyhp1Aa4/c=
+        b=hFPAqQGBG2ILPJm/jfvp/W4x63rYYYcjcMOQNmvqO90Ez1GgXR4fWnpL7HzNIt+aE
+         7pvMs84vDAbvyNh/1ByWz/8yGSYuFAmdf3Vw6q91BWBaq1SVoSfBFu8OJ7aKlOgsMg
+         i4oGJTWY7uCQWwXI8A4SpnhPdN/AaMJOJrndRNLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Luo Jiaxing <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 37/84] scsi: enclosure: Fix stale device oops with hot replug
-Date:   Fri, 17 Jan 2020 00:18:11 +0100
-Message-Id: <20200116231718.132769637@linuxfoundation.org>
+        Victorien Molle <victorien.molle@wifirst.fr>,
+        Florent Fourcot <florent.fourcot@wifirst.fr>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 175/203] sch_cake: Add missing NLA policy entry TCA_CAKE_SPLIT_GSO
+Date:   Fri, 17 Jan 2020 00:18:12 +0100
+Message-Id: <20200116231759.775066301@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +46,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Victorien Molle <victorien.molle@wifirst.fr>
 
-commit 529244bd1afc102ab164429d338d310d5d65e60d upstream.
+commit b3c424eb6a1a3c485de64619418a471dee6ce849 upstream.
 
-Doing an add/remove/add on a SCSI device in an enclosure leads to an oops
-caused by poisoned values in the enclosure device list pointers.  The
-reason is because we are keeping the enclosure device across the enclosed
-device add/remove/add but the current code is doing a
-device_add/device_del/device_add on it.  This is the wrong thing to do in
-sysfs, so fix it by not doing a device_del on the enclosure device simply
-because of a hot remove of the drive in the slot.
+This field has never been checked since introduction in mainline kernel
 
-[mkp: added missing email addresses]
-
-Fixes: 43d8eb9cfd0a ("[SCSI] ses: add support for enclosure component hot removal")
-Link: https://lore.kernel.org/r/1578532892.3852.10.camel@HansenPartnership.com
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reported-by: Luo Jiaxing <luojiaxing@huawei.com>
-Tested-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Victorien Molle <victorien.molle@wifirst.fr>
+Signed-off-by: Florent Fourcot <florent.fourcot@wifirst.fr>
+Fixes: 2db6dc2662ba "sch_cake: Make gso-splitting configurable from userspace"
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/enclosure.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/sched/sch_cake.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/enclosure.c
-+++ b/drivers/misc/enclosure.c
-@@ -419,10 +419,9 @@ int enclosure_remove_device(struct enclo
- 		cdev = &edev->component[i];
- 		if (cdev->dev == dev) {
- 			enclosure_remove_links(cdev);
--			device_del(&cdev->cdev);
- 			put_device(dev);
- 			cdev->dev = NULL;
--			return device_add(&cdev->cdev);
-+			return 0;
- 		}
- 	}
- 	return -ENODEV;
+--- a/net/sched/sch_cake.c
++++ b/net/sched/sch_cake.c
+@@ -2184,6 +2184,7 @@ static const struct nla_policy cake_poli
+ 	[TCA_CAKE_MPU]		 = { .type = NLA_U32 },
+ 	[TCA_CAKE_INGRESS]	 = { .type = NLA_U32 },
+ 	[TCA_CAKE_ACK_FILTER]	 = { .type = NLA_U32 },
++	[TCA_CAKE_SPLIT_GSO]	 = { .type = NLA_U32 },
+ 	[TCA_CAKE_FWMARK]	 = { .type = NLA_U32 },
+ };
+ 
 
 
