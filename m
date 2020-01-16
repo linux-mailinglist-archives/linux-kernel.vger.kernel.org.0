@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 501D113E31F
+	by mail.lfdr.de (Postfix) with ESMTP id B9EBB13E320
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387648AbgAPRAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49156 "EHLO mail.kernel.org"
+        id S2387689AbgAPRAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:00:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732814AbgAPQ7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:59:55 -0500
+        id S1732846AbgAPRAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB2824673;
-        Thu, 16 Jan 2020 16:59:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EAFA2468E;
+        Thu, 16 Jan 2020 17:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193995;
-        bh=U8xF5rETI1YMWglzEq/+RoBuIlqMzvNVf2Rjjzx3z5Q=;
+        s=default; t=1579194003;
+        bh=fTzTZdTov7HcnpdU0NW4Y0flZWYpEd2gLH97U0joLbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WewXDdxbK61rdSx6sPmYXuvZV4625iVVJ+inWqPEON8Gw5qi+ltwaATbhlg7Oge2/
-         agiGpTTTg5ukZZQQ/eLMRyK4sIkNpFcK/KzlfVMB5JZfhEJgSO3UdLmxTQEX3JRVVy
-         87R4rysTJtYbJiDeBnODpionj3MpyRKuslLvGEpE=
+        b=M170uZ5gz+lMwYn/1B4sbCI4vfEIqqJHoQsnjbQcu7qoaid2VYQuZVzEkH6ppCSDW
+         olbU8y0MOLqaDYihd22ykzclfqv3gLhQEyo7/FzwKqAjHD8jupvKbC58wftYlocE17
+         itBqqpWumvw6q1XkcRnqSFygrHPScZBH3D55nzy0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 124/671] net: hns3: fix wrong combined count returned by ethtool -l
-Date:   Thu, 16 Jan 2020 11:50:33 -0500
-Message-Id: <20200116165940.10720-7-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 130/671] ARM: dts: sun8i-a23-a33: Move NAND controller device node to sort by address
+Date:   Thu, 16 Jan 2020 11:50:39 -0500
+Message-Id: <20200116165940.10720-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -45,53 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit c3b9c50d1567aa12be4448fe85b09626eba2499c ]
+[ Upstream commit d027521497592773cd23d016d36975574d3452db ]
 
-The current code returns the number of all queues that can be used and
-the number of queues that have been allocated, which is incorrect.
-What should be returned is the number of queues allocated for each enabled
-TC and the number of queues that can be allocated.
+The NAND controller device node was inserted into the wrong position,
+probably due to a rebase or merge, as the file's structure does not
+provide enough context for git to accurately match the previous device
+node block.
 
-This patch fixes it.
-
-Fixes: 482d2e9c1cc7 ("net: hns3: add support to query tqps number")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: d7b843df13ea ("ARM: dts: sun8i: add NAND controller node for A23/A33")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index f8cc8d1f0b20..4b9f898a1620 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5922,18 +5922,17 @@ static u32 hclge_get_max_channels(struct hnae3_handle *handle)
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
+diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+index c16ffcc4db7d..a272a69519a2 100644
+--- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+@@ -155,6 +155,19 @@
+ 			#dma-cells = <1>;
+ 		};
  
--	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
-+	return min_t(u32, hdev->rss_size_max,
-+		     vport->alloc_tqps / kinfo->num_tc);
- }
++		nfc: nand@1c03000 {
++			compatible = "allwinner,sun4i-a10-nand";
++			reg = <0x01c03000 0x1000>;
++			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_NAND>, <&ccu CLK_NAND>;
++			clock-names = "ahb", "mod";
++			resets = <&ccu RST_BUS_NAND>;
++			reset-names = "ahb";
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+@@ -212,21 +225,6 @@
+ 			#size-cells = <0>;
+ 		};
  
- static void hclge_get_channels(struct hnae3_handle *handle,
- 			       struct ethtool_channels *ch)
- {
--	struct hclge_vport *vport = hclge_get_vport(handle);
+-		nfc: nand@1c03000 {
+-			compatible = "allwinner,sun4i-a10-nand";
+-			reg = <0x01c03000 0x1000>;
+-			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu CLK_BUS_NAND>, <&ccu CLK_NAND>;
+-			clock-names = "ahb", "mod";
+-			resets = <&ccu RST_BUS_NAND>;
+-			reset-names = "ahb";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&nand_pins &nand_pins_cs0 &nand_pins_rb0>;
+-			status = "disabled";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-		};
 -
- 	ch->max_combined = hclge_get_max_channels(handle);
- 	ch->other_count = 1;
- 	ch->max_other = 1;
--	ch->combined_count = vport->alloc_tqps;
-+	ch->combined_count = handle->kinfo.rss_size;
- }
- 
- static void hclge_get_tqps_and_rss_info(struct hnae3_handle *handle,
+ 		usb_otg: usb@1c19000 {
+ 			/* compatible gets set in SoC specific dtsi file */
+ 			reg = <0x01c19000 0x0400>;
 -- 
 2.20.1
 
