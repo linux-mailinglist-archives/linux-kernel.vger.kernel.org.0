@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E69B13FDB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD6713FDDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390790AbgAPX21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:28:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32962 "EHLO mail.kernel.org"
+        id S2403787AbgAPXaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:30:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391096AbgAPX2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:21 -0500
+        id S2391366AbgAPX3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:29:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D678C20684;
-        Thu, 16 Jan 2020 23:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 390C9206D9;
+        Thu, 16 Jan 2020 23:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217301;
-        bh=TWZygQ9YdgzATQj8d6zAywIdHQK2MyS6UkqC5kuQ1HY=;
+        s=default; t=1579217393;
+        bh=EpbH0jM1qqpILirwYTaP+35s+uBkOLXxHRMn5MSJZVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mFFnkBcf8n6O15/OV6tUWVDizCyYCQ68gvtmJgfNwoKmZyu0ctJQXe/rfTaRfsIlU
-         jLzT/TTBrBfkkK+16LFYxwySqXcP1uGGPLE9l/pGDyT+bTzv1wpalHA/SFBDJHkBWk
-         OUnnzgG67GZhFPVKE4vzS7s04xash6GYnOdSL/e0=
+        b=myQTrWUZaU3IoFb/iKIO8Ov1JDg1g+Gk85GCfGCVAOo3nXhTULW2i/bZsx+ottcrB
+         zrdioCB7LkxE89/91uQv5XmfGOOHIAddc4EEcsPQYNtGbubrgtjo+Do1xUsi6sHb2i
+         6h/So6lMFfqpBlDowSJBhR80ciebuGqUEvixHDyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 26/84] gpio: Fix error message on out-of-range GPIO in lookup table
-Date:   Fri, 17 Jan 2020 00:18:00 +0100
-Message-Id: <20200116231716.743428011@linuxfoundation.org>
+        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 28/84] s390/qeth: fix false reporting of VNIC CHAR config failure
+Date:   Fri, 17 Jan 2020 00:18:02 +0100
+Message-Id: <20200116231716.994739626@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -44,46 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Alexandra Winter <wintera@linux.ibm.com>
 
-commit d935bd50dd14a7714cbdba9a76435dbb56edb1ae upstream.
+commit 68c57bfd52836e31bff33e5e1fc64029749d2c35 upstream.
 
-When a GPIO offset in a lookup table is out-of-range, the printed error
-message (1) does not include the actual out-of-range value, and (2)
-contains an off-by-one error in the upper bound.
+Symptom: Error message "Configuring the VNIC characteristics failed"
+in dmesg whenever an OSA interface on z15 is set online.
 
-Avoid user confusion by also printing the actual GPIO offset, and
-correcting the upper bound of the range.
-While at it, use "%u" for unsigned int.
+The VNIC characteristics get re-programmed when setting a L2 device
+online. This follows the selected 'wanted' characteristics - with the
+exception that the INVISIBLE characteristic unconditionally gets
+switched off.
 
-Sample impact:
+For devices that don't support INVISIBLE (ie. OSA), the resulting
+IO failure raises a noisy error message
+("Configuring the VNIC characteristics failed").
+For IQD, INVISIBLE is off by default anyways.
 
-    -requested GPIO 0 is out of range [0..32] for chip e6052000.gpio
-    +requested GPIO 0 (45) is out of range [0..31] for chip e6052000.gpio
+So don't unnecessarily special-case the INVISIBLE characteristic, and
+thereby suppress the misleading error message on OSA devices.
 
-Fixes: 2a3cf6a3599e9015 ("gpiolib: return -ENOENT if no GPIO mapping exists")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191127095919.4214-1-geert+renesas@glider.be
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
+Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
+Reviewed-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/s390/net/qeth_l2_main.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3757,8 +3757,9 @@ static struct gpio_desc *gpiod_find(stru
- 
- 		if (chip->ngpio <= p->chip_hwnum) {
- 			dev_err(dev,
--				"requested GPIO %d is out of range [0..%d] for chip %s\n",
--				idx, chip->ngpio, chip->label);
-+				"requested GPIO %u (%u) is out of range [0..%u] for chip %s\n",
-+				idx, p->chip_hwnum, chip->ngpio - 1,
-+				chip->label);
- 			return ERR_PTR(-EINVAL);
- 		}
- 
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -2367,7 +2367,6 @@ static void qeth_l2_vnicc_init(struct qe
+ 	error = qeth_l2_vnicc_recover_timeout(card, QETH_VNICC_LEARNING,
+ 					      timeout);
+ 	chars_tmp = card->options.vnicc.wanted_chars ^ QETH_VNICC_DEFAULT;
+-	chars_tmp |= QETH_VNICC_BRIDGE_INVISIBLE;
+ 	chars_len = sizeof(card->options.vnicc.wanted_chars) * BITS_PER_BYTE;
+ 	for_each_set_bit(i, &chars_tmp, chars_len) {
+ 		vnicc = BIT(i);
 
 
