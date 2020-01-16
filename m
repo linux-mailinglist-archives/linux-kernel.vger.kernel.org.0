@@ -2,96 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBC213D4FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 08:28:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E77DD13D503
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 08:29:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730751AbgAPH2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 02:28:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58968 "EHLO mail.kernel.org"
+        id S1730845AbgAPH3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 02:29:11 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:39946 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730088AbgAPH2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 02:28:52 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CF10206D9;
-        Thu, 16 Jan 2020 07:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579159731;
-        bh=pRRQpXth0TXpHnnIZoTynOLbI277epXRK/djArfkqqg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hS8dlpQ99rHWL0kTk5ZTYzoWlF+J25ZQgpqOCCSNP9QRRFrh4ST6wgTBWIxY18DIE
-         LNp5gkGHlGi2/6LMyenbRn4s8rV1IGTp2AusKhQwbPGYgRWzfoJ9Z8HfxtqWPQToBi
-         QmN3YnO0LOt/4zJx8GDSRa1AKsyKkXQy3cdeZPCE=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1irzaD-00058d-LD; Thu, 16 Jan 2020 07:28:49 +0000
+        id S1729431AbgAPH3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 02:29:11 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1irzaV-0005Z8-M0; Thu, 16 Jan 2020 15:29:07 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1irzaS-0000nI-Hs; Thu, 16 Jan 2020 15:29:04 +0800
+Date:   Thu, 16 Jan 2020 15:29:04 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Rijo Thomas <Rijo-john.Thomas@amd.com>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Gary R Hook <gary.hook@amd.com>, tee-dev@lists.linaro.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 0/5] amdtee: Address bug report
+Message-ID: <20200116072904.o65qfy3atn66ruxi@gondor.apana.org.au>
+References: <cover.1578572591.git.Rijo-john.Thomas@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 16 Jan 2020 07:28:49 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Steven Price <steven.price@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCH v5 0/3] arm64: Workaround for Cortex-A55 erratum 1530923
-In-Reply-To: <20200114164543.GD2579@willie-the-truck>
-References: <20191216115631.17804-1-steven.price@arm.com>
- <20200114164543.GD2579@willie-the-truck>
-Message-ID: <3292551ef07b2c5354d48faedad849ff@kernel.org>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/1.3.8
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: will@kernel.org, steven.price@arm.com, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1578572591.git.Rijo-john.Thomas@amd.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-14 16:45, Will Deacon wrote:
-> On Mon, Dec 16, 2019 at 11:56:28AM +0000, Steven Price wrote:
->> Version 5 is a rebasing of version 4 (no changes).
->> 
->> This series enables a workaround for Cortex-A55 erratum 1530923. The
->> erratum potentially allows TLB entries to be allocated as a result of 
->> a
->> speculative AT instruction. This may happen in the middle of a guest
->> world switch while the relevant VMSA configuration is in an 
->> inconsistent
->> state, leading to erroneous content being allocated into TLBs.
->> 
->> There are existing workarounds for similar issues, 1165522 is
->> effectively the same, and 1319367/1319537 is similar but without VHE
->> support.  Rather than add to the selection of errata, the first patch
->> renames 1165522 to WORKAROUND_SPECULATIVE_AT which can be reused (in 
->> the
->> final patch) for 1530923.
->> 
->> The workaround for errata 1319367 and 1319537 although similar cannot
->> use VHE (not available on those CPUs) so cannot share the workaround.
->> However, to keep some sense of symmetry the workaround is renamed to
->> SPECULATIVE_AT_NVHE.
->> 
->> Changes since v4:
->>  * Rebased to v5.5-rc1
+On Thu, Jan 09, 2020 at 06:23:17PM +0530, Rijo Thomas wrote:
+> This patch series addresses the bug report submitted by Dan Carpenter.
 > 
-> Looks fine to me. Marc, are you ok with me queueing this via arm64 
-> (that's
-> where the existing workarounds came from), or would you prefer to take 
-> them
-> via kvm-arm?
+> Link: https://lists.linaro.org/pipermail/tee-dev/2020-January/001417.html
+> 
+> Since, these patches are based on cryptodev-2.6 tree, I have included
+> linux-crypto list as well.
+> 
+> This patch series does not fix the static checker warning reported due
+> to incorrect use of IS_ERR. Colin Ian King has submitted a fix for this
+> issue. Link: https://lkml.org/lkml/2020/1/8/88
+> 
+> Rijo Thomas (5):
+>   tee: amdtee: remove unused variable initialization
+>   tee: amdtee: print error message if tee not present
+>   tee: amdtee: skip tee_device_unregister if tee_device_alloc fails
+>   tee: amdtee: rename err label to err_device_unregister
+>   tee: amdtee: remove redundant NULL check for pool
+> 
+>  drivers/tee/amdtee/call.c | 14 +++++++-------
+>  drivers/tee/amdtee/core.c | 32 +++++++++++++++++---------------
+>  2 files changed, 24 insertions(+), 22 deletions(-)
 
-Please go ahead and take it (with my ack) via the arm64 tree.
-
-Thanks,
-
-        M.
+All applied.  Thanks.
 -- 
-Jazz is not dead. It just smells funny...
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
