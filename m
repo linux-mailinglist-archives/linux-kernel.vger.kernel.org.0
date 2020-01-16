@@ -2,137 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA46713D232
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:31:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BD2913D237
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 03:33:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbgAPCbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 21:31:39 -0500
-Received: from mail-eopbgr70041.outbound.protection.outlook.com ([40.107.7.41]:2222
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726513AbgAPCbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:31:38 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HR0gpZAIDLir9/xnlKZJf+A8OzMAHnA2Dj880bsokDpgvgrFelesM6ZHZDjA6Sa7KYa+BBdB0m6JyWQvr2ckupuWZ9ciu11+gXnnH2m5riGyUmnLFpIy60zf6Xs6ntltvXo8UGxD6bm3CHwhg8QY6V+CBT4s8GdzaJFY1cEiPd5ZK7f2LjSarb7M2BJPZQjvgZQrWkgmlRz6dmUUBcs/fGpHxozaFSWq6/SUbmjIwAGj6ysb+YKq1HkUAyOsj0zOFtgGTaZe9mb/t+GcCh/VKc+OKzKJOh18xuQrnYREgcg7QMylkiEh2OwfZ0oHb5ldJwglydJMw6685AHEdg+Epw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YNf7NOzBlVEVnItBVhSPKv5ExYYinWHj6hAshwgZxGY=;
- b=JFJLXxEbReL0u3qdc01Tv5PGks2RD6brXp+9ANnFCQ9lL9k+taQpf3fnz8b3veiMi7DkEKoEWTuUFFjhoIIKVBhLCnY6gOp4NA6eCs3ToW8UfN6s4wWUGNNAs1Ur1mvF7lANOFTOR/e3J1o0B9craC7/PMCecaiNFkq4UO1acP9uo00pDTIf3UIjmHf3T+VCo0AlrwckKVOGpvQ5gSmJ+Nbl01hYNNLqmmMF45YZOmtqXYDSji3KTdCAt4lC3JR3Oux8puJYlGgpkAp11noIa6HBSRoP2w+mrWJX1OxY5QqkAqhVYfkzBf7A0SDHd3aYWVOUoG7kw8x8iggGSZ8E6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nextfour.com; dmarc=pass action=none header.from=nextfour.com;
- dkim=pass header.d=nextfour.com; arc=none
+        id S1729441AbgAPCc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 21:32:59 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34215 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729043AbgAPCc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 15 Jan 2020 21:32:59 -0500
+Received: by mail-io1-f66.google.com with SMTP id z193so20097269iof.1
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 18:32:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=NextfourGroupOy.onmicrosoft.com;
- s=selector2-NextfourGroupOy-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YNf7NOzBlVEVnItBVhSPKv5ExYYinWHj6hAshwgZxGY=;
- b=p5hVayL77QYeNipp7UoRP3EN0wgyAnNc/4gq4T9n/gXbycYhDjxAsHbUlDGOY2M/Q9cBueqTcpQBM1epENx0DEJDDuJzSgvRgbIc1dPg8y4hyUX9JQiV1x0KDgf40ymEHu5rbOn4ef0OS8G6tNWe4R/vSJJyvnCzgBFqR8kk+TQ=
-Received: from VI1PR03MB3775.eurprd03.prod.outlook.com (52.134.21.155) by
- VI1PR03MB3582.eurprd03.prod.outlook.com (52.134.26.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.13; Thu, 16 Jan 2020 02:30:53 +0000
-Received: from VI1PR03MB3775.eurprd03.prod.outlook.com
- ([fe80::fdfe:b987:16ad:9de9]) by VI1PR03MB3775.eurprd03.prod.outlook.com
- ([fe80::fdfe:b987:16ad:9de9%5]) with mapi id 15.20.2623.018; Thu, 16 Jan 2020
- 02:30:53 +0000
-Received: from [192.168.1.121] (91.145.109.188) by HE1PR0701CA0071.eurprd07.prod.outlook.com (2603:10a6:3:64::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.10 via Frontend Transport; Thu, 16 Jan 2020 02:30:52 +0000
-From:   =?utf-8?B?TWlrYSBQZW50dGlsw6Q=?= <mika.penttila@nextfour.com>
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Yan Zhao <yan.y.zhao@intel.com>
-CC:     "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v2 1/2] vfio: introduce vfio_dma_rw to read/write a range
- of IOVAs
-Thread-Topic: [PATCH v2 1/2] vfio: introduce vfio_dma_rw to read/write a range
- of IOVAs
-Thread-Index: AQHVy1izPc+ONnk2aUegZV3QDrVrz6fsJ+UAgABrWAA=
-Date:   Thu, 16 Jan 2020 02:30:52 +0000
-Message-ID: <80cf3888-2e51-3fd7-a064-213e7ded188e@nextfour.com>
-References: <20200115034132.2753-1-yan.y.zhao@intel.com>
- <20200115035303.12362-1-yan.y.zhao@intel.com>
- <20200115130638.6926dd08@w520.home>
-In-Reply-To: <20200115130638.6926dd08@w520.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR0701CA0071.eurprd07.prod.outlook.com
- (2603:10a6:3:64::15) To VI1PR03MB3775.eurprd03.prod.outlook.com
- (2603:10a6:803:2b::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mika.penttila@nextfour.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [91.145.109.188]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3f6a1b21-5f78-45ed-b90b-08d79a2c1b8c
-x-ms-traffictypediagnostic: VI1PR03MB3582:
-x-microsoft-antispam-prvs: <VI1PR03MB3582FF5E399CF22B870C91B283360@VI1PR03MB3582.eurprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 02843AA9E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(346002)(396003)(39830400003)(189003)(199004)(31686004)(8676002)(16526019)(54906003)(31696002)(81156014)(16576012)(36756003)(2616005)(8936002)(86362001)(186003)(81166006)(26005)(110136005)(71200400001)(66556008)(4326008)(6486002)(64756008)(66446008)(85182001)(2906002)(66476007)(5660300002)(66946007)(508600001)(956004)(316002)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR03MB3582;H:VI1PR03MB3775.eurprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nextfour.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: F3V3raZja/DAqhbbXS8M316jYGjGnITssmOz30ysl1jhbtcspatnHpD26lNCb4c7OHKNQqWTgBc61V5N0MxgxuEC/WF5juDkRy01TBdmHnbSzExpGWrTC3ILPAnNPWN5O6gCV+xufMoZTJQ/MaF9TODCdFcZV9s5PVsM9B7JEC0jhWKL7oqTAtPH9uhB+e3gvfeTxnH+U5fMA5gGUUvYCtDZ1pD4RPjM7iWh6RU9Xs6V5n4R/WCwSl48sodwSv8si1IBuL6LpwjebZ860qPTwMVMU+IBgBObekpflB0Pb9LetehExf9GLfxqSmldjos9jKurQ3ZJMbGP/WyZOWoWC7fJfdiw2aS14fvYbVWye26YVpnJHdV7VRnRX3XAR8wuwQ+ZQARXhKOIlrNKpiqCYU03irV+ULAg4D49NyL9xF+yy9rZOOvvayUsATbSKiCV
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2A03A68253609840BF1CFE9C065D25C4@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ZMxDPPtpfyDr16DAViPOjphNjCxUKCyR951nmWvnX+0=;
+        b=RqbHK8VoNCXEI+hIdHVL/MC88sR1q4OPTXukFJTkCL/S7mLSBkvaWjPbEO2L6KiNFE
+         FhJusyzBBdV6kQ+a+YlTrvqU1YKNRBO4mhi1ULYHYxGkptEAQoBXJsH3mv+FHZHbmjUA
+         lwLqyjkVstTa24clYlsBGKvyucNtx5Vu6wGV8j+2BRaOcMvQaU0kKYIPj29mQIn+/36R
+         0NiXjAbEOA0a3MXvPd8ZyKRp5YExsJTzMX6AD+vrtGPu2uRtZKQQS4IIkgAk7HSgJtC8
+         tVDjeI9PNc+AZ/kdpwMMxAEqhSUELgnJcgLO+//z3PFC0Cx1sEcLfqiWo4CIiUoIzZFy
+         uz5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ZMxDPPtpfyDr16DAViPOjphNjCxUKCyR951nmWvnX+0=;
+        b=aqWvt4PDqDxLUDYVgUOSlWLSJSFwW0XKX9xorftxM86i2S1RDdUoqyVK7Tgz79KQaO
+         oqCRyB6+AViPWbaY3Qm3Y2mBWV+M9sDUT0x2eBLvPy480j3UX1QtInhk9+o4mnLDMBP/
+         sEs2+jx0eYrxPl8U7K7A/bk30nMeQQopp9Hha3aZXrxEGfoqq4acFAYH1jJDtsj+idqO
+         W7z4MtV1e1NYARKltBLbaDWOPWzHCcrcSyk1zbQ8//WYBDX36bdK/PIvJQdOD7aKgrI0
+         xA0K8++NKqr9LtMUhv20h2ewOEe0jlIecj+PB9rATpAY2PbGKae5SoKamhLKx2Kiga+q
+         P/pw==
+X-Gm-Message-State: APjAAAVoL8ociPyJpcwkZGojhaC1iNk0XrQnpCC1INTkLqkwIGmnA8E3
+        axH8Ch4Q851hMtjAHpP+KP/VEA==
+X-Google-Smtp-Source: APXvYqyh+g2Hzupz8itLKiU78z1Ffu3lm87KUi123IE5FELOjy2k517AvOgTd2cAPDjAJzP0F4bC4Q==
+X-Received: by 2002:a6b:e004:: with SMTP id z4mr24598779iog.235.1579141978190;
+        Wed, 15 Jan 2020 18:32:58 -0800 (PST)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id z15sm6458956ill.20.2020.01.15.18.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 18:32:57 -0800 (PST)
+Date:   Wed, 15 Jan 2020 18:32:55 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Greentime Hu <greentime.hu@sifive.com>, anup@brainfault.org
+cc:     green.hu@gmail.com, greentime@kernel.org, palmer@dabbelt.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        schwab@suse.de
+Subject: Re: [PATCH v4] riscv: make sure the cores stay looping in
+ .Lsecondary_park
+In-Reply-To: <20200115065436.7702-1-greentime.hu@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.2001151832001.98477@viisi.sifive.com>
+References: <20200115065436.7702-1-greentime.hu@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-X-OriginatorOrg: nextfour.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f6a1b21-5f78-45ed-b90b-08d79a2c1b8c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2020 02:30:52.9889
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 972e95c2-9290-4a02-8705-4014700ea294
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OVR7qSQOJHtwD6pO4lLw9poKhRCpCCrKlWYBCk/OBFyuxpqlFselY0lLaCGr82gZHozhYRKtmjaiUg3ElwuHL+DuTp92ZnWBhoRPKYcpq1E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB3582
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDE1LjEuMjAyMCAyMi4wNiwgQWxleCBXaWxsaWFtc29uIHdyb3RlOg0KPiBPbiBUdWUs
-IDE0IEphbiAyMDIwIDIyOjUzOjAzIC0wNTAwDQo+IFlhbiBaaGFvIDx5YW4ueS56aGFvQGludGVs
-LmNvbT4gd3JvdGU6DQo+DQo+PiB2ZmlvX2RtYV9ydyB3aWxsIHJlYWQvd3JpdGUgYSByYW5nZSBv
-ZiB1c2VyIHNwYWNlIG1lbW9yeSBwb2ludGVkIHRvIGJ5DQo+PiBJT1ZBIGludG8vZnJvbSBhIGtl
-cm5lbCBidWZmZXIgd2l0aG91dCBwaW5uaW5nIHRoZSB1c2VyIHNwYWNlIG1lbW9yeS4NCj4+DQo+
-PiBUT0RPOiBtYXJrIHRoZSBJT1ZBcyB0byB1c2VyIHNwYWNlIG1lbW9yeSBkaXJ0eSBpZiB0aGV5
-IGFyZSB3cml0dGVuIGluDQo+PiB2ZmlvX2RtYV9ydygpLg0KPj4NCj4+IENjOiBLZXZpbiBUaWFu
-IDxrZXZpbi50aWFuQGludGVsLmNvbT4NCj4+IFNpZ25lZC1vZmYtYnk6IFlhbiBaaGFvIDx5YW4u
-eS56aGFvQGludGVsLmNvbT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL3ZmaW8vdmZpby5jICAgICAg
-ICAgICAgIHwgNDUgKysrKysrKysrKysrKysrKysrKw0KPj4gICBkcml2ZXJzL3ZmaW8vdmZpb19p
-b21tdV90eXBlMS5jIHwgNzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+PiAg
-IGluY2x1ZGUvbGludXgvdmZpby5oICAgICAgICAgICAgfCAgNSArKysNCj4+ICAgMyBmaWxlcyBj
-aGFuZ2VkLCAxMjYgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Zm
-aW8vdmZpby5jIGIvZHJpdmVycy92ZmlvL3ZmaW8uYw0KPj4gaW5kZXggYzg0ODI2MjRjYTM0Li44
-YmQ1MmJjODQxY2YgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL3ZmaW8vdmZpby5jDQo+PiArKysg
-Yi9kcml2ZXJzL3ZmaW8vdmZpby5jDQo+PiBAQCAtMTk2MSw2ICsxOTYxLDUxIEBAIGludCB2Zmlv
-X3VucGluX3BhZ2VzKHN0cnVjdCBkZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyAqdXNlcl9wZm4s
-IGludCBucGFnZSkNCj4+ICAgfQ0KPj4gICBFWFBPUlRfU1lNQk9MKHZmaW9fdW5waW5fcGFnZXMp
-Ow0KPj4gICANCj4+ICsvKg0KPj4gKyAqIFJlYWQvV3JpdGUgYSByYW5nZSBvZiBJT1ZBcyBwb2lu
-dGluZyB0byB1c2VyIHNwYWNlIG1lbW9yeSBpbnRvL2Zyb20gYSBrZXJuZWwNCj4+ICsgKiBidWZm
-ZXIgd2l0aG91dCBwaW5uaW5nIHRoZSB1c2VyIHNwYWNlIG1lbW9yeQ0KPj4gKyAqIEBkZXYgW2lu
-XSAgOiBkZXZpY2UNCj4+ICsgKiBAaW92YSBbaW5dIDogYmFzZSBJT1ZBIG9mIGEgdXNlciBzcGFj
-ZSBidWZmZXINCj4+ICsgKiBAZGF0YSBbaW5dIDogcG9pbnRlciB0byBrZXJuZWwgYnVmZmVyDQo+
-PiArICogQGxlbiBbaW5dICA6IGtlcm5lbCBidWZmZXIgbGVuZ3RoDQo+PiArICogQHdyaXRlICAg
-ICA6IGluZGljYXRlIHJlYWQgb3Igd3JpdGUNCj4+ICsgKiBSZXR1cm4gZXJyb3IgY29kZSBvbiBm
-YWlsdXJlIG9yIDAgb24gc3VjY2Vzcy4NCj4+ICsgKi8NCj4+ICtpbnQgdmZpb19kbWFfcncoc3Ry
-dWN0IGRldmljZSAqZGV2LCBkbWFfYWRkcl90IGlvdmEsIHZvaWQgKmRhdGEsDQo+PiArCQkgICBz
-aXplX3QgbGVuLCBib29sIHdyaXRlKQ0KPj4gK3sNCj4+ICsJc3RydWN0IHZmaW9fY29udGFpbmVy
-ICpjb250YWluZXI7DQo+PiArCXN0cnVjdCB2ZmlvX2dyb3VwICpncm91cDsNCj4+ICsJc3RydWN0
-IHZmaW9faW9tbXVfZHJpdmVyICpkcml2ZXI7DQo+PiArCWludCByZXQgPSAwOw0KDQpEbyB5b3Ug
-a25vdyB0aGUgaW92YSBnaXZlbiB0byB2ZmlvX2RtYV9ydygpIGlzIGluZGVlZCBhIGdwYSBhbmQg
-bm90IGlvdmEgDQpmcm9tIGEgaW9tbXUgbWFwcGluZz8gU28gaXNuJ3QgaXQgeW91IGFjdHVhbGx5
-IGFzc3VtZSBhbGwgdGhlIGd1ZXN0IGlzIA0KcGlubmVkLA0KbGlrZSBmcm9tIGRldmljZSBhc3Np
-Z25tZW50Pw0KDQpPciB3aG8gYW5kIGhvdyBpcyB0aGUgdmZpbyBtYXBwaW5nIGFkZGVkIGJlZm9y
-ZSB0aGUgdmZpb19kbWFfcncoKSA/DQoNClRoYW5rcywNCk1pa2ENCg0K
+On Wed, 15 Jan 2020, Greentime Hu wrote:
+
+> The code in secondary_park is currently placed in the .init section. The
+> kernel reclaims and clears this code when it finishes booting. That
+> causes the cores parked in it to go to somewhere unpredictable, so we
+> move this function out of init to make sure the cores stay looping there.
+> 
+> The instruction bgeu a0, t0, .Lsecondary_park may have "a relocation
+> truncated to fit" issue during linking time. It is because that sections
+> are too far to jump. Let's use tail to jump to the .Lsecondary_park.
+> 
+> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+
+Thanks, queued for v5.5-rc.  Anup's Reviewed-by: has been dropped since 
+the patch changed significantly - Anup, if you are still happy with it, 
+please reply with another Reviewed-by:.  Thanks,
+
+
+- Paul
