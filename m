@@ -2,215 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1C813D6A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD1E13D6B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 10:22:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730592AbgAPJTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 04:19:10 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38779 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730342AbgAPJTJ (ORCPT
+        id S1730054AbgAPJVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 04:21:21 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35560 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726684AbgAPJVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 04:19:09 -0500
-Received: by mail-io1-f68.google.com with SMTP id i7so12563733ioo.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 01:19:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DEmkOKqY6q6hAhtGO8c8rmA8wwGHpO5BilLXpdIbB7I=;
-        b=WJ5IKs9fiBTVp8BuvxnKOBaru2rIXqED/Rq0yyQSdyRNzvJcbIJ8kJqtCUd+rcV6nn
-         EhI+mwh5Bq9EkGM1UCZoYtKiXQJb5mUkVbl5DEbwzwiQ5eWJf/1j5Inwc5mtqTXN+8cZ
-         lQKMTkatnFRaRzda7WRLP3JId4g6ZavROmaK4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DEmkOKqY6q6hAhtGO8c8rmA8wwGHpO5BilLXpdIbB7I=;
-        b=YKVprCUA4haZbcbDTKAt9FxUTKckoDtYph98E5T0WFcx3HhiCIEwH50KtaW4xRkUB7
-         cpyxA7V3mSIBLKmQEiKaKEpycuabH63gaXunppWLekCHRFfbNbQxHUp4c24H8nMH21JV
-         nnajy7OZO6aF0nV/VsbMk729lIWc6GJQ4tMnBvDxwTVorA5OhOSo9eyHfxTA6VmKGQwm
-         y+20Kvftb7DewYNlbVGH1Fp90HN7UuOED6VSGhNxkzmYT7Cg4HCXINPWKXqGjOtbGZJW
-         1wieGFfUnwkApXGuBJWcVVjUFW+NZcse8O4jaoESJf6HxzKsrYoEC0Mo2mOEHYTWzjOy
-         1vUQ==
-X-Gm-Message-State: APjAAAW2fNV6VTa0UK2KwKP2wc8tWjtm2+vpQ3iWVhbV2Jv+NbdvunAx
-        5Vrk/3nRPZnPQYMPnTKvPWOT3oOV4Z3q7ivqUYLzNg==
-X-Google-Smtp-Source: APXvYqzvaPrf1c/2YOtkHJqp95C4MJl+/6ictlNKs5rwIJmJYisKHyfz84aFv8nqE5MyfIb9iebBJBW44B4PJSvB2Ns=
-X-Received: by 2002:a5d:8cd6:: with SMTP id k22mr24400602iot.283.1579166348214;
- Thu, 16 Jan 2020 01:19:08 -0800 (PST)
+        Thu, 16 Jan 2020 04:21:21 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00G9CnvH019865;
+        Thu, 16 Jan 2020 10:21:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=oXdqzOpECkceymNrXiBm0gzyy2jK6pABw4YC8ToVezU=;
+ b=LMueDRVNZKKBRk7fSc5+0a3lqbIPoJPBRTNrEgkh4C1ln5yOoQPN+tqH2sPOEu2EGXX7
+ lRHlD9VVCTqquV6qsTeLW3QbpLkk2UxWKBtLOtZ2L1iqzSFXSZvyLsRFVdujE7J08L5I
+ tQdLg9dbTxjs8mWkym5Y3Nqo49WhML66pez9GPL0cqdNSuAcDBLqMV6La8GbLAtfI+/u
+ aTgHKn+fe5ebXVHPS5+8jOPZNnkwQMVzuEhX8r/ruGCpD5DbAV6KLFigrnZo9gN+CMta
+ 20YLGfb5MbuGarnghgi6Uxqje3JdGYOU8rDJ8dU+cPokjeAKr3gPWWM43LnU2KxCHwXI yg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xf7jpr5pd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Jan 2020 10:21:03 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DF267100034;
+        Thu, 16 Jan 2020 10:20:58 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CB8B62A900B;
+        Thu, 16 Jan 2020 10:20:58 +0100 (CET)
+Received: from lmecxl0923.lme.st.com (10.75.127.46) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Jan
+ 2020 10:20:58 +0100
+Subject: Re: [PATCH 5/9] dt-bindings: mmc: mmci: add delay block base register
+ for sdmmc
+To:     Rob Herring <robh@kernel.org>
+CC:     Ulf Hansson <ulf.hansson@linaro.org>,
+        <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20200110134823.14882-1-ludovic.barre@st.com>
+ <20200110134823.14882-6-ludovic.barre@st.com> <20200115145645.GA599@bogus>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <2ce63f11-8b0c-8261-63fa-cd19e874c537@st.com>
+Date:   Thu, 16 Jan 2020 10:20:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-References: <20200115063410.131692-1-hsinyi@chromium.org> <8736cgxmxi.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <8736cgxmxi.fsf@nanos.tec.linutronix.de>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Thu, 16 Jan 2020 17:18:41 +0800
-Message-ID: <CAJMQK-jDi+AACE1Cv_hKSMq8VhGTBeh+kyHO2U4sx9w=9bO2mA@mail.gmail.com>
-Subject: Re: [PATCH v5] reboot: support offline CPUs before reboot
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, linux-csky@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200115145645.GA599@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-16_02:2020-01-16,2020-01-15 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 8:30 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Hsin-Yi Wang <hsinyi@chromium.org> writes:
->
-> > Currently system reboots uses architecture specific codes (smp_send_stop)
-> > to offline non reboot CPUs. Most architecture's implementation is looping
-> > through all non reboot online CPUs and call ipi function to each of them. Some
-> > architecture like arm64, arm, and x86... would set offline masks to cpu without
-> > really offline them. This causes some race condition and kernel warning comes
-> > out sometimes when system reboots.
->
-> 'some race condition and kernel warning' is pretty useless information.
-> Please describe exactly which kind of issues are caused by the current
-> mechanism. Especially the race conditions are the interesting part (the
-> warnings are just a consequence).
->
-> > This patch adds a config ARCH_OFFLINE_CPUS_ON_REBOOT, which would
-> > offline cpus in
->
-> Please read Documentation/process/submitting-patches.rst and search for
-> 'This patch'.
->
-> > migrate_to_reboot_cpu(). If non reboot cpus are all offlined here, the loop for
-> > checking online cpus would be an empty loop.
->
-> This does not make any sense. The issues which you are trying to solve
-> are going to be still there when CONFIG_HOTPLUG_CPU is disabled.
->
-> > If architecture don't enable this config, or some cpus somehow fails
-> > to offline, it would fallback to ipi function.
->
-> This is really a half baken solution which keeps the various pointlessly
-> different pseudo reboot/kexec offlining implementations around. So with
-> this we have yet more code which only works depending on kernel
-> configuration and has the issue of potentially not being able to offline
-> a CPU. IOW this is going to fail completely in cases where a system is
-> in a state which prevents regular hotplug.
->
-> The existing pseudo-offline functions have timeouts and eventually a
-> fallback, e.g. the NMI fallback on x86. With this proposed regular
-> offline solution this will just get stuck w/o a chance to force
-> recovery.
->
-> While I like the idea and surely agree that the ideal solution is to
-> properly shutdown the CPUs on reboot, we need to take a step back and
-> look at the minimum requirements for a regular shutdown/reboot and at
-> the same time have a look at the requirements for emergency shutdown and
-> kexec/kcrash. Having proper information about the race conditions and
-> warnings you mentioned would be a good starting point.
->
+Hi Rob
 
-We saw this issue on regular reboot (not panic) on arm64: If tick
-broadcast and smp_send_stop() happen together and the first broadcast
-arrives to some idled CPU that hasn't already executed reboot ipi to
-run in spinloop, it would try to broadcast to another CPU, but that
-target CPU is already marked as offline by set_cpu_online() in reboot
-ipi, and a warning comes out since tick_handle_oneshot_broadcast()
-would check if it tries to broadcast to offline cpus. Most of the time
-the CPU getting the broadcast interrupt is already in the spinloop and
-thus isn't going to receive interrupts from the broadcast timer.
+Le 1/15/20 à 3:56 PM, Rob Herring a écrit :
+> On Fri, Jan 10, 2020 at 02:48:19PM +0100, Ludovic Barre wrote:
+>> To support the sdr104 mode, the sdmmc variant has a
+>> hardware delay block to manage the clock phase when sampling
+>> data received by the card.
+>>
+>> This patch adds a second base register (optional) for
+>> sdmmc delay block.
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>> ---
+>>   Documentation/devicetree/bindings/mmc/mmci.txt | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/mmci.txt b/Documentation/devicetree/bindings/mmc/mmci.txt
+>> index 6d3c626e017d..4ec921e4bf34 100644
+>> --- a/Documentation/devicetree/bindings/mmc/mmci.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/mmci.txt
+>> @@ -28,6 +28,8 @@ specific for ux500 variant:
+>>   - st,sig-pin-fbclk       : feedback clock signal pin used.
+>>   
+>>   specific for sdmmc variant:
+>> +- reg			 : a second base register may be defined if a delay
+>> +                           block is present and used for tuning.
+> 
+> Which compatibles have a 2nd reg entry?
 
-[   27.032080] Set kernel.core_pattern before fs.suid_dumpable.
-[   27.978628] reboot: Restarting system
-[   27.978919] WARNING: CPU: 3 PID: 0 at
-/mnt/host/source/src/third_party/kernel/v4.19/kernel/time/tick-broadcast.c:652
-tick_handle_oneshot_broadcast+0x1f8/0x214
-[   27.978932] Modules linked in: rfcomm uinput bridge stp llc
-nf_nat_tftp nf_conntrack_tftp nf_nat_ftp nf_conntrack_ftp esp6 ah6
-xfrm6_mode_tunnel xfrm6_mode_transport xfrm4_mode_tunnel
-xfrm4_mode_transport ip6t_REJECT ip6t_ipv6header hci_uart btqca
-bluetooth ipt_MASQUERADE ecdh_generic lzo_rle lzo_compress zram fuse
-cros_ec_sensors_sync cros_ec_sensors_ring cros_ec_light_prox
-cros_ec_sensors industrialio_triggered_buffer kfifo_buf
-cros_ec_sensors_core ath10k_sdio ath10k_core ath mac80211 cfg80211
-asix usbnet mii joydev
-[   27.979102] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G S
-  4.19.56 #79
-[   27.979113] Hardware name: MediaTek krane sku176 board (DT)
-[   27.979127] pstate: 00000085 (nzcv daIf -PAN -UAO)
-[   27.979140] pc : tick_handle_oneshot_broadcast+0x1f8/0x214
-[   27.979154] lr : tick_handle_oneshot_broadcast+0x108/0x214
-[   27.979162] sp : fffffff85c851610
-[   27.979171] x29: fffffff85c851670 x28: ffffff9082785510
-[   27.979187] x27: ffffff90822da700 x26: ffffff90826169c8
-[   27.979202] x25: ffffff9082616000 x24: 0000000000000001
-[   27.979217] x23: ffffff90827854f8 x22: 000000067a6599b8
-[   27.979232] x21: 0000000000000000 x20: 7fffffffffffffff
-[   27.979248] x19: ffffff9082785508 x18: 0000000000000000
-[   27.979263] x17: 0000000000000000 x16: 0000000000000000
-[   27.979278] x15: 0000000000000000 x14: fffffff85bf08040
-[   27.979293] x13: ffffff9082785000 x12: 0000000000000069
-[   27.979308] x11: ffffff9082785000 x10: 0000000000000018
-[   27.979323] x9 : 0000000000000010 x8 : ffffff9082615000
-[   27.979338] x7 : 0000000000000000 x6 : 000000000000003f
-[   27.979353] x5 : 0000000000000040 x4 : 0000000000000102
-[   27.979367] x3 : 0000000000000000 x2 : 0000000000000007
-[   27.979383] x1 : 0000000000000008 x0 : 0000000000000008
-[   27.979399] Call trace:
-[   27.979413]  tick_handle_oneshot_broadcast+0x1f8/0x214
-[   27.979429]  mtk_syst_handler+0x34/0x44
-[   27.979443]  __handle_irq_event_percpu+0x134/0x254
-[   27.979454]  handle_irq_event_percpu+0x34/0x8c
-[   27.979465]  handle_irq_event+0x48/0x78
-[   27.979478]  handle_fasteoi_irq+0xd0/0x1a4
-[   27.979492]  __handle_domain_irq+0x84/0xc4
-[   27.979505]  gic_handle_irq+0x154/0x1a4
-[   27.979516]  el1_irq+0xb0/0x128
-[   27.979531]  cpuidle_enter_state+0x298/0x328
-[   27.979543]  cpuidle_enter+0x30/0x40
-[   27.979557]  do_idle+0x154/0x270
-[   27.979569]  cpu_startup_entry+0x24/0x28
-[   27.979584]  secondary_start_kernel+0x15c/0x168
-[   27.979594] ---[ end trace 57ed1d1fade60372 ]---
+In fact, mmci driver is ARM Amba driver (arm,primecell) and has only one
+compatible "arm,pl18x".
+The variants are identified by primecell-periphid property
+(discovered at runtime with HW block register or defined by
+device tree property "arm,primecell-periphid").
 
-If system supports hotplug, _cpu_down() would properly handle tasks
-termination such as remove CPU from timer broadcasting by
-tick_offline_cpu()...etc, as well as some interrupt handling.
+The defaults "arm,pl18x" variants have only one base register,
+but the SDMMC need a second base register for these
+delay block registers.
 
-https://lore.kernel.org/patchwork/patch/1117201/ is a previous attempt
-to solve this issue by introducing another mask in reboot ipi function
-to avoid the cpu_online_mask being looked up in too many different
-places.
+example of sdmmc node:
+	sdmmc1: sdmmc@58005000 {
+		compatible = "arm,pl18x", "arm,primecell";
+		arm,primecell-periphid = <0x00253180>;
+		reg = <0x58005000 0x1000>, <0x58006000 0x1000>;
+	};
 
-> > Opt in this config for architectures that support CONFIG_HOTPLUG_CPU.
->
-> This is not opt-in. You force that on all architectures which support
-> CONFIG_HOTPLUG_CPU. The way we do this normally is to provide the
-> infrastructure first and then have separate patches (one per
-> architecture) enabling this, which allows the architecture maintainers
-> to decide individually.
+what do you advise?
 
-Acked, thanks.
-
->
-> Thanks,
->
->         tglx
+> 
+>>   - st,sig-dir             : signal direction polarity used for cmd, dat0 dat123.
+>>   - st,neg-edge            : data & command phase relation, generated on
+>>                              sd clock falling edge.
+>> -- 
+>> 2.17.1
+>>
