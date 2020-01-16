@@ -2,124 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6CC13DAB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA1E13DAC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 14:01:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgAPM46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:56:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726587AbgAPM45 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:56:57 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00GCq8i0042582
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:56:56 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xh8d62qnr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:56:56 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 16 Jan 2020 12:56:54 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 16 Jan 2020 12:56:52 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00GCup5G57147398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Jan 2020 12:56:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9F3F11C04C;
-        Thu, 16 Jan 2020 12:56:51 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 152B711C071;
-        Thu, 16 Jan 2020 12:56:51 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.139.213])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 16 Jan 2020 12:56:50 +0000 (GMT)
-Subject: Re: [PATCH] IMA: pre-allocate keyrings string
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Date:   Thu, 16 Jan 2020 07:56:50 -0500
-In-Reply-To: <20200116031508.3481-1-nramas@linux.microsoft.com>
-References: <20200116031508.3481-1-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011612-0008-0000-0000-00000349E670
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011612-0009-0000-0000-00004A6A4028
-Message-Id: <1579179410.5857.21.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-16_04:2020-01-16,2020-01-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001160109
+        id S1726871AbgAPM7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:59:23 -0500
+Received: from mga17.intel.com ([192.55.52.151]:22372 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbgAPM7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 07:59:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 04:59:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,326,1574150400"; 
+   d="scan'208";a="398268794"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2020 04:59:20 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1is4k3-000HWS-Oj; Thu, 16 Jan 2020 20:59:19 +0800
+Date:   Thu, 16 Jan 2020 20:58:50 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:ras/core] BUILD SUCCESS
+ 7a8bc2b0462eaca0072d1f7f4ddc749fcb8a773c
+Message-ID: <5e205e0a.xqwJbpFbpdGEpHCc%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laskhmi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  ras/core
+branch HEAD: 7a8bc2b0462eaca0072d1f7f4ddc749fcb8a773c  x86/mce: Fix use of uninitialized MCE message string
 
-On Wed, 2020-01-15 at 19:15 -0800, Lakshmi Ramasubramanian wrote:
-> ima_match_keyring() is called while holding rcu read lock.
-> Since this function executes in atmomic context, it should
-> not call any function that can sleep (such as kstrdup()).
+elapsed time: 1709m
 
-Good catch!
+configs tested: 24
+configs skipped: 107
 
-> This patch pre-allocates a buffer to hold the keyrings
-> string read from the IMA policy and uses that to check
-> the given keyring in ima_match_keyring().
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-(Reminder: this patch description line length is a bit short.
- According to  Documentation/process/submitting-patches.rst, the patch
-description line length should be line wrapped at 75 columns.)
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+x86_64                                   rhel
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                               rhel-7.6
 
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Fixes: e9085e0ad38a ("IMA: Add support to limit measuring keys")
-> ---
-
- 
-> @@ -1120,8 +1117,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  				result = -EINVAL;
->  				break;
->  			}
-> +
-> +			ima_keyrings = kstrdup(args[0].from, GFP_KERNEL);
-> +			if (!ima_keyrings) {
-> +				result = -ENOMEM;
-> +				break;
-> +			}
-
-
-This would work for a single "key" measurement rule, but not for
-multiple rules, where the last "keyrings" string is shorter than the
-previous ones.  For example, in addition to the builtin trusted
-keyrings, another rule could measure a keyring owned by a user.
-
-measure func=KEY_CHECK template=ima-buf keyrings=.ima|.builtin_trusted_keys
-measure func=KEY_CHECK uid=1000 template=ima-buf keyrings=_foo
-
-Mimi
-
->  			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
->  			if (!entry->keyrings) {
-> +				kfree(ima_keyrings);
-> +				ima_keyrings = NULL;
->  				result = -ENOMEM;
->  				break;
->  			}
-
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
