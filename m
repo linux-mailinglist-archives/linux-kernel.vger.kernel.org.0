@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8166413EE8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A971713EE6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395076AbgAPSJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:09:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54340 "EHLO mail.kernel.org"
+        id S2395063AbgAPSJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:09:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393341AbgAPRi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:38:28 -0500
+        id S2405041AbgAPRic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12ADA246D6;
-        Thu, 16 Jan 2020 17:38:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A97F246D5;
+        Thu, 16 Jan 2020 17:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196308;
-        bh=LZXc39akRF9TdNnhbcpEkxTJJQMlUphOrcUB7D1NdQs=;
+        s=default; t=1579196312;
+        bh=IJMGW8gLWsyyTQNqcA+b0r72ujTF6o/zNtEEivEBwGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rujcJOBW02oyaKB+gaqxgkIjHY1UR3RQQrQged+JyceICd8F2c4yzd1kvmpgQKKgo
-         grvzEztysdyI/g7dSxhJn+2FNuOwaccDuj+KbImpP6YhFWSsbzKALoppKIOAZyfPgq
-         j4J/gK1FV7gx2pAou6uNebKLDS6LIIjcKZD6OY4E=
+        b=AewYDxpR//30uo/k1I63fylpx0T9p2kqsEBLJ1MA2cjusMIhr3BtbS3aLVlkgyYxt
+         nuzSWQpud6f1SXgWoM94C2287ItjUFw88LPdbq/KHnnoDNSIV1S2p50kkBwzFeUVDe
+         JY/8qSaY+0nEAQ+KZVdLXkkMYM2Hk7soWIqHQCTQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jie Liu <liujie165@huawei.com>, Qiang Ning <ningqiang1@huawei.com>,
-        Zhiqiang Liu <liuzhiqiang26@huawei.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.9 116/251] tipc: set sysctl_tipc_rmem and named_timeout right range
-Date:   Thu, 16 Jan 2020 12:34:25 -0500
-Message-Id: <20200116173641.22137-76-sashal@kernel.org>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 119/251] media: ov2659: fix unbalanced mutex_lock/unlock
+Date:   Thu, 16 Jan 2020 12:34:28 -0500
+Message-Id: <20200116173641.22137-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -46,58 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jie Liu <liujie165@huawei.com>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit 4bcd4ec1017205644a2697bccbc3b5143f522f5f ]
+[ Upstream commit 384538bda10913e5c94ec5b5d34bd3075931bcf4 ]
 
-We find that sysctl_tipc_rmem and named_timeout do not have the right minimum
-setting. sysctl_tipc_rmem should be larger than zero, like sysctl_tcp_rmem.
-And named_timeout as a timeout setting should be not less than zero.
+Avoid returning with mutex locked.
 
-Fixes: cc79dd1ba9c10 ("tipc: change socket buffer overflow control to respect sk_rcvbuf")
-Fixes: a5325ae5b8bff ("tipc: add name distributor resiliency queue")
-Signed-off-by: Jie Liu <liujie165@huawei.com>
-Reported-by: Qiang Ning <ningqiang1@huawei.com>
-Reviewed-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: fa8cb6444c32 ("[media] ov2659: Don't depend on subdev API")
+
+Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/tipc/sysctl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov2659.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/tipc/sysctl.c b/net/tipc/sysctl.c
-index 1a779b1e8510..40f6d82083d7 100644
---- a/net/tipc/sysctl.c
-+++ b/net/tipc/sysctl.c
-@@ -37,6 +37,8 @@
- 
- #include <linux/sysctl.h>
- 
-+static int zero;
-+static int one = 1;
- static struct ctl_table_header *tipc_ctl_hdr;
- 
- static struct ctl_table tipc_table[] = {
-@@ -45,14 +47,16 @@ static struct ctl_table tipc_table[] = {
- 		.data		= &sysctl_tipc_rmem,
- 		.maxlen		= sizeof(sysctl_tipc_rmem),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1         = &one,
- 	},
- 	{
- 		.procname	= "named_timeout",
- 		.data		= &sysctl_tipc_named_timeout,
- 		.maxlen		= sizeof(sysctl_tipc_named_timeout),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1         = &zero,
- 	},
- 	{}
- };
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index ade3c48e2e0c..18546f950d79 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1137,7 +1137,7 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
+ 		mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
+ 		*mf = fmt->format;
+ #else
+-		return -ENOTTY;
++		ret = -ENOTTY;
+ #endif
+ 	} else {
+ 		s64 val;
 -- 
 2.20.1
 
