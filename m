@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31B0213E4FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1CE13E3E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390375AbgAPRMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:12:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389018AbgAPRLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:11:55 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729369AbgAPREz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:04:55 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:19036 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388270AbgAPREv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:04:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579194290; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=UfFifIJGILW8fksowAx6Kk3INRhbwc4+MMjSyJxB8xw=; b=vI7ntw2/WQr4RidiWTlyhtW6ThJYLBUH+wyO5g5htniy0Cs6JQLpIkELb8l5wmO6OXRc75IV
+ Wnw4QuBz1Er6Jcl9OhU3o8qnRmCcl1qge0Zbzm0u1/RlRYF90cHef39QA7cmJUBjgh7mZv2Z
+ 4tqyVTf5eyJdZ7kXYD03Fox9o8U=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2097b1.7fd1ec3b7ea0-smtp-out-n02;
+ Thu, 16 Jan 2020 17:04:49 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 79440C447A9; Thu, 16 Jan 2020 17:04:48 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940B7246A0;
-        Thu, 16 Jan 2020 17:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194714;
-        bh=VMxSnVGIwtCxxKxJeP4Q7uYMqhofEoA/E2CG4sUyupk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SS3pvIaWr+Qn337e2vDzM/2ty4g/E64EzKklydR6RvACrWTAtwEuS9cVsAj5Y+Ipl
-         8uIOs607aGyzDEVYSpvPQKSZdho6kwbUJR4EG+Rn3DLerDvVDh0+0kkIA/GHrLtDzv
-         yDaLga0PK34QPBFdWhPlCnYkavfcun8F8UvlHUXI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gerd Rausch <gerd.rausch@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
-Subject: [PATCH AUTOSEL 4.19 551/671] net/rds: Fix 'ib_evt_handler_call' element in 'rds_ib_stat_names'
-Date:   Thu, 16 Jan 2020 12:03:09 -0500
-Message-Id: <20200116170509.12787-288-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3B4E0C447AE;
+        Thu, 16 Jan 2020 17:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B4E0C447AE
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Subject: [PATCH V2 1/2] mmc: sdhci: Let a vendor driver supply and update ADMA descriptor size
+Date:   Thu, 16 Jan 2020 22:33:10 +0530
+Message-Id: <1579194192-7942-2-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org>
+References: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerd Rausch <gerd.rausch@oracle.com>
+Let a vendor driver supply the maximum descriptor size that it
+can operate on. ADMA descriptor table would be allocated using this
+supplied size.
+If any SD Host controller is of version prior to v4.10 spec
+but supports 16byte descriptor, this change allows them to supply
+correct descriptor size for ADMA table allocation.
 
-[ Upstream commit 05a82481a3024b94db00b8c816bb3d526b5209e0 ]
+Also let a vendor driver update the descriptor size by overriding
+sdhc_host->desc_size if it has to operates on a different descriptor
+sizes in different conditions.
 
-All entries in 'rds_ib_stat_names' are stringified versions
-of the corresponding "struct rds_ib_statistics" element
-without the "s_"-prefix.
-
-Fix entry 'ib_evt_handler_call' to do the same.
-
-Fixes: f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
-Signed-off-by: Gerd Rausch <gerd.rausch@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
 ---
- net/rds/ib_stats.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci.c | 7 +++++--
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/net/rds/ib_stats.c b/net/rds/ib_stats.c
-index 9252ad126335..ac46d8961b61 100644
---- a/net/rds/ib_stats.c
-+++ b/net/rds/ib_stats.c
-@@ -42,7 +42,7 @@ DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
- static const char *const rds_ib_stat_names[] = {
- 	"ib_connect_raced",
- 	"ib_listen_closed_stale",
--	"s_ib_evt_handler_call",
-+	"ib_evt_handler_call",
- 	"ib_tasklet_call",
- 	"ib_tx_cq_event",
- 	"ib_tx_ring_full",
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 3140fe2..19a5ad3 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3822,9 +3822,12 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 		void *buf;
+ 
+ 		if (host->flags & SDHCI_USE_64_BIT_DMA) {
++			if (!host->alloc_desc_sz)
++				host->alloc_desc_sz =
++					SDHCI_ADMA2_64_DESC_SZ(host);
++			host->desc_sz = host->alloc_desc_sz;
+ 			host->adma_table_sz = host->adma_table_cnt *
+-					      SDHCI_ADMA2_64_DESC_SZ(host);
+-			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
++					      host->desc_sz;
+ 		} else {
+ 			host->adma_table_sz = host->adma_table_cnt *
+ 					      SDHCI_ADMA2_32_DESC_SZ;
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 0ed3e0e..8e7c77d 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -555,6 +555,7 @@ struct sdhci_host {
+ 	dma_addr_t align_addr;	/* Mapped bounce buffer */
+ 
+ 	unsigned int desc_sz;	/* ADMA descriptor size */
++	unsigned int alloc_desc_sz;	/* ADMA descr. max size host supports */
+ 
+ 	struct workqueue_struct *complete_wq;	/* Request completion wq */
+ 	struct work_struct	complete_work;	/* Request completion work */
 -- 
-2.20.1
-
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
