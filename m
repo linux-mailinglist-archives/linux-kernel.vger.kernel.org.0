@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF9C13E442
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:07:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6365D13E446
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:07:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389070AbgAPRHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:07:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38020 "EHLO mail.kernel.org"
+        id S2388475AbgAPRHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:07:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389044AbgAPRG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:58 -0500
+        id S2389089AbgAPRHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:07:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6650A2081E;
-        Thu, 16 Jan 2020 17:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E20A1217F4;
+        Thu, 16 Jan 2020 17:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194417;
-        bh=9LdsUBp7qfC8M7hIx4I1cjSoYSEPj8Dn1kYaez5MelE=;
+        s=default; t=1579194430;
+        bh=N5ERwiDvrEhKjqvi4Vr6Ok+XCMKgXxIGwQY4H36gUX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yu2aVTu9KuYd2slD/1/jbgFdFzLhTrdsN9MQpu6gcYsu8orlCjCMjbQ1gmOobxPgI
-         +BAe2Tap+ksQqFkB38jazEBg2kidEtJ8Sl/4207Vuh3kAt4hOzlC0tjbJEEINR5dn7
-         G4lIKUX7pzp2hoIxUoXMem+C/CPdv1g+YkhCSBvw=
+        b=zU3b24f7I/qJ8SvqTqQtygrPDhdT0zsAD5YGYbh/W0GP0qJzI5xnsYUJKiLXII8yV
+         UcVoHxLBhYP0Cnv+zhR264As5opZ9M+z7ej7Jh3F+gpctWR88MuzcXQ6tiS/mG0PfX
+         MD+77eiWt8LPwTMMI5mWYlVVws8szT2bc7J8tvlQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rakesh Pillai <pillair@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 338/671] ath10k: Fix encoding for protected management frames
-Date:   Thu, 16 Jan 2020 11:59:36 -0500
-Message-Id: <20200116170509.12787-75-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 346/671] media: davinci/vpbe: array underflow in vpbe_enum_outputs()
+Date:   Thu, 16 Jan 2020 11:59:44 -0500
+Message-Id: <20200116170509.12787-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,46 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rakesh Pillai <pillair@codeaurora.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 42f1bc43e6a97b9ddbe976eba9bd05306c990c75 ]
+[ Upstream commit b72845ee5577b227131b1fef23f9d9a296621d7b ]
 
-Currently the protected management frames are
-not appended with the MIC_LEN which results in
-the protected management frames being encoded
-incorrectly.
+In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
+the problem is that "temp_index" can be negative.  This patch changes
+the types to unsigned to address this array underflow bug.
 
-Add the extra space at the end of the protected
-management frames to fix this encoding error for
-the protected management frames.
+Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
 
-Tested HW: WCN3990
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
-
-Fixes: 1807da49733e ("ath10k: wmi: add management tx by reference support over wmi")
-Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi-tlv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ include/media/davinci/vpbe.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-index a90990b8008d..248decb494c2 100644
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -2692,8 +2692,10 @@ ath10k_wmi_tlv_op_gen_mgmt_tx_send(struct ath10k *ar, struct sk_buff *msdu,
- 	if ((ieee80211_is_action(hdr->frame_control) ||
- 	     ieee80211_is_deauth(hdr->frame_control) ||
- 	     ieee80211_is_disassoc(hdr->frame_control)) &&
--	     ieee80211_has_protected(hdr->frame_control))
-+	     ieee80211_has_protected(hdr->frame_control)) {
-+		skb_put(msdu, IEEE80211_CCMP_MIC_LEN);
- 		buf_len += IEEE80211_CCMP_MIC_LEN;
-+	}
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index df1ae6b5c854..e45e062f4442 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -126,7 +126,7 @@ static int vpbe_enum_outputs(struct vpbe_device *vpbe_dev,
+ 			     struct v4l2_output *output)
+ {
+ 	struct vpbe_config *cfg = vpbe_dev->cfg;
+-	int temp_index = output->index;
++	unsigned int temp_index = output->index;
  
- 	buf_len = min_t(u32, buf_len, WMI_TLV_MGMT_TX_FRAME_MAX_LEN);
- 	buf_len = round_up(buf_len, 4);
+ 	if (temp_index >= cfg->num_outputs)
+ 		return -EINVAL;
+diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
+index 79a566d7defd..180a05e91497 100644
+--- a/include/media/davinci/vpbe.h
++++ b/include/media/davinci/vpbe.h
+@@ -92,7 +92,7 @@ struct vpbe_config {
+ 	struct encoder_config_info *ext_encoders;
+ 	/* amplifier information goes here */
+ 	struct amp_config_info *amp;
+-	int num_outputs;
++	unsigned int num_outputs;
+ 	/* Order is venc outputs followed by LCD and then external encoders */
+ 	struct vpbe_output *outputs;
+ };
 -- 
 2.20.1
 
