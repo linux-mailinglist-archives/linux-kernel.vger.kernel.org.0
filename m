@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FAC13FD1D
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF6B13FD1E
 	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:22:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388365AbgAPXWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:22:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
+        id S2389321AbgAPXWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:22:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388394AbgAPXWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:22:03 -0500
+        id S2390894AbgAPXWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:22:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EA3F2075B;
-        Thu, 16 Jan 2020 23:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAB44206D9;
+        Thu, 16 Jan 2020 23:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216922;
-        bh=s8TLmbI5O28ao/0WFz+LLo1bxPeLMw8soqZjjhXbPtM=;
+        s=default; t=1579216925;
+        bh=V2J9YfWSVeAVG7GVUmiIj3FqxophZV4LyMA8bfFylx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ST6rDSsCD8IORsUu7D6G889UVLcd8M1asu+m4h3JHuySqrU5reDEscGoe6SnJv6PY
-         +1dt6wmELfLmXc3Q5h9GxtPKIVJb8xUkxBGpb1d/rYHx81qlVSjVk0M+qIfGi1fgZI
-         5A6BdKcJz4C/6TUnzCVl6LvBemt2Pzs/iQ2EBoJI=
+        b=J+Aa1uEGVZw8IVKzPlNj40rXhZLgiHmicJaTFakGkpV5MTGw3AH3cI9pW5Nlzv0RN
+         ZQ4wOwtMxjTSe0wwQstEqJQGnyK+rGrQyvgAEUi+vYM/8jlyvUj0yyF5Bh9mbWWvPC
+         pNWp/kTrLKGbjLhx8cMFAkSje545PaiEMq9rMzTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Honggang Li <honli@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.4 075/203] RDMA/mlx5: Return proper error value
-Date:   Fri, 17 Jan 2020 00:16:32 +0100
-Message-Id: <20200116231750.786477600@linuxfoundation.org>
+Subject: [PATCH 5.4 076/203] RDMA/srpt: Report the SCSI residual to the initiator
+Date:   Fri, 17 Jan 2020 00:16:33 +0100
+Message-Id: <20200116231750.951965385@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -43,35 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 546d30099ed204792083f043cd7e016de86016a3 upstream.
+commit e88982ad1bb12db699de96fbc07096359ef6176c upstream.
 
-Returned value from mlx5_mr_cache_alloc() is checked to be error or real
-pointer. Return proper error code instead of NULL which is not checked
-later.
+The code added by this patch is similar to the code that already exists in
+ibmvscsis_determine_resid(). This patch has been tested by running the
+following command:
 
-Fixes: 81713d3788d2 ("IB/mlx5: Add implicit MR support")
-Link: https://lore.kernel.org/r/20191029055721.7192-1-leon@kernel.org
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+strace sg_raw -r 1k /dev/sdb 12 00 00 00 60 00 -o inquiry.bin |&
+    grep resid=
+
+Link: https://lore.kernel.org/r/20191105214632.183302-1-bvanassche@acm.org
+Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Acked-by: Honggang Li <honli@redhat.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/mr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -428,7 +428,7 @@ struct mlx5_ib_mr *mlx5_mr_cache_alloc(s
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -1364,9 +1364,11 @@ static int srpt_build_cmd_rsp(struct srp
+ 			      struct srpt_send_ioctx *ioctx, u64 tag,
+ 			      int status)
+ {
++	struct se_cmd *cmd = &ioctx->cmd;
+ 	struct srp_rsp *srp_rsp;
+ 	const u8 *sense_data;
+ 	int sense_data_len, max_sense_len;
++	u32 resid = cmd->residual_count;
  
- 	if (entry < 0 || entry >= MAX_MR_CACHE_ENTRIES) {
- 		mlx5_ib_err(dev, "cache entry %d is out of range\n", entry);
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 	}
+ 	/*
+ 	 * The lowest bit of all SAM-3 status codes is zero (see also
+@@ -1388,6 +1390,28 @@ static int srpt_build_cmd_rsp(struct srp
+ 	srp_rsp->tag = tag;
+ 	srp_rsp->status = status;
  
- 	ent = &cache->ent[entry];
++	if (cmd->se_cmd_flags & SCF_UNDERFLOW_BIT) {
++		if (cmd->data_direction == DMA_TO_DEVICE) {
++			/* residual data from an underflow write */
++			srp_rsp->flags = SRP_RSP_FLAG_DOUNDER;
++			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
++		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
++			/* residual data from an underflow read */
++			srp_rsp->flags = SRP_RSP_FLAG_DIUNDER;
++			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
++		}
++	} else if (cmd->se_cmd_flags & SCF_OVERFLOW_BIT) {
++		if (cmd->data_direction == DMA_TO_DEVICE) {
++			/* residual data from an overflow write */
++			srp_rsp->flags = SRP_RSP_FLAG_DOOVER;
++			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
++		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
++			/* residual data from an overflow read */
++			srp_rsp->flags = SRP_RSP_FLAG_DIOVER;
++			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
++		}
++	}
++
+ 	if (sense_data_len) {
+ 		BUILD_BUG_ON(MIN_MAX_RSP_SIZE <= sizeof(*srp_rsp));
+ 		max_sense_len = ch->max_ti_iu_len - sizeof(*srp_rsp);
 
 
