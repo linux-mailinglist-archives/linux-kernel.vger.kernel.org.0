@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3AE513E2C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11AB413E102
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733168AbgAPQ6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:58:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387571AbgAPQ5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:53 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2763721D56;
-        Thu, 16 Jan 2020 16:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193872;
-        bh=OO7qNgfWUdL2yUx7xNELD5Y0EfU2kzdT9hP26SbfvUk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xdD1TOHAgQcyAj8PouPgIfZr3BigbPpkDS4jCnHNIDgPUxSW1Ryxc5HYzXDfYGHl1
-         /hyddCyFDzaKHknolSgEdSQ8+rTO0ZshP9otxnd0s0SU6LXernjFWy6rOXkEoFyj9/
-         qye5yGtrLR990119I2NO8CQ61sgrHKLEV2lPPEVQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 116/671] memory: tegra: Don't invoke Tegra30+ specific memory timing setup on Tegra20
-Date:   Thu, 16 Jan 2020 11:45:47 -0500
-Message-Id: <20200116165502.8838-116-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+        id S1729868AbgAPQrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:47:09 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43984 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729830AbgAPQrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:47:04 -0500
+Received: by mail-qk1-f193.google.com with SMTP id t129so19699050qke.10
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:47:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=D8oCauuYRE1SlMMis3dug2fzKpE+RxnAnTLSLcxoqrg=;
+        b=L4YqFRv/HIosI38aRfTT9RUoXYUj5gQCPC2lArCXXcZhT8t0cWEC5wVZA8qKxvlc8a
+         kFYGvUo+HfNgYQP5yPBmaD3GAw0/rCSUBrGiyK46FsXGD+FxCHNdf3wU6/EbRw6drZdM
+         BaaqTF8xakilbxpoHJCvVUvFlAVn1cjTacfc18AokSq9CqlXbX7wNG6B13LCivkmaGXV
+         o2644W/3TW05Zf43G7sN96NwNRdIoFERGAo5K2JsFxDugp6M6REY7PisyJhaMFRram5w
+         hcKpzOqOXD8LemsJxsbLKLg8RobdeM2oxSb2ZlzeQUlTRKEV0tW5CN8EchDmUYAP6uAb
+         1hFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=D8oCauuYRE1SlMMis3dug2fzKpE+RxnAnTLSLcxoqrg=;
+        b=DEIUULvw8ofzEahmDanGShwg859wCyAPEDvQf1r2CndPevmveBaySh5eypvqon61in
+         mlxiHQfNDdkOARfEKGlJ4/gP5LdP6NcjYxW4TttmfVFZnwx9u/cXLxkj699u1Yo+5AJP
+         nEkZZ3hqq5U5NKkSzRZkkfdfne9mlRYN2u4LdJBNaDkTtEWIiOTgx7BWHbHkEmyXT1Dz
+         1izAAEfiCv1b6dNYFe8ZwLHeX80hQqKy5Pf856kmrRU3WkS4mm3lV8N0XK/b7iF8g6G6
+         vCdrViK9JzDTOcvLED8CrWmsTDsiO2MsVmqkHTq4FXmwAfIrNvJ4YTNq9KwIxbe/+6rC
+         RUQQ==
+X-Gm-Message-State: APjAAAVcCvBBMhMcTm4HVf/irrW/7UKq7lVNqQWn/oUWDiQhiPyfOo5m
+        yrzAapgwtXwr17c7tD6SWNUCIw==
+X-Google-Smtp-Source: APXvYqypp+d90Y4yoYRO3EuxkUOreoMMGp2MQ/4d0Q0SkDfhkqBQ3/udYa+fIlCQoetHxtkhSbTxiA==
+X-Received: by 2002:a37:68d5:: with SMTP id d204mr29461217qkc.171.1579193223959;
+        Thu, 16 Jan 2020 08:47:03 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::ae73])
+        by smtp.gmail.com with ESMTPSA id t3sm11697374qtc.8.2020.01.16.08.47.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 08:47:03 -0800 (PST)
+Date:   Thu, 16 Jan 2020 11:47:02 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH v2 3/6] mm: kmem: rename memcg_kmem_(un)charge() into
+ memcg_kmem_(un)charge_page()
+Message-ID: <20200116164702.GC57074@cmpxchg.org>
+References: <20200109202659.752357-1-guro@fb.com>
+ <20200109202659.752357-4-guro@fb.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200109202659.752357-4-guro@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+On Thu, Jan 09, 2020 at 12:26:56PM -0800, Roman Gushchin wrote:
+> Rename (__)memcg_kmem_(un)charge() into (__)memcg_kmem_(un)charge_page()
 
-[ Upstream commit be4dbdec2bab8635c7a41573668624ee13d83022 ]
+I almost bluescreened trying to parse this!
 
-This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
-timings for RAM code 0 registered" warning message during of kernels
-boot-up on Tegra20.
+> to better reflect what they are actually doing:
+> 1) call __memcg_kmem_(un)charge_memcg() to actually charge or
+> uncharge the current memcg
+> 2) set or clear the PageKmemcg flag
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 
-Fixes: a8d502fd3348 ("memory: tegra: Squash tegra20-mc into common tegra-mc driver")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/memory/tegra/mc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Agreed, this is better.
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index c8f16666256c..346d8eadb44b 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -664,12 +664,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		}
- 
- 		isr = tegra_mc_irq;
--	}
- 
--	err = tegra_mc_setup_timings(mc);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to setup timings: %d\n", err);
--		return err;
-+		err = tegra_mc_setup_timings(mc);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to setup timings: %d\n",
-+				err);
-+			return err;
-+		}
- 	}
- 
- 	mc->irq = platform_get_irq(pdev, 0);
--- 
-2.20.1
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
