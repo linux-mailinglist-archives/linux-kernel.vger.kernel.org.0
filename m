@@ -2,169 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4CD313F4E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290C113F452
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:49:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437104AbgAPSw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:52:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45614 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389424AbgAPSwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:52:25 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 403A7A059BCFEDDDA3A1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:52:23 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 Jan 2020 02:52:16 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <xuwei5@hisilicon.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] bus: hisi_lpc: Fixup IO ports addresses to avoid use-after-free in host removal
-Date:   Fri, 17 Jan 2020 02:48:34 +0800
-Message-ID: <1579200514-184352-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+        id S2437024AbgAPSs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:48:58 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38374 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390036AbgAPSsv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:48:51 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u2so4920338wmc.3;
+        Thu, 16 Jan 2020 10:48:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=W6L5M8NGDU85SsLDQmYbLaPSihnBnJlX3fanr790LTQ=;
+        b=M2ncpFHVDkDQJXFmSFyILtg5dfcgBMwp+/GDwfV0ypOJ3vRQp74CewosmQhXTj7EdA
+         TK1BjIlnP/mh+uYnRk77S/ysqHcbubzppvOap7bkqwZ09LK+pMxYdyA75Yx/NorPI4rj
+         XCP+iEcl2TmRooOl3ZAGi1kJcq4tU/dX8636my5k00oyhmBwN5ezSxXkEJjNJjy1u+tY
+         wIT+JqJw1sCuCCFy8N2CoaCSW2NM8iJbG4eaWe6UkXTXUn6ydkC3ws3cDEjfilCtqemD
+         /1FYY92btOopD1j1Jnv2q90KRWgiddRpdZhIBhXLxm5XGNLmUxJMdlEI51Ecvjls/uwB
+         yZHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=W6L5M8NGDU85SsLDQmYbLaPSihnBnJlX3fanr790LTQ=;
+        b=V0owF16lujqJ0riKGVAj19c4pKakKzkjN5PrRwNlV7MWdp/QNbit4j72+KqYi/9PLM
+         ksr7imVAFsQ5hj2FE2iBjmimZNFRRVBQ2aaXFY7oTgZrIkSWvjG6OV3e7jEKiTSkt/AQ
+         YvootNORMago/yoOBfjJO6ZFqmGd+C1hO+6fWbNmSuVqf8Ek5PX6MI7RryD3xr1Bh7oL
+         DYcpRM83rplELk65bSqp35WblYmOErIbwmoSDW56/XPRzfSXdjIu9qCfeV+xvX9iHCW0
+         A0o+U7EFH/DVvkTUUbZiezecmB6PLzI2DuLWPakFt9c095SV52KqcyYrs9HJhS+UhhyH
+         UMPQ==
+X-Gm-Message-State: APjAAAWikHLx8fKDsw2k8+XX8ar+24WljUcISIx8QGkQBqKxQEwUVTnO
+        VusnYsA9X1dp6c3JLmqteWI=
+X-Google-Smtp-Source: APXvYqxhkMJzX4Sq/b4oFH8dHiEfu0uRVsCPQXLvta8K0yXhLaMLfpTTKQzh6yknwnzeizGJswmEAQ==
+X-Received: by 2002:a1c:628b:: with SMTP id w133mr438122wmb.25.1579200529189;
+        Thu, 16 Jan 2020 10:48:49 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2dbe:4a00:e092:254d:41ed:2e49])
+        by smtp.gmail.com with ESMTPSA id n67sm6090068wmf.46.2020.01.16.10.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 10:48:48 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Joe Perches <joe@perches.com>, kernel@pengutronix.de,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH RESEND] MAINTAINERS: fix style in RESET CONTROLLER FRAMEWORK
+Date:   Thu, 16 Jan 2020 19:48:36 +0100
+Message-Id: <20200116184836.10256-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some released ACPI FW for Huawei boards describes incorrect the port IO
-address range for child devices, in that it tells us the IO port max range
-is 0x3fff for each child device, which is not correct. The address range
-should be [e4:e8) or similar. With this incorrect upper range, the child
-device IO port resources overlap.
+Commit 37859277374d ("MAINTAINERS: add reset controller framework
+keywords") slips in some formatting with spaces instead of tabs, which
+./scripts/checkpatch.pl -f MAINTAINERS complains about:
 
-As such, the kernel thinks that the LPC host serial device is a child of
-the IPMI device:
+  WARNING: MAINTAINERS entries use one tab after TYPE:
+  #14047: FILE: MAINTAINERS:14047:
+  +K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
 
-root@(none)$ more /proc/ioports
-[...]
-00ffc0e3-00ffffff : hisi-lpc-ipmi.0.auto
-  00ffc0e3-00ffc0e3 : ipmi_si
-  00ffc0e4-00ffc0e4 : ipmi_si
-  00ffc0e5-00ffc0e5 : ipmi_si
-  00ffc2f7-00ffffff : serial8250.1.auto
-    00ffc2f7-00ffc2fe : serial
-root@(none)$
+Fixes: 37859277374d ("MAINTAINERS: add reset controller framework keywords")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on v5.5-rc6 and next-20200116
+Philipp, please pick this patch.
 
-They should both be siblings. Note that these are logical PIO addresses,
-which have a direct mapping from the FW IO port ranges.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This shows up as a real issue when we enable CONFIG_KASAN and
-CONFIG_DEBUG_TEST_DRIVER_REMOVE - we see use-after-free warnings in the
-host removal path:
-
-==================================================================
-BUG: KASAN: use-after-free in release_resource+0x38/0xc8
-Read of size 8 at addr ffff0026accdbc38 by task swapper/0/1
-
-CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc6-00001-g68e186e77b5c-dirty #1593
-Hardware name: Huawei Taishan 2180 /D03, BIOS Hisilicon D03 IT20 Nemo 2.0 RC0 03/30/2018
-Call trace:
-dump_backtrace+0x0/0x290
-show_stack+0x14/0x20
-dump_stack+0xf0/0x14c
-print_address_description.isra.9+0x6c/0x3b8
-__kasan_report+0x12c/0x23c
-kasan_report+0xc/0x18
-__asan_load8+0x94/0xb8
-release_resource+0x38/0xc8
-platform_device_del.part.10+0x80/0xe0
-platform_device_unregister+0x20/0x38
-hisi_lpc_acpi_remove_subdev+0x10/0x20
-device_for_each_child+0xc8/0x128
-hisi_lpc_acpi_remove+0x4c/0xa8
-hisi_lpc_remove+0xbc/0xc0
-platform_drv_remove+0x3c/0x68
-really_probe+0x174/0x548
-driver_probe_device+0x7c/0x148
-device_driver_attach+0x94/0xa0
-__driver_attach+0xa4/0x110
-bus_for_each_dev+0xe8/0x158
-driver_attach+0x30/0x40
-bus_add_driver+0x234/0x2f0
-driver_register+0xbc/0x1d0
-__platform_driver_register+0x7c/0x88
-hisi_lpc_driver_init+0x18/0x20
-do_one_initcall+0xb4/0x258
-kernel_init_freeable+0x248/0x2c0
-kernel_init+0x10/0x118
-ret_from_fork+0x10/0x1c
-
-...
-
-The issue here is that the kernel created an incorrect parent-child
-resource dependency between two devices, and references the false parent
-node when deleting the second child device, when it had been deleted
-already.
-
-Fix up the child device resources from FW to create proper IO port
-resource relationships for broken FW.
-
-With this, the IO port layout looks more healthy:
-
-root@(none)$ more /proc/ioports
-[...]
-00ffc0e3-00ffc0e7 : hisi-lpc-ipmi.0.auto
-  00ffc0e3-00ffc0e3 : ipmi_si
-  00ffc0e4-00ffc0e4 : ipmi_si
-  00ffc0e5-00ffc0e5 : ipmi_si
-00ffc2f7-00ffc2ff : serial8250.1.auto
-  00ffc2f7-00ffc2fe : serial
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-index 8101df901830..08543579eefd 100644
---- a/drivers/bus/hisi_lpc.c
-+++ b/drivers/bus/hisi_lpc.c
-@@ -357,6 +357,26 @@ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
- 	return 0;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d2aa9db61ab6..83eae48ad4f2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14067,7 +14067,7 @@ F:	include/dt-bindings/reset/
+ F:	include/linux/reset.h
+ F:	include/linux/reset/
+ F:	include/linux/reset-controller.h
+-K:      \b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
++K:	\b(?:devm_|of_)?reset_control(?:ler_[a-z]+|_[a-z_]+)?\b
  
-+/*
-+ * Released firmware describes the IO port max address as 0x3fff, which is
-+ * the max host bus address. Fixup to a proper range. This will probably
-+ * never be fixed in firmware.
-+ */
-+static void hisi_lpc_acpi_fixup_child_resource(struct device *hostdev,
-+					       struct resource *r)
-+{
-+	if (r->end != 0x3fff)
-+		return;
-+
-+	if (r->start == 0xe4)
-+		r->end = 0xe4 + 0x04 - 1;
-+	else if (r->start == 0x2f8)
-+		r->end = 0x2f8 + 0x08 - 1;
-+	else
-+		dev_warn(hostdev, "unrecognised resource %pR to fixup, ignoring\n",
-+			 r);
-+}
-+
- /*
-  * hisi_lpc_acpi_set_io_res - set the resources for a child
-  * @child: the device node to be updated the I/O resource
-@@ -418,8 +438,11 @@ static int hisi_lpc_acpi_set_io_res(struct device *child,
- 		return -ENOMEM;
- 	}
- 	count = 0;
--	list_for_each_entry(rentry, &resource_list, node)
--		resources[count++] = *rentry->res;
-+	list_for_each_entry(rentry, &resource_list, node) {
-+		resources[count] = *rentry->res;
-+		hisi_lpc_acpi_fixup_child_resource(hostdev, &resources[count]);
-+		count++;
-+	}
- 
- 	acpi_dev_free_resource_list(&resource_list);
- 
+ RESTARTABLE SEQUENCES SUPPORT
+ M:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 -- 
 2.17.1
 
