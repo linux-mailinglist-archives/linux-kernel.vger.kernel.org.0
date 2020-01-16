@@ -2,115 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86BC213F1BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF6E13F1F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:32:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390683AbgAPSaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:30:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37188 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388586AbgAPSan (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:30:43 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI9Bg5056514;
-        Thu, 16 Jan 2020 18:30:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=W/xYyZuMQPUL8LywibdGc89gLisK7pTjwntsImkArLA=;
- b=BcoFKpG0AhmSGp9T+AI8JFScG9IIIytr2ntC33jVBVN4NeBq5TLiaFnK3DUe2/Rmhkdy
- bHwYJhQshTIdEDpYDX7XpNieDotmeBjXBHBYKKpbfk5HcNUWuzzaJVYZqyxnVQesrfyx
- uJVl5Zt901JcaDsmM2CIXfGp5uDZX4BmsryjCQc9bBJYgJaJBENrq6GJYV29MrX1s5j5
- 0bGerW/fjc2dbebgEoqV2R8vi3pJA8wGaYEkalF7SsHmqdL8WssBaRbWPv8v2wY8dfRT
- cexNqUHvIQTlA/7pjteT+IWOL9b+Tc41rKXlAowbX0FdoMDOnZNF4tbw41HrxLUFdLAW Dg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2xf74sm9ev-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 16 Jan 2020 18:30:31 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI9OLa124401;
-        Thu, 16 Jan 2020 18:30:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 2xj1ptje0p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 16 Jan 2020 18:30:31 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id 00GIU9f0190457;
-        Thu, 16 Jan 2020 18:30:31 GMT
-Received: from ca-dev107.us.oracle.com (ca-dev107.us.oracle.com [10.129.135.36])
-        by userp3020.oracle.com with ESMTP id 2xj1ptjdxt-3;
-        Thu, 16 Jan 2020 18:30:31 +0000
-From:   rao Shoaib <rao.shoaib@oracle.com>
-To:     linux-rdma@vger.kernel.org
-Cc:     jgg@ziepe.ca, monis@mellanox.com, dledford@redhat.com,
-        sean.hefty@intel.com, hal.rosenstock@gmail.com,
-        linux-kernel@vger.kernel.org, Rao Shoaib <rao.shoaib@oracle.com>
-Subject: [PATCH v4 2/2] RDMA/rxe: SGE buffer and max_inline data must have same size
-Date:   Thu, 16 Jan 2020 10:30:12 -0800
-Message-Id: <1579199412-15741-3-git-send-email-rao.shoaib@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1579199412-15741-1-git-send-email-rao.shoaib@oracle.com>
-References: <1579199412-15741-1-git-send-email-rao.shoaib@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001160147
+        id S2392159AbgAPSbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:31:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436645AbgAPSb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:31:28 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D86C206D7;
+        Thu, 16 Jan 2020 18:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579199487;
+        bh=n9w+eEwrwKaNFIfJ2uLhExYF95MkN3KncmP+Uf276UI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uxCDOQukU1DhBrpSDVnWCsaQAvjOUjLxlFvtr/Si8XX4qjWwO5+kvOjQYJvYJbUZy
+         wyVyxAbmtbScN9ahtoFyN+Nk/a1IMI8TtLXR2Z6Bq9+SbJFFdjoYIMTVp0RdowTi59
+         bz0/1+mmMQgW+RhvSzbjNRfefuFbK2bFDC9upZ8s=
+Date:   Thu, 16 Jan 2020 18:31:22 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        James Morse <james.morse@arm.com>
+Subject: Re: [PATCH] arm64: Add KRYO{3,4}XX CPU cores to spectre-v2 safe list
+Message-ID: <20200116183121.GE22420@willie-the-truck>
+References: <20200116141912.15465-1-saiprakash.ranjan@codeaurora.org>
+ <20200116153235.GA18909@willie-the-truck>
+ <1a3f9557fa52ce2528630434e9a49d98@codeaurora.org>
+ <CAD=FV=WP1T7gGC=m5FOwuLvZdwrg5f7K6tDuYFT=0BgCQMZf7A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=WP1T7gGC=m5FOwuLvZdwrg5f7K6tDuYFT=0BgCQMZf7A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rao Shoaib <rao.shoaib@oracle.com>
+On Thu, Jan 16, 2020 at 10:27:08AM -0800, Doug Anderson wrote:
+> On Thu, Jan 16, 2020 at 8:11 AM Sai Prakash Ranjan
+> <saiprakash.ranjan@codeaurora.org> wrote:
+> > On 2020-01-16 21:02, Will Deacon wrote:
+> > > On Thu, Jan 16, 2020 at 07:49:12PM +0530, Sai Prakash Ranjan wrote:
+> > >> KRYO3XX silver CPU cores and KRYO4XX silver, gold CPU cores
+> > >> are not affected by Spectre variant 2. Add them to spectre_v2
+> > >> safe list to correct ARM_SMCCC_ARCH_WORKAROUND_1 warning and
+> > >> vulnerability sysfs value.
+> > >>
+> > >> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> > >> ---
+> > >>  arch/arm64/include/asm/cputype.h | 6 ++++++
+> > >>  arch/arm64/kernel/cpu_errata.c   | 3 +++
+> > >>  2 files changed, 9 insertions(+)
+> > >>
+> > >> diff --git a/arch/arm64/include/asm/cputype.h
+> > >> b/arch/arm64/include/asm/cputype.h
+> > >> index aca07c2f6e6e..7219cddeba66 100644
+> > >> --- a/arch/arm64/include/asm/cputype.h
+> > >> +++ b/arch/arm64/include/asm/cputype.h
+> > >> @@ -85,6 +85,9 @@
+> > >>  #define QCOM_CPU_PART_FALKOR_V1             0x800
+> > >>  #define QCOM_CPU_PART_FALKOR                0xC00
+> > >>  #define QCOM_CPU_PART_KRYO          0x200
+> > >> +#define QCOM_CPU_PART_KRYO_3XX_SILVER       0x803
+> > >> +#define QCOM_CPU_PART_KRYO_4XX_GOLD 0x804
+> > >> +#define QCOM_CPU_PART_KRYO_4XX_SILVER       0x805
+> > >
+> > > Jeffrey is the only person I know who understands the CPU naming here,
+> > > so
+> > > I've added him in case this needs either renaming or extending to cover
+> > > other CPUs. I wouldn't be at all surprised if we need a function call
+> > > rather than a bunch of table entries...
+> > >
+> > > That said, the internet claims that KRYO4XX gold is based on
+> > > Cortex-A76,
+> > > and so CSV2 should be set...
+> > >
+> >
+> > Yes the internet claims are true and CSV2 is set. SANITY check logs in
+> > here show ID_PFR0_EL1 - https://lore.kernel.org/patchwork/patch/1138457/
+> 
+> I'm probably just being a noob here and am confused, but if CSV2 is
+> set then why do you need your patch at all?  The code I see says that
+> if CSV2 is set then we don't even check the spectre_v2_safe_list().
 
-SGE buffer size and max_inline data should be same. Maximum of the two
-values requested is used.
+You're not being a noob at all -- you're making the same point that I was
+trying to make :)
 
-Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
----
- drivers/infiniband/sw/rxe/rxe_qp.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+So I think we can take this patch with the KRYO_4XX_GOLD part dropped.
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_qp.c b/drivers/infiniband/sw/rxe/rxe_qp.c
-index e2c6d1c..d29d1a8 100644
---- a/drivers/infiniband/sw/rxe/rxe_qp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_qp.c
-@@ -238,18 +238,22 @@ static int rxe_qp_init_req(struct rxe_dev *rxe, struct rxe_qp *qp,
- 	qp->src_port = RXE_ROCE_V2_SPORT +
- 		(hash_32_generic(qp_num(qp), 14) & 0x3fff);
- 
--	qp->sq.max_wr		= init->cap.max_send_wr;
--	qp->sq.max_sge		= init->cap.max_send_sge;
--	qp->sq.max_inline	= init->cap.max_inline_data;
--
--	wqe_size = max_t(int, sizeof(struct rxe_send_wqe) +
--			 qp->sq.max_sge * sizeof(struct ib_sge),
--			 sizeof(struct rxe_send_wqe) +
--			 qp->sq.max_inline);
--
--	qp->sq.queue = rxe_queue_init(rxe,
--				      &qp->sq.max_wr,
--				      wqe_size);
-+	/* values for max_send_sge and max_inline_data have already been
-+	 * checked in rxe_qp_chk_cap() to make sure they are within limits.
-+	 */
-+	wqe_size = max_t(int, init->cap.max_send_sge * sizeof(struct ib_sge),
-+			 init->cap.max_inline_data);
-+	qp->sq.max_sge = wqe_size/sizeof(struct ib_sge);
-+	qp->sq.max_inline = wqe_size;
-+	init->cap.max_inline_data = qp->sq.max_inline;
-+	init->cap.max_send_sge = qp->sq.max_sge;
-+
-+	wqe_size += sizeof(struct rxe_send_wqe);
-+
-+	qp->sq.max_wr = init->cap.max_send_wr;
-+
-+	qp->sq.queue = rxe_queue_init(rxe, &qp->sq.max_wr, wqe_size);
-+
- 	if (!qp->sq.queue)
- 		return -ENOMEM;
- 
--- 
-1.8.3.1
-
+Will
