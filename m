@@ -2,182 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BCFE13EA69
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B72513EA88
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:45:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394079AbgAPRoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34150 "EHLO mail.kernel.org"
+        id S2406007AbgAPRoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:44:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388744AbgAPRnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:46 -0500
+        id S2394176AbgAPRoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:44:30 -0500
 Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9268B2474E;
-        Thu, 16 Jan 2020 17:43:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B51624761;
+        Thu, 16 Jan 2020 17:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196625;
-        bh=JF0ccaR7qzma6RZnVGAc0QY3jNY3PjqO4TYu3jZ7p04=;
+        s=default; t=1579196670;
+        bh=qmjLCbfQKX13aq2gy6zUekqoctbef1EOkzCXBZbK+zg=;
         h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=zQnA9E92vc7DPGCkFsxiZ+rKqrIhHx4ZP5aa/0xDqCll//Ryr6P2X8FnsmYHsb1mT
-         fCPh35oc0NLpfw0YceFHulh/5Hf6cPS5imsVQPgZrjNY3S9XcxIEGEnJoIciKTgUcD
-         gAbvv/jdRIJ7a6NiuNcKh+GeBrf6RCgIMM/cdd1c=
+        b=YTGwgwmWb32UjsVSCOMqIL6CkchqelmJN8BFTIXQr4OSEpqZDt56wJ0o5qv1EAKgE
+         ksRUXljCc+Kjw3ijLCCBBrg1Ho5y4NbPDypw6sOII/drjZfXkrCX1TBH4zEBHSX/8z
+         LmGtRQ32R8dTbPRynOJaw5II7Ucp5QoHpyJIYkXU=
 Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 15F6E35227B9; Thu, 16 Jan 2020 09:43:44 -0800 (PST)
-Date:   Thu, 16 Jan 2020 09:43:44 -0800
+        id 851A735227B9; Thu, 16 Jan 2020 09:44:29 -0800 (PST)
+Date:   Thu, 16 Jan 2020 09:44:29 -0800
 From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     andreyknvl@google.com, glider@google.com, dvyukov@google.com,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: Re: [PATCH -rcu v2] kcsan: Make KCSAN compatible with lockdep
-Message-ID: <20200116174344.GV2935@paulmck-ThinkPad-P72>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
+Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
+ kfree_rcu()
+Message-ID: <20200116174429.GW2935@paulmck-ThinkPad-P72>
 Reply-To: paulmck@kernel.org
-References: <20200115162512.70807-1-elver@google.com>
+References: <20191231122241.5702-1-urezki@gmail.com>
+ <20200116011410.GC246464@google.com>
+ <20200116024126.GS2935@paulmck-ThinkPad-P72>
+ <20200116172753.GB23524@pc636>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200115162512.70807-1-elver@google.com>
+In-Reply-To: <20200116172753.GB23524@pc636>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 05:25:12PM +0100, Marco Elver wrote:
-> We must avoid any recursion into lockdep if KCSAN is enabled on
-> utilities used by lockdep. One manifestation of this is corrupting
-> lockdep's IRQ trace state (if TRACE_IRQFLAGS). Fix this by:
-> 
-> 1. Using raw_local_irq{save,restore} in kcsan_setup_watchpoint().
-> 2. Disabling lockdep in kcsan_report().
-> 
-> Tested with:
-> 
->   CONFIG_LOCKDEP=y
->   CONFIG_DEBUG_LOCKDEP=y
->   CONFIG_TRACE_IRQFLAGS=y
-> 
-> Where previously, the following warning (and variants with different
-> stack traces) was consistently generated, with the fix introduced in
-> this patch, the warning cannot be reproduced.
+On Thu, Jan 16, 2020 at 06:27:53PM +0100, Uladzislau Rezki wrote:
+> On Wed, Jan 15, 2020 at 06:41:26PM -0800, Paul E. McKenney wrote:
+> > On Wed, Jan 15, 2020 at 08:14:10PM -0500, Joel Fernandes wrote:
+> > > On Tue, Dec 31, 2019 at 01:22:41PM +0100, Uladzislau Rezki (Sony) wrote:
+> > > > kfree_rcu() logic can be improved further by using kfree_bulk()
+> > > > interface along with "basic batching support" introduced earlier.
+> > > > 
+> > > > The are at least two advantages of using "bulk" interface:
+> > > > - in case of large number of kfree_rcu() requests kfree_bulk()
+> > > >   reduces the per-object overhead caused by calling kfree()
+> > > >   per-object.
+> > > > 
+> > > > - reduces the number of cache-misses due to "pointer chasing"
+> > > >   between objects which can be far spread between each other.
+> > > > 
+> > > > This approach defines a new kfree_rcu_bulk_data structure that
+> > > > stores pointers in an array with a specific size. Number of entries
+> > > > in that array depends on PAGE_SIZE making kfree_rcu_bulk_data
+> > > > structure to be exactly one page.
+> > > > 
+> > > > Since it deals with "block-chain" technique there is an extra
+> > > > need in dynamic allocation when a new block is required. Memory
+> > > > is allocated with GFP_NOWAIT | __GFP_NOWARN flags, i.e. that
+> > > > allows to skip direct reclaim under low memory condition to
+> > > > prevent stalling and fails silently under high memory pressure.
+> > > > 
+> > > > The "emergency path" gets maintained when a system is run out
+> > > > of memory. In that case objects are linked into regular list
+> > > > and that is it.
+> > > > 
+> > > > In order to evaluate it, the "rcuperf" was run to analyze how
+> > > > much memory is consumed and what is kfree_bulk() throughput.
+> > > > 
+> > > > Testing on the HiKey-960, arm64, 8xCPUs with below parameters:
+> > > > 
+> > > > CONFIG_SLAB=y
+> > > > kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
+> > > > 
+> > > > 102898760401 ns, loops: 200000, batches: 5822, memory footprint: 158MB
+> > > > 89947009882  ns, loops: 200000, batches: 6715, memory footprint: 115MB
+> > > > 
+> > > > rcuperf shows approximately ~12% better throughput(Total time)
+> > > > in case of using "bulk" interface. The "drain logic" or its RCU
+> > > > callback does the work faster that leads to better throughput.
+> > > 
+> > > Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > 
+> > > (Vlad is going to post a v2 which fixes a debugobjects bug but that should
+> > > not have any impact on testing).
+> > 
+> > Very good!  Uladzislau, could you please add Joel's Tested-by in
+> > your next posting?
+> > 
+> I will add for sure, with the a V2 version. Also, i will update the
+> commit message by adding the results related to different slab cache
+> usage, i mean with Joel's recent patch.
 
-I added Vlad's ack and Qian's Tested-by and queued this.  Thank you all!
+Sounds good, looking forward to it!
 
 							Thanx, Paul
-
->     WARNING: CPU: 0 PID: 2 at kernel/locking/lockdep.c:4406 check_flags.part.0+0x101/0x220
->     Modules linked in:
->     CPU: 0 PID: 2 Comm: kthreadd Not tainted 5.5.0-rc1+ #11
->     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
->     RIP: 0010:check_flags.part.0+0x101/0x220
->     <snip>
->     Call Trace:
->      lock_is_held_type+0x69/0x150
->      freezer_fork+0x20b/0x370
->      cgroup_post_fork+0x2c9/0x5c0
->      copy_process+0x2675/0x3b40
->      _do_fork+0xbe/0xa30
->      ? _raw_spin_unlock_irqrestore+0x40/0x50
->      ? match_held_lock+0x56/0x250
->      ? kthread_park+0xf0/0xf0
->      kernel_thread+0xa6/0xd0
->      ? kthread_park+0xf0/0xf0
->      kthreadd+0x321/0x3d0
->      ? kthread_create_on_cpu+0x130/0x130
->      ret_from_fork+0x3a/0x50
->     irq event stamp: 64
->     hardirqs last  enabled at (63): [<ffffffff9a7995d0>] _raw_spin_unlock_irqrestore+0x40/0x50
->     hardirqs last disabled at (64): [<ffffffff992a96d2>] kcsan_setup_watchpoint+0x92/0x460
->     softirqs last  enabled at (32): [<ffffffff990489b8>] fpu__copy+0xe8/0x470
->     softirqs last disabled at (30): [<ffffffff99048939>] fpu__copy+0x69/0x470
-> 
-> Reported-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
-> v2:
-> * Update comments.
-> ---
->  kernel/kcsan/core.c     |  6 ++++--
->  kernel/kcsan/report.c   | 11 +++++++++++
->  kernel/locking/Makefile |  3 +++
->  3 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-> index 87bf857c8893..64b30f7716a1 100644
-> --- a/kernel/kcsan/core.c
-> +++ b/kernel/kcsan/core.c
-> @@ -336,8 +336,10 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
->  	 *      CPU-local data accesses), it makes more sense (from a data race
->  	 *      detection point of view) to simply disable preemptions to ensure
->  	 *      as many tasks as possible run on other CPUs.
-> +	 *
-> +	 * Use raw versions, to avoid lockdep recursion via IRQ flags tracing.
->  	 */
-> -	local_irq_save(irq_flags);
-> +	raw_local_irq_save(irq_flags);
->  
->  	watchpoint = insert_watchpoint((unsigned long)ptr, size, is_write);
->  	if (watchpoint == NULL) {
-> @@ -429,7 +431,7 @@ kcsan_setup_watchpoint(const volatile void *ptr, size_t size, int type)
->  
->  	kcsan_counter_dec(KCSAN_COUNTER_USED_WATCHPOINTS);
->  out_unlock:
-> -	local_irq_restore(irq_flags);
-> +	raw_local_irq_restore(irq_flags);
->  out:
->  	user_access_restore(ua_flags);
->  }
-> diff --git a/kernel/kcsan/report.c b/kernel/kcsan/report.c
-> index b5b4feea49de..33bdf8b229b5 100644
-> --- a/kernel/kcsan/report.c
-> +++ b/kernel/kcsan/report.c
-> @@ -2,6 +2,7 @@
->  
->  #include <linux/jiffies.h>
->  #include <linux/kernel.h>
-> +#include <linux/lockdep.h>
->  #include <linux/preempt.h>
->  #include <linux/printk.h>
->  #include <linux/sched.h>
-> @@ -410,6 +411,14 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
->  {
->  	unsigned long flags = 0;
->  
-> +	/*
-> +	 * With TRACE_IRQFLAGS, lockdep's IRQ trace state becomes corrupted if
-> +	 * we do not turn off lockdep here; this could happen due to recursion
-> +	 * into lockdep via KCSAN if we detect a data race in utilities used by
-> +	 * lockdep.
-> +	 */
-> +	lockdep_off();
-> +
->  	kcsan_disable_current();
->  	if (prepare_report(&flags, ptr, size, access_type, cpu_id, type)) {
->  		if (print_report(ptr, size, access_type, value_change, cpu_id, type) && panic_on_warn)
-> @@ -418,4 +427,6 @@ void kcsan_report(const volatile void *ptr, size_t size, int access_type,
->  		release_report(&flags, type);
->  	}
->  	kcsan_enable_current();
-> +
-> +	lockdep_on();
->  }
-> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
-> index 45452facff3b..6d11cfb9b41f 100644
-> --- a/kernel/locking/Makefile
-> +++ b/kernel/locking/Makefile
-> @@ -5,6 +5,9 @@ KCOV_INSTRUMENT		:= n
->  
->  obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o
->  
-> +# Avoid recursion lockdep -> KCSAN -> ... -> lockdep.
-> +KCSAN_SANITIZE_lockdep.o := n
-> +
->  ifdef CONFIG_FUNCTION_TRACER
->  CFLAGS_REMOVE_lockdep.o = $(CC_FLAGS_FTRACE)
->  CFLAGS_REMOVE_lockdep_proc.o = $(CC_FLAGS_FTRACE)
-> -- 
-> 2.25.0.rc1.283.g88dfdc4193-goog
-> 
