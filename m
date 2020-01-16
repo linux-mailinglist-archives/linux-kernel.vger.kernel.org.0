@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AF1613FC2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:27:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F004113FC2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:29:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389997AbgAPW1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 17:27:17 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46106 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729454AbgAPW1R (ORCPT
+        id S2390017AbgAPW15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 17:27:57 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41455 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389972AbgAPW14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:27:17 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r9so20901309otp.13;
-        Thu, 16 Jan 2020 14:27:17 -0800 (PST)
+        Thu, 16 Jan 2020 17:27:56 -0500
+Received: by mail-qk1-f195.google.com with SMTP id x129so20821054qke.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 14:27:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iSl/iz8q5qsynSrNKHIQvHUN+GEAmInTpvYEYnskbhI=;
-        b=tQJWWE+aXJ7Q4PQlKya0EvRWlTVBsEAQxCUciiydmJ0zAadyfj/YO0XajNeBIEgEM5
-         m31QFefRbLVzSESQvsL5jAAya91YemMAr3ap9SvX7qX8YT8IMZ4PVIdHEWXkYHuHN30W
-         VVvFISoOixhkg8amsKwCYpz8WPStm6v5KGpN2mDZfe7S8iB0uAxA3o6EdJ/L1aKyC+cv
-         Su6aGd8HJ+g12eSz6gk5SfrBO3YQXgeRwL7KqHNgdDFlqam8o6n08iHDDL8vwPrInSyy
-         Zo5Hp8uCbJjCR1zC2BubBMAnbt2L6q8gfqkg3QQ5iQ9RIAfjGrUk4ka0FV8VnigLv+pi
-         g4iA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=IIlkHrTimX5Y+4zN+nLI9C7NsPf01V6aJUl+VM0yuVw=;
+        b=rAd76RbByw2XTzKcvnB6koJ/sOnQyw3smtZYZybrKopKduz4QFwdJBIiD3tQffkfDJ
+         wn0vksgeC1dpeVdsdsJ/QeQG0RvJFChLidDwOwQyGvgDmVE1XC/6kyhQIsDS8p7eHfc8
+         xCWNmaTgDi7rTu5JMOsA5ulxGgiwd202AbV6/gUYLl4iLlvPZW1bVKdt3d30FVG43Ki9
+         MAdOwi0A7yKY9WDP94X3+bsrL/MwYQsH0+g/qzIxMNuv2C9Ba3mZxY8gkJf9iswkdN3j
+         Me/7P0tL/FdM+MKTN6ZMnk3NjjUy/P9lOZdhAeyqStDz21/BVCa/6TfsswoPuHwSUn2I
+         FtSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iSl/iz8q5qsynSrNKHIQvHUN+GEAmInTpvYEYnskbhI=;
-        b=cmZpxXMow0d6TUm6O5BFOk44hnYmg8uq1+bjVcquKnnwEOe/LU0DV7U7YMXtawNYUe
-         of3lEEtOkqzC7RAI4Mvu7+iAB38XDc4MheiE3cywVkGTVj0QGsnNCHwYMxSN3LCpgk/b
-         +VMBt4rNGmsGWl7G0UtjVVR9R9/wNVldktQkXYwYKYvd/JHvU8n+wIBXmyRRd5bJ0kc4
-         EDFXDqhd+Uv+W7kRZk5HvWm/KkoyPoQhyDlJbkjtQfJHyA8SJcLl9FzTGC9gLgqi9dh3
-         gP7tH3I626PkLEFLE8Yy+fLva/wzKi8HltPNnuHjmdPKGtgeH52iV1P+voaumT7hHSl5
-         7O4Q==
-X-Gm-Message-State: APjAAAWN5461K+05ouS7R2Pt4lIzhqaOmlhdgyeBaSAP1JNDPnfv+UnM
-        9xh6UAHQ83qTHR9W+/d3+zM=
-X-Google-Smtp-Source: APXvYqzFgJ0McJrahhe7vh2rOK8/NO5bak3ECkJ56UAVMeGC+zD/jnWt6BjxDAJVedX6AkXY0mFl5g==
-X-Received: by 2002:a05:6830:128e:: with SMTP id z14mr3883578otp.184.1579213636587;
-        Thu, 16 Jan 2020 14:27:16 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id i12sm8216172otk.11.2020.01.16.14.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 14:27:16 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] IB/hfi1: Fix logical condition in msix_request_irq
-Date:   Thu, 16 Jan 2020 15:26:58 -0700
-Message-Id: <20200116222658.5285-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=IIlkHrTimX5Y+4zN+nLI9C7NsPf01V6aJUl+VM0yuVw=;
+        b=LQPwvl5hyeNZjuTXYJSCvF/BVYrCqPUsFL116D4o8pGrjKMcICIwvPL+aozUIu0Pxc
+         gLtJOgifhW2A+vFPG+QTNdDMxomy3bMdh+QoObZfLNAph1q2kWO7xD4fKwAt9zeUE3Te
+         bxwm0CxBJH/Oq/rtwCKyHL/j0xkPYnHSh6XSQdGvIyYgPZVEwqI09ZRasZctmQv+o0TA
+         Z/8v44+t7U26X2tKubKZy2DRwZcAjKCRJKsU+jY2+KgD6dxLuy7hPN/NlJlnQrn1BzJ8
+         FLbscHpBYChtaaK6DtJFrNt+0K9ufn5uZGiBpOYDaAykxTKcXusf4kgJ3ztSnVzWj7A5
+         J6Sw==
+X-Gm-Message-State: APjAAAWgyd7zqSXkjQ9/xiXQkoZuKPxHzoRF+rLr9ZuSZX8XLA4TJOFn
+        xyoHiwc/0klQCo+STXHd555aWgFtSq6il8kqHe8=
+X-Google-Smtp-Source: APXvYqxgQ30u8OuAKkfgaAyJTcnK2i2IB4c3Yu35rpqc6Yjbg0tlLzlgNzkhrLo3Bge5oVd+1VF6qUOLGbrJaUo1TYY=
+X-Received: by 2002:a37:5b41:: with SMTP id p62mr35488683qkb.442.1579213675767;
+ Thu, 16 Jan 2020 14:27:55 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Received: by 2002:aed:2d01:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 14:27:55
+ -0800 (PST)
+Reply-To: dawudausma@yahoo.com
+From:   Dawuda Usman <andrew.ejiro01@gmail.com>
+Date:   Thu, 16 Jan 2020 23:27:55 +0100
+Message-ID: <CAGLpzYznNcTKhwxjZwqD=JZ2j1Z47MYB4mPNNYgja-fKCmENQw@mail.gmail.com>
+Subject: Greetings friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Dear Friend,
 
-drivers/infiniband/hw/hfi1/msix.c:136:22: warning: overlapping
-comparisons always evaluate to false [-Wtautological-overlap-compare]
-        if (type < IRQ_SDMA && type >= IRQ_OTHER)
-            ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-1 warning generated.
+I am  Mr. Dawuda Usman working with the department of Audit and
+accounting manager here in the Bank,
 
-It is impossible for something to be less than 0 (IRQ_SDMA) and greater
-than or equal to 3 (IRQ_OTHER) at the same time. A logical OR should
-have been used to keep the same logic as before.
+There is this fund that was keep in my custody years ago,please I need
+your assistance for the transferring of this fund to your bank account
+for both of us benefit for life time investment and the amount is
+(US$4.5M DOLLARS).
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/841
-Fixes: 13d2a8384bd9 ("IB/hfi1: Decouple IRQ name from type")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/infiniband/hw/hfi1/msix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have every inquiry details to make the bank believe you and release
+the fund in within 5 banking working days with your full co-operation
+with me after success.
 
-diff --git a/drivers/infiniband/hw/hfi1/msix.c b/drivers/infiniband/hw/hfi1/msix.c
-index 4a620cf80588..db82db497b2c 100644
---- a/drivers/infiniband/hw/hfi1/msix.c
-+++ b/drivers/infiniband/hw/hfi1/msix.c
-@@ -133,7 +133,7 @@ static int msix_request_irq(struct hfi1_devdata *dd, void *arg,
- 	if (nr == dd->msix_info.max_requested)
- 		return -ENOSPC;
- 
--	if (type < IRQ_SDMA && type >= IRQ_OTHER)
-+	if (type < IRQ_SDMA || type >= IRQ_OTHER)
- 		return -EINVAL;
- 
- 	irq = pci_irq_vector(dd->pcidev, nr);
--- 
-2.25.0
+Note/ 50% for you why 50% for me after success of the transfer to your
+bank account.
 
+Below information is what I need from you so will can be reaching each other .
+
+1)Private telephone number...
+2)Age...
+3)Nationality...
+4)Occupation ...
+5)Full name ...
+
+Thanks.
+
+Mr. Dawuda Usman
