@@ -2,103 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B04713FB73
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6978613FB94
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388638AbgAPVaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:30:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58065 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388443AbgAPVaB (ORCPT
+        id S2389369AbgAPVbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:31:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53546 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388949AbgAPVbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:30:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579210200;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YUGNJL2/Wf026kdMIts/pJT5YKTZt1aptj+7LyeYLmk=;
-        b=fTK2Lb9nIWmkyged+E4vyCEMIUc4tO1xzyqthUG1F2nupgE4VTig3ZMbq4A3u7uiZtv+kv
-        0edXcSJ1xsPc0Hi6dIyQuNKmfs913MFCOwgf6HmR0HrfZ7g/CR67gEB3mjShKizlPRxe9l
-        392yUfIz9jbL4/vHFldhJwQ5uXCc58M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-48-4BE-gvcyMeSokQ9liZEf5A-1; Thu, 16 Jan 2020 16:29:58 -0500
-X-MC-Unique: 4BE-gvcyMeSokQ9liZEf5A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9A02D803A20;
-        Thu, 16 Jan 2020 21:29:56 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-12.phx2.redhat.com [10.3.112.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B0681001901;
-        Thu, 16 Jan 2020 21:29:48 +0000 (UTC)
-Date:   Thu, 16 Jan 2020 16:29:46 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        sgrubb@redhat.com, omosnace@redhat.com, fw@strlen.de,
-        twoerner@redhat.com, eparis@parisplace.org, ebiederm@xmission.com,
-        tgraf@infradead.org
-Subject: Re: [PATCH ghak25 v2 1/9] netfilter: normalize x_table function
- declarations
-Message-ID: <20200116212946.mwnk45v2px4e42uj@madcap2.tricolour.ca>
-References: <cover.1577830902.git.rgb@redhat.com>
- <194bdc565d548a14e12357a7c1a594605b7fdf0f.1577830902.git.rgb@redhat.com>
- <f8ee5829-f094-96b8-40c2-b0278f93fb03@6wind.com>
+        Thu, 16 Jan 2020 16:31:08 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1isCjD-0001Vr-PU; Thu, 16 Jan 2020 22:30:59 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 248441C1970;
+        Thu, 16 Jan 2020 22:30:59 +0100 (CET)
+Date:   Thu, 16 Jan 2020 21:30:58 -0000
+From:   "tip-bot2 for Andrea Parri" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] clocksource/drivers/hyper-v: Set TSC clocksource
+ as default w/ InvariantTSC
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200109160650.16150-3-parri.andrea@gmail.com>
+References: <20200109160650.16150-3-parri.andrea@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <f8ee5829-f094-96b8-40c2-b0278f93fb03@6wind.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <157921025889.396.394289795605229140.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020-01-08 17:47, Nicolas Dichtel wrote:
-> Le 06/01/2020 =E0 19:54, Richard Guy Briggs a =E9crit=A0:
-> > Git context diffs were being produced with unhelpful declaration type=
-s
-> > in the place of function names to help identify the funciton in which
-> > changes were made.
-> Just for my information, how do you reproduce that? With a 'git diff'?
+The following commit has been merged into the timers/core branch of tip:
 
-git format-patch is how it is presenting as a problem, which I assume
-would also be git diff.
+Commit-ID:     9e0333ae38eeb42249e10f95d209244a6e22ac9f
+Gitweb:        https://git.kernel.org/tip/9e0333ae38eeb42249e10f95d209244a6e22ac9f
+Author:        Andrea Parri <parri.andrea@gmail.com>
+AuthorDate:    Thu, 09 Jan 2020 17:06:50 +01:00
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Thu, 16 Jan 2020 19:09:02 +01:00
 
-> > Normalize x_table function declarations so that git context diff
-> > function labels work as expected.
-> >=20
-> [snip]
-> >=20
-> > --=20
-> > 1.8.3.1
-> git v1.8.3.1 is seven years old:
-> https://github.com/git/git/releases/tag/v1.8.3.1
->=20
-> I don't see any problems with git v2.24. Not sure that the patch brings=
- any
-> helpful value except complicating backports.
+clocksource/drivers/hyper-v: Set TSC clocksource as default w/ InvariantTSC
 
-It brings value to anyone who is on a distro that is stable and only
-slightly behind.  There are other features of git 2.x that I'd like to
-start using (git worktrees) but I'll have to wait until I can afford to
-upgrade.
+Change the Hyper-V clocksource ratings to 250, below the TSC clocksource
+rating of 300.  In configurations where Hyper-V offers an InvariantTSC,
+the TSC is not marked "unstable", so the TSC clocksource is available
+and preferred.  With the higher rating, it will be the default.  On
+older hardware and Hyper-V versions, the TSC is marked "unstable", so no
+TSC clocksource is created and the selected Hyper-V clocksource will be
+the default.
 
-> Nicolas
+Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20200109160650.16150-3-parri.andrea@gmail.com
+---
+ drivers/clocksource/hyperv_timer.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+index 42748ad..9d808d5 100644
+--- a/drivers/clocksource/hyperv_timer.c
++++ b/drivers/clocksource/hyperv_timer.c
+@@ -302,6 +302,14 @@ EXPORT_SYMBOL_GPL(hv_stimer_global_cleanup);
+  * the other that uses the TSC reference page feature as defined in the
+  * TLFS.  The MSR version is for compatibility with old versions of
+  * Hyper-V and 32-bit x86.  The TSC reference page version is preferred.
++ *
++ * The Hyper-V clocksource ratings of 250 are chosen to be below the
++ * TSC clocksource rating of 300.  In configurations where Hyper-V offers
++ * an InvariantTSC, the TSC is not marked "unstable", so the TSC clocksource
++ * is available and preferred.  With the higher rating, it will be the
++ * default.  On older hardware and Hyper-V versions, the TSC is marked
++ * "unstable", so no TSC clocksource is created and the selected Hyper-V
++ * clocksource will be the default.
+  */
+ 
+ u64 (*hv_read_reference_counter)(void);
+@@ -363,7 +371,7 @@ static void resume_hv_clock_tsc(struct clocksource *arg)
+ 
+ static struct clocksource hyperv_cs_tsc = {
+ 	.name	= "hyperv_clocksource_tsc_page",
+-	.rating	= 400,
++	.rating	= 250,
+ 	.read	= read_hv_clock_tsc_cs,
+ 	.mask	= CLOCKSOURCE_MASK(64),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
+@@ -395,7 +403,7 @@ static u64 read_hv_sched_clock_msr(void)
+ 
+ static struct clocksource hyperv_cs_msr = {
+ 	.name	= "hyperv_clocksource_msr",
+-	.rating	= 400,
++	.rating	= 250,
+ 	.read	= read_hv_clock_msr_cs,
+ 	.mask	= CLOCKSOURCE_MASK(64),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
