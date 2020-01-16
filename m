@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4093313F755
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 835ED13F74F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:11:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437428AbgAPTLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:11:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
+        id S2437416AbgAPTLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:11:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387730AbgAPRAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:21 -0500
+        id S1732785AbgAPRAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A97622467E;
-        Thu, 16 Jan 2020 17:00:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B78622525;
+        Thu, 16 Jan 2020 17:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194020;
-        bh=iXlGhkD+iPp8vh7EEoCYUfHQYjiFUHCq17Z2sMpPylM=;
+        s=default; t=1579194022;
+        bh=vo/6qv1xaJDDey7CJztxTkpzqd8t3nlUIJnexkrm3+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cCF82wdt6b+OfEXw9/4Zt9fETmnNEVLEbB07hJugw20CnWLDVKqff07lhJyUvuYGs
-         e1M0ghpfTAgj21BP7FfvJPPG9bFzSiuhUUjxCQDk5//kZTYfFnYIbQDWL06G+tLPFa
-         r3SYcOyB5Koeaz+vrEZjqCAc6CSevSPNGWCmOPJA=
+        b=Dqd6sQLCRy9Z5ZO1f3D5W+1/IH27iPOETBLs+v/m4W5xw0jFrArB0HRO4SJBRncOZ
+         KEbM4vDfjuysQ8r0cHLY2DOn4EThkiSW4qVjVG2KBSNc6mts6PTbmiSCj+HE/RhXVS
+         Ja0rhgk0vUigrM6n/X5VpE4SsuqSmXw5H89TrfGE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Corentin Labbe <clabbe@baylibre.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 141/671] crypto: crypto4xx - Fix wrong ppc4xx_trng_probe()/ppc4xx_trng_remove() arguments
-Date:   Thu, 16 Jan 2020 11:50:50 -0500
-Message-Id: <20200116165940.10720-24-sashal@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 143/671] driver core: Avoid careless re-use of existing device links
+Date:   Thu, 16 Jan 2020 11:50:52 -0500
+Message-Id: <20200116165940.10720-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,46 +43,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corentin Labbe <clabbe@baylibre.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 6e88098ca43a3d80ae86908f7badba683c8a0d84 ]
+[ Upstream commit f265df550a4350dce0a4d721a77c52e4b847ea40 ]
 
-When building without CONFIG_HW_RANDOM_PPC4XX, I hit the following build failure:
-drivers/crypto/amcc/crypto4xx_core.c: In function 'crypto4xx_probe':
-drivers/crypto/amcc/crypto4xx_core.c:1407:20: error: passing argument 1 of 'ppc4xx_trng_probe' from incompatible pointer type [-Werror=incompatible-pointer-types]
-In file included from drivers/crypto/amcc/crypto4xx_core.c:50:0:
-drivers/crypto/amcc/crypto4xx_trng.h:28:20: note: expected 'struct crypto4xx_device *' but argument is of type 'struct crypto4xx_core_device *'
-drivers/crypto/amcc/crypto4xx_core.c: In function 'crypto4xx_remove':
-drivers/crypto/amcc/crypto4xx_core.c:1434:21: error: passing argument 1 of 'ppc4xx_trng_remove' from incompatible pointer type [-Werror=incompatible-pointer-types]
-In file included from drivers/crypto/amcc/crypto4xx_core.c:50:0:
-drivers/crypto/amcc/crypto4xx_trng.h:30:20: note: expected 'struct crypto4xx_device *' but argument is of type 'struct crypto4xx_core_device *'
+After commit ead18c23c263 ("driver core: Introduce device links
+reference counting"), if there is a link between the given supplier
+and the given consumer already, device_link_add() will refcount it
+and return it unconditionally.  However, if the flags passed to
+it on the second (or any subsequent) attempt to create a device
+link between the same consumer-supplier pair are not compatible with
+the existing link's flags, that is incorrect.
 
-This patch fix the needed argument of ppc4xx_trng_probe()/ppc4xx_trng_remove() in that case.
+First off, if the existing link is stateless and the next caller of
+device_link_add() for the same consumer-supplier pair wants a
+stateful one, or the other way around, the existing link cannot be
+returned, because it will not match the expected behavior, so make
+device_link_add() dump the stack and return NULL in that case.
 
-Fixes: 5343e674f32f ("crypto4xx: integrate ppc4xx-rng into crypto4xx")
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Moreover, if the DL_FLAG_AUTOREMOVE_CONSUMER flag is passed to
+device_link_add(), its caller will expect its reference to the link
+to be dropped automatically on consumer driver removal, which will
+not happen if that flag is not set in the link's flags (and
+analogously for DL_FLAG_AUTOREMOVE_SUPPLIER).  For this reason, make
+device_link_add() update the existing link's flags accordingly
+before returning it to the caller.
+
+Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/amcc/crypto4xx_trng.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/core.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/amcc/crypto4xx_trng.h b/drivers/crypto/amcc/crypto4xx_trng.h
-index 931d22531f51..7bbda51b7337 100644
---- a/drivers/crypto/amcc/crypto4xx_trng.h
-+++ b/drivers/crypto/amcc/crypto4xx_trng.h
-@@ -26,9 +26,9 @@ void ppc4xx_trng_probe(struct crypto4xx_core_device *core_dev);
- void ppc4xx_trng_remove(struct crypto4xx_core_device *core_dev);
- #else
- static inline void ppc4xx_trng_probe(
--	struct crypto4xx_device *dev __maybe_unused) { }
-+	struct crypto4xx_core_device *dev __maybe_unused) { }
- static inline void ppc4xx_trng_remove(
--	struct crypto4xx_device *dev __maybe_unused) { }
-+	struct crypto4xx_core_device *dev __maybe_unused) { }
- #endif
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 055132f2292a..562385c47fa4 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -221,12 +221,29 @@ struct device_link *device_link_add(struct device *consumer,
+ 		goto out;
+ 	}
  
- #endif
+-	list_for_each_entry(link, &supplier->links.consumers, s_node)
+-		if (link->consumer == consumer) {
+-			kref_get(&link->kref);
++	list_for_each_entry(link, &supplier->links.consumers, s_node) {
++		if (link->consumer != consumer)
++			continue;
++
++		/*
++		 * Don't return a stateless link if the caller wants a stateful
++		 * one and vice versa.
++		 */
++		if (WARN_ON((flags & DL_FLAG_STATELESS) != (link->flags & DL_FLAG_STATELESS))) {
++			link = NULL;
+ 			goto out;
+ 		}
+ 
++		if (flags & DL_FLAG_AUTOREMOVE_CONSUMER)
++			link->flags |= DL_FLAG_AUTOREMOVE_CONSUMER;
++
++		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
++			link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
++
++		kref_get(&link->kref);
++		goto out;
++	}
++
+ 	link = kzalloc(sizeof(*link), GFP_KERNEL);
+ 	if (!link)
+ 		goto out;
 -- 
 2.20.1
 
