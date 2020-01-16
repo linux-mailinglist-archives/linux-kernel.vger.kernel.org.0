@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1303913E7EE
+	by mail.lfdr.de (Postfix) with ESMTP id 8F11013E7EF
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404250AbgAPR3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:29:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40254 "EHLO mail.kernel.org"
+        id S2404276AbgAPR3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:29:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392682AbgAPR2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:28:52 -0500
+        id S2404058AbgAPR2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B84C8246E8;
-        Thu, 16 Jan 2020 17:28:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DF3E24717;
+        Thu, 16 Jan 2020 17:28:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195732;
-        bh=wp8H6JrP5r7Xu478e+qmlSSOd3BEKvsKmv9Oq1SZ05c=;
+        s=default; t=1579195734;
+        bh=iZQi50xl/BXT7WwVnyOJs+dwOwZq0IMtZOKe8HzAilU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G29w+FI3OaFUaIAQ4BncKp3AsyDqEEI+KfgpuY4WdL0MZhwLgOLJx4ve2IBhlsec8
-         sHicx6vpsyGs/S2K3obNMA5zyH92tygbRCu+6Kr3nDwkKTqHDBy5G1tu4Eec0Wu9OK
-         i0hUOG9xyfitbDrMKjj3GTN8KbHM+w4XmdL75iHw=
+        b=ORUhLEKfL1tNJtl+FgnVJ4DMnyxN7FYBOsJjqQDIICNTTSnahk7Ogqo+ojJLHnOQM
+         gG5/KoZ49ZKJh+wgxiR7ai4IboaAGdWCWwfcihK9iAVTTFKtaTm3G3pWiYD29kj+oC
+         8/p/RogMVho9M71CESnxgZmkC2vBVAIVZUZctfQo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 271/371] ASoC: sun4i-i2s: RX and TX counter registers are swapped
-Date:   Thu, 16 Jan 2020 12:22:23 -0500
-Message-Id: <20200116172403.18149-214-sashal@kernel.org>
+Cc:     Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 273/371] mac80211: minstrel_ht: fix per-group max throughput rate initialization
+Date:   Thu, 16 Jan 2020 12:22:25 -0500
+Message-Id: <20200116172403.18149-216-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit cf2c0e1ce9544df42170fb921f12da82dc0cc8d6 ]
+[ Upstream commit 56dd918ff06e3ee24d8067e93ed12b2a39e71394 ]
 
-The RX and TX counters registers offset have been swapped, fix that.
+The group number needs to be multiplied by the number of rates per group
+to get the full rate index
 
-Fixes: fa7c0d13cb26 ("ASoC: sunxi: Add Allwinner A10 Digital Audio driver")
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/8b26477560ad5fd8f69e037b167c5e61de5c26a3.1566242458.git-series.maxime.ripard@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 5935839ad735 ("mac80211: improve minstrel_ht rate sorting by throughput & probability")
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Link: https://lore.kernel.org/r/20190820095449.45255-1-nbd@nbd.name
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/mac80211/rc80211_minstrel_ht.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index da0a2083e12a..d2802fd8c1dd 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -80,8 +80,8 @@
- #define SUN4I_I2S_CLK_DIV_MCLK_MASK		GENMASK(3, 0)
- #define SUN4I_I2S_CLK_DIV_MCLK(mclk)			((mclk) << 0)
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index e57811e4b91f..7ba4272642c9 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -529,7 +529,7 @@ minstrel_ht_update_stats(struct minstrel_priv *mp, struct minstrel_ht_sta *mi)
  
--#define SUN4I_I2S_RX_CNT_REG		0x28
--#define SUN4I_I2S_TX_CNT_REG		0x2c
-+#define SUN4I_I2S_TX_CNT_REG		0x28
-+#define SUN4I_I2S_RX_CNT_REG		0x2c
+ 		/* (re)Initialize group rate indexes */
+ 		for(j = 0; j < MAX_THR_RATES; j++)
+-			tmp_group_tp_rate[j] = group;
++			tmp_group_tp_rate[j] = MCS_GROUP_RATES * group;
  
- #define SUN4I_I2S_TX_CHAN_SEL_REG	0x30
- #define SUN4I_I2S_CHAN_SEL(num_chan)		(((num_chan) - 1) << 0)
+ 		for (i = 0; i < MCS_GROUP_RATES; i++) {
+ 			if (!(mi->supported[group] & BIT(i)))
 -- 
 2.20.1
 
