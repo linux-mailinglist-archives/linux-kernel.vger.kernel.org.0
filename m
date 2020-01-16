@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15D4113EF22
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC8613EF40
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405207AbgAPRgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:36:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51612 "EHLO mail.kernel.org"
+        id S1731489AbgAPRgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:36:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405090AbgAPRgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:36:44 -0500
+        id S2405114AbgAPRgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:36:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8159624694;
-        Thu, 16 Jan 2020 17:36:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4BCD246B7;
+        Thu, 16 Jan 2020 17:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196204;
-        bh=tdZMzdbq4gVQ5twnlrKuGhiga9ypKlA/c7vC+XIRG1s=;
+        s=default; t=1579196206;
+        bh=tdBSwxxCeitoPSZ6ScJGChgxmx8QvubbLNKi1Z1+VLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PeQ2xsHg0eHr+BVFtzhxG+jy/Ot8uajMi2gHwnANgpA6Fb+Mn5iEXMc8SxiyA07l+
-         Xs5Byk6u95wAOlZpDtVPyE/wVc8NFGx1sk3IP7dQQO82i7Ck9pRLk2bLO5/kGxdRJi
-         2HSrLSIkVHG/1fYrWleQtdavWysgOyDXKBxcOTwM=
+        b=1J2WK9Wpn4tiGkOnvwmbOtY9vvj/P80fWOTw7c6V8S3kteToX0GLgdFYrX3QUDKiv
+         xUgjhWJcqa201SuZAZFxAC0r+JlLIBdt3pj7Sa4oDSUc4TTWtfBuOdqOHprPzibiDQ
+         BApSyJvMGDmR2CymAwsJN/3Rb9xC9T8ELlCqljc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 042/251] crypto: tgr192 - fix unaligned memory access
-Date:   Thu, 16 Jan 2020 12:33:11 -0500
-Message-Id: <20200116173641.22137-2-sashal@kernel.org>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 043/251] ASoC: imx-sgtl5000: put of nodes if finding codec fails
+Date:   Thu, 16 Jan 2020 12:33:12 -0500
+Message-Id: <20200116173641.22137-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,48 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit f990f7fb58ac8ac9a43316f09a48cff1a49dda42 ]
+[ Upstream commit d9866572486802bc598a3e8576a5231378d190de ]
 
-Fix an unaligned memory access in tgr192_transform() by using the
-unaligned access helpers.
+Make sure to properly put the of node in case finding the codec
+fails.
 
-Fixes: 06ace7a9bafe ("[CRYPTO] Use standard byte order macros wherever possible")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 81e8e4926167 ("ASoC: fsl: add sgtl5000 clock support for imx-sgtl5000")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/tgr192.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/fsl/imx-sgtl5000.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/tgr192.c b/crypto/tgr192.c
-index 321bc6ff2a9d..904c8444aa0a 100644
---- a/crypto/tgr192.c
-+++ b/crypto/tgr192.c
-@@ -25,8 +25,9 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/mm.h>
--#include <asm/byteorder.h>
- #include <linux/types.h>
-+#include <asm/byteorder.h>
-+#include <asm/unaligned.h>
+diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
+index 8e525f7ac08d..3d99a8579c99 100644
+--- a/sound/soc/fsl/imx-sgtl5000.c
++++ b/sound/soc/fsl/imx-sgtl5000.c
+@@ -119,7 +119,8 @@ static int imx_sgtl5000_probe(struct platform_device *pdev)
+ 	codec_dev = of_find_i2c_device_by_node(codec_np);
+ 	if (!codec_dev) {
+ 		dev_err(&pdev->dev, "failed to find codec platform device\n");
+-		return -EPROBE_DEFER;
++		ret = -EPROBE_DEFER;
++		goto fail;
+ 	}
  
- #define TGR192_DIGEST_SIZE 24
- #define TGR160_DIGEST_SIZE 20
-@@ -468,10 +469,9 @@ static void tgr192_transform(struct tgr192_ctx *tctx, const u8 * data)
- 	u64 a, b, c, aa, bb, cc;
- 	u64 x[8];
- 	int i;
--	const __le64 *ptr = (const __le64 *)data;
- 
- 	for (i = 0; i < 8; i++)
--		x[i] = le64_to_cpu(ptr[i]);
-+		x[i] = get_unaligned_le64(data + i * sizeof(__le64));
- 
- 	/* save */
- 	a = aa = tctx->a;
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
 -- 
 2.20.1
 
