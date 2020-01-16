@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB80C13FDD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0B913FDD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403751AbgAPX3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35696 "EHLO mail.kernel.org"
+        id S2391370AbgAPX3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:29:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391336AbgAPX3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:29:44 -0500
+        id S2391348AbgAPX3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:29:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A022206D9;
-        Thu, 16 Jan 2020 23:29:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9DD12072E;
+        Thu, 16 Jan 2020 23:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217383;
-        bh=JSuBphsjuh0+PpEiMvHb+bCx5t9x0cjW3CLELLPZeHc=;
+        s=default; t=1579217386;
+        bh=PR6LMv/Zh4dtqefYb0m3O0npAsftNZ4io3k5rQIBbyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nqgpf7fzk95CcAfEMo9u9ksZQwy2R184yvc4zxCvg35rt1/yTb8vpFUcWvuHdUYoh
-         3tg945Wsx/nL+DXbJKHQdzACh5cNruPFMcylGyXyyVI8Ftmy2ib90SBKbtLPVmF/hP
-         2imWHPCS1a99/3xmV5SiiFdXsgkxiMyr5y6s5+rs=
+        b=UyIdX8mpXAj6foVSMXzCBZcCYoQmnQxY5gfIcQUxB0V0fV/lotmvsvzYTPJgWCr3A
+         SeijNVwjyYJfbI0ZpGSWepw0tvMRLyYv/XmJ6eKaeV3hvWGX6dDmZSEVRYS/1Bmcw3
+         yJMkB7NdCNKNMgteMYhfIjD9QcpN/Gb8Lcm0d34s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 34/84] btrfs: simplify inode locking for RWF_NOWAIT
-Date:   Fri, 17 Jan 2020 00:18:08 +0100
-Message-Id: <20200116231717.760212736@linuxfoundation.org>
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 35/84] RDMA/mlx5: Return proper error value
+Date:   Fri, 17 Jan 2020 00:18:09 +0100
+Message-Id: <20200116231717.902259017@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -43,41 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 9cf35f673583ccc9f3e2507498b3079d56614ad3 upstream.
+commit 546d30099ed204792083f043cd7e016de86016a3 upstream.
 
-This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression"). Apparently
-our current rwsem code doesn't like doing the trylock, then lock for
-real scheme. This causes extra contention on the lock and can be
-measured eg. by AIM7 benchmark.  So change our read/write methods to
-just do the trylock for the RWF_NOWAIT case.
+Returned value from mlx5_mr_cache_alloc() is checked to be error or real
+pointer. Return proper error code instead of NULL which is not checked
+later.
 
-Fixes: edf064e7c6fe ("btrfs: nowait aio support")
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ update changelog ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 81713d3788d2 ("IB/mlx5: Add implicit MR support")
+Link: https://lore.kernel.org/r/20191029055721.7192-1-leon@kernel.org
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/file.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1903,9 +1903,10 @@ static ssize_t btrfs_file_write_iter(str
- 	    (iocb->ki_flags & IOCB_NOWAIT))
- 		return -EOPNOTSUPP;
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -457,7 +457,7 @@ struct mlx5_ib_mr *mlx5_mr_cache_alloc(s
  
--	if (!inode_trylock(inode)) {
--		if (iocb->ki_flags & IOCB_NOWAIT)
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock(inode))
- 			return -EAGAIN;
-+	} else {
- 		inode_lock(inode);
+ 	if (entry < 0 || entry >= MAX_MR_CACHE_ENTRIES) {
+ 		mlx5_ib_err(dev, "cache entry %d is out of range\n", entry);
+-		return NULL;
++		return ERR_PTR(-EINVAL);
  	}
  
+ 	ent = &cache->ent[entry];
 
 
