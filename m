@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D6B013F1B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C5413F19A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407115AbgAPSah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:30:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33316 "EHLO mail.kernel.org"
+        id S2392180AbgAPRZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391990AbgAPRZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:31 -0500
+        id S2392077AbgAPRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CB47246DC;
-        Thu, 16 Jan 2020 17:25:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8398246DA;
+        Thu, 16 Jan 2020 17:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195531;
-        bh=USVgftlGwiLXXi5/H+/NWK1w91iAaWxgSLPLjyHHRn8=;
+        s=default; t=1579195533;
+        bh=0+8Nn4d6fkT38bReOZ0tZD+AXtiad866uuMNsOV/iTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iCtmNUd5wmY/ESVpu5SoLK8QS0X2M3wZDf+x0Wd3rpdSxw5HqC6Hkyv386Gotn4We
-         RKCdYzOyI/vyghcKf4ZYdgGEskN+8Qu6J0ESAfygW36C0iAOfgWdOMUh+RbGSAkxem
-         ro5i/+LFyQnBTsSCPV4+Q7DtXObX4ZFl/UFSCGnk=
+        b=1MaOyooxPI8WciK4u2FSZIipXVH60YHeUryIKo2thDNtZ5cEmy+Xe4K43aPkfUSQ5
+         b0VPYCxlRxBfX6hUK3WpWLD6RhX35ccHhkL4ZJ86Fl8kWJtoduyTu62oQ7wUzJik0Q
+         lkVmh7seJuy2CWk811GkIcgPs5e9Kxt2P28fJF5U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 126/371] netfilter: nft_set_hash: fix lookups with fixed size hash on big endian
-Date:   Thu, 16 Jan 2020 12:19:58 -0500
-Message-Id: <20200116172403.18149-69-sashal@kernel.org>
+Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
+        Nikita Danilov <nikita.danilov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 128/371] net: aquantia: fixed instack structure overflow
+Date:   Thu, 16 Jan 2020 12:20:00 -0500
+Message-Id: <20200116172403.18149-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,70 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Igor Russkikh <Igor.Russkikh@aquantia.com>
 
-[ Upstream commit 3b02b0adc242a72b5e46019b6a9e4f84823592f6 ]
+[ Upstream commit 8006e3730b6e900319411e35cee85b4513d298df ]
 
-Call jhash_1word() for the 4-bytes key case from the insertion and
-deactivation path, otherwise big endian arch set lookups fail.
+This is a real stack undercorruption found by kasan build.
 
-Fixes: 446a8268b7f5 ("netfilter: nft_set_hash: add lookup variant for fixed size hashtable")
-Reported-by: Florian Westphal <fw@strlen.de>
-Tested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The issue did no harm normally because it only overflowed
+2 bytes after `bitary` array which on most architectures
+were mapped into `err` local.
+
+Fixes: bab6de8fd180 ("net: ethernet: aquantia: Atlantic A0 and B0 specific functions.")
+Signed-off-by: Nikita Danilov <nikita.danilov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_set_hash.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c | 4 ++--
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/net/netfilter/nft_set_hash.c b/net/netfilter/nft_set_hash.c
-index 33aa2ac3a62e..73f8f99b1193 100644
---- a/net/netfilter/nft_set_hash.c
-+++ b/net/netfilter/nft_set_hash.c
-@@ -442,6 +442,23 @@ static bool nft_hash_lookup_fast(const struct net *net,
- 	return false;
- }
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+index b0abd187cead..b83ee74d2839 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+@@ -182,8 +182,8 @@ static int hw_atl_a0_hw_rss_set(struct aq_hw_s *self,
+ 	u32 i = 0U;
+ 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
+ 	int err = 0;
+-	u16 bitary[(HW_ATL_A0_RSS_REDIRECTION_MAX *
+-					HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
++	u16 bitary[1 + (HW_ATL_A0_RSS_REDIRECTION_MAX *
++		   HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
  
-+static u32 nft_jhash(const struct nft_set *set, const struct nft_hash *priv,
-+		     const struct nft_set_ext *ext)
-+{
-+	const struct nft_data *key = nft_set_ext_key(ext);
-+	u32 hash, k1;
-+
-+	if (set->klen == 4) {
-+		k1 = *(u32 *)key;
-+		hash = jhash_1word(k1, priv->seed);
-+	} else {
-+		hash = jhash(key, set->klen, priv->seed);
-+	}
-+	hash = reciprocal_scale(hash, priv->buckets);
-+
-+	return hash;
-+}
-+
- static int nft_hash_insert(const struct net *net, const struct nft_set *set,
- 			   const struct nft_set_elem *elem,
- 			   struct nft_set_ext **ext)
-@@ -451,8 +468,7 @@ static int nft_hash_insert(const struct net *net, const struct nft_set *set,
- 	u8 genmask = nft_genmask_next(net);
- 	u32 hash;
+ 	memset(bitary, 0, sizeof(bitary));
  
--	hash = jhash(nft_set_ext_key(&this->ext), set->klen, priv->seed);
--	hash = reciprocal_scale(hash, priv->buckets);
-+	hash = nft_jhash(set, priv, &this->ext);
- 	hlist_for_each_entry(he, &priv->table[hash], node) {
- 		if (!memcmp(nft_set_ext_key(&this->ext),
- 			    nft_set_ext_key(&he->ext), set->klen) &&
-@@ -491,8 +507,7 @@ static void *nft_hash_deactivate(const struct net *net,
- 	u8 genmask = nft_genmask_next(net);
- 	u32 hash;
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 236325f48ec9..1c1bb074f664 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -183,8 +183,8 @@ static int hw_atl_b0_hw_rss_set(struct aq_hw_s *self,
+ 	u32 i = 0U;
+ 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
+ 	int err = 0;
+-	u16 bitary[(HW_ATL_B0_RSS_REDIRECTION_MAX *
+-					HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
++	u16 bitary[1 + (HW_ATL_B0_RSS_REDIRECTION_MAX *
++		   HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
  
--	hash = jhash(nft_set_ext_key(&this->ext), set->klen, priv->seed);
--	hash = reciprocal_scale(hash, priv->buckets);
-+	hash = nft_jhash(set, priv, &this->ext);
- 	hlist_for_each_entry(he, &priv->table[hash], node) {
- 		if (!memcmp(nft_set_ext_key(&this->ext), &elem->key.val,
- 			    set->klen) ||
+ 	memset(bitary, 0, sizeof(bitary));
+ 
 -- 
 2.20.1
 
