@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D93E13F803
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC8B13F7C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:14:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437507AbgAPTOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:14:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42970 "EHLO mail.kernel.org"
+        id S2437496AbgAPTN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:13:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731461AbgAPQ4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:34 -0500
+        id S1729634AbgAPQ4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:56:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7330F21582;
-        Thu, 16 Jan 2020 16:56:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5501321582;
+        Thu, 16 Jan 2020 16:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193794;
-        bh=mmClsEUoJmFGhUgVgelqwouSevAanyCQLZZWcbL4ygk=;
+        s=default; t=1579193803;
+        bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=00Y6Tyq+CIAvVZ9q9L00JygsOFebmDjiQloxPRqrLvI8lyrg6HQIY/czVl4QPR1xv
-         OLyeaXzis4CeDEErbbBydpD9wo/mq9lhHvqE5UXtHgAhb9WreJy+8bWjocpgM6FSRR
-         +7pULGU5Bodlru9uoe+xutJ2LwL7fzODhI6x01Z8=
+        b=iJ/SqI5rqtKstaG+/zshLvZUsYZv6uJhx0HLVITsRfOO8CHIOftKpfBNQgavuWoox
+         S0XOZdE2et5MrWqaRtLzWchmww9ubbeB6fCXL9yoNuiNvvfogVz8PbcwXZn7VGXmLO
+         ELwLgsexSwSDhFGifl9Xdp16wpRtiM9Vh5KsiHiY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 065/671] staging: bcm2835-camera: fix module autoloading
-Date:   Thu, 16 Jan 2020 11:44:56 -0500
-Message-Id: <20200116165502.8838-65-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 069/671] pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
+Date:   Thu, 16 Jan 2020 11:45:00 -0500
+Message-Id: <20200116165502.8838-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -48,35 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 3a2c20024a2b47adbf514e7f3ab79342739c3926 ]
+[ Upstream commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b ]
 
-In order to make the module bcm2835-camera load automatically, we need to
-add a module alias.
+The lcd0_data24_1_pins[] array contains the LCD0 D1[2-5] pin numbers,
+but the lcd0_data24_1_mux[] array lacks the corresponding pin marks.
 
-Fixes: 4bebb0312ea9 ("staging/bcm2835-camera: Set ourselves up as a platform driver.")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 06c7dd866da70f6c ("sh-pfc: r8a7740: Add LCDC0 and LCDC1 pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index 068e5b9ab232..edf25922b12d 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -47,6 +47,7 @@ MODULE_DESCRIPTION("Broadcom 2835 MMAL video capture");
- MODULE_AUTHOR("Vincent Sanders");
- MODULE_LICENSE("GPL");
- MODULE_VERSION(BM2835_MMAL_VERSION);
-+MODULE_ALIAS("platform:bcm2835-camera");
- 
- int bcm2835_v4l2_debug;
- module_param_named(debug, bcm2835_v4l2_debug, int, 0644);
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index d8077065636e..e9739dbcb356 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -2154,6 +2154,7 @@ static const unsigned int lcd0_data24_1_mux[] = {
+ 	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
+ 	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
+ 	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
++	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
+ 	LCD0_D16_MARK, LCD0_D17_MARK, LCD0_D18_PORT163_MARK,
+ 	LCD0_D19_PORT162_MARK, LCD0_D20_PORT161_MARK, LCD0_D21_PORT158_MARK,
+ 	LCD0_D22_PORT160_MARK, LCD0_D23_PORT159_MARK,
 -- 
 2.20.1
 
