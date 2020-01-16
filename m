@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFE513FE03
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731BC13FDC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390866AbgAPXbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:31:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39616 "EHLO mail.kernel.org"
+        id S2390985AbgAPX3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:29:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403876AbgAPXb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:31:26 -0500
+        id S2391035AbgAPX3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:29:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 230572072B;
-        Thu, 16 Jan 2020 23:31:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E941920684;
+        Thu, 16 Jan 2020 23:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217485;
-        bh=JoBAKm2P5KYRaZHWujHHUbJl6+7uf7Ch3XDLnH4jh+4=;
+        s=default; t=1579217342;
+        bh=+vvDOcRdhJp6OiqKi07LAjtkECQRNIemvqgQAgj+pz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xUGtjlV6z8k4+xQ+Hvo8aoqolYN7MZh1kUqjaVa1WdOJOOMhpIoHVQgu+Sb/5MnQj
-         5yR3/AyID6sEcm0QgCR6zPgUkY+830PLSzjlh7gRwLT7Qi+nITqaX7qe187vF+khHg
-         NwewvqypX4H2TM4vAKd2w4HdjEQ98J4R6r7WPp6Y=
+        b=hteXR38UXZIa5mpkxLhjL5m7atGwZxudclWxitjsXKXS7mHteMX/H9LFNtZxZrwUm
+         PY/UryKR7mLJUGGvEk9i3m2YhgAobewJnONjBg+vjquv89Bs/is88CCs0Hr3gpnLuf
+         ZJiZMZLx5b/EYNyDP0wEjiMFSissoNdbs7rlXSuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 18/71] dccp: Fix memleak in __feat_register_sp
-Date:   Fri, 17 Jan 2020 00:18:16 +0100
-Message-Id: <20200116231712.074223081@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.19 44/84] NFSv4.x: Drop the slot if nfs4_delegreturn_prepare waits for layoutreturn
+Date:   Fri, 17 Jan 2020 00:18:18 +0100
+Message-Id: <20200116231718.983518480@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
+References: <20200116231713.087649517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 1d3ff0950e2b40dc861b1739029649d03f591820 upstream.
+commit 5326de9e94bedcf7366e7e7625d4deb8c1f1ca8a upstream.
 
-If dccp_feat_push_change fails, we forget free the mem
-which is alloced by kmemdup in dccp_feat_clone_sp_val.
+If nfs4_delegreturn_prepare needs to wait for a layoutreturn to complete
+then make sure we drop the sequence slot if we hold it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e8ef967a54f4 ("dccp: Registration routines for changing feature values")
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: 1c5bd76d17cc ("pNFS: Enable layoutreturn operation for return-on-close")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dccp/feat.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/dccp/feat.c
-+++ b/net/dccp/feat.c
-@@ -738,7 +738,12 @@ static int __feat_register_sp(struct lis
- 	if (dccp_feat_clone_sp_val(&fval, sp_val, sp_len))
- 		return -ENOMEM;
+---
+ fs/nfs/nfs4proc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -6103,8 +6103,10 @@ static void nfs4_delegreturn_prepare(str
  
--	return dccp_feat_push_change(fn, feat, is_local, mandatory, &fval);
-+	if (dccp_feat_push_change(fn, feat, is_local, mandatory, &fval)) {
-+		kfree(fval.sp.vec);
-+		return -ENOMEM;
+ 	d_data = (struct nfs4_delegreturndata *)data;
+ 
+-	if (!d_data->lr.roc && nfs4_wait_on_layoutreturn(d_data->inode, task))
++	if (!d_data->lr.roc && nfs4_wait_on_layoutreturn(d_data->inode, task)) {
++		nfs4_sequence_done(task, &d_data->res.seq_res);
+ 		return;
 +	}
-+
-+	return 0;
- }
  
- /**
+ 	lo = d_data->args.lr_args ? d_data->args.lr_args->layout : NULL;
+ 	if (lo && !pnfs_layout_is_valid(lo)) {
 
 
