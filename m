@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A2213FAF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:02:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBD4C13FAED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388412AbgAPVCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:02:48 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53389 "EHLO
+        id S2388218AbgAPVCj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:02:39 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53368 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgAPVCr (ORCPT
+        with ESMTP id S1726994AbgAPVCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:02:47 -0500
+        Thu, 16 Jan 2020 16:02:39 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isCHk-00013P-E9; Thu, 16 Jan 2020 22:02:36 +0100
+        id 1isCHj-00013L-RQ; Thu, 16 Jan 2020 22:02:36 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F0BB91C18C0;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 471551C0E70;
         Thu, 16 Jan 2020 22:02:35 +0100 (CET)
 Date:   Thu, 16 Jan 2020 21:02:35 -0000
-From:   "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Borislav Petkov" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/amd_nb: Add Family 19h PCI IDs
-Cc:     Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+Subject: [tip: ras/core] EDAC/mce_amd: Make fam_ops static global
+Cc:     Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200110015651.14887-4-Yazen.Ghannam@amd.com>
-References: <20200110015651.14887-4-Yazen.Ghannam@amd.com>
+In-Reply-To: <20200116163403.GF27148@zn.tnic>
+References: <20200116163403.GF27148@zn.tnic>
 MIME-Version: 1.0
-Message-ID: <157920855582.396.16470693063688916445.tip-bot2@tip-bot2>
+Message-ID: <157920855506.396.12217713594707433235.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,63 +46,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the ras/core branch of tip:
 
-Commit-ID:     b3f79ae45904ae987a7c06a9e8d6084d7b73e67f
-Gitweb:        https://git.kernel.org/tip/b3f79ae45904ae987a7c06a9e8d6084d7b73e67f
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Fri, 10 Jan 2020 01:56:49 
+Commit-ID:     86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0
+Gitweb:        https://git.kernel.org/tip/86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0
+Author:        Borislav Petkov <bp@suse.de>
+AuthorDate:    Thu, 16 Jan 2020 17:28:39 +01:00
 Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Thu, 16 Jan 2020 17:09:18 +01:00
+CommitterDate: Thu, 16 Jan 2020 21:52:48 +01:00
 
-x86/amd_nb: Add Family 19h PCI IDs
+EDAC/mce_amd: Make fam_ops static global
 
-Add the new PCI Device 18h IDs for AMD Family 19h systems. Note that
-Family 19h systems will not have a new PCI root device ID.
+... and do not kmalloc a three-pointer struct. Which simplifies
+mce_amd_init() a bit.
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+No functional changes.
+
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20200110015651.14887-4-Yazen.Ghannam@amd.com
+Link: https://lkml.kernel.org/r/20200116163403.GF27148@zn.tnic
 ---
- arch/x86/kernel/amd_nb.c | 3 +++
- include/linux/pci_ids.h  | 1 +
- 2 files changed, 4 insertions(+)
+ drivers/edac/mce_amd.c | 68 +++++++++++++++++------------------------
+ 1 file changed, 29 insertions(+), 39 deletions(-)
 
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 251c795..69aed0e 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -22,6 +22,7 @@
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
- #define PCI_DEVICE_ID_AMD_17H_M30H_DF_F4 0x1494
- #define PCI_DEVICE_ID_AMD_17H_M70H_DF_F4 0x1444
-+#define PCI_DEVICE_ID_AMD_19H_DF_F4	0x1654
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index 524c63f..ea980c5 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -6,7 +6,7 @@
  
- /* Protect the PCI config register pairs used for SMN and DF indirect access. */
- static DEFINE_MUTEX(smn_mutex);
-@@ -52,6 +53,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M30H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M70H_DF_F3) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_DF_F3) },
- 	{}
- };
- EXPORT_SYMBOL_GPL(amd_nb_misc_ids);
-@@ -66,6 +68,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M30H_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M70H_DF_F4) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
- 	{}
- };
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 2302d13..352c0d7 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -549,6 +549,7 @@
- #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
- #define PCI_DEVICE_ID_AMD_17H_M30H_DF_F3 0x1493
- #define PCI_DEVICE_ID_AMD_17H_M70H_DF_F3 0x1443
-+#define PCI_DEVICE_ID_AMD_19H_DF_F3	0x1653
- #define PCI_DEVICE_ID_AMD_CNB17H_F3	0x1703
- #define PCI_DEVICE_ID_AMD_LANCE		0x2000
- #define PCI_DEVICE_ID_AMD_LANCE_HOME	0x2001
+ #include "mce_amd.h"
+ 
+-static struct amd_decoder_ops *fam_ops;
++static struct amd_decoder_ops fam_ops;
+ 
+ static u8 xec_mask	 = 0xf;
+ 
+@@ -583,7 +583,7 @@ static void decode_mc0_mce(struct mce *m)
+ 					    : (xec ? "multimatch" : "parity")));
+ 			return;
+ 		}
+-	} else if (fam_ops->mc0_mce(ec, xec))
++	} else if (fam_ops.mc0_mce(ec, xec))
+ 		;
+ 	else
+ 		pr_emerg(HW_ERR "Corrupted MC0 MCE info?\n");
+@@ -697,7 +697,7 @@ static void decode_mc1_mce(struct mce *m)
+ 			pr_cont("Hardware Assert.\n");
+ 		else
+ 			goto wrong_mc1_mce;
+-	} else if (fam_ops->mc1_mce(ec, xec))
++	} else if (fam_ops.mc1_mce(ec, xec))
+ 		;
+ 	else
+ 		goto wrong_mc1_mce;
+@@ -831,7 +831,7 @@ static void decode_mc2_mce(struct mce *m)
+ 
+ 	pr_emerg(HW_ERR "MC2 Error: ");
+ 
+-	if (!fam_ops->mc2_mce(ec, xec))
++	if (!fam_ops.mc2_mce(ec, xec))
+ 		pr_cont(HW_ERR "Corrupted MC2 MCE info?\n");
+ }
+ 
+@@ -1130,7 +1130,8 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 	if (m->tsc)
+ 		pr_emerg(HW_ERR "TSC: %llu\n", m->tsc);
+ 
+-	if (!fam_ops)
++	/* Doesn't matter which member to test. */
++	if (!fam_ops.mc0_mce)
+ 		goto err_code;
+ 
+ 	switch (m->bank) {
+@@ -1185,10 +1186,6 @@ static int __init mce_amd_init(void)
+ 	    c->x86_vendor != X86_VENDOR_HYGON)
+ 		return -ENODEV;
+ 
+-	fam_ops = kzalloc(sizeof(struct amd_decoder_ops), GFP_KERNEL);
+-	if (!fam_ops)
+-		return -ENOMEM;
+-
+ 	if (boot_cpu_has(X86_FEATURE_SMCA)) {
+ 		xec_mask = 0x3f;
+ 		goto out;
+@@ -1196,59 +1193,58 @@ static int __init mce_amd_init(void)
+ 
+ 	switch (c->x86) {
+ 	case 0xf:
+-		fam_ops->mc0_mce = k8_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = k8_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x10:
+-		fam_ops->mc0_mce = f10h_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = f10h_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x11:
+-		fam_ops->mc0_mce = k8_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = k8_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x12:
+-		fam_ops->mc0_mce = f12h_mc0_mce;
+-		fam_ops->mc1_mce = k8_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = f12h_mc0_mce;
++		fam_ops.mc1_mce = k8_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x14:
+-		fam_ops->mc0_mce = cat_mc0_mce;
+-		fam_ops->mc1_mce = cat_mc1_mce;
+-		fam_ops->mc2_mce = k8_mc2_mce;
++		fam_ops.mc0_mce = cat_mc0_mce;
++		fam_ops.mc1_mce = cat_mc1_mce;
++		fam_ops.mc2_mce = k8_mc2_mce;
+ 		break;
+ 
+ 	case 0x15:
+ 		xec_mask = c->x86_model == 0x60 ? 0x3f : 0x1f;
+ 
+-		fam_ops->mc0_mce = f15h_mc0_mce;
+-		fam_ops->mc1_mce = f15h_mc1_mce;
+-		fam_ops->mc2_mce = f15h_mc2_mce;
++		fam_ops.mc0_mce = f15h_mc0_mce;
++		fam_ops.mc1_mce = f15h_mc1_mce;
++		fam_ops.mc2_mce = f15h_mc2_mce;
+ 		break;
+ 
+ 	case 0x16:
+ 		xec_mask = 0x1f;
+-		fam_ops->mc0_mce = cat_mc0_mce;
+-		fam_ops->mc1_mce = cat_mc1_mce;
+-		fam_ops->mc2_mce = f16h_mc2_mce;
++		fam_ops.mc0_mce = cat_mc0_mce;
++		fam_ops.mc1_mce = cat_mc1_mce;
++		fam_ops.mc2_mce = f16h_mc2_mce;
+ 		break;
+ 
+ 	case 0x17:
+ 	case 0x18:
+ 		pr_warn("Decoding supported only on Scalable MCA processors.\n");
+-		goto err_out;
+-		break;
++		return -EINVAL;
+ 
+ 	default:
+ 		printk(KERN_WARNING "Huh? What family is it: 0x%x?!\n", c->x86);
+-		goto err_out;
++		return -EINVAL;
+ 	}
+ 
+ out:
+@@ -1257,11 +1253,6 @@ out:
+ 	mce_register_decode_chain(&amd_mce_dec_nb);
+ 
+ 	return 0;
+-
+-err_out:
+-	kfree(fam_ops);
+-	fam_ops = NULL;
+-	return -EINVAL;
+ }
+ early_initcall(mce_amd_init);
+ 
+@@ -1269,7 +1260,6 @@ early_initcall(mce_amd_init);
+ static void __exit mce_amd_exit(void)
+ {
+ 	mce_unregister_decode_chain(&amd_mce_dec_nb);
+-	kfree(fam_ops);
+ }
+ 
+ MODULE_DESCRIPTION("AMD MCE decoder");
