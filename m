@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38A4E13F11C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A21913F0FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392420AbgAPS0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:26:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35712 "EHLO mail.kernel.org"
+        id S2392336AbgAPR0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:26:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404007AbgAPR0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:26:41 -0500
+        id S2404020AbgAPR0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:26:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88E11246CA;
-        Thu, 16 Jan 2020 17:26:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A3E9246C8;
+        Thu, 16 Jan 2020 17:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195600;
-        bh=dtlWM/rdlsoDyqcHy5G+UH3OKt7K9e0UJ2kfXsgMzQo=;
+        s=default; t=1579195603;
+        bh=b5bbwaFLgQvjArAtfG/H2/8OOvBX8ntW6iaFKtCKbvE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqoCV9roHlXiF/ROxdNUroTdVJonFnJBEvaLbut7N9cWPujE324ytPa7JdiSD+gMW
-         3qFJQP07ieUyEcTTZrIZfrOrf2w3Z3nNydNPvmxJk+X81NxyWOZGD40fTYXnAXDzyH
-         gVFq+xobJ9K4FCdBg7UoReulcugmUU1TStqYjMWM=
+        b=M6vwuRJTTc0FcAuJ8twtbrO1E6x3m40Pxl/ZfBnxS/G3Y4egCnZ2QK5v9iV9GmV6h
+         BwL1JIv+6fy9BwDGQtz7YD9eJ96kSj96aHsHzwdd/++d9u3b9wUIf9U0ldInVUOnGB
+         AVTbB4urKFHHed0VGNbu+517gJgbdrTsLE1QS7KY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Willem de Bruijn <willemb@google.com>,
-        David Laight <David.Laight@aculab.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 176/371] packet: in recvmsg msg_name return at least sizeof sockaddr_ll
-Date:   Thu, 16 Jan 2020 12:20:48 -0500
-Message-Id: <20200116172403.18149-119-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 178/371] usb: gadget: fsl: fix link error against usb-gadget module
+Date:   Thu, 16 Jan 2020 12:20:50 -0500
+Message-Id: <20200116172403.18149-121-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,67 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b2cf86e1563e33a14a1c69b3e508d15dc12f804c ]
+[ Upstream commit 2100e3ca3676e894fa48b8f6f01d01733387fe81 ]
 
-Packet send checks that msg_name is at least sizeof sockaddr_ll.
-Packet recv must return at least this length, so that its output
-can be passed unmodified to packet send.
+The dependency to ensure this driver links correctly fails since
+it can not be a loadable module:
 
-This ceased to be true since adding support for lladdr longer than
-sll_addr. Since, the return value uses true address length.
+drivers/usb/phy/phy-fsl-usb.o: In function `fsl_otg_set_peripheral':
+phy-fsl-usb.c:(.text+0x2224): undefined reference to `usb_gadget_vbus_disconnect'
 
-Always return at least sizeof sockaddr_ll, even if address length
-is shorter. Zero the padding bytes.
+Make the option 'tristate' so it can work correctly.
 
-Change v1->v2: do not overwrite zeroed padding again. use copy_len.
-
-Fixes: 0fb375fb9b93 ("[AF_PACKET]: Allow for > 8 byte hardware addresses.")
-Suggested-by: David Laight <David.Laight@aculab.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5a8d651a2bde ("usb: gadget: move gadget API functions to udc-core")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/packet/af_packet.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/usb/phy/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 4e1058159b08..e788f9c7c398 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3407,20 +3407,29 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 	sock_recv_ts_and_drops(msg, sk, skb);
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index 85a92d0813dd..440238061edd 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -20,7 +20,7 @@ config AB8500_USB
+ 	  in host mode, low speed.
  
- 	if (msg->msg_name) {
-+		int copy_len;
-+
- 		/* If the address length field is there to be filled
- 		 * in, we fill it in now.
- 		 */
- 		if (sock->type == SOCK_PACKET) {
- 			__sockaddr_check_size(sizeof(struct sockaddr_pkt));
- 			msg->msg_namelen = sizeof(struct sockaddr_pkt);
-+			copy_len = msg->msg_namelen;
- 		} else {
- 			struct sockaddr_ll *sll = &PACKET_SKB_CB(skb)->sa.ll;
- 
- 			msg->msg_namelen = sll->sll_halen +
- 				offsetof(struct sockaddr_ll, sll_addr);
-+			copy_len = msg->msg_namelen;
-+			if (msg->msg_namelen < sizeof(struct sockaddr_ll)) {
-+				memset(msg->msg_name +
-+				       offsetof(struct sockaddr_ll, sll_addr),
-+				       0, sizeof(sll->sll_addr));
-+				msg->msg_namelen = sizeof(struct sockaddr_ll);
-+			}
- 		}
--		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa,
--		       msg->msg_namelen);
-+		memcpy(msg->msg_name, &PACKET_SKB_CB(skb)->sa, copy_len);
- 	}
- 
- 	if (pkt_sk(sk)->auxdata) {
+ config FSL_USB2_OTG
+-	bool "Freescale USB OTG Transceiver Driver"
++	tristate "Freescale USB OTG Transceiver Driver"
+ 	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_OTG_FSM=y && PM
+ 	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+ 	select USB_PHY
 -- 
 2.20.1
 
