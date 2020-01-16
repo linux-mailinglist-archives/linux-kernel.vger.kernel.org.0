@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9279B13ED40
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2947613ED3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394960AbgAPSBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59062 "EHLO mail.kernel.org"
+        id S2394945AbgAPSBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:01:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405653AbgAPRl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:26 -0500
+        id S2405706AbgAPRlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFA3B246CF;
-        Thu, 16 Jan 2020 17:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBCF72470B;
+        Thu, 16 Jan 2020 17:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196485;
-        bh=W5GsXPgetj+H1lgqnH7m0kOe+yhVb2jMSSzjWLFHHfI=;
+        s=default; t=1579196492;
+        bh=PSIyekv9flrRqMwXHw8WZ9qzzBUJ70eDK3NmgkqJndE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFmsvvnwHOJMuhJrQqYLWXtz1ymLaZx4NSNChg39DiL7WFTGR/Rde7SoKAQ7MKPsH
-         ndRt2nbFV5x+nHohP9toVvLgDgbc7PGyJnEOUS4YNpLY/bpmKS1myx1iO49sMW19Jc
-         6Gku5LWdVgSZzZvfro82X+0gXX63ebTR9nxKjC4U=
+        b=T2IaP5/qRc+7rirxqiIvrax1yZ0HHmGxgJnc/BAHl5O4LGqzjGgkrYn6uo/V1zvez
+         egX6VsI1oaERuotuAcS1P/aTjXl2WbwczpXZ5Hdbbiw18Dzf6SyJe4avQp/K4Qn8dP
+         y68kKa2RIJD4vH/f4xN7pblH58TEzB9+W4PT5FjI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 231/251] scsi: esas2r: unlock on error in esas2r_nvram_read_direct()
-Date:   Thu, 16 Jan 2020 12:36:20 -0500
-Message-Id: <20200116173641.22137-191-sashal@kernel.org>
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 235/251] media: exynos4-is: Fix recursive locking in isp_video_release()
+Date:   Thu, 16 Jan 2020 12:36:24 -0500
+Message-Id: <20200116173641.22137-195-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,33 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-[ Upstream commit 906ca6353ac09696c1bf0892513c8edffff5e0a6 ]
+[ Upstream commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd ]
 
-This error path is missing an unlock.
+>From isp_video_release(), &isp->video_lock is held and subsequent
+vb2_fop_release() tries to lock vdev->lock which is same with the
+previous one. Replace vb2_fop_release() with _vb2_fop_release() to
+fix the recursive locking.
 
-Fixes: 26780d9e12ed ("[SCSI] esas2r: ATTO Technology ExpressSAS 6G SAS/SATA RAID Adapter Driver")
-Link: https://lore.kernel.org/r/20191022102324.GA27540@mwanda
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/esas2r/esas2r_flash.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
-index 7bd376d95ed5..b02ac389e6c6 100644
---- a/drivers/scsi/esas2r/esas2r_flash.c
-+++ b/drivers/scsi/esas2r/esas2r_flash.c
-@@ -1197,6 +1197,7 @@ bool esas2r_nvram_read_direct(struct esas2r_adapter *a)
- 	if (!esas2r_read_flash_block(a, a->nvram, FLS_OFFSET_NVR,
- 				     sizeof(struct esas2r_sas_nvram))) {
- 		esas2r_hdebug("NVRAM read failed, using defaults");
-+		up(&a->nvram_semaphore);
- 		return false;
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index e00fa03ddc3e..0c0eec671d49 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -316,7 +316,7 @@ static int isp_video_release(struct file *file)
+ 		ivc->streaming = 0;
  	}
  
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
 -- 
 2.20.1
 
