@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDF313F493
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7467813F491
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:50:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405628AbgAPSuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:50:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
+        id S2404241AbgAPSuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:50:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389533AbgAPRI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:08:57 -0500
+        id S2389551AbgAPRI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:08:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FDC124679;
-        Thu, 16 Jan 2020 17:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04B0421D56;
+        Thu, 16 Jan 2020 17:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194536;
-        bh=UE/EerTrYqjO2XAvlNEoUf+Lslpllt6/mB3bT7B/ag4=;
+        s=default; t=1579194538;
+        bh=OI/m1Gx2TY/Qme7Qza/LH9tOD5k0vJmo+OSFylDlFdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HHfGC8W+bDI1+8ll5fe5P5dUJ9XFdHa4nQufG3UPmWaipk5jRiyTRgpNLvR6rmb3s
-         fgvYT/YkFRa8wPNxCWDFSwOhQp/BQyhjB5hBiI2Pl/n+2Ha/HFGEppUV+3cw8aoJPH
-         EVTIwE8C6VhVl3tzJUMKmeec3fquQeYKLjbEGE9U=
+        b=dOTzAaYAs3JeVxcLbL5Y7I4eqnY6PCMFxVhEMeulwpSjnSdq1uRvSpjaDeVowsDzn
+         oQhEN+Iyhan9QvtGAgLLWByX+qjLvudSNQj16/NnWQ6K6eCXb86DQ/V+BqaUZr6Ff8
+         /iVaHfyCNyG2JWIbMocUXVWCT/NkF/YIqGb8NAYo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 423/671] net/af_iucv: always register net_device notifier
-Date:   Thu, 16 Jan 2020 12:01:01 -0500
-Message-Id: <20200116170509.12787-160-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 425/671] rtc: pcf8563: Fix interrupt trigger method
+Date:   Thu, 16 Jan 2020 12:01:03 -0500
+Message-Id: <20200116170509.12787-162-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,82 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 06996c1d4088a0d5f3e7789d7f96b4653cc947cc ]
+[ Upstream commit 65f662cbf829834fa4d94190eb7691e5a9cb92d8 ]
 
-Even when running as VM guest (ie pr_iucv != NULL), af_iucv can still
-open HiperTransport-based connections. For robust operation these
-connections require the af_iucv_netdev_notifier, so register it
-unconditionally.
+The PCF8563 datasheet says the interrupt line is active low and stays
+active until the events are cleared, i.e. a level trigger interrupt.
 
-Also handle any error that register_netdevice_notifier() returns.
+Fix the flags used to request the interrupt.
 
-Fixes: 9fbd87d41392 ("af_iucv: handle netdev events")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ede3e9d47cca ("drivers/rtc/rtc-pcf8563.c: add alarm support")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/iucv/af_iucv.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-pcf8563.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index e07daee1227c..23a1002ed86d 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -2465,6 +2465,13 @@ static int afiucv_iucv_init(void)
- 	return err;
- }
- 
-+static void afiucv_iucv_exit(void)
-+{
-+	device_unregister(af_iucv_dev);
-+	driver_unregister(&af_iucv_driver);
-+	pr_iucv->iucv_unregister(&af_iucv_handler, 0);
-+}
-+
- static int __init afiucv_init(void)
- {
- 	int err;
-@@ -2498,11 +2505,18 @@ static int __init afiucv_init(void)
- 		err = afiucv_iucv_init();
- 		if (err)
- 			goto out_sock;
--	} else
--		register_netdevice_notifier(&afiucv_netdev_notifier);
-+	}
-+
-+	err = register_netdevice_notifier(&afiucv_netdev_notifier);
-+	if (err)
-+		goto out_notifier;
-+
- 	dev_add_pack(&iucv_packet_type);
- 	return 0;
- 
-+out_notifier:
-+	if (pr_iucv)
-+		afiucv_iucv_exit();
- out_sock:
- 	sock_unregister(PF_IUCV);
- out_proto:
-@@ -2516,12 +2530,11 @@ static int __init afiucv_init(void)
- static void __exit afiucv_exit(void)
- {
- 	if (pr_iucv) {
--		device_unregister(af_iucv_dev);
--		driver_unregister(&af_iucv_driver);
--		pr_iucv->iucv_unregister(&af_iucv_handler, 0);
-+		afiucv_iucv_exit();
- 		symbol_put(iucv_if);
--	} else
--		unregister_netdevice_notifier(&afiucv_netdev_notifier);
-+	}
-+
-+	unregister_netdevice_notifier(&afiucv_netdev_notifier);
- 	dev_remove_pack(&iucv_packet_type);
- 	sock_unregister(PF_IUCV);
- 	proto_unregister(&iucv_proto);
+diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
+index 3efc86c25d27..e358313466f1 100644
+--- a/drivers/rtc/rtc-pcf8563.c
++++ b/drivers/rtc/rtc-pcf8563.c
+@@ -605,7 +605,7 @@ static int pcf8563_probe(struct i2c_client *client,
+ 	if (client->irq > 0) {
+ 		err = devm_request_threaded_irq(&client->dev, client->irq,
+ 				NULL, pcf8563_irq,
+-				IRQF_SHARED|IRQF_ONESHOT|IRQF_TRIGGER_FALLING,
++				IRQF_SHARED | IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+ 				pcf8563_driver.driver.name, client);
+ 		if (err) {
+ 			dev_err(&client->dev, "unable to request IRQ %d\n",
 -- 
 2.20.1
 
