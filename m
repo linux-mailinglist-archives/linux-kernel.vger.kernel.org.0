@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48E013E31C
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 501D113E31F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbgAPRAA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49104 "EHLO mail.kernel.org"
+        id S2387648AbgAPRAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387618AbgAPQ7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:59:54 -0500
+        id S1732814AbgAPQ7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:59:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DAA020728;
-        Thu, 16 Jan 2020 16:59:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCB2824673;
+        Thu, 16 Jan 2020 16:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193993;
-        bh=oRd0E7SCdWtugFrhZ95B+IDGaaAgSbq3cQIPybCl4JM=;
+        s=default; t=1579193995;
+        bh=U8xF5rETI1YMWglzEq/+RoBuIlqMzvNVf2Rjjzx3z5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9r0CW0Qf50pFq0rVdYuNurUre/SudPkrBWBZHGvL5ypL5Mi+ohZW5OJo3s2+IGB8
-         mvxRD6/qMFU58fvMPD7439V9C0tbmKMxCQU/C5aefZ5zp8g5HZnNYyH0w7GD9sVKGD
-         zr2a4eMOu1Sietf3q/s6vjshcLrZiuRQ0dguM3mg=
+        b=WewXDdxbK61rdSx6sPmYXuvZV4625iVVJ+inWqPEON8Gw5qi+ltwaATbhlg7Oge2/
+         agiGpTTTg5ukZZQQ/eLMRyK4sIkNpFcK/KzlfVMB5JZfhEJgSO3UdLmxTQEX3JRVVy
+         87R4rysTJtYbJiDeBnODpionj3MpyRKuslLvGEpE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Israel Rukshin <israelr@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 123/671] IB/iser: Pass the correct number of entries for dma mapped SGL
-Date:   Thu, 16 Jan 2020 11:50:32 -0500
-Message-Id: <20200116165940.10720-6-sashal@kernel.org>
+Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 124/671] net: hns3: fix wrong combined count returned by ethtool -l
+Date:   Thu, 16 Jan 2020 11:50:33 -0500
+Message-Id: <20200116165940.10720-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -45,59 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit 57b26497fabe1b9379b59fbc7e35e608e114df16 ]
+[ Upstream commit c3b9c50d1567aa12be4448fe85b09626eba2499c ]
 
-ib_dma_map_sg() augments the SGL into a 'dma mapped SGL'. This process may
-change the number of entries and the lengths of each entry.
+The current code returns the number of all queues that can be used and
+the number of queues that have been allocated, which is incorrect.
+What should be returned is the number of queues allocated for each enabled
+TC and the number of queues that can be allocated.
 
-Code that touches dma_address is iterating over the 'dma mapped SGL' and
-must use dma_nents which returned from ib_dma_map_sg().
+This patch fixes it.
 
-ib_sg_to_pages() and ib_map_mr_sg() are using dma_address so they must use
-dma_nents.
-
-Fixes: 39405885005a ("IB/iser: Port to new fast registration API")
-Fixes: bfe066e256d5 ("IB/iser: Reuse ib_sg_to_pages")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Acked-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 482d2e9c1cc7 ("net: hns3: add support to query tqps number")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/iser/iser_memory.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/iser/iser_memory.c b/drivers/infiniband/ulp/iser/iser_memory.c
-index 009be8889d71..379bc0dfc388 100644
---- a/drivers/infiniband/ulp/iser/iser_memory.c
-+++ b/drivers/infiniband/ulp/iser/iser_memory.c
-@@ -240,8 +240,8 @@ int iser_fast_reg_fmr(struct iscsi_iser_task *iser_task,
- 	page_vec->npages = 0;
- 	page_vec->fake_mr.page_size = SIZE_4K;
- 	plen = ib_sg_to_pages(&page_vec->fake_mr, mem->sg,
--			      mem->size, NULL, iser_set_page);
--	if (unlikely(plen < mem->size)) {
-+			      mem->dma_nents, NULL, iser_set_page);
-+	if (unlikely(plen < mem->dma_nents)) {
- 		iser_err("page vec too short to hold this SG\n");
- 		iser_data_buf_dump(mem, device->ib_device);
- 		iser_dump_page_vec(page_vec);
-@@ -451,10 +451,10 @@ static int iser_fast_reg_mr(struct iscsi_iser_task *iser_task,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index f8cc8d1f0b20..4b9f898a1620 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -5922,18 +5922,17 @@ static u32 hclge_get_max_channels(struct hnae3_handle *handle)
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hclge_dev *hdev = vport->back;
  
- 	ib_update_fast_reg_key(mr, ib_inc_rkey(mr->rkey));
+-	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
++	return min_t(u32, hdev->rss_size_max,
++		     vport->alloc_tqps / kinfo->num_tc);
+ }
  
--	n = ib_map_mr_sg(mr, mem->sg, mem->size, NULL, SIZE_4K);
--	if (unlikely(n != mem->size)) {
-+	n = ib_map_mr_sg(mr, mem->sg, mem->dma_nents, NULL, SIZE_4K);
-+	if (unlikely(n != mem->dma_nents)) {
- 		iser_err("failed to map sg (%d/%d)\n",
--			 n, mem->size);
-+			 n, mem->dma_nents);
- 		return n < 0 ? n : -EINVAL;
- 	}
+ static void hclge_get_channels(struct hnae3_handle *handle,
+ 			       struct ethtool_channels *ch)
+ {
+-	struct hclge_vport *vport = hclge_get_vport(handle);
+-
+ 	ch->max_combined = hclge_get_max_channels(handle);
+ 	ch->other_count = 1;
+ 	ch->max_other = 1;
+-	ch->combined_count = vport->alloc_tqps;
++	ch->combined_count = handle->kinfo.rss_size;
+ }
  
+ static void hclge_get_tqps_and_rss_info(struct hnae3_handle *handle,
 -- 
 2.20.1
 
