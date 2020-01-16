@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F6F013F8F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 526C813F8ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437680AbgAPTVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:21:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
+        id S2437812AbgAPTVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:21:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731066AbgAPQxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:37 -0500
+        id S1729339AbgAPQxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72337214AF;
-        Thu, 16 Jan 2020 16:53:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18DF42464B;
+        Thu, 16 Jan 2020 16:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193617;
-        bh=zv0uIQnbRuBqCuzGClHLpmzrWhj9qCdptkqR74SgYfU=;
+        s=default; t=1579193620;
+        bh=oUriMmdjKAgjJA7UfRp6wzz4Hoy6yBgLI1byKSxEiV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PwSR9O2zM3e5dZKi4kPruSALAsifbTuvCBq/fjHzflyT4l/gL+6bIlbvM5A1vuSsH
-         nS1HdQAx7UxRlvkvtOCSjJ2MoQ9X7lSh5MeHzXz4lW4JfH9XoMUSq3hCBN2I6xEnU3
-         4geXSS6R9vV68Cs+5u0BM2NXzMWG2DsiPRKKgWC0=
+        b=Q60BqtQqZzSQHr2VUTSl+YFnQqQJOAh31b0rqKQM0HLX5rTP2tbhaNRPMP50VfeOi
+         WqzihGbPtbYHxhvJyvEbzqTUgJ+v8kxSWVQArLI38pkPxE2kyRsjA0IdBSA8QLAE/Q
+         Hr+bK2GMZJmfDA7uwOezbmXWBTffT/N66hwjewTg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shuiqing Li <shuiqing.li@unisoc.com>,
-        Dongwei Wang <dongwei.wang@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Sasha Levin <sashal@kernel.org>, linux-watchdog@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 153/205] watchdog: sprd: Fix the incorrect pointer getting from driver data
-Date:   Thu, 16 Jan 2020 11:42:08 -0500
-Message-Id: <20200116164300.6705-153-sashal@kernel.org>
+Cc:     Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>, Sasha Levin <sashal@kernel.org>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 155/205] libbpf: Fix call relocation offset calculation bug
+Date:   Thu, 16 Jan 2020 11:42:10 -0500
+Message-Id: <20200116164300.6705-155-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -46,60 +45,236 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuiqing Li <shuiqing.li@unisoc.com>
+From: Andrii Nakryiko <andriin@fb.com>
 
-[ Upstream commit 39e68d9e7ab276880980ee5386301fb218202192 ]
+[ Upstream commit a0d7da26ce86a25e97ae191cb90574ada6daea98 ]
 
-The device driver data saved the 'struct sprd_wdt' object, it is
-incorrect to get 'struct watchdog_device' object from the driver
-data, thus fix it.
+When relocating subprogram call, libbpf doesn't take into account
+relo->text_off, which comes from symbol's value. This generally works fine for
+subprograms implemented as static functions, but breaks for global functions.
 
-Fixes: 477603467009 ("watchdog: Add Spreadtrum watchdog driver")
-Reported-by: Dongwei Wang <dongwei.wang@unisoc.com>
-Signed-off-by: Shuiqing Li <shuiqing.li@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/76d4687189ec940baa90cb8d679a8d4c8f02ee80.1573210405.git.baolin.wang@linaro.org
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Taking a simplified test_pkt_access.c as an example:
+
+__attribute__ ((noinline))
+static int test_pkt_access_subprog1(volatile struct __sk_buff *skb)
+{
+        return skb->len * 2;
+}
+
+__attribute__ ((noinline))
+static int test_pkt_access_subprog2(int val, volatile struct __sk_buff *skb)
+{
+        return skb->len + val;
+}
+
+SEC("classifier/test_pkt_access")
+int test_pkt_access(struct __sk_buff *skb)
+{
+        if (test_pkt_access_subprog1(skb) != skb->len * 2)
+                return TC_ACT_SHOT;
+        if (test_pkt_access_subprog2(2, skb) != skb->len + 2)
+                return TC_ACT_SHOT;
+        return TC_ACT_UNSPEC;
+}
+
+When compiled, we get two relocations, pointing to '.text' symbol. .text has
+st_value set to 0 (it points to the beginning of .text section):
+
+0000000000000008  000000050000000a R_BPF_64_32            0000000000000000 .text
+0000000000000040  000000050000000a R_BPF_64_32            0000000000000000 .text
+
+test_pkt_access_subprog1 and test_pkt_access_subprog2 offsets (targets of two
+calls) are encoded within call instruction's imm32 part as -1 and 2,
+respectively:
+
+0000000000000000 test_pkt_access_subprog1:
+       0:       61 10 00 00 00 00 00 00 r0 = *(u32 *)(r1 + 0)
+       1:       64 00 00 00 01 00 00 00 w0 <<= 1
+       2:       95 00 00 00 00 00 00 00 exit
+
+0000000000000018 test_pkt_access_subprog2:
+       3:       61 10 00 00 00 00 00 00 r0 = *(u32 *)(r1 + 0)
+       4:       04 00 00 00 02 00 00 00 w0 += 2
+       5:       95 00 00 00 00 00 00 00 exit
+
+0000000000000000 test_pkt_access:
+       0:       bf 16 00 00 00 00 00 00 r6 = r1
+===>   1:       85 10 00 00 ff ff ff ff call -1
+       2:       bc 01 00 00 00 00 00 00 w1 = w0
+       3:       b4 00 00 00 02 00 00 00 w0 = 2
+       4:       61 62 00 00 00 00 00 00 r2 = *(u32 *)(r6 + 0)
+       5:       64 02 00 00 01 00 00 00 w2 <<= 1
+       6:       5e 21 08 00 00 00 00 00 if w1 != w2 goto +8 <LBB0_3>
+       7:       bf 61 00 00 00 00 00 00 r1 = r6
+===>   8:       85 10 00 00 02 00 00 00 call 2
+       9:       bc 01 00 00 00 00 00 00 w1 = w0
+      10:       61 62 00 00 00 00 00 00 r2 = *(u32 *)(r6 + 0)
+      11:       04 02 00 00 02 00 00 00 w2 += 2
+      12:       b4 00 00 00 ff ff ff ff w0 = -1
+      13:       1e 21 01 00 00 00 00 00 if w1 == w2 goto +1 <LBB0_3>
+      14:       b4 00 00 00 02 00 00 00 w0 = 2
+0000000000000078 LBB0_3:
+      15:       95 00 00 00 00 00 00 00 exit
+
+Now, if we compile example with global functions, the setup changes.
+Relocations are now against specifically test_pkt_access_subprog1 and
+test_pkt_access_subprog2 symbols, with test_pkt_access_subprog2 pointing 24
+bytes into its respective section (.text), i.e., 3 instructions in:
+
+0000000000000008  000000070000000a R_BPF_64_32            0000000000000000 test_pkt_access_subprog1
+0000000000000048  000000080000000a R_BPF_64_32            0000000000000018 test_pkt_access_subprog2
+
+Calls instructions now encode offsets relative to function symbols and are both
+set ot -1:
+
+0000000000000000 test_pkt_access_subprog1:
+       0:       61 10 00 00 00 00 00 00 r0 = *(u32 *)(r1 + 0)
+       1:       64 00 00 00 01 00 00 00 w0 <<= 1
+       2:       95 00 00 00 00 00 00 00 exit
+
+0000000000000018 test_pkt_access_subprog2:
+       3:       61 20 00 00 00 00 00 00 r0 = *(u32 *)(r2 + 0)
+       4:       0c 10 00 00 00 00 00 00 w0 += w1
+       5:       95 00 00 00 00 00 00 00 exit
+
+0000000000000000 test_pkt_access:
+       0:       bf 16 00 00 00 00 00 00 r6 = r1
+===>   1:       85 10 00 00 ff ff ff ff call -1
+       2:       bc 01 00 00 00 00 00 00 w1 = w0
+       3:       b4 00 00 00 02 00 00 00 w0 = 2
+       4:       61 62 00 00 00 00 00 00 r2 = *(u32 *)(r6 + 0)
+       5:       64 02 00 00 01 00 00 00 w2 <<= 1
+       6:       5e 21 09 00 00 00 00 00 if w1 != w2 goto +9 <LBB2_3>
+       7:       b4 01 00 00 02 00 00 00 w1 = 2
+       8:       bf 62 00 00 00 00 00 00 r2 = r6
+===>   9:       85 10 00 00 ff ff ff ff call -1
+      10:       bc 01 00 00 00 00 00 00 w1 = w0
+      11:       61 62 00 00 00 00 00 00 r2 = *(u32 *)(r6 + 0)
+      12:       04 02 00 00 02 00 00 00 w2 += 2
+      13:       b4 00 00 00 ff ff ff ff w0 = -1
+      14:       1e 21 01 00 00 00 00 00 if w1 == w2 goto +1 <LBB2_3>
+      15:       b4 00 00 00 02 00 00 00 w0 = 2
+0000000000000080 LBB2_3:
+      16:       95 00 00 00 00 00 00 00 exit
+
+Thus the right formula to calculate target call offset after relocation should
+take into account relocation's target symbol value (offset within section),
+call instruction's imm32 offset, and (subtracting, to get relative instruction
+offset) instruction index of call instruction itself. All that is shifted by
+number of instructions in main program, given all sub-programs are copied over
+after main program.
+
+Convert few selftests relying on bpf-to-bpf calls to use global functions
+instead of static ones.
+
+Fixes: 48cca7e44f9f ("libbpf: add support for bpf_call")
+Reported-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Link: https://lore.kernel.org/bpf/20191119224447.3781271-1-andriin@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/sprd_wdt.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/lib/bpf/libbpf.c                             | 8 ++++++--
+ tools/testing/selftests/bpf/progs/test_btf_haskv.c | 4 ++--
+ tools/testing/selftests/bpf/progs/test_btf_newkv.c | 4 ++--
+ tools/testing/selftests/bpf/progs/test_btf_nokv.c  | 4 ++--
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/watchdog/sprd_wdt.c b/drivers/watchdog/sprd_wdt.c
-index 0bb17b046140..65cb55f3916f 100644
---- a/drivers/watchdog/sprd_wdt.c
-+++ b/drivers/watchdog/sprd_wdt.c
-@@ -327,10 +327,9 @@ static int sprd_wdt_probe(struct platform_device *pdev)
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index d98838c5820c..de2be6b2a748 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1791,9 +1791,13 @@ bpf_program__collect_reloc(struct bpf_program *prog, GElf_Shdr *shdr,
+ 				pr_warning("incorrect bpf_call opcode\n");
+ 				return -LIBBPF_ERRNO__RELOC;
+ 			}
++			if (sym.st_value % 8) {
++				pr_warn("bad call relo offset: %lu\n", sym.st_value);
++				return -LIBBPF_ERRNO__RELOC;
++			}
+ 			prog->reloc_desc[i].type = RELO_CALL;
+ 			prog->reloc_desc[i].insn_idx = insn_idx;
+-			prog->reloc_desc[i].text_off = sym.st_value;
++			prog->reloc_desc[i].text_off = sym.st_value / 8;
+ 			obj->has_pseudo_calls = true;
+ 			continue;
+ 		}
+@@ -3239,7 +3243,7 @@ bpf_program__reloc_text(struct bpf_program *prog, struct bpf_object *obj,
+ 			 prog->section_name);
+ 	}
+ 	insn = &prog->insns[relo->insn_idx];
+-	insn->imm += prog->main_prog_cnt - relo->insn_idx;
++	insn->imm += relo->text_off + prog->main_prog_cnt - relo->insn_idx;
+ 	return 0;
+ }
  
- static int __maybe_unused sprd_wdt_pm_suspend(struct device *dev)
+diff --git a/tools/testing/selftests/bpf/progs/test_btf_haskv.c b/tools/testing/selftests/bpf/progs/test_btf_haskv.c
+index e5c79fe0ffdb..d65c61e64df2 100644
+--- a/tools/testing/selftests/bpf/progs/test_btf_haskv.c
++++ b/tools/testing/selftests/bpf/progs/test_btf_haskv.c
+@@ -25,7 +25,7 @@ struct dummy_tracepoint_args {
+ };
+ 
+ __attribute__((noinline))
+-static int test_long_fname_2(struct dummy_tracepoint_args *arg)
++int test_long_fname_2(struct dummy_tracepoint_args *arg)
  {
--	struct watchdog_device *wdd = dev_get_drvdata(dev);
- 	struct sprd_wdt *wdt = dev_get_drvdata(dev);
+ 	struct ipv_counts *counts;
+ 	int key = 0;
+@@ -43,7 +43,7 @@ static int test_long_fname_2(struct dummy_tracepoint_args *arg)
+ }
  
--	if (watchdog_active(wdd))
-+	if (watchdog_active(&wdt->wdd))
- 		sprd_wdt_stop(&wdt->wdd);
- 	sprd_wdt_disable(wdt);
- 
-@@ -339,7 +338,6 @@ static int __maybe_unused sprd_wdt_pm_suspend(struct device *dev)
- 
- static int __maybe_unused sprd_wdt_pm_resume(struct device *dev)
+ __attribute__((noinline))
+-static int test_long_fname_1(struct dummy_tracepoint_args *arg)
++int test_long_fname_1(struct dummy_tracepoint_args *arg)
  {
--	struct watchdog_device *wdd = dev_get_drvdata(dev);
- 	struct sprd_wdt *wdt = dev_get_drvdata(dev);
- 	int ret;
+ 	return test_long_fname_2(arg);
+ }
+diff --git a/tools/testing/selftests/bpf/progs/test_btf_newkv.c b/tools/testing/selftests/bpf/progs/test_btf_newkv.c
+index 5ee3622ddebb..8e83317db841 100644
+--- a/tools/testing/selftests/bpf/progs/test_btf_newkv.c
++++ b/tools/testing/selftests/bpf/progs/test_btf_newkv.c
+@@ -33,7 +33,7 @@ struct dummy_tracepoint_args {
+ };
  
-@@ -347,7 +345,7 @@ static int __maybe_unused sprd_wdt_pm_resume(struct device *dev)
- 	if (ret)
- 		return ret;
+ __attribute__((noinline))
+-static int test_long_fname_2(struct dummy_tracepoint_args *arg)
++int test_long_fname_2(struct dummy_tracepoint_args *arg)
+ {
+ 	struct ipv_counts *counts;
+ 	int key = 0;
+@@ -56,7 +56,7 @@ static int test_long_fname_2(struct dummy_tracepoint_args *arg)
+ }
  
--	if (watchdog_active(wdd)) {
-+	if (watchdog_active(&wdt->wdd)) {
- 		ret = sprd_wdt_start(&wdt->wdd);
- 		if (ret) {
- 			sprd_wdt_disable(wdt);
+ __attribute__((noinline))
+-static int test_long_fname_1(struct dummy_tracepoint_args *arg)
++int test_long_fname_1(struct dummy_tracepoint_args *arg)
+ {
+ 	return test_long_fname_2(arg);
+ }
+diff --git a/tools/testing/selftests/bpf/progs/test_btf_nokv.c b/tools/testing/selftests/bpf/progs/test_btf_nokv.c
+index 434188c37774..3f4422044759 100644
+--- a/tools/testing/selftests/bpf/progs/test_btf_nokv.c
++++ b/tools/testing/selftests/bpf/progs/test_btf_nokv.c
+@@ -23,7 +23,7 @@ struct dummy_tracepoint_args {
+ };
+ 
+ __attribute__((noinline))
+-static int test_long_fname_2(struct dummy_tracepoint_args *arg)
++int test_long_fname_2(struct dummy_tracepoint_args *arg)
+ {
+ 	struct ipv_counts *counts;
+ 	int key = 0;
+@@ -41,7 +41,7 @@ static int test_long_fname_2(struct dummy_tracepoint_args *arg)
+ }
+ 
+ __attribute__((noinline))
+-static int test_long_fname_1(struct dummy_tracepoint_args *arg)
++int test_long_fname_1(struct dummy_tracepoint_args *arg)
+ {
+ 	return test_long_fname_2(arg);
+ }
 -- 
 2.20.1
 
