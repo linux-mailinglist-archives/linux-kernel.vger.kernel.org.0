@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82E2513F8B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:20:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF6E13F8B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:20:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731323AbgAPQx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:53:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37938 "EHLO mail.kernel.org"
+        id S2437775AbgAPTUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:20:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730092AbgAPQxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:53:54 -0500
+        id S1729285AbgAPQx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:53:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F8B72176D;
-        Thu, 16 Jan 2020 16:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72DA220730;
+        Thu, 16 Jan 2020 16:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193634;
-        bh=ooG/u0lpuDU3KfgsjKqprWqYhFBmpX+EfQTgpYhU9xA=;
+        s=default; t=1579193635;
+        bh=KgWLpGmJabYFlPdaEcw9F4Ql3GDN+A68D5/eBZPRZNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=usoq8sppPnKyUviULo+0W2Qq6zd+TYIrjfGHjOjQIqEx9YvZGfwxrBVdUtX+TjpMD
-         bHeXjZLIFsZhxxz3A/kUFxC2k4b7yyd7XYhMXR4PuPgxP695QHFHqc8tMmmnDB8ahz
-         l18h8YScUekr2J5KWX5k9YGtD/IrRhMxT7eRjlIU=
+        b=qndo76CEdaPTH6I9zBd2303VpKl6/ryXHtzKkdmJuH0HRt//TVSW1jV30q7aRPl70
+         PgM0g2vN/inAbFUTLrjfAliPe1ByoLjSH3Opl6/i4ghIxp2ZY1VoxP/XLtHO26T/DG
+         EmVn11W/Dd2clUhKzSBLULCt77lCbWvfqfh/hbbM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuhong Yuan <hslester96@gmail.com>, Vinod Koul <vkoul@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 167/205] dmaengine: ti: edma: fix missed failure handling
-Date:   Thu, 16 Jan 2020 11:42:22 -0500
-Message-Id: <20200116164300.6705-167-sashal@kernel.org>
+Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 168/205] crypto: sun4i-ss - fix big endian issues
+Date:   Thu, 16 Jan 2020 11:42:23 -0500
+Message-Id: <20200116164300.6705-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -42,39 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-[ Upstream commit 340049d453682a9fe8d91fe794dd091730f4bb25 ]
+[ Upstream commit d1d787bcebfe122a5bd443ae565696661e2e9656 ]
 
-When devm_kcalloc fails, it forgets to call edma_free_slot.
-Replace direct return with failure handler to fix it.
+When testing BigEndian kernel, the sun4i-ss was failling all crypto
+tests.
+This patch fix endian issues with it.
 
-Fixes: 1be5336bc7ba ("dmaengine: edma: New device tree binding")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Link: https://lore.kernel.org/r/20191118073802.28424-1-hslester96@gmail.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ti/edma.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/sunxi-ss/sun4i-ss-hash.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index ba7c4f07fcd6..80b780e49971 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -2403,8 +2403,10 @@ static int edma_probe(struct platform_device *pdev)
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+index 1369c5fa3087..07df012893bb 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+@@ -175,7 +175,7 @@ static int sun4i_hash(struct ahash_request *areq)
+ 	 */
+ 	unsigned int i = 0, end, fill, min_fill, nwait, nbw = 0, j = 0, todo;
+ 	unsigned int in_i = 0;
+-	u32 spaces, rx_cnt = SS_RX_DEFAULT, bf[32] = {0}, wb = 0, v, ivmode = 0;
++	u32 spaces, rx_cnt = SS_RX_DEFAULT, bf[32] = {0}, v, ivmode = 0;
+ 	struct sun4i_req_ctx *op = ahash_request_ctx(areq);
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+ 	struct sun4i_tfm_ctx *tfmctx = crypto_ahash_ctx(tfm);
+@@ -184,6 +184,7 @@ static int sun4i_hash(struct ahash_request *areq)
+ 	struct sg_mapping_iter mi;
+ 	int in_r, err = 0;
+ 	size_t copied = 0;
++	__le32 wb = 0;
  
- 		ecc->tc_list = devm_kcalloc(dev, ecc->num_tc,
- 					    sizeof(*ecc->tc_list), GFP_KERNEL);
--		if (!ecc->tc_list)
--			return -ENOMEM;
-+		if (!ecc->tc_list) {
-+			ret = -ENOMEM;
-+			goto err_reg1;
-+		}
+ 	dev_dbg(ss->dev, "%s %s bc=%llu len=%u mode=%x wl=%u h0=%0x",
+ 		__func__, crypto_tfm_alg_name(areq->base.tfm),
+@@ -395,7 +396,7 @@ static int sun4i_hash(struct ahash_request *areq)
  
- 		for (i = 0;; i++) {
- 			ret = of_parse_phandle_with_fixed_args(node, "ti,tptcs",
+ 		nbw = op->len - 4 * nwait;
+ 		if (nbw) {
+-			wb = *(u32 *)(op->buf + nwait * 4);
++			wb = cpu_to_le32(*(u32 *)(op->buf + nwait * 4));
+ 			wb &= GENMASK((nbw * 8) - 1, 0);
+ 
+ 			op->byte_count += nbw;
+@@ -404,7 +405,7 @@ static int sun4i_hash(struct ahash_request *areq)
+ 
+ 	/* write the remaining bytes of the nbw buffer */
+ 	wb |= ((1 << 7) << (nbw * 8));
+-	bf[j++] = wb;
++	bf[j++] = le32_to_cpu(wb);
+ 
+ 	/*
+ 	 * number of space to pad to obtain 64o minus 8(size) minus 4 (final 1)
+@@ -423,13 +424,13 @@ static int sun4i_hash(struct ahash_request *areq)
+ 
+ 	/* write the length of data */
+ 	if (op->mode == SS_OP_SHA1) {
+-		__be64 bits = cpu_to_be64(op->byte_count << 3);
+-		bf[j++] = lower_32_bits(bits);
+-		bf[j++] = upper_32_bits(bits);
++		__be64 *bits = (__be64 *)&bf[j];
++		*bits = cpu_to_be64(op->byte_count << 3);
++		j += 2;
+ 	} else {
+-		__le64 bits = op->byte_count << 3;
+-		bf[j++] = lower_32_bits(bits);
+-		bf[j++] = upper_32_bits(bits);
++		__le64 *bits = (__le64 *)&bf[j];
++		*bits = cpu_to_le64(op->byte_count << 3);
++		j += 2;
+ 	}
+ 	writesl(ss->base + SS_RXFIFO, bf, j);
+ 
+@@ -471,7 +472,7 @@ static int sun4i_hash(struct ahash_request *areq)
+ 		}
+ 	} else {
+ 		for (i = 0; i < 4; i++) {
+-			v = readl(ss->base + SS_MD0 + i * 4);
++			v = cpu_to_le32(readl(ss->base + SS_MD0 + i * 4));
+ 			memcpy(areq->result + i * 4, &v, 4);
+ 		}
+ 	}
 -- 
 2.20.1
 
