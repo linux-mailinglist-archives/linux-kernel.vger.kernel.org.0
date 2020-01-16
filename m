@@ -2,99 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C2D013E618
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BB713E659
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:20:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391460AbgAPRS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:18:27 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8812 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391384AbgAPRSR (ORCPT
+        id S2391571AbgAPRT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:19:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46017 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391385AbgAPRSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:18:17 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e209a9f0001>; Thu, 16 Jan 2020 09:17:19 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 16 Jan 2020 09:18:15 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 16 Jan 2020 09:18:15 -0800
-Received: from [10.24.37.48] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Jan
- 2020 17:18:11 +0000
-Subject: Re: [PATCH V3 0/2] PCI: Add MCFG quirks for Tegra194 host controllers
-To:     <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <andrew.murray@arm.com>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20200106082709.14370-1-vidyas@nvidia.com>
- <20200110191500.9538-1-vidyas@nvidia.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <e264ae37-f3b3-96d1-9294-3ea9f78b78fc@nvidia.com>
-Date:   Thu, 16 Jan 2020 22:48:08 +0530
+        Thu, 16 Jan 2020 12:18:15 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so16053223lfa.12;
+        Thu, 16 Jan 2020 09:18:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cuaekrQn9t7Wj/AF8dj3MhOapcvvLHIEhjAaNfRzTGg=;
+        b=YeqtpcEn2IV/D8OXJFcE8Jwf4Jf5u0lcuquyAt+BbRQSOM/wxvpHkWOoKD0qy6YOie
+         9dHspbuT06VGVoA3E0PbLe6tWs5+kTIUz8ZkVDy3/mO0/LEk0oM26QAQy9BuypSnnEhD
+         qqAStYiLDCN9jgloEBLnmd6Nlef0pYcf1K04K7smMA05WBEAdAPMahNf9pJPKvPhhIda
+         Ak3P6YljIUp2wRIalY3YIeHWrYa17sFFj6e2zgKElpQ536ZrBgV2Sc19gIwqi8JiXLdC
+         fYjw9GChQHcYFPTUeRB2U1S+Axy3alvJ7swTG3kYbqobHJyvrf0BPqePsvyQ5jtnChKl
+         YZPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cuaekrQn9t7Wj/AF8dj3MhOapcvvLHIEhjAaNfRzTGg=;
+        b=rG6a6rsucntkBqkZv23eKaV992eHVu9UTd6g1CtahMipdIAfGvlMr5jbHJKX/qzJel
+         EudUdrlmFzUp0Ka0S++dxL5toQQB7+DZY5VcfFQ6YuNznktSS4FXrtBaK1rMisyuc74q
+         4T2HE1smdldiV9MCvPiZQ2hTSRMA7oqLzDrMigMLuvmNecnI1+1h66ko/3PUYwXcPjIB
+         9ke19yR+pSKT8MQGGZNJjxPbREG5HOEC+TVtcf8hUpySJl1lODNliWSXE+BJe3GgK8Jm
+         bdjPS9Ey3vw0ZS0oImBDloCG6CRd0hsfZG2uhWUh1jhQuFUKpcX21ARD41Ovl/ASGXRm
+         Bz5g==
+X-Gm-Message-State: APjAAAUBtoV+kGIBbG3U/UxF/PFZ7CTjmwtq7iDnb7VloNyt6N65FmSp
+        3i3oGIvy0iXyTM2V3HI772UMNS6O
+X-Google-Smtp-Source: APXvYqy220VkFSTrKosDWOSCYosOmrkKL0p+neVS7EHUWpmuEjB9hGMhiTUcC+NgyGSjqCMQG3I39w==
+X-Received: by 2002:a19:3f51:: with SMTP id m78mr2935387lfa.70.1579195092626;
+        Thu, 16 Jan 2020 09:18:12 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id j19sm12606841lfb.90.2020.01.16.09.18.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 09:18:12 -0800 (PST)
+Subject: Re: [PATCH v4 09/14] dmaengine: tegra-apb: Clean up runtime PM
+ teardown
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200112173006.29863-1-digetx@gmail.com>
+ <20200112173006.29863-10-digetx@gmail.com>
+ <9a5c4f82-5653-8d81-e304-76675aff5d8f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <11cdf32b-23d5-8a4e-0832-3c75e90b8abe@gmail.com>
+Date:   Thu, 16 Jan 2020 20:18:11 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200110191500.9538-1-vidyas@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <9a5c4f82-5653-8d81-e304-76675aff5d8f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579195039; bh=hfxzNASfjnng1sY6kKvhYD/Q1iFNO8maPXvGYEY4Eqo=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=RnFh97nXGo9YJI9RPveweovTrQ/kf8VhPfkrpPo/P7W/Gig3mlah1NDuwcLh2iENH
-         oxoDM+xo0MBdor2PbuvfgM9pEKkP9KX7JO59RRC5A9Cum7ySTTNpMTrZO1Wg7ZMIhp
-         giRP5G1kuCIihLvVs3TaPqIriL5EJXI96iXShpzddAh20X23RC/vW3rP4fOmKWY32G
-         KGYgMAa7tPWxqXVzBW+YkP1k++Ih+45CBAwJZywtCa64oYRJu6vRd71Pif29yksOXm
-         S8il3C2RX4pLr30B0eKOg/9sXJdSpBzt8zEUmqxZOdeiQYpsdk5ItnPWg6j9+Kh8/z
-         ZbJAsKG5TEvMQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-Could you please review this series?
+15.01.2020 12:57, Jon Hunter пишет:
+> 
+> On 12/01/2020 17:30, Dmitry Osipenko wrote:
+>> It's cleaner to teardown RPM by revering the enable sequence, which makes
+>> code much easier to follow.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/dma/tegra20-apb-dma.c | 22 +++++++++++++---------
+>>  1 file changed, 13 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>> index 7158bd3145c4..cc4a9ca20780 100644
+>> --- a/drivers/dma/tegra20-apb-dma.c
+>> +++ b/drivers/dma/tegra20-apb-dma.c
+>> @@ -1429,13 +1429,15 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>>  	spin_lock_init(&tdma->global_lock);
+>>  
+>>  	pm_runtime_enable(&pdev->dev);
+>> -	if (!pm_runtime_enabled(&pdev->dev))
+>> +	if (!pm_runtime_enabled(&pdev->dev)) {
+>>  		ret = tegra_dma_runtime_resume(&pdev->dev);
+>> -	else
+>> +		if (ret)
+>> +			return ret;
+>> +	} else {
+>>  		ret = pm_runtime_get_sync(&pdev->dev);
+>> -
+>> -	if (ret < 0)
+>> -		goto err_pm_disable;
+>> +		if (ret < 0)
+>> +			goto err_pm_disable;
+>> +	}
+>>  
+>>  	/* Reset DMA controller */
+>>  	reset_control_assert(tdma->rst);
+>> @@ -1545,9 +1547,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>>  	dma_async_device_unregister(&tdma->dma_dev);
+>>  
+>>  err_pm_disable:
+>> -	pm_runtime_disable(&pdev->dev);
+>> -	if (!pm_runtime_status_suspended(&pdev->dev))
+>> +	if (!pm_runtime_enabled(&pdev->dev))
+>>  		tegra_dma_runtime_suspend(&pdev->dev);
+>> +	else
+>> +		pm_runtime_disable(&pdev->dev);
+>>  
+>>  	return ret;
+>>  }
+>> @@ -1558,9 +1561,10 @@ static int tegra_dma_remove(struct platform_device *pdev)
+>>  
+>>  	dma_async_device_unregister(&tdma->dma_dev);
+>>  
+>> -	pm_runtime_disable(&pdev->dev);
+>> -	if (!pm_runtime_status_suspended(&pdev->dev))
+>> +	if (!pm_runtime_enabled(&pdev->dev))
+>>  		tegra_dma_runtime_suspend(&pdev->dev);
+>> +	else
+>> +		pm_runtime_disable(&pdev->dev);
+> 
+> Looks like dma_async_device_unregister() will warn if a client still has
+> a channel requested but does not prevent the unregister from completing.
+> So it could be possible that we could be leaving the controller active now.
 
-Thanks in advance,
-Vidya Sagar
+It's a drivers dependency bug if DMA driver's module isn't properly
+refcounted and thus could be removed while it has active users. Nothing
+we can do about it here, the actual source of the bug needs to be fixed.
 
-On 1/11/20 12:44 AM, Vidya Sagar wrote:
-> The PCIe controller in Tegra194 SoC is not completely ECAM-compliant.
-> With the current hardware design limitations in place, ECAM can be enabled
-> only for one controller (C5 controller to be precise) with bus numbers
-> starting from 160 instead of 0. A different approach is taken to avoid this
-> abnormal way of enabling ECAM for just one controller but to enable
-> configuration space access for all the other controllers. In this approach,
-> ops are added through MCFG quirk mechanism which access the configuration
-> spaces by dynamically programming iATU (internal AddressTranslation Unit)
-> to generate respective configuration accesses just like the way it is
-> done in DesignWare core sub-system.
-> To increase the size of ECAM, a device-tree change is pushed in this series
-> to move the IO window from 32-bit PCIe aperture to 64-bit PCIe aperture leaving
-> the entire 32MB of 32-bit aperture for configuration space access.
-> 
-> V3:
-> * Pushed a device-tree change in the series to enable more space for ECAM
-> 
-> Vidya Sagar (2):
->    arm64: tegra: Re-order PCIe aperture mappings to support ACPI boot
->    PCI: Add MCFG quirks for Tegra194 host controllers
-> 
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi   |  36 ++++----
->   drivers/acpi/pci_mcfg.c                    |   7 ++
->   drivers/pci/controller/dwc/Kconfig         |   3 +-
->   drivers/pci/controller/dwc/Makefile        |   2 +-
->   drivers/pci/controller/dwc/pcie-tegra194.c | 102 +++++++++++++++++++++
->   include/linux/pci-ecam.h                   |   1 +
->   6 files changed, 131 insertions(+), 20 deletions(-)
-> 
+Perhaps Tegra DMA driver could inc/dec module's refcounf on channel's
+request/free, but I think it should be responsibility of the DMA core to
+care about the refcounting (if it doesn't do it already).
