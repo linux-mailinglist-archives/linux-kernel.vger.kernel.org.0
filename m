@@ -2,846 +2,483 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFCD413EBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:54:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 553AD13EB98
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406309AbgAPRxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:53:55 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58728 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394449AbgAPRxp (ORCPT
+        id S2406722AbgAPRvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:51:03 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46417 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388875AbgAPRvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:53:45 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00GHrf0E014811;
-        Thu, 16 Jan 2020 11:53:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579197221;
-        bh=qaBsAfmSFg8mIdSDEGZ/dwo7l0nNwFDMMGQp4E3pBbU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=HztZvj9kq0qzuOYBoArsvM1sMBxLVx/RtDDgsLCm0wbNn4KIUGKpGQX/AgKKrjr0A
-         +ObSi5cLFAXTnrvgHdln788/kgYSu7DMys23YswIXcXjHB/0CkNj07CVbNCAMCDjNR
-         Un2sQTLegX0pQnY0x1V8RZBzbVdNjH1yRKMnbxH8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00GHrffw128719
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 16 Jan 2020 11:53:41 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 16
- Jan 2020 11:53:41 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 16 Jan 2020 11:53:41 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00GHrfF1058150;
-        Thu, 16 Jan 2020 11:53:41 -0600
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <sebastian.reichel@collabora.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v4 4/4] power: supply: bq2515x: Introduce the bq2515x family
-Date:   Thu, 16 Jan 2020 11:50:39 -0600
-Message-ID: <20200116175039.1317-5-dmurphy@ti.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116175039.1317-1-dmurphy@ti.com>
-References: <20200116175039.1317-1-dmurphy@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 16 Jan 2020 12:51:00 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e25so8232771qtr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 09:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8QgiO7zRB4U154TA7zWPw6v0hTOdujU7WthZz88hQHA=;
+        b=R6bqCKSUusp8B8UK0vHW1LV76LGc9p7sYiEpJscwcYcMO0B5gwUYtjtcXcNVHasxgJ
+         xO2gJM0KvGgfkWY9TBRFF4xBPeaaKDXAAi/Ay9iZMM05WCQVG2pslB7v5UTD6ZbjaYE2
+         MMyGLA77HkYNQQq9dFMct9S+SPROfuTuL92CqcOMiStcCTKz/OZUnIhTCiYdQP199a+F
+         g0Rqb2plWb3ItR3YJ7cTXPFXYfOFlTiLAKzzlU3Mvbndl3E4xmQHbrriHsYtEIirHnq4
+         tbWMofC34z/T3TgOY0cB7M6E4saxujcpDRcRVLm6RftXzzu6FJSEkzPVl5qnNkshF89K
+         +0BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=8QgiO7zRB4U154TA7zWPw6v0hTOdujU7WthZz88hQHA=;
+        b=S4yq6OUlgwttbvmTT3o1jjGLuAFXwPp/RcwRILeAC7UUMB0U0u26guShTcC0YL3WVj
+         FLvPtCTqn/82HBBiZFAlKPdfVzvuCWDGZP6eVsRVLKjZrjzW7dCWI+jLwPFAAFEdZICI
+         1YPWVzLvAGrp8ycZfhjxpFUw1t4TUOBjOmTuQXmEcKxTbLWNiTUxPjEavx20+eHi5AYl
+         EVX6hNR1cyEKxiTTHUQNSYstG+2FWcVceVkxuiMCMzYHn8W17EkSE9lZ15tyj++Wd2+a
+         FkADX+3pENt+k4IR9+U1cY46ntAwogh+h4BluXj3Jtx5v0qsFPdd1cUvfzM+hotubyxA
+         UO7g==
+X-Gm-Message-State: APjAAAVDc4S7EH/HjRDqrGbb4/xv2vUpy9Qj95qaDnXd39/01BRJfyCd
+        MeoPIk/KGZHlPEFt28PGI4Wv8g==
+X-Google-Smtp-Source: APXvYqyFVCT9KrpqBt5fcReB37disP3cGCGOe8jWNKi9N7ZU+4MTBdB272qXdz3cp3iFzYsKzvO1mA==
+X-Received: by 2002:ac8:71cf:: with SMTP id i15mr3602732qtp.383.1579197058954;
+        Thu, 16 Jan 2020 09:50:58 -0800 (PST)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id d5sm10545351qke.130.2020.01.16.09.50.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Jan 2020 09:50:58 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH -rcu] kcsan: Make KCSAN compatible with lockdep
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <20200116174004.GU2935@paulmck-ThinkPad-P72>
+Date:   Thu, 16 Jan 2020 12:50:57 -0500
+Cc:     Marco Elver <elver@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <122F8599-1E5A-4F14-B093-0BB99308ED55@lca.pw>
+References: <20200114124919.11891-1-elver@google.com>
+ <CAG_fn=X1rFGd1gfML3D5=uiLKTmMbPUm0UD6D0+bg+_hJtQMqA@mail.gmail.com>
+ <CANpmjNP6+NTr7_rkNPVDbczst5vutW2K6FXXqkqFg6GGbQC31Q@mail.gmail.com>
+ <20200115163754.GA2935@paulmck-ThinkPad-P72>
+ <B2717BA1-B964-4B0A-BE4F-5B244087B9E5@lca.pw>
+ <D8636F45-621D-4A9F-A7A7-3399450DDAF0@lca.pw>
+ <20200116174004.GU2935@paulmck-ThinkPad-P72>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the bq25150 and bq25155 supply chargers.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/power/supply/Kconfig           |   8 +
- drivers/power/supply/Makefile          |   1 +
- drivers/power/supply/bq2515x_charger.c | 739 +++++++++++++++++++++++++
- 3 files changed, 748 insertions(+)
- create mode 100644 drivers/power/supply/bq2515x_charger.c
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 27164a1d3c7c..ee9f4b29e0b7 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -589,6 +589,14 @@ config CHARGER_BQ24735
- 	help
- 	  Say Y to enable support for the TI BQ24735 battery charger.
- 
-+config CHARGER_BQ2515X
-+	tristate "TI BQ2515X battery charger family"
-+	depends on I2C
-+	depends on GPIOLIB || COMPILE_TEST
-+	select REGMAP_I2C
-+	help
-+	  Say Y to enable support for the TI BQ2515X battery charger.
-+
- config CHARGER_BQ25890
- 	tristate "TI BQ25890 battery charger driver"
- 	depends on I2C
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index 6c7da920ea83..8fcc175a7e22 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -80,6 +80,7 @@ obj-$(CONFIG_CHARGER_BQ2415X)	+= bq2415x_charger.o
- obj-$(CONFIG_CHARGER_BQ24190)	+= bq24190_charger.o
- obj-$(CONFIG_CHARGER_BQ24257)	+= bq24257_charger.o
- obj-$(CONFIG_CHARGER_BQ24735)	+= bq24735-charger.o
-+obj-$(CONFIG_CHARGER_BQ2515X)	+= bq2515x_charger.o
- obj-$(CONFIG_CHARGER_BQ25890)	+= bq25890_charger.o
- obj-$(CONFIG_CHARGER_SMB347)	+= smb347-charger.o
- obj-$(CONFIG_CHARGER_TPS65090)	+= tps65090-charger.o
-diff --git a/drivers/power/supply/bq2515x_charger.c b/drivers/power/supply/bq2515x_charger.c
-new file mode 100644
-index 000000000000..dbf84bef4976
---- /dev/null
-+++ b/drivers/power/supply/bq2515x_charger.c
-@@ -0,0 +1,739 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// BQ2515X Battery Charger Driver
-+// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-+
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/power_supply.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+#define BQ2515X_MANUFACTURER "Texas Instruments"
-+
-+#define BQ2515X_STAT0		0x00
-+#define BQ2515X_STAT1		0x01
-+#define BQ2515X_STAT2		0x02
-+#define BQ2515X_FLAG0		0x03
-+#define BQ2515X_FLAG1		0x04
-+#define BQ2515X_FLAG2		0x05
-+#define BQ2515X_FLAG3		0x06
-+#define BQ2515X_MASK0		0x07
-+#define BQ2515X_MASK1		0x08
-+#define BQ2515X_MASK2		0x09
-+#define BQ2515X_MASK3		0x0a
-+#define BQ2515X_VBAT_CTRL	0x12
-+#define BQ2515X_ICHG_CTRL	0x13
-+#define BQ2515X_PCHRGCTRL	0x14
-+#define BQ2515X_TERMCTRL	0x15
-+#define BQ2515X_BUVLO		0x16
-+#define BQ2515X_CHARGERCTRL0	0x17
-+#define BQ2515X_CHARGERCTRL1	0x18
-+#define BQ2515X_ILIMCTRL	0x19
-+#define BQ2515X_LDOCTRL		0x1d
-+#define BQ2515X_MRCTRL		0x30
-+#define BQ2515X_ICCTRL0		0x35
-+#define BQ2515X_ICCTRL1		0x36
-+#define BQ2515X_ICCTRL2		0x37
-+#define BQ2515X_ADCCTRL0	0x40
-+#define BQ2515X_ADCCTRL1	0x41
-+#define BQ2515X_ADC_VBAT_M	0x42
-+#define BQ2515X_ADC_VBAT_L	0x43
-+#define BQ2515X_ADC_TS_M	0x44
-+#define BQ2515X_ADC_TS_L	0x45
-+#define BQ2515X_ADC_ICHG_M	0x46
-+#define BQ2515X_ADC_ICHG_L	0x47
-+#define BQ2515X_ADC_ADCIN_M	0x48
-+#define BQ2515X_ADC_ADCIN_L	0x49
-+#define BQ2515X_ADC_VIN_M	0x4a
-+#define BQ2515X_ADC_VIN_L	0x4b
-+#define BQ2515X_ADC_PMID_M	0x4c
-+#define BQ2515X_ADC_PMID_L	0x4d
-+#define BQ2515X_ADC_IIN_M	0x4e
-+#define BQ2515X_ADC_IIN_L	0x4f
-+#define BQ2515X_ADC_COMP1_M	0x52
-+#define BQ2515X_ADC_COMP1_L	0X53
-+#define BQ2515X_ADC_COMP2_M	0X54
-+#define BQ2515X_ADC_COMP2_L	0x55
-+#define BQ2515X_ADC_COMP3_M	0x56
-+#define BQ2515X_ADC_COMP3_L	0x57
-+#define BQ2515X_ADC_READ_EN	0x58
-+#define BQ2515X_TS_FASTCHGCTRL	0x61
-+#define BQ2515X_TS_COLD		0x62
-+#define BQ2515X_TS_COOL		0x63
-+#define BQ2515X_TS_WARM		0x64
-+#define BQ2515X_TS_HOT		0x65
-+#define BQ2515X_DEVICE_ID	0x6f
-+
-+#define BQ2515X_DIVISOR		65536
-+#define BQ2515X_VBAT_BASE_VOLT	3600000
-+#define BQ2515X_VBAT_REG_MAX	4600000
-+#define BQ2515X_VBAT_REG_MIN	3600000
-+#define BQ2515X_UV_FACTOR	10000
-+
-+#define BQ2515X_ILIM_150MA	0x2
-+#define BQ2515X_ILIM_MASK	0x7
-+#define BQ2515X_HEALTH_MASK	0xf
-+#define BQ2515X_OVERVOLT_MASK	0x80
-+
-+#define BQ2515X_HOT_FLAG	BIT(0)
-+#define BQ2515X_WARM_FLAG	BIT(1)
-+#define BQ2515X_COOL_FLAG	BIT(2)
-+#define BQ2515X_COLD_FLAG	BIT(3)
-+#define BQ2515X_SAFETY_TIMER_EXP	BIT(5)
-+
-+#define BQ2515X_VIN_GOOD	BIT(0)
-+#define BQ2515X_CHRG_DONE	BIT(5)
-+#define BQ2515X_CV_CHRG_MODE	BIT(6)
-+
-+static const int bq2515x_ilim_lvl_values[] = {
-+	50000, 100000, 150000, 200000, 300000, 400000, 500000, 600000
-+};
-+
-+/* initial field values, converted to register values */
-+struct bq2515x_init_data {
-+	int ichg;	/* charge current */
-+	int vreg;	/* regulation voltage */
-+};
-+
-+struct bq2515x_device {
-+	struct power_supply *mains;
-+	struct power_supply *battery;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	struct mutex lock;
-+
-+	struct gpio_desc *reset_gpio;
-+	struct gpio_desc *lp_gpio;
-+	struct gpio_desc *pg_gpio;
-+	struct gpio_desc *ce_gpio;
-+
-+	char model_name[I2C_NAME_SIZE];
-+	int mains_online;
-+
-+	uint32_t voltage_min_design;
-+	uint32_t voltage_max_design;
-+	uint32_t charge_full_design;
-+
-+	struct bq2515x_init_data init_data;
-+};
-+
-+static struct reg_default bq2515x_reg_defs[] = {
-+	{BQ2515X_STAT0, 0xff},
-+	{BQ2515X_STAT1, 0x0},
-+	{BQ2515X_STAT2, 0x0},
-+	{BQ2515X_FLAG0, 0x0},
-+	{BQ2515X_FLAG1, 0x0},
-+	{BQ2515X_FLAG2, 0x0},
-+	{BQ2515X_FLAG3, 0x0},
-+	{BQ2515X_MASK0, 0x0},
-+	{BQ2515X_MASK1, 0x0},
-+	{BQ2515X_MASK2, 0x0},
-+	{BQ2515X_MASK3, 0x0},
-+};
-+
-+static bool bq2515x_is_ps_online(struct bq2515x_device *bq2515x)
-+{
-+	return bq2515x->mains_online;
-+}
-+
-+static int bq2515x_wake_up(struct bq2515x_device *bq2515x)
-+{
-+	int ret;
-+	int val;
-+
-+	/* Read the STAT register if we can read it then the device is out
-+	 * of ship mode.  If the register cannot be read then attempt to wake
-+	 * it up and enable the ADC.
-+	 */
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_STAT0, &val);
-+	if (!ret)
-+		return ret;
-+
-+	/* Need to toggle LP and MR here */
-+	if (bq2515x->lp_gpio)
-+		gpiod_direction_output(bq2515x->lp_gpio, 1);
-+
-+	if (bq2515x->reset_gpio) {
-+		gpiod_direction_output(bq2515x->lp_gpio, 0);
-+		mdelay(2000);
-+		gpiod_direction_output(bq2515x->lp_gpio, 1);
-+	}
-+
-+	return regmap_write(bq2515x->regmap, BQ2515X_ADC_READ_EN, BIT(3));
-+}
-+
-+static int bq2515x_update_ps_status(struct bq2515x_device *bq2515x)
-+{
-+	bool dc = false;
-+	unsigned int val;
-+	int ret;
-+
-+	if (bq2515x->pg_gpio)
-+		val = gpiod_get_value(bq2515x->pg_gpio);
-+	else {
-+		ret = regmap_read(bq2515x->regmap, BQ2515X_STAT0, &val);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	dc = val & BQ2515X_VIN_GOOD;
-+
-+	ret = bq2515x->mains_online != dc;
-+
-+	bq2515x->mains_online = dc;
-+
-+	return ret;
-+}
-+
-+static int get_const_charge_current(struct bq2515x_device *bq2515x)
-+{
-+	int ret;
-+	int iin_msb;
-+	int iin_lsb;
-+	u16 ichg_measurement;
-+	int ilim_val, ichg_multiplier;
-+
-+	if (!bq2515x_is_ps_online(bq2515x))
-+		return -ENODATA;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ADC_IIN_M, &iin_msb);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ADC_IIN_L, &iin_lsb);
-+	if (ret < 0)
-+		return ret;
-+
-+	ichg_measurement = (iin_msb << 8) | iin_lsb;
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ILIMCTRL, &ilim_val);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ilim_val >= BQ2515X_ILIM_150MA)
-+		ichg_multiplier = 350;
-+	else
-+		ichg_multiplier = 750;
-+
-+	return (ichg_measurement * 100 / BQ2515X_DIVISOR) * ichg_multiplier;
-+}
-+
-+static int get_const_charge_voltage(struct bq2515x_device *bq2515x)
-+{
-+	int ret;
-+	int vin_msb;
-+	int vin_lsb;
-+	u16 vbat_measurement;
-+
-+	if (!bq2515x_is_ps_online(bq2515x))
-+		bq2515x_wake_up(bq2515x);
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ADC_VBAT_M, &vin_msb);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ADC_VBAT_L, &vin_lsb);
-+	if (ret)
-+		return ret;
-+
-+	vbat_measurement = (vin_msb << 8) | vin_lsb;
-+	return ((vbat_measurement * BQ2515X_UV_FACTOR) / BQ2515X_DIVISOR) * 6;
-+}
-+
-+static int bq2515x_charging_status(struct bq2515x_device *bq2515x,
-+				   union power_supply_propval *val)
-+{
-+	unsigned int status;
-+	int ret;
-+
-+	if (!bq2515x_is_ps_online(bq2515x))
-+		return 0;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_STAT0, &status);
-+	if (ret) {
-+		val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-+		return ret;
-+	}
-+
-+	if (status & BQ2515X_CV_CHRG_MODE && status & BQ2515X_VIN_GOOD)
-+		val->intval = POWER_SUPPLY_STATUS_CHARGING;
-+	else if (status & BQ2515X_CHRG_DONE)
-+		val->intval = POWER_SUPPLY_STATUS_FULL;
-+	else if (status & BQ2515X_VIN_GOOD)
-+		val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+	else
-+		val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-+
-+	return ret;
-+}
-+
-+static int bq2515x_get_batt_reg(struct bq2515x_device *bq2515x)
-+{
-+	int vbat_reg_code;
-+	int ret;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_VBAT_CTRL, &vbat_reg_code);
-+	if (ret)
-+		return ret;
-+
-+	return BQ2515X_VBAT_BASE_VOLT + vbat_reg_code * BQ2515X_UV_FACTOR;
-+}
-+
-+static int bq2515x_set_batt_reg(struct bq2515x_device *bq2515x, int val)
-+{
-+	int vbat_reg_code;
-+
-+	if (val > BQ2515X_VBAT_REG_MAX || val < BQ2515X_VBAT_REG_MIN)
-+		return -EINVAL;
-+
-+	vbat_reg_code = (val - BQ2515X_VBAT_BASE_VOLT) / BQ2515X_UV_FACTOR;
-+
-+	return regmap_write(bq2515x->regmap, BQ2515X_VBAT_CTRL, vbat_reg_code);
-+}
-+
-+static int bq2515x_get_ilim_lvl(struct bq2515x_device *bq2515x)
-+{
-+	int ret;
-+	int val;
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_ILIMCTRL, &val);
-+	if (ret)
-+		return ret;
-+
-+	return bq2515x_ilim_lvl_values[val & BQ2515X_ILIM_MASK];
-+}
-+
-+static int bq2515x_set_ilim_lvl(struct bq2515x_device *bq2515x, int val)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(bq2515x_ilim_lvl_values); i++) {
-+		if (val == bq2515x_ilim_lvl_values[i])
-+			break;
-+
-+		if (val > bq2515x_ilim_lvl_values[i - 1] &&
-+		    val < bq2515x_ilim_lvl_values[i]) {
-+			if (val - bq2515x_ilim_lvl_values[i - 1] <
-+			    bq2515x_ilim_lvl_values[i] - val) {
-+				i = i - 1;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return regmap_write(bq2515x->regmap, BQ2515X_ILIMCTRL, i);
-+}
-+
-+static int bq2515x_power_supply_property_is_writeable(struct power_supply *psy,
-+					enum power_supply_property prop)
-+{
-+	switch (prop) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+	case POWER_SUPPLY_PROP_CHARGE_NOW:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int bq2515x_charger_get_health(struct bq2515x_device *bq2515x,
-+				      union power_supply_propval *val)
-+{
-+	int health;
-+	int ret;
-+	int v;
-+
-+	if (!bq2515x_is_ps_online(bq2515x))
-+		bq2515x_wake_up(bq2515x);
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_FLAG1, &v);
-+	if (ret)
-+		return -EIO;
-+
-+	if (v & BQ2515X_HEALTH_MASK) {
-+		switch (v & BQ2515X_HEALTH_MASK) {
-+		case BQ2515X_HOT_FLAG:
-+			health = POWER_SUPPLY_HEALTH_HOT;
-+			break;
-+		case BQ2515X_WARM_FLAG:
-+			health = POWER_SUPPLY_HEALTH_WARM;
-+			break;
-+		case BQ2515X_COOL_FLAG:
-+			health = POWER_SUPPLY_HEALTH_COOL;
-+			break;
-+		case BQ2515X_COLD_FLAG:
-+			health = POWER_SUPPLY_HEALTH_COLD;
-+			break;
-+		default:
-+			health = POWER_SUPPLY_HEALTH_UNKNOWN;
-+		}
-+	} else if (v & BQ2515X_OVERVOLT_MASK) {
-+		health = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
-+	} else {
-+		health = POWER_SUPPLY_HEALTH_GOOD;
-+	}
-+
-+	ret = regmap_read(bq2515x->regmap, BQ2515X_FLAG3, &v);
-+	if (v & BQ2515X_SAFETY_TIMER_EXP)
-+		health = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
-+
-+	val->intval = health;
-+
-+	return 0;
-+}
-+
-+static int bq2515x_set_charge_enable(struct bq2515x_device *bq2515x, int val)
-+{
-+	if (bq2515x->ce_gpio)
-+		gpiod_set_value(bq2515x->ce_gpio, val);
-+
-+	return 0;
-+}
-+
-+static int bq2515x_get_charge_enable(struct bq2515x_device *bq2515x)
-+{
-+	int charge_value;
-+
-+	if (bq2515x->ce_gpio)
-+		charge_value = gpiod_get_value(bq2515x->ce_gpio);
-+	else
-+		return -EINVAL;
-+
-+	return charge_value;
-+}
-+
-+static int bq2515x_mains_set_property(struct power_supply *psy,
-+		enum power_supply_property prop,
-+		const union power_supply_propval *val)
-+{
-+	struct bq2515x_device *bq2515x = power_supply_get_drvdata(psy);
-+	int ret;
-+
-+	switch (prop) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		ret = bq2515x_set_ilim_lvl(bq2515x, val->intval);
-+		break;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+		ret = bq2515x_set_batt_reg(bq2515x, val->intval);
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_NOW:
-+		ret = bq2515x_set_charge_enable(bq2515x, val->intval);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int bq2515x_mains_get_property(struct power_supply *psy,
-+				     enum power_supply_property prop,
-+				     union power_supply_propval *val)
-+{
-+	struct bq2515x_device *bq2515x = power_supply_get_drvdata(psy);
-+	int ret;
-+
-+	switch (prop) {
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		val->intval = bq2515x->mains_online;
-+		break;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		ret = get_const_charge_current(bq2515x);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = ret;
-+		break;
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		ret = bq2515x_get_ilim_lvl(bq2515x);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = ret;
-+		break;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+		ret = bq2515x_get_batt_reg(bq2515x);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = ret;
-+		break;
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		val->strval = bq2515x->model_name;
-+		ret = 0;
-+		break;
-+	case POWER_SUPPLY_PROP_MANUFACTURER:
-+		val->strval = BQ2515X_MANUFACTURER;
-+		ret = 0;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MAX:
-+		val->intval = BQ2515X_VBAT_REG_MAX;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
-+		val->intval = BQ2515X_VBAT_REG_MIN;
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_NOW:
-+		ret = bq2515x_get_charge_enable(bq2515x);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = ret;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bq2515x_battery_get_property(struct power_supply *psy,
-+				       enum power_supply_property prop,
-+				       union power_supply_propval *val)
-+{
-+	struct bq2515x_device *bq2515x = power_supply_get_drvdata(psy);
-+	int ret;
-+
-+	ret = bq2515x_update_ps_status(bq2515x);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (prop) {
-+	case POWER_SUPPLY_PROP_STATUS:
-+		if (!bq2515x_is_ps_online(bq2515x)) {
-+			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
-+			break;
-+		}
-+
-+		ret = bq2515x_charging_status(bq2515x, val);
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		ret = get_const_charge_voltage(bq2515x);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = ret;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
-+		val->intval = bq2515x->voltage_min_design;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
-+		val->intval = bq2515x->voltage_max_design;
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-+		val->intval = bq2515x->charge_full_design;
-+		break;
-+	case POWER_SUPPLY_PROP_HEALTH:
-+		ret = bq2515x_charger_get_health(bq2515x, val);
-+		if (ret)
-+			val->intval = POWER_SUPPLY_HEALTH_UNKNOWN;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static enum power_supply_property bq2515x_battery_properties[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_HEALTH,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
-+	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-+};
-+
-+static enum power_supply_property bq2515x_charger_properties[] = {
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
-+	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
-+	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-+	POWER_SUPPLY_PROP_VOLTAGE_MAX,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN,
-+	POWER_SUPPLY_PROP_CHARGE_NOW,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_MANUFACTURER,
-+};
-+
-+static struct power_supply_desc bq2515x_mains_desc = {
-+	.name			= "bq2515x-mains",
-+	.type			= POWER_SUPPLY_TYPE_MAINS,
-+	.get_property		= bq2515x_mains_get_property,
-+	.set_property		= bq2515x_mains_set_property,
-+	.properties		= bq2515x_charger_properties,
-+	.num_properties		= ARRAY_SIZE(bq2515x_charger_properties),
-+	.property_is_writeable = bq2515x_power_supply_property_is_writeable,
-+
-+};
-+
-+static struct power_supply_desc bq2515x_battery_desc = {
-+	.name			= "bq2515x-battery",
-+	.type			= POWER_SUPPLY_TYPE_BATTERY,
-+	.get_property		= bq2515x_battery_get_property,
-+	.properties		= bq2515x_battery_properties,
-+	.num_properties		= ARRAY_SIZE(bq2515x_battery_properties),
-+};
-+
-+
-+static int bq2515x_power_supply_register(struct bq2515x_device *bq2515x)
-+{
-+	struct power_supply_config psy_cfg = { .drv_data = bq2515x, };
-+
-+	bq2515x->mains = devm_power_supply_register(bq2515x->dev,
-+						    &bq2515x_mains_desc,
-+						    &psy_cfg);
-+	if (IS_ERR(bq2515x->mains))
-+		return -EINVAL;
-+
-+	bq2515x->battery = devm_power_supply_register(bq2515x->dev,
-+						      &bq2515x_battery_desc,
-+						      &psy_cfg);
-+	if (IS_ERR(bq2515x->battery))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int bq2515x_hw_init(struct bq2515x_device *bq2515x)
-+{
-+	int ret = 0;
-+
-+	if (bq2515x->init_data.ichg)
-+		ret = bq2515x_set_ilim_lvl(bq2515x, bq2515x->init_data.ichg);
-+
-+	if (ret)
-+		goto err_out;
-+
-+	if (bq2515x->init_data.vreg)
-+		ret = bq2515x_set_batt_reg(bq2515x, bq2515x->init_data.vreg);
-+
-+err_out:
-+	return ret;
-+}
-+
-+static int bq2515x_read_properties(struct bq2515x_device *bq2515x)
-+{
-+	int ret;
-+
-+	ret = device_property_read_u32(bq2515x->dev,
-+				      "constant-charge-current-max-microamp",
-+				      &bq2515x->init_data.ichg);
-+	if (ret)
-+		bq2515x->init_data.ichg = bq2515x_ilim_lvl_values[1];
-+
-+	ret = device_property_read_u32(bq2515x->dev,
-+				      "constant-charge-voltage-max-microvolt",
-+				      &bq2515x->init_data.vreg);
-+	if (ret)
-+		bq2515x->init_data.vreg = 4200000;
-+
-+
-+	bq2515x->pg_gpio = devm_gpiod_get_optional(bq2515x->dev,
-+						   "pg", GPIOD_IN);
-+	if (IS_ERR(bq2515x->pg_gpio))
-+		dev_info(bq2515x->dev, "PG GPIO not defined");
-+
-+	bq2515x->reset_gpio = devm_gpiod_get_optional(bq2515x->dev,
-+						   "reset", GPIOD_OUT_LOW);
-+
-+	if (PTR_ERR(bq2515x->reset_gpio) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	bq2515x->lp_gpio = devm_gpiod_get_optional(bq2515x->dev, "low-power",
-+						   GPIOD_OUT_LOW);
-+	if (PTR_ERR(bq2515x->lp_gpio) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	bq2515x->ce_gpio = devm_gpiod_get_optional(bq2515x->dev,
-+						   "charge-enable",
-+						   GPIOD_OUT_HIGH);
-+	if (PTR_ERR(bq2515x->ce_gpio) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	return ret;
-+}
-+
-+static const struct regmap_config bq2515x_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = BQ2515X_DEVICE_ID,
-+	.reg_defaults     = bq2515x_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(bq2515x_reg_defs),
-+	.cache_type	  = REGCACHE_RBTREE,
-+};
-+
-+static int bq2515x_probe(struct i2c_client *client,
-+			 const struct i2c_device_id *id)
-+{
-+	struct device *dev = &client->dev;
-+	struct bq2515x_device *bq;
-+	int ret;
-+
-+	bq = devm_kzalloc(dev, sizeof(*bq), GFP_KERNEL);
-+	if (!bq)
-+		return -ENOMEM;
-+
-+	bq->client = client;
-+	bq->dev = dev;
-+
-+	mutex_init(&bq->lock);
-+
-+	bq->regmap = devm_regmap_init_i2c(client, &bq2515x_regmap_config);
-+	if (IS_ERR(bq->regmap)) {
-+		dev_err(dev, "failed to allocate register map\n");
-+		return PTR_ERR(bq->regmap);
-+	}
-+
-+	strncpy(bq->model_name, id->name, I2C_NAME_SIZE);
-+
-+	i2c_set_clientdata(client, bq);
-+
-+	ret = bq2515x_read_properties(bq);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to register power supply %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = bq2515x_hw_init(bq);
-+	if (ret < 0) {
-+		dev_err(dev, "Cannot initialize the chip.\n");
-+		return ret;
-+	}
-+
-+	return bq2515x_power_supply_register(bq);
-+}
-+
-+static const struct i2c_device_id bq2515x_i2c_ids[] = {
-+	{ "bq25150", 0 },
-+	{ "bq25155", 1 },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(i2c, bq2515x_i2c_ids);
-+
-+static const struct of_device_id bq2515x_of_match[] = {
-+	{ .compatible = "ti,bq25150", },
-+	{ .compatible = "ti,bq25155", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, bq2515x_of_match);
-+
-+static struct i2c_driver bq2515x_driver = {
-+	.driver = {
-+		.name = "bq2515x-charger",
-+		.of_match_table = bq2515x_of_match,
-+	},
-+	.probe = bq2515x_probe,
-+	.id_table = bq2515x_i2c_ids,
-+};
-+module_i2c_driver(bq2515x_driver);
-+
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_DESCRIPTION("BQ2515X charger driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.25.0
+> On Jan 16, 2020, at 12:40 PM, Paul E. McKenney <paulmck@kernel.org> =
+wrote:
+>=20
+> On Wed, Jan 15, 2020 at 11:37:47PM -0500, Qian Cai wrote:
+>>=20
+>>> On Jan 15, 2020, at 10:39 PM, Qian Cai <cai@lca.pw> wrote:
+>>>> On Jan 15, 2020, at 11:37 AM, Paul E. McKenney <paulmck@kernel.org> =
+wrote:
+>>>> On Wed, Jan 15, 2020 at 05:26:55PM +0100, Marco Elver wrote:
+>>>>> On Tue, 14 Jan 2020 at 18:24, Alexander Potapenko =
+<glider@google.com> wrote:
+>>>>>>=20
+>>>>>>> --- a/kernel/kcsan/core.c
+>>>>>>> +++ b/kernel/kcsan/core.c
+>>>>>>> @@ -337,7 +337,7 @@ kcsan_setup_watchpoint(const volatile void =
+*ptr, size_t size, int type)
+>>>>>>>       *      detection point of view) to simply disable =
+preemptions to ensure
+>>>>>>>       *      as many tasks as possible run on other CPUs.
+>>>>>>>       */
+>>>>>>> -       local_irq_save(irq_flags);
+>>>>>>> +       raw_local_irq_save(irq_flags);
+>>>>>>=20
+>>>>>> Please reflect the need to use raw_local_irq_save() in the =
+comment.
+>>>>>>=20
+>>>>>>>=20
+>>>>>>>      watchpoint =3D insert_watchpoint((unsigned long)ptr, size, =
+is_write);
+>>>>>>>      if (watchpoint =3D=3D NULL) {
+>>>>>>> @@ -429,7 +429,7 @@ kcsan_setup_watchpoint(const volatile void =
+*ptr, size_t size, int type)
+>>>>>>>=20
+>>>>>>>      kcsan_counter_dec(KCSAN_COUNTER_USED_WATCHPOINTS);
+>>>>>>> out_unlock:
+>>>>>>> -       local_irq_restore(irq_flags);
+>>>>>>> +       raw_local_irq_restore(irq_flags);
+>>>>>>=20
+>>>>>> Ditto
+>>>>>=20
+>>>>> Done. v2: =
+http://lkml.kernel.org/r/20200115162512.70807-1-elver@google.com
+>>>>=20
+>>>> Alexander and Qian, could you please let me know if this fixes =
+things
+>>>> up for you?
+>>>=20
+>>> The lockdep warning is gone, so feel free to add,
+>>>=20
+>>> Tested-by: Qian Cai <cai@lca.pw>
+>>>=20
+>>> for that patch, but the system is still unable to boot due to spam =
+of
+>>> warnings due to incompatible with debug_pagealloc, debugobjects, so
+>>> the warning rate limit does not help.
+>>=20
+>> I set CONFIG_DEBUG_OBJECTS=3Dn to see how further it could go, but
+>> the kernel is dead after those lines. Unable to boot any further.
+>=20
+> How large a system are you running on?  The reason that I ask is that =
+I
+> have been running it on a 12-CPU system with and without lockdep for =
+some
+> time.  So perhaps you are running this on a large system (thus =
+indicating
+> a need for better scalability) or are using an additional Kconfig =
+option?
+
+The system has 64 CPUs with additional debug options enabled,
+
+https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config
+
+>=20
+>> =E2=80=A6
+>> [  111.345991][  T789] Reported by Kernel Concurrency Sanitizer on:
+>> [  111.373039][  T789] CPU: 44 PID: 789 Comm: systemd-udevd Not =
+tainted 5.5.0-rc6-next-20200115+ #4
+>> [  111.414596][  T789] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018
+>> [  111.459984][  T789] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> [  111.554563][  T777] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> [  111.590304][  T777] BUG: KCSAN: data-race in __change_page_attr / =
+__change_page_attr
+>> [  111.626392][  T777]=20
+>> [  111.636881][  T777] write to 0xffffffff9a19cde0 of 8 bytes by task =
+796 on cpu 1:
+>> [  111.671544][  T777]  __change_page_attr+0xe9c/0x1620
+>> [  111.695067][  T777]  __change_page_attr_set_clr+0xde/0x4c0
+>> [  111.722124][  T777]  __set_pages_p+0xcc/0x100
+>> [  111.742644][  T777]  __kernel_map_pages+0x2e/0xdb
+>> [  111.765379][  T777]  prep_new_page+0x87/0x1f0
+>> [  111.785804][  T777]  get_page_from_freelist+0x1583/0x22b0
+>> [  111.810633][  T777]  __alloc_pages_nodemask+0x1b1/0x450
+>> [  111.835196][  T777]  alloc_pages_current+0xa6/0x120
+>> [  111.858619][  T777]  __vmalloc_node_range+0x338/0x480
+>> [  111.882253][  T777]  __vmalloc_node.constprop.29+0x70/0xb0
+>> [  111.908550][  T777]  vmalloc+0x69/0x80
+>> [  111.927150][  T777]  kernel_read_file+0x241/0x2b0
+>> [  111.950372][  T777]  kernel_read_file_from_fd+0x56/0x90
+>> [  111.976025][  T777]  __do_sys_finit_module+0xc7/0x190
+>> [  111.999847][  T777]  __x64_sys_finit_module+0x4c/0x60
+>> [  112.023326][  T777]  do_syscall_64+0x91/0xb47
+>> [  112.043903][  T777]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> [  112.070954][  T777]=20
+>> [  112.081261][  T777] read to 0xffffffff9a19cde0 of 8 bytes by task =
+777 on cpu 16:
+>> [  112.115510][  T777]  __change_page_attr+0xe81/0x1620
+>> [  112.138564][  T777]  __change_page_attr_set_clr+0xde/0x4c0
+>> [  112.164452][  T777]  __set_pages_p+0xcc/0x100
+>> [  112.185228][  T777]  __kernel_map_pages+0x2e/0xdb
+>> [  112.207122][  T777]  prep_new_page+0x87/0x1f0
+>> [  112.227507][  T777]  get_page_from_freelist+0x1583/0x22b0
+>> [  112.252947][  T777]  __alloc_pages_nodemask+0x1b1/0x450
+>> [  112.277504][  T777]  alloc_pages_current+0xa6/0x120
+>> [  112.300450][  T777]  alloc_slab_page+0x3b1/0x540
+>> [  112.322039][  T777]  allocate_slab+0x70/0x660
+>> [  112.342387][  T777]  new_slab+0x46/0x70
+>> [  112.360102][  T777]  ___slab_alloc+0x4ad/0x7d0
+>> [  112.380944][  T777]  __slab_alloc+0x43/0x70
+>> [  112.400596][  T777]  kmem_cache_alloc+0x2c3/0x420
+>> [  112.423674][  T777]  create_object+0x69/0x690
+>> [  112.447347][  T777]  kmemleak_alloc+0x7d/0xb0
+>> [  112.469100][  T777]  __kmalloc_track_caller+0x157/0x3c0
+>> [  112.493548][  T777]  kstrdup+0x3d/0x70
+>> [  112.510959][  T777]  mod_sysfs_setup+0x5e5/0xb10
+>> [  112.532234][  T777]  load_module+0x2510/0x2b60
+>> [  112.552985][  T777]  __do_sys_finit_module+0x14d/0x190
+>> [  112.577212][  T777]  __x64_sys_finit_module+0x4c/0x60
+>> [  112.601135][  T777]  do_syscall_64+0x91/0xb47
+>> [  112.621690][  T777]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> [  112.648566][  T777]=20
+>> [  112.659018][  T777] Reported by Kernel Concurrency Sanitizer on:
+>> [  112.687603][  T777] CPU: 16 PID: 777 Comm: systemd-udevd Not =
+tainted 5.5.0-rc6-next-20200115+ #4
+>> [  112.729082][  T777] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018
+>> [  112.772563][  T777] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> [  112.810304][  T364] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> [  112.848145][  T364] BUG: KCSAN: data-race in __change_page_attr / =
+__change_page_attr
+>> [  112.884579][  T364]=20
+>> [  112.884586][  T364] read to 0xffffffff9a19cde0 of 8 bytes by task =
+789 on cpu 12:
+>> [  112.884595][  T364]  __change_page_attr+0xe81/0x1620
+>> [  112.884602][  T364]  __change_page_attr_set_clr+0xde/0x4c0
+>> [  112.884607][  T364]  __set_pages_p+0xcc/0x100
+>> [  112.884612][  T364]  __kernel_map_pages+0x2e/0xdb
+>>         [  112.884619][  T364]  prep_new_page+0x87/0x1f0
+>> [  112.884627][  T364]  get_page_from_freelist+0x1583/0x22b0
+>> [  112.884633][  T364]  __alloc_pages_nodemask+0x1b1/0x450
+>> [  112.884640][  T364]  alloc_pages_vma+0x8a/0x2c0
+>> [  112.884646][  T364]  wp_page_copy+0x100/0x930
+>> Starting Show Pl[  112.884653][  T364]  do_wp_page+0x107/0x7b0
+>> [  112.884660][  T364]  __handle_mm_fault+0xce6/0xd40
+>> [  112.884667][  T364]  handle_mm_fault+0xfc/0x2f0
+>> [  112.884677][  T364]  do_page_fault+0x263/0x6f9
+>> ymouth Boot Screen...
+>> perf: interrupt took too long (7468 > 7338), lowering =
+kernel.perf_event_max_sample_rate to 26700
+>> perf: interrupt took too long (9463 > 9335), lowering =
+kernel.perf_event_max_sample_rate to 21100
+>>=20
+>>>=20
+>>> [   28.992752][  T394] Reported by Kernel Concurrency Sanitizer on:=20=
+
+>>> [   28.992752][  T394] CPU: 0 PID: 394 Comm: pgdatinit0 Not tainted =
+5.5.0-rc6-next-20200115+ #3=20
+>>> [   28.992752][  T394] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018=20
+>>> [   28.992752][  T394] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [   28.992752][  T394] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [   28.992752][  T394] BUG: KCSAN: data-race in __change_page_attr / =
+__change_page_attr=20
+>>> [   28.992752][  T394] =20
+>>> [   28.992752][  T394] read to 0xffffffffa01a6de0 of 8 bytes by task =
+395 on cpu 16:=20
+>>> [   28.992752][  T394]  __change_page_attr+0xe81/0x1620=20
+>>> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0=20
+>>> [   28.992752][  T394]  __set_pages_np+0xcc/0x100=20
+>>> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb=20
+>>> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730=20
+>>> [   28.992752][  T394]  __free_pages+0x51/0x90=20
+>>> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0=20
+>>> [   28.992752][  T394]  deferred_free_range+0x59/0x8f=20
+>>> [   28.992752][  T394]  deferred_init_max21d=20
+>>> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1=20
+>>> [   28.992752][  T394]  kthread+0x1e0/0x200=20
+>>> [   28.992752][  T394]  ret_from_fork+0x3a/0x50=20
+>>> [   28.992752][  T394] =20
+>>> [   28.992752][  T394] write to 0xffffffffa01a6de0 of 8 bytes by =
+task 394 on cpu 0:=20
+>>> [   28.992752][  T394]  __change_page_attr+0xe9c/0x1620=20
+>>> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0=20
+>>> [   28.992752][  T394]  __set_pages_np+0xcc/0x100=20
+>>> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb=20
+>>> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730=20
+>>> [   28.992752][  T394]  __free_pages+0x51/0x90=20
+>>> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0=20
+>>> [   28.992752][  T394]  deferred_free_range+0x59/0x8f=20
+>>> [   28.992752][  T394]  deferred_init_maxorder+0x1d6/0x21d=20
+>>> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1=20
+>>> [   28.992752][  T394]  kthread+0x1e0/0x200=20
+>>> [   28.992752][  T394]  ret_from_fork+0x3a/0x50=20
+>>>=20
+>>>=20
+>>> [   93.233621][  T349] Reported by Kernel Concurrency Sanitizer on:=20=
+
+>>> [   93.261902][  T349] CPU: 19 PID: 349 Comm: kworker/19:1 Not =
+tainted 5.5.0-rc6-next-20200115+ #3=20
+>>> [   93.302634][  T349] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018=20
+>>> [   93.345413][  T349] Workqueue: memcg_kmem_cache =
+memcg_kmem_cache_create_func=20
+>>> [   93.378715][  T349] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [   93.416183][  T616] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [   93.453415][  T616] BUG: KCSAN: data-race in __debug_object_init =
+/ fill_pool=20
+>>> [   93.486775][  T616] =20
+>>> [   93.497644][  T616] read to 0xffffffff9ff33b78 of 4 bytes by task =
+617 on cpu 12:=20
+>>> [   93.534139][  T616]  fill_pool+0x38/0x700=20
+>>> [   93.554913][  T616]  __debug_object_init+0x3f/0x900=20
+>>> [   93.579459][  T616]  debug_object_init+0x39/0x50=20
+>>> [   93.601952][  T616]  __init_work+0x3e/0x50=20
+>>> [   93.620611][  T616]  memcg_kmem_get_cache+0x3c8/0x480=20
+>>> [   93.643619][  T616]  slab_pre_alloc_hook+0x5d/0xa0=20
+>>> [   93.665134][  T616]  __kmalloc_node+0x60/0x300=20
+>>> [   93.685094][  T616]  kvmalloc_node+0x83/0xa0=20
+>>> [   93.704235][  T616]  seq_read+0x57c/0x7a0=20
+>>> [   93.722460][  T616]  proc_reg_read+0x11a/0x160=20
+>>> [   93.743570][  T616]  __vfs_read+0x59/0xa0=20
+>>> [   93.761660][  T616]  vfs_read+0xcf/0x1c0=20
+>>> [   93.779269][  T616]  ksys_read+0x9d/0x130=20
+>>> [   93.797267][  T616]  __x64_sys_read+0x4c/0x60=20
+>>> [   93.817205][  T616]  do_syscall_64+0x91/0xb47=20
+>>> [   93.837590][  T616]  entry_SYSCALL_64_after_hwframe+0x49/0xbe=20
+>>> [   93.864425][  T616] =20
+>>> [   93.874830][  T616] write to 0xffffffff9ff33b78 of 4 bytes by =
+task 616 on cpu 61:=20
+>>> [   93.908534][  T616]  __debug_object_init+0x6e5/0x900=20
+>>> [   93.931018][  T616]  debug_object_activate+0x1fc/0x350=20
+>>> [   93.954131][  T616]  call_rcu+0x4c/0x4e0=20
+>>> [   93.971959][  T616]  put_object+0x6a/0x90=20
+>>> [   93.989955][  T616]  __delete_object+0xb9/0xf0=20
+>>> [   94.009996][  T616]  delete_object_full+0x2d/0x40=20
+>>> [   94.031812][  T616]  kmemleak_free+0x5f/0x90=20
+>>> [   94.054671][  T616]  slab_free_freelist_hook+0x124/0x1c0=20
+>>> [   94.082027][  T616]  kmem_cache_free+0x10c/0x3a0=20
+>>> [   94.103806][  T616]  vm_area_free+0x31/0x40=20
+>>> [   94.124587][  T616]  remove_vma+0xb0/0xc0=20
+>>> [   94.143484][  T616]  exit_mmap+0x14c/0x220=20
+>>> [   94.163826][  T616]  mmput+0x10e/0x270=20
+>>> [   94.181736][  T616]  flush_old_exec+0x572/0xfe0=20
+>>> [   94.202760][  T616]  load_elf_binary+0x467/0x2180=20
+>>> [   94.224819][  T616]  search_binary_handler+0xd8/0x2b0=20
+>>> [   94.248735][  T616]  __do_execve_file+0xb61/0x1080=20
+>>> [   94.270943][  T616]  __x64_sys_execve+0x5f/0x70=20
+>>> [   94.292254][  T616]  do_syscall_64+0x91/0xb47=20
+>>> [   94.312712][  T616]  entry_SYSCALL_64_after_hwframe+0x49/0xbe=20
+>>>=20
+>>> [  103.455945][   C22] Reported by Kernel Concurrency Sanitizer on:=20=
+
+>>> [  103.483032][   C22] CPU: 22 PID: 0 Comm: swapper/22 Not tainted =
+5.5.0-rc6-next-20200115+ #3=20
+>>> [  103.520563][   C22] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018=20
+>>> [  103.561771][   C22] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [  103.598005][   C41] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [  103.633820][   C41] BUG: KCSAN: data-race in =
+intel_pstate_update_util / intel_pstate_update_util=20
+>>> [  103.673408][   C41] =20
+>>> [  103.683214][   C41] read to 0xffffffffa9098a58 of 2 bytes by =
+interrupt on cpu 2:=20
+>>> [  103.716645][   C41]  intel_pstate_update_util+0x580/0xb40=20
+>>> [  103.740609][   C41]  cpufreq_update_util+0xb0/0x160=20
+>>> [  103.762611][   C41]  update_blocked_averages+0x585/0x630=20
+>>> [  103.786435][   C41]  run_rebalance_domains+0xd5/0x240=20
+>>> [  103.812821][   C41]  __do_softirq+0xd9/0x57c=20
+>>> [  103.834438][   C41]  irq_exit+0xa2/0xc0=20
+>>> [  103.851773][   C41]  smp_apic_timer_interrupt+0x190/0x480=20
+>>> [  103.876005][   C41]  apic_timer_interrupt+0xf/0x20=20
+>>> [  103.897495][   C41]  cpuidle_enter_state+0x18a/0x9b0=20
+>>> [  103.919324][   C41]  cpuidle_enter+0x69/0xc0=20
+>>> [  103.938405][   C41]  call_cpuidle+0x23/0x40=20
+>>> [  103.957152][   C41]  do_idle+0x248/0x280=20
+>>> [  103.974728][   C41]  cpu_startup_entry+0x1d/0x1f=20
+>>> [  103.995059][   C41]  start_secondary+0x1ad/0x230=20
+>>> [  104.015920][   C41]  secondary_startup_64+0xb6/0xc0=20
+>>> [  104.037376][   C41] =20
+>>> [  104.047144][   C41] write to 0xffffffffa9098a59 of 1 bytes by =
+interrupt on cpu 41:=20
+>>> [  104.081113][   C41]  intel_pstate_update_util+0x4cf/0xb40=20
+>>> [  104.105862][   C41]  cpufreq_update_util+0xb0/0x160=20
+>>> [  104.127759][   C41]  update_load_avg+0x70e/0x800=20
+>>> [  104.148400][   C41]  task_tick_fair+0x5c/0x680=20
+>>> [  104.168325][   C41]  scheduler_tick+0xab/0x120=20
+>>> [  104.188881][   C41]  update_process_times+0x44/0x60=20
+>>> [  104.210811][   C41]  tick_sched_handle+0x4f/0xb0=20
+>>> [  104.231137][   C41]  tick_sched_timer+0x45/0xc0=20
+>>> [  104.251431][   C41]  __hrtimer_run_queues+0x243/0x800=20
+>>> [  104.274362][   C41]  hrtimer_interrupt+0x1d4/0x3e0=20
+>>> [  104.295860][   C41]  smp_apic_timer_interrupt+0x11d/0x480=20
+>>> [  104.325136][   C41]  apic_timer_interrupt+0xf/0x20=20
+>>> [  104.347864][   C41]  __kcsan_check_access+0x1a/0x120=20
+>>> [  104.370100][   C41]  __read_once_size+0x1f/0xe0=20
+>>> [  104.390064][   C41]  smp_call_function_many+0x4b0/0x5d0=20
+>>> [  104.413591][   C41]  on_each_cpu+0x46/0x90=20
+>>> [  104.431954][   C41]  flush_tlb_kernel_range+0x97/0xc0=20
+>>> [  104.454702][   C41]  free_unmap_vmap_area+0xaa/0xe0=20
+>>> [  104.476699][   C41]  remove_vm_area+0xf4/0x100=20
+>>> [  104.496763][   C41]  __vunmap+0x10a/0x460=20
+>>> [  104.514807][   C41]  __vfree+0x33/0x90=20
+>>> [  104.531597][   C41]  vfree+0x47/0x80=20
+>>> [  104.547600][   C41]  n_tty_close+0x56/0x80=20
+>>> [  104.565988][   C41]  tty_ldisc_close+0x76/0xa0=20
+>>> [  104.585912][   C41]  tty_ldisc_kill+0x51/0xa0=20
+>>> [  104.605864][   C41]  tty_ldisc_release+0xf4/0x1a0=20
+>>> [  104.627098][   C41]  tty_release_struct+0x23/0x60=20
+>>> [  104.648268][   C41]  tty_release+0x673/0x9c0=20
+>>> [  104.667517][   C41]  __fput+0x187/0x410=20
+>>> [  104.684357][   C41]  ____fput+0x1e/0x30=20
+>>> [  104.701542][   C41]  task_work_run+0xed/0x140=20
+>>> [  104.721358][   C41]  do_syscall_64+0x803/0xb47=20
+>>> [  104.740872][   C41]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>=20
+>>> [  136.745789][   C34] Reported by Kernel Concurrency Sanitizer on:=20=
+
+>>> [  136.774278][   C34] CPU: 34 PID: 0 Comm: swapper/34 Not tainted =
+5.5.0-rc6-next-20200115+ #3=20
+>>> [  136.814948][   C34] Hardware name: HP ProLiant XL230a =
+Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018=20
+>>> [  136.861974][   C34] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [  136.911354][    T1] =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=20
+>>> [  136.948491][    T1] BUG: KCSAN: data-race in __debug_object_init =
+/ fill_pool=20
+>>> [  136.981645][    T1] =20
+>>> [  136.992045][    T1] read to 0xffffffff9ff33b78 of 4 bytes by task =
+762 on cpu 25:=20
+>>> [  137.026513][    T1]  fill_pool+0x38/0x700=20
+>>> [  137.045575][    T1]  __debug_object_init+0x3f/0x900=20
+>>> [  137.068826][    T1]  debug_object_activate+0x1fc/0x350=20
+>>> [  137.093102][    T1]  call_rcu+0x4c/0x4e0=20
+>>> [  137.111520][    T1]  __fput+0x23a/0x410=20
+>>> [  137.129618][    T1]  ____fput+0x1e/0x30=20
+>>> [  137.147627][    T1]  task_work_run+0xed/0x140=20
+>>> [  137.168322][    T1]  do_syscall_64+0x803/0xb47=20
+>>> [  137.188572][    T1]  entry_SYSCALL_64_after_hwframe+0x49/0xbe=20
+>>> [  137.215309][    T1] =20
+>>> [  137.225579][    T1] write to 0xffffffff9ff33b78 of 4 bytes by =
+task 1 on cpu 7:=20
+>>> [  137.259867][    T1]  __debug_object_init+0x6e5/0x900=20
+>>> [  137.283065][    T1]  debug_object_activate+0x1fc/0x350=20
+>>> [  137.306988][    T1]  call_rcu+0x4c/0x4e0=20
+>>> [  137.326804][    T1]  dentry_free+0x70/0xe0=20
+>>> [  137.347208][    T1]  __dentry_kill+0x1db/0x300=20
+>>> [  137.369468][    T1]  shrink_dentry_list+0x153/0x2e0=20
+>>> [  137.393437][    T1]  shrink_dcache_parent+0x1ee/0x320=20
+>>> [  137.417174][    T1]  d_invalidate+0x80/0x130=20
+>>> [  137.437280][    T1]  proc_flush_task+0x14c/0x2b0=20
+>>> [  137.459263][    T1]  release_task.part.21+0x156/0xb50=20
+>>> [  137.483580][    T1]  wait_consider_task+0x17a8/0x1960=20
+>>> [  137.507550][    T1]  do_wait+0x25b/0x560=20
+>>> [  137.526175][    T1]  kernel_waitid+0x194/0x270=20
+>>> [  137.547105][    T1]  __do_sys_waitid+0x18e/0x1e0=20
+>>> [  137.568951][    T1]  __x64_sys_waitid+0x70/0x90=20
+>>> [  137.590291][    T1]  do_syscall_64+0x91/0xb47=20
+>>> [  137.610681][    T1]  entry_SYSCALL_64_after_hwframe+0x49/0xbe=20
 
