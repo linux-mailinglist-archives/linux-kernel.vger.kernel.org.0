@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 652B513E75E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B8713E760
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:25:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403853AbgAPRZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:25:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
+        id S2391932AbgAPRZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391372AbgAPRY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:59 -0500
+        id S2391880AbgAPRZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A6D246A3;
-        Thu, 16 Jan 2020 17:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8521246CE;
+        Thu, 16 Jan 2020 17:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195498;
-        bh=9KQUfNd3Nvl/2tc+oWzrExL4KL6ShVPizW8ADsB0Frw=;
+        s=default; t=1579195506;
+        bh=YwJenkpKoQsOOnBf39koHZ3gIvgogWUcYu9U/efC4eo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNNrfU0NOj7fMPkTLM6+VHhYUeSrJv+xwjurT/M3mwe0QC0wWu66NZkcdXtYx1Do+
-         DQbL3eXEFHJkLoHbT3COj/l2JbVE9xfjt9+ZdZIdu82HKKqMkwElxJe+hrFRphnKla
-         umDbfN11bA9+4+2w9CeOLouWmVQZipmf5l+drbDo=
+        b=vDl4l6VISRZmLqy8LwTyLQ+niTHJ+7kg7ch+br8tyKrsaWsD+TUzDVFgURgXUzrpS
+         FMQzGVbxuF87BHO0k7W7BarlLENdZet2e5F20hh/3rDNknHR3mreHtDnLnlmGQk/P5
+         u6V5zIj39Z9QoioB3xRB/Im1MK1L1NYR7sE3dVd8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 099/371] block: don't use bio->bi_vcnt to figure out segment number
-Date:   Thu, 16 Jan 2020 12:19:31 -0500
-Message-Id: <20200116172403.18149-42-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 106/371] cdc-wdm: pass return value of recover_from_urb_loss
+Date:   Thu, 16 Jan 2020 12:19:38 -0500
+Message-Id: <20200116172403.18149-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,48 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 1a67356e9a4829da2935dd338630a550c59c8489 ]
+[ Upstream commit 0742a338f5b3446a26de551ad8273fb41b2787f2 ]
 
-It is wrong to use bio->bi_vcnt to figure out how many segments
-there are in the bio even though CLONED flag isn't set on this bio,
-because this bio may be splitted or advanced.
+'rv' is the correct return value, pass it upstream instead of 0
 
-So always use bio_segments() in blk_recount_segments(), and it shouldn't
-cause any performance loss now because the physical segment number is figured
-out in blk_queue_split() and BIO_SEG_VALID is set meantime since
-bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting").
-
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Fixes: 76d8137a3113 ("blk-merge: recaculate segment if it isn't less than max segments")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 17d80d562fd7 ("USB: autosuspend for cdc-wdm")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-merge.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/usb/class/cdc-wdm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index f61b50a01bc7..415b5dafd9e6 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -299,13 +299,7 @@ void blk_recalc_rq_segments(struct request *rq)
+diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+index a593cdfc897f..d5d42dccda10 100644
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -1085,7 +1085,7 @@ static int wdm_post_reset(struct usb_interface *intf)
+ 	rv = recover_from_urb_loss(desc);
+ 	mutex_unlock(&desc->wlock);
+ 	mutex_unlock(&desc->rlock);
+-	return 0;
++	return rv;
+ }
  
- void blk_recount_segments(struct request_queue *q, struct bio *bio)
- {
--	unsigned short seg_cnt;
--
--	/* estimate segment number by bi_vcnt for non-cloned bio */
--	if (bio_flagged(bio, BIO_CLONED))
--		seg_cnt = bio_segments(bio);
--	else
--		seg_cnt = bio->bi_vcnt;
-+	unsigned short seg_cnt = bio_segments(bio);
- 
- 	if (test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags) &&
- 			(seg_cnt < queue_max_segments(q)))
+ static struct usb_driver wdm_driver = {
 -- 
 2.20.1
 
