@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D05013EF0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B7AE13EF0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:13:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405250AbgAPRg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:36:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51796 "EHLO mail.kernel.org"
+        id S2405238AbgAPRgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:36:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405211AbgAPRgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:36:51 -0500
+        id S2405218AbgAPRgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:36:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59162246C5;
-        Thu, 16 Jan 2020 17:36:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F37B246C9;
+        Thu, 16 Jan 2020 17:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196211;
-        bh=LW2F/jHELeJRFD9QL7sp0B9QATRcwZeOVrASKbhON6M=;
+        s=default; t=1579196212;
+        bh=G80E6DG/Xdhyn3QL8jhCTGhx/edP9krCWxwJu0H8Ch4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Im8+VoS+bdZ5csWX+o0KtkdzgegB0jr3fCQN3ScN5ancrjaPKeh1oIfDbERxlforz
-         VHdfNK3NYtomdeaByE00NZOh4UEUhFfyUWaxWYihcLvLEV8H12Lptj025VORgqaFcU
-         EAS1i1Kz+5GAhR5zV9wz5sf6wgTY2lMtnZxxogsk=
+        b=DmGCfBzSKnlSxXSWopw4sovhvZU7lGaZy8DbdzJZIefVSqdkUuA6lOgl3MgPAwrjs
+         uNHiVZlDPKhdFtTbh+//6qY4hQSG1m95JOaiJVOkKbWWkOf31q++ZBRshZEQ/24n7d
+         o9DjO6AR4nhsgujG7xbU9NLX/+jiJ6KqyHXEYi7o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Danny Alexander <danny.alexander@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 047/251] iwlwifi: mvm: fix A-MPDU reference assignment
-Date:   Thu, 16 Jan 2020 12:33:16 -0500
-Message-Id: <20200116173641.22137-7-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 048/251] tty: ipwireless: Fix potential NULL pointer dereference
+Date:   Thu, 16 Jan 2020 12:33:17 -0500
+Message-Id: <20200116173641.22137-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -45,48 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 1f7698abedeeb3fef3cbcf78e16f925df675a179 ]
+[ Upstream commit 7dd50e205b3348dc7784efbdf85723551de64a25 ]
 
-The current code assigns the reference, and then goes to increment
-it if the toggle bit has changed. That way, we get
+There is a potential NULL pointer dereference in case
+alloc_ctrl_packet() fails and returns NULL.
 
-Toggle  0  0  0  0  1  1  1  1
-ID      1  1  1  1  1  2  2  2
-
-Fix that by assigning the post-toggle ID to get
-
-Toggle  0  0  0  0  1  1  1  1
-ID      1  1  1  1  2  2  2  2
-
-Reported-by: Danny Alexander <danny.alexander@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Fixes: fbe4112791b8 ("iwlwifi: mvm: update mpdu metadata API")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 099dc4fb6265 ("ipwireless: driver for PC Card 3G/UMTS modem")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/ipwireless/hardware.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
-index c2bbc8c17beb..bc06d87a0106 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
-@@ -810,12 +810,12 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *mvm, struct napi_struct *napi,
- 		bool toggle_bit = phy_info & IWL_RX_MPDU_PHY_AMPDU_TOGGLE;
+diff --git a/drivers/tty/ipwireless/hardware.c b/drivers/tty/ipwireless/hardware.c
+index df0204b6148f..4417f7568422 100644
+--- a/drivers/tty/ipwireless/hardware.c
++++ b/drivers/tty/ipwireless/hardware.c
+@@ -1515,6 +1515,8 @@ static void ipw_send_setup_packet(struct ipw_hardware *hw)
+ 			sizeof(struct ipw_setup_get_version_query_packet),
+ 			ADDR_SETUP_PROT, TL_PROTOCOLID_SETUP,
+ 			TL_SETUP_SIGNO_GET_VERSION_QRY);
++	if (!ver_packet)
++		return;
+ 	ver_packet->header.length = sizeof(struct tl_setup_get_version_qry);
  
- 		rx_status->flag |= RX_FLAG_AMPDU_DETAILS;
--		rx_status->ampdu_reference = mvm->ampdu_ref;
- 		/* toggle is switched whenever new aggregation starts */
- 		if (toggle_bit != mvm->ampdu_toggle) {
- 			mvm->ampdu_ref++;
- 			mvm->ampdu_toggle = toggle_bit;
- 		}
-+		rx_status->ampdu_reference = mvm->ampdu_ref;
- 	}
- 
- 	rcu_read_lock();
+ 	/*
 -- 
 2.20.1
 
