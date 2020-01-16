@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A027213E507
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:12:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C92B13E50A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:12:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbgAPRMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
+        id S2390443AbgAPRMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:12:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390372AbgAPRMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:12:01 -0500
+        id S2390385AbgAPRMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:12:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F422469F;
-        Thu, 16 Jan 2020 17:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 155FF24698;
+        Thu, 16 Jan 2020 17:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194720;
-        bh=kTIb/Y3XzjF2+VFSAC+cj2XncnKLjgkHWIlny1KaSHw=;
+        s=default; t=1579194725;
+        bh=NEJ9cspdl9wGfVplcbENKdgyFw0bHoTrRFhM9X9pK4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N7fgVBB4TvCyDj3tAVaJw0xpWMf1UalDkcTkfz29sq3PcXkPyju2iTIhhDxucr+Gg
-         1jgn0t1we2VzqrJqgHbRQfb1mlwrD5Nj3fTxoFioTEOXhRf2iPpkAeoq1sE0s5Cr3J
-         Xo8YCWr+zvay25H0cgKFdBg6nQCjWxzAxzD4+HMc=
+        b=H4bA+mFHOr2FWN58RHdQT8cALrbU4O/4F9sU/67mtKXRIoeEF1m2Yz57RY60hCoFX
+         zfQsCU8elNowf2+PVerS56sGgfOllqYABZwtBJqnM3MruQxU/1Z4NPh72EZSE7tfjE
+         5/droG66x6CsyJDT3MIYUp6VzdiXB7fB3363QNN0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 556/671] clk: actions: Fix factor clk struct member access
-Date:   Thu, 16 Jan 2020 12:03:14 -0500
-Message-Id: <20200116170509.12787-293-sashal@kernel.org>
+Cc:     Yunfeng Ye <yeyunfeng@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 559/671] crypto: hisilicon - Matching the dma address for dma_pool_free()
+Date:   Thu, 16 Jan 2020 12:03:17 -0500
+Message-Id: <20200116170509.12787-296-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,61 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+From: Yunfeng Ye <yeyunfeng@huawei.com>
 
-[ Upstream commit ed309bfb4812e8b31a3eb877e157b8028a49e50c ]
+[ Upstream commit e00371af1d4ce73d527d8ee69fda2febaf5a42c2 ]
 
-Since the helper "owl_factor_helper_round_rate" is shared between factor
-and composite clocks, using the factor clk specific helper function
-like "hw_to_owl_factor" to access its members will create issues when
-called from composite clk specific code. Hence, pass the "factor_hw"
-struct pointer directly instead of fetching it using factor clk specific
-helpers.
+When dma_pool_zalloc() fail in sec_alloc_and_fill_hw_sgl(),
+dma_pool_free() is invoked, but the parameters that sgl_current and
+sgl_current->next_sgl is not match.
 
-This issue has been observed when a composite clock like "sd0_clk" tried
-to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
-error.
+Using sec_free_hw_sgl() instead of the original free routine.
 
-While we are at it, let's rename the "clk_val_best" function to
-"owl_clk_val_best" since this is an owl SoCs specific helper.
-
-Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190916154546.24982-2-manivannan.sadhasivam@linaro.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/actions/owl-factor.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/crypto/hisilicon/sec/sec_algs.c | 44 +++++++++++--------------
+ 1 file changed, 19 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/actions/owl-factor.c b/drivers/clk/actions/owl-factor.c
-index 317d4a9e112e..f15e2621fa18 100644
---- a/drivers/clk/actions/owl-factor.c
-+++ b/drivers/clk/actions/owl-factor.c
-@@ -64,11 +64,10 @@ static unsigned int _get_table_val(const struct clk_factor_table *table,
- 	return val;
+diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
+index db2983c51f1e..bf9658800bda 100644
+--- a/drivers/crypto/hisilicon/sec/sec_algs.c
++++ b/drivers/crypto/hisilicon/sec/sec_algs.c
+@@ -153,6 +153,24 @@ static void sec_alg_skcipher_init_context(struct crypto_skcipher *atfm,
+ 				       ctx->cipher_alg);
  }
  
--static int clk_val_best(struct clk_hw *hw, unsigned long rate,
-+static int owl_clk_val_best(const struct owl_factor_hw *factor_hw,
-+			struct clk_hw *hw, unsigned long rate,
- 			unsigned long *best_parent_rate)
- {
--	struct owl_factor *factor = hw_to_owl_factor(hw);
--	struct owl_factor_hw *factor_hw = &factor->factor_hw;
- 	const struct clk_factor_table *clkt = factor_hw->table;
- 	unsigned long parent_rate, try_parent_rate, best = 0, cur_rate;
- 	unsigned long parent_rate_saved = *best_parent_rate;
-@@ -126,7 +125,7 @@ long owl_factor_helper_round_rate(struct owl_clk_common *common,
- 	const struct clk_factor_table *clkt = factor_hw->table;
- 	unsigned int val, mul = 0, div = 1;
++static void sec_free_hw_sgl(struct sec_hw_sgl *hw_sgl,
++			    dma_addr_t psec_sgl, struct sec_dev_info *info)
++{
++	struct sec_hw_sgl *sgl_current, *sgl_next;
++	dma_addr_t sgl_next_dma;
++
++	sgl_current = hw_sgl;
++	while (sgl_current) {
++		sgl_next = sgl_current->next;
++		sgl_next_dma = sgl_current->next_sgl;
++
++		dma_pool_free(info->hw_sgl_pool, sgl_current, psec_sgl);
++
++		sgl_current = sgl_next;
++		psec_sgl = sgl_next_dma;
++	}
++}
++
+ static int sec_alloc_and_fill_hw_sgl(struct sec_hw_sgl **sec_sgl,
+ 				     dma_addr_t *psec_sgl,
+ 				     struct scatterlist *sgl,
+@@ -199,36 +217,12 @@ static int sec_alloc_and_fill_hw_sgl(struct sec_hw_sgl **sec_sgl,
+ 	return 0;
  
--	val = clk_val_best(&common->hw, rate, parent_rate);
-+	val = owl_clk_val_best(factor_hw, &common->hw, rate, parent_rate);
- 	_get_table_div_mul(clkt, val, &mul, &div);
+ err_free_hw_sgls:
+-	sgl_current = *sec_sgl;
+-	while (sgl_current) {
+-		sgl_next = sgl_current->next;
+-		dma_pool_free(info->hw_sgl_pool, sgl_current,
+-			      sgl_current->next_sgl);
+-		sgl_current = sgl_next;
+-	}
++	sec_free_hw_sgl(*sec_sgl, *psec_sgl, info);
+ 	*psec_sgl = 0;
  
- 	return *parent_rate * mul / div;
+ 	return ret;
+ }
+ 
+-static void sec_free_hw_sgl(struct sec_hw_sgl *hw_sgl,
+-			    dma_addr_t psec_sgl, struct sec_dev_info *info)
+-{
+-	struct sec_hw_sgl *sgl_current, *sgl_next;
+-	dma_addr_t sgl_next_dma;
+-
+-	sgl_current = hw_sgl;
+-	while (sgl_current) {
+-		sgl_next = sgl_current->next;
+-		sgl_next_dma = sgl_current->next_sgl;
+-
+-		dma_pool_free(info->hw_sgl_pool, sgl_current, psec_sgl);
+-
+-		sgl_current = sgl_next;
+-		psec_sgl = sgl_next_dma;
+-	}
+-}
+-
+ static int sec_alg_skcipher_setkey(struct crypto_skcipher *tfm,
+ 				   const u8 *key, unsigned int keylen,
+ 				   enum sec_cipher_alg alg)
 -- 
 2.20.1
 
