@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9031613F859
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA06813F853
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437575AbgAPTR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:17:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40180 "EHLO mail.kernel.org"
+        id S2407308AbgAPTRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:17:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732589AbgAPQzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:10 -0500
+        id S1732674AbgAPQzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8E7F2192A;
-        Thu, 16 Jan 2020 16:55:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B53A2467A;
+        Thu, 16 Jan 2020 16:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193710;
-        bh=v62+uadh2EIx4wLh1tUeUy7PoYIjisnB1H3B4tUsUAI=;
+        s=default; t=1579193714;
+        bh=klIKoTMA6lF5peF5ulNsoGKugOg5LPRiZi3nziNWFJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wilJg2oU6tgT26GRcBRo9JKnK6FKKbM1dV37NvErbMInjdjuDdCBrT6XOlAGl2GNT
-         T/nIFd8gBN82WPpoICN9ZpaLKYRTORXjbmE+Y3g8Con6ISubkRdwHeMUvlbuCf5Rcp
-         lFc3D4f2eIv6dNUcOSxNtTPpPBGgtwa6gwy5Pu6Y=
+        b=QX7HSAm21TH7/fKsGEiXztMOGuVMkSlZL4knblr1NL+TptW4vQWoEDRBWHNBRG5v9
+         A3LfW1RFuGslOafPPsA933Wctk6MtHHWq3S7OzXGRKJFAkj2PdJYCENb6aQO4mD8Vz
+         UshUBePUqlBJIOfDUh5hvToTkcIZMefPh8zb9rKg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 006/671] iio: fix position relative kernel version
-Date:   Thu, 16 Jan 2020 11:43:57 -0500
-Message-Id: <20200116165502.8838-6-sashal@kernel.org>
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 010/671] ARM: qcom_defconfig: Enable MAILBOX
+Date:   Thu, 16 Jan 2020 11:44:01 -0500
+Message-Id: <20200116165502.8838-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -43,33 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 21eab7861688aa4c69fcb88440cc0c4a422bdcd6 ]
+[ Upstream commit 54c2678cd198f61555796bbda5e1727e6e1858f1 ]
 
-Position relative channel type was added in 4.19 kernel version
+Problem:
+ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
+becomes unset since MAILBOX was not enabled in qcom_defconfig and is
+not otherwise selected for the dragonboard.  When the resulting
+kernel is booted the mmc device which contains the root file system
+is not available.
 
-Fixes: "3055a6cfa04ba" ("iio: Add channel for Position Relative")
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fix:
+add CONFIG_MAILBOX to qcom_defconfig
+
+Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+added a "depends on MAILBOX")
+
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-bus-iio | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/qcom_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index a5b4f223641d..8127a08e366d 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -199,7 +199,7 @@ Description:
- 
- What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_x_raw
- What:		/sys/bus/iio/devices/iio:deviceX/in_positionrelative_y_raw
--KernelVersion:	4.18
-+KernelVersion:	4.19
- Contact:	linux-iio@vger.kernel.org
- Description:
- 		Relative position in direction x or y on a pad (may be
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index 6aa7046fb91f..bd6440f23493 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
+ CONFIG_MSM_IOMMU=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_QCOM=y
++CONFIG_MAILBOX=y
+ CONFIG_REMOTEPROC=y
+ CONFIG_QCOM_ADSP_PIL=y
+ CONFIG_QCOM_Q6V5_PIL=y
 -- 
 2.20.1
 
