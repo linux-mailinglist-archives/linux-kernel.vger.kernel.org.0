@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5967D13E989
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A5913E8CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:34:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405044AbgAPRic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:38:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393220AbgAPRhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:54 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2404869AbgAPReW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:34:22 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29969 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404857AbgAPReT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:34:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579196058;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OVue51NKiEdCI1G3Wg0c7rke38eyF1pA9SE2ZsSZDQI=;
+        b=fHZcmqoBNKJ/oTnjU0vuYOxeg8/j/PzykVnX2910NcHF03B349QRl82ZaZXLDfUUYEJjw9
+        6E5mnVO7wr2s/YfAlKf0TH1ZOwZUVy5m9OljCBRiboopjssQ+50LKebR9DHmBR2kVsZlvz
+        RFxesn+9wQxK4wO9PTdm84eTBHPeikY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-aaus8bAsOVm8obp_vZoOEQ-1; Thu, 16 Jan 2020 12:34:14 -0500
+X-MC-Unique: aaus8bAsOVm8obp_vZoOEQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E60B246DD;
-        Thu, 16 Jan 2020 17:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196274;
-        bh=CoU9mfn6JpZ2Lmi3xaNgldVIo9L2bmErfOKLD4D/kuI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPoA/XRHRBl9FOhLa9u30NOZ0PL9isO9sSZCMYPhZCrfhDk+RbO+83tHw0nDhv0dQ
-         PCTBalZOFp1GLmp8uaahshbND1VWB8q2IKABWA2SBme14Z/WS1HoTVR7ui+5gWuHrT
-         A1yQqUGWZmzAofh1/j80crxTPJu2/MsrVB4pBkas=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 095/251] net: sh_eth: fix a missing check of of_get_phy_mode
-Date:   Thu, 16 Jan 2020 12:34:04 -0500
-Message-Id: <20200116173641.22137-55-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44F5519057D8;
+        Thu, 16 Jan 2020 17:34:11 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 443E75C1D8;
+        Thu, 16 Jan 2020 17:34:10 +0000 (UTC)
+Subject: Re: [PATCH v2] watchdog: Fix possible soft lockup warning at bootup
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Robert Richter <rrichter@marvell.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20200103151032.19590-1-longman@redhat.com>
+ <87sgkgw3xq.fsf@nanos.tec.linutronix.de>
+ <87blr3wrqw.fsf@nanos.tec.linutronix.de>
+ <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
+ <87tv4vuyo6.fsf@nanos.tec.linutronix.de>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <9ae2ee4d-7b67-50ff-e736-1d51753c5ccd@redhat.com>
+Date:   Thu, 16 Jan 2020 12:34:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87tv4vuyo6.fsf@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+On 1/16/20 11:57 AM, Thomas Gleixner wrote:
+>> So your theory the MONOTONIC clock runs differently/wrongly could
+>> explain that (assuming this drives the sched clock). Though, I am
+> No. sched_clock() is separate. It uses a raw timestamp (in your case
+> from the ARM arch timer) and converts it to something which is close to
+> proper time. So my assumption was based on the printout Waiman had:
+>
+>  [ 1... ] CPU.... watchdog_fn now  170000000
+>  [ 25.. ] CPU.... watchdog_fn now 4170000000
+>
+> I assumed that now comes from ktime_get() or something like
+> that. Waiman?
 
-[ Upstream commit 035a14e71f27eefa50087963b94cbdb3580d08bf ]
+I printed out the now parameter of the=A0 __hrtimer_run_queues() call. So
+from the timer perspective, it is losing time. For watchdog, the soft
+expiry time is 4s. The watchdog function won't be called until the
+timer's time advances 4s or more. That corresponds to about 24s in
+timestamp time for that particular class of systems.
 
-of_get_phy_mode may fail and return a negative error code;
-the fix checks the return value of of_get_phy_mode and
-returns NULL of it fails.
-
-Fixes: b356e978e92f ("sh_eth: add device tree support")
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 49300194d3f9..6f8d4810ce97 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2929,12 +2929,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 	struct device_node *np = dev->of_node;
- 	struct sh_eth_plat_data *pdata;
- 	const char *mac_addr;
-+	int ret;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return NULL;
- 
--	pdata->phy_interface = of_get_phy_mode(np);
-+	ret = of_get_phy_mode(np);
-+	if (ret < 0)
-+		return NULL;
-+	pdata->phy_interface = ret;
- 
- 	mac_addr = of_get_mac_address(np);
- 	if (mac_addr)
--- 
-2.20.1
+Cheers,
+Longman
 
