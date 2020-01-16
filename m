@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD48613FDDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7D3813FDFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:31:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403762AbgAPXaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:30:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35852 "EHLO mail.kernel.org"
+        id S2404058AbgAPXbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:31:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391358AbgAPX3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:29:49 -0500
+        id S2391472AbgAPXbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 497BF206D9;
-        Thu, 16 Jan 2020 23:29:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7646D2072E;
+        Thu, 16 Jan 2020 23:31:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217388;
-        bh=bRXWIdddXbaSpDKseEkgF8QW4FjBl0fHJoBki22Yous=;
+        s=default; t=1579217470;
+        bh=hB5BWWxIKoqnN8wYNVmuKsmyHSS/5JsQbHctyTPH+BA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dVS6UMLWjgcaYeLFYKR/Q1kSHkv2B0xC5kPYYQ4zCN5l/xR312UfHMRqmNV3IT9T4
-         2HGXdFPjvBQmzfW1ADHmjJjHAQeRJHZ1nBVfhgEsRYJmXmbPA1EaZwogQ/aZa8/EvW
-         K0221Tu0sp32Sxt17yN371IeknwAJpE4us7DPGYM=
+        b=Tr8B2sMC3Xotg9/LaFvKyRf4vN/TH7VYtkTDaf9IjuWE0mTXdLm1eKbj1MRSmRnx7
+         v8PAmjsKPdEHD1Dno2fuaBPZYZZ4wRuEStP+9q1W8iqb2hYDtP+RBua2bggd/Sgmxa
+         zzxrXggs3LHrI4gdwfHx4/6pu/5YTN0dWdkbviOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Honggang Li <honli@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 36/84] RDMA/srpt: Report the SCSI residual to the initiator
+        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 12/71] mac80211: Do not send Layer 2 Update frame before authorization
 Date:   Fri, 17 Jan 2020 00:18:10 +0100
-Message-Id: <20200116231718.035158071@linuxfoundation.org>
+Message-Id: <20200116231711.224146351@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +45,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Jouni Malinen <jouni@codeaurora.org>
 
-commit e88982ad1bb12db699de96fbc07096359ef6176c upstream.
+commit 3e493173b7841259a08c5c8e5cbe90adb349da7e upstream.
 
-The code added by this patch is similar to the code that already exists in
-ibmvscsis_determine_resid(). This patch has been tested by running the
-following command:
+The Layer 2 Update frame is used to update bridges when a station roams
+to another AP even if that STA does not transmit any frames after the
+reassociation. This behavior was described in IEEE Std 802.11F-2003 as
+something that would happen based on MLME-ASSOCIATE.indication, i.e.,
+before completing 4-way handshake. However, this IEEE trial-use
+recommended practice document was published before RSN (IEEE Std
+802.11i-2004) and as such, did not consider RSN use cases. Furthermore,
+IEEE Std 802.11F-2003 was withdrawn in 2006 and as such, has not been
+maintained amd should not be used anymore.
 
-strace sg_raw -r 1k /dev/sdb 12 00 00 00 60 00 -o inquiry.bin |&
-    grep resid=
+Sending out the Layer 2 Update frame immediately after association is
+fine for open networks (and also when using SAE, FT protocol, or FILS
+authentication when the station is actually authenticated by the time
+association completes). However, it is not appropriate for cases where
+RSN is used with PSK or EAP authentication since the station is actually
+fully authenticated only once the 4-way handshake completes after
+authentication and attackers might be able to use the unauthenticated
+triggering of Layer 2 Update frame transmission to disrupt bridge
+behavior.
 
-Link: https://lore.kernel.org/r/20191105214632.183302-1-bvanassche@acm.org
-Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Acked-by: Honggang Li <honli@redhat.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fix this by postponing transmission of the Layer 2 Update frame from
+station entry addition to the point when the station entry is marked
+authorized. Similarly, send out the VLAN binding update only if the STA
+entry has already been authorized.
+
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ net/mac80211/cfg.c      |   14 ++++----------
+ net/mac80211/sta_info.c |    4 ++++
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -1324,9 +1324,11 @@ static int srpt_build_cmd_rsp(struct srp
- 			      struct srpt_send_ioctx *ioctx, u64 tag,
- 			      int status)
- {
-+	struct se_cmd *cmd = &ioctx->cmd;
- 	struct srp_rsp *srp_rsp;
- 	const u8 *sense_data;
- 	int sense_data_len, max_sense_len;
-+	u32 resid = cmd->residual_count;
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1398,7 +1398,6 @@ static int ieee80211_add_station(struct
+ 	struct sta_info *sta;
+ 	struct ieee80211_sub_if_data *sdata;
+ 	int err;
+-	int layer2_update;
  
- 	/*
- 	 * The lowest bit of all SAM-3 status codes is zero (see also
-@@ -1348,6 +1350,28 @@ static int srpt_build_cmd_rsp(struct srp
- 	srp_rsp->tag = tag;
- 	srp_rsp->status = status;
+ 	if (params->vlan) {
+ 		sdata = IEEE80211_DEV_TO_SUB_IF(params->vlan);
+@@ -1442,18 +1441,12 @@ static int ieee80211_add_station(struct
+ 	    test_sta_flag(sta, WLAN_STA_ASSOC))
+ 		rate_control_rate_init(sta);
  
-+	if (cmd->se_cmd_flags & SCF_UNDERFLOW_BIT) {
-+		if (cmd->data_direction == DMA_TO_DEVICE) {
-+			/* residual data from an underflow write */
-+			srp_rsp->flags = SRP_RSP_FLAG_DOUNDER;
-+			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
-+		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
-+			/* residual data from an underflow read */
-+			srp_rsp->flags = SRP_RSP_FLAG_DIUNDER;
-+			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
+-	layer2_update = sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
+-		sdata->vif.type == NL80211_IFTYPE_AP;
+-
+ 	err = sta_info_insert_rcu(sta);
+ 	if (err) {
+ 		rcu_read_unlock();
+ 		return err;
+ 	}
+ 
+-	if (layer2_update)
+-		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
+-
+ 	rcu_read_unlock();
+ 
+ 	return 0;
+@@ -1551,10 +1544,11 @@ static int ieee80211_change_station(stru
+ 		sta->sdata = vlansdata;
+ 		ieee80211_check_fast_xmit(sta);
+ 
+-		if (test_sta_flag(sta, WLAN_STA_AUTHORIZED))
++		if (test_sta_flag(sta, WLAN_STA_AUTHORIZED)) {
+ 			ieee80211_vif_inc_num_mcast(sta->sdata);
+-
+-		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
++			cfg80211_send_layer2_update(sta->sdata->dev,
++						    sta->sta.addr);
 +		}
-+	} else if (cmd->se_cmd_flags & SCF_OVERFLOW_BIT) {
-+		if (cmd->data_direction == DMA_TO_DEVICE) {
-+			/* residual data from an overflow write */
-+			srp_rsp->flags = SRP_RSP_FLAG_DOOVER;
-+			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
-+		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
-+			/* residual data from an overflow read */
-+			srp_rsp->flags = SRP_RSP_FLAG_DIOVER;
-+			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
-+		}
-+	}
-+
- 	if (sense_data_len) {
- 		BUILD_BUG_ON(MIN_MAX_RSP_SIZE <= sizeof(*srp_rsp));
- 		max_sense_len = ch->max_ti_iu_len - sizeof(*srp_rsp);
+ 	}
+ 
+ 	err = sta_apply_parameters(local, sta, params);
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@ -1899,6 +1899,10 @@ int sta_info_move_state(struct sta_info
+ 			ieee80211_check_fast_xmit(sta);
+ 			ieee80211_check_fast_rx(sta);
+ 		}
++		if (sta->sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
++		    sta->sdata->vif.type == NL80211_IFTYPE_AP)
++			cfg80211_send_layer2_update(sta->sdata->dev,
++						    sta->sta.addr);
+ 		break;
+ 	default:
+ 		break;
 
 
