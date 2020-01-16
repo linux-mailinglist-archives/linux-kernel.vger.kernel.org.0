@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53EBE13F4CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FAC613F4AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:53:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404695AbgAPSv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:51:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42628 "EHLO mail.kernel.org"
+        id S2389495AbgAPRIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:08:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388813AbgAPRIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:08:37 -0500
+        id S2387629AbgAPRIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:08:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51ED7217F4;
-        Thu, 16 Jan 2020 17:08:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB36A21D56;
+        Thu, 16 Jan 2020 17:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194516;
-        bh=1uCPHsfJfr26GFduXu+QhjfWliFP3cSM3VNE+SKE9mY=;
+        s=default; t=1579194523;
+        bh=/BomwU7BzLsXWZlAm+sEkga800aiL6dN51sInZMjMYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WVe/z2gNIz2GhWettHuIGsPYARs6GAdS48g9vibW3NL65AZfXHqX7dxhCsrEvC2hg
-         nI+DjfVVmVSo8Z4/1bM2Ur86iCu/rcfSJbJG1BGx/5A/oJki9eqTZbajP8QyOUAOWV
-         C0NwGTzBs/0H7WCYMg/5bfCb2BzWSpvuqBmp0Dy0=
+        b=fz3UzSrtMtDse0uHaTXmbLOeu7d/LcJ2y8gxiwegxJ2cvlM2ZgzoGpSwmcCy8C59n
+         LZzpilmkAPkLH6n1D0NwRq3q68uEcj6e8WeMZb7PW//6seGYdm+75IF1HRGa737tE9
+         lKuXrZ8+W3uj3E5VbH1eIdFVgeFRVHHU/ILth5J8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>, Sasha Levin <sashal@kernel.org>,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 409/671] ntb_hw_switchtec: potential shift wrapping bug in switchtec_ntb_init_sndev()
-Date:   Thu, 16 Jan 2020 12:00:47 -0500
-Message-Id: <20200116170509.12787-146-sashal@kernel.org>
+Cc:     Michal Kalderon <michal.kalderon@marvell.com>,
+        Ariel Elior <ariel.elior@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 414/671] qed: iWARP - fix uninitialized callback
+Date:   Thu, 16 Jan 2020 12:00:52 -0500
+Message-Id: <20200116170509.12787-151-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,40 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Michal Kalderon <michal.kalderon@marvell.com>
 
-[ Upstream commit ff148d8ac53e59802645bd3200c811620317eb9f ]
+[ Upstream commit 43cf40d93fadbb0d3edf0942a4612f8ff67478a1 ]
 
-This code triggers a Smatch warning:
+Fix uninitialized variable warning by static checker.
 
-    drivers/ntb/hw/mscc/ntb_hw_switchtec.c:884 switchtec_ntb_init_sndev()
-    warn: should '(1 << sndev->peer_partition)' be a 64 bit type?
-
-The "part_map" and "tpart_vec" variables are u64 type so this seems like
-a valid warning.
-
-Fixes: 3df54c870f52 ("ntb_hw_switchtec: Allow using Switchtec NTB in multi-partition setups")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Jon Mason <jdmason@kudzu.us>
+Fixes: ae3488ff37dc ("qed: Add ll2 connection for processing unaligned MPA packets")
+Signed-off-by: Ariel Elior <ariel.elior@marvell.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 9916bc5b6759..313f6258c424 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -899,7 +899,7 @@ static int switchtec_ntb_init_sndev(struct switchtec_ntb *sndev)
- 		}
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+index c77babd0ef95..39787bb885c8 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -2641,6 +2641,7 @@ qed_iwarp_ll2_start(struct qed_hwfn *p_hwfn,
+ 	cbs.rx_release_cb = qed_iwarp_ll2_rel_rx_pkt;
+ 	cbs.tx_comp_cb = qed_iwarp_ll2_comp_tx_pkt;
+ 	cbs.tx_release_cb = qed_iwarp_ll2_rel_tx_pkt;
++	cbs.slowpath_cb = NULL;
+ 	cbs.cookie = p_hwfn;
  
- 		sndev->peer_partition = ffs(tpart_vec) - 1;
--		if (!(part_map & (1 << sndev->peer_partition))) {
-+		if (!(part_map & (1ULL << sndev->peer_partition))) {
- 			dev_err(&sndev->stdev->dev,
- 				"ntb target partition is not NT partition\n");
- 			return -ENODEV;
+ 	memset(&data, 0, sizeof(data));
 -- 
 2.20.1
 
