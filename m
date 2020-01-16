@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34AD313E327
+	by mail.lfdr.de (Postfix) with ESMTP id A8F8413E328
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:00:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387734AbgAPRAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49598 "EHLO mail.kernel.org"
+        id S2387754AbgAPRAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:00:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387685AbgAPRAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:10 -0500
+        id S2387722AbgAPRAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCC3E2468B;
-        Thu, 16 Jan 2020 17:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B19222525;
+        Thu, 16 Jan 2020 17:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194010;
-        bh=M7pKHob5n3us2aSh5joiFKVhkWDKifwR8/doQiFngqs=;
+        s=default; t=1579194016;
+        bh=IipMnTXhBIxyAvhtlYI+7dCiLvBs2w2RwqoI+ysNijA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qjIvlASfZr+ybAmWjvMsc6s7Dy1Cb0SlLAU8BoSlZutbo7DVYI3fecU5Fgh6BansF
-         r9dA1C6pAsSuX5Wa7tEpYUmfnsuON8ReQlpDf1J6zDfkzhzsT1GXrm1IALgatYDrJ8
-         GAag5XJS5P+TRupt+VHDrNUZC244F/a0F6PQlrJ0=
+        b=G2dX9xknjjZnKXXnCJTh8mp7CcIqfHeYB6FD7CmkksE5POZZpaEofxRbUgfpPPZL4
+         QxQfGNSQz2fmWvZmTjFClhqiX8qYlq1OuEmFrGvcp+453KwPswcRuaEUrnnw+Re4b4
+         uVErlxk1BmfDJc6R3XhsJ8B+Jvre1ZXHPyRSmDj4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     wenxu <wenxu@ucloud.cn>, "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 134/671] ip_tunnel: Fix route fl4 init in ip_md_tunnel_xmit
-Date:   Thu, 16 Jan 2020 11:50:43 -0500
-Message-Id: <20200116165940.10720-17-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 138/671] tty: ipwireless: Fix potential NULL pointer dereference
+Date:   Thu, 16 Jan 2020 11:50:47 -0500
+Message-Id: <20200116165940.10720-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -42,38 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: wenxu <wenxu@ucloud.cn>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 6e6b904ad4f9aed43ec320afbd5a52ed8461ab41 ]
+[ Upstream commit 7dd50e205b3348dc7784efbdf85723551de64a25 ]
 
-Init the gre_key from tuninfo->key.tun_id and init the mark
-from the skb->mark, set the oif to zero in the collect metadata
-mode.
+There is a potential NULL pointer dereference in case
+alloc_ctrl_packet() fails and returns NULL.
 
-Fixes: cfc7381b3002 ("ip_tunnel: add collect_md mode to IPIP tunnel")
-Signed-off-by: wenxu <wenxu@ucloud.cn>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 099dc4fb6265 ("ipwireless: driver for PC Card 3G/UMTS modem")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/ip_tunnel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/ipwireless/hardware.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-index 420e891ac59d..f03a1b68e70f 100644
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -574,8 +574,9 @@ void ip_md_tunnel_xmit(struct sk_buff *skb, struct net_device *dev, u8 proto)
- 		else if (skb->protocol == htons(ETH_P_IPV6))
- 			tos = ipv6_get_dsfield((const struct ipv6hdr *)inner_iph);
- 	}
--	ip_tunnel_init_flow(&fl4, proto, key->u.ipv4.dst, key->u.ipv4.src, 0,
--			    RT_TOS(tos), tunnel->parms.link, tunnel->fwmark);
-+	ip_tunnel_init_flow(&fl4, proto, key->u.ipv4.dst, key->u.ipv4.src,
-+			    tunnel_id_to_key32(key->tun_id), RT_TOS(tos),
-+			    0, skb->mark);
- 	if (tunnel->encap.type != TUNNEL_ENCAP_NONE)
- 		goto tx_error;
- 	rt = ip_route_output_key(tunnel->net, &fl4);
+diff --git a/drivers/tty/ipwireless/hardware.c b/drivers/tty/ipwireless/hardware.c
+index b0baa4ce10f9..6bbf35682d53 100644
+--- a/drivers/tty/ipwireless/hardware.c
++++ b/drivers/tty/ipwireless/hardware.c
+@@ -1516,6 +1516,8 @@ static void ipw_send_setup_packet(struct ipw_hardware *hw)
+ 			sizeof(struct ipw_setup_get_version_query_packet),
+ 			ADDR_SETUP_PROT, TL_PROTOCOLID_SETUP,
+ 			TL_SETUP_SIGNO_GET_VERSION_QRY);
++	if (!ver_packet)
++		return;
+ 	ver_packet->header.length = sizeof(struct tl_setup_get_version_qry);
+ 
+ 	/*
 -- 
 2.20.1
 
