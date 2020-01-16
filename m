@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D7CF13F83E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B0CE13F83C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:18:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391212AbgAPTQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41130 "EHLO mail.kernel.org"
+        id S2437532AbgAPTQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:16:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733077AbgAPQzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:37 -0500
+        id S1733091AbgAPQzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF6652467A;
-        Thu, 16 Jan 2020 16:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5766B2192A;
+        Thu, 16 Jan 2020 16:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193737;
-        bh=x8IBTbMc7q0xygme5mT2prwtW8teTHQaE5Z0R5c1sgQ=;
+        s=default; t=1579193741;
+        bh=N19053XbNoSi+CqfIZwUBqiWoKNj/vKaB4JSfsdBJx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l1uokLztaLSfQlxKIWgQwwbY7h1ETRJrYGBWSfn92GmyhGw2X5LHWzPlabJIycTXm
-         Fm7OaBmQd5Y7CKoN6MJftXISn5mgwsOWB0XfsGp99pBpBDu0a1Mc8WWoxchtfpCh/i
-         4IFf1mN3G56wvLk7C+338ma0+DK4BtaQ9ZRd75E8=
+        b=Q24qCQdycETW9wiHdq7ZIkq815zzlIMZH52ENiuknEkjYlsZbZxmHwCU7ZfEJrdqM
+         Akum96XbZQknjQ7YjPHxvjTx5CS5hi6zdOAsIGrhHKsF6yrqDZZmEbsfJ+Qa+LmjLz
+         h4fKWbIPYTe+K8LRmttZK+5NfLzkzO2cncUxTUro=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolas Huaman <nicolas@herochao.de>, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.19 029/671] ALSA: usb-audio: update quirk for B&W PX to remove microphone
-Date:   Thu, 16 Jan 2020 11:44:20 -0500
-Message-Id: <20200116165502.8838-29-sashal@kernel.org>
+Cc:     Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 032/671] netfilter: nft_osf: usage from output path is not valid
+Date:   Thu, 16 Jan 2020 11:44:23 -0500
+Message-Id: <20200116165502.8838-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -42,62 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Huaman <nicolas@herochao.de>
+From: Fernando Fernandez Mancera <ffmancera@riseup.net>
 
-[ Upstream commit c369c8db15d51fa175d2ba85928f79d16af6b562 ]
+[ Upstream commit 4a3e71b7b7dbaf3562be9d508260935aa13cb48b ]
 
-A quirk in snd-usb-audio was added to automate setting sample rate to
-4800k and remove the previously exposed nonfunctional microphone for
-the Bowers & Wilkins PX:
-commit 240a8af929c7c57dcde28682725b29cf8474e8e5
-https://lore.kernel.org/patchwork/patch/919689/
+The nft_osf extension, like xt_osf, is not supported from the output
+path.
 
-However the headphones where updated shortly after that to remove the
-unintentional microphone functionality. I guess because of this the
-headphones now crash when connecting them via USB while the quirk is
-active. Dmesg:
-
-snd-usb-audio: probe of 2-3:1.0 failed with error -22
-usb 2-3: 2:1: cannot get min/max values for control 2 (id 2)
-
-This patch removes the microfone and allows the headphones to connect
-and work out of the box. It is based on the current mainline kernel
- and successfully applied an tested on my machine (4.18.10.arch1-1).
-
-Fixes: 240a8af929c7 ("ALSA: usb-audio: Add a quirck for B&W PX headphones")
-Signed-off-by: Nicolas Huaman <nicolas@herochao.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: b96af92d6eaf ("netfilter: nf_tables: implement Passive OS fingerprint module in nft_osf")
+Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/quirks-table.h | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ net/netfilter/nft_osf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 65f9c4ba62ee..90d4f61cc230 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3349,19 +3349,14 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
- 				.ifnum = 0,
- 				.type = QUIRK_AUDIO_STANDARD_MIXER,
- 			},
--			/* Capture */
--			{
--				.ifnum = 1,
--				.type = QUIRK_IGNORE_INTERFACE,
--			},
- 			/* Playback */
- 			{
--				.ifnum = 2,
-+				.ifnum = 1,
- 				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
- 				.data = &(const struct audioformat) {
- 					.formats = SNDRV_PCM_FMTBIT_S16_LE,
- 					.channels = 2,
--					.iface = 2,
-+					.iface = 1,
- 					.altsetting = 1,
- 					.altset_idx = 1,
- 					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
+diff --git a/net/netfilter/nft_osf.c b/net/netfilter/nft_osf.c
+index a35fb59ace73..df4e3e0412ed 100644
+--- a/net/netfilter/nft_osf.c
++++ b/net/netfilter/nft_osf.c
+@@ -69,6 +69,15 @@ static int nft_osf_dump(struct sk_buff *skb, const struct nft_expr *expr)
+ 	return -1;
+ }
+ 
++static int nft_osf_validate(const struct nft_ctx *ctx,
++			    const struct nft_expr *expr,
++			    const struct nft_data **data)
++{
++	return nft_chain_validate_hooks(ctx->chain, (1 << NF_INET_LOCAL_IN) |
++						    (1 << NF_INET_PRE_ROUTING) |
++						    (1 << NF_INET_FORWARD));
++}
++
+ static struct nft_expr_type nft_osf_type;
+ static const struct nft_expr_ops nft_osf_op = {
+ 	.eval		= nft_osf_eval,
+@@ -76,6 +85,7 @@ static const struct nft_expr_ops nft_osf_op = {
+ 	.init		= nft_osf_init,
+ 	.dump		= nft_osf_dump,
+ 	.type		= &nft_osf_type,
++	.validate	= nft_osf_validate,
+ };
+ 
+ static struct nft_expr_type nft_osf_type __read_mostly = {
 -- 
 2.20.1
 
