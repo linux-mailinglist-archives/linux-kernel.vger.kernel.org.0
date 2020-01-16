@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B93C13FFA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9881F13FFA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:44:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbgAPXXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:23:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51100 "EHLO mail.kernel.org"
+        id S1730493AbgAPXo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:44:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731268AbgAPXXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:23:04 -0500
+        id S1730385AbgAPXYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:24:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 488642073A;
-        Thu, 16 Jan 2020 23:23:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 695982072E;
+        Thu, 16 Jan 2020 23:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216983;
-        bh=NwfYSZRZH0kb1dydif8obU3YW+j3+UU9L10pLsDIZwY=;
+        s=default; t=1579217049;
+        bh=N7VTVlXdao9/QnRa5Pq+e/5WQ6gubOhfw2gXsn5wv+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=le5dEZcbTRbXzlhvnxoFWm/MHTltHZ2f0c7PBiVUSJZ6DE9vNbDHTdc7RiuUxvyK2
-         GXWNovWRWAkTZwgUroRFoC4oOhiND8Y5mRWAUfnERuxPdwUwgRy/NTrCXkBdRPMj2N
-         YvLa+htAISoSza5h8LTg/sqXnd45X/F0kS3E3EX8=
+        b=aP24NWQyzyKxf0KN9wBgkaDJsSZ55/4tPsZahpVd29QU6FUl7+7tnLHnskIbZ/vpi
+         kvLXrN91ignhfZW6D3zXXg0ri8hOWqUvyeL7yElXtc7LDGvQ9o6mEEF0kyuwiwEWMD
+         iW/LCsfaWtLu5Onjvdp5l6+CQlYbTIPTLAZXladw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunfeng Ye <yeyunfeng@huawei.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Gonglei <arei.gonglei@huawei.com>,
+        virtualization@lists.linux-foundation.org,
+        Ard Biesheuvel <ardb@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.4 100/203] crypto: arm64/aes-neonbs - add return value of skcipher_walk_done() in __xts_crypt()
-Date:   Fri, 17 Jan 2020 00:16:57 +0100
-Message-Id: <20200116231754.355010543@linuxfoundation.org>
+Subject: [PATCH 5.4 101/203] crypto: virtio - implement missing support for output IVs
+Date:   Fri, 17 Jan 2020 00:16:58 +0100
+Message-Id: <20200116231754.427447217@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -44,35 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfeng Ye <yeyunfeng@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-commit 9b537997b669c42cec67893538037e8d1c83c91c upstream.
+commit 500e6807ce93b1fdc7d5b827c5cc167cc35630db upstream.
 
-A warning is found by the static code analysis tool:
-  "Identical condition 'err', second condition is always false"
+In order to allow for CBC to be chained, which is something that the
+CTS template relies upon, implementations of CBC need to pass the
+IV to be used for subsequent invocations via the IV buffer. This was
+not implemented yet for virtio-crypto so implement it now.
 
-Fix this by adding return value of skcipher_walk_done().
-
-Fixes: 67cfa5d3b721 ("crypto: arm64/aes-neonbs - implement ciphertext stealing for XTS")
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: dbaf0624ffa5 ("crypto: add virtio-crypto driver")
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Gonglei <arei.gonglei@huawei.com>
+Cc: virtualization@lists.linux-foundation.org
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/crypto/aes-neonbs-glue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/virtio/virtio_crypto_algs.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/arm64/crypto/aes-neonbs-glue.c
-+++ b/arch/arm64/crypto/aes-neonbs-glue.c
-@@ -384,7 +384,7 @@ static int __xts_crypt(struct skcipher_r
- 			goto xts_tail;
- 
- 		kernel_neon_end();
--		skcipher_walk_done(&walk, nbytes);
-+		err = skcipher_walk_done(&walk, nbytes);
+--- a/drivers/crypto/virtio/virtio_crypto_algs.c
++++ b/drivers/crypto/virtio/virtio_crypto_algs.c
+@@ -435,6 +435,11 @@ __virtio_crypto_ablkcipher_do_req(struct
+ 		goto free;
  	}
- 
- 	if (err || likely(!tail))
+ 	memcpy(iv, req->info, ivsize);
++	if (!vc_sym_req->encrypt)
++		scatterwalk_map_and_copy(req->info, req->src,
++					 req->nbytes - AES_BLOCK_SIZE,
++					 AES_BLOCK_SIZE, 0);
++
+ 	sg_init_one(&iv_sg, iv, ivsize);
+ 	sgs[num_out++] = &iv_sg;
+ 	vc_sym_req->iv = iv;
+@@ -571,6 +576,10 @@ static void virtio_crypto_ablkcipher_fin
+ 	struct ablkcipher_request *req,
+ 	int err)
+ {
++	if (vc_sym_req->encrypt)
++		scatterwalk_map_and_copy(req->info, req->dst,
++					 req->nbytes - AES_BLOCK_SIZE,
++					 AES_BLOCK_SIZE, 0);
+ 	crypto_finalize_ablkcipher_request(vc_sym_req->base.dataq->engine,
+ 					   req, err);
+ 	kzfree(vc_sym_req->iv);
 
 
