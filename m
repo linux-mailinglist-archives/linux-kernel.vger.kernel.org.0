@@ -2,80 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45FB213D1A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 02:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1594A13D1AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 02:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbgAPBo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 20:44:59 -0500
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:41326 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730247AbgAPBo6 (ORCPT
+        id S1730354AbgAPBpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 20:45:47 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42218 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730153AbgAPBpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 20:44:58 -0500
-Received: by mail-wr1-f47.google.com with SMTP id c9so17537266wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 17:44:57 -0800 (PST)
+        Wed, 15 Jan 2020 20:45:47 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y4so20751672ljj.9
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 17:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HHyBv9/uEUzj2yZpH1lPNDp/96TDlfsa3OqJUI+/4dM=;
-        b=ajk8NqoFzUUWEVPoY2YbpKmKovEbVpNC/G8dbwzkRIfRyNhL/ngheXVmIgb6pDrbao
-         FUWhzGPpa/oEe1zobU9JNgXhpZR1XjDfdqrnxlYFhEwi3N4INsKVi0qiqTLwCvTZF32u
-         kTNLBQH2N4O7WDwxfsALb9HrTzCIM/7Iqx+Wxrsq4/oqq3RyS2rxcy4tdmClzQIGLf74
-         2rJT0IBbeB3YWi5aFnrq5PQ1liOv66yMK5P6RZOY67JG69r3y2P1E3+VpHrKOxgabfeH
-         RJjutBwAPLO5mSrvgLl6KfcaPukSK3YQm0fWt8Wb7zx7l+ESm85Rw2s7gEMlu59ZQ1t/
-         QCjw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U+RQyzgBTq/ON6P2+wJSZt2wyW+FlNHJHg+NSKeDmFE=;
+        b=NUQfXiZb7391JB22uSyaFTtB4xoyTOL60AdEkWdUh9rxn3xgqHIqBIQpQ9yOWzqBXs
+         62FYnY/2uSynVunTrZJ8JYuDmTz8jZF6jOn7HOVMhJX3z4m9s9bL73CXe8BKLMOz5YIl
+         XdYCgmMNvQZ4n6Byp11D9S9bCCS57BSDMynfZrfNaOJW3E2ExHmELrlRs0lQfUqAN4DL
+         dgzBx3qRnlKImZtiOQ+nKIbLa1FIbL49mGsAeLkZYfgs75BdTKc8gPPNQiPaI1v71Lyw
+         sBSAjPQWnIw+uXBomVWjbWzV4XSeoiHgMQe1nO0SmAkMDbfva4H1eLJRCVuMFArrQrPI
+         dbFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HHyBv9/uEUzj2yZpH1lPNDp/96TDlfsa3OqJUI+/4dM=;
-        b=Z2jfjV42VvV2u9gyW5kL0csQezgyPXohjnJdGEE9DpUeYnDa+kYXnA/lYjpCTlvCvI
-         3MDcWyQ9LroDlFJ3QIfRsjMGxCpR5447sBgWGtVzdD9hFUJ89WMc36yvKa6Ls+bCq4uv
-         XeIMTRKRcB9/ITbnUJ6B7ZbM8xGPWQKFl0x2/5ptwI3cY7g+pwGq00Jo6T774Bv7Yqp9
-         hA9V2KT4aJPvtsugUUrJdfsha9Q85MKMos+EXqGz9FPlZ94d20Oa7Ng3oN+uV5mQ2c7P
-         d5cVVW6Pu515cN8xvuxau3dkwq2RybZbFv0xmhjgMqLPaSOe7QyUHo142loPrh5gaVw+
-         j6Ng==
-X-Gm-Message-State: APjAAAWVFIrXmN4807jhv8V/Gh0gOzIu2r8d1W0BKTZN4a93vmJdyGfY
-        iRbZLW1nxjZbqAv6nEw1F8wkkucNmzA=
-X-Google-Smtp-Source: APXvYqzrdHr6ViCBpGA8HoqiJ6r1JJpA8bbbJfh9MIOIuK0CtXAFlGH5oCt5SaUo7gz/zIiiwaNuPA==
-X-Received: by 2002:a5d:46d0:: with SMTP id g16mr246806wrs.287.1579139096285;
-        Wed, 15 Jan 2020 17:44:56 -0800 (PST)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id k16sm27619337wru.0.2020.01.15.17.44.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jan 2020 17:44:55 -0800 (PST)
-Subject: Re: linux-next: Fixes tag needs some work in the usb-gadget tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200116070726.7e2ef8cc@canb.auug.org.au>
- <b7ef5047-c8c3-42cc-d049-fb72563d3544@linaro.org>
- <20200116124100.58af81d5@canb.auug.org.au>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <6b984328-b3f4-a23d-efb3-7e7955ad165a@linaro.org>
-Date:   Thu, 16 Jan 2020 01:45:25 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U+RQyzgBTq/ON6P2+wJSZt2wyW+FlNHJHg+NSKeDmFE=;
+        b=fsPxyRl/HySQ/U+52Yh9zGowtzldQmW3l/jm9GqxDZLZWksifygIy+AN9PE8yD7Nvd
+         s2kVur2OkbgHnosbKfPKF0b20oT18JPPmu8sCOUxmwDsdWDy10aPn0wJ8X18EkGbQaQf
+         FYc4EKjp6A/ur3IHs9v8bB+uVJKT30baI9vGzVz6f0ETH4IO7c9tANp+80ZcmXsaDFPC
+         LN1lxc1WqeCuGJrWBjk7v0hFVFpDG4hveSN43Q0e5+aLbiHKoBhXqudts7fEpQRHrHVN
+         qbomFWbTjBIUiyQ5VWkjSVc2y64+E7URHm8KvASsikGf4wGyImOQiU22hWmnRfPyEEuR
+         kP+Q==
+X-Gm-Message-State: APjAAAVSFLdK9jbhzlX1g8lwoS8AVAV138Od2FL1XoUYtF5YrFV6OnhS
+        BD7Jxj8C9ev6YkaSrNN1Kl095Il5lqtxCwkvsPI=
+X-Google-Smtp-Source: APXvYqyS0Lev/bxVn6XJvsngSBDaCup/fvOuKS3i1TkfXUrcWrb0SPAGKurZCEgWoS1m5HQmozfoMHG2L6QpgpaGMKY=
+X-Received: by 2002:a2e:9d90:: with SMTP id c16mr669463ljj.264.1579139144680;
+ Wed, 15 Jan 2020 17:45:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200116124100.58af81d5@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1572437285.git.vpillai@digitalocean.com>
+ <5e3cea14-28d1-bf1e-cabe-fb5b48fdeadc@linux.intel.com> <3c3c56c1-b8dc-652c-535e-74f6dcf45560@linux.intel.com>
+ <CANaguZAz+mw1Oi8ecZt+JuCWbf=g5UvKrdSvAeM82Z1c+9oWAw@mail.gmail.com>
+ <8f9acfb3-28e0-8d3e-08e0-77f04410cf38@linux.intel.com> <1cc62dbe-348e-affa-8740-c162e1454510@linux.intel.com>
+In-Reply-To: <1cc62dbe-348e-affa-8740-c162e1454510@linux.intel.com>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Thu, 16 Jan 2020 09:45:29 +0800
+Message-ID: <CAERHkrsaXAgE4MyE6ZehZ8cSq0bVrjc5uJnE9GwLCk4dp1hS9g@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 00/19] Core scheduling v4
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Aubrey Li <aubrey.li@linux.intel.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dario Faggioli <dfaggioli@suse.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/2020 01:41, Stephen Rothwell wrote:
-> Hi Bryan,
-> 
-> On Thu, 16 Jan 2020 01:19:22 +0000 Bryan O'Donoghue <bryan.odonoghue@linaro.org> wrote:
->>
->> How should extra long fixes like this be divided up ?
-> 
-> Just let them run on even if they are too long i.e. don't split them at all.
+On Thu, Jan 16, 2020 at 3:33 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+>
+> On 1/14/20 7:43 PM, Li, Aubrey wrote:
+> > On 2020/1/14 23:40, Vineeth Remanan Pillai wrote:
+> >> On Mon, Jan 13, 2020 at 8:12 PM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+> >>
+> >>> I also encountered kernel panic with the v4 code when taking cpu offline or online
+> >>> when core scheduler is running.  I've refreshed the previous patch, along
+> >>> with 3 other patches to fix problems related to CPU online/offline.
+> >>>
+> >>> As a side effect of the fix, each core can now operate in core-scheduling
+> >>> mode or non core-scheduling mode, depending on how many online SMT threads it has.
+> >>>
+> >>> Vineet, are you guys planning to refresh v4 and update it to v5?  Aubrey posted
+> >>> a port to the latest kernel earlier.
+> >>>
+> >> Thanks for the updated patch Tim.
+> >>
+> >> We have been testing with v4 rebased on 5.4.8 as RC kernels had given us
+> >> trouble in the past. v5 is due soon and we are planning to release v5 when
+> >> 5.5 comes out. As of now, v5 has your crash fixes and Aubrey's changes
+> >> related to load balancing.
+> >
+> > It turns out my load balancing related changes need to be refined.
+> > For example, we don't migrate task if the task's core cookie does not match
+> > with CPU's core cookie, but if the entire core is idle, we should allow task
+> > migration, something like the following:
+> >
+> > I plan to do this after my Chinese New Year holiday(Feb 3rd).
+> >
+> > Thanks,
+> > -Aubrey
+> >
+>
+> Aubrey's attached patch should replace his previous patch
+> sched/fair: don't migrate task if cookie not match
+>
+> I've also added a fix below for Aubrey's patch
+> sched/fair: find cookie matched idlest CPU.
+>
+> Aubrey, can you merge this fix into that patch when you update
+> your patches?
 
-That's what's in the git commit log though isn't it ?
+Thanks Tim, I'll include your fix when I update my patches.
+
+-Aubrey
