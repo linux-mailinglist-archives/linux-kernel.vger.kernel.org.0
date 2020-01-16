@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7D813FE06
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:32:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1946913FDBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404175AbgAPXcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40412 "EHLO mail.kernel.org"
+        id S1731109AbgAPX2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:28:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391482AbgAPXbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:31:45 -0500
+        id S1731940AbgAPX2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:28:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D12420661;
-        Thu, 16 Jan 2020 23:31:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01DBA2072E;
+        Thu, 16 Jan 2020 23:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217505;
-        bh=h+byEWvsgdhemHu13KACwa/7kqTpPFzXgZyL0H2/qjk=;
+        s=default; t=1579217325;
+        bh=LLWDbMEtQlHQaEFDZtOJvHJuT8Dp4yXK03QRPw7cZK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jKrMYGtGA0bso20U8ZQs7SzMVbycSCqkQwjpwQk3BLjBUMF9hsPFW/++FFCkbCJZR
-         1yGHMGJF00oa1jL45+3qnAaCahiZb8GBMdNT3T4EDl8cW4RFNGsGyws1FGiFp4vocW
-         54cEJWHqe3+fOr/CQFUBIMEJYko4GS+WNUgw5VTo=
+        b=W/aiM66NxrIN0QlsxTR038+PRKsnNofimEWfg9dClCjd3z+0Beha0EldYmWZlAqun
+         bFkp+ujUFRdMQNOWSIp/pio6rETfpIiypzvTD4jvcKtjqyX9Lz3Lo0Iphz+JBbut1S
+         x6HI9713ubzVqPLi8Yl+CeJAMPfzeDBzf8CdSUck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH 4.14 04/71] ethtool: reduce stack usage with clang
-Date:   Fri, 17 Jan 2020 00:18:02 +0100
-Message-Id: <20200116231710.044940260@linuxfoundation.org>
+        stable@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 29/84] s390/qeth: Fix vnicc_is_in_use if rx_bcast not set
+Date:   Fri, 17 Jan 2020 00:18:03 +0100
+Message-Id: <20200116231717.121482627@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
+References: <20200116231713.087649517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,66 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Alexandra Winter <wintera@linux.ibm.com>
 
-commit 3499e87ea0413ee5b2cc028f4c8ed4d424bc7f98 upstream.
+commit e8a66d800471e2df7f0b484e2e46898b21d1fa82 upstream.
 
-clang inlines the dev_ethtool() more aggressively than gcc does, leading
-to a larger amount of used stack space:
+Symptom: After vnicc/rx_bcast has been manually set to 0,
+	bridge_* sysfs parameters can still be set or written.
+Only occurs on HiperSockets, as OSA doesn't support changing rx_bcast.
 
-net/core/ethtool.c:2536:24: error: stack frame size of 1216 bytes in function 'dev_ethtool' [-Werror,-Wframe-larger-than=]
+Vnic characteristics and bridgeport settings are mutually exclusive.
+rx_bcast defaults to 1, so manually setting it to 0 should disable
+bridge_* parameters.
 
-Marking the sub-functions that require the most stack space as
-noinline_for_stack gives us reasonable behavior on all compilers.
+Instead it makes sense here to check the supported mask. If the card
+does not support vnicc at all, bridge commands are always allowed.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Fixes: caa1f0b10d18 ("s390/qeth: add VNICC enable/disable support")
+Signed-off-by: Alexandra Winter <wintera@linux.ibm.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/ethtool.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/s390/net/qeth_l2_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -2343,9 +2343,10 @@ static int ethtool_set_tunable(struct ne
- 	return ret;
- }
- 
--static int ethtool_get_per_queue_coalesce(struct net_device *dev,
--					  void __user *useraddr,
--					  struct ethtool_per_queue_op *per_queue_opt)
-+static noinline_for_stack int
-+ethtool_get_per_queue_coalesce(struct net_device *dev,
-+			       void __user *useraddr,
-+			       struct ethtool_per_queue_op *per_queue_opt)
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -2285,8 +2285,7 @@ int qeth_l2_vnicc_get_timeout(struct qet
+ /* check if VNICC is currently enabled */
+ bool qeth_l2_vnicc_is_in_use(struct qeth_card *card)
  {
- 	u32 bit;
- 	int ret;
-@@ -2375,9 +2376,10 @@ static int ethtool_get_per_queue_coalesc
- 	return 0;
- }
- 
--static int ethtool_set_per_queue_coalesce(struct net_device *dev,
--					  void __user *useraddr,
--					  struct ethtool_per_queue_op *per_queue_opt)
-+static noinline_for_stack int
-+ethtool_set_per_queue_coalesce(struct net_device *dev,
-+			       void __user *useraddr,
-+			       struct ethtool_per_queue_op *per_queue_opt)
- {
- 	u32 bit;
- 	int i, ret = 0;
-@@ -2434,7 +2436,7 @@ roll_back:
- 	return ret;
- }
- 
--static int ethtool_set_per_queue(struct net_device *dev,
-+static int noinline_for_stack ethtool_set_per_queue(struct net_device *dev,
- 				 void __user *useraddr, u32 sub_cmd)
- {
- 	struct ethtool_per_queue_op per_queue_opt;
+-	/* if everything is turned off, VNICC is not active */
+-	if (!card->options.vnicc.cur_chars)
++	if (!card->options.vnicc.sup_chars)
+ 		return false;
+ 	/* default values are only OK if rx_bcast was not enabled by user
+ 	 * or the card is offline.
 
 
