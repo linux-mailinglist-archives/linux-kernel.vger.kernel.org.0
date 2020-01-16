@@ -2,90 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A5913E8CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C45F913E98D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404869AbgAPReW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:34:22 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29969 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404857AbgAPReT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:34:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579196058;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OVue51NKiEdCI1G3Wg0c7rke38eyF1pA9SE2ZsSZDQI=;
-        b=fHZcmqoBNKJ/oTnjU0vuYOxeg8/j/PzykVnX2910NcHF03B349QRl82ZaZXLDfUUYEJjw9
-        6E5mnVO7wr2s/YfAlKf0TH1ZOwZUVy5m9OljCBRiboopjssQ+50LKebR9DHmBR2kVsZlvz
-        RFxesn+9wQxK4wO9PTdm84eTBHPeikY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-386-aaus8bAsOVm8obp_vZoOEQ-1; Thu, 16 Jan 2020 12:34:14 -0500
-X-MC-Unique: aaus8bAsOVm8obp_vZoOEQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2393373AbgAPRip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:38:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389965AbgAPRiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:11 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44F5519057D8;
-        Thu, 16 Jan 2020 17:34:11 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 443E75C1D8;
-        Thu, 16 Jan 2020 17:34:10 +0000 (UTC)
-Subject: Re: [PATCH v2] watchdog: Fix possible soft lockup warning at bootup
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Robert Richter <rrichter@marvell.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20200103151032.19590-1-longman@redhat.com>
- <87sgkgw3xq.fsf@nanos.tec.linutronix.de>
- <87blr3wrqw.fsf@nanos.tec.linutronix.de>
- <20200116151146.wn6ec7igl2bfk4c2@rric.localdomain>
- <87tv4vuyo6.fsf@nanos.tec.linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <9ae2ee4d-7b67-50ff-e736-1d51753c5ccd@redhat.com>
-Date:   Thu, 16 Jan 2020 12:34:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E05A246C3;
+        Thu, 16 Jan 2020 17:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579196290;
+        bh=QNGO+4h+4tv4Cjbm89Vwy1rtiuhXMwGt9Ox0SnAPSOc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QK1imqXp+k9/9NFVCgciT3I0li/54tXXNxYkhYQzTAslzhyvoXo3xqjFcLsDui5of
+         XMQu87GL/MfAFQ+xvY8+NDF0wFfBhTPtI8xtQD+pSNub8TNLoBoigjKb4yhCgl2QPI
+         ZyGO0FDrPkJeuAUHfQ+FxhrKx6EH4Et7yoDLvC7I=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 105/251] media: davinci-isif: avoid uninitialized variable use
+Date:   Thu, 16 Jan 2020 12:34:14 -0500
+Message-Id: <20200116173641.22137-65-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
+References: <20200116173641.22137-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87tv4vuyo6.fsf@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 11:57 AM, Thomas Gleixner wrote:
->> So your theory the MONOTONIC clock runs differently/wrongly could
->> explain that (assuming this drives the sched clock). Though, I am
-> No. sched_clock() is separate. It uses a raw timestamp (in your case
-> from the ARM arch timer) and converts it to something which is close to
-> proper time. So my assumption was based on the printout Waiman had:
->
->  [ 1... ] CPU.... watchdog_fn now  170000000
->  [ 25.. ] CPU.... watchdog_fn now 4170000000
->
-> I assumed that now comes from ktime_get() or something like
-> that. Waiman?
+From: Arnd Bergmann <arnd@arndb.de>
 
-I printed out the now parameter of the=A0 __hrtimer_run_queues() call. So
-from the timer perspective, it is losing time. For watchdog, the soft
-expiry time is 4s. The watchdog function won't be called until the
-timer's time advances 4s or more. That corresponds to about 24s in
-timestamp time for that particular class of systems.
+[ Upstream commit 0e633f97162c1c74c68e2eb20bbd9259dce87cd9 ]
 
-Cheers,
-Longman
+clang warns about a possible variable use that gcc never
+complained about:
+
+drivers/media/platform/davinci/isif.c:982:32: error: variable 'frame_size' is uninitialized when used here
+      [-Werror,-Wuninitialized]
+                dm365_vpss_set_pg_frame_size(frame_size);
+                                             ^~~~~~~~~~
+drivers/media/platform/davinci/isif.c:887:2: note: variable 'frame_size' is declared here
+        struct vpss_pg_frame_size frame_size;
+        ^
+1 error generated.
+
+There is no initialization for this variable at all, and there
+has never been one in the mainline kernel, so we really should
+not put that stack data into an mmio register.
+
+On the other hand, I suspect that gcc checks the condition
+more closely and notices that the global
+isif_cfg.bayer.config_params.test_pat_gen flag is initialized
+to zero and never written to from any code path, so anything
+depending on it can be eliminated.
+
+To shut up the clang warning, just remove the dead code manually,
+it has probably never been used because any attempt to do so
+would have resulted in undefined behavior.
+
+Fixes: 63e3ab142fa3 ("V4L/DVB: V4L - vpfe capture - source for ISIF driver on DM365")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/davinci/isif.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/drivers/media/platform/davinci/isif.c b/drivers/media/platform/davinci/isif.c
+index 78e37cf3470f..b51b875c5a61 100644
+--- a/drivers/media/platform/davinci/isif.c
++++ b/drivers/media/platform/davinci/isif.c
+@@ -890,9 +890,7 @@ static int isif_set_hw_if_params(struct vpfe_hw_if_param *params)
+ static int isif_config_ycbcr(void)
+ {
+ 	struct isif_ycbcr_config *params = &isif_cfg.ycbcr;
+-	struct vpss_pg_frame_size frame_size;
+ 	u32 modeset = 0, ccdcfg = 0;
+-	struct vpss_sync_pol sync;
+ 
+ 	dev_dbg(isif_cfg.dev, "\nStarting isif_config_ycbcr...");
+ 
+@@ -980,13 +978,6 @@ static int isif_config_ycbcr(void)
+ 		/* two fields are interleaved in memory */
+ 		regw(0x00000249, SDOFST);
+ 
+-	/* Setup test pattern if enabled */
+-	if (isif_cfg.bayer.config_params.test_pat_gen) {
+-		sync.ccdpg_hdpol = params->hd_pol;
+-		sync.ccdpg_vdpol = params->vd_pol;
+-		dm365_vpss_set_sync_pol(sync);
+-		dm365_vpss_set_pg_frame_size(frame_size);
+-	}
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
