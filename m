@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE2213E4B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D69613E4B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389844AbgAPRKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:10:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47098 "EHLO mail.kernel.org"
+        id S2389857AbgAPRKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:10:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389800AbgAPRJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:09:59 -0500
+        id S2389472AbgAPRKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:10:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB15E2081E;
-        Thu, 16 Jan 2020 17:09:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C300E2468B;
+        Thu, 16 Jan 2020 17:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194598;
-        bh=eS8mU3QIA0TBXe9Uxh91D1mjEfC0CK2I4ipAljZKsLQ=;
+        s=default; t=1579194602;
+        bh=TJeYjIHhNMiZ37QzlXdwOSx5qNMJPZ9IvTSccoEPWic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHe2yCUo03r9DVV9OR+QMC9NxqzVi8klYDBioAYSF6oyPFRYUdmbXUOnk8ftAGzKt
-         FIA5X36eOJSXh2NCKNHdPVzR/uODwrMqDGB+IEaooo8U5TLiV6jCBlZlxT0BIOXeqa
-         /adMn1qV8wplHBF5+6WknUdz+RpT6Ya14urI2Wng=
+        b=A5r9ZtMD/Xkf2pkecLYcP1Folb3hWpATx/l/HKsd7OiVqpw3AbLdx/cSIrZRLergw
+         HJGFjTxvEeIbB5+rRO/iick8M0bhLlWQmONRTB+/aEK/vsqn6179JAdblOR4d854TY
+         ISipe1oP/VgOGfzTiz/hXmg/+jY1lVYhXZ0iOacU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 467/671] PM: sleep: Fix possible overflow in pm_system_cancel_wakeup()
-Date:   Thu, 16 Jan 2020 12:01:45 -0500
-Message-Id: <20200116170509.12787-204-sashal@kernel.org>
+Cc:     Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 470/671] usb: host: xhci-hub: fix extra endianness conversion
+Date:   Thu, 16 Jan 2020 12:01:48 -0500
+Message-Id: <20200116170509.12787-207-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -43,36 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
 
-[ Upstream commit 2933954b71f10d392764f95eec0f0aa2d103054b ]
+[ Upstream commit 6269e4c76eacabaea0d0099200ae1a455768d208 ]
 
-It is not actually guaranteed that pm_abort_suspend will be
-nonzero when pm_system_cancel_wakeup() is called which may lead to
-subtle issues, so make it use atomic_dec_if_positive() instead of
-atomic_dec() for the safety sake.
+Don't do extra cpu_to_le32 conversion for
+put_unaligned_le32 because it is already implemented
+in this function.
 
-Fixes: 33e4f80ee69b ("ACPI / PM: Ignore spurious SCI wakeups from suspend-to-idle")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Fixes sparse error:
+xhci-hub.c:1152:44: warning: incorrect type in argument 1 (different base types)
+xhci-hub.c:1152:44:    expected unsigned int [usertype] val
+xhci-hub.c:1152:44:    got restricted __le32 [usertype]
+
+Fixes: 395f540 "xhci: support new USB 3.1 hub request to get extended port status"
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Link: https://lore.kernel.org/r/1562501839-26522-1-git-send-email-ruslan.bilovol@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/power/wakeup.c | 2 +-
+ drivers/usb/host/xhci-hub.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-index 7c84f64c74f7..2dfa2e048745 100644
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -875,7 +875,7 @@ EXPORT_SYMBOL_GPL(pm_system_wakeup);
- 
- void pm_system_cancel_wakeup(void)
- {
--	atomic_dec(&pm_abort_suspend);
-+	atomic_dec_if_positive(&pm_abort_suspend);
- }
- 
- void pm_wakeup_clear(bool reset)
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 8f180bf7561a..9772c0de59b7 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1104,7 +1104,7 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 			}
+ 			port_li = readl(ports[wIndex]->addr + PORTLI);
+ 			status = xhci_get_ext_port_status(temp, port_li);
+-			put_unaligned_le32(cpu_to_le32(status), &buf[4]);
++			put_unaligned_le32(status, &buf[4]);
+ 		}
+ 		break;
+ 	case SetPortFeature:
 -- 
 2.20.1
 
