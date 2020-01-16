@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5AA013ED07
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:00:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F88013ED3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394900AbgAPSAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:00:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59592 "EHLO mail.kernel.org"
+        id S2394913AbgAPSB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:01:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405781AbgAPRlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:47 -0500
+        id S1733225AbgAPRlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:41:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0819624718;
-        Thu, 16 Jan 2020 17:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0359246AC;
+        Thu, 16 Jan 2020 17:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196506;
-        bh=vDh1zh2NXIVh0tH7uGbKC5ZjFd32+DbtXkYJo7HcdK8=;
+        s=default; t=1579196508;
+        bh=u4Wnu6vdTq3zbpaXhgACT1ejyw+Rhxp+TLvXUrakHKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H333YmT/XW5BFMByVvMfCgUpCqrnFsBWfeUrsrdvW86XmA/FOjxyrrbAhjru1D+rL
-         oouaBhP0uSJIQd3epXnogaIaVHLjS8j5a/0Q9rzfBm8/J5Mje84AxEBOMzx42lyzSb
-         Jzmp3rS23Xq/4QQxDBrmBIWbRq4rhcrDUCy46hPs=
+        b=XEX2jzml1GNB5ifN02yyvYoO2ItdqDw4azpvwSR6rflW3ckpBLovwr9awVt0l+JiH
+         zLzE2+XrkWUz3Yh3GBB0i2OBBzElILWEXBrpXVr2HnHH8iDKIh+/l+6BJ/90I1vyUO
+         PNVJ3Va/CcONPqfGhQaPdjmC2NCk7Bj4GsDHqmCo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oliver O'Halloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 246/251] powerpc/powernv: Disable native PCIe port management
-Date:   Thu, 16 Jan 2020 12:36:35 -0500
-Message-Id: <20200116173641.22137-206-sashal@kernel.org>
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 248/251] drm/radeon: fix bad DMA from INTERRUPT_CNTL2
+Date:   Thu, 16 Jan 2020 12:36:37 -0500
+Message-Id: <20200116173641.22137-208-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -43,78 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver O'Halloran <oohall@gmail.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 9d72dcef891030545f39ad386a30cf91df517fb2 ]
+[ Upstream commit 62d91dd2851e8ae2ca552f1b090a3575a4edf759 ]
 
-On PowerNV the PCIe topology is (currently) managed by the powernv platform
-code in Linux in cooperation with the platform firmware. Linux's native
-PCIe port service drivers operate independently of both and this can cause
-problems.
+The INTERRUPT_CNTL2 register expects a valid DMA address, but is
+currently set with a GPU MC address.  This can cause problems on
+systems that detect the resulting DMA read from an invalid address
+(found on a Power8 guest).
 
-The main issue is that the portbus driver will conflict with the platform
-specific hotplug driver (pnv_php) over ownership of the MSI used to notify
-the host when a hotplug event occurs. The portbus driver claims this MSI on
-behalf of the individual port services because the same interrupt is used
-for hotplug events, PMEs (on root ports), and link bandwidth change
-notifications. The portbus driver will always claim the interrupt even if
-the individual port service drivers, such as pciehp, are compiled out.
+Instead, use the DMA address of the dummy page because it will always
+be safe.
 
-The second, bigger, problem is that the hotplug port service driver
-fundamentally does not work on PowerNV. The platform assumes that all
-PCI devices have a corresponding arch-specific handle derived from the DT
-node for the device (pci_dn) and without one the platform will not allow
-a PCI device to be enabled. This problem is largely due to historical
-baggage, but it can't be resolved without significant re-factoring of the
-platform PCI support.
-
-We can fix these problems in the interim by setting the
-"pcie_ports_disabled" flag during platform initialisation. The flag
-indicates the platform owns the PCIe ports which stops the portbus driver
-from being registered.
-
-This does have the side effect of disabling all port services drivers
-that is: AER, PME, BW notifications, hotplug, and DPC. However, this is
-not a huge disadvantage on PowerNV since these services are either unused
-or handled through other means.
-
-Fixes: 66725152fb9f ("PCI/hotplug: PowerPC PowerNV PCI hotplug driver")
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191118065553.30362-1-oohall@gmail.com
+Fixes: d8f60cfc9345 ("drm/radeon/kms: Add support for interrupts on r6xx/r7xx chips (v3)")
+Fixes: 25a857fbe973 ("drm/radeon/kms: add support for interrupts on SI")
+Fixes: a59781bbe528 ("drm/radeon: add support for interrupts on CIK (v5)")
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/powernv/pci.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/radeon/cik.c  | 4 ++--
+ drivers/gpu/drm/radeon/r600.c | 4 ++--
+ drivers/gpu/drm/radeon/si.c   | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
-index 98cc8ba07c23..00dbf1e895a9 100644
---- a/arch/powerpc/platforms/powernv/pci.c
-+++ b/arch/powerpc/platforms/powernv/pci.c
-@@ -923,6 +923,23 @@ void __init pnv_pci_init(void)
- 	if (!firmware_has_feature(FW_FEATURE_OPAL))
- 		return;
+diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
+index b99f3e59011c..5fcb5869a489 100644
+--- a/drivers/gpu/drm/radeon/cik.c
++++ b/drivers/gpu/drm/radeon/cik.c
+@@ -7026,8 +7026,8 @@ static int cik_irq_init(struct radeon_device *rdev)
+ 	}
  
-+#ifdef CONFIG_PCIEPORTBUS
-+	/*
-+	 * On PowerNV PCIe devices are (currently) managed in cooperation
-+	 * with firmware. This isn't *strictly* required, but there's enough
-+	 * assumptions baked into both firmware and the platform code that
-+	 * it's unwise to allow the portbus services to be used.
-+	 *
-+	 * We need to fix this eventually, but for now set this flag to disable
-+	 * the portbus driver. The AER service isn't required since that AER
-+	 * events are handled via EEH. The pciehp hotplug driver can't work
-+	 * without kernel changes (and portbus binding breaks pnv_php). The
-+	 * other services also require some thinking about how we're going
-+	 * to integrate them.
-+	 */
-+	pcie_ports_disabled = true;
-+#endif
-+
- 	/* Look for IODA IO-Hubs. */
- 	for_each_compatible_node(np, NULL, "ibm,ioda-hub") {
- 		pnv_pci_init_ioda_hub(np);
+ 	/* setup interrupt control */
+-	/* XXX this should actually be a bus address, not an MC address. same on older asics */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
+diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
+index f2eac6b6c46a..9569c35f8766 100644
+--- a/drivers/gpu/drm/radeon/r600.c
++++ b/drivers/gpu/drm/radeon/r600.c
+@@ -3697,8 +3697,8 @@ int r600_irq_init(struct radeon_device *rdev)
+ 	}
+ 
+ 	/* setup interrupt control */
+-	/* set dummy read address to ring address */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
+diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
+index b75d809c292e..919d389869ce 100644
+--- a/drivers/gpu/drm/radeon/si.c
++++ b/drivers/gpu/drm/radeon/si.c
+@@ -6018,8 +6018,8 @@ static int si_irq_init(struct radeon_device *rdev)
+ 	}
+ 
+ 	/* setup interrupt control */
+-	/* set dummy read address to ring address */
+-	WREG32(INTERRUPT_CNTL2, rdev->ih.gpu_addr >> 8);
++	/* set dummy read address to dummy page address */
++	WREG32(INTERRUPT_CNTL2, rdev->dummy_page.addr >> 8);
+ 	interrupt_cntl = RREG32(INTERRUPT_CNTL);
+ 	/* IH_DUMMY_RD_OVERRIDE=0 - dummy read disabled with msi, enabled without msi
+ 	 * IH_DUMMY_RD_OVERRIDE=1 - dummy read controlled by IH_DUMMY_RD_EN
 -- 
 2.20.1
 
