@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE9EA13E3A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:03:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACB713E3F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:05:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbgAPRDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:03:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57212 "EHLO mail.kernel.org"
+        id S2388641AbgAPRFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:05:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388593AbgAPRDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:03:12 -0500
+        id S2388554AbgAPRFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:05:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0DB62081E;
-        Thu, 16 Jan 2020 17:03:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8AD224653;
+        Thu, 16 Jan 2020 17:05:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194191;
-        bh=Ts3IgJnZsIlHY5jIp5i4hscpO1qrooJOL1dufIMv008=;
+        s=default; t=1579194314;
+        bh=aaiAing3n5kCaciPCBMEpNxh5HMv1XnDrzTj/LLN8to=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jRhiZcQ/8XAAA+nrzXCXLlxrPN1P966wpy9nd5LSJfZTpHwNW6fQXzuXyBKEeXbsy
-         9XlbujtHtw+85nhsbNSr0Y69xmEOscQOqNbqL3rRYwVeIVmkgMyn8RuyGls4Y6LLj6
-         7C8k+Jfwxfwo3HxwVxYLZ/TFtfwaD1sFRyZeo+KQ=
+        b=rCnzUGshN/u3e0jHqMCdoxxx/76gtuwgc8VMUZQj7mRm28IFJEwRWNdWDoOxtWX1m
+         mAGdATsYyMKR2F2k05QMhbWOvFl3vXA7m0/hGst1+abUQuQkoiazZGQ2v2SGaV/tOp
+         r6iIqF+cdsaafatveq9J5O0SKOD71g6w3vDBykiY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 263/671] soc: qcom: cmd-db: Fix an error code in cmd_db_dev_probe()
-Date:   Thu, 16 Jan 2020 11:52:52 -0500
-Message-Id: <20200116165940.10720-146-sashal@kernel.org>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 266/671] spi: tegra114: clear packed bit for unpacked mode
+Date:   Thu, 16 Jan 2020 11:58:24 -0500
+Message-Id: <20200116170509.12787-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,38 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit 93b260528020792032e50725383f27a27897bb0f ]
+[ Upstream commit 7b3d10cdf54b8bc1dc0da21faed9789ac4da3684 ]
 
-The memremap() function doesn't return error pointers, it returns NULL.
-This code is returning "ret = PTR_ERR(NULL);" which is success, but it
-should return -ENOMEM.
+Fixes: Clear packed bit when not using packed mode.
 
-Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Packed bit is not cleared when not using packed mode. This results
+in transfer timeouts for the unpacked mode transfers followed by the
+packed mode transfers.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/qcom/cmd-db.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-tegra114.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index a6f646295f06..78d73ec587e1 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -283,8 +283,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index a1888dc6a938..fd039cab768a 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -730,6 +730,8 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
  
- 	cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WB);
--	if (IS_ERR_OR_NULL(cmd_db_header)) {
--		ret = PTR_ERR(cmd_db_header);
-+	if (!cmd_db_header) {
-+		ret = -ENOMEM;
- 		cmd_db_header = NULL;
- 		return ret;
- 	}
+ 	if (tspi->is_packed)
+ 		command1 |= SPI_PACKED;
++	else
++		command1 &= ~SPI_PACKED;
+ 
+ 	command1 &= ~(SPI_CS_SEL_MASK | SPI_TX_EN | SPI_RX_EN);
+ 	tspi->cur_direction = 0;
 -- 
 2.20.1
 
