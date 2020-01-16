@@ -2,178 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F99213F1FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:32:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E9E13F21D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:33:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436794AbgAPScB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:32:01 -0500
-Received: from mga09.intel.com ([134.134.136.24]:19023 "EHLO mga09.intel.com"
+        id S2436752AbgAPSdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:33:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:11853 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390739AbgAPSbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:31:53 -0500
+        id S2403901AbgAPSdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:33:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:31:52 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:33:04 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="scan'208";a="219768768"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2020 10:31:51 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1is9vr-000Fes-7B; Fri, 17 Jan 2020 02:31:51 +0800
-Date:   Fri, 17 Jan 2020 02:31:48 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [rcu:for-mingo] BUILD SUCCESS
- 330692eb36b9cf0f9534d8ba68f87610cff2d5fc
-Message-ID: <5e20ac14.0CTj0m6fFKnJYpmb%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="259529109"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by fmsmga001.fm.intel.com with ESMTP; 16 Jan 2020 10:33:04 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
+Date:   Thu, 16 Jan 2020 10:31:54 -0800
+Message-Id: <20200116183154.20880-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git  for-mingo
-branch HEAD: 330692eb36b9cf0f9534d8ba68f87610cff2d5fc  Merge branch 'kcsan.2020.01.07a' into HEAD
+From: Kan Liang <kan.liang@linux.intel.com>
 
-elapsed time: 2036m
+Perf doesn't take the left period into account when auto-reload is
+enabled with fixed period sampling mode in context switch.
+Here is the ftrace when recording PEBS event with fixed period.
 
-configs tested: 123
-configs skipped: 0
+    #perf record -e cycles:p -c 2000000 -- ./triad_loop
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+      //Task is scheduled out
+      triad_loop-17222 [000] d... 861765.878032: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0  //Disable global counter
+      triad_loop-17222 [000] d... 861765.878033: write_msr:
+MSR_IA32_PEBS_ENABLE(3f1), value 0       //Disable PEBS
+      triad_loop-17222 [000] d... 861765.878033: write_msr:
+MSR_P6_EVNTSEL0(186), value 40003003c    //Disable the counter
+      triad_loop-17222 [000] d... 861765.878033: rdpmc: 0, value
+fffffff82840                             //Read value of the counter
+      triad_loop-17222 [000] d... 861765.878034: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 1000f000000ff  //Re-enable global
+counter
 
-parisc                            allnoconfig
-parisc                            allyesonfig
-parisc                         b180_defconfig
-parisc                        c3000_defconfig
-parisc                              defconfig
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-h8300                     edosk2674_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-alpha                randconfig-a001-20200116
-m68k                 randconfig-a001-20200116
-mips                 randconfig-a001-20200116
-nds32                randconfig-a001-20200116
-parisc               randconfig-a001-20200116
-riscv                randconfig-a001-20200116
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-arc                              allyesconfig
-arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-i386                             alldefconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                                defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                               rhel-7.6
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-c6x                  randconfig-a001-20200116
-h8300                randconfig-a001-20200116
-microblaze           randconfig-a001-20200116
-nios2                randconfig-a001-20200116
-sparc64              randconfig-a001-20200116
-sparc                            allyesconfig
-sparc                               defconfig
-sparc64                          allmodconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                             defconfig
-um                                  defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64               randconfig-d001-20200116
-x86_64               randconfig-d002-20200116
-x86_64               randconfig-d003-20200116
-i386                 randconfig-d001-20200116
-i386                 randconfig-d002-20200116
-i386                 randconfig-d003-20200116
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arc                  randconfig-a001-20200116
-arm                  randconfig-a001-20200116
-arm64                randconfig-a001-20200116
-ia64                 randconfig-a001-20200116
-powerpc              randconfig-a001-20200116
-sparc                randconfig-a001-20200116
-x86_64               randconfig-b001-20200116
-x86_64               randconfig-b002-20200116
-x86_64               randconfig-b003-20200116
-i386                 randconfig-b001-20200116
-i386                 randconfig-b002-20200116
-i386                 randconfig-b003-20200116
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-ia64                             alldefconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
+      //Task is scheduled in again
+      triad_loop-17222 [000] d... 861765.878221: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0  //Disable global counter
+      triad_loop-17222 [000] d... 861765.878222: write_msr:
+MSR_IA32_PMC0(4c1), value ffffffe17b80   //write the value to the
+counter; The value is wrong. When the task switch in again, the counter
+should starts from previous left. However, it starts from the fixed
+period -2000000 again.
+      triad_loop-17222 [000] d... 861765.878223: write_msr:
+MSR_P6_EVNTSEL0(186), value 40043003c    //enable the counter
+      triad_loop-17222 [000] d... 861765.878223: write_msr:
+MSR_IA32_PEBS_ENABLE(3f1), value 1       //enable PEBS
+      triad_loop-17222 [000] d... 861765.878223: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 1000f000000ff  //Re-enable global
+counter
 
+A special variant of intel_pmu_save_and_restart() is used for
+auto-reload, which doesn't update the hwc->period_left.
+When the monitored task scheduled in again, perf doesn't know the left
+period. The user defined fixed period is used, which is inaccurate.
+
+With auto-reload, the counter always has a negative counter value. So
+the left period is -value. Update the period_left in
+intel_pmu_save_and_restart_reload().
+
+With the patch,
+      //Task is scheduled out
+      triad_loop-3068  [000] d...   153.680459: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      triad_loop-3068  [000] d...   153.680459: write_msr:
+MSR_IA32_PEBS_ENABLE(3f1), value 0
+      triad_loop-3068  [000] d...   153.680459: write_msr:
+MSR_P6_EVNTSEL0(186), value 40003003c
+      triad_loop-3068  [000] d...   153.680459: rdpmc: 0, value
+ffffffe25cbc
+      triad_loop-3068  [000] d...   153.680460: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+
+      //Task is scheduled in again
+      triad_loop-3068  [000] d...   153.680644: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      triad_loop-3068  [000] d...   153.680646: write_msr:
+MSR_IA32_PMC0(4c1), value ffffffe25cbc     //The left value is written
+into the counter.
+      triad_loop-3068  [000] d...   153.680646: write_msr:
+MSR_P6_EVNTSEL0(186), value 40043003c
+      triad_loop-3068  [000] d...   153.680646: write_msr:
+MSR_IA32_PEBS_ENABLE(3f1), value 1
+      triad_loop-3068  [000] d...   153.680647: write_msr:
+MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+
+Fixes: d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+ arch/x86/events/intel/ds.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index ce83950036c5..e5ad97a82342 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1713,6 +1713,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
+ 	old = ((s64)(prev_raw_count << shift) >> shift);
+ 	local64_add(new - old + count * period, &event->count);
+ 
++	local64_set(&hwc->period_left, -new);
++
+ 	perf_event_update_userpage(event);
+ 
+ 	return 0;
+-- 
+2.17.1
+
