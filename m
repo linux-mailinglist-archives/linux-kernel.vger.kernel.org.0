@@ -2,119 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2678A13D5A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 09:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16EBB13D5B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 09:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbgAPIG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 03:06:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbgAPIG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 03:06:56 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5D1E2077B;
-        Thu, 16 Jan 2020 08:06:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579162015;
-        bh=kmovhnOdTNZF+05ykgKH5WX6MCS0s6lAPI/WYzZejfo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hCEXiojqof9qt7912bwlCFqbdFjcEVrnU04HWRVU8DZuzR9+zWv2GufSGeRf3NNPY
-         wLsrUqw3CbnAn/rbF4fNE2C2VdgWy9FzamqLtF6I1PXrfNa6W8q8wSefQyQcBgRtsH
-         fRvonWTSB+5Vz+tdIZOcvJuglJZgx5bwdOapkMek=
-Date:   Thu, 16 Jan 2020 09:06:52 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] arm64: dts: allwinner: h6: tanix-tx6: Use internal
- oscillator
-Message-ID: <20200116080652.mp5z7dtrtj3nyhpq@gilmour.lan>
-References: <20200113180720.77461-1-jernej.skrabec@siol.net>
+        id S1730779AbgAPIHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 03:07:33 -0500
+Received: from mail-dm6nam11on2063.outbound.protection.outlook.com ([40.107.223.63]:35904
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726653AbgAPIHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 03:07:33 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c/ed1nOICWpOq93n446FyKP3DtIbmxrU8wWs8hehsUIyUf8T2b9Hgy3dzV6sezPrRL3shlerKqPtdrKCQYsz64n9+zEJ9T344tUiAK5T5UjBSXrpOMmuYzBfc6iSXVoLMAMzPWxsmAdfsPeuYkO3LiGYHdXv0rmX3m9ofv15AXJ9ILm9U7b9vvWeVBJ0ZEmuuMimiq8bWfHwKP8JVPDvhCKt0Nr84tfH/YSG9oXb2QSsF55vsFZnLpIa8zsGk4/R35TYH5+Qbr0QaC/REJOd4yop4czZzfWjJ8unlJAGj7tM0Zn1y/wkTDBa2pG9m5vt+kRWWSetl+kkl50TvRESXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bxFOTJ5Gw5UCeESIxecSkgu2h/vvliHkuHC9slQl4iQ=;
+ b=LYYj/KvTZT/sop7s6T0gi3eQvX2g6Ai0z8OMeYvyYSKTMG9mualZsdCyVBgFKAHBX9lhNzbHEMF/jlV50HvOriRIBqxalN2Ru4J5RH4MGvrDynG7c5PEpydIt63mhoJWh7OmmLuUvDRq4ljubjUW1wxjlis3LrxzlDhoP2aE4WcC62+4AhEV0naTbLZdErKkbeu1GosNrOWpfW/5bfnSmk+/ICRVBdhyYjJ7b6HfINPt3SPcgV5nx3mXXRSZSEhglXWyDGd2VlvnXXB4pxOIcZgjCQIXzCmM8q1EKy6g6PsIZFFyI+chJ3Ry0pwwIpnpTEmjieaMc+JgwysSWhGjxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bxFOTJ5Gw5UCeESIxecSkgu2h/vvliHkuHC9slQl4iQ=;
+ b=F56g24+3aUuHHU6Wm8C4I9JePAKh2wwFkZdOyRWFIcySfODSP9eiMyb/VOICE17nrxObFLnE3UaPx/2cA9vlrfVwv7K3OhYXNNcUJraX9Y9LSHvB/3paDLgfeJbUzVbfLsvPkVK/PQEhKx0X7aN7lX+33aPiS7dqeoo2aCdpeFQ=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Rijo-john.Thomas@amd.com; 
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com (10.175.62.7) by
+ CY4PR12MB1480.namprd12.prod.outlook.com (10.172.71.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Thu, 16 Jan 2020 08:07:30 +0000
+Received: from CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::9be:baba:170f:3e2]) by CY4PR12MB1925.namprd12.prod.outlook.com
+ ([fe80::9be:baba:170f:3e2%3]) with mapi id 15.20.2644.015; Thu, 16 Jan 2020
+ 08:07:30 +0000
+Subject: Re: [PATCH][next] tee: fix memory allocation failure checks on
+ drv_data and amdtee
+To:     Colin King <colin.king@canonical.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Gary R Hook <gary.hook@amd.com>, tee-dev@lists.linaro.org,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200107143601.105321-1-colin.king@canonical.com>
+ <747f9c93-7465-99aa-0b91-a05fd64c7d1f@amd.com>
+ <20200116070544.doegatlwgsftbhc4@gondor.apana.org.au>
+From:   "Thomas, Rijo-john" <Rijo-john.Thomas@amd.com>
+Message-ID: <645872d0-02fe-84f7-209a-dd43cb8264a1@amd.com>
+Date:   Thu, 16 Jan 2020 13:37:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+In-Reply-To: <20200116070544.doegatlwgsftbhc4@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA1PR01CA0147.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:71::17) To CY4PR12MB1925.namprd12.prod.outlook.com
+ (2603:10b6:903:120::7)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3pzc2q6hpze4pego"
-Content-Disposition: inline
-In-Reply-To: <20200113180720.77461-1-jernej.skrabec@siol.net>
+Received: from [10.138.134.82] (165.204.156.251) by MA1PR01CA0147.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:71::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20 via Frontend Transport; Thu, 16 Jan 2020 08:07:27 +0000
+X-Originating-IP: [165.204.156.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: d76aa0c8-c89d-4897-4255-08d79a5b21ff
+X-MS-TrafficTypeDiagnostic: CY4PR12MB1480:|CY4PR12MB1480:
+X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CY4PR12MB148046968C22B48210F1FF57CF360@CY4PR12MB1480.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 02843AA9E0
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(346002)(376002)(136003)(199004)(189003)(4744005)(6916009)(52116002)(26005)(2616005)(31686004)(2906002)(956004)(16526019)(186003)(5660300002)(53546011)(6666004)(66556008)(66476007)(66946007)(16576012)(8676002)(478600001)(31696002)(81156014)(54906003)(4326008)(81166006)(36756003)(6486002)(8936002)(316002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1480;H:CY4PR12MB1925.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7EpyYAb04POdDc3o7+yG5gbGIUkYUzSxrk/qXoFjGHPhOrPxZBoc5aeEfePT8/GSzMHSkiqi1ylMJI51AH4540zRuqvFk2CVvgR092jlw8teS9uVuKI0pldKXX9mNwHkvDUEoijUGs5QSZO4NANddHhprNCnErEFMqoAFNkkD6Quwx9mbpt35IfWpsCQ6Vfz1pnn5wThsqmmphKEKzZ9WafLTua2VwV2q2T6jOers4d8aJWoEc4KqcjoQPwW3cYHcDrRlYRPwbyTh9TyTqTO7Sa5pOQ3mZBCTagMnGPg9uJCytOBNmEGay0qSA0au6n+vkcMueVNxrmneRrJ+OjP+Qt3wegZ53FKWDCZYX48MaviU4JQCA/h+B+m1eVD6jeR90hpYtzOnCNmysiHDNmVi3KT1TJGs1NWkMUwOUknHb01qQZCnphK3xNVvhIl8DXK
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d76aa0c8-c89d-4897-4255-08d79a5b21ff
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2020 08:07:30.1401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hwsSwA/oBrpMVtEJECPvBjl6il08iT+s4Ugh7Gbej7K/fjX/cIbIOWI6p3gCMmPnHW506YDYWEL3GjOo2YHAOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1480
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Colin,
 
---3pzc2q6hpze4pego
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 16/01/20 12:35 pm, Herbert Xu wrote:
+> On Wed, Jan 08, 2020 at 12:33:08PM +0530, Thomas, Rijo-john wrote:
+>> +linux-crypto
+>>
+>> On 07/01/20 8:06 pm, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> Currently the memory allocation failure checks on drv_data and
+>>> amdtee are using IS_ERR rather than checking for a null pointer.
+>>> Fix these checks to use the conventional null pointer check.
+>>>
+>>> Addresses-Coverity: ("Dereference null return")
+>>> Fixes: 757cc3e9ff1d ("tee: add AMD-TEE driver")
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>
+>> Reviewed-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+> 
+> This patch needs to be resubmitted to the linux-crypto list for
+> it to be picked up by patchwork.
 
-Hi Jernej,
+Can you please resubmit this patch to linux-crypto list?
 
-On Mon, Jan 13, 2020 at 07:07:20PM +0100, Jernej Skrabec wrote:
-> Tanix TX6 doesn't have external 32 kHz oscillator, so switch RTC clock
-> to internal one.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->
-> While this patch gives one possible solution, I mainly want to start
-> discussion why Allwinner SoC dtsi reference external 32 kHz crystal
-> although some boards don't have it. My proposal would be to make clock
-> property optional, based on the fact if external crystal is present or
-> not. However, I'm not sure if that is possible at this point or not.
+Thanks,
+Rijo
 
-It's probably a bit of a dumb question but.. are you sure the crystal
-is missing?
-
-The H6 datasheet mentions that the 32kHz crystal needs to be there,
-and it's part of the power sequence, so I'd expect all boards to have
-it.
-
-> Driver also considers missing clock property as deprecated (old DT) [1],
-> so this might complicate things even further.
->
-> What do you think?
-
-I'm pretty sure (but that would need to be checked) that we never got
-a node without the clocks property on the H6. If that's the case, then
-we can add a check on the compatible.
-
-> Best regards,
-> Jernej
->
-> [1] https://elixir.bootlin.com/linux/latest/source/drivers/rtc/rtc-sun6i.c#L263
->
->  arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> index 83e6cb0e59ce..af3aebda47bb 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> @@ -91,6 +91,12 @@ &r_ir {
->  	status = "okay";
->  };
->
-> +/* This board doesn't have external 32 kHz crystal. */
-> +&rtc {
-> +	assigned-clocks = <&rtc 0>;
-> +	assigned-clock-parents = <&rtc 2>;
-> +};
-> +
-
-This should be dealt with in the driver however.
-
-Maxime
-
---3pzc2q6hpze4pego
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXiAZnAAKCRDj7w1vZxhR
-xfp9AQCqNNEBQxQevPB260RWbeeZq1fZKNeOc5q4PJQniM8vxQD/T0iCbunuJWB3
-Af65fnaGfBRmzV4wO0oHexIh7gFK6g4=
-=C6EU
------END PGP SIGNATURE-----
-
---3pzc2q6hpze4pego--
+> 
+> Thanks,
+> 
