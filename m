@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EBFA13F1B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C4613F1B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436727AbgAPSaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:30:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33514 "EHLO mail.kernel.org"
+        id S2436714AbgAPSaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:30:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392125AbgAPRZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:38 -0500
+        id S2392144AbgAPRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2212A246BE;
-        Thu, 16 Jan 2020 17:25:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B09CE246DD;
+        Thu, 16 Jan 2020 17:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195537;
-        bh=pdaL2usdeANw5MYykla2raJgzZsvaXsWZHnDQa4pUo8=;
+        s=default; t=1579195542;
+        bh=mAr6Zddc1rPASOuktELYGo8wqMA4ihXUJE/R/dMfsc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bq8bF7hBIClANPqH8QcHzmA3oQiVLiHdJ+xV0q4uIV34myJ2Rl8/8bocsXolqYfmu
-         dgY1Os5UB0TcJuB/82JuQEMcXpWIo5jfZlUV0t3W3jazYrKDcBJL0JS1RdmcvAJ3oQ
-         CNxsekwI6nKNvun6MvRPF7BvGu+sgHs8rzPILmjo=
+        b=X0ke1dv+RQ2mf0FMLwxBZWa6oYHOlAI7dHXQVvYV2JlUmGjyIU1RqnARHYLrAsJn1
+         gTJ+hxARbKBDBlgqfEvuwNi8Y7hG4bmiJX0PbXuXBL5S6rJ3+OuRSzWJQlrzAwxGjk
+         57tWPVKyp4C8NHF1xcquMqScYZXJIr1qQnjZhNSM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        Andyt Lutomirski <luto@kernel.org>,
-        dave.hansen@linux.intel.com, peterz@infradead.org, bp@alien8.de,
-        hpa@zytor.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 131/371] x86/mm: Remove unused variable 'cpu'
-Date:   Thu, 16 Jan 2020 12:20:03 -0500
-Message-Id: <20200116172403.18149-74-sashal@kernel.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 135/371] net: sh_eth: fix a missing check of of_get_phy_mode
+Date:   Thu, 16 Jan 2020 12:20:07 -0500
+Message-Id: <20200116172403.18149-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -44,48 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 3609e31bc8dc03b701390f79c74fc7fe92b95039 ]
+[ Upstream commit 035a14e71f27eefa50087963b94cbdb3580d08bf ]
 
-The commit a2055abe9c67 ("x86/mm: Pass flush_tlb_info to
-flush_tlb_others() etc") removed the unnecessary cpu parameter from
-uv_flush_tlb_others() but left an unused variable.
+of_get_phy_mode may fail and return a negative error code;
+the fix checks the return value of of_get_phy_mode and
+returns NULL of it fails.
 
-arch/x86/mm/tlb.c: In function 'native_flush_tlb_others':
-arch/x86/mm/tlb.c:688:16: warning: variable 'cpu' set but not used
-[-Wunused-but-set-variable]
-   unsigned int cpu;
-                ^~~
-
-Fixes: a2055abe9c67 ("x86/mm: Pass flush_tlb_info to flush_tlb_others() etc")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andyt Lutomirski <luto@kernel.org>
-Cc: dave.hansen@linux.intel.com
-Cc: peterz@infradead.org
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20190228220155.88124-1-cai@lca.pw
+Fixes: b356e978e92f ("sh_eth: add device tree support")
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/tlb.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 5400a24e1a8c..c5d7b4ae17ca 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -651,9 +651,6 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- 		 * that UV should be updated so that smp_call_function_many(),
- 		 * etc, are optimal on UV.
- 		 */
--		unsigned int cpu;
--
--		cpu = smp_processor_id();
- 		cpumask = uv_flush_tlb_others(cpumask, info);
- 		if (cpumask)
- 			smp_call_function_many(cpumask, flush_tlb_func_remote,
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 9b1906a65e11..25f3b2ad26e9 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3046,12 +3046,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
+ 	struct device_node *np = dev->of_node;
+ 	struct sh_eth_plat_data *pdata;
+ 	const char *mac_addr;
++	int ret;
+ 
+ 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+ 		return NULL;
+ 
+-	pdata->phy_interface = of_get_phy_mode(np);
++	ret = of_get_phy_mode(np);
++	if (ret < 0)
++		return NULL;
++	pdata->phy_interface = ret;
+ 
+ 	mac_addr = of_get_mac_address(np);
+ 	if (mac_addr)
 -- 
 2.20.1
 
