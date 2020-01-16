@@ -2,125 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB9513D981
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E58913D985
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgAPMB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:01:26 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46149 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbgAPMBZ (ORCPT
+        id S1726566AbgAPMCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:02:42 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48138 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726160AbgAPMCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:01:25 -0500
-Received: by mail-ua1-f66.google.com with SMTP id l6so7528862uap.13
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 04:01:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=0I+PreediRVMEWgWGPoXFPj3GLqhFhozrkL+77ZQpRU=;
-        b=gqsNeMXibvD5pjGv+eufAr9mZXSTPrGaBu4g5jxfECy3ZUkebpMyurVJKBzZ243OkS
-         uA83Y2MknX+rVgNwclTRwlSo+Q+pag+0972ylL77pEp2+BtZZSVYmIwsu/YviQ5Fwn2W
-         GwRsVl5j7rkZJp6Z0v9+/kaMGDEQHJtamMKrs7usWqSZP5BPE9N6nxjKvCe/n/x5F8KY
-         C0YI9KpE1ZDF8x1kK/3AtShRp2yfxFAeCk7r/Uu09Yv3O7zywhHrky42g6ZTtnu1VbYx
-         6wAFIRojVwk+QW9LjfIA/5iKn2rQwMnzT0YQ8eTiT0n3Zcu7Is8BzGA5UmGmb4EiZSpZ
-         UbPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=0I+PreediRVMEWgWGPoXFPj3GLqhFhozrkL+77ZQpRU=;
-        b=LMa9ORpd9/DkvohsvPQk9eCKvF63onf770P9PU/aKuUGe5maPz7KeY2vt7h5ufhK8/
-         i5rtQJPGsf/FdskIh6PDVKVCP3M0f+gYzhg/qzNY/V8dSYllKQWNKTwEVvUVRobi3IL2
-         fQg1XGfLWP46+zkDKVpxMaaNtwlfDsZ2aBfCwBG9ALXFdp2z+PKfUTlL2N+fsHuhMFhZ
-         mtff45euLkgEEWaJVrTik7MMSsnH486zygG4JiaG9n1kEh/pPxcieT3XMfa6vk52YzZi
-         KcVzbXqQuLwIr/H4m2QAhmuldC+gKC8Kq5ARGeiCibr1pQ6T+m30eJOo4JfBbAgzfayy
-         Cnbw==
-X-Gm-Message-State: APjAAAWNUzt5b+sKocgW3yhjZxRlV6hbZbY0Zz9zHiLNorFuFVfFtEY4
-        +XOJA+6xeVhFVlGDRKeN3pfSIfytW6OhaZqKbAw=
-X-Google-Smtp-Source: APXvYqwzd/2VRVcdwTDqkBKGvAYxtCJGuE/jgPQ/S45lBHGmusaGccyZMI91viUdgk9/AusK/HlUoj7H5NFWr6ROIdE=
-X-Received: by 2002:ab0:7411:: with SMTP id r17mr17777951uap.31.1579176083996;
- Thu, 16 Jan 2020 04:01:23 -0800 (PST)
-MIME-Version: 1.0
-Reply-To: sebastient766@gmail.com
-Received: by 2002:a67:e2c1:0:0:0:0:0 with HTTP; Thu, 16 Jan 2020 04:01:23
- -0800 (PST)
-From:   =?UTF-8?B?TXIuU8OpYmFzdGllbiBUb25p?= <sebastient766@gmail.com>
-Date:   Thu, 16 Jan 2020 04:01:23 -0800
-X-Google-Sender-Auth: B8Vr8IFc8qoQgViWAO9xkC2_nXc
-Message-ID: <CAKsTvF5Q0zF23oJE8TuGayDd+PnTNQQgtt_QCAcahbwp+9YR3w@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 16 Jan 2020 07:02:42 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00GBvSja080841
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:02:42 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xhff0fg46-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:02:41 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Thu, 16 Jan 2020 12:02:39 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 Jan 2020 12:02:34 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00GC2XZC44761500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 12:02:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45587A4053;
+        Thu, 16 Jan 2020 12:02:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02B3FA4057;
+        Thu, 16 Jan 2020 12:02:31 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.35.120])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 16 Jan 2020 12:02:30 +0000 (GMT)
+From:   Parth Shah <parth@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        patrick.bellasi@matbug.net, valentin.schneider@arm.com,
+        qais.yousef@arm.com, pavel@ucw.cz, dhaval.giani@oracle.com,
+        qperret@qperret.net, David.Laight@ACULAB.COM, pjt@google.com,
+        tj@kernel.org, dietmar.eggemann@arm.com
+Subject: [PATCH v3 0/3] Introduce per-task latency_nice for scheduler hints
+Date:   Thu, 16 Jan 2020 17:32:27 +0530
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 20011612-0016-0000-0000-000002DDD8B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011612-0017-0000-0000-000033407039
+Message-Id: <20200116120230.16759-1-parth@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-16_03:2020-01-16,2020-01-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 clxscore=1015
+ suspectscore=0 malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-2001160103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM MR.S=C3=89BASTIEN TONI
-AUDIT& ACCOUNT MANAGER
-BANK OF AFRICA (B.O.A)
-OUAGADOUGOU BURKINA FASO
-WEST AFRICA
+This is the 3rd revision of the patch set to introduce
+latency_{nice/tolerance} as a per task attribute.
 
-Dear Friend,
+The previous version can be found at:
+v1: https://lkml.org/lkml/2019/11/25/151
+v2: https://lkml.org/lkml/2019/12/8/10
 
-With due respect, I have decided to contact you on
-transubstantiation  that will be beneficial to both of us. At the
-bank last account and  auditing evaluation, my staffs came across an
-old account which was being maintained by a foreign client who we
-learn was among the deceased passengers of motor accident on
-November.2003, the deceased was unable to run this account since his
-death. Theaccount has  remained dormant without the knowledge of his
-family since it was put in a  safe deposit account in the bank for
-future investment by the client.
-
-Since his demise, even the members of his family haven't applied for
-claims  over this fund and it has been in the safe deposit account
-until I  discovered that it cannot be claimed since our client
-isaforeign nationaland we are sure that he has no next of kin here to
-file claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to bedone. I
-decided to seek ways through which to transfer this money out of the
-bank  and out of the country too.
+Changes in this revision are:
+v2 -> v3:
+- This series changes the longer attribute name to "latency_nice" as per
+  the comment from Dietmar Eggemann https://lkml.org/lkml/2019/12/5/394
+v1 -> v2:
+- Addressed comments from Qais Yousef
+- As per suggestion from Dietmar, moved content from newly created
+  include/linux/sched/latency_tolerance.h to kernel/sched/sched.h
+- Extend sched_setattr() to support latency_tolerance in tools headers UAPI
 
 
-The total amount in the account is 18.6 million with my positions as
-staffs  of the bank, I am handicapped because I cannot operate foreign
-accounts and  cannot lay debonair claim over this money. The client
-was a foreign  national and you will only be asked to act as his next
-of kin and I will  supply you with all the necessary information and
-bank data to assist you in being able to transfer this money to any
-bank of your  choice where this money could be transferred into.The
-total sum will be shared as follows: 50% for me, 50% for you and
-expenses incidental occur  during the transfer will be incur by both
-of us. The transfer is risk free on both sides hence you are going to
-follow my instruction till the fund  transfer to your account. Since I
-work in this bank that is why you should  be confident in the success
-of this transaction because you will be updated with information as at
-when desired.
+Introduction:
+==============
+This patch series introduces a new per-task attribute latency_nice to
+provide the scheduler hints about the latency requirements of the task [1].
 
-I will wish you to keep this transaction secret and confidential as I
-am  hoping to retire with my share of this money at the end of
-transaction  which will be when this money is safety in your account.
-I will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May  God help you to help me to a restive retirement, Amen,And
-You have to  contact me through my private e-mail
-at(sebastient766@gmail.com)Please for further information and inquires
-feel free to contact me back immediately for more explanation and
-better  understanding I want you to assure me your capability of
-handling this  project with trust by providing me your following
-information details such as:
+Latency_nice is a ranged attribute of a task with the value ranging
+from [-20, 19] both inclusive which makes it align with the task nice
+value.
 
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:.....................
-(6)YOUR COUNTRY:.....................
+The value should provide scheduler hints about the relative latency
+requirements of tasks, meaning the task with "latency_nice = -20"
+should have lower latency requirements than compared to those tasks with
+higher values. Similarly a task with "latency_nice = 19" can have higher
+latency and hence such tasks may not care much about latency.
 
-Yours sincerely,
-Mr.S=C3=A9bastien Toni
+The default value is set to 0. The usecases discussed below can use this
+range of [-20, 19] for latency_nice for the specific purpose. This
+patch does not implement any use cases for such attribute so that any
+change in naming or range does not affect much to the other (future)
+patches using this. The actual use of latency_nice during task wakeup
+and load-balancing is yet to be coded for each of those usecases.
+
+As per my view, this defined attribute can be used in following ways for a
+some of the usecases:
+1 Reduce search scan time for select_idle_cpu():
+- Reduce search scans for finding idle CPU for a waking task with lower
+  latency_nice values.
+
+2 TurboSched:
+- Classify the tasks with higher latency_nice values as a small
+  background task given that its historic utilization is very low, for
+  which the scheduler can search for more number of cores to do task
+  packing.  A task with a latency_nice >= some_threshold (e.g, == 19)
+  and util <= 12.5% can be background tasks.
+
+3 Optimize AVX512 based workload:
+- Bias scheduler to not put a task having (latency_nice == -20) on a
+  core occupying AVX512 based workload.
+
+
+Series Organization:
+====================
+- Patch 1: Add new attribute latency_nice to task_struct.
+- Patch 2: Clone parent task's attribute to the child task on fork
+- Patch 3: Add support for sched_{set,get}attr syscall to modify
+  	     latency_nice of the task
+
+
+The patch series can be applied on tip/sched/core at the
+commit 804d402fb6f6 ("sched/rt: Make RT capacity-aware")
+
+
+References:
+============
+[1]. Usecases for the per-task latency-nice attribute,
+     https://lkml.org/lkml/2019/9/30/215
+[2]. Task Latency-nice, "Subhra Mazumdar",
+     https://lkml.org/lkml/2019/8/30/829
+[3]. Introduce per-task latency_tolerance for scheduler hints,
+     https://lkml.org/lkml/2019/12/8/10
+
+
+Parth Shah (3):
+  sched: Introduce latency-nice as a per-task attribute
+  sched/core: Propagate parent task's latency requirements to the child
+    task
+  sched: Allow sched_{get,set}attr to change latency_nice of the task
+
+ include/linux/sched.h            |  1 +
+ include/uapi/linux/sched.h       |  4 +++-
+ include/uapi/linux/sched/types.h | 19 +++++++++++++++++++
+ kernel/sched/core.c              | 21 +++++++++++++++++++++
+ kernel/sched/sched.h             | 18 ++++++++++++++++++
+ tools/include/uapi/linux/sched.h |  4 +++-
+ 6 files changed, 65 insertions(+), 2 deletions(-)
+
+-- 
+2.17.2
+
