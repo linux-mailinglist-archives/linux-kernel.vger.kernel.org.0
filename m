@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC0B13F23A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:34:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2C613F1ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:32:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392657AbgAPSeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:34:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59738 "EHLO mail.kernel.org"
+        id S2391854AbgAPRZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:25:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403793AbgAPRYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:44 -0500
+        id S2391808AbgAPRYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BF6C2468C;
-        Thu, 16 Jan 2020 17:24:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1331E246B2;
+        Thu, 16 Jan 2020 17:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195483;
-        bh=OTfyqL13mP7+4AKTzIHZPyB8/MGAlw88DMRmtis+I9c=;
+        s=default; t=1579195489;
+        bh=EAJbWnwBlpDDCXgh5JtZ8Bw4nWOjmpO5KaecW+klynY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LxFfS7pDlFy5w39XwvkJ0T7w25YA2VSi6our4s1+8mdPsuhjSMMVl0s/3XDLJmobm
-         4wzsc5Rw6ntoKdu/lzTXtMSIT+wKGe+v8HFlAPUshcj+wDq/M20zE6IsRBtRIpGwfe
-         DCUiVu4gG6l8mnCjFyL+wWUv3PsF5gMzl3X/h7iw=
+        b=VZuWLbuA7Z63ZCvO0KxO97j3xYvWT/ERgtrbPiDJ4GHfryzhuQVOuZzBnJi/EII5G
+         MIFGk96gxKmthAu5AfZqv7AzpGxXoifsb/oOw4+b4Jl6tvy3Gwzy1ID1NG6u+UegvR
+         fpz2/wnidwJM9hby81rIK379gFayrdwFm5D9TjUw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 088/371] rtc: pm8xxx: fix unintended sign extension
-Date:   Thu, 16 Jan 2020 12:19:20 -0500
-Message-Id: <20200116172403.18149-31-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: [PATCH AUTOSEL 4.14 092/371] drm/etnaviv: potential NULL dereference
+Date:   Thu, 16 Jan 2020 12:19:24 -0500
+Message-Id: <20200116172403.18149-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,51 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e42280886018c6f77f0a90190f7cba344b0df3e0 ]
+[ Upstream commit 9e05352340d3a3e68c144136db9810b26ebb88c3 ]
 
-Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-the top bit of the u8 is set then the following conversion to an unsigned
-long will sign extend the value causing the upper 32 bits to be set in
-the result.
+The etnaviv_gem_prime_get_sg_table() is supposed to return error
+pointers.  Otherwise it can lead to a NULL dereference when it's called
+from drm_gem_map_dma_buf().
 
-Fix this by casting the u8 value to an unsigned long before the shift.
-
-Detected by CoverityScan, CID#1309693 ("Unintended sign extension")
-
-Fixes: 9a9a54ad7aa2 ("drivers/rtc: add support for Qualcomm PMIC8xxx RTC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 5f4a4a73f437 ("drm/etnaviv: fix gem_prime_get_sg_table to return new SG table")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-pm8xxx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-index fac835530671..a1b4b0ed1f19 100644
---- a/drivers/rtc/rtc-pm8xxx.c
-+++ b/drivers/rtc/rtc-pm8xxx.c
-@@ -186,7 +186,8 @@ static int pm8xxx_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 		}
- 	}
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+index ae884723e9b1..880b95511b98 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+@@ -26,7 +26,7 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	int npages = obj->size >> PAGE_SHIFT;
  
--	secs = value[0] | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
-+	secs = value[0] | (value[1] << 8) | (value[2] << 16) |
-+	       ((unsigned long)value[3] << 24);
+ 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
+-		return NULL;
++		return ERR_PTR(-EINVAL);
  
- 	rtc_time_to_tm(secs, tm);
- 
-@@ -267,7 +268,8 @@ static int pm8xxx_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 		return rc;
- 	}
- 
--	secs = value[0] | (value[1] << 8) | (value[2] << 16) | (value[3] << 24);
-+	secs = value[0] | (value[1] << 8) | (value[2] << 16) |
-+	       ((unsigned long)value[3] << 24);
- 
- 	rtc_time_to_tm(secs, &alarm->time);
- 
+ 	return drm_prime_pages_to_sg(etnaviv_obj->pages, npages);
+ }
 -- 
 2.20.1
 
