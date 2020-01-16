@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 041E913FE9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5FC13FE9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391511AbgAPXbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:31:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38126 "EHLO mail.kernel.org"
+        id S2389152AbgAPXb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:31:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391409AbgAPXar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:30:47 -0500
+        id S2391415AbgAPXau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:30:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EBCE2073A;
-        Thu, 16 Jan 2020 23:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A32FC20661;
+        Thu, 16 Jan 2020 23:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217446;
-        bh=qU0crJkjUsiWg2s1LzViuusnKuh8XR8514gpeOXXGK8=;
+        s=default; t=1579217449;
+        bh=CzXFhGf1ZajCXWtNKPJugt7XNNQ9VS0dodzo8nUu4fA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LkS7w93chAj0r2LH4UFnkxGPGC4Qlkdf7Vte4RUtOd9wZvGt4QmTpsm90XmjiRZ/P
-         rFO7U1pc9sDwM/3buUXHp1KyYCS1Up6t6tJy5ru3ivqEoI4UcD9ouRqxmMkhviErV/
-         J8lzZpPmFUFmpJtnaiL6UDczHrw4uuDHDpc8jkHw=
+        b=w3SCKomVsJ11L3+yXMV94nlFQy7SeXVLTa8L+s05qEn6t2WpIoN6i8Q7T+Cpz4s2Y
+         L+6YcFa32zSmvydO3g+o38OPJWaChg6KqkwVckI+mBOTG55vkfDyut8dFZ2FSfeveA
+         0is+2quIZD12j/DCTUTOXS682tX295qcIr0A3hME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 61/84] media: ov6650: Fix .get_fmt() V4L2_SUBDEV_FORMAT_TRY support
-Date:   Fri, 17 Jan 2020 00:18:35 +0100
-Message-Id: <20200116231720.884020396@linuxfoundation.org>
+Subject: [PATCH 4.19 62/84] media: rcar-vin: Fix incorrect return statement in rvin_try_format()
+Date:   Fri, 17 Jan 2020 00:18:36 +0100
+Message-Id: <20200116231720.985507322@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -44,52 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-commit 39034bb0c26b76a2c3abc54aa28c185f18b40c2f upstream.
+commit a0862a40364e2f87109317e31c51c9d7bc89e33f upstream.
 
-Commit da298c6d98d5 ("[media] v4l2: replace video op g_mbus_fmt by pad
-op get_fmt") converted a former ov6650_g_fmt() video operation callback
-to an ov6650_get_fmt() pad operation callback.  However, the converted
-function disregards a format->which flag that pad operations should
-obey and always returns active frame format settings.
+While refactoring code the return statement became corrupted, fix it by
+returning the correct return code.
 
-That can be fixed by always responding to V4L2_SUBDEV_FORMAT_TRY with
--EINVAL, or providing the response from a pad config argument, likely
-updated by a former user call to V4L2_SUBDEV_FORMAT_TRY .set_fmt().
-Since implementation of the latter is trivial, go for it.
-
-Fixes: da298c6d98d5 ("[media] v4l2: replace video op g_mbus_fmt by pad op get_fmt")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Fixes: 897e371389e77514 ("media: rcar-vin: simplify how formats are set and reset"
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/ov6650.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -531,10 +531,16 @@ static int ov6650_get_fmt(struct v4l2_su
- 	*mf = ov6650_def_fmt;
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -196,6 +196,7 @@ static int rvin_try_format(struct rvin_d
+ 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		goto done;
++	ret = 0;
  
- 	/* update media bus format code and frame size */
--	mf->width	= priv->rect.width >> priv->half_scale;
--	mf->height	= priv->rect.height >> priv->half_scale;
--	mf->code	= priv->code;
-+	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		mf->width = cfg->try_fmt.width;
-+		mf->height = cfg->try_fmt.height;
-+		mf->code = cfg->try_fmt.code;
+ 	v4l2_fill_pix_format(pix, &format.format);
  
-+	} else {
-+		mf->width = priv->rect.width >> priv->half_scale;
-+		mf->height = priv->rect.height >> priv->half_scale;
-+		mf->code = priv->code;
-+	}
- 	return 0;
+@@ -230,7 +231,7 @@ static int rvin_try_format(struct rvin_d
+ done:
+ 	v4l2_subdev_free_pad_config(pad_cfg);
+ 
+-	return 0;
++	return ret;
  }
  
+ static int rvin_querycap(struct file *file, void *priv,
 
 
