@@ -2,68 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A3813F0EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:25:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7ED313F0FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436641AbgAPSY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:24:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392408AbgAPSY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:24:56 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F20320684;
-        Thu, 16 Jan 2020 18:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579199096;
-        bh=Uvn4io9HRoCWehKj5QlRdjNGEEGcA1mRcdpz3dLBqGs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0CKqRrAnK+geRIGoLgKnBDxnHagxynAqskFtIRJ9DfMZWKYtbc1dCbzt1+SfM2sjc
-         hnVnjWETX8zzmlDO2rucuD7erQEPcfSJVahwFRoGLWRtDIXk5QdfPs8irawGcLG9X7
-         3jkFCB+/ojXqzQSHWy0dF/yM2x/Ww6byyiuTepeA=
-Date:   Thu, 16 Jan 2020 18:24:50 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Sami Tolvanen <samitolvanen@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jann Horn <jannh@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/15] add support for Clang's Shadow Call Stack
-Message-ID: <20200116182449.GD22420@willie-the-truck>
-References: <20191018161033.261971-1-samitolvanen@google.com>
- <20191206221351.38241-1-samitolvanen@google.com>
+        id S2436663AbgAPSZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:25:44 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51371 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395500AbgAPSZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:25:41 -0500
+X-Originating-IP: 109.204.130.2
+Received: from kurenai.i.gensoukyou.net (unknown [109.204.130.2])
+        (Authenticated sender: oranenj@gensoukyou.net)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C8D311C0012
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 18:25:38 +0000 (UTC)
+To:     linux-kernel@vger.kernel.org
+From:   Jarkko Oranen <oranenj@iki.fi>
+Subject: Linux router responds to any ARP query when iproute2 xfrm policies
+ are configured for an IPSec tunnel. What's going on?
+Message-ID: <4efb35fb-d2ee-49e7-8c7d-e8bab315ca60@iki.fi>
+Date:   Thu, 16 Jan 2020 20:25:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191206221351.38241-1-samitolvanen@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 02:13:36PM -0800, Sami Tolvanen wrote:
-> This patch series adds support for Clang's Shadow Call Stack
-> (SCS) mitigation, which uses a separately allocated shadow stack
-> to protect against return address overwrites. More information
-> can be found here:
-> 
->   https://clang.llvm.org/docs/ShadowCallStack.html
+Hi,
 
-I've queued the first four via arm64.
+First of all, I'm not currently subscribed to LKML, so please CC any 
+replies.
 
-Will
+I recently debugged a DHCP client which refused to accept a lease, and 
+noticed that my router seems to reply to ARP requests for any IP 
+address, apparently causing the client to think it was receiving a 
+duplicate IP.
+
+After some debugging, I learned that my router will respond to any ARP 
+query if the IP falls within the traffic selector I'm using for my xfrm 
+interface-based IPSec VPN. For example:
+
+$ arping 1.1.1.1
+
+ARPING 1.1.1.1 from 10.21.1.10 enp7s0
+
+Unicast reply from 1.1.1.1 [00:0D:B9:4B:07:C1]  1.449ms
+
+
+I tried changing the various ARP-related sysctls, but they had no effect 
+on this behaviour. It stops immediately if I kill the IPSec tunnel and 
+the xfrm policies are removed.
+
+The xfrm interface is created simply with
+   ip link add st0 type xfrm dev eth0 if_id 1
+and 10/8 is routed to it, though this doesn't seem to matter.
+
+When the IPSec tunnel is up and running, it configures xfrm policies 
+like so:
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	dir out priority 399999 ptype main
+
+	tmpl src <my-ip> dst <remote-ip>
+
+		proto esp spi 0xc5a3f611 reqid 1 mode tunnel
+
+	if_id 0x1
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	dir fwd priority 399999 ptype main
+
+	tmpl src <remote-ip> dst <my-ip>
+
+		proto esp reqid 1 mode tunnel
+
+	if_id 0x1
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	dir in priority 399999 ptype main
+
+	tmpl src <remote-ip> dst <my-ip>
+
+		proto esp reqid 1 mode tunnel
+
+	if_id 0x1
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	socket in priority 0 ptype main
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	socket out priority 0 ptype main
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	socket in priority 0 ptype main
+
+src 0.0.0.0/0 dst 0.0.0.0/0
+
+	socket out priority 0 ptype main
+
+src ::/0 dst ::/0
+
+	socket in priority 0 ptype main
+
+src ::/0 dst ::/0
+
+	socket out priority 0 ptype main
+
+src ::/0 dst ::/0
+
+	socket in priority 0 ptype main
+
+src ::/0 dst ::/0
+
+	socket out priority 0 ptype main
+
+
+The traffic selector affects what ARP requests the router responds to, 
+so if I change it to 10.0.0.0/8, it will respond to any ARP request for 
+IPs in that range.
+
+This is happening on Alpine Linux running kernel version 5.4.12-1-lts.
+
+Is this expected behaviour? I would appreciate some pointers.
+
+--
+Jarkko Oranen
