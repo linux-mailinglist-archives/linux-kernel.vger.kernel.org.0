@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5BE413F073
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4795E13F065
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404248AbgAPSVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:21:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37870 "EHLO mail.kernel.org"
+        id S2387540AbgAPSVe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:21:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392509AbgAPR1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:45 -0500
+        id S2392060AbgAPR1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFAE6246E6;
-        Thu, 16 Jan 2020 17:27:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEB25246E9;
+        Thu, 16 Jan 2020 17:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195664;
-        bh=xj46LUX8pWHd9qD70lWYOaExu6TVlptWMRSBikZc2YQ=;
+        s=default; t=1579195667;
+        bh=v9Lp2EmHI5PVUDJ4zW54quaf6jsktkRDtB35oO0fFgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztPIExW0hqpj2QFTEbSRhzRI0sev9kMXE5wusLOGRboF5LYmoseSi2kDSc8ynlKhn
-         XIeRExPOYlX2eZeEDm9kfNvL1yELa0BV2SqKS8uMm9vBmCrwebXpYEGaouyuDt6949
-         Is/ZRCk7KIAkjcvHOiZRnRh5WJyqUt7kNu0bel98=
+        b=1DUNFNza02c56GAuL1C+0nMf0V1I+DRRmSV2QunylJh8CODRf1ACz4i7AGryqr7kw
+         IfFCeoAnAMEQNeNYbgNahVj1aMMg8LfKtJeBsdDPvPCu/MX4j8Z+MQtKPib+nybApL
+         tQO9Qb7qkIx8pAtZz8wSNVA6q4YasmnpE94AqxRE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 223/371] cpufreq: brcmstb-avs-cpufreq: Fix types for voltage/frequency
-Date:   Thu, 16 Jan 2020 12:21:35 -0500
-Message-Id: <20200116172403.18149-166-sashal@kernel.org>
+Cc:     George Wilkie <gwilkie@vyatta.att-mail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 225/371] mpls: fix warning with multi-label encap
+Date:   Thu, 16 Jan 2020 12:21:37 -0500
+Message-Id: <20200116172403.18149-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,59 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: George Wilkie <gwilkie@vyatta.att-mail.com>
 
-[ Upstream commit 4c5681fcc684c762b09435de3e82ffeee7769d21 ]
+[ Upstream commit 2f3f7d1fa0d1039b24a55d127ed190f196fc3e79 ]
 
-What we read back from the register is going to be capped at 32-bits,
-and cpufreq_freq_table.frequency is an unsigned int. Avoid any possible
-value truncation by using the appropriate return value.
+If you configure a route with multiple labels, e.g.
+  ip route add 10.10.3.0/24 encap mpls 16/100 via 10.10.2.2 dev ens4
+A warning is logged:
+  kernel: [  130.561819] netlink: 'ip': attribute type 1 has an invalid
+  length.
 
-Fixes: de322e085995 ("cpufreq: brcmstb-avs-cpufreq: AVS CPUfreq driver for Broadcom STB SoCs")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Markus Mayer <mmayer@broadcom.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+This happens because mpls_iptunnel_policy has set the type of
+MPLS_IPTUNNEL_DST to fixed size NLA_U32.
+Change it to a minimum size.
+nla_get_labels() does the remaining validation.
+
+Fixes: e3e4712ec096 ("mpls: ip tunnel support")
+Signed-off-by: George Wilkie <gwilkie@vyatta.att-mail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/brcmstb-avs-cpufreq.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/mpls/mpls_iptunnel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-index bae319037658..39c462711eae 100644
---- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
-+++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-@@ -468,12 +468,12 @@ static int brcm_avs_set_pstate(struct private_data *priv, unsigned int pstate)
- 	return __issue_avs_command(priv, AVS_CMD_SET_PSTATE, true, args);
- }
+diff --git a/net/mpls/mpls_iptunnel.c b/net/mpls/mpls_iptunnel.c
+index 6e558a419f60..6c01166f972b 100644
+--- a/net/mpls/mpls_iptunnel.c
++++ b/net/mpls/mpls_iptunnel.c
+@@ -28,7 +28,7 @@
+ #include "internal.h"
  
--static unsigned long brcm_avs_get_voltage(void __iomem *base)
-+static u32 brcm_avs_get_voltage(void __iomem *base)
- {
- 	return readl(base + AVS_MBOX_VOLTAGE1);
- }
+ static const struct nla_policy mpls_iptunnel_policy[MPLS_IPTUNNEL_MAX + 1] = {
+-	[MPLS_IPTUNNEL_DST]	= { .type = NLA_U32 },
++	[MPLS_IPTUNNEL_DST]	= { .len = sizeof(u32) },
+ 	[MPLS_IPTUNNEL_TTL]	= { .type = NLA_U8 },
+ };
  
--static unsigned long brcm_avs_get_frequency(void __iomem *base)
-+static u32 brcm_avs_get_frequency(void __iomem *base)
- {
- 	return readl(base + AVS_MBOX_FREQUENCY) * 1000;	/* in kHz */
- }
-@@ -973,14 +973,14 @@ static ssize_t show_brcm_avs_voltage(struct cpufreq_policy *policy, char *buf)
- {
- 	struct private_data *priv = policy->driver_data;
- 
--	return sprintf(buf, "0x%08lx\n", brcm_avs_get_voltage(priv->base));
-+	return sprintf(buf, "0x%08x\n", brcm_avs_get_voltage(priv->base));
- }
- 
- static ssize_t show_brcm_avs_frequency(struct cpufreq_policy *policy, char *buf)
- {
- 	struct private_data *priv = policy->driver_data;
- 
--	return sprintf(buf, "0x%08lx\n", brcm_avs_get_frequency(priv->base));
-+	return sprintf(buf, "0x%08x\n", brcm_avs_get_frequency(priv->base));
- }
- 
- cpufreq_freq_attr_ro(brcm_avs_pstate);
 -- 
 2.20.1
 
