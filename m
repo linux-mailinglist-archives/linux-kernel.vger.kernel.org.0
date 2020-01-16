@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946A613E736
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:24:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 841C613E73A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:24:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391746AbgAPRYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:24:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58640 "EHLO mail.kernel.org"
+        id S2391286AbgAPRY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:24:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391723AbgAPRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:20 -0500
+        id S2391759AbgAPRY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB2F524684;
-        Thu, 16 Jan 2020 17:24:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 193D424684;
+        Thu, 16 Jan 2020 17:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195459;
-        bh=bYxSH8GfVHB3PUAM4GpW1DZVUUfAFBPIypwps27JDa4=;
+        s=default; t=1579195465;
+        bh=iXlGhkD+iPp8vh7EEoCYUfHQYjiFUHCq17Z2sMpPylM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A48zrwgnKE3rjMCLJm0Rg3k6arXHHPXzDN1ZiIpQCvX1HIF1VxXlVFwdOKL4uTzrI
-         2GFISlth7txKmuh1/1urBpypByHIpeBhO3a4AnU+1wCY6Z+Q/IKdxpt4d+jyjggXpO
-         DZbNkAFZy5MhD2vCTWRQBQ1tVRf/KsUuTvXKmo+8=
+        b=H4xchUpj0jN7osIfBeIHoYwyw8gP7ZnEwpTZOCQLqPpfzuozsh0WUQYZGQjmFjy4M
+         ED/are9yfSBOYe0TyaAIZQoVPDfAMBM91H0sOjMFJUfOeVzXI1gStgB71cb67tSRLr
+         TmdOjpuYwLA6Uh+boDLkGE+s4AGuihpM0I0fqcQo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Moni Shoua <monis@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 068/371] net/mlx5: Take lock with IRQs disabled to avoid deadlock
-Date:   Thu, 16 Jan 2020 12:19:00 -0500
-Message-Id: <20200116172403.18149-11-sashal@kernel.org>
+Cc:     Corentin Labbe <clabbe@baylibre.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 073/371] crypto: crypto4xx - Fix wrong ppc4xx_trng_probe()/ppc4xx_trng_remove() arguments
+Date:   Thu, 16 Jan 2020 12:19:05 -0500
+Message-Id: <20200116172403.18149-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,80 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Moni Shoua <monis@mellanox.com>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-[ Upstream commit 33814e5d127e21f53b52e17b0722c1b57d4f4d29 ]
+[ Upstream commit 6e88098ca43a3d80ae86908f7badba683c8a0d84 ]
 
-The lock in qp_table might be taken from process context or from
-interrupt context. This may lead to a deadlock unless it is taken with
-IRQs disabled.
+When building without CONFIG_HW_RANDOM_PPC4XX, I hit the following build failure:
+drivers/crypto/amcc/crypto4xx_core.c: In function 'crypto4xx_probe':
+drivers/crypto/amcc/crypto4xx_core.c:1407:20: error: passing argument 1 of 'ppc4xx_trng_probe' from incompatible pointer type [-Werror=incompatible-pointer-types]
+In file included from drivers/crypto/amcc/crypto4xx_core.c:50:0:
+drivers/crypto/amcc/crypto4xx_trng.h:28:20: note: expected 'struct crypto4xx_device *' but argument is of type 'struct crypto4xx_core_device *'
+drivers/crypto/amcc/crypto4xx_core.c: In function 'crypto4xx_remove':
+drivers/crypto/amcc/crypto4xx_core.c:1434:21: error: passing argument 1 of 'ppc4xx_trng_remove' from incompatible pointer type [-Werror=incompatible-pointer-types]
+In file included from drivers/crypto/amcc/crypto4xx_core.c:50:0:
+drivers/crypto/amcc/crypto4xx_trng.h:30:20: note: expected 'struct crypto4xx_device *' but argument is of type 'struct crypto4xx_core_device *'
 
-Discovered by lockdep
+This patch fix the needed argument of ppc4xx_trng_probe()/ppc4xx_trng_remove() in that case.
 
-================================
-WARNING: inconsistent lock state
-4.20.0-rc6
---------------------------------
-inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W}
-
-python/12572 [HC1[1]:SC0[0]:HE0:SE1] takes:
-00000000052a4df4 (&(&table->lock)->rlock#2){?.+.}, /0x50 [mlx5_core]
-{HARDIRQ-ON-W} state was registered at:
-  _raw_spin_lock+0x33/0x70
-  mlx5_get_rsc+0x1a/0x50 [mlx5_core]
-  mlx5_ib_eqe_pf_action+0x493/0x1be0 [mlx5_ib]
-  process_one_work+0x90c/0x1820
-  worker_thread+0x87/0xbb0
-  kthread+0x320/0x3e0
-  ret_from_fork+0x24/0x30
-irq event stamp: 103928
-hardirqs last  enabled at (103927): [] nk+0x1a/0x1c
-hardirqs last disabled at (103928): [] unk+0x1a/0x1c
-softirqs last  enabled at (103924): [] tcp_sendmsg+0x31/0x40
-softirqs last disabled at (103922): [] 80
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&(&table->lock)->rlock#2);
-
-    lock(&(&table->lock)->rlock#2);
-
- *** DEADLOCK ***
-
-Fixes: 032080ab43ac ("IB/mlx5: Lock QP during page fault handling")
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 5343e674f32f ("crypto4xx: integrate ppc4xx-rng into crypto4xx")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/qp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/crypto/amcc/crypto4xx_trng.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/qp.c b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
-index 5f091c6ea049..b92d5690287b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
-@@ -44,14 +44,15 @@ static struct mlx5_core_rsc_common *mlx5_get_rsc(struct mlx5_core_dev *dev,
- {
- 	struct mlx5_qp_table *table = &dev->priv.qp_table;
- 	struct mlx5_core_rsc_common *common;
-+	unsigned long flags;
+diff --git a/drivers/crypto/amcc/crypto4xx_trng.h b/drivers/crypto/amcc/crypto4xx_trng.h
+index 931d22531f51..7bbda51b7337 100644
+--- a/drivers/crypto/amcc/crypto4xx_trng.h
++++ b/drivers/crypto/amcc/crypto4xx_trng.h
+@@ -26,9 +26,9 @@ void ppc4xx_trng_probe(struct crypto4xx_core_device *core_dev);
+ void ppc4xx_trng_remove(struct crypto4xx_core_device *core_dev);
+ #else
+ static inline void ppc4xx_trng_probe(
+-	struct crypto4xx_device *dev __maybe_unused) { }
++	struct crypto4xx_core_device *dev __maybe_unused) { }
+ static inline void ppc4xx_trng_remove(
+-	struct crypto4xx_device *dev __maybe_unused) { }
++	struct crypto4xx_core_device *dev __maybe_unused) { }
+ #endif
  
--	spin_lock(&table->lock);
-+	spin_lock_irqsave(&table->lock, flags);
- 
- 	common = radix_tree_lookup(&table->tree, rsn);
- 	if (common)
- 		atomic_inc(&common->refcount);
- 
--	spin_unlock(&table->lock);
-+	spin_unlock_irqrestore(&table->lock, flags);
- 
- 	if (!common) {
- 		mlx5_core_warn(dev, "Async event for bogus resource 0x%x\n",
+ #endif
 -- 
 2.20.1
 
