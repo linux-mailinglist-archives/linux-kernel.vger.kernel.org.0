@@ -2,122 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77C6013DF5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CDD313DF66
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:59:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgAPP5Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:57:16 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:11478 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726730AbgAPP5Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:57:16 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579190235; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=iru6tv9Z7QQCV5dgJVR7xZ6Q0DYAM+fSwdOud0OR7R8=;
- b=AuoH5wpofyk7h930gMWr73mxkX4MEEZEP0hlEH3vkJV+FP5fTypEd3mtn80jLGNp3EBvMqFj
- +G5bV8A5cLOsWDto3gkRxzlkCysIB2l4GeApDwF5qeQgnsFrFEcLXs5oOBxfIywk5tEVDzXu
- bwr4xer7FJhVeHA4HsWduaetjbw=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e2087d5.7efd8b9079d0-smtp-out-n03;
- Thu, 16 Jan 2020 15:57:09 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 715B0C4479C; Thu, 16 Jan 2020 15:57:08 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9DA2C43383;
-        Thu, 16 Jan 2020 15:57:07 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 16 Jan 2020 21:27:07 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>, Will Deacon <will@kernel.org>
-Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: Add KRYO{3,4}XX CPU cores to spectre-v2 safe list
-In-Reply-To: <1a114449-8026-b99d-a4ce-93aac2ffdcb3@codeaurora.org>
-References: <20200116141912.15465-1-saiprakash.ranjan@codeaurora.org>
- <20200116153235.GA18909@willie-the-truck>
- <1a114449-8026-b99d-a4ce-93aac2ffdcb3@codeaurora.org>
-Message-ID: <ff70f2fd2fd8525f919ff9a872d33041@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        id S1726827AbgAPP7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:59:10 -0500
+Received: from mga09.intel.com ([134.134.136.24]:61560 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbgAPP7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:59:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 07:59:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,326,1574150400"; 
+   d="scan'208";a="248853704"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Jan 2020 07:59:09 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, eranian@google.com, acme@redhat.com,
+        mingo@kernel.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
+Cc:     jolsa@kernel.org, namhyung@kernel.org, vitaly.slobodskoy@intel.com,
+        pavel.gerasimov@intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH V5 0/2] Stitch LBR call stack (kernel)
+Date:   Thu, 16 Jan 2020 07:57:55 -0800
+Message-Id: <20200116155757.19624-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeffrey,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On 2020-01-16 21:12, Jeffrey Hugo wrote:
-> On 1/16/2020 8:32 AM, Will Deacon wrote:
->> [+Jeffrey]
->> 
->> On Thu, Jan 16, 2020 at 07:49:12PM +0530, Sai Prakash Ranjan wrote:
->>> KRYO3XX silver CPU cores and KRYO4XX silver, gold CPU cores
->>> are not affected by Spectre variant 2. Add them to spectre_v2
->>> safe list to correct ARM_SMCCC_ARCH_WORKAROUND_1 warning and
->>> vulnerability sysfs value.
->>> 
->>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>> ---
->>>   arch/arm64/include/asm/cputype.h | 6 ++++++
->>>   arch/arm64/kernel/cpu_errata.c   | 3 +++
->>>   2 files changed, 9 insertions(+)
->>> 
->>> diff --git a/arch/arm64/include/asm/cputype.h 
->>> b/arch/arm64/include/asm/cputype.h
->>> index aca07c2f6e6e..7219cddeba66 100644
->>> --- a/arch/arm64/include/asm/cputype.h
->>> +++ b/arch/arm64/include/asm/cputype.h
->>> @@ -85,6 +85,9 @@
->>>   #define QCOM_CPU_PART_FALKOR_V1		0x800
->>>   #define QCOM_CPU_PART_FALKOR		0xC00
->>>   #define QCOM_CPU_PART_KRYO		0x200
->>> +#define QCOM_CPU_PART_KRYO_3XX_SILVER	0x803
->>> +#define QCOM_CPU_PART_KRYO_4XX_GOLD	0x804
->>> +#define QCOM_CPU_PART_KRYO_4XX_SILVER	0x805
->> 
->> Jeffrey is the only person I know who understands the CPU naming here, 
->> so
->> I've added him in case this needs either renaming or extending to 
->> cover
->> other CPUs. I wouldn't be at all surprised if we need a function call
->> rather than a bunch of table entries...
-> 
-> The added lines look sane to me, from a naming and MIDR perspective.
-> I don't know off hand if these CPUs are really fixed or not.
-> 
-> I wonder why a "KRYO_3XX_GOLD  0x802" line is not being added.  Sai?
-> 
+Changes since V4
+- Only include the kernel patches
+- Abstract TOS to HW index, which can be used across hw platforms.
+  If we don't know the order of raw branch records, the hw_idx should be
+  -1ULL. Set hw_idx to -1ULL for IBM Power for now.
+- Move the new branch sample type back to bit 17
 
-KRYO_3XX_GOLD is based on Cortex-A75 which is not spectre v2 safe.
+Changes since V3
+- Add the new branch sample type at the end of enum
+  perf_branch_sample_type.
+- Rebase the user space patch on top of acme's perf/core branch
 
-Thanks,
-Sai
+Changes since V2
+- Move tos into struct perf_branch_stack
+
+Changes since V1
+- Add a new branch sample type for LBR TOS. Drop the sample type in V1.
+- Add check in perf header to detect unknown input bits in event attr
+- Save and use the LBR cursor nodes from previous sample to avoid
+  duplicate calculation of cursor nodes.
+- Add fast path for duplicate entries check. It benefits all call stack
+  parsing, not just for stitch LBR call stack. It can be merged
+  independetely.
+
+Start from Haswell, Linux perf can utilize the existing Last Branch
+Record (LBR) facility to record call stack. However, the depth of the
+reconstructed LBR call stack limits to the number of LBR registers.
+E.g. on skylake, the depth of reconstructed LBR call stack is <= 32
+That's because HW will overwrite the oldest LBR registers when it's
+full.
+
+However, the overwritten LBRs may still be retrieved from previous
+sample. At that moment, HW hasn't overwritten the LBR registers yet.
+Perf tools can stitch those overwritten LBRs on current call stacks to
+get a more complete call stack.
+
+To determine if LBRs can be stitched, the physical index of LBR
+registers is required. A new branch sample type is introduced to
+dump the LBR Top-of-Stack (TOS) information for perf tools.
+
+The stitching approach base on LBR call stack technology. The known
+limitations of LBR call stack technology still apply to the approach,
+e.g. Exception handing such as setjmp/longjmp will have calls/returns
+not match.
+This approach is not full proof. There can be cases where it creates
+incorrect call stacks from incorrect matches. There is no attempt
+to validate any matches in another way. So it is not enabled by default.
+However in many common cases with call stack overflows it can recreate
+better call stacks than the default lbr call stack output. So if there
+are problems with LBR overflows this is a possible workaround.
+
+Regression:
+Users may collect LBR call stack on a machine with new perf tool and
+new kernel (support LBR TOS). However, they may parse the perf.data with
+old perf tool (not support LBR TOS). The old tool doesn't check
+attr.branch_sample_type. Users probably get incorrect information
+without any warning.
+
+Kan Liang (2):
+  perf/core: Add new branch sample type for HW index of raw branch
+    records
+  perf/x86/intel: Output LBR TOS information
+
+ arch/powerpc/perf/core-book3s.c |  1 +
+ arch/x86/events/intel/lbr.c     |  9 +++++++++
+ include/linux/perf_event.h      | 12 ++++++++++++
+ include/uapi/linux/perf_event.h | 10 +++++++++-
+ kernel/events/core.c            | 11 +++++++++++
+ 5 files changed, 42 insertions(+), 1 deletion(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.17.1
+
