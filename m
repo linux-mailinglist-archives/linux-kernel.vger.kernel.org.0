@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279EE13EF4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B510413EF4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbgAPSOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:14:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48994 "EHLO mail.kernel.org"
+        id S2395333AbgAPSOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:14:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393057AbgAPRe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:34:58 -0500
+        id S2404885AbgAPRfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89C83246A9;
-        Thu, 16 Jan 2020 17:34:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F972246C0;
+        Thu, 16 Jan 2020 17:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196097;
-        bh=p2vl7Mx/wmMj0nieC4rH/c5NL1D20ti+nnLoi7u/yHQ=;
+        s=default; t=1579196099;
+        bh=gNFwEQOsiuqgaNAr1jQlS1TSYe0ExSz1VKzlHHfJk4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4MHospsljrHB6mDidwfuT3TLliebgnrSIm2pXdwNRLK4nxkVO3bi1rGfeHgFUWDR
-         likxh3nn/h9PLsr9e6mPBC0CPdl0d7ZRqh1x1eg3InUCrc8vxl2NKfZh/RV4Puk9nU
-         syUVJguG0X+uJCZ0UzeW9Xn36mHPMuikx15CQins=
+        b=NCgeQrZ5Wkd3aOcW4TuvQLYGTp6gvX3OqJUIIveN+48vhgJEtbXQRwuKe2OgawEyI
+         JxfFKT4H0FP2DTX9l2FMGa3dS/TXe7HValnTGlWaYWrP9Ec4geKHgsTM21WR02uVu4
+         suP2vE/IUqQITDldvd4YXYfA0Zu2UQ1APS88NWac=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 009/251] mlxsw: reg: QEEC: Add minimum shaper fields
-Date:   Thu, 16 Jan 2020 12:30:43 -0500
-Message-Id: <20200116173445.21385-9-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 011/251] exportfs: fix 'passing zero to ERR_PTR()' warning
+Date:   Thu, 16 Jan 2020 12:30:45 -0500
+Message-Id: <20200116173445.21385-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -44,75 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 8b931821aa04823e2e5df0ae93937baabbd23286 ]
+[ Upstream commit 909e22e05353a783c526829427e9a8de122fba9c ]
 
-Add QEEC.mise (minimum shaper enable) and QEEC.min_shaper_rate to enable
-configuration of minimum shaper.
+Fix a static code checker warning:
+  fs/exportfs/expfs.c:171 reconnect_one() warn: passing zero to 'ERR_PTR'
 
-Increase the QEEC length to 0x20 as well: that's the length that the
-register has had for a long time now, but with the configurations that
-mlxsw typically exercises, the firmware tolerated 0x1C-sized packets.
-With mise=true however, FW rejects packets unless they have the full
-required length.
+The error path for lookup_one_len_unlocked failure
+should set err to PTR_ERR.
 
-Fixes: b9b7cee40579 ("mlxsw: reg: Add QoS ETS Element Configuration register")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bbf7a8a3562f ("exportfs: move most of reconnect_path to helper function")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/reg.h | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ fs/exportfs/expfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/reg.h b/drivers/net/ethernet/mellanox/mlxsw/reg.h
-index b2a745b579fd..fdc69218c8ca 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/reg.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/reg.h
-@@ -1873,7 +1873,7 @@ static inline void mlxsw_reg_qtct_pack(char *payload, u8 local_port,
-  * Configures the ETS elements.
-  */
- #define MLXSW_REG_QEEC_ID 0x400D
--#define MLXSW_REG_QEEC_LEN 0x1C
-+#define MLXSW_REG_QEEC_LEN 0x20
- 
- static const struct mlxsw_reg_info mlxsw_reg_qeec = {
- 	.id = MLXSW_REG_QEEC_ID,
-@@ -1918,6 +1918,15 @@ MLXSW_ITEM32(reg, qeec, element_index, 0x04, 0, 8);
-  */
- MLXSW_ITEM32(reg, qeec, next_element_index, 0x08, 0, 8);
- 
-+/* reg_qeec_mise
-+ * Min shaper configuration enable. Enables configuration of the min
-+ * shaper on this ETS element
-+ * 0 - Disable
-+ * 1 - Enable
-+ * Access: RW
-+ */
-+MLXSW_ITEM32(reg, qeec, mise, 0x0C, 31, 1);
-+
- enum {
- 	MLXSW_REG_QEEC_BYTES_MODE,
- 	MLXSW_REG_QEEC_PACKETS_MODE,
-@@ -1934,6 +1943,17 @@ enum {
-  */
- MLXSW_ITEM32(reg, qeec, pb, 0x0C, 28, 1);
- 
-+/* The smallest permitted min shaper rate. */
-+#define MLXSW_REG_QEEC_MIS_MIN	200000		/* Kbps */
-+
-+/* reg_qeec_min_shaper_rate
-+ * Min shaper information rate.
-+ * For CPU port, can only be configured for port hierarchy.
-+ * When in bytes mode, value is specified in units of 1000bps.
-+ * Access: RW
-+ */
-+MLXSW_ITEM32(reg, qeec, min_shaper_rate, 0x0C, 0, 28);
-+
- /* reg_qeec_mase
-  * Max shaper configuration enable. Enables configuration of the max
-  * shaper on this ETS element.
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 3706939e5dd5..1730122b10e0 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -146,6 +146,7 @@ static struct dentry *reconnect_one(struct vfsmount *mnt,
+ 	tmp = lookup_one_len_unlocked(nbuf, parent, strlen(nbuf));
+ 	if (IS_ERR(tmp)) {
+ 		dprintk("%s: lookup failed: %d\n", __func__, PTR_ERR(tmp));
++		err = PTR_ERR(tmp);
+ 		goto out_err;
+ 	}
+ 	if (tmp != dentry) {
 -- 
 2.20.1
 
