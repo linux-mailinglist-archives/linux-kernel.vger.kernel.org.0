@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBA413DF3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9872D13DF41
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 16:51:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgAPPu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 10:50:59 -0500
-Received: from mga18.intel.com ([134.134.136.126]:9875 "EHLO mga18.intel.com"
+        id S1726965AbgAPPvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 10:51:22 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41954 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbgAPPu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:50:59 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 07:50:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,326,1574150400"; 
-   d="scan'208";a="257414987"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2020 07:50:57 -0800
-Date:   Thu, 16 Jan 2020 07:50:57 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Perform non-canonical checks in 32-bit KVM
-Message-ID: <20200116155057.GB20561@linux.intel.com>
-References: <20200115183605.15413-1-sean.j.christopherson@intel.com>
- <cf9a9746-e0b8-8303-afd5-b1c3a2a9ac83@oracle.com>
+        id S1726151AbgAPPvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:51:22 -0500
+Received: from zn.tnic (p200300EC2F0B23002957B4D0D21CE7EE.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2300:2957:b4d0:d21c:e7ee])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 03DF71EC071C;
+        Thu, 16 Jan 2020 16:51:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579189881;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Wgupd+vOvik6VGLiIGC59MyorQUoRE4q6Dw4T3BddQQ=;
+        b=B9PDoURNxaeK1V/0ll4/vaNNTUmNSiwgq4cI9FHPlIp1aDBaATDHydkLzH8Ndhp6avesjO
+        gz/3Z4Inhx8fZT01x84RQc0XDsnM5LXKslNcWt4l7AMYYInV+m/9rbWTULvtzpgJEcGTpD
+        WtUurxpcw50qhYomFLN6n9rjZB0ctqo=
+Date:   Thu, 16 Jan 2020 16:51:16 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bp@suse.de, tony.luck@intel.com, x86@kernel.org
+Subject: Re: [PATCH 1/5] x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit
+ McaType
+Message-ID: <20200116155116.GE27148@zn.tnic>
+References: <20200110015651.14887-1-Yazen.Ghannam@amd.com>
+ <20200110015651.14887-2-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf9a9746-e0b8-8303-afd5-b1c3a2a9ac83@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20200110015651.14887-2-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 05:37:16PM -0800, Krish Sadhukhan wrote:
+On Fri, Jan 10, 2020 at 01:56:47AM +0000, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
 > 
-> On 01/15/2020 10:36 AM, Sean Christopherson wrote:
-> >  arch/x86/kvm/x86.h | 8 --------
-> >  1 file changed, 8 deletions(-)
-> >
-> >diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> >index cab5e71f0f0f..3ff590ec0238 100644
-> >--- a/arch/x86/kvm/x86.h
-> >+++ b/arch/x86/kvm/x86.h
-> >@@ -166,21 +166,13 @@ static inline u64 get_canonical(u64 la, u8 vaddr_bits)
-> >  static inline bool is_noncanonical_address(u64 la, struct kvm_vcpu *vcpu)
-> >  {
-> >-#ifdef CONFIG_X86_64
-> >  	return get_canonical(la, vcpu_virt_addr_bits(vcpu)) != la;
-> >-#else
-> >-	return false;
-> >-#endif
-> >  }
-> >  static inline bool emul_is_noncanonical_address(u64 la,
-> >  						struct x86_emulate_ctxt *ctxt)
-> >  {
-> >-#ifdef CONFIG_X86_64
-> >  	return get_canonical(la, ctxt_virt_addr_bits(ctxt)) != la;
-> >-#else
-> >-	return false;
-> >-#endif
-> >  }
-> >  static inline void vcpu_cache_mmio_info(struct kvm_vcpu *vcpu,
-> 
-> nested_vmx_check_host_state() still won't call it on 32-bit because it has
-> the CONFIG_X86_64 guard around the callee:
-> 
->  #ifdef CONFIG_X86_64
->         if (CC(is_noncanonical_address(vmcs12->host_fs_base, vcpu)) ||
->             CC(is_noncanonical_address(vmcs12->host_gs_base, vcpu)) ||
->  ...
+> Future SMCA systems may see a new version of the Load Store unit bank
+		      ^^^^^^^^
 
-Doh, I was looking at an older version of nested.c.  Nice catch!
+Yah, you've been hanging around with hw people too much. I can just as
+well reply: "well, I'll apply the patch when I see future SMCA systems"
+:-)
 
-> Don't we need to remove these guards in the callers as well ?
+All I'm saying is, forget those "may" formulations when it comes to
+kernel patches. :-)
 
-Ya, that would be my preference.
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
