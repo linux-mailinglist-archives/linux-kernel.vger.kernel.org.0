@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BEB13FE1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:34:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2B413FF49
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:42:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403882AbgAPXci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41928 "EHLO mail.kernel.org"
+        id S2391183AbgAPXl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404089AbgAPXc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:29 -0500
+        id S2388327AbgAPX1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:27:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DF5F206D9;
-        Thu, 16 Jan 2020 23:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C32B2072E;
+        Thu, 16 Jan 2020 23:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217548;
-        bh=f96ZAgfD7z4kX6S1UyNF8i0p7VlaogHIyeGDEhekY8M=;
+        s=default; t=1579217240;
+        bh=Jas9M4NC9WttapCSqzQTQUihydt2rWA4eNC4cFlbr/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q3PuFaSPWFqxsRLyRQyUBk2i4IUbUMvytO1YbNCZ1MfNB7ORb08iOfHlzN4u+K/Jm
-         QCkpdfi6u8occE4LxAOjmbUeFIMKJNTCnlUiHVlQtG04dLrg75iv+Et+hG7y0dFvqp
-         X7JpQOAws3umUVOsbVwYb4L9DML5Lttg0RHNuRXw=
+        b=E6dG6kMPEferV7By1oYWzHYBKqkqpknzGd0KlmkVzqgK0Ir0BcaGS6lh1BNngwYdI
+         cSUFFW+J4XkgHCjmAb8wdq5UpmVBPKdNMdwCq59yTOE2+xztyZi2H3wq+6fkH+s/IY
+         IKCfk0Hb9cE9O7zo0eW5VMC+ZprYbqcSo8zpnHgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 26/71] gpio: Fix error message on out-of-range GPIO in lookup table
+        Vladimir Kondratiev <vladimir.kondratiev@intel.com>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 187/203] mips: cacheinfo: report shared CPU map
 Date:   Fri, 17 Jan 2020 00:18:24 +0100
-Message-Id: <20200116231713.266491730@linuxfoundation.org>
+Message-Id: <20200116231800.650807790@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
-References: <20200116231709.377772748@linuxfoundation.org>
+In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
+References: <20200116231745.218684830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +47,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
 
-commit d935bd50dd14a7714cbdba9a76435dbb56edb1ae upstream.
+[ Upstream commit 3b1313eb32c499d46dc4c3e896d19d9564c879c4 ]
 
-When a GPIO offset in a lookup table is out-of-range, the printed error
-message (1) does not include the actual out-of-range value, and (2)
-contains an off-by-one error in the upper bound.
+Report L1 caches as shared per core; L2 - per cluster.
 
-Avoid user confusion by also printing the actual GPIO offset, and
-correcting the upper bound of the range.
-While at it, use "%u" for unsigned int.
+This fixes "perf" that went crazy if shared_cpu_map attribute not
+reported on sysfs, in form of
 
-Sample impact:
+/sys/devices/system/cpu/cpu*/cache/index*/shared_cpu_list
+/sys/devices/system/cpu/cpu*/cache/index*/shared_cpu_map
 
-    -requested GPIO 0 is out of range [0..32] for chip e6052000.gpio
-    +requested GPIO 0 (45) is out of range [0..31] for chip e6052000.gpio
-
-Fixes: 2a3cf6a3599e9015 ("gpiolib: return -ENOENT if no GPIO mapping exists")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191127095919.4214-1-geert+renesas@glider.be
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
+Signed-off-by: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/mips/kernel/cacheinfo.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3167,8 +3167,9 @@ static struct gpio_desc *gpiod_find(stru
+diff --git a/arch/mips/kernel/cacheinfo.c b/arch/mips/kernel/cacheinfo.c
+index f777e44653d5..47312c529410 100644
+--- a/arch/mips/kernel/cacheinfo.c
++++ b/arch/mips/kernel/cacheinfo.c
+@@ -50,6 +50,25 @@ static int __init_cache_level(unsigned int cpu)
+ 	return 0;
+ }
  
- 		if (chip->ngpio <= p->chip_hwnum) {
- 			dev_err(dev,
--				"requested GPIO %d is out of range [0..%d] for chip %s\n",
--				idx, chip->ngpio, chip->label);
-+				"requested GPIO %u (%u) is out of range [0..%u] for chip %s\n",
-+				idx, p->chip_hwnum, chip->ngpio - 1,
-+				chip->label);
- 			return ERR_PTR(-EINVAL);
- 		}
++static void fill_cpumask_siblings(int cpu, cpumask_t *cpu_map)
++{
++	int cpu1;
++
++	for_each_possible_cpu(cpu1)
++		if (cpus_are_siblings(cpu, cpu1))
++			cpumask_set_cpu(cpu1, cpu_map);
++}
++
++static void fill_cpumask_cluster(int cpu, cpumask_t *cpu_map)
++{
++	int cpu1;
++	int cluster = cpu_cluster(&cpu_data[cpu]);
++
++	for_each_possible_cpu(cpu1)
++		if (cpu_cluster(&cpu_data[cpu1]) == cluster)
++			cpumask_set_cpu(cpu1, cpu_map);
++}
++
+ static int __populate_cache_leaves(unsigned int cpu)
+ {
+ 	struct cpuinfo_mips *c = &current_cpu_data;
+@@ -57,14 +76,20 @@ static int __populate_cache_leaves(unsigned int cpu)
+ 	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
  
+ 	if (c->icache.waysize) {
++		/* L1 caches are per core */
++		fill_cpumask_siblings(cpu, &this_leaf->shared_cpu_map);
+ 		populate_cache(dcache, this_leaf, 1, CACHE_TYPE_DATA);
++		fill_cpumask_siblings(cpu, &this_leaf->shared_cpu_map);
+ 		populate_cache(icache, this_leaf, 1, CACHE_TYPE_INST);
+ 	} else {
+ 		populate_cache(dcache, this_leaf, 1, CACHE_TYPE_UNIFIED);
+ 	}
+ 
+-	if (c->scache.waysize)
++	if (c->scache.waysize) {
++		/* L2 cache is per cluster */
++		fill_cpumask_cluster(cpu, &this_leaf->shared_cpu_map);
+ 		populate_cache(scache, this_leaf, 2, CACHE_TYPE_UNIFIED);
++	}
+ 
+ 	if (c->tcache.waysize)
+ 		populate_cache(tcache, this_leaf, 3, CACHE_TYPE_UNIFIED);
+-- 
+2.20.1
+
 
 
