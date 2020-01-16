@@ -2,111 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B72513EA88
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:45:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA5413EBF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406007AbgAPRoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:44:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
+        id S2394451AbgAPRxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:53:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394176AbgAPRoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:44:30 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        id S2406021AbgAPRo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:44:58 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B51624761;
-        Thu, 16 Jan 2020 17:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46112477B;
+        Thu, 16 Jan 2020 17:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196670;
-        bh=qmjLCbfQKX13aq2gy6zUekqoctbef1EOkzCXBZbK+zg=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=YTGwgwmWb32UjsVSCOMqIL6CkchqelmJN8BFTIXQr4OSEpqZDt56wJ0o5qv1EAKgE
-         ksRUXljCc+Kjw3ijLCCBBrg1Ho5y4NbPDypw6sOII/drjZfXkrCX1TBH4zEBHSX/8z
-         LmGtRQ32R8dTbPRynOJaw5II7Ucp5QoHpyJIYkXU=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 851A735227B9; Thu, 16 Jan 2020 09:44:29 -0800 (PST)
-Date:   Thu, 16 Jan 2020 09:44:29 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+        s=default; t=1579196697;
+        bh=eZc1L4+pca2HQRZ4NlFHXHq40yJapRdOmzlFzQ/cknQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zlHbDbVJTAEzMxf/SUtdxJAXgWWsPwuJLkj5y/dsFpdWk6r25yTkB4U8bYfo9zX64
+         84fLlEQVbP4jGLbiOgOA8O5xtVXhKMTROUWezOITnG+sEvonw9zZ2G1XCxQxKBbcNo
+         IIkiMjs9fllhsIEfoPhk17Sc1+ru8i2vFwMMaDwY=
+Date:   Thu, 16 Jan 2020 17:44:51 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
- kfree_rcu()
-Message-ID: <20200116174429.GW2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191231122241.5702-1-urezki@gmail.com>
- <20200116011410.GC246464@google.com>
- <20200116024126.GS2935@paulmck-ThinkPad-P72>
- <20200116172753.GB23524@pc636>
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jann Horn <jannh@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 11/15] arm64: efi: restore x18 if it was corrupted
+Message-ID: <20200116174450.GD21396@willie-the-truck>
+References: <20191018161033.261971-1-samitolvanen@google.com>
+ <20191206221351.38241-1-samitolvanen@google.com>
+ <20191206221351.38241-12-samitolvanen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200116172753.GB23524@pc636>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191206221351.38241-12-samitolvanen@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 06:27:53PM +0100, Uladzislau Rezki wrote:
-> On Wed, Jan 15, 2020 at 06:41:26PM -0800, Paul E. McKenney wrote:
-> > On Wed, Jan 15, 2020 at 08:14:10PM -0500, Joel Fernandes wrote:
-> > > On Tue, Dec 31, 2019 at 01:22:41PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > > kfree_rcu() logic can be improved further by using kfree_bulk()
-> > > > interface along with "basic batching support" introduced earlier.
-> > > > 
-> > > > The are at least two advantages of using "bulk" interface:
-> > > > - in case of large number of kfree_rcu() requests kfree_bulk()
-> > > >   reduces the per-object overhead caused by calling kfree()
-> > > >   per-object.
-> > > > 
-> > > > - reduces the number of cache-misses due to "pointer chasing"
-> > > >   between objects which can be far spread between each other.
-> > > > 
-> > > > This approach defines a new kfree_rcu_bulk_data structure that
-> > > > stores pointers in an array with a specific size. Number of entries
-> > > > in that array depends on PAGE_SIZE making kfree_rcu_bulk_data
-> > > > structure to be exactly one page.
-> > > > 
-> > > > Since it deals with "block-chain" technique there is an extra
-> > > > need in dynamic allocation when a new block is required. Memory
-> > > > is allocated with GFP_NOWAIT | __GFP_NOWARN flags, i.e. that
-> > > > allows to skip direct reclaim under low memory condition to
-> > > > prevent stalling and fails silently under high memory pressure.
-> > > > 
-> > > > The "emergency path" gets maintained when a system is run out
-> > > > of memory. In that case objects are linked into regular list
-> > > > and that is it.
-> > > > 
-> > > > In order to evaluate it, the "rcuperf" was run to analyze how
-> > > > much memory is consumed and what is kfree_bulk() throughput.
-> > > > 
-> > > > Testing on the HiKey-960, arm64, 8xCPUs with below parameters:
-> > > > 
-> > > > CONFIG_SLAB=y
-> > > > kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
-> > > > 
-> > > > 102898760401 ns, loops: 200000, batches: 5822, memory footprint: 158MB
-> > > > 89947009882  ns, loops: 200000, batches: 6715, memory footprint: 115MB
-> > > > 
-> > > > rcuperf shows approximately ~12% better throughput(Total time)
-> > > > in case of using "bulk" interface. The "drain logic" or its RCU
-> > > > callback does the work faster that leads to better throughput.
-> > > 
-> > > Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > 
-> > > (Vlad is going to post a v2 which fixes a debugobjects bug but that should
-> > > not have any impact on testing).
-> > 
-> > Very good!  Uladzislau, could you please add Joel's Tested-by in
-> > your next posting?
-> > 
-> I will add for sure, with the a V2 version. Also, i will update the
-> commit message by adding the results related to different slab cache
-> usage, i mean with Joel's recent patch.
+On Fri, Dec 06, 2019 at 02:13:47PM -0800, Sami Tolvanen wrote:
+> If we detect a corrupted x18 and SCS is enabled, restore the register
+> before jumping back to instrumented code. This is safe, because the
+> wrapper is called with preemption disabled and a separate shadow stack
+> is used for interrupt handling.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/arm64/kernel/efi-rt-wrapper.S | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/efi-rt-wrapper.S b/arch/arm64/kernel/efi-rt-wrapper.S
+> index 3fc71106cb2b..62f0260f5c17 100644
+> --- a/arch/arm64/kernel/efi-rt-wrapper.S
+> +++ b/arch/arm64/kernel/efi-rt-wrapper.S
+> @@ -34,5 +34,14 @@ ENTRY(__efi_rt_asm_wrapper)
+>  	ldp	x29, x30, [sp], #32
+>  	b.ne	0f
+>  	ret
+> -0:	b	efi_handle_corrupted_x18	// tail call
+> +0:
+> +#ifdef CONFIG_SHADOW_CALL_STACK
+> +	/*
+> +	 * Restore x18 before returning to instrumented code. This is
+> +	 * safe because the wrapper is called with preemption disabled and
+> +	 * a separate shadow stack is used for interrupts.
+> +	 */
+> +	mov	x18, x2
+> +#endif
 
-Sounds good, looking forward to it!
+Why not restore it regardless of CONFIG_SHADOW_CALL_STACK?
 
-							Thanx, Paul
+Will
