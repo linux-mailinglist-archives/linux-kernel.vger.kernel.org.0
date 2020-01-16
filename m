@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9ED13F7E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 918A313F7E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:17:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbgAPQzk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:55:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40666 "EHLO mail.kernel.org"
+        id S1732872AbgAPQzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:55:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbgAPQz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:26 -0500
+        id S1732930AbgAPQz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B3E0205F4;
-        Thu, 16 Jan 2020 16:55:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DB2D2192A;
+        Thu, 16 Jan 2020 16:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193725;
-        bh=MGeSLlY5TsMsrM4CMCU6nTzFUKELvmTkU0CYxuigBdQ=;
+        s=default; t=1579193728;
+        bh=C56IW0/Kh53913yk/Ml60Mj0SZ9XP0ePBFNW2/HPD6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oIaJjdIT+k5c3NBwORmIthTI4l2RoDce9vyxmBJsyU4HYmPkMuHJ2Ht+t7l+8rEwm
-         GLI0/f0N3DxHhiBFKKfgaOI4CakJNmdE/q0FuDiEYvpLgH9ce0/lw6OrVa2QKl/U4A
-         jKCnWAyXQBgGw4oK+rdrLu0cP8dVduDGMfE7GbZY=
+        b=hznRKdI3gJyCSiJtmhJ0bFjP8G7GH621qfMkYTVKxl4ATtFQHbLXjzHZVgR6b2aiP
+         Q5vxgN5uBUyHMjFtSyCboX/ecG38irrEeH0T4yd14LpyR/nnJwRmGjjaAYkC7zyTdU
+         n972T6z+yC0YNGg2Q9OeSezgkb/1RntEvq4Y3ksg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhu Yanjun <yanjun.zhu@oracle.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 019/671] IB/rxe: replace kvfree with vfree
-Date:   Thu, 16 Jan 2020 11:44:10 -0500
-Message-Id: <20200116165502.8838-19-sashal@kernel.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 021/671] genirq/debugfs: Reinstate full OF path for domain name
+Date:   Thu, 16 Jan 2020 11:44:12 -0500
+Message-Id: <20200116165502.8838-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -44,75 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Yanjun <yanjun.zhu@oracle.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit 721ad7e643f7002efa398838693f90284ea216d1 ]
+[ Upstream commit 94967b55ebf3b603f2fe750ecedd896042585a1c ]
 
-The buf is allocated by vmalloc_user in the function rxe_queue_init.
-So it is better to free it by vfree.
+On a DT based system, we use the of_node full name to name the
+corresponding irq domain. We expect that name to be unique, so so that
+domains with the same base name won't clash (this happens on multi-node
+topologies, for example).
 
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Since a7e4cfb0a7ca ("of/fdt: only store the device node basename in
+full_name"), of_node_full_name() lies and only returns the basename. This
+breaks the above requirement, and we end-up with only a subset of the
+domains in /sys/kernel/debug/irq/domains.
+
+Let's reinstate the feature by using the fancy new %pOF format specifier,
+which happens to do the right thing.
+
+Fixes: a7e4cfb0a7ca ("of/fdt: only store the device node basename in full_name")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20181001100522.180054-3-marc.zyngier@arm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_cq.c | 4 ++--
- drivers/infiniband/sw/rxe/rxe_qp.c | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ kernel/irq/irqdomain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_cq.c b/drivers/infiniband/sw/rxe/rxe_cq.c
-index 2ee4b08b00ea..a57276f2cb84 100644
---- a/drivers/infiniband/sw/rxe/rxe_cq.c
-+++ b/drivers/infiniband/sw/rxe/rxe_cq.c
-@@ -30,7 +30,7 @@
-  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  * SOFTWARE.
-  */
--
-+#include <linux/vmalloc.h>
- #include "rxe.h"
- #include "rxe_loc.h"
- #include "rxe_queue.h"
-@@ -97,7 +97,7 @@ int rxe_cq_from_init(struct rxe_dev *rxe, struct rxe_cq *cq, int cqe,
- 	err = do_mmap_info(rxe, uresp ? &uresp->mi : NULL, context,
- 			   cq->queue->buf, cq->queue->buf_size, &cq->queue->ip);
- 	if (err) {
--		kvfree(cq->queue->buf);
-+		vfree(cq->queue->buf);
- 		kfree(cq->queue);
- 		return err;
- 	}
-diff --git a/drivers/infiniband/sw/rxe/rxe_qp.c b/drivers/infiniband/sw/rxe/rxe_qp.c
-index c58452daffc7..230697fa31fe 100644
---- a/drivers/infiniband/sw/rxe/rxe_qp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_qp.c
-@@ -34,6 +34,7 @@
- #include <linux/skbuff.h>
- #include <linux/delay.h>
- #include <linux/sched.h>
-+#include <linux/vmalloc.h>
- 
- #include "rxe.h"
- #include "rxe_loc.h"
-@@ -247,7 +248,7 @@ static int rxe_qp_init_req(struct rxe_dev *rxe, struct rxe_qp *qp,
- 			   &qp->sq.queue->ip);
- 
- 	if (err) {
--		kvfree(qp->sq.queue->buf);
-+		vfree(qp->sq.queue->buf);
- 		kfree(qp->sq.queue);
- 		return err;
- 	}
-@@ -300,7 +301,7 @@ static int rxe_qp_init_resp(struct rxe_dev *rxe, struct rxe_qp *qp,
- 				   qp->rq.queue->buf, qp->rq.queue->buf_size,
- 				   &qp->rq.queue->ip);
- 		if (err) {
--			kvfree(qp->rq.queue->buf);
-+			vfree(qp->rq.queue->buf);
- 			kfree(qp->rq.queue);
- 			return err;
- 		}
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 5d9fc01b60a6..0b90be360724 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -183,7 +183,7 @@ struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, int size,
+ 		 * unhappy about. Replace them with ':', which does
+ 		 * the trick and is not as offensive as '\'...
+ 		 */
+-		name = kstrdup(of_node_full_name(of_node), GFP_KERNEL);
++		name = kasprintf(GFP_KERNEL, "%pOF", of_node);
+ 		if (!name) {
+ 			kfree(domain);
+ 			return NULL;
 -- 
 2.20.1
 
