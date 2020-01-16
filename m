@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE04A13FEFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A65D13FE85
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391099AbgAPXjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:39:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33046 "EHLO mail.kernel.org"
+        id S2404351AbgAPXgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:36:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389017AbgAPX2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:28:24 -0500
+        id S2391209AbgAPXbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:31:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FD642072E;
-        Thu, 16 Jan 2020 23:28:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1908B20684;
+        Thu, 16 Jan 2020 23:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217303;
-        bh=X/RhwB3ltoFu/o5xwb831LGVLfW0AvB+9BD9HsiGhGs=;
+        s=default; t=1579217502;
+        bh=1T1BEJXMUaQIjkV3UeDue1Z4USjqdymjd8/QHn0k+H4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JMd/C9uHfx7dUnS6BP0klwVYnfFFiX6U6tEMZ1EzL9WoL1L5bKAKTX31EYvLWjUOK
-         eDq+Ehr0TYmNKo9ldSTniUSZBRovlsvsYzZwBAtm7QrwAfQiGAx4fD+FXG6X1Eg3+Y
-         t1RIE9/7vfICA5SiMJylXhcUdhCiAddCKMAycMM8=
+        b=l8j7yk4ogjO/TfL/vk5x/KuXYYeaChTyTeeG8b5yAcclEIbbIhFPCn6PkfKCsmJXA
+         fzum8K0/0qDcx2XNbRtAO0NeSboEd1xAvdd+eamaf2nFlkUYgwoPdmzxMUMEf1tnQ1
+         RPi7lQ9GBNXnM+tnNCV0cz44aNGR3wNefqeKlcY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 27/84] hsr: reset network header when supervision frame is created
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 03/71] HID: hidraw, uhid: Always report EPOLLOUT
 Date:   Fri, 17 Jan 2020 00:18:01 +0100
-Message-Id: <20200116231716.864291308@linuxfoundation.org>
+Message-Id: <20200116231709.908406156@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit 3ed0a1d563903bdb4b4c36c58c4d9c1bcb23a6e6 upstream.
+[ Upstream commit 9e635c2851df6caee651e589fbf937b637973c91 ]
 
-The supervision frame is L2 frame.
-When supervision frame is created, hsr module doesn't set network header.
-If tap routine is enabled, dev_queue_xmit_nit() is called and it checks
-network_header. If network_header pointer wasn't set(or invalid),
-it resets network_header and warns.
-In order to avoid unnecessary warning message, resetting network_header
-is needed.
+hidraw and uhid device nodes are always available for writing so we should
+always report EPOLLOUT and EPOLLWRNORM bits, not only in the cases when
+there is nothing to read.
 
-Test commands:
-    ip netns add nst
-    ip link add veth0 type veth peer name veth1
-    ip link add veth2 type veth peer name veth3
-    ip link set veth1 netns nst
-    ip link set veth3 netns nst
-    ip link set veth0 up
-    ip link set veth2 up
-    ip link add hsr0 type hsr slave1 veth0 slave2 veth2
-    ip a a 192.168.100.1/24 dev hsr0
-    ip link set hsr0 up
-    ip netns exec nst ip link set veth1 up
-    ip netns exec nst ip link set veth3 up
-    ip netns exec nst ip link add hsr1 type hsr slave1 veth1 slave2 veth3
-    ip netns exec nst ip a a 192.168.100.2/24 dev hsr1
-    ip netns exec nst ip link set hsr1 up
-    tcpdump -nei veth0
-
-Splat looks like:
-[  175.852292][    C3] protocol 88fb is buggy, dev veth0
-
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: be54e7461ffdc ("HID: uhid: Fix returning EPOLLOUT from uhid_char_poll")
+Fixes: 9f3b61dc1dd7b ("HID: hidraw: Fix returning EPOLLOUT from hidraw_poll")
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/hsr/hsr_device.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hid/hidraw.c | 7 ++++---
+ drivers/hid/uhid.c   | 5 +++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -281,6 +281,8 @@ static void send_hsr_supervision_frame(s
- 			    skb->dev->dev_addr, skb->len) <= 0)
- 		goto out;
- 	skb_reset_mac_header(skb);
-+	skb_reset_network_header(skb);
-+	skb_reset_transport_header(skb);
+diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+index 1abf5008def0..5243c4120819 100644
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -257,13 +257,14 @@ out:
+ static unsigned int hidraw_poll(struct file *file, poll_table *wait)
+ {
+ 	struct hidraw_list *list = file->private_data;
++	unsigned int mask = POLLOUT | POLLWRNORM; /* hidraw is always writable */
  
- 	if (hsrVer > 0) {
- 		hsr_tag = skb_put(skb, sizeof(struct hsr_tag));
+ 	poll_wait(file, &list->hidraw->wait, wait);
+ 	if (list->head != list->tail)
+-		return POLLIN | POLLRDNORM;
++		mask |= POLLIN | POLLRDNORM;
+ 	if (!list->hidraw->exist)
+-		return POLLERR | POLLHUP;
+-	return POLLOUT | POLLWRNORM;
++		mask |= POLLERR | POLLHUP;
++	return mask;
+ }
+ 
+ static int hidraw_open(struct inode *inode, struct file *file)
+diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+index e63b761f600a..c749f449c7cb 100644
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -769,13 +769,14 @@ unlock:
+ static unsigned int uhid_char_poll(struct file *file, poll_table *wait)
+ {
+ 	struct uhid_device *uhid = file->private_data;
++	unsigned int mask = POLLOUT | POLLWRNORM; /* uhid is always writable */
+ 
+ 	poll_wait(file, &uhid->waitq, wait);
+ 
+ 	if (uhid->head != uhid->tail)
+-		return POLLIN | POLLRDNORM;
++		mask |= POLLIN | POLLRDNORM;
+ 
+-	return EPOLLOUT | EPOLLWRNORM;
++	return mask;
+ }
+ 
+ static const struct file_operations uhid_fops = {
+-- 
+2.20.1
+
 
 
