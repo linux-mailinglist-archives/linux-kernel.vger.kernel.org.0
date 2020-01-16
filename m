@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B2013E7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A590C13E7DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404210AbgAPR2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:28:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39224 "EHLO mail.kernel.org"
+        id S2392587AbgAPR2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:28:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404179AbgAPR2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:28:19 -0500
+        id S2404213AbgAPR2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:28:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 494BB246E6;
-        Thu, 16 Jan 2020 17:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E00BB246D3;
+        Thu, 16 Jan 2020 17:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195698;
-        bh=rgDJbPRJVcoJSOkhpmFZCC4zEKPK4rigzmowCZomXv8=;
+        s=default; t=1579195704;
+        bh=9jFjZ5bu+tsaBRyIe6orZnczu0wyPfyxbPpkonaWPQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SkZnVzaTIfJQX2JT5aPcRKeAyBVAVAqMXQJ6y4Ow09UzWfS41mvyvnvdkqVJ77mV4
-         QaxVDSgIVuxSI3HZASCTyEbQX366TLkOKjZ/KN/pRhimqMTmzXnBIDIGtrwSYFaqEx
-         VnsMGjN1ENmntd6R/pKhNem9YnNeLmrnkcmFzRTk=
+        b=iW9/3SYbmECG92M9oSb8Ys1mfai3SOD4mrS2z8/gBbxWHoTzOXJ6rnqMR/WYGgrHu
+         byGtGimaVw8ZoMXTwIQrNX0g/kgcx9TC7dItuvjAnMHF/rhw+Fs2Aogn4kKtzKfXFM
+         dc5vusEknMG8z7cvW9IaNrYJQ+J49s6Tqeecre/Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, netdev@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 247/371] net: pasemi: fix an use-after-free in pasemi_mac_phy_init()
-Date:   Thu, 16 Jan 2020 12:21:59 -0500
-Message-Id: <20200116172403.18149-190-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 251/371] libertas_tf: Use correct channel range in lbtf_geo_init
+Date:   Thu, 16 Jan 2020 12:22:03 -0500
+Message-Id: <20200116172403.18149-194-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -46,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit faf5577f2498cea23011b5c785ef853ded22700b ]
+[ Upstream commit 2ec4ad49b98e4a14147d04f914717135eca7c8b1 ]
 
-The phy_dn variable is still being used in of_phy_connect() after the
-of_node_put() call, which may result in use-after-free.
+It seems we should use 'range' instead of 'priv->range'
+in lbtf_geo_init(), because 'range' is the corret one
+related to current regioncode.
 
-Fixes: 1dd2d06c0459 ("net: Rework pasemi_mac driver to use of_mdio infrastructure")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 691cdb49388b ("libertas_tf: command helper functions for libertas_tf")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/pasemi/pasemi_mac.c | 2 +-
+ drivers/net/wireless/marvell/libertas_tf/cmd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/pasemi/pasemi_mac.c b/drivers/net/ethernet/pasemi/pasemi_mac.c
-index 49591d9c2e1b..c9b4ac9d3330 100644
---- a/drivers/net/ethernet/pasemi/pasemi_mac.c
-+++ b/drivers/net/ethernet/pasemi/pasemi_mac.c
-@@ -1053,7 +1053,6 @@ static int pasemi_mac_phy_init(struct net_device *dev)
+diff --git a/drivers/net/wireless/marvell/libertas_tf/cmd.c b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+index 909ac3685010..2b193f1257a5 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/cmd.c
++++ b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+@@ -69,7 +69,7 @@ static void lbtf_geo_init(struct lbtf_private *priv)
+ 			break;
+ 		}
  
- 	dn = pci_device_to_OF_node(mac->pdev);
- 	phy_dn = of_parse_phandle(dn, "phy-handle", 0);
--	of_node_put(phy_dn);
+-	for (ch = priv->range.start; ch < priv->range.end; ch++)
++	for (ch = range->start; ch < range->end; ch++)
+ 		priv->channels[CHAN_TO_IDX(ch)].flags = 0;
+ }
  
- 	mac->link = 0;
- 	mac->speed = 0;
-@@ -1062,6 +1061,7 @@ static int pasemi_mac_phy_init(struct net_device *dev)
- 	phydev = of_phy_connect(dev, phy_dn, &pasemi_adjust_link, 0,
- 				PHY_INTERFACE_MODE_SGMII);
- 
-+	of_node_put(phy_dn);
- 	if (!phydev) {
- 		printk(KERN_ERR "%s: Could not attach to phy\n", dev->name);
- 		return -ENODEV;
 -- 
 2.20.1
 
