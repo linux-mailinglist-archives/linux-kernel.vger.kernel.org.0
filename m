@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB6B13FF08
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C0913FF04
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389329AbgAPX1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:27:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59740 "EHLO mail.kernel.org"
+        id S2391322AbgAPXjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:39:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390323AbgAPX1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:27:43 -0500
+        id S2389646AbgAPX1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:27:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 041F2206D9;
-        Thu, 16 Jan 2020 23:27:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD1B0206D9;
+        Thu, 16 Jan 2020 23:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217262;
-        bh=M11YPmtxsmk+XesG8cp2Yxwo/AKLCEUpp6AZOst0NJ8=;
+        s=default; t=1579217267;
+        bh=/rnnCLUtsDSujem08bDuUV6hvzEqVGJfSuKukWLi4i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e+3uC6EAgy+jaOHffz9YeuFi0J5kaZ9N1jaKA0bpaOo39NSHb1g/BesSsek+4aNrO
-         6pmGKK5ExMi+ziotle/tscMTo+rpuM9Yy9EK8ARhKPAKdt8N1DQUx8QMvx899DGUgk
-         d2/poHd0Sr7z2b9/OS4Isqht+qSG+dUhuF0Tdnvg=
+        b=zGjfxbpq7XAAGOtTfMHlJrQhprF7xD1urt0/KVuB1U9wVxVsqIRRFx4Sw0LmEdez7
+         l9DKOYxuHhOMn36XimbDrpeQH6XuISNZSGtsGhzAO0xcB8N9/hSxr2ZD/kaErzAyEs
+         wZEmsSb38ch5aPBJzxy2SAhtQVddmmMQAO6G+o7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+66010012fd4c531a1a96@syzkaller.appspotmail.com,
-        Vandana BN <bnvandana@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.19 11/84] media: usb:zr364xx:Fix KASAN:null-ptr-deref Read in zr364xx_vidioc_querycap
-Date:   Fri, 17 Jan 2020 00:17:45 +0100
-Message-Id: <20200116231714.921855815@linuxfoundation.org>
+Subject: [PATCH 4.19 13/84] iwlwifi: pcie: fix memory leaks in iwl_pcie_ctxt_info_gen3_init
+Date:   Fri, 17 Jan 2020 00:17:47 +0100
+Message-Id: <20200116231715.177276544@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
 References: <20200116231713.087649517@linuxfoundation.org>
@@ -47,80 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vandana BN <bnvandana@gmail.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-commit 5d2e73a5f80a5b5aff3caf1ec6d39b5b3f54b26e upstream.
+commit 0f4f199443faca715523b0659aa536251d8b978f upstream.
 
-SyzKaller hit the null pointer deref while reading from uninitialized
-udev->product in zr364xx_vidioc_querycap().
+In iwl_pcie_ctxt_info_gen3_init there are cases that the allocated dma
+memory is leaked in case of error.
 
-==================================================================
-BUG: KASAN: null-ptr-deref in read_word_at_a_time+0xe/0x20
-include/linux/compiler.h:274
-Read of size 1 at addr 0000000000000000 by task v4l_id/5287
+DMA memories prph_scratch, prph_info, and ctxt_info_gen3 are allocated
+and initialized to be later assigned to trans_pcie. But in any error case
+before such assignment the allocated memories should be released.
 
-CPU: 1 PID: 5287 Comm: v4l_id Not tainted 5.1.0-rc3-319004-g43151d6 #6
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xe8/0x16e lib/dump_stack.c:113
-  kasan_report.cold+0x5/0x3c mm/kasan/report.c:321
-  read_word_at_a_time+0xe/0x20 include/linux/compiler.h:274
-  strscpy+0x8a/0x280 lib/string.c:207
-  zr364xx_vidioc_querycap+0xb5/0x210 drivers/media/usb/zr364xx/zr364xx.c:706
-  v4l_querycap+0x12b/0x340 drivers/media/v4l2-core/v4l2-ioctl.c:1062
-  __video_do_ioctl+0x5bb/0xb40 drivers/media/v4l2-core/v4l2-ioctl.c:2874
-  video_usercopy+0x44e/0xf00 drivers/media/v4l2-core/v4l2-ioctl.c:3056
-  v4l2_ioctl+0x14e/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:364
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xced/0x12f0 fs/ioctl.c:696
-  ksys_ioctl+0xa0/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x74/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xcf/0x4f0 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f3b56d8b347
-Code: 90 90 90 48 8b 05 f1 fa 2a 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff
-ff c3 90 90 90 90 90 90 90 90 90 90 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff
-ff 73 01 c3 48 8b 0d c1 fa 2a 00 31 d2 48 29 c2 64
-RSP: 002b:00007ffe005d5d68 EFLAGS: 00000202 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f3b56d8b347
-RDX: 00007ffe005d5d70 RSI: 0000000080685600 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400884
-R13: 00007ffe005d5ec0 R14: 0000000000000000 R15: 0000000000000000
-==================================================================
+First of such error cases happens when iwl_pcie_init_fw_sec fails.
+Current implementation correctly releases prph_scratch. But in two
+sunsequent error cases where dma_alloc_coherent may fail, such
+releases are missing.
 
-For this device udev->product is not initialized and accessing it causes a NULL pointer deref.
+This commit adds release for prph_scratch when allocation for
+prph_info fails, and adds releases for prph_scratch and prph_info when
+allocation for ctxt_info_gen3 fails.
 
-The fix is to check for NULL before strscpy() and copy empty string, if
-product is NULL
-
-Reported-by: syzbot+66010012fd4c531a1a96@syzkaller.appspotmail.com
-Signed-off-by: Vandana BN <bnvandana@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[bwh: Backported to 4.19: This function uses strlcpy() instead of strscpy()]
+Fixes: 2ee824026288 ("iwlwifi: pcie: support context information for 22560 devices")
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/zr364xx/zr364xx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c |   36 ++++++++++-----
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
---- a/drivers/media/usb/zr364xx/zr364xx.c
-+++ b/drivers/media/usb/zr364xx/zr364xx.c
-@@ -703,7 +703,8 @@ static int zr364xx_vidioc_querycap(struc
- 	struct zr364xx_camera *cam = video_drvdata(file);
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c
+@@ -102,13 +102,9 @@ int iwl_pcie_ctxt_info_gen3_init(struct
  
- 	strlcpy(cap->driver, DRIVER_DESC, sizeof(cap->driver));
--	strlcpy(cap->card, cam->udev->product, sizeof(cap->card));
-+	if (cam->udev->product)
-+		strlcpy(cap->card, cam->udev->product, sizeof(cap->card));
- 	strlcpy(cap->bus_info, dev_name(&cam->udev->dev),
- 		sizeof(cap->bus_info));
- 	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE |
+ 	/* allocate ucode sections in dram and set addresses */
+ 	ret = iwl_pcie_init_fw_sec(trans, fw, &prph_scratch->dram);
+-	if (ret) {
+-		dma_free_coherent(trans->dev,
+-				  sizeof(*prph_scratch),
+-				  prph_scratch,
+-				  trans_pcie->prph_scratch_dma_addr);
+-		return ret;
+-	}
++	if (ret)
++		goto err_free_prph_scratch;
++
+ 
+ 	/* Allocate prph information
+ 	 * currently we don't assign to the prph info anything, but it would get
+@@ -116,16 +112,20 @@ int iwl_pcie_ctxt_info_gen3_init(struct
+ 	prph_info = dma_alloc_coherent(trans->dev, sizeof(*prph_info),
+ 				       &trans_pcie->prph_info_dma_addr,
+ 				       GFP_KERNEL);
+-	if (!prph_info)
+-		return -ENOMEM;
++	if (!prph_info) {
++		ret = -ENOMEM;
++		goto err_free_prph_scratch;
++	}
+ 
+ 	/* Allocate context info */
+ 	ctxt_info_gen3 = dma_alloc_coherent(trans->dev,
+ 					    sizeof(*ctxt_info_gen3),
+ 					    &trans_pcie->ctxt_info_dma_addr,
+ 					    GFP_KERNEL);
+-	if (!ctxt_info_gen3)
+-		return -ENOMEM;
++	if (!ctxt_info_gen3) {
++		ret = -ENOMEM;
++		goto err_free_prph_info;
++	}
+ 
+ 	ctxt_info_gen3->prph_info_base_addr =
+ 		cpu_to_le64(trans_pcie->prph_info_dma_addr);
+@@ -176,6 +176,20 @@ int iwl_pcie_ctxt_info_gen3_init(struct
+ 	iwl_set_bit(trans, CSR_GP_CNTRL, CSR_AUTO_FUNC_INIT);
+ 
+ 	return 0;
++
++err_free_prph_info:
++	dma_free_coherent(trans->dev,
++			  sizeof(*prph_info),
++			prph_info,
++			trans_pcie->prph_info_dma_addr);
++
++err_free_prph_scratch:
++	dma_free_coherent(trans->dev,
++			  sizeof(*prph_scratch),
++			prph_scratch,
++			trans_pcie->prph_scratch_dma_addr);
++	return ret;
++
+ }
+ 
+ void iwl_pcie_ctxt_info_gen3_free(struct iwl_trans *trans)
 
 
