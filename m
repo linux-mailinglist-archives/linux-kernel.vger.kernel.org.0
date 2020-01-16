@@ -2,100 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0574B13D34D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F22B13D355
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731035AbgAPEzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 23:55:47 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46809 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbgAPEzr (ORCPT
+        id S1731107AbgAPE7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 23:59:24 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:52600 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729370AbgAPE7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 23:55:47 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z124so9255029pgb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 20:55:47 -0800 (PST)
+        Wed, 15 Jan 2020 23:59:24 -0500
+Received: by mail-pf1-f201.google.com with SMTP id 145so12341321pfx.19
+        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 20:59:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t8v+4DgG5fbcG655PWQyALbezwDT0tnYhquzZ6Aq2MQ=;
-        b=eFA6wLdiEyl3ZoRG7Sqd18ajRt2HOl+aeMKbdK4pAQPh+xanYAztfw5U5LK0gzJC6U
-         4Ko/MudJrnmRZIdvZ7rUiUhrXfklOq+riOxXv5OrM+XaQFdaRaEZkL73OMTYNGhtf+A0
-         SSromzDHLBBuOP9xfqmg5KDVMnedlxikPtVONL9AM+5q1DeKkeAiuagJATY3XGidmeOp
-         uy6GUdr3rDdNyAABTH2PnWA1WwJiv9qUvpvugtoYYEWFg6WmpidBQgc9OMOLnsXXkgyr
-         O/0Q6KUrD+sOq3mYUobqdruGJEHQbuMY1Y98g0Iy+5/P33+4XoP9csFE6nS8ytsV9BWO
-         qRMg==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Yujd7NYO/Gpv5hGCan+Hwvd6fcY54ztoBNLrmT1puBg=;
+        b=nTEBofKCmnS3/2Efie7j4FZM7iYpE9k7Y1Z9TsJLPzuhnrp5h87vi8ctGlA2+HfJAl
+         opiTgWmaY7DX0H/+B1r6K6Tg64BvXYhhD+ShVHVdU0vIj7oMvLT5OPdIBFqk1wtlkG4b
+         G0eiPMDFBf8NZsdmCdkSL8vw80EVcjJfeGLKpid+7f0y/zZTbcAgZ9y5ibio3uXvSI46
+         jyoeSWHvjVLfTKMUipCNT2kCx97J5p9Rcr8QXZIVRCEitkKtbEs9qjMvvVJO/p2d0rwc
+         ldkk6YdzhMKWycWNdoaaVP8O6REhdqAYPhUL9WJaRLMLfdb7/Zwu2VS3l4VQXmxB9JH4
+         QvFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t8v+4DgG5fbcG655PWQyALbezwDT0tnYhquzZ6Aq2MQ=;
-        b=E5SZFWhZTo66e6sWp/aDyq3Cm6CDvGMOneJizSUzqwDYJhar0GOhbwINxR4HgbT60z
-         7gMfqIzflF9DhUkefzIn2SQ/cdsHgBlwr57YQduvx6i3rPpIglpcaG7Ugll1AuNxAthG
-         exQfMvFpbO7RPn8lzlZnU5liAgSCJRBr+6sEeurIyyWU0noendBvpfhWPRgSs/9T3ISC
-         BvRFerOHuPpdJTroGvyfYdplfcs9MDmd6Q/DpeahvQnf2ogBOCp8nckJyS1PXDnc5Vcg
-         awpQss3TvvBQlZtiUZQIh4PXDrTiWKlGh6O2wymRszpjfK+RQ4DitqUg50IRVGhlAE0m
-         Rd4g==
-X-Gm-Message-State: APjAAAXoMGXSYOsuAhBZVUo+0e9RaLzg3xOPWXnImjs7jsON8ynhh1eQ
-        1X2NER4NIoseI5Iw/bfSfHq8hw==
-X-Google-Smtp-Source: APXvYqxnV6r1cSp8obgrdpEsHKaYRE3hpOyfzEi1lowGIpNqD6SK+1CizrnQ2nn9d21ZheCDgnO6MQ==
-X-Received: by 2002:a63:4d5e:: with SMTP id n30mr37091031pgl.275.1579150546866;
-        Wed, 15 Jan 2020 20:55:46 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c1sm24140468pfa.51.2020.01.15.20.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 20:55:46 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Olof Johansson <olof@lixom.net>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH] arm64: defconfig: Enable Qualcomm SC7180 pinctrl and gcc
-Date:   Wed, 15 Jan 2020 20:54:57 -0800
-Message-Id: <20200116045457.2489704-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Yujd7NYO/Gpv5hGCan+Hwvd6fcY54ztoBNLrmT1puBg=;
+        b=QFWZYQIhuDCt/JTLY0JYXpJpfhtwTaiL/EZJkg+Yy3UBy0+PZ9vo5sqb2Ox+lpjbWC
+         3cyLIAvTEIBuV+7N1yUrcAma54cedQE6J82NTKCFXPxnlwK/LHfcuyvW7OU87ZqSq0IY
+         u/dKccUwmLu0xErs0yeHUHMF2HJa7MwqH5aywE5Rfz4ee+vysOC0Ob1APBAhPuFTtgNw
+         rnih5GT4jQBggiZxoRLe+xvqZIn4poeAdHYIeY1g2yxx6GdeuldX2oxRiGHOyyYzGzVE
+         3/5VhOxjmlCB/juupBHN6FvJdSo0Y17745T4tQlROoAK4Sn5GVhhqEpO48gMukvRC3qM
+         4zeQ==
+X-Gm-Message-State: APjAAAXGKI8bRi9B6Q5ry1/CtnI72S4TTb88v6IrnYrp85WVqM50bm/h
+        ikAFKvF8rh+sHE2Bd0PqQGo8uSNhnksx
+X-Google-Smtp-Source: APXvYqztiY0Q4ZmmaSQYCImVDBFiPoKpJXtaMUoBTv6utaLXpsOu5sO8VaU8H9zbSEU0+Q8RUA3PyWHvcwVI
+X-Received: by 2002:a65:48cb:: with SMTP id o11mr37361408pgs.313.1579150763148;
+ Wed, 15 Jan 2020 20:59:23 -0800 (PST)
+Date:   Wed, 15 Jan 2020 20:59:18 -0800
+Message-Id: <20200116045918.75597-1-brianvv@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
+Subject: [PATCH bpf-next] libbpf: Fix unneeded extra initialization in bpf_map_batch_common
+From:   Brian Vazquez <brianvv@google.com>
+To:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Brian Vazquez <brianvv@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the Qualcomm SC7180 pinctrl and gcc driver, in order to allow the
-kernel to boot to console.
+bpf_attr doesn't required to be declared with '= {}' as memset is used
+in the code.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: 2ab3d86ea1859 ("libbpf: Add libbpf support to batch ops")
+Reported-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Brian Vazquez <brianvv@google.com>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/lib/bpf/bpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8409aa80e30a..a1766c05cfe4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -412,6 +412,7 @@ CONFIG_PINCTRL_MSM8998=y
- CONFIG_PINCTRL_QCS404=y
- CONFIG_PINCTRL_QDF2XXX=y
- CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
-+CONFIG_PINCTRL_SC7180=y
- CONFIG_PINCTRL_SDM845=y
- CONFIG_PINCTRL_SM8150=y
- CONFIG_GPIO_ALTERA=m
-@@ -722,6 +723,7 @@ CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
- CONFIG_MSM_GCC_8998=y
- CONFIG_QCS_GCC_404=y
-+CONFIG_SC_GCC_7180=y
- CONFIG_SDM_GCC_845=y
- CONFIG_SM_GCC_8150=y
- CONFIG_QCOM_HFPLL=y
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index 317727d612149..ed42b006533c4 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -457,7 +457,7 @@ static int bpf_map_batch_common(int cmd, int fd, void  *in_batch,
+ 				__u32 *count,
+ 				const struct bpf_map_batch_opts *opts)
+ {
+-	union bpf_attr attr = {};
++	union bpf_attr attr;
+ 	int ret;
+ 
+ 	if (!OPTS_VALID(opts, bpf_map_batch_opts))
 -- 
-2.24.0
+2.25.0.rc1.283.g88dfdc4193-goog
 
