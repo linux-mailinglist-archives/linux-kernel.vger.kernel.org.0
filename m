@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9943413EEEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E31313EEE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:12:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395192AbgAPSMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:12:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52482 "EHLO mail.kernel.org"
+        id S2395318AbgAPSL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:11:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393043AbgAPRhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:19 -0500
+        id S1731650AbgAPRhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:37:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 566B92468C;
-        Thu, 16 Jan 2020 17:37:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2472E246D3;
+        Thu, 16 Jan 2020 17:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196239;
-        bh=Z/6Je7W6tQDJpYaxxR+scce6bDJ+iS9rauUEIqMWV8w=;
+        s=default; t=1579196243;
+        bh=Z5A90g+/eZtkcA/YgSKg43FyETGEqdOD7qAPa/dHGwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iGUbM5fCZs9RfVmDICjwCe9K21axWVSw8XkbjDwttrfz5BiyRyw2Ic2BREUHbQ6fD
-         xr7UBfhxj185sGqty7DwpVi+uenh4P/yH45/jLt72ISvBKxiWXZydbd9HZq2uShzg+
-         e4dEGMloC1cSTiFrQCMVoogYST7Rf0xsLNK1q47Q=
+        b=a0AYaeH1JHY+8e2ki9btplhTmAjBDzYI2Jg48ZRU4y8jYyiBM4maEp31QgKh21tDg
+         j30UamRQrxn/lg0L4cKLyau/JTeuZVVrQsibVoSZY16CjMq07virKbaz+7wVRZjGHa
+         klG1Dm5sx1qgjMnJgAX3Hb3ggx6apXCkUgpU02zg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 069/251] pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
-Date:   Thu, 16 Jan 2020 12:33:38 -0500
-Message-Id: <20200116173641.22137-29-sashal@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <james.morris@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 072/251] keys: Timestamp new keys
+Date:   Thu, 16 Jan 2020 12:33:41 -0500
+Message-Id: <20200116173641.22137-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -44,35 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 0e6e448bdcf896d001a289a6112a704542d51516 ]
+[ Upstream commit 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4 ]
 
-There are two pin groups for the FSIC SPDIF signal, but the FSIC pin
-group array lists only one, and it refers to a nonexistent group.
+Set the timestamp on new keys rather than leaving it unset.
 
-Fixes: 2ecd4154c906b7d6 ("sh-pfc: sh73a0: Add FSI pin groups and functions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 31d5a79d7f3d ("KEYS: Do LRU discard in full keyrings")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/keys/key.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-index f8fbedb46585..6dca760f9f28 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-@@ -3367,7 +3367,8 @@ static const char * const fsic_groups[] = {
- 	"fsic_sclk_out",
- 	"fsic_data_in",
- 	"fsic_data_out",
--	"fsic_spdif",
-+	"fsic_spdif_0",
-+	"fsic_spdif_1",
- };
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 7276d1a009d4..280b4feccdc0 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -296,6 +296,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key->gid = gid;
+ 	key->perm = perm;
+ 	key->restrict_link = restrict_link;
++	key->last_used_at = ktime_get_real_seconds();
  
- static const char * const fsid_groups[] = {
+ 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
+ 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
 -- 
 2.20.1
 
