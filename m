@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB7C13F447
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:48:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 839BE13F431
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436979AbgAPSso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:48:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46088 "EHLO mail.kernel.org"
+        id S2389780AbgAPRJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:09:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389068AbgAPRJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:09:41 -0500
+        id S2389420AbgAPRJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:09:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E557D2081E;
-        Thu, 16 Jan 2020 17:09:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B3F7206D9;
+        Thu, 16 Jan 2020 17:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194580;
-        bh=lV6vCJ54AZJJG/iIgMdGhEKiyRI7RwaFGDruA9QXvkU=;
+        s=default; t=1579194583;
+        bh=yGgVaHGgBR6n1ABHhk0gvfmtZc0p3oSmfcOIHIkwBdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gFeOe3C+EYsGO6AIAehSqPbsUF1AH1b/+dt8SaZ9WiD8ZHgc02g7pISBiNMNPdoPM
-         4tRvj4iyh1svAxzMmIT9BFaKDsH2et9269p7NE9w0wQhPTaRXj4XB+3QCBL9vZZhPA
-         TMeqQUvaulH+bQ2mfBzk6qacg1184UKTr+u/CKsk=
+        b=ng2qEHLLw856nVVkl4zL8YyDFArRc/4yBJbUNuqEhfC5SNZE3GxMBHufSPCQEAW8l
+         jAvXMd4kT93ugllclMDiw0lo7jpKKCXywzj+HLY9SUQcM12Jx/PUMLId8xaf1Ed4W0
+         gVpFqrf3CVNxNxGIQCqp56D4LkQRJt8KlfQ2DcMk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Minghuan Lian <Minghuan.Lian@nxp.com>,
+        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
         Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 454/671] PCI: mobiveil: Remove the flag MSI_FLAG_MULTI_PCI_MSI
-Date:   Thu, 16 Jan 2020 12:01:32 -0500
-Message-Id: <20200116170509.12787-191-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 456/671] PCI: mobiveil: Fix the valid check for inbound and outbound windows
+Date:   Thu, 16 Jan 2020 12:01:34 -0500
+Message-Id: <20200116170509.12787-193-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -46,41 +47,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-[ Upstream commit a131fb6364c1be0924dcb969ecf6b988c556a5d5 ]
+[ Upstream commit ccd34dac2ed596b1f26079912bdf638e002a3979 ]
 
-The Mobiveil internal MSI controller requires separate target addresses,
-one per MSI vector; this is clearly incompatible with the Multiple MSI
-feature, which requires the same target address for all vectors
-requested by an endpoint (ie the Message Address field in the MSI
-Capability structure), so the multi MSI feature is clearly not
-supported by the host controller driver.
+In program_ib/ob_windows() check the window index from the function
+parameter instead of the total number of initialized windows to
+determine if the specified window is valid.
 
-Remove the flag MSI_FLAG_MULTI_PCI_MSI and with it multi MSI support,
-fixing the misconfiguration.
-
-Fixes: 1e913e58335f ("PCI: mobiveil: Add MSI support")
+Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
 Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-[lorenzo.pieralisi@arm.com: commit log]
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mobiveil.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/pcie-mobiveil.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index a2d1e89d4867..dc228eb500ed 100644
+index 476be4f3c7f6..14f816591e84 100644
 --- a/drivers/pci/controller/pcie-mobiveil.c
 +++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -643,7 +643,7 @@ static struct irq_chip mobiveil_msi_irq_chip = {
+@@ -395,7 +395,7 @@ static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+ 	int amap_ctrl_dw;
+ 	u64 size64 = ~(size - 1);
  
- static struct msi_domain_info mobiveil_msi_domain_info = {
- 	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--		MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
-+		   MSI_FLAG_PCI_MSIX),
- 	.chip	= &mobiveil_msi_irq_chip,
- };
+-	if ((pcie->ib_wins_configured + 1) > pcie->ppio_wins) {
++	if (win_num >= pcie->ppio_wins) {
+ 		dev_err(&pcie->pdev->dev,
+ 			"ERROR: max inbound windows reached !\n");
+ 		return;
+@@ -429,7 +429,7 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+ 	u32 value, type;
+ 	u64 size64 = ~(size - 1);
  
+-	if ((pcie->ob_wins_configured + 1) > pcie->apio_wins) {
++	if (win_num >= pcie->apio_wins) {
+ 		dev_err(&pcie->pdev->dev,
+ 			"ERROR: max outbound windows reached !\n");
+ 		return;
 -- 
 2.20.1
 
