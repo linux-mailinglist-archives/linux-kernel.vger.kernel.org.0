@@ -2,131 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B18813F058
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D89113EF30
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388823AbgAPSVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:21:04 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44933 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392514AbgAPR15 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:57 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u71so23522436lje.11;
-        Thu, 16 Jan 2020 09:27:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KAfEq0Wia/8z+S4bm8ISIAkLRoETrLhDzNF3CD6LfUo=;
-        b=CC0D61/ly4pXDeN66+tjpJvQRw+us91gGWNkXwaMXhXuk921z3PBxraiZLMjF1Lnuw
-         IJNmch97bvt3ZuFpG0uSWWF0iu9WHRpYjrQFyYuxnzKXxBNM9b5WUa9KbQyPE93RYjsH
-         Gy09E//nokyfyE0pzw0qdZvKQAHp+2Jbq9yy5Mtcsd5Q80cKvtIldbVKIv2WAJL2sJN0
-         3f8Vc4bV6cbNFRTaFQh9FF6zuxV8lN0ahTI0ohvHyq58FYwBsNI9MQtrka9UX8OE3IMc
-         BSZlKeXIU3LwyaKDhNhTTbs9I2Y06tGmUeki0TD7kOitLJlJLhfdcPX26NqpzwId3HDn
-         Jp2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KAfEq0Wia/8z+S4bm8ISIAkLRoETrLhDzNF3CD6LfUo=;
-        b=VwDIRjUyD5TttKtMAdJDMQniiPDkeHGWStnDtzLoqi/X5OWMaVFlp7xzfnrWTtvHn/
-         2d00CjW2FG2VSHWMWJU2ZLSeIcqH1gUQHE4ZFBzXDJztqK515s2cIDh8hSOJrv6wP1uW
-         FjFdX/85YdOvtl/BHXkOExw5Q9kYg6OYKPJKw1ZxJkv6UiEiuoRqktVA7LLuSSBIS/AU
-         hCcC3QeizcvPxjsEoo2NgWyMjIcaUzLTz/F2s4PzIsMoKCgsQ+A9znJhIjY1sPwL7u+D
-         XWV48rweYqtdMTwxGooCS4vL35ve46D5Hk2JenYDarrXTPzWVubmVEchA7HE5Dc0N4pm
-         UZgQ==
-X-Gm-Message-State: APjAAAUqWU4cs5Ljes/X7BglECHQxWsvjNtKENNR1O8aR2UwK5/XSpzj
-        XZ3JEMDQ5JEN4c2PnfBAcN0=
-X-Google-Smtp-Source: APXvYqxRGtb4VF2mqDwJ9VTg1FQWW9gQRKo8nlEheXIkbVUsjfBcCWngFOnmK85dKlwinqOKXNcMyQ==
-X-Received: by 2002:a2e:b4cb:: with SMTP id r11mr2989831ljm.68.1579195675798;
-        Thu, 16 Jan 2020 09:27:55 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id z13sm11141629ljh.21.2020.01.16.09.27.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 09:27:55 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Thu, 16 Jan 2020 18:27:53 +0100
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
- kfree_rcu()
-Message-ID: <20200116172753.GB23524@pc636>
-References: <20191231122241.5702-1-urezki@gmail.com>
- <20200116011410.GC246464@google.com>
- <20200116024126.GS2935@paulmck-ThinkPad-P72>
+        id S2388256AbgAPRey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391438AbgAPRet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:34:49 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76538246B1;
+        Thu, 16 Jan 2020 17:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579196088;
+        bh=SjvVj+je/HMlB1NOEWTRrKGFRifaS0pbyWGdTMOoztQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KUeuB8R+4cQHW8/jv/nxqPkmypBJcfAx0W401dq4tPaK83L6wfjLz/9woQMJyYz7j
+         DABJW5iI5wAEVxQROQ0fm5NjJxFlXFSNZ075URx0fAuyZASAMOYSl9+xiftd/4xyQc
+         ORcT1UA1VqMHfswMYLN3+q9WbeIoU3yVk/HjIeI4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.9 002/251] drm/virtio: fix bounds check in virtio_gpu_cmd_get_capset()
+Date:   Thu, 16 Jan 2020 12:30:36 -0500
+Message-Id: <20200116173445.21385-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
+References: <20200116173445.21385-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116024126.GS2935@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 06:41:26PM -0800, Paul E. McKenney wrote:
-> On Wed, Jan 15, 2020 at 08:14:10PM -0500, Joel Fernandes wrote:
-> > On Tue, Dec 31, 2019 at 01:22:41PM +0100, Uladzislau Rezki (Sony) wrote:
-> > > kfree_rcu() logic can be improved further by using kfree_bulk()
-> > > interface along with "basic batching support" introduced earlier.
-> > > 
-> > > The are at least two advantages of using "bulk" interface:
-> > > - in case of large number of kfree_rcu() requests kfree_bulk()
-> > >   reduces the per-object overhead caused by calling kfree()
-> > >   per-object.
-> > > 
-> > > - reduces the number of cache-misses due to "pointer chasing"
-> > >   between objects which can be far spread between each other.
-> > > 
-> > > This approach defines a new kfree_rcu_bulk_data structure that
-> > > stores pointers in an array with a specific size. Number of entries
-> > > in that array depends on PAGE_SIZE making kfree_rcu_bulk_data
-> > > structure to be exactly one page.
-> > > 
-> > > Since it deals with "block-chain" technique there is an extra
-> > > need in dynamic allocation when a new block is required. Memory
-> > > is allocated with GFP_NOWAIT | __GFP_NOWARN flags, i.e. that
-> > > allows to skip direct reclaim under low memory condition to
-> > > prevent stalling and fails silently under high memory pressure.
-> > > 
-> > > The "emergency path" gets maintained when a system is run out
-> > > of memory. In that case objects are linked into regular list
-> > > and that is it.
-> > > 
-> > > In order to evaluate it, the "rcuperf" was run to analyze how
-> > > much memory is consumed and what is kfree_bulk() throughput.
-> > > 
-> > > Testing on the HiKey-960, arm64, 8xCPUs with below parameters:
-> > > 
-> > > CONFIG_SLAB=y
-> > > kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
-> > > 
-> > > 102898760401 ns, loops: 200000, batches: 5822, memory footprint: 158MB
-> > > 89947009882  ns, loops: 200000, batches: 6715, memory footprint: 115MB
-> > > 
-> > > rcuperf shows approximately ~12% better throughput(Total time)
-> > > in case of using "bulk" interface. The "drain logic" or its RCU
-> > > callback does the work faster that leads to better throughput.
-> > 
-> > Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > 
-> > (Vlad is going to post a v2 which fixes a debugobjects bug but that should
-> > not have any impact on testing).
-> 
-> Very good!  Uladzislau, could you please add Joel's Tested-by in
-> your next posting?
-> 
-I will add for sure, with the a V2 version. Also, i will update the
-commit message by adding the results related to different slab cache
-usage, i mean with Joel's recent patch.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thank you.
+[ Upstream commit 09c4b49457434fa74749ad6194ef28464d9f5df9 ]
 
---
-Vlad Rezki
+This doesn't affect runtime because in the current code "idx" is always
+valid.
+
+First, we read from "vgdev->capsets[idx].max_size" before checking
+whether "idx" is within bounds.  And secondly the bounds check is off by
+one so we could end up reading one element beyond the end of the
+vgdev->capsets[] array.
+
+Fixes: 62fb7a5e1096 ("virtio-gpu: add 3d/virgl support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180704094250.m7sgvvzg3dhcvv3h@kili.mountain
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/virtio/virtgpu_vq.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index a1b3ea1ccb65..772a5a3b0ce1 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -681,11 +681,11 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ {
+ 	struct virtio_gpu_get_capset *cmd_p;
+ 	struct virtio_gpu_vbuffer *vbuf;
+-	int max_size = vgdev->capsets[idx].max_size;
++	int max_size;
+ 	struct virtio_gpu_drv_cap_cache *cache_ent;
+ 	void *resp_buf;
+ 
+-	if (idx > vgdev->num_capsets)
++	if (idx >= vgdev->num_capsets)
+ 		return -EINVAL;
+ 
+ 	if (version > vgdev->capsets[idx].max_version)
+@@ -695,6 +695,7 @@ int virtio_gpu_cmd_get_capset(struct virtio_gpu_device *vgdev,
+ 	if (!cache_ent)
+ 		return -ENOMEM;
+ 
++	max_size = vgdev->capsets[idx].max_size;
+ 	cache_ent->caps_cache = kmalloc(max_size, GFP_KERNEL);
+ 	if (!cache_ent->caps_cache) {
+ 		kfree(cache_ent);
+-- 
+2.20.1
+
