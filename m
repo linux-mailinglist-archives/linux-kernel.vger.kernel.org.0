@@ -2,83 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AB413E102
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:47:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8F613E10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:47:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbgAPQrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:47:09 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43984 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729830AbgAPQrE (ORCPT
+        id S1729890AbgAPQrS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 16 Jan 2020 11:47:18 -0500
+Received: from mailoutvs28.siol.net ([185.57.226.219]:60633 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729878AbgAPQrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:47:04 -0500
-Received: by mail-qk1-f193.google.com with SMTP id t129so19699050qke.10
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 08:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=D8oCauuYRE1SlMMis3dug2fzKpE+RxnAnTLSLcxoqrg=;
-        b=L4YqFRv/HIosI38aRfTT9RUoXYUj5gQCPC2lArCXXcZhT8t0cWEC5wVZA8qKxvlc8a
-         kFYGvUo+HfNgYQP5yPBmaD3GAw0/rCSUBrGiyK46FsXGD+FxCHNdf3wU6/EbRw6drZdM
-         BaaqTF8xakilbxpoHJCvVUvFlAVn1cjTacfc18AokSq9CqlXbX7wNG6B13LCivkmaGXV
-         o2644W/3TW05Zf43G7sN96NwNRdIoFERGAo5K2JsFxDugp6M6REY7PisyJhaMFRram5w
-         hcKpzOqOXD8LemsJxsbLKLg8RobdeM2oxSb2ZlzeQUlTRKEV0tW5CN8EchDmUYAP6uAb
-         1hFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D8oCauuYRE1SlMMis3dug2fzKpE+RxnAnTLSLcxoqrg=;
-        b=DEIUULvw8ofzEahmDanGShwg859wCyAPEDvQf1r2CndPevmveBaySh5eypvqon61in
-         mlxiHQfNDdkOARfEKGlJ4/gP5LdP6NcjYxW4TttmfVFZnwx9u/cXLxkj699u1Yo+5AJP
-         nEkZZ3hqq5U5NKkSzRZkkfdfne9mlRYN2u4LdJBNaDkTtEWIiOTgx7BWHbHkEmyXT1Dz
-         1izAAEfiCv1b6dNYFe8ZwLHeX80hQqKy5Pf856kmrRU3WkS4mm3lV8N0XK/b7iF8g6G6
-         vCdrViK9JzDTOcvLED8CrWmsTDsiO2MsVmqkHTq4FXmwAfIrNvJ4YTNq9KwIxbe/+6rC
-         RUQQ==
-X-Gm-Message-State: APjAAAVcCvBBMhMcTm4HVf/irrW/7UKq7lVNqQWn/oUWDiQhiPyfOo5m
-        yrzAapgwtXwr17c7tD6SWNUCIw==
-X-Google-Smtp-Source: APXvYqypp+d90Y4yoYRO3EuxkUOreoMMGp2MQ/4d0Q0SkDfhkqBQ3/udYa+fIlCQoetHxtkhSbTxiA==
-X-Received: by 2002:a37:68d5:: with SMTP id d204mr29461217qkc.171.1579193223959;
-        Thu, 16 Jan 2020 08:47:03 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::ae73])
-        by smtp.gmail.com with ESMTPSA id t3sm11697374qtc.8.2020.01.16.08.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 08:47:03 -0800 (PST)
-Date:   Thu, 16 Jan 2020 11:47:02 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v2 3/6] mm: kmem: rename memcg_kmem_(un)charge() into
- memcg_kmem_(un)charge_page()
-Message-ID: <20200116164702.GC57074@cmpxchg.org>
-References: <20200109202659.752357-1-guro@fb.com>
- <20200109202659.752357-4-guro@fb.com>
+        Thu, 16 Jan 2020 11:47:16 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 3256D522C71;
+        Thu, 16 Jan 2020 17:47:13 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id yW5AjuuxMjwE; Thu, 16 Jan 2020 17:47:12 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id C28C9523561;
+        Thu, 16 Jan 2020 17:47:12 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net [194.152.20.232])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id 66D88522C71;
+        Thu, 16 Jan 2020 17:47:12 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] arm64: dts: allwinner: h6: tanix-tx6: Use internal oscillator
+Date:   Thu, 16 Jan 2020 17:47:12 +0100
+Message-ID: <20509747.EfDdHjke4D@jernej-laptop>
+In-Reply-To: <20200116080652.mp5z7dtrtj3nyhpq@gilmour.lan>
+References: <20200113180720.77461-1-jernej.skrabec@siol.net> <20200116080652.mp5z7dtrtj3nyhpq@gilmour.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200109202659.752357-4-guro@fb.com>
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 12:26:56PM -0800, Roman Gushchin wrote:
-> Rename (__)memcg_kmem_(un)charge() into (__)memcg_kmem_(un)charge_page()
+Hi!
 
-I almost bluescreened trying to parse this!
-
-> to better reflect what they are actually doing:
-> 1) call __memcg_kmem_(un)charge_memcg() to actually charge or
-> uncharge the current memcg
-> 2) set or clear the PageKmemcg flag
+Dne četrtek, 16. januar 2020 ob 09:06:52 CET je Maxime Ripard napisal(a):
+> Hi Jernej,
 > 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+> On Mon, Jan 13, 2020 at 07:07:20PM +0100, Jernej Skrabec wrote:
+> > Tanix TX6 doesn't have external 32 kHz oscillator, so switch RTC clock
+> > to internal one.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> > While this patch gives one possible solution, I mainly want to start
+> > discussion why Allwinner SoC dtsi reference external 32 kHz crystal
+> > although some boards don't have it. My proposal would be to make clock
+> > property optional, based on the fact if external crystal is present or
+> > not. However, I'm not sure if that is possible at this point or not.
+> 
+> It's probably a bit of a dumb question but.. are you sure the crystal
+> is missing?
 
-Agreed, this is better.
+Although I don't have schematic, I'm pretty sure. Without this patch or one at 
+[1], RTC gives a lot of errors in dmesg. I think that unpopulated XC2 pads 
+near SoC (see [2]) are probably reserved for crystal.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+With patch in [1], which enables automatic switching in case of error, I saw 
+that on this box RTC always switched to internal RC.
+
+> 
+> The H6 datasheet mentions that the 32kHz crystal needs to be there,
+> and it's part of the power sequence, so I'd expect all boards to have
+> it.
+
+Can you be more specific where it is stated that crystal is mandatory? 
+
+Note that schematic of some boards, like OrangePi PC2 (H5) or OrangePi Zero 
+(H3) don't even have 32K crystal in them.
+
+> 
+> > Driver also considers missing clock property as deprecated (old DT) [1],
+> > so this might complicate things even further.
+> > 
+> > What do you think?
+> 
+> I'm pretty sure (but that would need to be checked) that we never got
+> a node without the clocks property on the H6. If that's the case, then
+> we can add a check on the compatible.
+
+Yes, that would be nice solution. I can work something out if you agree that 
+this is the way.
+
+> 
+> > Best regards,
+> > Jernej
+> > 
+> > [1]
+> > https://elixir.bootlin.com/linux/latest/source/drivers/rtc/rtc-sun6i.c#L2
+> > 63> 
+> >  arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
+> > b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts index
+> > 83e6cb0e59ce..af3aebda47bb 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
+> > @@ -91,6 +91,12 @@ &r_ir {
+> > 
+> >  	status = "okay";
+> >  
+> >  };
+> > 
+> > +/* This board doesn't have external 32 kHz crystal. */
+> > +&rtc {
+> > +	assigned-clocks = <&rtc 0>;
+> > +	assigned-clock-parents = <&rtc 2>;
+> > +};
+> > +
+> 
+> This should be dealt with in the driver however.
+
+Sure, it is something to start discussion, I don't like tackling clocks in DT 
+either.
+
+Best regards,
+Jernej
+
+[1] https://github.com/LibreELEC/LibreELEC.tv/blob/master/projects/Allwinner/
+devices/H6/patches/linux/15-RTC-workaround.patch
+[2] http://linux-sunxi.org/images/2/2e/Tanix_tx6_pcb_top.png
+
+
+
+
