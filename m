@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A96F13F458
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACFE413F43E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389126AbgAPStI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:49:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45708 "EHLO mail.kernel.org"
+        id S2389744AbgAPRJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:09:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389331AbgAPRJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:09:34 -0500
+        id S2388005AbgAPRJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:09:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF4DE206D9;
-        Thu, 16 Jan 2020 17:09:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B50192081E;
+        Thu, 16 Jan 2020 17:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194573;
-        bh=zWIVbCJUd3+CRNeZR8VkGLIJl7ILEecnGPvy7R0d51g=;
+        s=default; t=1579194576;
+        bh=EOeTwFYfR1tRmEs+i2yW1WJPsXSZJ8dmnIgkbArp8ro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yQbds6uaF9LPjYBLz8WuDA5LiSzNrWDUx0Sc+8ujOQywQdaV/m04ahnApwfxTEoIi
-         bH6ekjgRXVGgebTf/XlQlkPkdjG9dlfUEOARZ9YJ6iT+8t9wSkp4zuLtfKy450vNn6
-         8SBgu8ufb/J93tkBNtWoPT1fFOKz0iYcEcFDjeac=
+        b=pfJ6STlhYVDP+fZqifhWN/R40/mV9TqGrvdDBjznOrDfbPc1hMY3Ei5fb5aWIjgS9
+         qhDnzL0Tmjr2oxDBhhk9HRLUTeshpMM9asYWloG0/8r04Q86dTgLbSr7z/yBHsW2Uu
+         TrEHyzLQrKP/TOPa3Ntj0xC40rcge/z22Ar11Kw0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 449/671] ACPI: PM: Introduce "poweroff" callbacks for ACPI PM domain and LPSS
-Date:   Thu, 16 Jan 2020 12:01:27 -0500
-Message-Id: <20200116170509.12787-186-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 451/671] devres: allow const resource arguments
+Date:   Thu, 16 Jan 2020 12:01:29 -0500
+Message-Id: <20200116170509.12787-188-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,204 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit c95b7595f85c688d5c569ddbbd6ab6a4bdae2f36 ]
+[ Upstream commit 9dea44c91469512d346e638694c22c30a5273992 ]
 
-In general, it is not correct to call pm_generic_suspend(),
-pm_generic_suspend_late() and pm_generic_suspend_noirq() during the
-hibernation's "poweroff" transition, because device drivers may
-provide special callbacks to be invoked then and the wrappers in
-question cause system suspend callbacks to be run.  Unfortunately,
-that happens in the ACPI PM domain and ACPI LPSS.
+devm_ioremap_resource() does not currently take 'const' arguments,
+which results in a warning from the first driver trying to do it
+anyway:
 
-To address this potential issue, introduce "poweroff" callbacks
-for the ACPI PM and LPSS that will use pm_generic_poweroff(),
-pm_generic_poweroff_late() and pm_generic_poweroff_noirq() as
-appropriate.
+drivers/gpio/gpio-amd-fch.c: In function 'amd_fch_gpio_probe':
+drivers/gpio/gpio-amd-fch.c:171:49: error: passing argument 2 of 'devm_ioremap_resource' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+  priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
+                                                 ^~~~~~~~~~~~~~~~~~~
 
-Fixes: 05087360fd7a (ACPI / PM: Take SMART_SUSPEND driver flag into account)
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Change the prototype to allow it, as there is no real reason not to.
+
+Fixes: 9bb2e0452508 ("gpio: amd: Make resource struct const")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20190628150049.1108048-1-arnd@arndb.de
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviwed-By: Enrico Weigelt <info@metux.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_lpss.c | 50 +++++++++++++++++++++++++++++++---
- drivers/acpi/device_pm.c | 58 +++++++++++++++++++++++++++++++++++++---
- include/linux/acpi.h     |  2 ++
- 3 files changed, 104 insertions(+), 6 deletions(-)
+ include/linux/device.h | 3 ++-
+ lib/devres.c           | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index 11c460ab9de9..ded6c5c17fd7 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -1056,6 +1056,13 @@ static int acpi_lpss_suspend_noirq(struct device *dev)
- 	int ret;
+diff --git a/include/linux/device.h b/include/linux/device.h
+index e9d1c768f972..c74ce473589a 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -701,7 +701,8 @@ extern unsigned long devm_get_free_pages(struct device *dev,
+ 					 gfp_t gfp_mask, unsigned int order);
+ extern void devm_free_pages(struct device *dev, unsigned long addr);
  
- 	if (pdata->dev_desc->resume_from_noirq) {
-+		/*
-+		 * The driver's ->suspend_late callback will be invoked by
-+		 * acpi_lpss_do_suspend_late(), with the assumption that the
-+		 * driver really wanted to run that code in ->suspend_noirq, but
-+		 * it could not run after acpi_dev_suspend() and the driver
-+		 * expected the latter to be called in the "late" phase.
-+		 */
- 		ret = acpi_lpss_do_suspend_late(dev);
- 		if (ret)
- 			return ret;
-@@ -1142,6 +1149,43 @@ static int acpi_lpss_restore_noirq(struct device *dev)
- 	/* This is analogous to what happens in acpi_lpss_resume_noirq(). */
- 	return acpi_lpss_do_restore_early(dev);
- }
-+
-+static int acpi_lpss_do_poweroff_late(struct device *dev)
-+{
-+	int ret = pm_generic_poweroff_late(dev);
-+
-+	return ret ? ret : acpi_lpss_suspend(dev, device_may_wakeup(dev));
-+}
-+
-+static int acpi_lpss_poweroff_late(struct device *dev)
-+{
-+	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
-+
-+	if (dev_pm_smart_suspend_and_suspended(dev))
-+		return 0;
-+
-+	if (pdata->dev_desc->resume_from_noirq)
-+		return 0;
-+
-+	return acpi_lpss_do_poweroff_late(dev);
-+}
-+
-+static int acpi_lpss_poweroff_noirq(struct device *dev)
-+{
-+	struct lpss_private_data *pdata = acpi_driver_data(ACPI_COMPANION(dev));
-+
-+	if (dev_pm_smart_suspend_and_suspended(dev))
-+		return 0;
-+
-+	if (pdata->dev_desc->resume_from_noirq) {
-+		/* This is analogous to the acpi_lpss_suspend_noirq() case. */
-+		int ret = acpi_lpss_do_poweroff_late(dev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return pm_generic_poweroff_noirq(dev);
-+}
- #endif /* CONFIG_PM_SLEEP */
+-void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
++void __iomem *devm_ioremap_resource(struct device *dev,
++				    const struct resource *res);
  
- static int acpi_lpss_runtime_suspend(struct device *dev)
-@@ -1175,9 +1219,9 @@ static struct dev_pm_domain acpi_lpss_pm_domain = {
- 		.resume_noirq = acpi_lpss_resume_noirq,
- 		.resume_early = acpi_lpss_resume_early,
- 		.freeze = acpi_subsys_freeze,
--		.poweroff = acpi_subsys_suspend,
--		.poweroff_late = acpi_lpss_suspend_late,
--		.poweroff_noirq = acpi_lpss_suspend_noirq,
-+		.poweroff = acpi_subsys_poweroff,
-+		.poweroff_late = acpi_lpss_poweroff_late,
-+		.poweroff_noirq = acpi_lpss_poweroff_noirq,
- 		.restore_noirq = acpi_lpss_restore_noirq,
- 		.restore_early = acpi_lpss_restore_early,
- #endif
-diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
-index 5a88a63e902d..54b6547d32b2 100644
---- a/drivers/acpi/device_pm.c
-+++ b/drivers/acpi/device_pm.c
-@@ -1137,6 +1137,58 @@ int acpi_subsys_restore_early(struct device *dev)
- 	return ret ? ret : pm_generic_restore_early(dev);
- }
- EXPORT_SYMBOL_GPL(acpi_subsys_restore_early);
-+
-+/**
-+ * acpi_subsys_poweroff - Run the device driver's poweroff callback.
-+ * @dev: Device to handle.
-+ *
-+ * Follow PCI and resume devices from runtime suspend before running their
-+ * system poweroff callbacks, unless the driver can cope with runtime-suspended
-+ * devices during system suspend and there are no ACPI-specific reasons for
-+ * resuming them.
-+ */
-+int acpi_subsys_poweroff(struct device *dev)
-+{
-+	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
-+	    acpi_dev_needs_resume(dev, ACPI_COMPANION(dev)))
-+		pm_runtime_resume(dev);
-+
-+	return pm_generic_poweroff(dev);
-+}
-+EXPORT_SYMBOL_GPL(acpi_subsys_poweroff);
-+
-+/**
-+ * acpi_subsys_poweroff_late - Run the device driver's poweroff callback.
-+ * @dev: Device to handle.
-+ *
-+ * Carry out the generic late poweroff procedure for @dev and use ACPI to put
-+ * it into a low-power state during system transition into a sleep state.
-+ */
-+static int acpi_subsys_poweroff_late(struct device *dev)
-+{
-+	int ret;
-+
-+	if (dev_pm_smart_suspend_and_suspended(dev))
-+		return 0;
-+
-+	ret = pm_generic_poweroff_late(dev);
-+	if (ret)
-+		return ret;
-+
-+	return acpi_dev_suspend(dev, device_may_wakeup(dev));
-+}
-+
-+/**
-+ * acpi_subsys_poweroff_noirq - Run the driver's "noirq" poweroff callback.
-+ * @dev: Device to suspend.
-+ */
-+static int acpi_subsys_poweroff_noirq(struct device *dev)
-+{
-+	if (dev_pm_smart_suspend_and_suspended(dev))
-+		return 0;
-+
-+	return pm_generic_poweroff_noirq(dev);
-+}
- #endif /* CONFIG_PM_SLEEP */
- 
- static struct dev_pm_domain acpi_general_pm_domain = {
-@@ -1152,9 +1204,9 @@ static struct dev_pm_domain acpi_general_pm_domain = {
- 		.resume_noirq = acpi_subsys_resume_noirq,
- 		.resume_early = acpi_subsys_resume_early,
- 		.freeze = acpi_subsys_freeze,
--		.poweroff = acpi_subsys_suspend,
--		.poweroff_late = acpi_subsys_suspend_late,
--		.poweroff_noirq = acpi_subsys_suspend_noirq,
-+		.poweroff = acpi_subsys_poweroff,
-+		.poweroff_late = acpi_subsys_poweroff_late,
-+		.poweroff_noirq = acpi_subsys_poweroff_noirq,
- 		.restore_early = acpi_subsys_restore_early,
- #endif
- 	},
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 32fabeeda5e3..cd412817654f 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -919,6 +919,7 @@ int acpi_subsys_suspend_late(struct device *dev);
- int acpi_subsys_suspend_noirq(struct device *dev);
- int acpi_subsys_suspend(struct device *dev);
- int acpi_subsys_freeze(struct device *dev);
-+int acpi_subsys_poweroff(struct device *dev);
- #else
- static inline int acpi_dev_resume_early(struct device *dev) { return 0; }
- static inline int acpi_subsys_prepare(struct device *dev) { return 0; }
-@@ -927,6 +928,7 @@ static inline int acpi_subsys_suspend_late(struct device *dev) { return 0; }
- static inline int acpi_subsys_suspend_noirq(struct device *dev) { return 0; }
- static inline int acpi_subsys_suspend(struct device *dev) { return 0; }
- static inline int acpi_subsys_freeze(struct device *dev) { return 0; }
-+static inline int acpi_subsys_poweroff(struct device *dev) { return 0; }
- #endif
- 
- #ifdef CONFIG_ACPI
+ void __iomem *devm_of_iomap(struct device *dev,
+ 			    struct device_node *node, int index,
+diff --git a/lib/devres.c b/lib/devres.c
+index faccf1a037d0..aa0f5308ac6b 100644
+--- a/lib/devres.c
++++ b/lib/devres.c
+@@ -131,7 +131,8 @@ EXPORT_SYMBOL(devm_iounmap);
+  *	if (IS_ERR(base))
+  *		return PTR_ERR(base);
+  */
+-void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
++void __iomem *devm_ioremap_resource(struct device *dev,
++				    const struct resource *res)
+ {
+ 	resource_size_t size;
+ 	const char *name;
 -- 
 2.20.1
 
