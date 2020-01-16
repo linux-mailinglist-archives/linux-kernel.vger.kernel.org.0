@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D01B713F6BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1880713F6AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:06:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407259AbgAPTGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:06:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
+        id S2388136AbgAPRBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:01:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387495AbgAPRB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:01:28 -0500
+        id S1729782AbgAPRBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:01:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0319821582;
-        Thu, 16 Jan 2020 17:01:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 586892464B;
+        Thu, 16 Jan 2020 17:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194087;
-        bh=tvYjhdGG/mNMo4H1UoE0B3fWCG3cdfeEEw8tNd+7JHE=;
+        s=default; t=1579194090;
+        bh=IUzSGB77D53GljgvthFQefGhyMuKcSOamUi+WgliY20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M2bStPI7KLfUHBotrPbSt+6gfLdLZljOYdwOy+lbVntTI6gXum4Z11EuVkJGxbUBQ
-         Rtjyy4YZCJdvhOV33aKW65Jqe4tq3a+87/QF6KEOXejP2bCg7pBp0DzUTKP1UZPCGU
-         pvzU8guJIbnnG8Q/Ihn7FX5YIG19aXC4Rxnkf2Y0=
+        b=FS29KqC2UPyXhGp6t5iIkLPHTFa/3NqtUkGmsUNhF4T5cU3kaAwbGfxnlzv6KI8Sn
+         YrHknx0C9isNwGElu3oZat6ceWn+E2OcX4OkJG06mWoWKni9c/y3YwK+u/uH4AGfY2
+         uTHZ9MxoL/h3UeMZEvVPMi/87VZIUBwZHaD3sVFc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 191/671] mdio_bus: Fix PTR_ERR() usage after initialization to constant
-Date:   Thu, 16 Jan 2020 11:51:40 -0500
-Message-Id: <20200116165940.10720-74-sashal@kernel.org>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.19 193/671] staging: r8822be: check kzalloc return or bail
+Date:   Thu, 16 Jan 2020 11:51:42 -0500
+Message-Id: <20200116165940.10720-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,47 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 780feae7eb69388c8d8b661cda6706b0dc0f642b ]
+[ Upstream commit e4b08e16b7d9d030b6475ef48f94d734a39f3c81 ]
 
-Fix coccinelle warning:
+The kzalloc() in halmac_parse_psd_data_88xx() can fail and return NULL
+so check the psd_set->data after allocation and if allocation failed
+return HALMAC_CMD_PROCESS_ERROR.
 
-./drivers/net/phy/mdio_bus.c:51:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
-./drivers/net/phy/mdio_bus.c:52:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
-
-fix this by using IS_ERR before PTR_ERR
-
-Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-drive")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/mdio_bus.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ .../staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c    | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index c5588d4508f9..5c89a310359d 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -56,11 +56,12 @@ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
- 		gpiod = fwnode_get_named_gpiod(&mdiodev->dev.of_node->fwnode,
- 					       "reset-gpios", 0, GPIOD_OUT_LOW,
- 					       "PHY reset");
--	if (PTR_ERR(gpiod) == -ENOENT ||
--	    PTR_ERR(gpiod) == -ENOSYS)
--		gpiod = NULL;
--	else if (IS_ERR(gpiod))
--		return PTR_ERR(gpiod);
-+	if (IS_ERR(gpiod)) {
-+		if (PTR_ERR(gpiod) == -ENOENT || PTR_ERR(gpiod) == -ENOSYS)
-+			gpiod = NULL;
-+		else
-+			return PTR_ERR(gpiod);
+diff --git a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+index 53f55f129a76..ec742da030db 100644
+--- a/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
++++ b/drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+@@ -2466,8 +2466,11 @@ halmac_parse_psd_data_88xx(struct halmac_adapter *halmac_adapter, u8 *c2h_buf,
+ 	segment_size = (u8)PSD_DATA_GET_SEGMENT_SIZE(c2h_buf);
+ 	psd_set->data_size = total_size;
+ 
+-	if (!psd_set->data)
++	if (!psd_set->data) {
+ 		psd_set->data = kzalloc(psd_set->data_size, GFP_KERNEL);
++		if (!psd_set->data)
++			return HALMAC_CMD_PROCESS_ERROR;
 +	}
  
- 	mdiodev->reset = gpiod;
- 
+ 	if (segment_id == 0)
+ 		psd_set->segment_size = segment_size;
 -- 
 2.20.1
 
