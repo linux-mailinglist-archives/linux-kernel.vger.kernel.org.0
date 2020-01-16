@@ -2,97 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F8013D2DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FD1F13D2D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 04:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbgAPDqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 22:46:05 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:52832 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728905AbgAPDqF (ORCPT
+        id S1730153AbgAPDoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 22:44:55 -0500
+Received: from regular1.263xmail.com ([211.150.70.204]:47236 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728905AbgAPDoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 22:46:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TnrK-DZ_1579146361;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TnrK-DZ_1579146361)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 16 Jan 2020 11:46:02 +0800
-Subject: Re: [PATCH] sched/cputime: remove irqtime_account_idle_ticks
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        linux-kernel@vger.kernel.org
-References: <1579144650-161327-1-git-send-email-alex.shi@linux.alibaba.com>
-Message-ID: <5c95e93d-c44c-b19e-62c0-b7c45c60e9e0@linux.alibaba.com>
-Date:   Thu, 16 Jan 2020 11:44:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        Wed, 15 Jan 2020 22:44:54 -0500
+Received: from localhost (unknown [192.168.167.223])
+        by regular1.263xmail.com (Postfix) with ESMTP id B32AB25B;
+        Thu, 16 Jan 2020 11:44:46 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.9] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P614T140606315673344S1579146284883989_;
+        Thu, 16 Jan 2020 11:44:45 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <c5786d4e514634879cef127dc9caa3a5>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: huangtao@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2] pinctrl/rockchip: splite soc data to separated driver
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+Cc:     David Wu <david.wu@rock-chips.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Peter Robinson <pbrobinson@gmail.com>,
+        Vagrant Cascadian <vagrant@debian.org>, afaerber@suse.de,
+        Tao Huang <huangtao@rock-chips.com>
+References: <20200109094001.24343-1-jay.xu@rock-chips.com>
+ <20200113011616.19791-1-jay.xu@rock-chips.com>
+ <CACRpkdY_EHQbF4rRyGwoxEk8LeWfmRzmCd=8=SY95LPXMHYOmw@mail.gmail.com>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <c4ec95a7-aaf1-2331-352f-2def319a1c7d@rock-chips.com>
+Date:   Thu, 16 Jan 2020 11:44:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <1579144650-161327-1-git-send-email-alex.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=gbk
+In-Reply-To: <CACRpkdY_EHQbF4rRyGwoxEk8LeWfmRzmCd=8=SY95LPXMHYOmw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 2020/1/15 ä¸‹åˆ8:51, Linus Walleij wrote:
+> On Mon, Jan 13, 2020 at 2:16 AM Jianqun Xu <jay.xu@rock-chips.com> wrote:
+>
+>> * Decrease codes of pinctrl-rockchip.c from 4,000 lines to 2000 by
+>> separating soc data to a new file.
+>>
+>> * Move rockchip pinctrl related struct definations to a head file.
+>>
+>> * Keep legency pinctrl-rockchip.c under driver/pinctrl but not to
+>> compile it, conveniently for reviewers.
+>>
+>> Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+> This patch looks good, two things are missing:
+>
+> - Review from Heiko
+>
+> - A change to MAINTAINERS so that the file pattern still
+>    matches
+>
+> Should someone from Rockchip also sign up as comaintainer
+> for this driver by the way? (Though the people at Rockchip
+> posting patches for this seem to change a bit.)
 
-ÔÚ 2020/1/16 ÉÏÎç11:17, Alex Shi Ð´µÀ:
-> irqtime_account_idle_ticks just add longer call path w/o enough meaning.
-> We don't bother remove this function to simply code and reduce a
-> bit object size of kernel.
 
-Sorry, above commit log need to revise as following:
+The kernel Image size is keep growing, this patch can help reduce the 
+size of
 
-irqtime_account_idle_ticks just add longer call path w/o enough meaning.
-We'd better to remove this function to simply code and reduce a bit object
-size of kernel.
+kernel image for one SoC, and this is what we have done in U-Boot mainline.
 
-> 
-> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-> Cc: Ingo Molnar <mingo@redhat.com> 
-> Cc: Peter Zijlstra <peterz@infradead.org> 
-> Cc: Juri Lelli <juri.lelli@redhat.com> 
-> Cc: Vincent Guittot <vincent.guittot@linaro.org> 
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com> 
-> Cc: Steven Rostedt <rostedt@goodmis.org> 
-> Cc: Ben Segall <bsegall@google.com> 
-> Cc: Mel Gorman <mgorman@suse.de> 
-> Cc: linux-kernel@vger.kernel.org 
-> ---
->  kernel/sched/cputime.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-> index cff3e656566d..17640d145e44 100644
-> --- a/kernel/sched/cputime.c
-> +++ b/kernel/sched/cputime.c
-> @@ -390,12 +390,7 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
->  	}
->  }
->  
-> -static void irqtime_account_idle_ticks(int ticks)
-> -{
-> -	irqtime_account_process_tick(current, 0, ticks);
-> -}
->  #else /* CONFIG_IRQ_TIME_ACCOUNTING */
-> -static inline void irqtime_account_idle_ticks(int ticks) { }
->  static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
->  						int nr_ticks) { }
->  #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
-> @@ -505,7 +500,7 @@ void account_idle_ticks(unsigned long ticks)
->  	u64 cputime, steal;
->  
->  	if (sched_clock_irqtime) {
-> -		irqtime_account_idle_ticks(ticks);
-> +		irqtime_account_process_tick(current, 0, ticks);
->  		return;
->  	}
->  
-> 
+And for distribution kernel who need to cover all the SoCs with one 
+kernel image,
+
+need to update the defconfig.
+
+The patch looks good to me,
+
+Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+
+Thanks,
+- Kever
+
+
+>
+> Yours,
+> Linus Walleij
+>
+>
+
+
