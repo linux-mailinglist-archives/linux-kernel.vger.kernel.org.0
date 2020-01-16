@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A971713EE6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF8B13EE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395063AbgAPSJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:09:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
+        id S2395051AbgAPSIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:08:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405041AbgAPRic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:38:32 -0500
+        id S2405078AbgAPRih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A97F246D5;
-        Thu, 16 Jan 2020 17:38:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11883246F2;
+        Thu, 16 Jan 2020 17:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196312;
-        bh=IJMGW8gLWsyyTQNqcA+b0r72ujTF6o/zNtEEivEBwGU=;
+        s=default; t=1579196317;
+        bh=vGBL1imLSbmqR+6eJCLZvfNMR/2j+V+YokWAhVLP25k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AewYDxpR//30uo/k1I63fylpx0T9p2kqsEBLJ1MA2cjusMIhr3BtbS3aLVlkgyYxt
-         nuzSWQpud6f1SXgWoM94C2287ItjUFw88LPdbq/KHnnoDNSIV1S2p50kkBwzFeUVDe
-         JY/8qSaY+0nEAQ+KZVdLXkkMYM2Hk7soWIqHQCTQ=
+        b=JacH2PLqUQIcVeoTub7XQiu88hqQlkqGLWepO6RJ6LkBDKlds9HWv8gcY+TtyZJc0
+         jTkU64Z7hanQmbMtS9S+sacAOnox7Cm0JjzIjcSvkfaUzQFcaO6GWMbW3Vxu6UPW/Z
+         O19BqKinhMqzx/LdIE9bE9HC5ObyMYiAB6jjFMK0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 119/251] media: ov2659: fix unbalanced mutex_lock/unlock
-Date:   Thu, 16 Jan 2020 12:34:28 -0500
-Message-Id: <20200116173641.22137-79-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 4.9 122/251] ALSA: usb-audio: Handle the error from snd_usb_mixer_apply_create_quirk()
+Date:   Thu, 16 Jan 2020 12:34:31 -0500
+Message-Id: <20200116173641.22137-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -45,37 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 384538bda10913e5c94ec5b5d34bd3075931bcf4 ]
+[ Upstream commit 328e9f6973be2ee67862cb17bf6c0c5c5918cd72 ]
 
-Avoid returning with mutex locked.
+The error from snd_usb_mixer_apply_create_quirk() is ignored in the
+current usb-audio driver code, which will continue the probing even
+after the error.  Let's take it more serious.
 
-Fixes: fa8cb6444c32 ("[media] ov2659: Don't depend on subdev API")
-
-Cc: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 7b1eda223deb ("ALSA: usb-mixer: factor out quirks")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov2659.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/mixer.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-index ade3c48e2e0c..18546f950d79 100644
---- a/drivers/media/i2c/ov2659.c
-+++ b/drivers/media/i2c/ov2659.c
-@@ -1137,7 +1137,7 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
- 		mf = v4l2_subdev_get_try_format(sd, cfg, fmt->pad);
- 		*mf = fmt->format;
- #else
--		return -ENOTTY;
-+		ret = -ENOTTY;
- #endif
- 	} else {
- 		s64 val;
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 64fa1bbf0acb..54011f8543a7 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2626,7 +2626,9 @@ int snd_usb_create_mixer(struct snd_usb_audio *chip, int ctrlif,
+ 	    (err = snd_usb_mixer_status_create(mixer)) < 0)
+ 		goto _error;
+ 
+-	snd_usb_mixer_apply_create_quirk(mixer);
++	err = snd_usb_mixer_apply_create_quirk(mixer);
++	if (err < 0)
++		goto _error;
+ 
+ 	err = snd_device_new(chip->card, SNDRV_DEV_CODEC, mixer, &dev_ops);
+ 	if (err < 0)
 -- 
 2.20.1
 
