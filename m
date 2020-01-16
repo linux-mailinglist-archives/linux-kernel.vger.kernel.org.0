@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 973DB13E266
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9318813E268
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 17:56:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731651AbgAPQzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 11:55:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40638 "EHLO mail.kernel.org"
+        id S1732824AbgAPQzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 11:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732792AbgAPQzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:55:25 -0500
+        id S1729368AbgAPQz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:55:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFC6122522;
-        Thu, 16 Jan 2020 16:55:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 492852176D;
+        Thu, 16 Jan 2020 16:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193724;
-        bh=bbNkedQdnDzdtuUlAZ2NagqN5EXVfxVOs37adHQ4BEM=;
+        s=default; t=1579193727;
+        bh=2xRJRWDQlQ6lgY7clO/7aQlHd9NaMYeMsWsqynNKo3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nZJzo/G2HLWjfXwgiP9E493ETgx21Y3sJQQMlGULYOk0ku3sqXHLc1FULYRJhaSOk
-         GvpzDlidoGbFLCvofUxpRZsOyG8XwBh8wezrnGs4bGbAbH3dgvdo45cwofUSGJ8QDE
-         41KE4O0128ytpB0k4MmpZzNTig7sTOznomoVaOVc=
+        b=cknxyQGl+PdMwEB1PSUAey06jw/z+vNIrTqFiLzOs/KFFIql5aE3fsVcbwIq7LmN2
+         CgK+c1pJfYKpV9TovmA1hO69Tj7AfwXWhXXkucZ3ZMd/aXCDZzYZF4YnZq0N9SHoYp
+         6r2DE/e6f4i05lXxx15QiNdFvCyv6roDPdYDb0Xs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Houlong Wei <houlong.wei@mediatek.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 018/671] mailbox: mediatek: Add check for possible failure of kzalloc
-Date:   Thu, 16 Jan 2020 11:44:09 -0500
-Message-Id: <20200116165502.8838-18-sashal@kernel.org>
+Cc:     Alex Estrin <alex.estrin@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J . Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 020/671] IB/hfi1: Add mtu check for operational data VLs
+Date:   Thu, 16 Jan 2020 11:44:11 -0500
+Message-Id: <20200116165502.8838-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -47,39 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Houlong Wei <houlong.wei@mediatek.com>
+From: Alex Estrin <alex.estrin@intel.com>
 
-[ Upstream commit 9f0a0a381c5db56e7922dbeea6831f27db58372f ]
+[ Upstream commit eb50130964e8c1379f37c3d3bab33a411ec62e98 ]
 
-The patch 623a6143a845("mailbox: mediatek: Add Mediatek CMDQ driver")
-introduce the following static checker warning:
-  drivers/mailbox/mtk-cmdq-mailbox.c:366 cmdq_mbox_send_data()
-  error: potential null dereference 'task'.  (kzalloc returns null)
+Since Virtual Lanes BCT credits and MTU are set through separate MADs, we
+have to ensure both are valid, and data VLs are ready for transmission
+before we allow port transition to Armed state.
 
-Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Fixes: 5e2d6764a729 ("IB/hfi1: Verify port data VLs credits on transition to Armed")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/hw/hfi1/chip.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index aec46d5d3506..f7cc29c00302 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -363,6 +363,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
- 	WARN_ON(cmdq->suspended);
+diff --git a/drivers/infiniband/hw/hfi1/chip.c b/drivers/infiniband/hw/hfi1/chip.c
+index 6b8935361133..b09a4b1cf397 100644
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -10580,12 +10580,29 @@ void set_link_down_reason(struct hfi1_pportdata *ppd, u8 lcl_reason,
+ 	}
+ }
  
- 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
-+	if (!task)
-+		return -ENOMEM;
+-/*
+- * Verify if BCT for data VLs is non-zero.
++/**
++ * data_vls_operational() - Verify if data VL BCT credits and MTU
++ *			    are both set.
++ * @ppd: pointer to hfi1_pportdata structure
++ *
++ * Return: true - Ok, false -otherwise.
+  */
+ static inline bool data_vls_operational(struct hfi1_pportdata *ppd)
+ {
+-	return !!ppd->actual_vls_operational;
++	int i;
++	u64 reg;
 +
- 	task->cmdq = cmdq;
- 	INIT_LIST_HEAD(&task->list_entry);
- 	task->pa_base = pkt->pa_base;
++	if (!ppd->actual_vls_operational)
++		return false;
++
++	for (i = 0; i < ppd->vls_supported; i++) {
++		reg = read_csr(ppd->dd, SEND_CM_CREDIT_VL + (8 * i));
++		if ((reg && !ppd->dd->vld[i].mtu) ||
++		    (!reg && ppd->dd->vld[i].mtu))
++			return false;
++	}
++
++	return true;
+ }
+ 
+ /*
+@@ -10698,7 +10715,8 @@ int set_link_state(struct hfi1_pportdata *ppd, u32 state)
+ 
+ 		if (!data_vls_operational(ppd)) {
+ 			dd_dev_err(dd,
+-				   "%s: data VLs not operational\n", __func__);
++				   "%s: Invalid data VL credits or mtu\n",
++				   __func__);
+ 			ret = -EINVAL;
+ 			break;
+ 		}
 -- 
 2.20.1
 
