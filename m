@@ -2,31 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7ED313F0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E53C13F12E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436663AbgAPSZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:25:44 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51371 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395500AbgAPSZl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:25:41 -0500
-X-Originating-IP: 109.204.130.2
-Received: from kurenai.i.gensoukyou.net (unknown [109.204.130.2])
-        (Authenticated sender: oranenj@gensoukyou.net)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id C8D311C0012
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 18:25:38 +0000 (UTC)
-To:     linux-kernel@vger.kernel.org
-From:   Jarkko Oranen <oranenj@iki.fi>
-Subject: Linux router responds to any ARP query when iproute2 xfrm policies
- are configured for an IPSec tunnel. What's going on?
-Message-ID: <4efb35fb-d2ee-49e7-8c7d-e8bab315ca60@iki.fi>
-Date:   Thu, 16 Jan 2020 20:25:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S2406795AbgAPS1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:27:10 -0500
+Received: from foss.arm.com ([217.140.110.172]:58314 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436715AbgAPS1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:27:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B4AC139F;
+        Thu, 16 Jan 2020 10:27:04 -0800 (PST)
+Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C99B23F534;
+        Thu, 16 Jan 2020 10:27:03 -0800 (PST)
+Subject: Re: [regression] cpuset: offlined CPUs removed from affinity masks
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Li Zefan <lizefan@huawei.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+References: <1251528473.590671.1579196495905.JavaMail.zimbra@efficios.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <3010d5a9-cce9-bc79-22c0-365d88f1135c@arm.com>
+Date:   Thu, 16 Jan 2020 18:27:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1251528473.590671.1579196495905.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,108 +39,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 16/01/2020 17:41, Mathieu Desnoyers wrote:
+> Hi,
+> 
+> I noticed the following regression with CONFIG_CPUSET=y. Note that
+> I am not using cpusets at all (only using the root cpuset I'm given
+> at boot), it's just configured in. I am currently working on a 5.2.5
+> kernel. I am simply combining use of taskset(1) (setting the affinity
+> mask of a process) and cpu hotplug. The result is that with
+> CONFIG_CPUSET=y, setting the affinity mask including an offline CPU number
+> don't keep that CPU in the affinity mask, and it is never put back when the
+> CPU comes back online. CONFIG_CPUSET=n behaves as expected, and puts back
+> the CPU into the affinity mask reported to user-space when it comes back
+> online.
+> 
+> 
+> * With CONFIG_CPUSET=y (unexpected behavior):
+> 
+> # echo 0 > /sys/devices/system/cpu/cpu1/online
+> 
+> % taskset 0x7 ./loop &
+> % taskset -p $!
+> pid 1341's current affinity mask: 5
+> 
+> # echo 1 > /sys/devices/system/cpu/cpu1/online
+> 
+> taskset -p $!
+> pid 1341's current affinity mask: 5
+> 
+> kill $!
+> 
 
-First of all, I'm not currently subscribed to LKML, so please CC any 
-replies.
+As discussed on IRC, this is because we have in sched_setaffinity():
 
-I recently debugged a DHCP client which refused to accept a lease, and 
-noticed that my router seems to reply to ARP requests for any IP 
-address, apparently causing the client to think it was receiving a 
-duplicate IP.
+  cpuset_cpus_allowed(p, cpus_allowed);
+  cpumask_and(new_mask, in_mask, cpus_allowed);
 
-After some debugging, I learned that my router will respond to any ARP 
-query if the IP falls within the traffic selector I'm using for my xfrm 
-interface-based IPSec VPN. For example:
+Another source of issue is that CPUs are taken out of cpusets when
+hotplugged out, and not put back in when hotplugged back in (except for the
+root cpuset which follows cpu_active_mask).
 
-$ arping 1.1.1.1
+Both cpuset.effective_cpus and cpuset.allowed_cpus seem to only span
+online CPUs:
 
-ARPING 1.1.1.1 from 10.21.1.10 enp7s0
+  root@valsch-juno:~# cat /sys/fs/cgroup/cpuset/cpuset.effective_cpus 
+  0-5
+  root@valsch-juno:~# cat /sys/fs/cgroup/cpuset/cpuset.cpus
+  0-5
+  root@valsch-juno:~# echo 0 > /sys/devices/system/cpu/cpu3/online                                     
+  [93418.733050] CPU3: shutdown
+  [93418.735815] psci: CPU3 killed (polled 0 ms)
+  root@valsch-juno:~# cat /sys/fs/cgroup/cpuset/cpuset.cpus                                            
+  0-2,4-5
+  root@valsch-juno:~# cat /sys/fs/cgroup/cpuset/cpuset.effective_cpus                                  
+  0-2,4-5
 
-Unicast reply from 1.1.1.1 [00:0D:B9:4B:07:C1]  1.449ms
+The thing is, with CONFIG_CPUSET=n, we can absolutely cope with p->cpus_ptr
+spanning CPUs that are offline because we still check the active/online
+mask (is_cpu_allowed()). So one thing I'd like to know is why do cpusets
+remove offline cpus from their mask? I could see cpuset.allowed containing
+both online & offline CPUs, and cpuset.effective containing just the online
+ones.
 
-
-I tried changing the various ARP-related sysctls, but they had no effect 
-on this behaviour. It stops immediately if I kill the IPSec tunnel and 
-the xfrm policies are removed.
-
-The xfrm interface is created simply with
-   ip link add st0 type xfrm dev eth0 if_id 1
-and 10/8 is routed to it, though this doesn't seem to matter.
-
-When the IPSec tunnel is up and running, it configures xfrm policies 
-like so:
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	dir out priority 399999 ptype main
-
-	tmpl src <my-ip> dst <remote-ip>
-
-		proto esp spi 0xc5a3f611 reqid 1 mode tunnel
-
-	if_id 0x1
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	dir fwd priority 399999 ptype main
-
-	tmpl src <remote-ip> dst <my-ip>
-
-		proto esp reqid 1 mode tunnel
-
-	if_id 0x1
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	dir in priority 399999 ptype main
-
-	tmpl src <remote-ip> dst <my-ip>
-
-		proto esp reqid 1 mode tunnel
-
-	if_id 0x1
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	socket in priority 0 ptype main
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	socket out priority 0 ptype main
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	socket in priority 0 ptype main
-
-src 0.0.0.0/0 dst 0.0.0.0/0
-
-	socket out priority 0 ptype main
-
-src ::/0 dst ::/0
-
-	socket in priority 0 ptype main
-
-src ::/0 dst ::/0
-
-	socket out priority 0 ptype main
-
-src ::/0 dst ::/0
-
-	socket in priority 0 ptype main
-
-src ::/0 dst ::/0
-
-	socket out priority 0 ptype main
-
-
-The traffic selector affects what ARP requests the router responds to, 
-so if I change it to 10.0.0.0/8, it will respond to any ARP request for 
-IPs in that range.
-
-This is happening on Alpine Linux running kernel version 5.4.12-1-lts.
-
-Is this expected behaviour? I would appreciate some pointers.
-
---
-Jarkko Oranen
+That way in sched_setaffinity() we can still check for cpuset.allowed, and
+we still have the online/active check in __set_cpus_allowed_ptr() to deny
+stupid requests.
