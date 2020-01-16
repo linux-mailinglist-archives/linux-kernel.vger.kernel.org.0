@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A6213E464
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F7813E465
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:08:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387945AbgAPRIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:08:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
+        id S2389344AbgAPRIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:08:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388450AbgAPRIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:08:00 -0500
+        id S2389287AbgAPRIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:08:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6508320730;
-        Thu, 16 Jan 2020 17:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2C4F2467C;
+        Thu, 16 Jan 2020 17:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194480;
-        bh=Cbm9NWmK9mpFfahIoT9+kEcREyTJA5wATb0Y07W3Zkk=;
+        s=default; t=1579194487;
+        bh=mpGL97m6k814QXjnL2ki81L3W3OZi3I9xyhDVPmMuY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1amk1Up1ZlD5lGMay8KOGF7FaTOYx/oWRtCCUDs6qXxEy0JxLoE5WafijHyv3Xj36
-         o5/Sc0XfRuhSYNJUh84geaGxugZl98PkwBS2UQE6j1eSLh+o07BcoQCnFMCuEdLD1V
-         trFq2ihjnhg2PtiomnEXO7WdIFRN2BuQ7HDL28OQ=
+        b=SbaaxJ3Q+Jzm0nOtelDq9GMhzjTvOZUJg06BXlhfCkgz/SStqP2ZKyJpwLWAn8Fav
+         MTfyZ/F9b9zubMqRpCojSSbfCHd4JNESSd70INixALx1lr0j61Fydx4i77RNb2Pb/9
+         idiy7S71KaIOgSioSGeq3LWK+U9KatuXU4zoLxYk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 382/671] iommu: Use right function to get group for device
-Date:   Thu, 16 Jan 2020 12:00:20 -0500
-Message-Id: <20200116170509.12787-119-sashal@kernel.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.19 387/671] media: Staging: media: Release the correct resource in an error handling path
+Date:   Thu, 16 Jan 2020 12:00:25 -0500
+Message-Id: <20200116170509.12787-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,39 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lu Baolu <baolu.lu@linux.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 57274ea25736496ee019a5c40479855b21888839 ]
+[ Upstream commit 3b6471c7becd06325eb5e701cc2602b2edbbc7b6 ]
 
-The iommu_group_get_for_dev() will allocate a group for a
-device if it isn't in any group. This isn't the use case
-in iommu_request_dm_for_dev(). Let's use iommu_group_get()
-instead.
+'res' is reassigned several times in the function and if we 'goto
+error_unmap', its value is not the returned value of 'request_mem_region()'
+anymore.
 
-Fixes: d290f1e70d85a ("iommu: Introduce iommu_request_dm_for_dev()")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Introduce a new 'struct resource *' variable (i.e. res2) to keep a pointer
+to the right resource, if needed in the error handling path.
+
+Fixes: 4b4eda001704 ("Staging: media: Unmap and release region obtained by ioremap_nocache")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/iommu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index d588b6844f5f..3d69c8205c52 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1899,9 +1899,9 @@ int iommu_request_dm_for_dev(struct device *dev)
- 	int ret;
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 95942768639c..7bf2648affc0 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1777,7 +1777,7 @@ vpfe_ipipe_init(struct vpfe_ipipe_device *ipipe, struct platform_device *pdev)
+ 	struct media_pad *pads = &ipipe->pads[0];
+ 	struct v4l2_subdev *sd = &ipipe->subdev;
+ 	struct media_entity *me = &sd->entity;
+-	struct resource *res, *memres;
++	struct resource *res, *res2, *memres;
  
- 	/* Device must already be in a group before calling this function */
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group))
--		return PTR_ERR(group);
-+	group = iommu_group_get(dev);
-+	if (!group)
-+		return -EINVAL;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
+ 	if (!res)
+@@ -1791,11 +1791,11 @@ vpfe_ipipe_init(struct vpfe_ipipe_device *ipipe, struct platform_device *pdev)
+ 	if (!ipipe->base_addr)
+ 		goto error_release;
  
- 	mutex_lock(&group->mutex);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 6);
+-	if (!res)
++	res2 = platform_get_resource(pdev, IORESOURCE_MEM, 6);
++	if (!res2)
+ 		goto error_unmap;
+-	ipipe->isp5_base_addr = ioremap_nocache(res->start,
+-						resource_size(res));
++	ipipe->isp5_base_addr = ioremap_nocache(res2->start,
++						resource_size(res2));
+ 	if (!ipipe->isp5_base_addr)
+ 		goto error_unmap;
  
 -- 
 2.20.1
