@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E9213E387
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8AE13E388
 	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388413AbgAPRCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:02:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
+        id S2388426AbgAPRCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:02:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388353AbgAPRC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:02:26 -0500
+        id S2388375AbgAPRC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:02:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 045592077B;
-        Thu, 16 Jan 2020 17:02:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DBF22073A;
+        Thu, 16 Jan 2020 17:02:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194145;
-        bh=2djee2Mzdhm5LjrME6B+HCK/qdkDAaWAQQU7n/IZMzE=;
+        s=default; t=1579194147;
+        bh=N/kyBEfQWkq0Pn0UNjKmxITDICB0c0Y8/CBAvgyWKnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytHJ5U/FLurZzjsO/TBTD0rQ/0WDy8q5b+HpZS0GqeYgecUqp6Be2t1PaoFdP+neu
-         SMcJnm8a7sVUdu8IMT3vG11zidDPQP4NorZrXQ89zgpVr2HSRTzOLy79OeLTaU/a2E
-         2C+tr67UtiD4O6rFF3EPa/aIQZR6f/X9RYLRJUqI=
+        b=FO7I9312jQOovwSX213/fzl1PY432guloubZOL2cUKuhKYzvhRwxT9KWWD0I66K+q
+         Nnemh8TT8DRHLoUJLK7KLxPjx1G/VtDc7wKJyO+bmud5pTiHQbAkiCvRtuf7BbPj2q
+         dKPbxXxuurLOAjZnyHVL81uwcOaW01F1G554EgWA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 230/671] NFS: Add missing encode / decode sequence_maxsz to v4.2 operations
-Date:   Thu, 16 Jan 2020 11:52:19 -0500
-Message-Id: <20200116165940.10720-113-sashal@kernel.org>
+Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
+        Nikita Danilov <nikita.danilov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 232/671] net: aquantia: fixed instack structure overflow
+Date:   Thu, 16 Jan 2020 11:52:21 -0500
+Message-Id: <20200116165940.10720-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,86 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anna Schumaker <Anna.Schumaker@Netapp.com>
+From: Igor Russkikh <Igor.Russkikh@aquantia.com>
 
-[ Upstream commit 1a3466aed3a17eed41cd9411f89eb637f58349b0 ]
+[ Upstream commit 8006e3730b6e900319411e35cee85b4513d298df ]
 
-These really should have been there from the beginning, but we never
-noticed because there was enough slack in the RPC request for the extra
-bytes. Chuck's recent patch to use au_cslack and au_rslack to compute
-buffer size shrunk the buffer enough that this was now a problem for
-SEEK operations on my test client.
+This is a real stack undercorruption found by kasan build.
 
-Fixes: f4ac1674f5da4 ("nfs: Add ALLOCATE support")
-Fixes: 2e72448b07dc3 ("NFS: Add COPY nfs operation")
-Fixes: cb95deea0b4aa ("NFS OFFLOAD_CANCEL xdr")
-Fixes: 624bd5b7b683c ("nfs: Add DEALLOCATE support")
-Fixes: 1c6dcbe5ceff8 ("NFS: Implement SEEK")
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+The issue did no harm normally because it only overflowed
+2 bytes after `bitary` array which on most architectures
+were mapped into `err` local.
+
+Fixes: bab6de8fd180 ("net: ethernet: aquantia: Atlantic A0 and B0 specific functions.")
+Signed-off-by: Nikita Danilov <nikita.danilov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs42xdr.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c | 4 ++--
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nfs/nfs42xdr.c b/fs/nfs/nfs42xdr.c
-index 69f72ed2bf87..ec9803088f6b 100644
---- a/fs/nfs/nfs42xdr.c
-+++ b/fs/nfs/nfs42xdr.c
-@@ -59,43 +59,53 @@
- #define decode_clone_maxsz		(op_decode_hdr_maxsz)
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+index 97addfa6f895..dab5891b9714 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_a0.c
+@@ -207,8 +207,8 @@ static int hw_atl_a0_hw_rss_set(struct aq_hw_s *self,
+ 	u32 i = 0U;
+ 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
+ 	int err = 0;
+-	u16 bitary[(HW_ATL_A0_RSS_REDIRECTION_MAX *
+-					HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
++	u16 bitary[1 + (HW_ATL_A0_RSS_REDIRECTION_MAX *
++		   HW_ATL_A0_RSS_REDIRECTION_BITS / 16U)];
  
- #define NFS4_enc_allocate_sz		(compound_encode_hdr_maxsz + \
-+					 encode_sequence_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_allocate_maxsz + \
- 					 encode_getattr_maxsz)
- #define NFS4_dec_allocate_sz		(compound_decode_hdr_maxsz + \
-+					 decode_sequence_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_allocate_maxsz + \
- 					 decode_getattr_maxsz)
- #define NFS4_enc_copy_sz		(compound_encode_hdr_maxsz + \
-+					 encode_sequence_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_savefh_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_copy_maxsz + \
- 					 encode_commit_maxsz)
- #define NFS4_dec_copy_sz		(compound_decode_hdr_maxsz + \
-+					 decode_sequence_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_savefh_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_copy_maxsz + \
- 					 decode_commit_maxsz)
- #define NFS4_enc_offload_cancel_sz	(compound_encode_hdr_maxsz + \
-+					 encode_sequence_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_offload_cancel_maxsz)
- #define NFS4_dec_offload_cancel_sz	(compound_decode_hdr_maxsz + \
-+					 decode_sequence_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_offload_cancel_maxsz)
- #define NFS4_enc_deallocate_sz		(compound_encode_hdr_maxsz + \
-+					 encode_sequence_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_deallocate_maxsz + \
- 					 encode_getattr_maxsz)
- #define NFS4_dec_deallocate_sz		(compound_decode_hdr_maxsz + \
-+					 decode_sequence_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_deallocate_maxsz + \
- 					 decode_getattr_maxsz)
- #define NFS4_enc_seek_sz		(compound_encode_hdr_maxsz + \
-+					 encode_sequence_maxsz + \
- 					 encode_putfh_maxsz + \
- 					 encode_seek_maxsz)
- #define NFS4_dec_seek_sz		(compound_decode_hdr_maxsz + \
-+					 decode_sequence_maxsz + \
- 					 decode_putfh_maxsz + \
- 					 decode_seek_maxsz)
- #define NFS4_enc_layoutstats_sz		(compound_encode_hdr_maxsz + \
+ 	memset(bitary, 0, sizeof(bitary));
+ 
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 51cd1f98bcf0..c4f914a29c38 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -192,8 +192,8 @@ static int hw_atl_b0_hw_rss_set(struct aq_hw_s *self,
+ 	u32 i = 0U;
+ 	u32 num_rss_queues = max(1U, self->aq_nic_cfg->num_rss_queues);
+ 	int err = 0;
+-	u16 bitary[(HW_ATL_B0_RSS_REDIRECTION_MAX *
+-					HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
++	u16 bitary[1 + (HW_ATL_B0_RSS_REDIRECTION_MAX *
++		   HW_ATL_B0_RSS_REDIRECTION_BITS / 16U)];
+ 
+ 	memset(bitary, 0, sizeof(bitary));
+ 
 -- 
 2.20.1
 
