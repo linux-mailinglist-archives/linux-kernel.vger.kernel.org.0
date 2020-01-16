@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8764E13F0B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D0A13F0CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436602AbgAPSXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:23:46 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36532 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436574AbgAPSXk (ORCPT
+        id S2436621AbgAPSYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:24:18 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43895 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395566AbgAPSXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 16 Jan 2020 13:23:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so20192892wru.3
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:38 -0800 (PST)
+Received: by mail-wr1-f66.google.com with SMTP id d16so20183644wre.10
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:23:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eCk7taMYXig6QizdE0ghBnmwbeYgntkLTmTbCbBGnrs=;
-        b=B9WWSq4LTVYf6zF5jzq5uyWVUAK2V3uajkBTuMbS1oN2jzIhmuiXYafd5tzbPIU4TM
-         V+3ADCAHaX1n2r5Q11vZ1WczevgqPDKfoO+5mVOxCobqoOe6RzSXLhTmfUcGzFczTiEZ
-         GRhPzr7keETxMCzyOTEQ+OA/rleCBkwemUHK9XVVxomPE0q9TQZfJlqihM6fsk7YAgxh
-         kE2btgEFuMhHXMvCSA9ke1OJt8+8Da1Yang+wofVehgz+qzUjRV568722abNvpH6z3mk
-         t5W/QXnVJVfsSOnDm3KW6E9X5c9wCsROm1cbBnr+NuBfQKw5REHIWMecjYZZiK6UHWC6
-         SkIg==
+        bh=6GzX84NfDDLTeIA6gc1l7fXC6tihOLThsT86UiBLkGc=;
+        b=PMnbr0CXM4L39OIkLBv9NNcZmMeCur9LJbC9xdfDIFRLBFdhoummuP6RcyD97FN+xy
+         +rqcfydCyWRKx7GGU+vH52bQtqHrg80kf/PY1Xykkjz/DrtM/AJWGKoIfKYOZtWrWd2r
+         xZnJXDmoeqRcI93oSanvn1TnmsZtk67I5J0ZNiwTx+Xq/VDHx7HYduR5GQO+Zz+CQgW0
+         c/CvIfAYTU63cAEodPi6ZgY4VbBUL7vokyBTotbHy4dtNaU7Dtf8kh7dOzMrTUFwKJP2
+         7wChtsPoT9zdaeczEsys5XhEZ2meyBzgExwZoJr7C4FjL+HEnzstlAo396Dq9eAHSJXk
+         Xvxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eCk7taMYXig6QizdE0ghBnmwbeYgntkLTmTbCbBGnrs=;
-        b=UOuW6LfFAQg1EFZ1K0YkRGa6WjPgcVXLgx+xtoWzv9C2Hv7A0USlYTo8GdrBDTzN4A
-         s+RsbAgmzmtL72oGvz5xUpImWLDRWmT0TZ20EYBMdeDl2XDp4dfSGW0V+Eal/Iqat0HH
-         X+ZeA9eruK+RcYkGVweNvHE63+r3JV1Ac+NMK7bx/AzkOIGlGzL1KOkQdlxxjcQr4+9w
-         amXRvEmdQdt3xP2hQ5uo/bBMmcn8Yr6MqG2x6x6xYDltKXGo5mJRog09HaomSRWJHha8
-         EcYw9WJC91PzhXJl9eHbqqXQ3TylK3YIS29mg6g2R84ctXlXTlky7U+1e6Dij8l1R0ms
-         C2Kw==
-X-Gm-Message-State: APjAAAUw3TCN2yrxEEBn1Ssjl4vL4kF4gVJKlfZY3PfsEaLMwfeygkSU
-        FdKZYsoZHiB1pdmlQpaTUYT8+Q==
-X-Google-Smtp-Source: APXvYqxifH7932pswP5qEFtVYz5zCbLefcreY49Vr0JANd+tsAuHPXaSc6lQcRTaP1xzh1umz15l0g==
-X-Received: by 2002:adf:dcc2:: with SMTP id x2mr4468338wrm.24.1579199017651;
-        Thu, 16 Jan 2020 10:23:37 -0800 (PST)
+        bh=6GzX84NfDDLTeIA6gc1l7fXC6tihOLThsT86UiBLkGc=;
+        b=o4VcS6IYni/jtD4oV71gqRix3NQjcLuxytZ8GnBQ1k697WBQ8CpxYP8CkMdmsXOtwE
+         sRnBMQMAJkVpugO3VvXjAgCjIfqmHmBkfZHo3Zm0Jbjl/kNPBP2/CrUZdNHiBdzc9Vph
+         f/WdMsoV1ybXuJFttBwGq62T/lEZOraFnQ4+RXWR9tPGJeuc1gHM2c4rIt//1rj9U5VL
+         oBNK5hzj6CtUOLP4PT6ByMVXPDj24FWHV3ncExUNDNnnE9Jfcsy+NyyozMlIObhwSfOH
+         bITznS5YWcUqjQrYs18XqHFPDHOtELP1B/wO40QyeOXrZaCSM/kNnRUv9EiByJ2vewZn
+         v6iQ==
+X-Gm-Message-State: APjAAAVm/f5b/BhFVfS7lQtcVPCcHmJ5ogjpxhrVsnYFJdbH+0OqbKeG
+        ILWqFDLABWZ4WDowYwQh6ykA/vVKGPUgpw==
+X-Google-Smtp-Source: APXvYqwauPPd4aLhBDp5MlnHSV754ZND+e0We5OC6l83FAVvtluvfuHGtG9xSa6ZuKF4/wTrB5V3vg==
+X-Received: by 2002:adf:f1d0:: with SMTP id z16mr4510386wro.209.1579199018983;
+        Thu, 16 Jan 2020 10:23:38 -0800 (PST)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
-        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.36
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 10:23:37 -0800 (PST)
+        Thu, 16 Jan 2020 10:23:38 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 11/17] clocksource/drivers/timer-ti-dm: Convert to devm_platform_ioremap_resource
-Date:   Thu, 16 Jan 2020 19:22:58 +0100
-Message-Id: <20200116182304.4926-11-daniel.lezcano@linaro.org>
+Subject: [PATCH 12/17] clocksource/drivers/timer-ti-dm: Switch to platform_get_irq
+Date:   Thu, 16 Jan 2020 19:22:59 +0100
+Message-Id: <20200116182304.4926-12-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
 References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
@@ -61,50 +61,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-Use devm_platform_ioremap_resource() to simplify code, which
-wraps 'platform_get_resource' and 'devm_ioremap_resource' in a
-single helper.
+platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
+requesting IRQ's resources, as they can be not ready yet. Using
+platform_get_irq() instead is preferred for getting IRQ even if it
+was not retrieved earlier.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20191221173027.30716-4-tiny.windzz@gmail.com
+Link: https://lore.kernel.org/r/20191221173027.30716-5-tiny.windzz@gmail.com
 ---
- drivers/clocksource/timer-ti-dm.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/clocksource/timer-ti-dm.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index 5394d9dbdfbc..aa2ede266edf 100644
+index aa2ede266edf..bd16efb2740b 100644
 --- a/drivers/clocksource/timer-ti-dm.c
 +++ b/drivers/clocksource/timer-ti-dm.c
-@@ -780,7 +780,7 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
+@@ -780,7 +780,6 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
  {
  	unsigned long flags;
  	struct omap_dm_timer *timer;
--	struct resource *mem, *irq;
-+	struct resource *irq;
+-	struct resource *irq;
  	struct device *dev = &pdev->dev;
  	const struct dmtimer_platform_data *pdata;
  	int ret;
-@@ -802,18 +802,12 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
+@@ -796,11 +795,9 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
  		return -ENODEV;
  	}
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (unlikely(!mem)) {
--		dev_err(dev, "%s: no memory resource.\n", __func__);
+-	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (unlikely(!irq)) {
+-		dev_err(dev, "%s: no IRQ resource.\n", __func__);
 -		return -ENODEV;
 -	}
--
++	timer->irq = platform_get_irq(pdev, 0);
++	if (timer->irq < 0)
++		return timer->irq;
+ 
  	timer = devm_kzalloc(dev, sizeof(*timer), GFP_KERNEL);
  	if (!timer)
- 		return  -ENOMEM;
+@@ -830,7 +827,6 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
+ 	if (pdata)
+ 		timer->errata = pdata->timer_errata;
  
- 	timer->fclk = ERR_PTR(-ENODEV);
--	timer->io_base = devm_ioremap_resource(dev, mem);
-+	timer->io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(timer->io_base))
- 		return PTR_ERR(timer->io_base);
+-	timer->irq = irq->start;
+ 	timer->pdev = pdev;
  
+ 	pm_runtime_enable(dev);
 -- 
 2.17.1
 
