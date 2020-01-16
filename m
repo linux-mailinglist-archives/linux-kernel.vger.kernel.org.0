@@ -2,194 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D26B813FBFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A2713FC02
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 23:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389818AbgAPWGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 17:06:52 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40937 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729260AbgAPWGw (ORCPT
+        id S2389809AbgAPWJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 17:09:16 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:41430 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388875AbgAPWJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 17:06:52 -0500
-Received: by mail-io1-f68.google.com with SMTP id x1so23695988iop.7;
-        Thu, 16 Jan 2020 14:06:51 -0800 (PST)
+        Thu, 16 Jan 2020 17:09:15 -0500
+Received: by mail-qv1-f66.google.com with SMTP id x1so9858701qvr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 14:09:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=knzeQPpwpmUJ11TawlbFVOi7iUcMTe9UXbqXHmIy6x8=;
-        b=Nc0X5ckwS0Uncvh6W9RMln28oDNFJf92A6ApU1c+wkQPPYhW1nbCAiqa/woL1MRNct
-         8y1KcS2KVv7lCAEthRdvlIIB9F/whSaW+ngES7vrub2eyoGIGn28Z2yEyAWC/oHfJxR8
-         bcdgICJ76pHCkarN8qfZe9gRvcDncD08jVk1fSHMJ8lJejjeeSgGDSgXkaDec+59yQ//
-         /wAKv1uAlXU2wdf8TfZI2HzllyGqSSMjMh1pV00RwhDJgQVAM1/dDBf143Teaa/pB1MJ
-         KxqOuGZhQ4YXUUXu/mMiToQcY4VqNHxOqGa/H3Lib8ObAFwnHLgc8Ri5mkbmSOHLX+sW
-         xQdg==
+        bh=NUb8ilLBAhUZ6/jWBRcP+4R7/8UlPkVpgXywFwbpI6U=;
+        b=TYC/GqZ5SQrKgEdAAYYA9Wut1vr7vwQzUWfzcrfJ2CSuF+xvvIw7qNNmJQ4xTwesfM
+         e3VyuCwNqv57wZoT7JPmfyoeilP1kSDk3rvXlnK0W8N0gJsZCmu6A76umz/I9HhPoQiM
+         LkhvhsaENVh/dt2wy9RTxLdRxZ2xvim6+8lVA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=knzeQPpwpmUJ11TawlbFVOi7iUcMTe9UXbqXHmIy6x8=;
-        b=aKFJQC7XZInBHRtIFdQapLmbcbqrxrncAHvoxZO3j20RTxraXG4pQqTtvpEp9pxSQO
-         +i503SExvx34kEEpZG0Lci/jEWx0Lkhnv9WW3ka80kFp5kFJt97Lm7Hy2+3pCPto+kU/
-         V0FJv7gwbmJEsGa9y6rg039fA82Hjm6NMI56g4+qKKrzhXgmRP6AVnn1uj35N0p35fO9
-         l8rycI/vzh0YpsJLpIEDNrd9uHJWzGVHbgZaFHV8w2pRbWnBu4cZw92QG9OPr7PpwtRJ
-         sVqruhrGYRGzNyUiif+fu3OzyJYu1KziedVHJkJKkOdmmmDEGRnA8SCNUU7m5dY5klgr
-         y8Fw==
-X-Gm-Message-State: APjAAAW9oWSFRf1XI7bUzGqGy/SRAt34veeBUcFrF7sVH7si+NnBqtyn
-        DIq+rGKtBWZKSRR8xasE5lAXKNF3lvhE3ANayRc=
-X-Google-Smtp-Source: APXvYqxLK0nmek4moXMlWTzFOChCalpCN0T4wM+Ql3A33S8tK9KrwjxQPrkF8tPOqUuEVelBvumhZG++ugI41Oliorc=
-X-Received: by 2002:a05:6638:6a6:: with SMTP id d6mr30886433jad.132.1579212411258;
- Thu, 16 Jan 2020 14:06:51 -0800 (PST)
+        bh=NUb8ilLBAhUZ6/jWBRcP+4R7/8UlPkVpgXywFwbpI6U=;
+        b=swvs9ycWkffE4vkIFK3+Yy9Wv/DX0g1bbJMq4N3teblCaKhoVCyvqoVEZLfaKIHrFk
+         iApfmsqh13AqP49MCYabeJwzcSSJa8MseDeG8f5ARgVZYYOOr8xlLk7rHE2XF9paDs70
+         spDWRh6uBgkzfDfK62ymMHt91zvyPncCBr6bAcRJjVsE+pp+IM/iD0uCL6iStzCElTcs
+         UlfiGdLLm5as6R9gVQ94LrGFViKqPdRXiGjLgJ3D4TkswWJ5SsGmOZXLHKSqQef4ZJVt
+         TaV2zXYNrZHqaNZL+6GAbKNf7OW2g9VTDqysJ5Yjscqh1kH28sc9XtH2FOrzqxwg4o7A
+         P1gw==
+X-Gm-Message-State: APjAAAVHoq7AfGJYCMsiQ9IM46tKWWAbmwOsksv5V7ONn6bySp5o79Al
+        1tzQKcMqTvSJNmyLEAD1NaW4kJQZtyt+gkq2vYFviw==
+X-Google-Smtp-Source: APXvYqzXGRlWrfImjI5+ICjTTTiaWsfN0EkDJEtf2hE3RMf7K345toyyMRu3pnzUIZ1iBKJVlU2ezfP3BVKWbra3njY=
+X-Received: by 2002:a0c:e790:: with SMTP id x16mr1240023qvn.18.1579212554458;
+ Thu, 16 Jan 2020 14:09:14 -0800 (PST)
 MIME-Version: 1.0
-References: <26f61914-3c0d-4911-7f21-23967839554c@canonical.com>
-In-Reply-To: <26f61914-3c0d-4911-7f21-23967839554c@canonical.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 16 Jan 2020 16:06:40 -0600
-Message-ID: <CAH2r5msT7GjFLGBbu40cYu3ZuwvWtdsCNM5V8n67o4uguC95Yg@mail.gmail.com>
-Subject: Re: cifs: Avoid doing network I/O while holding cache lock
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     "Paulo Alcantara (SUSE)" <pc@cjr.nz>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200114232219.93171-1-pmalani@chromium.org> <20200114232219.93171-3-pmalani@chromium.org>
+ <20200116194556.GB208460@google.com>
+In-Reply-To: <20200116194556.GB208460@google.com>
+From:   Prashant Malani <pmalani@chromium.org>
+Date:   Thu, 16 Jan 2020 14:09:04 -0800
+Message-ID: <CACeCKafnm-NQrzNs7hpMRiYDuhQ-t_mdNaevCqEpefnxaZkNYw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] power: supply: cros-ec-usbpd-charger: Fix host events
+To:     Benson Leung <bleung@google.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, sre@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Jon Flatley <jflat@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added the one line patch from Paulo to address what Colin reported and
-added a "Reported-by" for Colin mentioning Coverity.  merged into
-cifs-2.6.git for-next
-
-On Thu, Jan 16, 2020 at 1:10 PM Colin Ian King <colin.king@canonical.com> wrote:
+On Thu, Jan 16, 2020 at 11:46 AM Benson Leung <bleung@google.com> wrote:
 >
-> Hi,
+> On Tue, Jan 14, 2020 at 03:22:22PM -0800, Prashant Malani wrote:
+> > From: Jon Flatley <jflat@chromium.org>
+> >
+> > There's a bug on ACPI platforms where host events from the ECPD ACPI
+> > device never make their way to the cros-ec-usbpd-charger driver. This
+> > makes it so the only time the charger driver updates its state is when
+> > user space accesses its sysfs attributes.
+> >
+> > Now that these events have been unified into a single notifier chain on
+> > both ACPI and non-ACPI platforms, update the charger driver to use this
+> > new notifier.
+> >
+> > Signed-off-by: Jon Flatley <jflat@chromium.org>
+> > Signed-off-by: Prashant Malani <pmalani@chromium.org>
 >
-> static analysis with Coverity has detected an issue with the following
-> commit:
->
-> commit 03535b72873ba74e80e6938b5f772cf5b07ca76b
-> Author: Paulo Alcantara (SUSE) <pc@cjr.nz>
-> Date:   Wed Dec 4 17:38:03 2019 -0300
->
->     cifs: Avoid doing network I/O while holding cache lock
+> Only a minor nit. Otherwise,
+> Reviewed-by: Benson Leung <bleung@chromium.org>
 >
 >
+> > ---
+> >
+> > Changes in v6(pmalani@chromium.org):
+> > - Patch first introduced into the series in v6.
+> >
+> >  drivers/power/supply/Kconfig              |  2 +-
+> >  drivers/power/supply/cros_usbpd-charger.c | 50 ++++++++---------------
+> >  2 files changed, 19 insertions(+), 33 deletions(-)
+> >
+> > diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> > index 27164a1d3c7c4..ba74ddd793c3d 100644
+> > --- a/drivers/power/supply/Kconfig
+> > +++ b/drivers/power/supply/Kconfig
+> > @@ -659,7 +659,7 @@ config CHARGER_RT9455
+> >
+> >  config CHARGER_CROS_USBPD
+> >       tristate "ChromeOS EC based USBPD charger"
+> > -     depends on CROS_EC
+> > +     depends on CROS_USBPD_NOTIFY
+> >       default n
+> >       help
+> >         Say Y here to enable ChromeOS EC based USBPD charger
+> > diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+> > index 6cc7c3910e098..7f7e051262170 100644
+> > --- a/drivers/power/supply/cros_usbpd-charger.c
+> > +++ b/drivers/power/supply/cros_usbpd-charger.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/mfd/cros_ec.h>
+> >  #include <linux/module.h>
+> >  #include <linux/platform_data/cros_ec_commands.h>
+> > +#include <linux/platform_data/cros_usbpd_notify.h>
 >
-> This commit removed a memset on the vol object, causing the issue as
-> reported below by Coverity:
+> Really minor nit. Alphabetize this #include. This insertion should
+> be one line below.
+Done. Thanks.
 >
-> 1342static struct cifs_ses *find_root_ses(struct vol_info *vi,
-> 1343                                      struct cifs_tcon *tcon,
-> 1344                                      const char *path)
-> 1345{
-> 1346        char *rpath;
-> 1347        int rc;
-> 1348        struct cache_entry *ce;
-> 1349        struct dfs_info3_param ref = {0};
-> 1350        char *mdata = NULL, *devname = NULL;
-> 1351        struct TCP_Server_Info *server;
-> 1352        struct cifs_ses *ses;
+> >  #include <linux/platform_data/cros_ec_proto.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/power_supply.h>
+> > @@ -524,32 +525,21 @@ static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
+> >  }
+> >
+> >  static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+> > -                                    unsigned long queued_during_suspend,
+> > +                                    unsigned long host_event,
+> >                                      void *_notify)
+> >  {
+> > -     struct cros_ec_device *ec_device;
+> > -     struct charger_data *charger;
+> > -     u32 host_event;
+> > +     struct charger_data *charger = container_of(nb, struct charger_data,
+> > +                                                 notifier);
+> >
+> > -     charger = container_of(nb, struct charger_data, notifier);
+> > -     ec_device = charger->ec_device;
+> > -
+> > -     host_event = cros_ec_get_host_event(ec_device);
+> > -     if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+> > -             cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+> > -             return NOTIFY_OK;
+> > -     } else {
+> > -             return NOTIFY_DONE;
+> > -     }
+> > +     cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+> > +     return NOTIFY_OK;
+> >  }
+> >
+> >  static void cros_usbpd_charger_unregister_notifier(void *data)
+> >  {
+> >       struct charger_data *charger = data;
+> > -     struct cros_ec_device *ec_device = charger->ec_device;
+> >
+> > -     blocking_notifier_chain_unregister(&ec_device->event_notifier,
+> > -                                        &charger->notifier);
+> > +     cros_usbpd_unregister_notify(&charger->notifier);
+> >  }
+> >
+> >  static int cros_usbpd_charger_probe(struct platform_device *pd)
+> > @@ -683,21 +673,17 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+> >               goto fail;
+> >       }
+> >
+> > -     if (ec_device->mkbp_event_supported) {
+> > -             /* Get PD events from the EC */
+> > -             charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
+> > -             ret = blocking_notifier_chain_register(
+> > -                                             &ec_device->event_notifier,
+> > -                                             &charger->notifier);
+> > -             if (ret < 0) {
+> > -                     dev_warn(dev, "failed to register notifier\n");
+> > -             } else {
+> > -                     ret = devm_add_action_or_reset(dev,
+> > -                                     cros_usbpd_charger_unregister_notifier,
+> > -                                     charger);
+> > -                     if (ret < 0)
+> > -                             goto fail;
+> > -             }
+> > +     /* Get PD events from the EC */
+> > +     charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
+> > +     ret = cros_usbpd_register_notify(&charger->notifier);
+> > +     if (ret < 0) {
+> > +             dev_warn(dev, "failed to register notifier\n");
+> > +     } else {
+> > +             ret = devm_add_action_or_reset(dev,
+> > +                             cros_usbpd_charger_unregister_notifier,
+> > +                             charger);
+> > +             if (ret < 0)
+> > +                     goto fail;
+> >       }
+> >
+> >       return 0;
+> > --
+> > 2.25.0.341.g760bfbb309-goog
+> >
 >
->     1. var_decl: Declaring variable vol without initializer.
-> 1353        struct smb_vol vol;
-> 1354
-> 1355        rpath = get_dfs_root(path);
->
->     2. Condition IS_ERR(rpath), taking false branch.
-> 1356        if (IS_ERR(rpath))
-> 1357                return ERR_CAST(rpath);
-> 1358
-> 1359        down_read(&htable_rw_lock);
-> 1360
-> 1361        ce = lookup_cache_entry(rpath, NULL);
->
->     3. Condition IS_ERR(ce), taking true branch.
-> 1362        if (IS_ERR(ce)) {
-> 1363                up_read(&htable_rw_lock);
-> 1364                ses = ERR_CAST(ce);
->
->     4. Jumping to label out.
-> 1365                goto out;
-> 1366        }
-> 1367
-> 1368        rc = setup_referral(path, ce, &ref, get_tgt_name(ce));
-> 1369        if (rc) {
-> 1370                up_read(&htable_rw_lock);
-> 1371                ses = ERR_PTR(rc);
-> 1372                goto out;
-> 1373        }
-> 1374
-> 1375        up_read(&htable_rw_lock);
-> 1376
-> 1377        mdata = cifs_compose_mount_options(vi->mntdata, rpath, &ref,
-> 1378                                           &devname);
-> 1379        free_dfs_info_param(&ref);
-> 1380
-> 1381        if (IS_ERR(mdata)) {
-> 1382                ses = ERR_CAST(mdata);
-> 1383                mdata = NULL;
-> 1384                goto out;
-> 1385        }
-> 1386
-> 1387        rc = cifs_setup_volume_info(&vol, mdata, devname, false);
-> 1388        kfree(devname);
-> 1389
-> 1390        if (rc) {
-> 1391                ses = ERR_PTR(rc);
-> 1392                goto out;
-> 1393        }
-> 1394
-> 1395        server = get_tcp_server(&vol);
-> 1396        if (!server) {
-> 1397                ses = ERR_PTR(-EHOSTDOWN);
-> 1398                goto out;
-> 1399        }
-> 1400
-> 1401        ses = cifs_get_smb_ses(server, &vol);
-> 1402
-> 1403out:
->
->     5. uninit_use_in_call: Using uninitialized value vol.username when
-> calling cifs_cleanup_volume_info_contents.
->
->     6. uninit_use_in_call: Using uninitialized value vol.password when
-> calling cifs_cleanup_volume_info_contents.
->
->     7. uninit_use_in_call: Using uninitialized value vol.domainname when
-> calling cifs_cleanup_volume_info_contents.
->
->     8. uninit_use_in_call: Using uninitialized value vol.UNC when
-> calling cifs_cleanup_volume_info_contents.
->
->     9. uninit_use_in_call: Using uninitialized value vol.iocharset when
-> calling cifs_cleanup_volume_info_contents.
->
->  Uninitialized pointer read
->    10. uninit_use_in_call: Using uninitialized value vol.prepath when
-> calling cifs_cleanup_volume_info_contents.
->
-> 1404        cifs_cleanup_volume_info_contents(&vol);
-> 1405        kfree(mdata);
-> 1406        kfree(rpath);
->
-> The vol object is memset as a result of calling cifs_setup_volume_info()
-> but this is too late for the earlier jumps to the error cleanup path at
-> label out.  I did think about putting this back but it adds an
-> unnecessary memset, a better fix may be return immediately or to exit
-> via the kfree(mdata) at the end of the function.
->
-> Not sure what is best, so I'm flagging this up as an issue that needs
-> fixing.
->
-> Colin
-
-
-
--- 
-Thanks,
-
-Steve
+> --
+> Benson Leung
+> Staff Software Engineer
+> Chrome OS Kernel
+> Google Inc.
+> bleung@google.com
+> Chromium OS Project
+> bleung@chromium.org
