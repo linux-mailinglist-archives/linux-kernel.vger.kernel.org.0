@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE0B13F06D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:22:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7363B13F08E
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392495AbgAPR1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37362 "EHLO mail.kernel.org"
+        id S2395517AbgAPSWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404052AbgAPR12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:28 -0500
+        id S2404057AbgAPR1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 631E5246D1;
-        Thu, 16 Jan 2020 17:27:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F3C0246D3;
+        Thu, 16 Jan 2020 17:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195648;
-        bh=Yw7Sxwca5v+5wc2avdjj/iOaHU0AHaZFoEdAY1dbTaA=;
+        s=default; t=1579195649;
+        bh=LV/BZbBT0dIxJVUKESzPV9/ZnvEA6aMRs4D8sEBcqr0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qvhdai3pPUeQZkLpiuKIh8zLFAEuLCtkgin/44YKhetSoXgnSuCmObQNnU1KwlITM
-         mVLB7jDVQXoJPvY5WlHTyZy3+8lxJi8wHixxkYQgWGOnbO3M0QkrOHIGedIRrQnJeL
-         h3URBEr/WOBI9Wi+tiA+9uPmK68jQ91k+PMtfImU=
+        b=YV4nWlLyVLzpCnpedVgmSnQaXe4ruXm1d0sFMPBQCdAWIsvf90Z4K6AzfKRuxysd1
+         a1gpo9y6vK/Q9vW+v7PZ19VjaQh8yTWVCKqBCobK3GfLaAMiR+PZd0X0/KG4IvVTSH
+         XacaDySIdQIjqDVbXl4t/3f5zepj9vrxbFGMF5j0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Hook, Gary" <Gary.Hook@amd.com>, Gary R Hook <gary.hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 211/371] crypto: ccp - Fix 3DES complaint from ccp-crypto module
-Date:   Thu, 16 Jan 2020 12:21:23 -0500
-Message-Id: <20200116172403.18149-154-sashal@kernel.org>
+Cc:     Erwan Le Ray <erwan.leray@st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 212/371] serial: stm32: fix rx error handling
+Date:   Thu, 16 Jan 2020 12:21:24 -0500
+Message-Id: <20200116172403.18149-155-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -43,75 +45,162 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Hook, Gary" <Gary.Hook@amd.com>
+From: Erwan Le Ray <erwan.leray@st.com>
 
-[ Upstream commit 89646fdda4cae203185444ac7988835f36a21ee1 ]
+[ Upstream commit 4f01d833fdcdd6f9b85d9e5d5d7568eb683626a7 ]
 
-Crypto self-tests reveal an error:
+- Fixes parity and framing error bit by clearing parity and framing error
+  flag. The current implementation doesn't clear the error bits when an
+  error is detected.
+- Fixes the incorrect name of framing error clearing flag in header file.
+- Fixes misalignement between data frame and errors status. The status
+  read for "n" frame was the status of "n+1" frame".
+- Fixes break detection was not triggered by the expected register.
 
-alg: skcipher: cbc-des3-ccp encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
-
-The offset value should not be recomputed when retrieving the context.
-Also, a code path exists which makes decisions based on older (version 3)
-hardware; a v3 device deosn't support 3DES so remove this check.
-
-Fixes: 990672d48515 ('crypto: ccp - Enable 3DES function on v5 CCPs')
-
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 48a6092fb41f ("serial: stm32-usart: Add STM32 USART Driver")
+Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccp/ccp-ops.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/tty/serial/stm32-usart.c | 54 +++++++++++++++++++++-----------
+ drivers/tty/serial/stm32-usart.h | 10 ++----
+ 2 files changed, 37 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/crypto/ccp/ccp-ops.c b/drivers/crypto/ccp/ccp-ops.c
-index 1e2e42106dee..4b48b8523a40 100644
---- a/drivers/crypto/ccp/ccp-ops.c
-+++ b/drivers/crypto/ccp/ccp-ops.c
-@@ -1293,6 +1293,9 @@ static int ccp_run_des3_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
- 	int ret;
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index 03a583264d9e..c43590077372 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -118,35 +118,51 @@ static void stm32_receive_chars(struct uart_port *port, bool threaded)
  
- 	/* Error checks */
-+	if (cmd_q->ccp->vdata->version < CCP_VERSION(5, 0))
-+		return -EINVAL;
+ 	while (stm32_pending_rx(port, &sr, &stm32_port->last_res, threaded)) {
+ 		sr |= USART_SR_DUMMY_RX;
+-		c = stm32_get_char(port, &sr, &stm32_port->last_res);
+ 		flag = TTY_NORMAL;
+-		port->icount.rx++;
+ 
++		/*
++		 * Status bits has to be cleared before reading the RDR:
++		 * In FIFO mode, reading the RDR will pop the next data
++		 * (if any) along with its status bits into the SR.
++		 * Not doing so leads to misalignement between RDR and SR,
++		 * and clear status bits of the next rx data.
++		 *
++		 * Clear errors flags for stm32f7 and stm32h7 compatible
++		 * devices. On stm32f4 compatible devices, the error bit is
++		 * cleared by the sequence [read SR - read DR].
++		 */
++		if ((sr & USART_SR_ERR_MASK) && ofs->icr != UNDEF_REG)
++			stm32_clr_bits(port, ofs->icr, USART_ICR_ORECF |
++				       USART_ICR_PECF | USART_ICR_FECF);
 +
- 	if (!cmd_q->ccp->vdata->perform->des3)
- 		return -EINVAL;
++		c = stm32_get_char(port, &sr, &stm32_port->last_res);
++		port->icount.rx++;
+ 		if (sr & USART_SR_ERR_MASK) {
+-			if (sr & USART_SR_LBD) {
+-				port->icount.brk++;
+-				if (uart_handle_break(port))
+-					continue;
+-			} else if (sr & USART_SR_ORE) {
+-				if (ofs->icr != UNDEF_REG)
+-					writel_relaxed(USART_ICR_ORECF,
+-						       port->membase +
+-						       ofs->icr);
++			if (sr & USART_SR_ORE) {
+ 				port->icount.overrun++;
+ 			} else if (sr & USART_SR_PE) {
+ 				port->icount.parity++;
+ 			} else if (sr & USART_SR_FE) {
+-				port->icount.frame++;
++				/* Break detection if character is null */
++				if (!c) {
++					port->icount.brk++;
++					if (uart_handle_break(port))
++						continue;
++				} else {
++					port->icount.frame++;
++				}
+ 			}
  
-@@ -1375,8 +1378,6 @@ static int ccp_run_des3_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
- 	 * passthru option to convert from big endian to little endian.
- 	 */
- 	if (des3->mode != CCP_DES3_MODE_ECB) {
--		u32 load_mode;
--
- 		op.sb_ctx = cmd_q->sb_ctx;
+ 			sr &= port->read_status_mask;
  
- 		ret = ccp_init_dm_workarea(&ctx, cmd_q,
-@@ -1392,12 +1393,8 @@ static int ccp_run_des3_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
- 		if (ret)
- 			goto e_ctx;
- 
--		if (cmd_q->ccp->vdata->version == CCP_VERSION(3, 0))
--			load_mode = CCP_PASSTHRU_BYTESWAP_NOOP;
--		else
--			load_mode = CCP_PASSTHRU_BYTESWAP_256BIT;
- 		ret = ccp_copy_to_sb(cmd_q, &ctx, op.jobid, op.sb_ctx,
--				     load_mode);
-+				     CCP_PASSTHRU_BYTESWAP_256BIT);
- 		if (ret) {
- 			cmd->engine_error = cmd_q->cmd_error;
- 			goto e_ctx;
-@@ -1459,10 +1456,6 @@ static int ccp_run_des3_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
+-			if (sr & USART_SR_LBD)
+-				flag = TTY_BREAK;
+-			else if (sr & USART_SR_PE)
++			if (sr & USART_SR_PE) {
+ 				flag = TTY_PARITY;
+-			else if (sr & USART_SR_FE)
+-				flag = TTY_FRAME;
++			} else if (sr & USART_SR_FE) {
++				if (!c)
++					flag = TTY_BREAK;
++				else
++					flag = TTY_FRAME;
++			}
  		}
  
- 		/* ...but we only need the last DES3_EDE_BLOCK_SIZE bytes */
--		if (cmd_q->ccp->vdata->version == CCP_VERSION(3, 0))
--			dm_offset = CCP_SB_BYTES - des3->iv_len;
--		else
--			dm_offset = 0;
- 		ccp_get_dm_area(&ctx, dm_offset, des3->iv, 0,
- 				DES3_EDE_BLOCK_SIZE);
- 	}
+ 		if (uart_handle_sysrq_char(port, c))
+@@ -569,14 +585,14 @@ static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	if (termios->c_iflag & INPCK)
+ 		port->read_status_mask |= USART_SR_PE | USART_SR_FE;
+ 	if (termios->c_iflag & (IGNBRK | BRKINT | PARMRK))
+-		port->read_status_mask |= USART_SR_LBD;
++		port->read_status_mask |= USART_SR_FE;
+ 
+ 	/* Characters to ignore */
+ 	port->ignore_status_mask = 0;
+ 	if (termios->c_iflag & IGNPAR)
+ 		port->ignore_status_mask = USART_SR_PE | USART_SR_FE;
+ 	if (termios->c_iflag & IGNBRK) {
+-		port->ignore_status_mask |= USART_SR_LBD;
++		port->ignore_status_mask |= USART_SR_FE;
+ 		/*
+ 		 * If we're ignoring parity and break indicators,
+ 		 * ignore overruns too (for real raw support).
+diff --git a/drivers/tty/serial/stm32-usart.h b/drivers/tty/serial/stm32-usart.h
+index ffc0c5285e51..9d087881913a 100644
+--- a/drivers/tty/serial/stm32-usart.h
++++ b/drivers/tty/serial/stm32-usart.h
+@@ -108,7 +108,6 @@ struct stm32_usart_info stm32h7_info = {
+ #define USART_SR_RXNE		BIT(5)
+ #define USART_SR_TC		BIT(6)
+ #define USART_SR_TXE		BIT(7)
+-#define USART_SR_LBD		BIT(8)
+ #define USART_SR_CTSIF		BIT(9)
+ #define USART_SR_CTS		BIT(10)		/* F7 */
+ #define USART_SR_RTOF		BIT(11)		/* F7 */
+@@ -120,8 +119,7 @@ struct stm32_usart_info stm32h7_info = {
+ #define USART_SR_SBKF		BIT(18)		/* F7 */
+ #define USART_SR_WUF		BIT(20)		/* H7 */
+ #define USART_SR_TEACK		BIT(21)		/* F7 */
+-#define USART_SR_ERR_MASK	(USART_SR_LBD | USART_SR_ORE | \
+-				 USART_SR_FE | USART_SR_PE)
++#define USART_SR_ERR_MASK	(USART_SR_ORE | USART_SR_FE | USART_SR_PE)
+ /* Dummy bits */
+ #define USART_SR_DUMMY_RX	BIT(16)
+ 
+@@ -166,8 +164,6 @@ struct stm32_usart_info stm32h7_info = {
+ /* USART_CR2 */
+ #define USART_CR2_ADD_MASK	GENMASK(3, 0)	/* F4 */
+ #define USART_CR2_ADDM7		BIT(4)		/* F7 */
+-#define USART_CR2_LBDL		BIT(5)
+-#define USART_CR2_LBDIE		BIT(6)
+ #define USART_CR2_LBCL		BIT(8)
+ #define USART_CR2_CPHA		BIT(9)
+ #define USART_CR2_CPOL		BIT(10)
+@@ -224,12 +220,10 @@ struct stm32_usart_info stm32h7_info = {
+ 
+ /* USART_ICR */
+ #define USART_ICR_PECF		BIT(0)		/* F7 */
+-#define USART_ICR_FFECF		BIT(1)		/* F7 */
+-#define USART_ICR_NCF		BIT(2)		/* F7 */
++#define USART_ICR_FECF		BIT(1)		/* F7 */
+ #define USART_ICR_ORECF		BIT(3)		/* F7 */
+ #define USART_ICR_IDLECF	BIT(4)		/* F7 */
+ #define USART_ICR_TCCF		BIT(6)		/* F7 */
+-#define USART_ICR_LBDCF		BIT(8)		/* F7 */
+ #define USART_ICR_CTSCF		BIT(9)		/* F7 */
+ #define USART_ICR_RTOCF		BIT(11)		/* F7 */
+ #define USART_ICR_EOBCF		BIT(12)		/* F7 */
 -- 
 2.20.1
 
