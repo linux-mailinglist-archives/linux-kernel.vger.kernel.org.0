@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE13314000C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E5A140009
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:47:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390699AbgAPXUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:20:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47330 "EHLO mail.kernel.org"
+        id S2391950AbgAPXrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:47:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390664AbgAPXUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:20:39 -0500
+        id S2390727AbgAPXUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:20:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B2BE2082F;
-        Thu, 16 Jan 2020 23:20:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE9492072B;
+        Thu, 16 Jan 2020 23:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216838;
-        bh=8HFTOHFdpVn8DqOi9ioDRy1zz3Sz9X+4Nb7QxL9ae6M=;
+        s=default; t=1579216848;
+        bh=98cRC04yURKjGE1BkLFvLk6G387leR2Q90ANMDBQl5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kLaqdDo/et75HaTM8zvkgka/iQF2OF+meGY8ulxArqzrXUbf9dt2CDrc96CUgRT+6
-         vCSSkCf7iWmNDP8jqshz7gmPBCk0ENp2NGroaeJJftuhrjnaEFM6KysiEJVByk83jF
-         6DSFQLRY20lqidNu7eDCqsMGAN9+tJonUGP9FSdE=
+        b=yQsWHzJXt1rHLoRYLKrv2DJ8E/lfKwqoLx4oI+ND/6YkW1Wufue5FlG84LY03belr
+         eQfBEMuuDNAqVds23W8x1PolB0qhtGYhlKRihH0mi1MvPMZoP2AH/7WkWS6rbTyMoX
+         RSDGQDG3FIJvVLe86GhCLguI+pU2tIzPrL50bzIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5.4 040/203] MAINTAINERS: Append missed file to the database
-Date:   Fri, 17 Jan 2020 00:15:57 +0100
-Message-Id: <20200116231747.557078308@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 5.4 044/203] reset: brcmstb: Remove resource checks
+Date:   Fri, 17 Jan 2020 00:16:01 +0100
+Message-Id: <20200116231747.854191375@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
 References: <20200116231745.218684830@linuxfoundation.org>
@@ -45,33 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 44fe5cb32c7599a4059931a98794e0418619aa96 upstream.
+commit ce89d8d3a70fa530e16f0b0f8994385a214cd0c0 upstream.
 
-When gpiolib.h internal header had been split to few, the commit 77cb907abe6c
-("gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h") in particular missed
-the MAINTAINERS database update. Do it here.
+The use of IS_ALIGNED() is incorrect, the typical resource we pass looks
+like this: start: 0x8404318, size: 0x30. When using IS_ALIGNED() we will
+get the following 0x8404318 & (0x18 - 1) = 0x10 which is definitively
+not equal to 0, same goes with the size. These two checks would make the
+driver fail probing.
 
-Fixes: 77cb907abe6c ("gpiolib: acpi: Split ACPI stuff to gpiolib-acpi.h")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Remove the resource checks, since there should be no constraint on the
+base addresse or size.
+
+Fixes: 77750bc089e4 ("reset: Add Broadcom STB SW_INIT reset controller driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- MAINTAINERS |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/reset/reset-brcmstb.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6973,6 +6973,7 @@ L:	linux-acpi@vger.kernel.org
- S:	Maintained
- F:	Documentation/firmware-guide/acpi/gpio-properties.rst
- F:	drivers/gpio/gpiolib-acpi.c
-+F:	drivers/gpio/gpiolib-acpi.h
+--- a/drivers/reset/reset-brcmstb.c
++++ b/drivers/reset/reset-brcmstb.c
+@@ -91,12 +91,6 @@ static int brcmstb_reset_probe(struct pl
+ 		return -ENOMEM;
  
- GPIO IR Transmitter
- M:	Sean Young <sean@mess.org>
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!IS_ALIGNED(res->start, SW_INIT_BANK_SIZE) ||
+-	    !IS_ALIGNED(resource_size(res), SW_INIT_BANK_SIZE)) {
+-		dev_err(kdev, "incorrect register range\n");
+-		return -EINVAL;
+-	}
+-
+ 	priv->base = devm_ioremap_resource(kdev, res);
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
 
 
