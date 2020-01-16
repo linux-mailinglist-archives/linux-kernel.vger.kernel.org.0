@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9448613F772
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB57A13F77B
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:12:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbgAPRAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:00:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49324 "EHLO mail.kernel.org"
+        id S2387668AbgAPTMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:12:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387618AbgAPRAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:01 -0500
+        id S2387645AbgAPRAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 643E622525;
-        Thu, 16 Jan 2020 17:00:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8839E2467E;
+        Thu, 16 Jan 2020 17:00:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194001;
-        bh=i/V3gk9PEcJrPo97JdmBI9EBn/+Wp7cEy9/qDwLVC2k=;
+        s=default; t=1579194002;
+        bh=1Fec6hCpa53F8ruqlYEmIEx/ZjvkbUKr0KeKcqP+Fu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gIHpmzlcKdhCPKt9LXfo/JPdNE7TMSTVqcABQqGMri18I+5KBx+Wx9VA/XZgcqCE8
-         4EAOvzs7T5EA4UZud7lgWbuGPiq0wmYHOYBS0jjqiDryCVbQb4R7vqjlfvtvKCnKbD
-         Y5TlloBzqSumcB1px5jIb4JtZS2OInRpdHzQrA1E=
+        b=SxhkU2UJMNPexjTmPOTh6ljNtrlR+bnDOLzJItraAi9fl4FSfiiSfxzjHV+LAjika
+         E2CnBlJo3lexncx2aRKF8KV+u+GMCfXU65nCQ4T1Ajn4FYQ2e0dtFUwMLg0c5FkWl+
+         XBTnYDisv3NBeJnirEJrpLUkqAS+ZitgfZNq0MSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-spi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 128/671] spi/topcliff_pch: Fix potential NULL dereference on allocation error
-Date:   Thu, 16 Jan 2020 11:50:37 -0500
-Message-Id: <20200116165940.10720-11-sashal@kernel.org>
+Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 129/671] net: hns3: fix bug of ethtool_ops.get_channels for VF
+Date:   Thu, 16 Jan 2020 11:50:38 -0500
+Message-Id: <20200116165940.10720-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
 References: <20200116165940.10720-1-sashal@kernel.org>
@@ -43,45 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit e902cdcb5112b89ee445588147964723fd69ffb4 ]
+[ Upstream commit 8be7362186bd5ccb5f6f72be49751ad2778e2636 ]
 
-In pch_spi_handle_dma, it doesn't check for NULL returns of kcalloc
-so it would result in an Oops.
+The current code returns the number of all queues that can be used and
+the number of queues that have been allocated, which is incorrect.
+What should be returned is the number of queues allocated for each enabled
+TC and the number of queues that can be allocated.
 
-Fixes: c37f3c2749b5 ("spi/topcliff_pch: DMA support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch fixes it.
+
+Fixes: 849e46077689 ("net: hns3: add ethtool_ops.get_channels support for VF")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 4389ab80c23e..fa730a871d25 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1008,6 +1008,9 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 67db19709dea..fd5375b5991b 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1957,7 +1957,8 @@ static u32 hclgevf_get_max_channels(struct hclgevf_dev *hdev)
+ 	struct hnae3_handle *nic = &hdev->nic;
+ 	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
  
- 	/* RX */
- 	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
-+	if (!dma->sg_rx_p)
-+		return;
-+
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1068,6 +1071,9 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	}
+-	return min_t(u32, hdev->rss_size_max * kinfo->num_tc, hdev->num_tqps);
++	return min_t(u32, hdev->rss_size_max,
++		     hdev->num_tqps / kinfo->num_tc);
+ }
  
- 	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
-+	if (!dma->sg_tx_p)
-+		return;
-+
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
+ /**
+@@ -1978,7 +1979,7 @@ static void hclgevf_get_channels(struct hnae3_handle *handle,
+ 	ch->max_combined = hclgevf_get_max_channels(hdev);
+ 	ch->other_count = 0;
+ 	ch->max_other = 0;
+-	ch->combined_count = hdev->num_tqps;
++	ch->combined_count = handle->kinfo.rss_size;
+ }
+ 
+ static void hclgevf_get_tqps_and_rss_info(struct hnae3_handle *handle,
 -- 
 2.20.1
 
