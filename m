@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E1913E8E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:35:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E6B313E8EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393066AbgAPRfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:35:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49038 "EHLO mail.kernel.org"
+        id S2404911AbgAPRfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729818AbgAPRe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:34:59 -0500
+        id S2393035AbgAPRfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD87B24683;
-        Thu, 16 Jan 2020 17:34:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF3D1246A9;
+        Thu, 16 Jan 2020 17:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196098;
-        bh=6Fd7Q3BMWeJNBGk0kKO5Sfece9B848AW7wMsA8jHAYA=;
+        s=default; t=1579196104;
+        bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bOTsOV4fq4jWlusWQUCe2ZXfHn39UVu6hAfo3iMmpxEBrFxQ209vrRIOSDcR9DQSS
-         uC5OkT5qnA0ASwvUitcwssqKN1iWgXrTkgJBKdkCTS59chSHzmkuDgtz5xxPbZcnLB
-         ovX9Pp7fcSLl44Gq77CBMuuJkNKbSUYoAqg3d1xs=
+        b=QeuX2gK9dR3Eh3LdHBsjAtcxrjbvZYnZIyPgMURS6tL2phJhGY2wzd14mLeCW/nOr
+         6jzpG15Lgc0LI4Staq/oYakrrFpv8oVI0MEa2kICfncBMY2w6fgR3J04RmzO7OrDJc
+         XL6MJRw/kkC+Cvjn1i9wZYJfbqIFiDkrVtX8p2CQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.9 010/251] pcrypt: use format specifier in kobject_add
-Date:   Thu, 16 Jan 2020 12:30:44 -0500
-Message-Id: <20200116173445.21385-10-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 014/251] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
+Date:   Thu, 16 Jan 2020 12:30:48 -0500
+Message-Id: <20200116173445.21385-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -44,41 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b1e3874c75ab15288f573b3532e507c37e8e7656 ]
+[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
 
-Passing string 'name' as the format specifier is potentially hazardous
-because name could (although very unlikely to) have a format specifier
-embedded in it causing issues when parsing the non-existent arguments
-to these.  Follow best practice by using the "%s" format string for
-the string 'name'.
+The gether_gmii_mux[] array contains the REF125CK pin mark, but the
+gether_gmii_pins[] array lacks the corresponding pin number.
 
-Cleans up clang warning:
-crypto/pcrypt.c:397:40: warning: format string is not a string literal
-(potentially insecure) [-Wformat-security]
-
-Fixes: a3fb1e330dd2 ("pcrypt: Added sysfs interface to pcrypt")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/pcrypt.c | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
-index f8ec3d4ba4a8..a5718c0a3dc4 100644
---- a/crypto/pcrypt.c
-+++ b/crypto/pcrypt.c
-@@ -394,7 +394,7 @@ static int pcrypt_sysfs_add(struct padata_instance *pinst, const char *name)
- 	int ret;
- 
- 	pinst->kobj.kset = pcrypt_kset;
--	ret = kobject_add(&pinst->kobj, NULL, name);
-+	ret = kobject_add(&pinst->kobj, NULL, "%s", name);
- 	if (!ret)
- 		kobject_uevent(&pinst->kobj, KOBJ_ADD);
- 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index 35f436bcb849..d8077065636e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -1982,7 +1982,7 @@ static const unsigned int gether_gmii_pins[] = {
+ 	 */
+ 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
+ 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
+-	205, 163, 206, 207,
++	205, 163, 206, 207, 158,
+ };
+ static const unsigned int gether_gmii_mux[] = {
+ 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
 -- 
 2.20.1
 
