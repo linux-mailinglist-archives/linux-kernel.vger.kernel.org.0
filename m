@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 249A713F2AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFFDD13F29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436865AbgAPSgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:36:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56760 "EHLO mail.kernel.org"
+        id S2391193AbgAPRYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:24:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390616AbgAPRM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:12:57 -0500
+        id S2390071AbgAPRND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:13:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DF5420684;
-        Thu, 16 Jan 2020 17:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17E5B246A1;
+        Thu, 16 Jan 2020 17:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194777;
-        bh=3BOj0VQFcmveERWLpa/tuFBG9tDDPouv+gFGtCBGxDI=;
+        s=default; t=1579194782;
+        bh=q1ncPLTAFlH3nr9CJUFHxdP7vHGcDmJ0gaWk0Z3OZhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wyETtSTQUpajkOfKLHtz9ixoxz01qDjHk+svPTJ+MR0jX2NUMMncjubZoQ8o02gAM
-         E3Uw9V3AlE6qTJQkAs2QDzEzZiu0A9NsrPrgpGOBimgJQPujJ1Tw5AfSj+ZNRvUCBi
-         MQ8QAgg0F0m3mQecNr5jGBUqtL9WtnCiLAQUahwE=
+        b=riCIdXdu3VQEC1LCS2jT8uQgUmcvMk+27g5WShRaIKL2kGybv1+3TFOEz5n2ouArC
+         54C7t0LWG/poHsZASIpco/aln7e3AyXV8v2DIciY13XZXtJgJFylz80QSnNZ+5dWtx
+         DF2BslKqjqKEiknRn8cwqHUYHPczz/E1qBjsZxL0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Karsten Graul <kgraul@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 594/671] net/smc: receive pending data after RCV_SHUTDOWN
-Date:   Thu, 16 Jan 2020 12:03:52 -0500
-Message-Id: <20200116170509.12787-331-sashal@kernel.org>
+Cc:     Jean Delvare <jdelvare@suse.de>, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 598/671] firmware: dmi: Fix unlikely out-of-bounds read in save_mem_devices
+Date:   Thu, 16 Jan 2020 12:03:56 -0500
+Message-Id: <20200116170509.12787-335-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,75 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Karsten Graul <kgraul@linux.ibm.com>
+From: Jean Delvare <jdelvare@suse.de>
 
-[ Upstream commit 107529e31a87acd475ff6a0f82745821b8f70fec ]
+[ Upstream commit 81dde26de9c08bb04c4962a15608778aaffb3cf9 ]
 
-smc_rx_recvmsg() first checks if data is available, and then if
-RCV_SHUTDOWN is set. There is a race when smc_cdc_msg_recv_action() runs
-in between these 2 checks, receives data and sets RCV_SHUTDOWN.
-In that case smc_rx_recvmsg() would return from receive without to
-process the available data.
-Fix that with a final check for data available if RCV_SHUTDOWN is set.
-Move the check for data into a function and call it twice.
-And use the existing helper smc_rx_data_available().
+Before reading the Extended Size field, we should ensure it fits in
+the DMI record. There is already a record length check but it does
+not cover that field.
 
-Fixes: 952310ccf2d8 ("smc: receive data from RMBE")
-Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
-Signed-off-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+It would take a seriously corrupted DMI table to hit that bug, so no
+need to worry, but we should still fix it.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 6deae96b42eb ("firmware, DMI: Add function to look up a handle and return DIMM size")
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/smc/smc_rx.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ drivers/firmware/dmi_scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/smc/smc_rx.c b/net/smc/smc_rx.c
-index 1ee5fdbf8284..36340912df48 100644
---- a/net/smc/smc_rx.c
-+++ b/net/smc/smc_rx.c
-@@ -262,6 +262,18 @@ static int smc_rx_recv_urg(struct smc_sock *smc, struct msghdr *msg, int len,
- 	return -EAGAIN;
- }
- 
-+static bool smc_rx_recvmsg_data_available(struct smc_sock *smc)
-+{
-+	struct smc_connection *conn = &smc->conn;
-+
-+	if (smc_rx_data_available(conn))
-+		return true;
-+	else if (conn->urg_state == SMC_URG_VALID)
-+		/* we received a single urgent Byte - skip */
-+		smc_rx_update_cons(smc, 0);
-+	return false;
-+}
-+
- /* smc_rx_recvmsg - receive data from RMBE
-  * @msg:	copy data to receive buffer
-  * @pipe:	copy data to pipe if set - indicates splice() call
-@@ -303,15 +315,18 @@ int smc_rx_recvmsg(struct smc_sock *smc, struct msghdr *msg,
- 		if (read_done >= target || (pipe && read_done))
- 			break;
- 
--		if (atomic_read(&conn->bytes_to_rcv))
-+		if (smc_rx_recvmsg_data_available(smc))
- 			goto copy;
--		else if (conn->urg_state == SMC_URG_VALID)
--			/* we received a single urgent Byte - skip */
--			smc_rx_update_cons(smc, 0);
- 
- 		if (sk->sk_shutdown & RCV_SHUTDOWN ||
--		    conn->local_tx_ctrl.conn_state_flags.peer_conn_abort)
-+		    conn->local_tx_ctrl.conn_state_flags.peer_conn_abort) {
-+			/* smc_cdc_msg_recv_action() could have run after
-+			 * above smc_rx_recvmsg_data_available()
-+			 */
-+			if (smc_rx_recvmsg_data_available(smc))
-+				goto copy;
- 			break;
-+		}
- 
- 		if (read_done) {
- 			if (sk->sk_err ||
+diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+index f2483548cde9..0dc0c78f1fdb 100644
+--- a/drivers/firmware/dmi_scan.c
++++ b/drivers/firmware/dmi_scan.c
+@@ -407,7 +407,7 @@ static void __init save_mem_devices(const struct dmi_header *dm, void *v)
+ 		bytes = ~0ull;
+ 	else if (size & 0x8000)
+ 		bytes = (u64)(size & 0x7fff) << 10;
+-	else if (size != 0x7fff)
++	else if (size != 0x7fff || dm->length < 0x20)
+ 		bytes = (u64)size << 20;
+ 	else
+ 		bytes = (u64)get_unaligned((u32 *)&d[0x1C]) << 20;
 -- 
 2.20.1
 
