@@ -2,98 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875F113F94A
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1794C13F973
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407389AbgAPTYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 14:24:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44991 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729590AbgAPTYF (ORCPT
+        id S1730790AbgAPTZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:25:56 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44831 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729203AbgAPTZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:24:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579202644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e8HBHJP/uq6LLcUiW9DMmgfjF72wvEE4C0oRW83XDZw=;
-        b=VcEOirFKhZ/qGMHCRLahr+bltd2l1gTxwfk5EDwDmKEoDSyWqgJEWy7o1n6L7SEvhvykxz
-        hE6uzNQaU+jZx3E9qOdEBE1+E1NV4ECevJvap0VSJnxtEuADcPMLB5NyAcL/q8EG4JOPuC
-        FWwffG4wDRPc+hjx2L9hdGdZ7pPsrdQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-Wpe1cMcoOoGBY_oRiv4oYg-1; Thu, 16 Jan 2020 14:24:00 -0500
-X-MC-Unique: Wpe1cMcoOoGBY_oRiv4oYg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 119012F2E;
-        Thu, 16 Jan 2020 19:23:59 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC035D9C9;
-        Thu, 16 Jan 2020 19:23:54 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id C1B6B220A24; Thu, 16 Jan 2020 14:23:53 -0500 (EST)
-Date:   Thu, 16 Jan 2020 14:23:53 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200116192353.GD25291@redhat.com>
-References: <20200114203138.GA3145@redhat.com>
- <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com>
- <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com>
- <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
- <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
- <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
- <20200116183900.GC25291@redhat.com>
- <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
+        Thu, 16 Jan 2020 14:25:55 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 62so4059341pfu.11
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 11:25:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UoXmscIHF47pWtJ9KUeHYTru5gMXzffDC9Q60+M0m2Y=;
+        b=OtMlLwEYchm4DsDaowqkEg2KpPgr///vim8wAsAQtKLZUHYmg3/WZbhtLXWrTCRHNc
+         oV6d67f/g2WNja98sELhneBRWYkY87SvgdAoz7dVKasTKcxTSIbJPa2TeCUegYv6xP/h
+         gbciql2ySsJYr6qXrn5rgklIFACmuW4YcQ2F4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UoXmscIHF47pWtJ9KUeHYTru5gMXzffDC9Q60+M0m2Y=;
+        b=T0eBivOl6h26q0ewongrdBeqU1/r2Xd8rqbOkehCAeRV8rpH/eFywz4qP811gvJo5i
+         smC2aeJvzc7L+BnGptnay894vpjmxdqsIv4ZLUm9BOQDCsuDAHxV8W5eeu97mVT27j4P
+         MX9V3vI7SDA3Zwlehq3o1GnyeGDMpr6srS7GDKjfGy6wzqwcwXjgaYgJls3kyC31FCO0
+         AzAoSvhI45uHeDDvXMZRb+G75kY5PooLJrCdx96Za6WMt2ebTM0xFuh1dj6MPJgsPkyP
+         mtlLpGmiqzVKeNl/IPVZsgn3t9xq1RBlcCyPhVisO4Trg/Q7FPY/LH5QBOYWkyYy0Mq1
+         XaWg==
+X-Gm-Message-State: APjAAAUZQAs2fxT3FOIvCMzK/StfSBAfiM7bcCMczr/Z8h4GkUUjzyEW
+        dP2B6gdPwzKxq8iYFRDTe2hU0Q==
+X-Google-Smtp-Source: APXvYqxgiyPG9gPfp4SRfJKGLTVLondeWrkSrTpE7KWY0xNsjHCtBzjBo8zsbFkHBCcT6fsWiTuisg==
+X-Received: by 2002:a65:68c8:: with SMTP id k8mr41247676pgt.216.1579202754122;
+        Thu, 16 Jan 2020 11:25:54 -0800 (PST)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id o134sm27433549pfg.137.2020.01.16.11.25.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 11:25:53 -0800 (PST)
+Date:   Thu, 16 Jan 2020 14:25:52 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, bristot@redhat.com,
+        frextrite@gmail.com, madhuparnabhowmik04@gmail.com,
+        urezki@gmail.com, Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 rcu-dev] rcuperf: Measure memory footprint during
+ kfree_rcu() test
+Message-ID: <20200116192552.GE246464@google.com>
+References: <20191219211349.235877-1-joel@joelfernandes.org>
+ <20191221000729.GH2889@paulmck-ThinkPad-P72>
+ <20191221033714.GB156579@google.com>
+ <20200106195200.GS13449@paulmck-ThinkPad-P72>
+ <20200115220300.GA94036@google.com>
+ <20200115224251.GK2935@paulmck-ThinkPad-P72>
+ <20200115224542.GB94036@google.com>
+ <20200116000104.GO2935@paulmck-ThinkPad-P72>
+ <20200116040558.GD246464@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200116040558.GD246464@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:09:00AM -0800, Dan Williams wrote:
-
-[..]
-> > > True, but if kpartx + udev can make this transparent then I don't
-> > > think users lose any functionality. They just gain a device-mapper
-> > > dependency.
-> >
-> > So udev rules will trigger when a /dev/pmemX device shows up and run
-> > kpartx which in turn will create dm-linear devices and device nodes
-> > will show up in /dev/mapper/pmemXpY.
-> >
-> > IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
-> > systemd unit files are depenent on /dev/pmemXpY, these will still be
-> > broken out of the box and will have to be modified to use device nodes
-> > in /dev/mapper/ directory instead. Do I understand it right, Or I missed
-> > the idea completely.
+On Wed, Jan 15, 2020 at 11:05:58PM -0500, Joel Fernandes wrote:
+> On Wed, Jan 15, 2020 at 04:01:04PM -0800, Paul E. McKenney wrote:
+> > On Wed, Jan 15, 2020 at 05:45:42PM -0500, Joel Fernandes wrote:
+> > > On Wed, Jan 15, 2020 at 02:42:51PM -0800, Paul E. McKenney wrote:
+> > > > > [snip]
+> > > > > > > We can certainly refine it further but at this time I am thinking of spending
+> > > > > > > my time reviewing Lai's patches and learning some other RCU things I need to
+> > > > > > > catch up on. If you hate this patch too much, we can also defer this patch
+> > > > > > > review for a bit and I can carry it in my tree for now as it is only a patch
+> > > > > > > to test code. But honestly, in its current form I am sort of happy with it.
+> > > > > > 
+> > > > > > OK, I will keep it as is for now and let's look again later on.  It is not
+> > > > > > in the bucket for the upcoming merge window in any case, so we do have
+> > > > > > quite a bit of time.
+> > > > > > 
+> > > > > > It is not that I hate it, but rather that I want to be able to give
+> > > > > > good answers to questions that might come up.  And given that I have
+> > > > > > occasionally given certain people a hard time about their statistics,
+> > > > > > it is only reasonable to expect them to return the favor.  I wouldn't
+> > > > > > want you to be caught in the crossfire.  ;-)
+> > > > > 
+> > > > > Since the weights were concerning, I was thinking of just using a weight of
+> > > > > (1 / N) where N is the number of samples. Essentially taking the average.
+> > > > > That could be simple enough and does not cause your concerns with weight
+> > > > > tuning. I tested it and looks good, I'll post it shortly.
+> > > > 
+> > > > YES!!!  ;-)
+> > > > 
+> > > > Snapshot mem_begin before entering the loop.  For the mean value to
+> > > > be solid, you need at least 20-30 samples, which might mean upping the
+> > > > default for kfree_loops.  Have an "unsigned long long" to accumulate the
+> > > > sum, which should avoid any possibility of overflow for current systems
+> > > > and for all systems for kfree_loops less than PAGE_SIZE.  At which point,
+> > > > forget the "%" stuff and just sum up the si_mem_available() on each pass
+> > > > through the loop.
+> > > > 
+> > > > Do the division on exit from the loop, preferably checking for divide
+> > > > by zero.
+> > > > 
+> > > > Straightforward, fast, reasonably reliable, and easy to defend.
+> > > 
+> > > I mostly did it along these lines. Hopefully the latest posting is reasonable
+> > > enough ;-) I sent it twice because I messed up the authorship (sorry).
+> > 
+> > No problem with the authorship-fix resend!
+> > 
+> > But let's get this patch consistent with basic statistics!
+> > 
+> > You really do need 20-30 samples for an average to mean much.
+> > 
+> > Of course, right now you default kfree_loops to 10.  You are doing
+> > 8000 kmalloc()/kfree_rcu() loops on each pass.  This is large enough
+> > that just dropping the "% 4" should be just fine from the viewpoint of
+> > si_mem_available() overhead.  But 8000 allocations and frees should get
+> > done in way less than one second, so kicking the default kfree_loops up
+> > to 30 should be a non-problem.
+> > 
+> > Then the patch would be both simpler and statistically valid.
+> > 
+> > So could you please stop using me as the middleman in your fight with
+> > the laws of mathematics and get this patch to a defensible state?  ;-)
 > 
-> No, I'd write the udev rule to create links from /dev/pmemXpY to the
-> /dev/mapper device, and that rule would be gated by a new pmem device
-> attribute to trigger when kpartx needs to run vs the kernel native
-> partitions.
+> The thing is the signal doesn't vary much. I could very well just take one
+> out of the 4 samples and report that. But I still took the average since
+> there are 4 samples. I don't see much point in taking more samples here since
+> I am not concerned that the signal will fluctuate much (and if it really
+> does, then I can easily catch that kind of variation with multiple rcuperf
+> runs).
+> 
+> But if you really want though, I can increase the sampling to 20 samples or a
+> number like that and resend it.
 
-Got it. This sounds much better.
+Changed it to around 20 samples and the tests look fine. Updated patch below (v5) :
 
-Vivek
+---8<-----------------------
+
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH] rcuperf: Measure memory footprint during kfree_rcu() test (v5)
+
+During changes to kfree_rcu() code, we often check the amount of free
+memory.  As an alternative to checking this manually, this commit adds a
+measurement in the test itself.  It measures four times during the test
+for available memory, digitally filters these measurements to produce a
+running average with a weight of 0.5, and compares this digitally
+filtered value with the amount of available memory at the beginning of
+the test.
+
+We apply the digital filter only once we are more than 25% into the
+test. At the 25% mark, we just read available memory and don't apply any
+filtering. This prevents the first sample from skewing the results
+as we would not consider memory readings that were before memory was
+allocated.
+
+A sample run shows something like:
+
+Total time taken by all kfree'ers: 6369738407 ns, loops: 10000, batches: 764, memory footprint: 216MB
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+---
+v1->v2: Minor corrections
+v1->v3: Use long long to prevent 32-bit system's overflow
+	Handle case where some threads start later than others.
+	Start measuring only once 25% into the test. Slightly more accurate.
+v3->v4: Simplified test more. Using simple average.
+v4->v5: Collect more memory samples than previous revision (4 to 5, vs, 20 to 21).
+
+ kernel/rcu/rcuperf.c | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index 1fd0cc72022e..284625af4c79 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/kthread.h>
+ #include <linux/err.h>
+@@ -593,7 +594,7 @@ rcu_perf_shutdown(void *arg)
+ 
+ torture_param(int, kfree_nthreads, -1, "Number of threads running loops of kfree_rcu().");
+ torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done in an iteration.");
+-torture_param(int, kfree_loops, 10, "Number of loops doing kfree_alloc_num allocations and frees.");
++torture_param(int, kfree_loops, 20, "Number of loops doing kfree_alloc_num allocations and frees.");
+ 
+ static struct task_struct **kfree_reader_tasks;
+ static int kfree_nrealthreads;
+@@ -616,14 +617,17 @@ DEFINE_KFREE_OBJ(32); // goes on kmalloc-64 slab
+ DEFINE_KFREE_OBJ(64); // goes on kmalloc-96 slab
+ DEFINE_KFREE_OBJ(96); // goes on kmalloc-128 slab
+ 
++long long mem_begin;
++
+ static int
+ kfree_perf_thread(void *arg)
+ {
+ 	int i, loop = 0;
+ 	long me = (long)arg;
+ 	void *alloc_ptr;
+-
+ 	u64 start_time, end_time;
++	long mem_samples = 0;
++	long long mem_during = 0;
+ 
+ 	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+ 	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+@@ -638,7 +642,17 @@ kfree_perf_thread(void *arg)
+ 			b_rcu_gp_test_started = cur_ops->get_gp_seq();
+ 	}
+ 
++	// Prevent "% 0" error below.
++	if (kfree_loops < 20)
++		kfree_loops = 20;
++
+ 	do {
++		// Start measuring only from when we are a little into the test.
++		if ((loop != 0) && (loop % (kfree_loops / 20) == 0)) {
++			mem_during = mem_during + si_mem_available();
++			mem_samples++;
++		}
++
+ 		for (i = 0; i < kfree_alloc_num; i++) {
+ 			int kfree_type = i % 4;
+ 
+@@ -671,6 +685,8 @@ kfree_perf_thread(void *arg)
+ 		cond_resched();
+ 	} while (!torture_must_stop() && ++loop < kfree_loops);
+ 
++	mem_during = (mem_during / mem_samples);
++
+ 	if (atomic_inc_return(&n_kfree_perf_thread_ended) >= kfree_nrealthreads) {
+ 		end_time = ktime_get_mono_fast_ns();
+ 
+@@ -679,9 +695,13 @@ kfree_perf_thread(void *arg)
+ 		else
+ 			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
+ 
+-		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
++		// The "memory footprint" field represents how much in-flight
++		// memory is allocated during the test and waiting to be freed.
++		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld, memory footprint: %lldMB\n",
+ 		       (unsigned long long)(end_time - start_time), kfree_loops,
+-		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
++		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started),
++		       (mem_begin - mem_during) >> (20 - PAGE_SHIFT));
++
+ 		if (shutdown) {
+ 			smp_mb(); /* Assign before wake. */
+ 			wake_up(&shutdown_wq);
+@@ -753,6 +773,8 @@ kfree_perf_init(void)
+ 		goto unwind;
+ 	}
+ 
++	mem_begin = si_mem_available();
++
+ 	for (i = 0; i < kfree_nrealthreads; i++) {
+ 		firsterr = torture_create_kthread(kfree_perf_thread, (void *)i,
+ 						  kfree_reader_tasks[i]);
+-- 
+2.25.0.rc1.283.g88dfdc4193-goog
 
