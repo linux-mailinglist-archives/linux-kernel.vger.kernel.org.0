@@ -2,112 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACD2513FB86
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 802E313FB90
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:32:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389195AbgAPVbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:31:22 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:53577 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389023AbgAPVbM (ORCPT
+        id S2389295AbgAPVbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:31:45 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38443 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389271AbgAPVbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:31:12 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1isCjL-0001Zr-N2; Thu, 16 Jan 2020 22:31:07 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9C4A01C1997;
-        Thu, 16 Jan 2020 22:31:03 +0100 (CET)
-Date:   Thu, 16 Jan 2020 21:31:03 -0000
-From:   "tip-bot2 for Dexuan Cui" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/hyper-v: Suspend/resume
- Hyper-V clocksource for hibernation
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1574233946-48377-1-git-send-email-decui@microsoft.com>
-References: <1574233946-48377-1-git-send-email-decui@microsoft.com>
+        Thu, 16 Jan 2020 16:31:43 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f20so8897722plj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 13:31:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CnVcYi/hHjaeb2++zB3QNjZWrPcPugEoKb4FEoIY0uc=;
+        b=e1Q+9nwivpUZ2eoLhWvQW1m6CVAfa3aaBK6UccLFGY6wRgCQaM0k2UwuA/r4xW72Fz
+         Cpa8tRIYCmLrOJczdtutg3hQgF5DQ/LN0HphoQosDw7iwLUx78p/zHtm31mmcOujIme5
+         IVDzoihrY9213l6cwwUw0YMFuljdl3ONuQPx8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CnVcYi/hHjaeb2++zB3QNjZWrPcPugEoKb4FEoIY0uc=;
+        b=BEzsvqCMcxtDOMo9ezaUknSSP6PyNphACN/YCmvihIgBCVarWYq72oNdtEx6MJoBqs
+         WLXPJ1QqAf8rV3JSh6mQXMLSptmWgISDnah3b3jXJZ5GCPEy9vIkvRAuOfLLk469buxo
+         ZEG3b+LiIIIAkemKbC/pueFW4C3TQZfORt5DYjlJ7xEi42IPu5ZP9FhBkJUTVRXqCd+1
+         epZsT4yWZwyiU0wf53KGXfkgrt9Rs7E/OyLVpe3+TvGER9sdDn7Bhf6BYm7TdZJj3TH2
+         C5J7Hg3Kn8SEPU0Flo0Vfzch5BFz45r82dr9CI5FgW05l3YQfuqigOOAFbV5vVWShMwu
+         oBCw==
+X-Gm-Message-State: APjAAAXygf8Y315MuHEMd/uoEwb9L++X0p0ri8Ew882gI5iEbcgJjH3e
+        7xcnw5P2JeasCNn+lWx13fldmw==
+X-Google-Smtp-Source: APXvYqxRm1Ch7JZUpuIlMAl3bHLM9JzmakZgQeA31Fg9jI5zsQYCQR2YD2ZlLu+lzl5fVGUJRQtt3A==
+X-Received: by 2002:a17:902:8202:: with SMTP id x2mr32885787pln.314.1579210302728;
+        Thu, 16 Jan 2020 13:31:42 -0800 (PST)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id g19sm26782723pfh.134.2020.01.16.13.31.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 16 Jan 2020 13:31:42 -0800 (PST)
+From:   Evan Green <evgreen@chromium.org>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Evan Green <evgreen@chromium.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI/MSI: Avoid torn updates to MSI pairs
+Date:   Thu, 16 Jan 2020 13:31:28 -0800
+Message-Id: <20200116133102.1.I9c7e72144ef639cc135ea33ef332852a6b33730f@changeid>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Message-ID: <157921026342.396.802266094475126495.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+__pci_write_msi_msg() updates three registers in the device: address
+high, address low, and data. On x86 systems, address low contains
+CPU targeting info, and data contains the vector. The order of writes
+is address, then data.
 
-Commit-ID:     1349401ff1aa425e7381ed26feb63e0d6b557fc6
-Gitweb:        https://git.kernel.org/tip/1349401ff1aa425e7381ed26feb63e0d6b557fc6
-Author:        Dexuan Cui <decui@microsoft.com>
-AuthorDate:    Tue, 19 Nov 2019 23:12:26 -08:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Thu, 16 Jan 2020 19:06:57 +01:00
+This is problematic if an interrupt comes in after address has
+been written, but before data is updated, and the SMP affinity of
+the interrupt is changing. In this case, the interrupt targets the
+wrong vector on the new CPU.
 
-clocksource/drivers/hyper-v: Suspend/resume Hyper-V clocksource for hibernation
+This case is pretty easy to stumble into using xhci and CPU hotplugging.
+Create a script that targets interrupts at a set of cores and then
+offlines those cores. Put some stress on USB, and then watch xhci lose
+an interrupt and die.
 
-This is needed for hibernation, e.g. when we resume the old kernel, we need
-to disable the "current" kernel's TSC page and then resume the old kernel's.
+Avoid this by disabling MSIs during the update.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/1574233946-48377-1-git-send-email-decui@microsoft.com
+Signed-off-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/clocksource/hyperv_timer.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index 287d8d5..1aec08e 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -330,12 +330,37 @@ static u64 read_hv_sched_clock_tsc(void)
- 	return read_hv_clock_tsc(NULL) - hv_sched_clock_offset;
- }
+
+Bjorn,
+I was unsure whether disabling MSIs temporarily is actually an okay
+thing to do. I considered using the mask bit, but got the impression
+that not all devices support the mask bit. Let me know if this going to
+cause problems or there's a better way. I can include the repro
+script I used to cause mayhem if needed.
+
+---
+ drivers/pci/msi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index 6b43a5455c7af..97856ef862d68 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -328,7 +328,7 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+ 		u16 msgctl;
  
-+static void suspend_hv_clock_tsc(struct clocksource *arg)
-+{
-+	u64 tsc_msr;
-+
-+	/* Disable the TSC page */
-+	hv_get_reference_tsc(tsc_msr);
-+	tsc_msr &= ~BIT_ULL(0);
-+	hv_set_reference_tsc(tsc_msr);
-+}
-+
-+
-+static void resume_hv_clock_tsc(struct clocksource *arg)
-+{
-+	phys_addr_t phys_addr = virt_to_phys(&tsc_pg);
-+	u64 tsc_msr;
-+
-+	/* Re-enable the TSC page */
-+	hv_get_reference_tsc(tsc_msr);
-+	tsc_msr &= GENMASK_ULL(11, 0);
-+	tsc_msr |= BIT_ULL(0) | (u64)phys_addr;
-+	hv_set_reference_tsc(tsc_msr);
-+}
-+
- static struct clocksource hyperv_cs_tsc = {
- 	.name	= "hyperv_clocksource_tsc_page",
- 	.rating	= 400,
- 	.read	= read_hv_clock_tsc,
- 	.mask	= CLOCKSOURCE_MASK(64),
- 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
-+	.suspend= suspend_hv_clock_tsc,
-+	.resume	= resume_hv_clock_tsc,
- };
+ 		pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &msgctl);
+-		msgctl &= ~PCI_MSI_FLAGS_QSIZE;
++		msgctl &= ~(PCI_MSI_FLAGS_QSIZE | PCI_MSI_FLAGS_ENABLE);
+ 		msgctl |= entry->msi_attrib.multiple << 4;
+ 		pci_write_config_word(dev, pos + PCI_MSI_FLAGS, msgctl);
  
- static u64 notrace read_hv_clock_msr(struct clocksource *arg)
+@@ -343,6 +343,9 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+ 			pci_write_config_word(dev, pos + PCI_MSI_DATA_32,
+ 					      msg->data);
+ 		}
++
++		msgctl |= PCI_MSI_FLAGS_ENABLE;
++		pci_write_config_word(dev, pos + PCI_MSI_FLAGS, msgctl);
+ 	}
+ 
+ skip:
+-- 
+2.24.1
+
