@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40BFB13F5EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:00:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D11013F607
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388490AbgAPRGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:06:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        id S2437356AbgAPTA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 14:00:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388823AbgAPRGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:06:04 -0500
+        id S2388481AbgAPRGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D982A22464;
-        Thu, 16 Jan 2020 17:06:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A403122522;
+        Thu, 16 Jan 2020 17:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194363;
-        bh=sujWSidxGQh0FrodT21X75t2dAsJYhleL/Z93fr0TOg=;
+        s=default; t=1579194368;
+        bh=DIN3t0CL3qc9oQivN4pyYzvvL2OYzqK+JGu7m+2wO8M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P5pLo4XWTbVGO61eKMpQBGOIEz8Dt2wVOHmyNDkaWCYvsHPA8j4dlsU88qjsUExRO
-         YQil4kPuC/kDifcTuHLpJ9R/4MzCI4YgNqx03qsxqHsqK2AJJhmx77XsDnbr9+XGff
-         57A3DCwF5BWU3QFv5Po6HlKGYPbcuIUlkgENixBQ=
+        b=ffdNfVSH0xKwPk6evCnL/w9ZxtSx4/AI3Hqy3ZTrzqX+X3CFKC4MxxtbJV+mqiFma
+         4ITk3wIOvaSNXh7ZAzfBruALNB4013PNaOIz77zzrHsuSmmKVbD2oswda2mAmLCjOI
+         NMG7pLNhuE+S+vtSxLCvUTmlicf5f60j3LW+XdHE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Darren Hart <dvhart@infradead.org>,
+Cc:     Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 299/671] platform/x86: alienware-wmi: fix kfree on potentially uninitialized pointer
-Date:   Thu, 16 Jan 2020 11:58:57 -0500
-Message-Id: <20200116170509.12787-36-sashal@kernel.org>
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 302/671] selftests/ipc: Fix msgque compiler warnings
+Date:   Thu, 16 Jan 2020 11:59:00 -0500
+Message-Id: <20200116170509.12787-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -44,62 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 98e2630284ab741804bd0713e932e725466f2f84 ]
+[ Upstream commit a147faa96f832f76e772b1e448e94ea84c774081 ]
 
-Currently the kfree of output.pointer can be potentially freeing
-an uninitalized pointer in the case where out_data is NULL. Fix this
-by reworking the case where out_data is not-null to perform the
-ACPI status check and also the kfree of outpoint.pointer in one block
-and hence ensuring the pointer is only freed when it has been used.
+This fixes the various compiler warnings when building the msgque
+selftest. The primary change is using sys/msg.h instead of linux/msg.h
+directly to gain the API declarations.
 
-Also replace the if (ptr != NULL) idiom with just if (ptr).
-
-Fixes: ff0e9f26288d ("platform/x86: alienware-wmi: Correct a memory leak")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Fixes: 3a665531a3b7 ("selftests: IPC message queue copy feature test")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/alienware-wmi.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ tools/testing/selftests/ipc/msgque.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/x86/alienware-wmi.c b/drivers/platform/x86/alienware-wmi.c
-index f10af5c383c5..c0d1555735cd 100644
---- a/drivers/platform/x86/alienware-wmi.c
-+++ b/drivers/platform/x86/alienware-wmi.c
-@@ -522,23 +522,22 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
+diff --git a/tools/testing/selftests/ipc/msgque.c b/tools/testing/selftests/ipc/msgque.c
+index dac927e82336..4c156aeab6b8 100644
+--- a/tools/testing/selftests/ipc/msgque.c
++++ b/tools/testing/selftests/ipc/msgque.c
+@@ -1,9 +1,10 @@
+ // SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
+-#include <linux/msg.h>
++#include <sys/msg.h>
+ #include <fcntl.h>
  
- 	input.length = (acpi_size) sizeof(*in_args);
- 	input.pointer = in_args;
--	if (out_data != NULL) {
-+	if (out_data) {
- 		output.length = ACPI_ALLOCATE_BUFFER;
- 		output.pointer = NULL;
- 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
- 					     command, &input, &output);
--	} else
-+		if (ACPI_SUCCESS(status)) {
-+			obj = (union acpi_object *)output.pointer;
-+			if (obj && obj->type == ACPI_TYPE_INTEGER)
-+				*out_data = (u32)obj->integer.value;
-+		}
-+		kfree(output.pointer);
-+	} else {
- 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
- 					     command, &input, NULL);
--
--	if (ACPI_SUCCESS(status) && out_data != NULL) {
--		obj = (union acpi_object *)output.pointer;
--		if (obj && obj->type == ACPI_TYPE_INTEGER)
--			*out_data = (u32) obj->integer.value;
- 	}
--	kfree(output.pointer);
- 	return status;
--
+ #include "../kselftest.h"
+@@ -73,7 +74,7 @@ int restore_queue(struct msgque_data *msgque)
+ 	return 0;
+ 
+ destroy:
+-	if (msgctl(id, IPC_RMID, 0))
++	if (msgctl(id, IPC_RMID, NULL))
+ 		printf("Failed to destroy queue: %d\n", -errno);
+ 	return ret;
  }
+@@ -120,7 +121,7 @@ int check_and_destroy_queue(struct msgque_data *msgque)
  
- /*
+ 	ret = 0;
+ err:
+-	if (msgctl(msgque->msq_id, IPC_RMID, 0)) {
++	if (msgctl(msgque->msq_id, IPC_RMID, NULL)) {
+ 		printf("Failed to destroy queue: %d\n", -errno);
+ 		return -errno;
+ 	}
+@@ -129,7 +130,7 @@ int check_and_destroy_queue(struct msgque_data *msgque)
+ 
+ int dump_queue(struct msgque_data *msgque)
+ {
+-	struct msqid64_ds ds;
++	struct msqid_ds ds;
+ 	int kern_id;
+ 	int i, ret;
+ 
+@@ -245,7 +246,7 @@ int main(int argc, char **argv)
+ 	return ksft_exit_pass();
+ 
+ err_destroy:
+-	if (msgctl(msgque.msq_id, IPC_RMID, 0)) {
++	if (msgctl(msgque.msq_id, IPC_RMID, NULL)) {
+ 		printf("Failed to destroy queue: %d\n", -errno);
+ 		return ksft_exit_fail();
+ 	}
 -- 
 2.20.1
 
