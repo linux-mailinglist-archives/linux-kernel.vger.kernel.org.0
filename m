@@ -2,77 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF1F13FEB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B5B13FF07
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:40:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388539AbgAPXhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
+        id S2391496AbgAPXj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:39:56 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36242 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390085AbgAPXhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:37:36 -0500
-Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        id S2391259AbgAPXjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:39:53 -0500
+Received: from zn.tnic (p200300EC2F0B23005181490C10C27842.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2300:5181:490c:10c2:7842])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC8AE2072B;
-        Thu, 16 Jan 2020 23:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217856;
-        bh=LNLkwqumuCRsUZzAEzSEPyLEs54KO1X1kXB8A1qAvQw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XiJli2FduQhRgI8pXXx0H4Mh715uj9Rkkyyx6+ApiYXPlAB0n5ofBPOz8OI2HhrBN
-         ZQONr0gbIy//k0a+OQVnS0X+Gz8xKuwbw1lhBCN1S0fr8Xf/c2jLKvab/e1zcdVUTT
-         Eue2nsmA6xgn/tTSsHwXAQlqm2NaXo/VvouCw96Q=
-Date:   Thu, 16 Jan 2020 15:37:35 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Alex Shi <alex.shi@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmscan: remove prefetch_prev_lru_page
-Message-Id: <20200116153735.3090629f3b40bd850c66bd18@linux-foundation.org>
-In-Reply-To: <B6E75D9E-E9A2-4078-A89A-267310467B0A@lca.pw>
-References: <739f4470-8dfe-bb2f-8100-2134f48868b6@linux.alibaba.com>
-        <B6E75D9E-E9A2-4078-A89A-267310467B0A@lca.pw>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 604831EC0391;
+        Fri, 17 Jan 2020 00:39:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579217991;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=XdVmCwBwt//oBCkhqjb8tTmVc8IASboW33NxVb/IAfY=;
+        b=YPQzpgi+jN4kZUdorP3ZJjH+er8RY33Mgz3mEO1/YW2ZWPSDNgpTJlvsWjrCMAitTl9XT/
+        S0Sq0petU47LCGnEwBKNo3nt10UVJmhSlpFpqCG/VG6kxtes4xbGlY6i3y5+6I8hMtx03k
+        7U+lqdV/g+LomdBjPT+bN37wjTKpVAY=
+Date:   Fri, 17 Jan 2020 00:39:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Shiping Ji <shiping.linux@gmail.com>
+Cc:     James Morse <james.morse@arm.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        sashal@kernel.org, hangl@microsoft.com,
+        Lei Wang <lewan@microsoft.com>, ruizhao@microsoft.com,
+        shji@microsoft.com, Scott Branden <scott.branden@broadcom.com>,
+        Yuqing Shen <yuqing.shen@broadcom.com>, ray.jui@broadcom.com,
+        wangglei@gmail.com
+Subject: Re: [PATCH v9 1/2] dt-bindings: edac: arm-dmc520.txt
+Message-ID: <20200116233939.GI27148@zn.tnic>
+References: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 07:26:23 -0500 Qian Cai <cai@lca.pw> wrote:
-
+On Wed, Jan 15, 2020 at 06:32:27AM -0800, Shiping Ji wrote:
+> This is the device tree bindings for new EDAC driver dmc520_edac.c.
 > 
-> 
-> > On Jan 14, 2020, at 9:33 PM, Alex Shi <alex.shi@linux.alibaba.com> wrote:
-> > 
-> > ﻿
-> > 
-> >> 在 2020/1/14 下午9:46, Qian Cai 写道:
-> >> 
-> >> 
-> >>>> On Jan 14, 2020, at 7:55 AM, Alex Shi <alex.shi@linux.alibaba.com> wrote:
-> >>> 
-> >>> This macro are never used in git history. So better to remove.
-> >> 
-> >> When removing unused thingy, it is important to figure out which commit introduced it in the first place and Cc the relevant people in that commit.
-> >> 
-> > 
-> > Thanks fore reminder, Qian!
-> > 
-> > This macro was introduced in 1da177e4c3f4 Linux-2.6.12-rc2, no author or commiter could be found.
-> 
-> Looks a bit deeper for this, and I am not sure if it is necessary to remove it especially this does not cause any complication warning noise, because the macro looks like a part of API design to have a pair of both read and write version, even though only the write version is used at the moment.
-> 
-> In theory,  there could be users for the read version in the future, and then it needs to be added back.
+> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
+> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
+> Reviewed-by: James Morse <james.morse@arm.com>
 
-Sure.  A problem with leaving it in place is that this leads people to
-assume it is tested, which it presumably is not.
+So for this patch, v2 had Rui Zhao as an author:
 
-I don't think there's any particular downside either way, really.  But
-it's presently cruft so I'm inclined to remove it.  If someone has a
-need then they can add it back (presumbly reimplement it, actually) and
-test it then.
+https://lkml.kernel.org/r/BN7PR08MB5572B3388B2D7DC8F6C7F285AE4C0@BN7PR08MB5572.namprd08.prod.outlook.com
 
+v3 got Lei as an author:
+
+https://lkml.kernel.org/r/CY1PR0401MB1244062C1738B09D6100F202860A0@CY1PR0401MB1244.namprd04.prod.outlook.com
+
+and now it is you.
+
+So when you send next time, think about who's going to be the author.
+
+> +     line numbers. The valid interrupt names are the followings:
+
+WARNING: 'followings' may be misspelled - perhaps 'following'?
+#51: FILE: Documentation/devicetree/bindings/edac/arm-dmc520.txt:10:
++     line numbers. The valid interrupt names are the followings:
+
+Please integrate scripts/checkpatch.pl into your patch creation
+workflow. Some of the warnings/errors *actually* make sense.
+
+Also, this patch throws this other checkpatch warning:
+
+WARNING: DT bindings should be in DT schema format. See: Documentation/devicetree/writing-schema.rst
+
+but since Rob reviewed it, I'm going to assume checkpatch is wrong here.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
