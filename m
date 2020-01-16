@@ -2,76 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E09D13FD81
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A955913FCD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389544AbgAPX0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:26:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388570AbgAPX0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:26:13 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3A6820684;
-        Thu, 16 Jan 2020 23:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217173;
-        bh=rZxzFmoa86ylUJe4TS+EB8Wyx7/hluposH2EB+Imi8s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBSmewAdqMyX1J+/POXglJhtlNR34YfXIqxxGIx498Fa3z9p/7U+JDy+2Ez0jMgfQ
-         zkwtUWofElE1phB9HyYQKBsHI/D7drJZ6tkOblztblykS2H7XaLHj189AM2t7PcrzT
-         tLrtDAzKHxqjiyAhQLQ/c1hzNxf4IP5Yg1pHx88c=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Olga Kornievskaia <kolga@netapp.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 5.4 177/203] NFSD fixing possible null pointer derefering in copy offload
-Date:   Fri, 17 Jan 2020 00:18:14 +0100
-Message-Id: <20200116231759.922172938@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2389827AbgAPXS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:18:27 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38982 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729351AbgAPXS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:18:27 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 77so21015769oty.6;
+        Thu, 16 Jan 2020 15:18:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=9EAHGBuNSiTZ5l+4zkY1z64r39UtR5n6bdLL5+4kKYw=;
+        b=b+jUIvN1fqe2yQJwN17tm5K0bnCqpeKpHEZDNXmoHmjsv9r37u4aySrAV/wv3DZbEM
+         k08SjMNPSN35gUQ5uS5vbXgwyNpELMmjvOdWCi94jpFhh6RVp4YxD5pNAAJRWsqC749Z
+         4ohQTOxvL6cqTdv64SEBY3evPYWmFvJiT+zpJFG7StueOVAF7w5tWRR6w+92nTNIcBgm
+         9NXQOtGx8hkraHvyb8dyQ9p8/xe1OelU8427903oLzI04+SD+bvR4cmQpLALkogrC8C0
+         BGMOdvgRZOOweTqDHXbDHnsd4w8ZNAs3omCeckUnt6eoKC3fj8FgSg/e6QfZ0liGV4Cb
+         HHAw==
+X-Gm-Message-State: APjAAAWqPFCo7dBuQFTILnZPnpC42hulTz1vuSuk3mmiM96FaqpgrHwl
+        nooz4NeHNR+Z7s9Jo6dn6emE0Y5KFrf9MWK5gOsC96y5
+X-Google-Smtp-Source: APXvYqwUZi+VXujTD0dJq+O3DBa1rtWtuoNRma2EaFrjX1F544jKaMnrJ4XSyslqHMl0UHvJxJbc4yTEuKlc5uInp7I=
+X-Received: by 2002:a05:6830:1e67:: with SMTP id m7mr4139324otr.262.1579216706411;
+ Thu, 16 Jan 2020 15:18:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 17 Jan 2020 00:18:15 +0100
+Message-ID: <CAJZ5v0gx+Om02PH6t74R0d2F_sPZwncOSMWrhA0Yx77=xdpCyA@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v5.5-rc7
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Hi Linus,
 
-commit 18f428d4e2f7eff162d80b2b21689496c4e82afd upstream.
+Please pull from the tag
 
-Static checker revealed possible error path leading to possible
-NULL pointer dereferencing.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-5.5-rc7
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: e0639dc5805a: ("NFSD introduce async copy feature")
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+with top-most commit 57388a2ccb6c2f554fee39772886c69b796dde53
 
----
- fs/nfsd/nfs4proc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ cpuidle: teo: Fix intervals[] array indexing bug
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1298,7 +1298,8 @@ nfsd4_copy(struct svc_rqst *rqstp, struc
- out:
- 	return status;
- out_err:
--	cleanup_async_copy(async_copy);
-+	if (async_copy)
-+		cleanup_async_copy(async_copy);
- 	goto out;
- }
- 
+on top of commit b3a987b0264d3ddbb24293ebff10eddfc472f653
+
+ Linux 5.5-rc6
+
+to receive a power management fix for 5.5-rc7.
+
+This fixes a coding mistake in the teo cpuidle governor causing data
+to be written beyond the last array element (Ikjoon Jang).
+
+Thanks!
 
 
+---------------
+
+Ikjoon Jang (1):
+      cpuidle: teo: Fix intervals[] array indexing bug
+
+---------------
+
+ drivers/cpuidle/governors/teo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
