@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3605213F242
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2391213F217
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:33:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392743AbgAPSeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:34:14 -0500
+        id S2403825AbgAPRYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:24:52 -0500
 Received: from mail.kernel.org ([198.145.29.99]:59614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391801AbgAPRYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:41 -0500
+        id S2403784AbgAPRYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:24:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A6424683;
-        Thu, 16 Jan 2020 17:24:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C6E524692;
+        Thu, 16 Jan 2020 17:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195480;
-        bh=IpNxx3W+VnjKXEjn7C67RV765J6IboVPFp1m1VokPGk=;
+        s=default; t=1579195482;
+        bh=0rB/DCX0/vZqshYz2euc0r2r572R1otNYKQa2llh8N0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ZSWEv2zHNtc4RDs+BprQ++zDbSO+wSarwYyWaRF6kLZSnizCuPrn6Tsv5rC1+UlH
-         06Pt8b4mhunpJLNPi5nJBEB8hnMeTu2BVoxdhAiLKDFtvhUt9U8PmYrnShWPibgxzq
-         Ln+Gbn893B+QVRjqeXYjcrdGm6Tow4DuNoBK4YI8=
+        b=w6SGY6gwGnX7QbTsz6V5A9ncxlx7bq5c9Umd10n30j0j/yrVoygWyY2RHmNN0pY8z
+         3J65fqZSb2zOJj7Fa2tb8LU+zwvJaNcOdYGCabLrmdmRoTZhKgSE3Tu2y3zia9OXZj
+         x8hlw+NtqnZUfCqi8xJU08mccTyIqKHN5OHcO4BE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 085/371] rtc: ds1307: rx8130: Fix alarm handling
-Date:   Thu, 16 Jan 2020 12:19:17 -0500
-Message-Id: <20200116172403.18149-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 087/371] rtc: 88pm80x: fix unintended sign extension
+Date:   Thu, 16 Jan 2020 12:19:19 -0500
+Message-Id: <20200116172403.18149-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,52 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 3f929cad943380370b6db31fcb7a38d898d91089 ]
+[ Upstream commit fb0b322537a831b5b0cb948c56f8f958ce493d3a ]
 
-When the EXTENSION.WADA bit is set, register 0x19 contains a bitmap of
-week days, not a day of month. As Linux only handles a single alarm
-without repetition using day of month is more flexible, so clear this
-bit. (Otherwise a value depending on time.tm_wday would have to be
-written to register 0x19.)
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Also optimize setting the AIE bit to use a single register write instead
-of a bulk write of three registers.
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-Fixes: ee0981be7704 ("rtc: ds1307: Add support for Epson RX8130CE")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Detected by CoverityScan, CID#714646-714649 ("Unintended sign extension")
+
+Fixes: 2985c29c1964 ("rtc: Add rtc support to 88PM80X PMIC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-ds1307.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/rtc/rtc-88pm80x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index e7d9215c9201..8d45d93b1db6 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -733,8 +733,8 @@ static int rx8130_set_alarm(struct device *dev, struct rtc_wkalrm *t)
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index 466bf7f9a285..7da2a1fb50f8 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -116,12 +116,14 @@ static int pm80x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
  
--	ctl[0] &= ~RX8130_REG_EXTENSION_WADA;
--	ctl[1] |= RX8130_REG_FLAG_AF;
-+	ctl[0] &= RX8130_REG_EXTENSION_WADA;
-+	ctl[1] &= ~RX8130_REG_FLAG_AF;
- 	ctl[2] &= ~RX8130_REG_CONTROL0_AIE;
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -144,7 +146,8 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
  
- 	ret = regmap_bulk_write(ds1307->regmap, RX8130_REG_EXTENSION, ctl,
-@@ -757,8 +757,7 @@ static int rx8130_set_alarm(struct device *dev, struct rtc_wkalrm *t)
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -165,11 +168,13 @@ static int pm80x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	int ret;
  
- 	ctl[2] |= RX8130_REG_CONTROL0_AIE;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
  
--	return regmap_bulk_write(ds1307->regmap, RX8130_REG_EXTENSION, ctl,
--				 sizeof(ctl));
-+	return regmap_write(ds1307->regmap, RX8130_REG_CONTROL0, ctl[2]);
- }
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -192,12 +197,14 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
  
- static int rx8130_alarm_irq_enable(struct device *dev, unsigned int enabled)
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
 -- 
 2.20.1
 
