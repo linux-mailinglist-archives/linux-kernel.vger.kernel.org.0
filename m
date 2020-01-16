@@ -2,78 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 665FA13EE93
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E0C13EE9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:11:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395079AbgAPSJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:09:36 -0500
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:43895 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730692AbgAPSJd (ORCPT
+        id S2394989AbgAPSKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:10:01 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35643 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395107AbgAPSJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:09:33 -0500
-Received: by mail-ot1-f51.google.com with SMTP id p8so20186373oth.10
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:09:33 -0800 (PST)
+        Thu, 16 Jan 2020 13:09:58 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i15so20237820oto.2
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 10:09:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KQb8Uq0IKx193QyLS3C+yGAjzOMy3a3CukknBRN2elo=;
-        b=Z9dKYGG/It3ZDq626KVAn3UYMJ8w5rR7FNp1xgY+lJV2JdQ8DWHIetf1F8KloLda3X
-         39gAmzG6xzkqr5D4Ak+0h08VxlZHpS0TnHAHHZwNZrxSD9H0o70ll3pjpzqbXTbh1DKL
-         DNBT464rgyw5mNlpF54auwQ7W0YShGDSgsOZLiQe9UuUK/EI3rXInwadnnG1lGK7QCU1
-         3w5gr6gsDviIi8iAJ4m/+JCGUJ3agwdBGY3e7V1tUCcAsasgKFwzh4MHrwHdLzXIgLAk
-         x0PHbDzD2veOuVMZQjGO+cEu0iHunQLVEGPuaT782qMLmcgX5LnyP/rsd3PiYSGCcLoS
-         c59A==
+        bh=FzuZRenN/3UczXLj3+thO7tKTqsTx9weWp2ttaG3+Ko=;
+        b=zawuOQt5P47InN/xf28+hOOPRs0JqfEPg7d21bnyv89wscVYKmezFAfp43eeV4aj1z
+         amFHw66rURc66/hjqx+kl6xxu+bxKSxkeEHWHRlL7UAodZS4USBNj/I1Y1mC8w76qAPe
+         oJPFMagtBnvN/9TXG8ZOcyPhNz9NfaMSlmontOpFUyjwa9D5ipU4d2BAQTFZtbYH0LO8
+         AsAKOyhzVopHd0EMrUJCO/LYIHUuDEZldvlymyKTVB297Erz7EZ9RyUbVBQeAe7/Ja4V
+         HC9yWT8qYYbgQJarOSQ/z9QpA6XabIQSANO7+YXGXik4Wuxi4b0InRmGg+tFAxyTAk/5
+         dK7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KQb8Uq0IKx193QyLS3C+yGAjzOMy3a3CukknBRN2elo=;
-        b=IOspGWkjNIKUHEA/4KRB9OHuwmPoB7r5E0OVHTIV68hjypA6VXJ8GO9LibjyHOEIex
-         /XruPGrLPJChq7aBMIAYDz9Gonb5/ejO06u9BiYxYFs07FWj9VsDJnUtko9XutkCh2W8
-         LlrXfAfCkd2BtPauosg5kUZDoGLJIYZ/I3DPuR8fTD3QmUDAgswQFAmI9kyvIo20HcxP
-         rZZIgYP7HW/ECt/MOlGttLsgGQKXka3AuhHXeWDNMxp+HgTsnmaOIG5MZmky7kuy5Swf
-         oUMz0/dQiKPxthNceCcr0NtBMC61TmqL8+DZIqUFkFMxREe9SjCFalqX8hgvWePpE/TE
-         Ss5g==
-X-Gm-Message-State: APjAAAVpZD7pLwSvy0Z+/GPI32uPtfvxrG3WMxit+mHkStbfQqjBbWT6
-        eUwnWRyYJJ4q+Jt9bxUGnayW36ovMIV4O8lpEYCYNY0Q
-X-Google-Smtp-Source: APXvYqyXr3lS+JZj9aYaGZcaZ677aNc3G5lICFsM5cpGfCF42dv3olbejurJoFC1AmwOnpAVRiOEEAY2CuZWxYa6P3Q=
-X-Received: by 2002:a9d:6f11:: with SMTP id n17mr3079638otq.126.1579198173237;
- Thu, 16 Jan 2020 10:09:33 -0800 (PST)
+        bh=FzuZRenN/3UczXLj3+thO7tKTqsTx9weWp2ttaG3+Ko=;
+        b=RBkiDDEsvW7FZE7VNOVT4NG8oMQv2ddtwcJd2YTTlXcJwcnLIf6nmtIaC1pZEQGoW6
+         Afx2nBj/Zt2ztm1xA5qqVIVNtqMS3A1aisK5VGDm3sEgwRWglaJc98kA5sA0IxNnOScS
+         3/pEjrGJnmgKTZfu/qM8IkhHYqh0XoXcs9rDmNWRblosLVmD1nkKS7q76j8s3LuAraaL
+         HQH3hLVqkoAgx5ybCB/oaGeO6CmY9hxVeUDhKy4Cbvy3Wqr0jTQHNtkCw+zmO6rQngVq
+         JHphhL2CQ3D5K5J+QBxVABRXuDj0g8d5R57ueQdenW2et6gzTmLzKAIURUoN/Ck4F9RD
+         Rntw==
+X-Gm-Message-State: APjAAAUEHUSUVm/4tW6cw3CqNaeP//Kb43Uv9KeaaqHRL3N841FQrBSI
+        cUMunrLQR3jtX4PlaQ3j99KqcopkbddJgGt96tTBGg==
+X-Google-Smtp-Source: APXvYqxAe2+rFr7S0FrSp08rIPwAe1Wau7z51hUUxL0cS3xj2Ecu8Rh56J0DxcLVUk1gryZFW39U+zJXoh6ArDNKXCE=
+X-Received: by 2002:a9d:68cc:: with SMTP id i12mr3043119oto.207.1579198197588;
+ Thu, 16 Jan 2020 10:09:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20200106181117.GA16248@redhat.com> <20200116145403.GB25291@redhat.com>
-In-Reply-To: <20200116145403.GB25291@redhat.com>
+References: <20200107180101.GC15920@redhat.com> <CAPcyv4gmdoqpwwwy4dS3D2eZFjmJ_Zi39k=1a4wn-_ksm-UV4A@mail.gmail.com>
+ <20200107183307.GD15920@redhat.com> <CAPcyv4ggoS4dWjq-1KbcuaDtroHKEi5Vu19ggJ-qgycs6w1eCA@mail.gmail.com>
+ <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
+ <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
+ <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
+ <20200115195617.GA4133@redhat.com> <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
+ <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 16 Jan 2020 10:09:22 -0800
-Message-ID: <CAPcyv4hNQ3qtF1CA5Bb3NkSyUbw+_3CCY2e97EMXS4jfHTF7ag@mail.gmail.com>
-Subject: Re: dax: Get rid of fs_dax_get_by_host() helper
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date:   Thu, 16 Jan 2020 10:09:46 -0800
+Message-ID: <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 6:54 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
 >
-> On Mon, Jan 06, 2020 at 01:11:17PM -0500, Vivek Goyal wrote:
-> > Looks like nobody is using fs_dax_get_by_host() except fs_dax_get_by_bdev()
-> > and it can easily use dax_get_by_host() instead.
-> >
-> > IIUC, fs_dax_get_by_host() was only introduced so that one could compile
-> > with CONFIG_FS_DAX=n and CONFIG_DAX=m. fs_dax_get_by_bdev() achieves
-> > the same purpose and hence it looks like fs_dax_get_by_host() is not
-> > needed anymore.
-> >
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> Hi, Dan,
 >
-> Hi Dan,
+> Dan Williams <dan.j.williams@intel.com> writes:
 >
-> Ping for this patch. How does it look to you. If you don't have concerns,
-> can you please take it in your tree.
+> > I'm going to take a look at how hard it would be to develop a kpartx
+> > fallback in udev. If that can live across the driver transition then
+> > maybe this can be a non-event for end users that already have that
+> > udev update deployed.
+>
+> I just wanted to remind you that label-less dimms still exist, and are
+> still being shipped.  For those devices, the only way to subdivide the
+> storage is via partitioning.
 
-Yes, looks good and applied.
+True, but if kpartx + udev can make this transparent then I don't
+think users lose any functionality. They just gain a device-mapper
+dependency.
