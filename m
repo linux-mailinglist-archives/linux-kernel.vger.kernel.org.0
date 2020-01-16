@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A2413F61E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32DD213F61F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 20:02:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388406AbgAPRFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:05:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34396 "EHLO mail.kernel.org"
+        id S1729580AbgAPRFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:05:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388740AbgAPRFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:32 -0500
+        id S2388552AbgAPRFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:05:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4079A24684;
-        Thu, 16 Jan 2020 17:05:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D413820730;
+        Thu, 16 Jan 2020 17:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194331;
-        bh=Hv37BfS55KKDAbh7Qq/n5MYz80MnjEqtZFsgK6Mdv/o=;
+        s=default; t=1579194333;
+        bh=4Pp4UyDFYiG/ROGt91fvWF9zDwzdijE459rGVCPFR4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQ/uDMdir2IB3IrBlV2W3YTW8sv0wY7TTiSHV3sflENNBUKSmnS7P1pyACU8+cnJS
-         sUME1CAOQWUPYx/Veep3HNMjzg6eyPrnsBUnKAemLUQ6kh7KnFT0yYKwcQScsVmLC2
-         sm5wloc9N4aqok52LqwZSQWVTYNTj32bMD1aYgMI=
+        b=OULyfUDEeUY8Bx97kTiQO6oZ3yZuoYJBfOA4zAOczvXf8L/4mfe+WNgkLLAzMpZFu
+         fPzm+xB1c25vSIwOnsC0XiaT3hPeZCmw5tzzjIHQBc4pqCLrMX7tfvEva8hC+mTexA
+         riwvnL7dbIQVqAWMReBmiNZ/06ZrLfaBJ0Me2s7o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 278/671] rtc: mt6397: Don't call irq_dispose_mapping.
-Date:   Thu, 16 Jan 2020 11:58:36 -0500
-Message-Id: <20200116170509.12787-15-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 279/671] ehea: Fix a copy-paste err in ehea_init_port_res
+Date:   Thu, 16 Jan 2020 11:58:37 -0500
+Message-Id: <20200116170509.12787-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
@@ -45,59 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pi-Hsun Shih <pihsun@chromium.org>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 24db953e942bd7a983e97892bdaddf69d00b1199 ]
+[ Upstream commit c8f191282f819ab4e9b47b22a65c6c29734cefce ]
 
-The IRQ mapping was changed to not being created in the rtc-mt6397
-driver, so the irq_dispose_mapping is no longer needed.
-Also the dev_id passed to free_irq should be the same as the last
-argument passed to request_threaded_irq.
-This prevents a "Trying to free already-free IRQ 274" warning when
-unbinding the driver.
+pr->tx_bytes should be assigned to tx_bytes other than
+rx_bytes.
 
-Fixes: e695d3a0b3b3 ("mfd: mt6397: Create irq mappings in mfd core driver")
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: ce45b873028f ("ehea: Fixing statistics")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-mt6397.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/ibm/ehea/ehea_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index e9a25ec4d434..c06cf5202e02 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -343,7 +343,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
- 			rtc->irq, ret);
--		goto out_dispose_irq;
-+		return ret;
- 	}
+diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/ethernet/ibm/ehea/ehea_main.c
+index e8ee69d4e4d3..0f799e8e093c 100644
+--- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
++++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
+@@ -1464,7 +1464,7 @@ static int ehea_init_port_res(struct ehea_port *port, struct ehea_port_res *pr,
  
- 	device_init_wakeup(&pdev->dev, 1);
-@@ -359,9 +359,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	return 0;
+ 	memset(pr, 0, sizeof(struct ehea_port_res));
  
- out_free_irq:
--	free_irq(rtc->irq, rtc->rtc_dev);
--out_dispose_irq:
--	irq_dispose_mapping(rtc->irq);
-+	free_irq(rtc->irq, rtc);
- 	return ret;
- }
- 
-@@ -369,8 +367,7 @@ static int mtk_rtc_remove(struct platform_device *pdev)
- {
- 	struct mt6397_rtc *rtc = platform_get_drvdata(pdev);
- 
--	free_irq(rtc->irq, rtc->rtc_dev);
--	irq_dispose_mapping(rtc->irq);
-+	free_irq(rtc->irq, rtc);
- 
- 	return 0;
- }
+-	pr->tx_bytes = rx_bytes;
++	pr->tx_bytes = tx_bytes;
+ 	pr->tx_packets = tx_packets;
+ 	pr->rx_bytes = rx_bytes;
+ 	pr->rx_packets = rx_packets;
 -- 
 2.20.1
 
