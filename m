@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 150A013F55F
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:56:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E8413F5CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388705AbgAPRHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:07:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34204 "EHLO mail.kernel.org"
+        id S2388614AbgAPRGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:06:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388691AbgAPRF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:27 -0500
+        id S2388920AbgAPRGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:06:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85F3D2087E;
-        Thu, 16 Jan 2020 17:05:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 119C3214AF;
+        Thu, 16 Jan 2020 17:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194327;
-        bh=2rpy/MMMrn6+0nPuWAz83Vpo/mL3rkWiZmO0V/DJzLU=;
+        s=default; t=1579194381;
+        bh=Idwdf9oYrNJnx5TDr3DzrtEpAiY/RJkENvQhosI7ETE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kG9O+YWIRmv+3gx+YVhUqsd/GVpBSZhg+RDoL1dglH9+OafK61gBiTaKM+lqHwQQA
-         ROhzvS1/zRwDyCi+/Z5kTgD4V81qSJpw3twIqy915XGoYBUduJIvRvzHgIkZuJqLtT
-         LPp79en7GBiU1ewtZYavS6to/ih6lcTVQPGhr73w=
+        b=CJd8+FHwyrcbzO1a3Ajv4PySqwwEAhe+xq4hctAyuJL8uR4/Z4pDVNzxMgQ521QR9
+         rzNCKxYPJmb4l4fA3v9FVyVp8zYvW7AA1+xoox0t2CmIm2+P+Sd3rmMc9OkZmAFo5F
+         QiVRnwooj/tSgz1i0FEAUWFy4jw6WYsHflYrjznw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 275/671] drm/fb-helper: generic: Call drm_client_add() after setup is done
-Date:   Thu, 16 Jan 2020 11:58:33 -0500
-Message-Id: <20200116170509.12787-12-sashal@kernel.org>
+Cc:     Trond Myklebust <trondmy@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 312/671] NFS: Don't interrupt file writeout due to fatal errors
+Date:   Thu, 16 Jan 2020 11:59:10 -0500
+Message-Id: <20200116170509.12787-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
 References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,47 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Noralf Trønnes <noralf@tronnes.org>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit 6e3f17ee73f7e3c2ef0e2c8fd8624b2ece8ef2c9 ]
+[ Upstream commit 14bebe3c90b326d2a0df78aed5e9de090c71d878 ]
 
-Hotplug can happen while drm_fbdev_generic_setup() is running so move
-drm_client_add() call after setup is done to avoid
-drm_fbdev_client_hotplug() running in two threads at the same time.
+When flushing out dirty pages, the fact that we may hit fatal errors
+is not a reason to stop writeback. Those errors are reported through
+fsync(), not through the flush mechanism.
 
-Fixes: 9060d7f49376 ("drm/fb-helper: Finish the generic fbdev emulation")
-Cc: stable@vger.kernel.org
-Reported-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190401141358.25309-1-noralf@tronnes.org
+Fixes: a6598813a4c5b ("NFS: Don't write back further requests if there...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/write.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 1c87ad6667e7..da9a381d6b57 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -3257,8 +3257,6 @@ int drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
- 		return ret;
- 	}
- 
--	drm_client_add(&fb_helper->client);
--
- 	if (!preferred_bpp)
- 		preferred_bpp = dev->mode_config.preferred_depth;
- 	if (!preferred_bpp)
-@@ -3267,6 +3265,8 @@ int drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
- 
- 	drm_fbdev_client_hotplug(&fb_helper->client);
- 
-+	drm_client_add(&fb_helper->client);
-+
- 	return 0;
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 117ffd90419e..e27637fa0f79 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -646,7 +646,7 @@ static int nfs_page_async_flush(struct nfs_pageio_descriptor *pgio,
+ 	return ret;
+ out_launder:
+ 	nfs_write_error_remove_page(req);
+-	return ret;
++	return 0;
  }
- EXPORT_SYMBOL(drm_fbdev_generic_setup);
+ 
+ static int nfs_do_writepage(struct page *page, struct writeback_control *wbc,
 -- 
 2.20.1
 
