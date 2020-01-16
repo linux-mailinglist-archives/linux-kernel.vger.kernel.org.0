@@ -2,73 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EED513D82E
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 11:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4978513D85F
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 11:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbgAPKtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 05:49:02 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:41717 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgAPKtC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 05:49:02 -0500
-Received: by mail-il1-f200.google.com with SMTP id k9so15591596ili.8
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 02:49:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=vXf7A0NOmOYnzFvw+i/lGTeJq016329/QakV55aUcG0=;
-        b=eNTZxIfiYzKDu0LbWdmrlXVZ7lLDkcxk5FZlhB4R9ZE7CCncJ5cq5gjjScSDWJMJW7
-         6twUHcOKsQvQ6sBxslr5VpEb72v3TU9RB6p4CQJj/tpYgr3hX31Owd0IbyRN1jyMGi6q
-         xu0vkWymETTWX0IM/2d5luKWAmTIsy5npm06OBFcpSriqLkF2NDwO+QUZ2731GHiZiRb
-         hFWHLCShfUIpp4BlCWvtayUBPFzlhTjOHoTFQ4N1fe4ZoVGE6a8bW3YWFwboYiz7yI/8
-         Y7Byhng8EFD0Rxk1Rq7Apsj9Rev/Q+c7t39zD9EbPnJAM53wPL5jOKNSKgKewAGpT0nT
-         D5mQ==
-X-Gm-Message-State: APjAAAWRpGMs6t/pmGSTVefMdWciw9faz6POEcALrIuMhj+8Ya9hEKCe
-        Yg8mcGcOaVH4sd1RwMDmRlhSOaMDzO7TklkwLtibdl1LaEta
-X-Google-Smtp-Source: APXvYqxopJ/jpk1yIg/I62PmVhs8FXVnSYmF1TfUZ9VNvmnmuoElsGzQesNp8GprKQ9VNUmhiQEqsoJLXz2GyBosz3vGAuYabDoY
+        id S1729016AbgAPKvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 05:51:24 -0500
+Received: from verein.lst.de ([213.95.11.211]:55329 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726187AbgAPKvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 05:51:12 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 0DE4F68B20; Thu, 16 Jan 2020 11:51:09 +0100 (CET)
+Date:   Thu, 16 Jan 2020 11:51:08 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
+        sj1557.seo@samsung.com, linkinjeon@gmail.com, arnd@arndb.de
+Subject: Re: [PATCH v10 00/14] add the latest exfat driver
+Message-ID: <20200116105108.GA16924@lst.de>
+References: <CGME20200115082818epcas1p4892a99345626188afd111ee263132458@epcas1p4.samsung.com> <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115094732.bou23s3bduxpnr4k@pali>
 MIME-Version: 1.0
-X-Received: by 2002:a92:3cd4:: with SMTP id j81mr3015923ilf.77.1579171741688;
- Thu, 16 Jan 2020 02:49:01 -0800 (PST)
-Date:   Thu, 16 Jan 2020 02:49:01 -0800
-In-Reply-To: <000000000000b9fc96059c36db9e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b3ea0f059c3f9203@google.com>
-Subject: Re: WARNING in nft_request_module
-From:   syzbot <syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        kadlec@blackhole.kfki.hu, kadlec@netfilter.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200115094732.bou23s3bduxpnr4k@pali>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Wed, Jan 15, 2020 at 10:47:32AM +0100, Pali Rohár wrote:
+> Next steps for future:
+> 
+> * De-duplicate cache code between fat and exfat. Currently fs/exfat
+>   cache code is heavily copy-paste of fs/fat cache code.
 
-commit 452238e8d5ffd8b77f92387519513839d4ca7379
-Author: Florian Westphal <fw@strlen.de>
-Date:   Wed Jul 11 11:45:10 2018 +0000
+As said before I don't think this should be a merge blocker.  I actually
+see this more of an experiment as the sharing might make things worse.
+But at least it is worth giving it a try.
 
-     netfilter: nf_tables: add and use helper for module autoload
+> * De-duplicate UTF-16 functions. Currently fs/exfat has e.g. helper
+>   functions for surrogate pairs copy-paste from fs/nls.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bb83e1e00000
-start commit:   51d69817 Merge tag 'platform-drivers-x86-v5.5-3' of git://..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=147b83e1e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=107b83e1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0e63ae76d117ae1c3a01
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b14421e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138473fee00000
+If you looked into that can you post a list of suspected duplicates?
 
-Reported-by: syzbot+0e63ae76d117ae1c3a01@syzkaller.appspotmail.com
-Fixes: 452238e8d5ff ("netfilter: nf_tables: add and use helper for module  
-autoload")
+> 
+> * Unify EXFAT_DEFAULT_IOCHARSET and FAT_DEFAULT_IOCHARSET. Or maybe
+>   unify it with other filesystems too.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+For the initial merge I think they should be kept separate, as
+referencing other file systems Kconfig variable is confusing.
+Investingating if we could a single common one sounds like a good idea,
+though.
+
+> * After applying this patch series, remote staging exfat implementation.
+
+I think Greg wants to do that separately.  I still hope we can do that
+in the same merge window, though.
