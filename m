@@ -2,64 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F72413EE42
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3675913EE6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395018AbgAPSID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:08:03 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40378 "EHLO mail.skyhub.de"
+        id S2395071AbgAPSJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:09:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406990AbgAPSH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:07:58 -0500
-Received: from zn.tnic (p200300EC2F0B2300140B140D62B5CC9C.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:2300:140b:140d:62b5:cc9c])
+        id S2395058AbgAPSJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:09:04 -0500
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C881F1EC0CD6;
-        Thu, 16 Jan 2020 19:07:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579198076;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=KW2w5CooqgG7zpU0vTkX9OBD4qWnzpFrAZgTPF5qpKg=;
-        b=M3SoHBtRZX+AR749P5f1ZQLxwYDKhjZ0hVg+xhQ0HV8jS4p/7fH6LoyvX9mbA8CsnAbmIj
-        7ElNkBxLWZjgMIp3pNL2K5QSvRVz8OeVNeDV2MztZB4ev8cz7XlKm86Cf0hoclgjiDktiy
-        yaVC241z82SWqJjSwtOrATgNG17mk3U=
-Date:   Thu, 16 Jan 2020 19:07:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, luto@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, peterz@infradead.org,
-        fenghua.yu@intel.com, vineela.tummalapalli@intel.com,
-        linux-kernel@vger.kernel.org, DavidWang@zhaoxin.com,
-        CooperYan@zhaoxin.com, QiyuanWang@zhaoxin.com,
-        HerryYang@zhaoxin.com
-Subject: Re: [PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from
- SPECTRE_V2
-Message-ID: <20200116180748.GG27148@zn.tnic>
-References: <1579146434-2668-1-git-send-email-TonyWWang-oc@zhaoxin.com>
- <87r1zzuy48.fsf@nanos.tec.linutronix.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D525214AF;
+        Thu, 16 Jan 2020 18:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579198142;
+        bh=G12bYRjcFudffpQ1Inc1ks16rEJngpLF0eu9Bib/8YI=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=y1Wk+36g6x6dqMQXtUbMYxKQj6vISCydPq/80JUNhvRBRQlZvOMlp8qwo9f/1hK/9
+         6ViaY6kF/wqqJdCtP2KA73CyC4RcI1702MEccjKN559ZrT75cKQmGVxCoLrhF37W4D
+         ydKODBdVJNUDGpAtZxoVBfhyqK/3Lni8IIbkruIU=
+Date:   Thu, 16 Jan 2020 18:08:58 +0000
+From:   Will Deacon <will@kernel.org>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, robh+dt@kernel.org,
+        frowand.list@gmail.com, Bhupesh Sharma <bhsharma@redhat.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 2/2] arm64: kexec_file: add crash dump support
+Message-ID: <20200116180857.GA22420@willie-the-truck>
+References: <20191216021247.24950-1-takahiro.akashi@linaro.org>
+ <20191216021247.24950-3-takahiro.akashi@linaro.org>
+ <20200108174839.GB21242@willie-the-truck>
+ <20200109004654.GA28530@linaro.org>
+ <20200109083254.GA7280@willie-the-truck>
+ <20200110160549.GA25437@willie-the-truck>
+ <CA+CK2bAy-vfoz3kgUjZB74Hrobgu-a8H4pv6RbA_tbq++NWz5g@mail.gmail.com>
+ <20200113112105.GB2337@willie-the-truck>
+ <20200114053825.GC28530@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r1zzuy48.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <20200114053825.GC28530@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 06:09:27PM +0100, Thomas Gleixner wrote:
-> So the right thing here is to resend both patches as a patch series
-> with the conflict properly resolved.
+On Tue, Jan 14, 2020 at 02:38:26PM +0900, AKASHI Takahiro wrote:
+> On Mon, Jan 13, 2020 at 11:21:06AM +0000, Will Deacon wrote:
+> > On Fri, Jan 10, 2020 at 11:19:16AM -0500, Pavel Tatashin wrote:
+> > > On Fri, Jan 10, 2020 at 11:05 AM Will Deacon <will@kernel.org> wrote:
+> > > > On Thu, Jan 09, 2020 at 08:32:54AM +0000, Will Deacon wrote:
+> > > > > On Thu, Jan 09, 2020 at 09:46:55AM +0900, AKASHI Takahiro wrote:
+> > > > > > On Wed, Jan 08, 2020 at 05:48:39PM +0000, Will Deacon wrote:
+> > > > > > > On Mon, Dec 16, 2019 at 11:12:47AM +0900, AKASHI Takahiro wrote:
+> > > > > > > > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+> > > > > > > > index 12a561a54128..d24b527e8c00 100644
+> > > > > > > > --- a/arch/arm64/include/asm/kexec.h
+> > > > > > > > +++ b/arch/arm64/include/asm/kexec.h
+> > > > > > > > @@ -96,6 +96,10 @@ static inline void crash_post_resume(void) {}
+> > > > > > > >  struct kimage_arch {
+> > > > > > > >         void *dtb;
+> > > > > > > >         unsigned long dtb_mem;
+> > > > > > > > +       /* Core ELF header buffer */
+> > > > > > > > +       void *elf_headers;
+> > > > > > > > +       unsigned long elf_headers_mem;
+> > > > > > > > +       unsigned long elf_headers_sz;
+> > > > > > > >  };
+> > > > > > >
+> > > > > > > This conflicts with the cleanup work from Pavel. Please can you check my
+> > > > > > > resolution? [1]
+> > > > > >
+> > > > > > I don't know why we need to change a type of dtb_mem,
+> > > > > > otherwise it looks good.
+> > > > > >
+> > > > > > (I also assume that you notice that kimage_arch is of no use for kexec.)
+> > > > >
+> > > > > Yes, that's why I'd like the resolution checked. If you reckon it's cleaner
+> > > > > to drop Pavel's patch altogether in light of your changes, we can do that
+> > > > > instead.
+> > > > >
+> > > > > Thoughts?
+> > > >
+> > > > Well, I've reverted the cleanup patch so please shout if you'd prefer
+> > > > something else.
+> > > 
+> > > As I understand, the only concern was the type change for dtb_mem.
+> > > This was one of the review comments for my patch
+> > > https://lore.kernel.org/lkml/20191204155938.2279686-21-pasha.tatashin@soleen.com/
+> > > 
+> > > (I believe it was from Marc Zyngier), I add a number of new fields,
+> > > and they all should be phys_addr_t, this is why I change dtb_mem to
+> > > phys_addr_t to be consistent.
+> > 
+> > Sure, but I've only queued the first part of your series and that cleanup
+> > patch doesn't make a lot of sense when applied against Akashi's work. I'm
+> > happy to take stuff on top if you both agree to it, but having half of the
+> > struct use unsigned long and the other half use phys_addr_t is messy.
+> 
+> Logically, whether dtb_mem is a "unsigned long" or phys_addr_t doesn't
+> matter unless the kernel is compiled under LLP64.
+> As far as the existing kexec code, either generic or arm64-specific,
+> is concerned, however, "unsigned long is widely used as a physical address
+> (For example, see kexec_buf definition) over the code.
+> 
+> (Oops, reboot_code_buffer_phys is a phys_addr_t :)
+> 
+> So as long as my kexec_file (and associated kdump) patch comes first
+> before Pavel's, I'd like to keep using "unsigned long".
+> Then, you can change "unsigned long" to phys_addr_t in your patch
+> for whatever reason it is.
+> 
+> Please note that, if you want to do that, it would be better to modify
+> not only kimage_arch but also all the occurrences of "unsigned long"
+> to phys_addr_t for maintaining the integrity.
+> 
+> In addition, in my kexec_file kdump code, I still believe that
+> "#ifdef CONFIG_KEXEC_FILE" should stay before the definition of
+> kimage_arch as kimage_arch is of no use for normal kexec code.
+> 
+> Again,
+> "#ifdef" statement may be moved forward once additional fields be
+> added later by Pavel's patch, say, "[PATCH v8 15/25] arm64: kexec:
+> move relocation function setup" for any reason.
+> 
+> I believe that this way gives us a logical and consistent view of
+> history of changes.
+> Make sense?
 
-And it is about time you started using --thread and --no-chain-reply-to
-with git send-email so that your patchsets are properly threaded. See
-the git-send-email(1) if something's still unclear.
+This is a bit much to stick in a merge commit, so I'll stick with the revert
+for now and you can send patches on top if you want it changed.
 
--- 
-Regards/Gruss,
-    Boris.
+Cheers,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Will
