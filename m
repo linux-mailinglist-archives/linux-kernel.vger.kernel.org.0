@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A7213F20B
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 186B513F208
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:33:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404739AbgAPScm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:32:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60294 "EHLO mail.kernel.org"
+        id S2404515AbgAPSc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:32:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391833AbgAPRY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:57 -0500
+        id S2391849AbgAPRZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:25:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F9952468D;
-        Thu, 16 Jan 2020 17:24:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E33F2246A5;
+        Thu, 16 Jan 2020 17:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195497;
-        bh=pApbjpB3M1WpmYu3P2kMlD3KDQd2NJxdcECDY4o+trk=;
+        s=default; t=1579195499;
+        bh=3GDST97Zptw0/e84om70F9jZkf2LN43fAxlrhDAXbIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q3bUW5hictFEyspyE7/eNRE8AEiyZ7hOTlQoCZu+jCkz3PaPbyvIW0hZeQ8en+ClZ
-         joPV/MAOPUJiSirVzg7grx88IQoN6Q2oVYflchJ73XTOuUuzsGa/4tjg8fpE4vSRLE
-         OLIDg3tHBqzKO33XP7ZkJXVyJzUIW5xuMw2mFulQ=
+        b=BpwG32FE5HKa3b6t5qUW/+4XxzQ/5T354s3lYXPGpVJ7KGKoqMeU88WhEk4NVhWfR
+         2cEoRjbqX8qRwmmHFgCISiVjC0Aazdjilf6aniIuKI4OXoyLa6r7sAeKYPdTezoOC1
+         qMW/SunBZoRi9rc+0ObspA8xfIFFlec9mWpZPtHw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, Bin Liu <b-liu@ti.com>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 098/371] usb: phy: twl6030-usb: fix possible use-after-free on remove
-Date:   Thu, 16 Jan 2020 12:19:30 -0500
-Message-Id: <20200116172403.18149-41-sashal@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <james.morris@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 100/371] keys: Timestamp new keys
+Date:   Thu, 16 Jan 2020 12:19:32 -0500
+Message-Id: <20200116172403.18149-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -45,39 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <thesven73@gmail.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 5895d311d28f2605e2f71c1a3e043ed38f3ac9d2 ]
+[ Upstream commit 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4 ]
 
-In remove(), use cancel_delayed_work_sync() to cancel the
-delayed work. Otherwise there's a chance that this work
-will continue to run until after the device has been removed.
+Set the timestamp on new keys rather than leaving it unset.
 
-This issue was detected with the help of Coccinelle.
-
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Bin Liu <b-liu@ti.com>
-Fixes: b6a619a883c3 ("usb: phy: Check initial state for twl6030")
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 31d5a79d7f3d ("KEYS: Do LRU discard in full keyrings")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/phy/phy-twl6030-usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/keys/key.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/phy/phy-twl6030-usb.c b/drivers/usb/phy/phy-twl6030-usb.c
-index b5dc077ed7d3..8e14fa221191 100644
---- a/drivers/usb/phy/phy-twl6030-usb.c
-+++ b/drivers/usb/phy/phy-twl6030-usb.c
-@@ -413,7 +413,7 @@ static int twl6030_usb_remove(struct platform_device *pdev)
- {
- 	struct twl6030_usb *twl = platform_get_drvdata(pdev);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 87172f99f73e..17244f5f54c6 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -297,6 +297,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key->gid = gid;
+ 	key->perm = perm;
+ 	key->restrict_link = restrict_link;
++	key->last_used_at = ktime_get_real_seconds();
  
--	cancel_delayed_work(&twl->get_status_work);
-+	cancel_delayed_work_sync(&twl->get_status_work);
- 	twl6030_interrupt_mask(TWL6030_USBOTG_INT_MASK,
- 		REG_INT_MSK_LINE_C);
- 	twl6030_interrupt_mask(TWL6030_USBOTG_INT_MASK,
+ 	if (!(flags & KEY_ALLOC_NOT_IN_QUOTA))
+ 		key->flags |= 1 << KEY_FLAG_IN_QUOTA;
 -- 
 2.20.1
 
