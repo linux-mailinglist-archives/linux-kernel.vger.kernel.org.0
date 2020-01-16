@@ -2,447 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E150613DD10
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B96F13DD17
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbgAPOJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 09:09:33 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50650 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbgAPOJT (ORCPT
+        id S1726574AbgAPOLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 09:11:43 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46777 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbgAPOLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:09:19 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200116140917euoutp0168760db240785a387da69e47a18c7910~qY0Kyjeo50568405684euoutp01F
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 14:09:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200116140917euoutp0168760db240785a387da69e47a18c7910~qY0Kyjeo50568405684euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579183757;
-        bh=hpgw6xnVEWj+E/Pyg9EDeM6sLEMaetg0XhqQOF1Ravk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfdA8L3MqjAn4KlFojNgxkuF8+x8Tj2lV+V6c0kCjeoNxWre96swmsCDz7OR0OV4I
-         N+kYYUEtV/eX3SC+0uBfmGGDeZYdTcRbKNyWp6USm9JXJt4icibyBrp/Rmy5rQt/QA
-         In/tuWfxTwnhHNVgdMr5wlzH9L9q8wct/6T5powQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200116140917eucas1p1d640595b59ab2a8f67765c3873bc61bf~qY0KczGcV1322413224eucas1p1O;
-        Thu, 16 Jan 2020 14:09:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 8D.FD.60679.C8E602E5; Thu, 16
-        Jan 2020 14:09:17 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200116140916eucas1p2bd3480995a55fdc646481a8fa5a5aff3~qY0KCTod32425224252eucas1p27;
-        Thu, 16 Jan 2020 14:09:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200116140916eusmtrp2bf28e8ece2286e3860f47641f36a9439~qY0KBtxrl0965509655eusmtrp2H;
-        Thu, 16 Jan 2020 14:09:16 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-51-5e206e8c3e51
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 0B.FF.08375.C8E602E5; Thu, 16
-        Jan 2020 14:09:16 +0000 (GMT)
-Received: from AMDC3058.digital.local (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200116140916eusmtip139c44590ab708c090249338a68ceb2be~qY0Jt7Ymx0711307113eusmtip1C;
-        Thu, 16 Jan 2020 14:09:16 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     Andrzej Hajda <a.hajda@samsung.com>, b.zolnierkie@samsung.com
-Subject: [PATCH 6/6] video: fbdev: controlfb: remove function prototypes
- part #3
-Date:   Thu, 16 Jan 2020 15:09:00 +0100
-Message-Id: <20200116140900.26363-7-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200116140900.26363-1-b.zolnierkie@samsung.com>
+        Thu, 16 Jan 2020 09:11:43 -0500
+Received: by mail-qk1-f194.google.com with SMTP id r14so19148911qke.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 06:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=E4TXCvIZZmY4SQCWQzeLR1MFoYNB31lrG2Qln+AaBO4=;
+        b=JFr3/SZ3UQPbE6tN0WIDrmGEvvrNPfsLSUjntfSPf4H8CaB9Ec8m1JVzlwKdxQI7bR
+         3Wf7o15qkWvfU2BrXgUqDa/P5/s3JU86YwmHmVDJgHJVZpC48Wq+GwpiH70SVGZXzNCW
+         tUB0BZs20iU/qGmkxxbEKTg+rfI7uWyRi6HD7SwwKfn6eeOx5NXa2L4khYzmYqdU/Q73
+         XJzZwnq1+SkVZNFtHtVAhdji1nJv/bWhk/VqEp4wX7VCiTOc5nBu+Cv/vpBioS4yMhnI
+         nFwmiDzAw7e0YnFmBSZ6FJ2C6Eprq+qfGs/8uk/SzOBENKSHugI2ZSccx15T3V2aqTrv
+         rb8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E4TXCvIZZmY4SQCWQzeLR1MFoYNB31lrG2Qln+AaBO4=;
+        b=J3Igr384+D5IPRCwG4ArhhYfqnJ4dIRG/0J2RgMx+DRE1fSJNCb1vR2dxr/FmNlQ7h
+         Z3kGkLwFYBN2t5mcV9oXmhLVsQQ58agOQihvJkJZQHyygn4qyx+BnGG0LSXWGridxYZe
+         gTPbNAJjLTlk6ghRv3pW00kQAkw16J7QY9QzWUrZoPHIFAsnjoTY6AQJ0Ff+d7VgPVWU
+         xeqb4g6xUJFNLGS8BOQYP4THxXTHz8AiMMMByAcKspyQylqNqfll7PKI8F/6ArtSZePC
+         LDzjFYqvjcy9YGB29WUf8mhD65ZiKksdBh6tBhVDVcg9qV4W2bJHo27KcN/wXSCFp2+H
+         L2XA==
+X-Gm-Message-State: APjAAAVLt/R1Eym5rReWfXpmeyVq/VXMaz9ChApLUtV5gVt/5DqyXmea
+        3yF53TolQMV8BeLetsLRKhIf7A==
+X-Google-Smtp-Source: APXvYqx6uZpu4GcW1N0sXEyw9K5yx2S6JPwxGtld6dzchDnf5W2zeuoRuG/8THysf1WiLlTh8VyUTg==
+X-Received: by 2002:a37:5fc2:: with SMTP id t185mr32372460qkb.271.1579183901908;
+        Thu, 16 Jan 2020 06:11:41 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
+        by smtp.gmail.com with ESMTPSA id g53sm11292147qtk.76.2020.01.16.06.11.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 Jan 2020 06:11:41 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1is5s4-0003yp-CZ; Thu, 16 Jan 2020 10:11:40 -0400
+Date:   Thu, 16 Jan 2020 10:11:40 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ben Skeggs <bskeggs@redhat.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v6 4/6] mm/mmu_notifier: add mmu_interval_notifier_find()
+Message-ID: <20200116141140.GA10759@ziepe.ca>
+References: <20200113224703.5917-1-rcampbell@nvidia.com>
+ <20200113224703.5917-5-rcampbell@nvidia.com>
+ <20200114124956.GN20978@mellanox.com>
+ <528c1cff-608c-d342-1e72-90d780555204@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZduznOd3ePIU4g/Z+Zotb686xWmycsZ7V
-        4srX92wWJ/o+sFpc3jWHzYHV4373cSaPvi2rGD0+b5ILYI7isklJzcksSy3St0vgypgx3afg
-        n3vFkr9PGRsYf1p2MXJwSAiYSGw8EdfFyMUhJLCCUaJhzldmCOcLo8Sb+5tZIJzPjBLbZzcC
-        OZxgHRNnv4ZKLGeUOHKggw2u5XTzAXaQKjYBK4mJ7asYQWwRgQSJFdNnMILsYxZwlGju5wMx
-        hQWCJHrPR4JUsAioSnyf0M0GYvMK2Er8+76JHWKXvMTWb59YQWxOATuJeafuMULUCEqcnPkE
-        7B5moJrmrbPBrpYQ+MwmcXPJdahDXST+H9sHNUhY4tXxLVC2jMT/nfOZIBrWMUr87XgB1b2d
-        UWL55H9sEFXWEnfO/WKDOFpTYv0ufYiwo8T0pcfYIGHHJ3HjrSDEEXwSk7ZNZ4YI80p0tAlB
-        VKtJbFi2gQ1mbdfOlcwQtodET8sktgmMirOQvDMLyTuzEPYuYGRexSieWlqcm55abJSXWq5X
-        nJhbXJqXrpecn7uJEZg+Tv87/mUH464/SYcYBTgYlXh4ZwQpxAmxJpYVV+YeYpTgYFYS4T05
-        QzZOiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/xopexQgLpiSWp2ampBalFMFkmDk6pBkbtovI3
-        0neCV4g2XCqr81pmMfeHT3jjE9n236VRy77P5ov1DGpl61v7kSFXc/PbGzn9LoJ++tGrsu9M
-        Nt1Z5iHy7MH+5aKLNq3ddeZ4RrfD78NK2fG/D0T82fHXoMBOoK1u9eJ7LM1d+fadDl2My3O2
-        sx67vuuyXKsqh8yJsxcm8T3mz7pjaKjEUpyRaKjFXFScCAC2vAG8GwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsVy+t/xu7o9eQpxBge+K1vcWneO1WLjjPWs
-        Fle+vmezONH3gdXi8q45bA6sHve7jzN59G1ZxejxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWR
-        nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaM6T4F/9wrlvx9ytjA+NOyi5GTQ0LA
-        RGLi7NcsXYxcHEICSxklJp48xtTFyAGUkJE4vr4MokZY4s+1LjaImk+MEsdvtbGDJNgErCQm
-        tq9iBLFFBJIkOhtOMoPYzALOErNuPWICsYUFAiQutHWzgdgsAqoS3ydA2LwCthL/vm9ih1gg
-        L7H12ydWEJtTwE5i3ql7jCA3CAHVHJomBVEuKHFy5hMWiPHyEs1bZzNPYBSYhSQ1C0lqASPT
-        KkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMAw33bs5+YdjJc2Bh9iFOBgVOLhnRGkECfEmlhW
-        XJl7iFGCg1lJhPfkDNk4Id6UxMqq1KL8+KLSnNTiQ4ymQD9MZJYSTc4HxmBeSbyhqaG5haWh
-        ubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQZGL71Tl2Qjsmy1N1VtszHe8Kjy6smZ
-        M4LYp0uuY4x453wp5fuvwP2CHdzJd+5urfU/c+xe6qLEzdJlMv0PFx0pKniS0/PphcK9hEqG
-        A/Y5GuE3y5r9P5vrzhK3ivp9w7741kbO6x/0V/zdcNV+yYxPLFzaEb/XmMxQjf8/I8x6Ye+/
-        pZzdvE6zlViKMxINtZiLihMBmJZlOYkCAAA=
-X-CMS-MailID: 20200116140916eucas1p2bd3480995a55fdc646481a8fa5a5aff3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200116140916eucas1p2bd3480995a55fdc646481a8fa5a5aff3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200116140916eucas1p2bd3480995a55fdc646481a8fa5a5aff3
-References: <20200116140900.26363-1-b.zolnierkie@samsung.com>
-        <CGME20200116140916eucas1p2bd3480995a55fdc646481a8fa5a5aff3@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <528c1cff-608c-d342-1e72-90d780555204@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorder code a bit and then remove no longer needed function
-prototypes.
+On Wed, Jan 15, 2020 at 02:05:24PM -0800, Ralph Campbell wrote:
+> 
+> On 1/14/20 4:49 AM, Jason Gunthorpe wrote:
+> > On Mon, Jan 13, 2020 at 02:47:01PM -0800, Ralph Campbell wrote:
+> > > diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+> > > index 47ad9cc89aab..4efecc0f13cb 100644
+> > > +++ b/mm/mmu_notifier.c
+> > > @@ -1171,6 +1171,39 @@ void mmu_interval_notifier_update(struct mmu_interval_notifier *mni,
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(mmu_interval_notifier_update);
+> > > +struct mmu_interval_notifier *mmu_interval_notifier_find(struct mm_struct *mm,
+> > > +				const struct mmu_interval_notifier_ops *ops,
+> > > +				unsigned long start, unsigned long last)
+> > > +{
+> > > +	struct mmu_notifier_mm *mmn_mm = mm->mmu_notifier_mm;
+> > > +	struct interval_tree_node *node;
+> > > +	struct mmu_interval_notifier *mni;
+> > > +	struct mmu_interval_notifier *res = NULL;
+> > > +
+> > > +	spin_lock(&mmn_mm->lock);
+> > > +	node = interval_tree_iter_first(&mmn_mm->itree, start, last);
+> > > +	if (node) {
+> > > +		mni = container_of(node, struct mmu_interval_notifier,
+> > > +				   interval_tree);
+> > > +		while (true) {
+> > > +			if (mni->ops == ops) {
+> > > +				res = mni;
+> > > +				break;
+> > > +			}
+> > > +			node = interval_tree_iter_next(&mni->interval_tree,
+> > > +						       start, last);
+> > > +			if (!node)
+> > > +				break;
+> > > +			mni = container_of(node, struct mmu_interval_notifier,
+> > > +					   interval_tree);
+> > > +		}
+> > > +	}
+> > > +	spin_unlock(&mmn_mm->lock);
+> > 
+> > This doesn't seem safe at all, here we are returning a pointer to
+> > memory from the interval tree with out any kind of lifetime
+> > protection.
+> 
+> It is memory that the driver has allocated and has full control over
+> the lifetime since the driver does all the insertions and removals.
+> The driver does have to hold the HW page table lock so lookups are
+> synchronized with interval insertions and removals and page table
+> entry insertions and removals.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/video/fbdev/controlfb.c | 306 +++++++++++++++-----------------
- 1 file changed, 147 insertions(+), 159 deletions(-)
+No.. the ->release is async, so having the driver hold a lock around
+all the mmu_interval_ APIS still doesn't make it safe. The element
+could be on the defered list and it could become freed at any moment.
 
-diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
-index 4012ecf72d47..e71192ee5650 100644
---- a/drivers/video/fbdev/controlfb.c
-+++ b/drivers/video/fbdev/controlfb.c
-@@ -129,16 +129,6 @@ struct fb_info_control {
- #define CNTRL_REG(INFO,REG) (&(((INFO)->control_regs->REG).r))
- 
- 
--/******************** Prototypes for internal functions **********************/
--
--static void control_set_hardware(struct fb_info_control *p,
--	struct fb_par_control *par);
--static int control_var_to_par(struct fb_var_screeninfo *var,
--	struct fb_par_control *par, const struct fb_info *fb_info);
--static inline void control_par_to_var(struct fb_par_control *par,
--	struct fb_var_screeninfo *var);
--
--
- /************************** Internal variables *******************************/
- 
- static struct fb_info_control *control_fb;
-@@ -147,155 +137,6 @@ static int default_vmode __initdata = VMODE_NVRAM;
- static int default_cmode __initdata = CMODE_NVRAM;
- 
- 
--/********************  The functions for controlfb_ops ********************/
--
--/*
-- * Checks a var structure
-- */
--static int controlfb_check_var (struct fb_var_screeninfo *var, struct fb_info *info)
--{
--	struct fb_par_control par;
--	int err;
--
--	err = control_var_to_par(var, &par, info);
--	if (err)
--		return err;	
--	control_par_to_var(&par, var);
--
--	return 0;
--}
--
--/*
-- * Applies current var to display
-- */
--static int controlfb_set_par (struct fb_info *info)
--{
--	struct fb_info_control *p =
--		container_of(info, struct fb_info_control, info);
--	struct fb_par_control par;
--	int err;
--
--	if((err = control_var_to_par(&info->var, &par, info))) {
--		printk (KERN_ERR "controlfb_set_par: error calling"
--				 " control_var_to_par: %d.\n", err);
--		return err;
--	}
--	
--	control_set_hardware(p, &par);
--
--	info->fix.visual = (p->par.cmode == CMODE_8) ?
--		FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_DIRECTCOLOR;
--	info->fix.line_length = p->par.pitch;
--	info->fix.xpanstep = 32 >> p->par.cmode;
--	info->fix.ypanstep = 1;
--
--	return 0;
--}
--
--/*
-- * Set screen start address according to var offset values
-- */
--static inline void set_screen_start(int xoffset, int yoffset,
--	struct fb_info_control *p)
--{
--	struct fb_par_control *par = &p->par;
--
--	par->xoffset = xoffset;
--	par->yoffset = yoffset;
--	out_le32(CNTRL_REG(p,start_addr),
--		 par->yoffset * par->pitch + (par->xoffset << par->cmode));
--}
--
--
--static int controlfb_pan_display(struct fb_var_screeninfo *var,
--				 struct fb_info *info)
--{
--	unsigned int xoffset, hstep;
--	struct fb_info_control *p =
--		container_of(info, struct fb_info_control, info);
--	struct fb_par_control *par = &p->par;
--
--	/*
--	 * make sure start addr will be 32-byte aligned
--	 */
--	hstep = 0x1f >> par->cmode;
--	xoffset = (var->xoffset + hstep) & ~hstep;
--
--	if (xoffset+par->xres > par->vxres ||
--	    var->yoffset+par->yres > par->vyres)
--		return -EINVAL;
--
--	set_screen_start(xoffset, var->yoffset, p);
--
--	return 0;
--}
--
--
--/*
-- * Private mmap since we want to have a different caching on the framebuffer
-- * for controlfb.
-- * Note there's no locking in here; it's done in fb_mmap() in fbmem.c.
-- */
--static int controlfb_mmap(struct fb_info *info,
--                       struct vm_area_struct *vma)
--{
--	unsigned long mmio_pgoff;
--	unsigned long start;
--	u32 len;
--
--	start = info->fix.smem_start;
--	len = info->fix.smem_len;
--	mmio_pgoff = PAGE_ALIGN((start & ~PAGE_MASK) + len) >> PAGE_SHIFT;
--	if (vma->vm_pgoff >= mmio_pgoff) {
--		if (info->var.accel_flags)
--			return -EINVAL;
--		vma->vm_pgoff -= mmio_pgoff;
--		start = info->fix.mmio_start;
--		len = info->fix.mmio_len;
--		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
--	} else {
--		/* framebuffer */
--#ifdef CONFIG_PPC_PMAC
--		vma->vm_page_prot = pgprot_cached_wthru(vma->vm_page_prot);
--#endif
--	}
--
--	return vm_iomap_memory(vma, start, len);
--}
--
--static int controlfb_blank(int blank_mode, struct fb_info *info)
--{
--	struct fb_info_control *p =
--		container_of(info, struct fb_info_control, info);
--	unsigned ctrl;
--
--	ctrl = le32_to_cpup((const __force __le32 *)CNTRL_REG(p, ctrl));
--	if (blank_mode > 0)
--		switch (blank_mode) {
--		case FB_BLANK_VSYNC_SUSPEND:
--			ctrl &= ~3;
--			break;
--		case FB_BLANK_HSYNC_SUSPEND:
--			ctrl &= ~0x30;
--			break;
--		case FB_BLANK_POWERDOWN:
--			ctrl &= ~0x33;
--			/* fall through */
--		case FB_BLANK_NORMAL:
--			ctrl |= 0x400;
--			break;
--		default:
--			break;
--		}
--	else {
--		ctrl &= ~0x400;
--		ctrl |= 0x33;
--	}
--	out_le32(CNTRL_REG(p,ctrl), ctrl);
--
--	return 0;
--}
--
- static int controlfb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
- 			     u_int transp, struct fb_info *info)
- {
-@@ -352,6 +193,20 @@ static void set_control_clock(unsigned char *params)
- #endif	
- }
- 
-+/*
-+ * Set screen start address according to var offset values
-+ */
-+static inline void set_screen_start(int xoffset, int yoffset,
-+	struct fb_info_control *p)
-+{
-+	struct fb_par_control *par = &p->par;
-+
-+	par->xoffset = xoffset;
-+	par->yoffset = yoffset;
-+	out_le32(CNTRL_REG(p,start_addr),
-+		 par->yoffset * par->pitch + (par->xoffset << par->cmode));
-+}
-+
- #define RADACAL_WRITE(a,d) \
- 	out_8(&p->cmap_regs->addr, (a)); \
- 	out_8(&p->cmap_regs->dat,   (d))
-@@ -774,6 +629,139 @@ static inline void control_par_to_var(struct fb_par_control *par,
- 	var->pixclock >>= par->regvals.clock_params[2];
- }
- 
-+/********************  The functions for controlfb_ops ********************/
-+
-+/*
-+ * Checks a var structure
-+ */
-+static int controlfb_check_var (struct fb_var_screeninfo *var, struct fb_info *info)
-+{
-+	struct fb_par_control par;
-+	int err;
-+
-+	err = control_var_to_par(var, &par, info);
-+	if (err)
-+		return err;	
-+	control_par_to_var(&par, var);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Applies current var to display
-+ */
-+static int controlfb_set_par (struct fb_info *info)
-+{
-+	struct fb_info_control *p =
-+		container_of(info, struct fb_info_control, info);
-+	struct fb_par_control par;
-+	int err;
-+
-+	if((err = control_var_to_par(&info->var, &par, info))) {
-+		printk (KERN_ERR "controlfb_set_par: error calling"
-+				 " control_var_to_par: %d.\n", err);
-+		return err;
-+	}
-+	
-+	control_set_hardware(p, &par);
-+
-+	info->fix.visual = (p->par.cmode == CMODE_8) ?
-+		FB_VISUAL_PSEUDOCOLOR : FB_VISUAL_DIRECTCOLOR;
-+	info->fix.line_length = p->par.pitch;
-+	info->fix.xpanstep = 32 >> p->par.cmode;
-+	info->fix.ypanstep = 1;
-+
-+	return 0;
-+}
-+
-+static int controlfb_pan_display(struct fb_var_screeninfo *var,
-+				 struct fb_info *info)
-+{
-+	unsigned int xoffset, hstep;
-+	struct fb_info_control *p =
-+		container_of(info, struct fb_info_control, info);
-+	struct fb_par_control *par = &p->par;
-+
-+	/*
-+	 * make sure start addr will be 32-byte aligned
-+	 */
-+	hstep = 0x1f >> par->cmode;
-+	xoffset = (var->xoffset + hstep) & ~hstep;
-+
-+	if (xoffset+par->xres > par->vxres ||
-+	    var->yoffset+par->yres > par->vyres)
-+		return -EINVAL;
-+
-+	set_screen_start(xoffset, var->yoffset, p);
-+
-+	return 0;
-+}
-+
-+static int controlfb_blank(int blank_mode, struct fb_info *info)
-+{
-+	struct fb_info_control *p =
-+		container_of(info, struct fb_info_control, info);
-+	unsigned ctrl;
-+
-+	ctrl = le32_to_cpup((const __force __le32 *)CNTRL_REG(p, ctrl));
-+	if (blank_mode > 0)
-+		switch (blank_mode) {
-+		case FB_BLANK_VSYNC_SUSPEND:
-+			ctrl &= ~3;
-+			break;
-+		case FB_BLANK_HSYNC_SUSPEND:
-+			ctrl &= ~0x30;
-+			break;
-+		case FB_BLANK_POWERDOWN:
-+			ctrl &= ~0x33;
-+			/* fall through */
-+		case FB_BLANK_NORMAL:
-+			ctrl |= 0x400;
-+			break;
-+		default:
-+			break;
-+		}
-+	else {
-+		ctrl &= ~0x400;
-+		ctrl |= 0x33;
-+	}
-+	out_le32(CNTRL_REG(p,ctrl), ctrl);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Private mmap since we want to have a different caching on the framebuffer
-+ * for controlfb.
-+ * Note there's no locking in here; it's done in fb_mmap() in fbmem.c.
-+ */
-+static int controlfb_mmap(struct fb_info *info,
-+                       struct vm_area_struct *vma)
-+{
-+	unsigned long mmio_pgoff;
-+	unsigned long start;
-+	u32 len;
-+
-+	start = info->fix.smem_start;
-+	len = info->fix.smem_len;
-+	mmio_pgoff = PAGE_ALIGN((start & ~PAGE_MASK) + len) >> PAGE_SHIFT;
-+	if (vma->vm_pgoff >= mmio_pgoff) {
-+		if (info->var.accel_flags)
-+			return -EINVAL;
-+		vma->vm_pgoff -= mmio_pgoff;
-+		start = info->fix.mmio_start;
-+		len = info->fix.mmio_len;
-+		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-+	} else {
-+		/* framebuffer */
-+#ifdef CONFIG_PPC_PMAC
-+		vma->vm_page_prot = pgprot_cached_wthru(vma->vm_page_prot);
-+#endif
-+	}
-+
-+	return vm_iomap_memory(vma, start, len);
-+}
-+
- static const struct fb_ops controlfb_ops = {
- 	.owner		= THIS_MODULE,
- 	.fb_check_var	= controlfb_check_var,
--- 
-2.24.1
+> > If the interval tree is read it must be left in the read lock state
+> > until the caller is done with the pointer.
+> > 
+> > .. and this poses all sorts of questions about consistency with items
+> > on the deferred list. Should find return an item undergoing deletion?
+> 
+> I don't think so. The deferred operations are all complete when
+> mmu_interval_read_begin() returns, and the sequence number check
+> with mmu_interval_read_retry() guarantees there have been no changes
+> while not holding the driver page table lock and calling hmm_range_fault().
 
+It seems very dangerous to say, on one hand, that the driver is
+serialized because it holds a lock around all mmu_interval_* calls,
+while on the other saying that on rare edge cases find does not return
+a result that matches the serial-program-order sequence.
+
+This seems like a way to create bugs.
+
+For instance, if find is consistent with the defered list then it will
+not return any element that has a pending deletion and the above issue
+with lifetime wouldn't happen.
+
+However, I'm still not sure that providing an API tha requires the
+driver to provide tricky locking is the best idea. This basically says
+that if a driver uses find then every single other call to
+mmu_interval_* must be serialized with a single lock.
+
+Jason
