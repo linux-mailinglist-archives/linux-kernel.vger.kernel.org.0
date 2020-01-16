@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 775C813FE1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA2713FE65
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391584AbgAPXck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41988 "EHLO mail.kernel.org"
+        id S2404119AbgAPXcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391571AbgAPXcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:31 -0500
+        id S2391582AbgAPXce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:32:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9036D20684;
-        Thu, 16 Jan 2020 23:32:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A564206D9;
+        Thu, 16 Jan 2020 23:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217551;
-        bh=ZtOLED+HzresPEo2yXdyGD4jaScfbyJgvGIZpJddPBo=;
+        s=default; t=1579217553;
+        bh=yPILc2EaqVkJZiRtfHC31Gm8I44unw4nu8DjMiE840U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EPLgUOrwaYmKSaLJPylJg8j09lO9oYdg/Cqt7j9sONZxtHvBjSv6Cxv3iX3Hc2Dd7
-         NQgfe9Z0pQizHE0Hjp11JNyJNP3wfmbBHLFeD6KflRDtgrfJIewO+IgFb5bG5VAfX3
-         AsbRFAcpx0pFZax7SBbWSiww7mhHzrbSsZtL3nEU=
+        b=t+BjNGwJsFUQlCQVVLC4GvksiIfp8QKB353e87CMHewZOqWNRxz0bGerKNXejBnxI
+         kcisUfynCxTlKgYcWkQV2+cn6g2s6IWo6Fk2atAc/U7bcM4P9qLZnjE4L1xridPLG+
+         RAt30PhpeUyGOQQkql9C6KmQ26Lj1Vok9zIgA/7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.14 44/71] scsi: sd: enable compat ioctls for sed-opal
-Date:   Fri, 17 Jan 2020 00:18:42 +0100
-Message-Id: <20200116231715.862762618@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH 4.14 45/71] arm64: dts: apq8096-db820c: Increase load on l21 for SDCARD
+Date:   Fri, 17 Jan 2020 00:18:43 +0100
+Message-Id: <20200116231715.985523042@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
 References: <20200116231709.377772748@linuxfoundation.org>
@@ -45,61 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-commit 142b2ac82e31c174936c5719fa12ae28f51a55b7 upstream.
+commit e38161bd325ea541ef2f258d8e28281077dde524 upstream.
 
-The sed_ioctl() function is written to be compatible between
-32-bit and 64-bit processes, however compat mode is only
-wired up for nvme, not for sd.
+In the same way as for msm8974-hammerhead, l21 load, used for SDCARD
+VMMC, needs to be increased in order to prevent any voltage drop issues
+(due to limited current) happening with some SDCARDS or during specific
+operations (e.g. write).
 
-Add the missing call to sed_ioctl() in sd_compat_ioctl().
-
-Fixes: d80210f25ff0 ("sd: add support for TCG OPAL self encrypting disks")
-Cc: linux-scsi@vger.kernel.org
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: 660a9763c6a9 (arm64: dts: qcom: db820c: Add pm8994 regulator node)
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1697,20 +1697,30 @@ static void sd_rescan(struct device *dev
- static int sd_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 			   unsigned int cmd, unsigned long arg)
- {
--	struct scsi_device *sdev = scsi_disk(bdev->bd_disk)->device;
-+	struct gendisk *disk = bdev->bd_disk;
-+	struct scsi_disk *sdkp = scsi_disk(disk);
-+	struct scsi_device *sdev = sdkp->device;
-+	void __user *p = compat_ptr(arg);
- 	int error;
- 
-+	error = scsi_verify_blk_ioctl(bdev, cmd);
-+	if (error < 0)
-+		return error;
-+
- 	error = scsi_ioctl_block_when_processing_errors(sdev, cmd,
- 			(mode & FMODE_NDELAY) != 0);
- 	if (error)
- 		return error;
-+
-+	if (is_sed_ioctl(cmd))
-+		return sed_ioctl(sdkp->opal_dev, cmd, p);
- 	       
- 	/* 
- 	 * Let the static ioctl translation table take care of it.
- 	 */
- 	if (!sdev->host->hostt->compat_ioctl)
- 		return -ENOIOCTLCMD; 
--	return sdev->host->hostt->compat_ioctl(sdev, cmd, (void __user *)arg);
-+	return sdev->host->hostt->compat_ioctl(sdev, cmd, p);
- }
- #endif
- 
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -262,6 +262,8 @@
+ 				l21 {
+ 					regulator-min-microvolt = <2950000>;
+ 					regulator-max-microvolt = <2950000>;
++					regulator-allow-set-load;
++					regulator-system-load = <200000>;
+ 				};
+ 				l22 {
+ 					regulator-min-microvolt = <3300000>;
 
 
