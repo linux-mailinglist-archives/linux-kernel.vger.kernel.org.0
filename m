@@ -2,73 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B89F13FB4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:22:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A83213FAF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 22:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388886AbgAPVWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 16:22:09 -0500
-Received: from moreofthesa.me.uk ([178.238.159.109]:54642 "EHLO
-        spam.moreofthesa.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387674AbgAPVWJ (ORCPT
+        id S2388273AbgAPVCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 16:02:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:53375 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729890AbgAPVCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 16:22:09 -0500
-X-Greylist: delayed 1087 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 16:22:08 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=moreofthesa.me.uk; s=201708; h=In-Reply-To:Message-ID:Subject:Cc:To:From:
-        Date:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:References:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0ordMptwqL+7MqYAIKv1O1Ieb3eNxf4cNX632cV3+dI=; b=RRDWFtivoFmKXXDB0m7aeAH97d
-        D5g/kj9Jnkk6taQz/jfaaxvQyIfIxxD6+/ycumnS2Ydc+8/enlTDDoaEWr6sn01LVdVvc2VVjU/B/
-        rZF6MNXbizAXZOmTdjNvtZ6xAo35wme4ZJYCgn7YaYzcpcPb3eqnNu6xvzDvLiet+n4Y8twAi3RSR
-        xiECOcwi0OdpTNY6r90HRj04PcZCHH86nRlxeH042Jiq6pYcUoJMBzi617tmybqpa72qxRS6ua6Ch
-        EXAUya72hS2nmyLQCjEUyzlg2WLaIM06dNYyILbzgxppyhFHVgtRvOwERvxvSruBfT0Qxee6C/9IX
-        ZlSZqsEw==;
-Received: from [2001:8b0:897:1650::2] (helo=moreofthesa.me.uk)
-        by spam.moreofthesa.me.uk with esmtp (Exim 4.92)
-        (envelope-from <devspam@moreofthesa.me.uk>)
-        id 1isCIx-0007Lo-QE; Thu, 16 Jan 2020 21:03:57 +0000
-Date:   Thu, 16 Jan 2020 20:55:16 +0000
-From:   Darren Salt <devspam@moreofthesa.me.uk>
-To:     linux@roeck-us.net
-Cc:     clemens@ladisch.de, jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
-Message-ID: <5838D7FEC0%devspam@moreofthesa.me.uk>
-In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
-Mail-Followup-To: linux@roeck-us.net, clemens@ladisch.de, jdelvare@suse.com, 
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Darren Salt 
- <devspam@moreofthesa.me.uk>
-User-Agent: Messenger-Pro/2.73.6.4250 (Qt/5.11.3) (Linux-x86_64)
-X-No-Archive: no
-X-Orwell-Date: Thu, 12830 Dec 1984 20:55:16 +0000
-X-SA-Exim-Connect-IP: 2001:8b0:897:1650::2
-X-SA-Exim-Mail-From: devspam@moreofthesa.me.uk
-X-SA-Exim-Scanned: No (on spam.moreofthesa.me.uk); SAEximRunCond expanded to false
+        Thu, 16 Jan 2020 16:02:41 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1isCHk-00013O-Ce; Thu, 16 Jan 2020 22:02:36 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BB9E61C1886;
+        Thu, 16 Jan 2020 22:02:35 +0100 (CET)
+Date:   Thu, 16 Jan 2020 21:02:35 -0000
+From:   "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] EDAC/amd64: Add family ops for Family 19h Models 00h-0Fh
+Cc:     Yazen Ghannam <yazen.ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200110015651.14887-5-Yazen.Ghannam@amd.com>
+References: <20200110015651.14887-5-Yazen.Ghannam@amd.com>
+MIME-Version: 1.0
+Message-ID: <157920855560.396.17119230849166470415.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested-By: Darren Salt <devspam@moreofthesa.me.uk>
+The following commit has been merged into the ras/core branch of tip:
 
-Linux 5.4.12, Ryzen 5 1600. Patches were applied cleanly. No problems noticed in
+Commit-ID:     2eb61c91c3e2738218e55f2eaf7e78a4435c233d
+Gitweb:        https://git.kernel.org/tip/2eb61c91c3e2738218e55f2eaf7e78a4435c233d
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Fri, 10 Jan 2020 01:56:50 
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Thu, 16 Jan 2020 17:09:23 +01:00
 
-    $ sensors k10temp-pci-00c3
-    k10temp-pci-00c3
-    Adapter: PCI adapter
-    Vcore:	  +1.11 V
-    Vsoc:	  +0.94 V
-    Tdie:	  +42.8°C  (high = +70.0°C)
-    Tctl:         +42.8°C
-    Icore:       +15.59 A
-    Isoc:    	 +12.63 A
-    
-    $
+EDAC/amd64: Add family ops for Family 19h Models 00h-0Fh
 
--- 
-|  _  | Darren Salt, using Debian GNU/Linux (and Android)
-| ( ) |
-|  X  | ASCII Ribbon campaign against HTML e-mail
-| / \ |
+Add family ops to support AMD Family 19h systems. Existing Family 17h
+functions can be used. Also, add Family 19h to the list of families to
+automatically load the module.
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20200110015651.14887-5-Yazen.Ghannam@amd.com
+---
+ drivers/edac/amd64_edac.c | 17 +++++++++++++++++
+ drivers/edac/amd64_edac.h |  3 +++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 428ce98..2488cbf 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2336,6 +2336,16 @@ static struct amd64_family_type family_types[] = {
+ 			.dbam_to_cs		= f17_addr_mask_to_cs_size,
+ 		}
+ 	},
++	[F19_CPUS] = {
++		.ctl_name = "F19h",
++		.f0_id = PCI_DEVICE_ID_AMD_19H_DF_F0,
++		.f6_id = PCI_DEVICE_ID_AMD_19H_DF_F6,
++		.max_mcs = 8,
++		.ops = {
++			.early_channel_count	= f17_early_channel_count,
++			.dbam_to_cs		= f17_addr_mask_to_cs_size,
++		}
++	},
+ };
+ 
+ /*
+@@ -3368,6 +3378,12 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
+ 			family_types[F17_CPUS].ctl_name = "F18h";
+ 		break;
+ 
++	case 0x19:
++		fam_type	= &family_types[F19_CPUS];
++		pvt->ops	= &family_types[F19_CPUS].ops;
++		family_types[F19_CPUS].ctl_name = "F19h";
++		break;
++
+ 	default:
+ 		amd64_err("Unsupported family!\n");
+ 		return NULL;
+@@ -3626,6 +3642,7 @@ static const struct x86_cpu_id amd64_cpuids[] = {
+ 	{ X86_VENDOR_AMD, 0x16, X86_MODEL_ANY,	X86_FEATURE_ANY, 0 },
+ 	{ X86_VENDOR_AMD, 0x17, X86_MODEL_ANY,	X86_FEATURE_ANY, 0 },
+ 	{ X86_VENDOR_HYGON, 0x18, X86_MODEL_ANY, X86_FEATURE_ANY, 0 },
++	{ X86_VENDOR_AMD, 0x19, X86_MODEL_ANY,	X86_FEATURE_ANY, 0 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(x86cpu, amd64_cpuids);
+diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+index 9be3168..abbf3c2 100644
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -122,6 +122,8 @@
+ #define PCI_DEVICE_ID_AMD_17H_M30H_DF_F6 0x1496
+ #define PCI_DEVICE_ID_AMD_17H_M70H_DF_F0 0x1440
+ #define PCI_DEVICE_ID_AMD_17H_M70H_DF_F6 0x1446
++#define PCI_DEVICE_ID_AMD_19H_DF_F0	0x1650
++#define PCI_DEVICE_ID_AMD_19H_DF_F6	0x1656
+ 
+ /*
+  * Function 1 - Address Map
+@@ -292,6 +294,7 @@ enum amd_families {
+ 	F17_M10H_CPUS,
+ 	F17_M30H_CPUS,
+ 	F17_M70H_CPUS,
++	F19_CPUS,
+ 	NUM_FAMILIES,
+ };
+ 
