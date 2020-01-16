@@ -2,126 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC93413DDA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2FE13DDBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 15:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbgAPOkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 09:40:42 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:45179 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbgAPOkl (ORCPT
+        id S1727008AbgAPOmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 09:42:55 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58974 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbgAPOmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:40:41 -0500
-Received: by mail-vs1-f67.google.com with SMTP id b4so12788171vsa.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 06:40:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MVhtaTZCnCfNAKfqW6Z96W5OFC2Pq+R/wFI5kI7mdb4=;
-        b=gXEtdQ7PCw+gTlTwk1m8oaajlGEKXgyLcnQ9O/Q3xrgixx5T22kdhtzB2RxINoEeYz
-         7eY9jpwmUVVR32V/YGB1Hf5+pC9LvE1fyWYBuaBY84d8VnJWSVlhLtU3vo2ngr3NSQ8u
-         s0h28cTMPi+qhCHTXZoZD1FkXjkwgb9xQlrqIyhqMaLPoc1P0m3JoASsyLh/bngQWlkh
-         g2aOkk3mZO1/tMmjtt6fe9B+4LvgPIzfYQMYbZqXe2BaoVLlx4EXvtbl0tWzEXpwTyFH
-         Ajj1kCy4Sa1iR4cs5ps/nMGuJimSypSXdHgDhJfvgDJKzeBRbHbE19yw6SxqQTQ0tUck
-         6rtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MVhtaTZCnCfNAKfqW6Z96W5OFC2Pq+R/wFI5kI7mdb4=;
-        b=mosNEf4AbuiOLLhSyCAMbL2465W2uHt6a8cri6MYlApi2ldjvKfPjWI6pr3zQuCxuu
-         w35xAJpIgVYjproAW8tFUMy9dmrqfI9FuAaUNNfBhqHOUkOvyd40hwc7lpxwryDuGG5W
-         NrOvPplNtjCnw0JAr/YfRkRsNn5z3sfUrq6Ya1almOz5GLgrTtjIRnGIxUn+hLhCHxDy
-         tixjGRzc4N+ZC5rch32uDxoJlg4LmSu3wS4FmIDGYmyfib2GXuElcC4WuQ7ovRd6Fz8z
-         LXkkscJWtc6vT8afiwMHxT7JjwUDdwqDyaqMBIkKCrrIwG0MHUxvGz4e2R5XO++OHHNB
-         8Z3Q==
-X-Gm-Message-State: APjAAAUMxVEp/DUkCAAEN18sQ4niGa8ktMQw27XsGbyIGBs1ZT2ZEwvw
-        EtfdNLYplcVoN/ewbqDRwSvfSh2YVdBDbGBT7qrJzg==
-X-Google-Smtp-Source: APXvYqxdGqQVZL1Cp2YXroa6T/66ubc1o8e1OjNbTTh0kzG7LTpsQVMQx7USP1Q+2n2bYrFlgiT+1QU5tEx365YNJ9U=
-X-Received: by 2002:a67:cd96:: with SMTP id r22mr1631688vsl.165.1579185640833;
- Thu, 16 Jan 2020 06:40:40 -0800 (PST)
+        Thu, 16 Jan 2020 09:42:43 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200116144241euoutp02fe20c944b952dd74e42350d0ecc22190~qZRVjEmpr2958429584euoutp02h
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200116144241euoutp02fe20c944b952dd74e42350d0ecc22190~qZRVjEmpr2958429584euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579185761;
+        bh=8Ahf2/0EsEBYG+/Mv5cyXwGGbXnNjNkyPPuFLBhAkYQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=qGFNauyArbJxWpVSh/xTaYHLyTlldsLv0uAEsQAHlPwZmyDS9MsmfVunPRStnc61P
+         TjBiTeG8jFl7zCOC8iWFJDb/iINEV8+jRDf4RyT32AQv17S2XGvdl5lk05vPsD/o0o
+         +I5dZL0WMgb+mOrQiVOdrWj+AOsdmmqn0f1lKPhg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200116144241eucas1p21fbfa0f4e0e68dedad3a4bc6dcafeb64~qZRVRthGZ2314923149eucas1p2C;
+        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 14.D2.60698.166702E5; Thu, 16
+        Jan 2020 14:42:41 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff~qZRU3h-381442314423eucas1p2V;
+        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200116144241eusmtrp13ad69389c59a3c9b12dbcdca183a5a2a~qZRU20qKm0584505845eusmtrp1T;
+        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-e6-5e20766159d0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D4.64.08375.166702E5; Thu, 16
+        Jan 2020 14:42:41 +0000 (GMT)
+Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200116144240eusmtip2b01528aecb320a8b1705f43c2d4928bd~qZRUV2MnO2614526145eusmtip2N;
+        Thu, 16 Jan 2020 14:42:40 +0000 (GMT)
+From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        georgi.djakov@linaro.org, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com, krzk@kernel.org
+Subject: [PATCH v4 0/3] interconnect: Support Samsung Exynos use-case
+Date:   Thu, 16 Jan 2020 15:41:59 +0100
+Message-Id: <20200116144202.12116-1-a.swigon@samsung.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20200107104040.14500-1-peter.ujfalusi@ti.com>
-In-Reply-To: <20200107104040.14500-1-peter.ujfalusi@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 16 Jan 2020 15:40:04 +0100
-Message-ID: <CAPDyKFqjiwqP-QzHQT4r-YXzLD2rdjNZK5Vb9=KC1SDTuhwtOw@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: bcm2835: Use dma_request_chan() instead dma_request_slave_channel()
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Vinod Koul <vkoul@kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAKsWRmVeSWpSXmKPExsWy7djP87qJZQpxBg23ZCzuz2tltNg4Yz2r
+        xfUvz1ktpu/dxGZx/vwGdovLu+awWXzuPcJoMeP8PiaLtUfusjtwemxa1cnmcefaHjaPvi2r
+        GD0+b5ILYInisklJzcksSy3St0vgyvj68j57wQ/eihcn5jA2MG7m7mLk5JAQMJHomdfPDmIL
+        CaxglOj/FQ9hf2GUuHfcu4uRC8j+zCix6/kzJpiGxzvesEAULWeU2P8+DaIIqOH95UVsIAk2
+        AUeJSVMfgE0VEYiX+LjtHwtIEbPATkaJI3//gE0SFnCV2NT4jRnEZhFQlfg6qQsszitgKXHo
+        7wxGiG3yEqs3HGCGiAtKnJz5BGwzM1C8eetsZpChEgKT2SUatu2DOs9FYtmaecwQtrDEq+Nb
+        2CFsGYnTk3tYIOxiiac777NCNDcwSmxadgSqwVrizrlfQC9wAG3QlFi/Sx/ElAD6Zvu6IAiT
+        T+LGW0GIE/gkJm2bzgwR5pXoaBOCMJUkds3kgxgnIdG0+hrUaA+JPTcWQ4MtVqLjSD/LBEaF
+        WUj+moXkr1kIFyxgZF7FKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmG5O/zv+dQfjvj9J
+        hxgFOBiVeHg/hCjECbEmlhVX5h5ilOBgVhLhPTlDNk6INyWxsiq1KD++qDQntfgQozQHi5I4
+        r/Gil7FCAumJJanZqakFqUUwWSYOTqkGRqGyQ3Y2P4pn1Lg0yKxjkSvd7bagsnCGq6NV1bVL
+        f93Mw+adKuXPmT1z1u7U284T3s2av971voaD86+vJS+qPUWb0mMZrh22eGC1csksdtW9ba8N
+        W32eLJ47aXnlV6f4ZxlaCosLJ3++YhCRvGt6sQz/qb3Hpj89o5V192uWmMf+iRqplxMuPlFi
+        Kc5INNRiLipOBACAgVbSMwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsVy+t/xe7qJZQpxBvs+sljcn9fKaLFxxnpW
+        i+tfnrNaTN+7ic3i/PkN7BaXd81hs/jce4TRYsb5fUwWa4/cZXfg9Ni0qpPN4861PWwefVtW
+        MXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
+        b5egl/H15X32gh+8FS9OzGFsYNzM3cXIySEhYCLxeMcbli5GLg4hgaWMEj1757NDJCQkPq6/
+        wQphC0v8udbFBlH0iVFi+dSHbCAJNgFHiUlTH4A1iAgkStx69JgZpIhZYD+jxMs7bWBFwgKu
+        EpsavzGD2CwCqhJfJ3Uxgdi8ApYSh/7OYITYIC+xesMBZoi4oMTJmU+ATuIAGqQusX6eEEiY
+        Gaikeets5gmM/LOQVM1CqJqFpGoBI/MqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwOjYduzn
+        5h2MlzYGH2IU4GBU4uGdEaQQJ8SaWFZcmXuIUYKDWUmE9+QM2Tgh3pTEyqrUovz4otKc1OJD
+        jKZAL0xklhJNzgdGbl5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6p
+        BkYPuZPXN+z/env+vG3yN9TFdmq/Vr345sxDVsNCn1f7rp1b8/yzd+jbTZwVq66KvPpQdch+
+        rwSXfx3vrwaT1isP1wq7s5VwPl40p3l7SdG3PPcfD3/ViC1XtFH+zuL3ujtIMdT5zIcSzyJW
+        RtUb98463LJPVn/jKH5SzuzIXKctsx68W72Eg91IiaU4I9FQi7moOBEA6vO3GKQCAAA=
+X-CMS-MailID: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
+References: <CGME20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 Jan 2020 at 11:40, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->
-> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-> eating up the error code.
->
-> By using dma_request_chan() directly the driver can support deferred
-> probing against DMA.
->
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Previously posted as a part of a larger RFC: [1].
 
-I thought I had already applied this, but maybe I didn't publish my
-branch back then.
+The Exynos SoC family relies on the devfreq driver for frequency
+scaling. However, a way to programmatically enforce QoS contraints
+(i.e., minimum frequency) is desired. A solution which uses the
+interconnect framework to ensure QoS is currently being developed[1].
 
-Oh well, please double check so the code has been included in my next branch.
+The exynos-bus hierarchy is composed of multiple buses which are probed
+separately. Sometimes the DMC is even handled by a different driver.
+Since the exynos-bus driver is generic and supports multiple differing
+bus hierarchies, IDs for nodes (i.e. buses) are assigned dynamically. Due
+to the unspecified relative probing order, every bus registers its own
+interconnect provider.
 
-Kind regards
-Uffe
+Rationale for each patch in this series:
+* Patch 01 (exporting of_icc_get_from_provider()) makes it easy to
+  retrieve the parent node from the DT (cf. patch 05 in [1]).
+* Patch 02 (allowing #interconnect-cells = <0>) allows to remove dummy
+  node IDs from the DT.
+* Patch 03 (allowing inter-provider node pairs) is necessary to make
+  such multi-provider hierarchy work. A new approach implemented in v3
+  ensures not to break any existing drivers.
 
+---
+Changes since v3 (to patches in this series):
+* Improve commit messages.
 
-> ---
-> Hi,
->
-> Changes since v1:
-> - jump to err: instead of returning in case of EPROBE_DEFER
->
-> Regards,
-> Peter
->
->  drivers/mmc/host/bcm2835.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-> index 99f61fd2a658..c3d949847cbd 100644
-> --- a/drivers/mmc/host/bcm2835.c
-> +++ b/drivers/mmc/host/bcm2835.c
-> @@ -1393,7 +1393,17 @@ static int bcm2835_probe(struct platform_device *pdev)
->         host->dma_chan = NULL;
->         host->dma_desc = NULL;
->
-> -       host->dma_chan_rxtx = dma_request_slave_channel(dev, "rx-tx");
-> +       host->dma_chan_rxtx = dma_request_chan(dev, "rx-tx");
-> +       if (IS_ERR(host->dma_chan_rxtx)) {
-> +               ret = PTR_ERR(host->dma_chan_rxtx);
-> +               host->dma_chan_rxtx = NULL;
-> +
-> +               if (ret == -EPROBE_DEFER)
-> +                       goto err;
-> +
-> +               /* Ignore errors to fall back to PIO mode */
-> +       }
-> +
->
->         clk = devm_clk_get(dev, NULL);
->         if (IS_ERR(clk)) {
-> --
-> Peter
->
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->
+---
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
+
+---
+References:
+[1] https://patchwork.kernel.org/patch/11305287/
+
+Artur Świgoń (3):
+  interconnect: Export of_icc_get_from_provider()
+  interconnect: Relax requirement in of_icc_get_from_provider()
+  interconnect: Allow inter-provider pairs to be configured
+
+ drivers/interconnect/core.c           | 16 ++++++++--------
+ include/linux/interconnect-provider.h |  8 ++++++++
+ 2 files changed, 16 insertions(+), 8 deletions(-)
+
+-- 
+2.17.1
+
