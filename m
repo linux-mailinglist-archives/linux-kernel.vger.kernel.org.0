@@ -2,92 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 207DE13D8CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 12:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C036F13D8D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 12:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgAPLRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 06:17:10 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45425 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAPLRK (ORCPT
+        id S1726730AbgAPLUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 06:20:14 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:42734 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgAPLUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 06:17:10 -0500
-Received: by mail-ua1-f66.google.com with SMTP id 59so7483672uap.12
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 03:17:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F7tUdno7ArtPSiaOPdMNn5wVN9V2qtibzn63/OmNwzM=;
-        b=lwcdtRWLk0imKl7E0r3n6TJW8xeDU1FBZjrxdwbB1j1Ol8VLI6md87iF6Ei32CqstB
-         iZsxa6IJPvBFh4/KZIDh7uRZ4kCTldU8Hs1BMoPEFCwDTo7QdO9PKkKKeMCczAi+zG/4
-         JZfYXGg313YN4TZwuOTHONOstMiYv8zbow0CFVohUQbrYitLoSQqIkeDcuxGp6qNSXRF
-         MSkysZR6XwblHa8eMmPSQT/qJd8xv8W9O4E2ppMNt4Lo0lJZCGfmkzvlu2IAtDMnEnbB
-         1QjcmJa6xjbZVSVMx8kwvXsDZZBH7G6592G8of/U/0t0mCjvPQm1g4udNBlpI6gURr5r
-         am4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F7tUdno7ArtPSiaOPdMNn5wVN9V2qtibzn63/OmNwzM=;
-        b=CGrUz3plPhz+V7b2pcGZapPMpHdRpXosgmfIqf2XaUFiblipJGmtKY4F1iXI/ooofL
-         nGdO5uNKvU0rQNq9qBMSQIWNgdIbpE9jc3AU3P8b5+PYjApRbQJh9WgiSUlKCsMK7WWZ
-         nIs4nMQUx9yz5I4J4JhWJlmYfIPWnSi7l5NqYtEv6Jfe43nOT4yioK9BJJGrPvVcpran
-         g8R4ATxTabQacam43/AC/XMu9ZaXdjriChwSiSLAwe7bue2NsGm6339f8y/chG+J7KHD
-         pfr2MYfVK4jNAv53LCuY5iwrNiyd21qQgYuNX3EQ5aPrzk96anQr+dW4PqC2GGFqsIUl
-         cKLw==
-X-Gm-Message-State: APjAAAUBbiZL0vnMkX/g9wMCNnSc8JdOMQ1dNvzJUaPrz6S7KvAKHvXD
-        bgQqYiUovLwYGfuEWBnGe5LgdRHbYtDfYFwZ4imhOg==
-X-Google-Smtp-Source: APXvYqyiD7on53LJXj+IvnXLqg0ezI6WrramGC7O26YFNv+/TCtHx+KoDKnYfKLOvap+43EPQJV5R5WFI/gCOGKBRMA=
-X-Received: by 2002:ab0:20a:: with SMTP id 10mr17143795uas.19.1579173428886;
- Thu, 16 Jan 2020 03:17:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20191219145843.3823-1-jbx6244@gmail.com> <20191228093059.2817-1-jbx6244@gmail.com>
- <20200104215524.GA28188@bogus>
-In-Reply-To: <20200104215524.GA28188@bogus>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 16 Jan 2020 12:16:32 +0100
-Message-ID: <CAPDyKFp5BvA7tKpBUh-bpn5X4xvg8b9HuMO7+fZVJEp78=ToRw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: remove identical phrase in
- disable-wp text
-To:     Rob Herring <robh@kernel.org>
-Cc:     Johan Jonker <jbx6244@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 16 Jan 2020 06:20:13 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GBJ9lW093932;
+        Thu, 16 Jan 2020 11:19:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=YjFKVeJql6lw/iCy6LWo5CW0DXVtW3mwUUFRKQ485gU=;
+ b=XtFE4lVNz2AHk/xSj27X7PMwQnut7Q+IPoYad1Yo0hw6nFtdq2q1uYgzb6Fl+Cl6Nfec
+ wjSqrvNLJgudz0N3JsOJdke+w6F0e594aKWwJ7tXwployHKYaPzlDLaqan1AY/bN5jKN
+ NYtt5aiADdHy+Og2b+ZdVnlAMgoa37dM+gwNi/xrL8G4+M02NvK/uxdJJHSVT/Z7h7Ep
+ wdu3BE+8N+SXw13MCZIHFfl68Gbx5N/YBTcC9XzvoVnhJ3/7fUUg7lPTPIE34n7aVrCS
+ M3jj4S8TJ52Y1SrmjBdb6vWFIfIozEyl8BDiVwJaJG2t+OFF6oJ1IWtpzECxCWfQjL7W Ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xf74shvpc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 11:19:32 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GBJ8hu189386;
+        Thu, 16 Jan 2020 11:19:32 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2xj1psvwpv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 11:19:31 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00GBINs4016818;
+        Thu, 16 Jan 2020 11:18:23 GMT
+Received: from dhcp-10-175-200-122.vpn.oracle.com (/10.175.200.122)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Jan 2020 03:18:23 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     rjw@rjwysocki.net
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, brendanhiggins@google.com,
+        linux-next@vger.kernel.org, dmitry.torokhov@gmail.com,
+        sfr@canb.auug.org.au, rdunlap@infradead.org,
+        Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH] software node: property entry kunit tests must depend on KUNIT=y
+Date:   Thu, 16 Jan 2020 11:17:31 +0000
+Message-Id: <1579173451-2439-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=800
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160097
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=859 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 4 Jan 2020 at 22:55, Rob Herring <robh@kernel.org> wrote:
->
-> On Sat, 28 Dec 2019 10:30:58 +0100, Johan Jonker wrote:
-> > There are two identical phrases in the disable-wp text,
-> > so remove one of them.
-> >
-> > Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
->
-> Applied, thanks.
->
-> Rob
+property entry kunit tests are built if CONFIG_KUNIT_DRIVER_PE_TEST
+(a boolean) is 'y'; it in turn depends on CONFIG_KUNIT.  However to
+ensure clean merge with linux-next, where CONFIG_KUNIT is tristate,
+we need to explicitly specify KUNIT=y as a dependency, otherwise
+allmodconfig builds will build kunit as a module and fail to build
+the property entry tests.  Later CONFIG_KUNIT_DRIVER_PE_TEST can
+be converted to tristate.
 
-Rob,
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 27f9d7e984d9 ("software node: introduce CONFIG_KUNIT_DRIVER_PE_TEST")
+Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+---
+ drivers/base/test/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Normally I pick up the DT doc changes for mmc whenever you have acked
-them (at least more non-trivial changes). I regards to the
-mmc-controller.yaml file, I have no queued changes in my tree for this
-cycle so this should be fine in regards to conflicts.
+diff --git a/drivers/base/test/Kconfig b/drivers/base/test/Kconfig
+index d29ae95..305c775 100644
+--- a/drivers/base/test/Kconfig
++++ b/drivers/base/test/Kconfig
+@@ -10,4 +10,4 @@ config TEST_ASYNC_DRIVER_PROBE
+ 	  If unsure say N.
+ config KUNIT_DRIVER_PE_TEST
+ 	bool "KUnit Tests for property entry API"
+-	depends on KUNIT
++	depends on KUNIT=y
+-- 
+1.8.3.1
 
-Going forward, do you prefer to pick the DT doc changes for mmc, or
-can I consider this as a single occasion thingy?
-
-Kind regards
-Uffe
