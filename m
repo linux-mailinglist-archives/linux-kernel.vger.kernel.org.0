@@ -2,82 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4612413DAA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:54:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6CC13DAB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 13:58:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgAPMxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 07:53:23 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44012 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAPMxX (ORCPT
+        id S1726845AbgAPM46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 07:56:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30572 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726587AbgAPM45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 07:53:23 -0500
-Received: by mail-ot1-f65.google.com with SMTP id p8so19196865oth.10;
-        Thu, 16 Jan 2020 04:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UTrPLVNO7VWMNeu8igv+LQcUt1WzUrjPtjLMSVo2xbk=;
-        b=lZv9Axne9P671ULx5Jo7hSSDdO0Mp7UYRSOOE0bv5PjDolvDoS/0ZgjIp5uUBktcDz
-         tqJxfCOKKbWhqaALp0YMUnc0yQ3Flda0267nae3Hj/IDqnhiRTMdK7Wkt0XPifn0ldyM
-         L1LLVFxzhmo7y29E/8C0YQ/VkFB6EAEU7Ow2co4r7k8RlTWm3XWHnhdLjg1ELviKP/p9
-         /WvivKjb835Pj3U0Rqo53wLNKlyKYdelipVDY5RkYBN3Bqsm+5MgENVUEe5uvFz8gTlT
-         XFlHbJwQzDzx7WFkW0iEPlgCQxzwCFNW/KcutszMyQNpYxlmNGzj6u0PcXj7BNMG68q1
-         Ab1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UTrPLVNO7VWMNeu8igv+LQcUt1WzUrjPtjLMSVo2xbk=;
-        b=k+5UaN36EWq8MFmmVc8KoEkv7DXeURjt/8WD9K5N0kEl8MiF0TRCW/CeClOAjAFbSC
-         7hMmTWZo6p7D4ewKzzozZHDg1xobsQpyhYoINy0o8kWV72jPR/gtnnmRQlNOjZcdsUbC
-         YbP0jiZ6wbJj2g1dhmuQbK8wnl8BYMlgXueZ7RSdZ/qJetazCMiZQGTEXa/E9y+Ooe2K
-         4qZv1/06nt+iXf7LbaR9DOjP85wO53++kRFli57kfKwVQ9ib2jcHGUp2MEHvil7falmS
-         BAwAyJ2YDSH+77XQ3sEk9WfJkb9yhDOIjakEOQrP/XtcRxt3UNV6liXo+1O+21UZSjOT
-         R9pg==
-X-Gm-Message-State: APjAAAUxtHMRoO7YxBjHj8LaP55XFDSvpEcwxUwCwJFpmlrjVV3vyY9P
-        5BWB47SW6LNrJ7bkDzU45f+cIUw+8hP5GhK7NFkuh2iP
-X-Google-Smtp-Source: APXvYqzo6JOoRDSNx8gmB+ryX9A2AF6TP/amBNBj/nmQkkGhOvhtKfPdee3vLa8hlhn9EtBrlD236NHOQpuXsmjXki4=
-X-Received: by 2002:a9d:3bc4:: with SMTP id k62mr1878121otc.186.1579179202433;
- Thu, 16 Jan 2020 04:53:22 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20200116122951eucas1p1d36493f2b496bb13dca4fd1a17abad49@eucas1p1.samsung.com>
- <20200116122938.20789-1-b.zolnierkie@samsung.com>
-In-Reply-To: <20200116122938.20789-1-b.zolnierkie@samsung.com>
-From:   Manuel Lauss <manuel.lauss@gmail.com>
-Date:   Thu, 16 Jan 2020 13:52:46 +0100
-Message-ID: <CAOLZvyH-gP36fjC3EpkLLAi0Ha0sXvgmMqgQ9CnZ3-rHNTdU9A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ide/MIPS/docs: remove no longer used au1xxx-ide driver
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-IDE <linux-ide@vger.kernel.org>,
-        Linux-MIPS <linux-mips@vger.kernel.org>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+        Thu, 16 Jan 2020 07:56:57 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00GCq8i0042582
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:56:56 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xh8d62qnr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 07:56:56 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 16 Jan 2020 12:56:54 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 16 Jan 2020 12:56:52 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00GCup5G57147398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 12:56:51 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9F3F11C04C;
+        Thu, 16 Jan 2020 12:56:51 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 152B711C071;
+        Thu, 16 Jan 2020 12:56:51 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.139.213])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 16 Jan 2020 12:56:50 +0000 (GMT)
+Subject: Re: [PATCH] IMA: pre-allocate keyrings string
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Date:   Thu, 16 Jan 2020 07:56:50 -0500
+In-Reply-To: <20200116031508.3481-1-nramas@linux.microsoft.com>
+References: <20200116031508.3481-1-nramas@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20011612-0008-0000-0000-00000349E670
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20011612-0009-0000-0000-00004A6A4028
+Message-Id: <1579179410.5857.21.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-16_04:2020-01-16,2020-01-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 phishscore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-2001160109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 1:30 PM Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Commit 54ff4a1d1732 ("MIPS: Alchemy: pata_platform for DB1200")
-> from year 2014 converted the only user of au1xxx-ide IDE host
-> driver (MIPS Alchemy DB1200 platform) to use pata_platform libata
-> host driver instead. This patch series removes dead au1xxx-ide
-> driver code & co.
+Hi Laskhmi,
 
-For the whole series:
-Acked-By: Manuel Lauss <manuel.lauss@gmail.com>
+On Wed, 2020-01-15 at 19:15 -0800, Lakshmi Ramasubramanian wrote:
+> ima_match_keyring() is called while holding rcu read lock.
+> Since this function executes in atmomic context, it should
+> not call any function that can sleep (such as kstrdup()).
 
-Good riddance. This driver really only worked well with the db1200
-board set to a specific
-cpu clock speed.
+Good catch!
 
-Best regards,
-      Manuel
+> This patch pre-allocates a buffer to hold the keyrings
+> string read from the IMA policy and uses that to check
+> the given keyring in ima_match_keyring().
+
+(Reminder: this patch description line length is a bit short.
+ According to  Documentation/process/submitting-patches.rst, the patch
+description line length should be line wrapped at 75 columns.)
+
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Fixes: e9085e0ad38a ("IMA: Add support to limit measuring keys")
+> ---
+
+ 
+> @@ -1120,8 +1117,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  				result = -EINVAL;
+>  				break;
+>  			}
+> +
+> +			ima_keyrings = kstrdup(args[0].from, GFP_KERNEL);
+> +			if (!ima_keyrings) {
+> +				result = -ENOMEM;
+> +				break;
+> +			}
+
+
+This would work for a single "key" measurement rule, but not for
+multiple rules, where the last "keyrings" string is shorter than the
+previous ones.  For example, in addition to the builtin trusted
+keyrings, another rule could measure a keyring owned by a user.
+
+measure func=KEY_CHECK template=ima-buf keyrings=.ima|.builtin_trusted_keys
+measure func=KEY_CHECK uid=1000 template=ima-buf keyrings=_foo
+
+Mimi
+
+>  			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
+>  			if (!entry->keyrings) {
+> +				kfree(ima_keyrings);
+> +				ima_keyrings = NULL;
+>  				result = -ENOMEM;
+>  				break;
+>  			}
+
