@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80AE13E7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6A113E7AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 18:27:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392444AbgAPR1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 12:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36514 "EHLO mail.kernel.org"
+        id S2392457AbgAPR1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 12:27:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392392AbgAPR1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:27:04 -0500
+        id S2392417AbgAPR1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:27:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6BF6246D3;
-        Thu, 16 Jan 2020 17:27:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14059246D3;
+        Thu, 16 Jan 2020 17:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195623;
-        bh=8iRFm89jihfp3NUUzy4kvRT0BpudT1RYy/C7LLvQQX0=;
+        s=default; t=1579195630;
+        bh=PFQWB6yhTiykWY+nO5wBabV+FH2+zy+I/JKuaKCtjec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AAtiSOQ6gsT+Q5CF9PJVkE9o7ubq4+Qq5E50qidI4+ipH3PDc89e2SjyJcFrIq/co
-         FKn+8lCsAZq1SQ7FuAAsM6N54D3AfkE+IyCtaeNz5G9EvkQg04Y144r6hNHwtnidby
-         IGEg5ob8xwoXYpeYuY74me1w8am2cmrIogwqLIVE=
+        b=U0YzvyhaJFjLqtLm8YZrzczSOtjXijCMiyt/9T61eo0k39YLGB1YGOh7MVSru++Sw
+         KsqW9SvIFVFoeotndmgtxdzodiTvqAHt9PtlOJSs2tHhRdQssT+VnFLSMEdvrcZHO/
+         lBH+9+5CYmm+IxK+1wwy7Td7BrH5WEnMJRzbLi00=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Lad Prabhakar" <prabhakar.csengg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 194/371] media: davinci/vpbe: array underflow in vpbe_enum_outputs()
-Date:   Thu, 16 Jan 2020 12:21:06 -0500
-Message-Id: <20200116172403.18149-137-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 198/371] pwm: meson: Consider 128 a valid pre-divider
+Date:   Thu, 16 Jan 2020 12:21:10 -0500
+Message-Id: <20200116172403.18149-141-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,52 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit b72845ee5577b227131b1fef23f9d9a296621d7b ]
+[ Upstream commit 51496e4446875726d50a5617a6e0e0dabbc2e6da ]
 
-In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
-the problem is that "temp_index" can be negative.  This patch changes
-the types to unsigned to address this array underflow bug.
+The pre-divider allows configuring longer PWM periods compared to using
+the input clock directly. The pre-divider is 7 bit wide, meaning it's
+maximum value is 128 (the register value is off-by-one: 0x7f or 127).
 
-Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
+Change the loop to also allow for the maximum possible value to be
+considered valid.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: "Lad Prabhakar" <prabhakar.csengg@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 211ed630753d2f ("pwm: Add support for Meson PWM Controller")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/davinci/vpbe.c | 2 +-
- include/media/davinci/vpbe.h          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-meson.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 1d3c13e36904..915af9ca4711 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -126,7 +126,7 @@ static int vpbe_enum_outputs(struct vpbe_device *vpbe_dev,
- 			     struct v4l2_output *output)
- {
- 	struct vpbe_config *cfg = vpbe_dev->cfg;
--	int temp_index = output->index;
-+	unsigned int temp_index = output->index;
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 9b79cbc7a715..9551f896dd6f 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -188,7 +188,7 @@ static int meson_pwm_calc(struct meson_pwm *meson,
+ 	do_div(fin_ps, fin_freq);
  
- 	if (temp_index >= cfg->num_outputs)
+ 	/* Calc pre_div with the period */
+-	for (pre_div = 0; pre_div < MISC_CLK_DIV_MASK; pre_div++) {
++	for (pre_div = 0; pre_div <= MISC_CLK_DIV_MASK; pre_div++) {
+ 		cnt = DIV_ROUND_CLOSEST_ULL((u64)period * 1000,
+ 					    fin_ps * (pre_div + 1));
+ 		dev_dbg(meson->chip.dev, "fin_ps=%llu pre_div=%u cnt=%u\n",
+@@ -197,7 +197,7 @@ static int meson_pwm_calc(struct meson_pwm *meson,
+ 			break;
+ 	}
+ 
+-	if (pre_div == MISC_CLK_DIV_MASK) {
++	if (pre_div > MISC_CLK_DIV_MASK) {
+ 		dev_err(meson->chip.dev, "unable to get period pre_div\n");
  		return -EINVAL;
-diff --git a/include/media/davinci/vpbe.h b/include/media/davinci/vpbe.h
-index 79a566d7defd..180a05e91497 100644
---- a/include/media/davinci/vpbe.h
-+++ b/include/media/davinci/vpbe.h
-@@ -92,7 +92,7 @@ struct vpbe_config {
- 	struct encoder_config_info *ext_encoders;
- 	/* amplifier information goes here */
- 	struct amp_config_info *amp;
--	int num_outputs;
-+	unsigned int num_outputs;
- 	/* Order is venc outputs followed by LCD and then external encoders */
- 	struct vpbe_output *outputs;
- };
+ 	}
 -- 
 2.20.1
 
