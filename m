@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF8B13EE63
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8742E13EE60
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:09:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395051AbgAPSIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54536 "EHLO mail.kernel.org"
+        id S2395037AbgAPSIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:08:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405078AbgAPRih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:38:37 -0500
+        id S2393232AbgAPRil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:38:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11883246F2;
-        Thu, 16 Jan 2020 17:38:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8267E246DD;
+        Thu, 16 Jan 2020 17:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196317;
-        bh=vGBL1imLSbmqR+6eJCLZvfNMR/2j+V+YokWAhVLP25k=;
+        s=default; t=1579196320;
+        bh=DFY2xJ6oT72ntgufKPgHkk3dp5CRgSUSTNJfVJtkg/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JacH2PLqUQIcVeoTub7XQiu88hqQlkqGLWepO6RJ6LkBDKlds9HWv8gcY+TtyZJc0
-         jTkU64Z7hanQmbMtS9S+sacAOnox7Cm0JjzIjcSvkfaUzQFcaO6GWMbW3Vxu6UPW/Z
-         O19BqKinhMqzx/LdIE9bE9HC5ObyMYiAB6jjFMK0=
+        b=hToWdV+Km+6kDlybUFPYBC3xSS07l+gWxswA851Yg90F7+1rpNqyF6AKFopIfl7Ju
+         c0GbLaK5J0WR9+GOweycNdzgWl0BmEXDhvd1XMGZGCzkRXXBkwlkmpTRuqWFp556Nx
+         I7fC71mf76tOywkQAeRt1MMt9fo9t3T1DBloC6JM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH AUTOSEL 4.9 122/251] ALSA: usb-audio: Handle the error from snd_usb_mixer_apply_create_quirk()
-Date:   Thu, 16 Jan 2020 12:34:31 -0500
-Message-Id: <20200116173641.22137-82-sashal@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 4.9 124/251] ASoC: fix valid stream condition
+Date:   Thu, 16 Jan 2020 12:34:33 -0500
+Message-Id: <20200116173641.22137-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -42,36 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 328e9f6973be2ee67862cb17bf6c0c5c5918cd72 ]
+[ Upstream commit 6a7c59c6d9f3b280e81d7a04bbe4e55e90152dce ]
 
-The error from snd_usb_mixer_apply_create_quirk() is ignored in the
-current usb-audio driver code, which will continue the probing even
-after the error.  Let's take it more serious.
+A stream may specify a rate range using 'rate_min' and 'rate_max', so a
+stream may be valid and not specify any rates. However, as stream cannot
+be valid and not have any channel. Let's use this condition instead to
+determine if a stream is valid or not.
 
-Fixes: 7b1eda223deb ("ALSA: usb-mixer: factor out quirks")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: cde79035c6cf ("ASoC: Handle multiple codecs with split playback / capture")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/mixer.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/soc-pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 64fa1bbf0acb..54011f8543a7 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2626,7 +2626,9 @@ int snd_usb_create_mixer(struct snd_usb_audio *chip, int ctrlif,
- 	    (err = snd_usb_mixer_status_create(mixer)) < 0)
- 		goto _error;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index d69559e45872..635b22fa1101 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -48,8 +48,8 @@ static bool snd_soc_dai_stream_valid(struct snd_soc_dai *dai, int stream)
+ 	else
+ 		codec_stream = &dai->driver->capture;
  
--	snd_usb_mixer_apply_create_quirk(mixer);
-+	err = snd_usb_mixer_apply_create_quirk(mixer);
-+	if (err < 0)
-+		goto _error;
+-	/* If the codec specifies any rate at all, it supports the stream. */
+-	return codec_stream->rates;
++	/* If the codec specifies any channels at all, it supports the stream */
++	return codec_stream->channels_min;
+ }
  
- 	err = snd_device_new(chip->card, SNDRV_DEV_CODEC, mixer, &dev_ops);
- 	if (err < 0)
+ /**
 -- 
 2.20.1
 
