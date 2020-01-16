@@ -2,335 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C591113D358
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:59:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EF113D350
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 05:56:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbgAPE73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 15 Jan 2020 23:59:29 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:50621 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729339AbgAPE71 (ORCPT
+        id S1731076AbgAPE4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 15 Jan 2020 23:56:05 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:33184 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728939AbgAPE4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 15 Jan 2020 23:59:27 -0500
-Received: by mail-pj1-f65.google.com with SMTP id r67so956688pjb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 15 Jan 2020 20:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=z53UVTG1ULBtuQ1LxJSMm2czmwa20G9F5OXvojD1fg4=;
-        b=EqouT2wdXqN1P+58/nsi+jjWzQLgcj9AN6PZTr19+cMUQN8vJOX2b6/2cytgshraVC
-         MCw+W4Jx5RyzzuqKK1jSYSd7s5eMNO7LSeFi3Ls2ELmvP1wPt8gPodExGcnRr3ZhwNL4
-         Z1Vjo+jqVuv+tsA5Zc9mTWjAzFkl6HAQYpp58=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=z53UVTG1ULBtuQ1LxJSMm2czmwa20G9F5OXvojD1fg4=;
-        b=PDtqBe2o9yu2TGXQi42jsEYJLinJjUmG4ZNZUnmn8vnkDBJvAwOCllTQCpOB26vpZT
-         IuPpfdPILnZhbAI6/28DisaNM4kTbOHFCXu1OVbMOv7N4ek2FrxiOc5kH+lxAatzxd/t
-         27o1vLB3nKlrnY9XLMD4wy+QWLsEwiyIWFpYqhJTESZPRk9AVqPCQ34X1jZBRlCPkBiC
-         PTSK+hXEG64vSMcAQotvhSVx/xrXAmIZt2xerGMSJFu/UxUI6ZXKVuCiv7xZRA9Iomq7
-         ze/BwEWWHNYiR6wUQm3ntniZhEp71yyo8yvuTnX7zW5OB4uwF7jHmdRaCWPLrPhpEmT9
-         ehmg==
-X-Gm-Message-State: APjAAAXRL7OVDW78WrFYwGaAOPMtVLNJ95Dgn2UeBcac/zdL2WesfJD7
-        Iorqj+ZCPfIpcjlDP5MExnPLgA==
-X-Google-Smtp-Source: APXvYqwgktfuhUsaY0HteVcfjC3WijSpm6UzLF4FmlDIvzRuKy0dAkwLDNlttgNukSCAUan9c5j+sg==
-X-Received: by 2002:a17:90a:238b:: with SMTP id g11mr4528703pje.128.1579150766876;
-        Wed, 15 Jan 2020 20:59:26 -0800 (PST)
-Received: from localhost (2001-44b8-1113-6700-097c-7eed-afd4-cd15.static.ipv6.internode.on.net. [2001:44b8:1113:6700:97c:7eed:afd4:cd15])
-        by smtp.gmail.com with ESMTPSA id i9sm24055664pfk.24.2020.01.15.20.59.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 20:59:26 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>
-Subject: Re: [PATCH 2/2] string.h: fix incompatibility between FORTIFY_SOURCE and KASAN
-In-Reply-To: <CACT4Y+bxh1OmV64Z-EZrYk-otW9q_fxiHnvrE_VMYj-=YAk2Bg@mail.gmail.com>
-References: <20200115063710.15796-1-dja@axtens.net> <20200115063710.15796-3-dja@axtens.net> <CACT4Y+bxh1OmV64Z-EZrYk-otW9q_fxiHnvrE_VMYj-=YAk2Bg@mail.gmail.com>
-Date:   Thu, 16 Jan 2020 15:59:22 +1100
-Message-ID: <8736cgkndh.fsf@dja-thinkpad.axtens.net>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 15 Jan 2020 23:56:05 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200116045602epoutp01b72edace4a51a0ce0b1883e92632d46a~qRRHKFWgB1937219372epoutp01s
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 04:56:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200116045602epoutp01b72edace4a51a0ce0b1883e92632d46a~qRRHKFWgB1937219372epoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579150562;
+        bh=iDdGFC80liuLcCitIx5Z1XeLoon4zcp2MZNcH7otOlQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=mecyRj9mxWSEr4vrb5CVLVIh8YIrZPGggv1GxvaMvZOA9kIITRrYCha3Ypx1zQ9PB
+         tjEi8TQaXgpgPd88Sjup8VDcg4Nu91KQ4q54qqHbfVSNTvgkERV5AnQCL395dXro9u
+         gOIWuPdd4XgvfV12xIYO9uwMxgMQCXrZQ0FZ8e2M=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200116045601epcas1p3f64891f092781441f6e79e4d94c115b6~qRRGdgfMn1158411584epcas1p3t;
+        Thu, 16 Jan 2020 04:56:01 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47ysMy5YrvzMqYkb; Thu, 16 Jan
+        2020 04:55:58 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        29.BE.48498.EDCEF1E5; Thu, 16 Jan 2020 13:55:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200116045558epcas1p2801d3b213c0993a7a56f8317b5bd1074~qRRDopu2J1519915199epcas1p2D;
+        Thu, 16 Jan 2020 04:55:58 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200116045558epsmtrp2ef6bd1725719bdbd850aa01cf448b335~qRRDnuVMx1723617236epsmtrp2X;
+        Thu, 16 Jan 2020 04:55:58 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-5e-5e1fecde33c9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        00.CF.10238.EDCEF1E5; Thu, 16 Jan 2020 13:55:58 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200116045557epsmtip1a2c2d4bb218449a24357a4ab18dfc0bd~qRRDWnUhj2145121451epsmtip1F;
+        Thu, 16 Jan 2020 04:55:57 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, enric.balletbo@collabora.com,
+        hl@rock-chips.com, digetx@gmail.com, bjorn.andersson@linaro.org,
+        jcrouse@codeaurora.org, cw00.choi@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com
+Subject: [PATCH v4] PM / devfreq: Add debugfs support with devfreq_summary
+ file
+Date:   Thu, 16 Jan 2020 14:03:13 +0900
+Message-Id: <20200116050313.3564-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmge69N/JxBmdealvcn9fKaHF6/zsW
+        i4k3rrBYXP/ynNVi9cfHjBZrbh9itPix4RSzxcYF2RZnm96wW6y4+5HV4vKuOWwWn3uPMFos
+        bGpht1h75C67xe3GFWwO/B5r5q1h9Ljc18vksePuEkaPnbPusntsWtXJ5nHn2h42j43vdjB5
+        /J21n8Wjb8sqRo/Pm+QCuKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPIS
+        c1NtlVx8AnTdMnOA3lBSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX
+        5qXrJefnWhkaGBiZAhUmZGesv9zMXnDGouLpykfsDYw/NLsYOTkkBEwkur5dZ+9i5OIQEtjB
+        KLG9bzEbhPOJUWLHk1vsIFVCAt8YJZ70x8N0TFnwngmiaC+jxK3P0xghnC+MEn9edLKCVLEJ
+        aEnsf3GDDcQWEbCSOP2/gxmkiFlgP5PEhJ9vmUESwgKBEoeebAdbwSKgKnH14xqwZl4BS4m9
+        t1cwQ6yTl1i94QBYs4TAazaJTT//sEMkXCTOfelkg7CFJV4d3wIVl5L4/G4vVLxaYuXJI2wQ
+        zR2MElv2X2CFSBhL7F86GegJDqCTNCXW79KHCCtK7Pw9lxHEZhbgk3j3tYcVpERCgFeio00I
+        okRZ4vKDu0wQtqTE4naYEzwkNu16yQYJrliJqVOmsU5glJ2FsGABI+MqRrHUguLc9NRiwwIj
+        5GjaxAhOm1pmOxgXnfM5xCjAwajEw3vgn1ycEGtiWXFl7iFGCQ5mJRHekzNk44R4UxIrq1KL
+        8uOLSnNSiw8xmgJDbyKzlGhyPjCl55XEG5oaGRsbW5gYmpkaGiqJ87osAJojkJ5YkpqdmlqQ
+        WgTTx8TBKdXAmPrL04jn4ZnFC069KjqReMDoTYfEeb4/n4xraq6csNtktmRuV3eUP5cVZ+X1
+        DtYXjNFT3UJPCDxOX5Fldr9RJYyXJe9GgJuQ/YnLk434OkReTK2advsvZ5ichYvWtVlXdjyr
+        exb6ctreJ82nr8+a6tG/uaTj8O3DKu/0ls3wcA+8/5d9XmDbTSWW4oxEQy3mouJEAG8IMmOx
+        AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSnO69N/JxBhOnc1ncn9fKaHF6/zsW
+        i4k3rrBYXP/ynNVi9cfHjBZrbh9itPix4RSzxcYF2RZnm96wW6y4+5HV4vKuOWwWn3uPMFos
+        bGpht1h75C67xe3GFWwO/B5r5q1h9Ljc18vksePuEkaPnbPusntsWtXJ5nHn2h42j43vdjB5
+        /J21n8Wjb8sqRo/Pm+QCuKK4bFJSczLLUov07RK4MtZfbmYvOGNR8XTlI/YGxh+aXYycHBIC
+        JhJTFrxn6mLk4hAS2M0oMae9jR0iISkx7eJR5i5GDiBbWOLw4WKImk+MEqtXHmQGqWET0JLY
+        /+IGG4gtImAjcXfxNRaQImaB80wS7cunMoIkhAX8JR49PQbWwCKgKnH14xpWEJtXwFJi7+0V
+        zBDL5CVWbzjAPIGRZwEjwypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOAw1tLcwXh5
+        SfwhRgEORiUe3ow/cnFCrIllxZW5hxglOJiVRHhPzpCNE+JNSaysSi3Kjy8qzUktPsQozcGi
+        JM77NO9YpJBAemJJanZqakFqEUyWiYNTqoFx1mRm7gqhcqGmFa4rUjqO7XdTES7OE5vhL1lp
+        b/VIIJJLYIpWGYdq54VjU6pvn+d9FPTcc+/yswzpAv8MlYSW3ctcsclay3S32eKWOb5OP86p
+        lTFv31vi3221fPbnEM2F67zX397y19WmZuWNSeoP/8YpTYhaHKnlsn2rygabyAmuF64vWP5D
+        iaU4I9FQi7moOBEAHesQzF8CAAA=
+X-CMS-MailID: 20200116045558epcas1p2801d3b213c0993a7a56f8317b5bd1074
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200116045558epcas1p2801d3b213c0993a7a56f8317b5bd1074
+References: <CGME20200116045558epcas1p2801d3b213c0993a7a56f8317b5bd1074@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> writes:
+Add debugfs interface to provide debugging information of devfreq device.
+It contains 'devfreq_summary' entry to show the summary of registered
+devfreq devices as following and the additional debugfs file will be added.
+- /sys/kernel/debug/devfreq/devfreq_summary
 
-> On Wed, Jan 15, 2020 at 7:37 AM Daniel Axtens <dja@axtens.net> wrote:
->>
->> The memcmp KASAN self-test fails on a kernel with both KASAN and
->> FORTIFY_SOURCE.
->>
->> When FORTIFY_SOURCE is on, a number of functions are replaced with
->> fortified versions, which attempt to check the sizes of the operands.
->> However, these functions often directly invoke __builtin_foo() once they
->> have performed the fortify check. Using __builtins may bypass KASAN
->> checks if the compiler decides to inline it's own implementation as
->> sequence of instructions, rather than emit a function call that goes out
->> to a KASAN-instrumented implementation.
->>
->> Why is only memcmp affected?
->> ============================
->>
->> Of the string and string-like functions that kasan_test tests, only memcmp
->> is replaced by an inline sequence of instructions in my testing on x86 with
->> gcc version 9.2.1 20191008 (Ubuntu 9.2.1-9ubuntu2).
->>
->> I believe this is due to compiler heuristics. For example, if I annotate
->> kmalloc calls with the alloc_size annotation (and disable some fortify
->> compile-time checking!), the compiler will replace every memset except the
->> one in kmalloc_uaf_memset with inline instructions. (I have some WIP
->> patches to add this annotation.)
->>
->> Does this affect other functions in string.h?
->> =============================================
->>
->> Yes. Anything that uses __builtin_* rather than __real_* could be
->> affected. This looks like:
->>
->>  - strncpy
->>  - strcat
->>  - strlen
->>  - strlcpy maybe, under some circumstances?
->>  - strncat under some circumstances
->>  - memset
->>  - memcpy
->>  - memmove
->>  - memcmp (as noted)
->>  - memchr
->>  - strcpy
->>
->> Whether a function call is emitted always depends on the compiler. Most
->> bugs should get caught by FORTIFY_SOURCE, but the missed memcmp test shows
->> that this is not always the case.
->>
->> Isn't FORTIFY_SOURCE disabled with KASAN?
->> ========================================-
->>
->> The string headers on all arches supporting KASAN disable fortify with
->> kasan, but only when address sanitisation is _also_ disabled. For example
->> from x86:
->>
->>  #if defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__)
->>  /*
->>   * For files that are not instrumented (e.g. mm/slub.c) we
->>   * should use not instrumented version of mem* functions.
->>   */
->>  #define memcpy(dst, src, len) __memcpy(dst, src, len)
->>  #define memmove(dst, src, len) __memmove(dst, src, len)
->>  #define memset(s, c, n) __memset(s, c, n)
->>
->>  #ifndef __NO_FORTIFY
->>  #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
->>  #endif
->>
->>  #endif
->>
->> This comes from commit 6974f0c4555e ("include/linux/string.h: add the
->> option of fortified string.h functions"), and doesn't work when KASAN is
->> enabled and the file is supposed to be sanitised - as with test_kasan.c
->
-> Hi Daniel,
->
-> Thanks for addressing this. And special kudos for description detail level! :)
->
-> Phew, this layering of checking tools is a bit messy...
->
->> I'm pretty sure this is backwards: we shouldn't be using __builtin_memcpy
->> when we have a KASAN instrumented file, but we can use __builtin_* - and in
->> many cases all fortification - in files where we don't have
->> instrumentation.
->
-> I think if we use __builtin_* in a non-instrumented file, the compiler
-> can emit a call to normal mem* function which will be intercepted by
-> kasan and we will get instrumentation in a file which should not be
-> instrumented. Moreover this behavior will depend on optimization level
-> and compiler internals.
-> But as far as I see this does not affect any of the following and the
-> code change.
->
+[Detailed description of each field of 'devfreq_summary' debugfs file]
+- dev_name	: Device name of h/w.
+- dev		: Device name made by devfreq core.
+- parent_dev	: If devfreq device uses the passive governor,
+		  show parent devfreq device name. Otherwise, show 'null'.
+- governor	: Devfreq governor.
+- polling_ms	: If devfreq device uses the simple_ondemand governor,
+		  polling_ms is necessary for the period. (unit: millisecond)
+- cur_freq_Hz	: Current Frequency (unit: Hz)
+- old_freq_Hz	: Frequency before changing. (unit: Hz)
+- new_freq_Hz	: Frequency after changed. (unit: Hz)
 
-mmm OK - you are right, when I consider this and your other point...
+[For example on Exynos5422-based Odroid-XU3 board]
+$ cat /sys/kernel/debug/devfreq/devfreq_summary
+dev_name                       dev        parent_dev governor        polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
+------------------------------ ---------- ---------- --------------- ---------- ------------ ------------ ------------
+10c20000.memory-controller     devfreq0   null       simple_ondemand          0    165000000    165000000    825000000
+soc:bus_wcore                  devfreq1   null       simple_ondemand         50    532000000     88700000    532000000
+soc:bus_noc                    devfreq2   devfreq1   passive                  0    111000000     66600000    111000000
+soc:bus_fsys_apb               devfreq3   devfreq1   passive                  0    222000000    111000000    222000000
+soc:bus_fsys                   devfreq4   devfreq1   passive                  0    200000000     75000000    200000000
+soc:bus_fsys2                  devfreq5   devfreq1   passive                  0    200000000     75000000    200000000
+soc:bus_mfc                    devfreq6   devfreq1   passive                  0    333000000     83250000    333000000
+soc:bus_gen                    devfreq7   devfreq1   passive                  0    266000000     88700000    266000000
+soc:bus_peri                   devfreq8   devfreq1   passive                  0     66600000     66600000     66600000
+soc:bus_g2d                    devfreq9   devfreq1   passive                  0    333000000     83250000    333000000
+soc:bus_g2d_acp                devfreq10  devfreq1   passive                  0    266000000     66500000    266000000
+soc:bus_jpeg                   devfreq11  devfreq1   passive                  0    300000000     75000000    300000000
+soc:bus_jpeg_apb               devfreq12  devfreq1   passive                  0    166500000     83250000    166500000
+soc:bus_disp1_fimd             devfreq13  devfreq1   passive                  0    200000000    120000000    200000000
+soc:bus_disp1                  devfreq14  devfreq1   passive                  0    300000000    120000000    300000000
+soc:bus_gscl_scaler            devfreq15  devfreq1   passive                  0    300000000    150000000    300000000
+soc:bus_mscl                   devfreq16  devfreq1   passive                  0    666000000     84000000    666000000
 
->>  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
->> +
->> +#ifdef CONFIG_KASAN
->> +extern void *__underlying_memchr(const void *p, int c, __kernel_size_t size) __RENAME(memchr);
->
->
-> arch headers do:
->
-> #if defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__)
-> #define memcpy(dst, src, len) __memcpy(dst, src, len)
-> ...
->
-> to disable instrumentation. Does this still work with this change?
-> Previously they disabled fortify. What happens now? Will define of
-> memcpy to __memcpy also affect __RENAME(memcpy), so that
-> __underlying_memcpy will be an alias to __memcpy?
+[lkp: Reported the build error]
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+Changes from v3:
+- Remove the unneeded checking of return value when calling debugfs_create_dir
+- Add missing IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE) condition
+Changes from v2:
+- Show 'null' at 'parent_dev' field when governor of devfreq device
+  is not passive
+Changes from v1:
+- Drop the patch about 'devfreq_transitions' debugfs file
+- Modify from 'hz' to 'Hz'
+- Edit the indentation of 'devfreq_summary' when show summary
+- Exchange sequence between PTR_ERR and IS_ERR when debugfs_create_dir
 
-This is a good question. It's a really intricate set of interactions!!
 
-Between these two things, I think I'm going to just drop the removal of
-architecture changes, which means that fortify will continue to be
-disabled for files that disable KASAN sanitisation. It's just too
-complicated to reason through and satisfy myself that we're not going to
-get weird bugs, and the payoff is really small.
+ drivers/devfreq/devfreq.c | 82 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
->> +extern int __underlying_memcmp(const void *p, const void *q, __kernel_size_t size) __RENAME(memcmp);
->
-> All of these macros are leaking from the header file. Tomorrow we will
-> discover __underlying_memcpy uses somewhere in the wild, which will
-> not making understanding what actually happens simpler :)
-> Perhaps undef all of them at the bottom?
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 89260b17598f..cceee8bc3c2f 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kmod.h>
+ #include <linux/sched.h>
++#include <linux/debugfs.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+@@ -33,6 +34,7 @@
+ #define HZ_PER_KHZ	1000
+ 
+ static struct class *devfreq_class;
++static struct dentry *devfreq_debugfs;
+ 
+ /*
+  * devfreq core provides delayed work based load monitoring helper
+@@ -1643,6 +1645,81 @@ static struct attribute *devfreq_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(devfreq);
+ 
++/**
++ * devfreq_summary_show() - Show the summary of the devfreq devices
++ * @s:		seq_file instance to show the summary of devfreq devices
++ * @data:	not used
++ *
++ * Show the summary of the devfreq devices via 'devfreq_summary' debugfs file.
++ * It helps that user can know the detailed information of the devfreq devices.
++ *
++ * Return 0 always because it shows the information without any data change.
++ */
++static int devfreq_summary_show(struct seq_file *s, void *data)
++{
++	struct devfreq *devfreq;
++	struct devfreq *p_devfreq = NULL;
++	unsigned long cur_freq, min_freq, max_freq;
++	unsigned int polling_ms;
++
++	seq_printf(s, "%-30s %-10s %-10s %-15s %10s %12s %12s %12s\n",
++			"dev_name",
++			"dev",
++			"parent_dev",
++			"governor",
++			"polling_ms",
++			"cur_freq_Hz",
++			"min_freq_Hz",
++			"max_freq_Hz");
++	seq_printf(s, "%30s %10s %10s %15s %10s %12s %12s %12s\n",
++			"------------------------------",
++			"----------",
++			"----------",
++			"---------------",
++			"----------",
++			"------------",
++			"------------",
++			"------------");
++
++	mutex_lock(&devfreq_list_lock);
++
++	list_for_each_entry_reverse(devfreq, &devfreq_list, node) {
++#if IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE)
++		if (!strncmp(devfreq->governor_name, DEVFREQ_GOV_PASSIVE,
++							DEVFREQ_NAME_LEN)) {
++			struct devfreq_passive_data *data = devfreq->data;
++
++			if (data)
++				p_devfreq = data->parent;
++		} else {
++			p_devfreq = NULL;
++		}
++#endif
++
++		mutex_lock(&devfreq->lock);
++		cur_freq = devfreq->previous_freq,
++		get_freq_range(devfreq, &min_freq, &max_freq);
++		polling_ms = devfreq->profile->polling_ms,
++		mutex_unlock(&devfreq->lock);
++
++		seq_printf(s,
++			"%-30s %-10s %-10s %-15s %10d %12ld %12ld %12ld\n",
++			dev_name(devfreq->dev.parent),
++			dev_name(&devfreq->dev),
++			p_devfreq ? dev_name(&p_devfreq->dev) : "null",
++			devfreq->governor_name,
++			polling_ms,
++			cur_freq,
++			min_freq,
++			max_freq);
++	}
++
++	mutex_unlock(&devfreq_list_lock);
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(devfreq_summary);
++
+ static int __init devfreq_init(void)
+ {
+ 	devfreq_class = class_create(THIS_MODULE, "devfreq");
+@@ -1659,6 +1736,11 @@ static int __init devfreq_init(void)
+ 	}
+ 	devfreq_class->dev_groups = devfreq_groups;
+ 
++	devfreq_debugfs = debugfs_create_dir("devfreq", NULL);
++	debugfs_create_file("devfreq_summary", 0444,
++				devfreq_debugfs, NULL,
++				&devfreq_summary_fops);
++
+ 	return 0;
+ }
+ subsys_initcall(devfreq_init);
+-- 
+2.17.1
 
-I can't stop the function definitions from leaking, but I can stop the
-defines from leaking, which means we will catch any uses outside this
-block in a FORITY_SOURCE && !KASAN build. I've fixed this for v2.
-
-Regards,
-Daniel
-
->> +extern void *__underlying_memcpy(void *p, const void *q, __kernel_size_t size) __RENAME(memcpy);
->> +extern void *__underlying_memmove(void *p, const void *q, __kernel_size_t size) __RENAME(memmove);
->> +extern void *__underlying_memset(void *p, int c, __kernel_size_t size) __RENAME(memset);
->> +extern char *__underlying_strcat(char *p, const char *q) __RENAME(strcat);
->> +extern char *__underlying_strcpy(char *p, const char *q) __RENAME(strcpy);
->> +extern __kernel_size_t __underlying_strlen(const char *p) __RENAME(strlen);
->> +extern char *__underlying_strncat(char *p, const char *q, __kernel_size_t count) __RENAME(strncat);
->> +extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size) __RENAME(strncpy);
->> +#else
->> +#define __underlying_memchr    __builtin_memchr
->> +#define __underlying_memcmp    __builtin_memcmp
->> +#define __underlying_memcpy    __builtin_memcpy
->> +#define __underlying_memmove   __builtin_memmove
->> +#define __underlying_memset    __builtin_memset
->> +#define __underlying_strcat    __builtin_strcat
->> +#define __underlying_strcpy    __builtin_strcpy
->> +#define __underlying_strlen    __builtin_strlen
->> +#define __underlying_strncat   __builtin_strncat
->> +#define __underlying_strncpy   __builtin_strncpy
->> +#endif
->> +
->>  __FORTIFY_INLINE char *strncpy(char *p, const char *q, __kernel_size_t size)
->>  {
->>         size_t p_size = __builtin_object_size(p, 0);
->> @@ -324,14 +349,14 @@ __FORTIFY_INLINE char *strncpy(char *p, const char *q, __kernel_size_t size)
->>                 __write_overflow();
->>         if (p_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_strncpy(p, q, size);
->> +       return __underlying_strncpy(p, q, size);
->>  }
->>
->>  __FORTIFY_INLINE char *strcat(char *p, const char *q)
->>  {
->>         size_t p_size = __builtin_object_size(p, 0);
->>         if (p_size == (size_t)-1)
->> -               return __builtin_strcat(p, q);
->> +               return __underlying_strcat(p, q);
->>         if (strlcat(p, q, p_size) >= p_size)
->>                 fortify_panic(__func__);
->>         return p;
->> @@ -345,7 +370,7 @@ __FORTIFY_INLINE __kernel_size_t strlen(const char *p)
->>         /* Work around gcc excess stack consumption issue */
->>         if (p_size == (size_t)-1 ||
->>             (__builtin_constant_p(p[p_size - 1]) && p[p_size - 1] == '\0'))
->> -               return __builtin_strlen(p);
->> +               return __underlying_strlen(p);
->>         ret = strnlen(p, p_size);
->>         if (p_size <= ret)
->>                 fortify_panic(__func__);
->> @@ -378,7 +403,7 @@ __FORTIFY_INLINE size_t strlcpy(char *p, const char *q, size_t size)
->>                         __write_overflow();
->>                 if (len >= p_size)
->>                         fortify_panic(__func__);
->> -               __builtin_memcpy(p, q, len);
->> +               __underlying_memcpy(p, q, len);
->>                 p[len] = '\0';
->>         }
->>         return ret;
->> @@ -391,12 +416,12 @@ __FORTIFY_INLINE char *strncat(char *p, const char *q, __kernel_size_t count)
->>         size_t p_size = __builtin_object_size(p, 0);
->>         size_t q_size = __builtin_object_size(q, 0);
->>         if (p_size == (size_t)-1 && q_size == (size_t)-1)
->> -               return __builtin_strncat(p, q, count);
->> +               return __underlying_strncat(p, q, count);
->>         p_len = strlen(p);
->>         copy_len = strnlen(q, count);
->>         if (p_size < p_len + copy_len + 1)
->>                 fortify_panic(__func__);
->> -       __builtin_memcpy(p + p_len, q, copy_len);
->> +       __underlying_memcpy(p + p_len, q, copy_len);
->>         p[p_len + copy_len] = '\0';
->>         return p;
->>  }
->> @@ -408,7 +433,7 @@ __FORTIFY_INLINE void *memset(void *p, int c, __kernel_size_t size)
->>                 __write_overflow();
->>         if (p_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_memset(p, c, size);
->> +       return __underlying_memset(p, c, size);
->>  }
->>
->>  __FORTIFY_INLINE void *memcpy(void *p, const void *q, __kernel_size_t size)
->> @@ -423,7 +448,7 @@ __FORTIFY_INLINE void *memcpy(void *p, const void *q, __kernel_size_t size)
->>         }
->>         if (p_size < size || q_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_memcpy(p, q, size);
->> +       return __underlying_memcpy(p, q, size);
->>  }
->>
->>  __FORTIFY_INLINE void *memmove(void *p, const void *q, __kernel_size_t size)
->> @@ -438,7 +463,7 @@ __FORTIFY_INLINE void *memmove(void *p, const void *q, __kernel_size_t size)
->>         }
->>         if (p_size < size || q_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_memmove(p, q, size);
->> +       return __underlying_memmove(p, q, size);
->>  }
->>
->>  extern void *__real_memscan(void *, int, __kernel_size_t) __RENAME(memscan);
->> @@ -464,7 +489,7 @@ __FORTIFY_INLINE int memcmp(const void *p, const void *q, __kernel_size_t size)
->>         }
->>         if (p_size < size || q_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_memcmp(p, q, size);
->> +       return __underlying_memcmp(p, q, size);
->>  }
->>
->>  __FORTIFY_INLINE void *memchr(const void *p, int c, __kernel_size_t size)
->> @@ -474,7 +499,7 @@ __FORTIFY_INLINE void *memchr(const void *p, int c, __kernel_size_t size)
->>                 __read_overflow();
->>         if (p_size < size)
->>                 fortify_panic(__func__);
->> -       return __builtin_memchr(p, c, size);
->> +       return __underlying_memchr(p, c, size);
->>  }
->>
->>  void *__real_memchr_inv(const void *s, int c, size_t n) __RENAME(memchr_inv);
->> @@ -505,7 +530,7 @@ __FORTIFY_INLINE char *strcpy(char *p, const char *q)
->>         size_t p_size = __builtin_object_size(p, 0);
->>         size_t q_size = __builtin_object_size(q, 0);
->>         if (p_size == (size_t)-1 && q_size == (size_t)-1)
->> -               return __builtin_strcpy(p, q);
->> +               return __underlying_strcpy(p, q);
->>         memcpy(p, q, strlen(q) + 1);
->>         return p;
->>  }
->> --
->> 2.20.1
->>
