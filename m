@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C5913FE76
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:36:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0135413FE48
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 00:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389138AbgAPXby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 18:31:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37398 "EHLO mail.kernel.org"
+        id S2391422AbgAPXdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 18:33:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403989AbgAPXaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:30:30 -0500
+        id S2404407AbgAPXdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:33:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C77220684;
-        Thu, 16 Jan 2020 23:30:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6271E2087E;
+        Thu, 16 Jan 2020 23:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579217429;
-        bh=kAOaVjnWMYC/RpKKbmuTL0WR4dJhxwrxKVKAogktUJ4=;
+        s=default; t=1579217619;
+        bh=gVbEkf4yq5vJTw4E2HU3ReKS20++66X8C4lqXwTVBZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IWJd1ifoBSXf0XPrptx/XFKOuxAmU4hvVSEtvN9Mie4DYahIgM9shjciwMoy09m/b
-         JU/vBqOK3Mf6K9/EXrFeZE+JWdNwKravHX2q+PW8x8N+jBqpQtx1wesgIkd8ZEXOt2
-         hT8/jiwmOEDTJwgrspagaVraOrtwACpMd5KEHCj4=
+        b=L/i4wPskJao7RG5U4kRaM4RGq09HNZ7oo1jDTjYsrh6vQpoXGhWbN0YYs1+fPFLzJ
+         hQYpKcAavk70MZ9WAxU48iaO48v3An1RSfG3lVp0MbKsbSyw7bpWKV3fdcP2VIDqxw
+         JDIjVQOOpewaHtR8/BAODiHV2GrvZqn/1gH9CE1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 79/84] drm/arm/mali: make malidp_mw_connector_helper_funcs static
-Date:   Fri, 17 Jan 2020 00:18:53 +0100
-Message-Id: <20200116231722.790733579@linuxfoundation.org>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: [PATCH 4.14 56/71] mtd: spi-nor: fix silent truncation in spi_nor_read()
+Date:   Fri, 17 Jan 2020 00:18:54 +0100
+Message-Id: <20200116231717.270112184@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231713.087649517@linuxfoundation.org>
-References: <20200116231713.087649517@linuxfoundation.org>
+In-Reply-To: <20200116231709.377772748@linuxfoundation.org>
+References: <20200116231709.377772748@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit ac2917b01992c098b8d4e6837115e3ca347fdd90 ]
+commit a719a75a7761e4139dd099330d9fe3589d844f9b upstream.
 
-The malidp_mw_connector_helper_funcs is not referenced by name
-outside of the file it is in, so make it static to avoid the
-following warning:
+spi_nor_read() assigns the result of 'ssize_t spi_nor_read_data()'
+to the 'int ret' variable, while 'ssize_t' is a 64-bit type and *int*
+is a 32-bit type on the 64-bit machines. This silent truncation isn't
+really valid, so fix up the variable's type.
 
-drivers/gpu/drm/arm/malidp_mw.c:59:41: warning: symbol 'malidp_mw_connector_helper_funcs' was not declared. Should it be static?
+Fixes: 59451e1233bd ("mtd: spi-nor: change return value of read/write")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
-Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191217115309.2133503-1-ben.dooks@codethink.co.uk
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/arm/malidp_mw.c | 2 +-
+ drivers/mtd/spi-nor/spi-nor.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
-index 91472e5e0c8b..7266d3c8b8f4 100644
---- a/drivers/gpu/drm/arm/malidp_mw.c
-+++ b/drivers/gpu/drm/arm/malidp_mw.c
-@@ -55,7 +55,7 @@ malidp_mw_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -1216,7 +1216,7 @@ static int spi_nor_read(struct mtd_info
+ 			size_t *retlen, u_char *buf)
+ {
+ 	struct spi_nor *nor = mtd_to_spi_nor(mtd);
+-	int ret;
++	ssize_t ret;
  
--const struct drm_connector_helper_funcs malidp_mw_connector_helper_funcs = {
-+static const struct drm_connector_helper_funcs malidp_mw_connector_helper_funcs = {
- 	.get_modes = malidp_mw_connector_get_modes,
- 	.mode_valid = malidp_mw_connector_mode_valid,
- };
--- 
-2.20.1
-
+ 	dev_dbg(nor->dev, "from 0x%08x, len %zd\n", (u32)from, len);
+ 
 
 
