@@ -2,196 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C6213ED86
-	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 925DE13EDC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 16 Jan 2020 19:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406905AbgAPSDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 13:03:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:56900 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393641AbgAPSDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 13:03:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF3BD31B;
-        Thu, 16 Jan 2020 10:03:33 -0800 (PST)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE2C73F534;
-        Thu, 16 Jan 2020 10:03:32 -0800 (PST)
-Date:   Thu, 16 Jan 2020 18:03:26 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Radhey Shyam Pandey <radheys@xilinx.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michals@xilinx.com>,
-        Robert Hancock <hancock@sedsystems.ca>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/14] net: axienet: Fix DMA descriptor cleanup path
-Message-ID: <20200116180326.47c93ce2@donnerap.cambridge.arm.com>
-In-Reply-To: <CH2PR02MB70008D24DA7D1426E8A71013C7380@CH2PR02MB7000.namprd02.prod.outlook.com>
-References: <20200110115415.75683-1-andre.przywara@arm.com>
-        <20200110115415.75683-4-andre.przywara@arm.com>
-        <CH2PR02MB7000F64AB27D352E00DC77A7C7380@CH2PR02MB7000.namprd02.prod.outlook.com>
-        <20200110154328.6676215f@donnerap.cambridge.arm.com>
-        <CH2PR02MB70008D24DA7D1426E8A71013C7380@CH2PR02MB7000.namprd02.prod.outlook.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+        id S2406947AbgAPSE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 13:04:58 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:37778 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406927AbgAPSEv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:04:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI3d2x032053;
+        Thu, 16 Jan 2020 18:04:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=Wz0bfYpv6qVBxaaDhPfuHMj6fRJ3/Ll2i4XCWCEkzKU=;
+ b=P/xpYMzsQBE5bSIf2S5Rqg1imFhX6WSs+gM+2vlJjnEuX8CqmY+cnCyTLYqeL+nk6jJK
+ JhEyImmV4seyD2OKgOsPG9vPvMbtqliB0wCrQgMlRgaia8zGn55X8/0qBAKoBu+tFf/j
+ EGCnwUI/eE/YKnzFFyDulMHUTfZBKon5j4hwvQZpbRp71xa/v95DvKjA3dPwvf3XGxFd
+ rdWyTXu+2UuJcb0UfglLCJOhdZzBbBKLnX9GeUDxxH5VU5aj6MxUK+putiEf6vO+Uu+v
+ fmhY9Mnhg6L481saVULx+u4dmOsR2ydOneEQXD7B26uNZk595wXKPoG9TCeTUZtuGT0h yA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xf73yv695-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 18:04:29 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI46wZ100800;
+        Thu, 16 Jan 2020 18:04:28 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2xj61n0etc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 18:04:28 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00GI4NWO015447;
+        Thu, 16 Jan 2020 18:04:23 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Jan 2020 10:04:22 -0800
+Date:   Thu, 16 Jan 2020 10:04:21 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200116180421.GD8235@magnolia>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+ <20200116053935.GB8235@magnolia>
+ <20200116175501.GC24522@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116175501.GC24522@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Jan 2020 17:05:45 +0000
-Radhey Shyam Pandey <radheys@xilinx.com> wrote:
-
-Hi,
-
-> > -----Original Message-----
-> > From: Andre Przywara <andre.przywara@arm.com>
-> > Sent: Friday, January 10, 2020 9:13 PM
-> > To: Radhey Shyam Pandey <radheys@xilinx.com>
-> > Cc: David S . Miller <davem@davemloft.net>; Michal Simek
-> > <michals@xilinx.com>; Robert Hancock <hancock@sedsystems.ca>;
-> > netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH 03/14] net: axienet: Fix DMA descriptor cleanup path
-> > 
-> > On Fri, 10 Jan 2020 15:14:46 +0000
-> > Radhey Shyam Pandey <radheys@xilinx.com> wrote:
-> > 
-> > Hi Radhey,
-> > 
-> > thanks for having a look!
-> >   
-> > > > -----Original Message-----
-> > > > From: Andre Przywara <andre.przywara@arm.com>
-> > > > Sent: Friday, January 10, 2020 5:24 PM
-> > > > To: David S . Miller <davem@davemloft.net>; Radhey Shyam Pandey
-> > > > <radheys@xilinx.com>
-> > > > Cc: Michal Simek <michals@xilinx.com>; Robert Hancock
-> > > > <hancock@sedsystems.ca>; netdev@vger.kernel.org; linux-arm-
-> > > > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > > Subject: [PATCH 03/14] net: axienet: Fix DMA descriptor cleanup path
-> > > >
-> > > > When axienet_dma_bd_init() bails out during the initialisation process,
-> > > > it might do so with parts of the structure already allocated and
-> > > > initialised, while other parts have not been touched yet. Before
-> > > > returning in this case, we call axienet_dma_bd_release(), which does not
-> > > > take care of this corner case.
-> > > > This is most obvious by the first loop happily dereferencing
-> > > > lp->rx_bd_v, which we actually check to be non NULL *afterwards*.
-> > > >
-> > > > Make sure we only unmap or free already allocated structures, by:
-> > > > - directly returning with -ENOMEM if nothing has been allocated at all
-> > > > - checking for lp->rx_bd_v to be non-NULL *before* using it
-> > > > - only unmapping allocated DMA RX regions
-> > > >
-> > > > This avoids NULL pointer dereferences when initialisation fails.
-> > > >
-> > > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > > > ---
-> > > >  .../net/ethernet/xilinx/xilinx_axienet_main.c | 43 ++++++++++++-------
-> > > >  1 file changed, 28 insertions(+), 15 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> > > > b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> > > > index 97482cf093ce..7e90044cf2d9 100644
-> > > > --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> > > > +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> > > > @@ -160,24 +160,37 @@ static void axienet_dma_bd_release(struct
-> > > > net_device *ndev)
-> > > >  	int i;
-> > > >  	struct axienet_local *lp = netdev_priv(ndev);
-> > > >
-> > > > +	/* If we end up here, tx_bd_v must have been DMA allocated. */
-> > > > +	dma_free_coherent(ndev->dev.parent,
-> > > > +			  sizeof(*lp->tx_bd_v) * lp->tx_bd_num,
-> > > > +			  lp->tx_bd_v,
-> > > > +			  lp->tx_bd_p);
-> > > > +
-> > > > +	if (!lp->rx_bd_v)
-> > > > +		return;
-> > > > +
-> > > >  	for (i = 0; i < lp->rx_bd_num; i++) {
-> > > > -		dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
-> > > > -				 lp->max_frm_size, DMA_FROM_DEVICE);
-> > > > +		/* A NULL skb means this descriptor has not been initialised
-> > > > +		 * at all.
-> > > > +		 */
-> > > > +		if (!lp->rx_bd_v[i].skb)
-> > > > +			break;
-> > > > +
-> > > >  		dev_kfree_skb(lp->rx_bd_v[i].skb);
-> > > > -	}
-> > > >
-> > > > -	if (lp->rx_bd_v) {
-> > > > -		dma_free_coherent(ndev->dev.parent,
-> > > > -				  sizeof(*lp->rx_bd_v) * lp->rx_bd_num,
-> > > > -				  lp->rx_bd_v,
-> > > > -				  lp->rx_bd_p);
-> > > > -	}
-> > > > -	if (lp->tx_bd_v) {
-> > > > -		dma_free_coherent(ndev->dev.parent,
-> > > > -				  sizeof(*lp->tx_bd_v) * lp->tx_bd_num,
-> > > > -				  lp->tx_bd_v,
-> > > > -				  lp->tx_bd_p);
-> > > > +		/* For each descriptor, we programmed cntrl with the (non-
-> > > > zero)
-> > > > +		 * descriptor size, after it had been successfully allocated.
-> > > > +		 * So a non-zero value in there means we need to unmap it.
-> > > > +		 */  
-> > >  
-> > > > +		if (lp->rx_bd_v[i].cntrl)  
-> > >
-> > > I think it should ok to unmap w/o any check?  
-> > 
-> > Do you mean because .phys would be 0 if not initialised? AFAIK 0 can be a
-> > valid DMA address, so there is no special check for that, and unmapping
-> > DMA address 0 will probably go wrong at some point. So it's unlike
-> > kfree(NULL).  
+On Thu, Jan 16, 2020 at 09:55:02AM -0800, Ira Weiny wrote:
+> On Wed, Jan 15, 2020 at 09:39:35PM -0800, Darrick J. Wong wrote:
+> > On Wed, Jan 15, 2020 at 02:38:21PM -0800, Ira Weiny wrote:
+> > > On Wed, Jan 15, 2020 at 12:10:50PM -0800, Dan Williams wrote:
+> > > > On Wed, Jan 15, 2020 at 11:45 AM Ira Weiny <ira.weiny@intel.com> wrote:
+> > > > >
+> > > > > On Wed, Jan 15, 2020 at 09:38:34AM -0800, Darrick J. Wong wrote:
+> > > > > > On Wed, Jan 15, 2020 at 12:37:15PM +0100, Jan Kara wrote:
+> > > > > > > On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
+> > > > > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > > > >
+> > > 
 > 
-> I mean if skb allocation is successful in _dma_bd_init then in release path
-> we can assume .phys is always a valid address and skip rx_bd_v[i].cntrl
-> check.
-
-I don't think we can assume this. If the skb allocation succeeded, but then the dma_map_single failed (which we check with dma_mapping_error()), we would end up with a valid skb, but an uninitialised phys DMA address in the registers. That's why I set .cntrl only after having checked the dma_map_single() result.
-
-Or am I missing something?
-
-Cheers,
-Andre
- 
-> > > > +			dma_unmap_single(ndev->dev.parent, lp-  
-> > > > >rx_bd_v[i].phys,  
-> > > > +					 lp->max_frm_size,
-> > > > DMA_FROM_DEVICE);
-> > > >  	}
-> > > > +
-> > > > +	dma_free_coherent(ndev->dev.parent,
-> > > > +			  sizeof(*lp->rx_bd_v) * lp->rx_bd_num,
-> > > > +			  lp->rx_bd_v,
-> > > > +			  lp->rx_bd_p);
-> > > >  }
-> > > >
-> > > >  /**
-> > > > @@ -207,7 +220,7 @@ static int axienet_dma_bd_init(struct net_device
-> > > > *ndev)
-> > > >  					 sizeof(*lp->tx_bd_v) * lp-  
-> > > > >tx_bd_num,  
-> > > >  					 &lp->tx_bd_p, GFP_KERNEL);
-> > > >  	if (!lp->tx_bd_v)
-> > > > -		goto out;
-> > > > +		return -ENOMEM;
-> > > >
-> > > >  	lp->rx_bd_v = dma_alloc_coherent(ndev->dev.parent,
-> > > >  					 sizeof(*lp->rx_bd_v) * lp-  
-> > > > >rx_bd_num,  
-> > > > --
-> > > > 2.17.1  
-> > >  
+> [snip]
 > 
+> > > 
+> > > Sure, but for now I think referencing mmap for details on MAP_SYNC works.
+> > > 
+> > > I suspect that we may have some word smithing once I get this series in and we
+> > > submit a change to the statx man page itself.  Can I move forward with the
+> > > following for this patch?
+> > > 
+> > > <quote>
+> > > STATX_ATTR_DAX
+> > > 
+> > >         The file is in the DAX (cpu direct access) state.  DAX state
+> > 
+> > Hmm, now that I see it written out, I <cough> kind of like "DAX mode"
+> > better now. :/
+> > 
+> > "The file is in DAX (CPU direct access) mode.  DAX mode attempts..."
+> 
+> Sure...  now you tell me...  ;-)
+> 
+> Seriously, we could use mode here in the man page as this is less confusing to
+> say "DAX mode".
+> 
+> But I think the code should still use 'state' because mode is just too
+> overloaded.  You were not the only one who was thrown by my use of mode and I
+> don't want that confusion when we look at this code 2 weeks from now...
+> 
+> https://www.reddit.com/r/ProgrammerHumor/comments/852og2/only_god_knows/
+> 
+> ;-)
 
+Ok, let's leave it alone for now then.
+
+I'm not even sure what 'DAX' stands for.  Direct Access to ...
+Professor Xavier? 8-)
+
+> > 
+> > >         attempts to minimize software cache effects for both I/O and
+> > >         memory mappings of this file.  It requires a file system which
+> > >         has been configured to support DAX.
+> > > 
+> > >         DAX generally assumes all accesses are via cpu load / store
+> > >         instructions which can minimize overhead for small accesses, but
+> > >         may adversely affect cpu utilization for large transfers.
+> > > 
+> > >         File I/O is done directly to/from user-space buffers and memory
+> > >         mapped I/O may be performed with direct memory mappings that
+> > >         bypass kernel page cache.
+> > > 
+> > >         While the DAX property tends to result in data being transferred
+> > >         synchronously, it does not give the same guarantees of
+> > >         synchronous I/O where data and the necessary metadata are
+> > >         transferred together.
+> > 
+> > (I'm frankly not sure that synchronous I/O actually guarantees that the
+> > metadata has hit stable storage...)
+> 
+> I'll let you and Dan work this one out...  ;-)
+
+Hehe.  I think the wording here is fine.
+
+--D
+
+> Ira
+> 
