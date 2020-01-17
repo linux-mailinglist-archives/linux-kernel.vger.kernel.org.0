@@ -2,82 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C605140F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B3C140F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgAQQfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 11:35:11 -0500
-Received: from mail-qk1-f172.google.com ([209.85.222.172]:45047 "EHLO
-        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbgAQQfK (ORCPT
+        id S1727195AbgAQQgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 11:36:54 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41968 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbgAQQgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:35:10 -0500
-Received: by mail-qk1-f172.google.com with SMTP id w127so23207975qkb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 08:35:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=6is2X1qi44pt2A21wyyQUE+/mtVgsMKumSiZBpCadjg=;
-        b=RlgORZ/52mc53Fi3iu3/51jHSqQavtqJRjFUaNi7KAE7AlCO33wDsNSiwwuX9bajJf
-         FdnhQKnrkLaO9YV1TyULB2lVpkzPzL7+dIQT4jRRaVovvpaYxbz+V36VYUw3G9gohUZ1
-         EZfeZMK9TiBFW3VH3TZ8YRwYaw6RH/HPjbOD4lxEgDNyDpnEiElXl9w+KJUa5N3QYex7
-         RTuwB/b8/OqY8HFsMIhl7HKfqo8u99RBga10o8zq+bs009nEogmQLVojv0fiR+sUtdJk
-         GbJnm4LGyfSUE4Fwx8lscBbAGVGkAnoH/tGVGr02WM2/wodf+GWxT+3wxGvrsdFshFBD
-         b2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=6is2X1qi44pt2A21wyyQUE+/mtVgsMKumSiZBpCadjg=;
-        b=OZpZhlIXfT1rZ3OW0fEm5IXbMrTHDTysP7gGLjbfdo5NkyFF6dfFo9f2J0hIjsWDTj
-         6tTGpFzucWkgPtDb1WZvxeDxOWg1YB6O3IFOd09vsDlI8cw0EL1Wf7dwaGCzjPyxWBm/
-         30HbDeZ6n69KrG9BDsuC8h+ms3sA6cM/377UjyghcBlykzp/a4ndvuQjRJI3AhT0a3bA
-         RcVCBlQYvxt4gB/o7Sjqy5inMmlk6yy21InzWGFK+yHAxVbbMY3XMNxTRd+9B+yNaLAY
-         oX4SYNAy6x/px/5VilTNkJIrvTswHJDDCjsM8KEsYP5GiT04KRMnUJJqsEVK98H54Aus
-         LGEA==
-X-Gm-Message-State: APjAAAUQXW2Kg18GeQFNmNd5NfdfFBNypDPrOXbj8JqY7+MERWSVfWDH
-        lYntPuNqtus2w9MuqNl3s85+nyDwOVSmHA==
-X-Google-Smtp-Source: APXvYqxDb/sO1cYBfC7DsyWAAQ6RZwErytR69D9BO+T0QX2aj7jbDdu72BCJ4rKg7CSRJe1SoYEnnA==
-X-Received: by 2002:a37:9f57:: with SMTP id i84mr39281060qke.29.1579278909437;
-        Fri, 17 Jan 2020 08:35:09 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id r28sm13557339qtr.3.2020.01.17.08.35.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 08:35:08 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH -next v5] mm/hotplug: silence a lockdep splat with printk()
-Date:   Fri, 17 Jan 2020 11:35:08 -0500
-Message-Id: <587CD165-FAA4-4369-9F30-CB8F9C03F062@lca.pw>
-References: <5abf5440-7c1c-b9e9-9770-b89759771a44@redhat.com>
-Cc:     akpm@linux-foundation.org, mhocko@kernel.org,
-        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
-        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <5abf5440-7c1c-b9e9-9770-b89759771a44@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-X-Mailer: iPhone Mail (17C54)
+        Fri, 17 Jan 2020 11:36:53 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 9F7F12946EA
+Subject: Re: [PATCH v7 3/3] power: supply: cros-ec-usbpd-charger: Fix host
+ events
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Prashant Malani <pmalani@chromium.org>
+Cc:     groeck@chromium.org, bleung@chromium.org, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Jon Flatley <jflat@chromium.org>
+References: <20200117002820.56872-1-pmalani@chromium.org>
+ <20200117002820.56872-3-pmalani@chromium.org>
+ <20200117011216.p7etrc6oarptmhcb@earth.universe>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <cc46a6a3-706e-06df-882f-10e66cf89735@collabora.com>
+Date:   Fri, 17 Jan 2020 17:36:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200117011216.p7etrc6oarptmhcb@earth.universe>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sebastian,
 
+On 17/1/20 2:12, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Thu, Jan 16, 2020 at 04:28:24PM -0800, Prashant Malani wrote:
+>> From: Jon Flatley <jflat@chromium.org>
+>>
+>> There's a bug on ACPI platforms where host events from the ECPD ACPI
+>> device never make their way to the cros-ec-usbpd-charger driver. This
+>> makes it so the only time the charger driver updates its state is when
+>> user space accesses its sysfs attributes.
+>>
+>> Now that these events have been unified into a single notifier chain on
+>> both ACPI and non-ACPI platforms, update the charger driver to use this
+>> new notifier.
+>>
+>> Reviewed-by: Benson Leung <bleung@chromium.org>
+>> Co-Developed-by: Prashant Malani <pmalani@chromium.org>
+>> Signed-off-by: Jon Flatley <jflat@chromium.org>
+>> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+>> ---
+> 
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> 
+> I currently have one cros_usbpd-charger patch queued in -next.
+> This patch looks like it should not create conflicts, but it's
+> probably better to merge an immutable branch.
+> 
 
-> On Jan 17, 2020, at 11:27 AM, David Hildenbrand <david@redhat.com> wrote:
->=20
-> the "int" should go onto the next line as well
-> [...]
+I still have some concerns on the platform/chrome side and I have some problems
+with this driver testing it on Samsung Chromebook Plus (kevin). So it is not
+ready yet to merge, I'll create an im when ready.
 
-Yes.
+Thanks,
+ Enric
 
-> apart from that looks good to me. I hope we won't have a whac-a-mole
-> with printk() (including WARN_ON() etc?) under the zone lock. This all
-> screams for a better fix.
-
-WARN_ON() is normally not a concern. Once it happens here, we will figure ou=
-t the reason why it happens in the first place and shut it off there instead=
-.=
+> -- Sebastian
+> 
+>>
+>> Changes in v7(pmalani@chromium.org):
+>> - Alphabetize #include header.
+>>
+>> Changes in v6(pmalani@chromium.org):
+>> - Patch first introduced into the series in v6.
+>>
+>>  drivers/power/supply/Kconfig              |  2 +-
+>>  drivers/power/supply/cros_usbpd-charger.c | 50 ++++++++---------------
+>>  2 files changed, 19 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+>> index 27164a1d3c7c4..ba74ddd793c3d 100644
+>> --- a/drivers/power/supply/Kconfig
+>> +++ b/drivers/power/supply/Kconfig
+>> @@ -659,7 +659,7 @@ config CHARGER_RT9455
+>>  
+>>  config CHARGER_CROS_USBPD
+>>  	tristate "ChromeOS EC based USBPD charger"
+>> -	depends on CROS_EC
+>> +	depends on CROS_USBPD_NOTIFY
+>>  	default n
+>>  	help
+>>  	  Say Y here to enable ChromeOS EC based USBPD charger
+>> diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+>> index 6cc7c3910e098..7eea080048f43 100644
+>> --- a/drivers/power/supply/cros_usbpd-charger.c
+>> +++ b/drivers/power/supply/cros_usbpd-charger.c
+>> @@ -9,6 +9,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/platform_data/cros_ec_commands.h>
+>>  #include <linux/platform_data/cros_ec_proto.h>
+>> +#include <linux/platform_data/cros_usbpd_notify.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/power_supply.h>
+>>  #include <linux/slab.h>
+>> @@ -524,32 +525,21 @@ static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
+>>  }
+>>  
+>>  static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+>> -				       unsigned long queued_during_suspend,
+>> +				       unsigned long host_event,
+>>  				       void *_notify)
+>>  {
+>> -	struct cros_ec_device *ec_device;
+>> -	struct charger_data *charger;
+>> -	u32 host_event;
+>> +	struct charger_data *charger = container_of(nb, struct charger_data,
+>> +						    notifier);
+>>  
+>> -	charger = container_of(nb, struct charger_data, notifier);
+>> -	ec_device = charger->ec_device;
+>> -
+>> -	host_event = cros_ec_get_host_event(ec_device);
+>> -	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+>> -		cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+>> -		return NOTIFY_OK;
+>> -	} else {
+>> -		return NOTIFY_DONE;
+>> -	}
+>> +	cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+>> +	return NOTIFY_OK;
+>>  }
+>>  
+>>  static void cros_usbpd_charger_unregister_notifier(void *data)
+>>  {
+>>  	struct charger_data *charger = data;
+>> -	struct cros_ec_device *ec_device = charger->ec_device;
+>>  
+>> -	blocking_notifier_chain_unregister(&ec_device->event_notifier,
+>> -					   &charger->notifier);
+>> +	cros_usbpd_unregister_notify(&charger->notifier);
+>>  }
+>>  
+>>  static int cros_usbpd_charger_probe(struct platform_device *pd)
+>> @@ -683,21 +673,17 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+>>  		goto fail;
+>>  	}
+>>  
+>> -	if (ec_device->mkbp_event_supported) {
+>> -		/* Get PD events from the EC */
+>> -		charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
+>> -		ret = blocking_notifier_chain_register(
+>> -						&ec_device->event_notifier,
+>> -						&charger->notifier);
+>> -		if (ret < 0) {
+>> -			dev_warn(dev, "failed to register notifier\n");
+>> -		} else {
+>> -			ret = devm_add_action_or_reset(dev,
+>> -					cros_usbpd_charger_unregister_notifier,
+>> -					charger);
+>> -			if (ret < 0)
+>> -				goto fail;
+>> -		}
+>> +	/* Get PD events from the EC */
+>> +	charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
+>> +	ret = cros_usbpd_register_notify(&charger->notifier);
+>> +	if (ret < 0) {
+>> +		dev_warn(dev, "failed to register notifier\n");
+>> +	} else {
+>> +		ret = devm_add_action_or_reset(dev,
+>> +				cros_usbpd_charger_unregister_notifier,
+>> +				charger);
+>> +		if (ret < 0)
+>> +			goto fail;
+>>  	}
+>>  
+>>  	return 0;
+>> -- 
+>> 2.25.0.341.g760bfbb309-goog
+>>
