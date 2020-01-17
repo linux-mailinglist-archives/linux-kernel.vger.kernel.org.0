@@ -2,158 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F12014073F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 109AB140745
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:03:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgAQKDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:03:07 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44909 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbgAQKDG (ORCPT
+        id S1727029AbgAQKDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:03:21 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41281 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbgAQKDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:03:06 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200117100305euoutp01a0708cb5ccac32af602ebfb483511801~qpGffXj8_1352413524euoutp01d
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 10:03:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200117100305euoutp01a0708cb5ccac32af602ebfb483511801~qpGffXj8_1352413524euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579255385;
-        bh=FCkijMQphRE8Mr4fW6ndAfrNvL8gGE95bsivtOZKJ30=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=j5QfMYv076MRYuAvV9unKr0uS4ufwRSCIsTjKsnBVV0dRcBKcMesk+Dstxdv/FYDa
-         fUH/+q3TdmhbvM8Da8d38z5E7Mz2wm2c41wcdIot37xLH4OWnZIAwcOmDgp36dzuJ7
-         Xssy0jqfjlN3wMZdJ9QgybqwgWmnkQwoG6O1UKFI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200117100305eucas1p2ff5eb893a046122f6bc743ce871fa547~qpGfQ8rTh0451504515eucas1p2a;
-        Fri, 17 Jan 2020 10:03:05 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 64.2A.61286.956812E5; Fri, 17
-        Jan 2020 10:03:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200117100304eucas1p1758fb3bcddb6440d914684f863fa550d~qpGex6Blh1996119961eucas1p1g;
-        Fri, 17 Jan 2020 10:03:04 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200117100304eusmtrp1803be891b65d0223e1f0acfaebbe872b~qpGexFAua3085130851eusmtrp1F;
-        Fri, 17 Jan 2020 10:03:04 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-3c-5e218659b042
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.A5.08375.856812E5; Fri, 17
-        Jan 2020 10:03:04 +0000 (GMT)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200117100304eusmtip277a70c91926c89454bd5ab1160a717c4~qpGeQ7X-51169211692eusmtip2S;
-        Fri, 17 Jan 2020 10:03:04 +0000 (GMT)
-Subject: Re: [PATCH 1/1] drm/bridge: anx78xx: fix integer type used for
- storing dp link rate
-To:     Tobias Schramm <t.schramm@manjaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <4486560b-05e5-6c03-0a8e-4f193141a5c8@samsung.com>
-Date:   Fri, 17 Jan 2020 11:03:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.2.2
+        Fri, 17 Jan 2020 05:03:20 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k40so21315333qtk.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:03:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kN9jFTsuucSemoNqf4dJLa9bNAFNxkxyRhdletZB1KA=;
+        b=uMUCEpzDOb/YhPzJDKgHLZVBqvCippkuTHyQxxp2Cmnpz40yntAZP2m+g1FEG6tExR
+         LFWi1AdXr+eAjej1PGMgGvob4wKuvYLxCLUH6GqPqhEFe83i0lTFH9W7wJR1MbKHKMMl
+         uY7xC1fZdWlpU+eCfoSoeM1EJOvyX1xDyaJIPHusSH7gbW4L3Sv7X8jPKhabFm4jEUX1
+         gBHm5RJ1SAHQugvdz0i52hpuEXVFgdBm6NXxab0lOrWJxbi4gWwFZIlg2ukDVOBnD9U0
+         Ml5rETIniSPU8xMl5Ynb2ANw3+Nag/pkH0bmbsKR+tyvRUjKYor6GazB+AVaJ5aXCvCl
+         gqdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kN9jFTsuucSemoNqf4dJLa9bNAFNxkxyRhdletZB1KA=;
+        b=eitBN8NdfbnDbfoZut1gFO+oK+T9RbKwvV5IjKefI2d/yeL14wJLYhgxXsM5ho5TkG
+         uF1PQGXtZZt8LvCxzqBtY4wH8rnwFugzCQwo6tCKeuaB+k8UE5HPLqlPmfvYDMNfIcmD
+         JOVdFgU/x8KPQVLekfrKBR0WoMP3vIonRc+Y+9UdYaFTDc5eNDwpjyndihwvjqor/dyI
+         MDLviWI7FLI2PmEAnIG16ATxseg7by3tE3HBB4A/1jMk1ZMa0EFmJDHtwJEZd+N97Spw
+         Dwyy1Qp3YYnKP7/EZGiXQAPIiCRyk0Z+eBXKpJ9joZpoBAN3LnfjYhgQHhPJjKRMxDdG
+         WXsA==
+X-Gm-Message-State: APjAAAUdiMy7mdZV//ouPfnSuWAjzn/LnDLNGBHTuLcq/V2HmztVKEK/
+        PEfAsP1La3Ghna3Szlxs//W2rV0MK8AWgbE23yxP1w==
+X-Google-Smtp-Source: APXvYqzlZ86gy24oNdkpo3koZv9DQIH6cw6viAFVT92FEneqyzCrEOi79ncFmZ9Ch2Cod0dIRUvP1mHoUo69WbtuvFA=
+X-Received: by 2002:ac8:30f7:: with SMTP id w52mr6677250qta.380.1579255399591;
+ Fri, 17 Jan 2020 02:03:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200109084801.3117-2-t.schramm@manjaro.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFKsWRmVeSWpSXmKPExsWy7djPc7qRbYpxBoc62C16z51ksvi/bSKz
-        xZWv79ksrn5/yWxx8s1VFovOiUvYLS7vmsNmcagv2uLeur3MDpwe72+0snvs/baAxWN2x0xW
-        jxMTLjF5bP/2gNXjfvdxJo+Gw2sYPQ70Tmbx+LxJLoAzissmJTUnsyy1SN8ugStj/+TlTAVb
-        eSue7nnP2MA4jbuLkZNDQsBE4s3jaexdjFwcQgIrGCX+d91hg3C+MEpsffiQEcL5zChx+d5X
-        FpiW12f2Q1UtZ5RY3bCLGcJ5yyhx/3c3M0iVsECcxMOFu1hAEiICtxklVm4+CDaLWaCVUeLZ
-        2clgVWwCmhJ/N99kA7F5Bewklq45CRZnEVCVWNbVwQ5iiwpESDy58pgVokZQ4uTMJ2B3cApY
-        STSsfArWyywgL7H97RxmCFtc4taT+UwgyyQE7rFLzDu5nhXicBeJNSeXQNnCEq+Ob2GHsGUk
-        Tk/ugXquXuL+ihZmiOYOYBBs2MkMkbCWuHPuF9A2DqANmhLrd+lDhB0lGs9+YAYJSwjwSdx4
-        KwhxA5/EpG3TocK8Eh1tQhDVihL3z26FGigusfTCV7YJjEqzkHw2C8k3s5B8Mwth7wJGllWM
-        4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBKez0v+OfdjB+vZR0iFGAg1GJh3dGkEKcEGti
-        WXFl7iFGCQ5mJRHekzNk44R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQ
-        WgSTZeLglGpg3FZV9mKXo1zCC8t73wT//PQwC7maITCx6f4l9777RXc+ylyd0VhvfrNgYsbW
-        qEdp7u6npn6OKq6PX8VeFTjjrRK/bVL82wU/brT+WsBg4vhTVuSCGuNCnbllIjedHQ09y++d
-        UjbR7u/UFH9wKe35oWYFr4w5u/wkLp1+u8LGI63hnWDOkbxbSizFGYmGWsxFxYkAQX8Y7V0D
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xe7oRbYpxBkcXKlj0njvJZPF/20Rm
-        iytf37NZXP3+ktni5JurLBadE5ewW1zeNYfN4lBftMW9dXuZHTg93t9oZffY+20Bi8fsjpms
-        HicmXGLy2P7tAavH/e7jTB4Nh9cwehzonczi8XmTXABnlJ5NUX5pSapCRn5xia1StKGFkZ6h
-        pYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G/snLmQq28lY83fOesYFxGncXIyeHhICJ
-        xOsz+9m6GLk4hASWMko0P37GBJEQl9g9/y0zhC0s8edaF1TRa0aJgwv2sIEkhAXiJB4u3MUC
-        khARuM0ocfrKVGYQh1mglVFiZ8dFRoiWvYwSe+b1gs1iE9CU+Lv5Jlg7r4CdxNI1J8HiLAKq
-        Esu6OthBbFGBCIm3v2+yQtQISpyc+YQFxOYUsJJoWPkUrJdZQF3iz7xLzBC2vMT2t3OgbHGJ
-        W0/mM01gFJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzBqtx37
-        uXkH46WNwYcYBTgYlXh4ZwQpxAmxJpYVV+YeYpTgYFYS4T05QzZOiDclsbIqtSg/vqg0J7X4
-        EKMp0HMTmaVEk/OBCSWvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwen
-        VAOjjnGwdJiS4yV+U6VT+2VPLbIRbY7Ly1F/N5Pn7JOFJ+v//n+myuqt1paxVMzH3G3PuaKN
-        tUHvpA4sdVvhLbozJF7Wx3aC4gMhwbP7s4q/H5ihVnjmwu3L5oHqc4w6NE8/mbe6/vGeT9IG
-        5UfKX5iq9P9l2SYhVr5l3W1phnU615oWCv3ZLXZaiaU4I9FQi7moOBEAXZU0H/ACAAA=
-X-CMS-MailID: 20200117100304eucas1p1758fb3bcddb6440d914684f863fa550d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200109084920eucas1p1ed027ed22778b67eb86301d3bdf34bb5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200109084920eucas1p1ed027ed22778b67eb86301d3bdf34bb5
-References: <20200109084801.3117-1-t.schramm@manjaro.org>
-        <CGME20200109084920eucas1p1ed027ed22778b67eb86301d3bdf34bb5@eucas1p1.samsung.com>
-        <20200109084801.3117-2-t.schramm@manjaro.org>
+References: <20200115182816.33892-1-trishalfonso@google.com>
+ <dce24e66d89940c8998ccc2916e57877ccc9f6ae.camel@sipsolutions.net>
+ <CAKFsvU+sUdGC9TXK6vkg5ZM9=f7ePe7+rh29DO+kHDzFXacx2w@mail.gmail.com>
+ <4f382794416c023b6711ed2ca645abe4fb17d6da.camel@sipsolutions.net>
+ <b55720804de8e56febf48c7c3c11b578d06a8c9f.camel@sipsolutions.net>
+ <CACT4Y+brqD-o-u3Vt=C-PBiS2Wz+wXN3Q3RqBhf3XyRYaRoZJw@mail.gmail.com>
+ <2092169e6dd1f8d15f1db4b3787cc9fe596097b7.camel@sipsolutions.net>
+ <CACT4Y+b6C+y9sDfMYPDy-nh=WTt5+u2kLcWx2LQmHc1A5L7y0A@mail.gmail.com> <CACT4Y+atPME1RYvusmr2EQpv_mNkKJ2_LjMeANv0HxF=+Uu5hw@mail.gmail.com>
+In-Reply-To: <CACT4Y+atPME1RYvusmr2EQpv_mNkKJ2_LjMeANv0HxF=+Uu5hw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 17 Jan 2020 11:03:07 +0100
+Message-ID: <CACT4Y+bsaZoPC1Q7_rV-e_aO=LVPA-cE3btT_VARStWYk6dcPA@mail.gmail.com>
+Subject: Re: [RFC PATCH] UML: add support for KASAN under x86_64
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Patricia Alfonso <trishalfonso@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jeff Dike <jdike@addtoit.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-um@lists.infradead.org, David Gow <davidgow@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        anton.ivanov@cambridgegreys.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.01.2020 09:48, Tobias Schramm wrote:
-> commit ff1e8fb68ea0 ("drm/bridge: analogix-anx78xx: Avoid drm_dp_link helpers")
-> changed the link training logic to remove use of drm_dp_link helpers. However
-> the new logic stores the maximum link rate in a u8, overflowing it.
-> This commit changes the logic to store the max link rate in a unsigned int
-> instead.
+On Fri, Jan 17, 2020 at 10:59 AM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
-> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
-> ---
->  drivers/gpu/drm/bridge/analogix-anx78xx.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> On Thu, Jan 16, 2020 at 10:39 PM Patricia Alfonso
+> <trishalfonso@google.com> wrote:
+> >
+> > On Thu, Jan 16, 2020 at 1:23 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > On Thu, Jan 16, 2020 at 10:20 AM Johannes Berg
+> > > <johannes@sipsolutions.net> wrote:
+> > > >
+> > > > On Thu, 2020-01-16 at 10:18 +0100, Dmitry Vyukov wrote:
+> > > > >
+> > > > > Looking at this problem and at the number of KASAN_SANITIZE := n in
+> > > > > Makefiles (some of which are pretty sad, e.g. ignoring string.c,
+> > > > > kstrtox.c, vsprintf.c -- that's where the bugs are!), I think we
+> > > > > initialize KASAN too late. I think we need to do roughly what we do in
+> > > > > user-space asan (because it is user-space asan!). Constructors run
+> > > > > before main and it's really good, we need to initialize KASAN from
+> > > > > these constructors. Or if that's not enough in all cases, also add own
+> > > > > constructor/.preinit array entry to initialize as early as possible.
+> > > >
+> >
+> > I am not too happy with the number of KASAN_SANITIZE := n's either.
+> > This sounds like a good idea. Let me look into it; I am not familiar
+> > with constructors or .preint array.
+> >
+> > > > We even control the linker in this case, so we can put something into
+> > > > the .preinit array *first*.
+> > >
+> > > Even better! If we can reliably put something before constructors, we
+> > > don't even need lazy init in constructors.
+> > >
+> > > > > All we need to do is to call mmap syscall, there is really no
+> > > > > dependencies on anything kernel-related.
+> > > >
+> > > > OK. I wasn't really familiar with those details.
+> > > >
+> > > > > This should resolve the problem with constructors (after they
+> > > > > initialize KASAN, they can proceed to do anything they need) and it
+> > > > > should get rid of most KASAN_SANITIZE (in particular, all of
+> > > > > lib/Makefile and kernel/Makefile) and should fix stack instrumentation
+> > > > > (in case it does not work now). The only tiny bit we should not
+> > > > > instrument is the path from constructor up to mmap call.
+> >
+> > This sounds like a great solution. I am getting this KASAN report:
+> > "BUG: KASAN: stack-out-of-bounds in syscall_stub_data+0x2a5/0x2c7",
+> > which is probably because of this stack instrumentation problem you
+> > point out.
 >
-> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> index 274989f96a91..0f38b8c40dff 100644
-> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> @@ -748,6 +748,7 @@ static int anx78xx_init_pdata(struct anx78xx *anx78xx)
->  static int anx78xx_dp_link_training(struct anx78xx *anx78xx)
->  {
->  	u8 dp_bw, dpcd[2];
-> +	unsigned int max_link_rate;
->  	int err;
->  
->  	err = regmap_write(anx78xx->map[I2C_IDX_RX_P0], SP_HDMI_MUTE_CTRL_REG,
-> @@ -866,8 +867,8 @@ static int anx78xx_dp_link_training(struct anx78xx *anx78xx)
->  	if (err)
->  		return err;
->  
-> -	dpcd[0] = drm_dp_max_link_rate(anx78xx->dpcd);
-> -	dpcd[0] = drm_dp_link_rate_to_bw_code(dpcd[0]);
-> +	max_link_rate = drm_dp_max_link_rate(anx78xx->dpcd);
-> +	dpcd[0] = drm_dp_link_rate_to_bw_code(max_link_rate);
+> [reposting to the list]
+>
+> If that part of the code I mentioned is instrumented, manifestation
+> would be different -- stack instrumentation will try to access shadow,
+> shadow is not mapped yet, so it would crash on the shadow access.
+>
+> What you are seeing looks like, well, a kernel bug where it does a bad
+> stack access. Maybe it's KASAN actually _working_? :)
 
-
-The code converts bw_code to rate, then reverse, maybe it should be
-simplified:
-
-dpcd[0] = anx78xx->dpcd[DP_MAX_LINK_RATE];
-
-
-Regards
-
-Andrzej
-
-
->  	err = regmap_write(anx78xx->map[I2C_IDX_TX_P0],
->  			   SP_DP_MAIN_LINK_BW_SET_REG, dpcd[0]);
->  	if (err)
-
-
+Though, stack instrumentation may have issues with longjmp-like things.
+I would suggest first turning off stack instrumentation and getting
+that work. Solving problems one-by-one is always easier.
+If you need help debugging this, please post more info: patch, what
+you are doing, full kernel output (preferably from start, if it's not
+too lengthy).
