@@ -2,168 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AEE5140087
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1709A140096
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387974AbgAQAHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:07:17 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:29169 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387968AbgAQAHO (ORCPT
+        id S1729320AbgAQAJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:09:56 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:54941 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726958AbgAQAJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:07:14 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579219633; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=SHwNB49es+tEFhU72L5syNc/xMu/TcvkZcGp1768lCc=; b=esOf5+2P5QtMrYpLGbv9st+FyyRpHjaPTI5TX1bgefkhYNI/f5iWAnOmB7eLEeNc2wxHeczN
- zDDfrbQGzIRR0glytJ4bNw7or5jqfztg4DNIbR37zMametNor9AUCICSpQo24c0ef9Vmcx9u
- qes+Df+j0vxsWo6VmktgMiZG0rQ=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e20faae.7fa15424e998-smtp-out-n01;
- Fri, 17 Jan 2020 00:07:10 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 66DA5C447A2; Fri, 17 Jan 2020 00:07:10 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.46.162.237] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CFD3C433CB;
-        Fri, 17 Jan 2020 00:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CFD3C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [PATCH v2 3/6] dt-bindings: interconnect: Update Qualcomm SDM845
- DT bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, sboyd@kernel.org, ilina@codeaurora.org,
-        seansw@qti.qualcomm.com, elder@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1578630784-962-1-git-send-email-daidavid1@codeaurora.org>
- <1578630784-962-4-git-send-email-daidavid1@codeaurora.org>
- <20200115144942.GA15075@bogus>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <04723e50-dc73-269b-d861-30e5f1c97adb@codeaurora.org>
-Date:   Thu, 16 Jan 2020 16:07:08 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200115144942.GA15075@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 16 Jan 2020 19:09:56 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id D3381220A9;
+        Thu, 16 Jan 2020 19:09:54 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 16 Jan 2020 19:09:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=4y285Mn+nF0hNakty6Ped9kTCwL0aOB
+        qAFumkJVyMi4=; b=nuEayf3B1FaV744Uv9IaAHYAg2yJ2lIc+Zw2glZ04dF89A8
+        RL6SXwX08LExha9D01aXgbmCVNPJgKH7yl/UWQlo1v4ePBU3jYA/kU0vtS3ONL46
+        ztID4DuVaOKc+DG0tdNQVWrTrC6+Zi2zQ+NzWxaVp4/jNv5yDUnakMw6l9jmIrro
+        BZb4pXLfzUUMPyfuJKjJOaBnoqUwb4juTiyQJFw5EN1hnE1oTt1RDp0c9k/6kbtJ
+        6HypW5wwK5Ha/HzfUcozpJeBafV2cO99gnZmVoXsdfkFQPnSVPKl3/RiPSpXtAu7
+        IFugnJMJIleynsF9OzYOuGklT1xF8iuJu19PnmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=4y285M
+        n+nF0hNakty6Ped9kTCwL0aOBqAFumkJVyMi4=; b=K9jFKAkEM0xhlNwIb99nsw
+        iJWmDSEEumZc0x27W3teLKnVx2i8dr9eYKXJKoh4UV68IKmHIIEtFJc+YlR4gaNe
+        YFq/8IBLCCqFm/7z23Iae2TUF1tQcU84MWuci2MPt5eXlZilbaZ8ajjpJfiUngPN
+        jPpNmlRr3UxdF8h+dr5CVIK6G0g3DwIKJ73U8DtxGOIGAqHSo6O7ew2FuXUAc3uy
+        SkWHosKkpdYTsyCCjmaECod4T7Efes++9dDopUfqFWDjSnSC701vJadCUB4V1F8Q
+        uxInZRHHEd5obM/cG7lT1idLd5a0Mn4CWgQuRT0zCV++MjwBQ/MI6iSzsDPEjwBg
+        ==
+X-ME-Sender: <xms:UvsgXgi5hyaYPqtHY1Yc2vqXQhl7YnnJYdL0ncspUwNa1engiOcywQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigdduiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:UvsgXgsoLAnSNiH2i2f9_S9wZYbbJKXwvdjCqhoCr8AgzhfbblMlgQ>
+    <xmx:UvsgXt6EiU0I_kw1fOmgHS91SqFN-NAfy60ssAfuiSNG35jnM3dcCw>
+    <xmx:UvsgXipJZ2xQc7-G68_q3lvJOES4VMSRaMlDLOZXZO2xP4JEKrbNiQ>
+    <xmx:UvsgXgTwou8eJ5pcuBxtyObp2YdOQAZrd1Ir-1TiTKtv5cDW7uT_Kw>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id E76C1E00A2; Thu, 16 Jan 2020 19:09:53 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-754-g09d1619-fmstable-20200113v1
+Mime-Version: 1.0
+Message-Id: <3e28410b-805b-4599-88d1-98aa39c926d5@www.fastmail.com>
+In-Reply-To: <1579123790-6894-8-git-send-email-eajames@linux.ibm.com>
+References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
+ <1579123790-6894-8-git-send-email-eajames@linux.ibm.com>
+Date:   Fri, 17 Jan 2020 10:39:33 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v6 07/12] soc: aspeed: xdma: Add user interface
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 1/15/2020 6:49 AM, Rob Herring wrote:
-> On Thu, Jan 09, 2020 at 08:33:01PM -0800, David Dai wrote:
->> Redefine the Network-on-Chip devices to more accurately describe
->> the interconnect topology on Qualcomm's SDM845 platform. Each
->> interconnect device can communicate with different instances of the
->> RPMh hardware which are described as RSCs(Resource State Coordinators).
->>
->> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->> ---
->>   .../bindings/interconnect/qcom,sdm845.yaml         | 49 ++++++++++++++++++----
->>   1 file changed, 40 insertions(+), 9 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.yaml b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.yaml
->> index 61e0097..6741a12 100644
->> --- a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.yaml
->> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.yaml
->> @@ -13,21 +13,44 @@ description: |
->>      SDM845 interconnect providers support system bandwidth requirements through
->>      RPMh hardware accelerators known as Bus Clock Manager (BCM). The provider is
->>      able to communicate with the BCM through the Resource State Coordinator (RSC)
->> -   associated with each execution environment. Provider nodes must reside within
->> -   an RPMh device node pertaining to their RSC and each provider maps to a
->> -   single RPMh resource.
->> +   associated with each execution environment. Provider nodes must point to at
->> +   least one RPMh device child node pertaining to their RSC and each provider
->> +   can map to multiple RPMh resources.
->>    
->>   properties:
->> +  reg:
->> +    maxItems: 1
->> +
->>     compatible:
->>       enum:
->> -      - qcom,sdm845-rsc-hlos
->> +      - qcom,sdm845-aggre1-noc
->> +      - qcom,sdm845-aggre2-noc
->> +      - qcom,sdm845-config-noc
->> +      - qcom,sdm845-dc-noc
->> +      - qcom,sdm845-gladiator-noc
->> +      - qcom,sdm845-mem-noc
->> +      - qcom,sdm845-mmss-noc
->> +      - qcom,sdm845-system-noc
->>   
->>     '#interconnect-cells':
->>       const: 1
->>   
->> +  qcom,bcm-voter-names:
->> +    items:
->> +      - const: apps
->> +      - const: disp
-> If these are always the names, why do you need them?
-Disp and apps bcm voters are the only ones supported for sdm845, but the 
-number of voters and voter names may be different for other non-sdm845 
-based boards.
->> +
->> +  qcom,bcm-voters:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: |
->> +      List of phandles to qcom,bcm-voter nodes that are required by
->> +      this interconnect to send RPMh commands.
-> Is the max length 2?
-For sdm845, yes.
->> +
->>   required:
->>     - compatible
->> +  - reg
->>     - '#interconnect-cells'
->> +  - qcom,bcm-voters
->>   
->>   additionalProperties: false
->>   
->> @@ -35,9 +58,17 @@ examples:
->>     - |
->>         #include <dt-bindings/interconnect/qcom,sdm845.h>
->>   
->> -      apps_rsc: rsc {
->> -              rsc_hlos: interconnect {
->> -                      compatible = "qcom,sdm845-rsc-hlos";
->> -                      #interconnect-cells = <1>;
->> -              };
->> +      mem_noc: interconnect@1380000 {
->> +             compatible = "qcom,sdm845-mem-noc";
->> +             reg = <0 0x01380000 0 0x27200>;
->> +             #interconnect-cells = <1>;
->> +             qcom,bcm-voters = <&apps_bcm_voter>;
->> +      };
->> +
->> +      mmss_noc: interconnect@1740000 {
->> +             compatible = "qcom,sdm845-mmss-noc";
->> +             reg = <0 0x01740000 0 0x1c1000>;
->> +             #interconnect-cells = <1>;
->> +             qcom,bcm-voter-names = "apps", "disp";
->> +             qcom,bcm-voters = <&apps_bcm_voter>, <&disp_bcm_voter>;
->>         };
->> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+On Thu, 16 Jan 2020, at 07:59, Eddie James wrote:
+> This commits adds a miscdevice to provide a user interface to the XDMA
+> engine. The interface provides the write operation to start DMA
+> operations. The DMA parameters are passed as the data to the write call.
+> The actual data to transfer is NOT passed through write. Note that both
+> directions of DMA operation are accomplished through the write command;
+> BMC to host and host to BMC.
+> 
+> The XDMA driver reserves an area of physical memory for DMA operations,
+> as the XDMA engine is restricted to accessing certain physical memory
+> areas on some platforms. This memory forms a pool from which users can
+> allocate pages for their usage with calls to mmap. The space allocated
+> by a client will be the space used in the DMA operation. For an
+> "upstream" (BMC to host) operation, the data in the client's area will
+> be transferred to the host. For a "downstream" (host to BMC) operation,
+> the host data will be placed in the client's memory area.
+> 
+> Poll is also provided in order to determine when the DMA operation is
+> complete for non-blocking IO.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
