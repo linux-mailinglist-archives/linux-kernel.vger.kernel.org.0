@@ -2,79 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61A7014068C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:43:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F328C140683
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgAQJmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:42:24 -0500
-Received: from relay.sw.ru ([185.231.240.75]:50194 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbgAQJmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:42:22 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1isO8k-0005zq-5i; Fri, 17 Jan 2020 12:42:06 +0300
-Subject: Re: [Patch v3] mm: thp: grab the lock before manipulation defer list
-To:     David Rientjes <rientjes@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, alexander.duyck@gmail.com,
-        stable@vger.kernel.org
-References: <20200116013100.7679-1-richardw.yang@linux.intel.com>
- <0bb34c4a-97c7-0b3c-cf43-8af6cf9c4396@virtuozzo.com>
- <alpine.DEB.2.21.2001161357240.109233@chino.kir.corp.google.com>
- <20200117091002.GM19428@dhcp22.suse.cz>
- <b67fe2bb-e7a6-29fe-925e-dd1ae176cc4b@virtuozzo.com>
- <alpine.DEB.2.21.2001170132090.20618@chino.kir.corp.google.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <11ba0af7-c2b2-83f9-ac55-7793cedb8028@virtuozzo.com>
-Date:   Fri, 17 Jan 2020 12:42:05 +0300
+        id S1727043AbgAQJmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:42:18 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58239 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbgAQJmR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:42:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579254136;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=7IFOguwN5jalt+MN9l4CQa7npBjVxF+wbcNmNs/eR6s=;
+        b=PrXUuNO6RSOV+elpOL5+aKy1smZf6XkTQSrv3526he9xAIBdR8KSUncS6eVcPcehPghoUd
+        X9YmfVBq5qPzcjyp1GbNtC0l5tYhV/rUAw1l0uHcfff8UzhXbJSp+pFk9hpF/ND/ok8WHU
+        JIP2pHlTryO4mfrvo/aLL5yA+INfI+I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-14-rkJgzIBoM4aWK1XPCbXxzQ-1; Fri, 17 Jan 2020 04:42:14 -0500
+X-MC-Unique: rkJgzIBoM4aWK1XPCbXxzQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 20BCE1005512;
+        Fri, 17 Jan 2020 09:42:13 +0000 (UTC)
+Received: from [10.36.116.244] (ovpn-116-244.ams2.redhat.com [10.36.116.244])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 16D2860F82;
+        Fri, 17 Jan 2020 09:42:10 +0000 (UTC)
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
+ printk()
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20200117022111.18807-1-cai@lca.pw>
+ <d7068679-e28a-98a9-f5b8-49ea47f7c092@redhat.com>
+ <20200117085932.GK19428@dhcp22.suse.cz>
+ <b8aba013-16a8-8407-9330-8884d17b9594@redhat.com>
+ <20200117094009.GP19428@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <521da382-d9b2-8556-d603-5537b030d8fd@redhat.com>
+Date:   Fri, 17 Jan 2020 10:42:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.2001170132090.20618@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200117094009.GP19428@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.01.2020 12:32, David Rientjes wrote:
-> On Fri, 17 Jan 2020, Kirill Tkhai wrote:
-> 
->>>> I think that's a good point, especially considering that the current code 
->>>> appears to unconditionally place any compound page on the deferred split 
->>>> queue of the destination memcg.  The correct list that it should appear 
->>>> on, I believe, depends on whether the pmd has been split for the process 
->>>> being moved: note the MC_TARGET_PAGE caveat in 
->>>> mem_cgroup_move_charge_pte_range() that does not move the charge for 
->>>> compound pages with split pmds.  So when mem_cgroup_move_account() is 
->>>> called with compound == true, we're moving the charge of the entire 
->>>> compound page: why would it appear on that memcg's deferred split queue?
+On 17.01.20 10:40, Michal Hocko wrote:
+> On Fri 17-01-20 10:25:06, David Hildenbrand wrote:
+>> On 17.01.20 09:59, Michal Hocko wrote:
+>>> On Fri 17-01-20 09:51:05, David Hildenbrand wrote:
+>>>> On 17.01.20 03:21, Qian Cai wrote:
+>>> [...]
+>>>>> Even though has_unmovable_pages doesn't hold any reference to the
+>>>>> returned page this should be reasonably safe for the purpose of
+>>>>> reporting the page (dump_page) because it cannot be hotremoved. The
+>>>>
+>>>> This is only true in the context of memory unplug, but not in the
+>>>> context of is_mem_section_removable()-> is_pageblock_removable_nolock().
 >>>
->>> I believe Kirill asked how do we know that the page should be actually
->>> added to the deferred list just from the list_empty check. In other
->>> words what if the page hasn't been split at all?
+>>> Well, the above should hold for that path as well AFAICS. If the page is
+>>> unmovable then a racing hotplug cannot remove it, right? Or do you
+>>> consider a temporary unmovability to be a problem?
 >>
->> Yes, I'm talking about this. Function mem_cgroup_move_account() adds every
->> huge page to the deferred list, while we need to do that only for pages,
->> which are queued for splitting...
->>
+>> Somebody could test /sys/devices/system/memory/memoryX/removable. While
+>> returning the unmovable page, it could become movable and
+>> offlining+removing could succeed.
 > 
-> Yup, and that appears broken before Wei's patch.  Since we only migrate 
-> charges of entire compound pages (we have a mapping pmd, the underlying 
-> page cannot be split), it should not appear on the deferred split queue 
-> for any memcg, right?
+> Doesn't this path use device lock or something? If not than the new code
+> is not more racy then the existing one. Just look at
+> is_pageblock_removable_nolock and how it dereferences struct page
+> (page_zonenum in  page_zone.)
+> 
 
-Hm. Can't a huge page be mapped in two tasks:
+AFAIK no device lock, no device hotplug lock, no memory hotplug lock. I
+think it holds a reference to the device and to the kernelfs node. But
+AFAIK that does not block removal of offlining/memory, just when the
+objects get freed.
 
-1)the first task unmapped a part of page and initiated splitting,
-2)the second task still refers the whole page,
+-- 
+Thanks,
 
-then we move account for the second task?
+David / dhildenb
+
