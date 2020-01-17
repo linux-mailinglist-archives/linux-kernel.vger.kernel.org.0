@@ -2,82 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AAC140C5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F9F140C61
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbgAQOXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:23:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
+        id S1728827AbgAQOXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:23:42 -0500
+Received: from foss.arm.com ([217.140.110.172]:41780 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbgAQOXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:23:09 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AAD62072B;
-        Fri, 17 Jan 2020 14:23:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579270988;
-        bh=gap0/53YJTTxUaW1ZNsFwWpb1xxgzIidqgjjcXgrN+M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yL8XQo0/T8tM+oLhkkhEBUIlSgtOtklw8DJxtDTDZmlFcRLjOnrNsKzXFVYRt+QPP
-         shxieXZfXPMwLnKMhhNCktJPQDn8uDBw2LMiyJqyq6puJESG1Y+p7CUmqtzHu8z74M
-         8TWVxUStNO/q0+DyqBchUg2dzRdoJc/3fvQA4JkE=
-Date:   Fri, 17 Jan 2020 15:23:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 000/203] 5.4.13-stable review
-Message-ID: <20200117142306.GA1879300@kroah.com>
-References: <20200116231745.218684830@linuxfoundation.org>
- <25658ca7-fa1a-303b-7a75-099b9bcf235b@nvidia.com>
+        id S1726574AbgAQOXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 09:23:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC81411D4;
+        Fri, 17 Jan 2020 06:23:40 -0800 (PST)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1370B3F534;
+        Fri, 17 Jan 2020 06:23:39 -0800 (PST)
+Date:   Fri, 17 Jan 2020 14:23:33 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Zeng Tao <prime.zeng@hisilicon.com>, linuxarm@huawei.com,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] cpu-topology: Don't error on more than CONFIG_NR_CPUS
+ CPUs in device tree
+Message-ID: <20200117142333.GA4088@bogus>
+References: <1579225973-32423-1-git-send-email-prime.zeng@hisilicon.com>
+ <20200117101957.GA4099@bogus>
+ <20200117142134.GA1858257@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <25658ca7-fa1a-303b-7a75-099b9bcf235b@nvidia.com>
+In-Reply-To: <20200117142134.GA1858257@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 01:21:02PM +0000, Jon Hunter wrote:
-> 
-> On 16/01/2020 23:15, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.13 release.
-> > There are 203 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 18 Jan 2020 23:16:00 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.13-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.4.13-rc1-g3c8b6cdc962e
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+On Fri, Jan 17, 2020 at 03:21:35PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Jan 17, 2020 at 10:19:57AM +0000, Sudeep Holla wrote:
+> > On Fri, Jan 17, 2020 at 09:52:52AM +0800, Zeng Tao wrote:
+> > > When the kernel is configured with CONFIG_NR_CPUS smaller than the
+> > > number of CPU nodes in the device tree(DT), all the CPU nodes parsing
+> > > done to fetch topology information will fail. This is not reasonable
+> > > as it is legal to have all the physical CPUs in the system in the DT.
+> > >
+> > > Let us just skip such CPU DT nodes that are not used in the kernel
+> > > rather than returning an error.
+> > >
+> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+> >
+> > Hi Greg,
+> >
+> > Can you pick this patch for v5.6 ?
+>
+> oops, didn't realize this was for me, sorry, will go do so now.
+>
 
-Wonderful, thanks for testing these and letting me know.
+No worries, it just got baked this morning :). I just dropped you a note
+before I could forget.
 
-greg k-h
+--
+Regards,
+Sudeep
