@@ -2,118 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F84C140B3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2A4C140B0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:38:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbgAQNnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:43:05 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:27988 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726566AbgAQNnC (ORCPT
+        id S1729093AbgAQNhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:37:31 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:56180 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbgAQNh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:43:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579268582;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xMnL4G6jmU2OaNfU4L/KK5+b9+BSnKw6V4a/Ssf8Fhg=;
-        b=h1CNAZQpqvVZijRKNDNN6ubaKxcDyiEXx173p6V39FvZfy6ppf2R0xUvpREtqupyHIXsAb
-        2aXt5rcjcGOD6t2xm3k06SK1nVFzH0IwDddjKSe3+a4qmLZH0RBNZNzYkoEz0Pc71405K1
-        BwGcUN8cqVM6Zxriu2k/rB2q92SJyfw=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-55-7VJr7iVyPn60NkLRnNmuOg-1; Fri, 17 Jan 2020 08:43:00 -0500
-X-MC-Unique: 7VJr7iVyPn60NkLRnNmuOg-1
-Received: by mail-lf1-f69.google.com with SMTP id x23so4376454lfc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:42:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=xMnL4G6jmU2OaNfU4L/KK5+b9+BSnKw6V4a/Ssf8Fhg=;
-        b=ACy6F0RdRaIZlT7X7F2IFL2dRKIF5tLAMv/I09T8jgA58aLuMgtozS82pPqjc3+uuA
-         qc6K2fIWFQ8t3LXGKdUJAaWWsSCX1Xy4vhUIgAy/9R1E10xMfrz/9f4XDLr/Lfbd69jo
-         s/euwu+2GriK2SnRfZ3mBAbrOSa4yjuFg/E6z8ApFh015odfINH08k0c+0hfoKYsH3gS
-         JYOU34qenrxcugOJ7+oaMYdMa+go7SMBtXRIamyUNQ1FCb2oqWSatoVZyhpz9IJzkARb
-         oBhlQ4GYfYqjf09npTXKsK39F7c1+kl2ge7ia1mXxWwwns1hUEwmBJiD3jUMrJUOOwRj
-         Yw8A==
-X-Gm-Message-State: APjAAAUpxGYZZpWiaHKJ/lUlKLobDxWiJfnqEMl99dWA6VlHO9+oRE4f
-        dA62cAOhr88afH2P9O/jOfNzIXDbQtwW/63mkh0whyJilNoTKMbp4NYS1Oei9X+n5gE6Lv05y3I
-        g4KQqfV8Ju6gI6p+39Hrz6pHJ
-X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr5597177ljm.218.1579268577930;
-        Fri, 17 Jan 2020 05:42:57 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzt3wfXgxOpp/EjUy4KtlwNoojyX+ef3VB3MZN9TMR6dcXGwDFGyY6GF7+SfD2lUiI01/Gy9w==
-X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr5597161ljm.218.1579268577656;
-        Fri, 17 Jan 2020 05:42:57 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id i13sm12376914ljg.89.2020.01.17.05.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 05:42:56 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id F09801804D8; Fri, 17 Jan 2020 14:36:47 +0100 (CET)
-Subject: [PATCH bpf-next v4 10/10] tools/runqslower: Remove tools/lib/bpf from
- include path
-From:   =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Alexei Starovoitov <ast@kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Date:   Fri, 17 Jan 2020 14:36:47 +0100
-Message-ID: <157926820790.1555735.1100844709479532083.stgit@toke.dk>
-In-Reply-To: <157926819690.1555735.10756593211671752826.stgit@toke.dk>
-References: <157926819690.1555735.10756593211671752826.stgit@toke.dk>
-User-Agent: StGit/0.21
+        Fri, 17 Jan 2020 08:37:29 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1isRoT-0000eM-J8; Fri, 17 Jan 2020 14:37:25 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DF1391C19DE;
+        Fri, 17 Jan 2020 14:37:24 +0100 (CET)
+Date:   Fri, 17 Jan 2020 13:37:24 -0000
+From:   "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/apic] x86/apic/uv: Avoid unused variable warning
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191212140419.315264-1-arnd@arndb.de>
+References: <20191212140419.315264-1-arnd@arndb.de>
 MIME-Version: 1.0
+Message-ID: <157926824469.396.6088993162462441082.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Toke Høiland-Jørgensen <toke@redhat.com>
+The following commit has been merged into the x86/apic branch of tip:
 
-Since we are now consistently using the bpf/ prefix on #include directives,
-we don't need to include tools/lib/bpf in the include path. Remove it to
-make sure we don't inadvertently introduce new includes without the prefix.
+Commit-ID:     d0b7788804482b2689946cd8d910ac3e03126c8d
+Gitweb:        https://git.kernel.org/tip/d0b7788804482b2689946cd8d910ac3e03126c8d
+Author:        Arnd Bergmann <arnd@arndb.de>
+AuthorDate:    Thu, 12 Dec 2019 15:03:57 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 17 Jan 2020 14:34:41 +01:00
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+x86/apic/uv: Avoid unused variable warning
+
+When CONFIG_PROC_FS is disabled, the compiler warns about an unused
+variable:
+
+arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_setup_proc_files':
+arch/x86/kernel/apic/x2apic_uv_x.c:1546:8: error: unused variable 'name' [-Werror=unused-variable]
+  char *name = hubless ? "hubless" : "hubbed";
+
+Simplify the code so this variable is no longer needed.
+
+Fixes: 8785968bce1c ("x86/platform/uv: Add UV Hubbed/Hubless Proc FS Files")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20191212140419.315264-1-arnd@arndb.de
+
 ---
- tools/bpf/runqslower/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/x2apic_uv_x.c | 43 ++++-------------------------
+ 1 file changed, 6 insertions(+), 37 deletions(-)
 
-diff --git a/tools/bpf/runqslower/Makefile b/tools/bpf/runqslower/Makefile
-index 9f022f7f2593..0cac6f0ddccf 100644
---- a/tools/bpf/runqslower/Makefile
-+++ b/tools/bpf/runqslower/Makefile
-@@ -5,7 +5,7 @@ LLC := llc
- LLVM_STRIP := llvm-strip
- DEFAULT_BPFTOOL := $(OUTPUT)/sbin/bpftool
- BPFTOOL ?= $(DEFAULT_BPFTOOL)
--INCLUDES := -I$(OUTPUT) -I$(abspath ../../lib) -I$(abspath ../../lib/bpf)
-+INCLUDES := -I$(OUTPUT) -I$(abspath ../../lib)
- LIBBPF_SRC := $(abspath ../../lib/bpf)
- CFLAGS := -g -Wall
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index d5b51a7..ad53b2a 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -1493,65 +1493,34 @@ static void check_efi_reboot(void)
+ }
  
-
+ /* Setup user proc fs files */
+-static int proc_hubbed_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubbed_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "0x%x\n", uv_hubbed_system);
+ 	return 0;
+ }
+ 
+-static int proc_hubless_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_hubless_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "0x%x\n", uv_hubless_system);
+ 	return 0;
+ }
+ 
+-static int proc_oemid_show(struct seq_file *file, void *data)
++static int __maybe_unused proc_oemid_show(struct seq_file *file, void *data)
+ {
+ 	seq_printf(file, "%s/%s\n", oem_id, oem_table_id);
+ 	return 0;
+ }
+ 
+-static int proc_hubbed_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_hubbed_show, (void *)NULL);
+-}
+-
+-static int proc_hubless_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_hubless_show, (void *)NULL);
+-}
+-
+-static int proc_oemid_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, proc_oemid_show, (void *)NULL);
+-}
+-
+-/* (struct is "non-const" as open function is set at runtime) */
+-static struct file_operations proc_version_fops = {
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+-static const struct file_operations proc_oemid_fops = {
+-	.open		= proc_oemid_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static __init void uv_setup_proc_files(int hubless)
+ {
+ 	struct proc_dir_entry *pde;
+-	char *name = hubless ? "hubless" : "hubbed";
+ 
+ 	pde = proc_mkdir(UV_PROC_NODE, NULL);
+-	proc_create("oemid", 0, pde, &proc_oemid_fops);
+-	proc_create(name, 0, pde, &proc_version_fops);
++	proc_create_single("oemid", 0, pde, proc_oemid_show);
+ 	if (hubless)
+-		proc_version_fops.open = proc_hubless_open;
++		proc_create_single("hubless", 0, pde, proc_hubless_show);
+ 	else
+-		proc_version_fops.open = proc_hubbed_open;
++		proc_create_single("hubbed", 0, pde, proc_hubbed_show);
+ }
+ 
+ /* Initialize UV hubless systems */
