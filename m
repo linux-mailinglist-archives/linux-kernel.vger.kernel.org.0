@@ -2,88 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CBB1404E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 09:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A85D1404D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 09:05:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbgAQIIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 03:08:46 -0500
-Received: from fanzine.igalia.com ([178.60.130.6]:38119 "EHLO
-        fanzine.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbgAQIIp (ORCPT
+        id S1729532AbgAQIE5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 17 Jan 2020 03:04:57 -0500
+Received: from twhmllg4.macronix.com ([122.147.135.202]:58499 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbgAQIE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 03:08:45 -0500
-X-Greylist: delayed 2593 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 03:08:45 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com; s=20170329;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID; bh=xkBF8jCSOWPumWg9R+MOpddk9K9WEJFLsXsk5vUpwbU=;
-        b=ctgc1bMFPsEvVCcRWuutv+YO2ueOPTps5Bt6MPdOZxl0KloyUOn9f0hYS7JBAP89XHhp/vfRf7bptujxrAIlMsrG0sWnRbKLIAuU7iS9+xFRPoZ8VL+OvJ7WMAu1kkK7v3nMnJ3y3hIxjvVhUeA8s0Wcjg080Em0FF8EeHom99OO8mLi13fCUVAKq5Pj50iiEdcc4m63hho9fAfWt+TAU3Zyf0QCRtiYU9AMd98dJqiA64iCO3yjrPiofo+VNVdjjJ74qNABJwgbedobd2rr8QEMJduQYJOcFwUubSPhukHyPiVuM1DC7scKUrxgryJ2apfGF+D9rINzKTEEJhxXrw==;
-Received: from [192.168.10.170] (helo=ip170.dynamic.igalia.com)
-        by fanzine.igalia.com with esmtpsa 
-        (Cipher TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256) (Exim)
-        id 1isM0Y-00039r-B1; Fri, 17 Jan 2020 08:25:30 +0100
-Message-ID: <cb93a21557216d1b389390c556f421132aac88f0.camel@igalia.com>
-Subject: Re: [PATCH AUTOSEL 5.4 003/205] drm/v3d: don't leak bin job if
- v3d_job_init fails.
-From:   Iago Toral <itoral@igalia.com>
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
-Date:   Fri, 17 Jan 2020 08:25:30 +0100
-In-Reply-To: <20200116164300.6705-3-sashal@kernel.org>
-References: <20200116164300.6705-1-sashal@kernel.org>
-         <20200116164300.6705-3-sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.1-2 
+        Fri, 17 Jan 2020 03:04:56 -0500
+X-Greylist: delayed 552 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 03:04:56 EST
+Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
+        by TWHMLLG4.macronix.com with ESMTP id 00H7tiBl090299
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 15:55:44 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from twhfm1p2.macronix.com (twhfm1p2.macronix.com [172.17.20.92])
+        by TWHMLLG4.macronix.com with ESMTP id 00H7sWnD089113;
+        Fri, 17 Jan 2020 15:54:32 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
+        by Forcepoint Email with ESMTP id 09849F090BB977A1CEE9;
+        Fri, 17 Jan 2020 15:54:33 +0800 (CST)
+In-Reply-To: <20200109172816.6c1d7be7@xps13>
+References: <1571902807-10388-1-git-send-email-masonccyang@mxic.com.tw> <1571902807-10388-2-git-send-email-masonccyang@mxic.com.tw> <20200109172816.6c1d7be7@xps13>
+To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc:     bbrezillon@kernel.org, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
+        mark.rutland@arm.com, richard@nod.at, robh+dt@kernel.org,
+        vigneshr@ti.com
+Subject: Re: [PATCH v4 1/2] mtd: rawnand: Add support for Macronix NAND randomizer
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-KeepSent: ECBDB130:03AD44B7-482584F2:002B40F2;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFECBDB130.03AD44B7-ON482584F2.002B40F2-482584F2.002B720F@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Fri, 17 Jan 2020 15:54:33 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2020/01/17 PM 03:54:33,
+        Serialize complete at 2020/01/17 PM 03:54:33
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-MAIL: TWHMLLG4.macronix.com 00H7sWnD089113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha,
 
+Hi Miquel,
 
-please notice that there were two separate patches that addressed the
-same issue and applying both simultaneously leads to a double free
-(which is what I see is happening with this patch: see the second call
-to kfree(bin) right below the one added here). This issue was raised
-previously here:
-
-https://lists.freedesktop.org/archives/dri-devel/2019-October/241425.html
-
-Iago
-
-On Thu, 2020-01-16 at 11:39 -0500, Sasha Levin wrote:
-> From: Iago Toral Quiroga <itoral@igalia.com>
+ 
+> > +static int macronix_nand_randomizer_check_enable(struct nand_chip 
+*chip)
+> > +{
+> > +   u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
+> > +   int ret;
+> > +
+> > +   ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
+> > +            feature);
+> > +   if (ret < 0)
+> > +      return ret;
+> > +
+> > +   if (feature[0])
+> > +      return feature[0];
+> > +
+> > +   feature[0] = MACRONIX_RANDOMIZER_MODE_ENTER;
+> > +   ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
+> > +            feature);
+> > +   if (ret < 0)
+> > +      return ret;
+> > +
+> > +   /* RANDEN and RANDOPT OTP bits are programmed */
+> > +   feature[0] = 0x0;
+> > +   ret = nand_prog_page_op(chip, 0, 0, feature, 1);
+> > +   if (ret < 0)
+> > +      return ret;
+> > +
+> > +   ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
+> > +            feature);
+> > +   if (ret < 0)
+> > +      return ret;
+> > +
+> > +   feature[0] &= MACRONIX_RANDOMIZER_MODE_EXIT;
+> > +   ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
+> > +            feature);
+> > +   if (ret < 0)
+> > +      return ret;
+> > +
+> > +   return feature[0];
 > 
-> [ Upstream commit 0d352a3a8a1f26168d09f7073e61bb4b328e3bb9 ]
+> Can feature[0] be != 0 ? I don't think so, in this case I prefer a:
+> return 0;
 > 
-> If the initialization of the job fails we need to kfree() it
-> before returning.
+
+okay, will fix it.
+
+> > +}
+> > +
+> >  static void macronix_nand_onfi_init(struct nand_chip *chip)
+> >  {
+> >     struct nand_parameters *p = &chip->parameters;
+> >     struct nand_onfi_vendor_macronix *mxic;
+> > +   struct device_node *dn = nand_get_flash_node(chip);
+> > +   int rand_otp = 0;
+> > +   int ret;
+> > 
+> >     if (!p->onfi)
+> >        return;
+> > 
+> > +   if (of_find_property(dn, "mxic,enable-randomizer-otp", NULL))
+> > +      rand_otp = 1;
+> > +
+> >     mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
+> > +   /* Subpage write is prohibited in randomizer operatoin */
 > 
-> Signed-off-by: Iago Toral Quiroga <itoral@igalia.com>
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Link: 
-> https://patchwork.freedesktop.org/patch/msgid/20190916071125.5255-1-itoral@igalia.com
-> Fixes: a783a09ee76d ("drm/v3d: Refactor job management.")
-> Reviewed-by: Eric Anholt <eric@anholt.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/gpu/drm/v3d/v3d_gem.c | 1 +
->  1 file changed, 1 insertion(+)
+>                                        with          operation
 > 
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c
-> b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 19c092d75266..6316bf3646af 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -565,6 +565,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void
-> *data,
->  		ret = v3d_job_init(v3d, file_priv, &bin->base,
->  				   v3d_job_free, args->in_sync_bcl);
->  		if (ret) {
-> +			kfree(bin);
->  			v3d_job_put(&render->base);
->  			kfree(bin);
->  			return ret;
+> > +   if (rand_otp && chip->options & NAND_NO_SUBPAGE_WRITE &&
+> > +       mxic->reliability_func & MACRONIX_RANDOMIZER_BIT) {
+> > +      if (p->supports_set_get_features) {
+> > +         bitmap_set(p->set_feature_list,
+> > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
+> > +         bitmap_set(p->get_feature_list,
+> > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
+> > +         ret = macronix_nand_randomizer_check_enable(chip);
+> > +         if (ret < 0)
+> > +            pr_info("Macronix NAND randomizer failed\n");
+> > +         else
+> > +            pr_info("Macronix NAND randomizer enabled\n");
+> 
+> Maybe we should update the bitmaps only if it succeeds?
+
+okay, will drop pr_info();
+
+> 
+> > +      }
+> > +   }
+> > +
+> >     if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
+> >        return;
+> > 
+> 
+> With the above fixed,
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> 
+> Thanks,
+> Miquèl
+
+thanks for your time & comments.
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
 
