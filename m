@@ -2,48 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 603D5140E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D062E140E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:45:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgAQPoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 10:44:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53780 "EHLO
+        id S1729293AbgAQPof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 10:44:35 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53714 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728982AbgAQPoY (ORCPT
+        with ESMTP id S1728780AbgAQPoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:44:24 -0500
+        Fri, 17 Jan 2020 10:44:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=nTgcYnW1bBqfkqgXrC6bADcDL5m+JJlT4b9lz90Hafo=; b=bK8g+eoibs1c
-        sshSw5ILQoPvUH2r+fGkJP36wgQioTIfHtdNDfPbwWA9DmXb/4rq0s+zW/8lr66WUmrgq4UzBGnrj
-        GBnZUn9FN81lrYV3PnDWFEtBW9Pb1HIP22SVx5Qbi4ooTjqCeBqgp46ujjrM/Ck9Vok6c6HgwOERw
-        Id7wc=;
+        List-Archive; bh=vjW9mfK4aBXhMLu/88Xq/Y/8N/0IQECf/VG4X1TRQ58=; b=Sngr38compYj
+        RHDGlp3gH9V+G0MndtzaUuLMEPCCFNCJpTPpioCmrD503bn7sqgyw/C/kgkjK+uY8ZGR8Lh8u0Pkd
+        wLr5w7vFuBWYG06BgJ+ErYfN/xqYrzIbePChu83QQOnC9aWA2ZSFHUU93m+Wy3FQbSJIw4eD8VfEF
+        Sy/Bc=;
 Received: from fw-tnat-cam4.arm.com ([217.140.106.52] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1isTn9-0006rx-Qz; Fri, 17 Jan 2020 15:44:11 +0000
+        id 1isTnA-0006s5-5q; Fri, 17 Jan 2020 15:44:12 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 83ED6D02C26; Fri, 17 Jan 2020 15:44:11 +0000 (GMT)
+        id DAA68D02A2A; Fri, 17 Jan 2020 15:44:11 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     Alexander.Deucher@amd.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, "Cc:"@sirena.org.uk, "Cc:"@sirena.org.uk,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>,
         Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, moderated@sirena.org.uk,
-        open list <linux-kernel@vger.kernel.org>,
-        Ravulapati@sirena.org.uk, Vishnu@sirena.org.uk,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Shuming Fan <shumingf@realtek.com>,
         Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: amd: Additional DAI for I2S SP instance." to the asoc tree
-In-Reply-To: <1579261510-12580-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Message-Id: <applied-1579261510-12580-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+Subject: Applied "ASoC: rt711: fix return value check in rt711_sdw_probe()" to the asoc tree
+In-Reply-To: <20200115143034.94492-1-weiyongjun1@huawei.com>
+Message-Id: <applied-20200115143034.94492-1-weiyongjun1@huawei.com>
 X-Patchwork-Hint: ignore
 Date:   Fri, 17 Jan 2020 15:44:11 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,7 +51,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: amd: Additional DAI for I2S SP instance.
+   ASoC: rt711: fix return value check in rt711_sdw_probe()
 
 has been applied to the asoc tree at
 
@@ -78,54 +76,38 @@ to this mail.
 Thanks,
 Mark
 
-From a174a6c226796824cb2f78157c0b183ed472fa3f Mon Sep 17 00:00:00 2001
-From: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Date: Fri, 17 Jan 2020 17:15:09 +0530
-Subject: [PATCH] ASoC: amd: Additional DAI for I2S SP instance.
+From b03c29c1b13afa18ee88cce07bbe87298eb0d3a3 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Wed, 15 Jan 2020 14:30:34 +0000
+Subject: [PATCH] ASoC: rt711: fix return value check in rt711_sdw_probe()
 
-I2S SP instance has separate BCLK and LRCLK for Tx and Rx.
-Creating additional DAI for Rx.
+In case of error, the function devm_regmap_init() returns ERR_PTR() and
+never returns NULL. The NULL test in the return value check should be
+replaced with IS_ERR().
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Link: https://lore.kernel.org/r/1579261510-12580-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com
+Fixes: 320b8b0d13b8 ("ASoC: rt711: add rt711 codec driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Link: https://lore.kernel.org/r/20200115143034.94492-1-weiyongjun1@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/raven/acp3x.h     | 2 +-
- sound/soc/amd/raven/pci-acp3x.c | 8 +++++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt711-sdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index b6a80dc0b641..21e7ac017f2b 100644
---- a/sound/soc/amd/raven/acp3x.h
-+++ b/sound/soc/amd/raven/acp3x.h
-@@ -13,7 +13,7 @@
- #define TDM_ENABLE 1
- #define TDM_DISABLE 0
+diff --git a/sound/soc/codecs/rt711-sdw.c b/sound/soc/codecs/rt711-sdw.c
+index e28dc84ede5b..85e62e1059cd 100644
+--- a/sound/soc/codecs/rt711-sdw.c
++++ b/sound/soc/codecs/rt711-sdw.c
+@@ -460,8 +460,8 @@ static int rt711_sdw_probe(struct sdw_slave *slave,
  
--#define ACP3x_DEVS		3
-+#define ACP3x_DEVS		4
- #define ACP3x_PHY_BASE_ADDRESS 0x1240000
- #define	ACP3x_I2S_MODE	0
- #define	ACP3x_REG_START	0x1240000
-diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-index 2f9f52905853..65330bb50e74 100644
---- a/sound/soc/amd/raven/pci-acp3x.c
-+++ b/sound/soc/amd/raven/pci-acp3x.c
-@@ -225,7 +225,13 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		pdevinfo[2].id = 1;
- 		pdevinfo[2].parent = &pci->dev;
- 		pdevinfo[2].num_res = 1;
--		pdevinfo[2].res = &adata->res[2];
-+		pdevinfo[2].res = &adata->res[1];
-+
-+		pdevinfo[3].name = "acp3x_i2s_playcap";
-+		pdevinfo[3].id = 2;
-+		pdevinfo[3].parent = &pci->dev;
-+		pdevinfo[3].num_res = 1;
-+		pdevinfo[3].res = &adata->res[2];
- 		for (i = 0; i < ACP3x_DEVS; i++) {
- 			adata->pdev[i] =
- 				platform_device_register_full(&pdevinfo[i]);
+ 	regmap = devm_regmap_init(&slave->dev, NULL,
+ 		&slave->dev, &rt711_regmap);
+-	if (!regmap)
+-		return -EINVAL;
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
+ 
+ 	rt711_init(&slave->dev, sdw_regmap, regmap, slave);
+ 
 -- 
 2.20.1
 
