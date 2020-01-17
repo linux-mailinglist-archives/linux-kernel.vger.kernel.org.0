@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D0E3140779
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C8E140766
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbgAQKIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:08:53 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55338 "EHLO
+        id S1729050AbgAQKI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:08:58 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55385 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727243AbgAQKIs (ORCPT
+        with ESMTP id S1727243AbgAQKIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:08:48 -0500
+        Fri, 17 Jan 2020 05:08:55 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isOYV-0005RS-27; Fri, 17 Jan 2020 11:08:43 +0100
+        id 1isOYV-0005Rw-HZ; Fri, 17 Jan 2020 11:08:43 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6A42F1C19CF;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A4E6A1C19D0;
         Fri, 17 Jan 2020 11:08:41 +0100 (CET)
 Date:   Fri, 17 Jan 2020 10:08:41 -0000
-From:   "tip-bot2 for Peng Liu" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Peng Wang" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Fix sgc->{min,max}_capacity calculation
- for SD_OVERLAP
-Cc:     Peng Liu <iwtbavbm@gmail.com>,
+Subject: [tip: sched/core] sched/fair: calculate delta runnable load only when
+ it's needed
+Cc:     Peng Wang <rocking@linux.alibaba.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200104130828.GA7718@iZj6chx1xj0e0buvshuecpZ>
-References: <20200104130828.GA7718@iZj6chx1xj0e0buvshuecpZ>
+In-Reply-To: <20200103114400.17668-1-rocking@linux.alibaba.com>
+References: <20200103114400.17668-1-rocking@linux.alibaba.com>
 MIME-Version: 1.0
-Message-ID: <157925572126.396.16039413045911352646.tip-bot2@tip-bot2>
+Message-ID: <157925572151.396.5137433460252396733.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,78 +49,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     4c58f57fa6e93318a0899f70d8b99fe6bac22ce8
-Gitweb:        https://git.kernel.org/tip/4c58f57fa6e93318a0899f70d8b99fe6bac22ce8
-Author:        Peng Liu <iwtbavbm@gmail.com>
-AuthorDate:    Sat, 04 Jan 2020 21:08:28 +08:00
+Commit-ID:     fe71bbb21ee14160f73f81b113d71145327a1c0d
+Gitweb:        https://git.kernel.org/tip/fe71bbb21ee14160f73f81b113d71145327a1c0d
+Author:        Peng Wang <rocking@linux.alibaba.com>
+AuthorDate:    Fri, 03 Jan 2020 19:44:00 +08:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 17 Jan 2020 10:19:21 +01:00
 
-sched/fair: Fix sgc->{min,max}_capacity calculation for SD_OVERLAP
+sched/fair: calculate delta runnable load only when it's needed
 
-commit bf475ce0a3dd ("sched/fair: Add per-CPU min capacity to
-sched_group_capacity") introduced per-cpu min_capacity.
+Move the code of calculation for delta_sum/delta_avg to where
+it is really needed to be done.
 
-commit e3d6d0cb66f2 ("sched/fair: Add sched_group per-CPU max capacity")
-introduced per-cpu max_capacity.
-
-In the SD_OVERLAP case, the local variable 'capacity' represents the sum
-of CPU capacity of all CPUs in the first sched group (sg) of the sched
-domain (sd).
-
-It is erroneously used to calculate sg's min and max CPU capacity.
-To fix this use capacity_of(cpu) instead of 'capacity'.
-
-The code which achieves this via cpu_rq(cpu)->sd->groups->sgc->capacity
-(for rq->sd != NULL) can be removed since it delivers the same value as
-capacity_of(cpu) which is currently only used for the (!rq->sd) case
-(see update_cpu_capacity()).
-An sg of the lowest sd (rq->sd or sd->child == NULL) represents a single
-CPU (and hence sg->sgc->capacity == capacity_of(cpu)).
-
-Signed-off-by: Peng Liu <iwtbavbm@gmail.com>
+Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
-Link: https://lkml.kernel.org/r/20200104130828.GA7718@iZj6chx1xj0e0buvshuecpZ
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lkml.kernel.org/r/20200103114400.17668-1-rocking@linux.alibaba.com
 ---
- kernel/sched/fair.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ kernel/sched/fair.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 32c5421..e84723c 100644
+index d292883..32c5421 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7802,29 +7802,11 @@ void update_group_capacity(struct sched_domain *sd, int cpu)
- 		 */
+@@ -3366,16 +3366,17 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
  
- 		for_each_cpu(cpu, sched_group_span(sdg)) {
--			struct sched_group_capacity *sgc;
--			struct rq *rq = cpu_rq(cpu);
-+			unsigned long cpu_cap = capacity_of(cpu);
- 
--			/*
--			 * build_sched_domains() -> init_sched_groups_capacity()
--			 * gets here before we've attached the domains to the
--			 * runqueues.
--			 *
--			 * Use capacity_of(), which is set irrespective of domains
--			 * in update_cpu_capacity().
--			 *
--			 * This avoids capacity from being 0 and
--			 * causing divide-by-zero issues on boot.
--			 */
--			if (unlikely(!rq->sd)) {
--				capacity += capacity_of(cpu);
--			} else {
--				sgc = rq->sd->groups->sgc;
--				capacity += sgc->capacity;
--			}
+ 	runnable_load_sum = (s64)se_runnable(se) * runnable_sum;
+ 	runnable_load_avg = div_s64(runnable_load_sum, LOAD_AVG_MAX);
+-	delta_sum = runnable_load_sum - se_weight(se) * se->avg.runnable_load_sum;
+-	delta_avg = runnable_load_avg - se->avg.runnable_load_avg;
 -
--			min_capacity = min(capacity, min_capacity);
--			max_capacity = max(capacity, max_capacity);
-+			capacity += cpu_cap;
-+			min_capacity = min(cpu_cap, min_capacity);
-+			max_capacity = max(cpu_cap, max_capacity);
- 		}
- 	} else  {
- 		/*
+-	se->avg.runnable_load_sum = runnable_sum;
+-	se->avg.runnable_load_avg = runnable_load_avg;
+ 
+ 	if (se->on_rq) {
++		delta_sum = runnable_load_sum -
++				se_weight(se) * se->avg.runnable_load_sum;
++		delta_avg = runnable_load_avg - se->avg.runnable_load_avg;
+ 		add_positive(&cfs_rq->avg.runnable_load_avg, delta_avg);
+ 		add_positive(&cfs_rq->avg.runnable_load_sum, delta_sum);
+ 	}
++
++	se->avg.runnable_load_sum = runnable_sum;
++	se->avg.runnable_load_avg = runnable_load_avg;
+ }
+ 
+ static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum)
