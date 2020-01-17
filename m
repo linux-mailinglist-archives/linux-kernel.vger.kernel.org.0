@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 033D5140787
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36574140768
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:09:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgAQKKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:10:06 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55368 "EHLO
+        id S1729149AbgAQKJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:09:07 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55412 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728826AbgAQKIv (ORCPT
+        with ESMTP id S1726587AbgAQKJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:08:51 -0500
+        Fri, 17 Jan 2020 05:09:05 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isOYX-0005Sk-NW; Fri, 17 Jan 2020 11:08:45 +0100
+        id 1isOYb-0005TO-M6; Fri, 17 Jan 2020 11:08:50 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 239431C19D1;
-        Fri, 17 Jan 2020 11:08:42 +0100 (CET)
-Date:   Fri, 17 Jan 2020 10:08:41 -0000
-From:   "tip-bot2 for Yangtao Li" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 00E7D1C19D4;
+        Fri, 17 Jan 2020 11:08:43 +0100 (CET)
+Date:   Fri, 17 Jan 2020 10:08:42 -0000
+From:   "tip-bot2 for Qais Yousef" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] stop_machine: Make stop_cpus() static
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+Subject: [tip: sched/core] sched/uclamp: Fix a bug in propagating uclamp value
+ in new cgroups
+Cc:     Doug Smythies <dsmythies@telus.net>,
+        Qais Yousef <qais.yousef@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191228161912.24082-1-tiny.windzz@gmail.com>
-References: <20191228161912.24082-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Message-ID: <157925572197.396.6580962318661308779.tip-bot2@tip-bot2>
+Message-ID: <157925572279.396.17594637724980159951.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,65 +47,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     35f4cd96f5551dc1b2641159e7bb7bf91de6600f
-Gitweb:        https://git.kernel.org/tip/35f4cd96f5551dc1b2641159e7bb7bf91de6600f
-Author:        Yangtao Li <tiny.windzz@gmail.com>
-AuthorDate:    Sat, 28 Dec 2019 16:19:12 
+Commit-ID:     7226017ad37a888915628e59a84a2d1e57b40707
+Gitweb:        https://git.kernel.org/tip/7226017ad37a888915628e59a84a2d1e57b40707
+Author:        Qais Yousef <qais.yousef@arm.com>
+AuthorDate:    Tue, 24 Dec 2019 11:54:04 
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 17 Jan 2020 10:19:21 +01:00
+CommitterDate: Fri, 17 Jan 2020 10:19:20 +01:00
 
-stop_machine: Make stop_cpus() static
+sched/uclamp: Fix a bug in propagating uclamp value in new cgroups
 
-The function stop_cpus() is only used internally by the
-stop_machine for stop multiple cpus.
+When a new cgroup is created, the effective uclamp value wasn't updated
+with a call to cpu_util_update_eff() that looks at the hierarchy and
+update to the most restrictive values.
 
-Make it static.
+Fix it by ensuring to call cpu_util_update_eff() when a new cgroup
+becomes online.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Without this change, the newly created cgroup uses the default
+root_task_group uclamp values, which is 1024 for both uclamp_{min, max},
+which will cause the rq to to be clamped to max, hence cause the
+system to run at max frequency.
+
+The problem was observed on Ubuntu server and was reproduced on Debian
+and Buildroot rootfs.
+
+By default, Ubuntu and Debian create a cpu controller cgroup hierarchy
+and add all tasks to it - which creates enough noise to keep the rq
+uclamp value at max most of the time. Imitating this behavior makes the
+problem visible in Buildroot too which otherwise looks fine since it's a
+minimal userspace.
+
+Fixes: 0b60ba2dd342 ("sched/uclamp: Propagate parent clamps")
+Reported-by: Doug Smythies <dsmythies@telus.net>
+Signed-off-by: Qais Yousef <qais.yousef@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20191228161912.24082-1-tiny.windzz@gmail.com
+Tested-by: Doug Smythies <dsmythies@telus.net>
+Link: https://lore.kernel.org/lkml/000701d5b965$361b6c60$a2524520$@net/
 ---
- include/linux/stop_machine.h |  9 ---------
- kernel/stop_machine.c        |  2 +-
- 2 files changed, 1 insertion(+), 10 deletions(-)
+ kernel/sched/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
-index 648298f..76d8b09 100644
---- a/include/linux/stop_machine.h
-+++ b/include/linux/stop_machine.h
-@@ -32,7 +32,6 @@ int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
- int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *arg);
- bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
- 			 struct cpu_stop_work *work_buf);
--int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
- void stop_machine_park(int cpu);
- void stop_machine_unpark(int cpu);
- void stop_machine_yield(const struct cpumask *cpumask);
-@@ -81,14 +80,6 @@ static inline bool stop_one_cpu_nowait(unsigned int cpu,
- 	return false;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e7b08d5..d0270b1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7099,6 +7099,12 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
+ 
+ 	if (parent)
+ 		sched_online_group(tg, parent);
++
++#ifdef CONFIG_UCLAMP_TASK_GROUP
++	/* Propagate the effective uclamp value for the new group */
++	cpu_util_update_eff(css);
++#endif
++
+ 	return 0;
  }
- 
--static inline int stop_cpus(const struct cpumask *cpumask,
--			    cpu_stop_fn_t fn, void *arg)
--{
--	if (cpumask_test_cpu(raw_smp_processor_id(), cpumask))
--		return stop_one_cpu(raw_smp_processor_id(), fn, arg);
--	return -ENOENT;
--}
--
- #endif	/* CONFIG_SMP */
- 
- /*
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 5d68ec4..865bb02 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -442,7 +442,7 @@ static int __stop_cpus(const struct cpumask *cpumask,
-  * @cpumask were offline; otherwise, 0 if all executions of @fn
-  * returned 0, any non zero return value if any returned non zero.
-  */
--int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
-+static int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
- {
- 	int ret;
  
