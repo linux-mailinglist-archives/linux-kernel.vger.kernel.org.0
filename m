@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42C8E140766
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:09:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 033D5140787
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729050AbgAQKI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:08:58 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55385 "EHLO
+        id S1729431AbgAQKKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:10:06 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55368 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727243AbgAQKIz (ORCPT
+        with ESMTP id S1728826AbgAQKIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:08:55 -0500
+        Fri, 17 Jan 2020 05:08:51 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isOYV-0005Rw-HZ; Fri, 17 Jan 2020 11:08:43 +0100
+        id 1isOYX-0005Sk-NW; Fri, 17 Jan 2020 11:08:45 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A4E6A1C19D0;
-        Fri, 17 Jan 2020 11:08:41 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 239431C19D1;
+        Fri, 17 Jan 2020 11:08:42 +0100 (CET)
 Date:   Fri, 17 Jan 2020 10:08:41 -0000
-From:   "tip-bot2 for Peng Wang" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Yangtao Li" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: calculate delta runnable load only when
- it's needed
-Cc:     Peng Wang <rocking@linux.alibaba.com>,
+Subject: [tip: sched/core] stop_machine: Make stop_cpus() static
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200103114400.17668-1-rocking@linux.alibaba.com>
-References: <20200103114400.17668-1-rocking@linux.alibaba.com>
+In-Reply-To: <20191228161912.24082-1-tiny.windzz@gmail.com>
+References: <20191228161912.24082-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Message-ID: <157925572151.396.5137433460252396733.tip-bot2@tip-bot2>
+Message-ID: <157925572197.396.6580962318661308779.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,50 +47,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     fe71bbb21ee14160f73f81b113d71145327a1c0d
-Gitweb:        https://git.kernel.org/tip/fe71bbb21ee14160f73f81b113d71145327a1c0d
-Author:        Peng Wang <rocking@linux.alibaba.com>
-AuthorDate:    Fri, 03 Jan 2020 19:44:00 +08:00
+Commit-ID:     35f4cd96f5551dc1b2641159e7bb7bf91de6600f
+Gitweb:        https://git.kernel.org/tip/35f4cd96f5551dc1b2641159e7bb7bf91de6600f
+Author:        Yangtao Li <tiny.windzz@gmail.com>
+AuthorDate:    Sat, 28 Dec 2019 16:19:12 
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 17 Jan 2020 10:19:21 +01:00
 
-sched/fair: calculate delta runnable load only when it's needed
+stop_machine: Make stop_cpus() static
 
-Move the code of calculation for delta_sum/delta_avg to where
-it is really needed to be done.
+The function stop_cpus() is only used internally by the
+stop_machine for stop multiple cpus.
 
-Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
+Make it static.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lkml.kernel.org/r/20200103114400.17668-1-rocking@linux.alibaba.com
+Link: https://lkml.kernel.org/r/20191228161912.24082-1-tiny.windzz@gmail.com
 ---
- kernel/sched/fair.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ include/linux/stop_machine.h |  9 ---------
+ kernel/stop_machine.c        |  2 +-
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d292883..32c5421 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3366,16 +3366,17 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
- 
- 	runnable_load_sum = (s64)se_runnable(se) * runnable_sum;
- 	runnable_load_avg = div_s64(runnable_load_sum, LOAD_AVG_MAX);
--	delta_sum = runnable_load_sum - se_weight(se) * se->avg.runnable_load_sum;
--	delta_avg = runnable_load_avg - se->avg.runnable_load_avg;
--
--	se->avg.runnable_load_sum = runnable_sum;
--	se->avg.runnable_load_avg = runnable_load_avg;
- 
- 	if (se->on_rq) {
-+		delta_sum = runnable_load_sum -
-+				se_weight(se) * se->avg.runnable_load_sum;
-+		delta_avg = runnable_load_avg - se->avg.runnable_load_avg;
- 		add_positive(&cfs_rq->avg.runnable_load_avg, delta_avg);
- 		add_positive(&cfs_rq->avg.runnable_load_sum, delta_sum);
- 	}
-+
-+	se->avg.runnable_load_sum = runnable_sum;
-+	se->avg.runnable_load_avg = runnable_load_avg;
+diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
+index 648298f..76d8b09 100644
+--- a/include/linux/stop_machine.h
++++ b/include/linux/stop_machine.h
+@@ -32,7 +32,6 @@ int stop_one_cpu(unsigned int cpu, cpu_stop_fn_t fn, void *arg);
+ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *arg);
+ bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
+ 			 struct cpu_stop_work *work_buf);
+-int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+ void stop_machine_park(int cpu);
+ void stop_machine_unpark(int cpu);
+ void stop_machine_yield(const struct cpumask *cpumask);
+@@ -81,14 +80,6 @@ static inline bool stop_one_cpu_nowait(unsigned int cpu,
+ 	return false;
  }
  
- static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum)
+-static inline int stop_cpus(const struct cpumask *cpumask,
+-			    cpu_stop_fn_t fn, void *arg)
+-{
+-	if (cpumask_test_cpu(raw_smp_processor_id(), cpumask))
+-		return stop_one_cpu(raw_smp_processor_id(), fn, arg);
+-	return -ENOENT;
+-}
+-
+ #endif	/* CONFIG_SMP */
+ 
+ /*
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index 5d68ec4..865bb02 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -442,7 +442,7 @@ static int __stop_cpus(const struct cpumask *cpumask,
+  * @cpumask were offline; otherwise, 0 if all executions of @fn
+  * returned 0, any non zero return value if any returned non zero.
+  */
+-int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
++static int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
+ {
+ 	int ret;
+ 
