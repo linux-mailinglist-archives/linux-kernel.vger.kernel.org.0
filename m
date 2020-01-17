@@ -2,61 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC549140F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A54140F65
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:54:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgAQQyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 11:54:06 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33547 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729049AbgAQQyF (ORCPT
+        id S1729287AbgAQQyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 11:54:16 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35498 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729247AbgAQQyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:54:05 -0500
-Received: by mail-il1-f193.google.com with SMTP id v15so21830271iln.0
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 08:54:05 -0800 (PST)
+        Fri, 17 Jan 2020 11:54:14 -0500
+Received: by mail-io1-f65.google.com with SMTP id h8so26751267iob.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 08:54:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=brzZaUJh7FW1ka56Adtf/85XWoAeQqVQT/Er0invsYs=;
-        b=SZtwdh2oqjI+UBiZ9BSi5WKvwkiUFyfwGoVa2E3NdmvReO0bKyMmTi7Ubdbzdm1zYx
-         j/dvlz0YjLN6po1K1VfcfjAdHKCvHItvP3Fh0gJV3ri9ioJU/CfhoGK21WXnfbbiT9Ji
-         VousTxLZB3mEZQk6cxudxSPYWMu4CwYT2N1RfGnbN5M51Qg1EEcVToajht0YCvQ0kEfi
-         aFDZVWqMkJNUKyTuLZY22D6P6bg1mg5zo/PuTI9B2KNZ9AMzwyoslvWMmqdQS7Se9uAT
-         caEUvK8/k9nEXVFSzcrVcZBzcRGDYYGKFiV5c/iPuhhat3MwI0pN5oV/tk6ytlYWaiwu
-         EiUQ==
+        bh=uFIUVKsz4aPMvzp5H7zdGJcmUXpH7dHc5gmMJqmLGlg=;
+        b=Ju3I1Jfs9dGT84Iy5fhqRFLUVMNJ2DaIdE+XAgBGJVq2WI7cBhYBPlKCVOfqs4VjMZ
+         5ICq/oE45Eg7QmU2ztU/ugOzLpOvQ2sTLgH4W6CEG5igTtgl1kKoVhX3J3f1sfZ7fO+I
+         JlYaxN8NlIaKixzCZBXnSUCbPBdtD6QReoBvllPp/KtRlRs4nS+7Hm4udEoIrUm8C0m7
+         Bv5BGlkrns50GvcaB7Bf+XmCIptl1fNUe3m5b7HoaXRW5F86S/8vnDbb3AuiE2juhPi+
+         5AJL6a9LVL5rapntmvKmiWEqM1aM55VyhUm/u1S9BHEP0VaaVuXAx4M5wkLazCr15Z/M
+         67ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=brzZaUJh7FW1ka56Adtf/85XWoAeQqVQT/Er0invsYs=;
-        b=Y6Mu4yMNtCXS2y0yH1oZygDijRwRSADiHkOG/47ZJcyQRN53yANrAO3a9cjyNupQM1
-         WE6h27zKY69LnLinWod7XIODiLsY62KC425tjAjXo5+pB2w4Z7MtufmcPfWOTspGZ/fW
-         feupIUq/vCWO97UbcanKJJk0+nqLIzWRLY2wpGHD0EjGuYv8ngjm4aKIBfuguHMSMQrr
-         DZof2yQZmRyJWxKSevrA1XJff9+4yRWQqNAgbbmylPdQqhwWmk7KygCLD2OgjxY9eoA3
-         rRVPu5J7RFlyewhiNQiCaW1MttFIPykCEyLlKizMdm/KUDVAuGNgUzRKNCNrcgRj76LC
-         67jQ==
-X-Gm-Message-State: APjAAAXGizsC7okc4k6aUzORCnnYn8cbiH//A46SNy8OsKezJ/bIDDZk
-        TcoPxcB3OnJj/FL1XFxMZetTvA==
-X-Google-Smtp-Source: APXvYqwYn6A64W6RYQdcSAW8Dx+vuADYJTH0IldHuTPwJSaUgo9yYVECtHmkSACxkdEpECMiMT5HEw==
-X-Received: by 2002:a92:4013:: with SMTP id n19mr3718111ila.279.1579280044000;
-        Fri, 17 Jan 2020 08:54:04 -0800 (PST)
+        bh=uFIUVKsz4aPMvzp5H7zdGJcmUXpH7dHc5gmMJqmLGlg=;
+        b=PImLmAKfeFuihsnK6AKQLgbBgq7mPNEyg1WSO6pbHxb/ZZs1Vvh1q41qrqzNJ7tBDU
+         wle/eoMMssX0r6UACGnRfeZp7YdHMbRbQL2ySN+mwfQ4WUEaSV6beGAdhzo0/ubY4yhy
+         L8snOBdprZjD3LocvZdCtN6k21D2swoJ/Tm6mBfDx/pWxSPvBiqe5hpU7UMjUQ4BQUq/
+         uzYu3bxLL6DMttusckrz/RDpxxPgT0nAIkwYax0y8BwJwXxtiZR9Pb6hw2ypHim2dYH9
+         Py1Nj4CDahrFf4+jo2xKJdbMwSeXRmOZazdQ4suLJvtzHjPlTXgHI6wMyulIoAXyeCsc
+         R0dw==
+X-Gm-Message-State: APjAAAUx+6yNoBLvjL5877yCQaKSNhqzIr0LwHWN9KhbzV+s62I8KyR8
+        gAdA5nUK2HYlGDwdvssAfl2PGg==
+X-Google-Smtp-Source: APXvYqyb7lB/rV1ivpPHirD+5CsQ4f/jRvFS49kUJduVxa9UCt1nkgGP/tUwxXBNpRlOKcvyPaLpjg==
+X-Received: by 2002:a5e:9748:: with SMTP id h8mr23496836ioq.121.1579280053465;
+        Fri, 17 Jan 2020 08:54:13 -0800 (PST)
 Received: from alago.cortijodelrio.net (CableLink-189-219-74-147.Hosts.InterCable.net. [189.219.74.147])
-        by smtp.googlemail.com with ESMTPSA id f16sm8120662ilq.16.2020.01.17.08.54.02
+        by smtp.googlemail.com with ESMTPSA id f16sm8120662ilq.16.2020.01.17.08.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 08:54:03 -0800 (PST)
+        Fri, 17 Jan 2020 08:54:12 -0800 (PST)
 From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
 To:     shuah@kernel.org
 Cc:     =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linux-kernel@vger.kernel.org (open list:RESTARTABLE SEQUENCES SUPPORT),
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH 2/3] selftests/rseq: Build with LDFLAGS
-Date:   Fri, 17 Jan 2020 10:53:27 -0600
-Message-Id: <20200117165330.17015-2-daniel.diaz@linaro.org>
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 3/3] selftests/bpf: Build urandom_read with LDFLAGS and LDLIBS
+Date:   Fri, 17 Jan 2020 10:53:28 -0600
+Message-Id: <20200117165330.17015-3-daniel.diaz@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200117165330.17015-1-daniel.diaz@linaro.org>
 References: <20200117165330.17015-1-daniel.diaz@linaro.org>
@@ -68,42 +71,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During cross-compilation, it was discovered that LDFLAGS were
-not being used while building binaries, leading to defaults
-which were not necessarily correct.
+During cross-compilation, it was discovered that LDFLAGS and
+LDLIBS were not being used while building binaries, leading
+to defaults which were not necessarily correct.
 
 OpenEmbedded reported this kind of problem:
   ERROR: QA Issue: No GNU_HASH in the ELF binary [...], didn't pass LDFLAGS?
 
 Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 ---
- tools/testing/selftests/rseq/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/testing/selftests/bpf/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index d6469535630a..2d2d0c283de1 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -22,15 +22,15 @@ TEST_PROGS = run_param_test.sh
- include ../lib.mk
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index e2fd6f8d579c..f1740113d5dc 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -88,7 +88,7 @@ $(notdir $(TEST_GEN_PROGS)						\
+ 	 $(TEST_CUSTOM_PROGS)): %: $(OUTPUT)/% ;
  
- $(OUTPUT)/librseq.so: rseq.c rseq.h rseq-*.h
--	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
+ $(OUTPUT)/urandom_read: urandom_read.c
+-	$(CC) -o $@ $< -Wl,--build-id
++	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS) -Wl,--build-id
  
- $(OUTPUT)/%: %.c $(TEST_GEN_PROGS_EXTENDED) rseq.h rseq-*.h
--	$(CC) $(CFLAGS) $< $(LDLIBS) -lrseq -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -lrseq -o $@
- 
- $(OUTPUT)/param_test_benchmark: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
- 					rseq.h rseq-*.h
--	$(CC) $(CFLAGS) -DBENCHMARK $< $(LDLIBS) -lrseq -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) -DBENCHMARK $< $(LDLIBS) -lrseq -o $@
- 
- $(OUTPUT)/param_test_compare_twice: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
- 					rseq.h rseq-*.h
--	$(CC) $(CFLAGS) -DRSEQ_COMPARE_TWICE $< $(LDLIBS) -lrseq -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) -DRSEQ_COMPARE_TWICE $< $(LDLIBS) -lrseq -o $@
+ $(OUTPUT)/test_stub.o: test_stub.c
+ 	$(CC) -c $(CFLAGS) -o $@ $<
 -- 
 2.20.1
 
