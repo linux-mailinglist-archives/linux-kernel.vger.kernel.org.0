@@ -2,125 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3BA14109F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F39AA1410A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgAQSTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 13:19:03 -0500
-Received: from mailoutvs11.siol.net ([185.57.226.202]:49903 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726970AbgAQSTD (ORCPT
+        id S1729133AbgAQSTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 13:19:14 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57223 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbgAQSTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:19:03 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 3B8B7523E9F;
-        Fri, 17 Jan 2020 19:19:00 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id KYaxS-gW__TX; Fri, 17 Jan 2020 19:18:59 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id DB642523E5B;
-        Fri, 17 Jan 2020 19:18:59 +0100 (CET)
-Received: from jernej-laptop.localnet (89-212-178-211.dynamic.t-2.net [89.212.178.211])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id F2837523EA2;
-        Fri, 17 Jan 2020 19:18:58 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64: dts: allwinner: h6: tanix-tx6: enable emmc
-Date:   Fri, 17 Jan 2020 19:18:58 +0100
-Message-ID: <3332569.R56niFO833@jernej-laptop>
-In-Reply-To: <20200117181427.hy7qsyxwomsl3v2q@gilmour.lan>
-References: <20200115193441.172902-1-jernej.skrabec@siol.net> <20200117181427.hy7qsyxwomsl3v2q@gilmour.lan>
+        Fri, 17 Jan 2020 13:19:14 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1isWD8-00068M-Go; Fri, 17 Jan 2020 19:19:10 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 134441C19EF;
+        Fri, 17 Jan 2020 19:19:10 +0100 (CET)
+Date:   Fri, 17 Jan 2020 18:19:09 -0000
+From:   "tip-bot2 for Tony W Wang-oc" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/pti] x86/speculation/swapgs: Exclude Zhaoxin CPUs from
+ SWAPGS vulnerability
+Cc:     "Tony W Wang-oc" <TonyWWang-oc@zhaoxin.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <1579227872-26972-3-git-send-email-TonyWWang-oc@zhaoxin.com>
+References: <1579227872-26972-3-git-send-email-TonyWWang-oc@zhaoxin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Message-ID: <157928514982.396.3134965085356599913.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne petek, 17. januar 2020 ob 19:14:27 CET je Maxime Ripard napisal(a):
-> On Wed, Jan 15, 2020 at 08:34:41PM +0100, Jernej Skrabec wrote:
-> > Tanix TX6 has 32 GiB eMMC. Add a node for it.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  .../dts/allwinner/sun50i-h6-tanix-tx6.dts     | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> > b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts index
-> > 83e6cb0e59ce..8cbf4e4a761e 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix-tx6.dts
-> > @@ -31,6 +31,13 @@ hdmi_con_in: endpoint {
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > +	reg_vcc1v8: vcc1v8 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "vcc1v8";
-> > +		regulator-min-microvolt = <1800000>;
-> > +		regulator-max-microvolt = <1800000>;
-> > +	};
-> > +
-> > 
-> >  	reg_vcc3v3: vcc3v3 {
-> >  	
-> >  		compatible = "regulator-fixed";
-> >  		regulator-name = "vcc3v3";
-> > 
-> > @@ -78,6 +85,15 @@ &mmc0 {
-> > 
-> >  	status = "okay";
-> >  
-> >  };
-> > 
-> > +&mmc2 {
-> > +	vmmc-supply = <&reg_vcc3v3>;
-> > +	vqmmc-supply = <&reg_vcc1v8>;
-> > +	non-removable;
-> > +	cap-mmc-hw-reset;
-> > +	bus-width = <8>;
-> > +	status = "okay";
-> > +};
-> > +
-> > 
-> >  &ohci0 {
-> >  
-> >  	status = "okay";
-> >  
-> >  };
-> > 
-> > @@ -86,6 +102,10 @@ &ohci3 {
-> > 
-> >  	status = "okay";
-> >  
-> >  };
-> > 
-> > +&pio {
-> > +	vcc-pc-supply = <&reg_vcc1v8>;
-> > +};
-> > +
-> 
-> Can you list all of the regulators for the H6 while you're at it (in a
-> preliminary patch, ideally)?
+The following commit has been merged into the x86/pti branch of tip:
 
-Not sure what you mean. This box has only fixed regulators. I deducted above 
-from the fact that port C is mostly dedicated to eMMC, so it has to use same 
-regulator as vqmmc. Other than that, I don't know.
+Commit-ID:     a84de2fa962c1b0551653fe245d6cb5f6129179c
+Gitweb:        https://git.kernel.org/tip/a84de2fa962c1b0551653fe245d6cb5f6129179c
+Author:        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+AuthorDate:    Fri, 17 Jan 2020 10:24:32 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 17 Jan 2020 19:13:47 +01:00
 
-Best regards,
-Jernej
+x86/speculation/swapgs: Exclude Zhaoxin CPUs from SWAPGS vulnerability
 
+New Zhaoxin family 7 CPUs are not affected by the SWAPGS vulnerability. So
+mark these CPUs in the cpu vulnerability whitelist accordingly.
 
+Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/1579227872-26972-3-git-send-email-TonyWWang-oc@zhaoxin.com
 
+---
+ arch/x86/kernel/cpu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 6048bd3..ca4a0d2 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1087,8 +1087,8 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 	VULNWL_HYGON(X86_FAMILY_ANY,	NO_MELTDOWN | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+ 	/* Zhaoxin Family 7 */
+-	VULNWL(CENTAUR,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
+-	VULNWL(ZHAOXIN,	7, X86_MODEL_ANY,	NO_SPECTRE_V2),
++	VULNWL(CENTAUR,	7, X86_MODEL_ANY,	NO_SPECTRE_V2 | NO_SWAPGS),
++	VULNWL(ZHAOXIN,	7, X86_MODEL_ANY,	NO_SPECTRE_V2 | NO_SWAPGS),
+ 	{}
+ };
+ 
