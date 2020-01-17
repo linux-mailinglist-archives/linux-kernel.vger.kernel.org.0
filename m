@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDD531413C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:57:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDE31413C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:57:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbgAQV5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 16:57:33 -0500
+        id S1729925AbgAQV5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 16:57:31 -0500
 Received: from mga18.intel.com ([134.134.136.126]:29365 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729035AbgAQV5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 16:57:31 -0500
+        id S1729035AbgAQV5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 16:57:30 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 13:54:05 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 13:54:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="373782467"
+   d="scan'208";a="214628422"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 17 Jan 2020 13:54:04 -0800
+  by orsmga007.jf.intel.com with ESMTP; 17 Jan 2020 13:54:02 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1isZZ5-000ANc-Ot; Sat, 18 Jan 2020 05:54:03 +0800
+        id 1isZZ3-0009uo-PJ; Sat, 18 Jan 2020 05:54:01 +0800
 Date:   Sat, 18 Jan 2020 05:53:19 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- ccf74128d66ce937876184ad55db2e0276af08d3
-Message-ID: <5e222ccf.sPfoWtMmtSi+4dNH%lkp@intel.com>
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ 2167f1625c2f04a33145f325db0de285630f7bd1
+Message-ID: <5e222ccf.4Iv9ejfCJKssWZR0%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,12 +39,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  sched/core
-branch HEAD: ccf74128d66ce937876184ad55db2e0276af08d3  sched/topology: Assert non-NUMA topology masks don't (partially) overlap
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  perf/urgent
+branch HEAD: 2167f1625c2f04a33145f325db0de285630f7bd1  perf/x86/intel/uncore: Remove PCIe3 unit for SNR
 
-elapsed time: 484m
+elapsed time: 480m
 
-configs tested: 163
+configs tested: 169
 configs skipped: 0
 
 The following configs have been built successfully.
@@ -55,11 +55,10 @@ openrisc             randconfig-a001-20200118
 s390                 randconfig-a001-20200118
 sh                   randconfig-a001-20200118
 xtensa               randconfig-a001-20200118
-parisc                            allnoconfig
-parisc                            allyesonfig
-parisc                         b180_defconfig
-parisc                        c3000_defconfig
-parisc                              defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
 sparc                            allyesconfig
 sparc                               defconfig
 sparc64                          allmodconfig
@@ -97,6 +96,18 @@ sh                                allnoconfig
 sh                          rsk7269_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                            titan_defconfig
+x86_64               randconfig-c001-20200118
+x86_64               randconfig-c002-20200118
+x86_64               randconfig-c003-20200118
+i386                 randconfig-c001-20200118
+i386                 randconfig-c002-20200118
+i386                 randconfig-c003-20200118
+x86_64               randconfig-f001-20200118
+x86_64               randconfig-f002-20200118
+x86_64               randconfig-f003-20200118
+i386                 randconfig-f001-20200118
+i386                 randconfig-f002-20200118
+i386                 randconfig-f003-20200118
 x86_64               randconfig-d001-20200118
 x86_64               randconfig-d002-20200118
 x86_64               randconfig-d003-20200118
@@ -109,11 +120,29 @@ arm64                randconfig-a001-20200118
 ia64                 randconfig-a001-20200118
 powerpc              randconfig-a001-20200118
 sparc                randconfig-a001-20200118
+alpha                randconfig-a001-20200118
+m68k                 randconfig-a001-20200118
+mips                 randconfig-a001-20200118
+nds32                randconfig-a001-20200118
+parisc               randconfig-a001-20200118
+riscv                randconfig-a001-20200118
 ia64                             alldefconfig
 ia64                             allmodconfig
 ia64                              allnoconfig
 ia64                             allyesconfig
 ia64                                defconfig
+x86_64               randconfig-h001-20200118
+x86_64               randconfig-h002-20200118
+x86_64               randconfig-h003-20200118
+i386                 randconfig-h001-20200118
+i386                 randconfig-h002-20200118
+i386                 randconfig-h003-20200118
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
 h8300                     edosk2674_defconfig
 h8300                    h8300h-sim_defconfig
 h8300                       h8s-sim_defconfig
@@ -121,24 +150,11 @@ m68k                             allmodconfig
 m68k                       m5475evb_defconfig
 m68k                          multi_defconfig
 m68k                           sun3_defconfig
-alpha                randconfig-a001-20200118
-m68k                 randconfig-a001-20200118
-mips                 randconfig-a001-20200118
-nds32                randconfig-a001-20200118
-parisc               randconfig-a001-20200118
-riscv                randconfig-a001-20200118
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-x86_64               randconfig-h001-20200118
-x86_64               randconfig-h002-20200118
-x86_64               randconfig-h003-20200118
-i386                 randconfig-h001-20200118
-i386                 randconfig-h002-20200118
-i386                 randconfig-h003-20200118
+parisc                            allnoconfig
+parisc                            allyesonfig
+parisc                         b180_defconfig
+parisc                        c3000_defconfig
+parisc                              defconfig
 arc                              allyesconfig
 arc                                 defconfig
 microblaze                      mmu_defconfig
@@ -152,16 +168,6 @@ openrisc             randconfig-a001-20200117
 s390                 randconfig-a001-20200117
 sh                   randconfig-a001-20200117
 xtensa               randconfig-a001-20200117
-x86_64               randconfig-f001-20200118
-x86_64               randconfig-f002-20200118
-x86_64               randconfig-f003-20200118
-i386                 randconfig-f001-20200118
-i386                 randconfig-f002-20200118
-i386                 randconfig-f003-20200118
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
 alpha                randconfig-a001-20200117
 m68k                 randconfig-a001-20200117
 mips                 randconfig-a001-20200117
@@ -186,6 +192,12 @@ mips                              allnoconfig
 mips                             allyesconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
+x86_64               randconfig-b001-20200118
+x86_64               randconfig-b002-20200118
+x86_64               randconfig-b003-20200118
+i386                 randconfig-b001-20200118
+i386                 randconfig-b002-20200118
+i386                 randconfig-b003-20200118
 um                                  defconfig
 um                             i386_defconfig
 um                           x86_64_defconfig
@@ -207,12 +219,6 @@ i386                             alldefconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
-x86_64               randconfig-c001-20200118
-x86_64               randconfig-c002-20200118
-x86_64               randconfig-c003-20200118
-i386                 randconfig-c001-20200118
-i386                 randconfig-c002-20200118
-i386                 randconfig-c003-20200118
 
 ---
 0-DAY kernel test infrastructure                 Open Source Technology Center
