@@ -2,42 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B95140908
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDEA14090E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgAQLgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 06:36:21 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59269 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbgAQLgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:36:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 03:36:20 -0800
-X-IronPort-AV: E=Sophos;i="5.70,330,1574150400"; 
-   d="scan'208";a="218881938"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 03:36:15 -0800
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org
-Cc:     dri-devel@lists.freedesktop.org, Perry Yuan <pyuan@redhat.com>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
-        Lee Shawn C <shawn.c.lee@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] drm/i915: Don't use VBT for detecting DPCD backlight controls
-In-Reply-To: <20200116211623.53799-5-lyude@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200116211623.53799-1-lyude@redhat.com> <20200116211623.53799-5-lyude@redhat.com>
-Date:   Fri, 17 Jan 2020 13:36:12 +0200
-Message-ID: <87zhemgvrn.fsf@intel.com>
+        id S1727195AbgAQLhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 06:37:03 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:14201 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbgAQLhC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 06:37:02 -0500
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: xwQShq9l4VBljm/WWgN5Nzy46/aIe3WKw2CNcekLNHivgKlF1Zj55l+jGlQdTwnJexIjf2qSx3
+ y7O5KRiGC+Nj1TcZ6v6wl0CdQyJb/fKAIJkMlSht856b6SEUQASg/iIx+sL8L8UtdZp+75qUrZ
+ jg64EI6V3opBvWozrDc4qvdEjOWTKRkdh479EP3KVOBTd0S7BIFN7YyLUwj3jlUmTMGOECbtEV
+ yitTuNC4DopW93zt39wSgCfOAEmpIr1jxDNNbG0Z4JojU7RPJoLpJZN3/12xOMIBzo9fwAAKQA
+ 4+o=
+X-IronPort-AV: E=Sophos;i="5.70,330,1574146800"; 
+   d="scan'208";a="62954987"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jan 2020 04:37:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 17 Jan 2020 04:37:02 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 17 Jan 2020 04:36:59 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/4] clock fixes for at91
+Date:   Fri, 17 Jan 2020 13:36:45 +0200
+Message-ID: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,87 +66,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020, Lyude Paul <lyude@redhat.com> wrote:
-> Despite the fact that the VBT appears to have a field for specifying
-> that a system is equipped with a panel that supports standard VESA
-> backlight controls over the DP AUX channel, so far every system we've
-> spotted DPCD backlight control support on doesn't actually set this
-> field correctly and all have it set to INTEL_BACKLIGHT_DISPLAY_DDI.
->
-> While we don't know the exact reason for this VBT misuse, talking with
-> some vendors indicated that there's a good number of laptop panels out
-> there that supposedly support both PWM backlight controls and DPCD
-> backlight controls as a workaround until Intel supports DPCD backlight
-> controls across platforms universally. This being said, the X1 Extreme
-> 2nd Gen that I have here (note that Lenovo is not the hardware vendor
-> that informed us of this) PWM backlight controls are advertised, but
-> only DPCD controls actually function. I'm going to make an educated
-> guess here and say that on systems like this one, it's likely that PWM
-> backlight controls might have been intended to work but were never
-> really tested by QA.
->
-> Since we really need backlights to work without any extra module
-> parameters, let's take the risk here and rely on the standard DPCD caps
-> to tell us whether AUX backlight controls are supported or not. We still
-> check the VBT, but only to make sure that we don't enable DPCD backlight
-> controls on a panel that uses something other then the standard VESA
-> interfaces over AUX. Since panels using such non-standard interfaces
-> should probably have support added to i915, we'll print a warning when
-> seeing this in the VBT. We can remove this warning later if we end up
-> adding support for any custom backlight interfaces.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112376
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Cc: Perry Yuan <pyuan@redhat.com>
-> Cc: AceLan Kao <acelan.kao@canonical.com>
-> ---
->  .../drm/i915/display/intel_dp_aux_backlight.c    | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> index 77a759361c5c..3002b600635f 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> @@ -330,13 +330,17 @@ int intel_dp_aux_init_backlight_funcs(struct intel_connector *intel_connector)
->  	struct intel_panel *panel = &intel_connector->panel;
->  	struct drm_i915_private *dev_priv = to_i915(intel_connector->base.dev);
->  
-> -	if (i915_modparams.enable_dpcd_backlight == 0 ||
-> -	    (i915_modparams.enable_dpcd_backlight == -1 &&
-> -	    dev_priv->vbt.backlight.type != INTEL_BACKLIGHT_VESA_EDP_AUX_INTERFACE))
-> -		return -ENODEV;
-> -
-> -	if (!intel_dp_aux_display_control_capable(intel_connector))
-> +	if (i915_modparams.enable_dpcd_backlight == 0)
->  		return -ENODEV;
-> +	if (i915_modparams.enable_dpcd_backlight == -1) {
-> +		if (dev_priv->vbt.backlight.type
-> +		    == INTEL_BACKLIGHT_PANEL_DRIVER_INTERFACE) {
-> +			DRM_WARN("VBT says panel uses custom panel driver interface, not using DPCD backlight controls\n");
-> +			return -ENODEV;
-> +		}
-> +		if (!intel_dp_aux_display_control_capable(intel_connector))
-> +			return -ENODEV;
+Hi,
 
-Functionally, I'm fine with trying this. But perhaps we should check aux
-and early return first, and then check what vbt says, to reduce the
-dmesg noise.
+This series contains some fixes for at91 clocks (usb + sam9x60).
 
-I'll probably want to see a debug message if we're enabling aux
-backlight even if dev_priv->vbt.backlight.type !=
-INTEL_BACKLIGHT_VESA_EDP_AUX_INTERFACE. It's the kind of debug trace
-you'll really want to get first.
+Thank you,
+Claudiu Beznea
 
-BR,
-Jani.
+Claudiu Beznea (4):
+  clk: at91: usb: continue if clk_hw_round_rate() returned zero
+  clk: at91: sam9x60: fix usb clock parents
+  clk: at91: usb: use proper usbs_mask
+  clk: at91: usb: introduce num_parents in driver's structure
 
-
-
-> +	}
->  
->  	panel->backlight.setup = intel_dp_aux_setup_backlight;
->  	panel->backlight.enable = intel_dp_aux_enable_backlight;
+ drivers/clk/at91/clk-usb.c | 9 +++++++--
+ drivers/clk/at91/sam9x60.c | 5 ++---
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.7.4
+
