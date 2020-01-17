@@ -2,110 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE0E140785
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A03C914079F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbgAQKJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:09:59 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36626 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbgAQKJx (ORCPT
+        id S1729182AbgAQKLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:11:14 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:64928 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbgAQKLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:09:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so22111879wru.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:09:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=YISpyKpQLeyZzuM7GvuVJ7EJ8elz6lBBgLI3G6qJUsI=;
-        b=Om+3agWx46v380MyT9qje7b/bQzpX0c/qhvN22fywDLm1tTCm2GcXoYQ2lCUebzlgj
-         3yCWrKdYDnUKiF9C/Rl//6Jls4A8WD/DloB3kmzerntdReN50d6xl42Jc9uogVPAoPor
-         OuvmwQXwvrKcSpE0pJ39dVTZx1Fm3qmAVT4THCgI1y9k/yN7EFRcBeg1CH8lmF3nDwcK
-         8D77pMvun+tUB3cx9FAs0Z0kpLv2ZKDCxfMbA2gOQ8y+QAAQS6LT/8U7pW6qLZegb2G3
-         PNXNu3euC1TTSJ0Wdc9eer67lT/9qPZH9pYOMNEkBVTttE2l0Cpxb64y3CIeMobWjFfb
-         LfCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=YISpyKpQLeyZzuM7GvuVJ7EJ8elz6lBBgLI3G6qJUsI=;
-        b=FRMZ+49qhX51CpnXKXOoYRfPI4RLExxhJf1wpecwKhKVBKzBNoI5UjULFlauPdSz03
-         dmo0fHtH8OeEIoH62EusYF2X0nIOjGlxn94E+5yK8pUJY3ZPkDw0gg02FOIDWeIqv5Z6
-         4xgUwrtHpp6SimMyMNGhvKuKsQG5oEMoris+nbCFaLis1zlmwfTHBK7dj4hnQQFgseMw
-         PnTLbKaui8EVTlJLyrkYQdNUgcLozUuXqxbgahJFk8RbHogwyMOgBC1J4ZicJQWium/B
-         fI+KDUlR/Hdn7fHO2r/NZ36zK472zPdxH5N+CFdGvRWdAzFqVOYxnGGZ27+VWCwHwBlw
-         tzBQ==
-X-Gm-Message-State: APjAAAX+T6g5VFXDw05RUBUUVR2hOxOeWcjCaSqzYYpPXc/mh7vWzID1
-        VLReDQqIIzCoUMrSynSBh3FadDJLCQ0=
-X-Google-Smtp-Source: APXvYqxqEtLipEsHaogoR2jMoOo5aO/vN4KHKR3WBBi6RlhbAW3j19TXXptHwp0RyDPCHGXRHpnrbA==
-X-Received: by 2002:a5d:6089:: with SMTP id w9mr2243772wrt.228.1579255791363;
-        Fri, 17 Jan 2020 02:09:51 -0800 (PST)
-Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id 5sm33493552wrh.5.2020.01.17.02.09.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 02:09:50 -0800 (PST)
-Date:   Fri, 17 Jan 2020 10:10:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        Fri, 17 Jan 2020 05:11:13 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-cc-5e2188408057
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id E9.DA.08102.048812E5; Fri, 17 Jan 2020 11:11:12 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Fri, 17 Jan 2020 11:11:07 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "lee.jones@linaro.org" <lee.jones@linaro.org>
+CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
         "sashal@kernel.org" <sashal@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
 Subject: Re: [PATCH] mfd: bd70528: Fix hour register mask
-Message-ID: <20200117101009.GC15507@dell>
+Thread-Topic: [PATCH] mfd: bd70528: Fix hour register mask
+Thread-Index: AQHVy33u6ExLp0ReyUCqWPc5BSkWM6fubBCAgAADpgCAAAKhgIAAIoKAgAAASAA=
+Date:   Fri, 17 Jan 2020 10:11:06 +0000
+Message-ID: <1c5c4c8bb1c6070bb98a59f008b63eeb742f5af1.camel@fi.rohmeurope.com>
 References: <20200115082933.GA29117@localhost.localdomain>
- <83e8e1ecc40a58e2e6d1960bbb41c8dcfe730ce1.camel@fi.rohmeurope.com>
- <20200117075714.GA1822218@kroah.com>
- <b5835b0fe842a01888d66c07281e13fc64c2c9ef.camel@fi.rohmeurope.com>
+         <83e8e1ecc40a58e2e6d1960bbb41c8dcfe730ce1.camel@fi.rohmeurope.com>
+         <20200117075714.GA1822218@kroah.com>
+         <b5835b0fe842a01888d66c07281e13fc64c2c9ef.camel@fi.rohmeurope.com>
+         <20200117101009.GC15507@dell>
+In-Reply-To: <20200117101009.GC15507@dell>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5A7F71BB26483645B325C84A167A07AD@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b5835b0fe842a01888d66c07281e13fc64c2c9ef.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42I5sOL3Rl2HDsU4g6ZdPBbt75axWzQvXs9m
+        cf/rUUaLy7vmsFnMWXqCxWLTmmtsDmwe89ZUe+ycdZfdY9OqTjaPO9f2sHnsn7uG3ePzJrkA
+        tihum6TEkrLgzPQ8fbsE7owJ+/uZC9YJVizunc7UwPhFoIuRk0NCwETi37MvTF2MXBxCAlcZ
+        Jd4vOw3lnGCUuLrhGksXIwcHm4CNRNdNdpAGEQFDiSUnnrKA1DALLGWS6N11gxEkISxgKbH5
+        314miCIriVvvHoD1igj4Sfw47A8SZhFQlbi8aD1YOS9Q+OLhB+wQu/qZJN7P3ADWyymgJTH5
+        P8gCTg5GAVmJzoZ3YHFmAXGJTc++s0JcLSCxZM95ZghbVOLl439QcSWJvT8fgu1lFtCUWL9L
+        H6LVQWL/9vlsELaixJTuh+wQNwhKnJz5hGUCo9gsJBtmIXTPQtI9C0n3LCTdCxhZVzFK5CZm
+        5qQnlqQa6hWlluoV5WfkAqnk/NxNjJBI/bKD8f8hz0OMTByMhxglOZiURHlF9sjGCfEl5adU
+        ZiQWZ8QXleakFh9ilOBgVhLhPTkDKMebklhZlVqUD5OS5mBREudVfzgxVkgAZFd2ampBahFM
+        VoaDQ0mCl7dVMU5IsCg1PbUiLTOnBCHNxMEJMpxLSqQ4NS8ltSixtCQjHpQ+4ouBCQQkxQO0
+        174NqJ23uCAxFygK0XqKUZtjwsu5i5g5jsxduohZiCUvPy9VSpy3oQWoVACkNKM0D27RK0Zx
+        DkYlYV6NdqAsDzBlw815BbSCCWjFBGc5kBUliQgpqQbG2s3TTN5wyzQ/ivTc6/KnOlTCe8W6
+        X7FG+sYXfmSlOwjWF35MmDLBIkzRknOd3MSLp5ZJnlcX3HFaO75UgHVCtdOXy30MU3Y7brT3
+        TXm1lmvfxPlywidVkr8wT5HgiXSbwm8x1UZn+5aShXwX5Dje/ln78YjFq5KTSZduex/cYb53
+        3aNiV6HzSizFGYmGWsxFxYkAGI+k1pYDAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020, Vaittinen, Matti wrote:
-
-> 
-> On Fri, 2020-01-17 at 08:57 +0100, gregkh@linuxfoundation.org wrote:
-> > On Fri, Jan 17, 2020 at 07:44:07AM +0000, Vaittinen, Matti wrote:
-> > > 
-> > > Is it possible to get this in 5.4 stable - while leaving this out
-> > > of
-> > > current MFD tree and applying the BD71828 series to MFD?
-> > 
-> > We only take patches that are in Linus's tree for the stable tree,
-> > unless there are very big reasons not to do so (i.e. it is totally
-> > rewritten in a different way there.)
-> > 
-> > Once the change/fix is in Linus's tree, then you can backport it to
-> > stable in a different way if you want, but you need to give lots of
-> > reasons why it is done that way.
-> 
-> Right. Thanks for the explanation Greg. I have no _strong_ reasons -
-> which means I'll split the RTC support patch in BD71828 series into two
-> - first of the patches being this fix, second being the BD71828
-> support. Then this fix can be taken in 5.4 after it has been merged to
-> Linus' tree - the BD71828 support can be omitted from 5.4
-> 
-> I hope the BD71828 series could still make it to next release - but if
-> it wont, then it might be in next after that :]
-> 
-> Lee, please skip this one, I'll do v10 of the BD71828 series where this
-> fix is included as separate fix-patch.
-
-Will look out for it.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+DQpPbiBGcmksIDIwMjAtMDEtMTcgYXQgMTA6MTAgKzAwMDAsIExlZSBKb25lcyB3cm90ZToNCj4g
+T24gRnJpLCAxNyBKYW4gMjAyMCwgVmFpdHRpbmVuLCBNYXR0aSB3cm90ZToNCj4gDQo+ID4gT24g
+RnJpLCAyMDIwLTAxLTE3IGF0IDA4OjU3ICswMTAwLCBncmVna2hAbGludXhmb3VuZGF0aW9uLm9y
+Zw0KPiA+IHdyb3RlOg0KPiA+ID4gT24gRnJpLCBKYW4gMTcsIDIwMjAgYXQgMDc6NDQ6MDdBTSAr
+MDAwMCwgVmFpdHRpbmVuLCBNYXR0aSB3cm90ZToNCj4gPiA+ID4gSXMgaXQgcG9zc2libGUgdG8g
+Z2V0IHRoaXMgaW4gNS40IHN0YWJsZSAtIHdoaWxlIGxlYXZpbmcgdGhpcw0KPiA+ID4gPiBvdXQN
+Cj4gPiA+ID4gb2YNCj4gPiA+ID4gY3VycmVudCBNRkQgdHJlZSBhbmQgYXBwbHlpbmcgdGhlIEJE
+NzE4Mjggc2VyaWVzIHRvIE1GRD8NCj4gPiA+IA0KPiA+ID4gV2Ugb25seSB0YWtlIHBhdGNoZXMg
+dGhhdCBhcmUgaW4gTGludXMncyB0cmVlIGZvciB0aGUgc3RhYmxlDQo+ID4gPiB0cmVlLA0KPiA+
+ID4gdW5sZXNzIHRoZXJlIGFyZSB2ZXJ5IGJpZyByZWFzb25zIG5vdCB0byBkbyBzbyAoaS5lLiBp
+dCBpcw0KPiA+ID4gdG90YWxseQ0KPiA+ID4gcmV3cml0dGVuIGluIGEgZGlmZmVyZW50IHdheSB0
+aGVyZS4pDQo+ID4gPiANCj4gPiA+IE9uY2UgdGhlIGNoYW5nZS9maXggaXMgaW4gTGludXMncyB0
+cmVlLCB0aGVuIHlvdSBjYW4gYmFja3BvcnQgaXQNCj4gPiA+IHRvDQo+ID4gPiBzdGFibGUgaW4g
+YSBkaWZmZXJlbnQgd2F5IGlmIHlvdSB3YW50LCBidXQgeW91IG5lZWQgdG8gZ2l2ZSBsb3RzDQo+
+ID4gPiBvZg0KPiA+ID4gcmVhc29ucyB3aHkgaXQgaXMgZG9uZSB0aGF0IHdheS4NCj4gPiANCj4g
+PiBSaWdodC4gVGhhbmtzIGZvciB0aGUgZXhwbGFuYXRpb24gR3JlZy4gSSBoYXZlIG5vIF9zdHJv
+bmdfIHJlYXNvbnMNCj4gPiAtDQo+ID4gd2hpY2ggbWVhbnMgSSdsbCBzcGxpdCB0aGUgUlRDIHN1
+cHBvcnQgcGF0Y2ggaW4gQkQ3MTgyOCBzZXJpZXMgaW50bw0KPiA+IHR3bw0KPiA+IC0gZmlyc3Qg
+b2YgdGhlIHBhdGNoZXMgYmVpbmcgdGhpcyBmaXgsIHNlY29uZCBiZWluZyB0aGUgQkQ3MTgyOA0K
+PiA+IHN1cHBvcnQuIFRoZW4gdGhpcyBmaXggY2FuIGJlIHRha2VuIGluIDUuNCBhZnRlciBpdCBo
+YXMgYmVlbiBtZXJnZWQNCj4gPiB0bw0KPiA+IExpbnVzJyB0cmVlIC0gdGhlIEJENzE4Mjggc3Vw
+cG9ydCBjYW4gYmUgb21pdHRlZCBmcm9tIDUuNA0KPiA+IA0KPiA+IEkgaG9wZSB0aGUgQkQ3MTgy
+OCBzZXJpZXMgY291bGQgc3RpbGwgbWFrZSBpdCB0byBuZXh0IHJlbGVhc2UgLSBidXQNCj4gPiBp
+Zg0KPiA+IGl0IHdvbnQsIHRoZW4gaXQgbWlnaHQgYmUgaW4gbmV4dCBhZnRlciB0aGF0IDpdDQo+
+ID4gDQo+ID4gTGVlLCBwbGVhc2Ugc2tpcCB0aGlzIG9uZSwgSSdsbCBkbyB2MTAgb2YgdGhlIEJE
+NzE4Mjggc2VyaWVzIHdoZXJlDQo+ID4gdGhpcw0KPiA+IGZpeCBpcyBpbmNsdWRlZCBhcyBzZXBh
+cmF0ZSBmaXgtcGF0Y2guDQo+IA0KPiBXaWxsIGxvb2sgb3V0IGZvciBpdC4NCj4gDQpUaGFua3Mh
+IEl0IHNob3VsZCBiZSBvbiBpdCdzIHdheSB0aHJvdWdoIHRoZSBtYWlsIHNlcnZlcnMgOl0NCg0K
+QnIsDQoJTWF0dGkgVmFpdHRpbmVuDQoNCg==
