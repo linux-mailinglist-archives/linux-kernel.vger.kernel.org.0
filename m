@@ -2,61 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0E81140321
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0AAE140329
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbgAQErc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 23:47:32 -0500
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:40412 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbgAQErc (ORCPT
+        id S1729588AbgAQEv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 23:51:57 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42002 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbgAQEv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 23:47:32 -0500
-Received: by mail-pg1-f177.google.com with SMTP id k25so11041154pgt.7
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 20:47:32 -0800 (PST)
+        Thu, 16 Jan 2020 23:51:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 4so11346662pfz.9
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 20:51:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=A+4aYu/f+LLI3Jw91RLfV6RdAoA39tW2N/DHyvDL3Ik=;
-        b=sxc0BE3OoszJC5FcjG40xTs59ymbvxykkUk8mBvmvm13L2O1sRFFxW7xoQbhpSHgf5
-         zBpes8RCdcKhjcpAYj+e1ZpMYfNZb+V3G9DsJxiAOG7j3D06dMgyaXqV6aXcGkpliwi3
-         +O7pml11pdBF8JcPPKcJ5hhqz53FCSgApNqw1/SVeIJFPNbpz+SBuBC3cD8mtpZwOewv
-         FmCsN7Y72mFfR7chMz/5lm3hczCSBAA81+964CHZyVYUER3aw2clkom8/7Ul9tP2abxW
-         c6A37jME6MCwBQ4tjff8WLidrVhe/bqqnDNBYqfQMtgGA8zhJBp6z6SfrQxSpSBPAYpp
-         vzRg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=InISBspkm5MQykXQvlAo8sKTZ869qG5tJNqMQexJDfE=;
+        b=SeZnFLr11e9J3ss8CpgxQB/FABiTdtguktnz817wTD5muKgDsvSpMHASyBB6DtgJUR
+         D3eKauyzQ0foumq7ch4A7b3Eh0z/j0UyokSwkVe2vkgr2aKZR170T7/LhcXfLWU54Ytm
+         1w04JvL1k5wYnOmTdw/dtH2IfGUzQbdBy6xuBcf76P5eguPMCJj5CjO9UhNWLtSAF/bT
+         oQLJmq8U1gyXY2KWCWVT84hCn97ssgpyABSkRdrV9tEHvm3He8z+78o6Z75hdI9TG2Fw
+         Byq2t2EWc2mig2JnyJVY7mSkfafpc3BDXbSJrUUsPfHdexqU86Altk8IOjnwjgK+Pf9M
+         H8Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=A+4aYu/f+LLI3Jw91RLfV6RdAoA39tW2N/DHyvDL3Ik=;
-        b=DtRFGq3OQeQqiLs4uKj8Rhs91vYly+qpW5rM0Hu+ZyqDcnkH2IvdvPZzndCpQpC5YU
-         spzjzdhoM9kdayoBHhmh0WByU9Lmx5Vg0W7DmQ8SHbrUYF1B0YmqgOP8+GsMYX0EnxkS
-         QvXqdz2mHuW6d+YPanG0aBKYOHDcBqtR4Maceq5Is+DY0ephzjtnxubllNWoYkvXdPdj
-         d8Adc1FBlrP8Wd2rkQd28mpPT8PUKGl81q2Q+cEExHC1N9GgxlhlhAe3/szp8nRZqMq9
-         8jD4ahGcGbPjqUbSlZkrIvIPeiM/ocRYibxT/j4xaDV/s9paASsNt0oFPH8PY+JxJg2w
-         hb2A==
-X-Gm-Message-State: APjAAAVphyhksfdQWq+G8jy55mOZVVciIw/x5YepuJg59544nXmyivzo
-        RMpebRVUxu+f4yj3J0eGWS9CKUaPVaA=
-X-Google-Smtp-Source: APXvYqzvatyId/eBVFoH3KLoXBu5HUCClzB9UM6crG/QSDY1KoMfVERKvTxmUsdwdnzcWDs810WGXw==
-X-Received: by 2002:a63:d906:: with SMTP id r6mr43590024pgg.440.1579236451548;
-        Thu, 16 Jan 2020 20:47:31 -0800 (PST)
+        bh=InISBspkm5MQykXQvlAo8sKTZ869qG5tJNqMQexJDfE=;
+        b=NwQkg54+WE6jRqNFFu7AQPYTutEgvwbercZIrpAaGUF8b3926ODO0ft+Tpm9FowtvH
+         Ud1PeNYt3dgUiAf20ofUQQYa0o5hhnHJc77y6MTOG9r1TlPcQZn/AyRGUDg18XqhsXX+
+         pEeajouYywEpvOieJzhVtt/zBFBNNZW0ttGLN+6I1Gneub27FhdFlfBsIFpzAa92N7SL
+         3d1AsRUYmVIgNeEAjAYjlz7oFfwLKQCdU2iYsC/JjYnL/qmKY7OTLMiRE0VQGJaKtEg0
+         K8x2xavQL+K3DD5/RyCF37RDv09wSL4N0ZiAe8qMiSxHmMO2tKlaq3CyhOKXmc6WR8e2
+         KQrA==
+X-Gm-Message-State: APjAAAVhS0Ne1n3DNrEOGuc0LsUS9av0aAteu54tz3Ob3KovPiqGTCRN
+        4M3gfRdOXhjPnBU1q9iakESxGA==
+X-Google-Smtp-Source: APXvYqy3jnFjxJoPk3kDPPclsSt6jkMc0480DqviIff0jlHDXtVzAyKbiiN8uiS9aJYVHNR9jAMouw==
+X-Received: by 2002:aa7:9484:: with SMTP id z4mr1140430pfk.88.1579236716245;
+        Thu, 16 Jan 2020 20:51:56 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id z26sm28299448pfa.90.2020.01.16.20.47.30
+        by smtp.gmail.com with ESMTPSA id s18sm27326510pfh.179.2020.01.16.20.51.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 20:47:31 -0800 (PST)
-Subject: Re: [PATCH] io_uring: hide uring_fd in ctx
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        Thu, 16 Jan 2020 20:51:55 -0800 (PST)
+Subject: Re: [PATCH v3 0/3] ata: ahci_brcm: Follow-up changes for BCM7216
+To:     Florian Fainelli <florian.fainelli@broadcom.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         linux-kernel@vger.kernel.org
-References: <2aefced4902f33f2b70aaedc32bc8d60a20efd7a.1579225489.git.asml.silence@gmail.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Tejun Heo <tj@kernel.org>, Jaedon Shin <jaedon.shin@gmail.com>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+References: <20200107183022.26224-1-f.fainelli@gmail.com>
+ <d32d1c1e6f32eeed811fa00e1b5d8ca121eea70f.camel@pengutronix.de>
+ <33d3589b-accf-04c2-5527-5a0f9c632d0b@broadcom.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e0d0eaea-3bda-ec22-0da5-8cfbeaf3f42d@kernel.dk>
-Date:   Thu, 16 Jan 2020 21:47:29 -0700
+Message-ID: <cca98d8c-4308-9fe8-5192-863851702369@kernel.dk>
+Date:   Thu, 16 Jan 2020 21:51:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <2aefced4902f33f2b70aaedc32bc8d60a20efd7a.1579225489.git.asml.silence@gmail.com>
+In-Reply-To: <33d3589b-accf-04c2-5527-5a0f9c632d0b@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,12 +78,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20 6:45 PM, Pavel Begunkov wrote:
-> req->ring_fd and req->ring_file are used only during the prep stage
-> during submission, which is is protected by mutex. There is no need
-> to store them per-request, place them in ctx.
+On 1/16/20 9:44 PM, Florian Fainelli wrote:
+> 
+> 
+> On 1/8/2020 1:25 AM, Philipp Zabel wrote:
+>> Hi Florian,
+>>
+>> On Tue, 2020-01-07 at 10:30 -0800, Florian Fainelli wrote:
+>>> Hi Jens, Philipp,
+>>>
+>>> These three patches are a follow-up to my previous series titled: ata:
+>>> ahci_brcm: Fixes and new device support.
+>>>
+>>> After submitting the BCM7216 RESCAL reset driver, Philipp the reset
+>>> controller maintained indicated that the reset line should be self
+>>> de-asserting and so reset_control_reset() should be used instead.
+>>>
+>>> These three patches update the driver in that regard. It would be great if
+>>> you could apply those and get them queued up for 5.6 since they are
+>>> directly related to the previous series.
+>>>
+>>> Changes in v3:
+>>> - introduced a preliminary patch making use of the proper reset control
+>>>   API in order to manage the optional reset controller line
+>>> - updated patches after introducing that preliminary patch
+>>
+>> The third patch could be simplified by storing the rescal reset control
+>> in a separate struct member and relying on the optional reset control
+>> API more. This is just a suggestion though, the series looks fine as-is.
+>>
+>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+> Thanks! Jens is that good for you?
 
-Thanks, applied.
+Can you re-send against the current branch and include the reviewed-bys
+from here as well?
+
 
 -- 
 Jens Axboe
