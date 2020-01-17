@@ -2,162 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A0C1403F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 07:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43ACC1403FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 07:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbgAQG0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 01:26:46 -0500
-Received: from mga17.intel.com ([192.55.52.151]:14600 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbgAQG0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 01:26:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 22:26:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,329,1574150400"; 
-   d="scan'208";a="424342481"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga005.fm.intel.com with ESMTP; 16 Jan 2020 22:26:32 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Derek Yerger <derek@djy.llc>,
-        kernel@najdan.com, Thomas Lambertz <mail@thomaslambertz.de>,
-        Rik van Riel <riel@surriel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4/4] KVM: x86: Remove unused ctxt param from emulator's FPU accessors
-Date:   Thu, 16 Jan 2020 22:26:28 -0800
-Message-Id: <20200117062628.6233-5-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200117062628.6233-1-sean.j.christopherson@intel.com>
-References: <20200117062628.6233-1-sean.j.christopherson@intel.com>
+        id S1728899AbgAQG2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 01:28:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33851 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgAQG2R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 01:28:17 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t2so21517409wrr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 22:28:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vvF3fPu42sSx+4imIXkbIazKn6wGHRrvMJiDBLGJfPw=;
+        b=m/oCh1sDRC/kXqKSFS+sZAhvHDlIfudqzQ2z6ERaO2XxSYSDY1hlY60vrt3yjZ+oV6
+         pCmSJgVrL/qxg0vfZOKuBsCO5SvB3blBSkpM2AfI1dbgw6xQpQ/JWEVz0rpLAjOtjFAI
+         zOztnxNq/nAvvliHOCGG/LDXa9Ye2pM5O8PR329p9AZ9bQBGXhDEdRFcs7OEXbGE349B
+         /Brt1ByzbyUd3xxYuNojF4C6vScOSeGCa7C6pdy+tyTR4eiE18+mnyAPy32lYvh0ESU2
+         HtBKneTYfaYyyWP0kCOT/zbt6sIjenyMUg6A08Oi3DmyPBOZ67M1BOcMA4Uy5KbrqJA6
+         sAtQ==
+X-Gm-Message-State: APjAAAWlW5f8Uep4qvQBJAjeJ6uZ0L8NItIa4cBa3CPuhqRwP0N1sAZM
+        H9abWkc4Ra31h31V0lhVgzk=
+X-Google-Smtp-Source: APXvYqwkZAR+jobw5u5vprLmpyWrVp8F0lhzB2GzsxGpJhiiei7yRMXMC6rKBJkshfqkczDtHNb/5Q==
+X-Received: by 2002:adf:f484:: with SMTP id l4mr1321649wro.207.1579242495892;
+        Thu, 16 Jan 2020 22:28:15 -0800 (PST)
+Received: from localhost (ip-37-188-146-105.eurotel.cz. [37.188.146.105])
+        by smtp.gmail.com with ESMTPSA id g25sm1700029wmh.3.2020.01.16.22.28.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 22:28:14 -0800 (PST)
+Date:   Fri, 17 Jan 2020 07:28:13 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "buddy.zhang" <buddy.zhang@aliyun.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/cma.c: find a named CMA area by name
+Message-ID: <20200117062813.GE19428@dhcp22.suse.cz>
+References: <20200116101322.17795-1-buddy.zhang@aliyun.com>
+ <20200116121240.GS19428@dhcp22.suse.cz>
+ <6EE060CC-A19D-4F9D-BE36-14CB20C44AE2@aliyun.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6EE060CC-A19D-4F9D-BE36-14CB20C44AE2@aliyun.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove an unused struct x86_emulate_ctxt * param from low level helpers
-used to access guest FPU state.  The unused param was left behind by
-commit 6ab0b9feb82a ("x86,kvm: remove KVM emulator get_fpu / put_fpu").
+On Fri 17-01-20 10:16:46, buddy.zhang wrote:
+[...]
+>     So, if device want to use a special named CMA area on module,  
+>     "cma_find_by_name()" need export symbols.
 
-No functional change intended.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/emulate.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 2a5bed60ce50..3e3b3cd60cce 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -1090,7 +1090,7 @@ static void emulator_put_fpu(void)
- 	fpregs_unlock();
- }
- 
--static void read_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data, int reg)
-+static void read_sse_reg(sse128_t *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1117,8 +1117,7 @@ static void read_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data, int reg)
- 	emulator_put_fpu();
- }
- 
--static void write_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data,
--			  int reg)
-+static void write_sse_reg(sse128_t *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1145,7 +1144,7 @@ static void write_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data,
- 	emulator_put_fpu();
- }
- 
--static void read_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
-+static void read_mmx_reg(u64 *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1162,7 +1161,7 @@ static void read_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
- 	emulator_put_fpu();
- }
- 
--static void write_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
-+static void write_mmx_reg(u64 *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1234,7 +1233,7 @@ static void decode_register_operand(struct x86_emulate_ctxt *ctxt,
- 		op->type = OP_XMM;
- 		op->bytes = 16;
- 		op->addr.xmm = reg;
--		read_sse_reg(ctxt, &op->vec_val, reg);
-+		read_sse_reg(&op->vec_val, reg);
- 		return;
- 	}
- 	if (ctxt->d & Mmx) {
-@@ -1285,7 +1284,7 @@ static int decode_modrm(struct x86_emulate_ctxt *ctxt,
- 			op->type = OP_XMM;
- 			op->bytes = 16;
- 			op->addr.xmm = ctxt->modrm_rm;
--			read_sse_reg(ctxt, &op->vec_val, ctxt->modrm_rm);
-+			read_sse_reg(&op->vec_val, ctxt->modrm_rm);
- 			return rc;
- 		}
- 		if (ctxt->d & Mmx) {
-@@ -1862,10 +1861,10 @@ static int writeback(struct x86_emulate_ctxt *ctxt, struct operand *op)
- 				       op->bytes * op->count);
- 		break;
- 	case OP_XMM:
--		write_sse_reg(ctxt, &op->vec_val, op->addr.xmm);
-+		write_sse_reg(&op->vec_val, op->addr.xmm);
- 		break;
- 	case OP_MM:
--		write_mmx_reg(ctxt, &op->mm_val, op->addr.mm);
-+		write_mmx_reg(&op->mm_val, op->addr.mm);
- 		break;
- 	case OP_NONE:
- 		/* no writeback */
-@@ -5495,11 +5494,10 @@ static int flush_pending_x87_faults(struct x86_emulate_ctxt *ctxt)
- 	return X86EMUL_CONTINUE;
- }
- 
--static void fetch_possible_mmx_operand(struct x86_emulate_ctxt *ctxt,
--				       struct operand *op)
-+static void fetch_possible_mmx_operand(struct operand *op)
- {
- 	if (op->type == OP_MM)
--		read_mmx_reg(ctxt, &op->mm_val, op->addr.mm);
-+		read_mmx_reg(&op->mm_val, op->addr.mm);
- }
- 
- static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *))
-@@ -5578,10 +5576,10 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
- 			 * Now that we know the fpu is exception safe, we can fetch
- 			 * operands from it.
- 			 */
--			fetch_possible_mmx_operand(ctxt, &ctxt->src);
--			fetch_possible_mmx_operand(ctxt, &ctxt->src2);
-+			fetch_possible_mmx_operand(&ctxt->src);
-+			fetch_possible_mmx_operand(&ctxt->src2);
- 			if (!(ctxt->d & Mov))
--				fetch_possible_mmx_operand(ctxt, &ctxt->dst);
-+				fetch_possible_mmx_operand(&ctxt->dst);
- 		}
- 
- 		if (unlikely(emul_flags & X86EMUL_GUEST_MASK) && ctxt->intercept) {
+My question was whether there actually is any device that would like to
+use this functionality. Your patch doesn't add any and there is no
+reference to any either. We do not add exports for the functionality
+which is not used in the tree.
 -- 
-2.24.1
-
+Michal Hocko
+SUSE Labs
