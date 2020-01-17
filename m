@@ -2,138 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED68140137
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 461AB140131
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:57:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387644AbgAQA67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:58:59 -0500
-Received: from mail.prewas.sk ([212.5.209.170]:65480 "EHLO mail.prewas.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730151AbgAQA67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:58:59 -0500
-dkim-signature: v=1; a=rsa-sha256; d=3ksolutions.sk; s=mail.prewas.sk;
-        c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References;
-        bh=joY66v7Mt3fGNDLPvMmR7lEkVuZrgs2jMtaE6jZ8mCk=;
-        b=tD0DF0Jw9lF5zWH+nIiIBYGVDFfn8ar+Kk2PyWQlWUE8+7+Uq3gvSum4Ko11j+v2lyLbrj71grDti0uH52ncIFVT99KNPOA/T66BQpPk7nw71mhow4kFDlB4M9yuXrfiWXXslIHFDQdFkRLaZ9yW5nqy83Fw5qEq8AntrQXjNzeEJNcpq+t5LC5bYTvLyQGNwNQow+4I1O1v6NK7DTpot8zUYtOqAsRtoaLUg256TKywQrhUsmO4IVgcw4
-        cUbVnyB7BKU5xGsTjaM8ou4lS/MIAqbnonWvr2wFKBkXYq8jwLl1BO2kXyvHWralWU/3r+tcqttv/PKmlBXJ0rQjjLjw==
-Received: from [10.0.1.61] (pcfilo.vital.sk [10.0.1.61])
-        by mail.prewas.sk with ESMTPSA
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128)
-        ; Fri, 17 Jan 2020 01:58:57 +0100
-From:   =?UTF-8?B?SXZhbiDFoGnFoXTDrWsgLSAzSyBTb2x1dGlvbnMsIHMuIHIuIG8u?= 
-        <sistik@3ksolutions.sk>
-Subject: Re: [PATCH] tty: serial: amba-pl011: added RS485 support
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-References: <20200106235203.27256-1-sistik@3ksolutions.sk>
- <20200116132954.5tcxmezs5qhseiem@wunner.de>
-Message-ID: <4e082c29-9a47-accc-425b-8d1854fb6ac6@3ksolutions.sk>
-Date:   Fri, 17 Jan 2020 01:58:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S2387459AbgAQA5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:57:44 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:38748 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732786AbgAQA5n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 19:57:43 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200117005741epoutp04dc5ac4381e0665c0f229730ae179a927~qhqSqT9fs0528005280epoutp04_
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 00:57:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200117005741epoutp04dc5ac4381e0665c0f229730ae179a927~qhqSqT9fs0528005280epoutp04_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579222661;
+        bh=2YtNRcjk3fmfAqxExx3lDdXzhOaFYJbA2NmlhZCCF8g=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ealh4xOagR/9yOg24c5ZZPj37XQKQVDL33sYOHwOnniz5FX9Z/q+uXSUJLTe7r+FO
+         9uJTZUqihzla8j5i1Oxy9vOHzinac/J1oj4Q3+GfqUiYhz5bB0O04XSulkd/NfXMZC
+         fMG6DOaVpN+A+K6TnzvUF6Gt1L5iKIydBayWlCEI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200117005740epcas1p4dd5fb29789a1c49e83b12bbc1e95bd18~qhqSTMeRW0957909579epcas1p4j;
+        Fri, 17 Jan 2020 00:57:40 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47zN2V318LzMqYkn; Fri, 17 Jan
+        2020 00:57:38 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        35.8F.52419.F76012E5; Fri, 17 Jan 2020 09:57:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200117005734epcas1p3a7ab803d3d34efeb864b730371402dd1~qhqMblqzl1233812338epcas1p3c;
+        Fri, 17 Jan 2020 00:57:34 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200117005734epsmtrp13ff80474a5b05be9399fc3fa0ea6de96~qhqMa7WHT0556605566epsmtrp1M;
+        Fri, 17 Jan 2020 00:57:34 +0000 (GMT)
+X-AuditID: b6c32a37-59fff7000001ccc3-c8-5e21067f84fe
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A4.33.06569.E76012E5; Fri, 17 Jan 2020 09:57:34 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200117005734epsmtip2d6b7378808c38a63ed677ece6a1a3c91~qhqMQ2e7-1345313453epsmtip2L;
+        Fri, 17 Jan 2020 00:57:34 +0000 (GMT)
+Subject: Re: [PATCH] extcon: Remove unneeded extern keyword from extcon.h
+To:     linux-kernel@vger.kernel.org
+Cc:     chanwoo@kernel.org, myungjoo.ham@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <2f529cd0-d896-3b71-7224-299969294a3e@samsung.com>
+Date:   Fri, 17 Jan 2020 10:04:55 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20200116132954.5tcxmezs5qhseiem@wunner.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200116043947.12556-1-cw00.choi@samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdlhTV7eeTTHO4OwnZouJN66wWFzeNYfN
+        4nbjCjYHZo9NqzrZPPq2rGL0+LxJLoA5KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX
+        0NLCXEkhLzE31VbJxSdA1y0zB2iRkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafA
+        skCvODG3uDQvXS85P9fK0MDAyBSoMCE7Y/PbFSwFE5QqrvYcZGxgXCHTxcjJISFgIjF1+kPW
+        LkYuDiGBHYwSz5v/QzmfGCVm3G5jAakSEvjGKHFolw5Mx8tjD1ggivYyStyafhrKec8o8a35
+        GhNIlbCAp8TTJwfBukUEFCQ29z5jBbGZBQwkHl3dB2azCWhJ7H9xgw3E5hdQlLj64zEjiM0r
+        YCcxr2EDWJxFQFXi6qdHYPWiAmESJ7e1QNUISpyc+QRsPqeAtcS5tX1sEPPFJW49mc8EYctL
+        bH87hxnkOAmBI2wSe86fZIZ4wUViwZ9vLBC2sMSr41vYIWwpiZf9bVB2tcTKk0fYIJo7GCW2
+        7L/ACpEwlti/dDLQBg6gDZoS63fpQ4QVJXb+nssIsZhP4t3XHlaQEgkBXomONiGIEmWJyw/u
+        MkHYkhKL2zvZJjAqzULyziwkL8xC8sIshGULGFlWMYqlFhTnpqcWGxYYI8f2JkZwItQy38G4
+        4ZzPIUYBDkYlHt4ZQQpxQqyJZcWVuYcYJTiYlUR4T86QjRPiTUmsrEotyo8vKs1JLT7EaAoM
+        7YnMUqLJ+cAknVcSb2hqZGxsbGFiaGZqaKgkzjvDBWiOQHpiSWp2ampBahFMHxMHp1QDYw/r
+        E6NPx17uldh/WdwtoMDtQ2Xx+9Dy2uJZvjIMBRG/jq0Vauad96OrppKl0febuZLoDtHAT11/
+        7+S4Mt+99eNzj2Uxg77JGpmV956d+Pyp5UHjjbWqz9eGRno/nuRmsbOidA3zj7yvLZX/Qibd
+        zJ09+aWcQHa8z4bP5040yj5v3/Lnqc5TXyWW4oxEQy3mouJEAObZTVWaAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSvG4dm2Kcwel2UYuJN66wWFzeNYfN
+        4nbjCjYHZo9NqzrZPPq2rGL0+LxJLoA5issmJTUnsyy1SN8ugStj89sVLAUTlCqu9hxkbGBc
+        IdPFyMkhIWAi8fLYA5YuRi4OIYHdjBLbZr1gh0hISky7eJS5i5EDyBaWOHy4GKLmLaPEoRc/
+        mUBqhAU8JZ4+OcgCYosIKEhs7n3GCmIzCxhIPLq6jxWioY9RYsKFJrChbAJaEvtf3GADsfkF
+        FCWu/njMCGLzCthJzGvYABZnEVCVuPrpEdggUYEwiZ1LHjNB1AhKnJz5BGwZp4C1xLm1fWwQ
+        y9Ql/sy7xAxhi0vcejKfCcKWl9j+dg7zBEbhWUjaZyFpmYWkZRaSlgWMLKsYJVMLinPTc4sN
+        C4zyUsv1ihNzi0vz0vWS83M3MYJjQktrB+OJE/GHGAU4GJV4eGcEKcQJsSaWFVfmHmKU4GBW
+        EuE9OUM2Tog3JbGyKrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVANj
+        v4tE8iWRi0cfvjD1tuteGC2Rsuz69SKm9S+6pvcdObavynm270xJNs8/gtLNb87neCUKObea
+        JHDPCXCsniL7ZG2A1qmdDYLHrptHXWP9eSh1am3DyVdX9BZ/PTF5dhTvV/9wYzOnjhXtRflp
+        7WdKZto7F4QG310fV7v8rkd1R4FzS6CayzQlluKMREMt5qLiRAD56WHJhQIAAA==
+X-CMS-MailID: 20200117005734epcas1p3a7ab803d3d34efeb864b730371402dd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f
+References: <CGME20200116043228epcas1p11a74c5935b015ec85fc61da8cf12681f@epcas1p1.samsung.com>
+        <20200116043947.12556-1-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16. 1. 2020 at 14:29 Lukas Wunner wrote:
-
-> So I've implemented rs485 support for amba-pl011.c two years ago
-> but the patches need a little more polishing before they can be
-> upstreamed and I haven't gotten around to that yet.  I apologize
-> that it meant you had to reinvent the wheel.
-> You can find my implementation on this branch:
-> https://github.com/RevolutionPi/linux/commits/revpi-4.19
+On 1/16/20 1:39 PM, Chanwoo Choi wrote:
+> 'extern' keyword is unneeded in extcon.h because public header file
+> of extcon defines the function prototype.
 > 
-> Specifically this commit:
-> https://github.com/RevolutionPi/linux/commit/0099313962a5
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  include/linux/extcon.h | 30 +++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
+> 
+> diff --git a/include/linux/extcon.h b/include/linux/extcon.h
+> index 2bdf643d8593..1b1d77ec2114 100644
+> --- a/include/linux/extcon.h
+> +++ b/include/linux/extcon.h
+> @@ -170,7 +170,7 @@ struct extcon_dev;
+>   * Following APIs get the connected state of each external connector.
+>   * The 'id' argument indicates the defined external connector.
+>   */
+> -extern int extcon_get_state(struct extcon_dev *edev, unsigned int id);
+> +int extcon_get_state(struct extcon_dev *edev, unsigned int id);
+>  
+>  /*
+>   * Following APIs get the property of each external connector.
+> @@ -181,10 +181,10 @@ extern int extcon_get_state(struct extcon_dev *edev, unsigned int id);
+>   * for each external connector. They are used to get the capability of the
+>   * property of each external connector based on the id and property.
+>   */
+> -extern int extcon_get_property(struct extcon_dev *edev, unsigned int id,
+> +int extcon_get_property(struct extcon_dev *edev, unsigned int id,
+>  				unsigned int prop,
+>  				union extcon_property_value *prop_val);
+> -extern int extcon_get_property_capability(struct extcon_dev *edev,
+> +int extcon_get_property_capability(struct extcon_dev *edev,
+>  				unsigned int id, unsigned int prop);
+>  
+>  /*
+> @@ -196,38 +196,38 @@ extern int extcon_get_property_capability(struct extcon_dev *edev,
+>   * extcon_register_notifier_all(*edev, *nb) : Register a notifier block
+>   *			for all supported external connectors of the extcon.
+>   */
+> -extern int extcon_register_notifier(struct extcon_dev *edev, unsigned int id,
+> +int extcon_register_notifier(struct extcon_dev *edev, unsigned int id,
+>  				struct notifier_block *nb);
+> -extern int extcon_unregister_notifier(struct extcon_dev *edev, unsigned int id,
+> +int extcon_unregister_notifier(struct extcon_dev *edev, unsigned int id,
+>  				struct notifier_block *nb);
+> -extern int devm_extcon_register_notifier(struct device *dev,
+> +int devm_extcon_register_notifier(struct device *dev,
+>  				struct extcon_dev *edev, unsigned int id,
+>  				struct notifier_block *nb);
+> -extern void devm_extcon_unregister_notifier(struct device *dev,
+> +void devm_extcon_unregister_notifier(struct device *dev,
+>  				struct extcon_dev *edev, unsigned int id,
+>  				struct notifier_block *nb);
+>  
+> -extern int extcon_register_notifier_all(struct extcon_dev *edev,
+> +int extcon_register_notifier_all(struct extcon_dev *edev,
+>  				struct notifier_block *nb);
+> -extern int extcon_unregister_notifier_all(struct extcon_dev *edev,
+> +int extcon_unregister_notifier_all(struct extcon_dev *edev,
+>  				struct notifier_block *nb);
+> -extern int devm_extcon_register_notifier_all(struct device *dev,
+> +int devm_extcon_register_notifier_all(struct device *dev,
+>  				struct extcon_dev *edev,
+>  				struct notifier_block *nb);
+> -extern void devm_extcon_unregister_notifier_all(struct device *dev,
+> +void devm_extcon_unregister_notifier_all(struct device *dev,
+>  				struct extcon_dev *edev,
+>  				struct notifier_block *nb);
+>  
+>  /*
+>   * Following APIs get the extcon_dev from devicetree or by through extcon name.
+>   */
+> -extern struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name);
+> -extern struct extcon_dev *extcon_find_edev_by_node(struct device_node *node);
+> -extern struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
+> +struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name);
+> +struct extcon_dev *extcon_find_edev_by_node(struct device_node *node);
+> +struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev,
+>  						     int index);
+>  
+>  /* Following API get the name of extcon device. */
+> -extern const char *extcon_get_edev_name(struct extcon_dev *edev);
+> +const char *extcon_get_edev_name(struct extcon_dev *edev);
+>  
+>  #else /* CONFIG_EXTCON */
+>  static inline int extcon_get_state(struct extcon_dev *edev, unsigned int id)
+> 
 
-The wheel with octagonal shape is still not perfect. I made it more
-smoother. Your implementation in recommended commit use an active
-waiting (pl011_rs485_tx_start, pl011_rs485_tx_stop) and that could
-cause lots of problems in upper layers of tty driver or application.
-I think you forgot to implement possibility to start TX during
-"delay after send", too.
+Applied it.
 
-
-> You've used hrtimers in case delays are necessary after assertion
-> or before deassertion of RTS.  Note that 8250_port.c already contains
-> code for that.  If one wants to go that route, it would probably be
-> best to move that code into serial_core.c to make it available to
-> non-8250 ports.
-
-The 8250_port.c use DMA. Do you thin that it shoud be moved to
-serial_core.c? If there will be default implementation of handling
-RTS by serial_core.c using timers, than I will refactor this driver
-to use it.
-
-
-> I took a completely different approach:  I converted amba-pl011.c
-> to threaded interrupt handling using two kthreads, one for sending,
-> one for receiving.  This allows simultaneous writing to and reading
-> from the FIFO.  The driver keeps track of the FIFO fill level,
-> which allows writing to the FIFO blindly.  The hardirq handler
-> updates the fill level counter and wakes either of the IRQ threads.
-
-I do not see any used thread in link:
-https://github.com/RevolutionPi/linux/commit/0099313962a5
-I am not kernel thread expert but I think that thread is not as
-lightweight as hrtimer. According to my knowledge the hrtimer use some
-kind of interrupt. Compare to this the kthread is created as thread
-with all its scheduling structures. Did you implemented proper thread
-shutdown? Has the thread right priority? There are many questions
-like this...
-
-
-> Once the driver was converted to threaded interrupts, it became
-> possible to sleep in the IRQ handler, so I just used msleep()
-> for the RTS delays.
-
-I think that thread with main purpose to wait is waist of resources.
-This kind of task should be handled by timers. I saw this passion for
-threads in Windows CE 6 drivers. Did you read some of them?
-
-
-> The tty layer lets you know when there's nothing more to transmit by
-> calling the ->stop_tx() hook.  Then you just busy-wait for the FIFO
-> to empty before you deassert RTS.
-
-This would be wasting of CPU time and as I mentioned above it can cause
-problems in above layers. Busy-wait in any method require deep
-knowledge of "caller".
-
-
-> Another idea would be to set TXIFLSEL (TX interrupt FIFO level select)
-> in the UARTIFLS register to the lowest possible setting.  Then you'll
-> get an interrupt when the TX FIFO only contains 2 bytes (on a PL011
-> with 16 byte FIFOs), thus minimizing the busy-wait duration.
-
-TX interrupt is used by other parts of driver. I would not recommend to
-change this behavior without complete analysis of buffer refill timing.
-There can be some devices which can be "IDLE" sensitive. This devices
-would not work properly on higher baud rates.
-I do not use busy-wait in timer tick. If there is data in FIFO I do not
-stop timer and let it tick one more time.
-
-
-Thanks,
-
-Ivan
-
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
