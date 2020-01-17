@@ -2,117 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58CD714103C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97225141052
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgAQRw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:52:28 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34176 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbgAQRw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 12:52:28 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z22so27356805ljg.1;
-        Fri, 17 Jan 2020 09:52:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7SLBslMTron5CoDazO5Pc97XqvZGpRwv9uincOn+XEQ=;
-        b=keopsm+jdLEPkcWO5PTzlEOVhbk9veT9Rbt+9bPC3zBed3/sJ88AkA0RKI5G1GDBKZ
-         5RFGHS2lhaDDecRVFEES3H87S4wT8RdcBQ3l5NMpg0LKoam4w8YyiFPABs9myOLHmbk1
-         u7dfgC1EEwsfgfPFHYWUoaVsVK+tA3HeAeokBWn/wbW1KS2jOCXIh5NiGxMTIQbtcnJ3
-         AUa3MnvzeB3I7JhZfzEYMjBqQS6K0k2BVqU/5FrI0/JQQzx1d4EHk8zrPg7yhwjaAZEv
-         vhKoyKOliO837dOt1afb2xzP9qJcuMM7chjwVfxwCcFQi7BFHbElmVVpzEszXWU9HQO9
-         iXFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7SLBslMTron5CoDazO5Pc97XqvZGpRwv9uincOn+XEQ=;
-        b=kXaHxL/pDxThyOveJlEtaH9PB8q5PLOV2ZjpZZeGkT7h74KxwOqri/mRrDMsZzEZR4
-         xrll5GHbWn6uTqYABehAogB+CAnxa1faLLAxKDzP/k4Ij2YfYolfIneaJewmV+ozIXLe
-         oZD+Edh+q9gcKQ8LJM1w4kReeiOv8KdvT6UhcpOM/JhhXOPpzOjF+uZilb02o55ojpWt
-         GsoPE7I04227ZuPo0gX2WM0AVWGTepLE35LBN9eR7yEe8L2SVcspThJ/n5iFCmObG9iy
-         YDtIdMERL7mU9rdGWLnwUcduLq5amFHWb/qgEAAs7enqVvstQWpNnw7yS6VIo2eXpyUJ
-         HMMw==
-X-Gm-Message-State: APjAAAU08eVJICkv2zqGZZXTj11BYnVNNVBZ0TmpUtZ6CFE/qrr+xUw5
-        lSEtCtkdhc4umEjD5ajURuI=
-X-Google-Smtp-Source: APXvYqx/xY6mBjX4TqtkNzjok6XvYIF9TLL3cZHvjR5MzG0L93+KKIOJZPZWTAyjF0rWONLxNzqmRw==
-X-Received: by 2002:a2e:3608:: with SMTP id d8mr6363971lja.152.1579283545812;
-        Fri, 17 Jan 2020 09:52:25 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id t29sm12429175lfg.84.2020.01.17.09.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 09:52:25 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Fri, 17 Jan 2020 18:52:17 +0100
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
-Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
- kfree_rcu()
-Message-ID: <20200117175217.GA23622@pc636>
-References: <20191231122241.5702-1-urezki@gmail.com>
- <20200113190315.GA12543@paulmck-ThinkPad-P72>
- <20200114164937.GA50403@google.com>
- <20200115131446.GA18417@pc636>
- <20200115225350.GA246464@google.com>
+        id S1728773AbgAQR4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:56:31 -0500
+Received: from mga11.intel.com ([192.55.52.93]:62787 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbgAQR4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 12:56:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 09:56:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
+   d="scan'208";a="262983778"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jan 2020 09:56:27 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id DF1A48D; Fri, 17 Jan 2020 19:56:26 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org,
+        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/8] rtc: cmos: Use shared IRQ only for Microsoft Surface 3
+Date:   Fri, 17 Jan 2020 19:56:19 +0200
+Message-Id: <20200117175626.56358-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200115225350.GA246464@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > > But rcuperf uses a single block size, which turns into kfree_bulk() using
-> > > > a single slab, which results in good locality of reference.  So I have to
-> > > 
-> > > You meant a "single cache" category when you say "single slab"? Just to
-> > > mention, the number of slabs (in a single cache) when a large number of
-> > > objects are allocated is more than 1 (not single). With current rcuperf, I
-> > > see 100s of slabs (each slab being one page) in the kmalloc-32 cache. Each
-> > > slab contains around 128 objects of type kfree_rcu (24 byte object aligned to
-> > > 32-byte slab object).
-> > > 
-> > I think that is about using different slab caches to break locality. It
-> > makes sense, IMHO, because usually the system make use of different slabs,
-> > because of different object sizes. From the other hand i guess there are
-> > test cases when only one slab gets used.
-> 
-> I was wondering about "locality". A cache can be split into many slabs. Only
-> the data on a page is local (contiguous). If there are a large number of
-> objects, then it goes to a new slab (on the same cache). At least on the
-> kmalloc slabs, there is only 1 slab per page. So for example, if on
-> kmalloc-32 slab, there are more than 128 objects, then it goes to a different
-> slab / page. So how is there still locality?
-> 
-Hmm.. On a high level:
+As reported by Guilherme:
 
-one slab cache manages a specific object size, i.e. the slab memory consists of
-contiguous pages(when increased probably not) of memory(4096 bytes or so) divided
-into equal object size. For example when kmalloc() gets called, the appropriate
-cache size(slab that serves only specific size) is selected and an object assigned
-from it is returned.
+The rtc-cmos interrupt setting was changed in the commit 079062b28fb4
+("rtc: cmos: prevent kernel warning on IRQ flags mismatch") in order
+to allow shared interrupts; according to that commit's description,
+some machine got kernel warnings due to the interrupt line being shared
+between rtc-cmos and other hardware, and rtc-cmos didn't allow IRQ sharing
+that time.
 
-But that is theory and i have not deeply analyzed how the SLAB works internally,
-so i can be wrong :)
+After the aforementioned commit though it was observed a huge increase
+in lost HPET interrupts in some systems, observed through the following
+kernel message:
 
-You mentioned 128 objects per one slab in the kmalloc-32 slab-cache. But all of
-them follows each other, i mean it is sequential and is like regular array. In
-that sense freeing can be beneficial because when an access is done to any object
-whole CPU cache-line is fetched(if it was not before), usually it is 64K.
+[...] hpet1: lost 35 rtc interrupts
 
-That is what i meant "locality". In order to "break it" i meant to allocate from
-different slabs to see how kfree_slub() behaves in that sense, what is more real
-scenario and workload, i think.
+After investigation, it was narrowed down to the shared interrupts
+usage when having the kernel option "irqpoll" enabled. In this case,
+all IRQ handlers are called for non-timer interrupts, if such handlers
+are setup in shared IRQ lines. The rtc-cmos IRQ handler could be set to
+hpet_rtc_interrupt(), which will produce the kernel "lost interrupts"
+message after doing work - lots of readl/writel to HPET registers, which
+are known to be slow.
 
---
-Vlad Rezki
+This patch changes this behavior by preventing shared interrupts for
+everything, but Microsoft Surface 3 as stated in the culprit commit message.
+Although "irqpoll" is not a default kernel option, it's used in some contexts,
+one being the kdump kernel (which is an already "impaired" kernel usually
+running with 1 CPU available), so the performance burden could be considerable.
+Also, the same issue would happen (in a shorter extent though) when using
+"irqfixup" kernel option.
+
+In a quick experiment, a virtual machine with uptime of 2 minutes produced
+>300 calls to hpet_rtc_interrupt() when "irqpoll" was set, whereas without
+sharing interrupts this number reduced to 1 interrupt. Machines with more
+hardware than a VM should generate even more unnecessary HPET interrupts
+in this scenario.
+
+Fixes: 079062b28fb4 ("rtc: cmos: prevent kernel warning on IRQ flags mismatch")
+Reported-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/rtc/rtc-cmos.c      | 21 +++++++++++++++++++--
+ include/linux/mc146818rtc.h |  4 +++-
+ 2 files changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/rtc/rtc-cmos.c b/drivers/rtc/rtc-cmos.c
+index 033303708c8b..09b7cdda9f55 100644
+--- a/drivers/rtc/rtc-cmos.c
++++ b/drivers/rtc/rtc-cmos.c
+@@ -27,6 +27,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/dmi.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -40,7 +41,6 @@
+ #ifdef CONFIG_X86
+ #include <asm/i8259.h>
+ #include <asm/processor.h>
+-#include <linux/dmi.h>
+ #endif
+ 
+ /* this is for "generic access to PC-style RTC" using CMOS_READ/CMOS_WRITE */
+@@ -836,6 +836,7 @@ cmos_do_probe(struct device *dev, struct resource *ports, int rtc_irq)
+ 
+ 	if (is_valid_irq(rtc_irq)) {
+ 		irq_handler_t rtc_cmos_int_handler;
++		unsigned long irq_flags = 0;
+ 
+ 		if (use_hpet_alarm()) {
+ 			rtc_cmos_int_handler = hpet_rtc_interrupt;
+@@ -849,8 +850,11 @@ cmos_do_probe(struct device *dev, struct resource *ports, int rtc_irq)
+ 		} else
+ 			rtc_cmos_int_handler = cmos_interrupt;
+ 
++		if (flags & CMOS_RTC_FLAGS_SHARED_IRQ)
++			irq_flags |= IRQF_SHARED;
++
+ 		retval = request_irq(rtc_irq, rtc_cmos_int_handler,
+-				IRQF_SHARED, dev_name(&cmos_rtc.rtc->dev),
++				irq_flags, dev_name(&cmos_rtc.rtc->dev),
+ 				cmos_rtc.rtc);
+ 		if (retval < 0) {
+ 			dev_dbg(dev, "IRQ %d is already in use\n", rtc_irq);
+@@ -1215,6 +1219,16 @@ static void use_acpi_alarm_quirks(void)
+ static inline void use_acpi_alarm_quirks(void) { }
+ #endif
+ 
++static const struct dmi_system_id rtc_cmos_surface3_table[] = {
++	{
++		.ident = "Microsoft Surface 3",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "Surface 3"),
++		},
++	},
++	{}
++};
++
+ /* Every ACPI platform has a mc146818 compatible "cmos rtc".  Here we find
+  * its device node and pass extra config data.  This helps its driver use
+  * capabilities that the now-obsolete mc146818 didn't have, and informs it
+@@ -1229,6 +1243,9 @@ static void cmos_wake_setup(struct device *dev)
+ 
+ 	use_acpi_alarm_quirks();
+ 
++	if (dmi_check_system(rtc_cmos_surface3_table))
++		acpi_rtc_info.flags |= CMOS_RTC_FLAGS_SHARED_IRQ;
++
+ 	rtc_wake_setup(dev);
+ 	acpi_rtc_info.wake_on = rtc_wake_on;
+ 	acpi_rtc_info.wake_off = rtc_wake_off;
+diff --git a/include/linux/mc146818rtc.h b/include/linux/mc146818rtc.h
+index 0661af17a758..d62d69b48b3e 100644
+--- a/include/linux/mc146818rtc.h
++++ b/include/linux/mc146818rtc.h
+@@ -35,7 +35,9 @@ struct cmos_rtc_board_info {
+ 	void	(*wake_off)(struct device *dev);
+ 
+ 	u32	flags;
+-#define CMOS_RTC_FLAGS_NOFREQ	(1 << 0)
++#define CMOS_RTC_FLAGS_NOFREQ		(1 << 0)
++#define CMOS_RTC_FLAGS_SHARED_IRQ	(1 << 1)
++
+ 	int	address_space;
+ 
+ 	u8	rtc_day_alarm;		/* zero, or register index */
+-- 
+2.24.1
+
