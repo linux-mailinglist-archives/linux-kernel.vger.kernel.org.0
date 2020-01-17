@@ -2,224 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817C41413B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA8F1413AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbgAQVyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 16:54:15 -0500
-Received: from mga05.intel.com ([192.55.52.43]:30427 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbgAQVyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 16:54:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 13:54:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="214628447"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 17 Jan 2020 13:54:11 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1isZZC-000B2U-Vb; Sat, 18 Jan 2020 05:54:10 +0800
-Date:   Sat, 18 Jan 2020 05:51:16 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:core/kprobes] BUILD SUCCESS
- 31537cf8f3f95d45360b995ad8be2c870edc5b02
-Message-ID: <5e222c54.gNJ+8gfLFzrNJ92z%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        id S1729345AbgAQVwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 16:52:03 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34037 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbgAQVwD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 16:52:03 -0500
+Received: by mail-qt1-f196.google.com with SMTP id 5so22974638qtz.1;
+        Fri, 17 Jan 2020 13:52:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LXFr+Oe+DVTEU1iGCR5ab4LZThTsrbbCxkzxMkJjD5c=;
+        b=SCKFYcXAx2pYOkg8sBdmA6UuPGSAN4IeyL1Dz/KSEDe5j/IrkXBa5bXmt6hFX6UhDM
+         2YYiUQFJw+8eXd/z3QSihMEyOYslWrk5vlX3iUsqa28FTs+P7NiNAIdO8+kQMfhKOa5H
+         G7pz4MTfa/UlimYFKtDwhRX73LJsP1FnpKiQhV+JY3QcgfU0G6tLwr57mRjBknDU4y47
+         msMgfAq7oc+VegMblw7Xw8uk64413y5aq2GWD0MMhStKrj5p3zliEbHRu6HeTHyN57wx
+         o2FQQesMgQvTTsSRJew4/ERaY6H8GFbehj5A6j6jBrRm5YSlchBa5enyuQgApmiUP4/y
+         WIcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LXFr+Oe+DVTEU1iGCR5ab4LZThTsrbbCxkzxMkJjD5c=;
+        b=IVE0bbXgttmXNRct/wh81V6UOn9dEQmxsO+4cbkPjdklvcBJOAxXdg0Z2NMoDv/zIi
+         RipZWrXV9uRwr5nszgNLdOab6ICUkEfn6vmDSnBzffkNXlnBtonXCYutw1pQGg7LV57F
+         RV0E9fO5VbEvfvFvtGb4cde1gGPbY05lNdsHxLQAB36ed3rSDhNUVDVuew+qXKPSgmEL
+         PxyfCTtUCjEYLRuFw4EbL1O6btZu89SwlC5Lm968Ep8FER2mIMJUexlB2TyPitUXfw+M
+         Mhd1sUS7DYdk1dEJM5HfVKZfFYvpvCeSDPrhxDAXhF/KHS/0aMdC5Jbhnir8crEEdMc4
+         kx9g==
+X-Gm-Message-State: APjAAAVpP+UumZjTsAKAHfNXmm77q7caJ7L13k4Q5leD3DevjikrY+aF
+        U4t+//4Neecmaxoy9fwxxCaKR1G9DjY07JkYnik=
+X-Google-Smtp-Source: APXvYqzPEH9j5BfkpS6SL5DHwqfsDvCoAE4QyeeHElbCapqNYQ1YI48ORniseUuBtLPs6QBmFuL8F8zVKIchHdd54ls=
+X-Received: by 2002:ac8:7b29:: with SMTP id l9mr9364164qtu.141.1579297921555;
+ Fri, 17 Jan 2020 13:52:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <157926819690.1555735.10756593211671752826.stgit@toke.dk> <157926820131.1555735.1177228853838027248.stgit@toke.dk>
+In-Reply-To: <157926820131.1555735.1177228853838027248.stgit@toke.dk>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 17 Jan 2020 13:51:50 -0800
+Message-ID: <CAEf4BzbAV0TmEUL=62jz+RD6SPmu927z-dhGL9JHepcAOGMSJA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 04/10] tools/runqslower: Use consistent
+ include paths for libbpf
+To:     =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  core/kprobes
-branch HEAD: 31537cf8f3f95d45360b995ad8be2c870edc5b02  tracing: Initialize ret in syscall_enter_define_fields()
+On Fri, Jan 17, 2020 at 5:37 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@redh=
+at.com> wrote:
+>
+> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>
+> Fix the runqslower tool to include libbpf header files with the bpf/
+> prefix, to be consistent with external users of the library. Also ensure
+> that all includes of exported libbpf header files (those that are exporte=
+d
+> on 'make install' of the library) use bracketed includes instead of quote=
+d.
+>
+> To not break the build, keep the old include path until everything has be=
+en
+> changed to the new one; a subsequent patch will remove that.
+>
+> Fixes: 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are taken f=
+rom selftests dir")
+> Acked-by: Andrii Nakryiko <andriin@fb.com>
+> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+> ---
+>  tools/bpf/runqslower/Makefile         |    5 +++--
+>  tools/bpf/runqslower/runqslower.bpf.c |    2 +-
+>  tools/bpf/runqslower/runqslower.c     |    4 ++--
+>  3 files changed, 6 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/bpf/runqslower/Makefile b/tools/bpf/runqslower/Makefil=
+e
+> index b62fc9646c39..9f022f7f2593 100644
+> --- a/tools/bpf/runqslower/Makefile
+> +++ b/tools/bpf/runqslower/Makefile
+> @@ -5,6 +5,7 @@ LLC :=3D llc
+>  LLVM_STRIP :=3D llvm-strip
+>  DEFAULT_BPFTOOL :=3D $(OUTPUT)/sbin/bpftool
+>  BPFTOOL ?=3D $(DEFAULT_BPFTOOL)
+> +INCLUDES :=3D -I$(OUTPUT) -I$(abspath ../../lib) -I$(abspath ../../lib/b=
+pf)
+>  LIBBPF_SRC :=3D $(abspath ../../lib/bpf)
 
-elapsed time: 485m
+drop LIBBPF_SRC, it's not used anymore
 
-configs tested: 169
-configs skipped: 0
+>  CFLAGS :=3D -g -Wall
+>
+> @@ -51,13 +52,13 @@ $(OUTPUT)/%.skel.h: $(OUTPUT)/%.bpf.o | $(BPFTOOL)
+>
+>  $(OUTPUT)/%.bpf.o: %.bpf.c $(OUTPUT)/libbpf.a | $(OUTPUT)
+>         $(call msg,BPF,$@)
+> -       $(Q)$(CLANG) -g -O2 -target bpf -I$(OUTPUT) -I$(LIBBPF_SRC)      =
+     \
+> +       $(Q)$(CLANG) -g -O2 -target bpf $(INCLUDES)           \
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+please preserve formatting and alignment conventions of a file
 
-csky                 randconfig-a001-20200118
-openrisc             randconfig-a001-20200118
-s390                 randconfig-a001-20200118
-sh                   randconfig-a001-20200118
-xtensa               randconfig-a001-20200118
-parisc                            allnoconfig
-parisc                            allyesonfig
-parisc                         b180_defconfig
-parisc                        c3000_defconfig
-parisc                              defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-sparc                            allyesconfig
-sparc                               defconfig
-sparc64                          allmodconfig
-sparc64                           allnoconfig
-sparc64                          allyesconfig
-sparc64                             defconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-x86_64               randconfig-e001-20200118
-x86_64               randconfig-e002-20200118
-x86_64               randconfig-e003-20200118
-i386                 randconfig-e001-20200118
-i386                 randconfig-e002-20200118
-i386                 randconfig-e003-20200118
-s390                             alldefconfig
-s390                             allmodconfig
-s390                              allnoconfig
-s390                             allyesconfig
-s390                          debug_defconfig
-s390                                defconfig
-s390                       zfcpdump_defconfig
-c6x                  randconfig-a001-20200118
-h8300                randconfig-a001-20200118
-microblaze           randconfig-a001-20200118
-nios2                randconfig-a001-20200118
-sparc64              randconfig-a001-20200118
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-x86_64               randconfig-c001-20200118
-x86_64               randconfig-c002-20200118
-x86_64               randconfig-c003-20200118
-i386                 randconfig-c001-20200118
-i386                 randconfig-c002-20200118
-i386                 randconfig-c003-20200118
-x86_64               randconfig-f001-20200118
-x86_64               randconfig-f002-20200118
-x86_64               randconfig-f003-20200118
-i386                 randconfig-f001-20200118
-i386                 randconfig-f002-20200118
-i386                 randconfig-f003-20200118
-x86_64               randconfig-d001-20200118
-x86_64               randconfig-d002-20200118
-x86_64               randconfig-d003-20200118
-i386                 randconfig-d001-20200118
-i386                 randconfig-d002-20200118
-i386                 randconfig-d003-20200118
-arc                  randconfig-a001-20200118
-arm                  randconfig-a001-20200118
-arm64                randconfig-a001-20200118
-ia64                 randconfig-a001-20200118
-powerpc              randconfig-a001-20200118
-sparc                randconfig-a001-20200118
-alpha                randconfig-a001-20200118
-m68k                 randconfig-a001-20200118
-mips                 randconfig-a001-20200118
-nds32                randconfig-a001-20200118
-parisc               randconfig-a001-20200118
-riscv                randconfig-a001-20200118
-ia64                             alldefconfig
-ia64                             allmodconfig
-ia64                              allnoconfig
-ia64                             allyesconfig
-ia64                                defconfig
-h8300                     edosk2674_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-x86_64               randconfig-h001-20200118
-x86_64               randconfig-h002-20200118
-x86_64               randconfig-h003-20200118
-i386                 randconfig-h001-20200118
-i386                 randconfig-h002-20200118
-i386                 randconfig-h003-20200118
-riscv                            allmodconfig
-riscv                             allnoconfig
-riscv                            allyesconfig
-riscv                               defconfig
-riscv                    nommu_virt_defconfig
-riscv                          rv32_defconfig
-arc                              allyesconfig
-arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-csky                 randconfig-a001-20200117
-openrisc             randconfig-a001-20200117
-s390                 randconfig-a001-20200117
-sh                   randconfig-a001-20200117
-xtensa               randconfig-a001-20200117
-alpha                randconfig-a001-20200117
-m68k                 randconfig-a001-20200117
-mips                 randconfig-a001-20200117
-nds32                randconfig-a001-20200117
-parisc               randconfig-a001-20200117
-riscv                randconfig-a001-20200117
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                               rhel-7.6
-x86_64               randconfig-g001-20200118
-x86_64               randconfig-g002-20200118
-x86_64               randconfig-g003-20200118
-i386                 randconfig-g001-20200118
-i386                 randconfig-g002-20200118
-i386                 randconfig-g003-20200118
-mips                           32r2_defconfig
-mips                         64r6el_defconfig
-mips                             allmodconfig
-mips                              allnoconfig
-mips                             allyesconfig
-mips                      fuloong2e_defconfig
-mips                      malta_kvm_defconfig
-x86_64               randconfig-b001-20200118
-x86_64               randconfig-b002-20200118
-x86_64               randconfig-b003-20200118
-i386                 randconfig-b001-20200118
-i386                 randconfig-b002-20200118
-i386                 randconfig-b003-20200118
-um                                  defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm64                               defconfig
-i386                             alldefconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                                defconfig
+>                  -c $(filter %.c,$^) -o $@ &&                            =
+     \
+>         $(LLVM_STRIP) -g $@
+>
+>  $(OUTPUT)/%.o: %.c | $(OUTPUT)
+>         $(call msg,CC,$@)
+> -       $(Q)$(CC) $(CFLAGS) -I$(LIBBPF_SRC) -I$(OUTPUT) -c $(filter %.c,$=
+^) -o $@
+> +       $(Q)$(CC) $(CFLAGS) $(INCLUDES) -c $(filter %.c,$^) -o $@
+>
+>  $(OUTPUT):
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+[...]
