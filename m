@@ -2,53 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4DF91407D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A7E1407D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:21:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbgAQKVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:21:55 -0500
-Received: from 8bytes.org ([81.169.241.247]:60138 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbgAQKVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:21:54 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 11BFA327; Fri, 17 Jan 2020 11:21:52 +0100 (CET)
-Date:   Fri, 17 Jan 2020 11:21:51 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/4] iommu: Preallocate iommu group when probing
- devices
-Message-ID: <20200117102151.GF15760@8bytes.org>
-References: <20200101052648.14295-1-baolu.lu@linux.intel.com>
- <20200101052648.14295-4-baolu.lu@linux.intel.com>
+        id S1728819AbgAQKVm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:21:42 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52816 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbgAQKVl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 05:21:41 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p9so6881840wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:21:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=oIMnoa3sbVn/rSlDZkNhieTQX0bAIPs2g8BvjBAAJYw=;
+        b=uWT/LKHFB9KJAzcvqgQA2YPyMRp+0vG3uJZJyC3ZOr8OoMycE8q+vQ3sCqK9hRMWk8
+         CfPK8HfmmypEvmovpHkBAuOmFommCtZrSL3YGxaKtIy3C3wGjROaOrRNZRZF/IbwZ6/N
+         uFv0OCYryACBEzIU3GMggHYVxRB8XhctMuMY3RQ8xEyZFJ+Gu+v8KtV0SrU0pAbLQKw9
+         aBK0/A/HOC8i4J4FHvzXI7LIUlYeWICcyQgPkVOMFQpN/HRBb9n7nDdCMeaD06aXcIHA
+         pbdfSXj7+3zrtJ7O9sTCzn6iP4wsSNRAQDeSozArMrOTT3pTX/KgJkrI/TVLv78bVqaz
+         +I9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=oIMnoa3sbVn/rSlDZkNhieTQX0bAIPs2g8BvjBAAJYw=;
+        b=o2tgdQYEfJJszS8iN6Ko46RYa/kKkz96Wrs9yyfL5eW+yOSbmbhzxOpwnJUq/t+Fs9
+         MvSSNva32kICg+Ro2ik6mBxWr2a0VQ7JDlou0sfqF12Izmgn5+KJXUYalDl0ZSfbHWXS
+         ufccIG8uMuYzNaVZrF9vb1ecqLxHZzkVULxz1JEScbYhq+mKGiZg7M7gapQGa1uYFszL
+         83W56CNzcFvKSx0DEGQimvYIOVOKdzpptpWyzFOCOn7r21cX1AbsXCwbxq4s+gn0dWKP
+         hPNSr+sH74A0FJJZNljtByoGipE6rRXVrMIc4FCdi20qqtYUBB1Bgc/6F1kdDsDnPq5o
+         zRDw==
+X-Gm-Message-State: APjAAAVr6utlci5gMWWSx4B1T0rg7y8TC/May5QxO/KqDkiyJ7V79ITz
+        Mf8lOYcyB7mCEFbEVzfYtm5NJQ==
+X-Google-Smtp-Source: APXvYqyjoao5W4ukyHmbDLvlRKQ3NULe0P7hwKt2aT/kXMKOsmfbWd9tvncJKeQZdv+1I5pJSDFudA==
+X-Received: by 2002:a05:600c:2c50:: with SMTP id r16mr3747778wmg.74.1579256500001;
+        Fri, 17 Jan 2020 02:21:40 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id h66sm9780563wme.41.2020.01.17.02.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 02:21:39 -0800 (PST)
+Date:   Fri, 17 Jan 2020 10:21:57 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v10 09/13] mfd: bd70528: Fix hour register mask
+Message-ID: <20200117102157.GE15507@dell>
+References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <8609d42822a6ce3755e2166b8c1246b3b04eeb78.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200101052648.14295-4-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8609d42822a6ce3755e2166b8c1246b3b04eeb78.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 01, 2020 at 01:26:47PM +0800, Lu Baolu wrote:
-> This splits iommu group allocation from adding devices. This makes
-> it possible to determine the default domain type for each group as
-> all devices belonging to the group have been determined.
+On Fri, 17 Jan 2020, Matti Vaittinen wrote:
 
-I think its better to keep group allocation as it is and just defer
-default domain allocation after each device is in its group. But take
-care about the device hotplug path which might add new devices to groups
-which already have a default domain, or add new groups that might need a
-default domain too.
+> When RTC is used in 24H mode (and it is by this driver) the maximum
+> hour value is 24 in BCD. This occupies bits [5:0] - which means
+> correct mask for HOUR register is 0x3f not 0x1f. Fix the mask
+> 
+> Fixes: 32a4a4ebf768 ("rtc: bd70528: Initial support for ROHM bd70528 RTC")
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+> Changes: Splitted this fix into separate patch which can be applied to
+> 5.4 too
+> 
+>  include/linux/mfd/rohm-bd70528.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-	Joerg
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
