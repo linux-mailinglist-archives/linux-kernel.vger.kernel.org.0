@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28098140CB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1F1B140CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:40:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbgAQOjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:39:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57528 "EHLO mx2.suse.de"
+        id S1729253AbgAQOjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:39:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57548 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729014AbgAQOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729022AbgAQOjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 09:39:07 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 025A7ACD7;
+        by mx2.suse.de (Postfix) with ESMTP id 9B03AAD05;
         Fri, 17 Jan 2020 14:39:05 +0000 (UTC)
 From:   Mian Yousaf Kaukab <ykaukab@suse.de>
 To:     linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org
 Cc:     linux-kernel@vger.kernel.org, paul.gortmaker@windriver.com,
         suzuki.poulose@arm.com, alexander.shishkin@linux.intel.com,
         Mian Yousaf Kaukab <ykaukab@suse.de>
-Subject: [PATCH RFC 08/15] coresight: tmc-etr: add function to register catu ops
-Date:   Fri, 17 Jan 2020 15:40:03 +0100
-Message-Id: <20200117144010.11149-9-ykaukab@suse.de>
+Subject: [PATCH RFC 09/15] coresight: etm-perf: remove unnecessary configuration check
+Date:   Fri, 17 Jan 2020 15:40:04 +0100
+Message-Id: <20200117144010.11149-10-ykaukab@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200117144010.11149-1-ykaukab@suse.de>
 References: <20200117144010.11149-1-ykaukab@suse.de>
@@ -31,93 +31,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make etr_catu_buf_ops static. Instead of directly accessing it in
-etr_buf_ops[], add a function to let catu driver register the ops at
-runtime. Break circular dependency between tmc-etr and catu drivers.
+etm-perf API is internal. No need to check CONFIG_CORESIGHT and export
+empty functions.
 
 Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
 ---
- drivers/hwtracing/coresight/coresight-catu.c    |  4 +++-
- drivers/hwtracing/coresight/coresight-catu.h    |  2 --
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 17 +++++++++++++++--
- drivers/hwtracing/coresight/coresight-tmc.h     |  3 +++
- 4 files changed, 21 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm-perf.h | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 6fc76b776744..6c77ccc04842 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -359,7 +359,7 @@ static int catu_alloc_etr_buf(struct tmc_drvdata *tmc_drvdata,
- 	return 0;
- }
- 
--const struct etr_buf_operations etr_catu_buf_ops = {
-+static const struct etr_buf_operations etr_catu_buf_ops = {
- 	.alloc = catu_alloc_etr_buf,
- 	.free = catu_free_etr_buf,
- 	.sync = catu_sync_etr_buf,
-@@ -559,6 +559,8 @@ static int catu_probe(struct amba_device *adev, const struct amba_id *id)
- 	catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
- 	catu_desc.ops = &catu_ops;
- 
-+	tmc_etr_set_catu_ops(&etr_catu_buf_ops);
-+
- 	drvdata->csdev = coresight_register(&catu_desc);
- 	if (IS_ERR(drvdata->csdev))
- 		ret = PTR_ERR(drvdata->csdev);
-diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-index 80ceee3c739c..6160c2d75a56 100644
---- a/drivers/hwtracing/coresight/coresight-catu.h
-+++ b/drivers/hwtracing/coresight/coresight-catu.h
-@@ -108,6 +108,4 @@ static inline bool coresight_is_catu_device(struct coresight_device *csdev)
- 	return true;
- }
- 
--extern const struct etr_buf_operations etr_catu_buf_ops;
--
- #endif
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 625882bc8b08..5b2a515af1ae 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -788,10 +788,23 @@ static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
- static const struct etr_buf_operations *etr_buf_ops[] = {
- 	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
- 	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
--	[ETR_MODE_CATU] = IS_ENABLED(CONFIG_CORESIGHT_CATU)
--						? &etr_catu_buf_ops : NULL,
-+	[ETR_MODE_CATU] = NULL,
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+index 4b1c1f55fb46..adc408dace8e 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.h
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+@@ -57,7 +57,6 @@ struct etm_event_data {
+ 	struct list_head * __percpu *path;
  };
  
-+void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu)
-+{
-+	etr_buf_ops[ETR_MODE_CATU] = catu;
-+}
-+EXPORT_SYMBOL_GPL(tmc_etr_set_catu_ops);
-+
-+void tmc_etr_remove_catu_ops(void)
-+{
-+	etr_buf_ops[ETR_MODE_CATU] = NULL;
-+	/* TODO: cleanup old etr_buf->ops and anything inflight */
-+	wmb();
-+}
-+EXPORT_SYMBOL_GPL(tmc_etr_remove_catu_ops);
-+
- static inline int tmc_etr_mode_alloc_buf(int mode,
- 					 struct tmc_drvdata *drvdata,
- 					 struct etr_buf *etr_buf, int node,
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 71de978575f3..db431e230a40 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -325,4 +325,7 @@ tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
+-#ifdef CONFIG_CORESIGHT
+ int etm_perf_symlink(struct coresight_device *csdev, bool link);
+ int etm_perf_add_symlink_sink(struct coresight_device *csdev);
+ void etm_perf_del_symlink_sink(struct coresight_device *csdev);
+@@ -69,18 +68,6 @@ static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
+ 		return data->snk_config;
+ 	return NULL;
+ }
+-#else
+-static inline int etm_perf_symlink(struct coresight_device *csdev, bool link)
+-{ return -EINVAL; }
+-int etm_perf_add_symlink_sink(struct coresight_device *csdev)
+-{ return -EINVAL; }
+-void etm_perf_del_symlink_sink(struct coresight_device *csdev) {}
+-static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
+-{
+-	return NULL;
+-}
+-
+-#endif /* CONFIG_CORESIGHT */
  
- struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
+ int __init etm_perf_init(void);
  
-+void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
-+void tmc_etr_remove_catu_ops(void);
-+
- #endif
 -- 
 2.16.4
 
