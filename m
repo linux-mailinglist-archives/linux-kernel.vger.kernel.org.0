@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7A7140CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2CD5140CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:40:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgAQOjC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:39:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57378 "EHLO mx2.suse.de"
+        id S1729287AbgAQOkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:40:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58472 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbgAQOjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:39:01 -0500
+        id S1728512AbgAQOkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 09:40:00 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0CB49AAC2;
-        Fri, 17 Jan 2020 14:38:59 +0000 (UTC)
-From:   Mian Yousaf Kaukab <ykaukab@suse.de>
-To:     linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org
-Cc:     linux-kernel@vger.kernel.org, paul.gortmaker@windriver.com,
-        suzuki.poulose@arm.com, alexander.shishkin@linux.intel.com,
-        Mian Yousaf Kaukab <ykaukab@suse.de>
-Subject: [PATCH RFC 00/15] coresight: make drivers modular
+        by mx2.suse.de (Postfix) with ESMTP id 59B93B17A;
+        Fri, 17 Jan 2020 14:39:58 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] xen/blkfront: limit allocated memory size to actual use case
 Date:   Fri, 17 Jan 2020 15:39:55 +0100
-Message-Id: <20200117144010.11149-1-ykaukab@suse.de>
+Message-Id: <20200117143955.18892-1-jgross@suse.com>
 X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Goal of this patchset is to make coresight drivers modular and enable
-them by default in the arm64 and arm defconfigs. This is work-in-progress
-and completely untested. Mainly, module exit calls are incomplete or
-missing. Posting here to get early feedback.
+Today the Xen blkfront driver allocates memory for one struct
+blkfront_ring_info for each communication ring. This structure is
+statically sized for the maximum supported configuration resulting
+in a size of more than 90 kB.
 
-Please review.
+As the main size contributor is one array inside the struct, the
+memory allocation can easily be limited by moving this array to be
+the last structure element and to allocate only the memory for the
+actually needed array size.
 
-Thanks you,
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ drivers/block/xen-blkfront.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Best regards,
-Yousaf 
-
-Mian Yousaf Kaukab (15):
-  Revert "drivers/hwtracing: make coresight-* explicitly non-modular"
-  coresight: remove multiple init calls from funnel driver
-  coresight: remove multiple init calls from replicator driver
-  coresight: make API private
-  coresight: rename coresight.c to coresight-bus.c
-  coresight: combine bus and PMU init calls
-  coresight: Makefile: regroup object files
-  coresight: tmc-etr: add function to register catu ops
-  coresight: etm-perf: remove unnecessary configuration check
-  coresight: export global symbols
-  coresight: add coresight prefix to barrier_pkt
-  coresight: use IS_ENABLED macro for configuration symbols
-  coresight: Kconfig: make all configurations tristate
-  arm64: defconfig: enable coresight
-  arm: config: enable coresight in v5 and v7 defconfigs
-
- arch/arm/configs/multi_v5_defconfig                |    8 +
- arch/arm/configs/multi_v7_defconfig                |    8 +
- arch/arm64/configs/defconfig                       |    8 +
- drivers/hwtracing/coresight/Kconfig                |   47 +-
- drivers/hwtracing/coresight/Makefile               |   23 +-
- drivers/hwtracing/coresight/coresight-bus.c        | 1368 ++++++++++++++++++++
- drivers/hwtracing/coresight/coresight-catu.c       |    9 +-
- drivers/hwtracing/coresight/coresight-catu.h       |    2 -
- drivers/hwtracing/coresight/coresight-etb10.c      |    9 +-
- drivers/hwtracing/coresight/coresight-etm-perf.c   |    4 +-
- drivers/hwtracing/coresight/coresight-etm-perf.h   |   13 +-
- drivers/hwtracing/coresight/coresight-etm3x.c      |   12 +-
- drivers/hwtracing/coresight/coresight-etm4x.c      |    7 +-
- drivers/hwtracing/coresight/coresight-funnel.c     |   34 +-
- drivers/hwtracing/coresight/coresight-priv.h       |   32 +-
- drivers/hwtracing/coresight/coresight-replicator.c |   34 +-
- drivers/hwtracing/coresight/coresight-stm.c        |    4 +-
- drivers/hwtracing/coresight/coresight-tmc-etf.c    |    2 +-
- drivers/hwtracing/coresight/coresight-tmc-etr.c    |   23 +-
- drivers/hwtracing/coresight/coresight-tmc.c        |    6 +-
- drivers/hwtracing/coresight/coresight-tmc.h        |    3 +
- drivers/hwtracing/coresight/coresight-tpiu.c       |    6 +-
- drivers/hwtracing/coresight/coresight.c            | 1338 -------------------
- include/linux/amba/bus.h                           |    9 -
- include/linux/coresight.h                          |   50 -
- 25 files changed, 1602 insertions(+), 1457 deletions(-)
- create mode 100644 drivers/hwtracing/coresight/coresight-bus.c
- delete mode 100644 drivers/hwtracing/coresight/coresight.c
-
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index c02be06c5299..61491167da19 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -151,9 +151,6 @@ MODULE_PARM_DESC(max_ring_page_order, "Maximum order of pages to be used for the
+ #define BLK_RING_SIZE(info)	\
+ 	__CONST_RING_SIZE(blkif, XEN_PAGE_SIZE * (info)->nr_ring_pages)
+ 
+-#define BLK_MAX_RING_SIZE	\
+-	__CONST_RING_SIZE(blkif, XEN_PAGE_SIZE * XENBUS_MAX_RING_GRANTS)
+-
+ /*
+  * ring-ref%u i=(-1UL) would take 11 characters + 'ring-ref' is 8, so 19
+  * characters are enough. Define to 20 to keep consistent with backend.
+@@ -177,12 +174,12 @@ struct blkfront_ring_info {
+ 	unsigned int evtchn, irq;
+ 	struct work_struct work;
+ 	struct gnttab_free_callback callback;
+-	struct blk_shadow shadow[BLK_MAX_RING_SIZE];
+ 	struct list_head indirect_pages;
+ 	struct list_head grants;
+ 	unsigned int persistent_gnts_c;
+ 	unsigned long shadow_free;
+ 	struct blkfront_info *dev_info;
++	struct blk_shadow shadow[];
+ };
+ 
+ /*
+@@ -1915,7 +1912,8 @@ static int negotiate_mq(struct blkfront_info *info)
+ 		info->nr_rings = 1;
+ 
+ 	info->rinfo = kvcalloc(info->nr_rings,
+-			       sizeof(struct blkfront_ring_info),
++			       struct_size(info->rinfo, shadow,
++					   BLK_RING_SIZE(info)),
+ 			       GFP_KERNEL);
+ 	if (!info->rinfo) {
+ 		xenbus_dev_fatal(info->xbdev, -ENOMEM, "allocating ring_info structure");
 -- 
 2.16.4
 
