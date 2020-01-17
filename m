@@ -2,69 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C320141116
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6FCC141118
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:48:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbgAQSr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 13:47:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44288 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727573AbgAQSr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:47:29 -0500
-Received: from zn.tnic (p200300EC2F08DC0098C6A8393F59F989.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:dc00:98c6:a839:3f59:f989])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B9B8C1EC03F6;
-        Fri, 17 Jan 2020 19:47:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579286847;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Y2ZrufAmDTgI9TXivlSlbPcvv98I5hvXGSkhEsQnmuk=;
-        b=OnvGup5BQQd1djQppGREI/Xmh13GQxmcxASd90ulRJpJ4ekUQ3Uq8EUm4A9yb8Zn7BG/57
-        4Ggz1p7ip2pSLukVliRuFrXhHmSrDBwhREdT5DLkF3gIrRDfJOS6DJGTUJ+BqRgHCOqR6u
-        HNyPYr6TR20k+Y/HPxAnPdXsx8lzXaQ=
-Date:   Fri, 17 Jan 2020 19:47:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        DavidWang@zhaoxin.com, CooperYan@zhaoxin.com,
-        QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com
-Subject: Re: [PATCH] x86/cpu: remove redundant cpu_detect_cache_sizes
-Message-ID: <20200117184720.GB31472@zn.tnic>
-References: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+        id S1729423AbgAQSs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 13:48:26 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34127 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbgAQSs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 13:48:26 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r11so12093282pgf.1;
+        Fri, 17 Jan 2020 10:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uf2grPri+Pk70ySyorIWRt3xOE6amIrsICg9f4UOiek=;
+        b=jQRQTldyPxOJDIzuGEiFZ7SbwJbDbJJZIZJtShG+tPkycNQT1BrpN5BPde5niFnHKu
+         qCTwnSpXS7gL1IRfmnw6K2RtOQCqhGRHemIr4uGyUTmKeXqLJ2qgo40JAhrYjRce3u5u
+         6HwQyNb8ABAznP5xHcoxVfEeVq+3YY0WIuQSxZNF1Olw7PQwFGzecFHc4JZgDjULHNrt
+         dv2LrSbKaxXlqUAS9bBlBqGVxrhcA7sqfD806e/OpXBG0K2Dt43ABqD51Y0Ffe2Oi5WM
+         s7hZ9w9FtGIDpELVVJ74Rf2jQYkhep+KLV4mvfiANFL5c5UhVB6x6+rBvJrbogB9Bct8
+         TDBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uf2grPri+Pk70ySyorIWRt3xOE6amIrsICg9f4UOiek=;
+        b=PXBmw1XeVYMcVFsTcZ9QvYAuXBT6yGMgvwxpfGFq3rZSgGVSKdHt+UsuI7+oRp7ftD
+         aEnJaS+REEcMoho/s18Lp1yNDF08PZgG6TyYsHKvrUnmdPtwX3XKbRU0UBXHXYAMhGxz
+         VRXbIiW8uOEtrY02hMdSbIGRqAhIOKSrnNLkKj/wd+VqXQj5QeF5SMQaKkXIncgkgf/p
+         VS2rSBF5KstTz6Uyb/adfHpXRlcRQLocs4Y9NfNYEk+mrEXbQSq9p0T4XBpGThGAvfho
+         cpr++wsdH6vLgzXMzbQ7IWCtBImgJoRJnW4MaazSNzIQYNHoFPNYlZKAyEuJkN6/aQzJ
+         T3jg==
+X-Gm-Message-State: APjAAAXJx6JEDBSRQGSGcbtOYGVhc1Oxj88rWlIRgK46ZtgsrBFU8wAU
+        oT2tWv0AaGAMYb1eAr3kqWc=
+X-Google-Smtp-Source: APXvYqyvXwmbIo2pROIrbwWIUHlo1UI2+KfXA/vCZHjGuwWa9d4r5hP8/q1nJyTRTwffia3TMmlJ5w==
+X-Received: by 2002:aa7:9816:: with SMTP id e22mr4382433pfl.229.1579286905813;
+        Fri, 17 Jan 2020 10:48:25 -0800 (PST)
+Received: from [192.168.86.235] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
+        by smtp.gmail.com with ESMTPSA id v15sm8304050pju.15.2020.01.17.10.48.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 10:48:25 -0800 (PST)
+Subject: Re: [PATCH] net: optimize cmpxchg in ip_idents_reserve
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jinyuqi@huawei.com,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, edumazet@google.com,
+        guoyang2@huawei.com, Will Deacon <will@kernel.org>
+References: <1579058620-26684-1-git-send-email-zhangshaokun@hisilicon.com>
+ <20200116.042722.153124126288244814.davem@davemloft.net>
+ <930faaff-4d18-452d-2e44-ef05b65dc858@gmail.com>
+ <1b3aaddf-22f5-1846-90f1-42e68583c1e4@gmail.com>
+ <430496fc-9f26-8cb4-91d8-505fda9af230@hisilicon.com>
+ <20200117123253.GC14879@hirez.programming.kicks-ass.net>
+ <7e6c6202-24bb-a532-adde-d53dd6fb14c3@gmail.com>
+ <20200117180324.GA2623847@rani.riverdale.lan>
+ <94573cea-a833-9b48-6581-8cc5cdd19b89@gmail.com>
+ <20200117183800.GA2649345@rani.riverdale.lan>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <45224c36-9941-aae5-aca4-e2c8e3723355@gmail.com>
+Date:   Fri, 17 Jan 2020 10:48:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20200117183800.GA2649345@rani.riverdale.lan>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 04:00:57PM +0800, Tony W Wang-oc wrote:
-> Before call cpu_detect_cache_sizes get l2size from CPUID.80000006,
-> these CPUs have called init_intel_cacheinfo get l2size/l3size from
-> CPUID.4.
 
-Questions:
 
-* Does CPUID(4) give the same result as CPUID(80000006) on those CPUs?
+On 1/17/20 10:38 AM, Arvind Sankar wrote:
+> On Fri, Jan 17, 2020 at 10:16:45AM -0800, Eric Dumazet wrote:
+>> Wasńt it the case back in 2016 already for linux-4.8 ?
+>>
+>> What will prevent someone to send another report to netdev/lkml ?
+>>
+>>  -fno-strict-overflow support is not a prereq for CONFIG_UBSAN.
+>>
+>> Fact that we kept in lib/ubsan.c and lib/test_ubsan.c code for 
+>> test_ubsan_add_overflow() and test_ubsan_sub_overflow() is disturbing.
+>>
+> 
+> No, it was bumped in 2018 in commit cafa0010cd51 ("Raise the minimum
+> required gcc version to 4.6"). That raised it from 3.2 -> 4.6.
+> 
 
-* cpu_detect_cache_sizes() sets c->x86_tlbsize while
-init_intel_cacheinfo() would set it only when it calls the former
-function - cpu_detect_cache_sizes() - at the end:
+This seems good to me, for gcc at least.
 
-        if (!l2)
-                cpu_detect_cache_sizes(c);
+Maybe it is time to enfore -fno-strict-overflow in KBUILD_CFLAGS 
+instead of making it conditional.
 
-Does that happen on those CPUs?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks.
