@@ -2,74 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8311B140215
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB89614021C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387665AbgAQCpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 21:45:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729067AbgAQCpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 21:45:23 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C4F920730;
-        Fri, 17 Jan 2020 02:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579229123;
-        bh=dKyqaaGGcB1MEqXs9BPg8uYw+xt+15onKXbpCmYtg4Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AexsPH/wskCzkb4pS2nT3LvFZB4U5CmfvO1tbOlwAmfd1Rs1rv3bPekfFJAR5fOPa
-         Au3WHsZFYfHiNbNL6NdkHnXQrtTALNMarDKuHPbl1Js/orf59bNMpKaiNiW+B4WdMw
-         K/sVKwM5KdYMz2jVOfnearTXlAGR34ko/ivRC6H8=
-Date:   Thu, 16 Jan 2020 21:45:22 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Rajendra Dendukuri <rajendra.dendukuri@broadcom.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 573/671] ipv6: Handle race in
- addrconf_dad_work
-Message-ID: <20200117024522.GN1706@sasha-vm>
-References: <20200116170509.12787-1-sashal@kernel.org>
- <20200116170509.12787-310-sashal@kernel.org>
- <fc012e53-ccdf-5ac5-6f3f-a2ecdf25bc39@gmail.com>
- <630c6286-2ab4-44ab-693e-0615a2ac690b@gmail.com>
+        id S2388678AbgAQCuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 21:50:01 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36949 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388384AbgAQCuA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 21:50:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p14so11224156pfn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 18:50:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ocx1bcHvca+8n2uDvEKp0ll9Xosk7Vm9gTmI5pqwqMY=;
+        b=A9dALr6S1daNEyD2gQ3R+ElBRW1LXgSwVHb0wqfhCi/w46iAnWFXeEHJ7eMeVbjcYO
+         A2H2cVbJy7G3KqIZLilJfguEYu+t0b0/mO5IJ/UPkqDaxviENqYUpEtNkB7q+cBNbmjt
+         nE22pYPhcGeS9bk/MGtaYs1u7bYZKRQtn0m2ytM+iB+TvLv0zFgR+6YErcCdSKCqTimN
+         /6KzW61HT8H1XAnCmH9Ag+mlgFx9MNcewP2G6XHZ79RIS67EXjLCxl38+7qJdDoMaZfd
+         n8XR2zaFnsVkpy0s/EgfO0pX4i4J20BZXKHNMNjWDXDKGte19fUjz09amzmo1OGh18e6
+         HX5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ocx1bcHvca+8n2uDvEKp0ll9Xosk7Vm9gTmI5pqwqMY=;
+        b=YDoXs+RvT8B6hx0yRhL29FTiDj7Oqv6mnzSAMQ20vAsjE3j0sLXpeqW0Oed+ouGBa0
+         ijj3P6xyovH6usFZl1K8ltLsS7FzPlnUdl9FS/VXV4Po3YPBEN137g9tkfEFdXMvL07T
+         tRG8mDEWSJmpkvpyT/Hf39JriBPJ2JVjWBKvetNR0ItIMIMp6xipcY8bWu9ehf9EknRg
+         NGU9EwuvNOpCgvD0VfjHEKoFjQNl9M25F7mFZqHxe6UAuEydyS4K0iHeWLGP+Dp2/Rof
+         HuCQfVu0+L4KW8hG71oM+eQbY6gWnq5ocolDdcaBT4pFwPS1fFDwXMhHI0KtG5yOnZIi
+         XzKA==
+X-Gm-Message-State: APjAAAWjzPiQCAxeJesZshec0luM8vDSSQXx6jnN0OT3J2/2MuXgUExI
+        1jt89nmAIjuFUxJlNp+JkvU=
+X-Google-Smtp-Source: APXvYqwQvFDnTATlFyF5/qlEI9Pl40x+gtbXGOWUGS+tSdK/gYhZSnx3HZR48Rfp24YtPLhJNEBoFA==
+X-Received: by 2002:a62:e30d:: with SMTP id g13mr761645pfh.92.1579229400236;
+        Thu, 16 Jan 2020 18:50:00 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id s131sm29571468pfs.135.2020.01.16.18.49.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 18:49:59 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:49:57 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, mhocko@kernel.org,
+        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        rostedt@goodmis.org, peterz@infradead.org, david@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
+ printk()
+Message-ID: <20200117024957.GA7372@google.com>
+References: <20200117022111.18807-1-cai@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <630c6286-2ab4-44ab-693e-0615a2ac690b@gmail.com>
+In-Reply-To: <20200117022111.18807-1-cai@lca.pw>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:20:16AM -0700, David Ahern wrote:
->On 1/16/20 10:18 AM, David Ahern wrote:
->> On 1/16/20 10:03 AM, Sasha Levin wrote:
->>> From: David Ahern <dsahern@gmail.com>
->>>
->>> [ Upstream commit a3ce2a21bb8969ae27917281244fa91bf5f286d7 ]
->>>
->>
->> That commit was reverted by 8ae72cbf62d2c1879456c0c5872f958e18f53711 and
->> then replaced by 2d819d250a1393a3e725715425ab70a0e0772a71
->>
+On (20/01/16 21:21), Qian Cai wrote:
+> It is not that hard to trigger lockdep splats by calling printk from
+> under zone->lock. Most of them are false positives caused by lock chains
+> introduced early in the boot process and they do not cause any real
+> problems (although some of the early boot lock dependencies could
+> happenn after boot as well). There are some console drivers which do
+> allocate from the printk context as well and those should be fixed. In
+> any case false positives are not that trivial to workaround and it is
+> far from optimal to lose lockdep functionality for something that is a
+> non-issue.
+[..]
 >
->BTW, the AUTOSEL algorithm should be updated to look for reverts and
->even ones that have already been nack'ed from a backport perspective.
->
->I felt a bit of deja vu with my response and sure enough this patch was
->selected back in October and I responded then that it should not be
->backported.
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Sorry about this David. This series is a result of an experimental work
-I did rather than the regular AUTOSEL workflow, so it ended up
-accidentally bubbling a few commits that were previously rejected.
+FWIW,
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
--- 
-Thanks,
-Sasha
+	-ss
