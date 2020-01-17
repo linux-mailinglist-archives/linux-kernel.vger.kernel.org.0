@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C0201406C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:47:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0C414071C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbgAQJpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:45:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41590 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbgAQJpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:45:38 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c9so22010043wrw.8
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:45:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=w7L79aO9Rjvj7e/M8+iEMEEveQjjR2gbYrDBVwpUq9o=;
-        b=AU3Q0YFzNGFnPl2im0TCXiz0kZFmI4e+nD/ve/eF7yLahrW8d++UrxFPzBjRAJPjAt
-         3CleXkagBfSe7EGUCZPhWUbiShEnyyHrPrus7owRa1tZOvc4X4kaNjIm53FBH32vCdwG
-         25tPQ1kvVoexoNpJIaRWvNg2uWqNNyPXCJuNqfxeDLC7kgMcjtExtrbn461hmX6o18eR
-         z/ueZhZev7ROxyx9EbAymf9GEFAhzTK4nHniaUpDbfhIByHXJ0hyrft9qnPcpy5p2FMG
-         74m+7xkanZFcxFe402+tUM6mHCxZylTOvv/7KMCQ/A0R9+xhf7ycwKJU7FApZShjHLm4
-         ee7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=w7L79aO9Rjvj7e/M8+iEMEEveQjjR2gbYrDBVwpUq9o=;
-        b=k1jnRsgZr8y+jBahEubfk/gosI78D55HvSYVeY/Fdsq0MteG1XouuEEAZRPjMGnitJ
-         2D2At+8r1/i1DZSzq2GJS3V4HXONFLQFALsCrnuaRVX++LSHXmDJDX/6aEXa1SSInFx3
-         E44dE0vs4/JCHw1lE85KGRWUWBYbXrAmDOxCnBw3qf7nhKOhujNwYtyQ5tYLBE80DYkY
-         AFtu5fQNLpTSzXU9b+K47R/PMnlIPtVVydF6qtg1kdtmzFyUwL67CdsZ0napTrKm0HYN
-         4V7gL8mnNO+uc+ReApeH2XWhHxTzRi9fvBTyY9CoE+HyXfPv9RISJbM2AGckAl5Dz+vJ
-         pJAQ==
-X-Gm-Message-State: APjAAAW559THyFF+FV/DLFYAR8dCfn3RZG9UXezTHW45dcC+zTWyPqqa
-        KhcaqRCI+kf55qZyhYuNB5cgsQ==
-X-Google-Smtp-Source: APXvYqy+oGT4r2HmL/m9cMbiZkerRGNi6pZOIoPtR3pUfPUq2DITG2EHd/C0t3kP+W5BHPUU07E6Wg==
-X-Received: by 2002:adf:f3cd:: with SMTP id g13mr2177501wrp.54.1579254335984;
-        Fri, 17 Jan 2020 01:45:35 -0800 (PST)
-Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id u1sm3606795wmc.5.2020.01.17.01.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 01:45:35 -0800 (PST)
-Date:   Fri, 17 Jan 2020 09:45:54 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     support.opensource@diasemi.com, robh+dt@kernel.org,
-        linus.walleij@linaro.org, Adam.Thomson.Opensource@diasemi.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] mfd: da9062: add support for the DA9062 GPIOs in
- the core
-Message-ID: <20200117094554.GB15507@dell>
-References: <20200108104746.1765-1-m.felsch@pengutronix.de>
- <20200108104746.1765-3-m.felsch@pengutronix.de>
+        id S1726761AbgAQJ6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:58:39 -0500
+Received: from smtp1.savana.cz ([217.16.187.42]:17024 "EHLO icewarp.savana.cz"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728901AbgAQJ6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:58:32 -0500
+X-Greylist: delayed 724 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 04:58:31 EST
+Received: from [192.168.0.106] ([212.37.87.11])
+        by icewarp.savana.cz (IceWarp 11.2.1.1 RHEL6 x64) with ASMTP (SSL) id 202001171046263774;
+        Fri, 17 Jan 2020 10:46:26 +0100
+Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
+To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc:     Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+References: <20200116141800.9828-1-linux@roeck-us.net>
+From:   =?UTF-8?Q?Ondrej_=c4=8cerman?= <ocerman@sda1.eu>
+Message-ID: <e452614a-5425-e77c-4e2f-2a17ca733b7f@sda1.eu>
+Date:   Fri, 17 Jan 2020 10:46:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200108104746.1765-3-m.felsch@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 08 Jan 2020, Marco Felsch wrote:
+Dňa 16. 1. 2020 o 15:17 Guenter Roeck napísal(a):
+> This patch series implements various improvements for the k10temp driver.
+>
+> Patch 1/4 introduces the use of bit operations.
+>
+> Patch 2/4 converts the driver to use the devm_hwmon_device_register_with_info
+> API. This not only simplifies the code and reduces its size, it also
+> makes the code easier to maintain and enhance.
+>
+> Patch 3/4 adds support for reporting Core Complex Die (CCD) temperatures
+> on Ryzen 3 (Zen2) CPUs.
+>
+> Patch 4/4 adds support for reporting core and SoC current and voltage
+> information on Ryzen CPUs.
+>
+> With all patches in place, output on Ryzen 3900 CPUs looks as follows
+> (with the system under load).
+>
+> k10temp-pci-00c3
+> Adapter: PCI adapter
+> Vcore:        +1.36 V
+> Vsoc:         +1.18 V
+> Tdie:         +86.8°C  (high = +70.0°C)
+> Tctl:         +86.8°C
+> Tccd1:        +80.0°C
+> Tccd2:        +81.8°C
+> Icore:       +44.14 A
+> Isoc:        +13.83 A
+>
+> The patch series has only been tested with Ryzen 3900 CPUs. Further test
+> coverage will be necessary before the changes can be applied to the Linux
+> kernel.
+>
+Hello everyone, I am the author of https://github.com/ocerman/zenpower/ .
 
-> Currently the da9062 GPIO's aren't available. The patch adds the support
-> to make these available by adding a gpio device with the corresponding
-> irq resources. Furthermore the patch fixes a minor style issue for the
-> onkey device.
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/da9062-core.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
+It is nice to see this merged.
 
-Applied, thanks.
+I just want to warn you that there have been reported issues with 
+Threadripper CPUs to zenpower issue tracker. Also I think that no-one 
+tested EPYC CPUs.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Most of the stuff I was able to figure out by trial-and-error approach 
+and unfortunately because I do not own any Threadripper CPU I was not 
+able to test and fix reported problems.
+
+Ondrej.
+
