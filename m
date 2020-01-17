@@ -2,68 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 629A0140F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:54:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA7B140F67
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgAQQyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 11:54:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbgAQQyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:54:08 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E707E2072B;
-        Fri, 17 Jan 2020 16:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579280048;
-        bh=FY97BvRPdZSU2bIodwF411p0zZgZzBz9rfMfxvBV0Po=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=h/bI+vGEPuRESvXvSwPWfqllyNprA4S2VpVi05U+yn/41OeA6M8TqCcjjGvANG2T6
-         qKcr4mkabYVo+s7BEgvHEJaAM3nXhf4dcUU61v2p7+/vbrThg6BIJKWysCwmLgYxbJ
-         BZeZqz5mUOjt05bV5SwjEkcqRFNXcpvA24WMsDrs=
-Date:   Fri, 17 Jan 2020 17:54:06 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     roman.sudarikov@linux.intel.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v4 2/2] perf =?iso-8859-1?Q?x86?=
- =?iso-8859-1?Q?=3A_Exposing_an_Uncore_unit_to_PMON_for_Intel_Xeon?=
- =?iso-8859-1?Q?=AE?= server platform
-Message-ID: <20200117165406.GA1937954@kroah.com>
-References: <20200117133759.5729-1-roman.sudarikov@linux.intel.com>
- <20200117133759.5729-3-roman.sudarikov@linux.intel.com>
- <20200117141944.GC1856891@kroah.com>
- <20200117162357.GK302770@tassilo.jf.intel.com>
+        id S1729304AbgAQQye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 11:54:34 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45213 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbgAQQye (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 11:54:34 -0500
+Received: by mail-qk1-f196.google.com with SMTP id x1so23253518qkl.12;
+        Fri, 17 Jan 2020 08:54:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6wgLl5grHs0gPcjfTsIGRVnNOC2uJ/o3JW7bJozvcUc=;
+        b=T+tRTuaZ0E4ESs9z2xKryIf3Kf5XLx+XyRdcTVuDke7A68XHbQER3CLcDo/5Ucg31e
+         8S/Oxaivpayz9mCUsCQFzlXOhwkAm6R8sXypTQQT8gAtG3Kzry42oAcwYu9Lr9Y2neEn
+         GcshvuWX6e3CV+G//grZvCcyagz5LXRwE46t+9FxuivWnIsWepP9LL86yM1kL+T6ncPs
+         qLpM4wXcK3Rb0BSIpKGZzqHQr9CbZJG+VqhDCaLYulslIiEGjQtwr5+rffgl8w7ZloG+
+         zSxiMooKrsBwZ1JpHOD56l04Owa3BNusswKYsanrhrqPce6ffQ+lPnVAVZIFURIp+vGS
+         hQHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6wgLl5grHs0gPcjfTsIGRVnNOC2uJ/o3JW7bJozvcUc=;
+        b=OEZ8DQt/Jo/zh7iD0rsaENCDTvOzLQR6qPSYOzBSf5JjYriUkVHL6ZebxW6qbwSyp6
+         Sge0SvbJglbd+oZD6n02vAjzDEx6HEduLcne7wGziXwGyOg76lyEErPbu5EhSNVdhP9W
+         df2LpD3MtZTcEWMtgXXK+KxAqj8ZsLlluuV5le3r2gOoQjEgTjnNELuqgtv6V21z7uJc
+         lYgaiaaymGEfwiPv8xjizyETsmidGxRAX8GXOqV/jy5gNIy8tTq1wekP/ip3VAXKb9sm
+         SESFB1+0lHgwKz/ZzWfpi/BrQkOqlfH3WuRdGqUbSffxpruVeyCghhWmeYUc5BjATXRD
+         7amQ==
+X-Gm-Message-State: APjAAAXsmQ4JXRRUi4Rbc2divNirCmZFdYTY+g4UlK4ah5iOvlTFwCvL
+        2hRLF1M6Qy7ZLhyke948VPY=
+X-Google-Smtp-Source: APXvYqxpDvPwwGebd3YG7dAKQNK9IaKaCAYomHMrqtEwxnq4EA+sY368Jto26N5fBZJ5xVP6V+uZbw==
+X-Received: by 2002:a37:b601:: with SMTP id g1mr39654001qkf.114.1579280072984;
+        Fri, 17 Jan 2020 08:54:32 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:7d10])
+        by smtp.gmail.com with ESMTPSA id q131sm12128682qke.1.2020.01.17.08.54.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Jan 2020 08:54:32 -0800 (PST)
+Date:   Fri, 17 Jan 2020 08:54:31 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v3 0/5] clone3 & cgroups: allow spawning processes into
+ cgroups
+Message-ID: <20200117165431.GI2677547@devbig004.ftw2.facebook.com>
+References: <20200117002143.15559-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200117162357.GK302770@tassilo.jf.intel.com>
+In-Reply-To: <20200117002143.15559-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 08:23:57AM -0800, Andi Kleen wrote:
-> > I thought I was nice and gentle last time and said that this was a
-> > really bad idea and you would fix it up.  That didn't happen, so I am
-> > being explicit here, THIS IS NOT AN ACCEPTABLE FILE OUTPUT FOR A SYSFS
-> > FILE.
-> 
-> Could you suggest how such a 1:N mapping should be expressed instead in
-> sysfs?
+Hey, imma wait for v4 w/ the perm check fixed.
 
-I have yet to figure out what it is you all are trying to express here
-given a lack of Documentation/ABI/ file :)
+Thanks.
 
-But again, sysfs is ONE VALUE PER FILE.  You have a list of items here,
-that is bounded only by the number of devices in the system at the
-moment.  That number will go up in time, as we all know.  So this is
-just not going to work at all as-is.
-
-greg k-h
+-- 
+tejun
