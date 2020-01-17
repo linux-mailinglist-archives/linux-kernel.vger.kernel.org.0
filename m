@@ -2,54 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E86D1402E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 603241402F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:21:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbgAQEQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 23:16:32 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42987 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729139AbgAQEQc (ORCPT
+        id S1730134AbgAQEVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 23:21:24 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:46670 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbgAQEVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 23:16:32 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s64so10995356pgb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 20:16:31 -0800 (PST)
+        Thu, 16 Jan 2020 23:21:23 -0500
+Received: by mail-il1-f194.google.com with SMTP id t17so20207539ilm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 20:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mRpBlfriiKBtpHdle3gY+6OvDi0xi+PHO3+1yxBhNW0=;
-        b=YpgoWq+f5KBHqJRceCkoXiAZ2cahZQK+2UyaAJe+K9OIe+XXcWUZL8U209yNlM3H75
-         KA7pvnOh+24zjdkJ7WMUJ3KA1+3nkIcrRF31rPO++SI7wQlThs4GJGs5B3nYoQLKW5HT
-         2eh3iHvTi3Xy88JGMBRbo122EsU8mcdZ/ksMWQv5AaykeNtw4L241TPf0aaaNgQ6oplO
-         UcCJxtf9XAGTsWbYYHU+gy2NpZnW2+Cl0nQVAovymBpgWIrdrUczQb4tNfSu/jIOSSvr
-         fG9ZirxeCQXz5lZPNcJRcNLxJM6Wbp3fKAwDJBz0ddZdtMZOh9o+PFBxxH/QKym4+LGz
-         VCIQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qfpdnB0mDY3WUkUnXeznDzcUOnDJRLF4NNorY2l78Ps=;
+        b=ZqPtCjnTL5BpE5R5EYfpzHPeea5Qp7vGjfHVQtwYh6GS2G1E6qCQktHCtcgcj750RB
+         KbbeLBevioO95S1auUbZ5BvudJZBXmK4sZWDFvDOzsSReMywkA736vs8L2yTMRHJL3WU
+         YtEnCvSIJYSnrMDfuobFoVMMr2wwZ08zgjuVc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mRpBlfriiKBtpHdle3gY+6OvDi0xi+PHO3+1yxBhNW0=;
-        b=NqhYsCwO61Q5ixt4AxnXprVH4O0ypq009IZrPEB2LkbPzVVY0kkigWX1hMLEfJzxcg
-         e4JTeQDos0GEonpDkkPs1FEAfdlt3oNohhYNLLrOdTBMmqoRLRcPejeYr5sIxCoLiYuu
-         DSVgVsVotVJR+jXRAbMFhry0OhozQF9Kw1+xrGS9/o0Lv/wbJ6iacdiuM3vEIWL2LrPc
-         K3vBuq8JhYIt3+3wwVK64qtXftk4RRKWC37JSVEF7K//fhqY3PhB6Ifq2xP0NkXiSqgd
-         d0I8f+4h4byfMrlem75xZzzgzdz5pzFPq5BQpSYRDNVc09+k0v1UOt7D7xBO7jKc1fxK
-         oZdA==
-X-Gm-Message-State: APjAAAWdLi75GEkl4cMMr2jfAGkFM3WrJ/yel2saaHb5b/1INpOsBwt1
-        kKE0+7RnGk7Y7QyENNpNgk3nsQ==
-X-Google-Smtp-Source: APXvYqxeLUKQP31a9O4MOSQTYDXXhKgO23RrfuN2OHejqkFLLCBgUZ8QQnxFYMZQ3Ktxo8BDhU+O2Q==
-X-Received: by 2002:a62:e30d:: with SMTP id g13mr1054005pfh.92.1579234591085;
-        Thu, 16 Jan 2020 20:16:31 -0800 (PST)
-Received: from [192.168.11.4] (softbank126112255110.biz.bbtec.net. [126.112.255.110])
-        by smtp.googlemail.com with ESMTPSA id l66sm26355096pga.30.2020.01.16.20.16.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 16 Jan 2020 20:16:30 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qfpdnB0mDY3WUkUnXeznDzcUOnDJRLF4NNorY2l78Ps=;
+        b=KB5ERtHF1FR74v6LI9NRHmGVRAp65Bmxo9e+/CKUz5KUx6L1IYv93rzrP8H9Dfzega
+         iBWW2rJYHQaww1E2YV+bab1JCFDMQhQQyRttq1CJRikWs038d37gZYzCmhaEvVaccGaY
+         hAEzGJfo5K9tswAXEp99VdyhN3gYK3FDERLFzxRfI5xIYl2+rMYTh8Rh4Q7KwqVWyIWL
+         31dUi/gC35VRgErFgfppdoAYFdmhsnUeFZ6jnyfnKMzMaFNdfYraTa/gzI+6xA9hKjxE
+         7SLP3xPNCyrIoHDbF9rPJDRfEpm0wyL6ug7KMXtjQ/ZADiqshc54hcWXAUbLLVWhqtDX
+         9SEw==
+X-Gm-Message-State: APjAAAWbSyJPMOZxGQLeXXowJgLqU0ojYKQEmGZ5WEXyTqMumOhgl5N1
+        767HGmWLG6kNiTo89MZGKUa8wHveJUchwmiyFOQ11g==
+X-Google-Smtp-Source: APXvYqx+51arEmX8KrYJLorNsz5cqX3rSL1q9+0np0e9Hh5Vavh2uliQ4xTj4S5fGKDgZ5Qi5GtPwcY6HIB8S7Zf6a8=
+X-Received: by 2002:a92:5c8f:: with SMTP id d15mr1631366ilg.102.1579234882781;
+ Thu, 16 Jan 2020 20:21:22 -0800 (PST)
+MIME-Version: 1.0
+References: <20200114110620.164861-1-hsinyi@chromium.org> <a701522f-73aa-2277-4a25-f84a27f38118@landley.net>
+In-Reply-To: <a701522f-73aa-2277-4a25-f84a27f38118@landley.net>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Fri, 17 Jan 2020 12:20:56 +0800
+Message-ID: <CAJMQK-iH7FPgj2cNZr==Szd8bnRyHC7=GzQt6-zsFq3eCdWJ1Q@mail.gmail.com>
 Subject: Re: [PATCH RESEND v4] reboot: support offline CPUs before reboot
-To:     Hsin-Yi Wang <hsinyi@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+To:     Rob Landley <rob@landley.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Jiri Kosina <jkosina@suse.cz>,
@@ -64,55 +62,59 @@ Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         Guenter Roeck <groeck@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-csky@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linux-pm@vger.kernel.org
-References: <20200114110620.164861-1-hsinyi@chromium.org>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <a701522f-73aa-2277-4a25-f84a27f38118@landley.net>
-Date:   Thu, 16 Jan 2020 22:20:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200114110620.164861-1-hsinyi@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, linux-csky@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 5:06 AM, Hsin-Yi Wang wrote:
-> This patch adds a config ARCH_OFFLINE_CPUS_ON_REBOOT, which would offline cpus in
-> migrate_to_reboot_cpu(). If non reboot cpus are all offlined here, the loop for
-> checking online cpus would be an empty loop. If architecture don't enable this
-> config, or some cpus somehow fails to offline, it would fallback to ipi
-> function.
+On Fri, Jan 17, 2020 at 12:16 PM Rob Landley <rob@landley.net> wrote:
+>
+> On 1/14/20 5:06 AM, Hsin-Yi Wang wrote:
+> > This patch adds a config ARCH_OFFLINE_CPUS_ON_REBOOT, which would offline cpus in
+> > migrate_to_reboot_cpu(). If non reboot cpus are all offlined here, the loop for
+> > checking online cpus would be an empty loop. If architecture don't enable this
+> > config, or some cpus somehow fails to offline, it would fallback to ipi
+> > function.
+>
+> I'm curious:
+>
+> > +# Select to do a full offline on secondary CPUs before reboot.
+> > +config ARCH_OFFLINE_CPUS_ON_REBOOT
+> > +     bool "Support for offline CPUs before reboot"
+> > +     depends on HOTPLUG_CPU
+>
+> The new symbol can't be selected without the other symbol.
+>
+> > +     select ARCH_OFFLINE_CPUS_ON_REBOOT if HOTPLUG_CPU
+>
+> And the other symbol automatically selects the new one.
+>
+> Why are you adding a second symbol that means the same thing as the existing symbol?
+>
 
-I'm curious:
+I should make the arch selecting this symbol in other patches and let
+the arch decides if they want to opt in, as Thomas pointed out in v5:
+https://lore.kernel.org/lkml/8736cgxmxi.fsf@nanos.tec.linutronix.de/
 
-> +# Select to do a full offline on secondary CPUs before reboot.
-> +config ARCH_OFFLINE_CPUS_ON_REBOOT
-> +	bool "Support for offline CPUs before reboot"
-> +	depends on HOTPLUG_CPU
+Current solution is not sufficient since it only solve problems for
+system that enables HOTPLUG_CPU.
 
-The new symbol can't be selected without the other symbol.
-
-> +	select ARCH_OFFLINE_CPUS_ON_REBOOT if HOTPLUG_CPU
-
-And the other symbol automatically selects the new one.
-
-Why are you adding a second symbol that means the same thing as the existing symbol?
-
-> +#if defined(CONFIG_PM_SLEEP_SMP) || defined(CONFIG_ARCH_OFFLINE_CPUS_ON_REBOOT)
-> +extern int freeze_secondary_cpus(int primary, bool reboot);
-> +#endif
-
-Couldn't that just test HOTPLUG_CPU? What's the second symbol for? (You can have
-empty stub functions when architectures don't support a thing...)
-
-Rob
+> > +#if defined(CONFIG_PM_SLEEP_SMP) || defined(CONFIG_ARCH_OFFLINE_CPUS_ON_REBOOT)
+> > +extern int freeze_secondary_cpus(int primary, bool reboot);
+> > +#endif
+>
+> Couldn't that just test HOTPLUG_CPU? What's the second symbol for? (You can have
+> empty stub functions when architectures don't support a thing...)
+>
+> Rob
