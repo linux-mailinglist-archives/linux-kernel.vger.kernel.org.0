@@ -2,104 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3819140754
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3220114073B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgAQKHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:07:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62462 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726362AbgAQKHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:07:10 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00H9DVD0134965
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 04:26:25 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xk0qr6bhr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 04:26:25 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 17 Jan 2020 09:26:23 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 Jan 2020 09:26:19 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00H9QJaa55443548
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 09:26:19 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E755B4C058;
-        Fri, 17 Jan 2020 09:26:18 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70DBE4C04A;
-        Fri, 17 Jan 2020 09:26:17 +0000 (GMT)
-Received: from bangoria.in.ibm.com (unknown [9.124.31.171])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Jan 2020 09:26:17 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org, jolsa@redhat.com
-Cc:     namhyung@kernel.org, irogers@google.com, songliubraving@fb.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 2/3] perf annotate: Align struct annotate_args
-Date:   Fri, 17 Jan 2020 14:56:11 +0530
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
-References: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
+        id S1727289AbgAQKAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:00:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50436 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726596AbgAQKAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 05:00:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E0F2CB49D;
+        Fri, 17 Jan 2020 10:00:38 +0000 (UTC)
+Date:   Fri, 17 Jan 2020 11:00:37 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurence Oberman <loberman@redhat.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] watchdog/softlockup: Report the overall time of
+ softlockups
+Message-ID: <20200117100037.6aahy7gwmrxb5ybg@pathway.suse.cz>
+References: <20191024114928.15377-1-pmladek@suse.com>
+ <20191024114928.15377-3-pmladek@suse.com>
+ <8736cfwmek.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011709-0028-0000-0000-000003D1EE41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011709-0029-0000-0000-000024961907
-Message-Id: <20200117092612.30874-3-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_02:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015
- bulkscore=0 impostorscore=0 malwarescore=0 mlxlogscore=897 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001170072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736cfwmek.fsf@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Align fields of struct annotate_args.
+On Thu 2020-01-16 14:39:31, Thomas Gleixner wrote:
+> Petr,
+> 
+> Petr Mladek <pmladek@suse.com> writes:
+> > -	if (touch_ts == 0) {
+> > +	/* Was the watchdog touched externally by a known slow code? */
+> > +	if (period_ts == 0) {
+> >  		if (unlikely(__this_cpu_read(softlockup_touch_sync))) {
+> >  			/*
+> >  			 * If the time stamp was touched atomically
+> > @@ -394,7 +405,12 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
+> >  
+> >  		/* Clear the guest paused flag on watchdog reset */
+> >  		kvm_check_and_clear_guest_paused();
+> > -		__touch_watchdog();
+> > +		/*
+> > +		 * The above kvm*() function could touch the watchdog.
+> > +		 * Set the real timestamp later to avoid an infinite
+> >  		loop.
+> 
+> This comment makes no sense whatsoever. If period_ts is 0,
+> i.e. something invoked touch_softlockup_watchdog*() then it does not
+> make any difference whether the kvm function invokes one of those
+> functions once more. The result is the same. The per cpu period_ts is
+> still 0.
+>
+> The point is that _AFTER_ a intentional watchdog reset, the reporting
+> base time needs to be set to now() in order to make it functional again.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/util/annotate.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Exactly. I think that my comment is just confusing. I wanted to say
+that the order was important.
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 7f9851772462..fe98d29dfbc4 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1143,13 +1143,13 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
- }
- 
- struct annotate_args {
--	struct arch		*arch;
--	struct map_symbol	 ms;
--	struct evsel	*evsel;
-+	struct arch		  *arch;
-+	struct map_symbol	  ms;
-+	struct evsel		  *evsel;
- 	struct annotation_options *options;
--	s64			 offset;
--	char			*line;
--	int			 line_nr;
-+	s64			  offset;
-+	char			  *line;
-+	int			  line_nr;
- };
- 
- static void annotation_line__new(struct annotation_line *al,
--- 
-2.24.1
+It was not obvious to me that kvm_check_and_clear_guest_paused() cleared
+perior_ts and must be called before update_report_period_ts(). I spent
+some time with debugging why the reshufled code stopped working ;-)
 
+What about the following?
+
+		/*
+		 * Clear the guest paused flag on watchdog. Might clear
+		 *  report_period_ts.
+		 */
+		kvm_check_and_clear_guest_paused();
+
+		update_report_period_ts();
+
+
+> > +		 */
+> > +		reset_report_period_ts();
+> 
+> Btw, the function name is misleading. I got confused several times
+> because I expected the reset to set the timestamp to 0, which is not the
+> case. update_report_period_ts() is far more intuitive.
+
+Sounds good.
+
+
+> > @@ -404,8 +420,9 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
+> >  	 * indicate it is getting cpu time.  If it hasn't then
+> >  	 * this is a good indication some task is hogging the cpu
+> >  	 */
+> > -	duration = is_softlockup(touch_ts);
+> > +	duration = is_softlockup(touch_ts, period_ts);
+> >  	if (unlikely(duration)) {
+> 
+> This lacks a comment. Your changelog paragraph:
+> 
+>  > Also the timestamp should get reset explicitly. It is done also by the code
+>  > printing the backtrace. But it is just a side effect and far from
+>  > obvious.
+> 
+> is probably referring to this, but it confused me more than it helped
+> simply because the update of the timestamp happens unconditionally even
+> when the backtrace code is not reached due to the KVM check
+
+Where is the timestamp updated unconditionaly, please?
+
+I found that it happens, for example, in printk_stack_address() that
+is hidden "deep" in show_stack().
+
+> So this is a change vs. the current implementation which is not
+> documented and explained.
+
+To me, it looks obvious to reset/update the period when the current
+period ended and we are about to report softlockup.
+
+OK, it might create wrong assumtion that the updated timestamp will
+really get used. It is not true because it will get reset inside
+the above mentioned show_stack(). But is it really guaranteed
+that the watchdog will be touched there?
+
+IMHO, the explicit call makes the code more reliable and easier
+to understand. The hidden touch() might get re(moved) at any time.
+
+
+> > +		reset_report_period_ts();
+> >  		/*
+> >  		 * If a virtual machine is stopped by the host it can look to
+> >  		 * the watchdog like a soft lockup, check to see if the host
+
+Thanks a lot for review.
+
+Best Regards,
+Petr
+
+PS: I will have only limited internet connection the following week.
