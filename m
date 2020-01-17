@@ -2,112 +2,282 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E07140342
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB91A14033A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:14:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgAQFWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 00:22:22 -0500
-Received: from bonobo.elm.relay.mailchannels.net ([23.83.212.22]:12820 "EHLO
-        bonobo.elm.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726706AbgAQFWW (ORCPT
+        id S1727162AbgAQFOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 00:14:49 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:29906 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbgAQFOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 00:22:22 -0500
-X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id BE1293414E3;
-        Fri, 17 Jan 2020 05:22:20 +0000 (UTC)
-Received: from pdx1-sub0-mail-a10.g.dreamhost.com (100-96-4-61.trex.outbound.svc.cluster.local [100.96.4.61])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id E605A341A31;
-        Fri, 17 Jan 2020 05:22:19 +0000 (UTC)
-X-Sender-Id: dreamhost|x-authsender|siddhesh@gotplt.org
-Received: from pdx1-sub0-mail-a10.g.dreamhost.com ([TEMPUNAVAIL].
- [64.90.62.162])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.18.5);
-        Fri, 17 Jan 2020 05:22:20 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|siddhesh@gotplt.org
-X-MailChannels-Auth-Id: dreamhost
-X-Supply-Robust: 370d02ba34fcfd4e_1579238540479_4289310058
-X-MC-Loop-Signature: 1579238540479:1777990223
-X-MC-Ingress-Time: 1579238540479
-Received: from pdx1-sub0-mail-a10.g.dreamhost.com (localhost [127.0.0.1])
-        by pdx1-sub0-mail-a10.g.dreamhost.com (Postfix) with ESMTP id 9060B8CAEC;
-        Thu, 16 Jan 2020 21:22:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=gotplt.org; h=subject:to
-        :cc:references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=gotplt.org; bh=Yj30kd
-        fElzmQt7WZpusShHxwZq4=; b=nM9ZbgrcosXlfUHZk83LH5gID02UM+bTsZex+w
-        yMJmbIWxJ/B7sowsTW462lJZqnewEJm5ybsjkPMUdyY63JstvK4KcgcDF8OTNDtV
-        4oYybuzlTs7kRCPjGA8NVYVNyi4Po+3r7hFJv2jUoikDhLUJlvLg2QwUkeFT2AtJ
-        PnSgc=
-Received: from [192.168.1.97] (unknown [123.252.202.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: siddhesh@gotplt.org)
-        by pdx1-sub0-mail-a10.g.dreamhost.com (Postfix) with ESMTPSA id 158898AB48;
-        Thu, 16 Jan 2020 21:22:11 -0800 (PST)
-Subject: Re: [PATCH] kselftest: Minimise dependency of get_size on C library
- interfaces
-To:     Tim.Bird@sony.com, masami.hiramatsu@linaro.org
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200113164158.15803-1-siddhesh@gotplt.org>
- <CAA93ih1KXO5oSKAB6PmQc6xOw4fX5T+2+zx91BD18YUxL+nWzQ@mail.gmail.com>
- <ECADFF3FD767C149AD96A924E7EA6EAF982C37D2@USCULXMSG17.am.sony.com>
-X-DH-BACKEND: pdx1-sub0-mail-a10
-From:   Siddhesh Poyarekar <siddhesh@gotplt.org>
-Autocrypt: addr=siddhesh@gotplt.org; keydata=
- mQENBFMAZNMBCACeatEKl6YY9iEVxzS64bPbvJsA1mLE2XFWmKXyYzm58dFqPMa0OQQTKCxj
- FCOrc+LD2KtmypttcahKnk5Lk1lNU/lV2hCuR7jJ37sL+/TFQuMMgsLPED6XU4/AYK3VUJvg
- GYLBnMVfpAGYLB5rnPvhFNx0r2KItO/CfiSEyD4g1Wu26SUAXGOp5hbSyBRGhju+8YJlhHBB
- jn3vZfw7IpwAWDVjK0crqMhGDXoZwK+ADUFY5NERAkT3Lb7d11F6+W4558WQZCYIWa3rZ62d
- 986OE7+7xKmJUcLLWvlv5spgUmvotZ4DMzaKba+waY5ygXdGIpm5seVIEUCTaBIe6QVLABEB
- AAG0KFNpZGRoZXNoIFBveWFyZWthciA8c2lkZGhlc2hAZ290cGx0Lm9yZz6JATgEEwECACIF
- Ale0y0wCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHnEPfvxzyGHUggIAJtLMvzH
- jRQi/Dg6oSMUMPtH7oEmgnk482dC4MGNl/bCtUV7VVIAtEN5TGvHxk1EKBNqj49Q+mZjef82
- iluW1RbXRY6+72yZ380yUC41SY+2hVOurJ//h3nvE+YHfO7QjV97yhIegc1kdwArVtgNNApL
- xj5Nc2epT824uaSznVhwyAS2OIHFLmiMYuIW338uXVEug1XKBHwJ9MppVblk4zapc9fRGvRG
- 72ivbTGXNgcza+Kkx1IdA0XB2dEQaAE1XR0FOshKtpeSDRERwZ17+rRT8EjmkRsR7qm1uvPS
- NW7wMTtlj8ox/XuSyG0Coy1NRgqe5bi53ha1kBoKlLaxvyW5AQ0EUwBk0wEIAKELSISlJ9rz
- 3tSBPNkpyqwIPn4//ZBuENJQfIWIWYM9r72sBRHZgiilsN7K7g6Ea7vLUVgv5+WInE4PWFQa
- qUSbMubTjshnaIAIeSU0rslwRRqu2B9HmS8marB+UYdQ+MsPVEInrB8uroFf8Jh7h+2Oqs2M
- KUMsayoFyQkVtwh3HI/AMTkmK6iun3AikOK+J9WLQx2Qqf+fLjY5/ZIjbowbd8GK3B4h4kUP
- beUI5TNg6xcKVyxVPMy8HazfaDwlUHfh07K0UFWtaFuw9v3tlaieOTLH0D0cBXyYTAqgs7C6
- 6cytxw+Qr6/+uHa8MMREDQwTEEwwick3h0h+vIhCsV0AEQEAAYkBHwQYAQIACQIbDAUCVOqz
- 3wAKCRB5xD378c8hh/UzB/0Q13oL/aS8km9sXOa8M1roQ69NUpqpMEOGBWO5naK8wZ2QKh4D
- 05DfNa7yT5FgPLI+a4kdOgWbW2fiE/wMYOMivjoFveOdlzPpsew6n2q5/cvopspriCGJWozT
- kwv1dv9gfTKB7dDJt+ICdabp7aohvNi5xeZgM4GxCiO1rfr0Jn7NAR3L5tpQsVD4eDTa9jg0
- qq/EiF+uLQH82D6bsxtS/Xre7b/sTKK3jE6sthui64w7F3X5M1qwk8XCsqCNA1Z2c+zWkLGH
- 4ZeB/Rrxapu0H0/TAhBBtbDo665GaRb3NSKzG4rJSjXSEQc4rna/Y7/s3c9uB0yjdyXX08mn HzVO
-Message-ID: <cf97c840-70ba-d9b8-6994-0a7ef67b6c0d@gotplt.org>
-Date:   Fri, 17 Jan 2020 10:51:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Fri, 17 Jan 2020 00:14:48 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200117051445epoutp031e054626d31145b3f26615c5e2982790~qlKv8xv7V2739827398epoutp03F
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:14:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200117051445epoutp031e054626d31145b3f26615c5e2982790~qlKv8xv7V2739827398epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579238085;
+        bh=4rDyvrwiqEvZkgB0cIZA1l+ZQ9LZ9qrA3Ngps1EaEAw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=QpvvqpMmhrIDcPwimSko7sHtB5tKMVWh8YvqBYzBHQuXW6ehSdw0biqan+W3jPblU
+         Qj/ST6fseP23e7wwGknDlHafcmk9gxAdFCFZEhev692UvwWMdtjKc4p2hququttxdB
+         RevXkxhV1WnCdmlbrNmsNxE2hy1SzK7YIeFG58MY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200117051445epcas1p2f7aa54665780213e0311479ef3015c20~qlKvU6LJT0464204642epcas1p2N;
+        Fri, 17 Jan 2020 05:14:45 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 47zTl65pRYzMqYkc; Fri, 17 Jan
+        2020 05:14:42 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        96.E3.48019.2C2412E5; Fri, 17 Jan 2020 14:14:42 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200117051442epcas1p2bbaf74e1f4d89be0015356be1d387f78~qlKsxOuEm0464204642epcas1p2I;
+        Fri, 17 Jan 2020 05:14:42 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200117051442epsmtrp1d53e1aef5cca29871ae1b2997edb167e~qlKswgMob1370613706epsmtrp1R;
+        Fri, 17 Jan 2020 05:14:42 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-3e-5e2142c2b43c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        54.B8.06569.2C2412E5; Fri, 17 Jan 2020 14:14:42 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200117051442epsmtip250cbf02491a6ec89bbff6f81d6410333~qlKsjapqP2225922259epsmtip2M;
+        Fri, 17 Jan 2020 05:14:42 +0000 (GMT)
+Subject: Re: [PATCH v2] thermal: devfreq_cooling: Use PM QoS to set
+ frequency limits
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <d73e67eb-4f2d-dc4b-c718-929a964d3640@samsung.com>
+Date:   Fri, 17 Jan 2020 14:22:02 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF982C37D2@USCULXMSG17.am.sony.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200116151219.v2.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-VR-OUT-STATUS: OK
-X-VR-OUT-SCORE: 0
-X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigdejkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufhiugguhhgvshhhucfrohihrghrvghkrghruceoshhiugguhhgvshhhsehgohhtphhlthdrohhrgheqnecukfhppeduvdefrddvhedvrddvtddvrddujedvnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopegludelvddrudeikedruddrleejngdpihhnvghtpeduvdefrddvhedvrddvtddvrddujedvpdhrvghtuhhrnhdqphgrthhhpefuihguughhvghshhcurfhohigrrhgvkhgrrhcuoehsihguughhvghshhesghhothhplhhtrdhorhhgqedpmhgrihhlfhhrohhmpehsihguughhvghshhesghhothhplhhtrdhorhhgpdhnrhgtphhtthhopefvihhmrdeuihhrugesshhonhihrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEJsWRmVeSWpSXmKPExsWy7bCmnu4hJ8U4g9dndSy+n/vJZDHvs6zF
+        /CvXWC3ONr1ht1hx9yOrxeVdc9gsPvceYbT4vOExo8XtxhVsFk8e9rE5cHnMbrjI4rFz1l12
+        j8V7XjJ53Lm2h81j47sdTB59W1YxenQcr/T4vEkugCMq2yYjNTEltUghNS85PyUzL91WyTs4
+        3jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6EQlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5x
+        ia1SakFKToFlgV5xYm5xaV66XnJ+rpWhgYGRKVBhQnbGzOajTAUbtSpuXWxnamD8qdjFyMkh
+        IWAi8fjwSuYuRi4OIYEdjBJ3929gBEkICXxilLh+SgEi8Y1RYsmNJ0wwHRtW/WKCSOxllFj6
+        p5EVwnnPKPH90i+wKmGBMIlHVzaygCREBP4wSrS+/8cMkmAW6GeUmHE6EcRmE9CS2P/iBhuI
+        zS+gKHH1x2Ow3bwCdhL79p5mAbFZBFQl2o5/B+sVBRp6clsLVI2gxMmZT8BqOAVCJU7OboOa
+        Ly5x68l8JghbXmL72zlgz0kIzGOX2HNkBTvEDy4SN9fNZIWwhSVeHd8CFZeSeNnfBmVXS6w8
+        eYQNormDUWLL/gtQDcYS+5dOBtrAAbRBU2L9Ln2IsKLEzt9zGSEW80m8+9rDClIiIcAr0dEm
+        BFGiLHH5wV1oMEpKLG7vZJvAqDQLyTuzkLwwC8kLsxCWLWBkWcUollpQnJueWmxYYIIc3ZsY
+        welXy2IH455zPocYBTgYlXh4ZwQpxAmxJpYVV+YeYpTgYFYS4T05QzZOiDclsbIqtSg/vqg0
+        J7X4EKMpMLQnMkuJJucDc0NeSbyhqZGxsbGFiaGZqaGhkjjvdBegOQLpiSWp2ampBalFMH1M
+        HJxSDYxh1od60lmedydffcCTPt/2VvWZ6n1HhdQsFWJX+7f0H5udrPHCf3G47+Tly65t4r3+
+        023/pJ+FPjFMiftYpGYxCq940lAj+cdPOuFWv6ODOVPI2omWR/mKngqGlT8/Fvz8/fWAu5Pn
+        1D1eJbTwkdv9mO1PeJKqdugXxR/47twdJFlvfPzCq6dKLMUZiYZazEXFiQBxR+8H1QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7bCSvO4hJ8U4g2Uf+Cy+n/vJZDHvs6zF
+        /CvXWC3ONr1ht1hx9yOrxeVdc9gsPvceYbT4vOExo8XtxhVsFk8e9rE5cHnMbrjI4rFz1l12
+        j8V7XjJ53Lm2h81j47sdTB59W1YxenQcr/T4vEkugCOKyyYlNSezLLVI3y6BK2Nm81Gmgo1a
+        FbcutjM1MP5U7GLk5JAQMJHYsOoXUxcjF4eQwG5Giaff1rJDJCQlpl08ytzFyAFkC0scPlwM
+        UfOWUeL93F5WkBphgTCJhUf62EESIgL/GCWab25hA3GYBfqBqp71M0K0rGCUuPHvM9hYNgEt
+        if0vbrCB2PwCihJXfzxmBLF5Bewk9u09zQJiswioSrQd/84MYosCrdi55DETRI2gxMmZT8Bq
+        OAVCJU7ObgOrYRZQl/gz7xKULS5x68l8JghbXmL72znMExiFZyFpn4WkZRaSlllIWhYwsqxi
+        lEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiORS2tHYwnTsQfYhTgYFTi4Z0RpBAnxJpY
+        VlyZe4hRgoNZSYT35AzZOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK88vnHIoUE0hNLUrNTUwtS
+        i2CyTBycUg2MvFp17jpHRRlqPsxP2HLN+anmy1zJ6d+3bPnvyrvnmmy/cu5jg9X7DQ7qvNj1
+        IS3t0O7b3OW1URVb9Z592sB2as1lqfSbE9i7Cu/Yr1W7OTlN2ZW9bOnr3ivXBRrbnj82dndf
+        yWm3Y9pTnuiaGIn4f3xtujtnL1Crd76lcnoRu/Sriw+uBMtPU2Ipzkg01GIuKk4EAO0SppXB
+        AgAA
+X-CMS-MailID: 20200117051442epcas1p2bbaf74e1f4d89be0015356be1d387f78
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200116231233epcas1p363ab7e3ad2966d0ae7bac11e33aa6b83
+References: <CGME20200116231233epcas1p363ab7e3ad2966d0ae7bac11e33aa6b83@epcas1p3.samsung.com>
+        <20200116151219.v2.1.I146403d05b9ec82f48b807efd416a57f545b447a@changeid>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/20 11:02 pm, Tim.Bird@sony.com wrote:
+On 1/17/20 8:12 AM, Matthias Kaehlcke wrote:
+> Now that devfreq supports limiting the frequency range of a device
+> through PM QoS make use of it instead of disabling OPPs that should
+> not be used.
 > 
-> Since the code no longer uses __builtin_strlen(), this comment should
-> change also, to say something like "and string length function.
+> The switch from disabling OPPs to PM QoS introduces a subtle behavioral
+> change in case of conflicting requests (min > max): PM QoS gives
+> precedence to the MIN_FREQUENCY request, while higher OPPs disabled
+> with dev_pm_opp_disable() would override MIN_FREQUENCY.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> 
+> Changes in v2:
+> - added documentation for 'req_max_freq'
+> - fixed jumps in of_devfreq_cooling_register_power() unwind
+> - added comment about behavioral change to the commit message
+> 
+>  drivers/thermal/devfreq_cooling.c | 70 ++++++++++---------------------
+>  1 file changed, 23 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_cooling.c
+> index ef59256887ff63..cbbaf5bc425d1a 100644
+> --- a/drivers/thermal/devfreq_cooling.c
+> +++ b/drivers/thermal/devfreq_cooling.c
+> @@ -24,11 +24,13 @@
+>  #include <linux/idr.h>
+>  #include <linux/slab.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/pm_qos.h>
+>  #include <linux/thermal.h>
+>  
+>  #include <trace/events/thermal.h>
+>  
+> -#define SCALE_ERROR_MITIGATION 100
+> +#define HZ_PER_KHZ		1000
+> +#define SCALE_ERROR_MITIGATION	100
+>  
+>  static DEFINE_IDA(devfreq_ida);
+>  
+> @@ -53,6 +55,8 @@ static DEFINE_IDA(devfreq_ida);
+>   *		'utilization' (which is	'busy_time / 'total_time').
+>   *		The 'res_util' range is from 100 to (power_table[state] * 100)
+>   *		for the corresponding 'state'.
+> + * @req_max_freq:	PM QoS request for limiting the maximum frequency
+> + *			of the devfreq device.
+>   */
+>  struct devfreq_cooling_device {
+>  	int id;
+> @@ -65,49 +69,9 @@ struct devfreq_cooling_device {
+>  	struct devfreq_cooling_power *power_ops;
+>  	u32 res_util;
+>  	int capped_state;
+> +	struct dev_pm_qos_request req_max_freq;
+>  };
+>  
+> -/**
+> - * partition_enable_opps() - disable all opps above a given state
+> - * @dfc:	Pointer to devfreq we are operating on
+> - * @cdev_state:	cooling device state we're setting
+> - *
+> - * Go through the OPPs of the device, enabling all OPPs until
+> - * @cdev_state and disabling those frequencies above it.
+> - */
+> -static int partition_enable_opps(struct devfreq_cooling_device *dfc,
+> -				 unsigned long cdev_state)
+> -{
+> -	int i;
+> -	struct device *dev = dfc->devfreq->dev.parent;
+> -
+> -	for (i = 0; i < dfc->freq_table_size; i++) {
+> -		struct dev_pm_opp *opp;
+> -		int ret = 0;
+> -		unsigned int freq = dfc->freq_table[i];
+> -		bool want_enable = i >= cdev_state ? true : false;
+> -
+> -		opp = dev_pm_opp_find_freq_exact(dev, freq, !want_enable);
+> -
+> -		if (PTR_ERR(opp) == -ERANGE)
+> -			continue;
+> -		else if (IS_ERR(opp))
+> -			return PTR_ERR(opp);
+> -
+> -		dev_pm_opp_put(opp);
+> -
+> -		if (want_enable)
+> -			ret = dev_pm_opp_enable(dev, freq);
+> -		else
+> -			ret = dev_pm_opp_disable(dev, freq);
+> -
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int devfreq_cooling_get_max_state(struct thermal_cooling_device *cdev,
+>  					 unsigned long *state)
+>  {
+> @@ -134,7 +98,7 @@ static int devfreq_cooling_set_cur_state(struct thermal_cooling_device *cdev,
+>  	struct devfreq_cooling_device *dfc = cdev->devdata;
+>  	struct devfreq *df = dfc->devfreq;
+>  	struct device *dev = df->dev.parent;
+> -	int ret;
+> +	unsigned long freq;
+>  
+>  	if (state == dfc->cooling_state)
+>  		return 0;
+> @@ -144,9 +108,10 @@ static int devfreq_cooling_set_cur_state(struct thermal_cooling_device *cdev,
+>  	if (state >= dfc->freq_table_size)
+>  		return -EINVAL;
+>  
+> -	ret = partition_enable_opps(dfc, state);
+> -	if (ret)
+> -		return ret;
+> +	freq = dfc->freq_table[state];
+> +
+> +	dev_pm_qos_update_request(&dfc->req_max_freq,
+> +				  DIV_ROUND_UP(freq, HZ_PER_KHZ));
+>  
+>  	dfc->cooling_state = state;
+>  
+> @@ -529,9 +494,15 @@ of_devfreq_cooling_register_power(struct device_node *np, struct devfreq *df,
+>  	if (err)
+>  		goto free_dfc;
+>  
+> -	err = ida_simple_get(&devfreq_ida, 0, 0, GFP_KERNEL);
+> +	err = dev_pm_qos_add_request(df->dev.parent, &dfc->req_max_freq,
+> +				     DEV_PM_QOS_MAX_FREQUENCY,
+> +				     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
+>  	if (err < 0)
+>  		goto free_tables;
+> +
+> +	err = ida_simple_get(&devfreq_ida, 0, 0, GFP_KERNEL);
+> +	if (err < 0)
+> +		goto remove_qos_req;
+>  	dfc->id = err;
+>  
+>  	snprintf(dev_name, sizeof(dev_name), "thermal-devfreq-%d", dfc->id);
+> @@ -552,6 +523,10 @@ of_devfreq_cooling_register_power(struct device_node *np, struct devfreq *df,
+>  
+>  release_ida:
+>  	ida_simple_remove(&devfreq_ida, dfc->id);
+> +
+> +remove_qos_req:
+> +	dev_pm_qos_remove_request(&dfc->req_max_freq);
+> +
+>  free_tables:
+>  	kfree(dfc->power_table);
+>  	kfree(dfc->freq_table);
+> @@ -600,6 +575,7 @@ void devfreq_cooling_unregister(struct thermal_cooling_device *cdev)
+>  
+>  	thermal_cooling_device_unregister(dfc->cdev);
+>  	ida_simple_remove(&devfreq_ida, dfc->id);
+> +	dev_pm_qos_remove_request(&dfc->req_max_freq);
+>  	kfree(dfc->power_table);
+>  	kfree(dfc->freq_table);
+>  
 > 
 
-Oops, I had made the change (to drop the __builtin_strlen mention since
-the length is just computed inline now) and somehow dropped it in some
-copy-paste confusion.  Looks like a patchwork-bot applied my patch, so
-should I send an updated patch or just a comment fix follow-up?
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks,
-Siddhesh
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
