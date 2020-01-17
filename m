@@ -2,168 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D029140721
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BEB140738
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:00:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbgAQJ6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:58:50 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53788 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726688AbgAQJ6r (ORCPT
+        id S1729098AbgAQKAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:00:01 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37219 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgAQJ75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:58:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579255125;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Uf1keSD3DOZ8jh4mCSz+0fhQb4Z+vPKdygjWjY+hlbM=;
-        b=NZuqAMQHdmeU601OrxePBrd966BxNqTEgfw5R1mDKKlzoMCLtfBAMfdQJQcMkHc6ssNurk
-        XAJCledikqC8sM82Bx1gZE+3zf4TRc2v4ZDsm464PMe4QEMK6Jyqh+45fE4RNTpiLpNyZq
-        yxTOyKuAoXXYsyF5qUexLdNL+f1K0fM=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-127-hLzf4peXPYKM3erIJvsGnA-1; Fri, 17 Jan 2020 04:58:44 -0500
-X-MC-Unique: hLzf4peXPYKM3erIJvsGnA-1
-Received: by mail-lj1-f199.google.com with SMTP id d14so6029943ljg.17
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:58:44 -0800 (PST)
+        Fri, 17 Jan 2020 04:59:57 -0500
+Received: by mail-qk1-f193.google.com with SMTP id 21so22150672qky.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:59:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jC/gslMBQjozVdraFcTbF5iK/wO0zoAIUa/gx2s21AI=;
+        b=dFb8Zxd4b6QhukcYJeb/+Y1gu5WKTtG8UOyyGTYW62kJkCoWulv38wWhEZdFdDofO0
+         8aXS+I429dwmMs9njLgs55rvt5XlKGAEKvpQ2Fz74/9Loq0byAqUCJ12PQJIorTIjPNM
+         SsBenxpwGvX1aipe0a5zMQnuBerkXI1m/qtErOzKPebtD8zEjOGMSS1Qkh6ZTSxhkIzk
+         Of/K4apTIvBkdWab834TrlBi8Kshg8CTVS0J+5mBW5wncAIb7l2/ucKjrwve657r/ZtB
+         +JYMMYrvPJ7I5x+hT23ADe9chNut8lArojNJKe3RS2xJrKJ7ZrETtU/+Q83k2rlDmhLw
+         sbrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=Uf1keSD3DOZ8jh4mCSz+0fhQb4Z+vPKdygjWjY+hlbM=;
-        b=DLNmldEN9VsGCLbWcu4yjuM0I4GaSPuP8/fn/is+XISNqd+rEYQJhgAQwpzyE+4wHN
-         kuwqZ9TSSSEGz+usQDKJUrWYEd3XIfU+rF9bU/yfRA54F5TKoNerTRAtclAqM9Q7C8oN
-         A7mzJtYtoMSAmXBBROr6OxnUs7qIZb158h1sS0w7L8SIJ3pEUfmrfOqLC5wkizES3yp2
-         U/odV3ZSbABiLQh+8T1m0/ECUe+7aFgC8zSkF4kCa0BtHoUE/UmUvB8PYCZDSM1Y1NAJ
-         Sv6qhllvzazG69HKPV+4rlY1yYVUIV/ybsME8BB/cIwNAfjE+uP6UuvCE49XO7I97eC9
-         /5hg==
-X-Gm-Message-State: APjAAAX7312UB80mFLjNd2KF3whlZaNBjynZtgEsqPctKUgl9k18TJog
-        gm9ILs+lS0yzCiEcDjpI3LBWikKGuQd5kWO58adpKfX5+59v/6y0zPNFfjPLD7d6OqATaiEkCwH
-        A8LclvIXz/YjNtDCD9r0AIHDG
-X-Received: by 2002:ac2:4849:: with SMTP id 9mr4975735lfy.11.1579255123124;
-        Fri, 17 Jan 2020 01:58:43 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzx3OTlP+sKcKqC8lWpUkR48Xy7KHR8XB1tnfvUp3Gadttkq8Vpe8cxhtUqaWxJHiUphB7sig==
-X-Received: by 2002:ac2:4849:: with SMTP id 9mr4975702lfy.11.1579255122857;
-        Fri, 17 Jan 2020 01:58:42 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id r21sm12164399ljn.64.2020.01.17.01.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 01:58:42 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 341A91804D6; Fri, 17 Jan 2020 10:58:41 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        clang-built-linux@googlegroups.com, brouer@redhat.com
-Subject: Re: [PATCH bpf-next v3 00/11] tools: Use consistent libbpf include paths everywhere
-In-Reply-To: <20200117095721.0030f414@carbon>
-References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <20200117041431.h7vvc32fungenyhg@ast-mbp.dhcp.thefacebook.com> <20200117095721.0030f414@carbon>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Fri, 17 Jan 2020 10:58:41 +0100
-Message-ID: <87lfq6qu9a.fsf@toke.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jC/gslMBQjozVdraFcTbF5iK/wO0zoAIUa/gx2s21AI=;
+        b=RUEJU1mOjrX8P3C4mDU3+PQiUSBmsY0G9saXX8IiNBnFazBkPbR4caSGxl1a/fjs0P
+         kYRtL6lYtABO9FhHQyXJHz7rVyc+twRPzpXq+2IjsSJ2yYqFO2Yz7yYvDhZ8yJzMyDg9
+         qW19lhj3LT+AlQ+wgG1J3BbHp715yThD5XUfIRJzdH6cPVx7YOD2mPySL70CEcTm6rWd
+         gmFn+tYV90SUoCJUXn29ey3ZT0ZyO/M596xk8uJe0OLWizJpCE4GI2aeOyW9p/C2VNeh
+         j8h4HwzfSRqkNa75k4MDzAQkfR3+VZpBZdDsIuwss+5/SP6y0Ro4Vp7zwJpbJKSX10/1
+         Xt/A==
+X-Gm-Message-State: APjAAAW08c+5hHU9lEq76WSDnY3j9BIlpz93KNSz2CK0yfGC5r66IHHf
+        XMN8VysyNQIOjIQVfFNHgJ/zjDgBgPcWpD+8dVl+0A==
+X-Google-Smtp-Source: APXvYqz9Y/DwCHrtW3J0WM4wXtrXil5LTa8i28aydOOQb5lrmQrvTTR0sGVZSbXd6saTas+zx7z5338Z0M8xp1dnfT0=
+X-Received: by 2002:a05:620a:1136:: with SMTP id p22mr37899734qkk.8.1579255195666;
+ Fri, 17 Jan 2020 01:59:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20200115182816.33892-1-trishalfonso@google.com>
+ <dce24e66d89940c8998ccc2916e57877ccc9f6ae.camel@sipsolutions.net>
+ <CAKFsvU+sUdGC9TXK6vkg5ZM9=f7ePe7+rh29DO+kHDzFXacx2w@mail.gmail.com>
+ <4f382794416c023b6711ed2ca645abe4fb17d6da.camel@sipsolutions.net>
+ <b55720804de8e56febf48c7c3c11b578d06a8c9f.camel@sipsolutions.net>
+ <CACT4Y+brqD-o-u3Vt=C-PBiS2Wz+wXN3Q3RqBhf3XyRYaRoZJw@mail.gmail.com>
+ <2092169e6dd1f8d15f1db4b3787cc9fe596097b7.camel@sipsolutions.net> <CACT4Y+b6C+y9sDfMYPDy-nh=WTt5+u2kLcWx2LQmHc1A5L7y0A@mail.gmail.com>
+In-Reply-To: <CACT4Y+b6C+y9sDfMYPDy-nh=WTt5+u2kLcWx2LQmHc1A5L7y0A@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 17 Jan 2020 10:59:44 +0100
+Message-ID: <CACT4Y+atPME1RYvusmr2EQpv_mNkKJ2_LjMeANv0HxF=+Uu5hw@mail.gmail.com>
+Subject: Re: [RFC PATCH] UML: add support for KASAN under x86_64
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Patricia Alfonso <trishalfonso@google.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jeff Dike <jdike@addtoit.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-um@lists.infradead.org, David Gow <davidgow@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        anton.ivanov@cambridgegreys.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jesper Dangaard Brouer <brouer@redhat.com> writes:
-
-> On Thu, 16 Jan 2020 20:14:32 -0800
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+On Thu, Jan 16, 2020 at 10:39 PM Patricia Alfonso
+<trishalfonso@google.com> wrote:
 >
->> On Thu, Jan 16, 2020 at 02:22:11PM +0100, Toke H=C3=B8iland-J=C3=B8rgens=
-en wrote:
->> > The recent commit 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs=
-.h are
->> > taken from selftests dir") broke compilation against libbpf if it is i=
-nstalled
->> > on the system, and $INCLUDEDIR/bpf is not in the include path.
->> >=20
->> > Since having the bpf/ subdir of $INCLUDEDIR in the include path has ne=
-ver been a
->> > requirement for building against libbpf before, this needs to be fixed=
-. One
->> > option is to just revert the offending commit and figure out a differe=
-nt way to
->> > achieve what it aims for.=20=20=20
->>=20
->> The offending commit has been in the tree for a week. So I applied Andri=
-i's
->> revert of that change. It reintroduced the build dependency issue, but w=
-e lived
->> with it for long time, so we can take time to fix it cleanly.
->> I suggest to focus on that build dependency first.
->>=20
->> > However, this series takes a different approach:
->> > Changing all in-tree users of libbpf to consistently use a bpf/ prefix=
- in
->> > #include directives for header files from libbpf.=20=20
->>=20
->> I'm not sure it's a good idea. It feels nice, but think of a message we'=
-re
->> sending to everyone. We will get spamed with question: does bpf community
->> require all libbpf users to use bpf/ prefix ? What should be our answer?
+> On Thu, Jan 16, 2020 at 1:23 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Thu, Jan 16, 2020 at 10:20 AM Johannes Berg
+> > <johannes@sipsolutions.net> wrote:
+> > >
+> > > On Thu, 2020-01-16 at 10:18 +0100, Dmitry Vyukov wrote:
+> > > >
+> > > > Looking at this problem and at the number of KASAN_SANITIZE := n in
+> > > > Makefiles (some of which are pretty sad, e.g. ignoring string.c,
+> > > > kstrtox.c, vsprintf.c -- that's where the bugs are!), I think we
+> > > > initialize KASAN too late. I think we need to do roughly what we do in
+> > > > user-space asan (because it is user-space asan!). Constructors run
+> > > > before main and it's really good, we need to initialize KASAN from
+> > > > these constructors. Or if that's not enough in all cases, also add own
+> > > > constructor/.preinit array entry to initialize as early as possible.
+> > >
 >
-> The answer should be: Yes. When libbpf install the header files the are
-> installed under bpf/ prefix.  It is very confusing that samples and
-> selftests can include libbpf.h without this prefix. Even worse
-> including "bpf.h" pickup the libbpf version bpf/bpf.h, which have
-> caused confusion.  The only reason for the direct "libbpf.h" include is
-> historical, as there used-to-be a local file for that.
-
-Agreed. Also, we are already telling people what the right include path
-is in at least two ways - and currently they are incompatible:
-
-- The pkg-config file included with libbpf has a notion of include path;
-  which does *not* include the bpf/ subdirectory.
-
-- The skeleton generator puts an '#include <libbpf.h>' line into the
-  generated files.
-
-With this series we'll at least be consistent.
-
->> Require or recommend? If require.. what for? It works as-is. If recommen=
-d then
->> why suddenly we're changing all files in selftests and samples?
->> There is no good answer here. I think we should leave the things as-is.
+> I am not too happy with the number of KASAN_SANITIZE := n's either.
+> This sounds like a good idea. Let me look into it; I am not familiar
+> with constructors or .preint array.
 >
-> I strongly believe we should correct this.  It doesn't make sense that
-> someone copying out a sample or selftests, into a git-submodule libbpf
-> (or distro installed libbpf-devel) have to understand that they have to
-> update the include path for all the libbpf header files.
+> > > We even control the linker in this case, so we can put something into
+> > > the .preinit array *first*.
+> >
+> > Even better! If we can reliably put something before constructors, we
+> > don't even need lazy init in constructors.
+> >
+> > > > All we need to do is to call mmap syscall, there is really no
+> > > > dependencies on anything kernel-related.
+> > >
+> > > OK. I wasn't really familiar with those details.
+> > >
+> > > > This should resolve the problem with constructors (after they
+> > > > initialize KASAN, they can proceed to do anything they need) and it
+> > > > should get rid of most KASAN_SANITIZE (in particular, all of
+> > > > lib/Makefile and kernel/Makefile) and should fix stack instrumentation
+> > > > (in case it does not work now). The only tiny bit we should not
+> > > > instrument is the path from constructor up to mmap call.
+>
+> This sounds like a great solution. I am getting this KASAN report:
+> "BUG: KASAN: stack-out-of-bounds in syscall_stub_data+0x2a5/0x2c7",
+> which is probably because of this stack instrumentation problem you
+> point out.
 
-Yeah, I think being clear and explicit about what is the recommended way
-to include libbpf is strictly an improvement. And making it possible to
-move example programs seamlessly in and out of the kernel tree will only
-make things easier for people.
+[reposting to the list]
 
-I'll rebase and respin this series on top of the revert (and fix
-Andrii's comments).
+If that part of the code I mentioned is instrumented, manifestation
+would be different -- stack instrumentation will try to access shadow,
+shadow is not mapped yet, so it would crash on the shadow access.
 
--Toke
-
+What you are seeing looks like, well, a kernel bug where it does a bad
+stack access. Maybe it's KASAN actually _working_? :)
