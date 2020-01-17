@@ -2,134 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB36140CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:44:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8E8140CFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbgAQOoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:44:08 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30689 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727007AbgAQOoI (ORCPT
+        id S1728898AbgAQOsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:48:40 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:45233 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbgAQOsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:44:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579272247;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=1T/P/iJZVUEHbMfXCqgPiMB52YnHuue3gwfJvaEMx4Q=;
-        b=GSX9uaFoM5txYi+1SO7lrV+OuusBo1FVwEPMtcDqVPeiGmeeR8I5whXElrSdTEHOElworx
-        a9uooVUVx8FR+HcgF07hBYC7wlOcizDVJLZR2Z5tmdhF5A/eF+9xjXtykYxCuh0Til/eA/
-        UucJGI56lGgU4BbUpzXFqWJoLtoAMLM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-48-C3SAJVxIOOSI0YvL-C2sFA-1; Fri, 17 Jan 2020 09:44:03 -0500
-X-MC-Unique: C3SAJVxIOOSI0YvL-C2sFA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 746C9100550E;
-        Fri, 17 Jan 2020 14:44:01 +0000 (UTC)
-Received: from [10.36.117.199] (ovpn-117-199.ams2.redhat.com [10.36.117.199])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E5D25DA32;
-        Fri, 17 Jan 2020 14:43:59 +0000 (UTC)
-Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
- printk()
-To:     Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
-        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <d7068679-e28a-98a9-f5b8-49ea47f7c092@redhat.com>
- <6BED7E12-CC3B-4AED-ACC8-F3533D3F3C70@lca.pw>
- <20200117144209.GA19428@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat GmbH
-Message-ID: <0e9b9357-1982-edd3-dbfe-5350c8d6d0eb@redhat.com>
-Date:   Fri, 17 Jan 2020 15:43:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Fri, 17 Jan 2020 09:48:40 -0500
+Received: by mail-oi1-f169.google.com with SMTP id n16so22370939oie.12;
+        Fri, 17 Jan 2020 06:48:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dyE4NzvdMsyKga26H8tQKOSJjEOPcWYAXtxjXIGSauM=;
+        b=uRDdYi242KUktL5GwKg/yethULGwGsgG72YBU8OfsSl6uZii0ON+vs5BSfkqTtK8up
+         Ut088jFxshpuWlJvJ4D4qBOPJk2QnfRB3QBuN+269Lzyc7pcif41z24xyGK95BsqWtXm
+         yutrVRymJSxhLMeUb+sPnnsTIJ8YF9pimsYYMGYx5Zb3JPRGeqjrmvhVhVw/1drkCTvQ
+         1zn6qmRMYbTUiBF5Z19HTi0nuMG4dkNjVUni7D7TWg79vteUQHypyTjhTPgazwGcXKdW
+         C/Q5Neb8JIGZmIWWe8HeHtnNlqiAy08MYAuuSwAaqu5c6DDKim3fM3UKK6i+klSljeQI
+         kQWg==
+X-Gm-Message-State: APjAAAXxi4ytemILCi2Pi5vi6qApJaPcy4s6rZQn4twUFKMeR9xwCDwY
+        XMBR6lmGvI4PyZlIU+xt1lCqEow=
+X-Google-Smtp-Source: APXvYqyABfMThOmRvFNhbdQGFqiqtT+906MusSLrADtaBvi+FGDgJmdep6F7xH8DXrsB8rHtfy/eFA==
+X-Received: by 2002:a54:4117:: with SMTP id l23mr3541405oic.140.1579272518846;
+        Fri, 17 Jan 2020 06:48:38 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f4sm7824851oij.25.2020.01.17.06.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 06:48:38 -0800 (PST)
+Received: (nullmailer pid 13001 invoked by uid 1000);
+        Fri, 17 Jan 2020 14:48:37 -0000
+Date:   Fri, 17 Jan 2020 08:48:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Amelie Delaunay <amelie.delaunay@st.com>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCHv2 1/2] dt-bindings: usb: dwc2: add support for STM32MP15
+ SoCs USB OTG HS and FS
+Message-ID: <20200117144837.GA27455@bogus>
+References: <20200116144524.16070-1-amelie.delaunay@st.com>
+ <20200116144524.16070-2-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20200117144209.GA19428@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116144524.16070-2-amelie.delaunay@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.01.20 15:42, Michal Hocko wrote:
-> On Fri 17-01-20 07:40:15, Qian Cai wrote:
->>
->>
->>> On Jan 17, 2020, at 3:51 AM, David Hildenbrand <david@redhat.com> wrote:
->>>
->>> -> you are accessing the pageblock without the zone lock. It could
->>> change to "isolate" again in the meantime if I am not wrong!
->>
->> Since we are just dumping the state for debugging, it should be fine
->> to accept a bit inaccuracy here due to racing. I could put a bit
->> comments over there.
+On Thu, Jan 16, 2020 at 03:45:23PM +0100, Amelie Delaunay wrote:
+> Add the specific compatible string for the DWC2 IP found in the STM32MP15
+> SoCs.
+> STM32MP15 SoCs uses sensing comparators to detect Vbus valid levels and
+> ID pin state. usb33d-supply described the regulator supplying Vbus and ID
+> sensing comparators.
 > 
-> Sorry, I could have been more specific. The race I was talking about is
-> not about accuracy. The current code is racy in that sense already
-> because you are looking at a struct page you do not own so its state can
-> change at any time. Please note that the zone->lock doesn't really
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>  Documentation/devicetree/bindings/usb/dwc2.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/dwc2.yaml b/Documentation/devicetree/bindings/usb/dwc2.yaml
+> index 71cf7ba32237..0b86250b97a9 100644
+> --- a/Documentation/devicetree/bindings/usb/dwc2.yaml
+> +++ b/Documentation/devicetree/bindings/usb/dwc2.yaml
+> @@ -58,6 +58,8 @@ properties:
+>        - const: st,stm32f4x9-fsotg
+>        - const: st,stm32f4x9-hsotg
+>        - const: st,stm32f7-hsotg
+> +      - const: st,stm32mp15-fsotg
+> +      - const: st,stm32mp15-hsotg
+>        - const: samsung,s3c6400-hsotg
+>  
+>    reg:
+> @@ -103,6 +105,10 @@ properties:
+>    vusb_a-supply:
+>      description: phandle to voltage regulator of analog section.
+>  
+> +  vusb33d_supply:
 
-The pageblock state cannot change with the zone->lock. That's what I was
-referring to here. (this specific check)
+Not a valid regulator property.
 
-> prevent from the state transition because that applies only to free
-> pages and those are obviously OK. So this is not really different.
+> +    description: reference to the external VBUS and ID sensing comparators, in
+> +      order to perform OTG operation, used on STM32MP15 SoCs.
 
+Are they external or part of the SoC? When we have Vbus sense and ID 
+GPIOs, those go in the connector node, so this probably should too if 
+these are board components.
 
--- 
-Thanks,
-
-David / dhildenb
-
+Rob
