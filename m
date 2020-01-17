@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4611413D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 785591413D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:01:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbgAQWA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:00:58 -0500
+        id S1729883AbgAQWA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:00:57 -0500
 Received: from mga07.intel.com ([134.134.136.100]:63143 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729361AbgAQWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729080AbgAQWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 17:00:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 13:54:08 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 13:54:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="263805562"
+   d="scan'208";a="424625161"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jan 2020 13:54:07 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 17 Jan 2020 13:54:06 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1isZZ9-000Adc-62; Sat, 18 Jan 2020 05:54:07 +0800
-Date:   Sat, 18 Jan 2020 05:51:16 +0800
+        id 1isZZ8-000AYc-7S; Sat, 18 Jan 2020 05:54:06 +0800
+Date:   Sat, 18 Jan 2020 05:51:17 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     "x86-ml" <x86@kernel.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:locking/core] BUILD SUCCESS
- f5bfdc8e3947a7ae489cf8ae9cfd6b3fb357b952
-Message-ID: <5e222c54.iNrgfK1V5ma05CJg%lkp@intel.com>
+Subject: [tip:x86/hyperv] BUILD SUCCESS
+ 538f127cd3bcf76071139f4bfe9cc3b2a46f3b3d
+Message-ID: <5e222c55.C3wbGmqmdUOpll38%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -39,10 +39,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  locking/core
-branch HEAD: f5bfdc8e3947a7ae489cf8ae9cfd6b3fb357b952  locking/osq: Use optimized spinning loop for arm64
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/hyperv
+branch HEAD: 538f127cd3bcf76071139f4bfe9cc3b2a46f3b3d  x86/hyper-v: Add "polling" bit to hv_synic_sint
 
-elapsed time: 485m
+elapsed time: 480m
 
 configs tested: 169
 configs skipped: 0
@@ -50,12 +50,6 @@ configs skipped: 0
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arc                              allyesconfig
-microblaze                    nommu_defconfig
-powerpc                       ppc64_defconfig
-microblaze                      mmu_defconfig
-arc                                 defconfig
-powerpc                           allnoconfig
 csky                 randconfig-a001-20200118
 openrisc             randconfig-a001-20200118
 s390                 randconfig-a001-20200118
@@ -107,11 +101,6 @@ sh                                allnoconfig
 sh                          rsk7269_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                            titan_defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                               rhel-7.6
 x86_64               randconfig-c001-20200118
 x86_64               randconfig-c002-20200118
 x86_64               randconfig-c003-20200118
@@ -166,22 +155,30 @@ riscv                            allyesconfig
 riscv                               defconfig
 riscv                    nommu_virt_defconfig
 riscv                          rv32_defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
 powerpc                             defconfig
+powerpc                       ppc64_defconfig
 powerpc                          rhel-kconfig
 csky                 randconfig-a001-20200117
 openrisc             randconfig-a001-20200117
 s390                 randconfig-a001-20200117
 sh                   randconfig-a001-20200117
 xtensa               randconfig-a001-20200117
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                                  defconfig
 alpha                randconfig-a001-20200117
 m68k                 randconfig-a001-20200117
 mips                 randconfig-a001-20200117
 nds32                randconfig-a001-20200117
 parisc               randconfig-a001-20200117
 riscv                randconfig-a001-20200117
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                               rhel-7.6
 x86_64               randconfig-g001-20200118
 x86_64               randconfig-g002-20200118
 x86_64               randconfig-g003-20200118
@@ -201,6 +198,9 @@ x86_64               randconfig-b003-20200118
 i386                 randconfig-b001-20200118
 i386                 randconfig-b002-20200118
 i386                 randconfig-b003-20200118
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
 arm                              allmodconfig
 arm                               allnoconfig
 arm                              allyesconfig
