@@ -2,106 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F91E1403DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 07:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 097841403F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 07:27:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgAQGRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 01:17:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:56638 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgAQGRC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 01:17:02 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H68VoP186719;
-        Fri, 17 Jan 2020 06:16:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=4TOKhipqmrCsgvCLGU5jhoCV7/t8LwEnDe/T9FY/bdY=;
- b=ciYbDhSNXaZI4kmd62VzISKNQqEwMNgub4uKinaEjmjtRlDpo9+DIIw3ookHr+Z/ZFDT
- bJh/+MdDIQ8dQ/BwKZN3Sc95pAlELceNMdmlmJsXkuapi9UyL9wDzSowuBcDBSk+AZpw
- JG0XiRBy9vo+oNriDRkeAotnRGLknYa8tHs1GsR6tiLSTg8rqyfKzt9r7LTZUEFTc3Q/
- eOzSP+DegprTi7M/UgRvu6zm+zrJ26XYM0K7Ts5rikFxt/A1P1INIOhZAYwwJy2Q2Liy
- /VmoOi2NBUf9KnbhUjac6iD8YZQyMQWwX8emFG4dAWPPafsyKhW2HtBUr5euAKvua2yr /Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2xf74spsg2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 06:16:52 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H69HnS076237;
-        Fri, 17 Jan 2020 06:16:51 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2xk2309qtt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 06:16:51 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00H6Gn32031289;
-        Fri, 17 Jan 2020 06:16:49 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 16 Jan 2020 22:16:49 -0800
-Date:   Thu, 16 Jan 2020 22:16:47 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     linux-xfs@vger.kernel.org, hch@lst.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] xfs: remove unused variable 'done'
-Message-ID: <20200117061647.GR8247@magnolia>
-References: <20200117015011.50412-1-yuehaibing@huawei.com>
+        id S1729112AbgAQG1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 01:27:00 -0500
+Received: from mga17.intel.com ([192.55.52.151]:14600 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbgAQG0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 01:26:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 22:26:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,329,1574150400"; 
+   d="scan'208";a="424342466"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Jan 2020 22:26:29 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Derek Yerger <derek@djy.llc>,
+        kernel@najdan.com, Thomas Lambertz <mail@thomaslambertz.de>,
+        Rik van Riel <riel@surriel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 0/4] KVM: x86: TIF_NEED_FPU_LOAD bug fixes
+Date:   Thu, 16 Jan 2020 22:26:24 -0800
+Message-Id: <20200117062628.6233-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117015011.50412-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001170048
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001170048
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 09:50:11AM +0800, YueHaibing wrote:
-> fs/xfs/xfs_inode.c: In function 'xfs_itruncate_extents_flags':
-> fs/xfs/xfs_inode.c:1523:8: warning: unused variable 'done' [-Wunused-variable]
-> 
-> commit 4bbb04abb4ee ("xfs: truncate should remove
-> all blocks, not just to the end of the page cache")
-> left behind this, so remove it.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Three bug fixes related to deferring FPU loading to return to userspace,
+or in this case, deferring to entering a KVM guest.  And a cleanup patch I
+couldn't resist throwing on top.
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+The crux of the matter is that TIF_FPU_NEED_LOAD can be set any time
+control is transferred out of KVM, e.g. via IRQ->softirq, not just when
+KVM is preempted.  The previous attempt to fix the underlying bug(s)
+by handling TIF_FPU_NEED_LOAD during kvm_sched_in() only made the bug(s)
+harder to hit, i.e. it resolved the preemption case but only shrunk the
+window where a softirq could corrupt state.
 
---D
+Paolo, patch 01 will conflict with commit 95145c25a78c ("KVM: x86: Add a
+WARN on TIF_NEED_FPU_LOAD in kvm_load_guest_fpu()") that is sitting in
+kvm/queue.  The kvm/queue commit should simply be dropped.
 
-> ---
->  fs/xfs/xfs_inode.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 1309f25..1979a00 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1520,7 +1520,6 @@ xfs_itruncate_extents_flags(
->  	xfs_fileoff_t		first_unmap_block;
->  	xfs_filblks_t		unmap_len;
->  	int			error = 0;
-> -	int			done = 0;
->  
->  	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
->  	ASSERT(!atomic_read(&VFS_I(ip)->i_count) ||
-> -- 
-> 2.7.4
-> 
-> 
+Patch 01 fixes the original underlying bug, which is that KVM doesn't
+handle TIF_FPU_NEED_LOAD when swapping between guest and userspace FPU
+state.
+
+Patch 02 fixes (unconfirmed) issues similar to the reported bug where KVM
+doesn't ensure CPU FPU state is fresh when accessing it during emulation.
+This patch is smoke tested only (via kvm-unit-tests' emulator tests).
+
+Patch 03 reverts the preemption bug fix, which simultaneously restores the
+handling of TIF_FPU_NEED_LOAD in vcpu_enter_guest() to fix the reported
+bugs[1][2] and removes the now-unnecessary preemption workaround.
+
+Alternatively, the handling of TIF_NEED_FPU_LOAD in the kvm_sched_in()
+path could be left in place, i.e it doesn't cause immediate damage, but
+as stated before, restoring FPU state after KVM is preempted only makes
+it harder to find the actual bugs.  Case in point, I originally split
+the revert into two separate patches (so that removing the kvm_sched_in()
+call wouldn't be tagged for stable), but that only hid the underlying
+kvm_put_guest_fpu() bug until I fully reverted the commit.
+
+Patch 04 removes an unused emulator context param from several of the
+functions that are fixed in patch 02.  The param was left behind during
+a previous KVM FPU state rework.
+
+Tested via Thomas Lambertz's mprime reproducer[3], which detected issues
+with buggy KVMs on my system in under a minute.  Ran clean for ~30 minutes
+on each of the first two patches and several hours with all three patches
+applied.
+
+[1] https://lore.kernel.org/kvm/1e525b08-6204-3238-5d56-513f82f1d7fb@djy.llc
+[2] https://lore.kernel.org/kvm/bug-206215-28872@https.bugzilla.kernel.org%2F
+[3] https://lore.kernel.org/lkml/217248af-e980-9cb0-ff0d-9773413b9d38@thomaslambertz.de
+
+Sean Christopherson (4):
+  KVM: x86: Handle TIF_NEED_FPU_LOAD in kvm_{load,put}_guest_fpu()
+  KVM: x86: Ensure guest's FPU state is loaded when accessing for
+    emulation
+  KVM: x86: Revert "KVM: X86: Fix fpu state crash in kvm guest"
+  KVM: x86: Remove unused ctxt param from emulator's FPU accessors
+
+ arch/x86/kvm/emulate.c | 67 ++++++++++++++++++++++++++++++++----------
+ arch/x86/kvm/x86.c     | 36 +++++++++++++++++------
+ 2 files changed, 79 insertions(+), 24 deletions(-)
+
+-- 
+2.24.1
+
