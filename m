@@ -2,125 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A7B140079
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF89A14008E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387434AbgAQAFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:05:50 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38733 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgAQAFu (ORCPT
+        id S2388397AbgAQAH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:07:29 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43489 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388123AbgAQAHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:05:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x185so11043023pfc.5;
-        Thu, 16 Jan 2020 16:05:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Svj12NA2gjd7b5eVHBvjZxEC8Kxi+bvZ2Dn4z/YcgvQ=;
-        b=HuvuyLW5rO2BJqylPGsENctXKFexAiJ0MiShrCADJTKUgy8oAGlv1BubtJ83recXMC
-         iYHx9E7cDVB2FlsjqZxmvGW4BK+kszEi4GEYM0Q8iVZqjc8cr5vkkyrs4YTp8E8Z5cTt
-         HTzeW14JH6o3gg48+b8Unk/8F2eKfxr4dOgTCnK9Y6oXC0FKkvRYmnki/WmKepYMXDdi
-         q3pYblq7iWlARUi8MV2Dhxg8F7NVPLLtzOd8pMrmnWSntcwtuyW4mqk7JSDTcQL16bhU
-         yp9l6HiKHOHwb3QWADHQlWtnZ57DA3PS/B96zZzKU+Fg+W/4FHJ5uNnCm99Qdz/07sZU
-         LhBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Svj12NA2gjd7b5eVHBvjZxEC8Kxi+bvZ2Dn4z/YcgvQ=;
-        b=BOmGnseJc0PcNdM8zPf8Nqb7G0ZShnhyFotqCfKtxYVIln4SdkASlVodQV4wLE86ZG
-         gjocFAGuKRpsC6OoEO3g+xmQ5YjltcHJuUeNoyUl/6Mc09K1VnYKYhiT2W/S2WuDC74y
-         c2mdI3Pvj2nfcRHNCy+sEAEt7/8vGJtAumnStMRsr1E5gD5cozoMetnoPA6OALMPzeCq
-         79DgB2Oya5WVZ5W7eQzAnP6l6UkKdq+GgLUjHdV90ZIQKr4JrUJ12C04BMr24b4QO4k+
-         5IeIBdRIXA+D+70mkx9t3lPNpPSufRQ2dZag8Hlwib7V+m2BqjW8QW41CJ+nOynLf0ft
-         JUzA==
-X-Gm-Message-State: APjAAAWWxDMVHveYBWXRovF4QBHem5vaya14VMmmuXn/rj0mdBEkZd5i
-        +5ZiZh4p8S5ccGDM5bI3qcE=
-X-Google-Smtp-Source: APXvYqxnWM+5PTjFYZHVJII74OXyuAMnX3nooi+A0jkEQ1brbqp6fqgkH9vjtMEOJD2CUvyg8B7wBQ==
-X-Received: by 2002:a62:be12:: with SMTP id l18mr123364pff.226.1579219549714;
-        Thu, 16 Jan 2020 16:05:49 -0800 (PST)
-Received: from ?IPv6:2001:4898:d8:28:cb3:a670:16e:de26? ([2001:4898:80e8:f:8cbb:a670:16e:de26])
-        by smtp.gmail.com with ESMTPSA id o7sm28603861pfg.138.2020.01.16.16.05.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 16:05:49 -0800 (PST)
-Subject: Re: [PATCH v9 1/2] dt-bindings: edac: arm-dmc520.txt
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     James Morse <james.morse@arm.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sashal@kernel.org, hangl@microsoft.com,
-        Lei Wang <lewan@microsoft.com>, ruizhao@microsoft.com,
-        shji@microsoft.com, Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>, ray.jui@broadcom.com,
-        wangglei@gmail.com
-References: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
- <20200116233939.GI27148@zn.tnic>
-From:   Shiping Ji <shiping.linux@gmail.com>
-Message-ID: <adeadf1f-df85-8af1-ccbd-fc8ff2cb4d43@gmail.com>
-Date:   Thu, 16 Jan 2020 16:05:48 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20200116233939.GI27148@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 16 Jan 2020 19:07:24 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id A1EFB22076;
+        Thu, 16 Jan 2020 19:07:23 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 16 Jan 2020 19:07:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=iVwt3LIcBpxtFQ+R6FD04TuQoW5u6ub
+        4oIPG6WUenUY=; b=nIHuqEaQ/sdrRrnsOodMgfAs3fTxRyGjWwxoiqVpAMqh/Qt
+        kVmSJqwZU8bxBNnsMPqiJWa3s0SHfcPlBXlASOT6jfKblehz662os+gJu2EBMeaa
+        9JbzPVWSCEOyV7kFfSCx2jFlF7UAkrTFk75kwCmJGUqKByCuzo3lJi8J4IKijzOJ
+        c7k5D6XTfXPB9jkSddI5Y58MeMkV2TvDbMQLvwun1uQrmEyg1n1ERely/joAyYvY
+        /3+hP0wvNMi1ci8CRPAeyjIYn9okYHnAouz0og82Aidmpgq9V014K/bd6n03j5EJ
+        WDa5RL8omgYZ99MzbUTm+3Dz+tQKdxdfrYSKvyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=iVwt3L
+        IcBpxtFQ+R6FD04TuQoW5u6ub4oIPG6WUenUY=; b=xFzk6qeH/mvGkHHqBRPCx8
+        Xy+0sptLa18T7CSAZs0gGyWF8+Puym2AKTUC9fW9XW/YqU6iMWL9KjUYN41VYBnH
+        53v39rwy/b6QLXY2ltb6l+GV05GE2jYAD+dGpcjoG7sPBklxgKdqrOJf58JTaJq1
+        M/SUMx5W4GAtg7AKf/yaT8CUjUvKxkx5zNxb2WmYWLDvzFyjeeMsRaol0yYoCYud
+        p3EohTACIeJ85/jDuL8YXXyiKAqYyHO1XwhW2j9XCbWFOmQXw6rSa5AeWjpLGEsP
+        GRkNHBSh7WpgVuLg/qYhXTy6rS2IQ8DUO100xA6YrJergIXuVpL9lYik/ljWQBog
+        ==
+X-ME-Sender: <xms:uvogXrsTmHavIf-jDnARkqGfVjrD6osK6CKmwH0D9y7gJRFUyY4PHg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigdduhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:uvogXjvPrn-SFp5F3ABf5eUxaaF1D1iuRGqUc7kLHp4u7khdoD_BYA>
+    <xmx:uvogXnWgjI5Th7WMD_W1W_ecOgLJK6NVEFt2DlkgkYqGuEmWXAW6UQ>
+    <xmx:uvogXnkPWU1OIPoNXerWWvGb2FFpP08Ba9Nafp2fogsNj56kBDjA5g>
+    <xmx:u_ogXuKuvqk1CinQv_y0rRqWGw2T-enbioXnTs6QkD0pJQb3jp68Sg>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id AF383E00A2; Thu, 16 Jan 2020 19:07:22 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-754-g09d1619-fmstable-20200113v1
+Mime-Version: 1.0
+Message-Id: <34acf604-d2e4-4efe-91ae-52b7a0dee187@www.fastmail.com>
+In-Reply-To: <1579123790-6894-7-git-send-email-eajames@linux.ibm.com>
+References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
+ <1579123790-6894-7-git-send-email-eajames@linux.ibm.com>
+Date:   Fri, 17 Jan 2020 10:37:02 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v6 06/12] soc: aspeed: Add XDMA Engine Driver
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/2020 3:39 PM, Borislav Petkov wrote:
-> On Wed, Jan 15, 2020 at 06:32:27AM -0800, Shiping Ji wrote:
->> This is the device tree bindings for new EDAC driver dmc520_edac.c.
->>
->> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
->> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
->> Reviewed-by: James Morse <james.morse@arm.com>
-> 
-> So for this patch, v2 had Rui Zhao as an author:
-> 
-> https://lkml.kernel.org/r/BN7PR08MB5572B3388B2D7DC8F6C7F285AE4C0@BN7PR08MB5572.namprd08.prod.outlook.com
-> 
-> v3 got Lei as an author:
-> 
-> https://lkml.kernel.org/r/CY1PR0401MB1244062C1738B09D6100F202860A0@CY1PR0401MB1244.namprd04.prod.outlook.com
-> 
-> and now it is you.
-> 
-> So when you send next time, think about who's going to be the author.
 
-I'll make sure Lei is the author (From:) in the next patches.
 
->> +     line numbers. The valid interrupt names are the followings:
+On Thu, 16 Jan 2020, at 07:59, Eddie James wrote:
+> The XDMA engine embedded in the AST2500 and AST2600 SOCs performs PCI
+> DMA operations between the SOC (acting as a BMC) and a host processor
+> in a server.
 > 
-> WARNING: 'followings' may be misspelled - perhaps 'following'?
-> #51: FILE: Documentation/devicetree/bindings/edac/arm-dmc520.txt:10:
-> +     line numbers. The valid interrupt names are the followings:
-
-Yes, I think this can be fixed. I checked the scripts/spelling.txt and it does suggest using 'following' instead.
- 
-> Please integrate scripts/checkpatch.pl into your patch creation
-> workflow. Some of the warnings/errors *actually* make sense.
-
-Yes, we will.
-
-> Also, this patch throws this other checkpatch warning:
+> This commit adds a driver to control the XDMA engine and adds functions
+> to initialize the hardware and memory and start DMA operations.
 > 
-> WARNING: DT bindings should be in DT schema format. See: Documentation/devicetree/writing-schema.rst
-> 
-> but since Rob reviewed it, I'm going to assume checkpatch is wrong here.
-> 
-> Thx.
- 
-The check seems to warn the next file in .txt format which should be rather in the new .yaml format. We'll try to make one next.
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
 
-Thanks!
-
--- 
-Best regards,
-Shiping Ji
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
