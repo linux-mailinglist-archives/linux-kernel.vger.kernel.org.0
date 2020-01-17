@@ -2,101 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B92A21410B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A26A1410BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:24:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbgAQSXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 13:23:15 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:37540 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726970AbgAQSXP (ORCPT
+        id S1729246AbgAQSYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 13:24:19 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37856 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbgAQSYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:23:15 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579285394; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=HAaZWipyM1y+vRZdQSfIUDV8Xxf9D/hWbucFY0TcBKk=; b=fV8z6zLQr1+epvLlrnO7hEnf94G8mX4maTYNMxFQsK0NorHjoNflIXP921Q0y8L5OOS5uXQY
- 16CpF8qErWvyg2Di1uu4LGiP+F9FFnrmsiE8iIKbOXpverlrJzudXoC6o5HhndnV52UkEhWv
- joRQwX3aJiKilKYTWMkQjJr/CAI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e21fb8e.7fd20340cab0-smtp-out-n02;
- Fri, 17 Jan 2020 18:23:10 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 73023C447A2; Fri, 17 Jan 2020 18:23:09 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from [10.46.161.159] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38CC4C43383;
-        Fri, 17 Jan 2020 18:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38CC4C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH v2 1/9] scsi: ufs: goto with returned value while failed
- to add WL
-To:     Bean Huo <huobean@gmail.com>, alim.akhtar@samsung.com,
-        avri.altman@wdc.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, stanley.chu@mediatek.com,
-        beanhuo@micron.com, bvanassche@acm.org, tomas.winkler@intel.com,
-        cang@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200116215914.16015-1-huobean@gmail.com>
- <20200116215914.16015-2-huobean@gmail.com>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <4f93045d-6c42-5f74-0e85-8b7019cd765f@codeaurora.org>
-Date:   Fri, 17 Jan 2020 10:23:07 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Fri, 17 Jan 2020 13:24:18 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HIDFPF186359;
+        Fri, 17 Jan 2020 18:24:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=V6jdRO8DhqcENdZcDjhcv4ayNKUxDX1LtbH6Da7E+34=;
+ b=b4Mr7Ihr0XV9WdlwaWg34Hl0DTRKBlJWqerwaqJco3cCtBY7/FeDhy6hUVpcVsto44uK
+ 6yX0cRD7SwWdMna9wbQ5LCIEnTwRD6/QKS77/hPrJxhmebfvn+9HJq1yWHKqOTHAKC7l
+ nC3zc6dRW+WJbKy7zpM2na1+VI0W39bNZ+L6OKzs/x05DecBuD9+unYJX2FK22B3wEpK
+ ZEMWL2dfG1bxlwt0ynLP1mLqpziNw6UJose15+KzmDa80uS0XexrsIFD0dRfTESCaWHG
+ 4CXVQP+bunQ/dSk35jRca/uY6pQ+CsImV4gsmNOzyPeuyx9CIo6WyJfMxkC4jw/pgovm iA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2xf74st9er-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jan 2020 18:24:08 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HIAmtU141255;
+        Fri, 17 Jan 2020 18:24:07 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2xk24ff8bm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jan 2020 18:24:07 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00HIO6VS005836;
+        Fri, 17 Jan 2020 18:24:06 GMT
+Received: from [10.209.227.41] (/10.209.227.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 17 Jan 2020 10:24:05 -0800
+Subject: Re: [PATCH v2] drivers: soc: ti: knav_qmss_queue: Pass lockdep
+ expression to RCU lists
+To:     Amol Grover <frextrite@gmail.com>, arm-soc <arm@kernel.org>
+Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+References: <20200117133048.31708-1-frextrite@gmail.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <5d77df7f-8693-0232-dbfe-0acfc37e040f@oracle.com>
+Date:   Fri, 17 Jan 2020 10:24:04 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200116215914.16015-2-huobean@gmail.com>
+In-Reply-To: <20200117133048.31708-1-frextrite@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=945
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001170142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001170142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/2020 1:59 PM, Bean Huo wrote:
-> From: Bean Huo <beanhuo@micron.com>
+On 1/17/20 5:30 AM, Amol Grover wrote:
+> inst->handles is traversed using list_for_each_entry_rcu
+> outside an RCU read-side critical section but under the protection
+> of knav_dev_lock.
 > 
-> This patch is to make goto statement with failure result in case of
-> failure of adding well known LUs.
+> Hence, add corresponding lockdep expression to silence false-positive
+> lockdep warnings, and harden RCU lists.
 > 
-> Fixes: 2a8fa600445c ("ufs: manually add well known logical units")
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
+> Add macro for the corresponding lockdep expression.
+> 
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
 > ---
->   drivers/scsi/ufs/ufshcd.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> v2:
+> - Remove rcu_read_lock_held() from lockdep expression since it is
+>    implicitly checked for.
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index bea036ab189a..9a9085a7bcc5 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -7032,7 +7032,8 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->   			ufshcd_init_icc_levels(hba);
->   
->   		/* Add required well known logical units to scsi mid layer */
-> -		if (ufshcd_scsi_add_wlus(hba))
-> +		ret = ufshcd_scsi_add_wlus(hba);
-> +		if (ret)
->   			goto out;
->   
->   		/* Initialize devfreq after UFS device is detected */
-> 
+Looks fine to me.
 
-Please retain my reviewed-by tag, if you change the commit message as 
-per Bart's reviews in your next version.
+Hi Olof, Arnd,
+Can you please pick this one and apply to your driver-soc branch ?
+I already sent out pull request and hence the request.
 
-Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-Linux Foundation Collaborative Project
+regards,
+Santosh
