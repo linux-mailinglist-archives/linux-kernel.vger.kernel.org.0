@@ -2,81 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9C0140DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:25:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BDA6140DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:27:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbgAQPZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 10:25:54 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42042 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726942AbgAQPZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:25:54 -0500
-Received: from zn.tnic (p200300EC2F08DC00788A88DBA2D0C692.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:dc00:788a:88db:a2d0:c692])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8FD691EC0C51;
-        Fri, 17 Jan 2020 16:25:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579274752;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=NXDhbVMip1oFNmzSwPSlff9/2JLjF0uDNe9CeQPatZc=;
-        b=ivNXuSuHY1SkuCb0ORK4thJwvkiYn6GhKmdoGgv9Z6AiOlg65O40XEC1EKW07R/A2oE8hR
-        DU+cJpikec3G9aTJ6U7yzzEthR6TTnHA3hGaukdMm0ZysqnoW1IDPhkAHRQVos/MsxUwQt
-        6pVStWucOKzBjM/wmC2oVXt1RmuxiiY=
-Date:   Fri, 17 Jan 2020 16:25:44 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 1/5] x86/MCE/AMD, EDAC/mce_amd: Add new Load Store unit
- McaType
-Message-ID: <20200117152544.GA31472@zn.tnic>
-References: <20200110015651.14887-1-Yazen.Ghannam@amd.com>
- <20200110015651.14887-2-Yazen.Ghannam@amd.com>
- <20200116155116.GE27148@zn.tnic>
- <BN6PR12MB166790FFA9876C17E6C4D351F8310@BN6PR12MB1667.namprd12.prod.outlook.com>
+        id S1729148AbgAQP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 10:27:07 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41638 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbgAQP1H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 10:27:07 -0500
+Received: by mail-vs1-f66.google.com with SMTP id k188so15046698vsc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 07:27:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Al120niEVsvG7P8tXNsKmXWmt+mTl+QFGeU5Kh7eR4U=;
+        b=QVGl54VEk6IqoBZfxHiKRwJ7W7fHQLmoqA7dXl0/UxAvhejD4IBJmCNpLZ9lUkE1fC
+         WgPZ5ADCtg7oiW3Xo/IBfYFnqNqb1mUA4FER2MRt2xQVaCc0yRvk0ERNFqG4aynigLaI
+         bqARgMYrA0aFJvLm+sBqSqKMXMNbsxfuPReez/T+wvldBpqja7r9lrvERgANSm0gYQqm
+         CcheN5lVCcNbuHklNrWljZGDAgEkDUz7RyqottS7GNrezHvRB9B70PN25AZUwQmVQYsV
+         GpYuaB6BoZoI03VHenosOmUI5Z2wiDlqwjvF3GkimYTJEQWHBvlmwpMRq3YUwOS3D6rM
+         bKzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Al120niEVsvG7P8tXNsKmXWmt+mTl+QFGeU5Kh7eR4U=;
+        b=ZxA1wyG8lkIcV78Uqdj3cLKKENqAu83J/3b/YvEdifqbAlnkL1dasSrrhGY7FK+FYI
+         KdDAbeO2ciaqMvqTFthRhgpJAz9MDWBKIu/xj2FI8xx49zaWSKt2HrKHhxQdpboxGqoH
+         9Kq4DQ/TrDhMeNp3kfpG8qoK0BjhQCDaIxHVvxIuIfHndVUdS2oHlUFfqmiayVNOSwVo
+         bKX2WXUwqJU3RXeI39EmH9PjrelLOGRkL4A0A9glYASk919EguG9K45gC1ld4PBmRfKH
+         mYH9vTSJcGFKyiBpOELH/U8O+PNlO2tdfxBZp2YKUg1VKqbSdmjcD37Zma7oNptCv4EP
+         huuA==
+X-Gm-Message-State: APjAAAXYKMXWCGcGUbsl96Yaakw6drNP9LhXPLW7isI1BpXmMVl/lyVn
+        3KRfBrZ2HpDUOcMqQGmIRLsIakSlYVP3lQC3jBAUIzqt
+X-Google-Smtp-Source: APXvYqzTjDrVgGbgQ1r4ko50S2082/ytC9qF95Fb820LkGXbqN3IaRKe6bQ2iWNKbAR5+QtwsKhJolyI1SoWJlgiGR4=
+X-Received: by 2002:a67:314e:: with SMTP id x75mr4981012vsx.35.1579274826364;
+ Fri, 17 Jan 2020 07:27:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BN6PR12MB166790FFA9876C17E6C4D351F8310@BN6PR12MB1667.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <f471bceaf237d582d746bd289c4c4f3639cb7b45.1577962382.git.mirq-linux@rere.qmqm.pl>
+ <CAPDyKFpZWnkK7UmCZ8M4UnM05wR3MQsPrpEjOJuwkKcN2gePSg@mail.gmail.com> <20200117140511.GC26135@qmqm.qmqm.pl>
+In-Reply-To: <20200117140511.GC26135@qmqm.qmqm.pl>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 17 Jan 2020 16:26:30 +0100
+Message-ID: <CAPDyKFpkhwnzi5PAr_0bAriYteeBUVM5Qr1byiXtJkgYd=dKfw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: limit probe clock frequency to configured f_max
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 03:14:06PM +0000, Ghannam, Yazen wrote:
-> [AMD Official Use Only - Internal Distribution Only]
+On Fri, 17 Jan 2020 at 15:05, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qm=
+qm.pl> wrote:
+>
+> On Thu, Jan 16, 2020 at 03:07:22PM +0100, Ulf Hansson wrote:
+> > On Thu, 2 Jan 2020 at 11:54, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere=
+.qmqm.pl> wrote:
+> > >
+> > > Currently MMC core disregards host->f_max during card initialization
+> > > phase. Obey upper boundary for the clock frequency and skip faster
+> > > speeds when they are above the limit.
+> >
+> > Is this a hypothetical problem or a real problem?
+>
+> This is a problem on noisy or broken boards or cards - so needed for
+> debugging such a combination. I wouldn't expect this is required for
+> normal devices.
 
-...
+Alright.
 
-> Yes, you "may" be right. :)
+>
+> > > Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> > > ---
+> > >  drivers/mmc/core/core.c | 10 ++++++++--
+> > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> > > index abf8f5eb0a1c..aa54d359dab7 100644
+> > > --- a/drivers/mmc/core/core.c
+> > > +++ b/drivers/mmc/core/core.c
+> > > @@ -2330,7 +2330,13 @@ void mmc_rescan(struct work_struct *work)
+> > >         }
+> > >
+> > >         for (i =3D 0; i < ARRAY_SIZE(freqs); i++) {
+> > > -               if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_=
+min)))
+> > > +               unsigned int freq =3D freqs[i];
+> > > +               if (freq > host->f_max) {
+> > > +                       if (i + 1 < ARRAY_SIZE(freqs))
+> > > +                               continue;
+> > > +                       freq =3D host->f_max;
+> >
+> > This looks wrong to me. For example, what if f_max =3D 250KHz and f_min=
+ =3D 50 KHz.
+> >
+> > Then we should try with 250KHz, then 200KHz and then 100KHz. This
+> > isn't what the above code does, I think.
+> >
+> > Instead it will try with 200KHz and then 100KHz, thus skip 250KHz.
+> >
+> > Maybe we should figure out what index of freqs[] to start the loop for
+> > (before actually starting the loop), depending on the value of f_max -
+> > rather than always start at 0.
+>
+> Yes, it will skip higher frequencies. I didn't view it a problem,
+> because the new code guarantees at least one frequency will be tried.
+> The eMMC standard specifies only max init frequency (400kHz), so all we
+> should try is something less whatever works.
+>
+> SD spec specifies minimal frequency (100kHz), but I wouldn't expect
+> this to be enforced nor required to be anywhere.
 
-:-)
+Well, my point isn't so much about the specs, rather about providing a
+consistent behaviour.
 
-> Seriously though, I'll work on it. Thanks!
+We deal with f_min constraints like I described above, then I think we
+should make f_max behave the similar way.
 
-Thanks.
-
-Also, you might wanna work on that piece of crap at the beginning of the
-mail too:
-
-> [AMD Official Use Only - Internal Distribution Only]
-
-I don't think there's a problem to use another mail provider but keep
-your SOB and From: mail for authorship attribution.
-
-Company mail setup is simply inadequate for upstream development. It
-almost doesn't matter which company. :-)
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Kind regards
+Uffe
