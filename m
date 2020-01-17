@@ -2,115 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A1B142E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BD23142E49
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:05:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgATPAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 10:00:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57455 "EHLO mga02.intel.com"
+        id S1728831AbgATPFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 10:05:17 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:53830 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726642AbgATPAF (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 10:00:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 07:00:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
-   d="scan'208";a="275576205"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.209.167]) ([10.254.209.167])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Jan 2020 07:00:02 -0800
-Subject: Re: [PATCH v4 3/4] perf util: Flexible to set block info output
- formats
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <20200115192904.16798-1-yao.jin@linux.intel.com>
- <20200115192904.16798-3-yao.jin@linux.intel.com>
- <20200120094737.GF608405@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <6c35864b-e396-6865-12a9-2fd001b0f567@linux.intel.com>
-Date:   Mon, 20 Jan 2020 23:00:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726860AbgATPFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 10:05:16 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id A5C71FB02;
+        Mon, 20 Jan 2020 16:05:12 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8znXPdI71quQ; Mon, 20 Jan 2020 16:05:11 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id ED37240007; Fri, 17 Jan 2020 16:47:26 +0100 (CET)
+Date:   Fri, 17 Jan 2020 16:47:26 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Emil Velikov <emil.velikov@collabora.com>
+Subject: Re: [PATCH v2 13/24] drm/etnaviv: reject timeouts with tv_nsec >=
+ NSEC_PER_SEC
+Message-ID: <20200117154726.GA328525@bogon.m.sigxcpu.org>
+References: <20191213204936.3643476-1-arnd@arndb.de>
+ <20191213205417.3871055-4-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20200120094737.GF608405@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213205417.3871055-4-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/20/2020 5:47 PM, Jiri Olsa wrote:
-> On Thu, Jan 16, 2020 at 03:29:03AM +0800, Jin Yao wrote:
+Hi,
+On Fri, Dec 13, 2019 at 09:53:41PM +0100, Arnd Bergmann wrote:
+> Most kernel interfaces that take a timespec require normalized
+> representation with tv_nsec between 0 and NSEC_PER_SEC.
 > 
-> SNIP
+> Passing values larger than 0x100000000ull further behaves differently
+> on 32-bit and 64-bit kernels, and can cause the latter to spend a long
+> time counting seconds in timespec64_sub()/set_normalized_timespec64().
 > 
->> +			       block_hpps, nr_hpps);
->>   
->> -	perf_hpp_list__register_sort_field(&bh->block_list,
->> -		&block_fmts[PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT].fmt);
->> +	/* Sort by the first fmt */
->> +	perf_hpp_list__register_sort_field(&bh->block_list, &block_fmts[0].fmt);
->>   }
->>   
->> -static void process_block_report(struct hists *hists,
->> -				 struct block_report *block_report,
->> -				 u64 total_cycles)
->> +static int process_block_report(struct hists *hists,
->> +				struct block_report *block_report,
->> +				u64 total_cycles, int *block_hpps,
->> +				int nr_hpps)
->>   {
->>   	struct rb_node *next = rb_first_cached(&hists->entries);
->>   	struct block_hist *bh = &block_report->hist;
->>   	struct hist_entry *he;
->>   
->> -	init_block_hist(bh, block_report->fmts);
->> +	if (nr_hpps > PERF_HPP_REPORT__BLOCK_MAX_INDEX)
+> Reject those large values at the user interface to enforce sane and
+> portable behavior.
 > 
-> hum, should be '>=' above.. ?
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> jirka
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> index 1f9c01be40d7..95d72dc00280 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -297,6 +297,9 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
+>  	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
+>  		return -EINVAL;
+>  
+> +	if (args->timeout.tv_nsec > NSEC_PER_SEC)
+> +		return -EINVAL;
+> +
+>  	obj = drm_gem_object_lookup(file, args->handle);
+>  	if (!obj)
+>  		return -ENOENT;
+> @@ -360,6 +363,9 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
+>  	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+>  		return -EINVAL;
+>  
+> +	if (args->timeout.tv_nsec > NSEC_PER_SEC)
+> +		return -EINVAL;
+> +
+>  	if (args->pipe >= ETNA_MAX_PIPES)
+>  		return -EINVAL;
+>  
+> @@ -411,6 +417,9 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
+>  	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+>  		return -EINVAL;
+>  
+> +	if (args->timeout.tv_nsec > NSEC_PER_SEC)
+> +		return -EINVAL;
+> +
+>  	if (args->pipe >= ETNA_MAX_PIPES)
+>  		return -EINVAL;
+>
+
+This breaks rendering here on arm64/gc7000 due to
+
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
+ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
+
+This is due to
+
+    get_abs_timeout(&req.timeout, 5000000000);
+
+in etna_bo_cpu_prep which can exceed NSEC_PER_SEC.
+
+Should i send a patch to revert that change since it breaks existing userspace?
+
+Cheers,
+ -- Guido
+
+> -- 
+> 2.20.0
 > 
-
-'=' should be OK.
-
-enum {
-	PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
-	PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
-	PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
-	PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
-	PERF_HPP_REPORT__BLOCK_RANGE,
-	PERF_HPP_REPORT__BLOCK_DSO,
-	PERF_HPP_REPORT__BLOCK_MAX_INDEX
-};
-
-PERF_HPP_REPORT__BLOCK_MAX_INDEX is 6.
-
-If nr_hpps is 6, for example, block_hpps[] is,
-
-		int block_hpps[6] = {
-			PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
-			PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
-			PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
-			PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
-			PERF_HPP_REPORT__BLOCK_RANGE,
-			PERF_HPP_REPORT__BLOCK_DSO,
-		};
-
-		block_info__create_report(session->evlist,
-					  rep->total_cycles,
-                                           block_hpps, 6,
-                                           &rep->nr_block_reports);
-
-That should be legal.
-
-Thanks
-Jin Yao
+> _______________________________________________
+> etnaviv mailing list
+> etnaviv@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/etnaviv
+> 
