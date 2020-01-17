@@ -2,162 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26A81411DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:34:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F541411BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbgAQTel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 14:34:41 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18185 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbgAQTej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 14:34:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 11:30:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="274474207"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Jan 2020 11:30:55 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Derek Yerger <derek@djy.llc>,
-        kernel@najdan.com, Thomas Lambertz <mail@thomaslambertz.de>,
-        Rik van Riel <riel@surriel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 4/4] KVM: x86: Remove unused ctxt param from emulator's FPU accessors
-Date:   Fri, 17 Jan 2020 11:30:52 -0800
-Message-Id: <20200117193052.1339-5-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200117193052.1339-1-sean.j.christopherson@intel.com>
-References: <20200117193052.1339-1-sean.j.christopherson@intel.com>
+        id S1729425AbgAQTbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 14:31:18 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:38168 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbgAQTbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 14:31:18 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 3402E80419;
+        Fri, 17 Jan 2020 20:31:13 +0100 (CET)
+Date:   Fri, 17 Jan 2020 20:31:12 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] video: fbdev: controlfb: add COMPILE_TEST support
+Message-ID: <20200117193112.GC24812@ravnborg.org>
+References: <20200116140900.26363-1-b.zolnierkie@samsung.com>
+ <CGME20200116140915eucas1p28dfeecf8a58cecb00262fe86fd19c4f5@eucas1p2.samsung.com>
+ <20200116140900.26363-4-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116140900.26363-4-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=hD80L64hAAAA:8 a=e5mUnYsNAAAA:8 a=iGuPKJsMUmC7bJEyTWkA:9
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove an unused struct x86_emulate_ctxt * param from low level helpers
-used to access guest FPU state.  The unused param was left behind by
-commit 6ab0b9feb82a ("x86,kvm: remove KVM emulator get_fpu / put_fpu").
+Hi Bartlomiej
 
-No functional change intended.
+On Thu, Jan 16, 2020 at 03:08:57PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> Add COMPILE_TEST support to controlfb driver for better compile
+> testing coverage.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/emulate.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+This is not a nice patch to add COMPILE_TEST support :-(
+But I see why you do it.
+I already spent too much time being side-tracked by this, but here are
+some comments to consider.
 
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 2a5bed60ce50..3e3b3cd60cce 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -1090,7 +1090,7 @@ static void emulator_put_fpu(void)
- 	fpregs_unlock();
- }
- 
--static void read_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data, int reg)
-+static void read_sse_reg(sse128_t *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1117,8 +1117,7 @@ static void read_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data, int reg)
- 	emulator_put_fpu();
- }
- 
--static void write_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data,
--			  int reg)
-+static void write_sse_reg(sse128_t *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1145,7 +1144,7 @@ static void write_sse_reg(struct x86_emulate_ctxt *ctxt, sse128_t *data,
- 	emulator_put_fpu();
- }
- 
--static void read_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
-+static void read_mmx_reg(u64 *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1162,7 +1161,7 @@ static void read_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
- 	emulator_put_fpu();
- }
- 
--static void write_mmx_reg(struct x86_emulate_ctxt *ctxt, u64 *data, int reg)
-+static void write_mmx_reg(u64 *data, int reg)
- {
- 	emulator_get_fpu();
- 	switch (reg) {
-@@ -1234,7 +1233,7 @@ static void decode_register_operand(struct x86_emulate_ctxt *ctxt,
- 		op->type = OP_XMM;
- 		op->bytes = 16;
- 		op->addr.xmm = reg;
--		read_sse_reg(ctxt, &op->vec_val, reg);
-+		read_sse_reg(&op->vec_val, reg);
- 		return;
- 	}
- 	if (ctxt->d & Mmx) {
-@@ -1285,7 +1284,7 @@ static int decode_modrm(struct x86_emulate_ctxt *ctxt,
- 			op->type = OP_XMM;
- 			op->bytes = 16;
- 			op->addr.xmm = ctxt->modrm_rm;
--			read_sse_reg(ctxt, &op->vec_val, ctxt->modrm_rm);
-+			read_sse_reg(&op->vec_val, ctxt->modrm_rm);
- 			return rc;
- 		}
- 		if (ctxt->d & Mmx) {
-@@ -1862,10 +1861,10 @@ static int writeback(struct x86_emulate_ctxt *ctxt, struct operand *op)
- 				       op->bytes * op->count);
- 		break;
- 	case OP_XMM:
--		write_sse_reg(ctxt, &op->vec_val, op->addr.xmm);
-+		write_sse_reg(&op->vec_val, op->addr.xmm);
- 		break;
- 	case OP_MM:
--		write_mmx_reg(ctxt, &op->mm_val, op->addr.mm);
-+		write_mmx_reg(&op->mm_val, op->addr.mm);
- 		break;
- 	case OP_NONE:
- 		/* no writeback */
-@@ -5495,11 +5494,10 @@ static int flush_pending_x87_faults(struct x86_emulate_ctxt *ctxt)
- 	return X86EMUL_CONTINUE;
- }
- 
--static void fetch_possible_mmx_operand(struct x86_emulate_ctxt *ctxt,
--				       struct operand *op)
-+static void fetch_possible_mmx_operand(struct operand *op)
- {
- 	if (op->type == OP_MM)
--		read_mmx_reg(ctxt, &op->mm_val, op->addr.mm);
-+		read_mmx_reg(&op->mm_val, op->addr.mm);
- }
- 
- static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *))
-@@ -5578,10 +5576,10 @@ int x86_emulate_insn(struct x86_emulate_ctxt *ctxt)
- 			 * Now that we know the fpu is exception safe, we can fetch
- 			 * operands from it.
- 			 */
--			fetch_possible_mmx_operand(ctxt, &ctxt->src);
--			fetch_possible_mmx_operand(ctxt, &ctxt->src2);
-+			fetch_possible_mmx_operand(&ctxt->src);
-+			fetch_possible_mmx_operand(&ctxt->src2);
- 			if (!(ctxt->d & Mov))
--				fetch_possible_mmx_operand(ctxt, &ctxt->dst);
-+				fetch_possible_mmx_operand(&ctxt->dst);
- 		}
- 
- 		if (unlikely(emul_flags & X86EMUL_GUEST_MASK) && ctxt->intercept) {
--- 
-2.24.1
+With the comments considered:
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
 
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/video/fbdev/Kconfig     |  2 +-
+>  drivers/video/fbdev/controlfb.c | 21 +++++++++++++++++++--
+>  2 files changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+> index aa9541bf964b..91c872457863 100644
+> --- a/drivers/video/fbdev/Kconfig
+> +++ b/drivers/video/fbdev/Kconfig
+> @@ -472,7 +472,7 @@ config FB_OF
+>  
+>  config FB_CONTROL
+>  	bool "Apple \"control\" display support"
+> -	depends on (FB = y) && PPC_PMAC && PPC32
+> +	depends on (FB = y) && ((PPC_PMAC && PPC32) || COMPILE_TEST)
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
+> diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
+> index bd0f61d8bdb5..87cd817ad4c6 100644
+> --- a/drivers/video/fbdev/controlfb.c
+> +++ b/drivers/video/fbdev/controlfb.c
+> @@ -47,12 +47,25 @@
+>  #include <linux/nvram.h>
+>  #include <linux/adb.h>
+>  #include <linux/cuda.h>
+> +#ifdef CONFIG_PPC_PMAC
+>  #include <asm/prom.h>
+>  #include <asm/btext.h>
+> +#endif
+>  
+>  #include "macmodes.h"
+>  #include "controlfb.h"
+>  
+> +#ifndef CONFIG_PPC_PMAC
+> +#undef in_8
+> +#undef out_8
+> +#undef in_le32
+> +#undef out_le32
+> +#define in_8(addr)		0
+> +#define out_8(addr, val)
+> +#define in_le32(addr)		0
+> +#define out_le32(addr, val)
+> +#endif
+> +
+>  struct fb_par_control {
+>  	int	vmode, cmode;
+>  	int	xres, yres;
+> @@ -278,7 +291,9 @@ static int controlfb_mmap(struct fb_info *info,
+>  		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
+>  	} else {
+>  		/* framebuffer */
+> +#ifdef CONFIG_PPC_PMAC
+>  		vma->vm_page_prot = pgprot_cached_wthru(vma->vm_page_prot);
+> +#endif
+
+Add:
+#define pgprot_cached_wthru(x) 0
+in the CONFIG_PPC_PMAC block?
+
+>  	}
+>  
+>  	return vm_iomap_memory(vma, start, len);
+> @@ -582,13 +597,14 @@ static void __init find_vram_size(struct fb_info_control *p)
+>  
+>  	out_8(&p->frame_buffer[0x600000], 0xb3);
+>  	out_8(&p->frame_buffer[0x600001], 0x71);
+> +#ifdef CONFIG_PPC_PMAC
+>  	asm volatile("eieio; dcbf 0,%0" : : "r" (&p->frame_buffer[0x600000])
+>  					: "memory" );
+>  	mb();
+>  	asm volatile("eieio; dcbi 0,%0" : : "r" (&p->frame_buffer[0x600000])
+>  					: "memory" );
+>  	mb();
+> -
+> +#endif
+
+The inline asm block could be written as:
+
+static void invalid_vram_cache(void * addr)
+{
+	eieio();
+	dcbf(addr);
+	mb;
+	eieio();
+	dcbi(addr);
+	mb();
+}
+
+And then this inline function could be in the CONFIG_PPC_PMAC block -
+and a dummy in the else part.
+The function name is just my best guess what the assembler does.
+
+>  	bank2 = (in_8(&p->frame_buffer[0x600000]) == 0xb3)
+>  		&& (in_8(&p->frame_buffer[0x600001]) == 0x71);
+>  
+> @@ -601,13 +617,14 @@ static void __init find_vram_size(struct fb_info_control *p)
+>  
+>  	out_8(&p->frame_buffer[0], 0x5a);
+>  	out_8(&p->frame_buffer[1], 0xc7);
+> +#ifdef CONFIG_PPC_PMAC
+>  	asm volatile("eieio; dcbf 0,%0" : : "r" (&p->frame_buffer[0])
+>  					: "memory" );
+>  	mb();
+>  	asm volatile("eieio; dcbi 0,%0" : : "r" (&p->frame_buffer[0])
+>  					: "memory" );
+>  	mb();
+> -
+> +#endif
+Same here.
+
+>  	bank1 = (in_8(&p->frame_buffer[0]) == 0x5a)
+>  		&& (in_8(&p->frame_buffer[1]) == 0xc7);
+>  
+> -- 
+> 2.24.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
