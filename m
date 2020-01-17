@@ -2,109 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D96140918
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A7A14090C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbgAQLhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 06:37:25 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:55294 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbgAQLhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:37:23 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: Ar/Uh1AKX+S7I+8FoBT0VDPfF3fi+zLtVHMeX4UWJyHGp9Gqu9ifdw7aXJWr+EWP+Y3Tu6QaZb
- JAN7qbaiHkfhWX6/dhgLywpSPKt0tLElvuJ2q9hU99sUyrL8SBS4qnCcEIkoj6LaH833tfr3yF
- GgvZ1UmNV/8m9WYhBgF5ngkpVzlcydfVb6RWNGK+ZQNEByvYrBPyKy1GTUvbz8kJX8EKkOid+W
- FEEWSwi+8IB5nN0gb1w+5NnzV/f6qJH2tYbuFkY+OL5tNS5UIIG/Ax3QwI+i/cd9kxZY9nHeUh
- GaY=
-X-IronPort-AV: E=Sophos;i="5.70,330,1574146800"; 
-   d="scan'208";a="63631936"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jan 2020 04:37:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 17 Jan 2020 04:37:14 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 17 Jan 2020 04:37:11 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 4/4] clk: at91: usb: introduce num_parents in driver's structure
-Date:   Fri, 17 Jan 2020 13:36:49 +0200
-Message-ID: <1579261009-4573-5-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1727032AbgAQLgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 06:36:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55076 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726371AbgAQLgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 06:36:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D1675AE2C;
+        Fri, 17 Jan 2020 11:36:46 +0000 (UTC)
+Subject: Re: [PATCH] xen/balloon: Support xend-based toolstack take two
+To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org
+References: <20200116170004.14373-1-jgross@suse.com>
+ <c29c92e3-eb20-7e0a-0174-ef72398b0998@suse.com>
+ <dc509037-a7d6-caa5-8000-28aeb20b638e@suse.com>
+From:   Jan Beulich <jbeulich@suse.com>
+Message-ID: <4ddd12ae-94f7-0b16-346a-46e096d9ae6e@suse.com>
+Date:   Fri, 17 Jan 2020 12:36:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <dc509037-a7d6-caa5-8000-28aeb20b638e@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SAM9X60 USB clock may have up to 3 parents. Save the number of parents in
-driver's data structure and validate against it when setting parent.
+On 17.01.2020 12:31, Jürgen Groß wrote:
+> On 17.01.20 12:01, Jan Beulich wrote:
+>> On 16.01.2020 18:00, Juergen Gross wrote:
+>>> Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
+>>> tried to fix a regression with running on rather ancient Xen versions.
+>>> Unfortunately the fix was based on the assumption that xend would
+>>> just use another Xenstore node, but in reality only some downstream
+>>> versions of xend are doing that. The upstream xend does not write
+>>> that Xenstore node at all, so the problem must be fixed in another
+>>> way.
+>>>
+>>> The easiest way to achieve that is to fall back to the behavior before
+>>> commit 5266b8e4445c ("xen: fix booting ballooned down hvm guest")
+>>> in case the static memory maximum can't be read.
+>>
+>> I could use some help here: Prior to said commit there was
+>>
+>> 	target_diff = new_target - balloon_stats.target_pages;
+>>
+>>
+>> Which is, afaict, ...
+>>
+>>> --- a/drivers/xen/xen-balloon.c
+>>> +++ b/drivers/xen/xen-balloon.c
+>>> @@ -94,7 +94,7 @@ static void watch_target(struct xenbus_watch *watch,
+>>>   				  "%llu", &static_max) == 1))
+>>>   			static_max >>= PAGE_SHIFT - 10;
+>>>   		else
+>>> -			static_max = new_target;
+>>> +			static_max = balloon_stats.current_pages;
+>>>   
+>>>   		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+>>>   				: static_max - balloon_stats.target_pages;
+>>
+>> ... what the code does before your change. Afaict there was
+>> never a use of balloon_stats.current_pages in this function.
+> 
+> That is a little bit indirect, yes. In the end I want static_max to
+> be either the maximum reported by Xen, or if not available, the current
+> assumed memory size, which can be found in balloon_stats.current_pages.
+> 
+> The main idea is to avoid a negative target_diff which would result in
+> not ballooning down.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/clk-usb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+All understood. Yet the change is then not a restore of prior behavior
+(just in a limited case), but a change to behavior that we never there
+before. I.e. it was indeed my assumption that the code was right, but
+the description was misleading.
 
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index c0895c993cce..31d5c45e30d7 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -25,6 +25,7 @@ struct at91sam9x5_clk_usb {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
- 	u32 usbs_mask;
-+	u8 num_parents;
- };
- 
- #define to_at91sam9x5_clk_usb(hw) \
-@@ -110,7 +111,7 @@ static int at91sam9x5_clk_usb_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct at91sam9x5_clk_usb *usb = to_at91sam9x5_clk_usb(hw);
- 
--	if (index > 1)
-+	if (index >= usb->num_parents)
- 		return -EINVAL;
- 
- 	regmap_update_bits(usb->regmap, AT91_PMC_USB, usb->usbs_mask, index);
-@@ -215,6 +216,7 @@ _at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
- 	usb->hw.init = &init;
- 	usb->regmap = regmap;
- 	usb->usbs_mask = usbs_mask;
-+	usb->num_parents = num_parents;
- 
- 	hw = &usb->hw;
- 	ret = clk_hw_register(NULL, &usb->hw);
--- 
-2.7.4
-
+Jan
