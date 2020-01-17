@@ -2,70 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9562F140634
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C89811406B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:46:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgAQJgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:36:15 -0500
-Received: from mga11.intel.com ([192.55.52.93]:4096 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbgAQJgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:36:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 01:27:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,329,1574150400"; 
-   d="scan'208";a="218852465"
-Received: from jsakkine-mobl1.fi.intel.com ([10.237.66.138])
-  by orsmga008.jf.intel.com with ESMTP; 17 Jan 2020 01:27:10 -0800
-Message-ID: <814543e26623f13481254d63cceb673a3b40531a.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm: Update mailing list contact information in
- sysfs-class-tpm
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-Date:   Fri, 17 Jan 2020 11:27:09 +0200
-In-Reply-To: <20200113142319.r2gfnmw254owobue@cantor>
-References: <20191025193628.31004-1-jsnitsel@redhat.com>
-         <20191028205338.GI8279@linux.intel.com>
-         <20200113142319.r2gfnmw254owobue@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S1729164AbgAQJpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:45:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39873 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbgAQJpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:45:10 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1isNvP-0005lD-Gc; Fri, 17 Jan 2020 09:28:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Zaibo Xu <xuzaibo@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: hisilicon: fix spelling mistake "disgest" -> "digest"
+Date:   Fri, 17 Jan 2020 09:28:19 +0000
+Message-Id: <20200117092819.97640-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-01-13 at 07:23 -0700, Jerry Snitselaar wrote:
-> On Mon Oct 28 19, Jarkko Sakkinen wrote:
-> > On Fri, Oct 25, 2019 at 12:36:28PM -0700, Jerry Snitselaar wrote:
-> > > All of the entries in Documentation/ABI/stable/sysfs-class-tpm
-> > > point to the old tpmdd-devel mailing list. This patch
-> > > updates the entries to point to linux-intergrity.
-> > > 
-> > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > > Cc: linux-integrity@vger.kernel.org
-> > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > 
-> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > /Jarkko
-> 
-> Hi Jarkko,
-> 
-> Should we put this into 5.6 as well?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes.
+There is a spelling mistake in an error message. Fix it.
 
-Thanks, I'll create a PR over the weekend.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/crypto/hisilicon/sec2/sec_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/Jarkko
+diff --git a/drivers/crypto/hisilicon/sec2/sec_crypto.c b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+index a0a35685e838..a2cfcc9ccd94 100644
+--- a/drivers/crypto/hisilicon/sec2/sec_crypto.c
++++ b/drivers/crypto/hisilicon/sec2/sec_crypto.c
+@@ -690,7 +690,7 @@ static int sec_aead_auth_set_key(struct sec_auth_ctx *ctx,
+ 		ret = crypto_shash_digest(shash, keys->authkey,
+ 					  keys->authkeylen, ctx->a_key);
+ 		if (ret) {
+-			pr_err("hisi_sec2: aead auth disgest error!\n");
++			pr_err("hisi_sec2: aead auth digest error!\n");
+ 			return -EINVAL;
+ 		}
+ 		ctx->a_key_len = blocksize;
+-- 
+2.24.0
 
