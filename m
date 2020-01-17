@@ -2,87 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A97A1412C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248D31412E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 22:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgAQVV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 16:21:26 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60004 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgAQVV0 (ORCPT
+        id S1729044AbgAQV06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 16:26:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56992 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729009AbgAQV05 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 16:21:26 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00HLLJdd024057;
-        Fri, 17 Jan 2020 15:21:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579296079;
-        bh=ONsoTuB/2GclkLHgPRMr5rwXOyh+oEbisNCdNrkRWLU=;
-        h=From:To:CC:Subject:Date;
-        b=cpiQVRq1H+H+a6PYDafbcatf8gVlql4n/JDC/XV/AlYNLC4VixVvFowJ6vpH18Q98
-         i4g9vHK7OZUVzt4m55EH6+wqJSPh4HWqAjK+PKLHDfIqDFyC8QzxobBLMqnoXi2ZSs
-         sMq+pyJycY1z6q0+5EyrLXhRVCrvxevRn0HRHuyk=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00HLLJ0d077243;
-        Fri, 17 Jan 2020 15:21:19 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 17
- Jan 2020 15:21:19 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 17 Jan 2020 15:21:19 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00HLLGoI093192;
-        Fri, 17 Jan 2020 15:21:17 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-CC:     <linux-kernel@vger.kernel.org>, Hongbo Yao <yaohongbo@huawei.com>
-Subject: [PATCH] phy: ti: j721e-wiz: Fix build error without CONFIG_OF_ADDRESS
-Date:   Sat, 18 Jan 2020 02:53:10 +0530
-Message-ID: <20200117212310.2864-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 17 Jan 2020 16:26:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579296416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2vnulubJD8mSbDRt53yuy9p1BI2iN8qpqQuvtoRp26c=;
+        b=GwZD0oXlf3BeSWUEb9St15UdVp9RnFbuYhEjvv44H7WPR8daIsBJSmj0/3rfIzRiL0NTlX
+        tlBthBGCh7Np1303Hu8FU9Y1FcvnU2TMXtofB1/isMDEc6gtc5xgZWHggrWUUrZeIBfz1g
+        gZi5z6YQk20I5/+trJd892KwDePXyNA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-111-EKAgyNHDPSSLzbE8S-KphQ-1; Fri, 17 Jan 2020 16:26:54 -0500
+X-MC-Unique: EKAgyNHDPSSLzbE8S-KphQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 004D1DBA6;
+        Fri, 17 Jan 2020 21:26:53 +0000 (UTC)
+Received: from treble (ovpn-123-54.rdu2.redhat.com [10.10.123.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7556B5D9CD;
+        Fri, 17 Jan 2020 21:26:51 +0000 (UTC)
+Date:   Fri, 17 Jan 2020 15:26:49 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Marco Elver <elver@google.com>
+Cc:     David Sterba <dsterba@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Dec 6 (objtool, lots in btrfs)
+Message-ID: <20200117212649.opf4lt4w4jgwmrt7@treble>
+References: <20191212184725.db3ost7rcopotr5u@treble>
+ <b9b0c81b-0ca8-dfb7-958f-cd58a449b6fb@infradead.org>
+ <ba2a7a9b-933b-d4e4-8970-85b6c1291fca@infradead.org>
+ <20191213235054.6k2lcnwa63r26zwi@treble>
+ <c6a33c21-3e71-ac98-cc95-db008764917c@infradead.org>
+ <20191214054515.ougsr5ykhl3vvy57@treble>
+ <fe1e0318-9b74-7ae0-07bd-d7a6c908e79a@infradead.org>
+ <20191217152511.GG3929@suse.cz>
+ <20200117172629.yqowxl642hdx4vcm@treble>
+ <CANpmjNP6Q5-uOVi5TvbnHKbHkubqrbzW1+QZqvoEVty6X7ZDXw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANpmjNP6Q5-uOVi5TvbnHKbHkubqrbzW1+QZqvoEVty6X7ZDXw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hongbo Yao <yaohongbo@huawei.com>
+On Fri, Jan 17, 2020 at 09:28:27PM +0100, Marco Elver wrote:
+> On Fri, 17 Jan 2020 at 18:26, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Tue, Dec 17, 2019 at 04:25:11PM +0100, David Sterba wrote:
+> > > On Fri, Dec 13, 2019 at 11:05:18PM -0800, Randy Dunlap wrote:
+> > > > OK, that fixes most of them, but still leaves these 2:
+> > > >
+> > > > btrfs006.out:fs/btrfs/extent_io.o: warning: objtool: __set_extent_bit()+0x536: unreachable instruction
+> > >
+> > > Hard to read from the assembly what C statement is it referring to. I
+> > > think there are also several functions inlined, I don't see anything
+> > > suspicious inside __set_extent_bit itself.
+> > >
+> > > > btrfs006.out:fs/btrfs/relocation.o: warning: objtool: add_tree_block()+0x501: unreachable instruction
+> > >
+> > > Probably also heavily inlined, the function has like 50 lines, a few
+> > > non-trivial function calls but the offset in the warning suggests a
+> > > larger size.
+> > >
+> > > While browsing the callees I noticed that both have in common a function
+> > > that is supposed to print and stop at fatal errors. They're
+> > > extent_io_tree_panic (extent_io.c) and backref_tree_panic
+> > > (relocation.c). Both call btrfs_panic which is a macro:
+> > >
+> > > 3239 #define btrfs_panic(fs_info, errno, fmt, args...)                       \
+> > > 3240 do {                                                                    \
+> > > 3241         __btrfs_panic(fs_info, __func__, __LINE__, errno, fmt, ##args); \
+> > > 3242         BUG();                                                          \
+> > > 3243 } while (0)
+> > >
+> > > There are no conditionals and BUG has the __noreturn annotation
+> > > (unreachable()) so all is in place and I don't have better ideas what's
+> > > causing the reports.
+> >
+> > I think KCSAN is somehow disabling GCC's detection of implicit noreturn
+> > functions -- or at least some calls to them.  So GCC is inserting dead
+> > code after the calls.  BUG() uses __builtin_unreachable(), so GCC should
+> > know better.
+> >
+> > If this is specific to KCSAN then I might just disable these warnings
+> > for KCSAN configs.
+> 
+> I noticed that this is also a CC_OPTIMIZE_FOR_SIZE config. I recently
+> sent some patches to turn some inlines into __always_inlines because
+> CC_OPTIMIZE_FOR_SIZE decides to not inline functions that should
+> always be inlined.
+> 
+> I noticed that 'assfail' is a 'static inline' function and you
+> mentioned earlier that GCC seems to not be able to determine if it
+> returns or not. If CC_OPTIMIZE_FOR_SIZE decides to not inline, then
+> maybe this could be a problem?  It could also be the compiler having
+> some trouble here with the CC_OPTIMIZE_FOR_SIZE + KCSAN combination.
 
-If CONFIG_OF_ADDRESS is not set and COMPILE_TEST=y, the following
-error is seen while building phy-j721e-wiz.c
+Even for a non-inlined static function, GCC typically detects when it's
+implicitly "noreturn", and optimizes the call sites accordingly.  And
+that has also been true even for CC_OPTIMIZE_FOR_SIZE in the past.  So
+something changed apparently.  (KCSAN was just a guess.)
 
-drivers/phy/ti/phy-j721e-wiz.o: In function `wiz_remove':
-phy-j721e-wiz.c:(.text+0x1a): undefined reference to
-`of_platform_device_destroy'
-
-Fix the config dependency for PHY_J721E_WIZ here.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 091876cc355d ("phy: ti: j721e-wiz: Add support for WIZ module present in TI J721E SoC")
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/phy/ti/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-index 3a1d3887c99c..6dbe9d0b9ff3 100644
---- a/drivers/phy/ti/Kconfig
-+++ b/drivers/phy/ti/Kconfig
-@@ -36,6 +36,7 @@ config PHY_AM654_SERDES
- config PHY_J721E_WIZ
- 	tristate "TI J721E WIZ (SERDES Wrapper) support"
- 	depends on OF && ARCH_K3 || COMPILE_TEST
-+	depends on HAS_IOMEM && OF_ADDRESS
- 	depends on COMMON_CLK
- 	select GENERIC_PHY
- 	select MULTIPLEXER
 -- 
-2.17.1
+Josh
 
