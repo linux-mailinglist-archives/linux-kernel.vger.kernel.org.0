@@ -2,87 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB89614021C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E1A140226
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 04:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388678AbgAQCuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 21:50:01 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36949 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388384AbgAQCuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 21:50:00 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p14so11224156pfn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 18:50:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ocx1bcHvca+8n2uDvEKp0ll9Xosk7Vm9gTmI5pqwqMY=;
-        b=A9dALr6S1daNEyD2gQ3R+ElBRW1LXgSwVHb0wqfhCi/w46iAnWFXeEHJ7eMeVbjcYO
-         A2H2cVbJy7G3KqIZLilJfguEYu+t0b0/mO5IJ/UPkqDaxviENqYUpEtNkB7q+cBNbmjt
-         nE22pYPhcGeS9bk/MGtaYs1u7bYZKRQtn0m2ytM+iB+TvLv0zFgR+6YErcCdSKCqTimN
-         /6KzW61HT8H1XAnCmH9Ag+mlgFx9MNcewP2G6XHZ79RIS67EXjLCxl38+7qJdDoMaZfd
-         n8XR2zaFnsVkpy0s/EgfO0pX4i4J20BZXKHNMNjWDXDKGte19fUjz09amzmo1OGh18e6
-         HX5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ocx1bcHvca+8n2uDvEKp0ll9Xosk7Vm9gTmI5pqwqMY=;
-        b=YDoXs+RvT8B6hx0yRhL29FTiDj7Oqv6mnzSAMQ20vAsjE3j0sLXpeqW0Oed+ouGBa0
-         ijj3P6xyovH6usFZl1K8ltLsS7FzPlnUdl9FS/VXV4Po3YPBEN137g9tkfEFdXMvL07T
-         tRG8mDEWSJmpkvpyT/Hf39JriBPJ2JVjWBKvetNR0ItIMIMp6xipcY8bWu9ehf9EknRg
-         NGU9EwuvNOpCgvD0VfjHEKoFjQNl9M25F7mFZqHxe6UAuEydyS4K0iHeWLGP+Dp2/Rof
-         HuCQfVu0+L4KW8hG71oM+eQbY6gWnq5ocolDdcaBT4pFwPS1fFDwXMhHI0KtG5yOnZIi
-         XzKA==
-X-Gm-Message-State: APjAAAWjzPiQCAxeJesZshec0luM8vDSSQXx6jnN0OT3J2/2MuXgUExI
-        1jt89nmAIjuFUxJlNp+JkvU=
-X-Google-Smtp-Source: APXvYqwQvFDnTATlFyF5/qlEI9Pl40x+gtbXGOWUGS+tSdK/gYhZSnx3HZR48Rfp24YtPLhJNEBoFA==
-X-Received: by 2002:a62:e30d:: with SMTP id g13mr761645pfh.92.1579229400236;
-        Thu, 16 Jan 2020 18:50:00 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
-        by smtp.gmail.com with ESMTPSA id s131sm29571468pfs.135.2020.01.16.18.49.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 18:49:59 -0800 (PST)
-Date:   Fri, 17 Jan 2020 11:49:57 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, mhocko@kernel.org,
-        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
-        rostedt@goodmis.org, peterz@infradead.org, david@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
- printk()
-Message-ID: <20200117024957.GA7372@google.com>
-References: <20200117022111.18807-1-cai@lca.pw>
+        id S2389089AbgAQC7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 21:59:30 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9647 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389065AbgAQC73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 21:59:29 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 78CF5ED8B3F9E512D1F0;
+        Fri, 17 Jan 2020 10:59:26 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 17 Jan 2020
+ 10:59:15 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <sfrench@samba.org>, <pshilov@microsoft.com>, <lsahlber@redhat.com>
+CC:     <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] cifs: remove set but not used variable 'server'
+Date:   Fri, 17 Jan 2020 10:57:17 +0800
+Message-ID: <20200117025717.58636-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117022111.18807-1-cai@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (20/01/16 21:21), Qian Cai wrote:
-> It is not that hard to trigger lockdep splats by calling printk from
-> under zone->lock. Most of them are false positives caused by lock chains
-> introduced early in the boot process and they do not cause any real
-> problems (although some of the early boot lock dependencies could
-> happenn after boot as well). There are some console drivers which do
-> allocate from the printk context as well and those should be fixed. In
-> any case false positives are not that trivial to workaround and it is
-> far from optimal to lose lockdep functionality for something that is a
-> non-issue.
-[..]
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Qian Cai <cai@lca.pw>
+fs/cifs/smb2pdu.c: In function 'SMB2_query_directory':
+fs/cifs/smb2pdu.c:4444:26: warning:
+ variable 'server' set but not used [-Wunused-but-set-variable]
+  struct TCP_Server_Info *server;
 
-FWIW,
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+It is not used, so remove it.
 
-	-ss
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/cifs/smb2pdu.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index a23ca3d..64d5a36 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -4441,13 +4441,10 @@ SMB2_query_directory(const unsigned int xid, struct cifs_tcon *tcon,
+ 	int resp_buftype = CIFS_NO_BUFFER;
+ 	struct kvec rsp_iov;
+ 	int rc = 0;
+-	struct TCP_Server_Info *server;
+ 	struct cifs_ses *ses = tcon->ses;
+ 	int flags = 0;
+ 
+-	if (ses && (ses->server))
+-		server = ses->server;
+-	else
++	if (!ses || !(ses->server))
+ 		return -EIO;
+ 
+ 	if (smb3_encryption_required(tcon))
+-- 
+2.7.4
+
+
