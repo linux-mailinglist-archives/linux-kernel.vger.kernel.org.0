@@ -2,85 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACBAF14018B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 02:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFD0140192
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 02:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388014AbgAQBqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 20:46:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726741AbgAQBq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 20:46:28 -0500
-Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38BFA2075B;
-        Fri, 17 Jan 2020 01:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579225587;
-        bh=kF0McEzzIna+OlNxDDvv0BFj+tanfJPabCZ9hgpDZTw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YLuQ4iN8bF+tZrRX09LQTvkHEz92ULIHS5nIyWSwrfb4VbMtXxH/Oe5XZvuePIEYo
-         sF47+mV/+zMy6nfyYfcd5nDd1MXB36Ni+9+XvwIfqY6iK0mnRcIs4F6WqZkN0XwLIK
-         SBIuF6vqcLWRDG/ZIbepRDIL+/bqD5sHlh96ZRAA=
-Date:   Thu, 16 Jan 2020 17:46:26 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     peterz@infradead.org, will@kernel.org, mpe@ellerman.id.au,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 3/9] asm-generic/tlb: Avoid potential double flush
-Message-Id: <20200116174626.0244f71bbff64eee6c7faa1d@linux-foundation.org>
-In-Reply-To: <c12bb139-9eda-74a9-b4de-b147a88ed1b0@linux.ibm.com>
-References: <20200116064531.483522-1-aneesh.kumar@linux.ibm.com>
-        <20200116064531.483522-4-aneesh.kumar@linux.ibm.com>
-        <c12bb139-9eda-74a9-b4de-b147a88ed1b0@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388557AbgAQBuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 20:50:44 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9181 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729602AbgAQBun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 20:50:43 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 72BF3EE69A289885EECF;
+        Fri, 17 Jan 2020 09:50:39 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 17 Jan 2020
+ 09:50:31 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <darrick.wong@oracle.com>, <linux-xfs@vger.kernel.org>,
+        <hch@lst.de>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] xfs: remove unused variable 'done'
+Date:   Fri, 17 Jan 2020 09:50:11 +0800
+Message-ID: <20200117015011.50412-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 12:19:59 +0530 "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com> wrote:
+fs/xfs/xfs_inode.c: In function 'xfs_itruncate_extents_flags':
+fs/xfs/xfs_inode.c:1523:8: warning: unused variable 'done' [-Wunused-variable]
 
-> On 1/16/20 12:15 PM, Aneesh Kumar K.V wrote:
-> > From: Peter Zijlstra <peterz@infradead.org>
-> > 
-> > Aneesh reported that:
-> > 
-> > 	tlb_flush_mmu()
-> > 	  tlb_flush_mmu_tlbonly()
-> > 	    tlb_flush()			<-- #1
-> > 	  tlb_flush_mmu_free()
-> > 	    tlb_table_flush()
-> > 	      tlb_table_invalidate()
-> > 		tlb_flush_mmu_tlbonly()
-> > 		  tlb_flush()		<-- #2
-> > 
-> > does two TLBIs when tlb->fullmm, because __tlb_reset_range() will not
-> > clear tlb->end in that case.
-> > 
-> > Observe that any caller to __tlb_adjust_range() also sets at least one
-> > of the tlb->freed_tables || tlb->cleared_p* bits, and those are
-> > unconditionally cleared by __tlb_reset_range().
-> > 
-> > Change the condition for actually issuing TLBI to having one of those
-> > bits set, as opposed to having tlb->end != 0.
-> > 
-> 
-> 
-> We should possibly get this to stable too along with the first two 
-> patches. I am not quiet sure if this will qualify for a stable backport. 
-> Hence avoided adding Cc:stable@kernel.org
+commit 4bbb04abb4ee ("xfs: truncate should remove
+all blocks, not just to the end of the page cache")
+left behind this, so remove it.
 
-I'm not seeing any description of the user-visible runtime effects. 
-Always needed, especially for -stable, please.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/xfs/xfs_inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-It appears to be a small performance benefit?  If that benefit was
-"large" and measurements were presented then that would be something
-we might wish to backport.
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 1309f25..1979a00 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -1520,7 +1520,6 @@ xfs_itruncate_extents_flags(
+ 	xfs_fileoff_t		first_unmap_block;
+ 	xfs_filblks_t		unmap_len;
+ 	int			error = 0;
+-	int			done = 0;
+ 
+ 	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
+ 	ASSERT(!atomic_read(&VFS_I(ip)->i_count) ||
+-- 
+2.7.4
 
 
