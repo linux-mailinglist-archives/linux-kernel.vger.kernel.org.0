@@ -2,149 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED2771413F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BEEF1413F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbgAQWPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:15:39 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50232 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgAQWPi (ORCPT
+        id S1729073AbgAQWQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:16:17 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50132 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgAQWQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:15:38 -0500
+        Fri, 17 Jan 2020 17:16:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SMbahnT/3TNTcGhSxCVvAMEn2xKSeJz9qPB7q7BC5OA=; b=UNk3YGiN1aR7PqotwWDdY28I2
-        ky70czk41LpR41AV32uspJTvFuwDsQifisxAZd3QpmMQcuyVGUL8X2HzKpjYPosLL9GAZFPOX0QyX
-        tupb2EjTgZ9doweAXekhMwj9u494SzY588OYVkIZhOc0Rh41T2oHhaG5EapU3/eb2Na1afh0Eygad
-        NVM4QXT19TN2PYgCPfBP9OPHJyDFU+IDkhh9aPuVt44bUFmZU1nIfWIPsnhes0/QRAWZtdVKf2dbB
-        uExI7QvG+V3UmPoALVCYxOd7QffzVY2Iq2FWo0AGAlFrzp21MTi7JHNufY4n6Phbwd+5eVjQq6lpS
-        aX70iUNmg==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:56288)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1isZtu-0007Mw-UI; Fri, 17 Jan 2020 22:15:35 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1isZtu-0000Ep-A5; Fri, 17 Jan 2020 22:15:34 +0000
-Date:   Fri, 17 Jan 2020 22:15:34 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: decompressor: simplify libfdt builds
-Message-ID: <20200117221534.GR25745@shell.armlinux.org.uk>
-References: <20191204044950.10418-1-masahiroy@kernel.org>
+         bh=CFwRKOc+gezyceo0kC40ZLd3xOsAPmQzS5kapaZ2B18=; b=oKyPNlVDNwLxSQvsjfAkGK9aF
+        R9eBYNoE5+kpCUwwuCM4AIBAFTneRiyrGJFIsrpgGpiY5vl652zEBt5pFSlhiGeGXy8CW1OjBk3iQ
+        P/mwDGmpeXiizWRqFXXiZq5GZ/nCoznlISFqOqczXQzwAEKz4cjuJtZc988M18xUs01YsUj3eeJPP
+        k5rUNPFnZIkmxfG8BzmfOUyVedBRIrP7PicBbfBevLz5OkFNdhy4PMuLb2AB73bfVZh67MXl9jMop
+        LqLNId60/MmxANfdKyra+NdBP9yZ465zbOrudluqx7J0gwtqrMApT0L59lqQWDWHhdzNZxc4xqkSO
+        qyuO8rj6w==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isZuG-0001rZ-79; Fri, 17 Jan 2020 22:15:56 +0000
+Subject: Re: mmotm 2019-12-10-19-14 uploaded (objtool: func() falls through)
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
+ <07777464-b9d8-ff1d-41d9-f62cc44f09f3@infradead.org>
+ <20191212184859.zjj2ycfkvpcns5bk@treble>
+ <042c6cd7-c983-03f1-6a79-5642549f57c4@infradead.org>
+ <20191212205811.4vrrb4hou3tbiada@treble>
+ <20200117181121.3h72dajey7oticbf@treble>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d1dc6614-9089-62a8-e303-84b9d57297a3@infradead.org>
+Date:   Fri, 17 Jan 2020 14:15:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191204044950.10418-1-masahiroy@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200117181121.3h72dajey7oticbf@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 01:49:50PM +0900, Masahiro Yamada wrote:
-> Copying source files during the build time may not end up with
-> as clean code as expected.
+On 1/17/20 10:11 AM, Josh Poimboeuf wrote:
+> On Thu, Dec 12, 2019 at 02:58:11PM -0600, Josh Poimboeuf wrote:
+>> On Thu, Dec 12, 2019 at 12:21:17PM -0800, Randy Dunlap wrote:
+>>> On 12/12/19 10:48 AM, Josh Poimboeuf wrote:
+>>>> On Wed, Dec 11, 2019 at 08:31:08AM -0800, Randy Dunlap wrote:
+>>>>> On 12/10/19 7:14 PM, Andrew Morton wrote:
+>>>>>> The mm-of-the-moment snapshot 2019-12-10-19-14 has been uploaded to
+>>>>>>
+>>>>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>>>>
+>>>>>> mmotm-readme.txt says
+>>>>>>
+>>>>>> README for mm-of-the-moment:
+>>>>>>
+>>>>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>>>>
+>>>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>>>>> more than once a week.
+>>>>>>
+>>>>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>>>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>>>>> http://ozlabs.org/~akpm/mmotm/series
+>>>>>>
+>>>>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>>>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>>>>> followed by the base kernel version against which this patch series is to
+>>>>>> be applied.
+>>>>>
+>>>>> on x86_64:
+>>>>>
+>>>>> drivers/hwmon/f71882fg.o: warning: objtool: f71882fg_update_device() falls through to next function show_pwm_auto_point_temp_hyst()
+>>>>> drivers/ide/ide-probe.o: warning: objtool: hwif_register_devices() falls through to next function hwif_release_dev()
+>>>>> drivers/ide/ide-probe.o: warning: objtool: ide_host_remove() falls through to next function ide_disable_port()
+>>>>
+>>>> Randy, can you share the .o files?
+>>>
+>>> Sure. They are attached.
+>>
+>> These look like compiler bugs to me... execution is falling off the edge
+>> of the functions for no apparent reason.  Could potentially be triggered
+>> by the '#define if' trace code.
 > 
-> lib/fdt*.c simply wrap scripts/dtc/libfdt/fdt*.c, and it works
-> nicely. Let's follow that approach for the arm decompressor, too.
+> Randy, do you happen to have a config which triggers the above bugs?  I
+> can reduce the test cases and open a GCC bug.
 > 
-> Add four wrappers, arch/arm/boot/compressed/fdt*.c and remove
-> the Makefile messes. Another nice thing is we no longer need to
-> maintain the own libfdt_env.h because the decompressor can include
-> <linux/libfdt_env.h>.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
-> KernelVersion: v5.5-rc1
-> 
-> 
->  arch/arm/boot/compressed/.gitignore     |  9 -------
->  arch/arm/boot/compressed/Makefile       | 33 +++++++------------------
->  arch/arm/boot/compressed/atags_to_fdt.c |  1 +
->  arch/arm/boot/compressed/fdt.c          |  1 +
->  arch/arm/boot/compressed/fdt_ro.c       |  1 +
->  arch/arm/boot/compressed/fdt_rw.c       |  1 +
->  arch/arm/boot/compressed/fdt_wip.c      |  1 +
->  arch/arm/boot/compressed/libfdt_env.h   | 24 ------------------
->  8 files changed, 14 insertions(+), 57 deletions(-)
->  create mode 100644 arch/arm/boot/compressed/fdt.c
->  create mode 100644 arch/arm/boot/compressed/fdt_ro.c
->  create mode 100644 arch/arm/boot/compressed/fdt_rw.c
->  create mode 100644 arch/arm/boot/compressed/fdt_wip.c
->  delete mode 100644 arch/arm/boot/compressed/libfdt_env.h
-> 
-> diff --git a/arch/arm/boot/compressed/.gitignore b/arch/arm/boot/compressed/.gitignore
-> index 86b2f5d28240..2fdb4885846b 100644
-> --- a/arch/arm/boot/compressed/.gitignore
-> +++ b/arch/arm/boot/compressed/.gitignore
-> @@ -6,12 +6,3 @@ hyp-stub.S
->  piggy_data
->  vmlinux
->  vmlinux.lds
-> -
-> -# borrowed libfdt files
-> -fdt.c
-> -fdt.h
-> -fdt_ro.c
-> -fdt_rw.c
-> -fdt_wip.c
-> -libfdt.h
-> -libfdt_internal.h
-> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-> index da599c3a1193..d01ce71afac6 100644
-> --- a/arch/arm/boot/compressed/Makefile
-> +++ b/arch/arm/boot/compressed/Makefile
-> @@ -76,29 +76,23 @@ compress-$(CONFIG_KERNEL_LZMA) = lzma
->  compress-$(CONFIG_KERNEL_XZ)   = xzkern
->  compress-$(CONFIG_KERNEL_LZ4)  = lz4
->  
-> -# Borrowed libfdt files for the ATAG compatibility mode
-> -
-> -libfdt		:= fdt_rw.c fdt_ro.c fdt_wip.c fdt.c
-> -libfdt_hdrs	:= fdt.h libfdt.h libfdt_internal.h
-> -
-> -libfdt_objs	:= $(addsuffix .o, $(basename $(libfdt)))
-> -
-> -$(addprefix $(obj)/,$(libfdt) $(libfdt_hdrs)): $(obj)/%: $(srctree)/scripts/dtc/libfdt/%
-> -	$(call cmd,shipped)
-> +ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
-> +libfdt_objs = fdt_rw.o fdt_ro.o fdt_wip.o fdt.o atags_to_fdt.o
->  
-> -$(addprefix $(obj)/,$(libfdt_objs) atags_to_fdt.o): \
-> -	$(addprefix $(obj)/,$(libfdt_hdrs))
-> +OBJS	+= $(libfdt_objs)
->  
-> -ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
-> -OBJS	+= $(libfdt_objs) atags_to_fdt.o
-> +# -fstack-protector-strong triggers protection checks in this code,
-> +# but it is being used too early to link to meaningful stack_chk logic.
-> +nossp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
-> +$(foreach o, $(libfdt_objs), \
-> +	$(eval CFLAGS_$(o) := -I $(srctree)/scripts/dtc/libfdt) $(nossp-flags-y))
 
-The above change causes build breakage over a number of ARM builds,
-which unfortunately doesn't result in emails from any build system
-containing the cause of the failure.
-
-See
-https://kernelci.org/build/rmk/branch/for-next/kernel/v5.5-rc1-12-g9a6545e2fc83/
-
-where the failures are reported as:
-
-../arch/arm/boot/compressed/Makefile:87: *** missing separator. Stop.
-
-Thanks.  Patch dropped.
+No, but I'll try to recreate the issue and get back to you.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+~Randy
+
