@@ -2,98 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7649141497
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 00:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A615614149E
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 00:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbgAQXEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 18:04:05 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:49581 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729099AbgAQXEF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 18:04:05 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 744C4585E;
-        Fri, 17 Jan 2020 18:04:02 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 17 Jan 2020 18:04:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=5quz/s
-        XDX8o8ICPwUpRb3ta3WYQ721Mtd7frfvTaU00=; b=gArZ7YMl0/16hrDswrK6K4
-        Oj1/8tYUm8W6ZSIHSp2E272yRYtNDil2/b+Zl1uR0y2yDMLrKFPfaIz8cwNw0TCe
-        /QXpv9G/bdVH1qnM7kVEXHVEB6BF3GEAtGZlwTvKPTLM9m7/cuJacUwm8/jnLde6
-        oake1xaY2Rd/fo94DOsXuyv3mOfstgSaUr5Orj2lRAOwhcYHMyPdNxU5WPKmh3ZY
-        zIIWtfx7pmMhjAkFxQsAkBsGqTpN4gD5/qko0JEam5s1fwPyMthWyik0V2YBeBqB
-        FuMd452qavUFwglnUYWUebwh8+kbfb6nzXVUa05WJYsnVhxzzYI696iuFAW22McA
-        ==
-X-ME-Sender: <xms:YT0iXnaBsenCTgvzg-F1rg31A2kwGO0iakIpJecYRwn6Wb-9ExUGUQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdelgddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvghhkhheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgqeenucfkph
-    epkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvghes
-    khhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:YT0iXlais33krYYwaT7vn-uWfQEnvuHvOa3KjDeSyBA1MwSMJ2yVkQ>
-    <xmx:YT0iXqFC-c0uJvp85UV0dfVlykGscfq6HanpacGVwHb8G7JDu832OA>
-    <xmx:YT0iXgDs-B2A7Z5byjQTVVnFgVmxFtRMenn4vH8U7_jIWUPPxy4bjw>
-    <xmx:Yj0iXshXyDKLHNAJMScgCbZ44x5VOJ2rnKHn1EdQ70m5uuN3Wo4ZOQ>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 10A2E80063;
-        Fri, 17 Jan 2020 18:04:01 -0500 (EST)
-Date:   Sat, 18 Jan 2020 00:03:56 +0100
-From:   Greg KH <gregkh@linux-foundation.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     roman.sudarikov@linux.intel.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v4 2/2] perf =?iso-8859-1?Q?x86?=
- =?iso-8859-1?Q?=3A_Exposing_an_Uncore_unit_to_PMON_for_Intel_Xeon?=
- =?iso-8859-1?Q?=AE?= server platform
-Message-ID: <20200117230356.GA2093716@kroah.com>
-References: <20200117133759.5729-1-roman.sudarikov@linux.intel.com>
- <20200117133759.5729-3-roman.sudarikov@linux.intel.com>
- <20200117141944.GC1856891@kroah.com>
- <20200117162357.GK302770@tassilo.jf.intel.com>
- <20200117165406.GA1937954@kroah.com>
- <20200117172726.GM302770@tassilo.jf.intel.com>
- <20200117184249.GB1969121@kroah.com>
- <20200117191220.GN302770@tassilo.jf.intel.com>
+        id S1730155AbgAQXGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 18:06:45 -0500
+Received: from mga14.intel.com ([192.55.52.115]:61007 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729099AbgAQXGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 18:06:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 15:06:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,332,1574150400"; 
+   d="scan'208";a="426157853"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jan 2020 15:06:43 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 567F65803DA;
+        Fri, 17 Jan 2020 15:06:43 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v12 8/8] PCI/ACPI: Enable EDR support
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Huong Nguyen <huong.nguyen@dell.com>,
+        Austin Bolen <Austin.Bolen@dell.com>
+References: <20200117204115.GA126492@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <cd68630b-a511-ade5-97ed-4ee0082b9f9e@linux.intel.com>
+Date:   Fri, 17 Jan 2020 15:04:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117191220.GN302770@tassilo.jf.intel.com>
+In-Reply-To: <20200117204115.GA126492@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 11:12:20AM -0800, Andi Kleen wrote:
-> > > pmon0-3: list of pci busses indexed by die
-> > > 
-> > > To be honest the approach doesn't seem unreasonable to me. It's similar
-> > > e.g. how we express lists of cpus or nodes in sysfs today.
-> 
-> <snipped repeated form letter non answer to question>
-> 
-> Roman, 
-> 
-> I suppose you'll need something like
-> 
-> /sys/device/system/dieXXX/pci-pmon<0-3>/bus 
-> 
-> and bus could be a symlink to the pci bus directory.
 
-Why do you need to link to the pci bus directory?
+On 1/17/20 12:41 PM, Bjorn Helgaas wrote:
+> On Sun, Jan 12, 2020 at 02:44:02PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> As per PCI firmware specification r3.2 Downstream Port Containment
+>> Related Enhancements ECN, sec 4.5.1, OS must implement following steps
+>> to enable/use EDR feature.
+>>
+>> 1. OS can use bit 7 of _OSC Control Field to negotiate control over
+>> Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
+>> negotiation, firmware will Set this bit to grant OS control over PCIe
+>> DPC configuration and Clear it if this feature was requested and denied,
+>> or was not requested.
+>>
+>> 2. Also, if OS supports EDR, it should expose its support to BIOS by
+>> setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
+>> Control Field it must also expose support for EDR by setting bit 7 of
+>> _OSC Support Field.
+>> --- a/drivers/pci/pcie/portdrv_core.c
+>> +++ b/drivers/pci/pcie/portdrv_core.c
+>> @@ -253,10 +253,13 @@ static int get_port_device_capability(struct pci_dev *dev)
+>>   	/*
+>>   	 * With dpc-native, allow Linux to use DPC even if it doesn't have
+>>   	 * permission to use AER.
+>> +	 * If EDR support is enabled in OS, then even if AER is not handled in
+>> +	 * OS, DPC service can be enabled.
+> Can you clarify this comment?  It talks about AER, but the code you
+> added:
+Previously with condition
+(pci_aer_available() && (pcie_ports_dpc_native || (services & 
+PCIE_PORT_SERVICE_AER)))
+we have only checked whether AER is enabled and supported before 
+enabling DPC.
 
-> The whole thing will be ugly and complicated and slow and difficult
-> to parse, but it will presumably follow Greg's rules.
+But with EDR support, we enumerate DPC driver even if AER is not 
+supported or handled
+in OS. And the or condition (IS_ENABLED(CONFIG_PCIE_EDR) && 
+!host->native_dpc) adds this
+support.
 
-Who needs to parse this?  What tool will do it and for what?
 
-greg k-h
+>    (IS_ENABLED(CONFIG_PCIE_EDR) && !host->native_dpc)
+>
+> doesn't have anything to do with AER.
+>
+>>   	 */
+>>   	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
+>> -	    pci_aer_available() &&
+>> -	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))
+>> +	    ((IS_ENABLED(CONFIG_PCIE_EDR) && !host->native_dpc) ||
+>> +	    (pci_aer_available() &&
+>> +	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))))
+>>   		services |= PCIE_PORT_SERVICE_DPC;
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
+
