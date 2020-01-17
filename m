@@ -2,57 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4EA140715
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ED5014072B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgAQJ63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:58:29 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37383 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728794AbgAQJ60 (ORCPT
+        id S1728951AbgAQJ6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:58:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39443 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728816AbgAQJ61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:58:26 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w15so22099995wru.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:58:24 -0800 (PST)
+        Fri, 17 Jan 2020 04:58:27 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 20so6911876wmj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:58:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vdr1R6he+EPUd/NCIYt7CQBDB83sSDrPxTnifgtApfQ=;
-        b=ROhabsZfAAiEDR7Gzc8sCW8VUDb0mnVMwJ06LQzZcVDa8sh7M+fsbMH83pXxpwM+U1
-         Xa3XjS8pqN9oEcjv/1DIf5uRHpbrCwMesgQCfzdTbrh9fSHnoXq/dAEGtOAk2iFs1Pke
-         CpuYNTjhkp1JN8cF/f4n5ICIo7eKCktztF8g69TA2UF5348dxmb6wABTxzDfnPatN54a
-         qKVaOc8ULZPv5VU8K9uYDmS6tl5M3sYwNi14NL+46CihyhOAXeNSTSln6KVR/iGquJar
-         1b0zxh3WLCpley9d6LWSCRco2mkxjleo5/NvJXy0Z0kIg4ImjUmt051jkCUzBiodVGQw
-         3DLQ==
+        bh=69zkeA3EsoksrgUY9Um/6N1yWF5rzIHjf5tDoqGZRjI=;
+        b=sea0KpwGHD3wCe5ufSr5NLlr4rEoNNOinI4ctaz8jmXEG28tG4zKZtlJL3i9I4qW/M
+         T8AwNZyC2VQTGl3AgkVCvsvAvG7OhnaHBNy8hghQ1N+D+dGW9J9/e61CUgtx4BAARx22
+         Mm/2g7FfeNT5T/HobvqAlKUJjjrQ8yceJ0dVgXPsdJPYHyxoEcp2uCcRbYOaecrgLqUW
+         vp3aa3OrIdCOm63ZPndB6GwSYPGB+nGgNbIJIBkvcJ/eCT8bdwX4IUR0v285L9YBoXIs
+         IDcSN+uNsOFxv0s8Gj37bEftJBxtW18p+eIO8HbtyujAraPC24OYil5Oc7JBXkPW3Dzd
+         X28A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vdr1R6he+EPUd/NCIYt7CQBDB83sSDrPxTnifgtApfQ=;
-        b=ox60vF+hzSoinh31+yHRIK+W2mhmAtsIGCq2DyRoe0Oat2OKtmtfAG8DT6uX1LDLbP
-         3IUYcRFBosNSHlxC6lfi4Kfjm9JvQvh6d7k8yqq7OaU/xr3ns0Hvphry7FGkc+lDj8ei
-         /KTpy81Qt016ZaCW7A8+Cxc+vRGQ9raBzh1YgUlWnbMgtI6gWzbDAG79dJB39DHfNFr7
-         nHB3aQ1rSY5rg8nOi5tBVqxRDVreNMKKbwUHWyYtJfmeQ4ZOCU1Iqxul8Cq1SHdgRtZZ
-         cOGDMcSm+ioZgfq+xDMiHtLu8lCUvJSeEXIIIyto3+K0msvNBZCskrYm5r4CZntjT3ss
-         Njsw==
-X-Gm-Message-State: APjAAAUPCgUjAFq2NRLSq0lfIkOyjsWKs4+18x0q0d6978RUP6tIqrL4
-        72Mw3CT2CVgCl2kR5Uu2TD0olg==
-X-Google-Smtp-Source: APXvYqyKSTIDCTHrX8b2t3m5uHVW+d+9ClLZ1lMfZMNYkwzcXqTaqzGYB0PXLzgjZl0YD61ceN2+sA==
-X-Received: by 2002:a5d:6406:: with SMTP id z6mr2166824wru.294.1579255104160;
-        Fri, 17 Jan 2020 01:58:24 -0800 (PST)
+        bh=69zkeA3EsoksrgUY9Um/6N1yWF5rzIHjf5tDoqGZRjI=;
+        b=YrLToY0j7rxJWDWx/5+R756XV9tt0ujvG3eS3xwWwK/4J1qIx0W3P0mgkzHuwWJx+9
+         lodVR8UyeUKOwIsHnG4r5l71qybhs+fyMiMnkyrQsOavGr9dtPm1R9FQRCR1iaDUv9FE
+         2KeG8vMgQX1YNQRZHqbaFC+MakPiZXdJ2MLRtLVa6okFbLSPMvfoQk60dS8tbWqekSzH
+         6DJJYCEKqc0AoaxOjECwIou+rqD97llj2zzAG/sL5Hv+cIJ3ZUo6t2YEKvi5ZEu8HX6m
+         PobiKrzhkJV6KehtIFsm86Te2qk6rulI59VVeRtF6Prx3LxD9C1xEfomIBpOn1/xP3Pj
+         USrw==
+X-Gm-Message-State: APjAAAV/406BHxeoRQYlPILzSTYGAXNf0fZTgcU8ucbuolVgSTQhRJhF
+        4MPfPFuWYsiuiVPIdLiGqCT28L0ltLQ=
+X-Google-Smtp-Source: APXvYqwo0Z7gY5lIK21vyoJch58yh5Dhjb6c6doWW6Fay3i1RC5pYgBybK/0QI27Sif2nJLw+LPoYw==
+X-Received: by 2002:a7b:c4cc:: with SMTP id g12mr3950050wmk.68.1579255105355;
+        Fri, 17 Jan 2020 01:58:25 -0800 (PST)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id r62sm9967007wma.32.2020.01.17.01.58.22
+        by smtp.googlemail.com with ESMTPSA id r62sm9967007wma.32.2020.01.17.01.58.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 17 Jan 2020 01:58:23 -0800 (PST)
+        Fri, 17 Jan 2020 01:58:24 -0800 (PST)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Georgi Djakov <georgi.djakov@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 04/12] interconnect: Add a name to struct icc_path
-Date:   Fri, 17 Jan 2020 11:58:08 +0200
-Message-Id: <20200117095816.23575-5-georgi.djakov@linaro.org>
+Subject: [PATCH 05/12] interconnect: Add basic tracepoints
+Date:   Fri, 17 Jan 2020 11:58:09 +0200
+Message-Id: <20200117095816.23575-6-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200117095816.23575-1-georgi.djakov@linaro.org>
 References: <20200117095816.23575-1-georgi.djakov@linaro.org>
@@ -63,81 +64,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When debugging interconnect things, it turned out that saving the path
-name and including it in the traces is quite useful, especially for
-devices with multiple paths.
+The tracepoints can help with understanding the system behavior of a
+given interconnect path when the consumer drivers change their bandwidth
+demands. This might be interesting when we want to monitor the requested
+interconnect bandwidth for each client driver. The paths may share the
+same nodes and this will help to understand "who and when is requesting
+what". All this is useful for subsystem drivers developers and may also
+provide hints when optimizing the power and performance profile of the
+system.
 
-For the path name we use the one specified in DT, or if we use platform
-data, the name is based on the source and destination node names.
-
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- drivers/interconnect/core.c     | 18 +++++++++++++++---
- drivers/interconnect/internal.h |  2 ++
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/interconnect/Makefile |  1 +
+ drivers/interconnect/core.c   |  7 +++
+ drivers/interconnect/trace.h  | 88 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/interconnect/trace.h
 
+diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+index 28f2ab0824d5..725029ae7a2c 100644
+--- a/drivers/interconnect/Makefile
++++ b/drivers/interconnect/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++CFLAGS_core.o				:= -I$(src)
+ icc-core-objs				:= core.o
+ 
+ obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
 diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index f30a326dc7ce..4f9bdb7f9165 100644
+index 4f9bdb7f9165..fbec2e4fdfeb 100644
 --- a/drivers/interconnect/core.c
 +++ b/drivers/interconnect/core.c
-@@ -356,9 +356,17 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+@@ -21,6 +21,9 @@
  
- 	mutex_lock(&icc_lock);
- 	path = path_find(dev, src_node, dst_node);
--	if (IS_ERR(path))
--		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
- 	mutex_unlock(&icc_lock);
-+	if (IS_ERR(path)) {
-+		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
-+		return path;
-+	}
+ #include "internal.h"
+ 
++#define CREATE_TRACE_POINTS
++#include "trace.h"
 +
-+	if (name)
-+		path->name = kstrdup_const(name, GFP_KERNEL);
-+	else
-+		path->name = kasprintf(GFP_KERNEL, "%s-%s",
-+				       src_node->name, dst_node->name);
+ static DEFINE_IDR(icc_idr);
+ static LIST_HEAD(icc_providers);
+ static DEFINE_MUTEX(icc_lock);
+@@ -435,6 +438,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
  
- 	return path;
- }
-@@ -481,9 +489,12 @@ struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
- 		goto out;
- 
- 	path = path_find(dev, src, dst);
--	if (IS_ERR(path))
-+	if (IS_ERR(path)) {
- 		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
-+		goto out;
-+	}
- 
-+	path->name = kasprintf(GFP_KERNEL, "%s-%s", src->name, dst->name);
- out:
- 	mutex_unlock(&icc_lock);
- 	return path;
-@@ -519,6 +530,7 @@ void icc_put(struct icc_path *path)
+ 		/* aggregate requests for this node */
+ 		aggregate_requests(node);
++
++		trace_icc_set_bw(path, node, i, avg_bw, peak_bw);
  	}
+ 
+ 	ret = apply_constraints(path);
+@@ -453,6 +458,8 @@ int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+ 
  	mutex_unlock(&icc_lock);
  
-+	kfree_const(path->name);
- 	kfree(path);
++	trace_icc_set_bw_end(path, ret);
++
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(icc_put);
-diff --git a/drivers/interconnect/internal.h b/drivers/interconnect/internal.h
-index 5853e8faf223..bf18cb7239df 100644
---- a/drivers/interconnect/internal.h
-+++ b/drivers/interconnect/internal.h
-@@ -29,10 +29,12 @@ struct icc_req {
- 
- /**
-  * struct icc_path - interconnect path structure
-+ * @name: a string name of the path (useful for ftrace)
-  * @num_nodes: number of hops (nodes)
-  * @reqs: array of the requests applicable to this path of nodes
-  */
- struct icc_path {
-+	const char *name;
- 	size_t num_nodes;
- 	struct icc_req reqs[];
- };
+ EXPORT_SYMBOL_GPL(icc_set_bw);
+diff --git a/drivers/interconnect/trace.h b/drivers/interconnect/trace.h
+new file mode 100644
+index 000000000000..3d668ff566bf
+--- /dev/null
++++ b/drivers/interconnect/trace.h
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Interconnect framework tracepoints
++ * Copyright (c) 2019, Linaro Ltd.
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM interconnect
++
++#if !defined(_TRACE_INTERCONNECT_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_INTERCONNECT_H
++
++#include <linux/interconnect.h>
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(icc_set_bw,
++
++	TP_PROTO(struct icc_path *p, struct icc_node *n, int i,
++		 u32 avg_bw, u32 peak_bw),
++
++	TP_ARGS(p, n, i, avg_bw, peak_bw),
++
++	TP_STRUCT__entry(
++		__string(path_name, p->name)
++		__string(dev, dev_name(p->reqs[i].dev))
++		__string(node_name, n->name)
++		__field(u32, avg_bw)
++		__field(u32, peak_bw)
++		__field(u32, node_avg_bw)
++		__field(u32, node_peak_bw)
++	),
++
++	TP_fast_assign(
++		__assign_str(path_name, p->name);
++		__assign_str(dev, dev_name(p->reqs[i].dev));
++		__assign_str(node_name, n->name);
++		__entry->avg_bw = avg_bw;
++		__entry->peak_bw = peak_bw;
++		__entry->node_avg_bw = n->avg_bw;
++		__entry->node_peak_bw = n->peak_bw;
++	),
++
++	TP_printk("path=%s dev=%s node=%s avg_bw=%u peak_bw=%u agg_avg=%u agg_peak=%u",
++		  __get_str(path_name),
++		  __get_str(dev),
++		  __get_str(node_name),
++		  __entry->avg_bw,
++		  __entry->peak_bw,
++		  __entry->node_avg_bw,
++		  __entry->node_peak_bw)
++);
++
++TRACE_EVENT(icc_set_bw_end,
++
++	TP_PROTO(struct icc_path *p, int ret),
++
++	TP_ARGS(p, ret),
++
++	TP_STRUCT__entry(
++		__string(path_name, p->name)
++		__string(dev, dev_name(p->reqs[0].dev))
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__assign_str(path_name, p->name);
++		__assign_str(dev, dev_name(p->reqs[0].dev));
++		__entry->ret = ret;
++	),
++
++	TP_printk("path=%s dev=%s ret=%d",
++		  __get_str(path_name),
++		  __get_str(dev),
++		  __entry->ret)
++);
++
++#endif /* _TRACE_INTERCONNECT_H */
++
++/* This part must be outside protection */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace
++
++#include <trace/define_trace.h>
