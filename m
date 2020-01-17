@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69DA8141027
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FA3F14102A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbgAQRnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:43:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39980 "EHLO mail.kernel.org"
+        id S1729821AbgAQRnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:43:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728984AbgAQRla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729011AbgAQRla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 12:41:30 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A34322464;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FD05214AF;
         Fri, 17 Jan 2020 17:41:29 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1isVce-000QPA-Am; Fri, 17 Jan 2020 12:41:28 -0500
-Message-Id: <20200117174128.213232389@goodmis.org>
+        id 1isVce-000QPg-FT; Fri, 17 Jan 2020 12:41:28 -0500
+Message-Id: <20200117174128.359879963@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 Jan 2020 12:41:17 -0500
+Date:   Fri, 17 Jan 2020 12:41:18 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,10 +31,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Julien Grall <julien.grall@arm.com>
-Subject: [PATCH RT 06/32] KVM: arm/arm64: Let the timer expire in hardirq context on RT
+        Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH RT 07/32] x86: preempt: Check preemption level before looking at lazy-preempt
 References: <20200117174111.282847363@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,52 +46,32 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 719cc080c914045a6e35787bf4dc3ba91cfd3efb ]
+[ Upstream commit 19fc8557f2323c52b26561651ed4d51fc688a740 ]
 
-The timers are canceled from an preempt-notifier which is invoked with
-disabled preemption which is not allowed on PREEMPT_RT.
-The timer callback is short so in could be invoked in hard-IRQ context
-on -RT.
+Before evaluating the lazy-preempt state it must be ensure that the
+preempt-count is zero.
 
-Let the timer expire on hard-IRQ context even on -RT.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Tested-by: Julien Grall <julien.grall@arm.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- virt/kvm/arm/arch_timer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/preempt.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/virt/kvm/arm/arch_timer.c b/virt/kvm/arm/arch_timer.c
-index 17cecc96f735..217d39f40393 100644
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@ -67,7 +67,7 @@ static inline bool userspace_irqchip(struct kvm *kvm)
- static void soft_timer_start(struct hrtimer *hrt, u64 ns)
- {
- 	hrtimer_start(hrt, ktime_add_ns(ktime_get(), ns),
--		      HRTIMER_MODE_ABS);
-+		      HRTIMER_MODE_ABS_HARD);
- }
- 
- static void soft_timer_cancel(struct hrtimer *hrt, struct work_struct *work)
-@@ -638,10 +638,10 @@ void kvm_timer_vcpu_init(struct kvm_vcpu *vcpu)
- 	vcpu_ptimer(vcpu)->cntvoff = 0;
- 
- 	INIT_WORK(&timer->expired, kvm_timer_inject_irq_work);
--	hrtimer_init(&timer->bg_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_init(&timer->bg_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
- 	timer->bg_timer.function = kvm_bg_timer_expire;
- 
--	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_init(&timer->phys_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
- 	timer->phys_timer.function = kvm_phys_timer_expire;
- 
- 	vtimer->irq.irq = default_vtimer_irq.irq;
+diff --git a/arch/x86/include/asm/preempt.h b/arch/x86/include/asm/preempt.h
+index f66708779274..afa0e42ccdd1 100644
+--- a/arch/x86/include/asm/preempt.h
++++ b/arch/x86/include/asm/preempt.h
+@@ -96,6 +96,8 @@ static __always_inline bool __preempt_count_dec_and_test(void)
+ 	if (____preempt_count_dec_and_test())
+ 		return true;
+ #ifdef CONFIG_PREEMPT_LAZY
++	if (preempt_count())
++		return false;
+ 	if (current_thread_info()->preempt_lazy_count)
+ 		return false;
+ 	return test_thread_flag(TIF_NEED_RESCHED_LAZY);
 -- 
 2.24.1
 
