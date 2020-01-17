@@ -2,109 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B267014079C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE0E140785
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbgAQKKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:10:32 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:51849 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729211AbgAQKK3 (ORCPT
+        id S1729398AbgAQKJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:09:59 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36626 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbgAQKJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:10:29 -0500
-Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mo7if-1jPZsX3TI3-00papY; Fri, 17 Jan 2020 11:10:27 +0100
-Received: by mail-qt1-f179.google.com with SMTP id w8so6929852qts.11;
-        Fri, 17 Jan 2020 02:10:26 -0800 (PST)
-X-Gm-Message-State: APjAAAUEDzsZQi9ARRL4u2fVW9n7pv71gxBBz7zQFldLOUe+9rwitPKI
-        y2LXShZzdxt1zNksoOxbOwYUoHYVgj34QmX8Xsk=
-X-Google-Smtp-Source: APXvYqwJseIcLf52SoCo+jtyEMNWCmLScJZGo/aM/tEE3YgOeqebesjzIckzh3dwWAmCE7mLdstmifhUAdg/ilxjg+0=
-X-Received: by 2002:ac8:768d:: with SMTP id g13mr6672928qtr.7.1579255825449;
- Fri, 17 Jan 2020 02:10:25 -0800 (PST)
+        Fri, 17 Jan 2020 05:09:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z3so22111879wru.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 02:09:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YISpyKpQLeyZzuM7GvuVJ7EJ8elz6lBBgLI3G6qJUsI=;
+        b=Om+3agWx46v380MyT9qje7b/bQzpX0c/qhvN22fywDLm1tTCm2GcXoYQ2lCUebzlgj
+         3yCWrKdYDnUKiF9C/Rl//6Jls4A8WD/DloB3kmzerntdReN50d6xl42Jc9uogVPAoPor
+         OuvmwQXwvrKcSpE0pJ39dVTZx1Fm3qmAVT4THCgI1y9k/yN7EFRcBeg1CH8lmF3nDwcK
+         8D77pMvun+tUB3cx9FAs0Z0kpLv2ZKDCxfMbA2gOQ8y+QAAQS6LT/8U7pW6qLZegb2G3
+         PNXNu3euC1TTSJ0Wdc9eer67lT/9qPZH9pYOMNEkBVTttE2l0Cpxb64y3CIeMobWjFfb
+         LfCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YISpyKpQLeyZzuM7GvuVJ7EJ8elz6lBBgLI3G6qJUsI=;
+        b=FRMZ+49qhX51CpnXKXOoYRfPI4RLExxhJf1wpecwKhKVBKzBNoI5UjULFlauPdSz03
+         dmo0fHtH8OeEIoH62EusYF2X0nIOjGlxn94E+5yK8pUJY3ZPkDw0gg02FOIDWeIqv5Z6
+         4xgUwrtHpp6SimMyMNGhvKuKsQG5oEMoris+nbCFaLis1zlmwfTHBK7dj4hnQQFgseMw
+         PnTLbKaui8EVTlJLyrkYQdNUgcLozUuXqxbgahJFk8RbHogwyMOgBC1J4ZicJQWium/B
+         fI+KDUlR/Hdn7fHO2r/NZ36zK472zPdxH5N+CFdGvRWdAzFqVOYxnGGZ27+VWCwHwBlw
+         tzBQ==
+X-Gm-Message-State: APjAAAX+T6g5VFXDw05RUBUUVR2hOxOeWcjCaSqzYYpPXc/mh7vWzID1
+        VLReDQqIIzCoUMrSynSBh3FadDJLCQ0=
+X-Google-Smtp-Source: APXvYqxqEtLipEsHaogoR2jMoOo5aO/vN4KHKR3WBBi6RlhbAW3j19TXXptHwp0RyDPCHGXRHpnrbA==
+X-Received: by 2002:a5d:6089:: with SMTP id w9mr2243772wrt.228.1579255791363;
+        Fri, 17 Jan 2020 02:09:51 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id 5sm33493552wrh.5.2020.01.17.02.09.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 02:09:50 -0800 (PST)
+Date:   Fri, 17 Jan 2020 10:10:09 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH] mfd: bd70528: Fix hour register mask
+Message-ID: <20200117101009.GC15507@dell>
+References: <20200115082933.GA29117@localhost.localdomain>
+ <83e8e1ecc40a58e2e6d1960bbb41c8dcfe730ce1.camel@fi.rohmeurope.com>
+ <20200117075714.GA1822218@kroah.com>
+ <b5835b0fe842a01888d66c07281e13fc64c2c9ef.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <cover.1579248206.git.michal.simek@xilinx.com> <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
-In-Reply-To: <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 17 Jan 2020 11:10:09 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3bfO9EdL6o4+yY5BCw0pc1ANYocVjyohmG34jcjLiWpA@mail.gmail.com>
-Message-ID: <CAK8P3a3bfO9EdL6o4+yY5BCw0pc1ANYocVjyohmG34jcjLiWpA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] asm-generic: Make dma-contiguous.h a mandatory
- include/asm header
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
-        Christoph Hellwig <hch@lst.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-riscv@lists.infradead.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Guo Ren <guoren@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Wesley Terpstra <wesley@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org, "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Waiman Long <longman@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:NoA6lR5asYNCyYKhe9jWMGVyZrcIPwFSmU/9i+MCsvjD7l/q+0E
- xamkGFPsa8WqWcpoTbKLa0HTFaxvsRDU3Yg1Tjs5VjPvEa0YzXlOTtB3H+HkUQLhOK18FNM
- T7d7QrUxg40WjYU29hDjIqfDeU8vaco2MiUSREKxtCEILK7r8Ok0/re0d55j9UMA+dbmPdd
- Q5ORnP1qoOhIYkN4s6C9Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:moewDwzL1zY=:Og/pj7BHnPsRu+8o/xR4jd
- /5FTFityP5vYdrAZ8u4f+NKv6rFWAXiKCGvUNOrKPS+uozyMXVzFVn9mn0BNuk49R4sTcvGiV
- /3mU1R1HdB6XM0NufLzKsZrh0bOP0zuW69QDX6Jf3/888gGK83uWEwGF/h0j5Sq6Fq9ieEunq
- rnRa+FNRnArnru6lWAqxwFLeodgnvUTEje6C2luxM/rv31CP97nI76r/sNggx0LoD25sgb+wk
- B4fXK4r6rHxmJpsUAB4TFHFVkBQ35xEtPP1HvFhDh9jiHrI8kn86LUg/TDDRub1/uVZ7zCklw
- FDS90rkhZDfEgOXuXMmplYuydxFxZ5J5rn5dd83zA6L3Mjgy2FG6ES8eKWzao4YVmB9Wduf7P
- xT9wsLcqqiDWbnzXGf4zKotbSRmzPh5Fv++MirVf8JMCdAzbBT0boZwPJ6iWrfkU/YCcUH7pG
- WeE0UXuRO3RVbgnexVPjLzBKZyX6YPi3extl0jEV7d8yqASmv/Kl5Qf4/pnLN02wxwhhDjRSo
- LfvutuyEY11++msvCeKnQeitTSrwLo+R/VB6KHb8Ji1Zlk79m51hBudGDrxCvGbngglFlj1/5
- Aj3Kb7UwL+cXDLCuBCzC7JgcoIMS3ojk07wwIA4kF8iAyNKRU1CwXQK9oLVpyUY3ueqglKHkM
- 4gWKEIE7xrnrIqcQYwa5Q3CQNWVMakSQo08oLy0UxUEp3jPx86yTFLpOurDppOZ+TUgS5z6t5
- TN+j9px/tXMV5B/LPPgcBZfaFFBxvYLBGZtBgt/V/CIQhXpE+NReitfu1neyJdDTkzpFVQzzK
- ZLa+TVfzc5R8QNK8838TmlIcv70M4a/zkgtTMAfBbxA24lD4vyG0JIDnIcKdsI+MjZabomZMp
- X8KXQN2N5yTRNHF73S3w==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b5835b0fe842a01888d66c07281e13fc64c2c9ef.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 9:03 AM Michal Simek <michal.simek@xilinx.com> wrote:
->
-> dma-continuguous.h is generic for all architectures except arm32 which has
-> its own version.
->
-> Similar change was done for msi.h by commit a1b39bae16a6
-> ("asm-generic: Make msi.h a mandatory include/asm header")
->
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->
-> Changes in v2:
-> - New patch suggested by Christoph
+On Fri, 17 Jan 2020, Vaittinen, Matti wrote:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> On Fri, 2020-01-17 at 08:57 +0100, gregkh@linuxfoundation.org wrote:
+> > On Fri, Jan 17, 2020 at 07:44:07AM +0000, Vaittinen, Matti wrote:
+> > > 
+> > > Is it possible to get this in 5.4 stable - while leaving this out
+> > > of
+> > > current MFD tree and applying the BD71828 series to MFD?
+> > 
+> > We only take patches that are in Linus's tree for the stable tree,
+> > unless there are very big reasons not to do so (i.e. it is totally
+> > rewritten in a different way there.)
+> > 
+> > Once the change/fix is in Linus's tree, then you can backport it to
+> > stable in a different way if you want, but you need to give lots of
+> > reasons why it is done that way.
+> 
+> Right. Thanks for the explanation Greg. I have no _strong_ reasons -
+> which means I'll split the RTC support patch in BD71828 series into two
+> - first of the patches being this fix, second being the BD71828
+> support. Then this fix can be taken in 5.4 after it has been merged to
+> Linus' tree - the BD71828 support can be omitted from 5.4
+> 
+> I hope the BD71828 series could still make it to next release - but if
+> it wont, then it might be in next after that :]
+> 
+> Lee, please skip this one, I'll do v10 of the BD71828 series where this
+> fix is included as separate fix-patch.
+
+Will look out for it.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
