@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C49E014101D
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C4714100C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:41:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbgAQRmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:42:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
+        id S1729368AbgAQRlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729153AbgAQRlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729174AbgAQRlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 12:41:31 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB6C121835;
-        Fri, 17 Jan 2020 17:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 035542465A;
+        Fri, 17 Jan 2020 17:41:31 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1isVcf-000QTp-OG; Fri, 17 Jan 2020 12:41:29 -0500
-Message-Id: <20200117174129.633885497@goodmis.org>
+        id 1isVcf-000QUL-TE; Fri, 17 Jan 2020 12:41:29 -0500
+Message-Id: <20200117174129.785425698@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 Jan 2020 12:41:26 -0500
+Date:   Fri, 17 Jan 2020 12:41:27 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -32,7 +32,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>, Scott Wood <swood@redhat.com>
-Subject: [PATCH RT 15/32] sched: Remove dead __migrate_disabled() check
+Subject: [PATCH RT 16/32] sched: migrate disable: Protect cpus_ptr with lock
 References: <20200117174111.282847363@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,36 +48,44 @@ If anyone has any objections, please let me know.
 
 From: Scott Wood <swood@redhat.com>
 
-[ Upstream commit 14d9272d534ea91262e15db99443fc5995c7c016 ]
+[ Upstream commit 27ee52a891ed2c7e2e2c8332ccae0de7c2674b09 ]
 
-This code was unreachable given the __migrate_disabled() branch
-to "out" immediately beforehand.
+Various places assume that cpus_ptr is protected by rq/pi locks,
+so don't change it before grabbing those locks.
 
 Signed-off-by: Scott Wood <swood@redhat.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/sched/core.c | 7 -------
- 1 file changed, 7 deletions(-)
+ kernel/sched/core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d6bd8129a390..a29f33e776d0 100644
+index a29f33e776d0..d9a3f88508ee 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -1182,13 +1182,6 @@ static int __set_cpus_allowed_ptr(struct task_struct *p,
- 	if (cpumask_test_cpu(task_cpu(p), new_mask) || __migrate_disabled(p))
- 		goto out;
+@@ -7250,9 +7250,8 @@ migrate_disable_update_cpus_allowed(struct task_struct *p)
+ 	struct rq *rq;
+ 	struct rq_flags rf;
  
--#if defined(CONFIG_SMP) && defined(CONFIG_PREEMPT_RT_BASE)
--	if (__migrate_disabled(p)) {
--		p->migrate_disable_update = 1;
--		goto out;
--	}
--#endif
+-	p->cpus_ptr = cpumask_of(smp_processor_id());
 -
- 	if (task_running(rq, p) || p->state == TASK_WAKING) {
- 		struct migration_arg arg = { p, dest_cpu };
- 		/* Need help from migration thread: drop lock and wait. */
+ 	rq = task_rq_lock(p, &rf);
++	p->cpus_ptr = cpumask_of(smp_processor_id());
+ 	update_nr_migratory(p, -1);
+ 	p->nr_cpus_allowed = 1;
+ 	task_rq_unlock(rq, p, &rf);
+@@ -7264,9 +7263,8 @@ migrate_enable_update_cpus_allowed(struct task_struct *p)
+ 	struct rq *rq;
+ 	struct rq_flags rf;
+ 
+-	p->cpus_ptr = &p->cpus_mask;
+-
+ 	rq = task_rq_lock(p, &rf);
++	p->cpus_ptr = &p->cpus_mask;
+ 	p->nr_cpus_allowed = cpumask_weight(&p->cpus_mask);
+ 	update_nr_migratory(p, 1);
+ 	task_rq_unlock(rq, p, &rf);
 -- 
 2.24.1
 
