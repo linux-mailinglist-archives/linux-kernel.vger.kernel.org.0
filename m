@@ -2,116 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A029E141208
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 21:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBB214122A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 21:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbgAQUB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 15:01:28 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34366 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbgAQUB1 (ORCPT
+        id S1729662AbgAQUPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 15:15:00 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:11189 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729590AbgAQUPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 15:01:27 -0500
-Received: by mail-oi1-f193.google.com with SMTP id l136so23287044oig.1;
-        Fri, 17 Jan 2020 12:01:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WtLR19hFs+LsyK9KKDc5U1EMy+Rsoybh1tO8OYgc20U=;
-        b=OBErEIy85vDSePoCzZvgSPRQLShCO3QAVhGIorrjIQXQN/W3AgaJYZrvDmALxj4MbA
-         Uw0PmB5IwUsueDXgJNCyGqyAacdZOhWyZgQN1ClMsxqfiTLBR+KnCa9bi3Ertbd2T5Gr
-         v6+zgoh+1cUbZGTYnGmzd5bB7H/5m9yMF8cMoKZ5YBg+cCCLxq2ApcvP/iGvDERe6t0W
-         f1eAgsSuU9IqxX1ULYiSsX7BxdGJX7nt6sjwVuIn8+rlA94p8x6vkiht2g0v+d3eZdrC
-         655KhkwVDK6tm6mpu0Thw0DgCmSCixG6LDG9VRYGAcbo5qza5gsrIUWG7f+VNFs1a1eL
-         NK1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WtLR19hFs+LsyK9KKDc5U1EMy+Rsoybh1tO8OYgc20U=;
-        b=CdgvWk3Aae8IgC34xS389kIIkM1VdfTBerSjNQnlXsbTOkdKqZ2K/0EaozLeyZhJwk
-         4qnvrR0snfNmxjEhkzE5aJ8ZvAJJ1ef17a0sj/0WXXW2nwg1Xh0nSBmxvWj5UVrZrYEA
-         JxiGQhkIPJDHELk/EYY81+FFczle4SW3OCXCh78bEJ7eohnyP850PIOXyx3f0MpiHPED
-         cDjHPmzUY/VbTu1+PXgVnExl0hs3VhE3UtkytPBdL3yWwzgRcwt/bCSJHWzoqukX97Jd
-         PaDpwQZnqSHg7WbmQ+NiM45dUvIouig3Up7jlGIHiUtS/ItVx/ieUfL/MgAPV617t7tQ
-         0o+A==
-X-Gm-Message-State: APjAAAWLFENyelYC1FRc5BrBsAluym0Hqa+ooJoV44RNoE2Pt/9yJc1A
-        FPRum4ax0AwH6ZCGYc0rV4kd2ix9AuLCC9ntq5o=
-X-Google-Smtp-Source: APXvYqzXYn0R1MrARhtw0Zzdl4A6iUzyS/fuzDCq78U6xoYH+5CYlGdxPMNLOZiK05XHZLs6exSGl14/VzdzXQjAI9Q=
-X-Received: by 2002:a54:4713:: with SMTP id k19mr4664423oik.113.1579291286913;
- Fri, 17 Jan 2020 12:01:26 -0800 (PST)
+        Fri, 17 Jan 2020 15:15:00 -0500
+X-Greylist: delayed 701 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 15:14:59 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1579292098;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:Cc:References:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=QEo/tDgeU262hRs3LehiNBf8B0dTyOdN3vdoJhDFEZw=;
+        b=Aiqs1VgdpGNNIuLSA4GmSZebYXionpkNhN8hZbpGyFhh0N1IKiApnM1ArV/T3T/L63
+        XOPvlzGpgXYdfeUh1lE5IP5CgptVtZ4wr6pX+Jc4is2fBb0ELR+Juye2LwH3hBNq2XRV
+        B+2MfpmZ7jUSZUEeEQTyiFC7CU+hDdAeypimh0GH7qB9YuuDkkZ7b5SBYySbpYLHwrhs
+        n3FnpEtnbzGn7ZXT/9SUeSwb+7cCf1hPfI30QxzH7jYCH5jKsGj3K4zEq6ko3LR+nNfl
+        eOv6Mt5IREKbw0a+6VdTxO81WrfldyyIl6JkUSRnyFc5H3BUeHak+JhLQKEzAvqoT4wR
+        kSNA==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3HMbEWKNteTQLYO"
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.40.177]
+        by smtp.strato.de (RZmta 46.1.4 DYNA|AUTH)
+        with ESMTPSA id 3013f9w0HK2sUOF
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Fri, 17 Jan 2020 21:02:54 +0100 (CET)
+Subject: Re: general protection fault in can_rx_register
+To:     dev.kurt@vandijck-laurijssen.be, mkl@pengutronix.de,
+        o.rempel@pengutronix.de
+References: <00000000000030dddb059c562a3f@google.com>
+Cc:     syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
+Date:   Fri, 17 Jan 2020 21:02:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <CAGi-RUJvqJoCXWN2YugRn=WYEk9yzt7m3OPfX_o++PmJWQ3woQ@mail.gmail.com>
- <87wo9ub5f6.fsf@nanos.tec.linutronix.de> <CAGi-RUK_TA+WWvXJSrsa=_Pwq0pV1ffUKOCBu5c1t8O5Xs+UJg@mail.gmail.com>
- <CAGi-RUJG=SB7az5FFVTzzgefn_VXUbyQX1dtBN+9gkR7MgyC6g@mail.gmail.com>
- <87imldbqe3.fsf@nanos.tec.linutronix.de> <CAGi-RULNwpiNGYALYRG84SOUzkvNTbgctmXoS=Luh29xDHJzYw@mail.gmail.com>
- <87v9pcw55q.fsf@nanos.tec.linutronix.de> <CAGi-RUJPJ59AMZp3Wap=9zSWLmQSXVDtkbD+O6Hofizf8JWyRg@mail.gmail.com>
- <87pnfjwxtx.fsf@nanos.tec.linutronix.de> <CAGi-RUJtqdLtFBVMxL8TOQ3LGRqqrV4Ge7Fu9mTyDoQVYxtA5g@mail.gmail.com>
- <87zhem172r.fsf@nanos.tec.linutronix.de> <CAGi-RUJkr0gPbynYe+Gkk-JoeyCHdSvd9zdgCv4Hij5vfGVMEA@mail.gmail.com>
- <87sgke1004.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87sgke1004.fsf@nanos.tec.linutronix.de>
-From:   Ramon Fried <rfried.dev@gmail.com>
-Date:   Fri, 17 Jan 2020 22:01:15 +0200
-Message-ID: <CAGi-RUJTGMA2VuhxA--0hvYgEPJydBPT9uHXD2YBToKgf3Zmbg@mail.gmail.com>
-Subject: Re: MSI irqchip configured as IRQCHIP_ONESHOT_SAFE causes spurious IRQs
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     hkallweit1@gmail.com, Bjorn Helgaas <bhelgaas@google.com>,
-        maz@kernel.org, lorenzo.pieralisi@arm.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00000000000030dddb059c562a3f@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 7:11 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Ramon,
->
-> Ramon Fried <rfried.dev@gmail.com> writes:
-> > On Fri, Jan 17, 2020 at 4:38 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> This is wrong. MSI is edge type, not level and you are really mixing up
-> >> the concepts here.
-> >>
-> >> The fact that the MSI block raises a level interrupt on the output side
-> >> has absolutely nothing to do with the type of the MSI interrupt itself.
-> >>
-> >> MSI is edge type by definition and this does not change just because
-> >> there is a translation unit between the MSI interrupt and the CPU
-> >> controller.
-> >>
-> >> The actual MSI interrupts do not even know about the existance of that
-> >> MSI block at all. They do not care, as all they need to know is a
-> >> message and an address. When an interrupt is raised in the device the
-> >> MSI chip associated to the device (PCI or something else) writes this
-> >> message to the address exactly ONCE. And this exactly ONCE defines the
-> >> edge nature of MSI.
-> >
-> > OK, now I understand my mistake. thanks.
->
-> :)
->
-> >> A proper designed MSI device should not send another message before the
-> >> interrupt handler which is associated to the device has handled the
-> >> interrupt at the device level.
-> >
-> > By "MSI device" you mean the MSI controller in the SOC or the endpoint
-> > that sends the MSI ?
->
-> The device which incorporates the MSI endpoint.
-This is not how the MSI specs describe it, so I'm confused.
-According to spec, MSI is just an ordinary post PCIe TLP to a certain
-memory on the root-complex.
-The only information it has whether to send an MSI or not is the
-masked/pending register in the config space.
-So, basically, back to my original question, without tinkering with
-these bits, the device will always send the MSI's,
-it's just that they will be masked on the MSI controller on the host. right ?
+Hi Marc, Oleksij, Kurt,
 
-Thanks,
-Ramon.
->
-> Thanks,
->
->         tglx
+On 17/01/2020 14.46, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1033df15e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbb8fa33f49f9f3
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=c3ea30e1e2485573f953
+> compiler:       clang version 10.0.0 
+> (https://github.com/llvm/llvm-project/ 
+> c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13204f15e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f5db9e00000
+> 
+> The bug was bisected to:
+> 
+> commit 9868b5d44f3df9dd75247acd23dddff0a42f79be
+> Author: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+> Date:   Mon Oct 8 09:48:33 2018 +0000
+> 
+>      can: introduce CAN_REQUIRED_SIZE macro
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129bfdb9e00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=119bfdb9e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=169bfdb9e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com
+> Fixes: 9868b5d44f3d ("can: introduce CAN_REQUIRED_SIZE macro")
+> 
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 9593 Comm: syz-executor302 Not tainted 5.5.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
+> Google 01/01/2011
+> RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
+> RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
+
+include/linux/rculist.h:528 is
+
+struct hlist_node *first = h->first;
+
+which would mean that 'h' must be NULL.
+
+But the h parameter is rcv_list from
+rcv_list = can_rcv_list_find(&can_id, &mask, dev_rcv_lists);
+
+Which can not return NULL - at least when dev_rcv_lists is a proper 
+pointer to the dev_rcv_lists provided by can_dev_rcv_lists_find().
+
+So either dev->ml_priv is NULL in the case of having a CAN interface 
+(here vxcan) or we have not allocated net->can.rx_alldev_list in 
+can_pernet_init() properly (which would lead to an -ENOMEM which is 
+reported to whom?).
+
+Hm. I'm lost. Any ideas?
+
+Regards,
+Oliver
+
+
+> Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 
+> 4c 89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 
+> 05 00 00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
+> RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
+> RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
+> RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
+> R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
+> R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
+> FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   raw_enable_filters net/can/raw.c:189 [inline]
+>   raw_enable_allfilters net/can/raw.c:255 [inline]
+>   raw_bind+0x326/0x1230 net/can/raw.c:428
+>   __sys_bind+0x2bd/0x3a0 net/socket.c:1649
+>   __do_sys_bind net/socket.c:1660 [inline]
+>   __se_sys_bind net/socket.c:1658 [inline]
+>   __x64_sys_bind+0x7a/0x90 net/socket.c:1658
+>   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x446ba9
+> Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 
+> f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 
+> f0 ff ff 0f 83 5b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fb132f25d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+> RAX: ffffffffffffffda RBX: 00000000006dbc88 RCX: 0000000000446ba9
+> RDX: 0000000000000008 RSI: 0000000020000180 RDI: 0000000000000003
+> RBP: 00000000006dbc80 R08: 00007fb132f26700 R09: 0000000000000000
+> R10: 00007fb132f26700 R11: 0000000000000246 R12: 00000000006dbc8c
+> R13: 0000000000000000 R14: 0000000000000000 R15: 068500100000003c
+> Modules linked in:
+> ---[ end trace 0dedabb13ca8e7d7 ]---
+> RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
+> RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
+> Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 
+> 4c 89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 
+> 05 00 00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
+> RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
+> RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
+> RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
+> R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
+> R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
+> FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: 
+> https://goo.gl/tpsmEJ#bisection
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
