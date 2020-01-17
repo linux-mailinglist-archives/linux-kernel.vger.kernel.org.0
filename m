@@ -2,100 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6C9140F56
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:53:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB8D140F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 17:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgAQQxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 11:53:16 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42354 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbgAQQxQ (ORCPT
+        id S1729110AbgAQQyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 11:54:00 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34055 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729049AbgAQQx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:53:16 -0500
-Received: by mail-qt1-f196.google.com with SMTP id j5so22236071qtq.9;
-        Fri, 17 Jan 2020 08:53:15 -0800 (PST)
+        Fri, 17 Jan 2020 11:53:59 -0500
+Received: by mail-io1-f66.google.com with SMTP id z193so26721268iof.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 08:53:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yuUv1OXPdVXWCIetDO046G9cCpe5yN5/7bZ6LwPz4B0=;
-        b=qejqoYN8Ckgk98zDdvv5t54CTIJkmQNW8KtQRyuyEU5uMhUYYKKdT62/lehyI7sVJm
-         qDJZ79DuRMyEyQ5o4Sh/7vvL5aHNSe/eGoS0al+CWlnzItuoZmCOirDYyqSxEDCMdULT
-         KMOPWsJfXCxADqkxSg3zY36dU/UpJqlnGRoyFbac5jbYRQUByodAZngML6pRT7ATH01E
-         VQnhvcD0HAZSbw7aP5UlTlCFkCxiR7SbsQkQHmQ0s5TuN0SBNFPHY6A/V0/y9Uscci6n
-         EeCF2xh5jqi4sRdsIwmsa6b0NditLe5KWesqcI88MZv6SzbmERB6gu6sNYB3BpWuVxhb
-         SKHA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyGJWsyTKkrgy7HZPA+UXNCoDltHdQbF47bF/H777tA=;
+        b=U38fXrW2OxaXp4sqTsmCr4POevsntbUi7GOoCjDmm6E2Eq8+gMvI5hv6kKT2VIHhfL
+         FrG5j3Xvg01cDie2KSjwgDxmYzEYXO/L/gqboMLJYQL2Za8zv5AxYxN0XpyIh6t8Oiz1
+         4ysCZDtqNui0yNjenG2zObc4paijp5zwOGr3b8KU1ysGyp3+cd22OAjT3MyzvRkgH20V
+         8Us7MJ61BeuTsVGHZLn43PfJAFN5w096D0daUoROwzyDF+LP4JZ4fSXOs8sGE2Y3ZX7v
+         s6uNeAa3X210wej7yLVvttw1txsGSpnDmhtsUELDq8WJH3Z1jStthNAHduDsl1I0kpoE
+         hMYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yuUv1OXPdVXWCIetDO046G9cCpe5yN5/7bZ6LwPz4B0=;
-        b=b9zJ22Dh8kEjRg8ts3PG2wyjQJ6zOxGZLUY/ETtCrupepWMZRknPN/6lrtR5289nm3
-         9wpQNRxjfm8paa3Uc3SjYGhYthUVYILIHDQNWd18wZlVJw42ot1rjDC8Y01tM1mJazgz
-         JbmNGaDmkxnstUZSrfjmToQzGxt8RwKOL4fsO14gUNcsXsknYWpyTHs2U28uDi3aAqNS
-         PwVeqNmNdw7gaQc9nw/G3poaKWKLPecHJojuH9OWDM/j1gGLc5jJwJ9EmpBPocF6dh8Z
-         2vS6+tOJZ6kPBA3deB/Cwj+VDuNZKNXV2i69cMTnwEEWnwf2XEEk6qNZTrY6nsMv7B0L
-         1X8Q==
-X-Gm-Message-State: APjAAAUpebE/ErzPUY312c16yWYkp+G9JRyFR8IQ5oFjTPRnEAECx0cJ
-        vv9u0wkHpZ/Zao+MY4bxw/0=
-X-Google-Smtp-Source: APXvYqzeqNYl3PDuAsOWUjZm+WEOTe7nEQaEy/4qU5UBYITUMTORCCIXd/KpbM11ytW1Gz0pKvbUzg==
-X-Received: by 2002:ac8:21fd:: with SMTP id 58mr8021334qtz.90.1579279994927;
-        Fri, 17 Jan 2020 08:53:14 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:7d10])
-        by smtp.gmail.com with ESMTPSA id l17sm12141256qkk.22.2020.01.17.08.53.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Jan 2020 08:53:14 -0800 (PST)
-Date:   Fri, 17 Jan 2020 08:53:11 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] clone3: allow spawning processes into cgroups
-Message-ID: <20200117165311.GH2677547@devbig004.ftw2.facebook.com>
-References: <20191223061504.28716-1-christian.brauner@ubuntu.com>
- <20191223061504.28716-3-christian.brauner@ubuntu.com>
- <20200107163204.GB2677547@devbig004.ftw2.facebook.com>
- <20200108180906.l4mvtdmh7nm2z7sc@wittgenstein>
- <20200116122944.nj3e66eusxu6sb44@wittgenstein>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyGJWsyTKkrgy7HZPA+UXNCoDltHdQbF47bF/H777tA=;
+        b=t+XDIj+xoUybUSc+T+3Zj+N8fbvGV3sZVHgzUCfsxaPhEiijCg3RXjVZncJkXlKS4D
+         7TnpQCcVxNxrmZZLfnAdBctUA7mG/GSccV0+5lacnQ2vhxeSwP+yPA/7lqgKT69/HqB1
+         H9M3tPIWJaQz5jobck+o1fRBlOfPTkacxlyqFPEuuwvheukPnsE4cImFk3NNLpw1eOHX
+         xloj9ZnTTJYC6QKnmVu5djOhZ0/BkGsH4VTyNAaahZr90A693j/8LdL1ozNXQeybc878
+         jrEH7EzXB8nD6UI7mlhF++CYy7uXRGTN6dByy5sOaFTdN3K8NwTAnDNQTuvKU9VgC7lY
+         n9ag==
+X-Gm-Message-State: APjAAAXZBxrR1qNsw/P5/GXhMLROePiyTUGAle1p4DT+BIWDEBp9DReB
+        cUXf/lAuFbCIKggq2j8MUSPVatF2Ufw=
+X-Google-Smtp-Source: APXvYqzcThZp+w7bcJSuEY6nvNEKKKQwjY3iu6iKJqwym9wa4/Nlt5pRDhUAXs4Xuv2n3kLUB8BpZw==
+X-Received: by 2002:a6b:fc02:: with SMTP id r2mr20538419ioh.183.1579280038463;
+        Fri, 17 Jan 2020 08:53:58 -0800 (PST)
+Received: from alago.cortijodelrio.net (CableLink-189-219-74-147.Hosts.InterCable.net. [189.219.74.147])
+        by smtp.googlemail.com with ESMTPSA id f16sm8120662ilq.16.2020.01.17.08.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 08:53:57 -0800 (PST)
+From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+To:     shuah@kernel.org
+Cc:     =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] selftests/x86: Build with LDFLAGS and LDLIBS
+Date:   Fri, 17 Jan 2020 10:53:26 -0600
+Message-Id: <20200117165330.17015-1-daniel.diaz@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116122944.nj3e66eusxu6sb44@wittgenstein>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Christian.
+During cross-compilation, it was discovered that LDFLAGS and
+LDLIBS were not being used while building binaries, leading
+to defaults which were not necessarily correct.
 
-Sorry about late reply.
+OpenEmbedded reported this kind of problem:
+  ERROR: QA Issue: No GNU_HASH in the ELF binary [...], didn't pass LDFLAGS?
 
-On Thu, Jan 16, 2020 at 01:29:44PM +0100, Christian Brauner wrote:
-> Could it be that you misread cgroup_attach_permissions()? Because it
-> does check for write permissions on the destination cgroup.procs file.
-> That's why I've added the cgroup_get_from_file() helper. :) See:
-> 
-> static int cgroup_attach_permissions(struct cgroup *src_cgrp,
-> 				     struct cgroup *dst_cgrp,
-> 				     struct super_block *sb, bool thread)
-> {
-> 	int ret = 0;
-> 
-> 	ret = cgroup_procs_write_permission(src_cgrp, dst_cgrp, sb);
-> 	if (ret)
-> 		return ret;
+Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+---
+ tools/testing/selftests/x86/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So, if you look at cgroup_procs_write_permission(), it's only checking
-the write perm of the common ancestor, not the destination because it
-assumes that the destination is already checked by the vfs layer, and
-we need to check both.
-
-Thanks.
-
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index 5d49bfec1e9a..f8360454eafd 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -71,10 +71,10 @@ all_64: $(BINARIES_64)
+ EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
+ 
+ $(BINARIES_32): $(OUTPUT)/%_32: %.c
+-	$(CC) -m32 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $^ -lrt -ldl -lm
++	$(CC) -m32 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -lrt -ldl -lm
+ 
+ $(BINARIES_64): $(OUTPUT)/%_64: %.c
+-	$(CC) -m64 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $^ -lrt -ldl
++	$(CC) -m64 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -lrt -ldl
+ 
+ # x86_64 users should be encouraged to install 32-bit libraries
+ ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),01)
 -- 
-tejun
+2.20.1
+
