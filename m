@@ -2,129 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B481400F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE6ED1400FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:32:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbgAQAbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:31:33 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38114 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730589AbgAQAbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:31:32 -0500
-Received: by mail-pl1-f195.google.com with SMTP id f20so9092410plj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 16:31:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=M9PfMDqq4mrgdJjoCxlePmryw2dwKhdtVpwo2rQpPHI=;
-        b=PdZtFhwcbZoGTyRB0YT1AXckQK03oRubwCEsjPBt6hG1EbNxYH0Fjv9cfZuk8BKwLr
-         Nfun0qpKSn16G4otglGI+BJlfh1NXbJLnUz19wnEiuyifT2ZaGyJeQdcvzWBZB99x0iT
-         nUmD1tc7SEfkKKIGJXLVJXhYzFHw02R8UDDoM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=M9PfMDqq4mrgdJjoCxlePmryw2dwKhdtVpwo2rQpPHI=;
-        b=BUMOAOtatPM/3MKR7g7OUx0WaPLPt98rX/8McKbHGKKJvYv2i1XsLcABi+inASgy4A
-         Ol0f/brYYy/TvwCfXZbvE498WgEx+/s5Sw+DMcIHou4K/ntyAYQ11+f96730W45l8n1F
-         wOevWFWUwX6jYDkafvMlLFPkQPFS+JJIWnzeJ8FWp9HWPYO7NiuFEBx4efEzFdIvDu+U
-         PdHbV6EiQRxX3DinCsvO65QuGd+gknppa/V8DQMmBaDwsj/lBPF4bDHilUBZHBZXHIVp
-         LrBBjNHGw2x6j2gJ/fxa2yfOsnOSTEhH5eXUDvE+8sJesZBSnvokkva3mhT/ZQPwR9AS
-         jNRw==
-X-Gm-Message-State: APjAAAWXOs9shm3gxhvjHxQrJm24Yuuvu3kbNVtiH5rg8LPIulUivnV9
-        fNAkjIpGaSjCqiMIGAGFS+QRuQ==
-X-Google-Smtp-Source: APXvYqykX9ESNeqte195/89wDGbzWuoGsUmrWe5z97ksNmWfJhf/Ojx/maDjljtSLn2zv692HKkdeA==
-X-Received: by 2002:a17:90a:17e3:: with SMTP id q90mr2334122pja.139.1579221092047;
-        Thu, 16 Jan 2020 16:31:32 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id r20sm25529366pgu.89.2020.01.16.16.31.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 16:31:31 -0800 (PST)
-Subject: Re: [PATCH v9 2/2] EDAC: add EDAC driver for DMC520
-To:     Shiping Ji <shiping.linux@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        James Morse <james.morse@arm.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sashal@kernel.org, hangl@microsoft.com,
-        Lei Wang <lewan@microsoft.com>, shji@microsoft.com,
-        ruizhao@microsoft.com, Yuqing Shen <yuqing.shen@broadcom.com>,
-        ray.jui@broadcom.com, wangglei@gmail.com
-References: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <aa80b8a5-5297-91c6-6410-99e43b53bd20@broadcom.com>
-Date:   Thu, 16 Jan 2020 16:31:27 -0800
+        id S1731667AbgAQAcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:32:06 -0500
+Received: from mail.prewas.sk ([212.5.209.170]:49349 "EHLO mail.prewas.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730487AbgAQAcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 19:32:05 -0500
+dkim-signature: v=1; a=rsa-sha256; d=3ksolutions.sk; s=mail.prewas.sk;
+        c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References;
+        bh=/ufg4YOpQeSX7cHfO6yjVhqqe1zoV2RAyfuHFpGADIk=;
+        b=TkBU61dQOLsmC1C6opABH7EfcFHApUscqlJRZ39KvqiJMLdBy9gZAcE1Jim9nPqJMBop8CDciT17nbvKUTjAaPGQVBkeOAcNkSm2lF5k7G9hD+S96I29nZtl+3XbufAcC2vuyJQAxQvUkqZOYv4ApGF9pySPSF6LJ94NhTgQs3uGkjAjuQ5qt9+dyyWBGsO8ehklAECOExbDLkIy7E3NuzSGzh93eZT8oP7mkDGdy/JuhapHCOVtnG6+N1
+        /rt7Q4IOKZLWWek0HAN6zJdQPny+zwD9TRd4pedc4+q++gVvCOqeoZWij0TIOsocFbnihgdfGmaXp3YF/kfLKe6Ghb2w==
+Received: from [10.0.1.61] (pcfilo.vital.sk [10.0.1.61])
+        by mail.prewas.sk with ESMTPSA
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128)
+        ; Fri, 17 Jan 2020 01:31:48 +0100
+Subject: Re: [PATCH] tty: serial: amba-pl011: added RS485 support
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+References: <20200106235203.27256-1-sistik@3ksolutions.sk>
+ <20200107072748.GA1014453@kroah.com>
+From:   "Ivan Sistik - 3K Solutions, s. r. o." <sistik@3ksolutions.sk>
+Message-ID: <f6deeb06-39b7-f140-c6bd-c977c5ad2b5a@3ksolutions.sk>
+Date:   Fri, 17 Jan 2020 01:31:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200107072748.GA1014453@kroah.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shiping,
+On 7. 1. 2020 at 8:27 Greg Kroah-Hartman wrote:
 
-Here is another small change to cleanup.
+>> +config SERIAL_AMBA_PL011_SOFT_RS485
+>> +	bool "RS485 software direction switching for ARM AMBA PL011 serial"
+>> +	depends on SERIAL_AMBA_PL011=y
+> 
+> Why "=y" here?  Shouldn't this just read:
+> 	depends on SERIAL_AMBA_PL011?
+> 
+>> +	select SERIAL_CORE
+> 
+> Is this needed?  SERIAL_AMBA_PL011 already selects this.
 
-On 2020-01-15 6:32 a.m., Shiping Ji wrote:
-> New driver supports error detection and correction on the devices with ARM
-> DMC-520 memory controller.
->
-> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
-> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
-> Reviewed-by: James Morse <james.morse@arm.com>
->
-> ---
->       Changes in v9:
->           - Removed interrupt-config and replaced with an interrupt map where names and masks are predefined
->           - Only one ISR function is defined, mask is retrieved from the interrupt map
->           - "dram_ecc_errc" and "dram_ecc_errd" are implemented
->
-> ---
-> +static void dmc520_get_dram_ecc_error_info(struct dmc520_edac *edac,
-> +					   bool is_ce,
-> +					   struct ecc_error_info *info)
-> +{
-> +	u32 reg_offset_low, reg_offset_high;
-> +	u32 reg_val_low, reg_val_high;
-> +	bool valid;
-> +
-> +	reg_offset_low = is_ce ? REG_OFFSET_DRAM_ECC_ERRC_INT_INFO_31_00 :
-> +				 REG_OFFSET_DRAM_ECC_ERRD_INT_INFO_31_00;
-> +	reg_offset_high = is_ce ? REG_OFFSET_DRAM_ECC_ERRC_INT_INFO_63_32 :
-> +				  REG_OFFSET_DRAM_ECC_ERRD_INT_INFO_63_32;
-> +
-> +	reg_val_low = dmc520_read_reg(edac, reg_offset_low);
-> +	reg_val_high = dmc520_read_reg(edac, reg_offset_high);
-> +
-> +	valid = (FIELD_GET(REG_FIELD_ERR_INFO_LOW_VALID, reg_val_low) != 0) &&
-> +		(FIELD_GET(REG_FIELD_ERR_INFO_HIGH_VALID, reg_val_high) != 0);
-> +
-> +	if (valid) {
-> +		info->col =
-> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_COL, reg_val_low);
-> +		info->row =
-> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_ROW, reg_val_low);
-> +		info->rank =
-> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_RANK, reg_val_low);
-> +		info->bank =
-> +			FIELD_GET(REG_FIELD_ERR_INFO_HIGH_BANK, reg_val_high);
-> +	} else {
-> +		memset(info, 0, sizeof(struct ecc_error_info));
-This should be sizeof(*info), not sizeof(struct ecc_error_info)
-for better programming to allow info to change type in the future
-without the code changing.
-> +	}
-> +}
-> +
->
+I am not sure. I found this few lines above:
+
+> config SERIAL_AMBA_PL010_CONSOLE
+> 	bool "Support for console on AMBA serial port"
+> 	depends on SERIAL_AMBA_PL010=y
+> 	select SERIAL_CORE_CONSOLE
+
+and modified it for my purpose.
+
+
+Thanks,
+
+Ivan
 
