@@ -2,149 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5413F1401E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4901401BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:18:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388857AbgAQC11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 21:27:27 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46362 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388787AbgAQC10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 21:27:26 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 18:27:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
-   d="asc'?scan'208";a="214325648"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.14])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jan 2020 18:27:23 -0800
-Date:   Fri, 17 Jan 2020 10:15:39 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Prescher <thomas.prescher@cyberus-technology.de>,
-        linux-kernel@vger.kernel.org,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, hang.yuan@intel.com,
-        dri-devel@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, zhiyuan.lv@intel.com
-Subject: Re: [RFC PATCH 4/4] drm/i915/gvt: move public gvt headers out into
- global include
-Message-ID: <20200117021539.GA6715@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <4079ce7c26a2d2a3c7e0828ed1ea6008d6e2c805.camel@cyberus-technology.de>
- <20200109171357.115936-1-julian.stecklina@cyberus-technology.de>
- <20200109171357.115936-5-julian.stecklina@cyberus-technology.de>
- <20200115152215.GA3830321@kroah.com>
- <9b32e225ee680e61716e300eb1ed8387599cc0dd.camel@cyberus-technology.de>
+        id S1731584AbgAQCSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 21:18:13 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:19373 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbgAQCSM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 21:18:12 -0500
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 00H2HqMP010111;
+        Fri, 17 Jan 2020 11:17:53 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 00H2HqMP010111
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1579227473;
+        bh=8ybG8LjXBlt8T0MqbW/EKhRw7vw4GK5v/Kz9EhLSiY0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=F35/WcRvhA1a/o5pzi3b7XEcrkYuaJ9HjJR4tSAZQzHyl0nNPSC4nULLCaydo7oir
+         S3xRpZEhGYcn32Dkj6Yyn39G2HxOjMDcxrI+iSGRuvaOcs2MBai+ClrieZiuzJCntF
+         L9r4UOoP25mIv5LzUM1+/ioVO+HGBOTVptw88Ed5touScLztlXdDAp9tSqksw/IKX+
+         H9GjhA2gCNkaTA6sPXS76lcuPJLf9ymx1Y5lqGftbgHEkrnDsKdtDh5sPcB7/mrsmM
+         GhG1DfiTJGrTS0YPyy316J6sv8bARzpkYAsC0oaKLZpmqsTudgXNqy+LVN0KfXG8cU
+         RBizO/H0l2sKg==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id h13so6266761vkn.10;
+        Thu, 16 Jan 2020 18:17:52 -0800 (PST)
+X-Gm-Message-State: APjAAAWhpsyZV3ciMCOs9UJ9oZIi1a3Lox6L3UKvbGi75bK5EQA+jn+Q
+        xfnj0XP2K+GabScy4wstve27lu5pX3hoqilusDk=
+X-Google-Smtp-Source: APXvYqxamBGY9Xjvh/06M1RPyeCEPFEdU4pr1Pslrd08CuggEi5cr4/SLwz18imIp0B/VXH59K8k/Vym1YLZr2jWIfw=
+X-Received: by 2002:a1f:72c3:: with SMTP id n186mr22174033vkc.12.1579227471741;
+ Thu, 16 Jan 2020 18:17:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
-Content-Disposition: inline
-In-Reply-To: <9b32e225ee680e61716e300eb1ed8387599cc0dd.camel@cyberus-technology.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20200113232212.138327-1-helgaas@kernel.org>
+In-Reply-To: <20200113232212.138327-1-helgaas@kernel.org>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 17 Jan 2020 11:17:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYynBVaaGROEjy1PC7+9xatO7gf2LTRGG1UOpiXtzENw@mail.gmail.com>
+Message-ID: <CAK7LNASYynBVaaGROEjy1PC7+9xatO7gf2LTRGG1UOpiXtzENw@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: fix documentation typos
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 14, 2020 at 8:22 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>
+> Fix a couple typos in kconfig-language documentation.
+>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  Documentation/kbuild/kconfig-language.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
+> index 74bef19f69f0..f547720bd82d 100644
+> --- a/Documentation/kbuild/kconfig-language.rst
+> +++ b/Documentation/kbuild/kconfig-language.rst
+> @@ -594,7 +594,7 @@ The two different resolutions for b) can be tested in the sample Kconfig file
+>  Documentation/kbuild/Kconfig.recursion-issue-02.
+>
+>  Below is a list of examples of prior fixes for these types of recursive issues;
+> -all errors appear to involve one or more select's and one or more "depends on".
+> +all errors appear to involve one or more "selects" and one or more "depends on".
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2020.01.16 15:13:01 +0100, Julian Stecklina wrote:
-> Hi Greg, Christoph,
->=20
-> On Wed, 2020-01-15 at 16:22 +0100, Greg KH wrote:
-> > On Thu, Jan 09, 2020 at 07:13:57PM +0200, Julian Stecklina wrote:
-> > > Now that the GVT interface to hypervisors does not depend on i915/GVT
-> > > internals anymore, we can move the headers to the global include/.
-> > >=20
-> > > This makes out-of-tree modules for hypervisor integration possible.
-> >=20
-> > What kind of out-of-tree modules do you need/want for this?
->=20
-> The mediated virtualization support in the i915 driver needs a backend to=
- the
-> hypervisor. There is currently one backend for KVM in the tree
-> (drivers/gpu/drm/i915/gvt/kvmgt.c) and at least 3 other hypervisor backen=
-ds out
-> of tree in various states of development that I know of. We are currently
-> developing one of these.
->=20
-> >=20
-> > Also, as Christoph said, adding exports for functions that are not used
-> > by anything within the kernel tree itself is not ok, that's not how we
-> > work.
->=20
-> The exports are used by the KVM hypervisor backend. The patchset I sent
-> basically decouples KVMGT from i915 driver internals. So personally I wou=
-ld
-> count this as a benefit in itself.
->=20
-> There is already an indirection in place that looks like it is intended to
-> decouple the hypervisor backends from the i915 driver core: intel_gvt_ops=
-=2E This
-> is a struct of function pointers that the hypervisor backend uses to talk=
- to the
-> GPU mediator code.
->=20
-> Unfortunately, this struct doesn't cover all usecases and the KVM hypervi=
-sor
-> backend directly touches the i915 devices' internal state in very few pla=
-ces. My
-> current solution was to wrap these accesses in accessor functions and
-> EXPORT_SYMBOL_GPL them.
->=20
-> If the more acceptable solution is to add more function pointers to
-> intel_gvt_ops instead of exporting symbols, I'm happy to go along this ro=
-ute.
+I think "selects" is strange here.
+
+"select" is a Kconfig keyword.
+select's is intentional, I guess.
+
+
+Keep it as-is, or perhaps change it into "select" (singular) ?
+
+
+
+
+
+
+>
+>  ============    ===================================
+>  commit          fix
+> @@ -656,7 +656,7 @@ the use of the xconfig configurator [1]_. Work should be done to confirm if
+>  the deduced semantics matches our intended Kconfig design goals.
+>
+>  Having well defined semantics can be useful for tools for practical
+> -evaluation of depenencies, for instance one such use known case was work to
+> +evaluation of dependencies, for instance one such case was work to
+>  express in boolean abstraction of the inferred semantics of Kconfig to
+>  translate Kconfig logic into boolean formulas and run a SAT solver on this to
+>  find dead code / features (always inactive), 114 dead features were found in
+> @@ -683,7 +683,7 @@ abstraction the inferred semantics of Kconfig to translate Kconfig logic into
+>  boolean formulas and run a SAT solver on it [5]_. Another known related project
+>  is CADOS [6]_ (former VAMOS [7]_) and the tools, mainly undertaker [8]_, which
+>  has been introduced first with [9]_.  The basic concept of undertaker is to
+> -exract variability models from Kconfig, and put them together with a
+> +extract variability models from Kconfig and put them together with a
+>  propositional formula extracted from CPP #ifdefs and build-rules into a SAT
+>  solver in order to find dead code, dead files, and dead symbols. If using a SAT
+>  solver is desirable on Kconfig one approach would be to evaluate repurposing
+> --
+> 2.25.0.rc1.283.g88dfdc4193-goog
 >
 
-That depends on the hypervisor requirement and purpose, if it requires
-gvt device model for some function e.g emulate mmio, we want it to be
-a general gvt_ops, if it just trys to retrieve some vgpu info, we
-might see if some common wrapper of internal data would be more easier.
 
-> > And why do they somehow have to be out of the tree?  We want them in the
-> > tree, and so should you, as it will save you time and money if they are.
->=20
-> I also want these hypervisor backends in the tree, but from a development
-> workflow having the ability to build them as a out-of-tree modules is very
-> convenient. I guess this is also true for the developers working on the o=
-ther
-> hypervisor backends.
->=20
-> When I looked at the status quo in i915/gvt a couple of weeks ago, it see=
-med
-> like it would be a win for everyone. Let me just clearly say that we have=
- no
-> intention of doing binary blob drivers. :)
->
-
-yeah, we do like to see more hypervisor support and make more clear interfa=
-ce
-between core device model with that.
-
-thanks
-
---=20
-Open Source Technology Center, Intel ltd.
-
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXiEYywAKCRCxBBozTXgY
-J7VAAJ4+GPxnpxcifJMey1RQ7Tu+IykKMQCdFGYEJ8xf6HRdloBoM5olfjQ3+Wo=
-=4F3W
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
+-- 
+Best Regards
+Masahiro Yamada
