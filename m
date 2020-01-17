@@ -2,131 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43396140C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA0AD140C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:30:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgAQOfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:35:13 -0500
-Received: from mx01-fr.bfs.de ([193.174.231.67]:9092 "EHLO mx01-fr.bfs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbgAQOfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:35:13 -0500
-X-Greylist: delayed 502 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 09:35:11 EST
-Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
-        by mx01-fr.bfs.de (Postfix) with ESMTPS id 94FDE2036D;
-        Fri, 17 Jan 2020 15:26:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1579271204; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vklTv1W7/ocwmfCw1yXAs37PNEse48aUNTXTC6C3H0c=;
-        b=C+HDCZgeGXwzghdLLVb2Z0kGY2gmufm+jURg6DQu2im7bC26WaFaEGGZHoHUTepbTyVNE3
-        LyPcEiGpaelRbhLIZxMf2/0n8H5ErY6WVaFrhdQNBhHOUqWJoPfU8+ev2pa2q+WGha2Dhr
-        Ydcuq/q7qL4JBz6PFxmasSmfMsD1Ho//QAmoocevBaA5r/j/nTJcybSFRFFRGGOFfLkfg2
-        5TPNV4ogtJVZMnOmeGpdz6H9aDulCYBnpqa5GGpZSXChfJwis1KO7DA/zNxAcsiW+VVv4C
-        DgnFGrOBYi9G6qmPOwXcIrmZ9ZEGyUaTHx5tUCILIMs9N9nshMW6WSsNdoPFsQ==
-Received: from [134.92.181.33] (unknown [134.92.181.33])
-        by mail-fr.bfs.de (Postfix) with ESMTPS id 204E5BEEBD;
-        Fri, 17 Jan 2020 15:26:43 +0100 (CET)
-Message-ID: <5E21C422.6040708@bfs.de>
-Date:   Fri, 17 Jan 2020 15:26:42 +0100
-From:   walter harms <wharms@bfs.de>
-Reply-To: wharms@bfs.de
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
+        id S1728916AbgAQOaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:30:07 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:47019 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbgAQOaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 09:30:06 -0500
+Received: by mail-lj1-f193.google.com with SMTP id m26so26623983ljc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 06:30:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bOUktzlDXg0zUzkubFwDmsWxGrWYcwgBd+na/rDWhno=;
+        b=FmQwSDZ9h+ChPbSx+HUDFsx3AF4fv5d/eMn9a7u1uEOCoO/c9XWXbUfhUyGp4ZJN7y
+         EK/dPu9WgUo3VRcJW9dmKgcevdidRoR8xpduKfeV44he4GBxLYWq+RAsV7s2ZEqJgKpv
+         80fH/J/EorhB8PjJjWFtz/+Qvw4ZbwKgdNS2qT//ZrmdQ8HNy8oBJL59G4bWg/e7dJfG
+         Z3RCyq3lG8qzLXQ0ZZe45pjXzDiKJ1Y4PdLxhbv61HZQMvUbE1+rhxD4QxjPD0At7Cd/
+         qSTLrVsMBpn4KdhNFTkYu965rd2xDF5+UkmIuVM++QhL5fBLXHUuLOj2ZvuoO9wnN5Up
+         83DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bOUktzlDXg0zUzkubFwDmsWxGrWYcwgBd+na/rDWhno=;
+        b=MM+Mjw8MP86R3p7Ax6k0xXT/DkIaS92iFDTiS3uhw2f8x1ootJSOPWng4ye5n0pe4u
+         aYrEjTQW6lFDPEA72shb/WtY3YBrc3w6RrKbYDzaPuMwbxeWYE6ijxEi7Ju2caX65xfb
+         KNDGE0YJNH5RX/yaBczTXrLosrLgYEXq8W/d9XCsIbIqMosIswpqqqL9FjbmuRseqvAI
+         3ZMTGb2p/JdnmFg6th59Tz4WGQzXif9YwBc2fijvgEWUuJ9cFar7GujIDgDmpkqcDJsa
+         aqvxpZsJuiOTIVrzWb0M03SBdOrkwERxZWlNgqFzMdqvxql858u/W3N25akJ3JXUV96b
+         PXXg==
+X-Gm-Message-State: APjAAAWI60TCz21+QG1jICtu36XbxfF66ofUbyHKtNIQV8H+rnjIR/Im
+        v5p0fXEd2IxP0mjra75/4B6Uprw3DTVl5S7pRmZCOQ==
+X-Google-Smtp-Source: APXvYqyiVtaPmSmRKsJv+E6BT5J2aNfHikdDme4b2COPAIWbQbmpxMSggM9KkYEG9DtxjDGJdxn2gwcpwAI0VlxDI9U=
+X-Received: by 2002:a2e:b554:: with SMTP id a20mr5296619ljn.25.1579271404131;
+ Fri, 17 Jan 2020 06:30:04 -0800 (PST)
 MIME-Version: 1.0
-To:     Colin King <colin.king@canonical.com>
-CC:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Nikola Cornij <Nikola.Cornij@amd.com>,
-        Wenjing Liu <Wenjing.Liu@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/amd/display: fix for-loop with incorrectly
- sized loop counter
-References: <20200117133305.113280-1-colin.king@canonical.com>
-In-Reply-To: <20200117133305.113280-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.10
-Authentication-Results: mx01-fr.bfs.de
-X-Spamd-Result: default: False [-3.10 / 7.00];
-         ARC_NA(0.00)[];
-         HAS_REPLYTO(0.00)[wharms@bfs.de];
-         BAYES_HAM(-3.00)[100.00%];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         REPLYTO_ADDR_EQ_FROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         NEURAL_HAM(-0.00)[-0.999,0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCVD_TLS_ALL(0.00)[]
+References: <20200114101319.GO3466@techsingularity.net> <CAKfTPtBROKKtTkz55McjJo6b=Qq0QRVckFe2fQS2kdxf8kCJLw@mail.gmail.com>
+ <20200117142628.GR3466@techsingularity.net>
+In-Reply-To: <20200117142628.GR3466@techsingularity.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 17 Jan 2020 15:29:52 +0100
+Message-ID: <CAKfTPtBz=DtstPOUF63N1SJRhTpgFxyH2DpApznH_Cd1og0CVg@mail.gmail.com>
+Subject: Re: [PATCH] sched, fair: Allow a small load imbalance between low
+ utilisation SD_NUMA domains v4
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 17 Jan 2020 at 15:26, Mel Gorman <mgorman@techsingularity.net> wrote:
+>
+> On Fri, Jan 17, 2020 at 02:16:15PM +0100, Vincent Guittot wrote:
+> > > A more interesting example is the Facebook schbench which uses a
+> > > number of messaging threads to communicate with worker threads. In this
+> > > configuration, one messaging thread is used per NUMA node and the number of
+> > > worker threads is varied. The 50, 75, 90, 95, 99, 99.5 and 99.9 percentiles
+> > > for response latency is then reported.
+> > >
+> > > Lat 50.00th-qrtle-1        44.00 (   0.00%)       37.00 (  15.91%)
+> > > Lat 75.00th-qrtle-1        53.00 (   0.00%)       41.00 (  22.64%)
+> > > Lat 90.00th-qrtle-1        57.00 (   0.00%)       42.00 (  26.32%)
+> > > Lat 95.00th-qrtle-1        63.00 (   0.00%)       43.00 (  31.75%)
+> > > Lat 99.00th-qrtle-1        76.00 (   0.00%)       51.00 (  32.89%)
+> > > Lat 99.50th-qrtle-1        89.00 (   0.00%)       52.00 (  41.57%)
+> > > Lat 99.90th-qrtle-1        98.00 (   0.00%)       55.00 (  43.88%)
+> >
+> > Which parameter changes between above and below tests ?
+> >
+> > > Lat 50.00th-qrtle-2        42.00 (   0.00%)       42.00 (   0.00%)
+> > > Lat 75.00th-qrtle-2        48.00 (   0.00%)       47.00 (   2.08%)
+> > > Lat 90.00th-qrtle-2        53.00 (   0.00%)       52.00 (   1.89%)
+> > > Lat 95.00th-qrtle-2        55.00 (   0.00%)       53.00 (   3.64%)
+> > > Lat 99.00th-qrtle-2        62.00 (   0.00%)       60.00 (   3.23%)
+> > > Lat 99.50th-qrtle-2        63.00 (   0.00%)       63.00 (   0.00%)
+> > > Lat 99.90th-qrtle-2        68.00 (   0.00%)       66.00 (   2.94%
+> > >
+>
+> The number of worker pool threads. Above is 1 worker thread, below is 2.
+>
+> > > @@ -8691,16 +8687,37 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+> > >                         env->migration_type = migrate_task;
+> > >                         lsub_positive(&nr_diff, local->sum_nr_running);
+> > >                         env->imbalance = nr_diff >> 1;
+> > > -                       return;
+> > > -               }
+> > > +               } else {
+> > >
+> > > -               /*
+> > > -                * If there is no overload, we just want to even the number of
+> > > -                * idle cpus.
+> > > -                */
+> > > -               env->migration_type = migrate_task;
+> > > -               env->imbalance = max_t(long, 0, (local->idle_cpus -
+> > > +                       /*
+> > > +                        * If there is no overload, we just want to even the number of
+> > > +                        * idle cpus.
+> > > +                        */
+> > > +                       env->migration_type = migrate_task;
+> > > +                       env->imbalance = max_t(long, 0, (local->idle_cpus -
+> > >                                                  busiest->idle_cpus) >> 1);
+> > > +               }
+> > > +
+> > > +               /* Consider allowing a small imbalance between NUMA groups */
+> > > +               if (env->sd->flags & SD_NUMA) {
+> > > +                       unsigned int imbalance_min;
+> > > +
+> > > +                       /*
+> > > +                        * Compute an allowed imbalance based on a simple
+> > > +                        * pair of communicating tasks that should remain
+> > > +                        * local and ignore them.
+> > > +                        *
+> > > +                        * NOTE: Generally this would have been based on
+> > > +                        * the domain size and this was evaluated. However,
+> > > +                        * the benefit is similar across a range of workloads
+> > > +                        * and machines but scaling by the domain size adds
+> > > +                        * the risk that lower domains have to be rebalanced.
+> > > +                        */
+> > > +                       imbalance_min = 2;
+> > > +                       if (busiest->sum_nr_running <= imbalance_min)
+> > > +                               env->imbalance = 0;
+> >
+> > Out of curiosity why have you decided to use the above instead of
+> >   env->imbalance -= min(env->imbalance, imbalance_adj);
+> >
+> > Have you seen perf regression with the min ?
+> >
+>
+> I didn't see a regression with min() but at this point, we're only
+> dealing with the case of ignoring a small imbalance when the busiest
+> group is almost completely idle. The distinction between using min and
+> just ignoring the imbalance is almost irrevelant in that case.
 
+yes you're right
 
-Am 17.01.2020 14:33, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> A for-loop is iterating from 0 up to 1000 however the loop variable count
-> is a u8 and hence not large enough.  Fix this by making count an int.
-> Also remove the redundant initialization of count since this is never used
-> and add { } on the loop statement make the loop block clearer.
-> 
-> Addresses-Coverity: ("Operands don't affect result")
-> Fixes: ed581a0ace44 ("drm/amd/display: wait for update when setting dpg test pattern")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> index 6ab298c65247..cbed738a4246 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-> @@ -3680,7 +3680,7 @@ static void set_crtc_test_pattern(struct dc_link *link,
->  			struct pipe_ctx *odm_pipe;
->  			enum controller_dp_color_space controller_color_space;
->  			int opp_cnt = 1;
-> -			uint8_t count = 0;
-> +			int count;
->  
->  			switch (test_pattern_color_space) {
->  			case DP_TEST_PATTERN_COLOR_SPACE_RGB:
-> @@ -3725,11 +3725,12 @@ static void set_crtc_test_pattern(struct dc_link *link,
->  				width,
->  				height);
->  			/* wait for dpg to blank pixel data with test pattern */
-> -			for (count = 0; count < 1000; count++)
-> +			for (count = 0; count < 1000; count++) {
->  				if (opp->funcs->dpg_is_blanked(opp))
->  					break;
->  				else
->  					udelay(100);
-> +			}
->  		}
->  	}
->  	break;
-
-Nitpick:
-the else is useless you can remove it.
-
-re,
- wh
-
+>
+> --
+> Mel Gorman
+> SUSE Labs
