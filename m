@@ -2,153 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D258D14071A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D029140721
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgAQJ6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:58:36 -0500
-Received: from ofcsgdbm.dwd.de ([141.38.3.245]:33933 "EHLO ofcsgdbm.dwd.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728913AbgAQJ6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:58:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by ofcsg2dn1.dwd.de (Postfix) with ESMTP id 47zc2X49xYz6v5j
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 09:58:28 +0000 (UTC)
-X-Virus-Scanned: by amavisd-new at csg.dwd.de
-Received: from ofcsg2dn1.dwd.de ([127.0.0.1])
-        by localhost (ofcsg2dn1.dwd.de [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 9ZkaTD7x98ih for <linux-kernel@vger.kernel.org>;
-        Fri, 17 Jan 2020 09:58:28 +0000 (UTC)
-Received: from ofmailhub.dwd.de (oflxs446.dwd.de [141.38.40.78])
-        by ofcsg2dn1.dwd.de (Postfix) with ESMTP id 47zc2X24mTz6v59;
-        Fri, 17 Jan 2020 09:58:28 +0000 (UTC)
-Received: from diagnostix.dwd.de (diagnostix.dwd.de [141.38.42.141])
-        by ofmailhub.dwd.de (Postfix) with ESMTP id BBD895B707;
-        Fri, 17 Jan 2020 09:58:27 +0000 (UTC)
-Date:   Fri, 17 Jan 2020 09:58:27 +0000 (UTC)
-From:   Holger Kiehl <Holger.Kiehl@dwd.de>
-X-X-Sender: kiehl@diagnostix.dwd.de
-To:     Guenter Roeck <linux@roeck-us.net>
-cc:     linux-hwmon@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
-In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
-Message-ID: <alpine.LRH.2.21.2001170949500.21460@diagnostix.dwd.de>
-References: <20200116141800.9828-1-linux@roeck-us.net>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1729182AbgAQJ6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:58:50 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53788 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726688AbgAQJ6r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:58:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579255125;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Uf1keSD3DOZ8jh4mCSz+0fhQb4Z+vPKdygjWjY+hlbM=;
+        b=NZuqAMQHdmeU601OrxePBrd966BxNqTEgfw5R1mDKKlzoMCLtfBAMfdQJQcMkHc6ssNurk
+        XAJCledikqC8sM82Bx1gZE+3zf4TRc2v4ZDsm464PMe4QEMK6Jyqh+45fE4RNTpiLpNyZq
+        yxTOyKuAoXXYsyF5qUexLdNL+f1K0fM=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-127-hLzf4peXPYKM3erIJvsGnA-1; Fri, 17 Jan 2020 04:58:44 -0500
+X-MC-Unique: hLzf4peXPYKM3erIJvsGnA-1
+Received: by mail-lj1-f199.google.com with SMTP id d14so6029943ljg.17
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:58:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=Uf1keSD3DOZ8jh4mCSz+0fhQb4Z+vPKdygjWjY+hlbM=;
+        b=DLNmldEN9VsGCLbWcu4yjuM0I4GaSPuP8/fn/is+XISNqd+rEYQJhgAQwpzyE+4wHN
+         kuwqZ9TSSSEGz+usQDKJUrWYEd3XIfU+rF9bU/yfRA54F5TKoNerTRAtclAqM9Q7C8oN
+         A7mzJtYtoMSAmXBBROr6OxnUs7qIZb158h1sS0w7L8SIJ3pEUfmrfOqLC5wkizES3yp2
+         U/odV3ZSbABiLQh+8T1m0/ECUe+7aFgC8zSkF4kCa0BtHoUE/UmUvB8PYCZDSM1Y1NAJ
+         Sv6qhllvzazG69HKPV+4rlY1yYVUIV/ybsME8BB/cIwNAfjE+uP6UuvCE49XO7I97eC9
+         /5hg==
+X-Gm-Message-State: APjAAAX7312UB80mFLjNd2KF3whlZaNBjynZtgEsqPctKUgl9k18TJog
+        gm9ILs+lS0yzCiEcDjpI3LBWikKGuQd5kWO58adpKfX5+59v/6y0zPNFfjPLD7d6OqATaiEkCwH
+        A8LclvIXz/YjNtDCD9r0AIHDG
+X-Received: by 2002:ac2:4849:: with SMTP id 9mr4975735lfy.11.1579255123124;
+        Fri, 17 Jan 2020 01:58:43 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzx3OTlP+sKcKqC8lWpUkR48Xy7KHR8XB1tnfvUp3Gadttkq8Vpe8cxhtUqaWxJHiUphB7sig==
+X-Received: by 2002:ac2:4849:: with SMTP id 9mr4975702lfy.11.1579255122857;
+        Fri, 17 Jan 2020 01:58:42 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id r21sm12164399ljn.64.2020.01.17.01.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 01:58:42 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 341A91804D6; Fri, 17 Jan 2020 10:58:41 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com, brouer@redhat.com
+Subject: Re: [PATCH bpf-next v3 00/11] tools: Use consistent libbpf include paths everywhere
+In-Reply-To: <20200117095721.0030f414@carbon>
+References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <20200117041431.h7vvc32fungenyhg@ast-mbp.dhcp.thefacebook.com> <20200117095721.0030f414@carbon>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Fri, 17 Jan 2020 10:58:41 +0100
+Message-ID: <87lfq6qu9a.fsf@toke.dk>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="646810922-661853023-1579255108=:21460"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Jesper Dangaard Brouer <brouer@redhat.com> writes:
 
---646810922-661853023-1579255108=:21460
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+> On Thu, 16 Jan 2020 20:14:32 -0800
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+>
+>> On Thu, Jan 16, 2020 at 02:22:11PM +0100, Toke H=C3=B8iland-J=C3=B8rgens=
+en wrote:
+>> > The recent commit 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs=
+.h are
+>> > taken from selftests dir") broke compilation against libbpf if it is i=
+nstalled
+>> > on the system, and $INCLUDEDIR/bpf is not in the include path.
+>> >=20
+>> > Since having the bpf/ subdir of $INCLUDEDIR in the include path has ne=
+ver been a
+>> > requirement for building against libbpf before, this needs to be fixed=
+. One
+>> > option is to just revert the offending commit and figure out a differe=
+nt way to
+>> > achieve what it aims for.=20=20=20
+>>=20
+>> The offending commit has been in the tree for a week. So I applied Andri=
+i's
+>> revert of that change. It reintroduced the build dependency issue, but w=
+e lived
+>> with it for long time, so we can take time to fix it cleanly.
+>> I suggest to focus on that build dependency first.
+>>=20
+>> > However, this series takes a different approach:
+>> > Changing all in-tree users of libbpf to consistently use a bpf/ prefix=
+ in
+>> > #include directives for header files from libbpf.=20=20
+>>=20
+>> I'm not sure it's a good idea. It feels nice, but think of a message we'=
+re
+>> sending to everyone. We will get spamed with question: does bpf community
+>> require all libbpf users to use bpf/ prefix ? What should be our answer?
+>
+> The answer should be: Yes. When libbpf install the header files the are
+> installed under bpf/ prefix.  It is very confusing that samples and
+> selftests can include libbpf.h without this prefix. Even worse
+> including "bpf.h" pickup the libbpf version bpf/bpf.h, which have
+> caused confusion.  The only reason for the direct "libbpf.h" include is
+> historical, as there used-to-be a local file for that.
 
-On Thu, 16 Jan 2020, Guenter Roeck wrote:
+Agreed. Also, we are already telling people what the right include path
+is in at least two ways - and currently they are incompatible:
 
-> This patch series implements various improvements for the k10temp driver.
-> 
-> Patch 1/4 introduces the use of bit operations.
-> 
-> Patch 2/4 converts the driver to use the devm_hwmon_device_register_with_info
-> API. This not only simplifies the code and reduces its size, it also
-> makes the code easier to maintain and enhance. 
-> 
-> Patch 3/4 adds support for reporting Core Complex Die (CCD) temperatures
-> on Ryzen 3 (Zen2) CPUs.
-> 
-> Patch 4/4 adds support for reporting core and SoC current and voltage
-> information on Ryzen CPUs.
-> 
-> With all patches in place, output on Ryzen 3900 CPUs looks as follows
-> (with the system under load).
-> 
-> k10temp-pci-00c3
-> Adapter: PCI adapter
-> Vcore:        +1.36 V
-> Vsoc:         +1.18 V
-> Tdie:         +86.8°C  (high = +70.0°C)
-> Tctl:         +86.8°C
-> Tccd1:        +80.0°C
-> Tccd2:        +81.8°C
-> Icore:       +44.14 A
-> Isoc:        +13.83 A
-> 
-> The patch series has only been tested with Ryzen 3900 CPUs. Further test
-> coverage will be necessary before the changes can be applied to the Linux
-> kernel.
-> 
-Here from my little Asrock A300 with a Ryzen 2400G:
+- The pkg-config file included with libbpf has a notion of include path;
+  which does *not* include the bpf/ subdirectory.
 
-   sensors
-   k10temp-pci-00c3
-   Adapter: PCI adapter
-   Vcore:        +0.78 V  
-   Vsoc:         +1.11 V  
-   Tdie:         +44.8°C  (high = +70.0°C)
-   Tctl:         +44.8°C  
-   Icore:        +5.20 A  
-   Isoc:         +2.17 A  
+- The skeleton generator puts an '#include <libbpf.h>' line into the
+  generated files.
 
-   nvme-pci-0100
-   Adapter: PCI adapter
-   Composite:    +41.9°C  (low  = -273.1°C, high = +80.8°C)
-                          (crit = +80.8°C)
-   Sensor 1:     +41.9°C  (low  = -273.1°C, high = +65261.8°C)
-   Sensor 2:     +44.9°C  (low  = -273.1°C, high = +65261.8°C)
+With this series we'll at least be consistent.
 
-   nct6793-isa-0290
-   Adapter: ISA adapter
-   in0:                    +0.34 V  (min =  +0.00 V, max =  +1.74 V)
-   in1:                    +1.84 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in2:                    +3.41 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in3:                    +3.39 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in4:                    +0.26 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in5:                    +0.14 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in6:                    +0.67 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in7:                    +3.39 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in8:                    +3.26 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in9:                    +1.84 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in10:                   +0.19 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in11:                   +0.14 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in12:                   +1.85 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in13:                   +1.72 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   in14:                   +0.20 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
-   fan1:                     0 RPM  (min =    0 RPM)
-   fan2:                   317 RPM  (min =    0 RPM)
-   fan3:                     0 RPM  (min =    0 RPM)
-   fan4:                     0 RPM  (min =    0 RPM)
-   fan5:                     0 RPM  (min =    0 RPM)
-   SYSTIN:                +113.0°C  (high =  +0.0°C, hyst =  +0.0°C)  sensor = thermistor
-   CPUTIN:                 +59.5°C  (high = +80.0°C, hyst = +75.0°C)  sensor = thermistor
-   AUXTIN0:                +45.0°C  (high =  +0.0°C, hyst =  +0.0°C)  ALARM  sensor = thermistor
-   AUXTIN1:               +107.0°C    sensor = thermistor
-   AUXTIN2:               +106.0°C    sensor = thermistor
-   AUXTIN3:               +103.0°C    sensor = thermistor
-   SMBUSMASTER 0:          +44.5°C  
-   PCH_CHIP_CPU_MAX_TEMP:   +0.0°C  
-   PCH_CHIP_TEMP:           +0.0°C  
-   PCH_CPU_TEMP:            +0.0°C  
-   intrusion0:            OK
-   intrusion1:            ALARM
-   beep_enable:           disabled
+>> Require or recommend? If require.. what for? It works as-is. If recommen=
+d then
+>> why suddenly we're changing all files in selftests and samples?
+>> There is no good answer here. I think we should leave the things as-is.
+>
+> I strongly believe we should correct this.  It doesn't make sense that
+> someone copying out a sample or selftests, into a git-submodule libbpf
+> (or distro installed libbpf-devel) have to understand that they have to
+> update the include path for all the libbpf header files.
 
-   amdgpu-pci-0300
-   Adapter: PCI adapter
-   vddgfx:           N/A  
-   vddnb:            N/A  
-   edge:         +44.0°C  (crit = +80.0°C, hyst =  +0.0°C)
+Yeah, I think being clear and explicit about what is the recommended way
+to include libbpf is strictly an improvement. And making it possible to
+move example programs seamlessly in and out of the kernel tree will only
+make things easier for people.
 
-Patches applied without any problem against Linus git tree.
+I'll rebase and respin this series on top of the revert (and fix
+Andrii's comments).
 
-Many thanks for this work!
+-Toke
 
-Regards,
-Holger
---646810922-661853023-1579255108=:21460--
