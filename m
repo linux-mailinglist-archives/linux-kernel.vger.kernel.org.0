@@ -2,105 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5320140BFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D668D140C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbgAQOCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:02:47 -0500
-Received: from mail.dlink.ru ([178.170.168.18]:55836 "EHLO fd.dlink.ru"
+        id S1727561AbgAQOFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:05:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728998AbgAQOCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:02:45 -0500
-Received: by fd.dlink.ru (Postfix, from userid 5000)
-        id 6EE6F1B21576; Fri, 17 Jan 2020 17:02:42 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 6EE6F1B21576
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
-        t=1579269762; bh=5ylIyyrZHlzb5tLPn4yy5E0L0D4VwPrmEFZ7BGuuHO8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=EWBPsPwsX/FBRAeYsYwLjo7CLzvkeykEkH6W4hPSin3x4nVpHbx8dB0zBAd3+ybfw
-         lPzxQX4Y/M5STsdDec+7dQ7JLXXIQuEPYvS6W8a3nFCJoj8oitsGYK/lorWNkw2e4c
-         OB+UNMEDAhllfdOQFY64LqnJ0WuHq5oyN2/1aP4k=
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
-        USER_IN_WHITELIST autolearn=disabled version=3.4.2
-Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
-        by fd.dlink.ru (Postfix) with ESMTP id 0A6A61B214CE;
-        Fri, 17 Jan 2020 17:02:32 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 0A6A61B214CE
-Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
-        by mail.rzn.dlink.ru (Postfix) with ESMTP id 5DADB1B20AE9;
-        Fri, 17 Jan 2020 17:02:31 +0300 (MSK)
-Received: from localhost.localdomain (unknown [196.196.203.126])
-        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
-        Fri, 17 Jan 2020 17:02:31 +0300 (MSK)
-From:   Alexander Lobakin <alobakin@dlink.ru>
-To:     Paul Burton <paulburton@kernel.org>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh@kernel.org>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        linux-mips@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH mips-fixes 3/3] MIPS: syscalls: fix indentation of the 'SYSNR' message
-Date:   Fri, 17 Jan 2020 17:02:09 +0300
-Message-Id: <20200117140209.17672-4-alobakin@dlink.ru>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200117140209.17672-1-alobakin@dlink.ru>
-References: <20200117140209.17672-1-alobakin@dlink.ru>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726587AbgAQOFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 09:05:04 -0500
+Subject: Re: [GIT PULL] gpio fixes for v5.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579269903;
+        bh=y04g8Y4MEnLLitmvnhpe7B5JwNWD6+j+7MPe8rGyiK8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=DCv684DTOHI02penZ1dPhUdE8i1Jr1w8F1G2OfOQCnIZWQcsgJB4gRt61YmV9kVuJ
+         TACa+6SHY0OPk3b65bYDPPJK38Aexl7tDLAXAZ4EsyJ08zNhlN9Rc5E7YKccrTAjTe
+         gl9Ydj925kulko2FnclDBY7zYIFTUgJXik7GUTjU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CACRpkdatPeRrqDzb7ynELvRD_TUfjAc3XCYPKmE5BrQdFXakiQ@mail.gmail.com>
+References: <CACRpkdatPeRrqDzb7ynELvRD_TUfjAc3XCYPKmE5BrQdFXakiQ@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CACRpkdatPeRrqDzb7ynELvRD_TUfjAc3XCYPKmE5BrQdFXakiQ@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ tags/gpio-v5.5-4
+X-PR-Tracked-Commit-Id: a564ac35d60564dd5b509e32afdc04e7aafee40e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 13b2668d6fc95dcecd11e4f86f47be24fda7da1f
+Message-Id: <157926990376.9623.15557688693663282462.pr-tracker-bot@kernel.org>
+Date:   Fri, 17 Jan 2020 14:05:03 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Kevin Hao <haokexin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It also lacks a whitespace (copy'n'paste error?) and also messes up the
-output:
+The pull request you sent on Fri, 17 Jan 2020 08:57:27 +0100:
 
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_n32.h
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_n64.h
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_o32.h
-  SYSNR  arch/mips/include/generated/uapi/asm/unistd_nr_n32.h
-  SYSNR  arch/mips/include/generated/uapi/asm/unistd_nr_n64.h
-  SYSNR  arch/mips/include/generated/uapi/asm/unistd_nr_o32.h
-  WRAP    arch/mips/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/mips/include/generated/uapi/asm/ipcbuf.h
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.5-4
 
-After:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/13b2668d6fc95dcecd11e4f86f47be24fda7da1f
 
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_n32.h
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_n64.h
-  SYSHDR  arch/mips/include/generated/uapi/asm/unistd_o32.h
-  SYSNR   arch/mips/include/generated/uapi/asm/unistd_nr_n32.h
-  SYSNR   arch/mips/include/generated/uapi/asm/unistd_nr_n64.h
-  SYSNR   arch/mips/include/generated/uapi/asm/unistd_nr_o32.h
-  WRAP    arch/mips/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/mips/include/generated/uapi/asm/ipcbuf.h
+Thank you!
 
-Present since day 0 of syscall table generation introduction for MIPS.
-
-Fixes: 9bcbf97c6293 ("mips: add system call table generation support")
-Cc: <stable@vger.kernel.org> # v5.0+
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
----
- arch/mips/kernel/syscalls/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/kernel/syscalls/Makefile b/arch/mips/kernel/syscalls/Makefile
-index a3d4bec695c6..6efb2f6889a7 100644
---- a/arch/mips/kernel/syscalls/Makefile
-+++ b/arch/mips/kernel/syscalls/Makefile
-@@ -18,7 +18,7 @@ quiet_cmd_syshdr = SYSHDR  $@
- 		   '$(syshdr_pfx_$(basetarget))'		\
- 		   '$(syshdr_offset_$(basetarget))'
- 
--quiet_cmd_sysnr = SYSNR  $@
-+quiet_cmd_sysnr = SYSNR   $@
-       cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'		\
- 		  '$(sysnr_abis_$(basetarget))'			\
- 		  '$(sysnr_pfx_$(basetarget))'			\
 -- 
-2.25.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
