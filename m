@@ -2,73 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0111408FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A82140903
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbgAQLdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 06:33:53 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43526 "EHLO
+        id S1727022AbgAQLe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 06:34:58 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43647 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgAQLdw (ORCPT
+        with ESMTP id S1726371AbgAQLe5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:33:52 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d16so22373441wre.10
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 03:33:51 -0800 (PST)
+        Fri, 17 Jan 2020 06:34:57 -0500
+Received: by mail-wr1-f68.google.com with SMTP id d16so22376891wre.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 03:34:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=HlGSqRPWCcpTVOvm2y/4qtBvBsg/45YDsT7XOrDxWQM=;
-        b=wa4/IqEfc6rA+A/P5fHdkezc4l0JT2FKB0L8O2eIS8GE75THnOPZY1efa7QMDwReoT
-         vQTSUimHGiira0WvCAsM9xAFumAjav8oSbE6ynre1ZUIhbMYZPjAKN73HxW9/V7ujGxj
-         p09HveO7MV5D2braT3bzrQkaDFCxkYT9oHVm933uCoSdV3ogA9miGjx+geK/7hsroHUy
-         ilTkQs1o36Mxs6PgZVX1sL0c6mQY8xf+kLlR3+kiomjPAFrl6eZ1GGl15YIXvkjLk2ck
-         z2RRWzaFarWf6iWxahIrJ9ABra2dOuzC0cSG+y7BBpy4MjHw0ENqLaHTuBNWG4FVHUS8
-         3Njw==
+        bh=evNHCWWR8VDQgkVk+W1DMeAHVIxkJQGWyaVBPtYnDrc=;
+        b=oBGOm9JvQ2c/xRqP4pTi1fYT4Xeumb+8oGfQHcf95V0670qJ/7pQ7y3K2WG7YtLHNr
+         VyjVpgrZFjiUcr8izrBXeqTrurwr6KnbGdtcbzwhRXGj5tHqowSJogHYzEWuicTLKVlI
+         XPdZBH5SApp7zifRAvPMp23HYM2ZCB2mnYCHb4MA+iWYjA40RXVo4rIZvjdqK9SxJRGt
+         EnISdUOZNFjodtS6vvsGwC24f38bRxelB2c6jbM+MVlj0gtS9KtCIyvlyvgw7FjvyIv8
+         6sDFWcWIKeuo0wrRqSv0bJy5m3N3iftgPM9U7u3/05jsbtJ045OCH2Hd4Vq+C1l1fEpL
+         PDdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=HlGSqRPWCcpTVOvm2y/4qtBvBsg/45YDsT7XOrDxWQM=;
-        b=iIUEsPdPGj3RSuBSsn8xsp0iA6+ofQgCJ0KGBz6J8kKbj7dn4Q+NMTZCri1rVqRqtI
-         XWtGszP4l+ZZ3tP/vRv27u1owOxqpEVeFCbNv2DyGK22E8HXxpjxFjZDjj+vnA4oHsTx
-         V880Jum66f5WSVBN3ZMBsgpqPdYmZyD5kbCUoC0wCSJsk4V/+RJ9MFKg1oTzj2MiOf0F
-         i+92XWM9Yw3T5a1ZrT18MhiEXtWZRyjdNH8sEwFx6i9+nglOt2MgIikIvGi8rEPyC81+
-         I48idVexIjwOPaYAcocbzTyLQK8de3psFxXr0nCFaJel6Wqomc2+eAlyKme2ajrfXSAV
-         F5MQ==
-X-Gm-Message-State: APjAAAWFdlsT8b/WgHXZIQGnG7MlSbE7mk+APCNMLCU9xXC7Ww+3g6fC
-        arIa7ZOWAW+h8AHZffeCthItZg==
-X-Google-Smtp-Source: APXvYqxWFzmFtAaZqwXcheoxbrUKo9fL18irV27YAg6aTrSXgtUWJp16xEvIUZeWzLPnBLgypfOWqQ==
-X-Received: by 2002:adf:ef03:: with SMTP id e3mr2544858wro.216.1579260830707;
-        Fri, 17 Jan 2020 03:33:50 -0800 (PST)
+        bh=evNHCWWR8VDQgkVk+W1DMeAHVIxkJQGWyaVBPtYnDrc=;
+        b=WFYoATpS4O+0JuUI7mtuqB2UCYYSZqU0f1wmMP3curdzarIIUcFPWN5F8nxlb6SJWz
+         Ll8LeqWmGkJk5N98VK0bL0tMz8mV9fCUo8CBhuGlr/sDNYuM0WXNW13rjgp+r2leHbKI
+         /ozcIKjDZJ5qfVdtEat747GJXF6YP+um+2TlsA4TwWs9/RQwnRDUsTiJoirUzuBLH32m
+         QZ6sV4hb2NiGABXiylwO4Jyk2zuHJy3cTz6Usz1uklx6Jsx0QuRaO43hljNOMH55ZqDw
+         Sca4Ju9NQrVd2TnaH96SlPqjFQglq/p5oFBnwy21fmfC98rKcBx59A6AuaJQf4X4hWaC
+         w0tA==
+X-Gm-Message-State: APjAAAXp9Ts/Qm0SIu0WpWPr2UI7VfJP8s11Lj6xCiMiF1FqnC7EGxT6
+        3PWxPrMPQLODe1GTCxcA910fuQ==
+X-Google-Smtp-Source: APXvYqxHUoUVGRG19E3ieVqNqnW2+WCjFDV9O+aG5AQe2K9rCp3BeYzv7LTq4ZhJWMCqeroBuJrIKg==
+X-Received: by 2002:adf:fe12:: with SMTP id n18mr2784294wrr.158.1579260896233;
+        Fri, 17 Jan 2020 03:34:56 -0800 (PST)
 Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id u14sm33018273wrm.51.2020.01.17.03.33.49
+        by smtp.gmail.com with ESMTPSA id 60sm34545482wrn.86.2020.01.17.03.34.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 03:33:50 -0800 (PST)
-Date:   Fri, 17 Jan 2020 11:34:04 +0000
+        Fri, 17 Jan 2020 03:34:55 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:35:11 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Prashant Malani <pmalani@chromium.org>
 Cc:     enric.balletbo@collabora.com, groeck@chromium.org,
         bleung@chromium.org, sre@kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] mfd: cros_ec: Add cros-usbpd-notify subdevice
-Message-ID: <20200117113404.GI15507@dell>
-References: <20200114232219.93171-1-pmalani@chromium.org>
- <20200114232219.93171-2-pmalani@chromium.org>
+Subject: Re: [PATCH v7 2/3] mfd: cros_ec: Add cros-usbpd-notify subdevice
+Message-ID: <20200117113511.GJ15507@dell>
+References: <20200117002820.56872-1-pmalani@chromium.org>
+ <20200117002820.56872-2-pmalani@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200114232219.93171-2-pmalani@chromium.org>
+In-Reply-To: <20200117002820.56872-2-pmalani@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020, Prashant Malani wrote:
+On Thu, 16 Jan 2020, Prashant Malani wrote:
 
 > Add the cros-usbpd-notify driver as a subdevice on platforms that
 > support the EC_FEATURE_USB_PD EC feature flag and don't have the
@@ -78,8 +78,12 @@ On Tue, 14 Jan 2020, Prashant Malani wrote:
 > notifications from the Chrome OS Embedded Controller (EC) via a
 > notification chain.
 > 
+> Reviewed-by: Benson Leung <bleung@chromium.org>
 > Signed-off-by: Prashant Malani <pmalani@chromium.org>
 > ---
+> 
+> Changes in v7:
+> - No changes.
 > 
 > Changes in v6:
 > - No changes.
@@ -93,10 +97,12 @@ On Tue, 14 Jan 2020, Prashant Malani wrote:
 >   mfd_cell and used an IS_ENABLED() check.
 > - Changed commit title and description slightly to reflect change in
 >   code.
+> 
 >  drivers/mfd/cros_ec_dev.c | 22 ++++++++++++++++++++++
 >  1 file changed, 22 insertions(+)
 
-Applied, thanks.
+Applied v6, since Patchwork can pick-up the Acks and there haven't
+been any changes since then.
 
 -- 
 Lee Jones [李琼斯]
