@@ -2,115 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784D91413FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32C4C1413EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:11:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgAQWQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:16:23 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60148 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbgAQWQX (ORCPT
+        id S1729955AbgAQWLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:11:51 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38738 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729246AbgAQWLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:16:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HM8HXd150359;
-        Fri, 17 Jan 2020 22:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=HFFGUnfSqVWShYbKt3p582lD3bfMPINDrNFPG0jJqvE=;
- b=kW1I3h9CqDB0WI8iNf10+m0iPa1caxU1I2lL1DtfW2t6Uujt+6MaHhDAA108OOEPPtMf
- goLIn+mP/rVpqL+EO+HM0B7wM5FQpwXMNqCmaqcrB6Z600IT925wNPtfUgkBRPg35LZM
- Mo3dMDUo92fmDi4WY7wvg2kCn4OK3T3EzCi9VB+NxluNT0ym96Ld1u4W/C9uk8KvsMGr
- ALkR6o/MlhLR0mM5EhBRvTo5MSi/0IRdQQoo4d7fwn4ZOJsqxEcP9dswoYez6M29dLuT
- +cn9qJ0lC19z4UEYkqRZLSynbDNwNVrxZ4aMQ/66dfOuMU/4COFYdA4k5s46rgjTEbHD 5A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xf74037wy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 22:09:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HM8mVc008512;
-        Fri, 17 Jan 2020 22:09:48 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2xjxm9pau4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 22:09:47 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00HM9iG3027286;
-        Fri, 17 Jan 2020 22:09:44 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 17 Jan 2020 14:09:44 -0800
-Subject: Re: [PATCH v9 3/8] hugetlb_cgroup: add reservation accounting for
- private mappings
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     shuah <shuah@kernel.org>, David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        Hillf Danton <hdanton@sina.com>
-References: <20191217231615.164161-1-almasrymina@google.com>
- <20191217231615.164161-3-almasrymina@google.com>
- <dec1ccd5-5973-c498-f2fe-390c1c51b2d0@oracle.com>
- <CAHS8izMzXpNMCmFh_SD7n+4+rj3QTqyRfeWQyXAhFo1-qV4iEQ@mail.gmail.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <0ea993b0-af18-cee8-527e-f6df7e76b0be@oracle.com>
-Date:   Fri, 17 Jan 2020 14:09:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Fri, 17 Jan 2020 17:11:50 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x185so12559176pfc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:11:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=I07pR0oCHYZ+OosxxFEWPv5kDJlwMJ/Csumm0eUVygc=;
+        b=IY7dG2oFgZVtqoBqrQQrRCWrDUSV1LC/NSDgr//4rHlhS6Vp+V2u9iTNfTll0hhDN0
+         DdXnXLiBhzLElgcNysVIBSjuv1OZHnhvzacjA3ME7q7snNAM7nhpF2/eLxykhfZW9nxZ
+         p9bT7Qf/wSA3MOfjBFHK00dxMdnX6IDsCoC1fY5U2jLU64alEpoY1r9mUrfYgG3Utqsq
+         xDxk6JCxmxEFka1Jf6072QxB24IglEagJ24t0HdToxnLnNCEuF6zAoMUQaNJvfDrgwaf
+         5AjBAIM9OAWoOBELnt7qJa4Hs15KW19nZkxmsmx4U3bj7f18zSMFOyPOyJctM0TiPkZs
+         pkOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=I07pR0oCHYZ+OosxxFEWPv5kDJlwMJ/Csumm0eUVygc=;
+        b=CJAfkgeCAeQMsCz4f5dvE6ilVa4LSLRng5W1jahkMDiXSAeGgXpT3lkiITJZF1kifT
+         03jzP8mt5POxoi7j6uwxXfKIRz4HpKIuO1KzBqnfpI9jSdeaLqzbJkg2Dnepii8548CF
+         xCN0oUtrUBdkz4L5dMRn5G9bu7EjnHrksPyWEs3PnXq9pvlbQj5S7o42uT+gO1G9bLqm
+         h046dWbesVfZH2bOdE0llJQrem1wyTjHlBQtbqwOmkl+YTS2bLIf6kxlmlr/aPcq9lOv
+         wrpLA3dkGrZuPJc2NfBZUXspu1gxQDoFuPSmfe8FR34F0vJfhkvwODQYGpRmT3cv5NSv
+         zxqg==
+X-Gm-Message-State: APjAAAVjmhQdijiSBcBEJU/QeDB/A0K8daE8C13AGzFplbbxIB9tVbU+
+        RiESXHIywo5o9EeX3h6MU7OhKkCkDto=
+X-Google-Smtp-Source: APXvYqzl5ui39E2Jhw94MkIfpeo/6fENDkaM2NcZLxDoCcu8TbV6QLo/CC4vzcYcHtJWW6l4jIGhIA==
+X-Received: by 2002:a63:d62:: with SMTP id 34mr49600714pgn.268.1579299109485;
+        Fri, 17 Jan 2020 14:11:49 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id a195sm30899088pfa.120.2020.01.17.14.11.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 14:11:48 -0800 (PST)
+Date:   Fri, 17 Jan 2020 14:11:48 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [patch v2] mm, thp: fix defrag setting if newline is not used
+In-Reply-To: <a3c269a7-ff41-ee7c-9041-ee06e50c5a10@suse.cz>
+Message-ID: <alpine.DEB.2.21.2001171411020.56385@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.2001141757490.108121@chino.kir.corp.google.com> <20200116191609.3972fd5301cf364a27381923@linux-foundation.org> <025511aa-4721-2edb-d658-78d6368a9101@suse.cz> <alpine.DEB.2.21.2001170136280.20618@chino.kir.corp.google.com>
+ <a3c269a7-ff41-ee7c-9041-ee06e50c5a10@suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAHS8izMzXpNMCmFh_SD7n+4+rj3QTqyRfeWQyXAhFo1-qV4iEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001170170
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001170170
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 2:52 PM, Mina Almasry wrote:
-> On Mon, Jan 13, 2020 at 4:55 PM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>> +#ifdef CONFIG_CGROUP_HUGETLB
->>> +     /*
->>> +      * Since we check for HPAGE_RESV_OWNER above, this must a private
->>> +      * mapping, and these values should be none-zero, and should point to
->>> +      * the hugetlb_cgroup counter to uncharge for this reservation.
->>> +      */
->>> +     WARN_ON(!resv->reservation_counter);
->>> +     WARN_ON(!resv->pages_per_hpage);
->>> +     WARN_ON(!resv->css);
->>
->> I was once again wondering if these were always non-NULL for private mappings.
->> It seems that reservation_counter (h_gc) would be NULL in these cases from
->> these early checks in hugetlb_cgroup_charge_cgroup().
->>
-> 
-> You are right. I'm fixing in v10 the code and comments to account for
-> h_cg potentially being NULL, but I'm having trouble testing. Looking
-> at the code, I'm a bit confused by the checks. Seems to me
-> hugetlb_cgroup_disabled() is the same as #ifdef CONFIG_CGROUP_HUGETLB;
-> I can't find a way to enable the Kconfig but have that return false
-> unless I hack the code.
+If thp defrag setting "defer" is used and a newline is *not* used when
+writing to the sysfs file, this is interpreted as the "defer+madvise"
+option.
 
-What about the boot options?
+This is because we do prefix matching and if five characters are written
+without a newline, the current code ends up comparing to the first five
+bytes of the "defer+madvise" option and using that instead.
 
-cgroup_disable=
-cgroup_no_v1=
+Use the more appropriate sysfs_streq() that handles the trailing newline
+for us.  Since this doubles as a nice cleanup, do it in enabled_store()
+as well.
 
--- 
-Mike Kravetz
+Fixes: 21440d7eb904 ("mm, thp: add new defer+madvise defrag option")
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ Latest 5.5-rc6 doesn't boot for me, something to be debugged separately,
+ so this was tested on 5.4.  No changes in this area, however, between
+ the two kernels.
+
+ mm/huge_memory.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 13cc93785006..1c61dea937bc 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -177,16 +177,13 @@ static ssize_t enabled_store(struct kobject *kobj,
+ {
+ 	ssize_t ret = count;
+ 
+-	if (!memcmp("always", buf,
+-		    min(sizeof("always")-1, count))) {
++	if (sysfs_streq(buf, "always")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("madvise", buf,
+-			   min(sizeof("madvise")-1, count))) {
++	} else if (sysfs_streq(buf, "madvise")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("never", buf,
+-			   min(sizeof("never")-1, count))) {
++	} else if (sysfs_streq(buf, "never")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG, &transparent_hugepage_flags);
+ 	} else
+@@ -250,32 +247,27 @@ static ssize_t defrag_store(struct kobject *kobj,
+ 			    struct kobj_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+-	if (!memcmp("always", buf,
+-		    min(sizeof("always")-1, count))) {
++	if (sysfs_streq(buf, "always")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("defer+madvise", buf,
+-		    min(sizeof("defer+madvise")-1, count))) {
++	} else if (sysfs_streq(buf, "defer+madvise")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("defer", buf,
+-		    min(sizeof("defer")-1, count))) {
++	} else if (sysfs_streq(buf, "defer")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("madvise", buf,
+-			   min(sizeof("madvise")-1, count))) {
++	} else if (sysfs_streq(buf, "madvise")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
+ 		set_bit(TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG, &transparent_hugepage_flags);
+-	} else if (!memcmp("never", buf,
+-			   min(sizeof("never")-1, count))) {
++	} else if (sysfs_streq(buf, "never")) {
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_FLAG, &transparent_hugepage_flags);
+ 		clear_bit(TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG, &transparent_hugepage_flags);
