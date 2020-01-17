@@ -2,242 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49C4140230
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 04:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BFEF140239
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 04:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389212AbgAQDDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 22:03:37 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46396 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388507AbgAQDDg (ORCPT
+        id S2389284AbgAQDI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 22:08:29 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32868 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387758AbgAQDI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 22:03:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579230215;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZHZAudpQ7YKqVHyEOwRamq1WK1H7U3kwvTz/1r/Y/lU=;
-        b=gS9JXooKQ6njC2mjiEuvDFSMpDEY8KWgPGd3A9B8iufRriaQpYCxyme6ZYZ9PvzOLL9N5K
-        y4e2pe8lmZq8dXjIBZOERel0Yi89Xl0+Do7K16Jo9Hq77/qRC4arTsTQ6wQG9i/KwTVppi
-        sd2CQEISWNkqCu2TP6XkFf/zeffRPW0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-275-CkGX8257OWK3y6RbnjmjLQ-1; Thu, 16 Jan 2020 22:03:33 -0500
-X-MC-Unique: CkGX8257OWK3y6RbnjmjLQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E08FDBA3;
-        Fri, 17 Jan 2020 03:03:30 +0000 (UTC)
-Received: from [10.72.12.168] (ovpn-12-168.pek2.redhat.com [10.72.12.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EA4E19C5B;
-        Fri, 17 Jan 2020 03:03:14 +0000 (UTC)
-Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-4-jasowang@redhat.com>
- <20200116152209.GH20978@mellanox.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <03cfbcc2-fef0-c9d8-0b08-798b2a293b8c@redhat.com>
-Date:   Fri, 17 Jan 2020 11:03:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200116152209.GH20978@mellanox.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-Content-Transfer-Encoding: quoted-printable
+        Thu, 16 Jan 2020 22:08:28 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z16so11251469pfk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 19:08:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=q6AVNeT1pWMrAlaKMB6tlkj93n7Ldpl+VE+2EqQtieY=;
+        b=tRvkV/taoExE6C8ByO7Owr7eXI6Dei+/H/fsmdc6eD9c2K+CLJ6MCSUVXJd3UvhZ7d
+         bKCpViiqvFmWan4uH/0A6gK80Uw8cB70I8Hc4xSmrd10IUI7a48Iezd97tVqUYJOZzqk
+         8M5UEMZ+8H9mSEx35scsj+jdlC7+EOF7lxJDP4RaDfwFBNY178zAth18DPdTujmAZT7X
+         DgZfGYH0zxVTLHU+C0DsNQnPcVNuRUjAhvd4TGTYUDjy4s6fdhM+2xReGRUkD8rnMZNj
+         gv3AIc7HnPs5SQ7zWBlmDw/oYiu29FCwQHJtIUwTToX3My6/QdK7xhdB9Bbl9XrLVbdE
+         jGEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=q6AVNeT1pWMrAlaKMB6tlkj93n7Ldpl+VE+2EqQtieY=;
+        b=E6WEV80hxr5+MTky5rX4P8XSR+GvUNt16gPVqeVIkqzZww9JdbydxUc64b6OqfjURD
+         2uENmBd5FD6Jk/iDTXj23pqNlghxaGKdOKmFA7kcwpaxhkdTSZsnKyWzH9JYBOPkWfsQ
+         NoEyx08u/sRD9HXWBA9fJrpr1STV6wZxqZnZ9/cgKWVc6CZ6yPDfC1WAnSlIhg2wual3
+         VFwtWLgGsVbR57IQuRt9pAtgFRaaEsjQgJprHKTPfO/bwWKvEWaBhB09hgxQpxf+CPqU
+         v4EzxZsRzop079QM4dXCWTCsSTHeeoNklh15mf7MdHdBhVb7Ym4Tb0+qZh8yhU15vI2o
+         Pb1g==
+X-Gm-Message-State: APjAAAWmf//C71hQMKM8IN/pPSet2CZtVqimLhtWf7lTOUd76dRnhlkZ
+        B693WSY2QJhK1VfSUH/wd9k=
+X-Google-Smtp-Source: APXvYqwZoWGPrcyKK1AOWc2AmJCdWiaPb/hXQ47FyUHVdZFuRQyo73LfRyQdGUZN93DToWdmOIgcBQ==
+X-Received: by 2002:a62:64d6:: with SMTP id y205mr802682pfb.41.1579230508172;
+        Thu, 16 Jan 2020 19:08:28 -0800 (PST)
+Received: from BJ08491PCU01.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id v10sm26175168pgk.24.2020.01.16.19.08.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 16 Jan 2020 19:08:27 -0800 (PST)
+From:   Li Guanglei <guangleix.li@gmail.com>
+To:     peterz@infradead.org, qais.yousef@arm.com
+Cc:     dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, linux-kernel@vger.kernel.org,
+        guangleix.li@gmail.com, guanglei.li@unisoc.com
+Subject: [PATCH v2] sched/core: Fix size of rq::uclamp initialization
+Date:   Fri, 17 Jan 2020 11:06:52 +0800
+Message-Id: <1579230412-10476-1-git-send-email-guangleix.li@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Li Guanglei <guanglei.li@unisoc.com>
 
-On 2020/1/16 =E4=B8=8B=E5=8D=8811:22, Jason Gunthorpe wrote:
-> On Thu, Jan 16, 2020 at 08:42:29PM +0800, Jason Wang wrote:
->> vDPA device is a device that uses a datapath which complies with the
->> virtio specifications with vendor specific control path. vDPA devices
->> can be both physically located on the hardware or emulated by
->> software. vDPA hardware devices are usually implemented through PCIE
->> with the following types:
->>
->> - PF (Physical Function) - A single Physical Function
->> - VF (Virtual Function) - Device that supports single root I/O
->>    virtualization (SR-IOV). Its Virtual Function (VF) represents a
->>    virtualized instance of the device that can be assigned to differen=
-t
->>    partitions
->> - VDEV (Virtual Device) - With technologies such as Intel Scalable
->>    IOV, a virtual device composed by host OS utilizing one or more
->>    ADIs.
->> - SF (Sub function) - Vendor specific interface to slice the Physical
->>    Function to multiple sub functions that can be assigned to differen=
-t
->>    partitions as virtual devices.
-> I really hope we don't end up with two different ways to spell this
-> same thing.
+rq::uclamp_rq is an array of struct uclamp_rq, make sure we clear the
+whole thing.
 
+Fixes: 69842cba9ace ("sched/uclamp: Add CPU's clamp buckets refcountinga")
+Signed-off-by: Li Guanglei <guanglei.li@unisoc.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Qais Yousef <qais.yousef@arm.com>
+Link:https://lkml.kernel.org/r/1577259844-12677-1-git-send-email-guangleix.li@gmail.com
+---
+ kernel/sched/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I think you meant ADI vs SF. It looks to me that ADI is limited to the=20
-scope of scalable IOV but SF not.
-
-
->
->> @@ -0,0 +1,2 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +obj-$(CONFIG_VDPA) +=3D vdpa.o
->> diff --git a/drivers/virtio/vdpa/vdpa.c b/drivers/virtio/vdpa/vdpa.c
->> new file mode 100644
->> index 000000000000..2b0e4a9f105d
->> +++ b/drivers/virtio/vdpa/vdpa.c
->> @@ -0,0 +1,141 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * vDPA bus.
->> + *
->> + * Copyright (c) 2019, Red Hat. All rights reserved.
->> + *     Author: Jason Wang <jasowang@redhat.com>
-> 2020 tests days
-
-
-Will fix.
-
-
->
->> + *
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/idr.h>
->> +#include <linux/vdpa.h>
->> +
->> +#define MOD_VERSION  "0.1"
-> I think module versions are discouraged these days
-
-
-Will remove.
-
-
->
->> +#define MOD_DESC     "vDPA bus"
->> +#define MOD_AUTHOR   "Jason Wang <jasowang@redhat.com>"
->> +#define MOD_LICENSE  "GPL v2"
->> +
->> +static DEFINE_IDA(vdpa_index_ida);
->> +
->> +struct device *vdpa_get_parent(struct vdpa_device *vdpa)
->> +{
->> +	return vdpa->dev.parent;
->> +}
->> +EXPORT_SYMBOL(vdpa_get_parent);
->> +
->> +void vdpa_set_parent(struct vdpa_device *vdpa, struct device *parent)
->> +{
->> +	vdpa->dev.parent =3D parent;
->> +}
->> +EXPORT_SYMBOL(vdpa_set_parent);
->> +
->> +struct vdpa_device *dev_to_vdpa(struct device *_dev)
->> +{
->> +	return container_of(_dev, struct vdpa_device, dev);
->> +}
->> +EXPORT_SYMBOL_GPL(dev_to_vdpa);
->> +
->> +struct device *vdpa_to_dev(struct vdpa_device *vdpa)
->> +{
->> +	return &vdpa->dev;
->> +}
->> +EXPORT_SYMBOL_GPL(vdpa_to_dev);
-> Why these trivial assessors? Seems unnecessary, or should at least be
-> static inlines in a header
-
-
-Will fix.
-
-
->
->> +int register_vdpa_device(struct vdpa_device *vdpa)
->> +{
-> Usually we want to see symbols consistently prefixed with vdpa_*, is
-> there a reason why register/unregister are swapped?
-
-
-I follow the name from virtio. I will switch to vdpa_*.
-
-
->
->> +	int err;
->> +
->> +	if (!vdpa_get_parent(vdpa))
->> +		return -EINVAL;
->> +
->> +	if (!vdpa->config)
->> +		return -EINVAL;
->> +
->> +	err =3D ida_simple_get(&vdpa_index_ida, 0, 0, GFP_KERNEL);
->> +	if (err < 0)
->> +		return -EFAULT;
->> +
->> +	vdpa->dev.bus =3D &vdpa_bus;
->> +	device_initialize(&vdpa->dev);
-> IMHO device_initialize should not be called inside something called
-> register, toooften we find out that the caller drivers need the device
-> to be initialized earlier, ie to use the kref, or something.
->
-> I find the best flow is to have some init function that does the
-> device_initialize and sets the device_name that the driver can call
-> early.
-
-
-Ok, will do.
-
-
->
-> Shouldn't there be a device/driver matching process of some kind?
-
-
-The question is what do we want do match here.
-
-1) "virtio" vs "vhost", I implemented matching method for this in mdev=20
-series, but it looks unnecessary for vDPA device driver to know about=20
-this. Anyway we can use sysfs driver bind/unbind to switch drivers
-2) virtio device id and vendor id. I'm not sure we need this consider=20
-the two drivers so far (virtio/vhost) are all bus drivers.
-
-Thanks
-
-
->
-> Jason
->
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 44123b4..05f870b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1252,7 +1252,8 @@ static void __init init_uclamp(void)
+ 	mutex_init(&uclamp_mutex);
+ 
+ 	for_each_possible_cpu(cpu) {
+-		memset(&cpu_rq(cpu)->uclamp, 0, sizeof(struct uclamp_rq));
++		memset(&cpu_rq(cpu)->uclamp, 0,
++				sizeof(struct uclamp_rq)*UCLAMP_CNT);
+ 		cpu_rq(cpu)->uclamp_flags = 0;
+ 	}
+ 
+-- 
+2.7.4
 
