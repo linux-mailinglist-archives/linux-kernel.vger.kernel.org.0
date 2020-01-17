@@ -2,322 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEBC114101F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CD714103C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbgAQRm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:42:56 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2281 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729674AbgAQRmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 12:42:52 -0500
-Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 682291981C328265B92A;
-        Fri, 17 Jan 2020 17:42:51 +0000 (GMT)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- lhreml703-cah.china.huawei.com (10.201.108.44) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 17 Jan 2020 17:42:50 +0000
-Received: from localhost (10.202.226.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Fri, 17 Jan
- 2020 17:42:50 +0000
-Date:   Fri, 17 Jan 2020 17:42:49 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     <Eugen.Hristev@microchip.com>
-CC:     <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Ludovic.Desroches@microchip.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: Re: [PATCH v2 3/3] iio: adc: at91-sama5d2_adc: update for other
- trigger usage
-Message-ID: <20200117174249.000011af@Huawei.com>
-In-Reply-To: <1578917098-9674-4-git-send-email-eugen.hristev@microchip.com>
-References: <1578917098-9674-1-git-send-email-eugen.hristev@microchip.com>
-        <1578917098-9674-4-git-send-email-eugen.hristev@microchip.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1728984AbgAQRw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:52:28 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34176 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbgAQRw2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 12:52:28 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z22so27356805ljg.1;
+        Fri, 17 Jan 2020 09:52:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7SLBslMTron5CoDazO5Pc97XqvZGpRwv9uincOn+XEQ=;
+        b=keopsm+jdLEPkcWO5PTzlEOVhbk9veT9Rbt+9bPC3zBed3/sJ88AkA0RKI5G1GDBKZ
+         5RFGHS2lhaDDecRVFEES3H87S4wT8RdcBQ3l5NMpg0LKoam4w8YyiFPABs9myOLHmbk1
+         u7dfgC1EEwsfgfPFHYWUoaVsVK+tA3HeAeokBWn/wbW1KS2jOCXIh5NiGxMTIQbtcnJ3
+         AUa3MnvzeB3I7JhZfzEYMjBqQS6K0k2BVqU/5FrI0/JQQzx1d4EHk8zrPg7yhwjaAZEv
+         vhKoyKOliO837dOt1afb2xzP9qJcuMM7chjwVfxwCcFQi7BFHbElmVVpzEszXWU9HQO9
+         iXFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7SLBslMTron5CoDazO5Pc97XqvZGpRwv9uincOn+XEQ=;
+        b=kXaHxL/pDxThyOveJlEtaH9PB8q5PLOV2ZjpZZeGkT7h74KxwOqri/mRrDMsZzEZR4
+         xrll5GHbWn6uTqYABehAogB+CAnxa1faLLAxKDzP/k4Ij2YfYolfIneaJewmV+ozIXLe
+         oZD+Edh+q9gcKQ8LJM1w4kReeiOv8KdvT6UhcpOM/JhhXOPpzOjF+uZilb02o55ojpWt
+         GsoPE7I04227ZuPo0gX2WM0AVWGTepLE35LBN9eR7yEe8L2SVcspThJ/n5iFCmObG9iy
+         YDtIdMERL7mU9rdGWLnwUcduLq5amFHWb/qgEAAs7enqVvstQWpNnw7yS6VIo2eXpyUJ
+         HMMw==
+X-Gm-Message-State: APjAAAU08eVJICkv2zqGZZXTj11BYnVNNVBZ0TmpUtZ6CFE/qrr+xUw5
+        lSEtCtkdhc4umEjD5ajURuI=
+X-Google-Smtp-Source: APXvYqx/xY6mBjX4TqtkNzjok6XvYIF9TLL3cZHvjR5MzG0L93+KKIOJZPZWTAyjF0rWONLxNzqmRw==
+X-Received: by 2002:a2e:3608:: with SMTP id d8mr6363971lja.152.1579283545812;
+        Fri, 17 Jan 2020 09:52:25 -0800 (PST)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id t29sm12429175lfg.84.2020.01.17.09.52.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 09:52:25 -0800 (PST)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Fri, 17 Jan 2020 18:52:17 +0100
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>
+Subject: Re: [PATCH 1/1] rcu/tree: support kfree_bulk() interface in
+ kfree_rcu()
+Message-ID: <20200117175217.GA23622@pc636>
+References: <20191231122241.5702-1-urezki@gmail.com>
+ <20200113190315.GA12543@paulmck-ThinkPad-P72>
+ <20200114164937.GA50403@google.com>
+ <20200115131446.GA18417@pc636>
+ <20200115225350.GA246464@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.57]
-X-ClientProxiedBy: lhreml701-chm.china.huawei.com (10.201.108.50) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115225350.GA246464@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 13 Jan 2020 12:07:10 +0000
-<Eugen.Hristev@microchip.com> wrote:
-
-> From: Eugen Hristev <eugen.hristev@microchip.com>
+> > > > But rcuperf uses a single block size, which turns into kfree_bulk() using
+> > > > a single slab, which results in good locality of reference.  So I have to
+> > > 
+> > > You meant a "single cache" category when you say "single slab"? Just to
+> > > mention, the number of slabs (in a single cache) when a large number of
+> > > objects are allocated is more than 1 (not single). With current rcuperf, I
+> > > see 100s of slabs (each slab being one page) in the kmalloc-32 cache. Each
+> > > slab contains around 128 objects of type kfree_rcu (24 byte object aligned to
+> > > 32-byte slab object).
+> > > 
+> > I think that is about using different slab caches to break locality. It
+> > makes sense, IMHO, because usually the system make use of different slabs,
+> > because of different object sizes. From the other hand i guess there are
+> > test cases when only one slab gets used.
 > 
-> This change will allow the at91-sama5d2_adc driver to use other triggers
-> than it's own.
-> In particular, tested with the sysfs trigger.
-> To be able to achieve this functionality, some changes were required:
-> 1) Do not enable/disable channels when enabling/disabling the trigger.
-> This is because the trigger is enabled/disabled only for our trigger
-> (obviously). We need channels enabled/disabled regardless of what trigger is
-> being used.
-> 2) Cope with DMA : DMA cannot be used when using another type of trigger.
-> Other triggers work through pollfunc, so we get polled anyway on every trigger.
-> Thus we have to obtain data at every trigger.
-> 3) When to start conversion? The usual pollfunc (store time from subsystem)
-> would be in hard irq and this would be a good way, but current iio subsystem
-> recommends to have it in the threaded irq. Thus adding software start
-> code in this handler.
-> 4) Buffer config: we need to setup buffer regardless of our own device's
-> trigger. We may get one attached later.
-> 5) IRQ handling: we use our own device IRQ only if it's our own trigger
-> and we do not use DMA . If we use DMA, we use the DMA controller's IRQ.
+> I was wondering about "locality". A cache can be split into many slabs. Only
+> the data on a page is local (contiguous). If there are a large number of
+> objects, then it goes to a new slab (on the same cache). At least on the
+> kmalloc slabs, there is only 1 slab per page. So for example, if on
+> kmalloc-32 slab, there are more than 128 objects, then it goes to a different
+> slab / page. So how is there still locality?
 > 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Hmm.. On a high level:
 
-+CC Alexandru as he's doing a lot of cleanup around the buffer functions.
-I'd like Alex to take a look at this.
+one slab cache manages a specific object size, i.e. the slab memory consists of
+contiguous pages(when increased probably not) of memory(4096 bytes or so) divided
+into equal object size. For example when kmalloc() gets called, the appropriate
+cache size(slab that serves only specific size) is selected and an object assigned
+from it is returned.
 
-A few comments inline from me.
+But that is theory and i have not deeply analyzed how the SLAB works internally,
+so i can be wrong :)
 
-Thanks,
+You mentioned 128 objects per one slab in the kmalloc-32 slab-cache. But all of
+them follows each other, i mean it is sequential and is like regular array. In
+that sense freeing can be beneficial because when an access is done to any object
+whole CPU cache-line is fetched(if it was not before), usually it is 64K.
 
-Jonathan
+That is what i meant "locality". In order to "break it" i meant to allocate from
+different slabs to see how kfree_slub() behaves in that sense, what is more real
+scenario and workload, i think.
 
-
-
-> ---
-> Changes in v2:
-> - adapt to the situation of having the previous two patches ahead in the series
-> 
->  drivers/iio/adc/at91-sama5d2_adc.c | 140 +++++++++++++++++++------------------
->  1 file changed, 73 insertions(+), 67 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-> index 454a493..34df043 100644
-> --- a/drivers/iio/adc/at91-sama5d2_adc.c
-> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
-> @@ -728,7 +728,6 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
->  	struct iio_dev *indio = iio_trigger_get_drvdata(trig);
->  	struct at91_adc_state *st = iio_priv(indio);
->  	u32 status = at91_adc_readl(st, AT91_SAMA5D2_TRGR);
-> -	u8 bit;
->  
->  	/* clear TRGMOD */
->  	status &= ~AT91_SAMA5D2_TRGR_TRGMOD_MASK;
-> @@ -739,45 +738,6 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
->  	/* set/unset hw trigger */
->  	at91_adc_writel(st, AT91_SAMA5D2_TRGR, status);
->  
-> -	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
-> -		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
-> -		u32 cor;
-> -
-> -		if (!chan)
-> -			continue;
-> -		/* these channel types cannot be handled by this trigger */
-> -		if (chan->type == IIO_POSITIONRELATIVE ||
-> -		    chan->type == IIO_PRESSURE)
-> -			continue;
-> -
-> -		if (state) {
-> -			cor = at91_adc_readl(st, AT91_SAMA5D2_COR);
-> -
-> -			if (chan->differential)
-> -				cor |= (BIT(chan->channel) |
-> -					BIT(chan->channel2)) <<
-> -					AT91_SAMA5D2_COR_DIFF_OFFSET;
-> -			else
-> -				cor &= ~(BIT(chan->channel) <<
-> -				       AT91_SAMA5D2_COR_DIFF_OFFSET);
-> -
-> -			at91_adc_writel(st, AT91_SAMA5D2_COR, cor);
-> -		}
-> -
-> -		if (state)
-> -			at91_adc_writel(st, AT91_SAMA5D2_CHER,
-> -					BIT(chan->channel));
-> -		else
-> -			at91_adc_writel(st, AT91_SAMA5D2_CHDR,
-> -					BIT(chan->channel));
-> -	}
-> -	/* enable irq only if not using DMA */
-> -	if (state && !st->dma_st.dma_chan)
-> -		at91_adc_writel(st, AT91_SAMA5D2_IER, AT91_SAMA5D2_IER_DRDY);
-> -	/* disable irq only if not using DMA */
-> -	if (!state && !st->dma_st.dma_chan)
-> -		at91_adc_writel(st, AT91_SAMA5D2_IDR, AT91_SAMA5D2_IER_DRDY);
-> -
->  	return 0;
->  }
->  
-> @@ -901,9 +861,22 @@ static int at91_adc_dma_start(struct iio_dev *indio_dev)
->  	return 0;
->  }
->  
-> +static bool at91_adc_buffer_check_use_irq(struct iio_dev *indio,
-> +					  struct at91_adc_state *st)
-> +{
-> +	/* if using DMA, we do not use our own IRQ (we use DMA-controller) */
-> +	if (st->dma_st.dma_chan)
-> +		return false;
-> +	/* if the trigger is not ours, then it has its own IRQ */
-> +	if (iio_trigger_validate_own_device(indio->trig, indio))
-> +		return false;
-> +	return true;
-> +}
-> +
->  static int at91_adc_buffer_postenable(struct iio_dev *indio_dev)
->  {
->  	int ret;
-> +	u8 bit;
->  	struct at91_adc_state *st = iio_priv(indio_dev);
->  
->  	/* check if we are enabling triggered buffer or the touchscreen */
-> @@ -921,9 +894,40 @@ static int at91_adc_buffer_postenable(struct iio_dev *indio_dev)
->  	ret = at91_adc_dma_start(indio_dev);
->  	if (ret) {
->  		dev_err(&indio_dev->dev, "buffer postenable failed\n");
-> +		iio_triggered_buffer_predisable(indio_dev);
-
-This seems odd given you have called the iio_triggered_buffer_postenable yet..
-That is below.
-
->  		return ret;
->  	}
->  
-> +	for_each_set_bit(bit, indio_dev->active_scan_mask,
-> +			 indio_dev->num_channels) {
-> +		struct iio_chan_spec const *chan =
-> +					at91_adc_chan_get(indio_dev, bit);
-> +		u32 cor;
-> +
-> +		if (!chan)
-> +			continue;
-> +		/* these channel types cannot be handled by this trigger */
-> +		if (chan->type == IIO_POSITIONRELATIVE ||
-> +		    chan->type == IIO_PRESSURE)
-> +			continue;
-> +
-> +		cor = at91_adc_readl(st, AT91_SAMA5D2_COR);
-> +
-> +		if (chan->differential)
-> +			cor |= (BIT(chan->channel) | BIT(chan->channel2)) <<
-> +				AT91_SAMA5D2_COR_DIFF_OFFSET;
-> +		else
-> +			cor &= ~(BIT(chan->channel) <<
-> +			       AT91_SAMA5D2_COR_DIFF_OFFSET);
-> +
-> +		at91_adc_writel(st, AT91_SAMA5D2_COR, cor);
-> +
-> +		at91_adc_writel(st, AT91_SAMA5D2_CHER, BIT(chan->channel));
-> +	}
-> +
-> +	if (at91_adc_buffer_check_use_irq(indio_dev, st))
-> +		at91_adc_writel(st, AT91_SAMA5D2_IER, AT91_SAMA5D2_IER_DRDY);
-> +
->  	return iio_triggered_buffer_postenable(indio_dev);
->  }
->  
-> @@ -944,21 +948,11 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
->  	if (!(indio_dev->currentmode & INDIO_ALL_TRIGGERED_MODES))
->  		return -EINVAL;
->  
-> -	/* continue with the triggered buffer */
-> -	ret = iio_triggered_buffer_predisable(indio_dev);
-> -	if (ret < 0)
-> -		dev_err(&indio_dev->dev, "buffer predisable failed\n");
-> -
-> -	if (!st->dma_st.dma_chan)
-> -		return ret;
-> -
-> -	/* if we are using DMA we must clear registers and end DMA */
-> -	dmaengine_terminate_sync(st->dma_st.dma_chan);
-> -
->  	/*
-> -	 * For each enabled channel we must read the last converted value
-> +	 * For each enable channel we must disable it in hardware.
-> +	 * In the case of DMA, we must read the last converted value
->  	 * to clear EOC status and not get a possible interrupt later.
-> -	 * This value is being read by DMA from LCDR anyway
-> +	 * This value is being read by DMA from LCDR anyway, so it's not lost.
->  	 */
->  	for_each_set_bit(bit, indio_dev->active_scan_mask,
->  			 indio_dev->num_channels) {
-> @@ -971,12 +965,28 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
->  		if (chan->type == IIO_POSITIONRELATIVE ||
->  		    chan->type == IIO_PRESSURE)
->  			continue;
-> +
-> +		at91_adc_writel(st, AT91_SAMA5D2_CHDR, BIT(chan->channel));
-> +
->  		if (st->dma_st.dma_chan)
->  			at91_adc_readl(st, chan->address);
->  	}
->  
-> +	if (at91_adc_buffer_check_use_irq(indio_dev, st))
-> +		at91_adc_writel(st, AT91_SAMA5D2_IDR, AT91_SAMA5D2_IER_DRDY);
-> +
->  	/* read overflow register to clear possible overflow status */
->  	at91_adc_readl(st, AT91_SAMA5D2_OVER);
-> +
-> +	/* continue with the triggered buffer */
-> +	ret = iio_triggered_buffer_predisable(indio_dev);
-> +	if (ret < 0)
-> +		dev_err(&indio_dev->dev, "buffer predisable failed\n");
-> +
-> +	/* if we are using DMA we must clear registers and end DMA */
-> +	if (st->dma_st.dma_chan)
-> +		dmaengine_terminate_sync(st->dma_st.dma_chan);
-
-This ordering is going to stop Alex doing his rework to remove the need
-to manually call iio_triggered_buffer_predisable.  Why does it make
-sense to do the dma stuff after that?
-
-Ah I see it always did and the postenable is the opposite of what Alex
-has been moving to as well.
-
-> +
->  	return ret;
->  }
->  
-> @@ -1131,6 +1141,13 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
->  	struct iio_dev *indio_dev = pf->indio_dev;
->  	struct at91_adc_state *st = iio_priv(indio_dev);
->  
-> +	/*
-> +	 * If it's not our trigger, start a conversion now, as we are
-> +	 * actually polling the trigger now.
-> +	 */
-> +	if (iio_trigger_validate_own_device(indio_dev->trig, indio_dev))
-> +		at91_adc_writel(st, AT91_SAMA5D2_CR, AT91_SAMA5D2_CR_START);
-> +
->  	if (st->dma_st.dma_chan)
->  		at91_adc_trigger_handler_dma(indio_dev);
->  	else
-> @@ -1143,20 +1160,9 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
->  
->  static int at91_adc_buffer_init(struct iio_dev *indio)
->  {
-> -	struct at91_adc_state *st = iio_priv(indio);
-> -
-> -	if (st->selected_trig->hw_trig) {
-> -		return devm_iio_triggered_buffer_setup(&indio->dev, indio,
-> -			&iio_pollfunc_store_time,
-> -			&at91_adc_trigger_handler, &at91_buffer_setup_ops);
-> -	}
-> -	/*
-> -	 * we need to prepare the buffer ops in case we will get
-> -	 * another buffer attached (like a callback buffer for the touchscreen)
-> -	 */
-> -	indio->setup_ops = &at91_buffer_setup_ops;
-> -
-> -	return 0;
-> +	return devm_iio_triggered_buffer_setup(&indio->dev, indio,
-> +		&iio_pollfunc_store_time,
-> +		&at91_adc_trigger_handler, &at91_buffer_setup_ops);
->  }
->  
->  static unsigned at91_adc_startup_time(unsigned startup_time_min,
-
-
+--
+Vlad Rezki
