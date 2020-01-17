@@ -2,110 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA7B141145
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C55FA14114C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:58:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbgAQS5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 13:57:43 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:38006 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729546AbgAQS5k (ORCPT
+        id S1729603AbgAQS5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 13:57:42 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:41806 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729486AbgAQS5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:57:40 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 6195F20028;
-        Fri, 17 Jan 2020 19:57:38 +0100 (CET)
-Date:   Fri, 17 Jan 2020 19:57:37 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] video: fbdev: w100fb: fix sparse warnings
-Message-ID: <20200117185737.GB24508@ravnborg.org>
-References: <CGME20200116145320eucas1p188ed7bed08623bc2c2ba6b863ff223d8@eucas1p1.samsung.com>
- <d438108a-e569-a14a-a9b1-3fefd88fcadc@samsung.com>
+        Fri, 17 Jan 2020 13:57:39 -0500
+Received: by mail-io1-f69.google.com with SMTP id m12so15659169ioh.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 10:57:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=0XaH1mXR999mQNU6K6YWrbLPoIkTydrY/Z5TzvdEIoo=;
+        b=Kmn/DZIzNhY/7n3uFL1LeuMgyYGVddWttz94DDXQBlgys+ijdYcOlKf/0cklodwTUN
+         MNAvOZRcr94GQMJEta2H5bqeJ7TC2I6wMvfesQuryWuTVyNxop+E1OhxWiCiidQqi3lF
+         DlN/MK/bUKj93/KvO2iA20Dkff+LMTZeL7gKsSm4rYHCoEolg9dNRt0RaaD7l+kp1iiL
+         Pzk5NLBCUGe3elrJm5NYAwufd0WPBR8aYCS534BlC8xYb0n+DWN5AqUJu7IfN9BMIda+
+         rpIGyFuENj4PbOvYKahecdnSZc1dYlUaCnpUeaMjdqMxJ4GqS/zzgXeIRmKPgiSgNOAg
+         sDRg==
+X-Gm-Message-State: APjAAAVFvIryuPfuZvbNT3AcLH9IBRrzT13fiWHcpbJbsCCZpJYWBQMs
+        RRmy5FodrjZwfOhK/wGXsTSlhx5x7R6KGO+yoBrMs6xf0Odx
+X-Google-Smtp-Source: APXvYqwdJblA4HS+sQAcyDnaZpEyamvRHPNZVLzTjCRJ1fUtjR6kwtPkrmKO+XSfDHOH8bobb3s8OKTAC0ffD9Ym4OsrWFyRFSsI
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d438108a-e569-a14a-a9b1-3fefd88fcadc@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=hD80L64hAAAA:8
-        a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8 a=jGXlrUAzkbCyByQ0p6wA:9
-        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Received: by 2002:a92:2907:: with SMTP id l7mr4151886ilg.140.1579287458817;
+ Fri, 17 Jan 2020 10:57:38 -0800 (PST)
+Date:   Fri, 17 Jan 2020 10:57:38 -0800
+In-Reply-To: <00000000000074ed27059c33dedc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb2c4f059c5a8309@google.com>
+Subject: Re: general protection fault in nft_chain_parse_hook
+From:   syzbot <syzbot+156a04714799b1d480bc@syzkaller.appspotmail.com>
+To:     bridge@lists.linux-foundation.org, coreteam@netfilter.org,
+        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
+        kadlec@netfilter.org, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 03:53:20PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> * Add missing __iomem annotations where needed.
-> * Make w100fb_probe() static.
-> * Return NULL pointer (instead of using plain integer) in
->   w100_get_xtal_tabl().
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
-> ---
->  drivers/video/fbdev/w100fb.c |   18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> Index: b/drivers/video/fbdev/w100fb.c
-> ===================================================================
-> --- a/drivers/video/fbdev/w100fb.c
-> +++ b/drivers/video/fbdev/w100fb.c
-> @@ -61,9 +61,9 @@ struct w100_pll_info *w100_get_xtal_tabl
->  #define BITS_PER_PIXEL    16
->  
->  /* Remapped addresses for base cfg, memmapped regs and the frame buffer itself */
-> -static void *remapped_base;
-> -static void *remapped_regs;
-> -static void *remapped_fbuf;
-> +static void __iomem *remapped_base;
-> +static void __iomem *remapped_regs;
-> +static void __iomem *remapped_fbuf;
->  
->  #define REMAPPED_FB_LEN   0x15ffff
->  
-> @@ -635,7 +635,7 @@ static int w100fb_resume(struct platform
->  #endif
->  
->  
-> -int w100fb_probe(struct platform_device *pdev)
-> +static int w100fb_probe(struct platform_device *pdev)
->  {
->  	int err = -EIO;
->  	struct w100fb_mach_info *inf;
-> @@ -807,10 +807,11 @@ static int w100fb_remove(struct platform
->  
->  static void w100_soft_reset(void)
->  {
-> -	u16 val = readw((u16 *) remapped_base + cfgSTATUS);
-> -	writew(val | 0x08, (u16 *) remapped_base + cfgSTATUS);
-> +	u16 val = readw((u16 __iomem *)remapped_base + cfgSTATUS);
-> +
-> +	writew(val | 0x08, (u16 __iomem *)remapped_base + cfgSTATUS);
->  	udelay(100);
-> -	writew(0x00, (u16 *) remapped_base + cfgSTATUS);
-> +	writew(0x00, (u16 __iomem *)remapped_base + cfgSTATUS);
->  	udelay(100);
->  }
->  
-> @@ -1022,7 +1023,8 @@ struct w100_pll_info *w100_get_xtal_tabl
->  			return pll_entry->pll_table;
->  		pll_entry++;
->  	} while (pll_entry->xtal_freq);
-> -	return 0;
-> +
-> +	return NULL;
->  }
->  
->  
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+syzbot has bisected this bug to:
+
+commit 98319cb9089844d76e65a6cce5bfbd165e698735
+Author: Pablo Neira Ayuso <pablo@netfilter.org>
+Date:   Tue Jan 9 01:48:47 2018 +0000
+
+     netfilter: nf_tables: get rid of struct nft_af_info abstraction
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13d38159e00000
+start commit:   f5ae2ea6 Fix built-in early-load Intel microcode alignment
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=10338159e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d38159e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=156a04714799b1d480bc
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a7e669e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11102356e00000
+
+Reported-by: syzbot+156a04714799b1d480bc@syzkaller.appspotmail.com
+Fixes: 98319cb90898 ("netfilter: nf_tables: get rid of struct nft_af_info  
+abstraction")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
