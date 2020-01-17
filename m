@@ -2,100 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6D51406CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:48:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BFA14068F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgAQJsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:48:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23118 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726752AbgAQJsI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:48:08 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00H9Ddbm102034
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 04:26:28 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xk0qgdutv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 04:26:27 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 17 Jan 2020 09:26:25 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 17 Jan 2020 09:26:21 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00H9QKd836569336
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 09:26:20 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ADF5D4C06F;
-        Fri, 17 Jan 2020 09:26:20 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 37F3B4C059;
-        Fri, 17 Jan 2020 09:26:19 +0000 (GMT)
-Received: from bangoria.in.ibm.com (unknown [9.124.31.171])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 17 Jan 2020 09:26:19 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     acme@kernel.org, jolsa@redhat.com
-Cc:     namhyung@kernel.org, irogers@google.com, songliubraving@fb.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 3/3] perf annotate: Fix segfault with source toggle
-Date:   Fri, 17 Jan 2020 14:56:12 +0530
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
-References: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
+        id S1729099AbgAQJm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:42:27 -0500
+Received: from relay.sw.ru ([185.231.240.75]:50194 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726706AbgAQJmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:42:25 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1isNtV-0005s1-FT; Fri, 17 Jan 2020 12:26:21 +0300
+Subject: Re: [Patch v3] mm: thp: grab the lock before manipulation defer list
+To:     Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, alexander.duyck@gmail.com,
+        stable@vger.kernel.org
+References: <20200116013100.7679-1-richardw.yang@linux.intel.com>
+ <0bb34c4a-97c7-0b3c-cf43-8af6cf9c4396@virtuozzo.com>
+ <alpine.DEB.2.21.2001161357240.109233@chino.kir.corp.google.com>
+ <20200117091002.GM19428@dhcp22.suse.cz>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <b67fe2bb-e7a6-29fe-925e-dd1ae176cc4b@virtuozzo.com>
+Date:   Fri, 17 Jan 2020 12:26:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20011709-0008-0000-0000-0000034A3A90
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20011709-0009-0000-0000-00004A6A96B4
-Message-Id: <20200117092612.30874-4-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_02:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- bulkscore=0 impostorscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001170072
+In-Reply-To: <20200117091002.GM19428@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While rendering annotate browser from perf report tui, we keep track
-of total number of lines(asm + source) in annotation->nr_entries and
-total number of asm lines in annotation->nr_asm_entries. But we don't
-reset them before starting. Thus if user annotates same function
-multiple times, we restart incrementing these fields with old values.
+On 17.01.2020 12:10, Michal Hocko wrote:
+> On Thu 16-01-20 14:01:59, David Rientjes wrote:
+>> On Thu, 16 Jan 2020, Kirill Tkhai wrote:
+>>
+>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>>> index c5b5f74cfd4d..6450bbe394e2 100644
+>>>> --- a/mm/memcontrol.c
+>>>> +++ b/mm/memcontrol.c
+>>>> @@ -5360,10 +5360,12 @@ static int 	(struct page *page,
+>>>>  	}
+>>>>  
+>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> -	if (compound && !list_empty(page_deferred_list(page))) {
+>>>> +	if (compound) {
+>>>>  		spin_lock(&from->deferred_split_queue.split_queue_lock);
+>>>> -		list_del_init(page_deferred_list(page));
+>>>> -		from->deferred_split_queue.split_queue_len--;
+>>>> +		if (!list_empty(page_deferred_list(page))) {
+>>>> +			list_del_init(page_deferred_list(page));
+>>>> +			from->deferred_split_queue.split_queue_len--;
+>>>> +		}
+>>>>  		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+>>>>  	}
+>>>>  #endif
+>>>> @@ -5377,11 +5379,13 @@ static int mem_cgroup_move_account(struct page *page,
+>>>>  	page->mem_cgroup = to;
+>>>>  
+>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> -	if (compound && list_empty(page_deferred_list(page))) {
+>>>> +	if (compound) {
+>>>>  		spin_lock(&to->deferred_split_queue.split_queue_lock);
+>>>> -		list_add_tail(page_deferred_list(page),
+>>>> -			      &to->deferred_split_queue.split_queue);
+>>>> -		to->deferred_split_queue.split_queue_len++;
+>>>> +		if (list_empty(page_deferred_list(page))) {
+>>>> +			list_add_tail(page_deferred_list(page),
+>>>> +				      &to->deferred_split_queue.split_queue);
+>>>> +			to->deferred_split_queue.split_queue_len++;
+>>>> +		}
+>>>>  		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+>>>>  	}
+>>>>  #endif
+>>>
+>>> The patch looks OK for me. But there is another question. I forget, why we unconditionally
+>>> add a page with empty deferred list to deferred_split_queue. Shouldn't we also check that
+>>> it was initially in the list? Something like:
+>>>
+>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>> index d4394ae4e5be..0be0136adaa6 100644
+>>> --- a/mm/memcontrol.c
+>>> +++ b/mm/memcontrol.c
+>>> @@ -5289,6 +5289,7 @@ static int mem_cgroup_move_account(struct page *page,
+>>>  	struct pglist_data *pgdat;
+>>>  	unsigned long flags;
+>>>  	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+>>> +	bool split = false;
+>>>  	int ret;
+>>>  	bool anon;
+>>>  
+>>> @@ -5346,6 +5347,7 @@ static int mem_cgroup_move_account(struct page *page,
+>>>  		if (!list_empty(page_deferred_list(page))) {
+>>>  			list_del_init(page_deferred_list(page));
+>>>  			from->deferred_split_queue.split_queue_len--;
+>>> +			split = true;
+>>>  		}
+>>>  		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+>>>  	}
+>>> @@ -5360,7 +5362,7 @@ static int mem_cgroup_move_account(struct page *page,
+>>>  	page->mem_cgroup = to;
+>>>  
+>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> -	if (compound) {
+>>> +	if (compound && split) {
+>>>  		spin_lock(&to->deferred_split_queue.split_queue_lock);
+>>>  		if (list_empty(page_deferred_list(page))) {
+>>>  			list_add_tail(page_deferred_list(page),
+>>>
+>>
+>> I think that's a good point, especially considering that the current code 
+>> appears to unconditionally place any compound page on the deferred split 
+>> queue of the destination memcg.  The correct list that it should appear 
+>> on, I believe, depends on whether the pmd has been split for the process 
+>> being moved: note the MC_TARGET_PAGE caveat in 
+>> mem_cgroup_move_charge_pte_range() that does not move the charge for 
+>> compound pages with split pmds.  So when mem_cgroup_move_account() is 
+>> called with compound == true, we're moving the charge of the entire 
+>> compound page: why would it appear on that memcg's deferred split queue?
+> 
+> I believe Kirill asked how do we know that the page should be actually
+> added to the deferred list just from the list_empty check. In other
+> words what if the page hasn't been split at all?
 
-This causes a segfault when user tries to toggle source code after
-annotating same function multiple times. Fix it.
-
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/util/annotate.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index fe98d29dfbc4..df09c2070337 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2610,6 +2610,8 @@ void annotation__set_offsets(struct annotation *notes, s64 size)
- 	struct annotation_line *al;
- 
- 	notes->max_line_len = 0;
-+	notes->nr_entries = 0;
-+	notes->nr_asm_entries = 0;
- 
- 	list_for_each_entry(al, &notes->src->source, node) {
- 		size_t line_len = strlen(al->line);
--- 
-2.24.1
-
+Yes, I'm talking about this. Function mem_cgroup_move_account() adds every
+huge page to the deferred list, while we need to do that only for pages,
+which are queued for splitting...
