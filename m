@@ -2,83 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0C414071C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:58:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 385DD1406C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgAQJ6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:58:39 -0500
-Received: from smtp1.savana.cz ([217.16.187.42]:17024 "EHLO icewarp.savana.cz"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728901AbgAQJ6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:58:32 -0500
-X-Greylist: delayed 724 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 04:58:31 EST
-Received: from [192.168.0.106] ([212.37.87.11])
-        by icewarp.savana.cz (IceWarp 11.2.1.1 RHEL6 x64) with ASMTP (SSL) id 202001171046263774;
-        Fri, 17 Jan 2020 10:46:26 +0100
-Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
-To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-References: <20200116141800.9828-1-linux@roeck-us.net>
-From:   =?UTF-8?Q?Ondrej_=c4=8cerman?= <ocerman@sda1.eu>
-Message-ID: <e452614a-5425-e77c-4e2f-2a17ca733b7f@sda1.eu>
-Date:   Fri, 17 Jan 2020 10:46:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727243AbgAQJrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:47:07 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30198 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726755AbgAQJrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 04:47:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579254422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MRdZZz9P8UIoKzsy8bUaagOkve384w9nZaJDimC4aAA=;
+        b=RIeXKXaoWoahHcca3rf5aBFLFtIykftH+O4yYyp4+xclJ4xiBJ3UgM6UDmWRgLX//CtOiE
+        mL6xb9CrTHkTlHJX+nB06PW+j6zuLL9MTmlpxx+kFkamUlDsdTqgiyI9WjPpOKnKbFzP4M
+        Wu8f3xXPw6CtVZ4aCMyGdXXGFISILmE=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-182-gn_os0UBPSSnnxPmoL6fRg-1; Fri, 17 Jan 2020 04:47:01 -0500
+X-MC-Unique: gn_os0UBPSSnnxPmoL6fRg-1
+Received: by mail-lj1-f199.google.com with SMTP id r14so6013600ljc.18
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:47:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=MRdZZz9P8UIoKzsy8bUaagOkve384w9nZaJDimC4aAA=;
+        b=K/G1CacmTRmS8pbT5plAhONBK0I3Q3EGPQOvvcE2Q34hkEt3h3aEtMQEow3umCyxhc
+         OMSIlcQ1kqwzHek57gfiI8J6VRx48raDV4eWMS70GXyHb20ogvCdMBYVtF+dUu3s8gYh
+         qg2WZnxgWDHcDCLmB3zXPnPSptgZx+IfolN8Im4YTVrRm/n3792O+wSZgV948ePvk4KM
+         S/unVlclJYZlpAenHwwPY271CGUVpwrIqKZLWA1fp5WMa2HLp+VW5TAPGMhLV1BbVX6J
+         Zdcg7iobC5K/idAoV2s8WNYdgzobEPCwR3O7Gt9NEWPf9fP7UjOfVPArQlBUF0ALQFzK
+         gVvg==
+X-Gm-Message-State: APjAAAW0gUdkXjh40IEJhJvtMBaBJsu9eDnCsmp8PdFPOrSttxT/nJPu
+        tE++8ZVlFPH7c/79V7wVSfjG7ufFmrZ/Qkm9Oyw0JJlMMTPaprGV0BmwWndmAY+tKAV2pCk2KZk
+        kUI526wJI2yAB+BzN1IWuUcTm
+X-Received: by 2002:a19:7015:: with SMTP id h21mr4868726lfc.68.1579254419647;
+        Fri, 17 Jan 2020 01:46:59 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyjvTMUn7InwON8DwCpRgzC4ouRW99OTFzcLs217w1iCLWqujy5RCewHLMusTudpnVGBByZkg==
+X-Received: by 2002:a19:7015:: with SMTP id h21mr4868705lfc.68.1579254419486;
+        Fri, 17 Jan 2020 01:46:59 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id r15sm12041957ljh.11.2020.01.17.01.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 01:46:58 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 3553E1804D6; Fri, 17 Jan 2020 10:46:58 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        "open list\:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH bpf-next v3 04/11] tools/runqslower: Use consistent include paths for libbpf
+In-Reply-To: <CAEf4BzbJZ7JUyr8p3YKX-Rrth_B7OMbih50xxyt_YNBd--107w@mail.gmail.com>
+References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <157918093613.1357254.10230277763921623892.stgit@toke.dk> <CAEf4BzbJZ7JUyr8p3YKX-Rrth_B7OMbih50xxyt_YNBd--107w@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Fri, 17 Jan 2020 10:46:58 +0100
+Message-ID: <87tv4uqust.fsf@toke.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dňa 16. 1. 2020 o 15:17 Guenter Roeck napísal(a):
-> This patch series implements various improvements for the k10temp driver.
->
-> Patch 1/4 introduces the use of bit operations.
->
-> Patch 2/4 converts the driver to use the devm_hwmon_device_register_with_info
-> API. This not only simplifies the code and reduces its size, it also
-> makes the code easier to maintain and enhance.
->
-> Patch 3/4 adds support for reporting Core Complex Die (CCD) temperatures
-> on Ryzen 3 (Zen2) CPUs.
->
-> Patch 4/4 adds support for reporting core and SoC current and voltage
-> information on Ryzen CPUs.
->
-> With all patches in place, output on Ryzen 3900 CPUs looks as follows
-> (with the system under load).
->
-> k10temp-pci-00c3
-> Adapter: PCI adapter
-> Vcore:        +1.36 V
-> Vsoc:         +1.18 V
-> Tdie:         +86.8°C  (high = +70.0°C)
-> Tctl:         +86.8°C
-> Tccd1:        +80.0°C
-> Tccd2:        +81.8°C
-> Icore:       +44.14 A
-> Isoc:        +13.83 A
->
-> The patch series has only been tested with Ryzen 3900 CPUs. Further test
-> coverage will be necessary before the changes can be applied to the Linux
-> kernel.
->
-Hello everyone, I am the author of https://github.com/ocerman/zenpower/ .
+Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
 
-It is nice to see this merged.
+> On Thu, Jan 16, 2020 at 5:23 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@re=
+dhat.com> wrote:
+>>
+>> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>>
+>> Fix the runqslower tool to include libbpf header files with the bpf/
+>> prefix, to be consistent with external users of the library. Also ensure
+>> that all includes of exported libbpf header files (those that are export=
+ed
+>> on 'make install' of the library) use bracketed includes instead of quot=
+ed.
+>>
+>> To not break the build, keep the old include path until everything has b=
+een
+>> changed to the new one; a subsequent patch will remove that.
+>>
+>> Fixes: 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are taken =
+from selftests dir")
+>> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>> ---
+>>  tools/bpf/runqslower/Makefile         |    5 +++--
+>>  tools/bpf/runqslower/runqslower.bpf.c |    2 +-
+>>  tools/bpf/runqslower/runqslower.c     |    4 ++--
+>>  3 files changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/bpf/runqslower/Makefile b/tools/bpf/runqslower/Makefi=
+le
+>> index 89fb7cd30f1a..c0512b830805 100644
+>> --- a/tools/bpf/runqslower/Makefile
+>> +++ b/tools/bpf/runqslower/Makefile
+>> @@ -5,6 +5,7 @@ LLC :=3D llc
+>>  LLVM_STRIP :=3D llvm-strip
+>>  DEFAULT_BPFTOOL :=3D $(OUTPUT)/sbin/bpftool
+>>  BPFTOOL ?=3D $(DEFAULT_BPFTOOL)
+>> +LIBBPF_INCLUDE :=3D -I$(abspath ../../lib) -I$(abspath ../../lib/bpf)
+>
+> I'd probably put all the -I's into single INCLUDES var and include
+> that one instead of mixing -I$(OUTPUT) and $(LIBBPF_INCLUDE), but this
+> works too.
 
-I just want to warn you that there have been reported issues with 
-Threadripper CPUs to zenpower issue tracker. Also I think that no-one 
-tested EPYC CPUs.
+Hmm, yeah, not a bad idea, actually. Since it seems I'm respinning
+anyway, I'll fix that up as well.
 
-Most of the stuff I was able to figure out by trial-and-error approach 
-and unfortunately because I do not own any Threadripper CPU I was not 
-able to test and fix reported problems.
-
-Ondrej.
+-Toke
 
