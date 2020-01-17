@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A2C140316
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE67B140323
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 05:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbgAQEo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 23:44:56 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:35594 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbgAQEo4 (ORCPT
+        id S1729657AbgAQErg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 23:47:36 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32827 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbgAQErg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 23:44:56 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H4cu8W123496;
-        Fri, 17 Jan 2020 04:44:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=kei4/bh5MHiyU6Xb1JUCnPX298eNmKPXG3KGKMXdG2U=;
- b=ZC2DR7zHE/Z6E+kKSHYV3aSz6EfolElzN6YKOI3lzNNWoYFc68PweWCZP3oRkdx/PWs5
- OZDL2668kyrUWwbwYlPjPgfHZEJH2URlqPu9I9DgNgyKEE0BQC2OdtwtNdF1ynOFzgq/
- 4rbO+lthATkTFLpGdrHzmcZIWeewh8PEuinjRY/6kJK5tggZ7Wn493rwrbNfbyIoiM5s
- AzVbIZJleoS8BkcbraIAkLqlRO2EV8QmnsoL54gu+xB/odbZYFIv4yIzKYBusIWx1L5c
- JbaZmY9F5eZbQFmHDTtDLm5HALVxWOeo/2GxQf0gD+JWQjn8nTvnHH1XvkZt+TLfVnI0 vQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2xf74spexn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 04:44:49 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H4d1Ss050604;
-        Fri, 17 Jan 2020 04:44:48 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2xjxm85c5w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 04:44:48 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00H4il8S027494;
-        Fri, 17 Jan 2020 04:44:47 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 16 Jan 2020 20:44:47 -0800
-Date:   Fri, 17 Jan 2020 07:46:30 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Simon Schwartz <kern.simon@theschwartz.xyz>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] driver core: platform: fix u32 greater or equal to
- zero comparison
-Message-ID: <20200117044629.GC19765@kadam>
-References: <20200116175758.88396-1-colin.king@canonical.com>
- <20200117044216.GC21151@kadam>
+        Thu, 16 Jan 2020 23:47:36 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so17363370lfl.0;
+        Thu, 16 Jan 2020 20:47:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=aSjDVv9JoqdRFNRmrpFljiUgmnl/7hIY0uQZp9U/Uwo=;
+        b=srZ+20ghz5frg4vqdy9kGLPJXA30XRnGCT+amPgAu+7t661DXBw9/0q3pCfMF/HXA8
+         KeRVJ2Gk3u99T6xArMCFZ9ifKSTF5fEkt59ALHfRkT1qWdUWydHpizAZikc3WdoD9gsL
+         s1tHe/Z5A4uK7+QYsdzlfGFUeNCjeK/O2xB0Zrq1sfOtQeyw0D+Tx5c2avG5JnhVB3ob
+         wnT/HMd95z3wMHccw43mqAhy/ofXWAUYl6KKXfu7a+2k23tGlvVvjYVzBZZalxksCKBS
+         T2L7RUXZ5YPwlfcFcSz0gfn+srYkRDNNpJcNim4gMTFnAI3WObP9kmaB8q4HKSyTgqp/
+         8Nfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=aSjDVv9JoqdRFNRmrpFljiUgmnl/7hIY0uQZp9U/Uwo=;
+        b=WFieerdvpEoEeZiwnce0r7brRIxCe72bSI1hrvu80o3JWGyM9jStjKtyLeDt9mUO2b
+         HWA5Hkf0lipaC27P5XMTLdjBY8QCHXFkGbK2pVXNKjZqR4CGoqZvBNQ41PN5AfPfHPkD
+         HmNog0cP4OhlGmgn5QanIGheysd/2p0Hd1nJfIdXFhr04LFQ9+aAoGUrtLDX0Lmya0NY
+         KYFi1XlqzmTGSob19N1cSZRlBQg/SUD9SWfQLTOxTh2q7NwfdhCEoqJsuttiJNJktstp
+         hvElgZOi9JpjJCiEEF1UlKoDleW7dCiZrrcx2khPqOTdMOjjSP0viXlhjHYi2SeNFeYr
+         lTvw==
+X-Gm-Message-State: APjAAAWIUUKcDmjJMAPdxkI3UITHCCZeEzrYX7zNQ7jAIE0nsXkmVKdb
+        lC4PYji6S47bNbi78as9qJBqgtkjaCVBYF1bJw/eRhUSA+syYQ==
+X-Google-Smtp-Source: APXvYqwSIcqTfZASwPpr+36OGEhITnENCPGBF0oOPL4egX+ehrL9vs7PlmhBMX0Uuxj3KFgfLpwbhxFRiKeKc5uvjto=
+X-Received: by 2002:ac2:5604:: with SMTP id v4mr4126634lfd.152.1579236454202;
+ Thu, 16 Jan 2020 20:47:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117044216.GC21151@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=477
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001170035
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=537 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001170035
+References: <20200116141800.9828-1-linux@roeck-us.net> <CANVEwpZVZs5gnvQTgwZGcT6JG7WdGrOVpbHWGD08bjPascjL=g@mail.gmail.com>
+ <964a5977-8d67-b0fd-4df4-c6bd41a8ad58@roeck-us.net>
+In-Reply-To: <964a5977-8d67-b0fd-4df4-c6bd41a8ad58@roeck-us.net>
+From:   Ken Moffat <zarniwhoop73@googlemail.com>
+Date:   Fri, 17 Jan 2020 04:47:23 +0000
+Message-ID: <CANVEwpZnaHBfF_NWp_3_wM4S3fhFrFuDXQWRMrp=-K4L0m1b6w@mail.gmail.com>
+Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 07:42:16AM +0300, Dan Carpenter wrote:
-> On Thu, Jan 16, 2020 at 05:57:58PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the check that a u32 variable i is >= 0 is always true because
-> > the unsigned variable will never be negative, causing the loop to run
-> > forever.  Fix this by changing the pre-decrement check to a zero check on
-> > i followed by a decrement of i.
-> > 
-> > Addresses-Coverity: ("Unsigned compared against 0")
-> > Fixes: 39cc539f90d0 ("driver core: platform: Prevent resouce overflow from causing infinite loops")
-> 
-> A better fix would be to revert this patch.  It doesn't fix a real bug.
-> The ->num_resources is typically under 5.  It's not going to overflow
-> INT_MAX any time soon.  There are "architectures with smaller ints."
+On Fri, 17 Jan 2020 at 03:58, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> Hi Ken,
+>
+> SMBUSMASTER 0 is the CPU, so we have a match with the temperatures.
+>
+OK, thanks for that information.
 
-I left out a word.  There are *no* "architectures with smaller ints."...
+>
+> Both Vcore and Icore should be much less when idle, and higher under
+> load. The data from the Super-IO chip suggests that it is a Nuvoton
+> chip. Can you report its first voltage (in0) ? That should roughly
+> match Vcore.
+>
+> All other data looks ok.
+>
+> Thanks,
+> Guenter
 
-I mean there used to be systems with 16 bit int but that was before I
-was born.  You could never run linux on them.
+Hi Guenter,
 
-regards,
-dan carpenter
+unfortunately I don't have any report of in0. I'm guessing I need some
+module(s) which did not seem to do anything useful in the past.
 
+All I have in the 'in' area is
+nct6779-isa-0290
+Adapter: ISA adapter
+Vcore:                  +0.30 V  (min =3D  +0.00 V, max =3D  +1.74 V)
+in1:                    +0.00 V  (min =3D  +0.00 V, max =3D  +0.00 V)
+AVCC:                   +3.39 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
++3.3V:                  +3.39 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in4:                    +1.90 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in5:                    +0.90 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in6:                    +1.50 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+3VSB:                   +3.47 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+Vbat:                   +3.26 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in9:                    +0.00 V  (min =3D  +0.00 V, max =3D  +0.00 V)
+in10:                   +0.32 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in11:                   +1.06 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in12:                   +1.70 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in13:                   +0.94 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+in14:                   +1.84 V  (min =3D  +0.00 V, max =3D  +0.00 V)  ALAR=
+M
+
+and at that point Vcore was reported as 1.41V (system idle)
+
+=C4=B8en
+--=20
+                     Also Spuke Zerothruster
+                                     (Finnegans Wake)
