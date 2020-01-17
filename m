@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F0F140762
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9164D14076F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 11:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbgAQKJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 05:09:00 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55395 "EHLO
+        id S1729281AbgAQKJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 05:09:18 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55439 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728951AbgAQKI5 (ORCPT
+        with ESMTP id S1729213AbgAQKJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:08:57 -0500
+        Fri, 17 Jan 2020 05:09:16 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1isOYe-0005UC-1l; Fri, 17 Jan 2020 11:08:52 +0100
+        id 1isOYv-0005az-Uy; Fri, 17 Jan 2020 11:09:10 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7B0101C19CF;
-        Fri, 17 Jan 2020 11:08:43 +0100 (CET)
-Date:   Fri, 17 Jan 2020 10:08:43 -0000
-From:   "tip-bot2 for Vincent Guittot" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A6F851C19CC;
+        Fri, 17 Jan 2020 11:09:09 +0100 (CET)
+Date:   Fri, 17 Jan 2020 10:09:09 -0000
+From:   "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair : Improve update_sd_pick_busiest for
- spare capacity case
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+Subject: [tip: locking/core] locking/qspinlock: Fix inaccessible URL of MCS lock paper
+Cc:     Waiman Long <longman@redhat.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1576839893-26930-1-git-send-email-vincent.guittot@linaro.org>
-References: <1576839893-26930-1-git-send-email-vincent.guittot@linaro.org>
+        Will Deacon <will@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200107174914.4187-1-longman@redhat.com>
+References: <20200107174914.4187-1-longman@redhat.com>
 MIME-Version: 1.0
-Message-ID: <157925572333.396.14134699274514143888.tip-bot2@tip-bot2>
+Message-ID: <157925574948.396.17056541510267349194.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,60 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     5f68eb19b5716f8cf3ccfa833cffd1522813b0e8
-Gitweb:        https://git.kernel.org/tip/5f68eb19b5716f8cf3ccfa833cffd1522813b0e8
-Author:        Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate:    Fri, 20 Dec 2019 12:04:53 +01:00
+Commit-ID:     57097124cbbd310cc2b5884189e22e60a3c20514
+Gitweb:        https://git.kernel.org/tip/57097124cbbd310cc2b5884189e22e60a3c20514
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Tue, 07 Jan 2020 12:49:14 -05:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Fri, 17 Jan 2020 10:19:19 +01:00
+CommitterDate: Fri, 17 Jan 2020 10:19:30 +01:00
 
-sched/fair : Improve update_sd_pick_busiest for spare capacity case
+locking/qspinlock: Fix inaccessible URL of MCS lock paper
 
-Similarly to calculate_imbalance() and find_busiest_group(), using the
-number of idle CPUs when there is only 1 CPU in the group is not efficient
-because we can't make a difference between a CPU running 1 task and a CPU
-running dozens of small tasks competing for the same CPU but not enough
-to overload it. More generally speaking, we should use the number of
-running tasks when there is the same number of idle CPUs in a group instead
-of blindly select the 1st one.
+It turns out that the URL of the MCS lock paper listed in the source
+code is no longer accessible. I did got question about where the paper
+was. This patch updates the URL to BZ 206115 which contains a copy of
+the paper from
 
-When the groups have spare capacity and the same number of idle CPUs, we
-compare the number of running tasks to select the busiest group.
+  https://www.cs.rochester.edu/u/scott/papers/1991_TOCS_synch.pdf
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/1576839893-26930-1-git-send-email-vincent.guittot@linaro.org
+Acked-by: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/r/20200107174914.4187-1-longman@redhat.com
 ---
- kernel/sched/fair.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ kernel/locking/qspinlock.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2d170b5..35c1057 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8181,14 +8181,18 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- 
- 	case group_has_spare:
- 		/*
--		 * Select not overloaded group with lowest number of
--		 * idle cpus. We could also compare the spare capacity
--		 * which is more stable but it can end up that the
--		 * group has less spare capacity but finally more idle
-+		 * Select not overloaded group with lowest number of idle cpus
-+		 * and highest number of running tasks. We could also compare
-+		 * the spare capacity which is more stable but it can end up
-+		 * that the group has less spare capacity but finally more idle
- 		 * CPUs which means less opportunity to pull tasks.
- 		 */
--		if (sgs->idle_cpus >= busiest->idle_cpus)
-+		if (sgs->idle_cpus > busiest->idle_cpus)
- 			return false;
-+		else if ((sgs->idle_cpus == busiest->idle_cpus) &&
-+			 (sgs->sum_nr_running <= busiest->sum_nr_running))
-+			return false;
-+
- 		break;
- 	}
- 
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 2473f10..b9515fc 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -31,14 +31,15 @@
+ /*
+  * The basic principle of a queue-based spinlock can best be understood
+  * by studying a classic queue-based spinlock implementation called the
+- * MCS lock. The paper below provides a good description for this kind
+- * of lock.
++ * MCS lock. A copy of the original MCS lock paper ("Algorithms for Scalable
++ * Synchronization on Shared-Memory Multiprocessors by Mellor-Crummey and
++ * Scott") is available at
+  *
+- * http://www.cise.ufl.edu/tr/DOC/REP-1992-71.pdf
++ * https://bugzilla.kernel.org/show_bug.cgi?id=206115
+  *
+- * This queued spinlock implementation is based on the MCS lock, however to make
+- * it fit the 4 bytes we assume spinlock_t to be, and preserve its existing
+- * API, we must modify it somehow.
++ * This queued spinlock implementation is based on the MCS lock, however to
++ * make it fit the 4 bytes we assume spinlock_t to be, and preserve its
++ * existing API, we must modify it somehow.
+  *
+  * In particular; where the traditional MCS lock consists of a tail pointer
+  * (8 bytes) and needs the next pointer (another 8 bytes) of its own node to
