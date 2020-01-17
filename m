@@ -2,197 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDA3140B1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3AF3140B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgAQNkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:40:14 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36475 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbgAQNkO (ORCPT
+        id S1726982AbgAQNlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:41:36 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44516 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgAQNlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:40:14 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so7688103wma.1
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:40:12 -0800 (PST)
+        Fri, 17 Jan 2020 08:41:36 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q10so22758370wrm.11
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:41:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=x0v+Cpelm9h83Fd8YoEOutozcn/2jODQn8Ym6ta3pDI=;
-        b=poWzvnimT8QTMy+z+ojdYjNwWKCfVW89Yxmci6IP1hOwVnknCtXaCr8i8dPxqfj1c6
-         6NHh9Vy22UuVjsdvRslMJxmzZ2r72OldpIzBGyTPzKMTdk2Z9oSf67RccUHaMNaQhd+k
-         lm/c63jSCsXUx2RU7tiHMS5C5Y2FizJpTWV+bQFZk8UuOie9JPNvsSkh5+vGRPhAp0aq
-         HK0OQ1Srf/D3qXPwbVceBBawRHCIp88uRHmu2HP+uHbb1PD3am4Blq1K6Lz24AmMxi2p
-         OWYnjJ/q+UHi4g8eny5q5ITFQpVAiYSQZTcj7rH44ZY1d2LCEmOKY9qNl6Wk1issBSPO
-         JpLg==
+        bh=GcZb4xy6ZyhyYGDUt5837z6AQgG8YRO7IyEEfNPumZ0=;
+        b=jTYiiw3De4JIpE0kvJsG3viHnTrL4mYP6IcmOYyhAlSSW+3UxOUfwB+R5mbA7nmzkJ
+         hsYzGxmDtAIBxHo1tbwpMSm4mIGIlChRiQLBtTFQUEwhf9h6wE2TxZeRfztZtCq+cFlg
+         QBOY7fdCWCKvFfH7VBJlC3XRCD+8/mCjtWaNKKLvNVcLCNNt+dEom6xSTfh1k2rdqJat
+         l7N6x7+dsiwVCRWd/cxJ7pRFQxoBnAlaFZFNa3hHpMxoqwQRZI6e5eDDbdBApEv6880l
+         ne5y1zcObcCEolGlmjxKzHq3imb349OxpZggYhkgqcqENJix8k5I1wR8N8pVhHUqJo0K
+         0Q1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=x0v+Cpelm9h83Fd8YoEOutozcn/2jODQn8Ym6ta3pDI=;
-        b=MwPx6vyRfZUx1aOOLsUSzbmJMuzUZevKSFQjUhqFjIqMumeYD6P0NoVyXGOChS8K5q
-         foyPJuxUolOwXmWZ5CvbY6PVBnEpjVhh13FejhgDB9usTYJViRwIFzq4keC2vkZNAQFs
-         rA+EuLWJRR3R2FlVdBiHx7C7Jk6BVS9BwQe96srwnd0dvRI+znQVdJngvPpVdeRVRu8D
-         A7Wo93vdSFnJv+su28JaE7B9aczA/0fPJjaWEAx0qi5+AHBglmWfmFN0JyEsMrbTU2Uj
-         GVVqgLm6R0lCgeGcTDtXOuqSDP6xriXGgL+rtIIxzK+7Nm/Qwp8ztWwsnPHG58EAumC1
-         2WQw==
-X-Gm-Message-State: APjAAAV/a3w3NInnD1GkwiXYS0GMRzCuZisOzS0NFSMjVqVcqSDEX5vS
-        kFZQHV3G/KFsEczZ28DCBi1ZVg==
-X-Google-Smtp-Source: APXvYqxGyR41SDvj5mCeLz1WXPpVshSUQyPXa3ccVTn3jG4GO+EYu0SQxB8cs1Dtg2CXlW/4Esj78Q==
-X-Received: by 2002:a7b:c764:: with SMTP id x4mr4598002wmk.116.1579268411354;
-        Fri, 17 Jan 2020 05:40:11 -0800 (PST)
+        bh=GcZb4xy6ZyhyYGDUt5837z6AQgG8YRO7IyEEfNPumZ0=;
+        b=sSpGwhSj5PthZvGeosaqiFUT69xpy9IgfFbB+2I5GXkhJtAbG6b3gS22CXafeGfAbK
+         aaFUG3SRXMGjGpFd38q8cYWxho2Gz84hjfVgm0eZsiYYO14wjvNfUM+1a08QvkHm+5Ie
+         N9yLnauU/eVgpdN3F0Ftx8JS+G3Yq69iyEKP5cQlA/5Lk1afXG+72S1gRla98otBhhkd
+         UBSqsi++aXsthEf1Weytl+lsvFIk7iqdCDPi5UxEJeFHrPqke+q7ND5KRTFci9myNuNX
+         SKVqRySa5in44xWIsXfd42c6d7mLb0FM2fqt+mMpOgtYBn9IRpc4FCW2Zd6tR7RmCXJJ
+         P26w==
+X-Gm-Message-State: APjAAAUl665Pe6ooufopYm0Q3iQwa4ClpyWOmW99FTwswE4WnSz96ZQ3
+        OY4w758VuZYbK1ZRhps7fCtrC4Q9VmM=
+X-Google-Smtp-Source: APXvYqxqngVy4Kzykkotny3rt+MjstUka/CA8kZllavIWXpUgiGeBCvQ7LOpZEjYUEGiWESALEKHLA==
+X-Received: by 2002:adf:e887:: with SMTP id d7mr3058845wrm.162.1579268494194;
+        Fri, 17 Jan 2020 05:41:34 -0800 (PST)
 Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id s8sm32993260wrt.57.2020.01.17.05.40.09
+        by smtp.gmail.com with ESMTPSA id w83sm8977770wmb.42.2020.01.17.05.41.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 05:40:10 -0800 (PST)
-Date:   Fri, 17 Jan 2020 13:40:26 +0000
+        Fri, 17 Jan 2020 05:41:33 -0800 (PST)
+Date:   Fri, 17 Jan 2020 13:41:52 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v10 08/13] regulator: bd718x7: Split driver to common and
- bd718x7 specific parts
-Message-ID: <20200117134026.GM15507@dell>
-References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
- <def409ab024717e6cd917c488e62fe04ad66bd52.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
- <20200117102854.GF15507@dell>
- <4bd035fb2c78e96f18006f06c5d8d9d2f1a1b70d.camel@fi.rohmeurope.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: Re: [PATCH] mfd: ab8500: Fix ab8500-clk typo
+Message-ID: <20200117134152.GN15507@dell>
+References: <20191211114639.748463-1-linus.walleij@linaro.org>
+ <20191216152240.GG2369@dell>
+ <CACRpkdYQjXyFZfwpk8y66R2XTSm5fEMCb-s-WzPt0KegsCptFQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4bd035fb2c78e96f18006f06c5d8d9d2f1a1b70d.camel@fi.rohmeurope.com>
+In-Reply-To: <CACRpkdYQjXyFZfwpk8y66R2XTSm5fEMCb-s-WzPt0KegsCptFQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020, Vaittinen, Matti wrote:
+On Fri, 17 Jan 2020, Linus Walleij wrote:
 
-> Hello Lee,
-> 
-> On Fri, 2020-01-17 at 10:28 +0000, Lee Jones wrote:
-> > On Fri, 17 Jan 2020, Matti Vaittinen wrote:
-> > 
-> > > Few ROHM PMICs allow setting the voltage states for different
-> > > system states
-> > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC
-> > > specific
-> > > mechanisms. bd718x7 driver implemented device-tree parsing
-> > > functions for
-> > > these state specific voltages. The parsing functions can be re-used 
-> > > by
-> > > other ROHM chip drivers like bd71828. Split the generic functions
-> > > from
-> > > bd718x7-regulator.c to rohm-regulator.c and export them for other
-> > > modules
-> > > to use.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Acked-by: Mark Brown <broonie@kernel.org>
+> On Mon, Dec 16, 2019 at 4:22 PM Lee Jones <lee.jones@linaro.org> wrote:
+> > On Wed, 11 Dec 2019, Linus Walleij wrote:
+> >
+> > > Commit f4d41ad84433 ("mfd: ab8500: Example using new OF_MFD_CELL MACRO")
+> > > has a typo error renaming "ab8500-clk" to "abx500-clk"
+> > > with the result att ALSA SoC audio broke as the clock
+> > > driver was not probing anymore. Fixed it up.
+> > >
+> > > Cc: Stephan Gerhold <stephan@gerhold.net>
+> > > Fixes: f4d41ad84433 ("mfd: ab8500: Example using new OF_MFD_CELL MACRO")
+> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > > > ---
-> > > no changes since v9
-> > > 
-> > >  drivers/regulator/Kconfig             |   4 +
-> > >  drivers/regulator/Makefile            |   1 +
-> > >  drivers/regulator/bd718x7-regulator.c | 183 ++++++++------------
-> > > ------
-> > >  drivers/regulator/rohm-regulator.c    |  95 +++++++++++++
-> > >  include/linux/mfd/rohm-generic.h      |  66 ++++++++++
-> > >  5 files changed, 221 insertions(+), 128 deletions(-)
-> > >  create mode 100644 drivers/regulator/rohm-regulator.c
-> > 
-> > [...]
-> > 
-> > > diff --git a/include/linux/mfd/rohm-generic.h
-> > > b/include/linux/mfd/rohm-generic.h
-> > > index ff3dd7578fd3..6cc5a0819959 100644
-> > > --- a/include/linux/mfd/rohm-generic.h
-> > > +++ b/include/linux/mfd/rohm-generic.h
-> > > @@ -4,6 +4,9 @@
-> > >  #ifndef __LINUX_MFD_ROHM_H__
-> > >  #define __LINUX_MFD_ROHM_H__
-> > >  
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/regulator/driver.h>
-> > > +
-> > >  enum rohm_chip_type {
-> > >  	ROHM_CHIP_TYPE_BD71837 = 0,
-> > >  	ROHM_CHIP_TYPE_BD71847,
-> > > @@ -17,4 +20,67 @@ struct rohm_regmap_dev {
-> > >  	struct regmap *regmap;
-> > >  };
-> > >  
-> > > +enum {
-> > > +	ROHM_DVS_LEVEL_UNKNOWN,
-> > > +	ROHM_DVS_LEVEL_RUN,
-> > > +	ROHM_DVS_LEVEL_IDLE,
-> > > +	ROHM_DVS_LEVEL_SUSPEND,
-> > > +	ROHM_DVS_LEVEL_LPSR,
-> > > +#define ROHM_DVS_LEVEL_MAX ROHM_DVS_LEVEL_LPSR
-> > 
-> > Haven't seen this before.  Is it legit?
-> > 
+> > >  drivers/mfd/ab8500-core.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > Applied, thanks.
 > 
-> I don't know why it wouldn't be :) I kind of grew used to that when I
-> still did some networking stuff.
+> For some reason this patch doesn't appear in mainline or linux-next,
+> I guess it fell off the planet somehow :D
+> 
+> Or do I look in the wrong place?
+> 
+> Lee, could you look into it?
 
-Networking it not a good example.
+It was there, just not pushed in a while.
 
-It's full of odd little quirks to the standard styling.
-
-> It doesn't really matter in this case but for example the netlink
-> headers do:
-> 
-> enum {
->    foo,
-> #define foo foo
->    bar,
-> #define bar bar
-> ...
-> };
-> 
-> https://elixir.bootlin.com/linux/v5.5-rc6/source/include/uapi/linux/rtnetlink.h
-> 
-> What is the good here is that this allows one to nicely exclude
-> unsupported stuff using preprocessor:
-> 
-> #include <header_with_or_without_foo_dependng_on_version.h>
-> 
-> #ifdef foo
-> use_foo(foo);
-> #endif
-> 
-> What about:
-> > 
-> >      ROHM_DVS_LEVEL_MAX = ROHM_DVS_LEVEL_LPSR
-> 
-> Anyways, I don't see why define wouldn't be Ok here - but sure it can
-> be changed if you insist ;) Just let me know if you can accept the
-> define or not :)
-
-Let's go for not in this instance. :D
+Pushed now, should be in -next tomorrow.
 
 -- 
 Lee Jones [李琼斯]
