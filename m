@@ -2,69 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BC814021A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9496140213
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:43:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388038AbgAQCqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 21:46:32 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51846 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729067AbgAQCqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 21:46:32 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BFB68DD483A01EE48DB4;
-        Fri, 17 Jan 2020 10:46:29 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 Jan 2020 10:46:22 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Jack Yu <jack.yu@realtek.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: rt715: fix return value check in rt715_sdw_probe()
-Date:   Fri, 17 Jan 2020 02:41:49 +0000
-Message-ID: <20200117024149.75515-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1730253AbgAQCnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 21:43:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729067AbgAQCnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 16 Jan 2020 21:43:10 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64FA02072B;
+        Fri, 17 Jan 2020 02:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579228989;
+        bh=icVIaVDWi3vTyx1vb/g5+nyxUn3QmYadK7RMizpkMvg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2H5qdGxcEvFupn1mLneikZvzAUVpctllA1nwnUE1QYY9mPT+2beJnTxKBBuhbyCUU
+         wzAUXQ820y8HpILkHlloaJIyczUjAY8qHbO5FzMdnIzhJZZJSR3+Fa5bZCKTAETV91
+         vVWdU8IFrCQiR6QMDTJ4Q6ugv0or+VoSbfdMdtqQ=
+Date:   Thu, 16 Jan 2020 21:43:08 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>,
+        Brian Masney <masneyb@onstation.org>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 482/671] iio: tsl2772: Use
+ devm_add_action_or_reset for tsl2772_chip_off
+Message-ID: <20200117024308.GM1706@sasha-vm>
+References: <20200116170509.12787-1-sashal@kernel.org>
+ <20200116170509.12787-219-sashal@kernel.org>
+ <20200116181618.000063c2@Huawei.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200116181618.000063c2@Huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of error, the function devm_regmap_init() returns ERR_PTR() and
-never returns NULL. The NULL test in the return value check should be
-replaced with IS_ERR().
+On Thu, Jan 16, 2020 at 06:16:18PM +0000, Jonathan Cameron wrote:
+>On Thu, 16 Jan 2020 12:02:00 -0500
+>Sasha Levin <sashal@kernel.org> wrote:
+>
+>> From: Chuhong Yuan <hslester96@gmail.com>
+>>
+>> [ Upstream commit 338084135aeddb103624a6841972fb8588295cc6 ]
+>>
+>> Use devm_add_action_or_reset to call tsl2772_chip_off
+>> when the device is removed.
+>> This also fixes the issue that the chip is turned off
+>> before the device is unregistered.
+>>
+>> Not marked for stable as fairly hard to hit the bug and
+>> this is in the middle of a set making other cleanups
+>> to the driver.  Hence will probably need explicit backporting.
+>
+>Guess I was wrong and it does go on cleanly.  I took a quick
+>look at current 4.19 driver and looks like it's fine on it's
+>own.
+>
+>We need to be careful with this one in general though.
+>
+>Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for 4.19
 
-Fixes: d1ede0641b05 ("ASoC: rt715: add RT715 codec driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- sound/soc/codecs/rt715-sdw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks Jonathan. I saw the comment, but it applied and built cleanly,
+and looked sane enough without any related changes.
 
-diff --git a/sound/soc/codecs/rt715-sdw.c b/sound/soc/codecs/rt715-sdw.c
-index 18868e4ae6e8..6d892c44c522 100644
---- a/sound/soc/codecs/rt715-sdw.c
-+++ b/sound/soc/codecs/rt715-sdw.c
-@@ -535,8 +535,8 @@ static int rt715_sdw_probe(struct sdw_slave *slave,
- 
- 	regmap = devm_regmap_init(&slave->dev, NULL, &slave->dev,
- 		&rt715_regmap);
--	if (!regmap)
--		return -EINVAL;
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
- 
- 	rt715_init(&slave->dev, sdw_regmap, regmap, slave);
-
-
-
+-- 
+Thanks,
+Sasha
