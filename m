@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A9A141028
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD10141024
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:43:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbgAQRnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:43:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
+        id S1729384AbgAQRnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:43:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729112AbgAQRla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729126AbgAQRla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 12:41:30 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20BDF24653;
+        by mail.kernel.org (Postfix) with ESMTPSA id 47CAF24656;
         Fri, 17 Jan 2020 17:41:30 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1isVcf-000QRl-1k; Fri, 17 Jan 2020 12:41:29 -0500
-Message-Id: <20200117174128.933104514@goodmis.org>
+        id 1isVcf-000QSH-6m; Fri, 17 Jan 2020 12:41:29 -0500
+Message-Id: <20200117174129.076462344@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 Jan 2020 12:41:22 -0500
+Date:   Fri, 17 Jan 2020 12:41:23 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,8 +31,10 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH RT 11/32] hrtimer: Add a missing bracket and hide `migration_base on !SMP
+        Tom Zanussi <zanussi@kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH RT 12/32] posix-timers: Unlock expiry lock in the early return
 References: <20200117174111.282847363@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,71 +50,38 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 47b6de0b7f22c28b40275aeede3993d807668c3b ]
+[ Upstream commit 356a2781375ec58521a9bc3f500488745990c242 ]
 
-[ Upstream commit 5d2295f3a93b04986d069ebeaf5b07725f9096c1 ]
+Patch ("posix-timers: Add expiry lock") acquired a lock in
+run_posix_cpu_timers() but didn't drop the lock in the early return.
 
-The recent change to avoid taking the expiry lock when a timer is currently
-migrated missed to add a bracket at the end of the if statement leading to
-compile errors.  Since that commit the variable `migration_base' is always
-used but it is only available on SMP configuration thus leading to another
-compile error.  The changelog says "The timer base and base->cpu_base
-cannot be NULL in the code path", so it is safe to limit this check to SMP
-configurations only.
+Unlock the lock in the early return path.
 
-Add the missing bracket to the if statement and hide `migration_base'
-behind CONFIG_SMP bars.
-
-[ tglx: Mark the functions inline ... ]
-
-Fixes: 68b2c8c1e4210 ("hrtimer: Don't take expiry_lock when timer is currently migrated")
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190904145527.eah7z56ntwobqm6j@linutronix.de
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-[bigeasy: port back to RT]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/time/hrtimer.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ kernel/time/posix-cpu-timers.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 1a5167c68310..e54a95de8b79 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -150,6 +150,11 @@ static struct hrtimer_cpu_base migration_cpu_base = {
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 765e700962ab..c9964dc3276b 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -1175,8 +1175,10 @@ static void __run_posix_cpu_timers(struct task_struct *tsk)
+ 	expiry_lock = this_cpu_ptr(&cpu_timer_expiry_lock);
+ 	spin_lock(expiry_lock);
  
- #define migration_base	migration_cpu_base.clock_base[0]
- 
-+static inline bool is_migration_base(struct hrtimer_clock_base *base)
-+{
-+	return base == &migration_base;
-+}
-+
- /*
-  * We are using hashed locking: holding per_cpu(hrtimer_bases)[n].lock
-  * means that all timers which are tied to this base via timer->base are
-@@ -274,6 +279,11 @@ switch_hrtimer_base(struct hrtimer *timer, struct hrtimer_clock_base *base,
- 
- #else /* CONFIG_SMP */
- 
-+static inline bool is_migration_base(struct hrtimer_clock_base *base)
-+{
-+	return false;
-+}
-+
- static inline struct hrtimer_clock_base *
- lock_hrtimer_base(const struct hrtimer *timer, unsigned long *flags)
- {
-@@ -943,7 +953,7 @@ void hrtimer_grab_expiry_lock(const struct hrtimer *timer)
- {
- 	struct hrtimer_clock_base *base = READ_ONCE(timer->base);
- 
--	if (timer->is_soft && base != &migration_base) {
-+	if (timer->is_soft && is_migration_base(base)) {
- 		spin_lock(&base->cpu_base->softirq_expiry_lock);
- 		spin_unlock(&base->cpu_base->softirq_expiry_lock);
- 	}
+-	if (!lock_task_sighand(tsk, &flags))
++	if (!lock_task_sighand(tsk, &flags)) {
++		spin_unlock(expiry_lock);
+ 		return;
++	}
+ 	/*
+ 	 * Here we take off tsk->signal->cpu_timers[N] and
+ 	 * tsk->cpu_timers[N] all the timers that are firing, and
 -- 
 2.24.1
 
