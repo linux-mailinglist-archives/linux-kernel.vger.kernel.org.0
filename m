@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D89141010
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C1A141013
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbgAQRlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40622 "EHLO mail.kernel.org"
+        id S1729551AbgAQRmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:42:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729276AbgAQRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729281AbgAQRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 12:41:33 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E82442464B;
-        Fri, 17 Jan 2020 17:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14B3524683;
+        Fri, 17 Jan 2020 17:41:33 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.93)
         (envelope-from <rostedt@goodmis.org>)
-        id 1isVch-000Qb3-S9; Fri, 17 Jan 2020 12:41:31 -0500
-Message-Id: <20200117174131.757396978@goodmis.org>
+        id 1isVci-000QbZ-0K; Fri, 17 Jan 2020 12:41:32 -0500
+Message-Id: <20200117174131.893547195@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 17 Jan 2020 12:41:40 -0500
+Date:   Fri, 17 Jan 2020 12:41:41 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -32,9 +32,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>,
         Tom Zanussi <zanussi@kernel.org>,
-        Dick Hollenbeck <dick@softplc.com>
-Subject: [PATCH RT 29/32] sched/core: migrate_enable() must access takedown_cpu_task on
- !HOTPLUG_CPU
+        Daniel Wagner <dwagner@suse.de>
+Subject: [PATCH RT 30/32] lib/smp_processor_id: Adjust check_preemption_disabled()
 References: <20200117174111.282847363@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,52 +47,38 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Daniel Wagner <dwagner@suse.de>
 
-[ Upstream commit a61d1977f692e46bad99a100f264981ba08cb4bd ]
+[ Upstream commit af3c1c5fdf177870fb5e6e16b24e374696ab28f5 ]
 
-The variable takedown_cpu_task is never declared/used on !HOTPLUG_CPU
-except for migrate_enable(). This leads to a link error.
+The current->migrate_disable counter is not always defined leading to
+build failures with DEBUG_PREEMPT && !PREEMPT_RT_BASE.
 
-Don't use takedown_cpu_task in !HOTPLUG_CPU.
+Restrict the access to ->migrate_disable to same set where
+->migrate_disable is modified.
 
-Reported-by: Dick Hollenbeck <dick@softplc.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Daniel Wagner <dwagner@suse.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bigeasy: adjust condition + description]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/cpu.c        | 2 ++
- kernel/sched/core.c | 2 ++
- 2 files changed, 4 insertions(+)
+ lib/smp_processor_id.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 5366c8c69c2f..b9d7ac61d707 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -846,7 +846,9 @@ static int take_cpu_down(void *_param)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PREEMPT_RT_BASE
- struct task_struct *takedown_cpu_task;
+diff --git a/lib/smp_processor_id.c b/lib/smp_processor_id.c
+index 0c80992aa337..2e7398534b66 100644
+--- a/lib/smp_processor_id.c
++++ b/lib/smp_processor_id.c
+@@ -22,8 +22,10 @@ notrace static unsigned int check_preemption_disabled(const char *what1,
+ 	 * Kernel threads bound to a single CPU can safely use
+ 	 * smp_processor_id():
+ 	 */
++#if defined(CONFIG_PREEMPT_RT_BASE) && (defined(CONFIG_SMP) || defined(CONFIG_SCHED_DEBUG))
+ 	if (current->migrate_disable)
+ 		goto out;
 +#endif
  
- static int takedown_cpu(unsigned int cpu)
- {
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e465381b464d..cbd76324babd 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7314,9 +7314,11 @@ void migrate_enable(void)
- 
- 	p->migrate_disable = 0;
- 	rq->nr_pinned--;
-+#ifdef CONFIG_HOTPLUG_CPU
- 	if (rq->nr_pinned == 0 && unlikely(!cpu_active(cpu)) &&
- 	    takedown_cpu_task)
- 		wake_up_process(takedown_cpu_task);
-+#endif
- 
- 	if (!p->migrate_disable_scheduled)
+ 	if (current->nr_cpus_allowed == 1)
  		goto out;
 -- 
 2.24.1
