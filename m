@@ -2,140 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCD6141117
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C320141116
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbgAQSr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1729366AbgAQSr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 17 Jan 2020 13:47:29 -0500
-Received: from mga14.intel.com ([192.55.52.115]:41380 "EHLO mga14.intel.com"
+Received: from mail.skyhub.de ([5.9.137.197]:44288 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbgAQSr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727573AbgAQSr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 17 Jan 2020 13:47:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 10:47:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="274464501"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Jan 2020 10:47:25 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1isWeU-0008uh-G9; Sat, 18 Jan 2020 02:47:26 +0800
-Date:   Sat, 18 Jan 2020 02:46:48 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "x86-ml" <x86@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [tip:perf/core] BUILD SUCCESS
- 5738891229a25e9e678122a843cbf0466a456d0c
-Message-ID: <5e220118.Jq+VZQNrWv+LPVgz%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+Received: from zn.tnic (p200300EC2F08DC0098C6A8393F59F989.dip0.t-ipconnect.de [IPv6:2003:ec:2f08:dc00:98c6:a839:3f59:f989])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B9B8C1EC03F6;
+        Fri, 17 Jan 2020 19:47:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1579286847;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Y2ZrufAmDTgI9TXivlSlbPcvv98I5hvXGSkhEsQnmuk=;
+        b=OnvGup5BQQd1djQppGREI/Xmh13GQxmcxASd90ulRJpJ4ekUQ3Uq8EUm4A9yb8Zn7BG/57
+        4Ggz1p7ip2pSLukVliRuFrXhHmSrDBwhREdT5DLkF3gIrRDfJOS6DJGTUJ+BqRgHCOqR6u
+        HNyPYr6TR20k+Y/HPxAnPdXsx8lzXaQ=
+Date:   Fri, 17 Jan 2020 19:47:20 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        DavidWang@zhaoxin.com, CooperYan@zhaoxin.com,
+        QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com
+Subject: Re: [PATCH] x86/cpu: remove redundant cpu_detect_cache_sizes
+Message-ID: <20200117184720.GB31472@zn.tnic>
+References: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  perf/core
-branch HEAD: 5738891229a25e9e678122a843cbf0466a456d0c  perf/x86/amd: Add support for Large Increment per Cycle Events
+On Wed, Jan 15, 2020 at 04:00:57PM +0800, Tony W Wang-oc wrote:
+> Before call cpu_detect_cache_sizes get l2size from CPUID.80000006,
+> these CPUs have called init_intel_cacheinfo get l2size/l3size from
+> CPUID.4.
 
-elapsed time: 301m
+Questions:
 
-configs tested: 85
-configs skipped: 105
+* Does CPUID(4) give the same result as CPUID(80000006) on those CPUs?
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+* cpu_detect_cache_sizes() sets c->x86_tlbsize while
+init_intel_cacheinfo() would set it only when it calls the former
+function - cpu_detect_cache_sizes() - at the end:
 
-csky                 randconfig-a001-20200118
-openrisc             randconfig-a001-20200118
-s390                 randconfig-a001-20200118
-sh                   randconfig-a001-20200118
-xtensa               randconfig-a001-20200118
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                               rhel-7.6
-x86_64                              fedora-25
-x86_64                                  kexec
-parisc                            allnoconfig
-parisc                            allyesonfig
-parisc                         b180_defconfig
-parisc                        c3000_defconfig
-parisc                              defconfig
-c6x                              allyesconfig
-c6x                        evmc6678_defconfig
-nios2                         10m50_defconfig
-nios2                         3c120_defconfig
-openrisc                    or1ksim_defconfig
-openrisc                 simple_smp_defconfig
-xtensa                       common_defconfig
-xtensa                          iss_defconfig
-alpha                               defconfig
-csky                                defconfig
-nds32                             allnoconfig
-nds32                               defconfig
-arc                  randconfig-a001-20200118
-arm                  randconfig-a001-20200118
-arm64                randconfig-a001-20200118
-ia64                 randconfig-a001-20200118
-powerpc              randconfig-a001-20200118
-sparc                randconfig-a001-20200118
-h8300                     edosk2674_defconfig
-h8300                    h8300h-sim_defconfig
-h8300                       h8s-sim_defconfig
-m68k                             allmodconfig
-m68k                       m5475evb_defconfig
-m68k                          multi_defconfig
-m68k                           sun3_defconfig
-arc                              allyesconfig
-arc                                 defconfig
-microblaze                      mmu_defconfig
-microblaze                    nommu_defconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                       ppc64_defconfig
-powerpc                          rhel-kconfig
-csky                 randconfig-a001-20200117
-openrisc             randconfig-a001-20200117
-s390                 randconfig-a001-20200117
-sh                   randconfig-a001-20200117
-xtensa               randconfig-a001-20200117
-sh                               allmodconfig
-sh                                allnoconfig
-sh                          rsk7269_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                            titan_defconfig
-um                                  defconfig
-um                             i386_defconfig
-um                           x86_64_defconfig
-arm                              allmodconfig
-arm                               allnoconfig
-arm                              allyesconfig
-arm                         at91_dt_defconfig
-arm                           efm32_defconfig
-arm                          exynos_defconfig
-arm                        multi_v5_defconfig
-arm                        multi_v7_defconfig
-arm                        shmobile_defconfig
-arm                           sunxi_defconfig
-arm64                            allmodconfig
-arm64                             allnoconfig
-arm64                            allyesconfig
-arm64                               defconfig
-i386                             alldefconfig
-i386                              allnoconfig
-i386                             allyesconfig
-i386                                defconfig
-x86_64               randconfig-c001-20200118
-x86_64               randconfig-c002-20200118
-x86_64               randconfig-c003-20200118
-i386                 randconfig-c001-20200118
-i386                 randconfig-c002-20200118
-i386                 randconfig-c003-20200118
+        if (!l2)
+                cpu_detect_cache_sizes(c);
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+Does that happen on those CPUs?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
