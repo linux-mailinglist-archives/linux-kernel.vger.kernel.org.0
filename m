@@ -2,109 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F137214119F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C731411A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbgAQT02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 14:26:28 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39567 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbgAQT01 (ORCPT
+        id S1729537AbgAQT0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 14:26:50 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42577 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbgAQT0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 14:26:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 20so8748537wmj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 11:26:26 -0800 (PST)
+        Fri, 17 Jan 2020 14:26:50 -0500
+Received: by mail-lj1-f195.google.com with SMTP id y4so27590075ljj.9
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 11:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=CrQQQJS6hPBOvSxXvrnAqrRK6fwLt7e2C0voH4SKr0k=;
-        b=fahfwsIRCL5XcTiGfHpb3xGA0wah3PeuQkVPJ+bnXWvwF8ZLPAyRVZUvCSuRWwP4Cj
-         ur0GAKBTlTRdpHIREQ8aSuOXyNpFoPb6iE8otT46i3QXIef0/J5iI5oexgHOY6JogqYV
-         3GPSBxNVU08D0HYXxxzvYLIyiv5W/XDutH95CdP9gcTdXmm9UE91QnYTF/U+3deBcB2N
-         rpH/zmemra+IW4ovEzPmp8On7ZJ+HLghcYzgYrBYqHRnYovG8ekFuubY11ikbpKvZpEs
-         2Ct3BRmqAPvR/21AB9XSSyN14ruV9V0eWn2mf+x9AaBQAx3zHabOT4rx3HnBNZHFgIzX
-         GLQA==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eWPxiqs2+iCS7ywgBZoPdcaP9J/JZnx6nY7cUof021c=;
+        b=V07u5up/I77H9UHL2RgtE8EgTvlvwfaEFYjFWyiW4+y3mmsf6hSpIL9mWxuD8JIASe
+         3SSst9qoCTXer85nAaDXwyv/YnBEnPFcdRJ2ybjqyOWOd1gg/3Kd6GrFQfpNmDHi/BMP
+         w0ZMrjYcUe+KlA5/lADOtOVfp712SacxUQBPD0QJjcff8V1bsR+QbUjR7dOF/lb0NN96
+         usrzIqp2q/vX/xCnYHVsNkAn2erp5+VtyzupP9SaaEZ0FD1ww/8EO+YxsI5seKUG4Cw8
+         5CMzNcoox5gW2zipArH3pjEATR80XUQuLFCaEDPaEVYFZGTyxdW97XFsH/XH+eENVwM2
+         htDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=CrQQQJS6hPBOvSxXvrnAqrRK6fwLt7e2C0voH4SKr0k=;
-        b=f/k/6fGVwMSLkxSiz2gMfg/64lfudf2x0xz6qvNVg+ndrawVLhn19PanzoItOrecmv
-         2KBl2O0yMAxlaeo0mb6Fe4Dtk1VuLW8v17RuFvWEc6+USmpCuSMPQrNsoxhzawuf6RYD
-         sv1fbfkKNbeB+Wk38DobxXfji/j+ZDBhvES194ODBTUsqkERvJ8WXu6H7V853Nq4we5/
-         hCuhtSJVVDLC/AMTff4NyA4l48x62afydRatFg3HEuH9s9thaYMo8KZjW80Gi3kqUX1F
-         bWUXZ7zQFFRrCUehgv59/yr7z64l19gqspYsZ8QLvhH0WO4MNiYKVBuEyBOk/o1wBowO
-         rKng==
-X-Gm-Message-State: APjAAAXa4p0jkmZI6OPs5TjgIt0H0Y9VQei6/AAChQ17/4NrYSnmvf5Y
-        dc4+fGzwSRVuKidfgbokcWI=
-X-Google-Smtp-Source: APXvYqwOum254fHTkisVnySvou7896TOt5jeUfPQz9ywH+p1klU2v02mlCRjQfhM3e1ZB/NTNFeLXQ==
-X-Received: by 2002:a1c:a78c:: with SMTP id q134mr6234664wme.98.1579289185316;
-        Fri, 17 Jan 2020 11:26:25 -0800 (PST)
-Received: from wambui.local ([197.237.61.225])
-        by smtp.googlemail.com with ESMTPSA id q11sm35636991wrp.24.2020.01.17.11.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 11:26:24 -0800 (PST)
-From:   Wambui Karuga <wambui.karugax@gmail.com>
-X-Google-Original-From: Wambui Karuga <wambui@wambui>
-Date:   Fri, 17 Jan 2020 22:25:44 +0300 (EAT)
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-cc:     Wambui Karuga <wambui.karugax@gmail.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, sean@poorly.run,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] drm/i915/display: conversion to new logging
- macros.
-In-Reply-To: <87pnfigpi5.fsf@intel.com>
-Message-ID: <alpine.LNX.2.21.99999.375.2001172219550.18007@wambui>
-References: <20200116130947.15464-1-wambui.karugax@gmail.com> <87pnfigpi5.fsf@intel.com>
-User-Agent: Alpine 2.21.99999 (LNX 375 2019-10-29)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eWPxiqs2+iCS7ywgBZoPdcaP9J/JZnx6nY7cUof021c=;
+        b=aTNQQEELczKTf7XZQI64oIiWUp1LlmzP2QmMrart80PNTGvIazqg5ob0p/DehaeJXU
+         gnSOPDIvaBpdkNG4awjZyJ8lyfqEzQ0zCwd9IEpPp61oUDo4ZpiBTlam3qehDXImv/G7
+         o2O+nXRhPN9EjS7kRlfJiny8O1sp3BcJ1Hr/f1KwXnBva/yTApSNUUWiLEN/DDhRBe0Z
+         kNXfjRGRfYCS0IEb8T6oQtoJxsVGjYtiPqP7tVsufprHncgHXUCgNSigBaPdLvI52V8k
+         ismx+ZMpI3gVVoeR5p1DnWHsD6pQqHYGLXOl87b08ff9zvkYAx+QYWJX+QrGZfgGMoVV
+         dtWg==
+X-Gm-Message-State: APjAAAVxgg0dPNTIERFfR42jEp1YSZ0qXmmp3rznA33IlrGxeQnOP2Pk
+        n+mwsCOGOcJci51gwt1M8WrN/g==
+X-Google-Smtp-Source: APXvYqxdevK1ARk4iG2CURRwB6/qFK6i8RWBWNjzDcLM/Zn5XeE+WkyCWl8OJDp7suwJT87EBjEJlw==
+X-Received: by 2002:a2e:9013:: with SMTP id h19mr6192574ljg.223.1579289207431;
+        Fri, 17 Jan 2020 11:26:47 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id w29sm12592801lfa.34.2020.01.17.11.26.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Jan 2020 11:26:46 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:25:55 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     santosh.shilimkar@oracle.com
+Cc:     Amol Grover <frextrite@gmail.com>, arm-soc <arm@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v2] drivers: soc: ti: knav_qmss_queue: Pass lockdep
+ expression to RCU lists
+Message-ID: <20200117192555.baoxu4xd7krxgfjz@localhost>
+References: <20200117133048.31708-1-frextrite@gmail.com>
+ <5d77df7f-8693-0232-dbfe-0acfc37e040f@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d77df7f-8693-0232-dbfe-0acfc37e040f@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 17, 2020 at 10:24:04AM -0800, santosh.shilimkar@oracle.com wrote:
+> On 1/17/20 5:30 AM, Amol Grover wrote:
+> > inst->handles is traversed using list_for_each_entry_rcu
+> > outside an RCU read-side critical section but under the protection
+> > of knav_dev_lock.
+> > 
+> > Hence, add corresponding lockdep expression to silence false-positive
+> > lockdep warnings, and harden RCU lists.
+> > 
+> > Add macro for the corresponding lockdep expression.
+> > 
+> > Signed-off-by: Amol Grover <frextrite@gmail.com>
+> > ---
+> > v2:
+> > - Remove rcu_read_lock_held() from lockdep expression since it is
+> >    implicitly checked for.
+> > 
+> Looks fine to me.
+> 
+> Hi Olof, Arnd,
+> Can you please pick this one and apply to your driver-soc branch ?
+> I already sent out pull request and hence the request.
+
+Hi,
+
+Can you please email the whole patch with sign-off to
+soc@kernel.org? Otherwise it won't end up in patchwork, which is how we track
+patches and pull requests these days.
 
 
-On Fri, 17 Jan 2020, Jani Nikula wrote:
+Thanks,
 
-> On Thu, 16 Jan 2020, Wambui Karuga <wambui.karugax@gmail.com> wrote:
->> This series converts the printk based logging macros in
->> drm/i915/display/intel_display.c to the new struct drm_device based
->> logging macros. This change was split into four for manageability and
->> due to the size of drm/i915/display/intel_display.c.
->
-> Please still write more descriptive commit messages than "part N".
->
-What would be a more descriptive subject line? I wasn't really sure about 
-the subject line since the series is for the same file - which is why I 
-went with "part N".
-
-> What are your basing your patches on? Our CI uses 
-drm-tip, and it's > failing to apply the patches.
->
-I'm using drm-tip, but I can rebase and try again.
-
-Thanks.
-wambui.
-> BR,
-> Jani.
->
->
->
->>
->> Wambui Karuga (4):
->>   drm/i915/display: conversion to new logging macros part 1
->>   drm/i915/display: conversion to new logging macros part 2
->>   drm/i915/display: conversion to new logging macros part 3
->>   drm/i915/display: convert to new logging macros part 4.
->>
->>  drivers/gpu/drm/i915/display/intel_display.c | 1021 ++++++++++--------
->>  1 file changed, 596 insertions(+), 425 deletions(-)
->
-> -- 
-> Jani Nikula, Intel Open Source Graphics Center
->
+-Olof
