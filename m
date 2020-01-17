@@ -2,190 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBB214122A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 21:15:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9177814120E
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 21:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbgAQUPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 15:15:00 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:11189 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729590AbgAQUPA (ORCPT
+        id S1729616AbgAQUDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 15:03:53 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46691 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbgAQUDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 15:15:00 -0500
-X-Greylist: delayed 701 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 15:14:59 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1579292098;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:Cc:References:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=QEo/tDgeU262hRs3LehiNBf8B0dTyOdN3vdoJhDFEZw=;
-        b=Aiqs1VgdpGNNIuLSA4GmSZebYXionpkNhN8hZbpGyFhh0N1IKiApnM1ArV/T3T/L63
-        XOPvlzGpgXYdfeUh1lE5IP5CgptVtZ4wr6pX+Jc4is2fBb0ELR+Juye2LwH3hBNq2XRV
-        B+2MfpmZ7jUSZUEeEQTyiFC7CU+hDdAeypimh0GH7qB9YuuDkkZ7b5SBYySbpYLHwrhs
-        n3FnpEtnbzGn7ZXT/9SUeSwb+7cCf1hPfI30QxzH7jYCH5jKsGj3K4zEq6ko3LR+nNfl
-        eOv6Mt5IREKbw0a+6VdTxO81WrfldyyIl6JkUSRnyFc5H3BUeHak+JhLQKEzAvqoT4wR
-        kSNA==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1o3HMbEWKNteTQLYO"
-X-RZG-CLASS-ID: mo00
-Received: from [192.168.40.177]
-        by smtp.strato.de (RZmta 46.1.4 DYNA|AUTH)
-        with ESMTPSA id 3013f9w0HK2sUOF
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 17 Jan 2020 21:02:54 +0100 (CET)
-Subject: Re: general protection fault in can_rx_register
-To:     dev.kurt@vandijck-laurijssen.be, mkl@pengutronix.de,
-        o.rempel@pengutronix.de
-References: <00000000000030dddb059c562a3f@google.com>
-Cc:     syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
-Date:   Fri, 17 Jan 2020 21:02:48 +0100
+        Fri, 17 Jan 2020 15:03:53 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z124so12150303pgb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 12:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aQzL6IvL/aNKUWcM/WEKNIR1eDFpwQ97k5mBGT8jfsU=;
+        b=Cu43cbaeUv+4oTBILNFwTFRqAqnfms17nEbDF3V9m9JTlOwDT9bvf07wE+5ATBzxaF
+         2fw+TDN1RUjFhsdqR8aKFGsVjwTd/OWzgmwQ4+Gbi653651q54+GMwS/TJKEDA7ucfu5
+         HJUvkVFkqDcIJwNVMZkmBYgXq9VMst2kovKmEVEtLGcQJsqq28b28WLWnLARLhU3yUmT
+         8lz4wq9Js/BFQRRPf7+6dqp4DzDJUY/Fbr0qauXe75Flfhx6WhxFnbJ5PE4DvtdDEgNS
+         A34BD1kZ18tr+jb2ZQYn3ifjPP7WWSzXTIpNQ5RDmXNwsxc0NRFs41KyDJWreSE7d2H9
+         DU0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=aQzL6IvL/aNKUWcM/WEKNIR1eDFpwQ97k5mBGT8jfsU=;
+        b=CYgzzD4n7BEs/6gOZRl+VRspcbddImKF591nB0bHQVK3a0/MUX/zl8W4YVVg0Emr+U
+         P0gBLwLzUirGPhbBcM44sfmx1bFLoJZMu1K2NeNrJbSYJ1cUNxuFEyjV5yB3rDrrlwuq
+         XeXehy2ZTlivjQgDc0YRn9YFKtFZX1/PiEsVr2XpKgx15h356VNZFk3zGSGxO9m073eU
+         8cdJxIgPiuEwvU1O2qoorKFt601R27fc4TnUhmVFX2LfrTLYJdFThQksCLxWD2/Z4Zdr
+         fUjH/BYXrjDMweiz7/IqlwWxlgMBxeQxJ8y2avT7wgO/RCjcB97ZjZ4DzRUF50ZBLWOG
+         kAwA==
+X-Gm-Message-State: APjAAAUTbz/u1MAb0FjY9gwrknA6cNaGH7pAfPP3pj5LQvYGYjSHnRZc
+        xrn5ofjAoXVfPz2zoNqYESSTJAI2
+X-Google-Smtp-Source: APXvYqwN30hLMkIPzOKSNGo/CwmL/oOMWhjeMn7vbJeLzph0R9U50OQTRe5i5IXBuun+EXpDmz9zXA==
+X-Received: by 2002:a65:484d:: with SMTP id i13mr47507815pgs.32.1579291431987;
+        Fri, 17 Jan 2020 12:03:51 -0800 (PST)
+Received: from [10.67.50.41] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id z64sm31392923pfz.23.2020.01.17.12.03.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 12:03:51 -0800 (PST)
+Subject: Re: [PATCH] arm64: defconfig: Enable Boradcom's GENET Ethernet
+ controller
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20200114164900.27483-1-nsaenzjulienne@suse.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ G10n8gCguORqNGMsVRxrlLs7/himep7MrCc=
+Message-ID: <b165ecbb-f6c0-cf23-949a-9a1cd0bbeab1@gmail.com>
+Date:   Fri, 17 Jan 2020 12:03:46 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <00000000000030dddb059c562a3f@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200114164900.27483-1-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc, Oleksij, Kurt,
-
-On 17/01/2020 14.46, syzbot wrote:
-> Hello,
+On 1/14/20 8:48 AM, Nicolas Saenz Julienne wrote:
+> Currently used on the Raspberry Pi 4.
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1033df15e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbb8fa33f49f9f3
-> dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=c3ea30e1e2485573f953
-> compiler:       clang version 10.0.0 
-> (https://github.com/llvm/llvm-project/ 
-> c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13204f15e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f5db9e00000
-> 
-> The bug was bisected to:
-> 
-> commit 9868b5d44f3df9dd75247acd23dddff0a42f79be
-> Author: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
-> Date:   Mon Oct 8 09:48:33 2018 +0000
-> 
->      can: introduce CAN_REQUIRED_SIZE macro
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129bfdb9e00000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=119bfdb9e00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=169bfdb9e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com
-> Fixes: 9868b5d44f3d ("can: introduce CAN_REQUIRED_SIZE macro")
-> 
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 9593 Comm: syz-executor302 Not tainted 5.5.0-rc6-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
-> Google 01/01/2011
-> RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
-> RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-include/linux/rculist.h:528 is
-
-struct hlist_node *first = h->first;
-
-which would mean that 'h' must be NULL.
-
-But the h parameter is rcv_list from
-rcv_list = can_rcv_list_find(&can_id, &mask, dev_rcv_lists);
-
-Which can not return NULL - at least when dev_rcv_lists is a proper 
-pointer to the dev_rcv_lists provided by can_dev_rcv_lists_find().
-
-So either dev->ml_priv is NULL in the case of having a CAN interface 
-(here vxcan) or we have not allocated net->can.rx_alldev_list in 
-can_pernet_init() properly (which would lead to an -ENOMEM which is 
-reported to whom?).
-
-Hm. I'm lost. Any ideas?
-
-Regards,
-Oliver
-
-
-> Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 
-> 4c 89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 
-> 05 00 00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
-> RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
-> RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
-> R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
-> R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
-> FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   raw_enable_filters net/can/raw.c:189 [inline]
->   raw_enable_allfilters net/can/raw.c:255 [inline]
->   raw_bind+0x326/0x1230 net/can/raw.c:428
->   __sys_bind+0x2bd/0x3a0 net/socket.c:1649
->   __do_sys_bind net/socket.c:1660 [inline]
->   __se_sys_bind net/socket.c:1658 [inline]
->   __x64_sys_bind+0x7a/0x90 net/socket.c:1658
->   do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x446ba9
-> Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 
-> f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 
-> f0 ff ff 0f 83 5b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007fb132f25d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-> RAX: ffffffffffffffda RBX: 00000000006dbc88 RCX: 0000000000446ba9
-> RDX: 0000000000000008 RSI: 0000000020000180 RDI: 0000000000000003
-> RBP: 00000000006dbc80 R08: 00007fb132f26700 R09: 0000000000000000
-> R10: 00007fb132f26700 R11: 0000000000000246 R12: 00000000006dbc8c
-> R13: 0000000000000000 R14: 0000000000000000 R15: 068500100000003c
-> Modules linked in:
-> ---[ end trace 0dedabb13ca8e7d7 ]---
-> RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
-> RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
-> Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 
-> 4c 89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 
-> 05 00 00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
-> RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
-> RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
-> R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
-> R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
-> FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: 
-> https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+Applied to defconfig-arm64/next with the subject typo corrected and a
+mention that other SoCs from Broadcom use this controller. Thanks!
+-- 
+Florian
