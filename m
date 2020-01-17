@@ -2,181 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33ED0140AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C383140AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:30:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgAQN1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:27:52 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40650 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbgAQN1w (ORCPT
+        id S1727009AbgAQNab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:30:31 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:43257 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgAQNab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:27:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t14so7597386wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:27:50 -0800 (PST)
+        Fri, 17 Jan 2020 08:30:31 -0500
+Received: by mail-qk1-f176.google.com with SMTP id t129so22622098qke.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:30:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PIqkqiKX2cwutNpB3IcDLeAmmYCpWIuuH/Xtq02/cXc=;
-        b=rR1Q3rqrJ4cKKTCGDv/Z5+Fo1P+ZQtT/d7HqveOFr2Au2QjnsmLyAcKww57wxeyek7
-         IDhvOR1mjP1PmvxC24D1g98xZRBLBIs2S3sytFPHpb/HB31VXeCbATmp0zVZcs6pCuMz
-         DogN4CFJDVX7+OBllKBz9dv2Nf2d0sjjzfmE74lsXPoLmjab8IYGS5wMq2QujmY5QZvX
-         EJod2nowDsluwI78/vmERLmUYCdLQoGGQgIHLOGVsiPdOy/HIGkUNZt4Gv+1ntsjDuny
-         M6klJkdgaegyCE96+DWOZI/8TIISXYlYWTYpr0RIDgP8llz6OVRGGke85ZJJUNJWoD3P
-         mdyg==
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=U4/RhVLZS3DfSJ3cg9+WjUoTzOlLIbTI9zPCVAjn1nY=;
+        b=WwRUF9vKt/5s/PIHYqrzuoQMr2a8YirD708F+kCBoHzuyHxGQbvciWODf9JXNvicud
+         fqkP5IagKLSw36fHs65g0Fuc+OBpucXWd0khkY0AI6jOJOaB2wCwCz+Fem2Dxod2uAOF
+         7DqLsEJ0gJGCKrTJ1dZ5pI5Z+1GLrrAKe1wYPDFdTrrQDKYdNeRC8Udk9m0cvmXuhZoH
+         gitDSWd2DQbEKfWmn+/wi5caB9h9sCIjcwUX5lfPy+BRMxU+eA9KRNN0i8RazrzcxYAj
+         SgGSUMOXtda41CAn75tZhLeh2/If/6LK07j7rx65Jk9ahagGfAX1JfzmuLeHrI2//Zs+
+         UyLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PIqkqiKX2cwutNpB3IcDLeAmmYCpWIuuH/Xtq02/cXc=;
-        b=q8V8OtjowjEMAHa25sx+kzPXmAlv4Jcar94ked2wn2fJ5Lm3SgGMLoBO14pZMlUj6/
-         cj+kyHi3g4mpJyXRqlDbLj7ZwSbKrbpfibViuY2aC6rGvejykB3GTJTRH2bY41oHYmxU
-         9zDbpht5YCMZXWo5nDpwnTRW1zAfwvvd5p/OTpgxvH74QvPM2jsoh68kyXYhQTFpHbTH
-         HadGlIJCHEpEY4rGUqQvk3dSeq6BTGHjKmr2zZQjvkceI1gD+SnDvBu1zD6KQbWYTMcl
-         NGChYzUez9/jKOBqWjohAAvY1auzWvocUbsCnWvRQaPEQMPF+zFG4qrQl2wh1bFmVeX+
-         +KVw==
-X-Gm-Message-State: APjAAAUmWYpgMtp++xSoo5l5SRW2HfA0knVG8WIIQgB/vmnL36JEsYpm
-        5CUmS3H7nFJ6HxZwqQSwMOT01PiESgU=
-X-Google-Smtp-Source: APXvYqwOwlbbeoYqAH3SvpO+tFI2xMgpmJPAmaICIBFYNibgX+0GTdpauHlYEXJ54XlUJtpDo7S+2w==
-X-Received: by 2002:a1c:4884:: with SMTP id v126mr4360261wma.64.1579267669959;
-        Fri, 17 Jan 2020 05:27:49 -0800 (PST)
-Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id s128sm9847090wme.39.2020.01.17.05.27.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 05:27:49 -0800 (PST)
-Date:   Fri, 17 Jan 2020 13:28:07 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Orson Zhai <orson.zhai@unisoc.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        baolin.wang@unisoc.com, chunyan.zhang@unisoc.com
-Subject: Re: [PATCH v3] mfd: syscon: Add arguments support for syscon
- reference
-Message-ID: <20200117132807.GL15507@dell>
-References: <1579259812-27186-1-git-send-email-orson.zhai@unisoc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1579259812-27186-1-git-send-email-orson.zhai@unisoc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=U4/RhVLZS3DfSJ3cg9+WjUoTzOlLIbTI9zPCVAjn1nY=;
+        b=uMI68xPs0A6//SezN68pFH08C/JjSzneeSNF0TTKPUvm265V7FbHpVS9qVWev6++7S
+         Pjet3hzkCOtdMdx7pg4Yvk9+55RxXBpYtKLuXUygb/Q7R9uLKuyZ4L+i5BrTyH232DuZ
+         YNL+ltU68w2+hxx7dBtUT1Sde5zcyWe2rp4gYBuJneb7eSqhpmB7jPXMuKeWKSXtngy9
+         EBkOYb8S0bGNxZjIa0vCbbKTNOYhfuJfqRDHhPjBbaS+pRgcHqrZNWNSE6NHtQHQ7C/B
+         vEDysZKAmbk+7rZ2Xxta67UIPJn4hFMWcDuircAFUsAgrTXg+grj0M5kkE6uFUORPFJM
+         QZDg==
+X-Gm-Message-State: APjAAAWvOBfcaCqASaOBP5Fnm0Ialt1cpg0BtwnhrYvOHOCALkeKXq1h
+        FZDMceKYfLh/d1k+xEhFIKHPGxevzHSNjw==
+X-Google-Smtp-Source: APXvYqylfHOqkWU3ftpd4sx7sBeSiuzylqb2aIYlnoIXhgDLdJTrg4fN/JqIAWiMZCi38UjMkMiwVQ==
+X-Received: by 2002:a37:7005:: with SMTP id l5mr36899936qkc.334.1579267828641;
+        Fri, 17 Jan 2020 05:30:28 -0800 (PST)
+Received: from ?IPv6:2600:1000:b029:6649:b819:fcc3:734e:5994? ([2600:1000:b029:6649:b819:fcc3:734e:5994])
+        by smtp.gmail.com with ESMTPSA id v4sm12909646qtd.24.2020.01.17.05.30.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 05:30:26 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with printk()
+Date:   Fri, 17 Jan 2020 08:30:24 -0500
+Message-Id: <D58FE32E-C5D9-4812-BCD8-BB3E6C4A7C55@lca.pw>
+References: <6f924bf7-835b-0176-1b12-aff4f1f4be0e@redhat.com>
+Cc:     akpm@linux-foundation.org, mhocko@kernel.org,
+        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+In-Reply-To: <6f924bf7-835b-0176-1b12-aff4f1f4be0e@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020, Orson Zhai wrote:
 
-> There are a lot of similar global registers being used across multiple SoCs
-> from Unisoc. But most of these registers are assigned with different offset
-> for different SoCs. It is hard to handle all of them in an all-in-one
-> kernel image.
+
+> On Jan 17, 2020, at 7:53 AM, David Hildenbrand <david@redhat.com> wrote:
 > 
-> Add a helper function to get regmap with arguments where we could put some
-> extra information such as the offset value.
-> 
-> Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
-> Tested-by: Baolin Wang <baolin.wang@unisoc.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
-> 
-> V3 Change:
->  Rebase on latest kernel v5.5-rc6 for Lee.
+> Can't we just use the zone_idx() stored in the memmap instead?
 
-Still not applying.
-
-I think it's a problem with the patch itself.
-
-It looks like all of the tabs have been replaced with spaces also.
-
-How are you sending the patch?
-
-Arnd,
-
-  Are you able to apply this?
-
->  drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
->  include/linux/mfd/syscon.h | 14 ++++++++++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index e22197c..2918b05 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -224,6 +224,35 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
->  }
->  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
-> 
-> +struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
-> +                                       const char *property,
-> +                                       int arg_count,
-> +                                       unsigned int *out_args)
-> +{
-> +       struct device_node *syscon_np;
-> +       struct of_phandle_args args;
-> +       struct regmap *regmap;
-> +       unsigned int index;
-> +       int rc;
-> +
-> +       rc = of_parse_phandle_with_fixed_args(np, property, arg_count,
-> +                       0, &args);
-> +       if (rc)
-> +               return ERR_PTR(rc);
-> +
-> +       syscon_np = args.np;
-> +       if (!syscon_np)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       regmap = syscon_node_to_regmap(syscon_np);
-> +       for (index = 0; index < arg_count; index++)
-> +               out_args[index] = args.args[index];
-> +       of_node_put(syscon_np);
-> +
-> +       return regmap;
-> +}
-> +EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle_args);
-> +
->  static int syscon_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-> index 112dc66..714cab1 100644
-> --- a/include/linux/mfd/syscon.h
-> +++ b/include/linux/mfd/syscon.h
-> @@ -23,6 +23,11 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
->  extern struct regmap *syscon_regmap_lookup_by_phandle(
->                                         struct device_node *np,
->                                         const char *property);
-> +extern struct regmap *syscon_regmap_lookup_by_phandle_args(
-> +                                       struct device_node *np,
-> +                                       const char *property,
-> +                                       int arg_count,
-> +                                       unsigned int *out_args);
->  #else
->  static inline struct regmap *device_node_to_regmap(struct device_node *np)
->  {
-> @@ -45,6 +50,15 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
->  {
->         return ERR_PTR(-ENOTSUPP);
->  }
-> +
-> +static struct regmap *syscon_regmap_lookup_by_phandle_args(
-> +                                       struct device_node *np,
-> +                                       const char *property,
-> +                                       int arg_count,
-> +                                       unsigned int *out_args)
-> +{
-> +       return ERR_PTR(-ENOTSUPP);
-> +}
->  #endif
-> 
->  #endif /* __LINUX_MFD_SYSCON_H__ */
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I am having a hard time to guess what that means. Care to elaborate?
