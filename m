@@ -2,87 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72EF14093B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:48:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79FD8140945
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbgAQLsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 06:48:05 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:40491 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbgAQLsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:48:05 -0500
-Received: by mail-wr1-f48.google.com with SMTP id c14so22397352wrn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 03:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qqkxnrx3HzuDPmPjQfwC1GI4loEmDbDbTR3bN9P7ZZ0=;
-        b=GkYwQUYOrsUVmzU0u/ktmDP996TPqL3/mEQu22A/PAwN9HhXEWUDTpXEcDYzyMKX+o
-         2hj3xTydd1rjb3EOG9TI5P2lsgvo9gagL4MtLZaG/wEX3TVqflON8Nqy4oBqBoF4Xovc
-         ddgItAXXurbywiUYt2Tai9Na/7RpRYTqlOmPOfQ2R7ptnDA4rEK0TSnYdECjqjSPh4PF
-         8djpOoJwynZv/Il6EJ6gCybwMD96BADwXo346xhmAUfkHepemK1YLBbYNEieSVgNJb4W
-         Wc02Z0NopIpLD+7ydzlddUy2fdC86uAud1w6Ueel1zRYxbjJWT5Jw7pfT18HK0JlPDCt
-         Hi4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qqkxnrx3HzuDPmPjQfwC1GI4loEmDbDbTR3bN9P7ZZ0=;
-        b=hHaWQJ2S4iCcHBNQ4k8UhM9myN38Q2gfRgx5ZP8N0+soLPXKXZeFJ1YpoqAMJL8v+M
-         imCHkgPkhDkLNhMsHlDMEOL1G0OvLVoT/H1i40hHGwUgHrvw7bFAfDy1KtaJPjtFmgr5
-         N5+/2P19NCNlGVNam+WGKlo51vkUdHymtgCWirKcVszZHJQJW4hTvk60biv5P582yRfd
-         f8ZykHaKuDehz+YhyA4/CRYsc49RxC7AZZ78vq8u84kJJbJ+8IG1ACZRFak6XBaksP1R
-         d0/vYZbik0IHYw25c419YCNX5areAwRJonwXukVVmguXD5W+YGgQd7pX0Tl1LMMT5VFH
-         SBbA==
-X-Gm-Message-State: APjAAAVZEstnwBsPlazXZnQaQsjqArjpw97Foupzt61jT+0fVWVw6Z4a
-        ewqYD3z7Pe/pslK6jVcbtswU3A==
-X-Google-Smtp-Source: APXvYqwwRw8rNfZci6g/8Dp0gQuxvHAtlDox1wQQnmfGO7HRw3bpYz4kxSfUFm69yLkEQ42LtbIRAw==
-X-Received: by 2002:adf:eb8e:: with SMTP id t14mr2603060wrn.384.1579261682747;
-        Fri, 17 Jan 2020 03:48:02 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
-        by smtp.gmail.com with ESMTPSA id i16sm9709716wmb.36.2020.01.17.03.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 03:48:02 -0800 (PST)
-Date:   Fri, 17 Jan 2020 11:47:58 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     mingo@redhat.com, peterz@infradead.org, ionela.voinescu@arm.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-        amit.kachhap@gmail.com, javi.merino@kernel.org,
-        kernel-team@android.com
-Subject: Re: [Patch v8 7/7] sched/fair: Enable tuning of decay period
-Message-ID: <20200117114758.GB219309@google.com>
-References: <1579031859-18692-1-git-send-email-thara.gopinath@linaro.org>
- <1579031859-18692-8-git-send-email-thara.gopinath@linaro.org>
+        id S1727162AbgAQLvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 06:51:07 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35410 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726689AbgAQLvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 06:51:06 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A345CB9D861EFE57526B;
+        Fri, 17 Jan 2020 19:51:03 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 17 Jan 2020
+ 19:50:54 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <josef@toxicpanda.com>, <axboe@kernel.dk>, <sunke32@huawei.com>
+CC:     <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] nbd: fix potential NULL pointer fault in connect and disconnect process
+Date:   Fri, 17 Jan 2020 19:50:05 +0800
+Message-ID: <20200117115005.37006-1-sunke32@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579031859-18692-8-git-send-email-thara.gopinath@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 14 Jan 2020 at 14:57:39 (-0500), Thara Gopinath wrote:
-> +static int __init setup_sched_thermal_decay_shift(char *str)
-> +{
-> +	int _shift;
-> +
-> +	if (kstrtoint(str, 0, &_shift))
-> +		pr_warn("Unable to set scheduler thermal pressure decay shift parameter\n");
+Connect and disconnect a nbd device repeatedly, will cause
+NULL pointer fault.
 
-Nit: looking at kstrtoint() it seems that _shift will be left unmodified
-upon failure. To avoid feeding a random value to clamp() below, perhaps
-initialize _shift to 0 ?
+It will appear by the steps:
+1. Connect the nbd device and disconnect it, but now nbd device
+   is not disconnected totally.
+2. Connect the same nbd device again immediately, it will fail
+   in nbd_start_device with a EBUSY return value.
+3. Wait a second to make sure the last config_refs is reduced
+   and run nbd_config_put to disconnect the nbd device totally.
+4. Start another process to open the nbd_device, config_refs
+   will increase and at the same time disconnect it.
 
-> +	sched_thermal_decay_shift = clamp(_shift, 0, 10);
-> +	return 1;
-> +}
+To fix it, add a NBD_HAS_STARTED flag. Set it in nbd_start_device_ioctl
+and nbd_genl_connect if nbd device is started successfully.
+Clear it in nbd_config_put. Test it in nbd_genl_disconnect and
+nbd_genl_reconfigure.
 
-Thanks,
-Quentin
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ drivers/block/nbd.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index b4607dd96185..ddd364e208ab 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -83,6 +83,7 @@ struct link_dead_args {
+ 
+ #define NBD_DESTROY_ON_DISCONNECT	0
+ #define NBD_DISCONNECT_REQUESTED	1
++#define NBD_HAS_STARTED				2
+ 
+ struct nbd_config {
+ 	u32 flags;
+@@ -1215,6 +1216,7 @@ static void nbd_config_put(struct nbd_device *nbd)
+ 		nbd->disk->queue->limits.discard_alignment = 0;
+ 		blk_queue_max_discard_sectors(nbd->disk->queue, UINT_MAX);
+ 		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, nbd->disk->queue);
++		clear_bit(NBD_HAS_STARTED, &nbd->flags);
+ 
+ 		mutex_unlock(&nbd->config_lock);
+ 		nbd_put(nbd);
+@@ -1290,6 +1292,8 @@ static int nbd_start_device_ioctl(struct nbd_device *nbd, struct block_device *b
+ 	ret = nbd_start_device(nbd);
+ 	if (ret)
+ 		return ret;
++	else
++		set_bit(NBD_HAS_STARTED, &nbd->flags);
+ 
+ 	if (max_part)
+ 		bdev->bd_invalidated = 1;
+@@ -1961,6 +1965,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+ 	mutex_unlock(&nbd->config_lock);
+ 	if (!ret) {
+ 		set_bit(NBD_RT_HAS_CONFIG_REF, &config->runtime_flags);
++		set_bit(NBD_HAS_STARTED, &nbd->flags);
+ 		refcount_inc(&nbd->config_refs);
+ 		nbd_connect_reply(info, nbd->index);
+ 	}
+@@ -2008,6 +2013,14 @@ static int nbd_genl_disconnect(struct sk_buff *skb, struct genl_info *info)
+ 		       index);
+ 		return -EINVAL;
+ 	}
++
++	if (!test_bit(NBD_HAS_STARTED, &nbd->flags)) {
++		mutex_unlock(&nbd_index_mutex);
++		printk(KERN_ERR "nbd: device at index %d failed to start\n",
++		       index);
++		return -EBUSY;
++	}
++
+ 	if (!refcount_inc_not_zero(&nbd->refs)) {
+ 		mutex_unlock(&nbd_index_mutex);
+ 		printk(KERN_ERR "nbd: device at index %d is going down\n",
+@@ -2049,6 +2062,14 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 		       index);
+ 		return -EINVAL;
+ 	}
++
++	if (!test_bit(NBD_HAS_STARTED, &nbd->flags)) {
++		mutex_unlock(&nbd_index_mutex);
++		printk(KERN_ERR "nbd: device at index %d failed to start\n",
++		       index);
++		return -EBUSY;
++	}
++
+ 	if (!refcount_inc_not_zero(&nbd->refs)) {
+ 		mutex_unlock(&nbd_index_mutex);
+ 		printk(KERN_ERR "nbd: device at index %d is going down\n",
+-- 
+2.17.2
+
