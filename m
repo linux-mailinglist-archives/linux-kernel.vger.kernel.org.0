@@ -2,90 +2,286 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4641406CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43AA11406D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgAQJrg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:47:36 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38609 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbgAQJrf (ORCPT
+        id S1729037AbgAQJtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:49:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28730 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727665AbgAQJto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:47:35 -0500
-Received: by mail-ed1-f66.google.com with SMTP id i16so21677783edr.5;
-        Fri, 17 Jan 2020 01:47:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=M2H04oFMQClOJRF53bzNbKYuXDn11Q5ncPxXvQj1eI0=;
-        b=QTgyBAbtBdrf/arF2vRIshn7dzjpjf3Lw2KHZv1s31zsyKOYBy73upjsFEIz25eKHZ
-         kVUqolz5KcwW265CLz4RuIifEq5A7Maxtbn2Xt/uEWBgHJyxAiThbLoFZxv8vOv95/i/
-         pP3+4GeSnswYWUqfJlnmnO4xIauXkmYcqSx6dtLvxhIW16BhSd9TPqbdF9+tZXwAg9C8
-         GAzSgMaK49rMR0vRWjXo7xGOjT12IF49Kr1S9cwTpkcpH6H3yLxbOjsXzZbdQr5DriA3
-         prvE7uT1/GQkj8Uu/j6sOqQPO7MYU6oAuxMIem0uvHRD25XeO/5HACLITa2EVE0IBf6E
-         F5xg==
+        Fri, 17 Jan 2020 04:49:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579254583;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2DEmJ5gzdkN5fJt0y4FiCUVkAhDydkqj1OLIvLy08AQ=;
+        b=KOF5uLIuL8EQoMcmV/0PLGJxqH0RLZO0MXYE2gk81Znld+Ne/pxwybiwRfuY27hxPsqWBY
+        YAPwhQeaew1skfJ6C+NLxErF3vtkfIyNp7CGYPHBwSJKwfsDMU6dFfr2NLwi2oYJ9MyoCU
+        9V9bps9pXPynlkSe8e86fBKp186mInA=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-105-TaQJBqswMQKrbwh0H6qgxQ-1; Fri, 17 Jan 2020 04:49:40 -0500
+X-MC-Unique: TaQJBqswMQKrbwh0H6qgxQ-1
+Received: by mail-lj1-f200.google.com with SMTP id b15so6027814ljp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:49:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=M2H04oFMQClOJRF53bzNbKYuXDn11Q5ncPxXvQj1eI0=;
-        b=SL5B4TVTOVAK653vKBLTRj92N0mPIGQT3RHqS58jCR1rmL1nVQLUXTiDfO5ij6f04A
-         6+2Isf7yP402nnsvouWNoi//BXMKpF37FouuYd0/IH0R1H45EYKWZjyBdAxHhiq/isi5
-         TJnLPU4t2gjNmHSyg6920qwPnty32TqBekmYg/5okH+VNInRtCFguIGAquZ/tOfHA2nX
-         YvEmRrw5dy+eXifwopC0oGJItiiQFYERNyNU8MUK9oQrDNewhdnu/mPkZL7JmOK20gWR
-         cgqyaoueNqrb2smfjSafE+3atVpcWjGLdGiq5fZM0lu6XuLbKig6o2Hd+HFXr5amjdXh
-         MGsQ==
-X-Gm-Message-State: APjAAAVA/jv5G0JohZF7+UtcaSQUdjQb6ucZsYhFKN0GNHja4MuZduyu
-        V4GLGi3c79S+WOZpceD9anU89k6hbVjucsmliZA=
-X-Google-Smtp-Source: APXvYqxcszSOGk1df4pS/p/jWmCxduCkNXzBykj+PzGBGPgkrJrFcBop5OGwYK+qY92vUixz8zZM/mtEdjvUTBO/6lU=
-X-Received: by 2002:aa7:d450:: with SMTP id q16mr2707757edr.169.1579254453401;
- Fri, 17 Jan 2020 01:47:33 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=2DEmJ5gzdkN5fJt0y4FiCUVkAhDydkqj1OLIvLy08AQ=;
+        b=HnLkAe8jOjVCkSxUYqp/Zy0UTYc+/q0tCP1xIpQS//NhjtxJIHnkpRQLfVO1WU4jr8
+         MpgesgJKZxI8RlSXXnl7I1a9OyLEYJ3BqPUBcsDWM5HEalQ300gFtYrgEY0oZQ1b7a6X
+         I1zXiaWvXWhRdLOB38GFtZtZapNiynzhgKfnWUaskIAfl2WWZJI1KzNXvdJ7r5OWGAg0
+         Q5xxAIAV1DKP8U9+DroUY0+fy0YYmf34Ps3gA2TI/b/PQr5HnlO2ju0qoVkspDhZiR/8
+         eP0VIBhUej7c8CGzcPdKbiMs1PiD8k8jUyC4Z9NKj7GPue0gBOpTI5CEieYCzWVOipLK
+         QcuA==
+X-Gm-Message-State: APjAAAVCQM/61oAa5dlVnzxuGDHk1hAwAvfJJCFSnWndwZWLdbvSKOVN
+        6I/XwB0SlPnpwsvhDdVD/Lf3iWUowF5D3uKcSzKE3UqxEguKQmCEpEYM366eUVar7bRLELCJdYA
+        23d7J1oJXPVJpVY6sHM/2fT7R
+X-Received: by 2002:a2e:5357:: with SMTP id t23mr5182972ljd.227.1579254578785;
+        Fri, 17 Jan 2020 01:49:38 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyk8gykyxX78t+pO2Au2DCESKKccxpSnivLcv8OMT8l6K8LCcsYcPg8bPfRFnts07+nJ1KN3Q==
+X-Received: by 2002:a2e:5357:: with SMTP id t23mr5182947ljd.227.1579254578524;
+        Fri, 17 Jan 2020 01:49:38 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id r9sm13683623lfc.72.2020.01.17.01.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 01:49:37 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id C6AC21804D6; Fri, 17 Jan 2020 10:49:36 +0100 (CET)
+From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        "open list\:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH bpf-next v3 09/11] selftests: Remove tools/lib/bpf from include path
+In-Reply-To: <CAEf4Bzba5FHN_iN52qRiGisRcauur1FqDY545EwE+RVR-nFvQA@mail.gmail.com>
+References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <157918094179.1357254.14428494370073273452.stgit@toke.dk> <CAEf4Bzba5FHN_iN52qRiGisRcauur1FqDY545EwE+RVR-nFvQA@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date:   Fri, 17 Jan 2020 10:49:36 +0100
+Message-ID: <87r1zyquof.fsf@toke.dk>
 MIME-Version: 1.0
-Received: by 2002:a05:6402:1c11:0:0:0:0 with HTTP; Fri, 17 Jan 2020 01:47:32
- -0800 (PST)
-In-Reply-To: <20200116191632.GB117689@otc-nc-03>
-References: <CACMCwJLJCA2iXS0QMKKAWQv252oUcmfsNvwDNP5+4Z_9VB-rTg@mail.gmail.com>
- <5C216684-6FDF-41B5-9F51-89DC295F6DDC@amacapital.net> <CACMCwJLogOH-nG7QEMzrXK-iJPOdzCrL05y0a6yAbtPsfdRjsQ@mail.gmail.com>
- <CAHk-=wiqPHc=BzSYO4N=awucq0td3s9VuBkct=m-B_xZVCgzBg@mail.gmail.com>
- <CACMCwJL+kdkJRfRhG6bt_ojU0UeipqxVL3vwS3ETqVEjnWL1ew@mail.gmail.com> <20200116191632.GB117689@otc-nc-03>
-From:   Jari Ruusu <jari.ruusu@gmail.com>
-Date:   Fri, 17 Jan 2020 11:47:32 +0200
-Message-ID: <CACMCwJLTWi=8yyhdxjsnwtqc_M7K4fPaJtB9PRiq_sz_q0R3UA@mail.gmail.com>
-Subject: Re: Fix built-in early-load Intel microcode alignment
-To:     "Raj, Ashok" <ashok.raj@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Fenghua Yu <fenghua.yu@intel.com>, johannes.berg@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/20, Raj, Ashok <ashok.raj@intel.com> wrote:
-> I don't suspect the alignment issue during microcode load to trigger
-> any hangs after couple days.
+Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
 
-Microcode was properly aligned when it was loaded to CPU.
-
-> Can you please also document the OEM, BIOS versions, and also both the
-> old and new microcode versions after the update.
+> On Thu, Jan 16, 2020 at 5:28 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@re=
+dhat.com> wrote:
+>>
+>> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>>
+>> To make sure no new files are introduced that doesn't include the bpf/
+>> prefix in its #include, remove tools/lib/bpf from the include path
+>> entirely.
+>>
+>> Instead, we introduce a new header files directory under the scratch too=
+ls/
+>> dir, and add a rule to run the 'install_headers' rule from libbpf to hav=
+e a
+>> full set of consistent libbpf headers in $(OUTPUT)/tools/include/bpf, and
+>> then use $(OUTPUT)/tools/include as the include path for selftests.
+>>
+>> For consistency we also make sure we put all the scratch build files from
+>> other bpftool and libbpf into tools/build/, so everything stays within
+>> selftests/.
+>>
+>> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>> ---
+>>  tools/testing/selftests/bpf/.gitignore |    1 +
+>>  tools/testing/selftests/bpf/Makefile   |   50 +++++++++++++++++++------=
+-------
+>>  2 files changed, 31 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/self=
+tests/bpf/.gitignore
+>> index 1d14e3ab70be..849be9990ad2 100644
+>> --- a/tools/testing/selftests/bpf/.gitignore
+>> +++ b/tools/testing/selftests/bpf/.gitignore
+>> @@ -40,3 +40,4 @@ test_cpp
+>>  /bpf_gcc
+>>  /tools
+>>  bpf_helper_defs.h
+>> +/include/bpf
 >
-> Would suggest logging the hang issue in public github for microcode issues.
-> This would let the product folks look at them.
+> Isn't the real path (within selftests/bpf) a tools/include/bpf, which
+> is already ignored through /tools rule?
+
+Yeah, you're correct. I started out with having it in include/bpf, but
+ended up moving it, and guess I forgot to remove the .gitignore. Will fix.
+
+>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selfte=
+sts/bpf/Makefile
+>> index 1fd7da49bd56..c3fa695bb028 100644
+>> --- a/tools/testing/selftests/bpf/Makefile
+>> +++ b/tools/testing/selftests/bpf/Makefile
+>> @@ -20,8 +20,8 @@ CLANG         ?=3D clang
+>>  LLC            ?=3D llc
+>>  LLVM_OBJCOPY   ?=3D llvm-objcopy
+>>  BPF_GCC                ?=3D $(shell command -v bpf-gcc;)
+>> -CFLAGS +=3D -g -Wall -O2 $(GENFLAGS) -I$(CURDIR) -I$(APIDIR) -I$(LIBDIR=
+)  \
+>> -         -I$(BPFDIR) -I$(GENDIR) -I$(TOOLSINCDIR)                      \
+>> +CFLAGS +=3D -g -Wall -O2 $(GENFLAGS) -I$(CURDIR) -I$(APIDIR)           =
+   \
+>> +         -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR) -I$(TOOLSINCDIR)     \
+>>           -Dbpf_prog_load=3Dbpf_prog_test_load                          =
+  \
+>>           -Dbpf_load_program=3Dbpf_test_load_program
+>>  LDLIBS +=3D -lcap -lelf -lz -lrt -lpthread
+>> @@ -97,11 +97,15 @@ OVERRIDE_TARGETS :=3D 1
+>>  override define CLEAN
+>>         $(call msg,CLEAN)
+>>         $(RM) -r $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN=
+_FILES) $(EXTRA_CLEAN)
+>> -       $(MAKE) -C $(BPFDIR) OUTPUT=3D$(OUTPUT)/ clean
+>>  endef
+>>
+>>  include ../lib.mk
+>>
+>> +SCRATCH_DIR :=3D $(OUTPUT)/tools
+>> +BUILD_DIR :=3D $(SCRATCH_DIR)/build
+>> +INCLUDE_DIR :=3D $(SCRATCH_DIR)/include
+>> +INCLUDE_BPF :=3D $(INCLUDE_DIR)/bpf/bpf.h
+>> +
+>>  # Define simple and short `make test_progs`, `make test_sysctl`, etc ta=
+rgets
+>>  # to build individual tests.
+>>  # NOTE: Semicolon at the end is critical to override lib.mk's default s=
+tatic
+>> @@ -120,7 +124,7 @@ $(OUTPUT)/urandom_read: urandom_read.c
+>>         $(call msg,BINARY,,$@)
+>>         $(CC) -o $@ $< -Wl,--build-id
+>>
+>> -$(OUTPUT)/test_stub.o: test_stub.c
+>> +$(OUTPUT)/test_stub.o: test_stub.c $(INCLUDE_BPF)
+>>         $(call msg,CC,,$@)
+>>         $(CC) -c $(CFLAGS) -o $@ $<
+>>
+>> @@ -129,7 +133,7 @@ $(OUTPUT)/runqslower: force
+>>         $(Q)$(MAKE) $(submake_extras) -C $(TOOLSDIR)/bpf/runqslower     =
+      \
+>>                     OUTPUT=3D$(CURDIR)/tools/ VMLINUX_BTF=3D$(abspath ..=
+/../../../vmlinux)
+>>
+>> -BPFOBJ :=3D $(OUTPUT)/libbpf.a
+>> +BPFOBJ :=3D $(BUILD_DIR)/libbpf/libbpf.a
+>>
+>>  $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED): $(OUTPUT)/test_stub.o $(B=
+PFOBJ)
+>>
+>> @@ -155,17 +159,23 @@ force:
+>>  DEFAULT_BPFTOOL :=3D $(OUTPUT)/tools/sbin/bpftool
+>>  BPFTOOL ?=3D $(DEFAULT_BPFTOOL)
+>>
+>> -$(DEFAULT_BPFTOOL): force
+>> -       $(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)                 =
+      \
+>> +$(BUILD_DIR)/libbpf $(BUILD_DIR)/bpftool $(INCLUDE_DIR):
+>> +       $(call msg,MKDIR,,$@)
+>> +       mkdir -p $@
+>> +
+>> +$(DEFAULT_BPFTOOL): force $(BUILD_DIR)/bpftool
 >
-> https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files
+> directories should be included as order-only dependencies (after | )
 
-I opened issue there.
+OK.
 
-https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/issues/23
+>> +       $(Q)$(MAKE) $(submake_extras)  -C $(BPFTOOLDIR)         \
+>> +                   OUTPUT=3D$(BUILD_DIR)/bpftool/                      =
+  \
+>>                     prefix=3D DESTDIR=3D$(OUTPUT)/tools/ install
+>>
+>> -$(BPFOBJ): force
+>> -       $(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) OUTPUT=3D$(OUTPUT)/
+>> +$(BPFOBJ): force $(BUILD_DIR)/libbpf
+>
+> same
+>
+>> +       $(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) \
+>> +               OUTPUT=3D$(BUILD_DIR)/libbpf/
+>>
+>> -BPF_HELPERS :=3D $(OUTPUT)/bpf_helper_defs.h $(wildcard $(BPFDIR)/bpf_*=
+.h)
+>> -$(OUTPUT)/bpf_helper_defs.h: $(BPFOBJ)
+>> -       $(Q)$(MAKE) $(submake_extras) -C $(BPFDIR)                      =
+      \
+>> -                   OUTPUT=3D$(OUTPUT)/ $(OUTPUT)/bpf_helper_defs.h
+>> +BPF_HELPERS :=3D $(wildcard $(BPFDIR)/bpf_*.h) $(INCLUDE_BPF)
+>
+> Shouldn't all BPF_HELPERS come from $(INCLUDE_DIR)/bpf now?
+>
+>> +$(INCLUDE_BPF): force $(BPFOBJ)
+>
+> And this can be more properly a $(BPF_HELPERS): force $(BPFOBJ)?
+>
+>> +       $(Q)$(MAKE) $(submake_extras) -C $(BPFDIR) install_headers \
+>> +               OUTPUT=3D$(BUILD_DIR)/libbpf/ DESTDIR=3D$(SCRATCH_DIR) p=
+refix=3D
+>>
+>>  # Get Clang's default includes on this system, as opposed to those seen=
+ by
+>>  # '-target bpf'. This fixes "missing" files on some architectures/distr=
+os,
+>> @@ -185,8 +195,8 @@ MENDIAN=3D$(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-=
+mbig-endian)
+>>
+>>  CLANG_SYS_INCLUDES =3D $(call get_sys_includes,$(CLANG))
+>>  BPF_CFLAGS =3D -g -D__TARGET_ARCH_$(SRCARCH) $(MENDIAN)                =
+  \
+>> -            -I$(OUTPUT) -I$(CURDIR) -I$(CURDIR)/include/uapi           \
+>> -            -I$(APIDIR) -I$(LIBDIR) -I$(BPFDIR) -I$(abspath $(OUTPUT)/.=
+./usr/include)
+>> +            -I$(INCLUDE_DIR) -I$(CURDIR) -I$(CURDIR)/include/uapi      \
+>> +            -I$(APIDIR) -I$(abspath $(OUTPUT)/../usr/include)
+>>
+>>  CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES) \
+>>                -Wno-compare-distinct-pointer-types
+>> @@ -306,7 +316,7 @@ $(TRUNNER_TEST_OBJS): $(TRUNNER_OUTPUT)/%.test.o:   =
+                \
+>>                       $(TRUNNER_EXTRA_HDRS)                             \
+>>                       $(TRUNNER_BPF_OBJS)                               \
+>>                       $(TRUNNER_BPF_SKELS)                              \
+>> -                     $$(BPFOBJ) | $(TRUNNER_OUTPUT)
+>> +                     $$(BPFOBJ) $$(INCLUDE_BPF) | $(TRUNNER_OUTPUT)
+>
+> singling out $(INCLUDE_BPF) looks weird? But I think $(BPFOBJ)
+> achieves the same effect, so this change can be probably dropped? Same
+> below.
 
--- 
-Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
+I was having some trouble getting the dependency order right here.
+$(INCLUDE_BPF) depends on $(BPFOBJ), not the other way around. May be
+fixable though, I'll take another look.
+
+-Toke
+
