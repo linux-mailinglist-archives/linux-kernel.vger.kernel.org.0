@@ -2,279 +2,392 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08248140AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C8FD140B07
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbgAQNgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:36:17 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30692 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726587AbgAQNgQ (ORCPT
+        id S1729047AbgAQNhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:37:24 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48103 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726950AbgAQNgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:36:16 -0500
+        Fri, 17 Jan 2020 08:36:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579268175;
+        s=mimecast20190719; t=1579268203;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BXIQYnzHX8n6+tW01eTbYB3ooJ5AGH7OZQJ9hqGsZMU=;
-        b=X9fygf23Ly6nug4PVHMmDNUst4GOj6gZ5ej/yGIv7SaQ4u2Hn3bW31mg/pdcqu9M5583yb
-        yKg33lMQb7bwxyrRN4jvbw0hyLsXmbheRPPmXGT5ItdcoWoDcNug9+UpF7CEx4KEcR57u6
-        1xP7TFDptebQ6Ju7MDSEg6hDwxg2zrg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-NLi7InnQNdWBQM_RQla3YQ-1; Fri, 17 Jan 2020 08:36:12 -0500
-X-MC-Unique: NLi7InnQNdWBQM_RQla3YQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 110B61800D48;
-        Fri, 17 Jan 2020 13:36:10 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-16.phx2.redhat.com [10.3.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D416619C4F;
-        Fri, 17 Jan 2020 13:36:07 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 644B711E4; Fri, 17 Jan 2020 10:36:04 -0300 (BRT)
-Date:   Fri, 17 Jan 2020 10:36:04 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9UHfRadrERMA1dU8MCwmB7dMaKqgeyt0Vqi49f22blc=;
+        b=cTfpSQgPAi5a08qqHyDqqFCDF6RUC+IqqzNlrU6XAF74EzGARq2KKwZcN6HqbFbgx44uQG
+        cp1oEd8UL5ROciz5I6EZ/4L4qE5Gid5UIuJZQkWd366SVpedH0zz1VOBCI1JRYhpvBMIuU
+        RNU0NNYXGIg91yO8++AWb513RhHpgFk=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-173-g418jdM_Pd-xRmgzkENVXg-1; Fri, 17 Jan 2020 08:36:42 -0500
+X-MC-Unique: g418jdM_Pd-xRmgzkENVXg-1
+Received: by mail-lf1-f72.google.com with SMTP id d6so4394657lfl.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:36:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=9UHfRadrERMA1dU8MCwmB7dMaKqgeyt0Vqi49f22blc=;
+        b=OFjqFCRxyVdBc7vZNPKvW/65iunX/FlleQwjiDmtWNV9EP3KrynBw4OfuEz3SzwR7D
+         dMFIi1xvFc6R1ZbazsS35we4mrnmfd8cjqQXFoCYmkg2Khqo6D0KKb28VsOtPNIZviz4
+         cuOUrSvQhhMDltAIgINznvu6MeP7TenuRCz02SWXVFrHQaVc1vFVJ1tHLQIPG+ryZ8M1
+         BMQ2gdO39y+7Xq8qN23bIH7aNglx0hpCneRjeHtfyd6hbrwPwzAnU7JyqV/c4fbIfUID
+         A0Tuqw2QfnZtTGr2J8grKV6AyE3qG21k/SAu3VeLACtIPfKnutw+uCBtqg7lDYlD///6
+         DQ8Q==
+X-Gm-Message-State: APjAAAUf6qHw2FmisDZ7IhgXCG52J0SFYc8kfv+Jqwn1i9JgvrSSQ8hl
+        mRxs7l8EvBgNogyPsSUuwx8SiAyMMg8sTynbL0A08sbBD3kmGgcwxkiIV9EZnyGiavmvIfIa79i
+        lE1zdg33w2ib+E6diq2OzZZsR
+X-Received: by 2002:a2e:8316:: with SMTP id a22mr5562718ljh.141.1579268200743;
+        Fri, 17 Jan 2020 05:36:40 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz3yrkOVyuX4zFdp7e3Ukmu9NChlM1OeWzm2a0yJyiWFBPYA3QiZ2IAyc8ifsIuGPXY653WYQ==
+X-Received: by 2002:a2e:8316:: with SMTP id a22mr5562677ljh.141.1579268200380;
+        Fri, 17 Jan 2020 05:36:40 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id b19sm12450246ljk.25.2020.01.17.05.36.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 05:36:39 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+        id 2650D1804D6; Fri, 17 Jan 2020 14:36:37 +0100 (CET)
+Subject: [PATCH bpf-next v4 00/10] tools: Use consistent libbpf include paths
+ everywhere
+From:   =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To:     Alexei Starovoitov <ast@kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>
-Subject: Re: [PATCH v6 1/2] perf parse: Refactor struct perf_evsel_config_term
-Message-ID: <20200117133604.GC3323@redhat.com>
-References: <20200117055251.24058-1-leo.yan@linaro.org>
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Date:   Fri, 17 Jan 2020 14:36:37 +0100
+Message-ID: <157926819690.1555735.10756593211671752826.stgit@toke.dk>
+User-Agent: StGit/0.21
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117055251.24058-1-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jan 17, 2020 at 01:52:50PM +0800, Leo Yan escreveu:
-> The struct perf_evsel_config_term::val is a union which contains
-> fields 'callgraph', 'drv_cfg' and 'branch' as string pointers.  This
-> leads to the complex code logic for handling every type's string
-> separately, and it's hard to release string as a general way.
-> 
-> This patch refactors the structure to add a common field 'str' in the
-> 'val' union as string pointer and remove the other three fields
-> 'callgraph', 'drv_cfg' and 'branch'.  Without passing field name, the
-> patch simplifies the string handling with macro ADD_CONFIG_TERM_STR()
-> for string pointer assignment.
-> 
-> This patch fixes multiple warnings of line over 80 characters detected
-> by checkpatch tool.
+We are currently being somewhat inconsistent with the libbpf include paths,
+which makes it difficult to move files from the kernel into an external
+libbpf-using project without adjusting include paths.
 
-Thanks, applied both.
- 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/arch/arm/util/cs-etm.c |  2 +-
->  tools/perf/util/evsel.c           |  6 +--
->  tools/perf/util/evsel_config.h    |  4 +-
->  tools/perf/util/parse-events.c    | 62 ++++++++++++++++++++-----------
->  4 files changed, 45 insertions(+), 29 deletions(-)
-> 
-> diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-> index ede040cf82ad..2898cfdf8fe1 100644
-> --- a/tools/perf/arch/arm/util/cs-etm.c
-> +++ b/tools/perf/arch/arm/util/cs-etm.c
-> @@ -226,7 +226,7 @@ static int cs_etm_set_sink_attr(struct perf_pmu *pmu,
->  		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
->  			continue;
->  
-> -		sink = term->val.drv_cfg;
-> +		sink = term->val.str;
->  		snprintf(path, PATH_MAX, "sinks/%s", sink);
->  
->  		ret = perf_pmu__scan_file(pmu, path, "%x", &hash);
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index a69e64236120..549abd43816f 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -808,12 +808,12 @@ static void apply_config_terms(struct evsel *evsel,
->  				perf_evsel__reset_sample_bit(evsel, TIME);
->  			break;
->  		case PERF_EVSEL__CONFIG_TERM_CALLGRAPH:
-> -			callgraph_buf = term->val.callgraph;
-> +			callgraph_buf = term->val.str;
->  			break;
->  		case PERF_EVSEL__CONFIG_TERM_BRANCH:
-> -			if (term->val.branch && strcmp(term->val.branch, "no")) {
-> +			if (term->val.str && strcmp(term->val.str, "no")) {
->  				perf_evsel__set_sample_bit(evsel, BRANCH_STACK);
-> -				parse_branch_str(term->val.branch,
-> +				parse_branch_str(term->val.str,
->  						 &attr->branch_sample_type);
->  			} else
->  				perf_evsel__reset_sample_bit(evsel, BRANCH_STACK);
-> diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-> index 1f8d2fe0b66e..b4a65201e4f7 100644
-> --- a/tools/perf/util/evsel_config.h
-> +++ b/tools/perf/util/evsel_config.h
-> @@ -36,18 +36,16 @@ struct perf_evsel_config_term {
->  		u64	      period;
->  		u64	      freq;
->  		bool	      time;
-> -		char	      *callgraph;
-> -		char	      *drv_cfg;
->  		u64	      stack_user;
->  		int	      max_stack;
->  		bool	      inherit;
->  		bool	      overwrite;
-> -		char	      *branch;
->  		unsigned long max_events;
->  		bool	      percore;
->  		bool	      aux_output;
->  		u32	      aux_sample_size;
->  		u64	      cfg_chg;
-> +		char	      *str;
->  	} val;
->  	bool weak;
->  };
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index ed7c008b9c8b..f59f3c8da473 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1219,8 +1219,7 @@ static int config_attr(struct perf_event_attr *attr,
->  static int get_config_terms(struct list_head *head_config,
->  			    struct list_head *head_terms __maybe_unused)
->  {
-> -#define ADD_CONFIG_TERM(__type, __name, __val)			\
-> -do {								\
-> +#define ADD_CONFIG_TERM(__type)					\
->  	struct perf_evsel_config_term *__t;			\
->  								\
->  	__t = zalloc(sizeof(*__t));				\
-> @@ -1229,9 +1228,19 @@ do {								\
->  								\
->  	INIT_LIST_HEAD(&__t->list);				\
->  	__t->type       = PERF_EVSEL__CONFIG_TERM_ ## __type;	\
-> -	__t->val.__name = __val;				\
->  	__t->weak	= term->weak;				\
-> -	list_add_tail(&__t->list, head_terms);			\
-> +	list_add_tail(&__t->list, head_terms)
-> +
-> +#define ADD_CONFIG_TERM_VAL(__type, __name, __val)		\
-> +do {								\
-> +	ADD_CONFIG_TERM(__type);				\
-> +	__t->val.__name = __val;				\
-> +} while (0)
-> +
-> +#define ADD_CONFIG_TERM_STR(__type, __val)			\
-> +do {								\
-> +	ADD_CONFIG_TERM(__type);				\
-> +	__t->val.str = __val;					\
->  } while (0)
->  
->  	struct parse_events_term *term;
-> @@ -1239,53 +1248,62 @@ do {								\
->  	list_for_each_entry(term, head_config, list) {
->  		switch (term->type_term) {
->  		case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
-> -			ADD_CONFIG_TERM(PERIOD, period, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(PERIOD, period, term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
-> -			ADD_CONFIG_TERM(FREQ, freq, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(FREQ, freq, term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_TIME:
-> -			ADD_CONFIG_TERM(TIME, time, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(TIME, time, term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_CALLGRAPH:
-> -			ADD_CONFIG_TERM(CALLGRAPH, callgraph, term->val.str);
-> +			ADD_CONFIG_TERM_STR(CALLGRAPH, term->val.str);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_BRANCH_SAMPLE_TYPE:
-> -			ADD_CONFIG_TERM(BRANCH, branch, term->val.str);
-> +			ADD_CONFIG_TERM_STR(BRANCH, term->val.str);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_STACKSIZE:
-> -			ADD_CONFIG_TERM(STACK_USER, stack_user, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(STACK_USER, stack_user,
-> +					    term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_INHERIT:
-> -			ADD_CONFIG_TERM(INHERIT, inherit, term->val.num ? 1 : 0);
-> +			ADD_CONFIG_TERM_VAL(INHERIT, inherit,
-> +					    term->val.num ? 1 : 0);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_NOINHERIT:
-> -			ADD_CONFIG_TERM(INHERIT, inherit, term->val.num ? 0 : 1);
-> +			ADD_CONFIG_TERM_VAL(INHERIT, inherit,
-> +					    term->val.num ? 0 : 1);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_MAX_STACK:
-> -			ADD_CONFIG_TERM(MAX_STACK, max_stack, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(MAX_STACK, max_stack,
-> +					    term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_MAX_EVENTS:
-> -			ADD_CONFIG_TERM(MAX_EVENTS, max_events, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(MAX_EVENTS, max_events,
-> +					    term->val.num);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_OVERWRITE:
-> -			ADD_CONFIG_TERM(OVERWRITE, overwrite, term->val.num ? 1 : 0);
-> +			ADD_CONFIG_TERM_VAL(OVERWRITE, overwrite,
-> +					    term->val.num ? 1 : 0);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_NOOVERWRITE:
-> -			ADD_CONFIG_TERM(OVERWRITE, overwrite, term->val.num ? 0 : 1);
-> +			ADD_CONFIG_TERM_VAL(OVERWRITE, overwrite,
-> +					    term->val.num ? 0 : 1);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
-> -			ADD_CONFIG_TERM(DRV_CFG, drv_cfg, term->val.str);
-> +			ADD_CONFIG_TERM_STR(DRV_CFG, term->val.str);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_PERCORE:
-> -			ADD_CONFIG_TERM(PERCORE, percore,
-> -					term->val.num ? true : false);
-> +			ADD_CONFIG_TERM_VAL(PERCORE, percore,
-> +					    term->val.num ? true : false);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT:
-> -			ADD_CONFIG_TERM(AUX_OUTPUT, aux_output, term->val.num ? 1 : 0);
-> +			ADD_CONFIG_TERM_VAL(AUX_OUTPUT, aux_output,
-> +					    term->val.num ? 1 : 0);
->  			break;
->  		case PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE:
-> -			ADD_CONFIG_TERM(AUX_SAMPLE_SIZE, aux_sample_size, term->val.num);
-> +			ADD_CONFIG_TERM_VAL(AUX_SAMPLE_SIZE, aux_sample_size,
-> +					    term->val.num);
->  			break;
->  		default:
->  			break;
-> @@ -1322,7 +1340,7 @@ static int get_config_chgs(struct perf_pmu *pmu, struct list_head *head_config,
->  	}
->  
->  	if (bits)
-> -		ADD_CONFIG_TERM(CFG_CHG, cfg_chg, bits);
-> +		ADD_CONFIG_TERM_VAL(CFG_CHG, cfg_chg, bits);
->  
->  #undef ADD_CONFIG_TERM
->  	return 0;
-> -- 
-> 2.17.1
+Having the bpf/ subdir of $INCLUDEDIR in the include path has never been a
+requirement for building against libbpf before, and indeed the libbpf pkg-config
+file doesn't include it. So let's make all libbpf includes across the kernel
+tree use the bpf/ prefix in their includes. Since bpftool skeleton generation
+emits code with a libbpf include, this also ensures that those can be used in
+existing external projects using the regular pkg-config include path.
+
+This turns out to be a somewhat invasive change in the number of files touched;
+however, the actual changes to files are fairly trivial (most of them are simply
+made with 'sed'). The series is split to make the change for one tool subdir at
+a time, while trying not to break the build along the way. It is structured like
+this:
+
+- Patch 1-3: Trivial fixes to Makefiles for issues I discovered while changing
+  the include paths.
+
+- Patch 4-8: Change the include directives to use the bpf/ prefix, and updates
+  Makefiles to make sure tools/lib/ is part of the include path, but without
+  removing tools/lib/bpf
+
+- Patch 9-10: Remove tools/lib/bpf from include paths to make sure we don't
+  inadvertently re-introduce includes without the bpf/ prefix.
+
+Changelog:
+
+v4:
+  - Move runqslower error on missing BTF into make rule
+  - Make sure we don't always force a rebuild selftests
+  - Rebase on latest bpf-next (dropping patch 11)
+
+v3:
+  - Don't add the kernel build dir to the runqslower Makefile, pass it in from
+    selftests instead.
+  - Use libbpf's 'make install_headers' in selftests instead of trying to
+    generate bpf_helper_defs.h in-place (to also work on read-only filesystems).
+  - Use a scratch builddir for both libbpf and bpftool when building in selftests.
+  - Revert bpf_helpers.h to quoted include instead of angled include with a bpf/
+    prefix.
+  - Fix a few style nits from Andrii
+
+v2:
+  - Do a full cleanup of libbpf includes instead of just changing the
+    bpf_helper_defs.h include.
+
+---
+
+Toke Høiland-Jørgensen (10):
+      samples/bpf: Don't try to remove user's homedir on clean
+      tools/bpf/runqslower: Fix override option for VMLINUX_BTF
+      selftests: Pass VMLINUX_BTF to runqslower Makefile
+      tools/runqslower: Use consistent include paths for libbpf
+      selftests: Use consistent include paths for libbpf
+      bpftool: Use consistent include paths for libbpf
+      perf: Use consistent include paths for libbpf
+      samples/bpf: Use consistent include paths for libbpf
+      selftests: Remove tools/lib/bpf from include path
+      tools/runqslower: Remove tools/lib/bpf from include path
+
+
+ samples/bpf/Makefile                               |    5 +-
+ samples/bpf/cpustat_kern.c                         |    2 -
+ samples/bpf/fds_example.c                          |    2 -
+ samples/bpf/hbm.c                                  |    4 +
+ samples/bpf/hbm_kern.h                             |    4 +
+ samples/bpf/ibumad_kern.c                          |    2 -
+ samples/bpf/ibumad_user.c                          |    2 -
+ samples/bpf/lathist_kern.c                         |    2 -
+ samples/bpf/lwt_len_hist_kern.c                    |    2 -
+ samples/bpf/map_perf_test_kern.c                   |    4 +
+ samples/bpf/offwaketime_kern.c                     |    4 +
+ samples/bpf/offwaketime_user.c                     |    2 -
+ samples/bpf/parse_ldabs.c                          |    2 -
+ samples/bpf/parse_simple.c                         |    2 -
+ samples/bpf/parse_varlen.c                         |    2 -
+ samples/bpf/sampleip_kern.c                        |    4 +
+ samples/bpf/sampleip_user.c                        |    2 -
+ samples/bpf/sock_flags_kern.c                      |    2 -
+ samples/bpf/sockex1_kern.c                         |    2 -
+ samples/bpf/sockex1_user.c                         |    2 -
+ samples/bpf/sockex2_kern.c                         |    2 -
+ samples/bpf/sockex2_user.c                         |    2 -
+ samples/bpf/sockex3_kern.c                         |    2 -
+ samples/bpf/spintest_kern.c                        |    4 +
+ samples/bpf/spintest_user.c                        |    2 -
+ samples/bpf/syscall_tp_kern.c                      |    2 -
+ samples/bpf/task_fd_query_kern.c                   |    2 -
+ samples/bpf/task_fd_query_user.c                   |    2 -
+ samples/bpf/tc_l2_redirect_kern.c                  |    2 -
+ samples/bpf/tcbpf1_kern.c                          |    2 -
+ samples/bpf/tcp_basertt_kern.c                     |    4 +
+ samples/bpf/tcp_bufs_kern.c                        |    4 +
+ samples/bpf/tcp_clamp_kern.c                       |    4 +
+ samples/bpf/tcp_cong_kern.c                        |    4 +
+ samples/bpf/tcp_dumpstats_kern.c                   |    4 +
+ samples/bpf/tcp_iw_kern.c                          |    4 +
+ samples/bpf/tcp_rwnd_kern.c                        |    4 +
+ samples/bpf/tcp_synrto_kern.c                      |    4 +
+ samples/bpf/tcp_tos_reflect_kern.c                 |    4 +
+ samples/bpf/test_cgrp2_tc_kern.c                   |    2 -
+ samples/bpf/test_current_task_under_cgroup_kern.c  |    2 -
+ samples/bpf/test_lwt_bpf.c                         |    2 -
+ samples/bpf/test_map_in_map_kern.c                 |    4 +
+ samples/bpf/test_overhead_kprobe_kern.c            |    4 +
+ samples/bpf/test_overhead_raw_tp_kern.c            |    2 -
+ samples/bpf/test_overhead_tp_kern.c                |    2 -
+ samples/bpf/test_probe_write_user_kern.c           |    4 +
+ samples/bpf/trace_event_kern.c                     |    4 +
+ samples/bpf/trace_event_user.c                     |    2 -
+ samples/bpf/trace_output_kern.c                    |    2 -
+ samples/bpf/trace_output_user.c                    |    2 -
+ samples/bpf/tracex1_kern.c                         |    4 +
+ samples/bpf/tracex2_kern.c                         |    4 +
+ samples/bpf/tracex3_kern.c                         |    4 +
+ samples/bpf/tracex4_kern.c                         |    4 +
+ samples/bpf/tracex5_kern.c                         |    4 +
+ samples/bpf/tracex6_kern.c                         |    2 -
+ samples/bpf/tracex7_kern.c                         |    2 -
+ samples/bpf/xdp1_kern.c                            |    2 -
+ samples/bpf/xdp1_user.c                            |    4 +
+ samples/bpf/xdp2_kern.c                            |    2 -
+ samples/bpf/xdp2skb_meta_kern.c                    |    2 -
+ samples/bpf/xdp_adjust_tail_kern.c                 |    2 -
+ samples/bpf/xdp_adjust_tail_user.c                 |    4 +
+ samples/bpf/xdp_fwd_kern.c                         |    2 -
+ samples/bpf/xdp_fwd_user.c                         |    2 -
+ samples/bpf/xdp_monitor_kern.c                     |    2 -
+ samples/bpf/xdp_redirect_cpu_kern.c                |    2 -
+ samples/bpf/xdp_redirect_cpu_user.c                |    2 -
+ samples/bpf/xdp_redirect_kern.c                    |    2 -
+ samples/bpf/xdp_redirect_map_kern.c                |    2 -
+ samples/bpf/xdp_redirect_map_user.c                |    2 -
+ samples/bpf/xdp_redirect_user.c                    |    2 -
+ samples/bpf/xdp_router_ipv4_kern.c                 |    2 -
+ samples/bpf/xdp_router_ipv4_user.c                 |    2 -
+ samples/bpf/xdp_rxq_info_kern.c                    |    2 -
+ samples/bpf/xdp_rxq_info_user.c                    |    4 +
+ samples/bpf/xdp_sample_pkts_kern.c                 |    2 -
+ samples/bpf/xdp_sample_pkts_user.c                 |    2 -
+ samples/bpf/xdp_tx_iptunnel_kern.c                 |    2 -
+ samples/bpf/xdp_tx_iptunnel_user.c                 |    2 -
+ samples/bpf/xdpsock_kern.c                         |    2 -
+ samples/bpf/xdpsock_user.c                         |    6 +-
+ tools/bpf/bpftool/Documentation/bpftool-gen.rst    |    2 -
+ tools/bpf/bpftool/Makefile                         |    2 -
+ tools/bpf/bpftool/btf.c                            |    8 +--
+ tools/bpf/bpftool/btf_dumper.c                     |    2 -
+ tools/bpf/bpftool/cgroup.c                         |    2 -
+ tools/bpf/bpftool/common.c                         |    4 +
+ tools/bpf/bpftool/feature.c                        |    4 +
+ tools/bpf/bpftool/gen.c                            |   10 ++--
+ tools/bpf/bpftool/jit_disasm.c                     |    2 -
+ tools/bpf/bpftool/main.c                           |    4 +
+ tools/bpf/bpftool/map.c                            |    4 +
+ tools/bpf/bpftool/map_perf_ring.c                  |    4 +
+ tools/bpf/bpftool/net.c                            |    8 +--
+ tools/bpf/bpftool/netlink_dumper.c                 |    4 +
+ tools/bpf/bpftool/perf.c                           |    2 -
+ tools/bpf/bpftool/prog.c                           |    6 +-
+ tools/bpf/bpftool/xlated_dumper.c                  |    2 -
+ tools/bpf/runqslower/Makefile                      |   23 ++++----
+ tools/bpf/runqslower/runqslower.bpf.c              |    2 -
+ tools/bpf/runqslower/runqslower.c                  |    4 +
+ tools/perf/examples/bpf/5sec.c                     |    2 -
+ tools/perf/examples/bpf/empty.c                    |    2 -
+ tools/perf/examples/bpf/sys_enter_openat.c         |    2 -
+ tools/perf/include/bpf/pid_filter.h                |    2 -
+ tools/perf/include/bpf/stdio.h                     |    2 -
+ tools/perf/include/bpf/unistd.h                    |    2 -
+ tools/testing/selftests/bpf/.gitignore             |    2 -
+ tools/testing/selftests/bpf/Makefile               |   57 +++++++++++++-------
+ tools/testing/selftests/bpf/bpf_tcp_helpers.h      |    4 +
+ tools/testing/selftests/bpf/bpf_trace_helpers.h    |    2 -
+ tools/testing/selftests/bpf/bpf_util.h             |    2 -
+ tools/testing/selftests/bpf/prog_tests/cpu_mask.c  |    2 -
+ .../testing/selftests/bpf/prog_tests/perf_buffer.c |    2 -
+ tools/testing/selftests/bpf/progs/bpf_dctcp.c      |    4 +
+ tools/testing/selftests/bpf/progs/bpf_flow.c       |    4 +
+ tools/testing/selftests/bpf/progs/connect4_prog.c  |    4 +
+ tools/testing/selftests/bpf/progs/connect6_prog.c  |    4 +
+ tools/testing/selftests/bpf/progs/dev_cgroup.c     |    2 -
+ tools/testing/selftests/bpf/progs/fentry_test.c    |    2 -
+ tools/testing/selftests/bpf/progs/fexit_bpf2bpf.c  |    2 -
+ .../selftests/bpf/progs/fexit_bpf2bpf_simple.c     |    2 -
+ tools/testing/selftests/bpf/progs/fexit_test.c     |    2 -
+ .../selftests/bpf/progs/get_cgroup_id_kern.c       |    2 -
+ tools/testing/selftests/bpf/progs/kfree_skb.c      |    4 +
+ tools/testing/selftests/bpf/progs/loop1.c          |    4 +
+ tools/testing/selftests/bpf/progs/loop2.c          |    4 +
+ tools/testing/selftests/bpf/progs/loop3.c          |    4 +
+ tools/testing/selftests/bpf/progs/loop4.c          |    2 -
+ tools/testing/selftests/bpf/progs/loop5.c          |    2 -
+ tools/testing/selftests/bpf/progs/netcnt_prog.c    |    2 -
+ tools/testing/selftests/bpf/progs/pyperf.h         |    2 -
+ .../testing/selftests/bpf/progs/sample_map_ret0.c  |    2 -
+ tools/testing/selftests/bpf/progs/sendmsg4_prog.c  |    4 +
+ tools/testing/selftests/bpf/progs/sendmsg6_prog.c  |    4 +
+ .../selftests/bpf/progs/socket_cookie_prog.c       |    4 +
+ .../selftests/bpf/progs/sockmap_parse_prog.c       |    4 +
+ .../selftests/bpf/progs/sockmap_tcp_msg_prog.c     |    4 +
+ .../selftests/bpf/progs/sockmap_verdict_prog.c     |    4 +
+ .../testing/selftests/bpf/progs/sockopt_inherit.c  |    2 -
+ tools/testing/selftests/bpf/progs/sockopt_multi.c  |    2 -
+ tools/testing/selftests/bpf/progs/sockopt_sk.c     |    2 -
+ tools/testing/selftests/bpf/progs/strobemeta.h     |    2 -
+ tools/testing/selftests/bpf/progs/tailcall1.c      |    2 -
+ tools/testing/selftests/bpf/progs/tailcall2.c      |    2 -
+ tools/testing/selftests/bpf/progs/tailcall3.c      |    2 -
+ tools/testing/selftests/bpf/progs/tailcall4.c      |    2 -
+ tools/testing/selftests/bpf/progs/tailcall5.c      |    2 -
+ tools/testing/selftests/bpf/progs/tcp_rtt.c        |    2 -
+ .../testing/selftests/bpf/progs/test_adjust_tail.c |    2 -
+ .../selftests/bpf/progs/test_attach_probe.c        |    2 -
+ tools/testing/selftests/bpf/progs/test_btf_haskv.c |    2 -
+ tools/testing/selftests/bpf/progs/test_btf_newkv.c |    2 -
+ tools/testing/selftests/bpf/progs/test_btf_nokv.c  |    2 -
+ .../testing/selftests/bpf/progs/test_core_extern.c |    2 -
+ .../selftests/bpf/progs/test_core_reloc_arrays.c   |    4 +
+ .../bpf/progs/test_core_reloc_bitfields_direct.c   |    4 +
+ .../bpf/progs/test_core_reloc_bitfields_probed.c   |    4 +
+ .../bpf/progs/test_core_reloc_existence.c          |    4 +
+ .../selftests/bpf/progs/test_core_reloc_flavors.c  |    4 +
+ .../selftests/bpf/progs/test_core_reloc_ints.c     |    4 +
+ .../selftests/bpf/progs/test_core_reloc_kernel.c   |    4 +
+ .../selftests/bpf/progs/test_core_reloc_misc.c     |    4 +
+ .../selftests/bpf/progs/test_core_reloc_mods.c     |    4 +
+ .../selftests/bpf/progs/test_core_reloc_nesting.c  |    4 +
+ .../bpf/progs/test_core_reloc_primitives.c         |    4 +
+ .../bpf/progs/test_core_reloc_ptr_as_arr.c         |    4 +
+ .../selftests/bpf/progs/test_core_reloc_size.c     |    4 +
+ .../selftests/bpf/progs/test_get_stack_rawtp.c     |    2 -
+ .../testing/selftests/bpf/progs/test_global_data.c |    2 -
+ .../selftests/bpf/progs/test_global_func1.c        |    2 -
+ .../selftests/bpf/progs/test_global_func3.c        |    2 -
+ .../selftests/bpf/progs/test_global_func5.c        |    2 -
+ .../selftests/bpf/progs/test_global_func6.c        |    2 -
+ .../selftests/bpf/progs/test_global_func7.c        |    2 -
+ tools/testing/selftests/bpf/progs/test_l4lb.c      |    4 +
+ .../selftests/bpf/progs/test_l4lb_noinline.c       |    4 +
+ .../selftests/bpf/progs/test_lirc_mode2_kern.c     |    2 -
+ .../selftests/bpf/progs/test_lwt_ip_encap.c        |    4 +
+ .../selftests/bpf/progs/test_lwt_seg6local.c       |    4 +
+ .../testing/selftests/bpf/progs/test_map_in_map.c  |    2 -
+ tools/testing/selftests/bpf/progs/test_map_lock.c  |    2 -
+ tools/testing/selftests/bpf/progs/test_mmap.c      |    2 -
+ tools/testing/selftests/bpf/progs/test_obj_id.c    |    2 -
+ tools/testing/selftests/bpf/progs/test_overhead.c  |    4 +
+ .../testing/selftests/bpf/progs/test_perf_buffer.c |    2 -
+ tools/testing/selftests/bpf/progs/test_pinning.c   |    2 -
+ .../selftests/bpf/progs/test_pinning_invalid.c     |    2 -
+ .../testing/selftests/bpf/progs/test_pkt_access.c  |    4 +
+ .../selftests/bpf/progs/test_pkt_md_access.c       |    2 -
+ .../testing/selftests/bpf/progs/test_probe_user.c  |    4 +
+ .../selftests/bpf/progs/test_queue_stack_map.h     |    2 -
+ .../testing/selftests/bpf/progs/test_rdonly_maps.c |    2 -
+ tools/testing/selftests/bpf/progs/test_seg6_loop.c |    4 +
+ .../bpf/progs/test_select_reuseport_kern.c         |    4 +
+ .../selftests/bpf/progs/test_send_signal_kern.c    |    2 -
+ .../selftests/bpf/progs/test_sk_lookup_kern.c      |    4 +
+ .../selftests/bpf/progs/test_skb_cgroup_id_kern.c  |    2 -
+ tools/testing/selftests/bpf/progs/test_skb_ctx.c   |    2 -
+ tools/testing/selftests/bpf/progs/test_skeleton.c  |    2 -
+ .../selftests/bpf/progs/test_sock_fields_kern.c    |    4 +
+ tools/testing/selftests/bpf/progs/test_spin_lock.c |    2 -
+ .../selftests/bpf/progs/test_stacktrace_build_id.c |    2 -
+ .../selftests/bpf/progs/test_stacktrace_map.c      |    2 -
+ .../selftests/bpf/progs/test_sysctl_loop1.c        |    2 -
+ .../selftests/bpf/progs/test_sysctl_loop2.c        |    2 -
+ .../testing/selftests/bpf/progs/test_sysctl_prog.c |    2 -
+ tools/testing/selftests/bpf/progs/test_tc_edt.c    |    4 +
+ tools/testing/selftests/bpf/progs/test_tc_tunnel.c |    4 +
+ .../bpf/progs/test_tcp_check_syncookie_kern.c      |    4 +
+ .../testing/selftests/bpf/progs/test_tcp_estats.c  |    2 -
+ .../testing/selftests/bpf/progs/test_tcpbpf_kern.c |    4 +
+ .../selftests/bpf/progs/test_tcpnotify_kern.c      |    4 +
+ .../testing/selftests/bpf/progs/test_tracepoint.c  |    2 -
+ .../testing/selftests/bpf/progs/test_tunnel_kern.c |    4 +
+ .../selftests/bpf/progs/test_verif_scale1.c        |    2 -
+ .../selftests/bpf/progs/test_verif_scale2.c        |    2 -
+ .../selftests/bpf/progs/test_verif_scale3.c        |    2 -
+ tools/testing/selftests/bpf/progs/test_xdp.c       |    4 +
+ .../testing/selftests/bpf/progs/test_xdp_bpf2bpf.c |    2 -
+ tools/testing/selftests/bpf/progs/test_xdp_loop.c  |    4 +
+ tools/testing/selftests/bpf/progs/test_xdp_meta.c  |    2 -
+ .../selftests/bpf/progs/test_xdp_noinline.c        |    4 +
+ .../selftests/bpf/progs/test_xdp_redirect.c        |    2 -
+ tools/testing/selftests/bpf/progs/test_xdp_vlan.c  |    4 +
+ tools/testing/selftests/bpf/progs/xdp_dummy.c      |    2 -
+ .../testing/selftests/bpf/progs/xdp_redirect_map.c |    2 -
+ tools/testing/selftests/bpf/progs/xdp_tx.c         |    2 -
+ tools/testing/selftests/bpf/progs/xdping_kern.c    |    4 +
+ tools/testing/selftests/bpf/test_cpp.cpp           |    6 +-
+ tools/testing/selftests/bpf/test_hashmap.c         |    2 -
+ tools/testing/selftests/bpf/test_progs.h           |    2 -
+ tools/testing/selftests/bpf/test_sock.c            |    2 -
+ tools/testing/selftests/bpf/test_sockmap_kern.h    |    4 +
+ tools/testing/selftests/bpf/test_sysctl.c          |    2 -
+ tools/testing/selftests/bpf/trace_helpers.h        |    2 -
+ 238 files changed, 388 insertions(+), 369 deletions(-)
 
