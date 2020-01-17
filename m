@@ -2,189 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C9CD1400FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B481400F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbgAQAdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:33:20 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:35705 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728898AbgAQAdU (ORCPT
+        id S1730785AbgAQAbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:31:33 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38114 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730589AbgAQAbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:33:20 -0500
-Received: by mail-pj1-f65.google.com with SMTP id s7so2472565pjc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 16:33:18 -0800 (PST)
+        Thu, 16 Jan 2020 19:31:32 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f20so9092410plj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 16 Jan 2020 16:31:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oENCplfxYS/x7buWRMyVXnbpGnLZpIshtiMHjv9RuL8=;
-        b=bV2jRU6y0Hh6CrGd9dfjiMuxbQQNzdSTfEvXeBz9zlwazA3Bv7xhlQ16RLSo1vq3qp
-         sKAA1RLxDtCbnfvdl6r0RqQ7/YH45+KPrOXl+ZuKIs0xl6Xly3Iyc3qu4jwwVexcYQEf
-         3DIq3zQlj/uLuWIEaVA91MFzhRVQhmIllJ8aQ=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=M9PfMDqq4mrgdJjoCxlePmryw2dwKhdtVpwo2rQpPHI=;
+        b=PdZtFhwcbZoGTyRB0YT1AXckQK03oRubwCEsjPBt6hG1EbNxYH0Fjv9cfZuk8BKwLr
+         Nfun0qpKSn16G4otglGI+BJlfh1NXbJLnUz19wnEiuyifT2ZaGyJeQdcvzWBZB99x0iT
+         nUmD1tc7SEfkKKIGJXLVJXhYzFHw02R8UDDoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oENCplfxYS/x7buWRMyVXnbpGnLZpIshtiMHjv9RuL8=;
-        b=PE/exTU4c6r1LSG1mot8hErHVC3409u/MAupJJpASEhuB/vPIzlLPmkS5LhO9Z/7kN
-         IA1eQNnpoQSW1Kr1A5nQf38RCK8jxfusq6GuFUJ92RKHobqBQrCG6UqJfUFnqun7fThr
-         qtCnxfNnn3QeFLj26lw51g5hGjV1Uh1I7WY9Zp7BlWlToGAnSfItIW2advnZCz8ZtPr6
-         owq01j82so5PimjSDF+Ubdm18Jg71ulCofoI/A6yaTxZMYUHYTz7C6crrLLWXuHmAw5g
-         Gd2h5hi6cJaCJgnxxx2Bdzg4UpEFpFkM9RuxmOXR5AlaJT2tNdjLAjXIbzis1a+8qgVp
-         n7JA==
-X-Gm-Message-State: APjAAAUToX36I0QSf2D1Phr1HVm3Ysdf4fjQY4hoFqkcvxjxXzyjW+4U
-        me4CcFNZs+zrJs9TsCppd1jflA==
-X-Google-Smtp-Source: APXvYqxq9YT/v0a4+lRet2n7yMQNshcu5xGQDYh95K/OSZa/KOXrXQkzsYGL4BILezDUTMyoUO6WMA==
-X-Received: by 2002:a17:902:a5c2:: with SMTP id t2mr40927930plq.86.1579221198354;
-        Thu, 16 Jan 2020 16:33:18 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id c188sm667420pga.83.2020.01.16.16.33.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 16:33:17 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     enric.balletbo@collabora.com, groeck@chromium.org,
-        bleung@chromium.org, lee.jones@linaro.org, sre@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Jon Flatley <jflat@chromium.org>,
-        Prashant Malani <pmalani@chromium.org>
-Subject: [PATCH v7 3/3] power: supply: cros-ec-usbpd-charger: Fix host events
-Date:   Thu, 16 Jan 2020 16:28:24 -0800
-Message-Id: <20200117002820.56872-3-pmalani@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200117002820.56872-1-pmalani@chromium.org>
-References: <20200117002820.56872-1-pmalani@chromium.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=M9PfMDqq4mrgdJjoCxlePmryw2dwKhdtVpwo2rQpPHI=;
+        b=BUMOAOtatPM/3MKR7g7OUx0WaPLPt98rX/8McKbHGKKJvYv2i1XsLcABi+inASgy4A
+         Ol0f/brYYy/TvwCfXZbvE498WgEx+/s5Sw+DMcIHou4K/ntyAYQ11+f96730W45l8n1F
+         wOevWFWUwX6jYDkafvMlLFPkQPFS+JJIWnzeJ8FWp9HWPYO7NiuFEBx4efEzFdIvDu+U
+         PdHbV6EiQRxX3DinCsvO65QuGd+gknppa/V8DQMmBaDwsj/lBPF4bDHilUBZHBZXHIVp
+         LrBBjNHGw2x6j2gJ/fxa2yfOsnOSTEhH5eXUDvE+8sJesZBSnvokkva3mhT/ZQPwR9AS
+         jNRw==
+X-Gm-Message-State: APjAAAWXOs9shm3gxhvjHxQrJm24Yuuvu3kbNVtiH5rg8LPIulUivnV9
+        fNAkjIpGaSjCqiMIGAGFS+QRuQ==
+X-Google-Smtp-Source: APXvYqykX9ESNeqte195/89wDGbzWuoGsUmrWe5z97ksNmWfJhf/Ojx/maDjljtSLn2zv692HKkdeA==
+X-Received: by 2002:a17:90a:17e3:: with SMTP id q90mr2334122pja.139.1579221092047;
+        Thu, 16 Jan 2020 16:31:32 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id r20sm25529366pgu.89.2020.01.16.16.31.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 16:31:31 -0800 (PST)
+Subject: Re: [PATCH v9 2/2] EDAC: add EDAC driver for DMC520
+To:     Shiping Ji <shiping.linux@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        James Morse <james.morse@arm.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        sashal@kernel.org, hangl@microsoft.com,
+        Lei Wang <lewan@microsoft.com>, shji@microsoft.com,
+        ruizhao@microsoft.com, Yuqing Shen <yuqing.shen@broadcom.com>,
+        ray.jui@broadcom.com, wangglei@gmail.com
+References: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <aa80b8a5-5297-91c6-6410-99e43b53bd20@broadcom.com>
+Date:   Thu, 16 Jan 2020 16:31:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Flatley <jflat@chromium.org>
+Hi Shiping,
 
-There's a bug on ACPI platforms where host events from the ECPD ACPI
-device never make their way to the cros-ec-usbpd-charger driver. This
-makes it so the only time the charger driver updates its state is when
-user space accesses its sysfs attributes.
+Here is another small change to cleanup.
 
-Now that these events have been unified into a single notifier chain on
-both ACPI and non-ACPI platforms, update the charger driver to use this
-new notifier.
-
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Co-Developed-by: Prashant Malani <pmalani@chromium.org>
-Signed-off-by: Jon Flatley <jflat@chromium.org>
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
-
-Changes in v7(pmalani@chromium.org):
-- Alphabetize #include header.
-
-Changes in v6(pmalani@chromium.org):
-- Patch first introduced into the series in v6.
-
- drivers/power/supply/Kconfig              |  2 +-
- drivers/power/supply/cros_usbpd-charger.c | 50 ++++++++---------------
- 2 files changed, 19 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 27164a1d3c7c4..ba74ddd793c3d 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -659,7 +659,7 @@ config CHARGER_RT9455
- 
- config CHARGER_CROS_USBPD
- 	tristate "ChromeOS EC based USBPD charger"
--	depends on CROS_EC
-+	depends on CROS_USBPD_NOTIFY
- 	default n
- 	help
- 	  Say Y here to enable ChromeOS EC based USBPD charger
-diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index 6cc7c3910e098..7eea080048f43 100644
---- a/drivers/power/supply/cros_usbpd-charger.c
-+++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/platform_data/cros_usbpd_notify.h>
- #include <linux/platform_device.h>
- #include <linux/power_supply.h>
- #include <linux/slab.h>
-@@ -524,32 +525,21 @@ static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
- }
- 
- static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
--				       unsigned long queued_during_suspend,
-+				       unsigned long host_event,
- 				       void *_notify)
- {
--	struct cros_ec_device *ec_device;
--	struct charger_data *charger;
--	u32 host_event;
-+	struct charger_data *charger = container_of(nb, struct charger_data,
-+						    notifier);
- 
--	charger = container_of(nb, struct charger_data, notifier);
--	ec_device = charger->ec_device;
--
--	host_event = cros_ec_get_host_event(ec_device);
--	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
--		cros_usbpd_charger_power_changed(charger->ports[0]->psy);
--		return NOTIFY_OK;
--	} else {
--		return NOTIFY_DONE;
--	}
-+	cros_usbpd_charger_power_changed(charger->ports[0]->psy);
-+	return NOTIFY_OK;
- }
- 
- static void cros_usbpd_charger_unregister_notifier(void *data)
- {
- 	struct charger_data *charger = data;
--	struct cros_ec_device *ec_device = charger->ec_device;
- 
--	blocking_notifier_chain_unregister(&ec_device->event_notifier,
--					   &charger->notifier);
-+	cros_usbpd_unregister_notify(&charger->notifier);
- }
- 
- static int cros_usbpd_charger_probe(struct platform_device *pd)
-@@ -683,21 +673,17 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
- 		goto fail;
- 	}
- 
--	if (ec_device->mkbp_event_supported) {
--		/* Get PD events from the EC */
--		charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
--		ret = blocking_notifier_chain_register(
--						&ec_device->event_notifier,
--						&charger->notifier);
--		if (ret < 0) {
--			dev_warn(dev, "failed to register notifier\n");
--		} else {
--			ret = devm_add_action_or_reset(dev,
--					cros_usbpd_charger_unregister_notifier,
--					charger);
--			if (ret < 0)
--				goto fail;
--		}
-+	/* Get PD events from the EC */
-+	charger->notifier.notifier_call = cros_usbpd_charger_ec_event;
-+	ret = cros_usbpd_register_notify(&charger->notifier);
-+	if (ret < 0) {
-+		dev_warn(dev, "failed to register notifier\n");
-+	} else {
-+		ret = devm_add_action_or_reset(dev,
-+				cros_usbpd_charger_unregister_notifier,
-+				charger);
-+		if (ret < 0)
-+			goto fail;
- 	}
- 
- 	return 0;
--- 
-2.25.0.341.g760bfbb309-goog
+On 2020-01-15 6:32 a.m., Shiping Ji wrote:
+> New driver supports error detection and correction on the devices with ARM
+> DMC-520 memory controller.
+>
+> Signed-off-by: Shiping Ji <shiping.linux@gmail.com>
+> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
+> Reviewed-by: James Morse <james.morse@arm.com>
+>
+> ---
+>       Changes in v9:
+>           - Removed interrupt-config and replaced with an interrupt map where names and masks are predefined
+>           - Only one ISR function is defined, mask is retrieved from the interrupt map
+>           - "dram_ecc_errc" and "dram_ecc_errd" are implemented
+>
+> ---
+> +static void dmc520_get_dram_ecc_error_info(struct dmc520_edac *edac,
+> +					   bool is_ce,
+> +					   struct ecc_error_info *info)
+> +{
+> +	u32 reg_offset_low, reg_offset_high;
+> +	u32 reg_val_low, reg_val_high;
+> +	bool valid;
+> +
+> +	reg_offset_low = is_ce ? REG_OFFSET_DRAM_ECC_ERRC_INT_INFO_31_00 :
+> +				 REG_OFFSET_DRAM_ECC_ERRD_INT_INFO_31_00;
+> +	reg_offset_high = is_ce ? REG_OFFSET_DRAM_ECC_ERRC_INT_INFO_63_32 :
+> +				  REG_OFFSET_DRAM_ECC_ERRD_INT_INFO_63_32;
+> +
+> +	reg_val_low = dmc520_read_reg(edac, reg_offset_low);
+> +	reg_val_high = dmc520_read_reg(edac, reg_offset_high);
+> +
+> +	valid = (FIELD_GET(REG_FIELD_ERR_INFO_LOW_VALID, reg_val_low) != 0) &&
+> +		(FIELD_GET(REG_FIELD_ERR_INFO_HIGH_VALID, reg_val_high) != 0);
+> +
+> +	if (valid) {
+> +		info->col =
+> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_COL, reg_val_low);
+> +		info->row =
+> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_ROW, reg_val_low);
+> +		info->rank =
+> +			FIELD_GET(REG_FIELD_ERR_INFO_LOW_RANK, reg_val_low);
+> +		info->bank =
+> +			FIELD_GET(REG_FIELD_ERR_INFO_HIGH_BANK, reg_val_high);
+> +	} else {
+> +		memset(info, 0, sizeof(struct ecc_error_info));
+This should be sizeof(*info), not sizeof(struct ecc_error_info)
+for better programming to allow info to change type in the future
+without the code changing.
+> +	}
+> +}
+> +
+>
 
