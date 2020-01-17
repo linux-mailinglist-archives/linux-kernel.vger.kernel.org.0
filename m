@@ -2,67 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C564140BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:52:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1285140BB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbgAQNvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:51:45 -0500
-Received: from mga12.intel.com ([192.55.52.136]:49828 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbgAQNvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:51:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 05:51:38 -0800
-X-IronPort-AV: E=Sophos;i="5.70,330,1574150400"; 
-   d="scan'208";a="218913054"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 05:51:33 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Wambui Karuga <wambui.karugax@gmail.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch
-Cc:     sean@poorly.run, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] drm/i915/display: conversion to new logging macros.
-In-Reply-To: <20200116130947.15464-1-wambui.karugax@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200116130947.15464-1-wambui.karugax@gmail.com>
-Date:   Fri, 17 Jan 2020 15:51:30 +0200
-Message-ID: <87pnfigpi5.fsf@intel.com>
+        id S1728760AbgAQNwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:52:25 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42135 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbgAQNwY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 08:52:24 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1isS2q-0003bt-CJ; Fri, 17 Jan 2020 14:52:16 +0100
+Message-ID: <e880aba2725afe2aa5f10c4ba69366d0b0de29bb.camel@pengutronix.de>
+Subject: Re: [EXT] [PATCH] PCI: imx6: Add L1SS support for i.MX8MQ
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Chris Healy <cphealy@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 17 Jan 2020 14:52:14 +0100
+In-Reply-To: <CAHQ1cqFg_EcLRUtOO65P-K4hFdkx0OyzxOupqdqwicnhROiZ6A@mail.gmail.com>
+References: <20200114170231.16421-1-andrew.smirnov@gmail.com>
+         <AM0PR0402MB35708B48AF371E81BFCCED158C370@AM0PR0402MB3570.eurprd04.prod.outlook.com>
+         <CAHQ1cqFg_EcLRUtOO65P-K4hFdkx0OyzxOupqdqwicnhROiZ6A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020, Wambui Karuga <wambui.karugax@gmail.com> wrote:
-> This series converts the printk based logging macros in
-> drm/i915/display/intel_display.c to the new struct drm_device based
-> logging macros. This change was split into four for manageability and
-> due to the size of drm/i915/display/intel_display.c.
+On Do, 2020-01-16 at 06:37 -0800, Andrey Smirnov wrote:
+> On Tue, Jan 14, 2020 at 7:26 PM Richard Zhu <hongxing.zhu@nxp.com> wrote:
+> > 
+> > > -----Original Message-----
+> > > From: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > > Sent: 2020年1月15日 1:03
+> > > To: linux-pci@vger.kernel.org
+> > > Cc: Andrey Smirnov <andrew.smirnov@gmail.com>; Lorenzo Pieralisi
+> > > <lorenzo.pieralisi@arm.com>; Bjorn Helgaas <bhelgaas@google.com>; Chris
+> > > Healy <cphealy@gmail.com>; Lucas Stach <l.stach@pengutronix.de>; Richard
+> > > Zhu <hongxing.zhu@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
+> > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > > Subject: [EXT] [PATCH] PCI: imx6: Add L1SS support for i.MX8MQ
+> > > 
+> > > Caution: EXT Email
+> > > 
+> > > Add code to configure PCI IP block to utilize supported ASPM features.
+> > > 
+> > > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > [Richard Zhu]  HI Andrey:
+> > This patch does the regmap to the src region, right?
+> 
+> Indeed.
+> 
+> > How about to add another reset to manipulate the *_OVERRIDE bit.
+> > Just like the following bits.
+> >                         resets = <&src IMX8MQ_RESET_PCIEPHY>,
+> >                                  <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
+> >                                  <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
+> >                         reset-names = "pciephy", "apps", "turnoff";
+> > 
+> 
+> Last time I talked to Philipp Zabel (maintainer of reset subsystem) he
+> made it pretty clear that he though that exposing those PCIe related
+> bits via reset subsystem (for both imx7 and imx8mq) was a mistake and
+> going forward he'd like to see only true reset functionality to be
+> exposed that way. IMX8MQ_PCIE_CTRL_APPS_CLK_REQ is definitely not a
+> reset line, so the case for adding it to reset driver is even weaker.
+> 
+> Lucas, do you mind sharing your thoughts on this?
 
-Please still write more descriptive commit messages than "part N".
+While I'm not too happy that we are now going to have multiple paths to
+those PCIe related control bits in the driver, I totally agree that we
+should stop abusing the reset API for things that aren't a reset.
 
-What are your basing your patches on? Our CI uses drm-tip, and it's
-failing to apply the patches.
+Maybe we should even go all the way and switch the APPS_EN bit
+manipulation to use the regmap instead of the reset. This would be a DT
+compatible change, as we would just ignore the apps reset specified in
+old DTs and don't require any DT changes for this to work if the regmap
+is looked up by compatible.
 
-BR,
-Jani.
+Regards,
+Lucas
 
-
-
->
-> Wambui Karuga (4):
->   drm/i915/display: conversion to new logging macros part 1
->   drm/i915/display: conversion to new logging macros part 2
->   drm/i915/display: conversion to new logging macros part 3
->   drm/i915/display: convert to new logging macros part 4.
->
->  drivers/gpu/drm/i915/display/intel_display.c | 1021 ++++++++++--------
->  1 file changed, 596 insertions(+), 425 deletions(-)
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
