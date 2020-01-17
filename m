@@ -2,172 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC1414028A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 04:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D22B140293
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 04:53:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbgAQDvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 22:51:11 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:56330 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729539AbgAQDvH (ORCPT
+        id S1731122AbgAQDvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 22:51:22 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54558 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726653AbgAQDvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 22:51:07 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B4CDD891AF;
-        Fri, 17 Jan 2020 16:51:05 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1579233065;
-        bh=fRH1fOtTq3nwhWeBJY9OSVBx1/bx+wOXC/1lsHlEf+Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=0I1ifQadS3Jx1N6SMXLWI8wK6VaBbmMKKLM45B+DcWd0FXtm91Feeqo3YIKGr+D3j
-         27OuYHT3y5n2Zd9EYwp8vVb6WB3d8Q3dV5D6BSWzzRWehz0LDgRPoLJpNUQ7jwA/0M
-         ZXTWp6abAq6YJsYYR7n7eo4vDzwwISDvnRnjGSuHdKjCPavcNY/oIlCzQtco4tfs/d
-         74sRlE8VesA/oyIhIpSAMWHzJk2fTWQTcjPTr9RARw4Zc35NpUZUQrq3zBzIdK9QQ+
-         nXpT3115tOX3YihKHxSt7w+ggSVUiChYnNGGbAjI2/XpShUu8soo1WMsroTMGw12ja
-         6Zm3FP6AE1Opg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5e212f290001>; Fri, 17 Jan 2020 16:51:05 +1300
-Received: from logans-dl.ws.atlnz.lc (logans-dl.ws.atlnz.lc [10.33.25.61])
-        by smtp (Postfix) with ESMTP id DD91E13EEFE;
-        Fri, 17 Jan 2020 16:51:04 +1300 (NZDT)
-Received: by logans-dl.ws.atlnz.lc (Postfix, from userid 1820)
-        id 5DBE1C1A8B; Fri, 17 Jan 2020 16:51:05 +1300 (NZDT)
-From:   Logan Shaw <logan.shaw@alliedtelesis.co.nz>
-To:     linux@roeck-us.net, jdelvare@suse.com, robh+dt@kernel.org
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Joshua.Scott@alliedtelesis.co.nz,
-        Chris.Packham@alliedtelesis.co.nz, logan.shaw@alliedtelesis.co.nz
-Subject: [PATCH v3 2/2] hwmon: (adt7475) Added attenuator bypass support
-Date:   Fri, 17 Jan 2020 16:50:18 +1300
-Message-Id: <20200117035018.11985-3-logan.shaw@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200117035018.11985-1-logan.shaw@alliedtelesis.co.nz>
-References: <20200117035018.11985-1-logan.shaw@alliedtelesis.co.nz>
+        Thu, 16 Jan 2020 22:51:17 -0500
+X-UUID: de7f84fd25ff49c59451f00af0b6c8b4-20200117
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=VjZO8NXrEdygh8unLaMlK+CBj4HVc+zbQuqJLK0MpHk=;
+        b=iLTSp5hcnEEBPvLkOeoDxXrjyGkAzjUoajAoqkCX0J9Sfye+1631IoZtlpcvHpXMziPlNeArWMr0VmuD5za4aHLAwtp8zRu8W+Eg5RXDxkwuvbU6sQ+QrnWYChmcYzk45+GqQMcjR1aS2+SbRC5w+8kkqgyrCaWFURCMYtqufUw=;
+X-UUID: de7f84fd25ff49c59451f00af0b6c8b4-20200117
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1230769150; Fri, 17 Jan 2020 11:51:10 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 17 Jan 2020 11:50:32 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 17 Jan 2020 11:51:08 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <jejb@linux.ibm.com>
+CC:     <beanhuo@micron.com>, <asutoshd@codeaurora.org>,
+        <cang@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <bvanassche@acm.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
+        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
+        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v1 0/3] scsi: ufs-mediatek: add MediaTek vendor implementation part II
+Date:   Fri, 17 Jan 2020 11:51:05 +0800
+Message-ID: <20200117035108.19699-1-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added a new file documenting the adt7475 devicetree and added the four
-new properties to it.
-
-Signed-off-by: Logan Shaw <logan.shaw@alliedtelesis.co.nz>
----
----
- .../devicetree/bindings/hwmon/adt7475.yaml    | 90 +++++++++++++++++++
- 1 file changed, 90 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.yaml
-
-diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Docum=
-entation/devicetree/bindings/hwmon/adt7475.yaml
-new file mode 100644
-index 000000000000..e201948beb35
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-@@ -0,0 +1,90 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/adt7475.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ADT7475 hwmon sensor
-+
-+maintainers:
-+  - Jean Delvare <jdelvare@suse.com>
-+
-+description: |
-+  The ADT7473, ADT7475, ADT7476, and ADT7490 are thermal monitors and mu=
-ltiple
-+  PWN fan controllers.
-+
-+  They support monitoring and controlling up to four fans (the ADT7490 c=
-an only
-+  control up to three). They support reading a single on chip temperatur=
-e
-+  sensor and two off chip temperature sensors (the ADT7490 additionally
-+  supports measuring up to three current external temperature sensors wi=
-th
-+  series resistance cancellation (SRC)).
-+
-+  Datasheets:
-+  https://www.onsemi.com/pub/Collateral/ADT7473-D.PDF
-+  https://www.onsemi.com/pub/Collateral/ADT7475-D.PDF
-+  https://www.onsemi.com/pub/Collateral/ADT7476-D.PDF
-+  https://www.onsemi.com/pub/Collateral/ADT7490-D.PDF
-+
-+  Description taken from omsemiconductors specification sheets, with min=
-or
-+  rephrasing.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,adt7473
-+      - adi,adt7475
-+      - adi,adt7476
-+      - adi,adt7490
-+
-+  reg:
-+    maxItems: 1
-+
-+  bypass-attenuator-in0:
-+    description: |
-+      Configures bypassing the individual voltage input
-+      attenuator, on in0. This is supported on the ADT7476 and ADT7490.
-+      If set to a non-zero integer the attenuator is bypassed, if set to
-+      zero the attenuator is not bypassed. If the property is absent the=
-n
-+      the config register is not modified.
-+    maxItems: 1
-+
-+  bypass-attenuator-in1:
-+    description: |
-+      Configures bypassing the individual voltage input
-+      attenuator, on in1. This is supported on the ADT7473, ADT7475,
-+      ADT7476 and ADT7490. If set to a non-zero integer the attenuator
-+      is bypassed, if set to zero the attenuator is not bypassed. If the
-+      property is absent then the config register is not modified.
-+    maxItems: 1
-+
-+  bypass-attenuator-in3:
-+    description: |
-+      Configures bypassing the individual voltage input
-+      attenuator, on in3. This is supported on the ADT7476 and ADT7490.
-+      If set to a non-zero integer the attenuator is bypassed, if set to
-+      zero the attenuator is not bypassed. If the property is absent the=
-n
-+      the config register is not modified.
-+    maxItems: 1
-+
-+  bypass-attenuator-in4:
-+    description: |
-+      Configures bypassing the individual voltage input
-+      attenuator, on in4. This is supported on the ADT7476 and ADT7490.
-+      If set to a non-zero integer the attenuator is bypassed, if set to
-+      zero the attenuator is not bypassed. If the property is absent the=
-n
-+      the config register is not modified.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    hwmon@2e {
-+      compatible =3D "adi,adt7476";
-+      reg =3D <0x2e>;
-+      bypass-attenuator-in1 =3D <1>;
-+      bypass-attenuator-in1 =3D <0>;
-+    };
-+...
---=20
-2.25.0
+SGksDQoNClRoaXMgc2VyaWVzIGFkZHMgc29tZSBNZWRpYVRlayB2ZW5kb3IgaW1wbGVtZW50YXRp
+b25zIGluIFVGUyBkcml2ZXI6DQogIC0gQ2FsbGJhY2sgZGJnX3JlZ2lzdGVyX2R1bXANCiAgLSBM
+b3ctcG93ZXIgbW9kZSBmb3IgaGliZXJuOCBzdGF0ZQ0KDQpTdGFubGV5IENodSAoMyk6DQogIHNj
+c2k6IHVmcy1tZWRpYXRlazogYWRkIGRiZ19yZWdpc3Rlcl9kdW1wIGltcGxlbWVudGF0aW9uDQog
+IHNjc2k6IHVmczogZXhwb3J0IHNvbWUgZnVuY3Rpb25zIGZvciB2ZW5kb3IgdXNhZ2UNCiAgc2Nz
+aTogdWZzLW1lZGlhdGVrOiBlbmFibGUgbG93LXBvd2VyIG1vZGUgZm9yIGhpYmVybjggc3RhdGUN
+Cg0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzLW1lZGlhdGVrLmMgfCA3MCArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5oIHwgIDUg
+KysrDQogZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuYyAgICAgICB8IDExICsrKystLQ0KIGRyaXZl
+cnMvc2NzaS91ZnMvdWZzaGNkLmggICAgICAgfCAgMyArKw0KIDQgZmlsZXMgY2hhbmdlZCwgODUg
+aW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCg0KLS0gDQoyLjE4LjANCg==
 
