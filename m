@@ -2,90 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A7A14090C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:36:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9007140927
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 12:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgAQLgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 06:36:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55076 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726371AbgAQLgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:36:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D1675AE2C;
-        Fri, 17 Jan 2020 11:36:46 +0000 (UTC)
-Subject: Re: [PATCH] xen/balloon: Support xend-based toolstack take two
-To:     =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-References: <20200116170004.14373-1-jgross@suse.com>
- <c29c92e3-eb20-7e0a-0174-ef72398b0998@suse.com>
- <dc509037-a7d6-caa5-8000-28aeb20b638e@suse.com>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <4ddd12ae-94f7-0b16-346a-46e096d9ae6e@suse.com>
-Date:   Fri, 17 Jan 2020 12:36:50 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726933AbgAQLkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 06:40:52 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:46450 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbgAQLkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 06:40:51 -0500
+Received: by mail-wr1-f50.google.com with SMTP id z7so22341184wrl.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 03:40:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cHQb5eaBdV5Y7L3TXPPVy41eNKPTn60KouNuNMc9msc=;
+        b=Ien6EDoNa/m4pUnIPA72MpkL/XJJHXoZrkFTPYxbKxu3voOGYv9kEI8R08V5wAZDus
+         lmGUVQxnB2vV6k9b2k4i+TxFin4qLmhgf6FavkKizXOEBhWDt9zHuY+FPICzb17WIabb
+         K/bbnFEmybI5GFp3eIAdl3Gnox4Zmg6yaaO4+ymrUchHWVnjfeEP8ORPpLNH2/cpAmHU
+         8U5pQ9RA/seCpXDz0fwxzrinxrBblb5hroPwGvwf3C6ZOB5BCQup2LIhujk0qROJH00s
+         Sjw44GJoWpGJmIDDwelqN/hWworvvRG5ixRJ9nHrNijZ1dbqO+br7hdnqQ0uDKuwyofj
+         0D+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cHQb5eaBdV5Y7L3TXPPVy41eNKPTn60KouNuNMc9msc=;
+        b=GSDO3I2LCQj5AswS2k5DHHLPF4vRk0G3F7crNcvRikrLfACOAG6rb+f7t+vAH+VPTq
+         tVWkJ0+2UQglBlIUqLyLN6/B19GBiG3LD0ms2s1m4Brqh6PXsmLWPlI9H4Xtm/bNlNvI
+         3cu9+FIVUgwC8mgeiyf2gjh/YEZTnDNSMCU5U2pfx3Yt0nedFsLq0wfHnxPM1KCTQHju
+         lUJ+V+cVX7eWLIlDFfj6Upw9rpjIFFp6kLQ+Cre8sW52RjYzYrp1/GuHmZf2aEZUD+OS
+         HXoqg0OSPar88CwSMsjRLTfp7vcDFCEvIJOWEH8dfqVhyFXQOka3reij3n2VpKEMcKvA
+         3xlA==
+X-Gm-Message-State: APjAAAU2LHZI7yY+Sc5AeaEZXLnEG9G6XJyStAfAniiGQra7d+Cnr1vX
+        CEzapH2U5kR5q+vHrk9YdeYSCA==
+X-Google-Smtp-Source: APXvYqx4SDJrFH5PbnjbxtqdBbq22/luSDJ5avGneSLnZUnxk7Pek9UUYfIUD0uJMDR8APZl/pelvA==
+X-Received: by 2002:adf:f990:: with SMTP id f16mr2621833wrr.185.1579261249200;
+        Fri, 17 Jan 2020 03:40:49 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id s19sm9097445wmj.33.2020.01.17.03.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 03:40:48 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:40:45 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
+        ionela.voinescu@arm.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
+        linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
+        javi.merino@kernel.org, amit.kucheria@verdurent.com,
+        kernel-team@android.com
+Subject: Re: [Patch v8 4/7] sched/fair: Enable periodic update of average
+ thermal pressure
+Message-ID: <20200117114045.GA219309@google.com>
+References: <1579031859-18692-1-git-send-email-thara.gopinath@linaro.org>
+ <1579031859-18692-5-git-send-email-thara.gopinath@linaro.org>
+ <20200116151502.GQ2827@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <dc509037-a7d6-caa5-8000-28aeb20b638e@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116151502.GQ2827@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.01.2020 12:31, Jürgen Groß wrote:
-> On 17.01.20 12:01, Jan Beulich wrote:
->> On 16.01.2020 18:00, Juergen Gross wrote:
->>> Commit 3aa6c19d2f38be ("xen/balloon: Support xend-based toolstack")
->>> tried to fix a regression with running on rather ancient Xen versions.
->>> Unfortunately the fix was based on the assumption that xend would
->>> just use another Xenstore node, but in reality only some downstream
->>> versions of xend are doing that. The upstream xend does not write
->>> that Xenstore node at all, so the problem must be fixed in another
->>> way.
->>>
->>> The easiest way to achieve that is to fall back to the behavior before
->>> commit 5266b8e4445c ("xen: fix booting ballooned down hvm guest")
->>> in case the static memory maximum can't be read.
->>
->> I could use some help here: Prior to said commit there was
->>
->> 	target_diff = new_target - balloon_stats.target_pages;
->>
->>
->> Which is, afaict, ...
->>
->>> --- a/drivers/xen/xen-balloon.c
->>> +++ b/drivers/xen/xen-balloon.c
->>> @@ -94,7 +94,7 @@ static void watch_target(struct xenbus_watch *watch,
->>>   				  "%llu", &static_max) == 1))
->>>   			static_max >>= PAGE_SHIFT - 10;
->>>   		else
->>> -			static_max = new_target;
->>> +			static_max = balloon_stats.current_pages;
->>>   
->>>   		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
->>>   				: static_max - balloon_stats.target_pages;
->>
->> ... what the code does before your change. Afaict there was
->> never a use of balloon_stats.current_pages in this function.
+On Thursday 16 Jan 2020 at 16:15:02 (+0100), Peter Zijlstra wrote:
+> > @@ -10275,6 +10281,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+> >  {
+> >  	struct cfs_rq *cfs_rq;
+> >  	struct sched_entity *se = &curr->se;
+> > +	unsigned long thermal_pressure = arch_cpu_thermal_pressure(cpu_of(rq));
+> >  
+> >  	for_each_sched_entity(se) {
+> >  		cfs_rq = cfs_rq_of(se);
+> > @@ -10286,6 +10293,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+> >  
+> >  	update_misfit_status(curr, rq);
+> >  	update_overutilized_status(task_rq(curr));
+> > +	update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
+> >  }
 > 
-> That is a little bit indirect, yes. In the end I want static_max to
-> be either the maximum reported by Xen, or if not available, the current
-> assumed memory size, which can be found in balloon_stats.current_pages.
-> 
-> The main idea is to avoid a negative target_diff which would result in
-> not ballooning down.
+> I'm thinking this is the wrong place; should this not be in
+> scheduler_tick(), right before calling sched_class::task_tick() ? Surely
+> any execution will affect thermals, not only fair class execution.
 
-All understood. Yet the change is then not a restore of prior behavior
-(just in a limited case), but a change to behavior that we never there
-before. I.e. it was indeed my assumption that the code was right, but
-the description was misleading.
+Right, but right now only CFS takes action when we overheat. That is,
+only CFS uses capacity_of() which is where the thermal signal gets
+reflected.
 
-Jan
+We definitely could (and maybe should) make RT and DL react to thermal
+pressure as well when they're both capacity-aware. But perhaps that's
+for later ? Thoughts ?
+
+Thanks,
+Quentin
