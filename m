@@ -2,142 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6911714038A
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B61140391
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:29:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbgAQFZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 00:25:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42794 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729537AbgAQFZm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 00:25:42 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p9so9367587plk.9;
-        Thu, 16 Jan 2020 21:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=VFz24DYx+AJEk47BONRgaGsS8LjnX5pSIY7Tnm7mCJo=;
-        b=KaZz1WJ9hDeSXfTdPY7q2phDBHVx1zx6FJU5x0Ubzj8AzyPoxeeJiz/Urrw17TAlKI
-         Gq79vwsd16J/wD9/LemeFpLRrXcXd6XJomy5sjrc5LWb97jYVScFWabJZUuIa+blgnSH
-         PXQjvfDKqyN+eN6+JOake8O4SJRgByeedVV/HxpqfEBb2IhGBkaukEWnb/IZfpRqRSrL
-         njAyXEEoZ4jII4GskFjGjxH3md5eF4OpDIdd+SW/cQ4qGUM5AEzNj4LeShxCMBSSaIPn
-         BLDyN4C3nebqdFrjyhJ6UpUBrkFbU1sLSrFWwCDEGSPjVgG3+pRYoJSWwWbLXtGAasXx
-         vu5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=VFz24DYx+AJEk47BONRgaGsS8LjnX5pSIY7Tnm7mCJo=;
-        b=fS93deDR51PliemLJREXfux1PBkPPAE/fH6veK9fhEB9rcsA33f3vgJC1jfw3bk9Vw
-         Kn6DwLwR7OHR8JEg0L+ZYVpuxLapMWSsfxmts7wgnuzob4FgsSmcRcGQTRCBkOgfZGeW
-         VGyE/3Y27LgKGCa2kThU0e73GOxGL+PwVXc4WR7YQHaQZkLma9jB7aBuGLhAPD+Fi0uO
-         aO0HGrTdjt2+adIhRVAIGbQpw6E6MyL6WBRp3og6xnw7T6prgZzhWeKqiT0d1JtneSq2
-         Q8ynPCCC3LB1Qr2PZhxeP1LN4Yy5EkrPacFN+v8IZGLUqvoRj+ZVg96R7b+Rv0bUaa+6
-         hKEg==
-X-Gm-Message-State: APjAAAU2pUIXHWOHwkXGTxAhGV6HzTVx+9pfTg2JMDOlcngYBmd+dUC6
-        EwzllqhM/vejn3qSFfghQ7Q=
-X-Google-Smtp-Source: APXvYqyMgiGlD9tGbi7+t2vq6IqNQC4YNjC/LY/EYxbj4BpulT+k0yA4i62+ylI7hYpLwFvlbpGCog==
-X-Received: by 2002:a17:90a:c211:: with SMTP id e17mr3767593pjt.14.1579238742145;
-        Thu, 16 Jan 2020 21:25:42 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id c26sm28844756pfj.101.2020.01.16.21.25.38
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 16 Jan 2020 21:25:41 -0800 (PST)
-From:   Baolin Wang <baolin.wang7@gmail.com>
-To:     axboe@kernel.dk, paolo.valente@linaro.org, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org
-Cc:     zhang.lyra@gmail.com, orsonzhai@gmail.com, arnd@arndb.de,
-        linus.walleij@linaro.org, baolin.wang7@gmail.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: [RFC PATCH 8/8] mmc: host: sdhci-sprd: Add MMC packed request support
-Date:   Fri, 17 Jan 2020 13:24:27 +0800
-Message-Id: <96e3ad74f2717029e5705fbf00bf3e61db90211d.1579164456.git.baolin.wang7@gmail.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1579164455.git.baolin.wang7@gmail.com>
-References: <cover.1579164455.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1579164455.git.baolin.wang7@gmail.com>
-References: <cover.1579164455.git.baolin.wang7@gmail.com>
+        id S1726378AbgAQF3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 00:29:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbgAQF3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 00:29:14 -0500
+Received: from localhost (unknown [122.182.218.15])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F37342072E;
+        Fri, 17 Jan 2020 05:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579238953;
+        bh=/clOrGLn8OAp1OI6m5X00wsw+u3Jo3xhtsfAEOlmqMY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nldw1FKn8NYMiMI0PeNeTNHGuNAZjOY3u9nlRhXuBzjE3j69A/60TQD3j1xoq6P23
+         7Wlj6W/WTPPJoDR4gIKC/1lVunYwMx10NrxFqlT3iSRm7h11X9JptdMf14LSusRiub
+         etVheOkx6KhLwn0tT0jbzMvuHDxdr6eX6QZdPwok=
+Date:   Fri, 17 Jan 2020 10:59:07 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     santosh.shilimkar@oracle.com, Olof Johansson <olof@lixom.net>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, soc@kernel.org,
+        arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        khilman@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [GIT_PULL] SOC: TI Keystone Ring Accelerator driver for v5.6
+Message-ID: <20200117052907.GT2818@vkoul-mobl>
+References: <1579205259-4845-1-git-send-email-santosh.shilimkar@oracle.com>
+ <20200117000358.fe7ew4vvnz4yxbzj@localhost>
+ <148b6ec3-6a8e-ced8-41b3-3dffd5528ed6@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <148b6ec3-6a8e-ced8-41b3-3dffd5528ed6@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the ADMA3 transfer mode as well as adding packed operations
-to support MMC packed requests to improve IO performance.
+Hi,
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/mmc/host/sdhci-sprd.c |   30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+Add Peter
 
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index 49afe1c..daa38ed 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -390,6 +390,12 @@ static void sdhci_sprd_request_done(struct sdhci_host *host,
- 	 mmc_request_done(host->mmc, mrq);
- }
- 
-+static void sdhci_sprd_packed_request_done(struct sdhci_host *host,
-+					   struct mmc_packed_request *prq)
-+{
-+	mmc_hsq_finalize_packed_request(host->mmc, prq);
-+}
-+
- static struct sdhci_ops sdhci_sprd_ops = {
- 	.read_l = sdhci_sprd_readl,
- 	.write_l = sdhci_sprd_writel,
-@@ -404,6 +410,7 @@ static void sdhci_sprd_request_done(struct sdhci_host *host,
- 	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
- 	.get_ro = sdhci_sprd_get_ro,
- 	.request_done = sdhci_sprd_request_done,
-+	.packed_request_done = sdhci_sprd_packed_request_done,
- };
- 
- static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -546,10 +553,18 @@ static void sdhci_sprd_phy_param_parse(struct sdhci_sprd_host *sprd_host,
- 		  SDHCI_QUIRK_MISSING_CAPS,
- 	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200 |
- 		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT |
--		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_USE_ADMA3_SUPPORT,
- 	.ops = &sdhci_sprd_ops,
- };
- 
-+static const struct hsq_packed_ops packed_ops = {
-+	.packed_algo = mmc_hsq_packed_algo_rw,
-+	.prepare_hardware = sdhci_prepare_packed,
-+	.unprepare_hardware = sdhci_unprepare_packed,
-+	.packed_request = sdhci_packed_request,
-+};
-+
- static int sdhci_sprd_probe(struct platform_device *pdev)
- {
- 	struct sdhci_host *host;
-@@ -676,7 +691,18 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 		goto err_cleanup_host;
- 	}
- 
--	ret = mmc_hsq_init(hsq, host->mmc, NULL, 0);
-+	/*
-+	 * If the host controller can support ADMA3 mode, we can enable the
-+	 * packed request mode to improve the read/write performance.
-+	 *
-+	 * Considering the maximum ADMA3 entries (default is 16) and the request
-+	 * latency, we set the default maximum packed requests number is 8.
-+	 */
-+	if (host->flags & SDHCI_USE_ADMA3)
-+		ret = mmc_hsq_init(hsq, host->mmc, &packed_ops,
-+				   SDHCI_MAX_ADMA3_ENTRIES / 2);
-+	else
-+		ret = mmc_hsq_init(hsq, host->mmc, NULL, 0);
- 	if (ret)
- 		goto err_cleanup_host;
- 
+On 16-01-20, 21:05, santosh.shilimkar@oracle.com wrote:
+> On 1/16/20 4:03 PM, Olof Johansson wrote:
+> > Hi,
+> > 
+> > On Thu, Jan 16, 2020 at 12:07:39PM -0800, Santosh Shilimkar wrote:
+> > > Its bit late for pull request, but if possible, please pull it to
+> > > soc drivers tree.
+> > > 
+> > > The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+> > > 
+> > >    Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >    git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/drivers_soc_for_5.6
+> > > 
+> > > for you to fetch changes up to 3277e8aa2504d97e022ecb9777d784ac1a439d36:
+> > > 
+> > >    soc: ti: k3: add navss ringacc driver (2020-01-15 10:07:27 -0800)
+> > > 
+> > > ----------------------------------------------------------------
+> > > SOC: TI Keystone Ring Accelerator driver
+> > > 
+> > > The Ring Accelerator (RINGACC or RA) provides hardware acceleration to
+> > > enable straightforward passing of work between a producer and a consumer.
+> > > There is one RINGACC module per NAVSS on TI AM65x SoCs.
+> > 
+> > This driver doesn't seem to have exported symbols, and no in-kernel
+> > users. So how will it be used?
+> > 
+> > Usually we ask to hold off until the consuming side/drivers are also ready.
+> > 
+> The other patches getting merged via Vinod's tree. The combined series
+> is split into couple of series. Vinod is going to pull this branch
+> and apply rest of the patchset. And then couple of additional consumer
+> drivers will get posted.
+
+Yeah the TI driver series has been reviewed and was 'waiting' for
+dependency to be resolved before I could apply them
+FWIW here is the series under consideration: https://lore.kernel.org/dmaengine/20191223110458.30766-1-peter.ujfalusi@ti.com/
+
+> > Also, is there a reason this is under drivers/soc/ instead of somewhere more
+> > suitable in the drivers subsystem? It's not "soc glue code" in the same way as
+> > drivers/soc was intended originally.
+> > 
+> These kind of SOC IP drivers, we put into drivers/soc/ because of lack
+> of specific subsystem where they fit in. Navigator was also similar example.
+> 
+> Regards,
+> Santosh
+
 -- 
-1.7.9.5
-
+~Vinod
