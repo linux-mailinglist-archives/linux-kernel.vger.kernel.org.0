@@ -2,91 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45ECB1410BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:24:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F7F1410C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 19:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgAQSYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 13:24:13 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43330 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbgAQSYM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:24:12 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x6so12309629pfo.10;
-        Fri, 17 Jan 2020 10:24:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dZq4930H9HujJy04y88tu8oZfEIDfkU1+0+vk4EgxTk=;
-        b=NG/bBZ9xt5g9xcqgnyHR4u+N+LkBsrI+BB+q+EzgjQFYNsPWuGmYkwmAWpvfFhxU3G
-         hdQMFqfOLdO3y3NvlwAQaic7RwMAhfIf/Ar1LAeJOjxvB1UhpEDNYR2mkek1zAEqa5cR
-         c6mzvmoG0Xl4rncgYPfA3xyx1YxZnckNwJbCL2ommLHjUfLYxL1TPdbjiaK/I2S7CctC
-         NvbTyHnpS7U5XIhdI3+4cV9y4ePt/CPHDqCHhcVaxSbwPeLQUJqFR/vcZzUQG0O15ddP
-         g41Nv3n9k4dFlpPuPK5RdAhYWSiKtMQBtJIJlBGDJi5jzQqeriLfjO+D5sSV+ixV8Q5D
-         JO/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dZq4930H9HujJy04y88tu8oZfEIDfkU1+0+vk4EgxTk=;
-        b=afralLiHjqmzN8qSILru28pepTnCIffwDE4OAhW00RbBY1b3Ry1o5dph7Xd+8PJ6DX
-         F4CXo6xnjp56z9Ljo4sGNsW+CMMFmDoNXjtljH0aR6tEl4C30+vH8s9LYBneeQ0JkLOi
-         KeWucy53zJ+uEDwmNFSzbRjlmFbSo7orc56VYQGHcNNoPdXdbW/py3e9EknirZPI4lFd
-         t/4gRDpwwpMRO3MAHIv9YVrQFfZ2eRq7Pm1ZSdlLb0OSQo8xfzefJvsEUY48oO1Pp4+3
-         WEUUA5vRK1XgJMH8ZTADmG+oBeEIaPBav3xX6qyDkE1e8OfZR65kZjf+zEdS4vSpTH2p
-         uHQg==
-X-Gm-Message-State: APjAAAXjxqnggnXkVkjlLok7v71gMU78p7TCJhNhwcI1KW4f5nr6pwc4
-        oJwWkVR9jr0I3q5GyFSwkdc=
-X-Google-Smtp-Source: APXvYqwqwtjiy/0ADuAQYaj/8wr83Ow+Ynf/qWks0ep1fuSe0WQLg9Hb44mfoLAT+0d/JXjA/BTNug==
-X-Received: by 2002:a63:fc57:: with SMTP id r23mr45446402pgk.71.1579285451964;
-        Fri, 17 Jan 2020 10:24:11 -0800 (PST)
-Received: from ?IPv6:2001:4898:d8:28:a811:24b6:1823:a6d9? ([2001:4898:80e8:8:2821:24b6:1823:a6d9])
-        by smtp.gmail.com with ESMTPSA id s18sm30103344pfh.179.2020.01.17.10.24.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 10:24:11 -0800 (PST)
-Subject: Re: [PATCH v9 2/2] EDAC: add EDAC driver for DMC520
-To:     Scott Branden <scott.branden@broadcom.com>,
-        Borislav Petkov <bp@alien8.de>,
-        James Morse <james.morse@arm.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sashal@kernel.org, hangl@microsoft.com,
-        Lei Wang <lewan@microsoft.com>, shji@microsoft.com,
-        ruizhao@microsoft.com, Yuqing Shen <yuqing.shen@broadcom.com>,
-        ray.jui@broadcom.com, wangglei@gmail.com
-References: <6a462190-0af2-094a-daa8-f480d54a1fbf@gmail.com>
- <aa80b8a5-5297-91c6-6410-99e43b53bd20@broadcom.com>
-From:   Shiping Ji <shiping.linux@gmail.com>
-Message-ID: <d05f6394-e076-6c99-965a-28444c0f24f9@gmail.com>
-Date:   Fri, 17 Jan 2020 10:24:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1729008AbgAQSZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 13:25:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726970AbgAQSZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 13:25:40 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04F0E206D5;
+        Fri, 17 Jan 2020 18:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579285539;
+        bh=Ajf3BP5hBZsV+EVeWhN6NMnAll1+MYA0SUMuToB9Bi8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rGISdMu+rzywI2gZjVcM1WGByjW5TW2wt+NoZo0MifkumfhruGnOL0SOu98nDSXnW
+         vCTYqXaeAAUINnBx/ZLG1eN9wlBGnta3fl2ZvyHMKSqhoxKpzIugxEBDZ4JIuL9TWZ
+         ETmRjk8Oo4A+/dOMlHkUwJzBbOQsq0qkLu6XJqaE=
+Date:   Fri, 17 Jan 2020 19:25:37 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: add OrangePi 3 with eMMC
+Message-ID: <20200117182537.scttsuq26g6v6yno@gilmour.lan>
+References: <20200115194216.173117-1-jernej.skrabec@siol.net>
+ <4200557.LvFx2qVVIh@jernej-laptop>
+ <20200116122944.sgl2fgxf5mrg6i52@gilmour.lan>
+ <12435330.uLZWGnKmhe@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <aa80b8a5-5297-91c6-6410-99e43b53bd20@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mplvgv5b6upxjosy"
+Content-Disposition: inline
+In-Reply-To: <12435330.uLZWGnKmhe@jernej-laptop>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/2020 4:31 PM, Scott Branden wrote:
-> Hi Shiping,
-> 
-> Here is another small change to cleanup.
->> +    } else {
->> +        memset(info, 0, sizeof(struct ecc_error_info));
-> This should be sizeof(*info), not sizeof(struct ecc_error_info)
-> for better programming to allow info to change type in the future
-> without the code changing.
 
-Yes, two occurrences will be replaced in the next patch, thanks!
+--mplvgv5b6upxjosy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best regards,
-Shiping Ji
+Hi,
+
+On Thu, Jan 16, 2020 at 05:33:45PM +0100, Jernej =C5=A0krabec wrote:
+> Dne =C4=8Detrtek, 16. januar 2020 ob 13:29:44 CET je Maxime Ripard napisa=
+l(a):
+> > On Thu, Jan 16, 2020 at 12:10:58AM +0100, Jernej =C5=A0krabec wrote:
+> > > Hi!
+> > >
+> > > Dne sreda, 15. januar 2020 ob 22:57:31 CET je Rob Herring napisal(a):
+> > > > On Wed, Jan 15, 2020 at 1:42 PM Jernej Skrabec <jernej.skrabec@siol=
+=2Enet>
+> > >
+> > > wrote:
+> > > > > OrangePi 3 can optionally have eMMC. Add a compatible for it.
+> > > >
+> > > > Is this just a population option or a different board layout? If the
+> > > > former, I don't think you need a new compatible, just add/enable a
+> > > > node for the eMMC.
+> > >
+> > > I have only board with eMMC but I imagine it's the former. Even so,
+> > > current
+> > > approach with Allwinner boards is to have two different board DT file=
+s,
+> > > one for each variant. This can be seen from
+> > > Documentation/devicetree/bindings/arm/ sunxi.yaml which has a lot of
+> > > compatibles ending with "-emmc". I guess reason for that is to avoid
+> > > having MMC controller being powered on for no reason.
+> > The main reason for that is that those populating options can be
+> > conflicting. For example, last week we discussed an issue about the
+> > eMMC being on the same pin set than an SPI flash, both options being
+> > available.
+> >
+> > The solution Andre suggested then was to let the eMMC be disabled, and
+> > have the bootloader probe the emmc, and if found, enable
+> > it. Otherwise, it means that you have a SPI flash (and enable it).
+> >
+> > I guess a similar solution would apply here.
+>
+> From what I can tell from schematic, pins are dedicated for eMMC.
+>
+> So what solution do you suggest? Put eMMC node in original OrangePi 3 DT =
+and
+> set status to disabled?
+
+If it's always dedicated to eMMC, but the eMMC is not always there, I
+guess we could remove the non-removable property from the eMMC
+mode. IIRC, without it (and without CD GPIO), it will fall-back to
+polling the card and will be able to detect it if it's there (and not
+use it if it's not).
+
+Maxime
+
+--mplvgv5b6upxjosy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXiH8IQAKCRDj7w1vZxhR
+xbWvAQDklRiCu9YordwQFOhckNNptssNw4rGbHaZXxEmxqtxQAD/UzPfwuDk4SR/
+fyxg+YnibVHtraJeNwUYsL27/pkCOQA=
+=TwtM
+-----END PGP SIGNATURE-----
+
+--mplvgv5b6upxjosy--
