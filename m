@@ -2,252 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9727D14005F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3602E14006A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 01:03:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387956AbgAQAAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 19:00:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40994 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387651AbgAQAAN (ORCPT
+        id S1726991AbgAQABw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 19:01:52 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:34347 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726088AbgAQABw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:00:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id x8so10729264pgk.8;
-        Thu, 16 Jan 2020 16:00:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QglLgkqFjKQCxygZipmvR3GsUGfJTk60o5ZOd6nyvzM=;
-        b=A5GN7q7x2GgL0yPH12L2wx30f/yE2I9iB0owJ5yvV6hgmMPnJliTxnId1SVEnEGQpd
-         QvlmNEQyMO0r00oVtIp6KNJj/mc6EGd+aeeqNfrLm7+djbPkDqYAUwmkn8tD3JtS+QoY
-         oh5qRUm0J8PChTC7+42Ua/aMp6heo62nShftwWrQZo4vyJWOdqVqg/Rrc9Vt0A0T4JwX
-         5bxaKMe+tXS7W+igmL+rFGNTMRuh8nXhpJWEohjzJKTG6fKgHto/dIcDsfe5JQxOLW0+
-         sgPsdAE6RPWPazEoIO+1MTqZjkBjylWA3gDkPE0/1rERbm+P70i7VztTgwVGKggowswh
-         qDlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=QglLgkqFjKQCxygZipmvR3GsUGfJTk60o5ZOd6nyvzM=;
-        b=S2VgiuywyGEYZH5/FmLqAJ2cO2PHdE8V/PSCkBTRayAQQUE9MfSz0e3uhae4DCLSC9
-         VYanx+qvgituQqGRAIpPfhi0qzMGsqekIQ/CIk2Rb0jn+upq+8muZ/bnUPxgdSfpOcz7
-         lHK+jNtlbe27L1MgW95d+zmn7LiOQI6dPSme4V7821NXdnCvT87gztDjd0oR05OF9Kuy
-         rcB7dV4ebG/1XpjfGMvFroin/tEMJPkBVoCrrGXKuAcfQkQqOxGS8gIMAXLYJpx9CAbO
-         sr/jARoP0cl9tSqncfGojNOgVDD68ZmbhuZYh6J0f3zjIZgqD1uzSeu2YnxVZ60zbbXv
-         TuEQ==
-X-Gm-Message-State: APjAAAWflUCmSYug9kZ9bmACYJqKvrM2CQ4d8fv3k4KD014pXd8/rCeo
-        Qn0vqPGczFheM4HhRxftUqU=
-X-Google-Smtp-Source: APXvYqwsJcCW+qt7R9B04B+vnwPfGrVGJtCei/LJzA5JSNhEEvKUwibk1XtW2akSOZv3EZr4Odh6TA==
-X-Received: by 2002:a63:dd58:: with SMTP id g24mr41178134pgj.102.1579219212474;
-        Thu, 16 Jan 2020 16:00:12 -0800 (PST)
-Received: from bbox-1.mtv.corp.google.com ([2620:15c:211:1:3e01:2939:5992:52da])
-        by smtp.gmail.com with ESMTPSA id z4sm26584885pfn.42.2020.01.16.16.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 16:00:11 -0800 (PST)
-From:   Minchan Kim <minchan@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-api@vger.kernel.org, oleksandr@redhat.com,
-        Suren Baghdasaryan <surenb@google.com>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        John Dias <joaodias@google.com>, ktkhai@virtuozzo.com,
-        christian.brauner@ubuntu.com, sjpark@amazon.de,
-        Minchan Kim <minchan@kernel.org>
-Subject: [PATCH v2 5/5] mm: support both pid and pidfd for process_madvise
-Date:   Thu, 16 Jan 2020 15:59:53 -0800
-Message-Id: <20200116235953.163318-6-minchan@kernel.org>
-X-Mailer: git-send-email 2.25.0.rc1.283.g88dfdc4193-goog
-In-Reply-To: <20200116235953.163318-1-minchan@kernel.org>
-References: <20200116235953.163318-1-minchan@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 16 Jan 2020 19:01:52 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 50F0D22077;
+        Thu, 16 Jan 2020 19:01:51 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 16 Jan 2020 19:01:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=+4d46nAg69apB++QN888O8Q+rlJqDsK
+        iGI/rETf8CM4=; b=pU3O/TGzgUZ3cp3Ae/Qw15GIvIjIhv/92V3RUdmVj6lSds/
+        pXL0Z7/YbEl3E0cFfDuhfUm0ckwZwa6rxViF7OcVTGxni6emI4oQ2LLu5bswSN8l
+        kZkhu81p1sWyemLn6DViC0DKSGaE39pcIzvK8ffh+7VE6Vl0o65OEtJy//REukeb
+        tfGWPjc037eNB0SvKApmpr4rlcLNaIs3kxHCQbt/We8haJm600Li3uDmgU7hVlX8
+        knBTLQ1X54GMJMpeGBOca1nMU2MPEGX91VPIOvtiqtxxc67osNpieHi0XjfT5VwZ
+        dBSKTyp+awkXY5/upHAG3sOhdIzNmoj3V6dm30w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=+4d46n
+        Ag69apB++QN888O8Q+rlJqDsKiGI/rETf8CM4=; b=sOzSyMqvMQhD65VKHv+Mg2
+        pj1KC1HwCxPjpA+4oJr6HoWgigppLMyvZp51ONbGdaW4aLv+BxC+cXgeOO0f8tJs
+        M+bA2zaqxHEOnEuguEWztQSxkn76/XN7r6Ju27Ti/o95F2JWH5d23Nmu7qFe+JcJ
+        Q6LUSdj3elIlkPKnLfNEHq03PbgiHIOMbykFZRn7fyiYlm1oqzlWvGTH4AL8zgV3
+        mzuc8nj0DQEoWbhGl1P5LH0jOiNXDl4ep8cSV4HUtrjYrdI0Ow3BVyeJSiIoKghD
+        fJlI9w/q4O5btBE+JtblN0+Ghe8V0hH72S5epN/hS4HUHO1wR83yy3MbRztZhtzw
+        ==
+X-ME-Sender: <xms:bvkgXrwp2O7KjDadKYhXFxuD_ExIQbhRvZrHICMXQhVuzo6jm8X_CQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigddugecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:bvkgXlrTSkyde1d1nfqk5OXTTD2kEYACVJ1253A8zSxeDrdMRZKduQ>
+    <xmx:bvkgXunaSZJfs2iTREwtxands2Y9uFDPHpdw4J7KZX1ze64THoavXA>
+    <xmx:bvkgXoo2rAyhshiNGu-So5CQPpZawZ0EOO1diF6-5V1YCLlWB7TtAg>
+    <xmx:b_kgXmn2xVH8CBc3Khf_qc91iCtNFOjCWCY0rnCuspTEJHtAa-pfeg>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7DCD5E00A2; Thu, 16 Jan 2020 19:01:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-754-g09d1619-fmstable-20200113v1
+Mime-Version: 1.0
+Message-Id: <9007a9db-5250-4ad7-b436-da26d6e1b620@www.fastmail.com>
+In-Reply-To: <1579123790-6894-6-git-send-email-eajames@linux.ibm.com>
+References: <1579123790-6894-1-git-send-email-eajames@linux.ibm.com>
+ <1579123790-6894-6-git-send-email-eajames@linux.ibm.com>
+Date:   Fri, 17 Jan 2020 10:31:30 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v6 05/12] dt-bindings: soc: Add Aspeed XDMA Engine
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a demand[1] to support pid as well pidfd for process_madvise
-to reduce unncessary syscall to get pidfd if the user has control of
-the targer process(ie, they could gaurantee the process is not gone
-or pid is not reused. Or, it might be okay to give a hint to wrong
-process).
 
-This patch aims for supporting both options like waitid(2). So, the
-syscall is currently,
 
-	int process_madvise(int which, pid_t pid, void *addr,
-		size_t length, int advise, unsigned long flag);
+On Thu, 16 Jan 2020, at 07:59, Eddie James wrote:
+> Document the bindings for the Aspeed AST25XX and AST26XX XDMA engine.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-@which is actually idtype_t for userspace libray and currently,
-it supports P_PID and P_PIDFD.
-
-[1]  https://lore.kernel.org/linux-mm/9d849087-3359-c4ab-fbec-859e8186c509@virtuozzo.com/
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- include/linux/pid.h      |  1 +
- include/linux/syscalls.h |  3 ++-
- kernel/exit.c            | 17 -----------------
- kernel/pid.c             | 17 +++++++++++++++++
- mm/madvise.c             | 34 ++++++++++++++++++++++------------
- 5 files changed, 42 insertions(+), 30 deletions(-)
-
-diff --git a/include/linux/pid.h b/include/linux/pid.h
-index 998ae7d24450..023d9c3a8edc 100644
---- a/include/linux/pid.h
-+++ b/include/linux/pid.h
-@@ -75,6 +75,7 @@ extern const struct file_operations pidfd_fops;
- struct file;
- 
- extern struct pid *pidfd_pid(const struct file *file);
-+extern struct pid *pidfd_get_pid(unsigned int fd);
- 
- static inline struct pid *get_pid(struct pid *pid)
- {
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 1b58a11ff49f..27060e59db37 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -877,7 +877,8 @@ asmlinkage long sys_munlockall(void);
- asmlinkage long sys_mincore(unsigned long start, size_t len,
- 				unsigned char __user * vec);
- asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
--asmlinkage long sys_process_madvise(int pidfd, unsigned long start,
-+
-+asmlinkage long sys_process_madvise(int which, pid_t pid, unsigned long start,
- 			size_t len, int behavior, unsigned long flags);
- asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
- 			unsigned long prot, unsigned long pgoff,
-diff --git a/kernel/exit.c b/kernel/exit.c
-index bcbd59888e67..7698843b1411 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1466,23 +1466,6 @@ static long do_wait(struct wait_opts *wo)
- 	return retval;
- }
- 
--static struct pid *pidfd_get_pid(unsigned int fd)
--{
--	struct fd f;
--	struct pid *pid;
--
--	f = fdget(fd);
--	if (!f.file)
--		return ERR_PTR(-EBADF);
--
--	pid = pidfd_pid(f.file);
--	if (!IS_ERR(pid))
--		get_pid(pid);
--
--	fdput(f);
--	return pid;
--}
--
- static long kernel_waitid(int which, pid_t upid, struct waitid_info *infop,
- 			  int options, struct rusage *ru)
- {
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 2278e249141d..a41a89d5dad2 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -496,6 +496,23 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
- 	return idr_get_next(&ns->idr, &nr);
- }
- 
-+struct pid *pidfd_get_pid(unsigned int fd)
-+{
-+	struct fd f;
-+	struct pid *pid;
-+
-+	f = fdget(fd);
-+	if (!f.file)
-+		return ERR_PTR(-EBADF);
-+
-+	pid = pidfd_pid(f.file);
-+	if (!IS_ERR(pid))
-+		get_pid(pid);
-+
-+	fdput(f);
-+	return pid;
-+}
-+
- /**
-  * pidfd_create() - Create a new pid file descriptor.
-  *
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 89557998d287..2ac62716e5b8 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1192,11 +1192,10 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
- 	return madvise_common(current, current->mm, start, len_in, behavior);
- }
- 
--SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
-+SYSCALL_DEFINE6(process_madvise, int, which, pid_t, upid, unsigned long, start,
- 		size_t, len_in, int, behavior, unsigned long, flags)
- {
- 	int ret;
--	struct fd f;
- 	struct pid *pid;
- 	struct task_struct *task;
- 	struct mm_struct *mm;
-@@ -1207,20 +1206,31 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
- 	if (!process_madvise_behavior_valid(behavior))
- 		return -EINVAL;
- 
--	f = fdget(pidfd);
--	if (!f.file)
--		return -EBADF;
-+	switch (which) {
-+	case P_PID:
-+		if (upid <= 0)
-+			return -EINVAL;
-+
-+		pid = find_get_pid(upid);
-+		if (!pid)
-+			return -ESRCH;
-+		break;
-+	case P_PIDFD:
-+		if (upid < 0)
-+			return -EINVAL;
- 
--	pid = pidfd_pid(f.file);
--	if (IS_ERR(pid)) {
--		ret = PTR_ERR(pid);
--		goto fdput;
-+		pid = pidfd_get_pid(upid);
-+		if (IS_ERR(pid))
-+			return PTR_ERR(pid);
-+		break;
-+	default:
-+		return -EINVAL;
- 	}
- 
- 	task = get_pid_task(pid, PIDTYPE_PID);
- 	if (!task) {
- 		ret = -ESRCH;
--		goto fdput;
-+		goto put_pid;
- 	}
- 
- 	mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
-@@ -1233,7 +1243,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, unsigned long, start,
- 	mmput(mm);
- release_task:
- 	put_task_struct(task);
--fdput:
--	fdput(f);
-+put_pid:
-+	put_pid(pid);
- 	return ret;
- }
--- 
-2.25.0.rc1.283.g88dfdc4193-goog
-
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
