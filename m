@@ -2,125 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D536141173
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC095141178
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbgAQTLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 14:11:00 -0500
-Received: from mga12.intel.com ([192.55.52.136]:37633 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbgAQTK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 14:10:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 11:10:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,331,1574150400"; 
-   d="scan'208";a="263269243"
-Received: from rakeshmi-mobl.gar.corp.intel.com (HELO [10.252.131.157]) ([10.252.131.157])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jan 2020 11:10:56 -0800
-Subject: Re: [PATCH v1 7/8] ASoC: Intel: Switch DMI table match to a test of
- variable
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-References: <20200117175626.56358-1-andriy.shevchenko@linux.intel.com>
- <20200117175626.56358-7-andriy.shevchenko@linux.intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c92e0395-0a08-a400-eb48-0aa05e52cf30@linux.intel.com>
-Date:   Fri, 17 Jan 2020 13:10:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1729496AbgAQTLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 14:11:07 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41546 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729456AbgAQTLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 14:11:07 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t14so2287414plr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 11:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ddh+J1aNApjVpqxRphFgI91ytuMiQu7DUUqdaf2bvPs=;
+        b=DLepnDTOCwEvanSytGMrHpz+NjlAgL2dcwQ39A7BTwc8s8FXc0BaZ7AlHWmcIkt9U9
+         sCwIONzWg9+3KzSljhS98LitF3p0pltTBLulgZDkl3msMeZJ2jrgrmWLG6EGUlAVQ1Vv
+         QgyeAJSi6uecYBlxuzQG40GSKW165jtPxrSSO5s889P/gq8XFoBW2geGkyzrQ/V8ntJJ
+         XMXCVexiShBajVAtI3kqmV4oy15aVW5Im3YeaBaAGctjn3p8SGciD50nMOfQfZgXpLuG
+         1lUayirspJWsOtQPQ+LLAq52zCfrBKZJoM0p6m8qNpuBwdy2x8ksgsTLnSwiyFmkqbnX
+         dcpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ddh+J1aNApjVpqxRphFgI91ytuMiQu7DUUqdaf2bvPs=;
+        b=c1b0DMnMQVMLl0f6ADSwdKjDWZJ4+9U9z7mRKkKOyJT+z3L9Y0/X7wSHcDdzath+nT
+         NXe/KD4WcYB/w5Myfw9LTLeOpfu4ic499MK9Lp4F2RJooC8YlZFDwiNFJwSDGsNG0BN+
+         /R7kmRUd4mFqmi9WHsIIOWF8ULPRz5WXRasSHPE8KAGcEfa4p5NOMaY2N1QKinemfMW6
+         MQVHnUqBDbrYFanLHIx3hwECMw0gP4m8yK+5ErVU71HDPpG2La+bsrzZvxaInefoYWSk
+         lQ3lgVKfJeK2aHLFX1thGv6QT5M1Q/DDWcvO+7mIDH+ijo75NIDSA9+dSgNTenF2GNuN
+         qFmw==
+X-Gm-Message-State: APjAAAU0Rzqw4r5NEzLyv5lWU8w3N+nax6mY6ivT5gsuQ/69AqKrdmYP
+        gVP8pqelfAsrp+UVl+Xoo5EvIA==
+X-Google-Smtp-Source: APXvYqzdNSS5A2A8ttf6eq9zuCpovcga8x+VM76dxFBLeN+NunYP6bxDWbzwk2CpJUlya2rtbGf8fQ==
+X-Received: by 2002:a17:902:10e:: with SMTP id 14mr660521plb.122.1579288265782;
+        Fri, 17 Jan 2020 11:11:05 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id i23sm29833186pfo.11.2020.01.17.11.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 11:11:05 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:11:04 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, alexander.duyck@gmail.com,
+        stable@vger.kernel.org
+Subject: Re: [Patch v3] mm: thp: grab the lock before manipulation defer
+ list
+In-Reply-To: <20200117153839.pcnfomzuaha3dafh@box>
+Message-ID: <alpine.DEB.2.21.2001171102590.75824@chino.kir.corp.google.com>
+References: <20200116013100.7679-1-richardw.yang@linux.intel.com> <0bb34c4a-97c7-0b3c-cf43-8af6cf9c4396@virtuozzo.com> <alpine.DEB.2.21.2001161357240.109233@chino.kir.corp.google.com> <20200117091002.GM19428@dhcp22.suse.cz> <alpine.DEB.2.21.2001170125350.20618@chino.kir.corp.google.com>
+ <20200117153839.pcnfomzuaha3dafh@box>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200117175626.56358-7-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 17 Jan 2020, Kirill A. Shutemov wrote:
 
-
-On 1/17/20 11:56 AM, Andy Shevchenko wrote:
-> Since we have a common x86 quirk that provides an exported variable,
-> use it instead of local DMI table match.
+> > Right, and I don't think that it necessarily is and the second 
+> > conditional in Wei's patch will always succeed unless we have raced.  That 
+> > patch is for a lock concern but I think Kirill's question has uncovered 
+> > something more interesting.
+> > 
+> > Kirill S would definitely be best to answer Kirill T's question, but from 
+> > my understanding when mem_cgroup_move_account() is called with 
+> > compound == true that we always have an intact pmd (we never migrate 
+> > partial page charges for pages on the deferred split queue with the 
+> > current charge migration implementation) and thus the underlying page is 
+> > not eligible to be split and shouldn't be on the deferred split queue.
+> > 
+> > In other words, a page being on the deferred split queue for a memcg 
+> > should only happen when it is charged to that memcg.  (This wasn't the 
+> > case when we only had per-node split queues.)  I think that's currently 
+> > broken in mem_cgroup_move_account() before Wei's patch.
 > 
-> Cc: Cezary Rojewski <cezary.rojewski@intel.com>
-> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-> Cc: Jie Yang <yang.jie@linux.intel.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: alsa-devel@alsa-project.org
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thanks Andy.
-
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-> ---
->   .../intel/common/soc-acpi-intel-cht-match.c   | 28 ++-----------------
->   1 file changed, 3 insertions(+), 25 deletions(-)
+> Right. It's broken indeed.
 > 
-> diff --git a/sound/soc/intel/common/soc-acpi-intel-cht-match.c b/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-> index d0fb43c2b9f6..833d2e130e6e 100644
-> --- a/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-> +++ b/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-> @@ -5,31 +5,11 @@
->    * Copyright (c) 2017, Intel Corporation.
->    */
->   
-> -#include <linux/dmi.h>
-> +#include <linux/platform_data/x86/machine.h>
-> +
->   #include <sound/soc-acpi.h>
->   #include <sound/soc-acpi-intel-match.h>
->   
-> -static unsigned long cht_machine_id;
-> -
-> -#define CHT_SURFACE_MACH 1
-> -
-> -static int cht_surface_quirk_cb(const struct dmi_system_id *id)
-> -{
-> -	cht_machine_id = CHT_SURFACE_MACH;
-> -	return 1;
-> -}
-> -
-> -static const struct dmi_system_id cht_table[] = {
-> -	{
-> -		.callback = cht_surface_quirk_cb,
-> -		.matches = {
-> -			DMI_MATCH(DMI_SYS_VENDOR, "Microsoft Corporation"),
-> -			DMI_MATCH(DMI_PRODUCT_NAME, "Surface 3"),
-> -		},
-> -	},
-> -	{ }
-> -};
-> -
->   static struct snd_soc_acpi_mach cht_surface_mach = {
->   	.id = "10EC5640",
->   	.drv_name = "cht-bsw-rt5645",
-> @@ -43,9 +23,7 @@ static struct snd_soc_acpi_mach *cht_quirk(void *arg)
->   {
->   	struct snd_soc_acpi_mach *mach = arg;
->   
-> -	dmi_check_system(cht_table);
-> -
-> -	if (cht_machine_id == CHT_SURFACE_MACH)
-> +	if (x86_microsoft_surface_3_machine)
->   		return &cht_surface_mach;
->   	else
->   		return mach;
+> We are dealing with anon page here. And it cannot be on deferred list as
+> long as it's mapped with PMD. We cannot get compound == true &&
+> !list_empty() on the (first) enter to the function. Any PMD-mapped page
+> will be put onto deferred by the function. This is wrong.
 > 
+> The fix is not obvious.
+> 
+> This comment got in mem_cgroup_move_charge_pte_range() my attention:
+> 
+> 			/*
+> 			 * We can have a part of the split pmd here. Moving it
+> 			 * can be done but it would be too convoluted so simply
+> 			 * ignore such a partial THP and keep it in original
+> 			 * memcg. There should be somebody mapping the head.
+> 			 */
+> 
+> That's exactly the case we care about: PTE-mapped THP that has to be split
+> under load. We don't move charge of them between memcgs and therefore we
+> should not move the page to different memcg.
+> 
+> I guess this will do the trick :P
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c5b5f74cfd4d..e87ee4c10f6e 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5359,14 +5359,6 @@ static int mem_cgroup_move_account(struct page *page,
+>  		__mod_lruvec_state(to_vec, NR_WRITEBACK, nr_pages);
+>  	}
+>  
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	if (compound && !list_empty(page_deferred_list(page))) {
+> -		spin_lock(&from->deferred_split_queue.split_queue_lock);
+> -		list_del_init(page_deferred_list(page));
+> -		from->deferred_split_queue.split_queue_len--;
+> -		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+> -	}
+> -#endif
+>  	/*
+>  	 * It is safe to change page->mem_cgroup here because the page
+>  	 * is referenced, charged, and isolated - we can't race with
+> @@ -5376,16 +5368,6 @@ static int mem_cgroup_move_account(struct page *page,
+>  	/* caller should have done css_get */
+>  	page->mem_cgroup = to;
+>  
+> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -	if (compound && list_empty(page_deferred_list(page))) {
+> -		spin_lock(&to->deferred_split_queue.split_queue_lock);
+> -		list_add_tail(page_deferred_list(page),
+> -			      &to->deferred_split_queue.split_queue);
+> -		to->deferred_split_queue.split_queue_len++;
+> -		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+> -	}
+> -#endif
+> -
+>  	spin_unlock_irqrestore(&from->move_lock, flags);
+>  
+>  	ret = 0;
+
+Yeah, this is what I was thinking as well.  When 
+PageTransHuge(page) == true and there's a mapping pmd, the charge gets 
+moved but the page shouldn't appear on any deferred split queue; when 
+there isn't a mapped pmd, it should already be on a queue but the charge 
+doesn't get moved so no change in which queue is needed.
+
+There was no deferred split handling in mem_cgroup_move_account() needed 
+for per-node deferred split queues either so this is purely an issue for 
+commit 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware") 
+so I think we need your patch and it should be annotated for stable 5.4+.
