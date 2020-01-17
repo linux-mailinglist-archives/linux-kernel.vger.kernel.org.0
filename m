@@ -2,73 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B896D1401D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C2B1401D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 03:24:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388128AbgAQCXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 16 Jan 2020 21:23:50 -0500
-Received: from forward501o.mail.yandex.net ([37.140.190.203]:59631 "EHLO
-        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726726AbgAQCXt (ORCPT
+        id S2388291AbgAQCYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 16 Jan 2020 21:24:08 -0500
+Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:30405 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726726AbgAQCYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 16 Jan 2020 21:23:49 -0500
-Received: from mxback26j.mail.yandex.net (mxback26j.mail.yandex.net [IPv6:2a02:6b8:0:1619::226])
-        by forward501o.mail.yandex.net (Yandex) with ESMTP id C63321E80128;
-        Fri, 17 Jan 2020 05:23:46 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback26j.mail.yandex.net (mxback/Yandex) with ESMTP id ZU3RfPQi61-Nje07Xe4;
-        Fri, 17 Jan 2020 05:23:46 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1579227826;
-        bh=u1Ex/dm008pS0Rs3HBPfLNJc8QRnk3C4G8W3JONuMQ0=;
-        h=Message-Id:Cc:Subject:In-Reply-To:Date:References:To:From;
-        b=TvhvRYJmVavbRIFYjpuWxnmMqAq6Hqy3kRZignk0nQTItrm2EQ0tXyql7Cxxtd7Ve
-         fyILr7EMwJo/6vD7ghdo5ju+bgYl2lyEAs+oopfXK+Grx4cFqCMcdGcy/QAu6Qs+4L
-         2Y6CrVLxDEK0Mv46Us5mR7lJ3CF7WpO7x310VAEA=
-Authentication-Results: mxback26j.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by sas1-e05fd3bc78f9.qloud-c.yandex.net with HTTP;
-        Fri, 17 Jan 2020 05:23:45 +0300
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-Envelope-From: yjx@flygoat.com
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Cc:     "chenhc@lemote.com" <chenhc@lemote.com>,
-        "paul.burton@mips.com" <paul.burton@mips.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maz@kernel.org" <maz@kernel.org>
-In-Reply-To: <875zhaeupr.fsf@nanos.tec.linutronix.de>
-References: <20200113101251.37471-1-jiaxun.yang@flygoat.com> <20200117001706.40620-1-jiaxun.yang@flygoat.com> <875zhaeupr.fsf@nanos.tec.linutronix.de>
-Subject: Re: [PATCH v1 1/2] genirq: Check for level based percpu irq
+        Thu, 16 Jan 2020 21:24:07 -0500
+Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHCAS2.zhaoxin.com
+ (10.28.252.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 17 Jan
+ 2020 10:24:05 +0800
+Received: from tony-HX002EA.zhaoxin.com (10.32.64.11) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 17 Jan
+ 2020 10:24:03 +0800
+From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <luto@kernel.org>,
+        <pawan.kumar.gupta@linux.intel.com>, <peterz@infradead.org>,
+        <fenghua.yu@intel.com>, <vineela.tummalapalli@intel.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <DavidWang@zhaoxin.com>, <CooperYan@zhaoxin.com>,
+        <QiyuanWang@zhaoxin.com>, <HerryYang@zhaoxin.com>
+Subject: [PATCH v1 0/2] x86/bugs: Exclude Zhaoxin family 7 CPUs
+Date:   Fri, 17 Jan 2020 10:24:30 +0800
+Message-ID: <1579227872-26972-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Fri, 17 Jan 2020 10:23:45 +0800
-Message-Id: <1440861579227825@sas1-e05fd3bc78f9.qloud-c.yandex.net>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+X-Originating-IP: [10.32.64.11]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+New Zhaoxin family 7 CPUs are not affected by SPECTRE_V2, SWAPGS.
 
+Extend cpu_vuln_whitelist flag with a NO_SPECTRE_V2 bit. And add
+these CPUs to the cpu vulnerability whitelist.
 
-17.01.2020, 09:29, "Thomas Gleixner" <tglx@linutronix.de>:
-> Jiaxun Yang <jiaxun.yang@flygoat.com> writes:
->>  MIPS processors implemented their IPI IRQ and CPU interrupt line
->>  as level triggered IRQ. However, our current percpu_irq flow is trying
->>  do it in a level triggered manner.
->
+Tony W Wang-oc (2):
+  x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2
+  x86/speculation/swapgs: Exclude Zhaoxin CPUs from SWAPGS
 
-Hi Thomas,
+ arch/x86/kernel/cpu/common.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Thanks for your kind explanation.
+-- 
+2.7.4
 
-That appears to be my misunderstanding of the trigger type.
-
-Paul, I have confirmed it seems fine to handle percpu IRQ without mask
-it on both Ingenic and Loongson processors. How about other MIPS Cores?
-Could you please help check that?
-
-Thanks.
-
---
-Jiaxun Yang
