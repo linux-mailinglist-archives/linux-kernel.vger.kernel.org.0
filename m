@@ -2,103 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C666E14032F
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F7614033C
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 06:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbgAQFEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 00:04:36 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33916 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbgAQFEf (ORCPT
+        id S1727665AbgAQFQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 00:16:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35423 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbgAQFQ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 00:04:35 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H4wCkp099355;
-        Fri, 17 Jan 2020 05:04:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=C7E4rn681XeGsLrdspXx5S23srOIn+BD9EH2JlLOmaE=;
- b=jE2GHbQ66yJlYqI9aR2paG/a63EAhcgEEsDn6YJcXT2E3NQ3D3YQkiaYOaUr5dOJleae
- PrD2fUsXzC1TJYrTp7TVVFrbbR5Z6IRJIFJUZ6sveihY7h3IZlguynathhBEulSUawld
- cAI91IakEI9WiNBoKm+n3eGFlC8//MKB8rWMiJegKQ80QzZV8REyXnNi+eT6i3e8w3jX
- ePIfiQ2jm8ByKCQ6gjXEFJyj7RKk++pt+60onw61fhF3h1+5+OFzaKcndGSygJaC3tO+
- ZxVmzd3Rz/BqN9GckXvM8pyK7+y6mxP4Rj2SRsZh9jXS2Pz1MK2vPqksa6vQaVRoLXdt yQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2xf73u6f42-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 05:04:28 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00H4wHkF085171;
-        Fri, 17 Jan 2020 05:04:27 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2xjxm868nx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 05:04:27 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00H54Qq6021453;
-        Fri, 17 Jan 2020 05:04:26 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 16 Jan 2020 21:04:26 -0800
-Date:   Fri, 17 Jan 2020 08:06:09 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Simon Schwartz <kern.simon@theschwartz.xyz>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] driver core: platform: fix u32 greater or equal to
- zero comparison
-Message-ID: <20200117050609.GD19765@kadam>
-References: <20200116175758.88396-1-colin.king@canonical.com>
- <20200117044216.GC21151@kadam>
+        Fri, 17 Jan 2020 00:16:27 -0500
+Received: from ip5f5bd663.dynamic.kabel-deutschland.de ([95.91.214.99] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1isJzc-0007pW-2m; Fri, 17 Jan 2020 05:16:24 +0000
+Date:   Fri, 17 Jan 2020 06:16:23 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Oleg Nesterov <oleg@redhat.com>, stable@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>
+Subject: Re: [REVIEW PATCH v2] ptrace: reintroduce usage of subjective
+ credentials in ptrace_has_cap()
+Message-ID: <20200117051622.yre42znvc4r3i7ta@wittgenstein>
+References: <20200116224518.30598-1-christian.brauner@ubuntu.com>
+ <202001161753.27427AD@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200117044216.GC21151@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=860
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001170038
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=922 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001170038
+In-Reply-To: <202001161753.27427AD@keescook>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 07:42:16AM +0300, Dan Carpenter wrote:
-> On Thu, Jan 16, 2020 at 05:57:58PM +0000, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the check that a u32 variable i is >= 0 is always true because
-> > the unsigned variable will never be negative, causing the loop to run
-> > forever.  Fix this by changing the pre-decrement check to a zero check on
-> > i followed by a decrement of i.
-> > 
-> > Addresses-Coverity: ("Unsigned compared against 0")
-> > Fixes: 39cc539f90d0 ("driver core: platform: Prevent resouce overflow from causing infinite loops")
+On Thu, Jan 16, 2020 at 06:29:26PM -0800, Kees Cook wrote:
+> On Thu, Jan 16, 2020 at 11:45:18PM +0100, Christian Brauner wrote:
+> > Commit 69f594a38967 ("ptrace: do not audit capability check when outputing /proc/pid/stat")
+> > introduced the ability to opt out of audit messages for accesses to
+> > various proc files since they are not violations of policy.
+> > While doing so it somehow switched the check from ns_capable() to
+> > has_ns_capability{_noaudit}(). That means it switched from checking the
+> > subjective credentials of the task to using the objective credentials. I
+> > couldn't find the original lkml thread and so I don't know why this switch
+> > was done. But it seems wrong since ptrace_has_cap() is currently only used
+> > in ptrace_may_access(). And it's used to check whether the calling task
+> > (subject) has the CAP_SYS_PTRACE capability in the provided user namespace
+> > to operate on the target task (object). According to the cred.h comments
+> > this would mean the subjective credentials of the calling task need to be
+> > used.
 > 
+> I don't follow this description. As far as I can see, both the current
+> code and your patch end up using current's cred, yes? I'm not following
+> the subjective/objective change mentioned here.
+> 
+> Before:
+> bool has_ns_capability(struct task_struct *t,
+>                        struct user_namespace *ns, int cap)
+> {
+>         int ret;
+> 
+>         rcu_read_lock();
+>         ret = security_capable(__task_cred(t), ns, cap, CAP_OPT_NONE);
 
-Also by the way say you have:
+If I'm not mistaken, you're looking at the cuplrit: "__task_cred()":
 
-	unsigned int limit = (unsigned)INT_MAX + 4;
-	int i;
+ /**
+ * __task_cred - Access a task's objective credentials
+ * @task: The task to query
+ *
+ * Access the objective credentials of a task.  The caller must hold the RCU
+ * readlock.
+ *
+ * The result of this function should not be passed directly to get_cred();
+ * rather get_task_cred() should be used instead.
+ */
+#define __task_cred(task)	\
+	rcu_dereference((task)->real_cred)
 
-	for (i = 0; i < limit; i++)
-		;
-	printf("%d\n", i);
+>         rcu_read_unlock();
+> 
+>         return (ret == 0);
+> }
+> ...
+> 		return has_ns_capability(current, ns, CAP_SYS_PTRACE)
+> 
+> After:
+> 	const struct cred *cred = current_cred(), ...
+> ...
+> 		return security_capable(cred, ns, CAP_SYS_PTRACE, CAP_OPT_NOAUDIT);
+> 
+> The cred passed to security_capable() is the subject before and after.
+> 
+> > This switches it to use security_capable() because we only call
+> > ptrace_has_cap() in ptrace_may_access() and in there we already have a
+> > stable reference to the calling tasks creds under cred_guard_mutex so
+> > there's no need to go through another series of dereferences and rcu
+> > locking done in ns_capable{_noaudit}().
+> 
+> This makes sense to me -- now there's no possible race on the cred
+> changing between the two ptrace_has_cap() checks, yes?
+> 
+> However, I'm still trying to see where cred_guard_mutex() comes into
+> play for callers of ptrace_may_access(). I see it for the object
+> ("task" arg in ptrace_may_access()), but if this is dealing with the cred
+> on current, it's just the RCU read lock protecting it (which I think is
+> fine here), but seems confusing in the commit log.
 
+Ah, right. I'll drop that from the commit message and place in the rcu
+lock.
 
-The loop will work the same way regardless of if int is signed or not
-because of type promotion.
-
-regards,
-dan carpenter
+Christian
