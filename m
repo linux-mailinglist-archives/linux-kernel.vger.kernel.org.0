@@ -2,128 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4046140B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:41:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDA3140B1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:40:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgAQNlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:41:07 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:51660 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbgAQNlH (ORCPT
+        id S1727026AbgAQNkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:40:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36475 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgAQNkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:41:07 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d15so3197767pjw.1;
-        Fri, 17 Jan 2020 05:41:06 -0800 (PST)
+        Fri, 17 Jan 2020 08:40:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so7688103wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:40:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vE1QPJ0SsgxgZYx5CvnPncdHxn/8vBh0HdyoKU9Gboc=;
-        b=QyKqaoH+S7cm0Jz+wqB3aUsuCAEVsyOkfTyoJu/lD2StQmcz4wXD9K4G6QCJGCqJyM
-         d2GaoGlBDsQTgTAbsBMghbdHZGNTkKoNN/DoCzG3LXNr01LjT/0frdFgMrklukbG6UkS
-         uMbn1hNP7RqshM6Im9nt0ybplspZwD9uvUKqaYpiTNAQv0cW1yC7kmj0cxSw1ZLl+bp4
-         bP/OAeQWtk2y8K2aPR2ZzcbNaI18TycgH+uPEzHEgYl1y3xUhvqQ+avg3+LJ51WLuDQ2
-         8mtSSe0hsaUh5/yfj9bYt9zDuU+3MKYHfDvD1cpMG1toB8N7sLZdjUGMuOCjICoh7QDC
-         Nxag==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=x0v+Cpelm9h83Fd8YoEOutozcn/2jODQn8Ym6ta3pDI=;
+        b=poWzvnimT8QTMy+z+ojdYjNwWKCfVW89Yxmci6IP1hOwVnknCtXaCr8i8dPxqfj1c6
+         6NHh9Vy22UuVjsdvRslMJxmzZ2r72OldpIzBGyTPzKMTdk2Z9oSf67RccUHaMNaQhd+k
+         lm/c63jSCsXUx2RU7tiHMS5C5Y2FizJpTWV+bQFZk8UuOie9JPNvsSkh5+vGRPhAp0aq
+         HK0OQ1Srf/D3qXPwbVceBBawRHCIp88uRHmu2HP+uHbb1PD3am4Blq1K6Lz24AmMxi2p
+         OWYnjJ/q+UHi4g8eny5q5ITFQpVAiYSQZTcj7rH44ZY1d2LCEmOKY9qNl6Wk1issBSPO
+         JpLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vE1QPJ0SsgxgZYx5CvnPncdHxn/8vBh0HdyoKU9Gboc=;
-        b=tEvIZYXTclDCBdBYhpAjNhxzK0WnNBAxGb0uNMjLzaYiySi1vAKUxFb2YZpDgELNmn
-         iY5XFvw1ly7+RV7MJcqsb0OrheBTeQJ4IQTSfIp2YN3KTznrzsp/WyGYHcH7r2M3wsVM
-         aEpIg+16s0Ox3tnBfZgo+l/35Ca84XYGw3s/ZrYltTCufHwVKJNsmWB4Ssv819uf/XTl
-         ncGpYfEh3d4TMNzOkIbkoHq1utkjAhulhtaHcYUEIUinaffWd442oAZTvhSuJl3eCUyq
-         5koqS0mqRbiiN6Di8YjUch7C8Fy2gCZBdzaxo6w+yKSw6T5sVkBbYOcQ6JSL9HpOFyGl
-         UQpg==
-X-Gm-Message-State: APjAAAWHd7GCGuWj18jdYg17sE8394+rZ4f1TUnpXAYnGckjWNbwGYYO
-        AK6M/ocJaEd7XNELpFzij4A=
-X-Google-Smtp-Source: APXvYqyQiDEahs+oIzffeKILq7/OIWWVxIE6YttQb0yHyVlEqqUNkaiw4IM+bhlTOdmqc4t/23TRKA==
-X-Received: by 2002:a17:90a:fe8:: with SMTP id 95mr5663027pjz.98.1579268466421;
-        Fri, 17 Jan 2020 05:41:06 -0800 (PST)
-Received: from localhost.localdomain ([103.211.17.168])
-        by smtp.googlemail.com with ESMTPSA id s18sm29522422pfh.179.2020.01.17.05.41.03
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=x0v+Cpelm9h83Fd8YoEOutozcn/2jODQn8Ym6ta3pDI=;
+        b=MwPx6vyRfZUx1aOOLsUSzbmJMuzUZevKSFQjUhqFjIqMumeYD6P0NoVyXGOChS8K5q
+         foyPJuxUolOwXmWZ5CvbY6PVBnEpjVhh13FejhgDB9usTYJViRwIFzq4keC2vkZNAQFs
+         rA+EuLWJRR3R2FlVdBiHx7C7Jk6BVS9BwQe96srwnd0dvRI+znQVdJngvPpVdeRVRu8D
+         A7Wo93vdSFnJv+su28JaE7B9aczA/0fPJjaWEAx0qi5+AHBglmWfmFN0JyEsMrbTU2Uj
+         GVVqgLm6R0lCgeGcTDtXOuqSDP6xriXGgL+rtIIxzK+7Nm/Qwp8ztWwsnPHG58EAumC1
+         2WQw==
+X-Gm-Message-State: APjAAAV/a3w3NInnD1GkwiXYS0GMRzCuZisOzS0NFSMjVqVcqSDEX5vS
+        kFZQHV3G/KFsEczZ28DCBi1ZVg==
+X-Google-Smtp-Source: APXvYqxGyR41SDvj5mCeLz1WXPpVshSUQyPXa3ccVTn3jG4GO+EYu0SQxB8cs1Dtg2CXlW/4Esj78Q==
+X-Received: by 2002:a7b:c764:: with SMTP id x4mr4598002wmk.116.1579268411354;
+        Fri, 17 Jan 2020 05:40:11 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id s8sm32993260wrt.57.2020.01.17.05.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 05:41:05 -0800 (PST)
-From:   Amol Grover <frextrite@gmail.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Amol Grover <frextrite@gmail.com>
-Subject: [PATCH v3 3/3] drivers: target: tcm_fc: tfc_sess: Pass lockdep expression to RCU lists
-Date:   Fri, 17 Jan 2020 19:08:57 +0530
-Message-Id: <20200117133854.32550-3-frextrite@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200117133854.32550-1-frextrite@gmail.com>
-References: <20200117133854.32550-1-frextrite@gmail.com>
+        Fri, 17 Jan 2020 05:40:10 -0800 (PST)
+Date:   Fri, 17 Jan 2020 13:40:26 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v10 08/13] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <20200117134026.GM15507@dell>
+References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <def409ab024717e6cd917c488e62fe04ad66bd52.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200117102854.GF15507@dell>
+ <4bd035fb2c78e96f18006f06c5d8d9d2f1a1b70d.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4bd035fb2c78e96f18006f06c5d8d9d2f1a1b70d.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-head is traversed with hlist_for_each_entry_rcu
-outside an RCU read-side critical section but under the
-protection of ft_lport_lock.
+On Fri, 17 Jan 2020, Vaittinen, Matti wrote:
 
-Hence, add the corresponding lockdep expression to the list traversal
-primitive to silence false-positive lockdep warnings, and
-harden RCU lists.
+> Hello Lee,
+> 
+> On Fri, 2020-01-17 at 10:28 +0000, Lee Jones wrote:
+> > On Fri, 17 Jan 2020, Matti Vaittinen wrote:
+> > 
+> > > Few ROHM PMICs allow setting the voltage states for different
+> > > system states
+> > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC
+> > > specific
+> > > mechanisms. bd718x7 driver implemented device-tree parsing
+> > > functions for
+> > > these state specific voltages. The parsing functions can be re-used 
+> > > by
+> > > other ROHM chip drivers like bd71828. Split the generic functions
+> > > from
+> > > bd718x7-regulator.c to rohm-regulator.c and export them for other
+> > > modules
+> > > to use.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > Acked-by: Mark Brown <broonie@kernel.org>
+> > > ---
+> > > no changes since v9
+> > > 
+> > >  drivers/regulator/Kconfig             |   4 +
+> > >  drivers/regulator/Makefile            |   1 +
+> > >  drivers/regulator/bd718x7-regulator.c | 183 ++++++++------------
+> > > ------
+> > >  drivers/regulator/rohm-regulator.c    |  95 +++++++++++++
+> > >  include/linux/mfd/rohm-generic.h      |  66 ++++++++++
+> > >  5 files changed, 221 insertions(+), 128 deletions(-)
+> > >  create mode 100644 drivers/regulator/rohm-regulator.c
+> > 
+> > [...]
+> > 
+> > > diff --git a/include/linux/mfd/rohm-generic.h
+> > > b/include/linux/mfd/rohm-generic.h
+> > > index ff3dd7578fd3..6cc5a0819959 100644
+> > > --- a/include/linux/mfd/rohm-generic.h
+> > > +++ b/include/linux/mfd/rohm-generic.h
+> > > @@ -4,6 +4,9 @@
+> > >  #ifndef __LINUX_MFD_ROHM_H__
+> > >  #define __LINUX_MFD_ROHM_H__
+> > >  
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/regulator/driver.h>
+> > > +
+> > >  enum rohm_chip_type {
+> > >  	ROHM_CHIP_TYPE_BD71837 = 0,
+> > >  	ROHM_CHIP_TYPE_BD71847,
+> > > @@ -17,4 +20,67 @@ struct rohm_regmap_dev {
+> > >  	struct regmap *regmap;
+> > >  };
+> > >  
+> > > +enum {
+> > > +	ROHM_DVS_LEVEL_UNKNOWN,
+> > > +	ROHM_DVS_LEVEL_RUN,
+> > > +	ROHM_DVS_LEVEL_IDLE,
+> > > +	ROHM_DVS_LEVEL_SUSPEND,
+> > > +	ROHM_DVS_LEVEL_LPSR,
+> > > +#define ROHM_DVS_LEVEL_MAX ROHM_DVS_LEVEL_LPSR
+> > 
+> > Haven't seen this before.  Is it legit?
+> > 
+> 
+> I don't know why it wouldn't be :) I kind of grew used to that when I
+> still did some networking stuff.
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
----
- drivers/target/tcm_fc/tfc_sess.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Networking it not a good example.
 
-diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
-index 4fd6a1de947c..bb70f61237a6 100644
---- a/drivers/target/tcm_fc/tfc_sess.c
-+++ b/drivers/target/tcm_fc/tfc_sess.c
-@@ -170,7 +170,8 @@ static struct ft_sess *ft_sess_get(struct fc_lport *lport, u32 port_id)
- 	}
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash) {
-+	hlist_for_each_entry_rcu(sess, head, hash,
-+				 lockdep_is_held(&ft_lport_lock)) {
- 		if (sess->port_id == port_id) {
- 			kref_get(&sess->kref);
- 			rcu_read_unlock();
-@@ -215,7 +216,8 @@ static struct ft_sess *ft_sess_create(struct ft_tport *tport, u32 port_id,
- 	ft_format_wwn(&initiatorname[0], TRANSPORT_IQN_LEN, rdata->ids.port_name);
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash)
-+	hlist_for_each_entry_rcu(sess, head, hash,
-+				 lockdep_is_held(&ft_lport_lock))
- 		if (sess->port_id == port_id)
- 			return sess;
- 
-@@ -264,7 +266,8 @@ static struct ft_sess *ft_sess_delete(struct ft_tport *tport, u32 port_id)
- 	struct ft_sess *sess;
- 
- 	head = &tport->hash[ft_sess_hash(port_id)];
--	hlist_for_each_entry_rcu(sess, head, hash) {
-+	hlist_for_each_entry_rcu(sess, head, hash,
-+				 lockdep_is_held(&ft_lport_lock)) {
- 		if (sess->port_id == port_id) {
- 			ft_sess_unhash(sess);
- 			return sess;
-@@ -291,7 +294,8 @@ static void ft_sess_delete_all(struct ft_tport *tport)
- 
- 	for (head = tport->hash;
- 	     head < &tport->hash[FT_SESS_HASH_SIZE]; head++) {
--		hlist_for_each_entry_rcu(sess, head, hash) {
-+		hlist_for_each_entry_rcu(sess, head, hash,
-+					 lockdep_is_held(&ft_lport_lock)) {
- 			ft_sess_unhash(sess);
- 			ft_close_sess(sess);	/* release from table */
- 		}
+It's full of odd little quirks to the standard styling.
+
+> It doesn't really matter in this case but for example the netlink
+> headers do:
+> 
+> enum {
+>    foo,
+> #define foo foo
+>    bar,
+> #define bar bar
+> ...
+> };
+> 
+> https://elixir.bootlin.com/linux/v5.5-rc6/source/include/uapi/linux/rtnetlink.h
+> 
+> What is the good here is that this allows one to nicely exclude
+> unsupported stuff using preprocessor:
+> 
+> #include <header_with_or_without_foo_dependng_on_version.h>
+> 
+> #ifdef foo
+> use_foo(foo);
+> #endif
+> 
+> What about:
+> > 
+> >      ROHM_DVS_LEVEL_MAX = ROHM_DVS_LEVEL_LPSR
+> 
+> Anyways, I don't see why define wouldn't be Ok here - but sure it can
+> be changed if you insist ;) Just let me know if you can accept the
+> define or not :)
+
+Let's go for not in this instance. :D
+
 -- 
-2.24.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
