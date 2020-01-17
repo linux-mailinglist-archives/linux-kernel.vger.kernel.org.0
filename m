@@ -2,71 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F219F140FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 115A0140FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 18:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbgAQR3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 12:29:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30201 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbgAQR3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 12:29:00 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 09:27:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,330,1574150400"; 
-   d="scan'208";a="220796756"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.21])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Jan 2020 09:27:27 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id E5DBE300DE4; Fri, 17 Jan 2020 09:27:26 -0800 (PST)
-Date:   Fri, 17 Jan 2020 09:27:26 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     roman.sudarikov@linux.intel.com, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, bgregg@netflix.com, kan.liang@linux.intel.com,
-        alexander.antonov@intel.com
-Subject: Re: [PATCH v4 2/2] perf =?iso-8859-1?Q?x86?=
- =?iso-8859-1?Q?=3A_Exposing_an_Uncore_unit_to_PMON_for_Intel_Xeon?=
- =?iso-8859-1?Q?=AE?= server platform
-Message-ID: <20200117172726.GM302770@tassilo.jf.intel.com>
-References: <20200117133759.5729-1-roman.sudarikov@linux.intel.com>
- <20200117133759.5729-3-roman.sudarikov@linux.intel.com>
- <20200117141944.GC1856891@kroah.com>
- <20200117162357.GK302770@tassilo.jf.intel.com>
- <20200117165406.GA1937954@kroah.com>
+        id S1728853AbgAQR2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 12:28:10 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44003 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbgAQR2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 12:28:10 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d18so22328496qtj.10;
+        Fri, 17 Jan 2020 09:28:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YJBe+PR1JTzkbV6VdX/ClFM8UuTfYuVGKNcb10Up+LM=;
+        b=DbHiqO+e6kYuR6bMRUFqkRzJXzREnc/t8WeVUwNtwBq0US0ALqFtfBS3k8Ar5PzFae
+         jpbiR7Ax+NvFzgNUZfzP6b4KBWdJJ8us7/sDH5Tiro8mnHYZM1bos9P/GDhAcxVHXG4b
+         +CqRW+gbtb40Tq4JQ9+XfDuAtGc8xx7XWoPbLCDa9sXO0xSMc54OuWYlMPO3hMfg3xGs
+         R6SRfw70eNBH9z1vinkvQf3Pkmv//DOGZzpDO/JeaaQZKfMlTJoC34/zqw6bnCacSApd
+         hf6+skAgQQBrKH5W5od7c18HNBincCZTYsXdKlpO3ehhcjXZitzgNqPGCAFsoZlAoM4q
+         MvUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=YJBe+PR1JTzkbV6VdX/ClFM8UuTfYuVGKNcb10Up+LM=;
+        b=dlGsDK2AVaRbvusaEwWxDibqJoeiK/AU65ivacLnjYcLGTxCD6VYhitgt2zmk+hptR
+         MfK5Oi0TydvTAPAOfCqkA0RFxuYxHppwz0DY3K8zZDAOCrmo2XSvJ/m+pMI6IwnGzJ3y
+         SGRJWwfxMcy8YdtctsVJvBwnB9dEEBhgpnYmAGhMnJEpQXDOwCUNl/gq5CnEuzmoJL0k
+         /yqZPr8pRF7NKkW8KEjAUO3/EY5/P912PucbXcLVztykPCI9Xb68AjnO9Vpc8aFwyRYI
+         jyGDqZvtzS6wVXn4eLQ8CGW9qjlt4QVINVasnkVXUJv4QvU1qyJFmUCOCtS6vNzRb+1Q
+         jRLg==
+X-Gm-Message-State: APjAAAWFfcXNO2Ha9g7lMIHhylEmtT4DU5RLAyl3XBSPtrOy+d9nyvEq
+        YV5glm5kx1vtcdMj/2m6AGU=
+X-Google-Smtp-Source: APXvYqz2O/xFh6ygdxVfF7TRwAgb6tMQGsH1goOEKwF730KRP0mdEDko+yi0ag0UIHTaUnjOw9qRYQ==
+X-Received: by 2002:aed:2150:: with SMTP id 74mr8430727qtc.323.1579282089045;
+        Fri, 17 Jan 2020 09:28:09 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::1:7d10])
+        by smtp.gmail.com with ESMTPSA id r37sm13251937qtj.44.2020.01.17.09.28.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Jan 2020 09:28:08 -0800 (PST)
+Date:   Fri, 17 Jan 2020 09:28:06 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc:     cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>, alex.shi@linux.alibaba.com,
+        guro@fb.com, kernel-team@android.com, linger.lee@mediatek.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
+        shuah@kernel.org, tomcherry@google.com
+Subject: Re: [PATCH 2/3] cgroup: Iterate tasks that did not finish do_exit()
+Message-ID: <20200117172806.GK2677547@devbig004.ftw2.facebook.com>
+References: <20200116043612.52782-1-surenb@google.com>
+ <20200117151533.12381-1-mkoutny@suse.com>
+ <20200117151533.12381-3-mkoutny@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200117165406.GA1937954@kroah.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200117151533.12381-3-mkoutny@suse.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Could you suggest how such a 1:N mapping should be expressed instead in
-> > sysfs?
+On Fri, Jan 17, 2020 at 04:15:32PM +0100, Michal Koutný wrote:
+> PF_EXITING is set earlier than actual removal from css_set when a task
+> is exitting. This can confuse cgroup.procs readers who see no PF_EXITING
+> tasks, however, rmdir is checking against css_set membership so it can
+> transitionally fail with EBUSY.
 > 
-> I have yet to figure out what it is you all are trying to express here
-> given a lack of Documentation/ABI/ file :)
+> Fix this by listing tasks that weren't unlinked from css_set active
+> lists.
+> It may happen that other users of the task iterator (without
+> CSS_TASK_ITER_PROCS) spot a PF_EXITING task before cgroup_exit(). This
+> is equal to the state before commit c03cd7738a83 ("cgroup: Include dying
+> leaders with live threads in PROCS iterations") but it may be reviewed
+> later.
 
-I thought the example Roman gave was clear.
+Yeah, this looks fine to me.  Any chance you can order this before the
+clean up so that we can mark it for -stable.
 
-System has multiple dies
-Each die has 4 pmon ports
-Each pmon port per die maps to one PCI bus.
+Thanks.
 
-He mapped it to 
-
-pmon0-3: list of pci busses indexed by die
-
-To be honest the approach doesn't seem unreasonable to me. It's similar
-e.g. how we express lists of cpus or nodes in sysfs today.
-
--Andi
+-- 
+tejun
