@@ -2,109 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ECD11411E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E228B1411EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 20:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbgAQTew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 14:34:52 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46427 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729674AbgAQTeu (ORCPT
+        id S1729526AbgAQTmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 14:42:35 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35120 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbgAQTmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 14:34:50 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 13so23171662oij.13
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 11:34:50 -0800 (PST)
+        Fri, 17 Jan 2020 14:42:35 -0500
+Received: by mail-qk1-f194.google.com with SMTP id z76so23861863qka.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 11:42:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wnbjoT0j5ag9BS3W7d99gmYHDerGz9fZIduxI8d9DlM=;
-        b=TT8zNjpuzdDlDWtxUF3ROPfakHa88TVeTCCzR5vCXgxUY7gnjtDdV908bvnyE5y4oV
-         QU36Uh70B8zBcLbEC5WsV9OQuSgknaM4MnZ+6jDRyDTKzq1HngpAdAAs3mElPkgX1Ngs
-         w8RxWNVZZmLjGd/pbBFQ57NF0JHpuxd7a1wSLqAAJwqSwurny5s+HaCNXAxlSd2TrGbE
-         I0HJnlRsjj6jLQu5Cu7qeoUYEz1c4KM83fzEb63Qt4ALXNdDhAqG60fYhmckugqonIpN
-         Q31HLAuMmqxdrdOBjnJmAuE2XH93asNdBTd9rXjxonqLYa1bomCyyydoau0rPmn4pocx
-         0aNQ==
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Ye5PEji8Lgk+2HK8XuoofHoKU/zw+6IcqrRfWMDcXsA=;
+        b=R4a7KkhpxKG2u4gFSisO74w8LfwHYRat/WpvDdyj2oMT3EFfpLna9/LhRToKNfnOKO
+         FOOGRvVdugmQZL8pTmrKw7C/kKY2TW6lQonQJ2Br1zQXv3OSUFM+FKgPpRRN80Epbmk1
+         mLz6hI0t/d0YpzianpWAoyaxAFkomd935paPz2kLaXK3x8QEv8GmQ7C9r8cAwAkEVbGJ
+         w1QhCdaR67LRaXAbvY9v8ZkQB0CGPWFWNLGYNl+Y+/ky1xbH84KpZq77nGBRKsoN3KmI
+         MnrspkpYSmcq082/h8d9/o2A/PjYjduzPZVbD3aoB91scCnc3OYBrJ8Jwbt9idjnTkvF
+         bt7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wnbjoT0j5ag9BS3W7d99gmYHDerGz9fZIduxI8d9DlM=;
-        b=G7Y5yeFPTMlAKdAgjhLO0uC3Ko0DNf+H8dFqrMjvUIjjqrnI0Z2l6fmXP3pBm+gpz3
-         Eul0aTa1MRd5edQFji93vU6ZwCSNqL8rT/801M7gVhI4V6yTiLx4AtBbZNZBw7G514X/
-         xq/KAVjucTIBJEuv8LRHEuRofnEyHqJdUpmIIkEzSgEKWR2CrBcAGZkqLP6zr/YoHu8c
-         KzOCB+F+8qjDZduXhxTfy/pbQ6GFqDT6yoshoN8vBgokYKVkvs37fjuxdbsDj36Kuqom
-         mG3cEouXS8B98znnorWcNYJyJ2o3KRU8VP1T9v9K+wYee1gM7n1yx25sTFOk7UFUkEp/
-         layQ==
-X-Gm-Message-State: APjAAAXjff752BU2wqsD7S4hrg0VDRLvecJN3TzN2AxJIzsOX2Cq2o2X
-        3xXqhE8VZzjTcUoMFmKpnh/Iv51F1StbIH5lkjDTUw==
-X-Google-Smtp-Source: APXvYqxLvi0jqyJq4c6XDMG40T2xm371zP61sFys+Wn5Kv1PErBnDGHtInooR+MBkC+FWhdeiq5hF2mMsauFR8qAt28=
-X-Received: by 2002:aca:ed57:: with SMTP id l84mr4713560oih.8.1579289689665;
- Fri, 17 Jan 2020 11:34:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20200115012651.228058-1-almasrymina@google.com>
- <20200115012651.228058-2-almasrymina@google.com> <7e1d2c5f-3b07-4d16-9e1b-bd89d25e7fb3@oracle.com>
-In-Reply-To: <7e1d2c5f-3b07-4d16-9e1b-bd89d25e7fb3@oracle.com>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Fri, 17 Jan 2020 11:34:38 -0800
-Message-ID: <CAHS8izMRrOOMV3v3gEuFHcX-YfQ5YOywGFu+K4-9zMXrAGFYbQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/8] hugetlb_cgroup: add interface for charge/uncharge
- hugetlb reservations
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeelb@google.com>, shuah <shuah@kernel.org>,
-        Greg Thelen <gthelen@google.com>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Ye5PEji8Lgk+2HK8XuoofHoKU/zw+6IcqrRfWMDcXsA=;
+        b=EFUjg+eTdYhpjSCkfwwcMUuqG+EqQYzSvmFZFg6E4QuYtFgpaMlf7B1HpDd3gf0IC5
+         IINWnEbceZb9VuzVIq8LVBm1FjJVSX5x8ANBtI7P3iKgCuDTWMS6W9y1LQ0gGmt/bJVq
+         fBGlQrTeJ/IKhyIVNwHpl/HOvkshb9RiJluc9cDirqEy3e2OpVIkb/aM2gQ/Q11VV18I
+         CXwgK4U8eAjB9k33SibCt+VY/DUIsbMin4M/414LR2LB/cBd/Ko/3JvsCpiWSzOouyeX
+         9E0c3g9LF6LLf9spguuSJdrY8D3U20dFPPPlOVKJUuWm+VA7kLZAvMLf/eazoBIiSIc0
+         3Jog==
+X-Gm-Message-State: APjAAAVa5q0UI+m/GqCR9LhQUio+/QsAxOTRVge6jIpZVxU9bBFxCJyd
+        Ef9Y224R09nT4YUui0BucMWcdg==
+X-Google-Smtp-Source: APXvYqwSBcRUIb0XSF+TonuquGNqUOqr3lpe0eX2whLYDESj9Kjje059D4yf4ox2EQy7aqDnbLzkfA==
+X-Received: by 2002:a37:ea09:: with SMTP id t9mr39996237qkj.151.1579290154109;
+        Fri, 17 Jan 2020 11:42:34 -0800 (PST)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id c6sm12009610qka.111.2020.01.17.11.42.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Jan 2020 11:42:33 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
+ printk()
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <06AE045D-F167-406B-A78B-CAE246058C9D@redhat.com>
+Date:   Fri, 17 Jan 2020 14:42:32 -0500
+Cc:     Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9E07384A-0C7F-4462-852F-B5A386AC10EB@lca.pw>
+References: <00155F33-17C6-4051-A8F9-CCD9414F400D@lca.pw>
+ <06AE045D-F167-406B-A78B-CAE246058C9D@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 11:26 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 1/14/20 5:26 PM, Mina Almasry wrote:
-> > Augments hugetlb_cgroup_charge_cgroup to be able to charge hugetlb
-> > usage or hugetlb reservation counter.
-> >
-> > Adds a new interface to uncharge a hugetlb_cgroup counter via
-> > hugetlb_cgroup_uncharge_counter.
-> >
-> > Integrates the counter with hugetlb_cgroup, via hugetlb_cgroup_init,
-> > hugetlb_cgroup_have_usage, and hugetlb_cgroup_css_offline.
-> >
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >
-> > ---
-> >
-> > Changes in v10:
-> > - Added missing VM_BUG_ON
->
-> Thanks for addressing my comments.
-> I see that patch 8 was updated to address David's comments.  I will also
-> review patch 8 later.
->
-> I am again requesting that someone with more cgroup experience comment on
-> this patch.  I do not have enough experience to determine if the code to
-> not reparent/zombie cgroup is correct.
->
 
-Thank you very much for your continued reviews and I'm sorry I'm
-having so much trouble getting anyone with cgroup experience to look
-deeply into this. My guess is that it's not very active feature and
-the patchseries is long and complex so folks are not interested.
-Nevertheless I'm continually poking David and Shakeel and they will
-hopefully continue to look into this.
 
-FWIW, I have a test for repartenting/counting zombies and the tests at
-least don't uncover any problems.
+> On Jan 17, 2020, at 2:15 PM, David Hildenbrand <david@redhat.com> =
+wrote:
+>=20
+>=20
+>=20
+>> Am 17.01.2020 um 19:49 schrieb Qian Cai <cai@lca.pw>:
+>>=20
+>> =EF=BB=BF
+>>=20
+>>> On Jan 17, 2020, at 10:46 AM, Michal Hocko <mhocko@kernel.org> =
+wrote:
+>>>=20
+>>>> On Fri 17-01-20 10:05:12, Qian Cai wrote:
+>>>>=20
+>>>>=20
+>>>>> On Jan 17, 2020, at 9:39 AM, Michal Hocko <mhocko@kernel.org> =
+wrote:
+>>>>>=20
+>>>>> Thanks a lot. Having it in a separate patch would be great.
+>>>>=20
+>>>> I was thinking about removing that WARN together in this v5 patch,
+>>>> so there is less churn to touch the same function again. However, I
+>>>> am fine either way, so just shout out if you feel strongly towards =
+a
+>>>> separate patch.
+>>>=20
+>>> I hope you meant moving rather than removing ;). The warning is =
+useful
+>>> because we shouldn't see unmovable pages in the movable zone. And a
+>>> separate patch makes more sense because the justification is =
+slightly
+>>> different. We do not want to have a way for userspace to trigger the
+>>> warning from userspace - even though it shouldn't be possible, but
+>>> still. Only the offlining path should complain.
+>>=20
+>> Something like this?
+>>=20
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 621716a25639..32c854851e1f 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -8307,7 +8307,6 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+>>       }
+>>       return NULL;
+>> unmovable:
+>> -       WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
+>>       return pfn_to_page(pfn + iter);
+>> }
+>>=20
+>> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+>> index e70586523ca3..08571b515d9f 100644
+>> --- a/mm/page_isolation.c
+>> +++ b/mm/page_isolation.c
+>> @@ -54,9 +54,11 @@ static int set_migratetype_isolate(struct page =
+*page, int migratetype, int isol_
+>>=20
+>> out:
+>>       spin_unlock_irqrestore(&zone->lock, flags);
+>> +
+>>       if (!ret)
+>>               drain_all_pages(zone);
+>>       else if ((isol_flags & REPORT_FAILURE) && unmovable)
+>=20
+> We have a dedicated flag for the offlining part.
 
-> For now,
-> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
-> while waiting for cgroup comments.
->
-> --
-> Mike Kravetz
+This should do the trick then,
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 621716a25639..4bb3e503cb9e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8231,7 +8231,7 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+                if (is_migrate_cma(migratetype))
+                        return NULL;
+=20
+-               goto unmovable;
++               return page;
+        }
+=20
+        for (; iter < pageblock_nr_pages; iter++) {
+@@ -8241,7 +8241,7 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+                page =3D pfn_to_page(pfn + iter);
+=20
+                if (PageReserved(page))
+-                       goto unmovable;
++                       return page;
+=20
+                /*
+                 * If the zone is movable and we have ruled out all =
+reserved
+@@ -8303,12 +8303,9 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+                 * is set to both of a memory hole page and a _used_ =
+kernel
+                 * page at boot.
+                 */
+-               goto unmovable;
++               return pfn_to_page(pfn + iter);
+        }
+        return NULL;
+-unmovable:
+-       WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
+-       return pfn_to_page(pfn + iter);
+ }
+=20
+ #ifdef CONFIG_CONTIG_ALLOC
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index e70586523ca3..e140eaa901b2 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -54,14 +54,20 @@ static int set_migratetype_isolate(struct page =
+*page, int migratetype, int isol_
+=20
+ out:
+        spin_unlock_irqrestore(&zone->lock, flags);
+-       if (!ret)
++
++       if (!ret) {
+                drain_all_pages(zone);
+-       else if ((isol_flags & REPORT_FAILURE) && unmovable)
+-               /*
+-                * printk() with zone->lock held will guarantee to =
+trigger a
+-                * lockdep splat, so defer it here.
+-                */
+-               dump_page(unmovable, "unmovable page");
++       } else {
++               if (isol_flags & MEMORY_OFFLINE)
++                       WARN_ON_ONCE(zone_idx(zone) =3D=3D =
+ZONE_MOVABLE);
++
++               if ((isol_flags & REPORT_FAILURE) && unmovable)
++                       /*
++                        * printk() with zone->lock held will likely =
+trigger a
++                        * lockdep splat, so defer it here.
++                        */
++                       dump_page(unmovable, "unmovable page");
++       }
+=20
+        return ret;
+ }
+
+>=20
+>> +               WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
+>>               /*
+>>                * printk() with zone->lock held will guarantee to =
+trigger a
+>>                * lockdep splat, so defer it here.
+>>=20
+>=20
+> So, are we fine with unmovable data ending up in ZONE_MOVABLE as long =
+as we can offline it?=20
+>=20
+> This might make my life in virtio-mem a little easier (I can unplug =
+chunks falling into ZONE_MOVABLE).
+
