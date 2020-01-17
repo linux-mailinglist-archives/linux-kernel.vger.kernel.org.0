@@ -2,157 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9078140AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E39140AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:28:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbgAQNXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:23:05 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35221 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgAQNXE (ORCPT
+        id S1726999AbgAQN2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:28:20 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42967 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgAQN2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:23:04 -0500
-Received: by mail-lf1-f66.google.com with SMTP id 15so18349547lfr.2
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:23:03 -0800 (PST)
+        Fri, 17 Jan 2020 08:28:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 4so11969385pfz.9
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 05:28:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zllgq5fb58Nvx/kXIr9DmmFUIHHhMyq6w8QbHcZulRQ=;
-        b=hMru0rew5W2r2jg2z4ygnA+2adJe2C3UGBlUiG/O7/HRX7zIyJEgSlO55dzdgBHDui
-         Je/k52NLVRYzq168+P9XWOhVjZauQ60nQ2YEkPNkCNySjPHuvGUBk7gqbI4hUGjT1uUu
-         RQvVHCH0tn2BN6QekeerisZKKPEM63JcTcTU9znAe3Pzh242vIp8qh94TknHX/2A5ZEZ
-         ji9URHs8yTObVvPsrsrmRGGZM0syfHM86zaJxNtmELMYkcw/pmbTDIif6Ful1pEKqHm9
-         t1ilMST5RadIcRDMrL6+oVvXJVf+WKe4fGKpUGfalkEKzY82bb45RdQmX7FU44gADbaW
-         Ys6Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0Uq9w8KRDPv2naiVGbzo1YruGuVK6eQQzWbOQYDeecw=;
+        b=KGwKWFKU8LpyyRPZZIjn241CT5YAMcsFkRMS+vcUU6Je9CLIHqi9KEsRG4O9zYbk/K
+         CTzDWNvPcyEppR+1PrMUEclVDew8SRrSgPmu2kKu8VJRoZ9zPOWucfSNBDxyEL3QvIAn
+         nOkR5Hwn6wa/UYgS+dyHidzR8Y5c9EQf7wORozmG5TEGsoSZCWZWX37qeWxU0tCx+OnT
+         nv0wcfy3+xUicbIu1uTVyRU/jyZ2sIGQTZxnZhJMjwmUXAj+s3dR3lgUkcdNnRCPxLYL
+         bLjfBjTD9xJl45zF+TnjXx/v73Vnh/tgZbjdVJD8JBisXrb2v/P2AsVANsj6YkWyrvJN
+         YhPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zllgq5fb58Nvx/kXIr9DmmFUIHHhMyq6w8QbHcZulRQ=;
-        b=UIjOjlu42nUg8QEo4QJsagrAI8YBd+lAAS2JumVIHBb7ct22oppMECaNJG1mMPBbNr
-         ou0KJS/G6JSrtG27WBC4SX/GtRcgf9Rck6Y3ueYtX+7+nEXLw2OTPRzrVlx2IFKUUaRM
-         8VFM6l8PW5oOoyIVgpg1yq6RozYfqX5E50GcnURut9mJkXVwKbBBqRm6Lh3Bv5oNVMVl
-         7w4jdC3nYbIGX1arWEAM7xUbeOevF+yi7ueUb5Kz99tOf+SFtkFgFdVJ+3hxhw7E3z90
-         YYLqRLjuyai6RjaP4oD1Uhn06MIb6MOmGt96rbrv6QEVbv9B8X4dPrA6Jjzx4NNuYEzI
-         yAlA==
-X-Gm-Message-State: APjAAAU1N6V7K4eX2lHGT+1UByfVlIQZ6Mumth5lUywR7ZXi6258lRbT
-        4uqkDmtT/CO6LaAdSDOSL1RSvNph3R7/FFvHHOoylg==
-X-Google-Smtp-Source: APXvYqzKMgWI5/s9GyLPGL7GZ3SiZXmTtloBpF0cqWO7wNun6yjAi28v3zhsKzUzo6wOtG6SG4lY5wcU7n+ZASlioSU=
-X-Received: by 2002:a19:114:: with SMTP id 20mr4907699lfb.25.1579267382341;
- Fri, 17 Jan 2020 05:23:02 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0Uq9w8KRDPv2naiVGbzo1YruGuVK6eQQzWbOQYDeecw=;
+        b=A3uWlbN/XNkvb3xKdBRS1S0EdPeEZrCGAsUW0LItjOERsrJ0okMxw2i8NqvDxf4MWB
+         qxCqFq6BV5MIJHFOSmMrduJebed0YzblPGjHFe2/1l6dkcmcGdRvDcC20vflWVGNDFeS
+         QQT2in5UhCz3wB4781szCsSZHfbbD/7uUDFBanenBl5CsRSlaS5p1IO4PRX+9f51sPtr
+         ukuz2+R/Sm6SwLhEjzM23xH4XVheuLwJ7KOndID0F1AaQeyRv5O94PI6Ob7u3/t3mQkf
+         Fp/lxvy1t32BljgieGjMXLbrFzByBZ/k39JvgjuYKGYkKLt1iV35WK/cRUWmtklMplAI
+         BRVA==
+X-Gm-Message-State: APjAAAWQ4xjJNhlr56d9HUPOR8X0NBSsRAJcgq9EI+mKwI8GlphV7ipS
+        i21L+g2PAIEKMnD9Uk/iouM=
+X-Google-Smtp-Source: APXvYqyRa5bPkS0cG3zloOH2k5dMVEL4C0YaP/hjBpfFF4s/zTbF/WZZ2pyaRtjPo4Vg3Yz+SB8szw==
+X-Received: by 2002:a63:28c7:: with SMTP id o190mr44013043pgo.394.1579267699670;
+        Fri, 17 Jan 2020 05:28:19 -0800 (PST)
+Received: from localhost.localdomain ([103.211.17.168])
+        by smtp.googlemail.com with ESMTPSA id i3sm30798353pfo.72.2020.01.17.05.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 05:28:18 -0800 (PST)
+From:   Amol Grover <frextrite@gmail.com>
+To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Madhuparna Bhowmik <madhuparnabhowmik04@gmail.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Amol Grover <frextrite@gmail.com>
+Subject: [PATCH v3] drivers: char: ipmi: ipmi_msghandler: Pass lockdep expression to RCU lists
+Date:   Fri, 17 Jan 2020 18:55:22 +0530
+Message-Id: <20200117132521.31020-1-frextrite@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <1579031859-18692-1-git-send-email-thara.gopinath@linaro.org>
- <1579031859-18692-5-git-send-email-thara.gopinath@linaro.org> <20200116151502.GQ2827@hirez.programming.kicks-ass.net>
-In-Reply-To: <20200116151502.GQ2827@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 17 Jan 2020 14:22:51 +0100
-Message-ID: <CAKfTPtA-M_APhGzwADhuwABzW_M5YKjm_ONGzQjFNRoJ+qYBmg@mail.gmail.com>
-Subject: Re: [Patch v8 4/7] sched/fair: Enable periodic update of average
- thermal pressure
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Quentin Perret <qperret@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 at 16:15, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Jan 14, 2020 at 02:57:36PM -0500, Thara Gopinath wrote:
-> > Introduce support in CFS periodic tick and other bookkeeping apis
-> > to trigger the process of computing average thermal pressure for a
-> > cpu. Also consider avg_thermal.load_avg in others_have_blocked
-> > which allows for decay of pelt signals.
-> >
-> > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 8da0222..311bb0b 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7470,6 +7470,9 @@ static inline bool others_have_blocked(struct rq *rq)
-> >       if (READ_ONCE(rq->avg_dl.util_avg))
-> >               return true;
-> >
-> > +     if (READ_ONCE(rq->avg_thermal.load_avg))
-> > +             return true;
-> > +
->
-> Given that struct sched_avg is 1 cacheline, the above is a pointless
-> guaranteed cacheline miss if the arch doesn't
-> CONFIG_HAVE_SCHED_THERMAL_PRESSURE.
->
-> >  #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
-> >       if (READ_ONCE(rq->avg_irq.util_avg))
-> >               return true;
-> > @@ -7495,6 +7498,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
-> >  {
-> >       const struct sched_class *curr_class;
-> >       u64 now = rq_clock_pelt(rq);
-> > +     unsigned long thermal_pressure = arch_cpu_thermal_pressure(cpu_of(rq));
-> >       bool decayed;
-> >
-> >       /*
-> > @@ -7505,6 +7509,8 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
-> >
-> >       decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
-> >                 update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-> > +               update_thermal_load_avg(rq_clock_task(rq), rq,
-> > +                                       thermal_pressure)                     |
-> >                 update_irq_load_avg(rq, 0);
-> >
-> >       if (others_have_blocked(rq))
->
-> That there indentation trainwreck is a reason to rename the function.
->
->         decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
->                   update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
->                   update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure) |
->                   update_irq_load_avg(rq, 0);
->
-> Is much better.
->
-> But now that you made me look at that, I noticed it's using a different
-> clock -- it is _NOT_ using now/rq_clock_pelt(), which means it'll not be
-> in sync with the other averages.
->
-> Is there a good reason for that?
+intf->cmd_rcvrs is traversed with list_for_each_entry_rcu
+outside an RCU read-side critical section but under the
+protection of intf->cmd_rcvrs_mutex.
 
-We don't need to apply frequency and cpu capacity invariance on the
-thermal capping signal which is  what rq_clock_pelt does
+ipmi_interfaces is traversed using list_for_each_entry_rcu
+outside an RCU read-side critical section but under the protection
+of ipmi_interfaces_mutex.
 
->
-> > @@ -10275,6 +10281,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
-> >  {
-> >       struct cfs_rq *cfs_rq;
-> >       struct sched_entity *se = &curr->se;
-> > +     unsigned long thermal_pressure = arch_cpu_thermal_pressure(cpu_of(rq));
-> >
-> >       for_each_sched_entity(se) {
-> >               cfs_rq = cfs_rq_of(se);
-> > @@ -10286,6 +10293,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
-> >
-> >       update_misfit_status(curr, rq);
-> >       update_overutilized_status(task_rq(curr));
-> > +     update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure);
-> >  }
->
-> I'm thinking this is the wrong place; should this not be in
-> scheduler_tick(), right before calling sched_class::task_tick() ? Surely
-> any execution will affect thermals, not only fair class execution.
+Hence, add the corresponding lockdep expression to the list traversal
+primitive to silence false-positive lockdep warnings, and
+harden RCU lists.
+
+Add macro for the corresponding lockdep expression to make the code
+clean and concise.
+
+Signed-off-by: Amol Grover <frextrite@gmail.com>
+---
+v3:
+- Remove rcu_read_lock_held() from lockdep expression since it is
+  implicitly checked.
+- Remove unintended macro usage.
+ 
+v2:
+- Fix sparse error
+  CHECK: Alignment should match open parenthesis
+
+ drivers/char/ipmi/ipmi_msghandler.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index cad9563f8f48..64ba16dcb681 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -618,6 +618,8 @@ static DEFINE_MUTEX(ipmidriver_mutex);
+ 
+ static LIST_HEAD(ipmi_interfaces);
+ static DEFINE_MUTEX(ipmi_interfaces_mutex);
++#define ipmi_interfaces_mutex_held() \
++	lockdep_is_held(&ipmi_interfaces_mutex)
+ static struct srcu_struct ipmi_interfaces_srcu;
+ 
+ /*
+@@ -1321,7 +1323,8 @@ static void _ipmi_destroy_user(struct ipmi_user *user)
+ 	 * synchronize_srcu()) then free everything in that list.
+ 	 */
+ 	mutex_lock(&intf->cmd_rcvrs_mutex);
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
+ 		if (rcvr->user == user) {
+ 			list_del_rcu(&rcvr->link);
+ 			rcvr->next = rcvrs;
+@@ -1599,7 +1602,8 @@ static struct cmd_rcvr *find_cmd_rcvr(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & (1 << chan)))
+ 			return rcvr;
+@@ -1614,7 +1618,8 @@ static int is_cmd_rcvr_exclusive(struct ipmi_smi *intf,
+ {
+ 	struct cmd_rcvr *rcvr;
+ 
+-	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link) {
++	list_for_each_entry_rcu(rcvr, &intf->cmd_rcvrs, link,
++				lockdep_is_held(&intf->cmd_rcvrs_mutex)) {
+ 		if ((rcvr->netfn == netfn) && (rcvr->cmd == cmd)
+ 					&& (rcvr->chans & chans))
+ 			return 0;
+@@ -3450,7 +3455,8 @@ int ipmi_add_smi(struct module         *owner,
+ 	/* Look for a hole in the numbers. */
+ 	i = 0;
+ 	link = &ipmi_interfaces;
+-	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link) {
++	list_for_each_entry_rcu(tintf, &ipmi_interfaces, link,
++				ipmi_interfaces_mutex_held()) {
+ 		if (tintf->intf_num != i) {
+ 			link = &tintf->link;
+ 			break;
+-- 
+2.24.1
+
