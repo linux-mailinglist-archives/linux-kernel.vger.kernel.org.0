@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BB614148B
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0466141490
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:59:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729835AbgAQW6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:58:11 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:39726 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbgAQW6K (ORCPT
+        id S1730128AbgAQW7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:59:15 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43924 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730075AbgAQW7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:58:10 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HMhrnr174540;
-        Fri, 17 Jan 2020 22:58:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=dENVIhtYjj5QMBF4ot0Yq+caEuhMLKWT5Dd/N2rM48Q=;
- b=gfQ9AU6+gFr7y+gwnYkF8lpRjg5PLqyA3gj5zD9hId1KspjMU2Vx8gwUJ1p3n6HAEN3N
- mJrQsow7Q/z1eMRpRsi8yi2K4Rx1DTHIuyOCOZFYuz6xQIeS/CtKH+rWkZt0Ap+ZyipQ
- 92sVO1yRWntXwMduKdKil5ZR/e9p0XUrEjaeMbOqw65mJjnFZm2/2OL+89ozjumAI0g6
- D2AauVFhe5N44zxIJhOcMBBnF4csmL4QQHVgbD7NRnpUjL+5gVAV/NGYsjJyS2jua0il
- bKVUKko9VCpxkUBGLORM/tQ3p6W1L47IOY/Yw4ql/4cPy1y9A7CetvIWKNyuDEvUur87 2A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xf7403bxt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 22:58:03 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HMi0P9072595;
-        Fri, 17 Jan 2020 22:58:03 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2xjxm9r6tm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jan 2020 22:58:02 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00HMw1rL030830;
-        Fri, 17 Jan 2020 22:58:01 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 17 Jan 2020 14:58:01 -0800
-Subject: Re: [PATCH v10 3/8] hugetlb_cgroup: add reservation accounting for
- private mappings
-To:     Mina Almasry <almasrymina@google.com>, rientjes@google.com,
-        shakeelb@google.com
-Cc:     shuah@kernel.org, gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        aneesh.kumar@linux.vnet.ibm.com
-References: <20200115012651.228058-1-almasrymina@google.com>
- <20200115012651.228058-3-almasrymina@google.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <49e5872e-eecb-4279-bc79-bbc1e132ab5d@oracle.com>
-Date:   Fri, 17 Jan 2020 14:57:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Fri, 17 Jan 2020 17:59:14 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 9so19577754lfq.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:59:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n8t5sesjNU4GLzY8Ju+3vDc9euUX5JJDxPn6PxTGKqI=;
+        b=LrX0GVfvApBDiFPAKXsTC6ZXEq3wFPVScIxV2pKP4/NrhX2lMLybDqv3vuTYX+t0pI
+         Lhktehq0OHOl73zq5jUdqinKKO4kz3KQ3CZCVTDb5mkGD2BZorxLp3pRvlovZcT5kPao
+         hXv9mgqLNSerZ6Yy8bvmwbYF2gUbPNEQYF2FwEDhqYIc+bbrC3ayEtaHsX6RWNyZrSlO
+         xot1UbPgeRa8MwLKAruM4tLOK8pUOO9DYba0U/D6wbiB2vLDcZz2Z+ZznciDT0mlYZl5
+         BAVa0Srgj4Ez+qLuGb+ADsgQZuG0NS1Hb6Ux5YuLQ03U3MMNFp4DgrQDe0WAbTwN5rc0
+         bOgw==
+X-Gm-Message-State: APjAAAWSTvB4hX85Ujt/MfzFAN2G095qbo1zgctpaGVjbOAU/HM1ugiz
+        K64MjEr7Nzc6wV6i1IvCUO4=
+X-Google-Smtp-Source: APXvYqwX3L4R8D8T2NdF04Cs/1BkxcMDoTxUEmh2LA4q6dBU5Sdsy0CjfB3zvrENKQcaYzogV7h5fA==
+X-Received: by 2002:ac2:43af:: with SMTP id t15mr6790438lfl.154.1579301953025;
+        Fri, 17 Jan 2020 14:59:13 -0800 (PST)
+Received: from hackbase.lan (128-68-70-109.broadband.corbina.ru. [128.68.70.109])
+        by smtp.gmail.com with ESMTPSA id n3sm12769556lfk.61.2020.01.17.14.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 14:59:12 -0800 (PST)
+From:   Alexander Popov <alex.popov@linux.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Alexander Popov <alex.popov@linux.com>,
+        linux-kernel@vger.kernel.org
+Cc:     notify@kernel.org
+Subject: [PATCH 1/1] timer: Improve the comment describing schedule_timeout()
+Date:   Sat, 18 Jan 2020 01:59:00 +0300
+Message-Id: <20200117225900.16340-1-alex.popov@linux.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <20200115012651.228058-3-almasrymina@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001170175
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9503 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001170175
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/20 5:26 PM, Mina Almasry wrote:
-> Normally the pointer to the cgroup to uncharge hangs off the struct
-> page, and gets queried when it's time to free the page. With
-> hugetlb_cgroup reservations, this is not possible. Because it's possible
-> for a page to be reserved by one task and actually faulted in by another
-> task.
-> 
-> The best place to put the hugetlb_cgroup pointer to uncharge for
-> reservations is in the resv_map. But, because the resv_map has different
-> semantics for private and shared mappings, the code patch to
-> charge/uncharge shared and private mappings is different. This patch
-> implements charging and uncharging for private mappings.
-> 
-> For private mappings, the counter to uncharge is in
-> resv_map->reservation_counter. On initializing the resv_map this is set
-> to NULL. On reservation of a region in private mapping, the tasks
-> hugetlb_cgroup is charged and the hugetlb_cgroup is placed is
-> resv_map->reservation_counter.
-> 
-> On hugetlb_vm_op_close, we uncharge resv_map->reservation_counter.
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
+When we were preparing the patch 6dcd5d7a7a29c1e, we made a mistake noticed
+by Linus: schedule_timeout() was called without setting the task state to
+anything particular. It calls the scheduler, but doesn't delay anything,
+because the task stays runnable. That happens because sched_submit_work()
+does nothing for tasks in TASK_RUNNING state.
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+That turned out to be the intended behavior. Adding a WARN() is not useful.
+Let's improve the comment about schedule_timeout() and describe that
+more explicitly.
 
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+---
+ kernel/time/timer.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 4820823515e9..cb34fac9d9f7 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1828,21 +1828,23 @@ static void process_timeout(struct timer_list *t)
+  * schedule_timeout - sleep until timeout
+  * @timeout: timeout value in jiffies
+  *
+- * Make the current task sleep until @timeout jiffies have
+- * elapsed. The routine will return immediately unless
+- * the current task state has been set (see set_current_state()).
++ * Make the current task sleep until @timeout jiffies have elapsed.
++ * The function behavior depends on the current task state
++ * (see also set_current_state() description):
+  *
+- * You can set the task state as follows -
++ * %TASK_RUNNING - the scheduler is called, but the task does not sleep
++ * at all. That happens because sched_submit_work() does nothing for
++ * tasks in %TASK_RUNNING state.
+  *
+  * %TASK_UNINTERRUPTIBLE - at least @timeout jiffies are guaranteed to
+  * pass before the routine returns unless the current task is explicitly
+- * woken up, (e.g. by wake_up_process())".
++ * woken up, (e.g. by wake_up_process()).
+  *
+  * %TASK_INTERRUPTIBLE - the routine may return early if a signal is
+  * delivered to the current task or the current task is explicitly woken
+  * up.
+  *
+- * The current task state is guaranteed to be TASK_RUNNING when this
++ * The current task state is guaranteed to be %TASK_RUNNING when this
+  * routine returns.
+  *
+  * Specifying a @timeout value of %MAX_SCHEDULE_TIMEOUT will schedule
+@@ -1850,7 +1852,7 @@ static void process_timeout(struct timer_list *t)
+  * value will be %MAX_SCHEDULE_TIMEOUT.
+  *
+  * Returns 0 when the timer has expired otherwise the remaining time in
+- * jiffies will be returned.  In all cases the return value is guaranteed
++ * jiffies will be returned. In all cases the return value is guaranteed
+  * to be non-negative.
+  */
+ signed long __sched schedule_timeout(signed long timeout)
 -- 
-Mike Kravetz
+2.24.1
+
