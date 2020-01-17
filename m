@@ -2,185 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A85D1404D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 09:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292EC1404C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 09:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbgAQIE5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 17 Jan 2020 03:04:57 -0500
-Received: from twhmllg4.macronix.com ([122.147.135.202]:58499 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbgAQIE4 (ORCPT
+        id S1729366AbgAQIDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 03:03:37 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37522 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729210AbgAQIDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 03:04:56 -0500
-X-Greylist: delayed 552 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 03:04:56 EST
-Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
-        by TWHMLLG4.macronix.com with ESMTP id 00H7tiBl090299
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 15:55:44 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from twhfm1p2.macronix.com (twhfm1p2.macronix.com [172.17.20.92])
-        by TWHMLLG4.macronix.com with ESMTP id 00H7sWnD089113;
-        Fri, 17 Jan 2020 15:54:32 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
-        by Forcepoint Email with ESMTP id 09849F090BB977A1CEE9;
-        Fri, 17 Jan 2020 15:54:33 +0800 (CST)
-In-Reply-To: <20200109172816.6c1d7be7@xps13>
-References: <1571902807-10388-1-git-send-email-masonccyang@mxic.com.tw> <1571902807-10388-2-git-send-email-masonccyang@mxic.com.tw> <20200109172816.6c1d7be7@xps13>
-To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc:     bbrezillon@kernel.org, computersforpeace@gmail.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        mark.rutland@arm.com, richard@nod.at, robh+dt@kernel.org,
-        vigneshr@ti.com
-Subject: Re: [PATCH v4 1/2] mtd: rawnand: Add support for Macronix NAND randomizer
+        Fri, 17 Jan 2020 03:03:36 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f129so6535920wmf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 00:03:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i++Wnr6lskfdyTEf2bt4TSLzH2Xad/WDR/WNYAW09E4=;
+        b=V7pcvnC73rYBS0KY9vSQuPPoEpxAvmkxo2YQx7SaJqwU7P4l65Hxjt9kOwliECjw9P
+         YSW/B284rrNNrsol0MpsGM3wcVvOQakDsgmtc9GVvvGrDYey7UrZ2qH6NscydWjrDnci
+         N+w0eDBnqHXYHUDgbLNnU7vcr4iOoh8jEH0sW2C5UZ751dm6PAdbcuF6gKQqUGWShSp6
+         PLLBJbhrzE2b9vaANhz7QeZU70gLhGkoDA6DM7CgZHpV6A4EcMED9tJUSQb67/A+gmZp
+         eAE04AXEcX//EN3QzjxcaulB9DofVRVeo85B4JZCm5LtlBV1DZROEdJRinPTDd/wuMyP
+         cD8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=i++Wnr6lskfdyTEf2bt4TSLzH2Xad/WDR/WNYAW09E4=;
+        b=n1WPofddAwjlTmmGKCaijl7zw9R5F0fj0b6P77ELoqvGU2ZPZd98qKbSVpOmZVwYl8
+         ghQNu7icFbJ7JryaXw8c3qrpaR3lkkeEGBbthCCG6A45iwvyK3hQX5GqD9/PJYsBf/9O
+         /75BCaSA9SEOX3YgRlzVD+PDB+PAm5JYIxDlMBd00od+VO4mz/l6knZ6+gxx93M+YIrr
+         J+nYBL4xhvLc/bou8+y1LhgazA5DfQi5Q5B/LzYsvlz2I/eDDmkvhHD+Zx58JoYK9gq7
+         KTNZdnXT2FAejIRE9CenDmIO/AKmn9l4gUq+Phx+jPNoxrMF2qGV7Zuuk3WGEOJwtgJ4
+         0trQ==
+X-Gm-Message-State: APjAAAXnZtKh3jNGv1DsIp9HrVq4LGYlUInqm80HvnlXM6qu14jclWdA
+        IFFUt6XCzjhsv2Pq4z1mEVQCoCaJzb4XAQz/
+X-Google-Smtp-Source: APXvYqxl96ObJwT48mJl919pgWBhjJ834NW1hgROfepdvC4HdYZrfui8PwfpswFTjDrAhkPvRoSP8Q==
+X-Received: by 2002:a05:600c:28d:: with SMTP id 13mr3383409wmk.52.1579248215057;
+        Fri, 17 Jan 2020 00:03:35 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id w8sm3110202wmd.2.2020.01.17.00.03.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Jan 2020 00:03:34 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, git@xilinx.com,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Paul Burton <paulburton@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Manjukumar Matha <manjukumar.harthikote-matha@xilinx.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-s390@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        x86@kernel.org, Guo Ren <guoren@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Manish Narani <manish.narani@xilinx.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH v2 0/2] microblaze: Enable CMA
+Date:   Fri, 17 Jan 2020 09:03:30 +0100
+Message-Id: <cover.1579248206.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-KeepSent: ECBDB130:03AD44B7-482584F2:002B40F2;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
-Message-ID: <OFECBDB130.03AD44B7-ON482584F2.002B40F2-482584F2.002B720F@mxic.com.tw>
-From:   masonccyang@mxic.com.tw
-Date:   Fri, 17 Jan 2020 15:54:33 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2020/01/17 PM 03:54:33,
-        Serialize complete at 2020/01/17 PM 03:54:33
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-MAIL: TWHMLLG4.macronix.com 00H7sWnD089113
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-Hi Miquel,
+the patchset enable CMA on Microblaze. Based on Christoph request I have
+created the first patch which makes dma-continugous.h mandatory for all
+archs before Microblaze wiring.
 
- 
-> > +static int macronix_nand_randomizer_check_enable(struct nand_chip 
-*chip)
-> > +{
-> > +   u8 feature[ONFI_SUBFEATURE_PARAM_LEN];
-> > +   int ret;
-> > +
-> > +   ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-> > +            feature);
-> > +   if (ret < 0)
-> > +      return ret;
-> > +
-> > +   if (feature[0])
-> > +      return feature[0];
-> > +
-> > +   feature[0] = MACRONIX_RANDOMIZER_MODE_ENTER;
-> > +   ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-> > +            feature);
-> > +   if (ret < 0)
-> > +      return ret;
-> > +
-> > +   /* RANDEN and RANDOPT OTP bits are programmed */
-> > +   feature[0] = 0x0;
-> > +   ret = nand_prog_page_op(chip, 0, 0, feature, 1);
-> > +   if (ret < 0)
-> > +      return ret;
-> > +
-> > +   ret = nand_get_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-> > +            feature);
-> > +   if (ret < 0)
-> > +      return ret;
-> > +
-> > +   feature[0] &= MACRONIX_RANDOMIZER_MODE_EXIT;
-> > +   ret = nand_set_features(chip, ONFI_FEATURE_ADDR_MXIC_RANDOMIZER,
-> > +            feature);
-> > +   if (ret < 0)
-> > +      return ret;
-> > +
-> > +   return feature[0];
-> 
-> Can feature[0] be != 0 ? I don't think so, in this case I prefer a:
-> return 0;
-> 
+Thanks,
+Michal
 
-okay, will fix it.
+Changes in v2:
+- New patch suggested by Christoph
+- Align commit message
+- Remove adding dma-contigous.h via Kbuild because it is done by previous
+  patch
 
-> > +}
-> > +
-> >  static void macronix_nand_onfi_init(struct nand_chip *chip)
-> >  {
-> >     struct nand_parameters *p = &chip->parameters;
-> >     struct nand_onfi_vendor_macronix *mxic;
-> > +   struct device_node *dn = nand_get_flash_node(chip);
-> > +   int rand_otp = 0;
-> > +   int ret;
-> > 
-> >     if (!p->onfi)
-> >        return;
-> > 
-> > +   if (of_find_property(dn, "mxic,enable-randomizer-otp", NULL))
-> > +      rand_otp = 1;
-> > +
-> >     mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
-> > +   /* Subpage write is prohibited in randomizer operatoin */
-> 
->                                        with          operation
-> 
-> > +   if (rand_otp && chip->options & NAND_NO_SUBPAGE_WRITE &&
-> > +       mxic->reliability_func & MACRONIX_RANDOMIZER_BIT) {
-> > +      if (p->supports_set_get_features) {
-> > +         bitmap_set(p->set_feature_list,
-> > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-> > +         bitmap_set(p->get_feature_list,
-> > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-> > +         ret = macronix_nand_randomizer_check_enable(chip);
-> > +         if (ret < 0)
-> > +            pr_info("Macronix NAND randomizer failed\n");
-> > +         else
-> > +            pr_info("Macronix NAND randomizer enabled\n");
-> 
-> Maybe we should update the bitmaps only if it succeeds?
+Michal Simek (2):
+  asm-generic: Make dma-contiguous.h a mandatory include/asm header
+  microblaze: Wire CMA allocator
 
-okay, will drop pr_info();
+ arch/arm64/include/asm/Kbuild         | 1 -
+ arch/csky/include/asm/Kbuild          | 1 -
+ arch/microblaze/Kconfig               | 1 +
+ arch/microblaze/configs/mmu_defconfig | 2 ++
+ arch/microblaze/mm/init.c             | 4 ++++
+ arch/mips/include/asm/Kbuild          | 1 -
+ arch/riscv/include/asm/Kbuild         | 1 -
+ arch/s390/include/asm/Kbuild          | 1 -
+ arch/x86/include/asm/Kbuild           | 1 -
+ arch/xtensa/include/asm/Kbuild        | 1 -
+ include/asm-generic/Kbuild            | 1 +
+ 11 files changed, 8 insertions(+), 7 deletions(-)
 
-> 
-> > +      }
-> > +   }
-> > +
-> >     if ((mxic->reliability_func & MACRONIX_READ_RETRY_BIT) == 0)
-> >        return;
-> > 
-> 
-> With the above fixed,
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> 
-> Thanks,
-> Miquèl
-
-thanks for your time & comments.
-Mason
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
-
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
+-- 
+2.25.0
 
