@@ -2,151 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3AFC140E2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33E0B140E24
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgAQPo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 10:44:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53974 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729207AbgAQPoa (ORCPT
+        id S1729365AbgAQPol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 10:44:41 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47490 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729335AbgAQPoh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:44:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=YZm/5f9wodQfID90hCH6kdu/JpRhW+QGeHbLTu7g0DM=; b=Wu4Px26QUDJX
-        9BBVnJdZiujoKJDRPmgP7URAGeeMyS/2vWCDgNjtat6R+Jn/iNX6uDYsbaQoX2FpFED4ivBh0ykiy
-        gWthDXylaQc0TVOl5Co7tjBTBLMpbclsVxl9c6jd3o8B7cq+SFdcTwtX8Hix9hiS2VevtxOixKqYe
-        /084o=;
-Received: from fw-tnat-cam4.arm.com ([217.140.106.52] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1isTnM-0006ua-JB; Fri, 17 Jan 2020 15:44:24 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 4C87BD02A2A; Fri, 17 Jan 2020 15:44:24 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     avifishman70@gmail.com, benjaminfair@google.com,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com
-Subject: Applied "spi: npcm-pspi: fix 16 bit send and receive support" to the spi tree
-In-Reply-To: <20200115162301.235926-2-tmaimon77@gmail.com>
-Message-Id: <applied-20200115162301.235926-2-tmaimon77@gmail.com>
-X-Patchwork-Hint: ignore
-Date:   Fri, 17 Jan 2020 15:44:24 +0000 (GMT)
+        Fri, 17 Jan 2020 10:44:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579275876;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3yf4bXBEtV+N0m/AYGXNmo4B989rg8nUKoS5DoL7jEM=;
+        b=NXI7TnkEx0uAbZi5BxKGDki51Wac7ZRqnG1ri1H89NAXdffjmdMbqV518jB7WfJ79qTT6X
+        lcBFXEEEl9noySIaIzdccBLNGbaK15QBn8/Z1w6jy9dJD6vwWblRuAFTCY8B9OgBYrP6iU
+        0f+vqBwWqPVQhAnBpamykWK7++DxMx4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-18-avFv5F18OXS38WgL_Apilw-1; Fri, 17 Jan 2020 10:44:33 -0500
+X-MC-Unique: avFv5F18OXS38WgL_Apilw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 12CF4DB60;
+        Fri, 17 Jan 2020 15:44:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BD6D19C7F;
+        Fri, 17 Jan 2020 15:44:30 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <b31b09abeea4982e038b0e66e45889bb2c9df750.camel@hammerspace.com>
+References: <b31b09abeea4982e038b0e66e45889bb2c9df750.camel@hammerspace.com> <20200117144055.GB3215@pi3> <CAJKOXPeCVwZfBsCVbc9RQUGi0UfWQw0uFamPiQasiO8fSthFsQ@mail.gmail.com> <433863.1579270803@warthog.procyon.org.uk> <461540.1579273958@warthog.procyon.org.uk>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     dhowells@redhat.com, "krzk@kernel.org" <krzk@kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "smayhew@redhat.com" <smayhew@redhat.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [BISECT BUG] NFS v4 root not working after 6d972518b821 ("NFS: Add fs_context support.")
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <464190.1579275869.1@warthog.procyon.org.uk>
+Date:   Fri, 17 Jan 2020 15:44:29 +0000
+Message-ID: <464191.1579275869@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Trond Myklebust <trondmy@hammerspace.com> wrote:
 
-   spi: npcm-pspi: fix 16 bit send and receive support
+> It looks like someone changed the return value from the old EINVAL to
+> something else? The "Numerical result out of range" message above
+> suggests it has been changed to EOVERFLOW, which probably is not
+> supported by 'mount'.
 
-has been applied to the spi tree at
+Ah, I see what's happened.  nfs_get_option_ui_bound() returns -ERANGE and the
+new code lets this through whereas the old code converted it to -EINVAL.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 47416a5f27be0a0e815ef5f9f2f06618ae5e0470 Mon Sep 17 00:00:00 2001
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Wed, 15 Jan 2020 18:22:58 +0200
-Subject: [PATCH] spi: npcm-pspi: fix 16 bit send and receive support
-
-Fixing NPCM BMC Peripheral SPI controller 16 bit
-send and receive support by writing and reading
-the SPI data in the right order.
-
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Link: https://lore.kernel.org/r/20200115162301.235926-2-tmaimon77@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-npcm-pspi.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index fe624731c74c..c74611abe2a9 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -195,6 +195,7 @@ static void npcm_pspi_setup_transfer(struct spi_device *spi,
- static void npcm_pspi_send(struct npcm_pspi *priv)
- {
- 	int wsize;
-+	u16 val;
- 
- 	wsize = min(bytes_per_word(priv->bits_per_word), priv->tx_bytes);
- 	priv->tx_bytes -= wsize;
-@@ -204,17 +205,18 @@ static void npcm_pspi_send(struct npcm_pspi *priv)
- 
- 	switch (wsize) {
- 	case 1:
--		iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-+		val = *priv->tx_buf++;
-+		iowrite8(val, NPCM_PSPI_DATA + priv->base);
- 		break;
- 	case 2:
--		iowrite16(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-+		val = *priv->tx_buf++;
-+		val = *priv->tx_buf++ | (val << 8);
-+		iowrite16(val, NPCM_PSPI_DATA + priv->base);
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		return;
- 	}
--
--	priv->tx_buf += wsize;
- }
- 
- static void npcm_pspi_recv(struct npcm_pspi *priv)
-@@ -230,18 +232,17 @@ static void npcm_pspi_recv(struct npcm_pspi *priv)
- 
- 	switch (rsize) {
- 	case 1:
--		val = ioread8(priv->base + NPCM_PSPI_DATA);
-+		*priv->rx_buf++ = ioread8(priv->base + NPCM_PSPI_DATA);
- 		break;
- 	case 2:
- 		val = ioread16(priv->base + NPCM_PSPI_DATA);
-+		*priv->rx_buf++ = (val >> 8);
-+		*priv->rx_buf++ = val & 0xff;
- 		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		return;
- 	}
--
--	*priv->rx_buf = val;
--	priv->rx_buf += rsize;
- }
- 
- static int npcm_pspi_transfer_one(struct spi_master *master,
--- 
-2.20.1
+David
 
