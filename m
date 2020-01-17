@@ -2,134 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893071406DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:50:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 938E71406E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:51:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgAQJut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:50:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27538 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726362AbgAQJut (ORCPT
+        id S1728670AbgAQJvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:51:02 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55881 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726085AbgAQJu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:50:49 -0500
+        Fri, 17 Jan 2020 04:50:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579254648;
+        s=mimecast20190719; t=1579254658;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=oJRJOOtAJx4rABOIyWYmHnWYUrcoGrCqCdDRh2YY52I=;
-        b=YD19WJUYZAJBREAk8ub3j0ctH0SOOPxc3Gn6Yaa9Mrn59JcDAZMvuVtG/R7RI4y738i+Di
-        Pd+Mo+sOjox0XRP1ZZD/t/+WtySQnVUsxrwYCqtJd5YbKR2J+qGdmlYGiUHUPNCBNbpksW
-        U6Yfw5ac+GEBbddZgFWoa3z0WzMQvjM=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-209-Jb8pC3TmOVC8GHx3E3vcsg-1; Fri, 17 Jan 2020 04:50:47 -0500
-X-MC-Unique: Jb8pC3TmOVC8GHx3E3vcsg-1
-Received: by mail-lj1-f199.google.com with SMTP id u9so6042528ljg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:50:47 -0800 (PST)
+        bh=mYd4XcpTB2WmAb9JpP9U+6d1Bzc5qT6nYxXsqhauuYY=;
+        b=SwmqNV3n9XqABMdeYmONREnv2Wi5vstcEkzcBOhSImQ0RhDBF6qPCa0uLtGD3W1cijdJAL
+        y2vW80qGORmaF1kPAqDUi2e7cazTIMVuFDqvfiSk8SNtXNpnDbAuBAjs0POp1nzelpcpT5
+        QKFjflfZCjQAheGLGEKyTd0PCYGJgpA=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-377-FfZtS8XxNBmxYw9VpP1Ghg-1; Fri, 17 Jan 2020 04:50:55 -0500
+X-MC-Unique: FfZtS8XxNBmxYw9VpP1Ghg-1
+Received: by mail-qt1-f198.google.com with SMTP id b7so15603837qtg.23
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:50:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=oJRJOOtAJx4rABOIyWYmHnWYUrcoGrCqCdDRh2YY52I=;
-        b=nZcK5ZtDZ/dnyAsrSsLNkxZb8kqMxhVw/VJi/QTCY5+ExlMu5dNx2HvYKC0wzVnp5R
-         Hu2SnDwGHZu2dwO5nK6M/0rgguJA9nQISSjJ7tb+Au7faejk76Qy+oI3R8EM2ghVz/PX
-         idyUQNdCxUFruez5OEJg49Kjh0sP9ty9hjbyZVSTU5pKZt9DQbmZDylTHebHZSrjREJN
-         K/x4k1BDNCT5FIdI0lE5Yx6BmovvF1ZHyQHOTLjQA685k0UFNYeqjzP94Yv1I0nAAaYW
-         706iKchFkHlURTXvBoTyE60dieMp9BkzV1oYY3XI5i5aZcWbfAhh4Cg1nphWusonkGGS
-         pwPA==
-X-Gm-Message-State: APjAAAU7WiSeYJEhM7RjJiWISbmo141Ve1oi5CTlZUCQ1hur3aN1c0OL
-        +pRFm+PdNM5mU5ORCtqZvzzY0GieVTngGoGFsUiEJ/AY13IAvNPVdEkHUAVmh0GFTJH3rSV1N8y
-        yVGah5OyVog5BFgW5Css6t6+c
-X-Received: by 2002:a2e:3a0c:: with SMTP id h12mr5110078lja.200.1579254646256;
-        Fri, 17 Jan 2020 01:50:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxVH1mvGN7jFxhc1CGWH4ht8uwwpUWB8gY29//W0Sp2WPWefYaaYkajI0yi/HmyV1E0o/g6WQ==
-X-Received: by 2002:a2e:3a0c:: with SMTP id h12mr5110047lja.200.1579254646128;
-        Fri, 17 Jan 2020 01:50:46 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id s9sm14012128ljh.90.2020.01.17.01.50.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mYd4XcpTB2WmAb9JpP9U+6d1Bzc5qT6nYxXsqhauuYY=;
+        b=P4BYpc+OG85qrqLcarkgKIKtBgm5rXhV4b63DrglMK+v07Xpm6poET42az+KJsATgw
+         +ANeZc2NOxIyI6eaZkVI/nerVJJjQpsOedJAKGWtsqc9pgiEXjyLHma5sOUePoUwR9/K
+         kSaatCqwoSZFic/wIVIvJG38KWSt4eYTzrdJ5KtBQQQIU1tA7EzW8DbAMM/nU6Seib7D
+         lL9iok3cQvrAyhTgUmuktjUBz+fgAWPNyYKXqs/QFZDVxsBe/n1LCB8Dkr2pB4cSVlNc
+         rTBMPonzozNcKi4n9LFuz04XrXY5LbwAvE08hGzxlZJ1K3kNHpuvcfNhQ+UeuB0XqokY
+         oVKQ==
+X-Gm-Message-State: APjAAAVm/fO6BRqu6p+kUk5T3Xv6lsPsvv70aQQLuJdWA5BpdKEetgsf
+        N6ObYFE0ju2s5LlTxSVzsuieTVZhvgptJySl1JBD/tmGru8fGUMKvw+qxzfHnMzBBRJcBaKsKHW
+        f/m8zEAzwRUwzQ2ZZEWN0YAKp
+X-Received: by 2002:a37:a70b:: with SMTP id q11mr32130070qke.393.1579254655347;
+        Fri, 17 Jan 2020 01:50:55 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxPk0EzmH8BB5RmxgtwTU30bMvpsJqk/7qLf7iaQA6f+J68LLqTM68sZN85WrQckS6a24uP8w==
+X-Received: by 2002:a37:a70b:: with SMTP id q11mr32130048qke.393.1579254655163;
+        Fri, 17 Jan 2020 01:50:55 -0800 (PST)
+Received: from redhat.com (bzq-79-179-85-180.red.bezeqint.net. [79.179.85.180])
+        by smtp.gmail.com with ESMTPSA id t38sm12968064qta.78.2020.01.17.01.50.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 01:50:45 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id D7C9C1804D6; Fri, 17 Jan 2020 10:50:44 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org,
-        "open list\:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH bpf-next v3 09/11] selftests: Remove tools/lib/bpf from include path
-In-Reply-To: <CAEf4BzYaLd25P7Uu=aFHW_=nHOCPdCpZCcoJobhRoSGQUA49HQ@mail.gmail.com>
-References: <157918093154.1357254.7616059374996162336.stgit@toke.dk> <157918094179.1357254.14428494370073273452.stgit@toke.dk> <CAEf4Bzba5FHN_iN52qRiGisRcauur1FqDY545EwE+RVR-nFvQA@mail.gmail.com> <CAEf4BzYaLd25P7Uu=aFHW_=nHOCPdCpZCcoJobhRoSGQUA49HQ@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Fri, 17 Jan 2020 10:50:44 +0100
-Message-ID: <87o8v2qumj.fsf@toke.dk>
+        Fri, 17 Jan 2020 01:50:54 -0800 (PST)
+Date:   Fri, 17 Jan 2020 04:50:48 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Lei Cao <lei.cao@stratus.com>
+Subject: Re: [PATCH v3 12/21] KVM: X86: Implement ring-based dirty memory
+ tracking
+Message-ID: <20200117045019-mutt-send-email-mst@kernel.org>
+References: <20200109145729.32898-1-peterx@redhat.com>
+ <20200109145729.32898-13-peterx@redhat.com>
+ <20200116033725-mutt-send-email-mst@kernel.org>
+ <20200116162703.GA344339@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116162703.GA344339@xz-x1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+On Thu, Jan 16, 2020 at 11:27:03AM -0500, Peter Xu wrote:
+> On Thu, Jan 16, 2020 at 03:38:21AM -0500, Michael S. Tsirkin wrote:
+> > On Thu, Jan 09, 2020 at 09:57:20AM -0500, Peter Xu wrote:
+> > > +	/* If to map any writable page within dirty ring, fail it */
+> > > +	if ((kvm_page_in_dirty_ring(vcpu->kvm, vma->vm_pgoff) ||
+> > > +	     kvm_page_in_dirty_ring(vcpu->kvm, vma->vm_pgoff + pages - 1)) &&
+> > > +	    vma->vm_flags & VM_WRITE)
+> > > +		return -EINVAL;
+> > 
+> > Worth thinking about other flags. Do we want to force VM_SHARED?
+> > Disable VM_EXEC?
+> 
+> Makes sense to me.  I think it worths a standalone patch since they
+> should apply for the whole per-vcpu mmaped regions rather than only
+> for the dirty ring buffers.
+> 
+> (Should include KVM_PIO_PAGE_OFFSET, KVM_COALESCED_MMIO_PAGE_OFFSET,
+>  KVM_S390_SIE_PAGE_OFFSET, kvm_run, and this new one)
+> 
+> Thanks,
 
-> On Thu, Jan 16, 2020 at 2:41 PM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
->>
->> On Thu, Jan 16, 2020 at 5:28 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@r=
-edhat.com> wrote:
->> >
->> > From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->> >
->> > To make sure no new files are introduced that doesn't include the bpf/
->> > prefix in its #include, remove tools/lib/bpf from the include path
->> > entirely.
->> >
->> > Instead, we introduce a new header files directory under the scratch t=
-ools/
->> > dir, and add a rule to run the 'install_headers' rule from libbpf to h=
-ave a
->> > full set of consistent libbpf headers in $(OUTPUT)/tools/include/bpf, =
-and
->> > then use $(OUTPUT)/tools/include as the include path for selftests.
->> >
->> > For consistency we also make sure we put all the scratch build files f=
-rom
->> > other bpftool and libbpf into tools/build/, so everything stays within
->> > selftests/.
->> >
->> > Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->> > ---
->
-> BTW, this change also now forces full rebuild regardless if anything
-> changed or not :(
 
-It does? Hmm, that was not intentional (I was mostly focused on making
-sure a clean make worked, not the opposite). I'll see if I can't fix
-that as well...
+I don't think we can change UAPI for existing ones.
+Userspace might be setting these by mistake.
 
--Toke
+> -- 
+> Peter Xu
 
