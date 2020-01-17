@@ -2,171 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DA91141463
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:52:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8EEB141474
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbgAQWwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:52:01 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45746 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbgAQWwB (ORCPT
+        id S1730192AbgAQWwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:52:22 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46967 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbgAQWwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:52:01 -0500
-Received: by mail-oi1-f193.google.com with SMTP id n16so23656545oie.12
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:52:00 -0800 (PST)
+        Fri, 17 Jan 2020 17:52:21 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z124so12323839pgb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:52:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bPRY1mht45VkQ0r3COkN8IZorbBTnfRW7uTMCnHTRE0=;
-        b=Z6i13jfNRgszkiyaik7lyEAAVG5xeSergpq0jyYAmn09fomUVv6yiq7uAN86DnOPPt
-         5IpwyBbL2gNEO1sRGGaytaK3vMyYGHPDANhTUtjk3Kq/trAWPeCsqusygof4adCNpyuP
-         GWMr3cO2ljXEwsHCYqTnjhhUncVpepTqUogLniTH3meeC2k/rFljqF1U2LGQSwLK7otI
-         TXn4BgO0YMzDxORkpEhBRhIacygXmch95Qc+Ex7GdCrQkRlRJEGcec7s4pSLmCOgRyt+
-         ztdHFz9/XiDEO7qwsuprUY2YYngQ0YcxihkvXDruOyoMl1rKAKOrvRrs/VvuJzQ6t1Ox
-         /vQw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YsipyYbr71+9e31r8uuk3JQ+6WQjuC8y1wrt6WH8ZeI=;
+        b=CDBUm8PAA4YTMmam7hHsPI026QKv6W3mlIOr2PTSmF7XeIhpRt3/LB6fmZHXT5a6Vm
+         f0V6aM/9vCtJDdv6N3kd7u9MimLqE4dVVAnWp4CE1M0yAxAuGQpCem7ARlGO8yQ4iY/a
+         PSKA96/80RRow8maqI00AU9BbAaSKfaKwYjbuxGVMLRNkjeRptLPPPKLhudAL6dcJBDL
+         vbVy6+u1W6/VORHMMc8VFYqhcK4Cd1Pe+8c0c/ewkXHFwwMIyz8DCeau+yB/svGWYRhF
+         a02BjidRl4Z+40KiIf15OdnY7/BIi++gP6Yck30Qp18JY0oJ6ewy8k8HZrm6wyqnfUcv
+         vnDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bPRY1mht45VkQ0r3COkN8IZorbBTnfRW7uTMCnHTRE0=;
-        b=YuR96SOOXAQgF4rMTQgsqeopbWlilEx43KTUEawL5nMsUpXRi3LmAqbmWogI7IeEmr
-         UYOLfbBrO1TDRX0LC5JVb8TrvTmr6QplpXBxXDzWphRAh8+F4xRyQzCv0X4XpkHVT6pf
-         qQ32rQneVScwxdOaFBcmXNy+K/ObOfNR5QQjwnim0ft7etYRE0sQLTTnpid0x4Ofew8R
-         KzqETJVI+lHxsUT3zcq7JbF8YgAzH4IekgX4uAenyqy9yymDV5fzEcaGxl+VLFmpNoeo
-         FunHXYOVo3rEdKNdwamvLsoTDsZHPAsFdCy87Jo6pUBRg7vFNK4nJorD0HHbpXnPJrlG
-         c6lw==
-X-Gm-Message-State: APjAAAW0M0Pft37jEbt4vI0BoTrKUiSDj6zqb4snnIEuZFWgKpKnTJDb
-        t7P0+5d2yiD+7Uo/4guDpKQo+8LETihwst4544+MYQ==
-X-Google-Smtp-Source: APXvYqw1nQ5WcChQLMUCNxlulVn4wohCILAMLAOqS6fv5lqjkkAKqK5gq7uqYTHhWtTvtwp3I3GiDp+2QAATZtwedXA=
-X-Received: by 2002:aca:d4c1:: with SMTP id l184mr5259065oig.172.1579301520140;
- Fri, 17 Jan 2020 14:52:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YsipyYbr71+9e31r8uuk3JQ+6WQjuC8y1wrt6WH8ZeI=;
+        b=Rc0kNi2Ql5SdTP6ALmtSmvnNTPBAt/wqdSxT4KkwBhVzuZby3grssLT+154/2GccXu
+         VIL9b4fxqO5kzCK+XxiVIXxSQOd35o+yOBtk987XQFgxYtH4zp0Hx6+JVvuY7zxFQZ2X
+         8TWue6pFx0pkB6UVBxqCdjUODi0fGK7pOz3mLNfwBxvJzUc7og+aAo3yMB22nxKvJLjl
+         oFicb45uFwpJehfvA56nKz21nadukJSPwnBcmuOpVwuAg+o6JS+ncWHjrJ5a+cc855J9
+         8tZEVVraGyJSyqo7qHh8ASpXAbKW3Mr3IRyx+Sgo1dqB4KowIV/ot27Ug4S5AsF+Fup8
+         gPjw==
+X-Gm-Message-State: APjAAAV9MZ3MEMjZ2gSvzX+ElpISTYwCSnn79K7Oh8RiCMK9qXyWNxNx
+        ev5iXYYLmyEemxEVHlC5UVvWQg==
+X-Google-Smtp-Source: APXvYqzGs+gkpKD2iIPDGV5FgCTt6txDmtAj7/ikKdL7oiZKBsLYzx8QAV15xrKhXA7ZXRTh5YUNyg==
+X-Received: by 2002:aa7:9aa5:: with SMTP id x5mr5390132pfi.131.1579301540092;
+        Fri, 17 Jan 2020 14:52:20 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id n188sm29570370pga.84.2020.01.17.14.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 14:52:19 -0800 (PST)
+Date:   Fri, 17 Jan 2020 15:52:17 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     =?iso-8859-1?Q?Cl=E9ment?= Leger <cleger@kalray.eu>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: Add support for predefined notifyids
+Message-ID: <20200117225217.GA27535@xps15>
+References: <20200115102142.11229-1-cleger@kalray.eu>
+ <088ceab9-f135-6e70-dcf6-f75ec46110b1@st.com>
+ <79048597.12371594.1579098506802.JavaMail.zimbra@kalray.eu>
+ <a1116656-cf2e-c1a1-7cc3-0fe2a79f076e@st.com>
+ <612100872.12377996.1579101063237.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
-References: <20200117164017.GA21582@paulmck-ThinkPad-P72> <3760F60F-4133-4FE1-9A4C-F335A8230285@lca.pw>
-In-Reply-To: <3760F60F-4133-4FE1-9A4C-F335A8230285@lca.pw>
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 17 Jan 2020 23:51:48 +0100
-Message-ID: <CANpmjNPdfB=hrcXJbPzdisxnBUZW3JEK9UbTpTy+a20b=6OdJg@mail.gmail.com>
-Subject: Re: [PATCH -rcu] kcsan: Make KCSAN compatible with lockdep
-To:     Qian Cai <cai@lca.pw>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <612100872.12377996.1579101063237.JavaMail.zimbra@kalray.eu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 at 17:59, Qian Cai <cai@lca.pw> wrote:
->
->
->
-> > On Jan 17, 2020, at 11:40 AM, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > True enough, but even if we reach the nirvana state where there is general
-> > agreement on what constitutes a data race in need of fixing and KCSAN
-> > faithfully checks based on that data-race definition, we need to handle
-> > the case where someone introduces a bug that results in a destructive
-> > off-CPU access to a per-CPU variable, which is exactly the sort of thing
-> > that KCSAN is supposed to detect.  But suppose that this variable is
-> > frequently referenced from functions that are inlined all over the place.
-> >
-> > Then that one bug might result in huge numbers of data-race reports in
-> > a very short period of time, especially on a large system.
->
-> It sounds like the case with debug_pagealloc where it prints a spam of those, and then the system is just dead.
->
-> [   28.992752][  T394] Reported by Kernel Concurrency Sanitizer on:
-> [   28.992752][  T394] CPU: 0 PID: 394 Comm: pgdatinit0 Not tainted 5.5.0-rc6-next-20200115+ #3
-> [   28.992752][  T394] Hardware name: HP ProLiant XL230a Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018
-> [   28.992752][  T394] ===============================================================
-> [   28.992752][  T394] ==================================================================
-> [   28.992752][  T394] BUG: KCSAN: data-race in __change_page_attr / __change_page_attr
-> [   28.992752][  T394]
-> [   28.992752][  T394] read to 0xffffffffa01a6de0 of 8 bytes by task 395 on cpu 16:
-> [   28.992752][  T394]  __change_page_attr+0xe81/0x1620
-> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0
-> [   28.992752][  T394]  __set_pages_np+0xcc/0x100
-> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb
-> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730
-> [   28.992752][  T394]  __free_pages+0x51/0x90
-> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0
-> [   28.992752][  T394]  deferred_free_range+0x59/0x8f
-> [   28.992752][  T394]  deferred_init_max21d
-> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1
-> [   28.992752][  T394]  kthread+0x1e0/0x200
-> [   28.992752][  T394]  ret_from_fork+0x3a/0x50
-> [   28.992752][  T394]
-> [   28.992752][  T394] write to 0xffffffffa01a6de0 of 8 bytes by task 394 on cpu 0:
-> [   28.992752][  T394]  __change_page_attr+0xe9c/0x1620
-> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0
-> [   28.992752][  T394]  __set_pages_np+0xcc/0x100
-> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb
-> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730
-> [   28.992752][  T394]  __free_pages+0x51/0x90
-> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0
-> [   28.992752][  T394]  deferred_free_range+0x59/0x8f
-> [   28.992752][  T394]  deferred_init_maxorder+0x1d6/0x21d
-> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1
-> [   28.992752][  T394]  kthread+0x1e0/0x200
-> [   28.992752][  T394]  ret_from_fork+0x3a/0x50
->
-> It point out to this,
->
->                 pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
->                 pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
->
->                 cpa_inc_4k_install();
->                 /* Hand in lpsize = 0 to enforce the protection mechanism */
->                 new_prot = static_protections(new_prot, address, pfn, 1, 0,
->                                               CPA_PROTECT);
->
-> In static_protections(),
->
->         /*
->          * There is no point in checking RW/NX conflicts when the requested
->          * mapping is setting the page !PRESENT.
->          */
->         if (!(pgprot_val(prot) & _PAGE_PRESENT))
->                 return prot;
->
-> Is there a data race there?
+Hey guys,
 
-Yes. I was finally able to reproduce this data race on linux-next (my
-system doesn't crash though, maybe not enough cores?). Here is a trace
-with line numbers:
+On Wed, Jan 15, 2020 at 04:11:03PM +0100, Clément Leger wrote:
+> 
+> 
+> ----- On 15 Jan, 2020, at 16:09, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
+> 
+> > On 1/15/20 3:28 PM, Clément Leger wrote:
+> >> Hi Arnaud,
+> >> 
+> >> ----- On 15 Jan, 2020, at 15:06, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
+> >> 
+> >>> Hi Clément,
+> >>>
+> >>> On 1/15/20 11:21 AM, Clement Leger wrote:
+> >>>> In order to support preallocated notify ids, if their value is
+> >>>> equal to FW_RSC_NOTIFY_ID_ANY, then do no allocate a notify id
+> >>>> dynamically but try to allocate the requested one. This is useful when
+> >>>> using custom ids to bind them to custom vendor resources. For instance,
+> >>>> it allow to assign a group of queues to a specific interrupti in order
+> >>>> to dispatch notifications.
+> >>>>
+> >>>> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> >>>> ---
+> >>>>  drivers/remoteproc/remoteproc_core.c | 27 +++++++++++++++++++--------
+> >>>>  include/linux/remoteproc.h           |  1 +
+> >>>>  2 files changed, 20 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+> >>>> b/drivers/remoteproc/remoteproc_core.c
+> >>>> index 307df98347ba..b1485fcd0f11 100644
+> >>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>>> @@ -351,14 +351,27 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+> >>>>  	/*
+> >>>>  	 * Assign an rproc-wide unique index for this vring
+> >>>>  	 * TODO: assign a notifyid for rvdev updates as well
+> >>>> -	 * TODO: support predefined notifyids (via resource table)
+> >>>>  	 */
+> >>>> -	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
+> >>>> -	if (ret < 0) {
+> >>>> -		dev_err(dev, "idr_alloc failed: %d\n", ret);
+> >>>> -		return ret;
+> >>>> +	if (rsc->vring[i].notifyid == FW_RSC_NOTIFY_ID_ANY) {
+> >>>> +		ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
+> >>>> +		if (ret < 0) {
+> >>>> +			dev_err(dev, "idr_alloc failed: %d\n", ret);
+> >>>> +			return ret;
+> >>>> +		}
+> >>>> +		notifyid = ret;
+> >>>> +
+> >>>> +		/* Let the rproc know the notifyid of this vring.*/
+> >>>> +		rsc->vring[i].notifyid = notifyid;
+> >>>> +	} else {
+> >>>> +		/* Reserve requested notify_id */
+> >>>> +		notifyid = rsc->vring[i].notifyid;
+> >>>> +		ret = idr_alloc(&rproc->notifyids, rvring, notifyid,
+> >>>> +				notifyid + 1, GFP_KERNEL);
+> >>>> +		if (ret < 0) {
+> >>>> +			dev_err(dev, "idr_alloc failed: %d\n", ret);
+> >>>> +			return ret;
+> >>>> +		}
+> >>>>  	}
+> >>>> -	notifyid = ret;
+> >>>>  
+> >>>>  	/* Potentially bump max_notifyid */
+> >>>>  	if (notifyid > rproc->max_notifyid)
+> >>>> @@ -366,8 +379,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+> >>>>  
+> >>>>  	rvring->notifyid = notifyid;
+> >>>>  
+> >>>> -	/* Let the rproc know the notifyid of this vring.*/
+> >>>> -	rsc->vring[i].notifyid = notifyid;
+> >>>>  	return 0;
+> >>>>  }
+> >>> The rproc_free_vring function resets the notifyid to -1 on free.
+> >>> This could generate a side effect if the resource table is not reloaded.
+> >> 
+> >> Oh indeed, I did not thought of that. What would you recommend ?
+> >> If using -1 in free vring, notify ids will be reallocated at next
+> >> round.
+> > Regarding the code i'm not sure that it is useful to reset the notifyID to -1 on
+> > free.
 
-read to 0xffffffffaa59a000 of 8 bytes by interrupt on cpu 7:
- cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
- __change_page_attr+0x10cf/0x1840 arch/x86/mm/pat/set_memory.c:1514
- __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
- __set_pages_np+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2148
- __kernel_map_pages+0xb0/0xc8 arch/x86/mm/pat/set_memory.c:2178
- kernel_map_pages include/linux/mm.h:2719 [inline]
-<snip>
+I'm not sure setting notifyid to -1 in rproc_free_vring() is such a big problem.
+No matter the code path I look at, if rproc_free_vring() is called something
+serious has happened and the resource table will be reloaded if another attempt
+at booting the remote processor is done.  It can also be that a graceful
+shutdown is underway, in which case the resource table will be reloaded anyway
+if/when the slave is brought back in service.
 
-write to 0xffffffffaa59a000 of 8 bytes by task 1 on cpu 6:
- cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
- __change_page_attr+0x10ea/0x1840 arch/x86/mm/pat/set_memory.c:1514
- __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
- __set_pages_p+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2129
- __kernel_map_pages+0x2e/0xc8 arch/x86/mm/pat/set_memory.c:2176
- kernel_map_pages include/linux/mm.h:2719 [inline]
-<snip>
+Let me know if I'm missing a scenario.
 
-Both accesses are due to the same "cpa_4k_install++" in
-cpa_inc_4k_install. Now you can see that a data race here could be
-potentially undesirable: depending on compiler optimizations or how
-x86 executes a non-LOCK'd increment, you may lose increments, corrupt
-the counter, etc. Since this counter only seems to be used for
-printing some stats, this data race itself is unlikely to cause harm
-to the system though.
+To me the real problem is if a FW image has set the notifyids in the resource
+table to 0xffffffff, thinking they will be overwritten.  In that case things
+will really south. 
+
+> > In current version, on alloc, the notifyID is overwriten without check.
+> > And as vdev status is updated, vring struct in resource table should be
+> > considered as invalid
+> > Except if i missed a usecase/race condition...
+> > 
+> >> 
+> >> I was also worried that it would break some existing user applications
+> >> which uses "0" as a notify id in vring but expect the id to be
+> >> allocated dynamically. With my modification, it means it will try to
+> >> use "0" as a predefined id, leading to allocation failure.
+
+From my point of view they will have been lucky for all this time.  Even with
+a new version of the resource table (which I think is the right way go)
+cases like this will break.
 
 Thanks,
--- Marco
+Mathieu
+
+> >> 
+> > Yes this could introduce regression for firmware that sets 0 as default value.
+> > Probably better to introduce this patch with a new version of the resource table
+> > :)
+> 
+> Understood ;)
+> 
+> Regards,
+> 
+> Clément
+> 
+> > 
+> > Regards
+> > Arnaud
+> >>>
+> >>>>  
+> >>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >>>> index 16ad66683ad0..dcae3394243e 100644
+> >>>> --- a/include/linux/remoteproc.h
+> >>>> +++ b/include/linux/remoteproc.h
+> >>>> @@ -123,6 +123,7 @@ enum fw_resource_type {
+> >>>>  };
+> >>>>  
+> >>>>  #define FW_RSC_ADDR_ANY (-1)
+> >>>> +#define FW_RSC_NOTIFY_ID_ANY (-1)This define can also be used in
+> >>>> rproc_free_vring
+> >> 
+> >> Indeed.
+> >> 
+> >> Thanks for your review.
+> >> 
+> >> Regards,
+> >> 
+> >> Clément
+> >> 
+> >>>
+> >>> Regards,
+> >>> Arnaud
+> >>>>  
+> >>>>  /**
+> > >>>   * struct fw_rsc_carveout - physically contiguous memory request
