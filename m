@@ -2,277 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71DFB140612
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:33:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0895014060F
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:33:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgAQJdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728899AbgAQJdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 17 Jan 2020 04:33:10 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:59057 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726950AbgAQJdF (ORCPT
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51889 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbgAQJdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:33:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579253584;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RHvGcF9xzuVRZeTw2ecPotSnBNnYfAGaG6neQxJf86E=;
-        b=dN35GK7zGCUpG0LFQSUBSG1CgLt1FSOGs6m7zva8+yffm/jwGGI3wr/AylucgVT3ycN/T7
-        GMFGws07c4tYx5RRAdQD8nvBMxjGGaPcti+njxy9BsSHDqnE9JPifItR2VVyvNYZoeNEHW
-        uY4H0fJmi0jE+XgOYZIxVs6kn5qp6UA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-IavVhmtuNH2UPO5_fDnW7w-1; Fri, 17 Jan 2020 04:33:03 -0500
-X-MC-Unique: IavVhmtuNH2UPO5_fDnW7w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46405107ACC7;
-        Fri, 17 Jan 2020 09:33:00 +0000 (UTC)
-Received: from [10.72.12.168] (ovpn-12-168.pek2.redhat.com [10.72.12.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 291178121F;
-        Fri, 17 Jan 2020 09:32:40 +0000 (UTC)
-Subject: Re: [PATCH 5/5] vdpasim: vDPA device simulator
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>, kuba@kernel.org
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-6-jasowang@redhat.com>
- <20200116154658.GJ20978@mellanox.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <aea2bff8-82c8-2c0f-19ee-e86db73e199f@redhat.com>
-Date:   Fri, 17 Jan 2020 17:32:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 17 Jan 2020 04:33:00 -0500
+Received: by mail-pj1-f65.google.com with SMTP id d15so2907770pjw.1
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:33:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=p0FYXrhY0dK2Yq0ADqbuALXVIqL3DOBXcQh5lESagqw=;
+        b=TF9fXgaUP4k4EAUC/Dy/SrOzwDt7ThZAFl1RiO2a29ruRoatv9IVB/khL4saK8kRVr
+         jmQulM0N9UWJo1tVbMtZSwfUOSeBO82sunl63tNxOn9BFdV+BcFNIApGC+7vEbF5JCs/
+         sFX4nSxwdD66o0jnSZQb+cuxIhTNSgQPJw+NbD6Yp2tQePUHbGgagbNBt9loJ1etUD8y
+         ju0tJkK2IpWUyY0tP+T6wcrO6lkabPJHh0jysu0L3AYYtHptfY8IDpWqeHAFxNNvJ2PP
+         2UZyeAiwnjYi/RrtKRf8YgfE3/Mwr3ec4ZhjQSrEwi+CGDiEwax83iA9qESUsmFSl9lm
+         BKcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=p0FYXrhY0dK2Yq0ADqbuALXVIqL3DOBXcQh5lESagqw=;
+        b=VKNI3GS0LmtFfnygaL/AowUjdiD4T1qmggnEOvJxFrnKOlIGtl5fL15MGuJeW8a6vt
+         ifl9Dg4iC5RGe6PwKJLD+kv074yFMkSFisLM3h1L3gW3k8QLeiIGsc48BDVjg3k7Yl+T
+         J1aqPi/CG2jSaoxI4QlVXKsw1gR+oNaqgzfOetJfpGiUjCHeP3wE0wO7NL+YnQPBfiE5
+         LLRbV5zd/ZsH0Ef2L3HGwsuVL27s2/lcEUP1+XIKTB8/d1x9SwvLKUQ7KbVTxCrMYUl6
+         De6nhXFeQSbwktXgB5JuH7jRloZidqUud24f9tXeUdi7nnpsOL0XQtckYPUqrg2h0va7
+         ersQ==
+X-Gm-Message-State: APjAAAVnpOo/IRV1f1uWH8+iJLNe1TVY4atjroZUfBCkB6Nf6g3MbJON
+        7HfHuchJxBdmk6r5cWtqfpDnbw==
+X-Google-Smtp-Source: APXvYqwrLEAFB5O9bxsGKIHjogYbkqKBu7pjTnCF9v/vgbb7R8TIhtoQCKwAw/QYjhF/m1x+onqgAg==
+X-Received: by 2002:a17:902:59cd:: with SMTP id d13mr43612993plj.146.1579253579655;
+        Fri, 17 Jan 2020 01:32:59 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c22sm28137098pfo.50.2020.01.17.01.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 01:32:59 -0800 (PST)
+Date:   Fri, 17 Jan 2020 01:32:58 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, alexander.duyck@gmail.com,
+        stable@vger.kernel.org
+Subject: Re: [Patch v3] mm: thp: grab the lock before manipulation defer
+ list
+In-Reply-To: <b67fe2bb-e7a6-29fe-925e-dd1ae176cc4b@virtuozzo.com>
+Message-ID: <alpine.DEB.2.21.2001170132090.20618@chino.kir.corp.google.com>
+References: <20200116013100.7679-1-richardw.yang@linux.intel.com> <0bb34c4a-97c7-0b3c-cf43-8af6cf9c4396@virtuozzo.com> <alpine.DEB.2.21.2001161357240.109233@chino.kir.corp.google.com> <20200117091002.GM19428@dhcp22.suse.cz>
+ <b67fe2bb-e7a6-29fe-925e-dd1ae176cc4b@virtuozzo.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20200116154658.GJ20978@mellanox.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 17 Jan 2020, Kirill Tkhai wrote:
 
-On 2020/1/16 =E4=B8=8B=E5=8D=8811:47, Jason Gunthorpe wrote:
-> On Thu, Jan 16, 2020 at 08:42:31PM +0800, Jason Wang wrote:
->> This patch implements a software vDPA networking device. The datapath
->> is implemented through vringh and workqueue. The device has an on-chip
->> IOMMU which translates IOVA to PA. For kernel virtio drivers, vDPA
->> simulator driver provides dma_ops. For vhost driers, set_map() methods
->> of vdpa_config_ops is implemented to accept mappings from vhost.
->>
->> A sysfs based management interface is implemented, devices are
->> created and removed through:
->>
->> /sys/devices/virtual/vdpa_simulator/netdev/{create|remove}
-> This is very gross, creating a class just to get a create/remove and
-> then not using the class for anything else? Yuk.
+> >> I think that's a good point, especially considering that the current code 
+> >> appears to unconditionally place any compound page on the deferred split 
+> >> queue of the destination memcg.  The correct list that it should appear 
+> >> on, I believe, depends on whether the pmd has been split for the process 
+> >> being moved: note the MC_TARGET_PAGE caveat in 
+> >> mem_cgroup_move_charge_pte_range() that does not move the charge for 
+> >> compound pages with split pmds.  So when mem_cgroup_move_account() is 
+> >> called with compound == true, we're moving the charge of the entire 
+> >> compound page: why would it appear on that memcg's deferred split queue?
+> > 
+> > I believe Kirill asked how do we know that the page should be actually
+> > added to the deferred list just from the list_empty check. In other
+> > words what if the page hasn't been split at all?
+> 
+> Yes, I'm talking about this. Function mem_cgroup_move_account() adds every
+> huge page to the deferred list, while we need to do that only for pages,
+> which are queued for splitting...
+> 
 
-
-It includes more information, e.g the devices and the link from vdpa_sim=20
-device and vdpa device.
-
-
->
->> Netlink based lifecycle management could be implemented for vDPA
->> simulator as well.
-> This is just begging for a netlink based approach.
->
-> Certainly netlink driven removal should be an agreeable standard for
-> all devices, I think.
-
-
-Well, I think Parav had some proposals during the discussion of mdev=20
-approach. But I'm not sure if he had any RFC codes for me to integrate=20
-it into vdpasim.
-
-Or do you want me to propose the netlink API? If yes, would you prefer=20
-to a new virtio dedicated one or be a subset of devlink?
-
-But it might be better to reach an agreement for all the vendors here.
-
-Rob, Steve, Tiwei, Lingshan, Harpreet, Martin, Jakub, please share your=20
-thoughts about the management API here.
-
-
->
->> +struct vdpasim_virtqueue {
->> +	struct vringh vring;
->> +	struct vringh_kiov iov;
->> +	unsigned short head;
->> +	bool ready;
->> +	u64 desc_addr;
->> +	u64 device_addr;
->> +	u64 driver_addr;
->> +	u32 num;
->> +	void *private;
->> +	irqreturn_t (*cb)(void *data);
->> +};
->> +
->> +#define VDPASIM_QUEUE_ALIGN PAGE_SIZE
->> +#define VDPASIM_QUEUE_MAX 256
->> +#define VDPASIM_DEVICE_ID 0x1
->> +#define VDPASIM_VENDOR_ID 0
->> +#define VDPASIM_VQ_NUM 0x2
->> +#define VDPASIM_CLASS_NAME "vdpa_simulator"
->> +#define VDPASIM_NAME "netdev"
->> +
->> +u64 vdpasim_features =3D (1ULL << VIRTIO_F_ANY_LAYOUT) |
->> +		       (1ULL << VIRTIO_F_VERSION_1)  |
->> +		       (1ULL << VIRTIO_F_IOMMU_PLATFORM);
-> Is not using static here intentional?
-
-
-No, let me fix.
-
-
->
->> +static void vdpasim_release_dev(struct device *_d)
->> +{
->> +	struct vdpa_device *vdpa =3D dev_to_vdpa(_d);
->> +	struct vdpasim *vdpasim =3D vdpa_to_sim(vdpa);
->> +
->> +	sysfs_remove_link(vdpasim_dev->devices_kobj, vdpasim->name);
->> +
->> +	mutex_lock(&vsim_list_lock);
->> +	list_del(&vdpasim->next);
->> +	mutex_unlock(&vsim_list_lock);
->> +
->> +	kfree(vdpasim->buffer);
->> +	kfree(vdpasim);
->> +}
-> It is again a bit weird to see a realease function in a driver. This
-> stuff is usually in the remove remove function.
-
-
-Will fix.
-
-
->
->> +static int vdpasim_create(const guid_t *uuid)
->> +{
->> +	struct vdpasim *vdpasim, *tmp;
->> +	struct virtio_net_config *config;
->> +	struct vdpa_device *vdpa;
->> +	struct device *dev;
->> +	int ret =3D -ENOMEM;
->> +
->> +	mutex_lock(&vsim_list_lock);
->> +	list_for_each_entry(tmp, &vsim_devices_list, next) {
->> +		if (guid_equal(&tmp->uuid, uuid)) {
->> +			mutex_unlock(&vsim_list_lock);
->> +			return -EEXIST;
->> +		}
->> +	}
->> +
->> +	vdpasim =3D kzalloc(sizeof(*vdpasim), GFP_KERNEL);
->> +	if (!vdpasim)
->> +		goto err_vdpa_alloc;
->> +
->> +	vdpasim->buffer =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
->> +	if (!vdpasim->buffer)
->> +		goto err_buffer_alloc;
->> +
->> +	vdpasim->iommu =3D vhost_iotlb_alloc(2048, 0);
->> +	if (!vdpasim->iommu)
->> +		goto err_iotlb;
->> +
->> +	config =3D &vdpasim->config;
->> +	config->mtu =3D 1500;
->> +	config->status =3D VIRTIO_NET_S_LINK_UP;
->> +	eth_random_addr(config->mac);
->> +
->> +	INIT_WORK(&vdpasim->work, vdpasim_work);
->> +	spin_lock_init(&vdpasim->lock);
->> +
->> +	guid_copy(&vdpasim->uuid, uuid);
->> +
->> +	list_add(&vdpasim->next, &vsim_devices_list);
->> +	vdpa =3D &vdpasim->vdpa;
->> +
->> +	mutex_unlock(&vsim_list_lock);
->> +
->> +	vdpa =3D &vdpasim->vdpa;
->> +	vdpa->config =3D &vdpasim_net_config_ops;
->> +	vdpa_set_parent(vdpa, &vdpasim_dev->dev);
->> +	vdpa->dev.release =3D vdpasim_release_dev;
->> +
->> +	vringh_set_iotlb(&vdpasim->vqs[0].vring, vdpasim->iommu);
->> +	vringh_set_iotlb(&vdpasim->vqs[1].vring, vdpasim->iommu);
->> +
->> +	dev =3D &vdpa->dev;
->> +	dev->coherent_dma_mask =3D DMA_BIT_MASK(64);
->> +	set_dma_ops(dev, &vdpasim_dma_ops);
->> +
->> +	ret =3D register_vdpa_device(vdpa);
->> +	if (ret)
->> +		goto err_register;
->> +
->> +	sprintf(vdpasim->name, "%pU", uuid);
->> +
->> +	ret =3D sysfs_create_link(vdpasim_dev->devices_kobj, &vdpa->dev.kobj=
-,
->> +				vdpasim->name);
->> +	if (ret)
->> +		goto err_link;
-> The goto err_link does the wrong unwind, once register is completed
-> the error unwind is unregister & put_device, not kfree. This is why I
-> recommend to always initalize the device early, and always using
-> put_device during error unwinds.
-
-
-Will fix.
-
-
->
-> This whole guid thing seems unncessary when the device is immediately
-> assigned a vdpa index from the ida.
-
-
-The problem here is that user need to know which vdpa_sim is the one=20
-that is just created.
-
-
-> If you were not using syfs you'd
-> just return that index from the creation netlink.
-
-
-Yes it is.
-
-Thanks
-
-
->
-> Jason
->
-
+Yup, and that appears broken before Wei's patch.  Since we only migrate 
+charges of entire compound pages (we have a mapping pmd, the underlying 
+page cannot be split), it should not appear on the deferred split queue 
+for any memcg, right?
