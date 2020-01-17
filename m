@@ -2,96 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C65B0140D1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEA0140D21
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbgAQOzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:55:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbgAQOzz (ORCPT
+        id S1728921AbgAQO4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:56:37 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:57950 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbgAQO4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:55:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7zwwz+4wo1PNFwWKmp+ufp43NtNubm/NKjA95ifXVlQ=; b=OgEpF7a/jjp2RTq8C8AAVnfZS
-        Tmvovj94SbG0K/2Wrla/d7NgHkPl4ZJOo2+vM3DqZvl4akfN2BTyG4QL14mq2NC9SEt/H/W469UKZ
-        wgjNldxUStW0ejemU6aUHubBY848wTI+H/7WRP55tURybaKpdWvsH7mmQwEWDTudh1Y608M9zWVR4
-        kh7me8dpa8KGtanYKKrqU21YrFD4rxgJ3VK5SLzetkJSW3lDQBMlqNo1v9gXl4hzfPZ2PQ/q3Fwdz
-        JUU+o6H0kg1ZhIszm3YHagdclKuIANQy8b7Ar9cwqHPkCdrYQ2Y8AdCWMv9N7CT9Hx42yeL53qIiH
-        zGSgANIaQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1isT2J-0000gl-7L; Fri, 17 Jan 2020 14:55:47 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BFBB3300F4B;
-        Fri, 17 Jan 2020 15:54:07 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 065B32020D8FC; Fri, 17 Jan 2020 15:55:45 +0100 (CET)
-Date:   Fri, 17 Jan 2020 15:55:44 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Thara Gopinath <thara.gopinath@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Quentin Perret <qperret@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>
-Subject: Re: [Patch v8 4/7] sched/fair: Enable periodic update of average
- thermal pressure
-Message-ID: <20200117145544.GE14879@hirez.programming.kicks-ass.net>
-References: <1579031859-18692-1-git-send-email-thara.gopinath@linaro.org>
- <1579031859-18692-5-git-send-email-thara.gopinath@linaro.org>
- <20200116151502.GQ2827@hirez.programming.kicks-ass.net>
- <CAKfTPtA-M_APhGzwADhuwABzW_M5YKjm_ONGzQjFNRoJ+qYBmg@mail.gmail.com>
+        Fri, 17 Jan 2020 09:56:37 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HEr9gs170370;
+        Fri, 17 Jan 2020 14:56:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=RDYxmTVi6oTBCZ/d+490GqYHOHA9lPToi4gO08lPyRM=;
+ b=AgWPVT2XCVmAXkqITfU70s/3cCF8Sp0GY33C70RcH0SMhQwG7itGReWnDR5elNp9POcd
+ C515OTVt5ANzeQJ6+iytxN56YsmbdjQQhGRXoDQ/XqeGVxJpKt9jur7muPeJeYK4gcXe
+ 2x3RegrwIWpwmSktWpe5av0hWsLqsNs+35dJ4SZLF7aAyVI2O+KIFess/Y0GuRwC73iC
+ +tARVqkzGDGCH2jTjZbSwmkE3UqFTj9Mci7Wld5D9x1+RbwZKBFvoyra6XWYWMs/3vs+
+ vHJrZweJDTdVe5yQWPTDkRXyNdgQ/wW9/LqmUx3CjqZRXpNjvt86zG3BPhIjIp4WEH9J JA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2xf73u91uj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jan 2020 14:56:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00HEsBST166391;
+        Fri, 17 Jan 2020 14:56:19 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xk24f4w2f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jan 2020 14:56:19 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00HEuH6G006884;
+        Fri, 17 Jan 2020 14:56:17 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 17 Jan 2020 06:56:17 -0800
+Subject: Re: [PATCH v2 2/4] x86/xen: add basic KASAN support for PV kernel
+To:     Sergey Dyasli <sergey.dyasli@citrix.com>, xen-devel@lists.xen.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        George Dunlap <george.dunlap@citrix.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200117125834.14552-1-sergey.dyasli@citrix.com>
+ <20200117125834.14552-3-sergey.dyasli@citrix.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <28aba070-fa53-5677-c2d2-97d06514dda8@oracle.com>
+Date:   Fri, 17 Jan 2020 09:56:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtA-M_APhGzwADhuwABzW_M5YKjm_ONGzQjFNRoJ+qYBmg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200117125834.14552-3-sergey.dyasli@citrix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=991
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001170117
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001170117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 02:22:51PM +0100, Vincent Guittot wrote:
-> On Thu, 16 Jan 2020 at 16:15, Peter Zijlstra <peterz@infradead.org> wrote:
 
-> >
-> > That there indentation trainwreck is a reason to rename the function.
-> >
-> >         decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
-> >                   update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-> >                   update_thermal_load_avg(rq_clock_task(rq), rq, thermal_pressure) |
-> >                   update_irq_load_avg(rq, 0);
-> >
-> > Is much better.
-> >
-> > But now that you made me look at that, I noticed it's using a different
-> > clock -- it is _NOT_ using now/rq_clock_pelt(), which means it'll not be
-> > in sync with the other averages.
-> >
-> > Is there a good reason for that?
-> 
-> We don't need to apply frequency and cpu capacity invariance on the
-> thermal capping signal which is  what rq_clock_pelt does
 
-Hmm, I suppose that is true, and that really could've done with a
-comment. Now clock_pelt is sort-of in sync with clock_task, but won't it
-still give weird artifacts by having it on a slightly different basis?
+On 1/17/20 7:58 AM, Sergey Dyasli wrote:
+> --- a/arch/x86/mm/kasan_init_64.c
+> +++ b/arch/x86/mm/kasan_init_64.c
+> @@ -13,6 +13,9 @@
+>   #include <linux/sched/task.h>
+>   #include <linux/vmalloc.h>
+>   
+> +#include <xen/xen.h>
+> +#include <xen/xen-ops.h>
+> +
+>   #include <asm/e820/types.h>
+>   #include <asm/pgalloc.h>
+>   #include <asm/tlbflush.h>
+> @@ -332,6 +335,11 @@ void __init kasan_early_init(void)
+>   	for (i = 0; pgtable_l5_enabled() && i < PTRS_PER_P4D; i++)
+>   		kasan_early_shadow_p4d[i] = __p4d(p4d_val);
+>   
+> +	if (xen_pv_domain()) {
+> +		pgd_t *pv_top_pgt = xen_pv_kasan_early_init();
+> +		kasan_map_early_shadow(pv_top_pgt);
+> +	}
+> +
 
-Anyway, looking at this, would it make sense to remove the @now argument
-from update_*_load_avg()? All those functions already take @rq, and
-rq_clock_*() are fairly trivial inlines.
+
+I'd suggest replacing this with xen_kasan_early_init() and doing 
+everything, including PV check, there. This way non-Xen code won't need 
+to be aware of Xen-specific details such as guest types.
+
+
+>   	kasan_map_early_shadow(early_top_pgt);
+>   	kasan_map_early_shadow(init_top_pgt);
+>   }
+> @@ -369,6 +377,8 @@ void __init kasan_init(void)
+>   				__pgd(__pa(tmp_p4d_table) | _KERNPG_TABLE));
+>   	}
+>   
+> +	xen_pv_kasan_pin_pgd(early_top_pgt);
+> +
+
+And drop "_pv" here (and below) for the same reason.
+
+-boris
+
+>   	load_cr3(early_top_pgt);
+>   	__flush_tlb_all();
+>   
+> @@ -433,6 +443,8 @@ void __init kasan_init(void)
+>   	load_cr3(init_top_pgt);
+>   	__flush_tlb_all();
+>   
+> +	xen_pv_kasan_unpin_pgd(early_top_pgt);
+> +
+>
