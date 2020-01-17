@@ -2,129 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDA6140DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7667140DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgAQP1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 10:27:07 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41638 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbgAQP1H (ORCPT
+        id S1729074AbgAQP0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 10:26:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38153 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbgAQP0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:27:07 -0500
-Received: by mail-vs1-f66.google.com with SMTP id k188so15046698vsc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 07:27:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Al120niEVsvG7P8tXNsKmXWmt+mTl+QFGeU5Kh7eR4U=;
-        b=QVGl54VEk6IqoBZfxHiKRwJ7W7fHQLmoqA7dXl0/UxAvhejD4IBJmCNpLZ9lUkE1fC
-         WgPZ5ADCtg7oiW3Xo/IBfYFnqNqb1mUA4FER2MRt2xQVaCc0yRvk0ERNFqG4aynigLaI
-         bqARgMYrA0aFJvLm+sBqSqKMXMNbsxfuPReez/T+wvldBpqja7r9lrvERgANSm0gYQqm
-         CcheN5lVCcNbuHklNrWljZGDAgEkDUz7RyqottS7GNrezHvRB9B70PN25AZUwQmVQYsV
-         GpYuaB6BoZoI03VHenosOmUI5Z2wiDlqwjvF3GkimYTJEQWHBvlmwpMRq3YUwOS3D6rM
-         bKzQ==
+        Fri, 17 Jan 2020 10:26:35 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u2so8019657wmc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 07:26:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Al120niEVsvG7P8tXNsKmXWmt+mTl+QFGeU5Kh7eR4U=;
-        b=ZxA1wyG8lkIcV78Uqdj3cLKKENqAu83J/3b/YvEdifqbAlnkL1dasSrrhGY7FK+FYI
-         KdDAbeO2ciaqMvqTFthRhgpJAz9MDWBKIu/xj2FI8xx49zaWSKt2HrKHhxQdpboxGqoH
-         9Kq4DQ/TrDhMeNp3kfpG8qoK0BjhQCDaIxHVvxIuIfHndVUdS2oHlUFfqmiayVNOSwVo
-         bKX2WXUwqJU3RXeI39EmH9PjrelLOGRkL4A0A9glYASk919EguG9K45gC1ld4PBmRfKH
-         mYH9vTSJcGFKyiBpOELH/U8O+PNlO2tdfxBZp2YKUg1VKqbSdmjcD37Zma7oNptCv4EP
-         huuA==
-X-Gm-Message-State: APjAAAXYKMXWCGcGUbsl96Yaakw6drNP9LhXPLW7isI1BpXmMVl/lyVn
-        3KRfBrZ2HpDUOcMqQGmIRLsIakSlYVP3lQC3jBAUIzqt
-X-Google-Smtp-Source: APXvYqzTjDrVgGbgQ1r4ko50S2082/ytC9qF95Fb820LkGXbqN3IaRKe6bQ2iWNKbAR5+QtwsKhJolyI1SoWJlgiGR4=
-X-Received: by 2002:a67:314e:: with SMTP id x75mr4981012vsx.35.1579274826364;
- Fri, 17 Jan 2020 07:27:06 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=54lYfq6O2/zCWOuTXiiiKBsbz1wekZ0hwyTR+nI95t4=;
+        b=Dy8Wrbv/nKMxPj1s5A5JZLA//cgcQa27XzKQHHPlaVcn8Qb7Cmf3Ez3fZkrLTpf0Up
+         hZ3938ZI5/dMDyY/2WpVjxvK779FUB39HF08yJFMY1IwaoI8iQDZWdHEd7FSG72COXWo
+         FXHXbNUQ5hgRvZRrSw3OOpB2KOea+NKRppSPHgk0dWKSgUzlsljf9oOD0Ur8Xdymaxby
+         XBgbg//vjaAdpap6oSioePWTc+As1vU4PhdVetAnxqLDhhYscOBkhjObyFSN3jG/5KXP
+         s2jGIs2CQrrLSgwQ3vOlJGQzYdLwun5PTew2rtMhhfwqXJN2kL6f6pUHbcupdTQrFHI+
+         UquA==
+X-Gm-Message-State: APjAAAWs1rw9CsTF2FUud8aLjMovbv76LNSkTrTR/YBHnvMbiP7Ou1sg
+        wmaNlaj+fVeOp9ytK3jpToE=
+X-Google-Smtp-Source: APXvYqzmut3AbdodMKbldK91Sl/6ZksklT1nZbYZzRgc6raJH+ZG1nmNAZsmhjHD7gtmDf+4IZDX7A==
+X-Received: by 2002:a1c:6588:: with SMTP id z130mr5129791wmb.0.1579274793248;
+        Fri, 17 Jan 2020 07:26:33 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id n3sm32566714wrs.8.2020.01.17.07.26.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 07:26:32 -0800 (PST)
+Date:   Fri, 17 Jan 2020 16:26:31 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        rostedt@goodmis.org, peterz@infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with
+ printk()
+Message-ID: <20200117152631.GJ19428@dhcp22.suse.cz>
+References: <d7068679-e28a-98a9-f5b8-49ea47f7c092@redhat.com>
+ <6BED7E12-CC3B-4AED-ACC8-F3533D3F3C70@lca.pw>
+ <20200117144209.GA19428@dhcp22.suse.cz>
+ <0e9b9357-1982-edd3-dbfe-5350c8d6d0eb@redhat.com>
 MIME-Version: 1.0
-References: <f471bceaf237d582d746bd289c4c4f3639cb7b45.1577962382.git.mirq-linux@rere.qmqm.pl>
- <CAPDyKFpZWnkK7UmCZ8M4UnM05wR3MQsPrpEjOJuwkKcN2gePSg@mail.gmail.com> <20200117140511.GC26135@qmqm.qmqm.pl>
-In-Reply-To: <20200117140511.GC26135@qmqm.qmqm.pl>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 17 Jan 2020 16:26:30 +0100
-Message-ID: <CAPDyKFpkhwnzi5PAr_0bAriYteeBUVM5Qr1byiXtJkgYd=dKfw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: limit probe clock frequency to configured f_max
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e9b9357-1982-edd3-dbfe-5350c8d6d0eb@redhat.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 at 15:05, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qm=
-qm.pl> wrote:
->
-> On Thu, Jan 16, 2020 at 03:07:22PM +0100, Ulf Hansson wrote:
-> > On Thu, 2 Jan 2020 at 11:54, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere=
-.qmqm.pl> wrote:
-> > >
-> > > Currently MMC core disregards host->f_max during card initialization
-> > > phase. Obey upper boundary for the clock frequency and skip faster
-> > > speeds when they are above the limit.
-> >
-> > Is this a hypothetical problem or a real problem?
->
-> This is a problem on noisy or broken boards or cards - so needed for
-> debugging such a combination. I wouldn't expect this is required for
-> normal devices.
+On Fri 17-01-20 15:43:58, David Hildenbrand wrote:
+> On 17.01.20 15:42, Michal Hocko wrote:
+> > On Fri 17-01-20 07:40:15, Qian Cai wrote:
+> >>
+> >>
+> >>> On Jan 17, 2020, at 3:51 AM, David Hildenbrand <david@redhat.com> wrote:
+> >>>
+> >>> -> you are accessing the pageblock without the zone lock. It could
+> >>> change to "isolate" again in the meantime if I am not wrong!
+> >>
+> >> Since we are just dumping the state for debugging, it should be fine
+> >> to accept a bit inaccuracy here due to racing. I could put a bit
+> >> comments over there.
+> > 
+> > Sorry, I could have been more specific. The race I was talking about is
+> > not about accuracy. The current code is racy in that sense already
+> > because you are looking at a struct page you do not own so its state can
+> > change at any time. Please note that the zone->lock doesn't really
+> 
+> The pageblock state cannot change with the zone->lock. That's what I was
+> referring to here. (this specific check)
 
-Alright.
-
->
-> > > Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> > > ---
-> > >  drivers/mmc/core/core.c | 10 ++++++++--
-> > >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> > > index abf8f5eb0a1c..aa54d359dab7 100644
-> > > --- a/drivers/mmc/core/core.c
-> > > +++ b/drivers/mmc/core/core.c
-> > > @@ -2330,7 +2330,13 @@ void mmc_rescan(struct work_struct *work)
-> > >         }
-> > >
-> > >         for (i =3D 0; i < ARRAY_SIZE(freqs); i++) {
-> > > -               if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_=
-min)))
-> > > +               unsigned int freq =3D freqs[i];
-> > > +               if (freq > host->f_max) {
-> > > +                       if (i + 1 < ARRAY_SIZE(freqs))
-> > > +                               continue;
-> > > +                       freq =3D host->f_max;
-> >
-> > This looks wrong to me. For example, what if f_max =3D 250KHz and f_min=
- =3D 50 KHz.
-> >
-> > Then we should try with 250KHz, then 200KHz and then 100KHz. This
-> > isn't what the above code does, I think.
-> >
-> > Instead it will try with 200KHz and then 100KHz, thus skip 250KHz.
-> >
-> > Maybe we should figure out what index of freqs[] to start the loop for
-> > (before actually starting the loop), depending on the value of f_max -
-> > rather than always start at 0.
->
-> Yes, it will skip higher frequencies. I didn't view it a problem,
-> because the new code guarantees at least one frequency will be tried.
-> The eMMC standard specifies only max init frequency (400kHz), so all we
-> should try is something less whatever works.
->
-> SD spec specifies minimal frequency (100kHz), but I wouldn't expect
-> this to be enforced nor required to be anywhere.
-
-Well, my point isn't so much about the specs, rather about providing a
-consistent behaviour.
-
-We deal with f_min constraints like I described above, then I think we
-should make f_max behave the similar way.
-
-Kind regards
-Uffe
+CMA pages tend to have a stable pageblock state. More importantly this
+is not the most important information from my experience. It is usually
+reference count and page flags that are of interest. Or details about
+what kind of filesystem is owning the page and it doesn't want to
+release it.
+-- 
+Michal Hocko
+SUSE Labs
