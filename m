@@ -2,112 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA1F140BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C564140BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 14:52:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgAQNwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 08:52:03 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:18438 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729123AbgAQNwC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 08:52:02 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579269121; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=USlJdlKMx5yIrdTVykTKpAm9eip0V27f956uFncn3rE=; b=wGSt0zAsGkqvd0huVRHmZsKrWZWjMUAWNLTPD5IV8xQc2xQUDLMn7nyXPc2m15iJAfXoOXbI
- +0twz4p/Ig8rFILIZOGkwj+gIWUgnlPTpPl8HWX+VZl9Zvhzes54s1edcB7AG5yfxr4nkT4+
- ebTTf4rSXYyry7HyY9DxkNz6XFE=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e21bbff.7fc55b16ace0-smtp-out-n02;
- Fri, 17 Jan 2020 13:51:59 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E2283C447A5; Fri, 17 Jan 2020 13:51:58 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6CA3AC447AA;
-        Fri, 17 Jan 2020 13:51:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CA3AC447AA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, evgreen@chromium.org,
-        p.zabel@pengutronix.de
-Cc:     ohad@wizery.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 4/4] remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
-Date:   Fri, 17 Jan 2020 19:21:30 +0530
-Message-Id: <20200117135130.3605-5-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20200117135130.3605-1-sibis@codeaurora.org>
-References: <20200117135130.3605-1-sibis@codeaurora.org>
+        id S1728709AbgAQNvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 08:51:45 -0500
+Received: from mga12.intel.com ([192.55.52.136]:49828 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726587AbgAQNvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 08:51:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 05:51:38 -0800
+X-IronPort-AV: E=Sophos;i="5.70,330,1574150400"; 
+   d="scan'208";a="218913054"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 05:51:33 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Wambui Karuga <wambui.karugax@gmail.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     sean@poorly.run, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] drm/i915/display: conversion to new logging macros.
+In-Reply-To: <20200116130947.15464-1-wambui.karugax@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200116130947.15464-1-wambui.karugax@gmail.com>
+Date:   Fri, 17 Jan 2020 15:51:30 +0200
+Message-ID: <87pnfigpi5.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define CONN_BOX_SPARE_0_EN and fixup comments to improve readability of
-Q6 modem reset_assert sequence on SC7180 SoCs.
+On Thu, 16 Jan 2020, Wambui Karuga <wambui.karugax@gmail.com> wrote:
+> This series converts the printk based logging macros in
+> drm/i915/display/intel_display.c to the new struct drm_device based
+> logging macros. This change was split into four for manageability and
+> due to the size of drm/i915/display/intel_display.c.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Please still write more descriptive commit messages than "part N".
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 6a98e9029c70b..8c9cfc213d5ff 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -71,6 +71,7 @@
- #define NAV_AXI_HALTREQ_BIT		BIT(0)
- #define NAV_AXI_HALTACK_BIT		BIT(1)
- #define NAV_AXI_IDLE_BIT		BIT(2)
-+#define CONN_BOX_SPARE_0_EN		BIT(0)
- 
- #define HALT_ACK_TIMEOUT_MS		100
- #define NAV_HALT_ACK_TIMEOUT_US		200
-@@ -415,16 +416,26 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
- 		ret = reset_control_reset(qproc->mss_restart);
- 		reset_control_deassert(qproc->pdc_reset);
- 	} else if (qproc->has_halt_nav) {
--		/* SWAR using CONN_BOX_SPARE_0 for pipeline glitch issue */
-+		/*
-+		 * SWWA for the pipeline glitch issue seen while
-+		 * putting the Q6 modem on SC7180 into reset:
-+		 * 1 - Assert PDC reset
-+		 * 2 - Set CONN_BOX_SPARE_0_EN
-+		 * 3 - Withdraw the halt requests
-+		 * 4 - Assert MSS reset
-+		 * 5 - Deassert PDC reset
-+		 * 6 - Clear CONN_BOX_SPARE_0_EN
-+		 * 7 - Deassert MSS reset
-+		 */
- 		reset_control_assert(qproc->pdc_reset);
- 		regmap_update_bits(qproc->conn_map, qproc->conn_box,
--				   BIT(0), BIT(0));
-+				   CONN_BOX_SPARE_0_EN, 1);
- 		regmap_update_bits(qproc->halt_nav_map, qproc->halt_nav,
- 				   NAV_AXI_HALTREQ_BIT, 0);
- 		reset_control_assert(qproc->mss_restart);
- 		reset_control_deassert(qproc->pdc_reset);
- 		regmap_update_bits(qproc->conn_map, qproc->conn_box,
--				   BIT(0), 0);
-+				   CONN_BOX_SPARE_0_EN, 0);
- 		ret = reset_control_deassert(qproc->mss_restart);
- 	} else {
- 		ret = reset_control_assert(qproc->mss_restart);
+What are your basing your patches on? Our CI uses drm-tip, and it's
+failing to apply the patches.
+
+BR,
+Jani.
+
+
+
+>
+> Wambui Karuga (4):
+>   drm/i915/display: conversion to new logging macros part 1
+>   drm/i915/display: conversion to new logging macros part 2
+>   drm/i915/display: conversion to new logging macros part 3
+>   drm/i915/display: convert to new logging macros part 4.
+>
+>  drivers/gpu/drm/i915/display/intel_display.c | 1021 ++++++++++--------
+>  1 file changed, 596 insertions(+), 425 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Jani Nikula, Intel Open Source Graphics Center
