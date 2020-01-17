@@ -2,77 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124CC141450
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA91141463
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:52:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbgAQWuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:50:55 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36793 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbgAQWuz (ORCPT
+        id S1730100AbgAQWwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:52:01 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45746 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbgAQWwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:50:55 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x184so12609838pfb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:50:54 -0800 (PST)
+        Fri, 17 Jan 2020 17:52:01 -0500
+Received: by mail-oi1-f193.google.com with SMTP id n16so23656545oie.12
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 14:52:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=FLv2ZspmtqwV150G96rF061vfchfrzmz1i+ZdELex5I=;
-        b=jUTxxjoN9jxxAGky9QPAtlkhKfjJdSN0eX88usA1girItO518AlegdysipQKmKs2td
-         0Mc2Dl31yrUS3Gg2FUuKqBvAv6xgRLYrnvYcrk/qec0Z3qxhktOUJ69JcwpGfMhO/rz+
-         hHSzIEZy9S/XhZ9WdFzu8kqHkAMKvNIdY3hFCv3hBzAGURg58s17qfurCfXONAbxFicH
-         RWwqOH42l7zV5ozTOY0mykRT2lbWswyq8cxIv9Lz+6FwPThf9ve4UR/t0fwCWrGBRQh6
-         dn/ooZjo6QxHXxgsTH7iydAjdEyOLfuK0707huw80XZXE3P//cvSzTW0sirPqRk4pApK
-         2skw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bPRY1mht45VkQ0r3COkN8IZorbBTnfRW7uTMCnHTRE0=;
+        b=Z6i13jfNRgszkiyaik7lyEAAVG5xeSergpq0jyYAmn09fomUVv6yiq7uAN86DnOPPt
+         5IpwyBbL2gNEO1sRGGaytaK3vMyYGHPDANhTUtjk3Kq/trAWPeCsqusygof4adCNpyuP
+         GWMr3cO2ljXEwsHCYqTnjhhUncVpepTqUogLniTH3meeC2k/rFljqF1U2LGQSwLK7otI
+         TXn4BgO0YMzDxORkpEhBRhIacygXmch95Qc+Ex7GdCrQkRlRJEGcec7s4pSLmCOgRyt+
+         ztdHFz9/XiDEO7qwsuprUY2YYngQ0YcxihkvXDruOyoMl1rKAKOrvRrs/VvuJzQ6t1Ox
+         /vQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FLv2ZspmtqwV150G96rF061vfchfrzmz1i+ZdELex5I=;
-        b=Nyh2aG+JpKzzzv9T/HT1H/L1nWL03yAd8X1kc2elm4RPfOkjmMk6y5B9xxDuVORI2h
-         WCk8Rr54fWJcDvrgCCeOURLtIx079bif6aR4b7ssx+XSsIjX1phvy/4Uwl2hB2MAYWJr
-         aftYaomUZKAdUwh2sVK/SOrLIiCf6xCHvXMj21Qb1kIY6Nkk/Wjz7gGfJ2sZ6Q4CszqV
-         6xKnRsR3UMOX5BA9IL2zw021Y49tLCgLT6079eUu5Z44N0Gvq8LTmKU5NT2ZFrFDBytz
-         cIehrpo0q/QOXi0OQAzQfRWgXLpG68DOP3afdep6IcVZCJAnIYtrf1CpqaQhorMZYlXY
-         WC5Q==
-X-Gm-Message-State: APjAAAXXt5eP9eVEtYg/Ijub3wom0jblTWNzgKTe06KcWm+3vjdCLH1H
-        9nM6OPArHH4EeFL7mZVLV77kWFOcnnc=
-X-Google-Smtp-Source: APXvYqyLbHa29ExwxlYeQgQQ5kJdJHWOTl/fbP1w9Af9NS/b86mmk0Allegw/taWsqzBnhqvNw5A9w==
-X-Received: by 2002:a62:e512:: with SMTP id n18mr5320769pff.50.1579301454363;
-        Fri, 17 Jan 2020 14:50:54 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id iq22sm8774088pjb.9.2020.01.17.14.50.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 14:50:53 -0800 (PST)
-Subject: Re: [PATCH 1/2] io_uring: remove REQ_F_IO_DRAINED
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <37a04c11e980f49cb17a4fd071d2d71a291a8fd5.1579299684.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8ba5eff5-891c-a02b-7c8f-62cc3365c710@kernel.dk>
-Date:   Fri, 17 Jan 2020 15:50:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bPRY1mht45VkQ0r3COkN8IZorbBTnfRW7uTMCnHTRE0=;
+        b=YuR96SOOXAQgF4rMTQgsqeopbWlilEx43KTUEawL5nMsUpXRi3LmAqbmWogI7IeEmr
+         UYOLfbBrO1TDRX0LC5JVb8TrvTmr6QplpXBxXDzWphRAh8+F4xRyQzCv0X4XpkHVT6pf
+         qQ32rQneVScwxdOaFBcmXNy+K/ObOfNR5QQjwnim0ft7etYRE0sQLTTnpid0x4Ofew8R
+         KzqETJVI+lHxsUT3zcq7JbF8YgAzH4IekgX4uAenyqy9yymDV5fzEcaGxl+VLFmpNoeo
+         FunHXYOVo3rEdKNdwamvLsoTDsZHPAsFdCy87Jo6pUBRg7vFNK4nJorD0HHbpXnPJrlG
+         c6lw==
+X-Gm-Message-State: APjAAAW0M0Pft37jEbt4vI0BoTrKUiSDj6zqb4snnIEuZFWgKpKnTJDb
+        t7P0+5d2yiD+7Uo/4guDpKQo+8LETihwst4544+MYQ==
+X-Google-Smtp-Source: APXvYqw1nQ5WcChQLMUCNxlulVn4wohCILAMLAOqS6fv5lqjkkAKqK5gq7uqYTHhWtTvtwp3I3GiDp+2QAATZtwedXA=
+X-Received: by 2002:aca:d4c1:: with SMTP id l184mr5259065oig.172.1579301520140;
+ Fri, 17 Jan 2020 14:52:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <37a04c11e980f49cb17a4fd071d2d71a291a8fd5.1579299684.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200117164017.GA21582@paulmck-ThinkPad-P72> <3760F60F-4133-4FE1-9A4C-F335A8230285@lca.pw>
+In-Reply-To: <3760F60F-4133-4FE1-9A4C-F335A8230285@lca.pw>
+From:   Marco Elver <elver@google.com>
+Date:   Fri, 17 Jan 2020 23:51:48 +0100
+Message-ID: <CANpmjNPdfB=hrcXJbPzdisxnBUZW3JEK9UbTpTy+a20b=6OdJg@mail.gmail.com>
+Subject: Re: [PATCH -rcu] kcsan: Make KCSAN compatible with lockdep
+To:     Qian Cai <cai@lca.pw>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/17/20 3:22 PM, Pavel Begunkov wrote:
-> A request can get into the defer list only once, there is no need for
-> marking it as drained, so remove it. This probably was left after
-> extracting __need_defer() for use in timeouts.
+On Fri, 17 Jan 2020 at 17:59, Qian Cai <cai@lca.pw> wrote:
+>
+>
+>
+> > On Jan 17, 2020, at 11:40 AM, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > True enough, but even if we reach the nirvana state where there is general
+> > agreement on what constitutes a data race in need of fixing and KCSAN
+> > faithfully checks based on that data-race definition, we need to handle
+> > the case where someone introduces a bug that results in a destructive
+> > off-CPU access to a per-CPU variable, which is exactly the sort of thing
+> > that KCSAN is supposed to detect.  But suppose that this variable is
+> > frequently referenced from functions that are inlined all over the place.
+> >
+> > Then that one bug might result in huge numbers of data-race reports in
+> > a very short period of time, especially on a large system.
+>
+> It sounds like the case with debug_pagealloc where it prints a spam of those, and then the system is just dead.
+>
+> [   28.992752][  T394] Reported by Kernel Concurrency Sanitizer on:
+> [   28.992752][  T394] CPU: 0 PID: 394 Comm: pgdatinit0 Not tainted 5.5.0-rc6-next-20200115+ #3
+> [   28.992752][  T394] Hardware name: HP ProLiant XL230a Gen9/ProLiant XL230a Gen9, BIOS U13 01/22/2018
+> [   28.992752][  T394] ===============================================================
+> [   28.992752][  T394] ==================================================================
+> [   28.992752][  T394] BUG: KCSAN: data-race in __change_page_attr / __change_page_attr
+> [   28.992752][  T394]
+> [   28.992752][  T394] read to 0xffffffffa01a6de0 of 8 bytes by task 395 on cpu 16:
+> [   28.992752][  T394]  __change_page_attr+0xe81/0x1620
+> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0
+> [   28.992752][  T394]  __set_pages_np+0xcc/0x100
+> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb
+> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730
+> [   28.992752][  T394]  __free_pages+0x51/0x90
+> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0
+> [   28.992752][  T394]  deferred_free_range+0x59/0x8f
+> [   28.992752][  T394]  deferred_init_max21d
+> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1
+> [   28.992752][  T394]  kthread+0x1e0/0x200
+> [   28.992752][  T394]  ret_from_fork+0x3a/0x50
+> [   28.992752][  T394]
+> [   28.992752][  T394] write to 0xffffffffa01a6de0 of 8 bytes by task 394 on cpu 0:
+> [   28.992752][  T394]  __change_page_attr+0xe9c/0x1620
+> [   28.992752][  T394]  __change_page_attr_set_clr+0xde/0x4c0
+> [   28.992752][  T394]  __set_pages_np+0xcc/0x100
+> [   28.992752][  T394]  __kernel_map_pages+0xd6/0xdb
+> [   28.992752][  T394]  __free_pages_ok+0x1a8/0x730
+> [   28.992752][  T394]  __free_pages+0x51/0x90
+> [   28.992752][  T394]  __free_pages_core+0x1c7/0x2c0
+> [   28.992752][  T394]  deferred_free_range+0x59/0x8f
+> [   28.992752][  T394]  deferred_init_maxorder+0x1d6/0x21d
+> [   28.992752][  T394]  deferred_init_memmap+0x14a/0x1c1
+> [   28.992752][  T394]  kthread+0x1e0/0x200
+> [   28.992752][  T394]  ret_from_fork+0x3a/0x50
+>
+> It point out to this,
+>
+>                 pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+>                 pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+>
+>                 cpa_inc_4k_install();
+>                 /* Hand in lpsize = 0 to enforce the protection mechanism */
+>                 new_prot = static_protections(new_prot, address, pfn, 1, 0,
+>                                               CPA_PROTECT);
+>
+> In static_protections(),
+>
+>         /*
+>          * There is no point in checking RW/NX conflicts when the requested
+>          * mapping is setting the page !PRESENT.
+>          */
+>         if (!(pgprot_val(prot) & _PAGE_PRESENT))
+>                 return prot;
+>
+> Is there a data race there?
 
-Applied - waiting with 2/2 until we're done discussing the approach
-there.
+Yes. I was finally able to reproduce this data race on linux-next (my
+system doesn't crash though, maybe not enough cores?). Here is a trace
+with line numbers:
 
--- 
-Jens Axboe
+read to 0xffffffffaa59a000 of 8 bytes by interrupt on cpu 7:
+ cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+ __change_page_attr+0x10cf/0x1840 arch/x86/mm/pat/set_memory.c:1514
+ __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+ __set_pages_np+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2148
+ __kernel_map_pages+0xb0/0xc8 arch/x86/mm/pat/set_memory.c:2178
+ kernel_map_pages include/linux/mm.h:2719 [inline]
+<snip>
 
+write to 0xffffffffaa59a000 of 8 bytes by task 1 on cpu 6:
+ cpa_inc_4k_install arch/x86/mm/pat/set_memory.c:131 [inline]
+ __change_page_attr+0x10ea/0x1840 arch/x86/mm/pat/set_memory.c:1514
+ __change_page_attr_set_clr+0xce/0x490 arch/x86/mm/pat/set_memory.c:1636
+ __set_pages_p+0xc4/0xf0 arch/x86/mm/pat/set_memory.c:2129
+ __kernel_map_pages+0x2e/0xc8 arch/x86/mm/pat/set_memory.c:2176
+ kernel_map_pages include/linux/mm.h:2719 [inline]
+<snip>
+
+Both accesses are due to the same "cpa_4k_install++" in
+cpa_inc_4k_install. Now you can see that a data race here could be
+potentially undesirable: depending on compiler optimizations or how
+x86 executes a non-LOCK'd increment, you may lose increments, corrupt
+the counter, etc. Since this counter only seems to be used for
+printing some stats, this data race itself is unlikely to cause harm
+to the system though.
+
+Thanks,
+-- Marco
