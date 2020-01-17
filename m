@@ -2,90 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C69F140D4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B21A140D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 16:05:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbgAQPEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 10:04:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46524 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbgAQPEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:04:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4C0F9BBC0;
-        Fri, 17 Jan 2020 15:04:04 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [POC 23/23] module: Remove obsolete module_disable_ro()
-Date:   Fri, 17 Jan 2020 16:03:23 +0100
-Message-Id: <20200117150323.21801-24-pmladek@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200117150323.21801-1-pmladek@suse.com>
-References: <20200117150323.21801-1-pmladek@suse.com>
+        id S1729505AbgAQPFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 10:05:17 -0500
+Received: from mail-qk1-f175.google.com ([209.85.222.175]:43526 "EHLO
+        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbgAQPFP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 10:05:15 -0500
+Received: by mail-qk1-f175.google.com with SMTP id t129so22926363qke.10
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 07:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=vEWn2SOFLnhk6DlGp/dtE96pkDjAj01HAVf7nAH98+Y=;
+        b=UdczXrlrHa7YI7hXuVCGuYq3iIBXYbq7STlxmX5/IEAtQp12ssQdMaOaEmXiRwLDnO
+         aFG08He1ZOznOu+u9WwwmvxBEPi2O9Ops3pGHITFG7sh+sP1/bs42HruOwufQWsEHIi8
+         IWfeEymTVvG56MvshgmDAQwmvYpdezVUWJGliYS+1ARlknRvdGKWEIJmlZNmNevnrW0o
+         qRmtV4dIeyJz/sjyxQamX4g4nAzELTcBVo8MA1biGJILF703GtWjbGoxinQ7GwYI3MQY
+         q0L11M2vOjTJvE22s2zKWDbjkSdn9m5aC98Bkt1cipcz+5hVxG6+F2t9w6rsX2l+qXKn
+         IvyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=vEWn2SOFLnhk6DlGp/dtE96pkDjAj01HAVf7nAH98+Y=;
+        b=Prv5UnnR9sqgPNvFJj1ETJXTRi8c7rSbd/pkgnCHrkuHQFPvj4lr7HcKKbgrDYlgRL
+         xO9tvXzHd/cn9E9RpT4o7EoBUgPx5retMvQO89SzJqnbTWYOjlRhg/fSlpwND3JfuWhp
+         +3xQaWF638pTdxb/1GLTGFxf4m/F1WKYA2PJRELyJ2ib3VjV3SdxTdH5u2X3wPAqM9D6
+         g0nLH/Lms0FjmsEdEIkj1BnHWZzNVlMKg4cfIGeA30aLl77py0armz0lSyoHVV1SO1fc
+         5gKcBSvLR5PCNkSCw+DWlFjY+NzuMM7VX3iUG6zI74SD6cY+bPQ19ROvZ4R66iOmdkMd
+         ZKOQ==
+X-Gm-Message-State: APjAAAXImLF2UfcyFyeu2FvTLmiTA3gpmnGxT633X0C1KK2fdsHNLfL4
+        h5gaHg0lTAavWN8n8KVQfMg45VIpDbkOJg==
+X-Google-Smtp-Source: APXvYqx6RVwiL9F8OYzKZk4pR48hSdZp3wdMlXTx5STMtgYUyHVc9K4iYn34cah0ksfCUa67Zlvvuw==
+X-Received: by 2002:a05:620a:1030:: with SMTP id a16mr37042858qkk.1.1579273513798;
+        Fri, 17 Jan 2020 07:05:13 -0800 (PST)
+Received: from [172.16.31.141] ([209.104.239.146])
+        by smtp.gmail.com with ESMTPSA id d26sm11693722qka.28.2020.01.17.07.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 07:05:12 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH -next v4] mm/hotplug: silence a lockdep splat with printk()
+Date:   Fri, 17 Jan 2020 10:05:12 -0500
+Message-Id: <3B7490FB-E915-4DC7-8739-01EDC023E22E@lca.pw>
+References: <20200117143905.GZ19428@dhcp22.suse.cz>
+Cc:     akpm@linux-foundation.org, sergey.senozhatsky.work@gmail.com,
+        pmladek@suse.com, rostedt@goodmis.org, peterz@infradead.org,
+        david@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200117143905.GZ19428@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The split livepatch modules are relocated immediately during the module
-load. There is no longer needed to disable the RO protection. The function
-can be finally remove because livepatching was the only user (sinner).
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- include/linux/module.h |  2 --
- kernel/module.c        | 13 -------------
- 2 files changed, 15 deletions(-)
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 8545f3087274..5c9e661ac3bc 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -854,12 +854,10 @@ extern int module_sysfs_initialized;
- extern void set_all_modules_text_rw(void);
- extern void set_all_modules_text_ro(void);
- extern void module_enable_ro(const struct module *mod, bool after_init);
--extern void module_disable_ro(const struct module *mod);
- #else
- static inline void set_all_modules_text_rw(void) { }
- static inline void set_all_modules_text_ro(void) { }
- static inline void module_enable_ro(const struct module *mod, bool after_init) { }
--static inline void module_disable_ro(const struct module *mod) { }
- #endif
- 
- #ifdef CONFIG_GENERIC_BUG
-diff --git a/kernel/module.c b/kernel/module.c
-index 442926fc5f34..d435bad80d7d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2030,19 +2030,6 @@ static void frob_writable_data(const struct module_layout *layout,
- 		   (layout->size - layout->ro_after_init_size) >> PAGE_SHIFT);
- }
- 
--/* livepatching wants to disable read-only so it can frob module. */
--void module_disable_ro(const struct module *mod)
--{
--	if (!rodata_enabled)
--		return;
--
--	frob_text(&mod->core_layout, set_memory_rw);
--	frob_rodata(&mod->core_layout, set_memory_rw);
--	frob_ro_after_init(&mod->core_layout, set_memory_rw);
--	frob_text(&mod->init_layout, set_memory_rw);
--	frob_rodata(&mod->init_layout, set_memory_rw);
--}
--
- void module_enable_ro(const struct module *mod, bool after_init)
- {
- 	if (!rodata_enabled)
--- 
-2.16.4
+> On Jan 17, 2020, at 9:39 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>=20
+> Thanks a lot. Having it in a separate patch would be great.
 
+I was thinking about removing that WARN together in this v5 patch, so there i=
+s less churn to touch the same function again. However, I am fine either way=
+, so just shout out if you feel strongly towards a separate patch.=
