@@ -2,75 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 960E31404B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 08:59:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CBB1404E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 09:08:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbgAQH7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 02:59:16 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59264 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbgAQH7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 02:59:15 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0204531959F5A58760;
-        Fri, 17 Jan 2020 15:59:14 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 17 Jan 2020 15:59:06 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: compress: fix to avoid NULL pointer dereference
-Date:   Fri, 17 Jan 2020 15:59:03 +0800
-Message-ID: <20200117075903.6157-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1729473AbgAQIIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 03:08:46 -0500
+Received: from fanzine.igalia.com ([178.60.130.6]:38119 "EHLO
+        fanzine.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbgAQIIp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 03:08:45 -0500
+X-Greylist: delayed 2593 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Jan 2020 03:08:45 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com; s=20170329;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID; bh=xkBF8jCSOWPumWg9R+MOpddk9K9WEJFLsXsk5vUpwbU=;
+        b=ctgc1bMFPsEvVCcRWuutv+YO2ueOPTps5Bt6MPdOZxl0KloyUOn9f0hYS7JBAP89XHhp/vfRf7bptujxrAIlMsrG0sWnRbKLIAuU7iS9+xFRPoZ8VL+OvJ7WMAu1kkK7v3nMnJ3y3hIxjvVhUeA8s0Wcjg080Em0FF8EeHom99OO8mLi13fCUVAKq5Pj50iiEdcc4m63hho9fAfWt+TAU3Zyf0QCRtiYU9AMd98dJqiA64iCO3yjrPiofo+VNVdjjJ74qNABJwgbedobd2rr8QEMJduQYJOcFwUubSPhukHyPiVuM1DC7scKUrxgryJ2apfGF+D9rINzKTEEJhxXrw==;
+Received: from [192.168.10.170] (helo=ip170.dynamic.igalia.com)
+        by fanzine.igalia.com with esmtpsa 
+        (Cipher TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256) (Exim)
+        id 1isM0Y-00039r-B1; Fri, 17 Jan 2020 08:25:30 +0100
+Message-ID: <cb93a21557216d1b389390c556f421132aac88f0.camel@igalia.com>
+Subject: Re: [PATCH AUTOSEL 5.4 003/205] drm/v3d: don't leak bin job if
+ v3d_job_init fails.
+From:   Iago Toral <itoral@igalia.com>
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
+Date:   Fri, 17 Jan 2020 08:25:30 +0100
+In-Reply-To: <20200116164300.6705-3-sashal@kernel.org>
+References: <20200116164300.6705-1-sashal@kernel.org>
+         <20200116164300.6705-3-sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If cluster has only one compressed page, race condition as below will
-trigger NULL pointer dereference:
+Hi Sasha,
 
-- f2fs_write_compressed_pages
- - cic->rpages[0] = cc->rpages[0];
- - f2fs_outplace_write_data
-					- f2fs_compress_write_end_io
-					 - WARN_ON(!cic->rpages[1]);
- - cic->rpages[1] = cc->rpages[1];
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/compress.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+please notice that there were two separate patches that addressed the
+same issue and applying both simultaneously leads to a double free
+(which is what I see is happening with this patch: see the second call
+to kfree(bin) right below the one added here). This issue was raised
+previously here:
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 45a6f20ceb3e..d8a64be90a50 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -837,12 +837,15 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 
- 	set_cluster_writeback(cc);
- 
-+	for (i = 0; i < cc->cluster_size; i++)
-+		cic->rpages[i] = cc->rpages[i];
-+
- 	for (i = 0; i < cc->cluster_size; i++, dn.ofs_in_node++) {
- 		block_t blkaddr;
- 
- 		blkaddr = datablock_addr(dn.inode, dn.node_page,
- 							dn.ofs_in_node);
--		fio.page = cic->rpages[i] = cc->rpages[i];
-+		fio.page = cic->rpages[i];
- 		fio.old_blkaddr = blkaddr;
- 
- 		/* cluster header */
--- 
-2.18.0.rc1
+https://lists.freedesktop.org/archives/dri-devel/2019-October/241425.html
+
+Iago
+
+On Thu, 2020-01-16 at 11:39 -0500, Sasha Levin wrote:
+> From: Iago Toral Quiroga <itoral@igalia.com>
+> 
+> [ Upstream commit 0d352a3a8a1f26168d09f7073e61bb4b328e3bb9 ]
+> 
+> If the initialization of the job fails we need to kfree() it
+> before returning.
+> 
+> Signed-off-by: Iago Toral Quiroga <itoral@igalia.com>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Link: 
+> https://patchwork.freedesktop.org/patch/msgid/20190916071125.5255-1-itoral@igalia.com
+> Fixes: a783a09ee76d ("drm/v3d: Refactor job management.")
+> Reviewed-by: Eric Anholt <eric@anholt.net>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/gpu/drm/v3d/v3d_gem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c
+> b/drivers/gpu/drm/v3d/v3d_gem.c
+> index 19c092d75266..6316bf3646af 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -565,6 +565,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void
+> *data,
+>  		ret = v3d_job_init(v3d, file_priv, &bin->base,
+>  				   v3d_job_free, args->in_sync_bcl);
+>  		if (ret) {
+> +			kfree(bin);
+>  			v3d_job_put(&render->base);
+>  			kfree(bin);
+>  			return ret;
 
