@@ -2,71 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D01F140C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 588E7140CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 15:37:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgAQOfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 09:35:25 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:36300 "EHLO inva021.nxp.com"
+        id S1728921AbgAQOhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 09:37:16 -0500
+Received: from mga03.intel.com ([134.134.136.65]:28638 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbgAQOfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:35:25 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C905200DE5;
-        Fri, 17 Jan 2020 15:35:23 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 57034200DDB;
-        Fri, 17 Jan 2020 15:35:23 +0100 (CET)
-Received: from fsr-ub1864-014.ea.freescale.net (fsr-ub1864-014.ea.freescale.net [10.171.95.219])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 07E6B2048C;
-        Fri, 17 Jan 2020 15:35:22 +0100 (CET)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: caam - add support for i.MX8M Plus
-Date:   Fri, 17 Jan 2020 16:35:13 +0200
-Message-Id: <20200117143513.7652-1-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726942AbgAQOhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 09:37:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 06:36:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,330,1574150400"; 
+   d="scan'208";a="218923948"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 17 Jan 2020 06:36:53 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1isSk1-000BmH-5k; Fri, 17 Jan 2020 22:36:53 +0800
+Date:   Fri, 17 Jan 2020 22:36:22 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:ras/core] BUILD SUCCESS
+ 86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0
+Message-ID: <5e21c666.hg5GxxJ0jFQqSTur%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the crypto engine used in i.mx8mp (i.MX 8M "Plus"),
-which is very similar to the one used in i.mx8mq, i.mx8mm, i.mx8mn.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  ras/core
+branch HEAD: 86e9f9d60eb5e0c5d99ddf6b79f4d308d6453bd0  EDAC/mce_amd: Make fam_ops static global
 
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+elapsed time: 747m
+
+configs tested: 164
+configs skipped: 0
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+x86_64               randconfig-g001-20200117
+x86_64               randconfig-g002-20200117
+x86_64               randconfig-g003-20200117
+i386                 randconfig-g001-20200117
+i386                 randconfig-g002-20200117
+i386                 randconfig-g003-20200117
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+riscv                          rv32_defconfig
+parisc                            allnoconfig
+parisc                            allyesonfig
+parisc                         b180_defconfig
+parisc                        c3000_defconfig
+parisc                              defconfig
+csky                 randconfig-a001-20200117
+openrisc             randconfig-a001-20200117
+s390                 randconfig-a001-20200117
+sh                   randconfig-a001-20200117
+xtensa               randconfig-a001-20200117
+arc                  randconfig-a001-20200117
+arm                  randconfig-a001-20200117
+arm64                randconfig-a001-20200117
+ia64                 randconfig-a001-20200117
+powerpc              randconfig-a001-20200117
+sparc                randconfig-a001-20200117
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                               rhel-7.6
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64               randconfig-c001-20200117
+x86_64               randconfig-c002-20200117
+x86_64               randconfig-c003-20200117
+i386                 randconfig-c001-20200117
+i386                 randconfig-c002-20200117
+i386                 randconfig-c003-20200117
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+alpha                randconfig-a001-20200117
+m68k                 randconfig-a001-20200117
+mips                 randconfig-a001-20200117
+nds32                randconfig-a001-20200117
+parisc               randconfig-a001-20200117
+riscv                randconfig-a001-20200117
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+x86_64               randconfig-e001-20200117
+x86_64               randconfig-e002-20200117
+x86_64               randconfig-e003-20200117
+i386                 randconfig-e001-20200117
+i386                 randconfig-e002-20200117
+i386                 randconfig-e003-20200117
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+x86_64               randconfig-a001-20200117
+x86_64               randconfig-a002-20200117
+x86_64               randconfig-a003-20200117
+i386                 randconfig-a001-20200117
+i386                 randconfig-a002-20200117
+i386                 randconfig-a003-20200117
+sparc                            allyesconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+x86_64               randconfig-f001-20200117
+x86_64               randconfig-f002-20200117
+x86_64               randconfig-f003-20200117
+i386                 randconfig-f001-20200117
+i386                 randconfig-f002-20200117
+i386                 randconfig-f003-20200117
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+c6x                  randconfig-a001-20200117
+h8300                randconfig-a001-20200117
+microblaze           randconfig-a001-20200117
+nios2                randconfig-a001-20200117
+sparc64              randconfig-a001-20200117
+x86_64               randconfig-h001-20200117
+x86_64               randconfig-h002-20200117
+x86_64               randconfig-h003-20200117
+i386                 randconfig-h001-20200117
+i386                 randconfig-h002-20200117
+i386                 randconfig-h003-20200117
+x86_64               randconfig-d001-20200117
+x86_64               randconfig-d002-20200117
+x86_64               randconfig-d003-20200117
+i386                 randconfig-d001-20200117
+i386                 randconfig-d002-20200117
+i386                 randconfig-d003-20200117
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+arm                              allmodconfig
+arm64                            allmodconfig
+x86_64               randconfig-b001-20200117
+x86_64               randconfig-b002-20200117
+x86_64               randconfig-b003-20200117
+i386                 randconfig-b001-20200117
+i386                 randconfig-b002-20200117
+i386                 randconfig-b003-20200117
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+
 ---
- drivers/crypto/caam/ctrl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
-index 88a58a8fc533..7139366da016 100644
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -99,12 +99,13 @@ static inline int run_descriptor_deco0(struct device *ctrldev, u32 *desc,
- 
- 	if (ctrlpriv->virt_en == 1 ||
- 	    /*
--	     * Apparently on i.MX8MQ, 8MM, 8MN it doesn't matter if virt_en == 1
-+	     * Apparently on i.MX8M{Q,M,N,P} it doesn't matter if virt_en == 1
- 	     * and the following steps should be performed regardless
- 	     */
- 	    of_machine_is_compatible("fsl,imx8mq") ||
- 	    of_machine_is_compatible("fsl,imx8mm") ||
--	    of_machine_is_compatible("fsl,imx8mn")) {
-+	    of_machine_is_compatible("fsl,imx8mn") ||
-+	    of_machine_is_compatible("fsl,imx8mp")) {
- 		clrsetbits_32(&ctrl->deco_rsr, 0, DECORSR_JR0);
- 
- 		while (!(rd_reg32(&ctrl->deco_rsr) & DECORSR_VALID) &&
--- 
-2.17.1
-
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
