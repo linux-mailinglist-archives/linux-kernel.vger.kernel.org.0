@@ -2,131 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95909140629
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D29140632
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:36:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbgAQJfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:35:19 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44253 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728988AbgAQJfS (ORCPT
+        id S1729157AbgAQJfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:35:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45586 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729112AbgAQJfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:35:18 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q10so21970198wrm.11
-        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:35:17 -0800 (PST)
+        Fri, 17 Jan 2020 04:35:31 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j26so25739884ljc.12;
+        Fri, 17 Jan 2020 01:35:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7gwrvz7ruAHA3SFXBx/tLBPi8mLd0GYtPIPaLfycq9U=;
-        b=bADdxA3vql8xQNRTXGin7fYGei40Pn/ItHd93V9lDoc4uiHXpkkk2FTr/LN/beubG5
-         32to6Ek2L1aZ1JHRatsl9sLiGlyve+y4Yrz61MwxJtqupVIGGJ0Pck4BZl/ltfksBbxT
-         ZRRDKLRG75t928T+3VUfDwG5BZs3VKepxiPrSMqSCUIYVvtFTIFkJmUu1jK9jM+NvzeI
-         D+blAxLapqQZY9U7BYZRlOycrcHjvpHC9DopWZaKBn0cNSdCcSVKNUVXrJEO/CQKt0HB
-         HErjv2tgyt/Ix8cwo1DCEoMBq0aBQTARco6bW/4IlhHVaRnky0j1iPqmhwmzd00Y4LM7
-         FFkA==
-X-Gm-Message-State: APjAAAVA4JjglDfTOLjCGd5kEdZOcJ33Bh2hgr41HSrdKcLiK7AmWVOI
-        kl+tSGEapcWwA8H1SMf4u6o=
-X-Google-Smtp-Source: APXvYqy9tO+u02lTrwIibulmYqlXXZMnVPkbGMsJVRWqsSy+/8HvCr25zmuKZzueYNYsb7kdpC2dpg==
-X-Received: by 2002:adf:e550:: with SMTP id z16mr2013469wrm.315.1579253716736;
-        Fri, 17 Jan 2020 01:35:16 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id d8sm32437954wrx.71.2020.01.17.01.35.15
+        bh=5G2Jq7cbJnlKXxoPCsYd5FlCl6CmO0LfS0famLwy+MA=;
+        b=OXZnbhceFUtkIk5RPlkoOO9iGcK+cRbOUwD72tiw0b8sM03TSxrLZTHYRRmwr+u/Ct
+         N8MpTvjJbMJc0gk0wiF0eYVv331zWVQbNyu5p6zVdg7hTGZTQKGR8lKiXGKGPJYZ0+ye
+         iFvY2js/p+9CkNjo8NMlOTAUGGv6KAeZZfUPxe+wiMh5dUgAbYFqHmGE5Rc1s14qA40B
+         xYDKQpW5fRt/hHehig7YLGYC4m49EyqbYzUUhnNTNRBoUusD/2Xy9aZJNY7Fr9/QTd9z
+         DSxfkvOaMlVPJn6pvL/y3OXwjJ6g0NKaDF+QcnRokuv8uY2g52T39X8hZugX8/fWqf0u
+         jfxQ==
+X-Gm-Message-State: APjAAAWctWskF7pWcZVrcMeLDRtsQ1fn7ORCRpKVts+6qI3s0VhQcyRd
+        XTi/sC0Wg9mDIdGe4P2lEiI=
+X-Google-Smtp-Source: APXvYqyW9iF5U3kuzBTOFPyGfBQUJdXZ11kB9kyWNtyZllb8G0RZOSBw3lT3Wu5hYOqBamnmGmxcCg==
+X-Received: by 2002:a2e:b4cf:: with SMTP id r15mr4655513ljm.52.1579253728938;
+        Fri, 17 Jan 2020 01:35:28 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id z5sm12108551lji.40.2020.01.17.01.35.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 01:35:15 -0800 (PST)
-Date:   Fri, 17 Jan 2020 10:35:14 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        nathanl@linux.ibm.com, ricklind@linux.vnet.ibm.com,
-        Scott Cheloha <cheloha@linux.ibm.com>,
-        Donald Dutile <ddutile@redhat.com>
-Subject: Re: [PATCH v4] drivers/base/memory.c: cache blocks in radix tree to
- accelerate lookup
-Message-ID: <20200117093514.GO19428@dhcp22.suse.cz>
-References: <20191217193238-1-cheloha@linux.vnet.ibm.com>
- <20200109212516.17849-1-cheloha@linux.vnet.ibm.com>
- <181caae3-ffb8-c745-a4c9-1aef93ea6dd5@redhat.com>
- <20200116152214.GX19428@dhcp22.suse.cz>
- <765a07fe-47e9-fe3d-716a-44d9ee4a5e99@redhat.com>
- <fe92b4f0-0cd7-c705-1ed9-239175689051@redhat.com>
+        Fri, 17 Jan 2020 01:35:28 -0800 (PST)
+Date:   Fri, 17 Jan 2020 11:35:21 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v10 04/13] mfd: bd718x7: Add compatible for BD71850
+Message-ID: <9771850fe04040c30ff3668fcba7002f7f0681fd.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe92b4f0-0cd7-c705-1ed9-239175689051@redhat.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 16-01-20 17:17:54, David Hildenbrand wrote:
-[...]
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index c6d288fad493..c75dec35de43 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -19,7 +19,7 @@
->  #include <linux/memory.h>
->  #include <linux/memory_hotplug.h>
->  #include <linux/mm.h>
-> -#include <linux/radix-tree.h>
-> +#include <linux/xarray.h>
->  #include <linux/stat.h>
->  #include <linux/slab.h>
->  
-> @@ -58,11 +58,11 @@ static struct bus_type memory_subsys = {
->  };
->  
->  /*
-> - * Memory blocks are cached in a local radix tree to avoid
-> + * Memory blocks are cached in a local xarray to avoid
->   * a costly linear search for the corresponding device on
->   * the subsystem bus.
->   */
-> -static RADIX_TREE(memory_blocks, GFP_KERNEL);
-> +static DEFINE_XARRAY(memory_blocks);
->  
->  static BLOCKING_NOTIFIER_HEAD(memory_chain);
->  
-> @@ -566,7 +566,7 @@ static struct memory_block *find_memory_block_by_id(unsigned long block_id)
->  {
->         struct memory_block *mem;
->  
-> -       mem = radix_tree_lookup(&memory_blocks, block_id);
-> +       mem = xa_load(&memory_blocks, block_id);
->         if (mem)
->                 get_device(&mem->dev);
->         return mem;
-> @@ -621,7 +621,8 @@ int register_memory(struct memory_block *memory)
->                 put_device(&memory->dev);
->                 return ret;
->         }
-> -       ret = radix_tree_insert(&memory_blocks, memory->dev.id, memory);
-> +       ret = xa_err(xa_store(&memory_blocks, memory->dev.id, memory,
-> +                             GFP_KERNEL));
->         if (ret) {
->                 put_device(&memory->dev);
->                 device_unregister(&memory->dev);
-> @@ -683,7 +684,7 @@ static void unregister_memory(struct memory_block *memory)
->         if (WARN_ON_ONCE(memory->dev.bus != &memory_subsys))
->                 return;
->  
-> -       WARN_ON(radix_tree_delete(&memory_blocks, memory->dev.id) == NULL);
-> +       WARN_ON(xa_erase(&memory_blocks, memory->dev.id) == NULL);
->  
->         /* drop the ref. we got via find_memory_block() */
->         put_device(&memory->dev);
+ROHM BD71850 PMIC is almost identical to BD71847. Main difference is some
+initial voltage values for regulators. The BD71850 can be handled by
+BD71847 driver but adding own compatible makes it clearer for one who
+creates the DT for board containing this PMIC and allows SW to be
+differentiating PMICs if needed.
 
-OK, this looks sensible. xa_store shouldn't ever return an existing
-device as we do the lookpup beforehand so good. We might need to
-reorganize the code if we want to drop the loopup though.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+no changes since v9
 
-Thanks!
+ drivers/mfd/rohm-bd718x7.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index bb86ec829079..c32c1b6c98fa 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -213,6 +213,10 @@ static const struct of_device_id bd718xx_of_match[] = {
+ 		.compatible = "rohm,bd71847",
+ 		.data = (void *)ROHM_CHIP_TYPE_BD71847,
+ 	},
++	{
++		.compatible = "rohm,bd71850",
++		.data = (void *)ROHM_CHIP_TYPE_BD71847,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bd718xx_of_match);
 -- 
-Michal Hocko
-SUSE Labs
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
