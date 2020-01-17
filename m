@@ -2,132 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EA9A141449
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:48:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D58DC14145A
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbgAQWsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:48:05 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51951 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726975AbgAQWsD (ORCPT
+        id S1729610AbgAQWvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:51:36 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41186 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbgAQWvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:48:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579301282;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7k4t+Fu3CF2DfsPNI0vhFBgalYuQuqZvmgpsZb91eNk=;
-        b=ASJ1h1nPCOo3Vdby3q4B++sa0DIc9S6lHYB2OQ6c95pw1hXldcDxJvPtNbfP/3R9clXOgI
-        qAdIBMec30fjdIjHqLEGPCpuJKpUkzkVTS8IZkJpni3+SrSM5Y5DuVADuWVfMsiWlfKlXl
-        6Usuozt9/mGTZAzs7x1bYFEXzxYXaA0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-321-MgiloWWFN-CHT1vLgeHbOg-1; Fri, 17 Jan 2020 17:48:00 -0500
-X-MC-Unique: MgiloWWFN-CHT1vLgeHbOg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D376800D53;
-        Fri, 17 Jan 2020 22:47:58 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-90.bss.redhat.com [10.20.1.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E8ED5DA32;
-        Fri, 17 Jan 2020 22:47:57 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Sean Paul <sean@poorly.run>, Wayne Lin <Wayne.Lin@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/dp_mst: Fix clearing payload state on topology disable
-Date:   Fri, 17 Jan 2020 17:47:49 -0500
-Message-Id: <20200117224749.128994-2-lyude@redhat.com>
-In-Reply-To: <20200117224749.128994-1-lyude@redhat.com>
-References: <20200117224749.128994-1-lyude@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+        Fri, 17 Jan 2020 17:51:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c9so24195428wrw.8;
+        Fri, 17 Jan 2020 14:51:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rB/I9wTlZsluZ1pWX0XXmWdx5P73UU2DmRV579b2vuw=;
+        b=VYiJCWdnIHWee70AS79QYdTXalM9reMJXFRUMUIz+KHfdoqVgiKO4Rd6Kgl3zbWfaL
+         E5ADDew7elU/ZkL2S2L+DEDhQFVfi2kcbdLvXT+neW4p023EohibYylTyGj3VG4bhvw4
+         K75kh+4aCp6TDR3zzqMbFtCMGOuHomba7lkTo8zIseuQBduZk6dfH3KnLHREo8sgjIsU
+         NrAhOwUmyrSxGfy0/mtYNEeg7+jE6ULrt0Z96o+Y17PE6dsDOAIf1IPMSHD635rmPXUg
+         gv8jEXKhjgeqFMlnsVaWTVBgUAjR40E/E1HkCMC+e5i9m/W69XW9YV9C7I1JtNDGqvJL
+         t+9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rB/I9wTlZsluZ1pWX0XXmWdx5P73UU2DmRV579b2vuw=;
+        b=iw6IElWzgoUxbwf1SVB7GWZQIMVAZ770ywhth5pKWPEspOI/ZKeOCo0VLo3AO/kto2
+         CykW/41rOFpudMhHrtvHzn+Ng8dSkEWrLNNQybaHa+8xObh5lknPjPaL9zzFWKBisyGj
+         paNGwtHyBvs8k7Uv3Mr4B2YhomU6Km3boJfgsm3u05ov0AvEcJi4vOXuPLjQiNO2ylkR
+         WMpmYmhjbncibNoZ+MWmeG1F0HdWk+4rIsmdJo9BXc6Bcg4FOgYorgoKF0Yr1G3sCALi
+         nx3sQcph9GA4z1tD6TKBqfsMjqFMD5UIhXNiVsZg7qZQa33euCGJ97lemw0f81M3lpyg
+         UFWA==
+X-Gm-Message-State: APjAAAXKV2ZvPYzPrp4Q2v93uxsw1v7/SYWU1ndEbGtTR4O9PoOKH4D4
+        oXe0KLUPnpi8Co8GslatUiA=
+X-Google-Smtp-Source: APXvYqxRjtvkqXGDBZw4rTboBAaOnX0y/AavOd24vu+Daqy2qWUzWWeZe6HEeDL4lyVBAX/r4CgkAg==
+X-Received: by 2002:adf:e40f:: with SMTP id g15mr5286688wrm.223.1579301492262;
+        Fri, 17 Jan 2020 14:51:32 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id l3sm32829387wrt.29.2020.01.17.14.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 14:51:31 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, glider@google.com,
+        dvyukov@google.com, corbet@lwn.net, linux@armlinux.org.uk,
+        christoffer.dall@arm.com, marc.zyngier@arm.com, arnd@arndb.de,
+        nico@fluxnic.net, vladimir.murzin@arm.com, keescook@chromium.org,
+        jinb.park7@gmail.com, alexandre.belloni@bootlin.com,
+        ard.biesheuvel@linaro.org, daniel.lezcano@linaro.org,
+        pombredanne@nexb.com, liuwenliang@huawei.com, rob@landley.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com,
+        yamada.masahiro@socionext.com, tglx@linutronix.de,
+        thgarnie@google.com, dhowells@redhat.com, geert@linux-m68k.org,
+        andre.przywara@arm.com, julien.thierry@arm.com, drjones@redhat.com,
+        philip@cog.systems, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, kasan-dev@googlegroups.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, ryabinin.a.a@gmail.com
+Subject: [PATCH v7 0/7] KASan for arm
+Date:   Fri, 17 Jan 2020 14:48:32 -0800
+Message-Id: <20200117224839.23531-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The issues caused by:
+Hi all,
 
-64e62bdf04ab ("drm/dp_mst: Remove VCPI while disabling topology mgr")
+Abbott submitted a v5 about a year ago here:
 
-Prompted me to take a closer look at how we clear the payload state in
-general when disabling the topology, and it turns out there's actually
-two subtle issues here.
+and the series was not picked up since then, so I rebased it against
+v5.2-rc4 and re-tested it on a Brahma-B53 (ARMv8 running AArch32 mode)
+and Brahma-B15, both LPAE and test-kasan is consistent with the ARM64
+counter part.
 
-The first is that we're not grabbing &mgr.payload_lock when clearing the
-payloads in drm_dp_mst_topology_mgr_set_mst(). Seeing as the canonical
-lock order is &mgr.payload_lock -> &mgr.lock (because we always want
-&mgr.lock to be the inner-most lock so topology validation always
-works), this makes perfect sense. It also means that -technically- there
-could be racing between someone calling
-drm_dp_mst_topology_mgr_set_mst() to disable the topology, along with a
-modeset occurring that's modifying the payload state at the same time.
+We were in a fairly good shape last time with a few different people
+having tested it, so I am hoping we can get that included for 5.4 if
+everything goes well.
 
-The second is the more obvious issue that Wayne Lin discovered, that
-we're not clearing proposed_payloads when disabling the topology.
+Changelog:
 
-I actually can't see any obvious places where the racing caused by the
-first issue would break something, and it could be that some of our
-higher-level locks already prevent this by happenstance, but better safe
-then sorry. So, let's make it so that drm_dp_mst_topology_mgr_set_mst()
-first grabs &mgr.payload_lock followed by &mgr.lock so that we never
-race when modifying the payload state. Then, we also clear
-proposed_payloads to fix the original issue of enabling a new topology
-with a dirty payload state. This doesn't clear any of the drm_dp_vcpi
-structures, but those are getting destroyed along with the ports anyway.
+v7 - v7
+- add Linus' Tested-by for the following platforms:
 
-Cc: Sean Paul <sean@poorly.run>
-Cc: Wayne Lin <Wayne.Lin@amd.com>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/drm_dp_mst_topology.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Tested systems:
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_=
-dp_mst_topology.c
-index 89c2a7505cbd..58287f4c1baf 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3483,6 +3483,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_m=
-st_topology_mgr *mgr, bool ms
- 	int ret =3D 0;
- 	struct drm_dp_mst_branch *mstb =3D NULL;
-=20
-+	mutex_lock(&mgr->payload_lock);
- 	mutex_lock(&mgr->lock);
- 	if (mst_state =3D=3D mgr->mst_state)
- 		goto out_unlock;
-@@ -3541,7 +3542,10 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_=
-mst_topology_mgr *mgr, bool ms
- 		/* this can fail if the device is gone */
- 		drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL, 0);
- 		ret =3D 0;
--		memset(mgr->payloads, 0, mgr->max_payloads * sizeof(struct drm_dp_payl=
-oad));
-+		memset(mgr->payloads, 0,
-+		       mgr->max_payloads * sizeof(struct drm_dp_payload));
-+		memset(mgr->proposed_vcpis, 0,
-+		       mgr->max_payloads * sizeof(void*));
- 		mgr->payload_mask =3D 0;
- 		set_bit(0, &mgr->payload_mask);
- 		mgr->vcpi_mask =3D 0;
-@@ -3550,6 +3554,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_m=
-st_topology_mgr *mgr, bool ms
-=20
- out_unlock:
- 	mutex_unlock(&mgr->lock);
-+	mutex_unlock(&mgr->payload_lock);
- 	if (mstb)
- 		drm_dp_mst_topology_put_mstb(mstb);
- 	return ret;
---=20
-2.24.1
+QEMU ARM RealView PBA8
+QEMU ARM RealView PBX A9
+QEMU ARM Versatile AB
+Hardware Integrator CP
+Hardware Versatile AB with IB2
+
+- define CONFIG_KASAN_SHADOW_OFFSET
+
+v6 - v5
+- Resolve conflicts during rebase, and updated to make use of
+  kasan_early_shadow_pte instead of kasan_zero_pte
+
+v5 - v4
+- Modify Andrey Ryabinin's email address.
+
+v4 - v3
+- Remove the fix of type conversion in kasan_cache_create because it has
+  been fix in the latest version in:
+  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+- Change some Reviewed-by tag into Reported-by tag to avoid misleading.
+  ---Reported by: Marc Zyngier <marc.zyngier@arm.com>
+                  Russell King - ARM Linux <linux@armlinux.org.uk>
+- Disable instrumentation for arch/arm/mm/physaddr.c
+
+v3 - v2
+- Remove this patch: 2 1-byte checks more safer for memory_is_poisoned_16
+  because a unaligned load/store of 16 bytes is rare on arm, and this
+  patch is very likely to affect the performance of modern CPUs.
+  ---Acked by: Russell King - ARM Linux <linux@armlinux.org.uk>
+- Fixed some link error which kasan_pmd_populate,kasan_pte_populate and
+  kasan_pud_populate are in section .meminit.text but the function
+  kasan_alloc_block which is called by kasan_pmd_populate,
+  kasan_pte_populate and kasan_pud_populate is in section .init.text. So
+  we need change kasan_pmd_populate,kasan_pte_populate and
+  kasan_pud_populate into the section .init.text.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>
+- Fixed some compile error which caused by the wrong access instruction in
+  arch/arm/kernel/entry-common.S.
+  ---Reported by: kbuild test robot <lkp@intel.com>
+- Disable instrumentation for arch/arm/kvm/hyp/*.
+  ---Acked by: Marc Zyngier <marc.zyngier@arm.com>
+- Update the set of supported architectures in
+  Documentation/dev-tools/kasan.rst.
+  ---Acked by:Dmitry Vyukov <dvyukov@google.com>
+- The version 2 is tested by:
+  Florian Fainelli <f.fainelli@gmail.com> (compile test)
+  kbuild test robot <lkp@intel.com>       (compile test)
+  Joel Stanley <joel@jms.id.au>           (on ASPEED ast2500(ARMv5))
+
+v2 - v1
+- Fixed some compiling error which happens on changing kernel compression
+  mode to lzma/xz/lzo/lz4.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+             Russell King - ARM Linux <linux@armlinux.org.uk>
+- Fixed a compiling error cause by some older arm instruction set(armv4t)
+  don't suppory movw/movt which is reported by kbuild.
+- Changed the pte flag from _L_PTE_DEFAULT | L_PTE_DIRTY | L_PTE_XN to
+  pgprot_val(PAGE_KERNEL).
+  ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved Enable KASan patch as the last one.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+     Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved the definitions of cp15 registers from
+  arch/arm/include/asm/kvm_hyp.h to arch/arm/include/asm/cp15.h.
+  ---Asked by: Mark Rutland <mark.rutland@arm.com>
+- Merge the following commits into the commit
+  Define the virtual space of KASan's shadow region:
+  1) Define the virtual space of KASan's shadow region;
+  2) Avoid cleaning the KASan shadow area's mapping table;
+  3) Add KASan layout;
+- Merge the following commits into the commit
+  Initialize the mapping of KASan shadow memory:
+  1) Initialize the mapping of KASan shadow memory;
+  2) Add support arm LPAE;
+  3) Don't need to map the shadow of KASan's shadow memory;
+     ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+  4) Change mapping of kasan_zero_page int readonly.
+- The version 1 is tested by Florian Fainelli <f.fainelli@gmail.com>
+  on a Cortex-A5 (no LPAE).
+
+Hi,all:
+   These patches add arch specific code for kernel address sanitizer
+(see Documentation/kasan.txt).
+
+   1/8 of kernel addresses reserved for shadow memory. There was no
+big enough hole for this, so virtual addresses for shadow were
+stolen from user space.
+
+   At early boot stage the whole shadow region populated with just
+one physical page (kasan_zero_page). Later, this page reused
+as readonly zero shadow for some memory that KASan currently
+don't track (vmalloc).
+
+  After mapping the physical memory, pages for shadow memory are
+allocated and mapped.
+
+  KASan's stack instrumentation significantly increases stack's
+consumption, so CONFIG_KASAN doubles THREAD_SIZE.
+
+  Functions like memset/memmove/memcpy do a lot of memory accesses.
+If bad pointer passed to one of these function it is important
+to catch this. Compiler's instrumentation cannot do this since
+these functions are written in assembly.
+
+  KASan replaces memory functions with manually instrumented variants.
+Original functions declared as weak symbols so strong definitions
+in mm/kasan/kasan.c could replace them. Original functions have aliases
+with '__' prefix in name, so we could call non-instrumented variant
+if needed.
+
+  Some files built without kasan instrumentation (e.g. mm/slub.c).
+Original mem* function replaced (via #define) with prefixed variants
+to disable memory access checks for such files.
+
+  On arm LPAE architecture,  the mapping table of KASan shadow memory(if
+PAGE_OFFSET is 0xc0000000, the KASan shadow memory's virtual space is
+0xb6e000000~0xbf000000) can't be filled in do_translation_fault function,
+because kasan instrumentation maybe cause do_translation_fault function
+accessing KASan shadow memory. The accessing of KASan shadow memory in
+do_translation_fault function maybe cause dead circle. So the mapping table
+of KASan shadow memory need be copyed in pgd_alloc function.
+
+Most of the code comes from:
+https://github.com/aryabinin/linux/commit/0b54f17e70ff50a902c4af05bb92716eb95acefe
+
+These patches are tested on vexpress-ca15, vexpress-ca9
+
+Abbott Liu (2):
+  ARM: Add TTBR operator for kasan_init
+  ARM: Define the virtual space of KASan's shadow region
+
+Andrey Ryabinin (4):
+  ARM: Disable instrumentation for some code
+  ARM: Replace memory function for kasan
+  ARM: Initialize the mapping of KASan shadow memory
+  ARM: Enable KASan for ARM
+
+Florian Fainelli (1):
+  ARM: Moved CP15 definitions from kvm_hyp.h to cp15.h
+
+ Documentation/dev-tools/kasan.rst     |   4 +-
+ arch/arm/Kconfig                      |   9 +
+ arch/arm/boot/compressed/Makefile     |   2 +
+ arch/arm/include/asm/cp15.h           | 107 +++++++++
+ arch/arm/include/asm/kasan.h          |  35 +++
+ arch/arm/include/asm/kasan_def.h      |  63 ++++++
+ arch/arm/include/asm/kvm_hyp.h        |  54 -----
+ arch/arm/include/asm/memory.h         |   5 +
+ arch/arm/include/asm/pgalloc.h        |   9 +-
+ arch/arm/include/asm/string.h         |  17 ++
+ arch/arm/include/asm/thread_info.h    |   4 +
+ arch/arm/kernel/entry-armv.S          |   5 +-
+ arch/arm/kernel/entry-common.S        |   9 +-
+ arch/arm/kernel/head-common.S         |   7 +-
+ arch/arm/kernel/setup.c               |   2 +
+ arch/arm/kernel/unwind.c              |   6 +-
+ arch/arm/kvm/hyp/cp15-sr.c            |  12 +-
+ arch/arm/kvm/hyp/switch.c             |   6 +-
+ arch/arm/lib/memcpy.S                 |   3 +
+ arch/arm/lib/memmove.S                |   5 +-
+ arch/arm/lib/memset.S                 |   3 +
+ arch/arm/mm/Makefile                  |   4 +
+ arch/arm/mm/kasan_init.c              | 302 ++++++++++++++++++++++++++
+ arch/arm/mm/mmu.c                     |   7 +-
+ arch/arm/mm/pgd.c                     |  14 ++
+ arch/arm/vdso/Makefile                |   2 +
+ drivers/firmware/efi/libstub/Makefile |   3 +-
+ 27 files changed, 621 insertions(+), 78 deletions(-)
+ create mode 100644 arch/arm/include/asm/kasan.h
+ create mode 100644 arch/arm/include/asm/kasan_def.h
+ create mode 100644 arch/arm/mm/kasan_init.c
+
+-- 
+2.17.1
 
