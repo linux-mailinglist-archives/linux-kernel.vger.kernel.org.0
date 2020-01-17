@@ -2,60 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CAD61406BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 299DF140647
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 10:39:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbgAQJpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 04:45:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:39873 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbgAQJpL (ORCPT
+        id S1727403AbgAQJhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 04:37:42 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46696 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbgAQJhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:45:11 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1isNyO-00063G-H6; Fri, 17 Jan 2020 09:31:24 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: musb: fix spelling mistake: "periperal" -> "peripheral"
-Date:   Fri, 17 Jan 2020 09:31:24 +0000
-Message-Id: <20200117093124.97965-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Fri, 17 Jan 2020 04:37:42 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n9so11669741pff.13
+        for <linux-kernel@vger.kernel.org>; Fri, 17 Jan 2020 01:37:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=QA3liVZQ//A8v0S8gslClqjh5Qy88hxNQ2Z93K52ofg=;
+        b=vs5R2hhwKO56EZKTxJZ5z0B18rX5CF/+KxhBFMGO4SJt8OdMwZ5ykw+ezhdfR4nDfq
+         DxvVcHVIhvEWOmWtzZkS/Hqfl+9Wthba8RgOKCDsjtdaBCySD4N0tMtho22a+3YIXTB6
+         B1vV29o/GYIBpXxdayIK/bot6FhJFJ1quM3w/sA2sWfktLsoUXDeQX/sFRA4OOLm/TlK
+         /vRbVTiTUnsUUzFjvxrmgXuvqAOjCHonzvjxWAFMiF0Dzf2fmARMOlhTyXXVNAGJQVn+
+         5Q/BOy+nvcDlWxXwIpqI8pZBjlGv0BvJgdw+/OAT09SraxZ0Ogn28wnB97xXgVXkgKfa
+         5VGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=QA3liVZQ//A8v0S8gslClqjh5Qy88hxNQ2Z93K52ofg=;
+        b=rV22EnHy3Bv9CUGkbYzJiAn+vEf3HwXZpxjginpZdgdmA/q79dLo9Et3uUzeVA0eW+
+         tOeFtpB2CQPkpjLQsK9o0Uze5DfUWIPu55oEZ8EvyMYFwpEZxXZSpMq5WWJftWirSo55
+         v3eqSmW5PV9lzQNX0NiCsBtL/CH7sH13/c1ZQE84j7lidjkjBNcEdA9H7ZWnIjC3s2MF
+         mLXczEqVAcME6n3rmxNwRhx2c+hPKlJiNY8DrRz3DhGJcLQ1HqvSCd5bt8aW7kav2npB
+         W36B+8WxYRUDpHDXOLnM8JJZ735qDFt+vCke1ZyL+hsaZ083F4fekIGtLpAvo8goClMT
+         yFgQ==
+X-Gm-Message-State: APjAAAU1C3U3jdDKTzHIIcPpHmdb3vcnFYJjwHJSwg9KR6Nl4Gx4PtSd
+        H3xhg1NwJmc23+RDvGTwHFr0IaOksrc=
+X-Google-Smtp-Source: APXvYqwz3HekrbkmdtcEbR1VmpXsc0SwALfwaNRL0wyMGU2wkWobLlXrFQo7CpzHaSoY4qb9QPl5gQ==
+X-Received: by 2002:a63:1106:: with SMTP id g6mr43863751pgl.13.1579253512065;
+        Fri, 17 Jan 2020 01:31:52 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id w187sm29499070pfw.62.2020.01.17.01.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 01:31:51 -0800 (PST)
+Date:   Fri, 17 Jan 2020 01:31:50 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Wei Yang <richardw.yang@linux.intel.com>, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, alexander.duyck@gmail.com,
+        stable@vger.kernel.org
+Subject: Re: [Patch v3] mm: thp: grab the lock before manipulation defer
+ list
+In-Reply-To: <20200117091002.GM19428@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.2001170125350.20618@chino.kir.corp.google.com>
+References: <20200116013100.7679-1-richardw.yang@linux.intel.com> <0bb34c4a-97c7-0b3c-cf43-8af6cf9c4396@virtuozzo.com> <alpine.DEB.2.21.2001161357240.109233@chino.kir.corp.google.com> <20200117091002.GM19428@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 17 Jan 2020, Michal Hocko wrote:
 
-There is a spelling mistake in a dev_err error message. Fix it.
+> On Thu 16-01-20 14:01:59, David Rientjes wrote:
+> > On Thu, 16 Jan 2020, Kirill Tkhai wrote:
+> > 
+> > > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > > index c5b5f74cfd4d..6450bbe394e2 100644
+> > > > --- a/mm/memcontrol.c
+> > > > +++ b/mm/memcontrol.c
+> > > > @@ -5360,10 +5360,12 @@ static int mem_cgroup_move_account(struct page *page,
+> > > >  	}
+> > > >  
+> > > >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > > > -	if (compound && !list_empty(page_deferred_list(page))) {
+> > > > +	if (compound) {
+> > > >  		spin_lock(&from->deferred_split_queue.split_queue_lock);
+> > > > -		list_del_init(page_deferred_list(page));
+> > > > -		from->deferred_split_queue.split_queue_len--;
+> > > > +		if (!list_empty(page_deferred_list(page))) {
+> > > > +			list_del_init(page_deferred_list(page));
+> > > > +			from->deferred_split_queue.split_queue_len--;
+> > > > +		}
+> > > >  		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+> > > >  	}
+> > > >  #endif
+> > > > @@ -5377,11 +5379,13 @@ static int mem_cgroup_move_account(struct page *page,
+> > > >  	page->mem_cgroup = to;
+> > > >  
+> > > >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > > > -	if (compound && list_empty(page_deferred_list(page))) {
+> > > > +	if (compound) {
+> > > >  		spin_lock(&to->deferred_split_queue.split_queue_lock);
+> > > > -		list_add_tail(page_deferred_list(page),
+> > > > -			      &to->deferred_split_queue.split_queue);
+> > > > -		to->deferred_split_queue.split_queue_len++;
+> > > > +		if (list_empty(page_deferred_list(page))) {
+> > > > +			list_add_tail(page_deferred_list(page),
+> > > > +				      &to->deferred_split_queue.split_queue);
+> > > > +			to->deferred_split_queue.split_queue_len++;
+> > > > +		}
+> > > >  		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+> > > >  	}
+> > > >  #endif
+> > > 
+> > > The patch looks OK for me. But there is another question. I forget, why we unconditionally
+> > > add a page with empty deferred list to deferred_split_queue. Shouldn't we also check that
+> > > it was initially in the list? Something like:
+> > > 
+> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > index d4394ae4e5be..0be0136adaa6 100644
+> > > --- a/mm/memcontrol.c
+> > > +++ b/mm/memcontrol.c
+> > > @@ -5289,6 +5289,7 @@ static int mem_cgroup_move_account(struct page *page,
+> > >  	struct pglist_data *pgdat;
+> > >  	unsigned long flags;
+> > >  	unsigned int nr_pages = compound ? hpage_nr_pages(page) : 1;
+> > > +	bool split = false;
+> > >  	int ret;
+> > >  	bool anon;
+> > >  
+> > > @@ -5346,6 +5347,7 @@ static int mem_cgroup_move_account(struct page *page,
+> > >  		if (!list_empty(page_deferred_list(page))) {
+> > >  			list_del_init(page_deferred_list(page));
+> > >  			from->deferred_split_queue.split_queue_len--;
+> > > +			split = true;
+> > >  		}
+> > >  		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+> > >  	}
+> > > @@ -5360,7 +5362,7 @@ static int mem_cgroup_move_account(struct page *page,
+> > >  	page->mem_cgroup = to;
+> > >  
+> > >  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > > -	if (compound) {
+> > > +	if (compound && split) {
+> > >  		spin_lock(&to->deferred_split_queue.split_queue_lock);
+> > >  		if (list_empty(page_deferred_list(page))) {
+> > >  			list_add_tail(page_deferred_list(page),
+> > > 
+> > 
+> > I think that's a good point, especially considering that the current code 
+> > appears to unconditionally place any compound page on the deferred split 
+> > queue of the destination memcg.  The correct list that it should appear 
+> > on, I believe, depends on whether the pmd has been split for the process 
+> > being moved: note the MC_TARGET_PAGE caveat in 
+> > mem_cgroup_move_charge_pte_range() that does not move the charge for 
+> > compound pages with split pmds.  So when mem_cgroup_move_account() is 
+> > called with compound == true, we're moving the charge of the entire 
+> > compound page: why would it appear on that memcg's deferred split queue?
+> 
+> I believe Kirill asked how do we know that the page should be actually
+> added to the deferred list just from the list_empty check. In other
+> words what if the page hasn't been split at all?
+> 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/musb/musb_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, and I don't think that it necessarily is and the second 
+conditional in Wei's patch will always succeed unless we have raced.  That 
+patch is for a lock concern but I think Kirill's question has uncovered 
+something more interesting.
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index 71691a1f8ae3..f616fb489542 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -540,7 +540,7 @@ int musb_set_peripheral(struct musb *musb)
- 				   devctl & MUSB_DEVCTL_BDEVICE, 5000,
- 				   1000000);
- 	if (error) {
--		dev_err(musb->controller, "%s: could not set periperal: %02x\n",
-+		dev_err(musb->controller, "%s: could not set peripheral: %02x\n",
- 			__func__, devctl);
- 
- 		return error;
--- 
-2.24.0
+Kirill S would definitely be best to answer Kirill T's question, but from 
+my understanding when mem_cgroup_move_account() is called with 
+compound == true that we always have an intact pmd (we never migrate 
+partial page charges for pages on the deferred split queue with the 
+current charge migration implementation) and thus the underlying page is 
+not eligible to be split and shouldn't be on the deferred split queue.
 
+In other words, a page being on the deferred split queue for a memcg 
+should only happen when it is charged to that memcg.  (This wasn't the 
+case when we only had per-node split queues.)  I think that's currently 
+broken in mem_cgroup_move_account() before Wei's patch.
