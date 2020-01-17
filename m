@@ -2,164 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9BFE141476
-	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3778014144B
+	for <lists+linux-kernel@lfdr.de>; Fri, 17 Jan 2020 23:48:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgAQWw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 17:52:26 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33585 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729015AbgAQWwY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:52:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so24230531wrq.0;
-        Fri, 17 Jan 2020 14:52:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kkVH3WV4mS0X3+3FT56qa2DP27GgNwjhnKPZdjR/cEg=;
-        b=ITxORkbK/eZIaQFygF9sIZY3a+lP6APCWVuUR2qCA8ArF56Rf0lBuPnE+xI3e0amgN
-         ciN+GBjyNVKgHqzSGXJFbp9JOTAEqA9RWPxRMK5h9N+vLuimpulhOlgLPpaOCIy8H4Ve
-         a0pGuqzVIpDDfMESsUZyewaDYvKc2y6CVlSZKkuF/ln0NYlPArYMZzdBuaBoOJ/6/2M2
-         4xyRE8OUJsK6IEetVrp+jzk4Px2/zkMqE3nHq9oQxbWMQeQAFuiXJD0eN/oMzFeS+8bC
-         5D7/f8b0pfF/pBjt1WlJVM3c5rSFEE/jdJqH++qw/yWw7Qn/ATn+y94BMOvffktWheFb
-         xriw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kkVH3WV4mS0X3+3FT56qa2DP27GgNwjhnKPZdjR/cEg=;
-        b=Hze+/bWhfvUAzOM6FYmeVAMPp548EyInrA3zNru2SQk7QEP6iMCaOXLMU9ROMJJNJ6
-         MEAlT5+F1hRNG0AfbWxpgregCUoXv41pb0CKvr7c4k83X5P/OvuJphaqbhzm39uIq3fj
-         woYy3CzXCdl/PtGDg8Ml8U2PU4T5kRed6hOlFM6bx4pwyGJjQMe9WP21oaWJndoFMWva
-         Q0If4dNflQ28uP3eLFNyMzirrnR/+/M3dY8Rc72pOkeIxAcxB+kjfoglqOLlnY8Yaqmt
-         gjyAl3yXnUhZOlt2/DYu8xTivQGvPDPSZgQ4IoR4p6+TMPRA4gQLuJjVeOwdBizrGe/D
-         Seig==
-X-Gm-Message-State: APjAAAUc3+HHws+QdXu7n6uatO0Mkb0miNXVjmBLrk0gb+Xq8/tkjAI4
-        ey2VtK6InPZtbx7VolQrB/A=
-X-Google-Smtp-Source: APXvYqxO45pdsD9bw7k1ZN/eHmJMDDLMtgzyredpWmd19F4mOCrBwdTMZQFVNqDl2BHgwDko/5ETWA==
-X-Received: by 2002:a5d:4ed0:: with SMTP id s16mr5523773wrv.144.1579301542065;
-        Fri, 17 Jan 2020 14:52:22 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id l3sm32829387wrt.29.2020.01.17.14.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 14:52:21 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Andrey Ryabinin <ryabinin@virtuozzo.com>,
-        Abbott Liu <liuwenliang@huawei.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, glider@google.com,
-        dvyukov@google.com, corbet@lwn.net, linux@armlinux.org.uk,
-        christoffer.dall@arm.com, marc.zyngier@arm.com, arnd@arndb.de,
-        nico@fluxnic.net, vladimir.murzin@arm.com, keescook@chromium.org,
-        jinb.park7@gmail.com, alexandre.belloni@bootlin.com,
-        ard.biesheuvel@linaro.org, daniel.lezcano@linaro.org,
-        pombredanne@nexb.com, rob@landley.net, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, yamada.masahiro@socionext.com,
-        tglx@linutronix.de, thgarnie@google.com, dhowells@redhat.com,
-        geert@linux-m68k.org, andre.przywara@arm.com,
-        julien.thierry@arm.com, drjones@redhat.com, philip@cog.systems,
-        mhocko@suse.com, kirill.shutemov@linux.intel.com,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        ryabinin.a.a@gmail.com
-Subject: [PATCH v7 7/7] ARM: Enable KASan for ARM
-Date:   Fri, 17 Jan 2020 14:48:39 -0800
-Message-Id: <20200117224839.23531-8-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200117224839.23531-1-f.fainelli@gmail.com>
-References: <20200117224839.23531-1-f.fainelli@gmail.com>
+        id S1729719AbgAQWsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 17:48:52 -0500
+Received: from smtp1.savana.cz ([217.16.187.42]:29538 "EHLO icewarp.savana.cz"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728852AbgAQWsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 17:48:51 -0500
+Received: from [192.168.0.106] ([212.37.87.11])
+        by icewarp.savana.cz (IceWarp 11.2.1.1 RHEL6 x64) with ASMTP (SSL) id 202001172348481734;
+        Fri, 17 Jan 2020 23:48:48 +0100
+Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
+References: <20200116141800.9828-1-linux@roeck-us.net>
+ <e452614a-5425-e77c-4e2f-2a17ca733b7f@sda1.eu>
+ <20200117184617.GD13396@roeck-us.net>
+From:   =?UTF-8?Q?Ondrej_=c4=8cerman?= <ocerman@sda1.eu>
+Message-ID: <5b4f8b92-d2ad-4eba-cd4f-4d0fddf92a52@sda1.eu>
+Date:   Fri, 17 Jan 2020 23:48:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200117184617.GD13396@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <ryabinin@virtuozzo.com>
 
-This patch enables the kernel address sanitizer for ARM. XIP_KERNEL has
-not been tested and is therefore not allowed.
+Dňa 17. 1. 2020 o 19:46 Guenter Roeck napísal(a):
+> On Fri, Jan 17, 2020 at 10:46:25AM +0100, Ondrej Čerman wrote:
+>> Dňa 16. 1. 2020 o 15:17 Guenter Roeck napísal(a):
+>>> This patch series implements various improvements for the k10temp driver.
+>>>
+>>> Patch 1/4 introduces the use of bit operations.
+>>>
+>>> Patch 2/4 converts the driver to use the devm_hwmon_device_register_with_info
+>>> API. This not only simplifies the code and reduces its size, it also
+>>> makes the code easier to maintain and enhance.
+>>>
+>>> Patch 3/4 adds support for reporting Core Complex Die (CCD) temperatures
+>>> on Ryzen 3 (Zen2) CPUs.
+>>>
+>>> Patch 4/4 adds support for reporting core and SoC current and voltage
+>>> information on Ryzen CPUs.
+>>>
+>>> With all patches in place, output on Ryzen 3900 CPUs looks as follows
+>>> (with the system under load).
+>>>
+>>> k10temp-pci-00c3
+>>> Adapter: PCI adapter
+>>> Vcore:        +1.36 V
+>>> Vsoc:         +1.18 V
+>>> Tdie:         +86.8°C  (high = +70.0°C)
+>>> Tctl:         +86.8°C
+>>> Tccd1:        +80.0°C
+>>> Tccd2:        +81.8°C
+>>> Icore:       +44.14 A
+>>> Isoc:        +13.83 A
+>>>
+>>> The patch series has only been tested with Ryzen 3900 CPUs. Further test
+>>> coverage will be necessary before the changes can be applied to the Linux
+>>> kernel.
+>>>
+>> Hello everyone, I am the author of https://github.com/ocerman/zenpower/ .
+>>
+>> It is nice to see this merged.
+>>
+>> I just want to warn you that there have been reported issues with
+>> Threadripper CPUs to zenpower issue tracker. Also I think that no-one tested
+>> EPYC CPUs.
+>>
+>> Most of the stuff I was able to figure out by trial-and-error approach and
+>> unfortunately because I do not own any Threadripper CPU I was not able to
+>> test and fix reported problems.
+>>
+> Thanks a lot for the note. The key problem seems to be that Threadripper
+> doesn't report SoC current and voltage. Is that correct ? If so, that
+> should be easy to solve.
 
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- Documentation/dev-tools/kasan.rst     | 4 ++--
- arch/arm/Kconfig                      | 9 +++++++++
- arch/arm/boot/compressed/Makefile     | 1 +
- drivers/firmware/efi/libstub/Makefile | 3 ++-
- 4 files changed, 14 insertions(+), 3 deletions(-)
+Hello,
 
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index e4d66e7c50de..6acd949989c3 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -21,8 +21,8 @@ global variables yet.
- 
- Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
- 
--Currently generic KASAN is supported for the x86_64, arm64, xtensa and s390
--architectures, and tag-based KASAN is supported only for arm64.
-+Currently generic KASAN is supported for the x86_64, arm, arm64, xtensa and
-+s390 architectures, and tag-based KASAN is supported only for arm64.
- 
- Usage
- -----
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 96dab76da3b3..70a7eb50984e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -65,6 +65,7 @@ config ARM
- 	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
- 	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
- 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
-+	select HAVE_ARCH_KASAN if MMU && !XIP_KERNEL
- 	select HAVE_ARCH_MMAP_RND_BITS if MMU
- 	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
-@@ -212,6 +213,14 @@ config ARCH_MAY_HAVE_PC_FDC
- config ZONE_DMA
- 	bool
- 
-+config KASAN_SHADOW_OFFSET
-+	hex
-+	depends on KASAN
-+	default 0x1f000000 if PAGE_OFFSET=0x40000000
-+	default 0x5f000000 if PAGE_OFFSET=0x80000000
-+	default 0x9f000000 if PAGE_OFFSET=0xC0000000
-+	default 0xffffffff
-+
- config ARCH_SUPPORTS_UPROBES
- 	def_bool y
- 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index 83991a0447fa..efda24b00a44 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -25,6 +25,7 @@ endif
- 
- GCOV_PROFILE		:= n
- KASAN_SANITIZE		:= n
-+CFLAGS_KERNEL		+= -D__SANITIZE_ADDRESS__
- 
- # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
- KCOV_INSTRUMENT		:= n
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index c35f893897e1..c8b36824189b 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_ARM64)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fpie $(DISABLE_STACKLEAK_PLUGIN)
- cflags-$(CONFIG_ARM)		:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) \
- 				   -fno-builtin -fpic \
--				   $(call cc-option,-mno-single-pic-base)
-+				   $(call cc-option,-mno-single-pic-base) \
-+				   -D__SANITIZE_ADDRESS__
- 
- cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- 
--- 
-2.17.1
+I thought that initially, but I was wrong. It seems like that these 
+multi-node CPUs are reporting SOC and Core voltage/current data at 
+particular node. Look at this HWiNFO64 screenshot of 2990WX for 
+reference: https://i.imgur.com/yM9X5nd.jpg . They also may be using 
+different addresses and/or factors.
+
+> On a side note, drivers/gpu/drm/amd/include/asic_reg/thm/thm_10_0_offset.h
+> suggests that two more temperature sensors might be available at 0x0005995C
+> and 0x00059960 (DIE3_TEMP and SW_TEMP). Have you ever tried that ?
+>
+> Thanks,
+> Guenter
+
+I was aware of 0005995c and I thought that it could be Tdie3 (that's why 
+I have included it in debug output, someone already shared that 3960X is 
+reporting data on that address). I think this one can be safely included.
+
+I was not aware of the other address, I will try it.
+
+Ondrej.
 
