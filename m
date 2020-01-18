@@ -2,72 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCD014167C
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 09:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8C614167A
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 09:14:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgARIQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 03:16:02 -0500
-Received: from [175.24.100.79] ([175.24.100.79]:54148 "EHLO mail.kaowomen.cn"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbgARIQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 03:16:01 -0500
-X-Greylist: delayed 571 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 Jan 2020 03:16:00 EST
-Received: by mail.kaowomen.cn (Postfix, from userid 5002)
-        id 2ECB1E0F18; Sat, 18 Jan 2020 16:06:28 +0800 (CST)
-Date:   Sat, 18 Jan 2020 16:06:28 +0800
-From:   Bo YU <tsu.yubo@gmail.com>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        irlied@linux.ie, daniel@ffwll.ch, airlied@redhat.com,
-        tprevite@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH -next] drm/drm_dp_mst:remove set but not used variable
- 'origlen'
-Message-ID: <20200118080628.mxcx7bfwdas5m7un@kaowomen.cn>
+        id S1726614AbgARIOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 03:14:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726425AbgARIOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 03:14:14 -0500
+Received: from localhost.localdomain (unknown [194.230.155.229])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDB4B24683;
+        Sat, 18 Jan 2020 08:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579335253;
+        bh=fGG701Ps8Rdb3kHwiYwVKSPobmo7g1hXU5nsiVSANLE=;
+        h=From:To:Subject:Date:From;
+        b=KY5w8CLNqGQ3jRvODbYqiK/DWa7RCHyhrOceWLALoHAfkVRlp5iPVa8ZkucekaMkw
+         kw1HGu2m77C5YOdWy2WWyL1br13FczHym4gmV7LYf9Fk51nTlsnCWbPXjjYCIs0sD+
+         onIj4zDYp+y1iNbY8cB5QSGpL7LHmEY/G7+BpTmw=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] sh: sh4a: Bring back tmu3_device early device
+Date:   Sat, 18 Jan 2020 09:13:56 +0100
+Message-Id: <20200118081356.22167-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Commit 1399c195ef50 ("sh: Switch to new style TMU device") converted
+tmu3_device platform device to new style of platform data but removed it
+from sh7786_early_devices array effectively removing last three timers
+and causing a warning:
 
-drivers/gpu/drm/drm_dp_mst_topology.c:3693:16: warning: variable
-‘origlen’ set but not used [-Wunused-but-set-variable]
-  int replylen, origlen, curreply;
+    arch/sh/kernel/cpu/sh4a/setup-sh7786.c:243:31:
+        warning: ‘tmu3_device’ defined but not used [-Wunused-variable]
 
-It looks like never use variable origlen after assign value to it.
+Fixes: 1399c195ef50 ("sh: Switch to new style TMU device")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Fixes: ad7f8a1f9ced7 (drm/helper: add Displayport multi-stream helper (v0.6))
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 4b74193b89ce..4c76e673206b 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3690,7 +3690,7 @@ static bool drm_dp_get_one_sb_msg(struct drm_dp_mst_topology_mgr *mgr, bool up)
- {
- 	int len;
- 	u8 replyblock[32];
--	int replylen, origlen, curreply;
-+	int replylen, curreply;
- 	int ret;
- 	struct drm_dp_sideband_msg_rx *msg;
- 	int basereg = up ? DP_SIDEBAND_MSG_UP_REQ_BASE : DP_SIDEBAND_MSG_DOWN_REP_BASE;
-@@ -3710,7 +3710,6 @@ static bool drm_dp_get_one_sb_msg(struct drm_dp_mst_topology_mgr *mgr, bool up)
- 	}
- 	replylen = msg->curchunk_len + msg->curchunk_hdrlen;
+Changes since v1:
+1. Add tmu3_device to early device list, as suggested by Geert.
+2. Add Fixes tag.
+---
+ arch/sh/kernel/cpu/sh4a/setup-sh7786.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
+index 4b0db8259e3d..74620f30b19b 100644
+--- a/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
++++ b/arch/sh/kernel/cpu/sh4a/setup-sh7786.c
+@@ -391,6 +391,7 @@ static struct platform_device *sh7786_early_devices[] __initdata = {
+ 	&tmu0_device,
+ 	&tmu1_device,
+ 	&tmu2_device,
++	&tmu3_device,
+ };
  
--	origlen = replylen;
- 	replylen -= len;
- 	curreply = len;
- 	while (replylen > 0) {
+ static struct platform_device *sh7786_devices[] __initdata = {
 -- 
-2.11.0
+2.17.1
 
