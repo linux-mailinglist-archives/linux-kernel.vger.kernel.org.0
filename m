@@ -2,77 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD95E1418A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 18:17:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 446531418A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 18:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbgARRRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 12:17:15 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:46244 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgARRRO (ORCPT
+        id S1726896AbgARRTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 12:19:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56190 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgARRTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 12:17:14 -0500
-Received: by mail-lf1-f46.google.com with SMTP id z26so100186lfg.13
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 09:17:13 -0800 (PST)
+        Sat, 18 Jan 2020 12:19:48 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q9so10372661wmj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 09:19:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/TfM+yjsSV6EWSEIB9bivQEZTFqDC0eQ4tARU7du8Iw=;
-        b=S4XH4TztfDlx0PcgUb9TVFLr47mdXeBEIFQuA1I4OaCWP564rhGaqk75ccIRgwXvFZ
-         bVcVuLpwUjJvGAzQKLi+tGcaTED7OVeiHQ7fwzsmjxufW1OnUb8K4x8vu1F/nnD9essp
-         GoJ0mYol94JZY+1g0c7xl5ydn4gEgWXLzlhKger7eLbMqr/hDr2ymbYXat7XTAx5ZedG
-         yBQOMFB/xBxvaUfV8vmGUz6LoG91/aEQ0+ABQXx7Ox9FL3/fB4WLRBAGkQQSOZqUDQtj
-         BGZACQzkHj0dWWon3cCXRhkd795BFG1zKvThMmk1SH6PrPbQS/2VQW4ePwieNEiVzqcS
-         XfQg==
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=EInU/dPYRvAZRwXJwqErJZ8yw9wZRuIpHUzkalVTyT4=;
+        b=dNtdcZ1/xaM13ffIwADWHZR3khEWHDFXBVJiytn/IPYPN3NYvSiH3QQpgjAgoToIUK
+         WngiagXpsTSX9pgwWCq4Lohl0nBNbLIAV6Jb8j+B+uGDcZ9CBCfWuSZ/2HZVG6CKg7ei
+         KhZhooYUxtRyOYDrjECjZW1RXRc/uZzCPGv14EYAbyNVWzYvT0VgPxT8DFZZgC9YMa4y
+         dZWApEJ3UiONhm69UnI1tzBB0JqHzgpKLjXYRT2PIpahx+oMu0Gj8CjTaCFfBb2P6f3G
+         zMwWYFEY5MycNr6+SRyTdpYtcL0+XKA4UQwutlWmRV6q6XtvLCnt/FkJ8SWmp/97a52L
+         NCsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/TfM+yjsSV6EWSEIB9bivQEZTFqDC0eQ4tARU7du8Iw=;
-        b=JFtNokK18Ze6nVsPRt3NqI537i15qq1F55y2LWdF8rX23tIQCxHAVJhnXDa2JGxeAN
-         y9BNC8jHx3i9rXLIC5j4X6ANInr+gkeF1mbi+YgE4NDFB4/Jaextvd5NpuYgpuLdDKrX
-         j1NuZff1y80E1teilkaScOFTOgzPxKt7H6G/R4EfFC0fnoDObl3hLeUWxjtuFwX/12TO
-         0EEG4cRZG53WQuavnVzY+k0vnXj/7E6hLnl3EaT7fp89GGWrGnCpVVZC+m0MEuBgX8M0
-         mbyPFyQme1PqkimDH9/9D2v36WiAQyU5/4IEDe5E7GCvBvw1GJTGtMBSpRK2As5CRSdT
-         CTLg==
-X-Gm-Message-State: APjAAAW+xZ8GaGLWozHJXZmIGZ63LWW1O0EeEd3hZZ/9YgMtrtntUDXt
-        PQC7cfJ+cCUQdGgqWulOpK8=
-X-Google-Smtp-Source: APXvYqxDnIq4CCujiAo2Wx1/I3okHK3AXG2vjysGcu6Pq0RY7shBizwZius7MDgymGciHzFw24IY5w==
-X-Received: by 2002:ac2:50da:: with SMTP id h26mr8738520lfm.80.1579367832422;
-        Sat, 18 Jan 2020 09:17:12 -0800 (PST)
-Received: from uranus.localdomain ([5.18.171.94])
-        by smtp.gmail.com with ESMTPSA id r21sm14278729ljn.64.2020.01.18.09.17.11
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=EInU/dPYRvAZRwXJwqErJZ8yw9wZRuIpHUzkalVTyT4=;
+        b=qvWhET+bbeafr3oEdpVQD5Qcb1C4uBvrF2LvLEXE+SdJLpc4T+Xh2KhcwdbmQqGFnK
+         iExjdxTxxM+KYxgmmbxU+QwlCg0FgyTOpqHazXqLVnDEECMfVz+O+/CbPYdPWIJK31Nb
+         sgSkRKmzNLYHWOeMWdJDy99svkWLAiL28OVfxlZqRGtS5jKeEDwc3knIP0CpiioNc4dV
+         LG5vaFGVUV+xRzJ1omT1aW/F/2gRQtiAYXAFCu9lfa2CjlS/9zVfhmug3vN7YCswGITJ
+         N768Dbr6koro9iy5a6Fk+goFFf3+3w0iJhy5wZEfm1gp0mgzYP9Fbxa79VHsWp3+HCZO
+         p0kQ==
+X-Gm-Message-State: APjAAAWrXjEMfH2qKV1ZWfMg9787CD6V0zP23ZYbfiL9SyKB06qkJaPl
+        dDoAPaK/KUJ+RwdjeEZcf2+DYooU
+X-Google-Smtp-Source: APXvYqywHbYqTw/ircYwVV87z40gJQb85fKlnRIXbYl0K9nvnF2A6NJLzZw6Ed2y2JZWfMaFzCUFhw==
+X-Received: by 2002:a05:600c:2301:: with SMTP id 1mr10711405wmo.147.1579367986172;
+        Sat, 18 Jan 2020 09:19:46 -0800 (PST)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id c15sm38837116wrt.1.2020.01.18.09.19.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jan 2020 09:17:11 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 00643461790; Sat, 18 Jan 2020 20:17:10 +0300 (MSK)
-Date:   Sat, 18 Jan 2020 20:17:10 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: getrusage(RUSAGE_BOTH)
-Message-ID: <20200118171710.GA2437@uranus>
-References: <ca7a02ad-2408-0cd8-e54e-d7dbecf9f0ba@rasmusvillemoes.dk>
+        Sat, 18 Jan 2020 09:19:45 -0800 (PST)
+Date:   Sat, 18 Jan 2020 18:19:43 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] IRQ fix
+Message-ID: <20200118171943.GA82768@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca7a02ad-2408-0cd8-e54e-d7dbecf9f0ba@rasmusvillemoes.dk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 18, 2020 at 05:48:20PM +0100, Rasmus Villemoes wrote:
-...
-> 
-> If RUSAGE_BOTH is not supposed to be used, perhaps it should be removed
-> from the uapi header?
+Linus,
 
-Hi Rasmus! I don't remember from scratch the RUSAGE_BOTH context
-(out of sources right now), but dropping it from uapi is definitely
-a wrong way -- since it is used inside kernel we should consider
-it as reserved value thus it should better live in uapi.
+Please pull the latest irq-urgent-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
+
+   # HEAD: 1fd224e35c1493e9f5d4d932c175616cccce8df9 irqchip/ingenic: Get rid of the legacy IRQ domain
+
+Fix a recent regression in the Ingenic SoCs irqchip driver that floods 
+the syslog.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Paul Cercueil (1):
+      irqchip/ingenic: Get rid of the legacy IRQ domain
+
+
+ drivers/irqchip/irq-ingenic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
+index 01d18b39069e..c5589ee0dfb3 100644
+--- a/drivers/irqchip/irq-ingenic.c
++++ b/drivers/irqchip/irq-ingenic.c
+@@ -17,7 +17,6 @@
+ #include <linux/delay.h>
+ 
+ #include <asm/io.h>
+-#include <asm/mach-jz4740/irq.h>
+ 
+ struct ingenic_intc_data {
+ 	void __iomem *base;
+@@ -50,7 +49,7 @@ static irqreturn_t intc_cascade(int irq, void *data)
+ 		while (pending) {
+ 			int bit = __fls(pending);
+ 
+-			irq = irq_find_mapping(domain, bit + (i * 32));
++			irq = irq_linear_revmap(domain, bit + (i * 32));
+ 			generic_handle_irq(irq);
+ 			pending &= ~BIT(bit);
+ 		}
+@@ -97,8 +96,7 @@ static int __init ingenic_intc_of_init(struct device_node *node,
+ 		goto out_unmap_irq;
+ 	}
+ 
+-	domain = irq_domain_add_legacy(node, num_chips * 32,
+-				       JZ4740_IRQ_BASE, 0,
++	domain = irq_domain_add_linear(node, num_chips * 32,
+ 				       &irq_generic_chip_ops, NULL);
+ 	if (!domain) {
+ 		err = -ENOMEM;
