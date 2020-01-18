@@ -2,54 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532C5141997
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 21:20:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C6161419A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 21:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgARUUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 15:20:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
+        id S1727061AbgARUl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 15:41:28 -0500
+Received: from onstation.org ([52.200.56.107]:39842 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728779AbgARUUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 15:20:04 -0500
-Subject: Re: [GIT PULL] more SCSI fixes for 5.5-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579378804;
-        bh=e0X0dZ+XoYgoAzup3hBksKQHzomqscFqr+DmTJaCguQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=hOIeE/9D/N/P2C8F9KR5IiNie6yqegCXKTOjL1UP+g2G3nZMU9XUXlAkQW+oneHfy
-         zikXxty3ev0NFgGf3gdrh3TuYQppaLp+awF9aJiXeHZonfRyiGYsmLGKVxdtG+cM98
-         76p6PkNwpV7xj9ltM4kNI6y4Lpup5d4CxaT3gcUo=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1579372445.3421.26.camel@HansenPartnership.com>
-References: <1579372445.3421.26.camel@HansenPartnership.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1579372445.3421.26.camel@HansenPartnership.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-X-PR-Tracked-Commit-Id: 28d76df18f0ad5bcf5fa48510b225f0ed262a99b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8965de70cbafec673417eed423bd5e0e9c244079
-Message-Id: <157937880416.12197.13080896970388822007.pr-tracker-bot@kernel.org>
-Date:   Sat, 18 Jan 2020 20:20:04 +0000
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        id S1726933AbgARUl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 15:41:27 -0500
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 3EA7F3E8F8;
+        Sat, 18 Jan 2020 20:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1579380087;
+        bh=w70lZdIZVmnTV+8m8BSpRyKKax6Xt6F/OwKbi0BD6AY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TP6xNLqcK1YGG4IdG1i2ZyZb3gJiaPGkeYG1cLqQROIGxEm56OjiZq0suJHn2B66J
+         f9AodHxoM5cVVn0wWUt3ZMxb9EpsrrF4zir3O0MmmG6XkWWrI+C4U6Um0gVSuSEbRH
+         4nT6PkREzMFQfsttyxWvMGm/R006lWERbNCLkwGk=
+From:   Brian Masney <masneyb@onstation.org>
+To:     robdclark@gmail.com
+Cc:     sean@poorly.run, airlied@linux.ie, daniel@ffwll.ch,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/msm/mdp5: rate limit pp done timeout warnings
+Date:   Sat, 18 Jan 2020 15:41:20 -0500
+Message-Id: <20200118204120.1039774-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 18 Jan 2020 10:34:05 -0800:
+Add rate limiting of the 'pp done time out' warnings since these
+warnings can quickly fill the dmesg buffer.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8965de70cbafec673417eed423bd5e0e9c244079
-
-Thank you!
-
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+index 05cc04f729d6..e1cc541e0ef2 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+@@ -1109,8 +1109,8 @@ static void mdp5_crtc_wait_for_pp_done(struct drm_crtc *crtc)
+ 	ret = wait_for_completion_timeout(&mdp5_crtc->pp_completion,
+ 						msecs_to_jiffies(50));
+ 	if (ret == 0)
+-		dev_warn(dev->dev, "pp done time out, lm=%d\n",
+-			 mdp5_cstate->pipeline.mixer->lm);
++		dev_warn_ratelimited(dev->dev, "pp done time out, lm=%d\n",
++				     mdp5_cstate->pipeline.mixer->lm);
+ }
+ 
+ static void mdp5_crtc_wait_for_flush_done(struct drm_crtc *crtc)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.24.1
+
