@@ -2,77 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC1EC141A13
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 23:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA81E141A48
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 23:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbgARWlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 17:41:16 -0500
-Received: from [198.137.202.133] ([198.137.202.133]:36394 "EHLO
-        bombadil.infradead.org" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727008AbgARWlP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 17:41:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vyYDHKvf8gCiisBHbQ1RzC91plzB3US9sNYD80kKiaU=; b=i3JtNAjSE6Cmh9ec2614Kqpaz
-        pDvpbDSOyBvB5PYbf5RdTTHw3IkY3UyZpv7p/iS4hp7Y9znPQfJD+m39U6zVkL2DauuWgBMqi5L6k
-        jvo3y72b8rppMJdJ9NaEy2r18bFFClCbtPYjg0xMA5nzaIgtIVvgdNLXmKIc1jPPF82YEO5Ii+1fL
-        FhaMWUP32RjrC/UzIS+KZorvqO8WST7q8Kq+EYPnVo+qmSfEk4WccgUg1LwSLoXPiz5WFq72ByCpC
-        lGnF3ASEkbw8TAr/Ofw/A25tEeIt+ePR+ef3xIYFoGgSnA9SMJOOGREbOVuP2NsjmBYp+dgSBicrR
-        dCE+PeD2g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iswlg-0001Y2-1d; Sat, 18 Jan 2020 22:40:36 +0000
-Date:   Sat, 18 Jan 2020 14:40:35 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: RFC: hold i_rwsem until aio completes
-Message-ID: <20200118224035.GA26801@bombadil.infradead.org>
-References: <20200114161225.309792-1-hch@lst.de>
- <20200114192700.GC22037@ziepe.ca>
- <20200115065614.GC21219@lst.de>
- <20200115132428.GA25201@ziepe.ca>
- <20200115143347.GL2827@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200115143347.GL2827@hirez.programming.kicks-ass.net>
+        id S1727083AbgARWyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 17:54:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbgARWyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 17:54:22 -0500
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBAF1246A5;
+        Sat, 18 Jan 2020 22:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579388062;
+        bh=Sev9wYvUYEKc/zi96JR7EJPQmQ+w++cAUQuho0Lvcrw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bx8VFTpKrukNtyrKYNpWQTv9MPPdUb67f7YOlBo4dKRK+/i/MOj7Eaf0YavBqSzEe
+         /mdWpMo8vERRzmRc3gO8wNVjeuTCRnI5FxQ2nWx6Sot5YFhcS6n69JBLu0rE7IKoF0
+         p+s5lIVAktqhjyYPmz4/WQHgBENTGQrwmRzX093g=
+Date:   Sat, 18 Jan 2020 14:54:21 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
+        ktkhai@virtuozzo.com, kirill.shutemov@linux.intel.com,
+        yang.shi@linux.alibaba.com, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        alexander.duyck@gmail.com, rientjes@google.com,
+        stable@vger.kernel.org
+Subject: Re: [Patch v4] mm: thp: remove the defer list related code since
+ this will not happen
+Message-Id: <20200118145421.0ab96d5d9bea21a3339d52fe@linux-foundation.org>
+In-Reply-To: <20200117233836.3434-1-richardw.yang@linux.intel.com>
+References: <20200117233836.3434-1-richardw.yang@linux.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 03:33:47PM +0100, Peter Zijlstra wrote:
-> On Wed, Jan 15, 2020 at 09:24:28AM -0400, Jason Gunthorpe wrote:
-> 
-> > I was interested because you are talking about allowing the read/write side
-> > of a rw sem to be held across a return to user space/etc, which is the
-> > same basic problem.
-> 
-> No it is not; allowing the lock to be held across userspace doesn't
-> change the owner. This is a crucial difference, PI depends on there
-> being a distinct owner. That said, allowing the lock to be held across
-> userspace still breaks PI in that it completely wrecks the ability to
-> analyze the critical section.
+On Sat, 18 Jan 2020 07:38:36 +0800 Wei Yang <richardw.yang@linux.intel.com> wrote:
 
-Thinking about this from a PI point of view, the problem is not that we
-returned to userspace still holding the lock, it's that boosting this
-process's priority will not help release the lock faster because this
-process no longer owns the lock.
+> If compound is true, this means it is a PMD mapped THP. Which implies
+> the page is not linked to any defer list. So the first code chunk will
+> not be executed.
+> 
+> Also with this reason, it would not be proper to add this page to a
+> defer list. So the second code chunk is not correct.
+> 
+> Based on this, we should remove the defer list related code.
+> 
+> Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
+> 
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: <stable@vger.kernel.org>    [5.4+]
 
-If we had a lock owner handoff API (ie I can donate my lock to another
-owner), that would solve this problem.  We'd want to have special owners
-to denote "RCU" "bottom halves" or "irq" so we know what we can do about
-PI.  I don't think we need a "I have stolen this lock from somebody else"
-API, but maybe I'm wrong there.
+This patch is identical to "mm: thp: grab the lock before manipulating
+defer list", which is rather confusing.  Please let people know when
+this sort of thing is done.
+
+The earlier changelog mentioned a possible race condition.  This
+changelog does not.  In fact this changelog fails to provide any
+description of any userspace-visible runtime effects of the bug. 
+Please send along such a description for inclusion, as always.
+
