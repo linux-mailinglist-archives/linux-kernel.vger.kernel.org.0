@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD551416D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9CC1416D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbgARJjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 04:39:04 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:39088 "EHLO shell.v3.sk"
+        id S1727085AbgARJjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 04:39:06 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:39100 "EHLO shell.v3.sk"
         rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726602AbgARJjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 04:39:04 -0500
+        id S1726831AbgARJjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 04:39:05 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 98184DFE50;
-        Sat, 18 Jan 2020 09:39:11 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTP id 8C2B8DFE68;
+        Sat, 18 Jan 2020 09:39:12 +0000 (UTC)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kxu7qTFbk0fu; Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
+        with ESMTP id Ad-3PFtHFBS6; Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 61058DFE68;
+        by zimbra.v3.sk (Postfix) with ESMTP id AD7DDDFDB5;
         Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 6CHdSDrZ5C6U; Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
+        with ESMTP id D5FO8EMxwEGj; Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
 Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id F1D9CDFDB5;
-        Sat, 18 Jan 2020 09:39:09 +0000 (UTC)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3A395DFD99;
+        Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 1/2] ARM: dts: mmp3: Fix the TWSI ranges
-Date:   Sat, 18 Jan 2020 10:38:57 +0100
-Message-Id: <20200118093858.326659-2-lkundrak@v3.sk>
+Subject: [PATCH 2/2] ARM: dts: mmp3-dell-ariel: Fix the SPI devices
+Date:   Sat, 18 Jan 2020 10:38:58 +0100
+Message-Id: <20200118093858.326659-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200118093858.326659-1-lkundrak@v3.sk>
 References: <20200118093858.326659-1-lkundrak@v3.sk>
@@ -44,75 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The register blocks don't occupy 4K. In fact, some blocks are packed
-close to others and assuming they're 4K causes overlaps:
+I've managed to get about everything wrong while digging these out of
+OEM's board file.
 
-  pxa2xx-i2c d4033800.i2c: can't request region for resource
-    [mem 0xd4033800-0xd40347ff]
+Correct the bus numbers, the exact model of the NOR flash, polarity of
+the chip selects and align the SPI frequency with the data sheet.
+
+Tested that it works now, with a slight fix to the PXA SSP driver.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/mmp3.dtsi | 12 ++++++------
+ arch/arm/boot/dts/mmp3-dell-ariel.dts | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
-index 1eba7fb6629b5..59a108e49b41e 100644
---- a/arch/arm/boot/dts/mmp3.dtsi
-+++ b/arch/arm/boot/dts/mmp3.dtsi
-@@ -400,7 +400,7 @@ gcb5: gpio@d4019108 {
+diff --git a/arch/arm/boot/dts/mmp3-dell-ariel.dts b/arch/arm/boot/dts/mm=
+p3-dell-ariel.dts
+index 15449c72c042b..b0ec14c421641 100644
+--- a/arch/arm/boot/dts/mmp3-dell-ariel.dts
++++ b/arch/arm/boot/dts/mmp3-dell-ariel.dts
+@@ -98,19 +98,19 @@ &twsi4 {
+ 	status =3D "okay";
+ };
 =20
- 			twsi1: i2c@d4011000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4011000 0x1000>;
-+				reg =3D <0xd4011000 0x70>;
- 				interrupts =3D <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI0>;
- 				resets =3D <&soc_clocks MMP2_CLK_TWSI0>;
-@@ -412,7 +412,7 @@ twsi1: i2c@d4011000 {
+-&ssp3 {
++&ssp1 {
+ 	status =3D "okay";
+-	cs-gpios =3D <&gpio 46 GPIO_ACTIVE_HIGH>;
++	cs-gpios =3D <&gpio 46 GPIO_ACTIVE_LOW>;
 =20
- 			twsi2: i2c@d4031000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4031000 0x1000>;
-+				reg =3D <0xd4031000 0x70>;
- 				interrupt-parent =3D <&twsi_mux>;
- 				interrupts =3D <0>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI1>;
-@@ -424,7 +424,7 @@ twsi2: i2c@d4031000 {
+ 	firmware-flash@0 {
+-		compatible =3D "st,m25p80", "jedec,spi-nor";
++		compatible =3D "winbond,w25q32", "jedec,spi-nor";
+ 		reg =3D <0>;
+-		spi-max-frequency =3D <40000000>;
++		spi-max-frequency =3D <104000000>;
+ 		m25p,fast-read;
+ 	};
+ };
 =20
- 			twsi3: i2c@d4032000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4032000 0x1000>;
-+				reg =3D <0xd4032000 0x70>;
- 				interrupt-parent =3D <&twsi_mux>;
- 				interrupts =3D <1>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI2>;
-@@ -436,7 +436,7 @@ twsi3: i2c@d4032000 {
-=20
- 			twsi4: i2c@d4033000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4033000 0x1000>;
-+				reg =3D <0xd4033000 0x70>;
- 				interrupt-parent =3D <&twsi_mux>;
- 				interrupts =3D <2>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI3>;
-@@ -449,7 +449,7 @@ twsi4: i2c@d4033000 {
-=20
- 			twsi5: i2c@d4033800 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4033800 0x1000>;
-+				reg =3D <0xd4033800 0x70>;
- 				interrupt-parent =3D <&twsi_mux>;
- 				interrupts =3D <3>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI4>;
-@@ -461,7 +461,7 @@ twsi5: i2c@d4033800 {
-=20
- 			twsi6: i2c@d4034000 {
- 				compatible =3D "mrvl,mmp-twsi";
--				reg =3D <0xd4034000 0x1000>;
-+				reg =3D <0xd4034000 0x70>;
- 				interrupt-parent =3D <&twsi_mux>;
- 				interrupts =3D <4>;
- 				clocks =3D <&soc_clocks MMP2_CLK_TWSI5>;
+-&ssp4 {
+-	cs-gpios =3D <&gpio 56 GPIO_ACTIVE_HIGH>;
++&ssp2 {
++	cs-gpios =3D <&gpio 56 GPIO_ACTIVE_LOW>;
+ 	status =3D "okay";
+ };
 --=20
 2.24.1
 
