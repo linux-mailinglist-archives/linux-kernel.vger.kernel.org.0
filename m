@@ -2,76 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330B8141802
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 15:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A288C14180F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 15:34:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbgARO21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 09:28:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51964 "EHLO mail.kernel.org"
+        id S1726627AbgAROeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 09:34:21 -0500
+Received: from mx.blih.net ([212.83.155.74]:46898 "EHLO mx.blih.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgARO21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 09:28:27 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B95262469A;
-        Sat, 18 Jan 2020 14:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579357706;
-        bh=5JmeRbrIpCIS8VAdKp6/Qm6DmGHg+3v869KbQ2bWKVU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Bhj7Y51K/9DBHKC0C0+tSoAwPGJ/hPgZk/kyIQQw99qjOI9o8u2HjexqP6+1ZTWCj
-         GEBtXUWbE1XHiC9aw3Q5hynsHmT3+KPDaZFH6IYyUbUB09oCY3TAAB3N+BO6E+VLHX
-         BZcA6uwIWaNxEWowK894OqE4hNsYn9npf1XZMMn0=
-Date:   Sat, 18 Jan 2020 14:28:21 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Robert Yang <decatf@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        =?UTF-8?B?TWlj?= =?UTF-8?B?aGHFgiBNaXJvc8WCYXc=?= 
-        <mirq-linux@rere.qmqm.pl>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] dt-bindings: iio: accel: kxcjk1013: Document
- mount-matrix property
-Message-ID: <20200118142821.4851166a@archlinux>
-In-Reply-To: <48acb337-5928-975c-e0cb-046278464203@gmail.com>
-References: <20200112203301.30235-1-digetx@gmail.com>
-        <20200112203301.30235-2-digetx@gmail.com>
-        <20200115153941.GA9685@bogus>
-        <48acb337-5928-975c-e0cb-046278464203@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S1726208AbgAROeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 09:34:21 -0500
+X-Greylist: delayed 397 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 Jan 2020 09:34:19 EST
+Received: from skull.home.blih.net (lfbn-idf2-1-1164-130.w90-92.abo.wanadoo.fr [90.92.223.130])
+        by mx.blih.net (OpenSMTPD) with ESMTPSA id cd584d1b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sat, 18 Jan 2020 14:27:38 +0000 (UTC)
+Date:   Sat, 18 Jan 2020 15:27:32 +0100
+From:   Emmanuel Vadot <manu@bidouilliste.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Emmanuel Vadot <manu@freebsd.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Add gpio bank supply for
+ A64-Olinuxino
+Message-Id: <20200118152732.0c9e7426074f4141dd09b586@bidouilliste.com>
+In-Reply-To: <CAGb2v67U6qjNf0PPMOm191UZDQvJTGZNNREc22ZsDW61KqaUEA@mail.gmail.com>
+References: <20200116194658.78893-1-manu@freebsd.org>
+        <CAGb2v67U6qjNf0PPMOm191UZDQvJTGZNNREc22ZsDW61KqaUEA@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd13.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 18 Jan 2020 05:42:01 +0300
-Dmitry Osipenko <digetx@gmail.com> wrote:
+On Fri, 17 Jan 2020 11:20:21 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-> 15.01.2020 18:39, Rob Herring =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Sun, 12 Jan 2020 23:33:01 +0300, Dmitry Osipenko wrote: =20
-> >> The generic IIO mount-matrix property conveys physical orientation of =
-the
-> >> hardware chip.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  .../devicetree/bindings/iio/accel/kionix,kxcjk1013.txt     | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >> =20
-> >=20
-> > Acked-by: Rob Herring <robh@kernel.org>
-> >  =20
->=20
-> Thanks!
-Applied.
+> On Fri, Jan 17, 2020 at 3:47 AM Emmanuel Vadot <manu@freebsd.org> wrote:
+> >
+> > Add the regulators for each bank on this boards.
+> >
+> > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > ---
+> >  .../boot/dts/allwinner/sun50i-a64-olinuxino.dts   | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> > index 01a9a52edae4..1a25abf6065c 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> > @@ -163,6 +163,17 @@ &ohci1 {
+> >         status = "okay";
+> >  };
+> >
+> > +&pio {
+> > +       vcc-pa-supply = <&reg_dcdc1>;
+> > +       vcc-pb-supply = <&reg_dcdc1>;
+> > +       vcc-pc-supply = <&reg_dcdc1>;
+> > +       vcc-pd-supply = <&reg_dcdc1>;
+> > +       vcc-pe-supply = <&reg_aldo1>;
+> > +       vcc-pf-supply = <&reg_dcdc1>;
+> > +       vcc-pg-supply = <&reg_dldo4>;
+> > +       vcc-ph-supply = <&reg_dcdc1>;
+> > +};
+> > +
+> >  &r_rsb {
+> >         status = "okay";
+> >
+> > @@ -175,6 +186,10 @@ axp803: pmic@3a3 {
+> >         };
+> >  };
+> >
+> > +&r_pio {
+> > +       vcc-pl-supply = <&reg_aldo2>;
+> 
+> This is likely going to cause a circular dependency, because the RSB
+> interface that is used to talk to the PMIC is also on the PL pins.
 
-thanks,
+ Indeed that cause a Linux kernel to not boot at all.
 
-Jonathan
+> (How does FreeBSD deal with this?)
 
+ We don't deal with vcc-X-supply until later in the boot, this is not
+ideal but better than not dealing with them.
+
+> Instead, just add a comment describing what is really used, and set
+> the regulator to always-on, which should already be the case.
+
+ Ok will do,
+
+Thanks.
+
+> ChenYu
+> 
+> > +};
+> > +
+> >  #include "axp803.dtsi"
+> >
+> >  &ac_power_supply {
+> > --
+> > 2.24.1
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+-- 
+Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
