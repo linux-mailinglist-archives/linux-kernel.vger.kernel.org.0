@@ -2,76 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B8A1419AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 21:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503561419B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 21:56:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgARUqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 15:46:40 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33588 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbgARUqj (ORCPT
+        id S1727083AbgARU4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 15:56:39 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43119 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbgARU4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 15:46:39 -0500
-Received: by mail-pl1-f196.google.com with SMTP id ay11so11380063plb.0
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 12:46:39 -0800 (PST)
+        Sat, 18 Jan 2020 15:56:38 -0500
+Received: by mail-wr1-f66.google.com with SMTP id d16so25854265wre.10
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 12:56:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=aBvwG5hs/viXjFOybOIYOqL0J9/NjAJR55aMcHkMqz4=;
-        b=Inb6NhQE6dYl3CVHDsOi2zXEBpNBU5RUcTsbaziD/JicVz7jAIJPYErWhulW0IFZp3
-         cHAFAsTbSpWgpbFJmrSjM42Td8TOgCcYdYy14I3nGBDv1Qif2VoKS/CB+acWtavKJ7SA
-         yL+4Zfo3ukT6yP30COGuuI27F4hb7jGd5IAngkeHzL2N+n5XFOsCnTwe0wpZGtlBFM2E
-         Phwb0Q1CACMW+jKyz+hU1TlshN1a0cPwtEWQ8Jg1LpHoztXMOfGoktO0Eqj3YJu1U8Wv
-         7ObOXnYx0Q/fkRYmp7zdzu5D138+Tm0KDmQUxW55+WlEc2qeUHRMeeycc5FWTatrrW+g
-         xKeg==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=SK7/yao5fsaBBNvMW9060fS3yhEeL6JTPeMbh6+XWqc=;
+        b=uY7GjVezYNXJ3TKzjl3dgF372yMrTSK7w8G47a/AMGYZwte7SDotv1Z4OSzMi2hFbU
+         HO70+ZQbQIVHEcDERjal0Q4EtM6qCSNRB5pTYuOYBj4F/gmd0cx5jvmYKNCf4BoqyLTF
+         oAL1hIaF3KswqbIZ0b7nH4rOZbzF5NqcfONvMDucYT+E+OUBfsDxKdYRBpaxfjrkADEP
+         UhQls3ufvsek5LwLYty8+TSLu/Yz0xEB4KlSt2KPffq2sS9DOMomkyOScz7k5THZK4ZO
+         VR7PCf69zcSS2jneZ2x+glnImSDlw/hO3OhmwNSulHSrQgbE26NKp0vpGM9hm8VMel74
+         EqZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aBvwG5hs/viXjFOybOIYOqL0J9/NjAJR55aMcHkMqz4=;
-        b=TGlgqCXFjlqBf6ZmTuIIKt3cNmMWohjC44VjTPK/Jl5gKnqSoIpMMhJmhu76TUqA/2
-         9Ew3At9ycAk/rJXpc2W29TcsKQVLjq/CZRfW8bPWCBpv0pqq8eTKLD7AJ+hmAS1Qgoyg
-         vYPgHyGhLz72AefsxdWHoLmlCU+s65ljEKlXPprqmi63GEXOA8f2y51i/UiIB8PrAQKO
-         plrmiBWtZp2nkByCbINrWD6S1nEnqIBP5wJqdVGtMfUnaLmIHeqXPNAb48/4pXrp+po6
-         uzIlD5D8hYuagjum2jbC0xCO5W9gQJSS/Ck/gXibnQFh0ykD+9NCtJ8cV/L/3N6Y8Ckj
-         u7GQ==
-X-Gm-Message-State: APjAAAUF2bTGqjdjPxTZ1Syr0yNCKst+OB6basgR9zzFNYBF0k171A+l
-        PG/wF6ZvEKcKrYjIvi3fx96zvaZXdMg=
-X-Google-Smtp-Source: APXvYqwWTGIwEbfvkeQFgWzlMG5o9J+qp/K4p7RgFLPHkAwxfZU7UIbBuw6opSlpBy0gmhhLpiTp6w==
-X-Received: by 2002:a17:90a:2351:: with SMTP id f75mr14131461pje.133.1579380399007;
-        Sat, 18 Jan 2020 12:46:39 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o7sm35806945pfg.138.2020.01.18.12.46.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jan 2020 12:46:38 -0800 (PST)
-Subject: Re: [PATCH] io_uring: use labeled array init in io_op_defs
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <b23c570236ab4b1f47603e52ef545875ac632df8.1579372106.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8eadfa1b-5dee-a6b4-e217-81fdd2484218@kernel.dk>
-Date:   Sat, 18 Jan 2020 13:46:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <b23c570236ab4b1f47603e52ef545875ac632df8.1579372106.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=SK7/yao5fsaBBNvMW9060fS3yhEeL6JTPeMbh6+XWqc=;
+        b=m7BGUi2ub2msJDcwrhybzDYEaHzWdCcWMX03uk7ZdHZaIx7ezrI+9FPPMgQ6y6QnsE
+         xQ2D8FwgQZikuAWIyceh0UOVdKmWkskyaEtVuTL4tflSBQ1FhikNreW2kHiGyQNqT61x
+         vFeqNZXJ079ESqNfF2UicFMyjLdUuq1wzZvn1yIE67takWDS/Pj7RXVgJKnpZ9pepJ8C
+         dPO37EPHT6U+kVaR1Yzlg17WfkMYAoItEv4VJyRIE+TJ6UpM7w4oc7xASbytBBwHbbgk
+         revT8oOtXHV5h+y3gHVYMxeueEQh9LGH280dKx8FXMg90K6FPM0zs8v3Z5PuCFhbpfod
+         L3yw==
+X-Gm-Message-State: APjAAAVhTi6xC6eA7WewAEZEP4/iCe9JKBLZw28Wazkxp89VGy+1jnFo
+        48YxozVi5RMDeuk6RwvOU+CMGy2gYKDwIA==
+X-Google-Smtp-Source: APXvYqz62KvAMiiicYrdtpzq79/NMDixMBfVUQi/cgwdgvWRPUa4ige7jZ8h4/yZHPX7LjHyYk6pbQ==
+X-Received: by 2002:a05:6000:1047:: with SMTP id c7mr10209792wrx.341.1579380996778;
+        Sat, 18 Jan 2020 12:56:36 -0800 (PST)
+Received: from Lappy.lan (cpc157701-rdng30-2-0-cust857.15-3.cable.virginm.net. [86.18.131.90])
+        by smtp.gmail.com with ESMTPSA id t125sm16244042wmf.17.2020.01.18.12.56.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Jan 2020 12:56:35 -0800 (PST)
+From:   Ben Whitten <ben.whitten@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     afaerber@suse.de, Ben Whitten <ben.whitten@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Han Nandor <nandor.han@vaisala.com>
+Subject: [PATCH v2 1/2] regmap: fix writes to non incrementing registers
+Date:   Sat, 18 Jan 2020 20:56:24 +0000
+Message-Id: <20200118205625.14532-1-ben.whitten@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/18/20 11:35 AM, Pavel Begunkov wrote:
-> Don't rely on implicit ordering of IORING_OP_ and explicitly place them
-> at a right place in io_op_defs. Now former comments are now a part of
-> the code and won't ever outdate.
+When checking if a register block is writable we must ensure that the
+block does not start with or contain a non incrementing register.
 
-Looks good to me, thanks. Applied.
+Fixes: 8b9f9d4dc511 ("regmap: verify if register is writeable before writing operations")
+Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+---
+ drivers/base/regmap/regmap.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 19f57ccfbe1d..59f911e57719 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1488,11 +1488,18 @@ static int _regmap_raw_write_impl(struct regmap *map, unsigned int reg,
+ 
+ 	WARN_ON(!map->bus);
+ 
+-	/* Check for unwritable registers before we start */
+-	for (i = 0; i < val_len / map->format.val_bytes; i++)
+-		if (!regmap_writeable(map,
+-				     reg + regmap_get_offset(map, i)))
+-			return -EINVAL;
++	/* Check for unwritable or noinc registers in range
++	 * before we start
++	 */
++	if (!regmap_writeable_noinc(map, reg)) {
++		for (i = 0; i < val_len / map->format.val_bytes; i++) {
++			unsigned int element =
++				reg + regmap_get_offset(map, i);
++			if (!regmap_writeable(map, element) ||
++				regmap_writeable_noinc(map, element))
++				return -EINVAL;
++		}
++	}
+ 
+ 	if (!map->cache_bypass && map->format.parse_val) {
+ 		unsigned int ival;
 -- 
-Jens Axboe
+2.17.1
 
