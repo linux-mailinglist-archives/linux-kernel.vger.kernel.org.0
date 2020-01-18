@@ -2,53 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC651419CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 22:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6251419BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 22:05:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbgARVFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 16:05:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726935AbgARVFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727060AbgARVFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 18 Jan 2020 16:05:04 -0500
-Subject: Re: [GIT PULL] thread fixes v5.5-rc7
+Received: from mail.kernel.org ([198.145.29.99]:37388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726933AbgARVFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 16:05:03 -0500
+Subject: Re: [GIT PULL] s390 updates for 5.5-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1579381503;
-        bh=I0t0rw5Xxk44pnXlbNBq7Oxw8U763HkZvNptywo5WAw=;
+        bh=7IX9vEs7ojp3ZgO+H9YO55X6TXH4dQxVyIV8DtZJ3Ig=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=y7hTKoHHiMHXc/zyjgQ+HYR06Qsq1HNJciBxMQ3R3JL3J+9kWnylqEveWw9BGcROz
-         JemAoVo+bCGDDmmqXiya5gplzCbOzSavg9Y48HHal135Tz4nf4Xc60BbVhyo4+gcdL
-         AaMRk1qhYN/YdrY8PUTEPPNLHvvJYJ+EhIkAKZB8=
+        b=mHW23Fxjbn8S4qUuQeuLtHrobrDjTLS7emMIoUsI0xQsobEKg4P59YYMMBt8n7ZZd
+         lm/rPnggKGgfF48eBjM9EE1eURekDkWOAkKd0Tig0tf0IM+HBOVlApRLl4B6a6u+hl
+         QseEMCcmuantL3RQIXhsTnQYk9RQX4D8nS4h1k9o=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200118144914.25322-1-christian.brauner@ubuntu.com>
-References: <20200118144914.25322-1-christian.brauner@ubuntu.com>
+In-Reply-To: <your-ad-here.call-01579351767-ext-7089@work.hours>
+References: <your-ad-here.call-01579351767-ext-7089@work.hours>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200118144914.25322-1-christian.brauner@ubuntu.com>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux
- tags/for-linus-2020-01-18
-X-PR-Tracked-Commit-Id: 6b3ad6649a4c75504edeba242d3fd36b3096a57f
+X-PR-Tracked-Message-Id: <your-ad-here.call-01579351767-ext-7089@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.5-5
+X-PR-Tracked-Commit-Id: 40260b01d029ba374637838213af500e03305326
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8cac89909a30807eb4aba56a0e29f55e3b6df42f
-Message-Id: <157938150347.20598.11869740443885595690.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 2324de6fab2223287da7628ba92dc6cfed4f46ca
+Message-Id: <157938150305.20598.8146120296125028034.pr-tracker-bot@kernel.org>
 Date:   Sat, 18 Jan 2020 21:05:03 +0000
-To:     Christian Brauner <christian.brauner@ubuntu.com>
+To:     Vasily Gorbik <gor@linux.ibm.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
-        stable@vger.kernel.org
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 18 Jan 2020 15:49:14 +0100:
+The pull request you sent on Sat, 18 Jan 2020 13:49:27 +0100:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-2020-01-18
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.5-5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8cac89909a30807eb4aba56a0e29f55e3b6df42f
+https://git.kernel.org/torvalds/c/2324de6fab2223287da7628ba92dc6cfed4f46ca
 
 Thank you!
 
