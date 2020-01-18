@@ -2,37 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A288C14180F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 15:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF1D141806
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 15:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgAROeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 09:34:21 -0500
-Received: from mx.blih.net ([212.83.155.74]:46898 "EHLO mx.blih.net"
+        id S1726460AbgAROax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 09:30:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgAROeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 09:34:21 -0500
-X-Greylist: delayed 397 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 Jan 2020 09:34:19 EST
-Received: from skull.home.blih.net (lfbn-idf2-1-1164-130.w90-92.abo.wanadoo.fr [90.92.223.130])
-        by mx.blih.net (OpenSMTPD) with ESMTPSA id cd584d1b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Sat, 18 Jan 2020 14:27:38 +0000 (UTC)
-Date:   Sat, 18 Jan 2020 15:27:32 +0100
-From:   Emmanuel Vadot <manu@bidouilliste.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Emmanuel Vadot <manu@freebsd.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: Add gpio bank supply for
- A64-Olinuxino
-Message-Id: <20200118152732.0c9e7426074f4141dd09b586@bidouilliste.com>
-In-Reply-To: <CAGb2v67U6qjNf0PPMOm191UZDQvJTGZNNREc22ZsDW61KqaUEA@mail.gmail.com>
-References: <20200116194658.78893-1-manu@freebsd.org>
-        <CAGb2v67U6qjNf0PPMOm191UZDQvJTGZNNREc22ZsDW61KqaUEA@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd13.0)
-Mime-Version: 1.0
+        id S1726208AbgAROaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 09:30:52 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09F202469A;
+        Sat, 18 Jan 2020 14:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579357851;
+        bh=jfvpugoRaJiaAZmEMxDtm22xX+OLmTaCZAns9JDGkys=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=i0S03MHU7UpyT/JtNyiZqYkXMqCl0L7m3VILZk0LrEsxiEP/h7/21q3ekz5GpRAsp
+         VB8BP6+LV0OZh7K0oyrxYE3YrGQRduRgNd3om4/rV1Tf7KqqqUse9g/KcANpAmimS8
+         FwPOLxoMebXZ11T9+4dWQ+2ctTmdGV2SJ3dD6caI=
+Date:   Sat, 18 Jan 2020 14:30:46 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <olivier.moysan@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <etienne.carriere@st.com>
+Subject: Re: [PATCH 1/2] iio: dac: stm32-dac: use reset controller only at
+ probe time
+Message-ID: <20200118143046.4e6a6b95@archlinux>
+In-Reply-To: <1578921266-6025-2-git-send-email-fabrice.gasnier@st.com>
+References: <1578921266-6025-1-git-send-email-fabrice.gasnier@st.com>
+        <1578921266-6025-2-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,85 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 11:20:21 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+On Mon, 13 Jan 2020 14:14:25 +0100
+Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-> On Fri, Jan 17, 2020 at 3:47 AM Emmanuel Vadot <manu@freebsd.org> wrote:
-> >
-> > Add the regulators for each bank on this boards.
-> >
-> > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-> > ---
-> >  .../boot/dts/allwinner/sun50i-a64-olinuxino.dts   | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> > index 01a9a52edae4..1a25abf6065c 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> > @@ -163,6 +163,17 @@ &ohci1 {
-> >         status = "okay";
-> >  };
-> >
-> > +&pio {
-> > +       vcc-pa-supply = <&reg_dcdc1>;
-> > +       vcc-pb-supply = <&reg_dcdc1>;
-> > +       vcc-pc-supply = <&reg_dcdc1>;
-> > +       vcc-pd-supply = <&reg_dcdc1>;
-> > +       vcc-pe-supply = <&reg_aldo1>;
-> > +       vcc-pf-supply = <&reg_dcdc1>;
-> > +       vcc-pg-supply = <&reg_dldo4>;
-> > +       vcc-ph-supply = <&reg_dcdc1>;
-> > +};
-> > +
-> >  &r_rsb {
-> >         status = "okay";
-> >
-> > @@ -175,6 +186,10 @@ axp803: pmic@3a3 {
-> >         };
-> >  };
-> >
-> > +&r_pio {
-> > +       vcc-pl-supply = <&reg_aldo2>;
+> From: Etienne Carriere <etienne.carriere@st.com>
 > 
-> This is likely going to cause a circular dependency, because the RSB
-> interface that is used to talk to the PMIC is also on the PL pins.
-
- Indeed that cause a Linux kernel to not boot at all.
-
-> (How does FreeBSD deal with this?)
-
- We don't deal with vcc-X-supply until later in the boot, this is not
-ideal but better than not dealing with them.
-
-> Instead, just add a comment describing what is really used, and set
-> the regulator to always-on, which should already be the case.
-
- Ok will do,
-
-Thanks.
-
-> ChenYu
+> This change removes the reset controller reference from the local
+> DAC instance since it is used only at probe time.
 > 
-> > +};
-> > +
-> >  #include "axp803.dtsi"
-> >
-> >  &ac_power_supply {
-> > --
-> > 2.24.1
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Makes sense.
+
+Applied to the togreg branch of iio.git and pushed out as testing
+to let those autobuilders poke at it for a few hours.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/dac/stm32-dac-core.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> diff --git a/drivers/iio/dac/stm32-dac-core.c b/drivers/iio/dac/stm32-dac-core.c
+> index 9e6b4cd..4d93446 100644
+> --- a/drivers/iio/dac/stm32-dac-core.c
+> +++ b/drivers/iio/dac/stm32-dac-core.c
+> @@ -20,13 +20,11 @@
+>  /**
+>   * struct stm32_dac_priv - stm32 DAC core private data
+>   * @pclk:		peripheral clock common for all DACs
+> - * @rst:		peripheral reset control
+>   * @vref:		regulator reference
+>   * @common:		Common data for all DAC instances
+>   */
+>  struct stm32_dac_priv {
+>  	struct clk *pclk;
+> -	struct reset_control *rst;
+>  	struct regulator *vref;
+>  	struct stm32_dac_common common;
+>  };
+> @@ -94,6 +92,7 @@ static int stm32_dac_probe(struct platform_device *pdev)
+>  	struct regmap *regmap;
+>  	struct resource *res;
+>  	void __iomem *mmio;
+> +	struct reset_control *rst;
+>  	int ret;
+>  
+>  	if (!dev->of_node)
+> @@ -148,11 +147,11 @@ static int stm32_dac_probe(struct platform_device *pdev)
+>  	priv->common.vref_mv = ret / 1000;
+>  	dev_dbg(dev, "vref+=%dmV\n", priv->common.vref_mv);
+>  
+> -	priv->rst = devm_reset_control_get_exclusive(dev, NULL);
+> -	if (!IS_ERR(priv->rst)) {
+> -		reset_control_assert(priv->rst);
+> +	rst = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (!IS_ERR(rst)) {
+> +		reset_control_assert(rst);
+>  		udelay(2);
+> -		reset_control_deassert(priv->rst);
+> +		reset_control_deassert(rst);
+>  	}
+>  
+>  	if (cfg && cfg->has_hfsel) {
 
-
--- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
