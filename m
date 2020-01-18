@@ -2,113 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E43E71416BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:16:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B98E81416BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:19:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbgARJQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 04:16:00 -0500
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:45567 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726602AbgARJP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 04:15:59 -0500
-Received: from [192.168.0.4] (ip5f5af7c3.dynamic.kabel-deutschland.de [95.90.247.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id A08B1206446A1;
-        Sat, 18 Jan 2020 10:15:55 +0100 (CET)
-Subject: Re: USB devices on Dell TB16 dock stop working after resuming
-To:     Mario Limonciello <mario.limonciello@dell.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     andreas.noever@gmail.com, michael.jamet@intel.com,
-        YehezkelShB@gmail.com, ck@xatom.net, linux-kernel@vger.kernel.org,
-        Anthony Wong <anthony.wong@canonical.com>
-References: <20191104154446.GH2552@lahna.fi.intel.com>
- <ea829adedf0445c0845e25d6e4b47905@AUSX13MPC105.AMER.DELL.COM>
- <d8cb6bc6-8145-eaed-5ba4-d7291478bdd7@molgen.mpg.de>
- <20191104162103.GI2552@lahna.fi.intel.com>
- <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de>
- <20191120105048.GY11621@lahna.fi.intel.com>
- <20191122105012.GD11621@lahna.fi.intel.com>
- <edfe1e3c-779b-61e4-8551-f2e13d46d733@molgen.mpg.de>
- <20191122112921.GF11621@lahna.fi.intel.com>
- <ae67c377-4763-4648-a91c-b9351e3b1cf1@molgen.mpg.de>
- <20191122114108.GG11621@lahna.fi.intel.com>
- <cf4140c8-5b92-f1e5-c9e4-e362ab06d6f8@linux.intel.com>
- <e5e3df06-4ddd-aadb-f1ad-6dd24fa2a5c2@molgen.mpg.de>
- <4b25e707-d2b5-11d1-4b16-48122828fde7@linux.intel.com>
- <a9e12353-6f88-edeb-0d78-15c1ac75666b@molgen.mpg.de>
- <87670037-8af5-c209-cbf8-70042e0a8fc5@linux.intel.com>
- <44d8eb12-9af5-7b9a-fa24-be8e8ec3cd48@molgen.mpg.de>
- <789c7db3bafa4bf9a9348123492196b0@AUSX13MPC105.AMER.DELL.COM>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <ba9b732f-a969-1840-abfc-829d21395f83@molgen.mpg.de>
-Date:   Sat, 18 Jan 2020 10:15:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726896AbgARJT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 04:19:26 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:32973 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbgARJT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 04:19:26 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d5so23784845qto.0
+        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 01:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z7V6E0TDaKraOo9dTt7jhc6TLdoMlUlp/uyIAC+ZTcI=;
+        b=r5Osyi+5S7I7ieJbRoinobkAaTllvHQz6AIaLQiYADUQlxAhGTpSFct10Rbv/qtQPE
+         XeQcvA/TRKGpFLwD5gVeUdVLPE5SFwnaYYXJ09z9LSlZ97mXMTSlaIdv3kesQ6zD7o+C
+         Iqilhd9nvoenPTM0cdlDK9qXTOP7vvglydomTJkikqduytMLU706Obi4jiFowybtbViF
+         93GtIc0xCZ7BAhaBAOlOKgSo77ZOJ/h/4ntx0g05wHFtFKwmmVfV8Rw7DmZrwumRApv6
+         2JN3gsKiuVf1UXzL0PyPH/jOaFC4nlRGCFG5rOk/4sjfNUfOFYWVYrG8VrH/xB4a1Yc6
+         0VkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z7V6E0TDaKraOo9dTt7jhc6TLdoMlUlp/uyIAC+ZTcI=;
+        b=qgr0cYbmEBmgLmtkuWZcbHkHUFbMOrxyjeJHN8TCXuDPJzQu94gnMw832DuR0m1rnY
+         ICjIzrjou/V2B+0UbLEMjOurTuu1XAeaEwZ5bua8iUJuDLNARC4HUF/qDfmh0+DMeIjq
+         k5nvrxaev9cf7npc6bo+Wy0EYVN1256cfoNUWR1HNNWtWfq9o0yHWFkqUKfQAUQZfOJZ
+         7URKLIoPEqwcfXVfkqsPXNiz3+E8fKXQUcR8yj2/oA9u+tPWpJhxhp4AcWZ4GdeUQT2H
+         kgLNneTb/284U3ePET3EN7o8kBIhx7ct4wd0xyPlW+t5EDs0pj7ogHc1fwb9TZzcvvbB
+         +jFw==
+X-Gm-Message-State: APjAAAWgSVvO2jp9kAFEBYGZKYDfx5OsxlNOSwYZcjSOpWGlejKzn/5i
+        9EAKj/W1/9rWGAr74mHpWld/JyeBOKPbDXVRIxYegQ==
+X-Google-Smtp-Source: APXvYqySu7QSqXqUmm7G/+6P0CGxNfV2qDMzuVTo/0NaUw5yglIxMT0d3on5SEunQ2/Vpk1yqcdlYTa4b1UTbvflla4=
+X-Received: by 2002:aed:3b6e:: with SMTP id q43mr11061878qte.57.1579339163936;
+ Sat, 18 Jan 2020 01:19:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <789c7db3bafa4bf9a9348123492196b0@AUSX13MPC105.AMER.DELL.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200116012321.26254-1-keescook@chromium.org> <20200116012321.26254-6-keescook@chromium.org>
+ <CACT4Y+batRaj_PaDnfzLjpLDOCChhpiayKeab-rNLx5LAj1sSQ@mail.gmail.com>
+ <202001161548.9E126B774F@keescook> <CACT4Y+Z9o4B37-sNU2582FBv_2+evgyKVbVo-OAufLrsney=wA@mail.gmail.com>
+ <202001171317.5E3C106F@keescook>
+In-Reply-To: <202001171317.5E3C106F@keescook>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sat, 18 Jan 2020 10:19:12 +0100
+Message-ID: <CACT4Y+ansnGK3woNmiZurj1eGfygbz7anxRqYe_VPs-_HE2u6g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] kasan: Unset panic_on_warn before calling panic()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Elena Petrova <lenaptr@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Mario,
+On Fri, Jan 17, 2020 at 10:20 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Fri, Jan 17, 2020 at 10:54:36AM +0100, Dmitry Vyukov wrote:
+> > On Fri, Jan 17, 2020 at 12:49 AM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > On Thu, Jan 16, 2020 at 06:23:01AM +0100, Dmitry Vyukov wrote:
+> > > > On Thu, Jan 16, 2020 at 2:24 AM Kees Cook <keescook@chromium.org> wrote:
+> > > > >
+> > > > > As done in the full WARN() handler, panic_on_warn needs to be cleared
+> > > > > before calling panic() to avoid recursive panics.
+> > > > >
+> > > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > > ---
+> > > > >  mm/kasan/report.c | 10 +++++++++-
+> > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> > > > > index 621782100eaa..844554e78893 100644
+> > > > > --- a/mm/kasan/report.c
+> > > > > +++ b/mm/kasan/report.c
+> > > > > @@ -92,8 +92,16 @@ static void end_report(unsigned long *flags)
+> > > > >         pr_err("==================================================================\n");
+> > > > >         add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
+> > > > >         spin_unlock_irqrestore(&report_lock, *flags);
+> > > > > -       if (panic_on_warn)
+> > > > > +       if (panic_on_warn) {
+> > > > > +               /*
+> > > > > +                * This thread may hit another WARN() in the panic path.
+> > > > > +                * Resetting this prevents additional WARN() from panicking the
+> > > > > +                * system on this thread.  Other threads are blocked by the
+> > > > > +                * panic_mutex in panic().
+> > > >
+> > > > I don't understand part about other threads.
+> > > > Other threads are not necessary inside of panic(). And in fact since
+> > > > we reset panic_on_warn, they will not get there even if they should.
+> > > > If I am reading this correctly, once one thread prints a warning and
+> > > > is going to panic, other threads may now print infinite amounts of
+> > > > warning and proceed past them freely. Why is this the behavior we
+> > > > want?
+> > >
+> > > AIUI, the issue is the current thread hitting another WARN and blocking
+> > > on trying to call panic again. WARNs encountered during the execution of
+> > > panic() need to not attempt to call panic() again.
+> >
+> > Yes, but the variable is global and affects other threads and the
+> > comment talks about other threads, and that's the part I am confused
+> > about (for both comment wording and the actual behavior). For the
+> > "same thread hitting another warning" case we need a per-task flag or
+> > something.
+>
+> This is duplicating the common panic-on-warn logic (see the generic bug
+> code), so I'd like to just have the same behavior between the three
+> implementations of panic-on-warn (generic bug, kasan, ubsan), and then
+> work to merge them into a common handler, and then perhaps fix the
+> details of the behavior. I think it's more correct to allow the panicing
+> thread to complete than to care about what the other threads are doing.
+> Right now, a WARN within the panic code will either a) hang the machine,
+> or b) not panic, allowing the rest of the threads to continue, maybe
+> then hitting other WARNs and hanging. The generic bug code does not
+> suffer from this.
 
+I see. Then:
 
-Am 17.01.20 um 19:33 schrieb Mario.Limonciello@dell.com:
->>> I was able to reproduce the issue with an external HS hub as well, so  this issue
->>> appears to be more related to ASMedia host than the built in HS hub in TB16
->>
->> I contacted the (German) Dell support, and they asked me to update the laptop
->> firmware to 1.9.1 claiming that these issues might be fixed there (despite the
->> change-log not containing that). Anyway, after the update, the user is still
->> able to reproduce the issue.
->>
->> Mario, what can I do, so the issue is escalated to your team, so you can work
->> with ASMedia to solve this?
-
-> From this thread it does sound to me like an ASMedia firmware problem,
-> not a Linux kernel problem.
-> 
-> I do know there is an updated ASMedia firmware binary available.  Right now
-> however there is unfortunately not a way to update ASMedia hub firmware using
-> free software. 
-
-The fwupd issue *Dell TB16: ASMedia USB controller can't be updated* [1] 
-was closed by the “stale robot”.
-
-> If possible, I would recommend that you try to update the
-> firmware using a Windows machine and see if it helps the problem.
-
-Thank you. I’ll try to do that on Monday.
-
-> I'm sorry and I don't intend to "pass the buck" but if that doesn't help this needs
-> to be prioritized and escalated with Dell support.
-> 
-> They will then work with the appropriate engineering team who owns the relationship
-> to ASMedia to resolve it.
-
-That’s how it should work theoretically, but have you ever dealt with 
-Dell’s first level support? They have little experience with Ubuntu, and 
-if you are unlucky, they say that Ubuntu support is not done by Dell but 
-“by the Linux community”. If you are lucky to not get this answer, they 
-do (Google) searches, telling you, your problem is solved by referencing 
-only similar sounding problems from the Ubuntu *user* forums. If the 
-firmware has a bug (in the UI!), they ask you to install Microsoft 
-Windows to see if that solves the issue. If you tell them, the Linux 
-developers analyzed the problem, and they say the following solution 
-have to be found, they do not know what that means. It’s very annoying 
-and time consuming often for naught.
-
-
-Kind regards,
-
-Paul
-
-
-[1]: https://github.com/fwupd/fwupd/issues/1351
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
