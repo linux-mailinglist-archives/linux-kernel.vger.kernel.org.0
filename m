@@ -2,64 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3335D141599
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 03:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44C8514159F
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 03:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbgARCkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 21:40:00 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9187 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730588AbgARCj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 21:39:59 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 41AEC3C6971C1F329BD0;
-        Sat, 18 Jan 2020 10:39:57 +0800 (CST)
-Received: from huawei.com (10.175.105.18) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sat, 18 Jan 2020
- 10:39:47 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
-To:     <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <sean.j.christopherson@intel.com>, <vkuznets@redhat.com>,
-        <wanpengli@tencent.com>, <jmattson@google.com>, <joro@8bytes.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>
-CC:     <linmiaohe@huawei.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-Subject: [PATCH] KVM: x86: avoid clearing pending exception event twice
-Date:   Sat, 18 Jan 2020 10:41:55 +0800
-Message-ID: <1579315315-6444-1-git-send-email-linmiaohe@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1730692AbgARCmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 21:42:05 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41486 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbgARCmE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 21:42:04 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so28388556ljc.8;
+        Fri, 17 Jan 2020 18:42:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ds2vxYVCII0rQhNGIg+GsyVnkbjiJdX12kWA/mq4wMs=;
+        b=sMUiJhurkj+REFjcm9uScNDQIWo6atrRvOjAFPbcL6BpRg3vIFAnr2vdTucrKAIRnv
+         Apy8gALjD6klDmBWI6WLZ4Cejs8+lPmONV9jxR1V+3G42wxcyTR48sR6CPBogGl2mLzj
+         lYYTq5xwBIF6Sp/gLmW2AzEHytAProEN7//A8mCxjNzPyMkKksCgwwvZiMAS6KuvRU6B
+         66tqKw81oNi2vpLmVHR1mfR1R+Gg9mV32d+FsEMvaV74/AWulZCDG2oX7NQ0p64U0fv3
+         Jxlv76t7KxZx7Dy1M2p3vC8ySDMgUgRyiU38JM1K0LQtbH8eTf+IhXoYwWuGSZyveE4D
+         BDPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ds2vxYVCII0rQhNGIg+GsyVnkbjiJdX12kWA/mq4wMs=;
+        b=riC5k9EOdhI2ji50issVyeOHyZVDpDS7znErQ8ngLOUg5Nik955Own7Ei/r2czVg0T
+         yXbOCuACssx8BqRBJsoUaezvuqxXxU1gHsdgoFID+tbCqMBEgtJEv3A0smFCo+ykXwPs
+         RuWKgtk0ABUsW8ut7/MLgrSU61prDyZB8HgmMhm9Wdbpjc/d7NM0X+qMymyS1jpjRwQI
+         zX9GSzDkrchz8nD43k9VlDEKIQY4uUGwHhPDoG9krSuAAtzoiM2qITzZmaPaVIC6ad/W
+         UJETsMuvBkdQ75EBjUnKm2ZP6oQnIs8BQS05/YyiE5RXY1/mZ/GyqqZ3lrW12RPKRUDl
+         oSeg==
+X-Gm-Message-State: APjAAAU8QCrzZwzJGVlwIicUPl1IUU7FkD8lWTsc7mN9Of9GB/129jBZ
+        M/btD9f7g34OoRDevzQB8qZV5QFp
+X-Google-Smtp-Source: APXvYqx4SPgXNQgiofbWRBqxg8Hg8OszJg54wd+IHTNo65z8DlowN83LeuGQdUx107VLbo6GadT5jw==
+X-Received: by 2002:a2e:3609:: with SMTP id d9mr6949836lja.188.1579315322666;
+        Fri, 17 Jan 2020 18:42:02 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id z22sm13103530ljm.24.2020.01.17.18.42.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 18:42:02 -0800 (PST)
+Subject: Re: [PATCH v1 2/2] dt-bindings: iio: accel: kxcjk1013: Document
+ mount-matrix property
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Robert Yang <decatf@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200112203301.30235-1-digetx@gmail.com>
+ <20200112203301.30235-2-digetx@gmail.com> <20200115153941.GA9685@bogus>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <48acb337-5928-975c-e0cb-046278464203@gmail.com>
+Date:   Sat, 18 Jan 2020 05:42:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.105.18]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200115153941.GA9685@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miaohe Lin <linmiaohe@huawei.com>
+15.01.2020 18:39, Rob Herring пишет:
+> On Sun, 12 Jan 2020 23:33:01 +0300, Dmitry Osipenko wrote:
+>> The generic IIO mount-matrix property conveys physical orientation of the
+>> hardware chip.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../devicetree/bindings/iio/accel/kionix,kxcjk1013.txt     | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
 
-The exception pending event is cleared by kvm_clear_exception_queue(). We
-shouldn't clear it again.
-
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- arch/x86/kvm/x86.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 93bbbce67a03..10fa42f627d9 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9180,7 +9180,6 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	vcpu->arch.nmi_injected = false;
- 	kvm_clear_interrupt_queue(vcpu);
- 	kvm_clear_exception_queue(vcpu);
--	vcpu->arch.exception.pending = false;
- 
- 	memset(vcpu->arch.db, 0, sizeof(vcpu->arch.db));
- 	kvm_update_dr0123(vcpu);
--- 
-2.19.1
-
+Thanks!
