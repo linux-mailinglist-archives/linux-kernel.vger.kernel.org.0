@@ -2,142 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4961419B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 21:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7DA1419BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 22:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgARU4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 15:56:32 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35993 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbgARU4c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 15:56:32 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so25868788wru.3
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 12:56:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TfOpyEkpEQNNYpuQeNoIFzzg0pkhdRWhvCkPTgoVfp8=;
-        b=hgqr6ryflMPzPaEqsEzD8WP79/6uZjzxUev8IVvA9ELmALVvpauK83071UTuU1mnfu
-         CMYY9LSo8IcS4fpMsDeoA7kGWDGPiVisdXSJd7OK1hjtxTrT4OIE+St88p81TcGcCZRm
-         o4WbNMODIQ9xk4HfrdTJrhsxTbjE20TPGSvrRMVCkm9jiALQ+825d8fRdA4ls91zdYBd
-         KStQmh0hs7Eb4rQ+MnJLS0ysxqAKcilo3D/VJcPa4fe2+V239AJADRzDvUecI4l5Owar
-         XMkGKXIkDdOxlsMhzmxtXAuaq/HuiXd9ATO/NWRVIGQJoITVKKsYu629uRfJ41n+TtSR
-         lyxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=TfOpyEkpEQNNYpuQeNoIFzzg0pkhdRWhvCkPTgoVfp8=;
-        b=SJJc03Lp3z5FAyfKXykEd4rncaW63MzjKlaIiLGnKQvqxFZHGq4Sz3vd2hjFsrx8eR
-         6VTHwCvHRi9jmy7CfNfYiSpUGJ22csslPqa+D2tfQ7rsUS0xKq++n5C6RX0+qQn7DL8w
-         sRMA0CO0eduTd+hGXx71L8/FMKGKFoU0Zn2LJdP7LqicMvzyEAWCeP5GJ8ImV8OQszQj
-         cCn1l1kiX51DQadsDvSgqf1y0cxnQo41/Tlxzd1F01WsoN2XUnb5XZ4kBNdDCqpYfEIg
-         wiXZcXsZwqDCMwwXSBZcFc1X4kmUJ2i6HJAxRSrYhiQA/O21BVoMr6EnIWcpOsJ2zn/H
-         iaew==
-X-Gm-Message-State: APjAAAWAendKXGMplADUBk94KvSShWmWOcbN838E/kuEeIBZ+QkVG0Fq
-        oh67L9ttLYGCYJRUGW7mTNRE6JK8
-X-Google-Smtp-Source: APXvYqxWC1el8lLx4UoJ5ekpC00wjXBIHLtSZOI6uZ0zDd8A28FCuHez9duiOgTvySlAL1dmoLoagw==
-X-Received: by 2002:a5d:49c7:: with SMTP id t7mr9829193wrs.369.1579380989887;
-        Sat, 18 Jan 2020 12:56:29 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:e0d6:d2cd:810b:30a9? ([2001:b07:6468:f312:e0d6:d2cd:810b:30a9])
-        by smtp.googlemail.com with ESMTPSA id 60sm41217833wrn.86.2020.01.18.12.56.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jan 2020 12:56:29 -0800 (PST)
-Subject: Re: [PATCH v2 0/2] misc: pvpanic: add crash loaded event
-To:     zhenwei pi <pizhenwei@bytedance.com>, arnd@arndb.de,
-        gregkh@linuxfoundation.org, peng.hao2@zte.com.cn
-Cc:     hutao@cn.fujitsu.com, linux-kernel@vger.kernel.org
-References: <20191215034840.2273096-1-pizhenwei@bytedance.com>
-From:   Paolo Bonzini <bonzini@gnu.org>
-Autocrypt: addr=bonzini@gnu.org; prefer-encrypt=mutual; keydata=
- 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
- 10oh++mb6s1dGf3ADAaOTRf8
-Message-ID: <4c94bd8c-6d53-b037-b8b3-b261fcb515e1@gnu.org>
-Date:   Sat, 18 Jan 2020 21:56:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1727028AbgARVCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 16:02:34 -0500
+Received: from onstation.org ([52.200.56.107]:39998 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbgARVCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 16:02:33 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 9E4E33E8F8;
+        Sat, 18 Jan 2020 21:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1579381352;
+        bh=tYvsyrCqD4e+2GQsK+s0EYAl6OMxJfsNFiwg29ZEvyw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I5eC8C1NA+C2z3nNd5BdQ4GV+pgLF3desVnqrppsiZZdEh8qMr8r0LOBjyvUyNhBW
+         VQRUsOqRNSHYVz5muRR3CQjHUlyL6ujmN31pdDW21ZXSIpzSqBZyrTy3JjvwpCQR91
+         e8BMYCllrp7sei6OAB16UOB4S1EiIBnQdXBnM6XQ=
+Date:   Sat, 18 Jan 2020 16:02:32 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     jeffrey.l.hugo@gmail.com, robdclark@gmail.com
+Cc:     freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        sean@poorly.run
+Subject: Re: [PATCH RFC v2] drm/msm/mdp5: enable autorefresh
+Message-ID: <20200118210232.GA32765@onstation.org>
+References: <20191230020053.26016-1-masneyb@onstation.org>
+ <20191230020053.26016-2-masneyb@onstation.org>
+ <20200101035027.GA9348@onstation.org>
 MIME-Version: 1.0
-In-Reply-To: <20191215034840.2273096-1-pizhenwei@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200101035027.GA9348@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/12/19 04:48, zhenwei pi wrote:
-> Add PVPANIC_CRASH_LOADED bit for pvpanic event, it means that guest
-> kernel actually hit a kernel panic, but the guest kernel wants to
-> handle by itself.
+On Tue, Dec 31, 2019 at 10:50:27PM -0500, Brian Masney wrote:
+> On Sun, Dec 29, 2019 at 09:00:53PM -0500, Brian Masney wrote:
+> > Since the introduction of commit 2d99ced787e3 ("drm/msm: async commit
+> > support"), command-mode panels began throwing the following errors:
+> > 
+> >     msm fd900000.mdss: pp done time out, lm=0
+> > 
+> > Let's fix this by enabling the autorefresh feature that's available in
+> > the MDP starting at version 1.0. This will cause the MDP to
+> > automatically send a frame to the panel every time the panel invokes the
+> > TE signal, which will trigger the PP_DONE IRQ. This requires only
+> > sending a single START signal for command-mode panels.
+> > 
+> > This gives us a counter for command-mode panels that we can use to
+> > implement async commit support for the MDP5 in a follow up patch.
+> > 
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > Suggested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > Fixes: 2d99ced787e3 ("drm/msm: async commit support")
+> > ---
+> > Changes since v1:
+> > - Send a single start command to kick off the pipeline.
+> > 
+> > The reason I marked this patch as a RFC is that the display during some
+> > small percentage of boots will stop updating after a minute or so, and
+> > the ping pong IRQs stop. Most of the time it works with no issues and I
+> > haven't been able to find a way to reproduce the issue. I tried
+> > suspending the phone by toggling /sys/power/state since I thought that
+> > the issue could potentially be related to power management.
 > 
-> Suggested by Greg KH, move the bit definition to uapi header file
-> for the programs outside of kernel.
-> 
-> zhenwei pi (2):
->   misc: pvpanic: move bit definition to uapi header file
->   misc: pvpanic: add crash loaded event
-> 
->  drivers/misc/pvpanic.c      | 12 +++++++++---
->  include/uapi/misc/pvpanic.h |  9 +++++++++
->  2 files changed, 18 insertions(+), 3 deletions(-)
->  create mode 100644 include/uapi/misc/pvpanic.h
-> 
+> After working to get the IOMMU up on msm8974, I suspect that the issue
+> that I describe above is caused by a device probe deferral, which
+> explains the intermittent nature of what I'm seeing. First driver load
+> sets up the autorefresh registers, sends a single START signal, then a
+> -EPROBE_DEFER is thrown later on. Second driver load lost the state, and
+> sends a second START signal and overloads the DSI.
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+The issue was not caused by an -EPROBE_DEFER error. The most consistent
+way that I've found to reproduce the issue is to compile the MSM DRM
+driver into the kernel (not as a module), boot the phone, don't change
+the screen contents, and after ~2 minutes the 'pp done time out'
+warnings start. I enabled all DRM debug information and included at the
+bottom of my message the relevant messages from dmesg at the point where
+the IRQs stop.
+
+I feel like I'm at a dead end on this since I'm not too familiar with
+this particular hardware and there's no publicly-available documents.
+Unless anyone has any suggestions for other things to try, I'm planning
+to stop looking into this issue and will instead look into getting the
+IOMMU working on this board. I would love to get this fixed though.
+
+
+---
+The point in dmesg right before the ping/pong IRQs stop. This sequence
+of messages appears consistently like this prior to this.
+
+[  128.915574] [drm:mdp5_crtc_vblank_irq] crtc-0: send event: 4c4a50e5                             
+[  128.928610] [drm:dsi_host_irq] isr=0x2000700, id=0                                              
+[  128.945398] [drm:dsi_host_irq] isr=0x2000700, id=0                                              
+[  128.962185] [drm:dsi_host_irq] isr=0x2000700, id=0                                           
+[  128.978974] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  128.995761] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.015163] [drm:dsi_host_irq] isr=0x2000700, id=0                             
+[  129.031826] [drm:dsi_host_irq] isr=0x2000700, id=0                                           
+[  129.048492] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.065160] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.081826] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.098493] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.115694] [drm:dsi_host_irq] isr=0x2000700, id=0                                                        
+[  129.115787] [drm:drm_atomic_state_init] Allocated atomic state f90dd658                                   
+[  129.115810] [drm:drm_mode_object_get] OBJ ID: 51 (2)                                            
+[  129.115823] [drm:drm_atomic_get_plane_state] Added [PLANE:33:plane-0] d172526a state to f90dd658
+[  129.115836] [drm:drm_mode_object_get] OBJ ID: 52 (1)                                                      
+[  129.115848] [drm:drm_atomic_get_crtc_state] Added [CRTC:50:crtc-0] 00606fa5 state to f90dd658             
+[  129.115858] [drm:drm_mode_object_get] OBJ ID: 556 (1)                                           
+[  129.115878] [drm:drm_atomic_check_only] checking f90dd658                                                 
+[  129.115895] [drm:mdp5_plane_atomic_check] plane-0: check (1 -> 1)                                         
+[  129.115910] [drm:mdp5_crtc_atomic_check] crtc-0: check                                          
+[  129.115921] [drm:mdp5_crtc_atomic_check] crtc-0: assign pipe plane-0 on stage=1                 
+[  129.115932] [drm:drm_atomic_commit] committing f90dd658                                         
+[  129.115957] [drm:msm_framebuffer_prepare] FB[51]: iova[0]: 70101000 (0)                                   
+[  129.116005] [drm:drm_calc_timestamping_constants] crtc 50: hwmode: htotal 1086, vtotal 1926, vdisplay 1920
+[  129.116015] [drm:drm_calc_timestamping_constants] crtc 50: clock 150000 kHz framedur 13944240 linedur 7240
+[  129.116025] [drm:drm_atomic_helper_commit_planes] crtc-0: begin                                           
+[  129.116037] [drm:mdp5_plane_atomic_update] plane-0: update                                                
+[  129.116050] [drm:mdp5_plane_mode_set] plane-0: FB[51] 0,0,1080,1920 -> CRTC[50] 0,0,1080,1920             
+[  129.116061] [drm:mdp5_plane_mode_set] scale config = 0                                                    
+[  129.116085] [drm:mdp5_crtc_atomic_flush] crtc-0: event: 2a2a7209                                          
+[  129.116107] [drm:mdp5_ctl_blend] lm0: blend config = 0x00040000. ext_cfg = 0x00000000                     
+[  129.116117] [drm:crtc_flush] crtc-0: flush=00000840                                                       
+[  129.116983] [drm:mdp5_crtc_vblank_irq] crtc-0: send event: 2a2a7209                                       
+[  129.172473] msm fd900000.mdss: pp done time out, lm=0                                                     
+[  129.172506] [drm:mdp5_plane_cleanup_fb] plane-0: cleanup: FB[51]                                          
+[  129.172525] [drm:drm_mode_object_put.part.0] OBJ ID: 556 (2)                                              
+[  129.172536] [drm:drm_atomic_state_default_clear] Clearing atomic state f90dd658                           
+[  129.172548] [drm:drm_mode_object_put.part.0] OBJ ID: 52 (2)                                               
+[  129.172558] [drm:drm_mode_object_put.part.0] OBJ ID: 51 (3)                                               
+[  129.172569] [drm:__drm_atomic_state_free] Freeing atomic state f90dd658          
+
+
+----
+Messages immediately after the last batch above when the ping/pong IRQs
+stop. This sequence of messages appear consistently like this after this
+point.
+
+[  129.322565] [drm:drm_atomic_state_init] Allocated atomic state f90dd658                                   
+[  129.322585] [drm:drm_mode_object_get] OBJ ID: 51 (2)                                                      
+[  129.322597] [drm:drm_atomic_get_plane_state] Added [PLANE:33:plane-0] 13115e01 state to f90dd658          
+[  129.322610] [drm:drm_mode_object_get] OBJ ID: 52 (1)                                            
+[  129.322621] [drm:drm_atomic_get_crtc_state] Added [CRTC:50:crtc-0] 380d863c state to f90dd658   
+[  129.322631] [drm:drm_mode_object_get] OBJ ID: 557 (1)                                                     
+[  129.322644] [drm:drm_atomic_check_only] checking f90dd658                                                 
+[  129.322661] [drm:mdp5_plane_atomic_check] plane-0: check (1 -> 1)                                         
+[  129.322675] [drm:mdp5_crtc_atomic_check] crtc-0: check                                                    
+[  129.322687] [drm:mdp5_crtc_atomic_check] crtc-0: assign pipe plane-0 on stage=1                           
+[  129.322698] [drm:drm_atomic_commit] committing f90dd658                                         
+[  129.322716] [drm:msm_framebuffer_prepare] FB[51]: iova[0]: 70101000 (0)                                   
+[  129.382537] msm fd900000.mdss: pp done time out, lm=0                                                     
+[  129.382577] [drm:drm_calc_timestamping_constants] crtc 50: hwmode: htotal 1086, vtotal 1926, vdisplay 1920
+[  129.382587] [drm:drm_calc_timestamping_constants] crtc 50: clock 150000 kHz framedur 13944240 linedur 7240
+[  129.382598] [drm:drm_atomic_helper_commit_planes] crtc-0: begin                                           
+[  129.382609] [drm:mdp5_plane_atomic_update] plane-0: update                                                
+[  129.382622] [drm:mdp5_plane_mode_set] plane-0: FB[51] 0,0,1080,1920 -> CRTC[50] 0,0,1080,1920             
+[  129.382633] [drm:mdp5_plane_mode_set] scale config = 0                                                    
+[  129.382653] [drm:mdp5_crtc_atomic_flush] crtc-0: event: 0df2511e                                          
+[  129.382677] [drm:mdp5_ctl_blend] lm0: blend config = 0x00040000. ext_cfg = 0x00000000                     
+[  129.382687] [drm:crtc_flush] crtc-0: flush=00000840                                                       
+[  129.385525] [drm:mdp5_crtc_vblank_irq] crtc-0: send event: 0df2511e                                       
+[  129.442536] msm fd900000.mdss: pp done time out, lm=0                                                     
+[  129.442568] [drm:mdp5_plane_cleanup_fb] plane-0: cleanup: FB[51]                                          
+[  129.442586] [drm:drm_mode_object_put.part.0] OBJ ID: 557 (2)                                              
+[  129.442597] [drm:drm_atomic_state_default_clear] Clearing atomic state f90dd658                           
+[  129.442609] [drm:drm_mode_object_put.part.0] OBJ ID: 52 (2)                                               
+[  129.442620] [drm:drm_mode_object_put.part.0] OBJ ID: 51 (3)                                               
+[  129.442630] [drm:__drm_atomic_state_free] Freeing atomic state f90dd658                                   
+
+Brian
