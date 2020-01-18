@@ -2,105 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5161416BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B499E1416AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbgARJQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 04:16:38 -0500
-Received: from ns3.fnarfbargle.com ([103.4.19.87]:41220 "EHLO
-        ns3.fnarfbargle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbgARJQh (ORCPT
+        id S1726899AbgARJLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 04:11:12 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41699 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726628AbgARJLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 04:16:37 -0500
-X-Greylist: delayed 1411 seconds by postgrey-1.27 at vger.kernel.org; Sat, 18 Jan 2020 04:16:36 EST
-Received: from [10.8.0.1] (helo=srv.home ident=heh3905)
-        by ns3.fnarfbargle.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <lists2009@fnarfbargle.com>)
-        id 1isjqY-00014F-U9; Sat, 18 Jan 2020 16:52:47 +0800
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fnarfbargle.com; s=mail;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=9Zt73YMWrB9fRw/Y7euwqnit6NOkGlC6M3h5APuHqbI=;
-        b=nSA1ClJPIEdna7thwoj4c2T7DDvavIE62hsQzLiwRvUMX+kMO3t4IHudVvZpsKt996LIrB3OqqSruIN+iQ6fwh+8Ygfgp1JS/2durHvkFD0/S3vo+h1vo0Nhilbx46ocdoq+yMRBtHBg8BSr2RzubePvJlb30pJc9eoC+eziJTc=;
-Subject: Re: [RFT PATCH 0/4] hwmon: k10temp driver improvements
-To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-References: <20200116141800.9828-1-linux@roeck-us.net>
-From:   Brad Campbell <lists2009@fnarfbargle.com>
-Message-ID: <492345ed-f82e-e4d9-20ac-924b4a00df90@fnarfbargle.com>
-Date:   Sat, 18 Jan 2020 16:52:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 18 Jan 2020 04:11:12 -0500
+Received: from dread.disaster.area (pa49-181-172-170.pa.nsw.optusnet.com.au [49.181.172.170])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 17D1F7EB72C;
+        Sat, 18 Jan 2020 20:11:07 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1isk8H-0003Ey-Eq; Sat, 18 Jan 2020 20:11:05 +1100
+Date:   Sat, 18 Jan 2020 20:11:05 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200118091105.GA9407@dread.disaster.area>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+ <20200116053935.GB8235@magnolia>
+ <CAPcyv4jDMsPj_vZwDOgPkfHLELZWqeJugKgKNVKbpiZ9th683g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200116141800.9828-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jDMsPj_vZwDOgPkfHLELZWqeJugKgKNVKbpiZ9th683g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=IIEU8dkfCNxGYurWsojP/w==:117 a=IIEU8dkfCNxGYurWsojP/w==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=Ei6hhWl3_lwP0hYN7Z4A:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/1/20 10:17 pm, Guenter Roeck wrote:
-> This patch series implements various improvements for the k10temp driver.
+On Wed, Jan 15, 2020 at 10:05:00PM -0800, Dan Williams wrote:
+> On Wed, Jan 15, 2020 at 9:39 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> [..]
+> > >         attempts to minimize software cache effects for both I/O and
+> > >         memory mappings of this file.  It requires a file system which
+> > >         has been configured to support DAX.
+> > >
+> > >         DAX generally assumes all accesses are via cpu load / store
+> > >         instructions which can minimize overhead for small accesses, but
+> > >         may adversely affect cpu utilization for large transfers.
+> > >
+> > >         File I/O is done directly to/from user-space buffers and memory
+> > >         mapped I/O may be performed with direct memory mappings that
+> > >         bypass kernel page cache.
+> > >
+> > >         While the DAX property tends to result in data being transferred
+> > >         synchronously, it does not give the same guarantees of
+> > >         synchronous I/O where data and the necessary metadata are
+> > >         transferred together.
+> >
+> > (I'm frankly not sure that synchronous I/O actually guarantees that the
+> > metadata has hit stable storage...)
 > 
+> Oh? That text was motivated by the open(2) man page description of O_SYNC.
 
-Looks good here. Identical motherboards (ASUS x370 Prime-Pro), different 
-CPUs.
+Ugh. "synchronous I/O" means two different things, depending on
+context. In the AIO context, it means "process context waits for operation
+completion direct", but in the O_SYNC context, it means "we guarantee
+data integrity for each I/O submitted".
 
-3950x
+Indeed, O_SYNC AIO is a thing. i.e. we can do an "async sync
+write" to guarantee data integrity without directly waiting for
+it. Now try describing that only using the words "synchronous
+write" to describe both behaviours. :)
 
-k10temp-pci-00c3
-Adapter: PCI adapter
-Vcore:        +1.38 V
-Vsoc:         +1.08 V
-Tdie:         +69.1°C  (high = +70.0°C)
-Tctl:         +69.1°C
-Tccd1:        +54.2°C
-Tccd2:        +57.0°C
-Icore:       +27.67 A
-Isoc:        +14.13 A
+IOWs, if you are talking about data integrity, you need to
+explicitly say "O_SYNC semantics", not "synchronous write", because
+"synchronous write" is totally ambiguous without the O_SYNC context
+of the open(2) man page...
 
-it8665-isa-0290
-Adapter: ISA adapter
-Vcore:        +1.41 V  (min =  +0.83 V, max =  +1.65 V)
-in1:          +2.51 V  (min =  +1.98 V, max =  +2.73 V)
-+12V:        +11.98 V  (min = +11.20 V, max = +12.40 V)
-+5V:          +5.01 V  (min =  +4.74 V, max =  +5.61 V)
-3VSB:         +6.67 V  (min =  +2.83 V, max =  +3.40 V)
-Vbat:         +6.58 V
-+3.3V:        +3.33 V
-CPU Fan:     3409 RPM  (min = 1500 RPM)
-Back Fan:       0 RPM  (min =    0 RPM)
-MB CPU Temp:  +56.0°C  (low  = +13.0°C, high = +88.0°C)
-Ambient:      +35.0°C  (low  = +13.0°C, high = +43.0°C)  sensor = thermistor
-PCH:          +46.0°C  (low  = +18.0°C, high = +61.0°C)  sensor = thermistor
+Cheers,
 
-1800x
+Dave.
 
-k10temp-pci-00c3
-Adapter: PCI adapter
-Vcore:        +1.26 V
-Vsoc:         +0.91 V
-Tdie:         +36.0°C  (high = +70.0°C)
-Tctl:         +56.0°C
-Icore:       +15.59 A
-Isoc:         +7.94 A
-
-it8665-isa-0290
-Adapter: ISA adapter
-Vcore:        +1.25 V  (min =  +0.83 V, max =  +1.65 V)
-in1:          +2.48 V  (min =  +1.98 V, max =  +2.73 V)
-+12V:        +11.98 V  (min = +11.20 V, max = +12.40 V)
-+5V:          +4.96 V  (min =  +4.74 V, max =  +5.61 V)
-3VSB:         +6.54 V  (min =  +2.83 V, max =  +3.40 V)
-Vbat:         +6.37 V
-+3.3V:        +3.31 V
-CPU Fan:     1171 RPM  (min = 1500 RPM)  ALARM
-Back Fan:       0 RPM  (min =    0 RPM)
-MB CPU Temp:  +36.0°C  (low  = +13.0°C, high = +88.0°C)
-Ambient:      +44.0°C  (low  = +13.0°C, high = +43.0°C)  sensor = thermistor
-PCH:          +38.0°C  (low  = +18.0°C, high = +61.0°C)  sensor = thermistor
-
-Regards,
-Brad
+-- 
+Dave Chinner
+david@fromorbit.com
