@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E85F14170F
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 11:54:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5199214170D
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 11:53:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbgARKx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 05:53:28 -0500
+        id S1727104AbgARKx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 05:53:27 -0500
 Received: from mga12.intel.com ([192.55.52.136]:61335 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727011AbgARKx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 05:53:27 -0500
+        id S1727011AbgARKx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 05:53:26 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2020 02:53:27 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2020 02:53:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,333,1574150400"; 
-   d="scan'208";a="306501351"
+   d="scan'208";a="220976111"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 18 Jan 2020 02:53:25 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 18 Jan 2020 02:53:24 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1isljI-0003Ca-Hw; Sat, 18 Jan 2020 18:53:24 +0800
-Date:   Sat, 18 Jan 2020 18:52:26 +0800
+        id 1isljI-0003BG-9w; Sat, 18 Jan 2020 18:53:24 +0800
+Date:   Sat, 18 Jan 2020 18:52:27 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Mike Salvatore <mike.salvatore@canonical.com>
 Cc:     kbuild-all@lists.01.org, Shuah Khan <skhan@linuxfoundation.org>,
@@ -33,39 +33,39 @@ Cc:     kbuild-all@lists.01.org, Shuah Khan <skhan@linuxfoundation.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [linux-next:master 7161/9861]
- security/apparmor/policy_unpack_test.c:51:15: sparse: sparse: symbol
- 'build_aa_ext_struct' was not declared. Should it be static?
-Message-ID: <202001181831.bFmypzrR%lkp@intel.com>
+Subject: [RFC PATCH linux-next] apparmor: build_aa_ext_struct() can be static
+Message-ID: <20200118105227.clmarnx4evv7sdox@f53c9c00458a>
+References: <202001181831.bFmypzrR%lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <202001181831.bFmypzrR%lkp@intel.com>
+X-Patchwork-Hint: ignore
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-head:   de970dffa7d19eae1d703c3534825308ef8d5dec
-commit: 4d944bcd4e731ab7bfe8d01a7041ea0ebdc090f1 [7161/9861] apparmor: add AppArmor KUnit tests for policy unpack
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-131-g22978b6b-dirty
-        git checkout 4d944bcd4e731ab7bfe8d01a7041ea0ebdc090f1
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> security/apparmor/policy_unpack_test.c:51:15: sparse: sparse: symbol 'build_aa_ext_struct' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+ policy_unpack_test.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 533137f45361c..dbcfeb12a019f 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -48,8 +48,8 @@ struct policy_unpack_fixture {
+ 	size_t e_size;
+ };
+ 
+-struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+-				   struct kunit *test, size_t buf_size)
++static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
++					  struct kunit *test, size_t buf_size)
+ {
+ 	char *buf;
+ 	struct aa_ext *e;
