@@ -2,67 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C303B141592
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 03:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9401614159C
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 03:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730645AbgARCUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 17 Jan 2020 21:20:19 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38382 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbgARCUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 17 Jan 2020 21:20:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2020 18:20:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,332,1574150400"; 
-   d="scan'208";a="214686885"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.138]) ([10.239.159.138])
-  by orsmga007.jf.intel.com with ESMTP; 17 Jan 2020 18:20:16 -0800
-Cc:     baolu.lu@linux.intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/4] iommu: Preallocate iommu group when probing
- devices
-To:     Joerg Roedel <joro@8bytes.org>
-References: <20200101052648.14295-1-baolu.lu@linux.intel.com>
- <20200101052648.14295-4-baolu.lu@linux.intel.com>
- <20200117102151.GF15760@8bytes.org>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <4a68a71a-d7e7-08e8-2fb9-bd83387016f8@linux.intel.com>
-Date:   Sat, 18 Jan 2020 10:18:52 +0800
+        id S1730670AbgARClj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 17 Jan 2020 21:41:39 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46958 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730588AbgARClj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 17 Jan 2020 21:41:39 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f15so19783261lfl.13;
+        Fri, 17 Jan 2020 18:41:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=J+iRYmced89jcnU4Rg8VpVSibvEd7ELkbaHRbjkZCpI=;
+        b=Tz2Xf4cmunY+k9YkZJ1jslRC0IwCbSBgTy5kHX23niLp3acGEdDXGxixRwavhmaegK
+         Ml8zQumQG2kUpWFGzR2HQ78dvhG1dAZFJBw3BHLjSILE+Bf2anJJs1Ezn0zLlfBOa+Ph
+         bLB3cTsEHI40bOrVu6HdhbOMyFBWLVd/MOY0ak8q3+fwtAVha6Wp9WUSW/91EfUcEzLb
+         gTT2mn8+KTH+cAw1bY/B5SdNu902WjuRqKgm21wHP4nW/6oanqOLn/cW26hSmddpwwJd
+         jXGVCPxIi+yvn5jwVW5DqouYsMgxXXqj44jieUNkjkcc1NmlpUiVAyBuIgdeJvCOOVa9
+         0D4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J+iRYmced89jcnU4Rg8VpVSibvEd7ELkbaHRbjkZCpI=;
+        b=uO9OHvO/2JipEpTG26WzAdaMtTdjzZRAWYNYUsXRAUKuLb/+x+FyRcEBuhabdKXXas
+         E9N9Dlj0yfJsEwejZ8Ze6jazh2w0Gpd7bVRXm/SStKwNGuIrqcSuBj/52cAaQdFoFIUC
+         zrM6p4oXaIT7jIrMBCxxIwU9gM31plIKVFByAtUMpAJD33YtHX1DT1bJEyq+DEAFYwYd
+         y1+PUeCZyJSri2yZaKpkNI01ANV+ETfEHG+PjlyNRFvrB43cO/cjLGzdse4kdvkYdoq8
+         0N/3LcKTyu6cAehI00xr0GOVDsqiSQPqXcCwaiQKi3D9T3PMJg6cxk7adJIWTuZ1mKsn
+         sxrQ==
+X-Gm-Message-State: APjAAAVdUYM+3nPgElxje4dDYMXONe3nuD8L8Xg1fsdjG9rC+t9VrTMz
+        NQZTbEsbnOrkS9boOmusKwsFgMZg
+X-Google-Smtp-Source: APXvYqz9wBfKWuD4mdqswx9eJOhhQuVJz//RlPfOEqu8FWu1GCAiD0Fd6bDvTwOsz0N3JmvzPFwUKQ==
+X-Received: by 2002:ac2:5e6c:: with SMTP id a12mr438297lfr.32.1579315295896;
+        Fri, 17 Jan 2020 18:41:35 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id f11sm15308894lfa.9.2020.01.17.18.41.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 18:41:34 -0800 (PST)
+Subject: Re: [PATCH v1 1/2] iio: accel: kxcjk1013: Support orientation matrix
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Robert Yang <decatf@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200112203301.30235-1-digetx@gmail.com>
+ <df95e688271b4cc0e2313daeeae85507c566fc04.camel@linux.intel.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <05662b2a-829a-aa0f-d751-05f01bf6535f@gmail.com>
+Date:   Sat, 18 Jan 2020 05:41:33 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200117102151.GF15760@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <df95e688271b4cc0e2313daeeae85507c566fc04.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
-
-On 1/17/20 6:21 PM, Joerg Roedel wrote:
-> On Wed, Jan 01, 2020 at 01:26:47PM +0800, Lu Baolu wrote:
->> This splits iommu group allocation from adding devices. This makes
->> it possible to determine the default domain type for each group as
->> all devices belonging to the group have been determined.
+15.01.2020 20:20, Srinivas Pandruvada пишет:
+> On Sun, 2020-01-12 at 23:33 +0300, Dmitry Osipenko wrote:
+>> Hardware could be physically mounted in any possible direction and
+>> userpspace needs to be aware of the mounting orientation in order to
+>> process sensor's data correctly. In particular this helps iio-sensor-
+>> proxy
+>> to report display's orientation properly on a phone/tablet devices.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> I think its better to keep group allocation as it is and just defer
-> default domain allocation after each device is in its group. But take
-> care about the device hotplug path which might add new devices to groups
-> which already have a default domain, or add new groups that might need a
-> default domain too.
-Thanks for the comment. It looks good to me. I will try to do it in the
-next version.
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Best regards,
-baolu
+Thanks!
+
