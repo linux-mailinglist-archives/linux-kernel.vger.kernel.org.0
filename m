@@ -2,77 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84CAA1416D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7D11416D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 18 Jan 2020 10:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbgARJgc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 18 Jan 2020 04:36:32 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41487 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbgARJgb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 04:36:31 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i1so24456462oie.8;
-        Sat, 18 Jan 2020 01:36:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nIAP5cG6K/C2mCPjVg0E+T86a04ru5M9t7rhH6PyWlM=;
-        b=ZxKQbqMhHlD5AyZl3tOtIQaUaQffq21bJ8XoCgzUylybTQ7R4xRcKS5DusHx1wmPNZ
-         J6IZqJ4aDlXEbXHB5S6UO/xK52Rnl6WeObsEzFWNYAyYJxCXZG2OPIbBVSQJaM2SoJD0
-         wZ/RcvyUJFs9aj7cj/sfz4aNgn7aIJxOwwGM+hEFmc2rpXUkE3wRpHTh81bOGj8tkNtB
-         CUviALAKxzC4jnYPJpdDHSyYP+1Vd1W6wVCDowZHo2SKqcdvMkpk3/Vex7lYjFxvsmjF
-         RSpG6723TaznP4xcoxzFqP0N6+hw5QM4HbIseCgXYwcyygUXti7U9tVEYL7FDGQU6dZF
-         8hCw==
-X-Gm-Message-State: APjAAAXctmwC8yugBA8fp/DF149ESGexF0tD13+FR0BhEyqI1j1oKYai
-        WZJnT4Pdw1GvZagpq4IIPI8tPNUAFjH2fojrlyw=
-X-Google-Smtp-Source: APXvYqxF+VrrePZ2atzzLogO5TIEFetNA0fD2qRqEjpTJE6Tki/uYIIRcD71LLw38+H+wtjqoVVnBKmMWBRYrlt/8XQ=
-X-Received: by 2002:aca:1a06:: with SMTP id a6mr6308768oia.148.1579340190993;
- Sat, 18 Jan 2020 01:36:30 -0800 (PST)
+        id S1727060AbgARJjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 04:39:05 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:39074 "EHLO shell.v3.sk"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726709AbgARJjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 04:39:04 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 0141BDFD99;
+        Sat, 18 Jan 2020 09:39:11 +0000 (UTC)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id yp5x23aBDNuT; Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1BB21DFE50;
+        Sat, 18 Jan 2020 09:39:10 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id hZypglIN-vIJ; Sat, 18 Jan 2020 09:39:09 +0000 (UTC)
+Received: from furthur.lan (unknown [109.183.109.54])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id B0997DFD99;
+        Sat, 18 Jan 2020 09:39:09 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM: dts: some more MMP3 DT fixes
+Date:   Sat, 18 Jan 2020 10:38:56 +0100
+Message-Id: <20200118093858.326659-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200118081356.22167-1-krzk@kernel.org>
-In-Reply-To: <20200118081356.22167-1-krzk@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 18 Jan 2020 10:36:17 +0100
-Message-ID: <CAMuHMdVTg+Amw6Epuqhd60pdUDeCbTzJ=7TNDLE0BQRgCLQHPQ@mail.gmail.com>
-Subject: Re: [PATCH v2] sh: sh4a: Bring back tmu3_device early device
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 18, 2020 at 9:14 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Commit 1399c195ef50 ("sh: Switch to new style TMU device") converted
-> tmu3_device platform device to new style of platform data but removed it
-> from sh7786_early_devices array effectively removing last three timers
-> and causing a warning:
->
->     arch/sh/kernel/cpu/sh4a/setup-sh7786.c:243:31:
->         warning: ‘tmu3_device’ defined but not used [-Wunused-variable]
->
-> Fixes: 1399c195ef50 ("sh: Switch to new style TMU device")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hi,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+please apply the two patches chained to this message.
 
-Gr{oetje,eeting}s,
+Both are rather straightforward. The first one is actually a resend of a
+patch sent just before the christmas holidays, which is probably why it
+slipped throught the cracks.
 
-                        Geert
+Thank you
+Lubo
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
