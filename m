@@ -2,90 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD81C141AC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D15A141AC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:09:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgASBGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 20:06:09 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59575 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbgASBGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 20:06:09 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 480c7L6K7fz9sP3;
-        Sun, 19 Jan 2020 12:06:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579395967;
-        bh=WB2vHqaSoZLAA5Tp3IIAjL7KxrkZjeK/A4htgKEjG4w=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VSivGPphpDCu4Q0KxR1BvrvEeK1LJPqqWpFU/5d812sWpydkXsYUSalp7dGKmyr58
-         GtAoxqqXaZY26fpML9o4ZBmAsheL6pJJyVKnBJgGR5kdrdS2WRJax3vRat1L9OCvp+
-         gVa9ViHYQYfTBRd0f8l4TZlVKO3/95c0Er6vi4RCR5MgJTwg1XjHAQQciZ6V107Lu5
-         m7sVDsTLVkL5PY+FkegFcvam859+iJma21bTBxdoKgmI5tr7Xk5Ukob4Veeev7y6tQ
-         gw7TV6OnxxGWGMRylzea/pZ6xudOAO55NjXg1NQPxWHpVaLQ6gEwbs1ZNASEH6S3rU
-         Psj3MTgixW9qw==
-Date:   Sun, 19 Jan 2020 12:06:05 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Message-ID: <20200119120605.5417fc50@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_MFy/01xHWYblFpWPCbdiXU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1728741AbgASBJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 20:09:35 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:54107 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbgASBJf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 20:09:35 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id 00J18Sjt003827;
+        Sun, 19 Jan 2020 10:08:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com 00J18Sjt003827
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1579396108;
+        bh=6MBI5y0HLjMV5fqAAD8InPmtoP2OMhcG7xNpXN5CC/s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Z6BsN2LR45ya+s/F2MC5vcLobGS/Orlq7tu1zd1yjDbAka8SXYOaMeZ9rpB1CuQZr
+         5bXcga3KWhq9fbP1oN/4moCH/REvnc89GniU2X+m7uNxjXaxozphARJSu2H9Uqx3LL
+         uW88pIG54/Y7xFuDaKXgAPBuakzf2x7nvzkWbhjuZTH/nbaoI5qTRs+G7wLFarXLA7
+         s6vpksJKKODmQq60lRIPK27bt2EfaHtvcAuwKeKJGenZhysQtiXLRlXnUUWsOqqYsN
+         We370+1F0xd1d1xIGs/LgKjd77zU04E4dkBJf7I9p2WSinst4mbfZJC6RHqRP567d5
+         SCYe0unlx1aOw==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     patches@arm.linux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v2] ARM: decompressor: simplify libfdt builds
+Date:   Sun, 19 Jan 2020 10:08:22 +0900
+Message-Id: <20200119010822.6897-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_MFy/01xHWYblFpWPCbdiXU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Copying source files during the build time may not end up with
+as clean code as expected.
 
-Hi all,
+lib/fdt*.c simply wrap scripts/dtc/libfdt/fdt*.c, and it works
+nicely. Let's follow that approach for the arm decompressor, too.
 
-In commit
+Add four wrappers, arch/arm/boot/compressed/fdt*.c and remove
+the Makefile messes. Another nice thing is we no longer need to
+maintain the own libfdt_env.h because the decompressor can include
+<linux/libfdt_env.h>.
 
-  8f1880cbe8d0 ("net: dsa: bcm_sf2: Configure IMP port for 2Gb/sec")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Fixes tag
+KernelVersion: v5.5-rc1
 
-  Fixes: 01b0ac07589e ("net: dsa: bcm_sf2: Add support for optional reset c=
-ontroller line")
+Changes in v2:
+  - fix build error
 
-has these problem(s):
+ arch/arm/boot/compressed/.gitignore     |  9 -------
+ arch/arm/boot/compressed/Makefile       | 33 +++++++------------------
+ arch/arm/boot/compressed/atags_to_fdt.c |  1 +
+ arch/arm/boot/compressed/fdt.c          |  1 +
+ arch/arm/boot/compressed/fdt_ro.c       |  1 +
+ arch/arm/boot/compressed/fdt_rw.c       |  1 +
+ arch/arm/boot/compressed/fdt_wip.c      |  1 +
+ arch/arm/boot/compressed/libfdt_env.h   | 24 ------------------
+ 8 files changed, 14 insertions(+), 57 deletions(-)
+ create mode 100644 arch/arm/boot/compressed/fdt.c
+ create mode 100644 arch/arm/boot/compressed/fdt_ro.c
+ create mode 100644 arch/arm/boot/compressed/fdt_rw.c
+ create mode 100644 arch/arm/boot/compressed/fdt_wip.c
+ delete mode 100644 arch/arm/boot/compressed/libfdt_env.h
 
-  - Target SHA1 does not exist
+diff --git a/arch/arm/boot/compressed/.gitignore b/arch/arm/boot/compressed/.gitignore
+index 86b2f5d28240..2fdb4885846b 100644
+--- a/arch/arm/boot/compressed/.gitignore
++++ b/arch/arm/boot/compressed/.gitignore
+@@ -6,12 +6,3 @@ hyp-stub.S
+ piggy_data
+ vmlinux
+ vmlinux.lds
+-
+-# borrowed libfdt files
+-fdt.c
+-fdt.h
+-fdt_ro.c
+-fdt_rw.c
+-fdt_wip.c
+-libfdt.h
+-libfdt_internal.h
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index da599c3a1193..07962a320b89 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -76,29 +76,23 @@ compress-$(CONFIG_KERNEL_LZMA) = lzma
+ compress-$(CONFIG_KERNEL_XZ)   = xzkern
+ compress-$(CONFIG_KERNEL_LZ4)  = lz4
+ 
+-# Borrowed libfdt files for the ATAG compatibility mode
+-
+-libfdt		:= fdt_rw.c fdt_ro.c fdt_wip.c fdt.c
+-libfdt_hdrs	:= fdt.h libfdt.h libfdt_internal.h
+-
+-libfdt_objs	:= $(addsuffix .o, $(basename $(libfdt)))
+-
+-$(addprefix $(obj)/,$(libfdt) $(libfdt_hdrs)): $(obj)/%: $(srctree)/scripts/dtc/libfdt/%
+-	$(call cmd,shipped)
++ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
++libfdt_objs = fdt_rw.o fdt_ro.o fdt_wip.o fdt.o atags_to_fdt.o
+ 
+-$(addprefix $(obj)/,$(libfdt_objs) atags_to_fdt.o): \
+-	$(addprefix $(obj)/,$(libfdt_hdrs))
++OBJS	+= $(libfdt_objs)
+ 
+-ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
+-OBJS	+= $(libfdt_objs) atags_to_fdt.o
++# -fstack-protector-strong triggers protection checks in this code,
++# but it is being used too early to link to meaningful stack_chk logic.
++nossp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
++$(foreach o, $(libfdt_objs), \
++	$(eval CFLAGS_$(o) := -I $(srctree)/scripts/dtc/libfdt $(nossp-flags-y)))
+ endif
+ 
+ targets       := vmlinux vmlinux.lds piggy_data piggy.o \
+ 		 lib1funcs.o ashldi3.o bswapsdi2.o \
+ 		 head.o $(OBJS)
+ 
+-clean-files += piggy_data lib1funcs.S ashldi3.S bswapsdi2.S \
+-		$(libfdt) $(libfdt_hdrs) hyp-stub.S
++clean-files += piggy_data lib1funcs.S ashldi3.S bswapsdi2.S hyp-stub.S
+ 
+ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+ KBUILD_CFLAGS += $(DISABLE_ARM_SSP_PER_TASK_PLUGIN)
+@@ -108,15 +102,6 @@ ORIG_CFLAGS := $(KBUILD_CFLAGS)
+ KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
+ endif
+ 
+-# -fstack-protector-strong triggers protection checks in this code,
+-# but it is being used too early to link to meaningful stack_chk logic.
+-nossp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
+-CFLAGS_atags_to_fdt.o := $(nossp-flags-y)
+-CFLAGS_fdt.o := $(nossp-flags-y)
+-CFLAGS_fdt_ro.o := $(nossp-flags-y)
+-CFLAGS_fdt_rw.o := $(nossp-flags-y)
+-CFLAGS_fdt_wip.o := $(nossp-flags-y)
+-
+ ccflags-y := -fpic $(call cc-option,-mno-single-pic-base,) -fno-builtin -I$(obj)
+ asflags-y := -DZIMAGE
+ 
+diff --git a/arch/arm/boot/compressed/atags_to_fdt.c b/arch/arm/boot/compressed/atags_to_fdt.c
+index 64c49747f8a3..8452753efebe 100644
+--- a/arch/arm/boot/compressed/atags_to_fdt.c
++++ b/arch/arm/boot/compressed/atags_to_fdt.c
+@@ -1,4 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/libfdt_env.h>
+ #include <asm/setup.h>
+ #include <libfdt.h>
+ 
+diff --git a/arch/arm/boot/compressed/fdt.c b/arch/arm/boot/compressed/fdt.c
+new file mode 100644
+index 000000000000..49bc1fc1e273
+--- /dev/null
++++ b/arch/arm/boot/compressed/fdt.c
+@@ -0,0 +1 @@
++#include "../../../../lib/fdt.c"
+diff --git a/arch/arm/boot/compressed/fdt_ro.c b/arch/arm/boot/compressed/fdt_ro.c
+new file mode 100644
+index 000000000000..fc7f8313e93e
+--- /dev/null
++++ b/arch/arm/boot/compressed/fdt_ro.c
+@@ -0,0 +1 @@
++#include "../../../../lib/fdt_ro.c"
+diff --git a/arch/arm/boot/compressed/fdt_rw.c b/arch/arm/boot/compressed/fdt_rw.c
+new file mode 100644
+index 000000000000..7e9777da2708
+--- /dev/null
++++ b/arch/arm/boot/compressed/fdt_rw.c
+@@ -0,0 +1 @@
++#include "../../../../lib/fdt_rw.c"
+diff --git a/arch/arm/boot/compressed/fdt_wip.c b/arch/arm/boot/compressed/fdt_wip.c
+new file mode 100644
+index 000000000000..f0b580e760a7
+--- /dev/null
++++ b/arch/arm/boot/compressed/fdt_wip.c
+@@ -0,0 +1 @@
++#include "../../../../lib/fdt_wip.c"
+diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
+deleted file mode 100644
+index 6a0f1f524466..000000000000
+--- a/arch/arm/boot/compressed/libfdt_env.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ARM_LIBFDT_ENV_H
+-#define _ARM_LIBFDT_ENV_H
+-
+-#include <linux/limits.h>
+-#include <linux/types.h>
+-#include <linux/string.h>
+-#include <asm/byteorder.h>
+-
+-#define INT32_MAX	S32_MAX
+-#define UINT32_MAX	U32_MAX
+-
+-typedef __be16 fdt16_t;
+-typedef __be32 fdt32_t;
+-typedef __be64 fdt64_t;
+-
+-#define fdt16_to_cpu(x)		be16_to_cpu(x)
+-#define cpu_to_fdt16(x)		cpu_to_be16(x)
+-#define fdt32_to_cpu(x)		be32_to_cpu(x)
+-#define cpu_to_fdt32(x)		cpu_to_be32(x)
+-#define fdt64_to_cpu(x)		be64_to_cpu(x)
+-#define cpu_to_fdt64(x)		cpu_to_be64(x)
+-
+-#endif
+-- 
+2.17.1
 
-Maybe you meant
-
-Fixes: eee87e4377a4 ("net: dsa: bcm_sf2: Add support for optional reset con=
-troller line")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_MFy/01xHWYblFpWPCbdiXU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4jq30ACgkQAVBC80lX
-0GzFxQf/Wcy8+0nzLxFi7ni6yXKnLjkIUGFrYNj3oCR8jerj+z6uWVMaQxqhMuBj
-4NGpsfulLGT20d47bx/IZix8BjvFOAb+plHwSpHYO5NMKwcbjADoPYJPn5dS553E
-ojubAqbfet8qwAPSMeHjjoeCpEE/TDdBE3nhUNhusOJbrrKsoiXGCItIWvd+taV0
-r4NZ+sFYpzxlFWjbML5o9GgzHW0NYwj75T3C7Z0EML7R0dbtL3Bl1LobQHMhgP+t
-ceVUMBeRQHNTg0PWd3UsbqmbjVDqwveRyylQDOgsGalsA76jy16rr+QEzR9Yq3Kx
-SNPVspKfcsiB51qhnkXRuw12kYS2Aw==
-=P1JM
------END PGP SIGNATURE-----
-
---Sig_/_MFy/01xHWYblFpWPCbdiXU--
