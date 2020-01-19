@@ -2,127 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29191141B66
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 04:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50447141B6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 04:13:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbgASDHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 22:07:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35882 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729064AbgASDH1 (ORCPT
+        id S1727580AbgASDNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 22:13:49 -0500
+Received: from ns3.fnarfbargle.com ([103.4.19.87]:60514 "EHLO
+        ns3.fnarfbargle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbgASDNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 22:07:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lKx256qV42VUfcJn3Q/aWjf3VjkERjdSMK72eHx0NVw=; b=HdE+OffDBMWufdUf4KF4uzfkT
-        ATug0N8+7YE9PqDYKwMpuGS3nTYrFGm8JIJMryUkXl2+TWqHN1jmUN8Mur3zUmqc2WFEyMuXm+9Ef
-        hrBiyW32SQ2YUosqZxWGMtoKj5rtO1VvJVnypY6gc00NvF+7W6P2NN1Pi6tPTSedIuUB+jCSwr6vd
-        la+l6R8+FHFj4R6br9bdGZthtaVqQsuHauAGOKCIDT4xpw0rRezVyZ3jriN9fvMEc1SscGKEnkr7V
-        UvnaiqLHZ+/Cagpnt+2/mDhF6vMGj5cQ75qWV8eHm5M1dyO1fZcn3wbdqr07CC7mDBpQU1BzUOv1f
-        2ND2pyeTg==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it0vb-00077H-To; Sun, 19 Jan 2020 03:07:08 +0000
-Subject: Re: [PATCH] workqueue: Document (some) memory-ordering properties of
- {queue,schedule}_work()
-To:     Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        "Paul E . McKenney" <paulmck@kernel.org>
-References: <20200118215820.7646-1-parri.andrea@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <86f582c3-6029-890f-6d63-d51b9d1274f2@infradead.org>
-Date:   Sat, 18 Jan 2020 19:07:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sat, 18 Jan 2020 22:13:48 -0500
+Received: from [10.8.0.1] (helo=srv.home ident=heh22038)
+        by ns3.fnarfbargle.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <lists2009@fnarfbargle.com>)
+        id 1it122-0001Ee-6P; Sun, 19 Jan 2020 11:13:46 +0800
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fnarfbargle.com; s=mail;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:Cc:References:To:Subject; bh=AihWplvJtdbUp+6jewTLVn4+o2sVAzvWGPw1MhIl0Ok=;
+        b=emjlcVjXGHq+T9x2P5kXJeM4eoruY8t0bErlasqfnyWmcTrXj9UjfTWnppWEqjvO+1kj1K2Y7RmXdbj6diLcFNDIBZd2i4wNRAkncYOBMmPO5/dEePzw5fMAWa6vSeszthAqSFX0b05p1xufgRODOaKpK0QFFJrZ+Gi/OOCAres=;
+Subject: Re: [PATCH v2 0/5] hwmon: k10temp driver improvements
+To:     Guenter Roeck <linux@roeck-us.net>
+References: <20200118172615.26329-1-linux@roeck-us.net>
+ <CANVEwpbgi5sUdBTyo330oCZ1T-cD+DoBJWrE9JbXw-DvYTiBvw@mail.gmail.com>
+ <7345a801-6e9d-b85f-1a8a-72ee89cc0330@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+From:   Brad Campbell <lists2009@fnarfbargle.com>
+Message-ID: <4996ea33-7fe2-59c7-32b2-a7bd09d42080@fnarfbargle.com>
+Date:   Sun, 19 Jan 2020 11:13:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20200118215820.7646-1-parri.andrea@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <7345a801-6e9d-b85f-1a8a-72ee89cc0330@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 1/18/20 1:58 PM, Andrea Parri wrote:
-> It's desirable to be able to rely on the following property:  All stores
-> preceding (in program order) a call to a successful queue_work() will be
-> visible from the CPU which will execute the queued work by the time such
-> work executes, e.g.,
+On 19/1/20 8:48 am, Guenter Roeck wrote:
+> Everyone: I'll be happy to add Tested-by: tags with your name and e-mail
+> address to the series, but you'll have to send it to me. I appreciate
+> all your testing and would like to acknowledge it, but I can not add
+> Tested-by: tags (or any other tags, for that matter) on my own.
 > 
->   { x is initially 0 }
-> 
->     CPU0                              CPU1
-> 
->     WRITE_ONCE(x, 1);                 [ "work" is being executed ]
->     r0 = queue_work(wq, work);          r1 = READ_ONCE(x);
-> 
->   Forbids: r0 == true && r1 == 0
-> 
-> The current implementation of queue_work() provides such memory-ordering
-> property:
-> 
->   - In __queue_work(), the ->lock spinlock is acquired.
-> 
->   - On the other side, in worker_thread(), this same ->lock is held
->     when dequeueing work.
-> 
-> So the locking ordering makes things work out.
-> 
-> Add this property to the DocBook headers of {queue,schedule}_work().
-> 
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> ---
->  include/linux/workqueue.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-> index 4261d1c6e87b1..4fef6c38b0536 100644
-> --- a/include/linux/workqueue.h
-> +++ b/include/linux/workqueue.h
-> @@ -487,6 +487,19 @@ extern void wq_worker_comm(char *buf, size_t size, struct task_struct *task);
->   *
->   * We queue the work to the CPU on which it was submitted, but if the CPU dies
->   * it can be processed by another CPU.
-> + *
-> + * Memory-ordering properties:  If it returns %true, guarantees that all stores
-> + * preceding the call to queue_work() in the program order will be visible from
-> + * the CPU which will execute @work by the time such work executes, e.g.,
-> + *
-> + * { x is initially 0 }
-> + *
-> + *   CPU0				CPU1
-> + *
-> + *   WRITE_ONCE(x, 1);			[ @work is being executed ]
-> + *   r0 = queue_work(wq, work);		  r1 = READ_ONCE(x);
-> + *
-> + * Forbids: r0 == true && r1 == 0
->   */
->  static inline bool queue_work(struct workqueue_struct *wq,
->  			      struct work_struct *work)
-> @@ -546,6 +559,9 @@ static inline bool schedule_work_on(int cpu, struct work_struct *work)
->   * This puts a job in the kernel-global workqueue if it was not already
->   * queued and leaves it in the same position on the kernel-global
->   * workqueue otherwise.
-> + *
-> + * Shares the same memory-ordering properties of queue_work(), c.f., the
-
-nit:                                                              cf. the
-
-> + * DocBook header of queue_work().
->   */
->  static inline bool schedule_work(struct work_struct *work)
->  {
+> Thanks,
+> Guenter
 > 
 
-
--- 
-~Randy
+Tested-by: Brad Campbell <lists2009@fnarfbargle.com>
 
