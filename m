@@ -2,163 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3C3141B21
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 03:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33199141B20
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 03:11:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbgASCLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 21:11:25 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40217 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbgASCLZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 21:11:25 -0500
-Received: by mail-vs1-f67.google.com with SMTP id g23so17087734vsr.7;
-        Sat, 18 Jan 2020 18:11:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B5jFZek4YmlK/Tonf5hyyKNhUMbuRn2M2YPUgwRM9ec=;
-        b=i35U7Xnwu3OoIXOaEPbvz0khPSVMrzWyR/5c1MkHDN68RMeckIGN0NrDqzIM7M0rpn
-         0AGUsE9ErseOaWgGgzqmI5jM9RBPo9Yyy+t9hxCiEXl09QsFPNwBqTgvUe9PlOTPgnen
-         1X+jBZtQYmrQ/4fIKpO+OAlcZdpWdWDFbRCM0fEeOyRPzthfmfG5VqIdn4eCPIxyePwn
-         Lk4UGyi/BM2zJ/MBf+LPz2iAGe3HPGI3GVGyEABQuUfucBx0bRgr37Mx8hw0BagzPuIq
-         CKwNf9yAesPxUiLsQViQ5dSRwF10LYvYNRcYq1Qrwp9neknpqeMwvnA0bYruZ6wZPkuy
-         wIXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B5jFZek4YmlK/Tonf5hyyKNhUMbuRn2M2YPUgwRM9ec=;
-        b=rYJHNMy8aQUuZCuYPWzaMFOqj5ilgrs0D1qmLbOzl+yagX06kr56i9UbtIGgaxJ/fI
-         Gtun1u+CxUGvcZeXVgyhr25z03D1DmECxR1/4rBNh/mnMDnZb7vZuDK2chES2QISzBjd
-         X0w/HO2uNcKLdKDU0D5x6ARx1BcLyjImNkBlX99A0SxXLopfparx5KBmoaiC4miR6TUK
-         +DEVlGTfa5g2UrS9MypJ1zyM/ncgoFpc9RRUwZKaPHcXN9A7pjzHyANlXhHgC8ijXtli
-         mzUOOnf8BGm8oXrF3HMZ2TwXCiYGYtCt1ZBoNT5mZmZFZYM6Kh78ZaLHDNJe/ckkIU11
-         Whow==
-X-Gm-Message-State: APjAAAV28wVBFG6t61LTyqibpXuvjMO9Y2QRP6GRcCeFNDVfmwbIFVDn
-        t3+6WE73jheJ+ni7mjvZhZAwcMiM3VvzDMTJkJA=
-X-Google-Smtp-Source: APXvYqzO4H83SrNXG/08MHKFDigUokN497fVtN8zHTfA0icJkLIqw4AXDrZmHsEqTm/0mthWQ3FRw5ZM/bys0LJOSFc=
-X-Received: by 2002:a67:fb14:: with SMTP id d20mr9211618vsr.136.1579399883734;
- Sat, 18 Jan 2020 18:11:23 -0800 (PST)
+        id S1728249AbgASCK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 21:10:59 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6490 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727106AbgASCK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 21:10:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2020 18:10:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,336,1574150400"; 
+   d="scan'208";a="214896325"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga007.jf.intel.com with ESMTP; 18 Jan 2020 18:10:56 -0800
+Date:   Sun, 19 Jan 2020 10:11:07 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, dan.j.williams@intel.com,
+        aneesh.kumar@linux.ibm.com, kirill@shutemov.name,
+        yang.shi@linux.alibaba.com, thellstrom@vmware.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/5] mm/mremap.c: cleanup move_page_tables() a little
+Message-ID: <20200119021107.GA9745@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200117232254.2792-1-richardw.yang@linux.intel.com>
+ <20200118160702.9e5cc9f44ef855c070036331@linux-foundation.org>
 MIME-Version: 1.0
-References: <20200119001327.29155-1-huobean@gmail.com> <20200119001327.29155-9-huobean@gmail.com>
-In-Reply-To: <20200119001327.29155-9-huobean@gmail.com>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Sun, 19 Jan 2020 07:40:47 +0530
-Message-ID: <CAGOxZ53rxMZRXU7tFF2yuAHmgXDp4Ho21y5_+BgV55D=Y-SzkA@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] scsi: ufs: Use UFS device indicated maximum LU number
-To:     Bean Huo <huobean@gmail.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>, asutoshd@codeaurora.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Can Guo <cang@codeaurora.org>, linux-scsi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200118160702.9e5cc9f44ef855c070036331@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 19, 2020 at 5:45 AM Bean Huo <huobean@gmail.com> wrote:
+On Sat, Jan 18, 2020 at 04:07:02PM -0800, Andrew Morton wrote:
+>On Sat, 18 Jan 2020 07:22:49 +0800 Wei Yang <richardw.yang@linux.intel.com> wrote:
 >
-> From: Bean Huo <beanhuo@micron.com>
+>> move_page_tables() tries to move page table by PMD or PTE.
+>> 
+>> The root reason is if it tries to move PMD, both old and new range should
+>> be PMD aligned. But current code calculate old range and new range
+>> separately.  This leads to some redundant check and calculation.
+>> 
+>> This cleanup tries to consolidate the range check in one place to reduce
+>> some extra range handling.
 >
-> According to Jedec standard UFS 3.0 and UFS 2.1 Spec, Maximum number
-> of logical units supported by the UFS device is indicated by parameter
-> bMaxNumberLU in Geometry Descriptor. This patch is to delete current
-> hard code macro definition of UFS_UPIU_MAX_GENERAL_LUN, and switch to
-> use device indicated number instead.
->
-> Reviewed-by: Asutosh Das <asutoshd@codeaurora.org>
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>Thanks, I grabbed these, aimed at 5.7-rc1.
 
->  drivers/scsi/ufs/ufs-sysfs.c |  2 +-
->  drivers/scsi/ufs/ufs.h       | 12 +++++++++---
->  drivers/scsi/ufs/ufshcd.c    |  4 ++--
->  3 files changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
-> index 720be3f64be7..dbdf8b01abed 100644
-> --- a/drivers/scsi/ufs/ufs-sysfs.c
-> +++ b/drivers/scsi/ufs/ufs-sysfs.c
-> @@ -713,7 +713,7 @@ static ssize_t _pname##_show(struct device *dev,                    \
->         struct scsi_device *sdev = to_scsi_device(dev);                 \
->         struct ufs_hba *hba = shost_priv(sdev->host);                   \
->         u8 lun = ufshcd_scsi_to_upiu_lun(sdev->lun);                    \
-> -       if (!ufs_is_valid_unit_desc_lun(lun))                           \
-> +       if (!ufs_is_valid_unit_desc_lun(&hba->dev_info, lun))           \
->                 return -EINVAL;                                         \
->         return ufs_sysfs_read_desc_param(hba, QUERY_DESC_IDN_##_duname, \
->                 lun, _duname##_DESC_PARAM##_puname, buf, _size);        \
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index c982bcc94662..dde2eb02f76f 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -63,7 +63,6 @@
->  #define UFS_UPIU_MAX_UNIT_NUM_ID       0x7F
->  #define UFS_MAX_LUNS           (SCSI_W_LUN_BASE + UFS_UPIU_MAX_UNIT_NUM_ID)
->  #define UFS_UPIU_WLUN_ID       (1 << 7)
-> -#define UFS_UPIU_MAX_GENERAL_LUN       8
->
->  /* Well known logical unit id in LUN field of UPIU */
->  enum {
-> @@ -539,12 +538,19 @@ struct ufs_dev_info {
->
->  /**
->   * ufs_is_valid_unit_desc_lun - checks if the given LUN has a unit descriptor
-> + * @dev_info: pointer of instance of struct ufs_dev_info
->   * @lun: LU number to check
->   * @return: true if the lun has a matching unit descriptor, false otherwise
->   */
-> -static inline bool ufs_is_valid_unit_desc_lun(u8 lun)
-> +static inline bool ufs_is_valid_unit_desc_lun(struct ufs_dev_info *dev_info,
-> +               u8 lun)
->  {
-> -       return lun == UFS_UPIU_RPMB_WLUN || (lun < UFS_UPIU_MAX_GENERAL_LUN);
-> +       if (!dev_info || !dev_info->max_lu_supported) {
-> +               pr_err("Max General LU supported by UFS isn't initilized\n");
-> +               return false;
-> +       }
-> +
-> +       return lun == UFS_UPIU_RPMB_WLUN || (lun < dev_info->max_lu_supported);
->  }
->
->  #endif /* End of Header */
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index dd10558f4d01..bf714221455e 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -3270,7 +3270,7 @@ static inline int ufshcd_read_unit_desc_param(struct ufs_hba *hba,
->          * Unit descriptors are only available for general purpose LUs (LUN id
->          * from 0 to 7) and RPMB Well known LU.
->          */
-> -       if (!ufs_is_valid_unit_desc_lun(lun))
-> +       if (!ufs_is_valid_unit_desc_lun(&hba->dev_info, lun))
->                 return -EOPNOTSUPP;
->
->         return ufshcd_read_desc_param(hba, QUERY_DESC_IDN_UNIT, lun,
-> @@ -4525,7 +4525,7 @@ static int ufshcd_get_lu_wp(struct ufs_hba *hba,
->          * protected so skip reading bLUWriteProtect parameter for
->          * it. For other W-LUs, UNIT DESCRIPTOR is not available.
->          */
-> -       else if (lun >= UFS_UPIU_MAX_GENERAL_LUN)
-> +       else if (lun >= hba->dev_info.max_lu_supported)
->                 ret = -ENOTSUPP;
->         else
->                 ret = ufshcd_read_unit_desc_param(hba,
-> --
-> 2.17.1
->
-
+Thanks :)
 
 -- 
-Regards,
-Alim
+Wei Yang
+Help you, Help me
