@@ -2,88 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC30E141ACE
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4DA141AD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgASBNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 20:13:52 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43411 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727070AbgASBNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 20:13:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 480cJF4XMCz9sNF;
-        Sun, 19 Jan 2020 12:13:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1579396430;
-        bh=LDAvg3g4XF4jb8yqToBBuvSRYfwbc6qcUob5orNpPOg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=f2tyhy1mTu3jKfkMKxVdEDTOuX0Ol1v3IFkYq+s+y5AtGtlsbUxGgi4lFPGBlQV9a
-         TaZ0jNauhHxaIJ1yD+0EveG6drf+78hvuLFudV/6Ak8bhUP6hnI+b34UnigcfM4Lqy
-         NLovd0SdXv1jxFS3iIzGR33PQgzyno+hJNFAUSWZNs29h3UqV5lgud3v75XGg4cF2n
-         EfOIGUnYA/HlwX7cLtt28qv/EHBU0pKyk4cEcA9D0vTKCY0NQnlfF3ifLr14OCtc4d
-         b0SyO9BVGf6YkKhSRg2IRbwX7LlQ1BTO7FotZQvD5f1xBVu46i9inOf26xje9H9+nl
-         2hzKyD9ZGsodQ==
-Date:   Sun, 19 Jan 2020 12:13:48 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cezary Rojewski <cezary.rojewski@intel.com>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
-Message-ID: <20200119121348.1f0ba618@canb.auug.org.au>
+        id S1727178AbgASBRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 20:17:12 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51814 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727070AbgASBRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 20:17:12 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EC87ACED00AE71D06D4D;
+        Sun, 19 Jan 2020 09:17:07 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 Jan 2020
+ 09:17:01 +0800
+Subject: Re: [RFC] iomap: fix race between readahead and direct write
+To:     Jan Kara <jack@suse.cz>
+CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <houtao1@huawei.com>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
+References: <20200116063601.39201-1-yukuai3@huawei.com>
+ <20200116153206.GF8446@quack2.suse.cz>
+ <ce4bc2f3-a23e-f6ba-0ef1-66231cd1057d@huawei.com>
+ <20200117110536.GE17141@quack2.suse.cz>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <976d09e1-e3b5-a6a6-d159-9bdac3a7dc84@huawei.com>
+Date:   Sun, 19 Jan 2020 09:17:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/hqZzsq4maTpjuBzys4DYYWP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20200117110536.GE17141@quack2.suse.cz>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hqZzsq4maTpjuBzys4DYYWP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-In commit
+On 2020/1/17 19:05, Jan Kara wrote:
+> provide
+> allocation for each page separately
 
-  a6947c9d86bc ("ASoC: SOF: Intel: hda: Fix SKL dai count")
+Thank you for your response!
 
-Fixes tag
+I do understand there will be additional CPU overhead. But page is 
+allocated in __do_page_cache_readahead(), which is called before
+iomap_begin(). And I did not change that.
 
-  Fixes: ac42b142cd76 ("ASoC: SOF: Intel: hda: Add iDisp4 DAI")
+Thanks!
+Yu Kuai
 
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: dd96daca6c83 ("ASoC: SOF: Intel: Add APL/CNL HW DSP support")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/hqZzsq4maTpjuBzys4DYYWP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4jrUwACgkQAVBC80lX
-0GySjQf/SIm/0pvuydMvMrGT8dBW8AM5QzySzDqm/dzqCMIAkzG0xdxUhSX8KqTq
-9L063pUnNPUWWqHfbhfSy7HeTC+NJRIfg1WTVBZEUP9/13m6S6l4RsMoICdyf311
-KxOJx15jI2O5UJGyySvnDnaBogynwKEiRN6leE/kLjQ3CYmE2MfGAy6rexu6YZzW
-vqu9sYNU4Fv++E2gixdZ/2bsK6Gp5kBwpNs5hYuzEJJiGgWPx+roqXXeeqt/gqq6
-CuQgavxqKG6w7ADWGhrxewylImWcfZtgkMqkP8cwu1ZS7rowulkFhZlxOF6WkBFR
-v58vTfW9S9k7Q0EDShHX+kcwFRBX6A==
-=iDEB
------END PGP SIGNATURE-----
-
---Sig_/hqZzsq4maTpjuBzys4DYYWP--
