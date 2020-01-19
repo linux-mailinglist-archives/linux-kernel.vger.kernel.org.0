@@ -2,202 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16A7B141BE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 05:04:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7F4141BC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 05:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgASEC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 23:02:56 -0500
-Received: from mga01.intel.com ([192.55.52.88]:54997 "EHLO mga01.intel.com"
+        id S1726444AbgASEAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 23:00:24 -0500
+Received: from mga14.intel.com ([192.55.52.115]:62796 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726951AbgASECy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 23:02:54 -0500
+        id S1725980AbgASEAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 23:00:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2020 20:02:52 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2020 20:00:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,336,1574150400"; 
-   d="scan'208";a="226751894"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jan 2020 20:02:50 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Huong Nguyen <huong.nguyen@dell.com>,
-        Austin Bolen <Austin.Bolen@dell.com>
-Subject: [PATCH v13 8/8] PCI/ACPI: Enable EDR support
-Date:   Sat, 18 Jan 2020 20:00:37 -0800
-Message-Id: <ea9584d47cbec728c942ec2c9d8812b6af15e815.1579406227.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1579406227.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1579406227.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+   d="scan'208";a="214910453"
+Received: from local-michael-cet-test.sh.intel.com ([10.239.159.128])
+  by orsmga007.jf.intel.com with ESMTP; 18 Jan 2020 20:00:20 -0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, jmattson@google.com,
+        sean.j.christopherson@intel.com
+Cc:     yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v11 00/10] Enable Sub-Page Write Protection Support
+Date:   Sun, 19 Jan 2020 12:04:57 +0800
+Message-Id: <20200119040507.23113-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+EPT-Based Sub-Page write Protection(SPP) allows Virtual Machine Monitor(VMM)
+specify write-permission for guest physical memory at a sub-page(128 byte)
+granularity. When SPP works, HW enforces write-access check for sub-pages
+within a protected 4KB page.
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, sec 4.5.1, OS must implement following steps
-to enable/use EDR feature.
+The feature targets to provide fine-grained memory protection for
+usages such as memory guard and VM introspection etc.
 
-1. OS can use bit 7 of _OSC Control Field to negotiate control over
-Downstream Port Containment (DPC) configuration of PCIe port. After _OSC
-negotiation, firmware will Set this bit to grant OS control over PCIe
-DPC configuration and Clear it if this feature was requested and denied,
-or was not requested.
+SPP is active when the "sub-page write protection" (bit 23) is 1 in
+Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+Permission Table(SPPT), and subpage permission vector is stored in the
+leaf entry of SPPT. The root page is referenced via a Sub-Page Permission
+Table Pointer (SPPTP) in VMCS.
 
-2. Also, if OS supports EDR, it should expose its support to BIOS by
-setting bit 7 of _OSC Support Field. And if OS sets bit 7 of _OSC
-Control Field it must also expose support for EDR by setting bit 7 of
-_OSC Support Field.
+To enable SPP for guest memory, the guest page should be first mapped
+to a 4KB EPT entry, then set SPP bit 61 of the corresponding entry. 
+While HW walks EPT, it traverses SPPT with the gpa to look up the sub-page
+permission vector within SPPT leaf entry. If the corresponding bit is set,
+write to sub-page is permitted, otherwise, SPP induced EPT violation is generated.
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Keith Busch <keith.busch@intel.com>
-Tested-by: Huong Nguyen <huong.nguyen@dell.com>
-Tested-by: Austin Bolen <Austin.Bolen@dell.com>
----
- drivers/acpi/pci_root.c         | 16 ++++++++++++++++
- drivers/pci/pcie/portdrv_core.c |  7 +++++--
- drivers/pci/probe.c             |  1 +
- include/linux/acpi.h            |  6 ++++--
- include/linux/pci.h             |  1 +
- 5 files changed, 27 insertions(+), 4 deletions(-)
+This patch serial passed SPP function test and selftest on Ice-Lake platform.
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index d1e666ef3fcc..ad1be5941a00 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -131,6 +131,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
- 	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
- 	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
- 	{ OSC_PCI_MSI_SUPPORT, "MSI" },
-+	{ OSC_PCI_EDR_SUPPORT, "EDR" },
- 	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
- };
- 
-@@ -141,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
- 	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
- 	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
- 	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
-+	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
- };
- 
- static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
-@@ -440,6 +442,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
- 	if (pci_msi_enabled())
- 		support |= OSC_PCI_MSI_SUPPORT;
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		support |= OSC_PCI_EDR_SUPPORT;
- 
- 	decode_osc_support(root, "OS supports", support);
- 	status = acpi_pci_osc_support(root, support);
-@@ -487,6 +491,16 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
- 			control |= OSC_PCI_EXPRESS_AER_CONTROL;
- 	}
- 
-+	/*
-+	 * Per the Downstream Port Containment Related Enhancements ECN to
-+	 * the PCI Firmware Spec, r3.2, sec 4.5.1, table 4-5,
-+	 * OSC_PCI_EXPRESS_DPC_CONTROL indicates the OS supports both DPC
-+	 * and EDR. So use CONFIG_PCIE_EDR for requesting DPC control which
-+	 * will only be turned on if both EDR and DPC is enabled.
-+	 */
-+	if (IS_ENABLED(CONFIG_PCIE_EDR))
-+		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
-+
- 	requested = control;
- 	status = acpi_pci_osc_control_set(handle, &control,
- 					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
-@@ -916,6 +930,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
- 		host_bridge->native_pme = 0;
- 	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
- 		host_bridge->native_ltr = 0;
-+	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
-+		host_bridge->native_dpc = 0;
- 
- 	/*
- 	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 5075cb9e850c..009742c865d6 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -253,10 +253,13 @@ static int get_port_device_capability(struct pci_dev *dev)
- 	/*
- 	 * With dpc-native, allow Linux to use DPC even if it doesn't have
- 	 * permission to use AER.
-+	 * If EDR support is enabled in OS, then even if AER is not handled in
-+	 * OS, DPC service can be enabled.
- 	 */
- 	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
--	    pci_aer_available() &&
--	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))
-+	    ((IS_ENABLED(CONFIG_PCIE_EDR) && !host->native_dpc) ||
-+	    (pci_aer_available() &&
-+	    (pcie_ports_dpc_native || (services & PCIE_PORT_SERVICE_AER)))))
- 		services |= PCIE_PORT_SERVICE_DPC;
- 
- 	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 512cb4312ddd..c9a9c5b42e72 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -598,6 +598,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+	bridge->native_dpc = 1;
- }
- 
- struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0f37a7d5fa77..0a7aaa452a98 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -515,8 +515,9 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
- #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
- #define OSC_PCI_MSI_SUPPORT			0x00000010
-+#define OSC_PCI_EDR_SUPPORT			0x00000080
- #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
--#define OSC_PCI_SUPPORT_MASKS			0x0000011f
-+#define OSC_PCI_SUPPORT_MASKS			0x0000019f
- 
- /* PCI Host Bridge _OSC: Capabilities DWORD 3: Control Field */
- #define OSC_PCI_EXPRESS_NATIVE_HP_CONTROL	0x00000001
-@@ -525,7 +526,8 @@ extern bool osc_pc_lpi_support_confirmed;
- #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
- #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
- #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
--#define OSC_PCI_CONTROL_MASKS			0x0000003f
-+#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
-+#define OSC_PCI_CONTROL_MASKS			0x000000bf
- 
- #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
- #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index c393dff2d66f..d0739e90f4e7 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -510,6 +510,7 @@ struct pci_host_bridge {
- 	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
- 	unsigned int	native_pme:1;		/* OS may use PCIe PME */
- 	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-+	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
- 	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
- 
- 	/* Resource alignment requirements */
+Please refer to the SPP introduction document in this patch set and
+Intel SDM for details:
+
+Intel SDM:
+https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+
+Patch 1: Documentation for SPP and related API.
+Patch 2: Add control flags for Sub-Page Protection(SPP).
+Patch 3: Add SPP Table setup functions.
+Patch 4: Add functions to create/destroy SPP bitmap block.
+Patch 5: Introduce user-space SPP IOCTLs.
+Patch 6: Set up SPP paging table at vmentry/vmexit.
+Patch 7: Enable Lazy mode SPP protection.
+Patch 8: Handle SPP protected pages when VM memory changes.
+Patch 9: Add SPP protection check in emulation case.
+Patch 10: SPP selftest.
+
+Change logs:
+v10 -> v11
+  1. Refactored patches Per Sean's review feedback.
+  2. Added HW/KVM capabilities check before initializes SPP.
+  3. Combined a few functions having similar usages.
+  4. Removed unecessary functions in kvm_x86_ops.
+  5. Other code fix according to testing.
+
+v9 ->v10
+  1. Cleared SPP active flag on VM resetting.
+  2. Added trancepoints on subpage setup and SPP induced vmexits.
+  3. Fixed a few code issues reported by Intel test robot.
+
+v8 ->v9:
+  1. Added SPP protection check in pte prefetch case.
+  2. Flushed EPT rmap to remove existing mappings of the target gfns.
+  3. Modified documentation to reflect recent changes.
+  4. Other minor code refactor.
+
+v7 -> v8:
+  1. Changed ioctl interface definition per Paolo's comments.
+  2. Replaced SPP_INIT ioctl funciton with KVM_ENABLE_CAP.
+  3. Removed SPP bit from X86 feature word.
+  4. Returned instruction length to user-space when SPP induced EPT
+     violation happens, this is to provide flexibility to use SPP,
+     revert write or track write.
+  5. Modified selftest application and added into this serial.
+  6. Simplified SPP permission vector check.
+  7. Moved spp.c and spp.h to kvm/mmu folder.
+  8. Other code fix according to Paolo's feedback and testing.
+
+v6 -> v7:
+  1. Configured all available protected pages once SPP induced vmexit
+     happens since there's no PRESENT bit in SPPT leaf entry.
+  2. Changed SPP protection check flow in tdp_page_fault().
+  3. Code refactor and minior fixes.
+
+v5 -> v6:
+  1. Added SPP protection patch for emulation cases per Jim's review.
+  2. Modified documentation and added API description per Jim's review.
+  3. Other minior changes suggested by Jim.
+
+v4 -> v5:
+  1. Enable SPP support for Hugepage(1GB/2MB) to extend application.
+  2. Make SPP miss vm-exit handler as the unified place to set up SPPT.
+  3. If SPP protected pages are access-tracked or dirty-page-tracked,
+     store SPP flag in reserved address bit, restore it in
+     fast_page_fault() handler.
+  4. Move SPP specific functions to vmx/spp.c and vmx/spp.h
+  5. Rebased code to kernel v5.3
+  6. Other change suggested by KVM community.
+  
+v3 -> v4:
+  1. Modified documentation to make it consistent with patches.
+  2. Allocated SPPT root page in init_spp() instead of vmx_set_cr3() to
+     avoid SPPT miss error.
+  3. Added back co-developers and sign-offs.
+
+v2 -> v3:                                                                
+  1. Rebased patches to kernel 5.1 release                                
+  2. Deferred SPPT setup to EPT fault handler if the page is not
+     available while set_subpage() is being called.
+  3. Added init IOCTL to reduce extra cost if SPP is not used.
+  4. Refactored patch structure, cleaned up cross referenced functions.
+  5. Added code to deal with memory swapping/migration/shrinker cases.
+
+v2 -> v1:
+  1. Rebased to 4.20-rc1
+  2. Move VMCS change to a separated patch.
+  3. Code refine and Bug fix 
+
+
+
+
+Yang Weijiang (10):
+  Documentation: Add EPT based Subpage Protection and related APIs
+  mmu: spp: Implement SPPT setup functions
+  mmu: spp: Implement functions to {get|set}_subpage permission
+  x86: spp: Introduce user-space SPP IOCTLs
+  vmx: spp: Handle SPP induced vmexit and EPT violation
+  mmu: spp: Enable Lazy mode SPP protection
+  mmu: spp: Re-enable SPP protection when EPT mapping changes
+  x86: spp: Add SPP protection check in instruction emulation
+  vmx: spp: Initialize SPP bitmap and SPP protection
+  kvm: selftests: selftest for Sub-Page protection
+
+ Documentation/virt/kvm/api.txt                |  39 ++
+ Documentation/virtual/kvm/spp_kvm.txt         | 179 +++++
+ arch/x86/include/asm/kvm_host.h               |  11 +-
+ arch/x86/include/asm/vmx.h                    |  10 +
+ arch/x86/include/uapi/asm/vmx.h               |   2 +
+ arch/x86/kvm/mmu.h                            |   2 +
+ arch/x86/kvm/mmu/mmu.c                        | 117 +++-
+ arch/x86/kvm/mmu/spp.c                        | 614 ++++++++++++++++++
+ arch/x86/kvm/mmu/spp.h                        |  38 ++
+ arch/x86/kvm/trace.h                          |  66 ++
+ arch/x86/kvm/vmx/capabilities.h               |   5 +
+ arch/x86/kvm/vmx/vmx.c                        | 108 +++
+ arch/x86/kvm/x86.c                            | 135 ++++
+ include/uapi/linux/kvm.h                      |  17 +
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   1 +
+ tools/testing/selftests/kvm/x86_64/spp_test.c | 235 +++++++
+ 17 files changed, 1573 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
+ create mode 100644 arch/x86/kvm/mmu/spp.c
+ create mode 100644 arch/x86/kvm/mmu/spp.h
+ create mode 100644 tools/testing/selftests/kvm/x86_64/spp_test.c
+
 -- 
-2.21.0
+2.17.2
 
