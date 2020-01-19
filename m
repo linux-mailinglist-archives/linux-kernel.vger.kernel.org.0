@@ -2,60 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF3414205D
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1604314205E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbgASWHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 17:07:06 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:54373 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbgASWHG (ORCPT
+        id S1728909AbgASWHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 17:07:50 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34290 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727195AbgASWHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 17:07:06 -0500
-Received: by mail-pj1-f68.google.com with SMTP id kx11so5791211pjb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 14:07:05 -0800 (PST)
+        Sun, 19 Jan 2020 17:07:50 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c9so7008210plo.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 14:07:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=BYSZ9xL7TDf1GtsTEJ0J+4ZhcMv2ysvRekB03PSrVjA=;
-        b=KiX394NOsv6PYmkqMGRP8Iik46YtKfb8doeMTrf/BVT3oFFOM4u8bJk1e3ELke+0rD
-         fgK1nYDu3Cj6IoItqC7F24ChzoDAFnDFljOqnkAPbkrJrw1BBqbFN4TgHj4FmWJCshbY
-         M9GxKmwx1zC8UM/HTEquW9iK4qTruYsm5kF8lu2HvORL/BsGNA9H2NV+YpBY0NSVTiqj
-         1/+na3yFhuUGb6l6r9qPy15UrVanBVKXjgWgCHMhrz2VcWu515skvqhNqgTVR0Qfziqs
-         gC0lSmlFBMNV6wimpG4vdNQG64zDDnWfVNHwf+kWO/gNgGBaYWesb+t81G5ih8EkNvDk
-         xLJQ==
+        bh=/hL29TjD11NGp8Ljf9rHQ0/AomEN8AOZ3o3x8TsgXFk=;
+        b=Htb8a7DQKkL06WtZXoCSnCOkhCYVkwPXtAjHrfTT4Xf/VJ7nmB6lqnfWKNBWwhtOS3
+         siqlOUsxdP8pNvX68Wd1JyIArmQdGVKeeaqGXGHBnTRBjNnc8aCDLm1rl9WvpmeKx/Pj
+         QopS5fa0Wg1ErVLFS6THufGI7FsHFbapGRaFomm+XycZKqMzdZm/OJuBOnyPp7Wf0nQE
+         En/g4tVfelYvlC+Y8w9P9YCoe/9zOAkU3xct1fPfoQwy8JP0pUXHmioI7m94tgNchdEt
+         /qaA/zvDDagxoYQ7uAx2SQtsfeG6IOBrkr4O7YrZwCKAhnagumI5u15CBCCBeV2Si05a
+         DNOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=BYSZ9xL7TDf1GtsTEJ0J+4ZhcMv2ysvRekB03PSrVjA=;
-        b=q2PefOmJX3ld5ERCexvmtBBkU74vS9NO+PHDLRT0DJqHrwmFv5ACouDqlB1ajYEHyy
-         HR/DKpoEi1y8liOvx9y/LEEz2HjfRIa+mO44YMC058BJ2MrbYz2c/HFqplYAz1DqNE1t
-         uFygxe/1+oCqe5s55b+9X7ztJvBsDO3D6b9zBljd3iP0UGMMNx8C/jJdYDnCNnG224aF
-         2GQ3gJjkxkrfgxRZh9ki0JzgdGBvW9ucwfhnhOHy1j/0DUdVsGyjfsv38cDT/eFP1gRg
-         2D3pEjRP3M1w2UWYd2A9WYgbvMZFp10je8LfA+/jSP7SP0JCXh0oBOlpGq80PimhllKx
-         px/Q==
-X-Gm-Message-State: APjAAAVEGu2zg8EvW1IloHoLFFbiMbfhNeEcRCXUdlpOzP+i4W3723Fv
-        RK6mxFeZJ39OR9Mtij2J4WV3HtIiAkY=
-X-Google-Smtp-Source: APXvYqwin6w7xMhaXzu3lBVjsk4UjhRMm0Gqr4sF7q2o+Hs9Xk66ge4fLKqUjk2khoVIvcUptGTEYA==
-X-Received: by 2002:a17:90a:246d:: with SMTP id h100mr19167208pje.127.1579471625391;
-        Sun, 19 Jan 2020 14:07:05 -0800 (PST)
+        bh=/hL29TjD11NGp8Ljf9rHQ0/AomEN8AOZ3o3x8TsgXFk=;
+        b=kybcLyEJGPOiOn9C7jvvjgH5u25i4d63Ykr2XYp3Y0gjty415tCzp1gJ9QRwPS0Y6w
+         fx0/mqMQ4vJb6HbxaxoCmyYfJSD2Ve2TrH3MsPJcT4udq0aFJ+P0Y9PT5jzum4pQ9760
+         B9uC/vjQ5rizhfzlV4yZxP6hobljfWxnY0k/YrQnuwlvsYCd4B2B1q2AGZXgDln87OGo
+         lJQj6tyTwTibla9iT7T3BKv/L/ixWE3F/NCoeyhKdXdrlZvNZglfUDDmCKIgbRsFt+SU
+         6CJC9/Z7dFNmuudQlHgGa2SOlRtZ67uncUG+3cwEeg9hN+IDje4/kfBmMWw9yZn3WkjP
+         DFaQ==
+X-Gm-Message-State: APjAAAWMaWUIMPbxGGydJEk5r91zTi207u7UgFJXrvL9HMQDMUzKwN/Y
+        bj4bSCPFvv7Fn0F1W3PxbqOISSvgDqk=
+X-Google-Smtp-Source: APXvYqy3TwdlfQVbRBki8jvV+Ha5LEu15W292YWV3lv0kmcreU2NGVrJBpZ3J28RMy/c6CpAjCfdzQ==
+X-Received: by 2002:a17:90a:cf07:: with SMTP id h7mr19741769pju.66.1579471669229;
+        Sun, 19 Jan 2020 14:07:49 -0800 (PST)
 Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id z22sm37095796pfr.83.2020.01.19.14.07.04
+        by smtp.gmail.com with ESMTPSA id p17sm35685755pfn.31.2020.01.19.14.07.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2020 14:07:04 -0800 (PST)
-Date:   Sun, 19 Jan 2020 14:07:04 -0800 (PST)
+        Sun, 19 Jan 2020 14:07:48 -0800 (PST)
+Date:   Sun, 19 Jan 2020 14:07:48 -0800 (PST)
 From:   David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To:     Wei Yang <richardw.yang@linux.intel.com>
 cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/page_alloc.c: rename free_pages_check_bad() to
- check_free_page_bad()
-In-Reply-To: <20200119131408.23247-3-richardw.yang@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2001191406270.43388@chino.kir.corp.google.com>
-References: <20200119131408.23247-1-richardw.yang@linux.intel.com> <20200119131408.23247-3-richardw.yang@linux.intel.com>
+Subject: Re: [PATCH 4/4] mm/page_alloc.c: bad_[reason|flags] is not necessary
+ when PageHWPoison
+In-Reply-To: <20200119131408.23247-5-richardw.yang@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.2001191407360.43388@chino.kir.corp.google.com>
+References: <20200119131408.23247-1-richardw.yang@linux.intel.com> <20200119131408.23247-5-richardw.yang@linux.intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -66,12 +66,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, 19 Jan 2020, Wei Yang wrote:
 
-> free_pages_check_bad() is the counterpart of check_new_page_bad(), while
-> their naming convention is a little different.
+> Since function returns directly, bad_[reason|flags] is not used any
+> where.
 > 
-> Use verb at first and singular form.
+> This is a following cleanup for commit e570f56cccd21 ("mm:
+> check_new_page_bad() directly returns in __PG_HWPOISON case")
 > 
+> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 
-I think if you agree with the suggestion in patch 1/4 to fix the issue 
-with bad page reporting that it would likely be better to fold patches 2 
-and 3 into that change.
+Acked-by: David Rientjes <rientjes@google.com>
