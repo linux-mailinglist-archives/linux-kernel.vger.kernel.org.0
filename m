@@ -2,86 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A82CC1420CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:18:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 939671420D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbgASXR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 18:17:29 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49838 "EHLO
+        id S1729137AbgASXRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 18:17:42 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49806 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729061AbgASXQd (ORCPT
+        with ESMTP id S1728949AbgASXQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 18:16:33 -0500
+        Sun, 19 Jan 2020 18:16:32 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id A5644299A7; Sun, 19 Jan 2020 18:16:31 -0500 (EST)
+        id 434B72997F; Sun, 19 Jan 2020 18:16:31 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-Id: <43f9cf226bd227cfdbcc94512d6f9dc02e84ccf7.1579474569.git.fthain@telegraphics.com.au>
+Message-Id: <031786f4029e93b7df05fddaed34e1faf4c89ad7.1579474569.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1579474569.git.fthain@telegraphics.com.au>
 References: <cover.1579474569.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 19/19] net/sonic: Prevent tx watchdog timeout
+Subject: [PATCH net 10/19] net/sonic: Start packet transmission immediately
 Date:   Mon, 20 Jan 2020 09:56:09 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Section 5.5.3.2 of the datasheet says,
+Give the transmit command as soon as the transmit descriptor is ready.
 
-    If FIFO Underrun, Byte Count Mismatch, Excessive Collision, or
-    Excessive Deferral (if enabled) errors occur, transmission ceases.
-
-In this situation, the chip asserts a TXER interrupt rather than TXDN.
-But the handler for the TXDN is the only way that the transmit queue
-gets restarted. Hence, an aborted transmission can result in a watchdog
-timeout.
-
-This problem can be reproduced on congested link, as that can result in
-excessive transmitter collisions. Another way to reproduce this is with
-a FIFO Underrun, which may be caused by DMA latency.
-
-In event of a TXER interrupt, prevent a watchdog timeout by restarting
-transmission.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/natsemi/sonic.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 1a569df63fde..bebdbb00a595 100644
+index 6322b4543e0b..6660bd75b699 100644
 --- a/drivers/net/ethernet/natsemi/sonic.c
 +++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -446,10 +446,19 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 			lp->stats.rx_missed_errors += 65536;
+@@ -287,12 +287,15 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 	sonic_tda_put(dev, entry, SONIC_TD_LINK,
+ 		sonic_tda_get(dev, entry, SONIC_TD_LINK) | SONIC_EOL);
  
- 		/* transmit error */
--		if (status & SONIC_INT_TXER)
--			if (SONIC_READ(SONIC_TCR) & SONIC_TCR_FU)
--				netif_dbg(lp, tx_err, dev, "%s: tx fifo underrun\n",
--					  __func__);
-+		if (status & SONIC_INT_TXER) {
-+			u16 tcr = SONIC_READ(SONIC_TCR);
++	sonic_tda_put(dev, lp->eol_tx, SONIC_TD_LINK, ~SONIC_EOL &
++		      sonic_tda_get(dev, lp->eol_tx, SONIC_TD_LINK));
 +
-+			netif_dbg(lp, tx_err, dev, "%s: TXER intr, TCR %04x\n",
-+				  __func__, tcr);
++	SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
 +
-+			if (tcr & (SONIC_TCR_EXD | SONIC_TCR_EXC |
-+				   SONIC_TCR_FU | SONIC_TCR_BCM)) {
-+				/* Aborted transmission. Try again. */
-+				netif_stop_queue(dev);
-+				SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
-+			}
-+		}
+ 	lp->tx_len[entry] = length;
+ 	lp->tx_laddr[entry] = laddr;
+ 	lp->tx_skb[entry] = skb;
  
- 		/* bus retry */
- 		if (status & SONIC_INT_BR) {
+-	sonic_tda_put(dev, lp->eol_tx, SONIC_TD_LINK,
+-				  sonic_tda_get(dev, lp->eol_tx, SONIC_TD_LINK) & ~SONIC_EOL);
+ 	lp->eol_tx = entry;
+ 
+ 	entry = (entry + 1) & SONIC_TDS_MASK;
+@@ -305,8 +308,6 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+ 
+ 	netif_dbg(lp, tx_queued, dev, "%s: issuing Tx command\n", __func__);
+ 
+-	SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
+-
+ 	local_irq_restore(flags);
+ 
+ 	return NETDEV_TX_OK;
 -- 
 2.24.1
 
