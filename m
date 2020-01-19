@@ -2,32 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5352D141DB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 13:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9775C141DC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 13:20:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgASMS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 07:18:29 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9195 "EHLO huawei.com"
+        id S1727403AbgASMUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 07:20:41 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40718 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726778AbgASMS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 07:18:28 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A20637D8C28224291A16;
-        Sun, 19 Jan 2020 20:18:26 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 Jan 2020
- 20:18:19 +0800
+        id S1726744AbgASMUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 07:20:41 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8EE9479CA32EEF2EE3A0;
+        Sun, 19 Jan 2020 20:20:39 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 Jan 2020
+ 20:20:31 +0800
 From:   yu kuai <yukuai3@huawei.com>
-To:     <benh@kernel.crashing.org>, <b.zolnierkie@samsung.com>
-CC:     <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+To:     <b.zolnierkie@samsung.com>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
         <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH 4/4] video: fbdev: remove set but not used variable 'bytpp'
-Date:   Sun, 19 Jan 2020 20:17:30 +0800
-Message-ID: <20200119121730.10701-5-yukuai3@huawei.com>
+Subject: [PATCH] video: remove set but not used variable 'ulScaleRight'
+Date:   Sun, 19 Jan 2020 20:19:45 +0800
+Message-ID: <20200119121945.12517-1-yukuai3@huawei.com>
 X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20200119121730.10701-1-yukuai3@huawei.com>
-References: <20200119121730.10701-1-yukuai3@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -40,39 +38,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/video/fbdev/aty/radeon_base.c: In function
-‘radeonfb_set_par’:
-drivers/video/fbdev/aty/radeon_base.c:1660:32: warning:
-variable ‘bytpp’ set but not used [-Wunused-but-set-variable]
+drivers/video/fbdev/kyro/STG4000OverlayDevice.c: In function
+‘SetOverlayViewPort’:
+drivers/video/fbdev/kyro/STG4000OverlayDevice.c:334:19: warning:
+variable ‘ulScaleRight’ set but not used [-Wunused-but-set-variable]
 
 It is never used, and so can be removed.
 
 Signed-off-by: yu kuai <yukuai3@huawei.com>
 ---
- drivers/video/fbdev/aty/radeon_base.c | 3 +--
+ drivers/video/fbdev/kyro/STG4000OverlayDevice.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
-index 7d2ee889ffcd..22b3ee4f2ffa 100644
---- a/drivers/video/fbdev/aty/radeon_base.c
-+++ b/drivers/video/fbdev/aty/radeon_base.c
-@@ -1657,7 +1657,7 @@ static int radeonfb_set_par(struct fb_info *info)
- 	int i, freq;
- 	int format = 0;
- 	int nopllcalc = 0;
--	int hsync_start, hsync_fudge, bytpp, hsync_wid, vsync_wid;
-+	int hsync_start, hsync_fudge, hsync_wid, vsync_wid;
- 	int primary_mon = PRIMARY_MONITOR(rinfo);
- 	int depth = var_to_depth(mode);
- 	int use_rmx = 0;
-@@ -1731,7 +1731,6 @@ static int radeonfb_set_par(struct fb_info *info)
- 		vsync_wid = 0x1f;
+diff --git a/drivers/video/fbdev/kyro/STG4000OverlayDevice.c b/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
+index 0aeeaa10708b..9fde0e3b69ec 100644
+--- a/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
++++ b/drivers/video/fbdev/kyro/STG4000OverlayDevice.c
+@@ -331,7 +331,7 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 	u32 ulScale;
+ 	u32 ulLeft, ulRight;
+ 	u32 ulSrcLeft, ulSrcRight;
+-	u32 ulScaleLeft, ulScaleRight;
++	u32 ulScaleLeft;
+ 	u32 ulhDecim;
+ 	u32 ulsVal;
+ 	u32 ulVertDecFactor;
+@@ -470,7 +470,6 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 		 * round down the pixel pos to the nearest 8 pixels.
+ 		 */
+ 		ulScaleLeft = ulSrcLeft;
+-		ulScaleRight = ulSrcRight;
  
- 	format = radeon_get_dstbpp(depth);
--	bytpp = mode->bits_per_pixel >> 3;
- 
- 	if ((primary_mon == MT_DFP) || (primary_mon == MT_LCD))
- 		hsync_fudge = hsync_fudge_fp[format-1];
+ 		/* shift fxscale until it is in the range of the scaler */
+ 		ulhDecim = 0;
 -- 
 2.17.2
 
