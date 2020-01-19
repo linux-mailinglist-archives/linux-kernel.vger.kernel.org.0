@@ -2,93 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A3F141ADD
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:24:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 979D4141ADF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgASBYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 20:24:41 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:54263 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbgASBYl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 20:24:41 -0500
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 00J1Ocw0003417
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 10:24:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 00J1Ocw0003417
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1579397079;
-        bh=Jqo96td/ObWYQIbBXemOoirCWsxHweKiuuiVKjHEhbs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ktBKhBGY7/AO421S1PPiqoqApEJgEhGfpDay+7kocfKoh+XYauiR2oNthuKEqY/yE
-         nPFGdqnlkx/eEr5nFBuqMcuXZet/hlwtcPI0MtMWTnMdSWzW5dupMfHZ3ZMUKOPCep
-         FlqSTdTtgWPPiSS+7wmVSS50Il9dHByzl9cFJmRXA8yiLBf3wJUI4zEI4TfxOgYmtp
-         RqIHpZys/h+EwTURU6AWh6gDBSck1lczcJWVphkPihK1lf/VgzcoR2kP5kPyLxO3MN
-         kNfCqQvVNEHFy+M+P51b8H6P89Qm85MzYVwNCVFf6V88PdmW6CCQECX/xv1UOryNNi
-         doC/w1Nme93hA==
-X-Nifty-SrcIP: [209.85.222.49]
-Received: by mail-ua1-f49.google.com with SMTP id 73so10315476uac.6
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 17:24:38 -0800 (PST)
-X-Gm-Message-State: APjAAAW6gUnPmnvWOh3a8z3Md7fl9k4mJB1nvC1BbthzX/8cunVDpcVC
-        Q16xmI3Tc10Me5JmmQd4LvoFF8vZta4uhEp7EmE=
-X-Google-Smtp-Source: APXvYqyXaHIRtN2qaDHZBVtF6xp/fQ55KREgbCsXUHTfL4JL2dpAskq6hijX/0Y7xBawJuy3ggiPQhoJLZ3umHondYw=
-X-Received: by 2002:ab0:14ea:: with SMTP id f39mr25531225uae.40.1579397077609;
- Sat, 18 Jan 2020 17:24:37 -0800 (PST)
+        id S1728600AbgASBZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 20:25:28 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9651 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727070AbgASBZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 18 Jan 2020 20:25:28 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8B567E18B6321792B211;
+        Sun, 19 Jan 2020 09:25:25 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 Jan 2020
+ 09:25:17 +0800
+Subject: Re: [RFC] iomap: fix race between readahead and direct write
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jan Kara <jack@suse.cz>
+CC:     <hch@infradead.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <houtao1@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>
+References: <20200116063601.39201-1-yukuai3@huawei.com>
+ <20200116153206.GF8446@quack2.suse.cz>
+ <ce4bc2f3-a23e-f6ba-0ef1-66231cd1057d@huawei.com>
+ <20200117110536.GE17141@quack2.suse.cz> <20200117162439.GT8247@magnolia>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <fefbacb4-4ad9-df70-a5ab-58df4471800c@huawei.com>
+Date:   Sun, 19 Jan 2020 09:25:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191204044950.10418-1-masahiroy@kernel.org> <20200117221534.GR25745@shell.armlinux.org.uk>
-In-Reply-To: <20200117221534.GR25745@shell.armlinux.org.uk>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 19 Jan 2020 10:24:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR2zdOLyoJRJpYVt0C+TqQ172z32OJMQi5tHKP6=0G=WA@mail.gmail.com>
-Message-ID: <CAK7LNAR2zdOLyoJRJpYVt0C+TqQ172z32OJMQi5tHKP6=0G=WA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: decompressor: simplify libfdt builds
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200117162439.GT8247@magnolia>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
-
-On Sat, Jan 18, 2020 at 7:15 AM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
-> > -ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
-> > -OBJS += $(libfdt_objs) atags_to_fdt.o
-> > +# -fstack-protector-strong triggers protection checks in this code,
-> > +# but it is being used too early to link to meaningful stack_chk logic.
-> > +nossp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
-> > +$(foreach o, $(libfdt_objs), \
-> > +     $(eval CFLAGS_$(o) := -I $(srctree)/scripts/dtc/libfdt) $(nossp-flags-y))
->
-> The above change causes build breakage over a number of ARM builds,
-> which unfortunately doesn't result in emails from any build system
-> containing the cause of the failure.
->
-> See
-> https://kernelci.org/build/rmk/branch/for-next/kernel/v5.5-rc1-12-g9a6545e2fc83/
->
-> where the failures are reported as:
->
-> ../arch/arm/boot/compressed/Makefile:87: *** missing separator. Stop.
->
-> Thanks.  Patch dropped.
 
 
-Sorry, I made a mistake about the location of
-the closing parenthesis.
+On 2020/1/18 0:24, Darrick J. Wong wrote:
+> Does the problem go away if you apply[1]?  If I understand the race
+> correctly, marking the extents unwritten and leaving them that way until
+> after we've written the disk should eliminate the exposure vector...?:)
 
+Thank you for your response.
 
-I fixed the build error, and posted v2:
+The patch [1] fixed the stale data exposure problem which was tested by
+generic/042. I'm afarid it's completely a diffrent case for generic/418.
 
-https://www.armlinux.org.uk/developer/patches/viewpatch.php?id=8953/1
+In generic/418, direct write wrote some data to disk successfully, while
+buffer read left the correspond page uptodate with 0 content in
+pagecache.
 
+Thanks!
+Yu Kuai
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
