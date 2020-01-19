@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095A9141EAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 16:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65757141EB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 16:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgASO7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 09:59:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbgASO7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 09:59:34 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98EA6206D7;
-        Sun, 19 Jan 2020 14:59:32 +0000 (UTC)
-Date:   Sun, 19 Jan 2020 09:59:31 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/22] tracing: bootconfig: Boot-time tracing and
- Extra boot config
-Message-ID: <20200119095931.736c4a1f@gandalf.local.home>
-In-Reply-To: <20200119232037.c46321eac70bf288b42f493f@kernel.org>
-References: <157867220019.17873.13377985653744804396.stgit@devnote2>
-        <20200119232037.c46321eac70bf288b42f493f@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728512AbgASPEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 10:04:53 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:37671 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727195AbgASPEv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 10:04:51 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from moshe@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 19 Jan 2020 17:04:48 +0200
+Received: from dev-l-vrt-136.mtl.labs.mlnx (dev-l-vrt-136.mtl.labs.mlnx [10.134.136.1])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id 00JF4mPF007486;
+        Sun, 19 Jan 2020 17:04:48 +0200
+Received: from dev-l-vrt-136.mtl.labs.mlnx (localhost [127.0.0.1])
+        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id 00JF4m5D026590;
+        Sun, 19 Jan 2020 17:04:48 +0200
+Received: (from moshe@localhost)
+        by dev-l-vrt-136.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id 00JF4iXd026587;
+        Sun, 19 Jan 2020 17:04:44 +0200
+From:   Moshe Shemesh <moshe@mellanox.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Jiri Pirko <jiri@mellanox.com>,
+        Vikas Gupta <vikas.gupta@broadcom.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>
+Subject: [PATCH net-next] devlink: Add health recover notifications on devlink flows
+Date:   Sun, 19 Jan 2020 17:04:28 +0200
+Message-Id: <1579446268-26540-1-git-send-email-moshe@mellanox.com>
+X-Mailer: git-send-email 1.8.4.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 19 Jan 2020 23:20:37 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Devlink health recover notifications were added only on driver direct
+updates of health_state through devlink_health_reporter_state_update().
+Add notifications on updates of health_state by devlink flows of report
+and recover.
 
-> Hi Steve,
-> 
-> Thanks for pick this series on your tree. I would like to fix some patches
-> according to Randy's comments. Should I update this series or just incremental
-> updates on top of your tree?
-> 
+Fixes: 97ff3bd37fac ("devlink: add devink notification when reporter update health state")
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+---
+ net/core/devlink.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Hi Masami,
+diff --git a/net/core/devlink.c b/net/core/devlink.c
+index b41b2e3..99f2057 100644
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -4851,6 +4851,9 @@ struct devlink_health_reporter *
+ }
+ EXPORT_SYMBOL_GPL(devlink_health_reporter_recovery_done);
+ 
++static void devlink_recover_notify(struct devlink_health_reporter *reporter,
++				   enum devlink_command cmd);
++
+ static int
+ devlink_health_reporter_recover(struct devlink_health_reporter *reporter,
+ 				void *priv_ctx, struct netlink_ext_ack *extack)
+@@ -4869,6 +4872,7 @@ struct devlink_health_reporter *
+ 
+ 	devlink_health_reporter_recovery_done(reporter);
+ 	reporter->health_state = DEVLINK_HEALTH_REPORTER_STATE_HEALTHY;
++	devlink_recover_notify(reporter, DEVLINK_CMD_HEALTH_REPORTER_RECOVER);
+ 
+ 	return 0;
+ }
+@@ -4935,6 +4939,7 @@ int devlink_health_report(struct devlink_health_reporter *reporter,
+ 	reporter->error_count++;
+ 	prev_health_state = reporter->health_state;
+ 	reporter->health_state = DEVLINK_HEALTH_REPORTER_STATE_ERROR;
++	devlink_recover_notify(reporter, DEVLINK_CMD_HEALTH_REPORTER_RECOVER);
+ 
+ 	/* abort if the previous error wasn't recovered */
+ 	if (reporter->auto_recover &&
+-- 
+1.8.3.1
 
-Just send me incremental patches. I try not to ever rebase what I push
-to linux-next (except for adding changes that don't affect the content
-of the code, like adding acked-by to commit messages).
-
-Thanks,
-
--- Steve
