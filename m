@@ -2,72 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA79D141DA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 12:34:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD2E141DBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 13:18:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgASLex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 06:34:53 -0500
-Received: from stcim.de ([78.46.90.227]:48544 "EHLO stcim.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbgASLex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 06:34:53 -0500
-Received: from 2001-4dd4-d47c-0-a288-b4ff-fee5-f5cc.ipv6dyn.netcologne.de ([2001:4dd4:d47c:0:a288:b4ff:fee5:f5cc] helo=porty)
-        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <contact@stefanchrist.eu>)
-        id 1it8qu-0001Qw-7U; Sun, 19 Jan 2020 12:34:48 +0100
-Date:   Sun, 19 Jan 2020 12:34:47 +0100
-From:   Stefan Lengfeld <contact@stefanchrist.eu>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     support.opensource@diasemi.com, linux@roeck-us.net,
-        Adam.Thomson.Opensource@diasemi.com,
-        linux-watchdog@vger.kernel.org, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org,
-        Stefan Riedmueller <s.riedmueller@phytec.de>
-Subject: Re: [PATCH v2] watchdog: da9062: make restart handler atomic safe
-Message-ID: <20200119113447.qizbk4waxk7c3enr@porty>
-References: <20200115162307.7336-1-m.felsch@pengutronix.de>
- <20200116072320.f7ia3e76hx7yknqb@porty>
+        id S1727243AbgASMSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 07:18:40 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbgASMS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 07:18:29 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB1364C57EF4A5898D05;
+        Sun, 19 Jan 2020 20:18:26 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Sun, 19 Jan 2020
+ 20:18:16 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <benh@kernel.crashing.org>, <b.zolnierkie@samsung.com>
+CC:     <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <zhengbin13@huawei.com>, <yi.zhang@huawei.com>
+Subject: [PATCH 0/4] cleanup patches for unused variables
+Date:   Sun, 19 Jan 2020 20:17:26 +0800
+Message-ID: <20200119121730.10701-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200116072320.f7ia3e76hx7yknqb@porty>
-X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marco,
+yu kuai (4):
+  video: fbdev: remove set but not used variable 'hSyncPol'
+  video: fbdev: remove set but not used variable 'vSyncPol'
+  video: fbdev: remove set but not used variable 'vSyncPol'
+  video: fbdev: remove set but not used variable 'bytpp'
 
-On Thu, Jan 16, 2020 at 08:23:20AM +0100, Stefan Lengfeld wrote:
-> On Wed, Jan 15, 2020 at 05:23:07PM +0100, Marco Felsch wrote:
-> > The restart handler is executed during the shutdown phase which is
-> > atomic/irq-less. The i2c framework supports atomic transfers since
-> > commit 63b96983a5dd ("i2c: core: introduce callbacks for atomic
-> > transfers") to address this use case. Using regmap within an atomic
-> > context is allowed only if the regmap type is MMIO and the cache type
-> > 'flat' or no cache is used. Using the i2c_smbus_write_byte_data()
-> > function can be done without additional tests because:
-> >  1) the DA9062 is an i2c-only device and
-> >  2) the i2c framework emulates the smbus protocol if the host adapter
-> >     does not support smbus_xfer by using the master_xfer.
-> > 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> 
-> Reviewed-by: Stefan Lengfeld <contact@stefanchrist.eu>
+ drivers/video/fbdev/aty/radeon_base.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-Now also 
+-- 
+2.17.2
 
-Tested-by: Stefan Lengfeld <contact@stefanchrist.eu>
-
-on a phyCORE-i.MX6 Quad with baseboard phyBOARD-Mira.
-
-I'm also cc'ing Stefan from phytec, since he is also interested in the
-thread/patch [1].
-
-Kind regards,
-    Stefan
-
-[1]: https://www.spinics.net/lists/linux-watchdog/msg17203.html
