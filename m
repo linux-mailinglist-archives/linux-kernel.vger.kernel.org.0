@@ -2,189 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58053141AC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 057B5141AD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbgASBIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 20:08:54 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43304 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbgASBIx (ORCPT
+        id S1728741AbgASBN4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 20:13:56 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55418 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbgASBNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 20:08:53 -0500
-Received: by mail-lj1-f194.google.com with SMTP id a13so30259797ljm.10;
-        Sat, 18 Jan 2020 17:08:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=AacwWKGmxUoGXrit3bF9ylLS3wXZpgvHLwTaKYgi69w=;
-        b=RpW/ireN3w+1bwBpTacY+Z1NKdxGZUeDlAtj/ztPUxyaDz8fjxjgOXhI4BiV5GAK4P
-         x3vBbsxKC2VYYrUDsOphEwohyRvDx99QCyGhY/e12B6xMhcdyRqaT3qKppkrBOzPQwlL
-         KJLeGgD0p4kpAkLKJpEw8Jmu+gSc658JgnqoiFOKGJiyJJUhRQQ+kMLTa+0utyUl3wmV
-         0aa54kMX7A88c88WwB4QZXpLQXijhRI9xFcaBKg55hc65pEMSrLTLE3qIDV5Mg7DAmKu
-         acXUwglJ5PfRFd1nBQRfWmaEXPpj2N7L5Xa1sS6wnVZX49YMr9CL9CatK05HKVxxQ78M
-         WXgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=AacwWKGmxUoGXrit3bF9ylLS3wXZpgvHLwTaKYgi69w=;
-        b=CXo2NOOtNsVrYBRQu+6RMy6m+zWK+MGrWqZBmsI2lbGPhzqoW/qYnjahgFKtSvfa7K
-         YbOSseAjBflQB5evueReDrie2Xwdwv/hV6H0UxsWrqHeb/bnifW1Hu8SrEB9afS5PerB
-         jkVCG0Daqsd2TrfD0AKQ4Il/4YN6lNhJ0BQGZk6bvMNM4ZtyEGlAwCfRXxfQtGahN/ah
-         zwokK4Lxf9F05kqBla6ZF6QWtDkuy0oqP7qhd2k41Qk7i1QJ/rnRU0kMMZUEwcqKF9yb
-         scIWeVVdCGg4EqcPDpTddbPCugQVlBeK3dZdccx/xz4Ju5Weh8+bGdagljeuE+iVbes8
-         SwGw==
-X-Gm-Message-State: APjAAAWZrKY1hZE9wJv9HIfo2jXiRG+wduUknZIXtA0kFiSUjbTDFr4W
-        WNsm9SDZcVL/heWbiR7pG5Oezq3z14Bqj6A37Ng=
-X-Google-Smtp-Source: APXvYqzA22+3Ab2p8KzOLW/XygyGuPG7mUsIgFaYy39U/tQHQpBRZ4hZ6yGrXiX1R/69yFV/8ftvndEOHFXfMIpi+xY=
-X-Received: by 2002:a05:651c:32b:: with SMTP id b11mr9814411ljp.203.1579396130247;
- Sat, 18 Jan 2020 17:08:50 -0800 (PST)
+        Sat, 18 Jan 2020 20:13:55 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isz8j-00BC8q-D7; Sun, 19 Jan 2020 01:12:43 +0000
+Date:   Sun, 19 Jan 2020 01:12:33 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        David Laight <david.laight@aculab.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        quae@daurnimator.com, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, libc-alpha@sourceware.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] openat2: minor uapi cleanups
+Message-ID: <20200119011233.GU8904@ZenIV.linux.org.uk>
+References: <20200115144831.GJ8904@ZenIV.linux.org.uk>
+ <20200118120800.16358-1-cyphar@cyphar.com>
+ <20200118152833.GS8904@ZenIV.linux.org.uk>
+ <20200118180941.GT8904@ZenIV.linux.org.uk>
+ <20200118230313.y4a3s7elierw4wzw@yavin>
 MIME-Version: 1.0
-References: <20200118172615.26329-1-linux@roeck-us.net> <CANVEwpbgi5sUdBTyo330oCZ1T-cD+DoBJWrE9JbXw-DvYTiBvw@mail.gmail.com>
- <7345a801-6e9d-b85f-1a8a-72ee89cc0330@roeck-us.net>
-In-Reply-To: <7345a801-6e9d-b85f-1a8a-72ee89cc0330@roeck-us.net>
-From:   Ken Moffat <zarniwhoop73@googlemail.com>
-Date:   Sun, 19 Jan 2020 01:08:38 +0000
-Message-ID: <CANVEwpa2YmfdJ8eAK9-Kx8z+m2uiexCjXF_rV8UpQaampxqO4A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] hwmon: k10temp driver improvements
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Darren Salt <devspam@moreofthesa.me.uk>,
-        Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>,
-        =?UTF-8?Q?Ondrej_=C4=8Cerman?= <ocerman@sda1.eu>,
-        Holger Kiehl <Holger.Kiehl@dwd.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Brad Campbell <lists2009@fnarfbargle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200118230313.y4a3s7elierw4wzw@yavin>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 19 Jan 2020 at 00:49, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 1/18/20 4:33 PM, Ken Moffat wrote:
-> > On Sat, 18 Jan 2020 at 17:26, Guenter Roeck <linux@roeck-us.net> wrote:
-> >>
-> >> This patch series implements various improvements for the k10temp driv=
-er.
-> >>
-> >> Patch 1/5 introduces the use of bit operations.
-> >>
-> >> Patch 2/5 converts the driver to use the devm_hwmon_device_register_wi=
-th_info
-> >> API. This not only simplifies the code and reduces its size, it also
-> >> makes the code easier to maintain and enhance.
-> >>
-> >> Patch 3/5 adds support for reporting Core Complex Die (CCD) temperatur=
-es
-> >> on Ryzen 3 (Zen2) CPUs.
-> >>
-> >> Patch 4/5 adds support for reporting core and SoC current and voltage
-> >> information on Ryzen CPUs.
-> >>
-> >> Patch 5/5 removes the maximum temperature from Tdie for Ryzen CPUs.
-> >> It is inaccurate, misleading, and it just doesn't make sense to report
-> >> wrong information.
-> >>
-> >> With all patches in place, output on Ryzen 3900X CPUs looks as follows
-> >> (with the system under load).
-> >>
-> >> k10temp-pci-00c3
-> >> Adapter: PCI adapter
-> >> Vcore:        +1.36 V
-> >> Vsoc:         +1.18 V
-> >> Tdie:         +86.8=C2=B0C
-> >> Tctl:         +86.8=C2=B0C
-> >> Tccd1:        +80.0=C2=B0C
-> >> Tccd2:        +81.8=C2=B0C
-> >> Icore:       +44.14 A
-> >> Isoc:        +13.83 A
-> >>
-> >> The voltage and current information is limited to Ryzen CPUs. Voltage
-> >> and current reporting on Threadripper and EPYC CPUs is different, and =
-the
-> >> reported information is either incomplete or wrong. Exclude it for the=
- time
-> >> being; it can always be added if/when more information becomes availab=
-le.
-> >>
-> >> Tested with the following Ryzen CPUs:
-> >>      1300X A user with this CPU in the system reported somewhat unexpe=
-cted
-> >>            values for Vcore; it isn't entirely if at all clear why tha=
-t is
-> >>            the case. Overall this does not warrant holding up the seri=
-es.
-> >
-> > As the owner of that machine, very much agreed.
-> >  >>      1600
-> >>      1800X
-> >>      2200G
-> >>      2400G
-> >>      3800X
-> >>      3900X
-> >>      3950X
-> >>
-> >
-> > I also had sensible results for v1 on 2500U and 3400G
-> >
-> Sorry, I somehow missed that.
->
-> >> v2: Added tested-by: tags as received.
-> >>      Don't display voltage and current information for Threadripper an=
-d EPYC.
-> >>      Stop displaying the fixed (and wrong) maximum temperature of 70 d=
-egrees C
-> >>      for Tdie on model 17h/18h CPUs.
-> >
-> > For v2 on my 2500U, system idle and then under load -
-> >
-> > --- k10temp-idle 2020-01-19 00:16:18.812002121 +0000
-> > +++ k10temp-load 2020-01-19 00:22:05.595470877 +0000
-> > @@ -1,15 +1,15 @@
-> >   k10temp-pci-00c3
-> >   Adapter: PCI adapter
-> > -Vcore:        +0.98 V
-> > +Vcore:        +1.15 V
-> >   Vsoc:         +0.93 V
-> > -Tdie:         +38.2=C2=B0C
-> > -Tctl:         +38.2=C2=B0C
-> > -Icore:       +10.39 A
-> > -Isoc:         +6.49 A
-> > +Tdie:         +76.2=C2=B0C
-> > +Tctl:         +76.2=C2=B0C
-> > +Icore:       +51.96 A
-> > +Isoc:         +7.58 A
-> >
-> >   amdgpu-pci-0300
-> >   Adapter: PCI adapter
-> >   vddgfx:           N/A
-> >   vddnb:            N/A
-> > -edge:         +38.0=C2=B0C  (crit =3D +80.0=C2=B0C, hyst =3D  +0.0=C2=
-=B0C)
-> > +edge:         +76.0=C2=B0C  (crit =3D +80.0=C2=B0C, hyst =3D  +0.0=C2=
-=B0C)
-> >
-> > I'll ony test v2 on the 3400G if you think the results would add someth=
-ing.
-> >
->
-> Thanks a lot for the additional testing! I don't think we need another
-> test on 3400G; after all, the actual measurement code didn't change.
->
-> Everyone: I'll be happy to add Tested-by: tags with your name and e-mail
-> address to the series, but you'll have to send it to me. I appreciate
-> all your testing and would like to acknowledge it, but I can not add
-> Tested-by: tags (or any other tags, for that matter) on my own.
->
-> Thanks,
-> Guenter
+On Sun, Jan 19, 2020 at 10:03:13AM +1100, Aleksa Sarai wrote:
 
-For the little it is worth:
-Tested-by Ken Moffat <zarniwhoop73@googlemail.com>
+> > possibly trigger?  The only things that ever clean ->root.mnt are
+> 
+> You're quite right -- the codepath I was worried about was pick_link()
+> failing (which *does* clear nd->path.mnt, and I must've misread it at
+> the time as nd->root.mnt).
+
+pick_link() (allocation failure of external stack in RCU case, followed
+by failure to legitimize the link) is, unfortunately, subtle and nasty.
+We *must* path_put() the link; if we'd managed to legitimize the mount
+and failed on dentry, the mount needs to be dropped.  No way around it.
+And while everything else there can be left for soon-to-be-reached
+terminate_walk(), this cannot.  We have no good way to pass what
+we need to drop to the place where that eventual terminate_walk()
+drops rcu_read_lock().  So we end up having to do what terminate_walk()
+would've done and do it right there, so we could do that path_put(link)
+before we bugger off.
+
+I'm not happy about that, but I don't see cleaner solutions, more's the
+pity.  However, it doesn't mess with ->root - nor should it, since
+we don't have LOOKUP_ROOT_GRABBED (not in RCU mode), so it can and
+should be left alone.
+ 
+> We can drop this check, though now complete_walk()'s main defence
+> against a NULL nd->root.mnt is that path_is_under() will fail and
+> trigger -EXDEV (or set_root() will fail at some point in the future).
+> However, as you pointed out, a NULL nd->root.mnt won't happen with
+> things as they stand today -- I might be a little too paranoid. :P
+
+The only reason why complete_walk() zeroes nd->root in some cases is
+microoptimization - we *know* we won't be using it later, so we don't
+care whether it's stale or not and can spare unlazy_walk() a bit of
+work.  All there is to that one.
+
+I don't see any reason for adding code that would clear nd->root in later
+work; if such thing does get added (again, I don't see what purpose
+could that possibly serve), we'll need to watch out for a lot of things.
+Starting with LOOKUP_ROOT case...  It's not something likely to slip
+in unnoticed.
