@@ -2,120 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEDC141B04
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 257EC141B08
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 02:48:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgASBrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 20:47:22 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:40565 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728783AbgASBrV (ORCPT
+        id S1729078AbgASBry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 20:47:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34678 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728779AbgASBrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 20:47:21 -0500
-X-UUID: 902c2c165d7345b5bf672b2405f5e078-20200119
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=x3qlvVjA+1w0zdnvIBDb63N00F9OElYvDcvNejnWj1k=;
-        b=K1rDjvByde+XQKFa+Vl7kreQJRNLGx3sfsIJaJGMag2A+jJn+hs2ApvfuNM3qNRJdaW0d/sruGkBnLozLkFxraaAxil/kRJT0jpw9Erq7VZDD/FJ2VV/qX0yS1IJZJdYmzLxZYzhAuW9FXtbjnezeyUyx18PsA10TghjE42LpY4=;
-X-UUID: 902c2c165d7345b5bf672b2405f5e078-20200119
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1158472755; Sun, 19 Jan 2020 09:46:19 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 19 Jan
- 2020 09:45:11 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Sun, 19 Jan 2020 09:45:08 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
-        <stonea168@163.com>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v10 5/5] drm/panel: support for auo, b101uan08.3 wuxga dsi video mode panel
-Date:   Sun, 19 Jan 2020 09:45:41 +0800
-Message-ID: <20200119014541.64273-6-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200119014541.64273-1-jitao.shi@mediatek.com>
-References: <20200119014541.64273-1-jitao.shi@mediatek.com>
+        Sat, 18 Jan 2020 20:47:53 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00J1iCUw177678;
+        Sun, 19 Jan 2020 01:47:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=VD8E+v/6K89dpk+5pvqo8X9az9h0A/hX8rT0o8KnhtE=;
+ b=BBph0UEF5XqSu6x3H6h7dfj9DjC9kOu0EbC/5QdouLBghCmK6j+h4svabydkRSM0F6r5
+ OBgXsvWc6K43emomYYaqd6lThWvxb797o2wZmm8EW9IAXt4tFttllEDL0hWPOSGLGk3E
+ 8XnvuqvyexgD/lezdPG46XSX2uhgaIDx5fv1eKSIJcSLjZuYynJIRpBJuvPGqVOIT1HK
+ xdDsbxtDP30iSLae0gG+PakZ0AdU+lZH7RO3yD2ykWYO2EuK9ne8c+jjPJ3v6tj6qOrm
+ 8CXtluoseR4EmLyl2JCUWOUAABBaEi0Y5WiAaWMKr3g6Ol/sWxh1agFykCsqlJ/9V2j/ sQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2xktnqt44f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 19 Jan 2020 01:47:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00J1iAkn073220;
+        Sun, 19 Jan 2020 01:47:20 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2xmbhqpwww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 19 Jan 2020 01:47:20 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00J1l9eS003461;
+        Sun, 19 Jan 2020 01:47:09 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 18 Jan 2020 17:47:09 -0800
+Subject: Re: [PATCH block v2 1/3] block: Add @flags argument to
+ bdev_write_zeroes_sectors()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+        axboe@kernel.dk, tytso@mit.edu, adilger.kernel@dilger.ca,
+        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com
+References: <157917805422.88675.6477661554332322975.stgit@localhost.localdomain>
+ <157917815798.88675.11900718803129164489.stgit@localhost.localdomain>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <a8c5c5fd-d6b1-950e-0493-b5020e5ca87d@oracle.com>
+Date:   Sun, 19 Jan 2020 09:46:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: D36ED15BC9F31FC002F2BB930BA4C4A7885D3EF56FE365D4B531C5E7C341AD872000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <157917815798.88675.11900718803129164489.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9504 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001190011
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9504 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001190011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QXVvLGF1byxiMTAxdWFuMDguMydzIGNvbm5lY3RvciBpcyBzYW1lIGFzIGJvZSx0djEwMXd1bS1u
-bDYuDQpUaGUgbW9zdCBjb2RlcyBjYW4gYmUgcmV1c2UuDQpTbyBhdW8sYjEwMXVhbjA4LjMgYW5k
-IGJvZSx0djEwMXd1bS1ubDYgdXNlIG9uZSBkcml2ZXIgZmlsZS4NCkFkZCB0aGUgZGlmZmVyZW50
-IHBhcnRzIGluIGRyaXZlciBkYXRhLg0KDQpTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFv
-LnNoaUBtZWRpYXRlay5jb20+DQpSZXZpZXdlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJv
-cmcub3JnPg0KLS0tDQogLi4uL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5j
-ICAgIHwgNzggKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA3OCBpbnNlcnRp
-b25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2
-MTAxd3VtLW5sNi5jIGIvZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLWJvZS10djEwMXd1bS1u
-bDYuYw0KaW5kZXggZTc3ZWE1NzdkOTNhLi4wMWZhZjg1OTc3MDAgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQorKysgYi9kcml2ZXJz
-L2dwdS9kcm0vcGFuZWwvcGFuZWwtYm9lLXR2MTAxd3VtLW5sNi5jDQpAQCAtMzc3LDYgKzM3Nyw1
-MyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHBhbmVsX2luaXRfY21kIGF1b19rZDEwMW44MF80NW5h
-X2luaXRfY21kW10gPSB7DQogCXt9LA0KIH07DQogDQorc3RhdGljIGNvbnN0IHN0cnVjdCBwYW5l
-bF9pbml0X2NtZCBhdW9fYjEwMXVhbjA4XzNfaW5pdF9jbWRbXSA9IHsNCisJX0lOSVRfREVMQVlf
-Q01EKDI0KSwNCisJX0lOSVRfRENTX0NNRCgweEIwLCAweDAxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEMwLCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEMxLCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEMyLCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEMzLCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEM0LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweEM1LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEM2LCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweEM3LCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweEM4LCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweEM5LCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweENBLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweENCLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweENDLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweENELCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweENFLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweENGLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEQwLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQx
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEQyLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEQzLCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEQ0LCAweDQ4KSwNCisJX0lOSVRfRENTX0NN
-RCgweEQ1LCAweDQ4KSwNCisJX0lOSVRfRENTX0NNRCgweEQ2LCAweDQ3KSwNCisJX0lOSVRfRENT
-X0NNRCgweEQ3LCAweDQ3KSwNCisJX0lOSVRfRENTX0NNRCgweEQ4LCAweDQ2KSwNCisJX0lOSVRf
-RENTX0NNRCgweEQ5LCAweDQ2KSwNCisJX0lOSVRfRENTX0NNRCgweERBLCAweDQ1KSwNCisJX0lO
-SVRfRENTX0NNRCgweERCLCAweDQ1KSwNCisJX0lOSVRfRENTX0NNRCgweERDLCAweDY0KSwNCisJ
-X0lOSVRfRENTX0NNRCgweERELCAweDY0KSwNCisJX0lOSVRfRENTX0NNRCgweERFLCAweDRGKSwN
-CisJX0lOSVRfRENTX0NNRCgweERGLCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEUwLCAweDQw
-KSwNCisJX0lOSVRfRENTX0NNRCgweEUxLCAweDQwKSwNCisJX0lOSVRfRENTX0NNRCgweEUyLCAw
-eDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEUzLCAweDY2KSwNCisJX0lOSVRfRENTX0NNRCgweEU0
-LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgweEU1LCAweDRGKSwNCisJX0lOSVRfRENTX0NNRCgw
-eEU2LCAweDQxKSwNCisJX0lOSVRfRENTX0NNRCgweEU3LCAweDQxKSwNCisJX0lOSVRfREVMQVlf
-Q01EKDE1MCksDQorCXt9LA0KK307DQorDQogc3RhdGljIGlubGluZSBzdHJ1Y3QgYm9lX3BhbmVs
-ICp0b19ib2VfcGFuZWwoc3RydWN0IGRybV9wYW5lbCAqcGFuZWwpDQogew0KIAlyZXR1cm4gY29u
-dGFpbmVyX29mKHBhbmVsLCBzdHJ1Y3QgYm9lX3BhbmVsLCBiYXNlKTsNCkBAIC02MjEsNiArNjY4
-LDM0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGFuZWxfZGVzYyBib2VfdHYxMDF3dW1fbjUzX2Rl
-c2MgPSB7DQogCS5pbml0X2NtZHMgPSBib2VfaW5pdF9jbWQsDQogfTsNCiANCitzdGF0aWMgY29u
-c3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSA9
-IHsNCisJLmNsb2NrID0gMTU5NjY3LA0KKwkuaGRpc3BsYXkgPSAxMjAwLA0KKwkuaHN5bmNfc3Rh
-cnQgPSAxMjAwICsgNjAsDQorCS5oc3luY19lbmQgPSAxMjAwICsgNjAgKyA0LA0KKwkuaHRvdGFs
-ID0gMTIwMCArIDYwICsgNCArIDgwLA0KKwkudmRpc3BsYXkgPSAxOTIwLA0KKwkudnN5bmNfc3Rh
-cnQgPSAxOTIwICsgMzQsDQorCS52c3luY19lbmQgPSAxOTIwICsgMzQgKyAyLA0KKwkudnRvdGFs
-ID0gMTkyMCArIDM0ICsgMiArIDI0LA0KKwkudnJlZnJlc2ggPSA2MCwNCisJLnR5cGUgPSBEUk1f
-TU9ERV9UWVBFX0RSSVZFUiB8IERSTV9NT0RFX1RZUEVfUFJFRkVSUkVELA0KK307DQorDQorc3Rh
-dGljIGNvbnN0IHN0cnVjdCBwYW5lbF9kZXNjIGF1b19iMTAxdWFuMDhfM19kZXNjID0gew0KKwku
-bW9kZXMgPSAmYXVvX2IxMDF1YW4wOF8zX2RlZmF1bHRfbW9kZSwNCisJLmJwYyA9IDgsDQorCS5z
-aXplID0gew0KKwkJLndpZHRoX21tID0gMTM1LA0KKwkJLmhlaWdodF9tbSA9IDIxNiwNCisJfSwN
-CisJLmxhbmVzID0gNCwNCisJLmZvcm1hdCA9IE1JUElfRFNJX0ZNVF9SR0I4ODgsDQorCS5tb2Rl
-X2ZsYWdzID0gTUlQSV9EU0lfTU9ERV9WSURFTyB8IE1JUElfRFNJX01PREVfVklERU9fU1lOQ19Q
-VUxTRSB8DQorCQkgICAgICBNSVBJX0RTSV9NT0RFX0xQTSwNCisJLmluaXRfY21kcyA9IGF1b19i
-MTAxdWFuMDhfM19pbml0X2NtZCwNCit9Ow0KKw0KIHN0YXRpYyBpbnQgYm9lX3BhbmVsX2dldF9t
-b2RlcyhzdHJ1Y3QgZHJtX3BhbmVsICpwYW5lbCwNCiAJCQkgICAgICAgc3RydWN0IGRybV9jb25u
-ZWN0b3IgKmNvbm5lY3RvcikNCiB7DQpAQCAtNzU2LDYgKzgzMSw5IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3Qgb2ZfZGV2aWNlX2lkIGJvZV9vZl9tYXRjaFtdID0gew0KIAl7IC5jb21wYXRpYmxlID0g
-ImJvZSx0djEwMXd1bS1uNTMiLA0KIAkgIC5kYXRhID0gJmJvZV90djEwMXd1bV9uNTNfZGVzYw0K
-IAl9LA0KKwl7IC5jb21wYXRpYmxlID0gImF1byxiMTAxdWFuMDguMyIsDQorCSAgLmRhdGEgPSAm
-YXVvX2IxMDF1YW4wOF8zX2Rlc2MNCisJfSwNCiAJeyAvKiBzZW50aW5lbCAqLyB9DQogfTsNCiBN
-T0RVTEVfREVWSUNFX1RBQkxFKG9mLCBib2Vfb2ZfbWF0Y2gpOw0KLS0gDQoyLjIxLjANCg==
+On 1/16/20 8:35 PM, Kirill Tkhai wrote:
+> This is a preparation for next patch, which introduces
+> a new flag BLKDEV_ZERO_ALLOCATE for calls, which need
+> only allocation of blocks and don't need actual blocks
+> zeroing.
+> 
+> CC: Martin K. Petersen <martin.petersen@oracle.com>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  block/blk-lib.c                     |    6 +++---
+>  drivers/md/dm-kcopyd.c              |    2 +-
+>  drivers/target/target_core_iblock.c |    4 ++--
+>  include/linux/blkdev.h              |    3 ++-
+>  4 files changed, 8 insertions(+), 7 deletions(-)
+> 
+
+Looks good to me.
+Reviewed-by: Bob Liu <bob.liu@oracle.com>
+
+> diff --git a/block/blk-lib.c b/block/blk-lib.c
+> index 5f2c429d4378..3e38c93cfc53 100644
+> --- a/block/blk-lib.c
+> +++ b/block/blk-lib.c
+> @@ -224,7 +224,7 @@ static int __blkdev_issue_write_zeroes(struct block_device *bdev,
+>  		return -EPERM;
+>  
+>  	/* Ensure that max_write_zeroes_sectors doesn't overflow bi_size */
+> -	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bdev);
+> +	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bdev, 0);
+>  
+>  	if (max_write_zeroes_sectors == 0)
+>  		return -EOPNOTSUPP;
+> @@ -362,7 +362,7 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>  	sector_t bs_mask;
+>  	struct bio *bio;
+>  	struct blk_plug plug;
+> -	bool try_write_zeroes = !!bdev_write_zeroes_sectors(bdev);
+> +	bool try_write_zeroes = !!bdev_write_zeroes_sectors(bdev, 0);
+>  
+>  	bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
+>  	if ((sector | nr_sects) & bs_mask)
+> @@ -391,7 +391,7 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>  			try_write_zeroes = false;
+>  			goto retry;
+>  		}
+> -		if (!bdev_write_zeroes_sectors(bdev)) {
+> +		if (!bdev_write_zeroes_sectors(bdev, 0)) {
+>  			/*
+>  			 * Zeroing offload support was indicated, but the
+>  			 * device reported ILLEGAL REQUEST (for some devices
+> diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
+> index 1bbe4a34ef4c..f1b8e7926dd4 100644
+> --- a/drivers/md/dm-kcopyd.c
+> +++ b/drivers/md/dm-kcopyd.c
+> @@ -831,7 +831,7 @@ void dm_kcopyd_copy(struct dm_kcopyd_client *kc, struct dm_io_region *from,
+>  		 */
+>  		job->rw = REQ_OP_WRITE_ZEROES;
+>  		for (i = 0; i < job->num_dests; i++)
+> -			if (!bdev_write_zeroes_sectors(job->dests[i].bdev)) {
+> +			if (!bdev_write_zeroes_sectors(job->dests[i].bdev, 0)) {
+>  				job->rw = WRITE;
+>  				break;
+>  			}
+> diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+> index 51ffd5c002de..73a63e197bf5 100644
+> --- a/drivers/target/target_core_iblock.c
+> +++ b/drivers/target/target_core_iblock.c
+> @@ -117,7 +117,7 @@ static int iblock_configure_device(struct se_device *dev)
+>  	 * Enable write same emulation for IBLOCK and use 0xFFFF as
+>  	 * the smaller WRITE_SAME(10) only has a two-byte block count.
+>  	 */
+> -	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bd);
+> +	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bd, 0);
+>  	if (max_write_zeroes_sectors)
+>  		dev->dev_attrib.max_write_same_len = max_write_zeroes_sectors;
+>  	else
+> @@ -468,7 +468,7 @@ iblock_execute_write_same(struct se_cmd *cmd)
+>  		return TCM_INVALID_CDB_FIELD;
+>  	}
+>  
+> -	if (bdev_write_zeroes_sectors(bdev)) {
+> +	if (bdev_write_zeroes_sectors(bdev, 0)) {
+>  		if (!iblock_execute_zero_out(bdev, cmd))
+>  			return 0;
+>  	}
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index c45779f00cbd..4cd69552df9a 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1418,7 +1418,8 @@ static inline unsigned int bdev_write_same(struct block_device *bdev)
+>  	return 0;
+>  }
+>  
+> -static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
+> +static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev,
+> +						     unsigned int flags)
+>  {
+>  	struct request_queue *q = bdev_get_queue(bdev);
+>  
+> 
+> 
 
