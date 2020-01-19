@@ -2,143 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E33141F0A
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35400141F1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:50:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbgASQbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 11:31:12 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:45419 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728827AbgASQbJ (ORCPT
+        id S1727144AbgASQu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 11:50:26 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60227 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbgASQu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 11:31:09 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id C6DA121B6B;
-        Sun, 19 Jan 2020 11:31:08 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 19 Jan 2020 11:31:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=J50f2lbdcydT0
-        Mb3z0ZQkgpbye5qC5NfAXApFJPVhDI=; b=Z10iIopv0pJzUiGi/OLDXKi1laAvb
-        hBxF6Qq+iht34FKmoKN3MbB5TtseHRqyYMRwu1Omp5VUkA68GeLDxEc8Slty9vs7
-        Fj2EGSwuhsEyCX0VukpDKBQBiZLunpTrah8frCx1y14nUFDBln2IJn/zxWRSwvvH
-        8v5aMRugxKytvTSYCAanbc9uKjqlk6Q9ETSrFNksl2iLul6R7pTZ3PcTcbGuaweZ
-        oK8dF4u3Yql4pSvB4Tm/n0gDhsuD/T5r1UJnQfoh1CBHfmVk2MCiphCTFz1K4Tvq
-        QX2R6Pok7gouip/orbUOnhvbzq4PjCGw0CiXMUvqNI0oN3PlSzYEcqL2g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=J50f2lbdcydT0Mb3z0ZQkgpbye5qC5NfAXApFJPVhDI=; b=pWvr3JOB
-        Tv3fRCqIa+28Jf8sLTvpbDtOkRvdMqDp3hheQUdKyppxEwpTar5Um3ZmYWeiDi5J
-        IJFU1yGpzKBwFfK9+1POx0PJ1h9nCKPzshwbTtLMpCTsPtfoONb+1YSt3zeoWsdC
-        ujQLpB4iS7qcPAVunZ2lSaKa2mNVjkqXzWstBk/2fT91kemo2dOULiAcvLYEsPcj
-        ENAyeH3RKZ5kTuXHn9riXnx0gwglbpga4X+ZdLf79WwYO7Nbokv3yJnt1/jNRH/9
-        klD22YzH+9UghSGFtso1eHKrx4hWdLVbRn7cSrMCDkuWiCzUFAFyf/WD+RizWNQg
-        bYV76vmJZ22+qQ==
-X-ME-Sender: <xms:TIQkXqLbymyBPWQ3F2iKkh1FFYTJX-vhQe-t47JdUbJGi61nLsxymw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefgdekkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
-    ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
-    vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:TIQkXgAW4AHcWkersNdEul4j34be3FDSqROhzDbIU3IhtldtHgvdDw>
-    <xmx:TIQkXjzSAhQ5YkDUwBRnP1it_lW-DPEKavbFaxuRvIu_IxzoeLLKHQ>
-    <xmx:TIQkXgrJd4DehqtFoCCvEr4gsu1a4spc2BdKn9DppNLQebvhhP4y5g>
-    <xmx:TIQkXgmUr4kIbZHpSLeS324Eqw_Nhs00Ydm1nM5ESLD-EFbPBGtFig>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 32EB08005A;
-        Sun, 19 Jan 2020 11:31:08 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 9/9] arm64: dts: allwinner: pinebook: Fix 5v0 boost regulator
-Date:   Sun, 19 Jan 2020 10:31:04 -0600
-Message-Id: <20200119163104.13274-9-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200119163104.13274-1-samuel@sholland.org>
-References: <20200119163104.13274-1-samuel@sholland.org>
+        Sun, 19 Jan 2020 11:50:26 -0500
+Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1itDmF-00043F-E1; Sun, 19 Jan 2020 17:50:19 +0100
+Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
+        id E1CB4105BE3; Sun, 19 Jan 2020 17:50:17 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Peter Xu <peterx@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH V3] sched/isolation: isolate from handling managed interrupt
+In-Reply-To: <20200118125354.15796-1-ming.lei@redhat.com>
+References: <20200118125354.15796-1-ming.lei@redhat.com>
+Date:   Sun, 19 Jan 2020 17:50:17 +0100
+Message-ID: <87ftgb4chi.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that AXP803 GPIO support is available, we can properly model
-the hardware. Replace the use of GPIO0-LDO with a fixed regulator
-controlled by GPIO0. This boost regulator is used to power the
-(internal and external) USB ports, as well as the speakers.
+Ming,
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- .../dts/allwinner/sun50i-a64-pinebook.dts     | 27 +++++++++----------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+Ming Lei <ming.lei@redhat.com> writes:
+>  
+> +static bool hk_should_isolate(struct irq_data *data,
+> +		const struct cpumask *affinity, unsigned int cpu)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-index 96434fdeb5c0..12e513ba8f50 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-@@ -57,6 +57,15 @@
- 		enable-active-high;
- 	};
- 
-+	reg_vcc5v0: vcc5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&axp_gpio 0 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-@@ -64,12 +73,7 @@
- 
- 	speaker_amp: audio-amplifier {
- 		compatible = "simple-audio-amplifier";
--		/*
--		 * TODO This is actually a fixed regulator controlled by
--		 * the GPIO line on the PMIC. This should be corrected
--		 * once GPIO support is added for this PMIC.
--		 */
--		VCC-supply = <&reg_ldo_io0>;
-+		VCC-supply = <&reg_vcc5v0>;
- 		enable-gpios = <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
- 		sound-name-prefix = "Speaker Amp";
- 	};
-@@ -302,13 +306,6 @@
- 	regulator-name = "vdd-cpus";
- };
- 
--&reg_ldo_io0 {
--	regulator-min-microvolt = <3300000>;
--	regulator-max-microvolt = <3300000>;
--	regulator-name = "vcc-usb";
--	status = "okay";
--};
--
- &reg_rtc_ldo {
- 	regulator-name = "vcc-rtc";
- };
-@@ -357,7 +354,7 @@
- };
- 
- &usbphy {
--	usb0_vbus-supply = <&reg_ldo_io0>;
--	usb1_vbus-supply = <&reg_ldo_io0>;
-+	usb0_vbus-supply = <&reg_vcc5v0>;
-+	usb1_vbus-supply = <&reg_vcc5v0>;
- 	status = "okay";
- };
--- 
-2.23.0
+Please align the first argument on the second line with the first
+argument on the first line.
 
+> +{
+> +	const struct cpumask *hk_mask;
+> +
+> +	if (!housekeeping_enabled(HK_FLAG_MANAGED_IRQ))
+> +		return false;
+> +
+> +	if (!irqd_affinity_is_managed(data))
+> +		return false;
+
+Pointless. That's already checked at the begin of the calling function.
+
+> +
+> +	if (!cpumask_test_cpu(cpu, affinity))
+> +		return false;
+
+Ditto.
+
+> +	hk_mask = housekeeping_cpumask(HK_FLAG_MANAGED_IRQ);
+> +	if (cpumask_subset(affinity, hk_mask))
+> +		return false;
+> +
+> +	if (cpumask_intersects(irq_data_get_effective_affinity_mask(data),
+> +				hk_mask))
+
+I really had to think twice why this is correct. The example I gave you
+is far more intuitive. It's just missing the check below.
+
+> +		return false;
+> +
+> +	return cpumask_test_cpu(cpu, hk_mask);
+> +}
+> +
+>  static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
+>  {
+>  	struct irq_data *data = irq_desc_get_irq_data(desc);
+> @@ -190,7 +216,8 @@ static void irq_restore_affinity_of_irq(struct irq_desc *desc, unsigned int cpu)
+>  	 * CPU then it is already assigned to a CPU in the affinity
+>  	 * mask. No point in trying to move it around.
+>  	 */
+> -	if (!irqd_is_single_target(data))
+> +	if (!irqd_is_single_target(data) ||
+> +			hk_should_isolate(data, affinity, cpu))
+
+	if (!irqd_is_single_target(data) ||
+	    hk_should_isolate(data, affinity, cpu))
+
+Please.
+
+>  		irq_set_affinity_locked(data, affinity, false);
+>  }
+>  
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 1753486b440c..a8af2ca806e2 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/rt.h>
+>  #include <linux/sched/task.h>
+> +#include <linux/sched/isolation.h>
+>  #include <uapi/linux/sched/types.h>
+>  #include <linux/task_work.h>
+>  
+> @@ -217,7 +218,40 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+>  	if (!chip || !chip->irq_set_affinity)
+>  		return -EINVAL;
+>  
+> -	ret = chip->irq_set_affinity(data, mask, force);
+> +	/*
+> +	 * If this is a managed interrupt and housekeeping is enabled on
+> +	 * it check whether the requested affinity mask intersects with
+> +	 * a housekeeping CPU. If so, then remove the isolated CPUs from
+> +	 * the mask and just keep the housekeeping CPU(s). This prevents
+> +	 * the affinity setter from routing the interrupt to an isolated
+> +	 * CPU to avoid that I/O submitted from a housekeeping CPU causes
+> +	 * interrupts on an isolated one.
+> +	 *
+> +	 * If the masks do not intersect or include online CPU(s) then
+> +	 * keep the requested mask. The isolated target CPUs are only
+> +	 * receiving interrupts when the I/O operation was submitted
+> +	 * directly from them.
+> +	 *
+> +	 * If all housekeeping CPUs in the affinity mask are offline,
+> +	 * we will migrate the irq from isolate CPU when any housekeeping
+> +	 * CPU in the mask becomes online.
+> +	 */
+> +	if (irqd_affinity_is_managed(data) &&
+> +			housekeeping_enabled(HK_FLAG_MANAGED_IRQ)) {
+
+Same here.
+
+> +		static DEFINE_RAW_SPINLOCK(prog_mask_lock);
+> +		static struct cpumask prog_mask;
+> +		const struct cpumask *hk_mask =
+> +			housekeeping_cpumask(HK_FLAG_MANAGED_IRQ);
+> +
+
+What's wrong with writing:
+
+		const struct cpumask *hk_mask;
+
+		hk_mask = housekeeping_cpumask(HK_FLAG_MANAGED_IRQ);
+
+Hmm?
+
+> +		raw_spin_lock(&prog_mask_lock);
+> +		cpumask_and(&prog_mask, mask, hk_mask);
+> +		if (!cpumask_intersects(&prog_mask, cpu_online_mask))
+> +			cpumask_copy(&prog_mask, mask);
+
+Why copy?
+
+		static struct cpumask tmp_mask;
+		const struct cpumask *hk_mask, *mp;
+
+		raw_spin_lock(&mask_lock);
+		cpumask_and(&tmp_mask, mask, hk_mask);
+		if (cpumask_intersects(&prog_mask, cpu_online_mask))
+                	mp = &tmp_mask;
+                else
+                	mp = mask;
+                ....
+Hmm?
+
+Thanks,
+
+        tglx
