@@ -2,309 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0578141BB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 04:26:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55807141B95
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 04:22:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgASD0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 22:26:34 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57042 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbgASD0e (ORCPT
+        id S1728600AbgASDWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 18 Jan 2020 22:22:23 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:22750 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725497AbgASDWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 22:26:34 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it1Dt-00BFmu-T8; Sun, 19 Jan 2020 03:26:10 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 9/9] new helper: traverse_mounts()
-Date:   Sun, 19 Jan 2020 03:17:38 +0000
-Message-Id: <20200119031738.2681033-26-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
-References: <20200119031423.GV8904@ZenIV.linux.org.uk>
- <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
+        Sat, 18 Jan 2020 22:22:23 -0500
+X-UUID: 69125e9aa54e446c9366f7f201a9d17a-20200119
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=N4m9R+HOEDebYFK3h+Sc6tDJ4qpxShm9ZEefTev3gRc=;
+        b=GDKHRbGqMIa1Fbjl67s5M9EaXA3KXyexPY5V6kV+EhVh/DmDufg6TvQ9JOTuZkUff0nCUoDogkrgVZ+P+8l5jpwmbkib/S3vKmK0dAFDf7ZOz/7PZJC0XPPZvG9F08PD46+C1EG0qyBpoIX9GgZbDJ8eYRgjfaPqDtQyYEWqqSw=;
+X-UUID: 69125e9aa54e446c9366f7f201a9d17a-20200119
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yong.liang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1301561568; Sun, 19 Jan 2020 11:22:02 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 19 Jan
+ 2020 11:20:20 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 19 Jan 2020 11:22:07 +0800
+Message-ID: <1579404112.27500.0.camel@mhfsdcap03>
+Subject: Re: [PATCH v12 4/4] watchdog: mtk_wdt: mt2712: Add reset controller
+From:   Yong Liang <yong.liang@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chang-An Chen =?UTF-8?Q?=28=E9=99=B3=E6=98=B6=E5=AE=89=29?= 
+        <Chang-An.Chen@mediatek.com>,
+        Freddy Hsin =?UTF-8?Q?=28=E8=BE=9B=E6=81=92=E8=B1=90=29?= 
+        <Freddy.Hsin@mediatek.com>,
+        Jiaxin Yu =?UTF-8?Q?=28=E4=BF=9E=E5=AE=B6=E9=91=AB=29?= 
+        <Jiaxin.Yu@mediatek.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+        Yingjoe Chen =?UTF-8?Q?=28=E9=99=B3=E8=8B=B1=E6=B4=B2=29?= 
+        <Yingjoe.Chen@mediatek.com>
+Date:   Sun, 19 Jan 2020 11:21:52 +0800
+In-Reply-To: <987a7ccf-3d1b-9d4b-d766-63925268c21e@gmail.com>
+References: <20200115085828.27791-1-yong.liang@mediatek.com>
+         <20200115085828.27791-5-yong.liang@mediatek.com>
+         <987a7ccf-3d1b-9d4b-d766-63925268c21e@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-SNTS-SMTP: 0375DB0187E35C7A60A71975C79E48344130A27F5AE250EF19AE1BE1763111EC2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
-
-common guts of follow_down() and follow_managed() taken to a new
-helper - traverse_mounts().  The remnants of follow_managed()
-are folded into its sole remaining caller (handle_mounts()).
-Calling conventions of handle_mounts() slightly sanitized -
-instead of the weird "1 for success, -E... for failure" that used
-to be imposed by the calling conventions of walk_component() et.al.
-we can use the normal "0 for success, -E... for failure".
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 177 ++++++++++++++++++++++-------------------------------
- 1 file changed, 72 insertions(+), 105 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 310c5ccddf42..d3172e2c7f7f 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1167,91 +1167,79 @@ static int follow_automount(struct path *path, int *count, unsigned lookup_flags
- }
- 
- /*
-- * Handle a dentry that is managed in some way.
-- * - Flagged for transit management (autofs)
-- * - Flagged as mountpoint
-- * - Flagged as automount point
-- *
-- * This may only be called in refwalk mode.
-- * On success path->dentry is known positive.
-- *
-- * Serialization is taken care of in namespace.c
-+ * mount traversal - out-of-line part.  One note on ->d_flags accesses -
-+ * dentries are pinned but not locked here, so negative dentry can go
-+ * positive right under us.  Use of smp_load_acquire() provides a barrier
-+ * sufficient for ->d_inode and ->d_flags consistency.
-  */
--static int follow_managed(struct path *path, struct nameidata *nd)
-+static int __traverse_mounts(struct path *path, unsigned flags, bool *jumped,
-+			     int *count, unsigned lookup_flags)
- {
--	struct vfsmount *mnt = path->mnt; /* held by caller, must be left alone */
--	unsigned flags;
-+	struct vfsmount *mnt = path->mnt;
- 	bool need_mntput = false;
- 	int ret = 0;
- 
--	/* Given that we're not holding a lock here, we retain the value in a
--	 * local variable for each dentry as we look at it so that we don't see
--	 * the components of that value change under us */
--	while (flags = smp_load_acquire(&path->dentry->d_flags),
--	       unlikely(flags & DCACHE_MANAGED_DENTRY)) {
-+	while (flags & DCACHE_MANAGED_DENTRY) {
- 		/* Allow the filesystem to manage the transit without i_mutex
- 		 * being held. */
- 		if (flags & DCACHE_MANAGE_TRANSIT) {
--			BUG_ON(!path->dentry->d_op);
--			BUG_ON(!path->dentry->d_op->d_manage);
- 			ret = path->dentry->d_op->d_manage(path, false);
- 			flags = smp_load_acquire(&path->dentry->d_flags);
- 			if (ret < 0)
- 				break;
- 		}
- 
--		/* Transit to a mounted filesystem. */
--		if (flags & DCACHE_MOUNTED) {
-+		if (flags & DCACHE_MOUNTED) {	// something's mounted on it..
- 			struct vfsmount *mounted = lookup_mnt(path);
--			if (mounted) {
-+			if (mounted) {		// ... in our namespace
- 				dput(path->dentry);
- 				if (need_mntput)
- 					mntput(path->mnt);
- 				path->mnt = mounted;
- 				path->dentry = dget(mounted->mnt_root);
-+				// here we know it's positive
-+				flags = path->dentry->d_flags;
- 				need_mntput = true;
- 				continue;
- 			}
--
--			/* Something is mounted on this dentry in another
--			 * namespace and/or whatever was mounted there in this
--			 * namespace got unmounted before lookup_mnt() could
--			 * get it */
- 		}
- 
--		/* Handle an automount point */
--		if (flags & DCACHE_NEED_AUTOMOUNT) {
--			ret = follow_automount(path, &nd->total_link_count,
--						nd->flags);
--			if (ret < 0)
--				break;
--			continue;
--		}
-+		if (!(flags & DCACHE_NEED_AUTOMOUNT))
-+			break;
- 
--		/* We didn't change the current path point */
--		break;
-+		// uncovered automount point
-+		ret = follow_automount(path, count, lookup_flags);
-+		flags = smp_load_acquire(&path->dentry->d_flags);
-+		if (ret < 0)
-+			break;
- 	}
- 
--	if (need_mntput) {
--		if (path->mnt == mnt)
--			mntput(path->mnt);
--		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
--			ret = -EXDEV;
--		else
--			nd->flags |= LOOKUP_JUMPED;
--	}
--	if (ret == -EISDIR || !ret)
--		ret = 1;
--	if (ret > 0 && unlikely(d_flags_negative(flags)))
-+	if (ret == -EISDIR)
-+		ret = 0;
-+	// possible if you race with several mount --move
-+	if (need_mntput && path->mnt == mnt)
-+		mntput(path->mnt);
-+	if (!ret && unlikely(d_flags_negative(flags)))
- 		ret = -ENOENT;
--	if (unlikely(ret < 0)) {
--		dput(path->dentry);
--		if (path->mnt != nd->path.mnt)
--			mntput(path->mnt);
--	}
-+	*jumped = need_mntput;
- 	return ret;
- }
- 
-+static inline int traverse_mounts(struct path *path, bool *jumped,
-+				  int *count, unsigned lookup_flags)
-+{
-+	unsigned flags = smp_load_acquire(&path->dentry->d_flags);
-+
-+	/* fastpath */
-+	if (likely(!(flags & DCACHE_MANAGED_DENTRY))) {
-+		*jumped = false;
-+		if (unlikely(d_flags_negative(flags)))
-+			return -ENOENT;
-+		return 0;
-+	}
-+	return __traverse_mounts(path, flags, jumped, count, lookup_flags);
-+}
-+
- int follow_down_one(struct path *path)
- {
- 	struct vfsmount *mounted;
-@@ -1268,6 +1256,23 @@ int follow_down_one(struct path *path)
- }
- EXPORT_SYMBOL(follow_down_one);
- 
-+/*
-+ * Follow down to the covering mount currently visible to userspace.  At each
-+ * point, the filesystem owning that dentry may be queried as to whether the
-+ * caller is permitted to proceed or not.
-+ */
-+int follow_down(struct path *path)
-+{
-+	struct vfsmount *mnt = path->mnt;
-+	bool jumped;
-+	int ret = traverse_mounts(path, &jumped, NULL, 0);
-+
-+	if (path->mnt != mnt)
-+		mntput(mnt);
-+	return ret;
-+}
-+EXPORT_SYMBOL(follow_down);
-+
- /*
-  * Try to skip to top of mountpoint pile in rcuwalk mode.  Fail if
-  * we meet a managed dentry that would need blocking.
-@@ -1324,6 +1329,7 @@ static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
- 			  struct path *path, struct inode **inode,
- 			  unsigned int *seqp)
- {
-+	bool jumped;
- 	int ret;
- 
- 	path->mnt = nd->path.mnt;
-@@ -1333,15 +1339,25 @@ static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
- 		if (unlikely(!*inode))
- 			return -ENOENT;
- 		if (likely(__follow_mount_rcu(nd, path, inode, seqp)))
--			return 1;
-+			return 0;
- 		if (unlazy_child(nd, dentry, seq))
- 			return -ECHILD;
- 		// *path might've been clobbered by __follow_mount_rcu()
- 		path->mnt = nd->path.mnt;
- 		path->dentry = dentry;
- 	}
--	ret = follow_managed(path, nd);
--	if (likely(ret >= 0)) {
-+	ret = traverse_mounts(path, &jumped, &nd->total_link_count, nd->flags);
-+	if (jumped) {
-+		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-+			ret = -EXDEV;
-+		else
-+			nd->flags |= LOOKUP_JUMPED;
-+	}
-+	if (unlikely(ret)) {
-+		dput(path->dentry);
-+		if (path->mnt != nd->path.mnt)
-+			mntput(path->mnt);
-+	} else {
- 		*inode = d_backing_inode(path->dentry);
- 		*seqp = 0; /* out of RCU mode, so the value doesn't matter */
- 	}
-@@ -1409,55 +1425,6 @@ static int follow_dotdot_rcu(struct nameidata *nd)
- 	return 0;
- }
- 
--/*
-- * Follow down to the covering mount currently visible to userspace.  At each
-- * point, the filesystem owning that dentry may be queried as to whether the
-- * caller is permitted to proceed or not.
-- */
--int follow_down(struct path *path)
--{
--	unsigned managed;
--	int ret;
--
--	while (managed = READ_ONCE(path->dentry->d_flags),
--	       unlikely(managed & DCACHE_MANAGED_DENTRY)) {
--		/* Allow the filesystem to manage the transit without i_mutex
--		 * being held.
--		 *
--		 * We indicate to the filesystem if someone is trying to mount
--		 * something here.  This gives autofs the chance to deny anyone
--		 * other than its daemon the right to mount on its
--		 * superstructure.
--		 *
--		 * The filesystem may sleep at this point.
--		 */
--		if (managed & DCACHE_MANAGE_TRANSIT) {
--			BUG_ON(!path->dentry->d_op);
--			BUG_ON(!path->dentry->d_op->d_manage);
--			ret = path->dentry->d_op->d_manage(path, false);
--			if (ret < 0)
--				return ret == -EISDIR ? 0 : ret;
--		}
--
--		/* Transit to a mounted filesystem. */
--		if (managed & DCACHE_MOUNTED) {
--			struct vfsmount *mounted = lookup_mnt(path);
--			if (!mounted)
--				break;
--			dput(path->dentry);
--			mntput(path->mnt);
--			path->mnt = mounted;
--			path->dentry = dget(mounted->mnt_root);
--			continue;
--		}
--
--		/* Don't handle automount points here */
--		break;
--	}
--	return 0;
--}
--EXPORT_SYMBOL(follow_down);
--
- /*
-  * Skip to top of mountpoint pile in refwalk mode for follow_dotdot()
-  */
--- 
-2.20.1
+T24gVGh1LCAyMDIwLTAxLTE2IGF0IDAwOjE4ICswODAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
+Og0KPiANCj4gT24gMTUvMDEvMjAyMCAwOTo1OCwgWW9uZyBMaWFuZyB3cm90ZToNCj4gPiBGcm9t
+OiAieW9uZy5saWFuZyIgPHlvbmcubGlhbmdAbWVkaWF0ZWsuY29tPg0KPiA+IA0KPiA+IEFkZCBy
+ZXNldCBjb250cm9sbGVyIGZvciAyNzEyLg0KPiA+IEJlc2lkZXMgd2F0Y2hkb2csIE1USyB0b3By
+Z3UgbW9kdWxlIGFsc2EgcHJvdmlkZSBzdWItc3lzdGVtIChlZywgYXVkaW8sDQo+ID4gY2FtZXJh
+LCBjb2RlYyBhbmQgY29ubmVjdGl2aXR5KSBzb2Z0d2FyZSByZXNldCBmdW5jdGlvbmFsaXR5Lg0K
+PiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IHlvbmcubGlhbmcgPHlvbmcubGlhbmdAbWVkaWF0ZWsu
+Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEppYXhpbiBZdSA8amlheGluLnl1QG1lZGlhdGVrLmNv
+bT4NCj4gPiBSZXZpZXdlZC1ieTogWWluZ2pvZSBDaGVuIDx5aW5nam9lLmNoZW5AbWVkaWF0ZWsu
+Y29tPg0KPiA+IFJldmlld2VkLWJ5OiBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJvbml4
+LmRlPg0KPiANCj4gQWNrZWQtYnk6IE1hdHRoaWFzIEJydWdnZXIgPG1hdHRoaWFzLmJnZ0BnbWFp
+bC5jb20+DQoNCkhpIE1hdHRpYXM6DQogIE1heSBJIG5lZWQgc2VuZCBhIG5ldyBwYXRjaCB3aGl0
+aCB0aGlzIHRhZz8NCj4gDQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvd2F0Y2hkb2cvbXRrX3dkdC5j
+IHwgNiArKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQ0KPiA+IA0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3dhdGNoZG9nL210a193ZHQuYyBiL2RyaXZlcnMvd2F0
+Y2hkb2cvbXRrX3dkdC5jDQo+ID4gaW5kZXggZTg4YWFjYjA0MDRkLi5kNmE2MzkzZjYwOWQgMTAw
+NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy93YXRjaGRvZy9tdGtfd2R0LmMNCj4gPiArKysgYi9kcml2
+ZXJzL3dhdGNoZG9nL210a193ZHQuYw0KPiA+IEBAIC05LDYgKzksNyBAQA0KPiA+ICAgKiBCYXNl
+ZCBvbiBzdW54aV93ZHQuYw0KPiA+ICAgKi8NCj4gPiAgDQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5k
+aW5ncy9yZXNldC1jb250cm9sbGVyL210MjcxMi1yZXNldHMuaD4NCj4gPiAgI2luY2x1ZGUgPGR0
+LWJpbmRpbmdzL3Jlc2V0LWNvbnRyb2xsZXIvbXQ4MTgzLXJlc2V0cy5oPg0KPiA+ICAjaW5jbHVk
+ZSA8bGludXgvZGVsYXkuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPg0KPiA+IEBAIC02
+Nyw2ICs2OCwxMCBAQCBzdHJ1Y3QgbXRrX3dkdF9kYXRhIHsNCj4gPiAgCWludCB0b3ByZ3Vfc3df
+cnN0X251bTsNCj4gPiAgfTsNCj4gPiAgDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3dk
+dF9kYXRhIG10MjcxMl9kYXRhID0gew0KPiA+ICsJLnRvcHJndV9zd19yc3RfbnVtID0gTVQyNzEy
+X1RPUFJHVV9TV19SU1RfTlVNLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBtdGtfd2R0X2RhdGEgbXQ4MTgzX2RhdGEgPSB7DQo+ID4gIAkudG9wcmd1X3N3X3JzdF9u
+dW0gPSBNVDgxODNfVE9QUkdVX1NXX1JTVF9OVU0sDQo+ID4gIH07DQo+ID4gQEAgLTMxNCw2ICsz
+MTksNyBAQCBzdGF0aWMgaW50IG10a193ZHRfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikNCj4g
+PiAgI2VuZGlmDQo+ID4gIA0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBt
+dGtfd2R0X2R0X2lkc1tdID0gew0KPiA+ICsJeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDI3
+MTItd2R0IiwgLmRhdGEgPSAmbXQyNzEyX2RhdGEgfSwNCj4gPiAgCXsgLmNvbXBhdGlibGUgPSAi
+bWVkaWF0ZWssbXQ2NTg5LXdkdCIgfSwNCj4gPiAgCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWss
+bXQ4MTgzLXdkdCIsIC5kYXRhID0gJm10ODE4M19kYXRhIH0sDQo+ID4gIAl7IC8qIHNlbnRpbmVs
+ICovIH0NCj4gPiANCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fDQo+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiBMaW51eC1tZWRpYXRl
+a0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsNCg0K
 
