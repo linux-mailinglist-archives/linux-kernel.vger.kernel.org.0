@@ -2,280 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE26141D47
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 11:15:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D631141D3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 11:11:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgASKPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 05:15:52 -0500
-Received: from mga04.intel.com ([192.55.52.120]:56813 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbgASKPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 05:15:51 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2020 02:15:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,337,1574150400"; 
-   d="scan'208";a="399104727"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga005.jf.intel.com with ESMTP; 19 Jan 2020 02:15:49 -0800
-Date:   Sun, 19 Jan 2020 05:06:37 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        id S1726827AbgASKLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 05:11:36 -0500
+Received: from mail-eopbgr80070.outbound.protection.outlook.com ([40.107.8.70]:46246
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726744AbgASKLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 05:11:36 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A67cDd4OWG7sw4LKAl1S/7tWHCnJwxHV9gJl4H399OkX8pVtjxy5dS66naGZALjTmNi5OCmctt2Vp5Q3QfMxWoxL7ISsQjjzGTIC/0jo6hFxBsE/mdDbs8hEdoKZgLssq3rJ+V3WOT76N8UU/d88B0smnHepy5Jpe3DW2w1xijSWFGgV1Roh7j94xT0jOT83q/Aokn1U4/ROH/JNGVw3m8XGvEO8senA/naYNf67vEy1RwGmqT7obkyBsAIi1jEhFpueJtWBA7iwtLFODMHXiZs7JQZtd6d7V9D4Y8uEwOGSdeYxSK+qhZGX6hZI+s2OAfEB52DeCFKEqGv/suyH1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aBmX0oXHl3mLCKM3vt12XfHpIPLvThoU0574maatKDY=;
+ b=mr0bmYiPcDBfV6+dc6UVH5+0UBWI+FS0I4sDUtz8tD+9sk9w0w7WwICJSb2e1v7Wu7pMpazYZSSEPcg0X7BNgs3CFY5BTDX8B0/83cUxluvB6W+NLk1AL0/s7AqhLfw0qgidHrYTzYPQIJe0INijjviCMcV1juwyF686P7tCqAJmcEGM4Xq10ePgs77cmNP5friNfe3hcNtrx260DdZj57qQriLVylvm0AeKLyZp4NIu2WbyxYvhd2UnJLEeyoyh9n6cQoqHJ3USsljWkKT9gRIRt9PLbh5r4JW3Hz4Ms9RrpKlBvi/I1Sn2Qr89ztck69A+Mk2TdM9VDureSoIlbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aBmX0oXHl3mLCKM3vt12XfHpIPLvThoU0574maatKDY=;
+ b=mkT1jcMFlmoZiUJn41KsuwOwC3sQmDkEs0OWjpg0ftE6A/XDTfQ285hFUH0xEnSgAPovAKpiW+pCHqPHhXYEjPwbqPD8NMusj2Y3Wamj2grvBIjH/SQg2N5ZDmmpRdxYisYwtT+1OtNL+zZvtZJf2LebWeJoEBfcLDZ425gUw4Y=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0SPR01MB0058.eurprd04.prod.outlook.com (20.179.37.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.22; Sun, 19 Jan 2020 10:11:32 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2644.024; Sun, 19 Jan 2020
+ 10:11:32 +0000
+Received: from localhost.localdomain (119.31.174.66) by HK0PR01CA0065.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.23 via Frontend Transport; Sun, 19 Jan 2020 10:11:25 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v2 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
- vfio_dma_rw
-Message-ID: <20200119100637.GD1759@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200115034132.2753-1-yan.y.zhao@intel.com>
- <20200115035455.12417-1-yan.y.zhao@intel.com>
- <20200115130651.29d7e9e0@w520.home>
- <20200116054941.GB1759@joy-OptiPlex-7040>
- <20200116083729.40983f38@w520.home>
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] arm64: dts: imx8mm: drop redundant interrupt-parent
+Thread-Topic: [PATCH] arm64: dts: imx8mm: drop redundant interrupt-parent
+Thread-Index: AQHVzrDSsTSUbG7Zs0OJCGW8FrFIzA==
+Date:   Sun, 19 Jan 2020 10:11:32 +0000
+Message-ID: <1579428407-9981-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0065.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::29) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4f95858c-c1eb-4b2c-85da-08d79cc7f507
+x-ms-traffictypediagnostic: AM0SPR01MB0058:|AM0SPR01MB0058:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0SPR01MB0058696D4A1E2C4F56DB7D0E88330@AM0SPR01MB0058.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
+x-forefront-prvs: 0287BBA78D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(66556008)(66476007)(66446008)(64756008)(2906002)(16526019)(186003)(6512007)(36756003)(478600001)(7416002)(44832011)(26005)(66946007)(6486002)(4326008)(956004)(2616005)(8936002)(4744005)(81166006)(81156014)(6506007)(52116002)(6666004)(86362001)(5660300002)(316002)(8676002)(110136005)(54906003)(71200400001)(69590400006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0SPR01MB0058;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ux3v6zAVBXNcQp93Paod4jdjcSna6i0MVieBWA9fU6qFLUOuiZtjhosWCH+7Sesrl7CQsOlTHda0X1acNs9N9ZKb3vV1pdXt4PaQc/7ELZt+kBvZhhF9y7gkSZMRWXrtNG2BuIZmw1Kg7Pf3W+03Josaxu5mE950kjZAjWYcbns95L8vTW0GXmffo5CSiapyraDGOCSQGXJQ0UDhj7ZokNR9dCZK1CHEbomKCfyUXESpbxxEiGsKLc1aON+4ga6jr7O8/PQHlTlyR/mxE0INPo9cw0KEy1KC2RLOIzqLum+rBPyLx55dBe+Jz8zOh3O4drNAwzSseF8tkxViAsAozF1274fpnfHDkrEHxWJUmccinUMFiTws93uvC8riZPHb0lP2wpUmiOnYQ49fGSBFiEtOMhwGYi/f86VdPSmEb2KR6kE0jhcI42lsQ43lBMtA8MIx7ykFtjYOrLNFKMw8vaxCAxrYgGJO8JCU4Gec4fZnVT1A71yjaY6EEfuet2S93DZyTg9grQkVUDt4/aavSA==
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116083729.40983f38@w520.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f95858c-c1eb-4b2c-85da-08d79cc7f507
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2020 10:11:32.3188
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UFB9UMFNL6+uufIT6sNiglpLoBdyeQvhjJ2DYDwqTVOaB8u0AI8j7elt9lCzzNOyQh/Dk8oT8FZHMr6AgrTgyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0SPR01MB0058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:37:29PM +0800, Alex Williamson wrote:
-> On Thu, 16 Jan 2020 00:49:41 -0500
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > On Thu, Jan 16, 2020 at 04:06:51AM +0800, Alex Williamson wrote:
-> > > On Tue, 14 Jan 2020 22:54:55 -0500
-> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > >   
-> > > > As a device model, it is better to read/write guest memory using vfio
-> > > > interface, so that vfio is able to maintain dirty info of device IOVAs.
-> > > > 
-> > > > Compared to kvm interfaces kvm_read/write_guest(), vfio_dma_rw() has ~600
-> > > > cycles more overhead on average.
-> > > > 
-> > > > -------------------------------------
-> > > > |    interface     | avg cpu cycles |
-> > > > |-----------------------------------|
-> > > > | kvm_write_guest  |     1554       |
-> > > > | ----------------------------------|
-> > > > | kvm_read_guest   |     707        |
-> > > > |-----------------------------------|
-> > > > | vfio_dma_rw(w)   |     2274       |
-> > > > |-----------------------------------|
-> > > > | vfio_dma_rw(r)   |     1378       |
-> > > > -------------------------------------  
-> > > 
-> > > In v1 you had:
-> > > 
-> > > -------------------------------------
-> > > |    interface     | avg cpu cycles |
-> > > |-----------------------------------|
-> > > | kvm_write_guest  |     1546       |
-> > > | ----------------------------------|
-> > > | kvm_read_guest   |     686        |
-> > > |-----------------------------------|
-> > > | vfio_iova_rw(w)  |     2233       |
-> > > |-----------------------------------|
-> > > | vfio_iova_rw(r)  |     1262       |
-> > > -------------------------------------
-> > > 
-> > > So the kvm numbers remained within +0.5-3% while the vfio numbers are
-> > > now +1.8-9.2%.  I would have expected the algorithm change to at least
-> > > not be worse for small accesses and be better for accesses crossing
-> > > page boundaries.  Do you know what happened?
-> > >  
-> > I only tested the 4 interfaces in GVT's environment, where most of the
-> > guest memory accesses are less than one page.
-> > And the different fluctuations should be caused by the locks.
-> > vfio_dma_rw contends locks with other vfio accesses which are assumed to
-> > be abundant in the case of GVT.
-> 
-> Hmm, so maybe it's time to convert vfio_iommu.lock from a mutex to a
-> rwsem?  Thanks,
-> 
+From: Peng Fan <peng.fan@nxp.com>
 
-hi Alex
-I tested your rwsem patches at (https://lkml.org/lkml/2020/1/16/1869).
-They works without any runtime error at my side. :) 
-However, I found out that the previous fluctuation may be because I didn't
-take read/write counts in to account.
-For example. though the two tests have different avg read/write cycles,
-their average cycles are almost the same.
- ______________________________________________________________________
-|        | avg read |            | avg write |            |            |
-|        | cycles   | read cnt   | cycles    | write cnt  | avg cycles |
-|----------------------------------------------------------------------|
-| test 1 |   1339   | 29,587,120 |  2258     | 17,098,364 |    1676    |
-| test 2 |   1340   | 28,454,262 |  2238     | 16,501,788 |    1670    |
- ----------------------------------------------------------------------
+There is interrupt-parent =3D <&gic> in root node, there is no
+need set it again in node ddr-pmu@3d800000.
 
-After measuring the exact read/write cnt and cycles of a specific workload,
-I get below findings:
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-(1) with single VM running glmark2 inside.
-glmark2: 40M+ read+write cnt, among which 63% is read.
-among reads, 48% is of PAGE_SIZE, the rest is less than a page.
-among writes, 100% is less than a page.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dt=
+s/freescale/imx8mm.dtsi
+index 1e5e11592f7b..b3d0b29d7007 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -896,7 +896,6 @@
+ 		ddr-pmu@3d800000 {
+ 			compatible =3D "fsl,imx8mm-ddr-pmu", "fsl,imx8m-ddr-pmu";
+ 			reg =3D <0x3d800000 0x400000>;
+-			interrupt-parent =3D <&gic>;
+ 			interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 	};
+--=20
+2.16.4
 
- __________________________________________________
-|       cycles         | read | write |  avg | inc |
-|--------------------------------------------------|
-| kvm_read/write_page  |  694 |  1506 |  993 |  /  |
-|--------------------------------------------------|
-|  vfio_dma_rw(mutex)  | 1340 |  2248 | 1673 | 680 |
-|--------------------------------------------------|
-| vfio_dma_rw(rwsem r) | 1323 |  2198 | 1645 | 653 |
- ---------------------------------------------------
-
-so vfio_dma_rw generally has 650+ more cycles per each read/write.
-While kvm->srcu is of 160 cycles on average with one vm is running, the
-cycles spending on locks for vfio_dma_rw spread like this:
- ___________________________
-|        cycles       | avg |
-|---------------------------|
-|     iommu->lock     | 117 |
-|---------------------------|
-|   vfio.group_lock   | 108 |
-|---------------------------|
-| group->unbound_lock | 114 |
-|---------------------------|
-|  group->device_lock | 115 |
-|---------------------------|
-|     group->mutex    | 113 |
- ---------------------------
-
-I measured the cycles for a mutex without any contention is 104 cycles
-on average (including time for get_cycles() and measured in the same way
-as other locks). So the contention of a single lock in a single vm
-environment is light. probably because there's a vgpu lock hold in GVT already.
-
-(2) with two VMs each running glmark2 inside.
-The contention increases a little.
-
- ___________________________________________________
-|       cycles         | read | write |  avg | inc  |
-|---------------------------------------------------|
-| kvm_read/write_page  | 1035 |  1832 | 1325 |  /   |
-|---------------------------------------------------|
-|  vfio_dma_rw(mutex)  | 2104 |  2886 | 2390 | 1065 |
-|---------------------------------------------------|
-| vfio_dma_rw(rwsem r) | 1965 |  2778 | 2260 | 935  |
- ---------------------------------------------------
-
-
- -----------------------------------------------
-|     avg cycles       |   one VM   |  two VMs  |
-|-----------------------------------------------|
-|  iommu lock (mutex)  |     117    |   150     |
-|-----------------------------------|-----------|
-| iommu lock (rwsem r) |     117    |   156     |
-|-----------------------------------|-----------|
-|   kvm->srcu          |     160    |   213     |
- -----------------------------------------------
-
-In the kvm case, avg cycles increased 332 cycles, while kvm->srcu only costed
-213 cycles. The rest 109 cycles may be spent on atomic operations.
-But I didn't measure them, as get_cycles() operation itself would influence final
-cycles by ~20 cycles.
-
-
-Thanks
-Yan
-
-
-
-
-> 
-> > > > Comparison of benchmarks scores are as blow:
-> > > > ------------------------------------------------------
-> > > > |  avg score  | kvm_read/write_guest  | vfio_dma_rw  |
-> > > > |----------------------------------------------------|
-> > > > |   Glmark2   |         1284          |    1296      |
-> > > > |----------------------------------------------------|
-> > > > |  Lightsmark |         61.24         |    61.27     |
-> > > > |----------------------------------------------------|
-> > > > |  OpenArena  |         140.9         |    137.4     |
-> > > > |----------------------------------------------------|
-> > > > |   Heaven    |          671          |     670      |
-> > > > ------------------------------------------------------
-> > > > No obvious performance downgrade found.
-> > > > 
-> > > > Cc: Kevin Tian <kevin.tian@intel.com>
-> > > > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > > > ---
-> > > >  drivers/gpu/drm/i915/gvt/kvmgt.c | 26 +++++++-------------------
-> > > >  1 file changed, 7 insertions(+), 19 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-> > > > index bd79a9718cc7..17edc9a7ff05 100644
-> > > > --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-> > > > +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-> > > > @@ -1966,31 +1966,19 @@ static int kvmgt_rw_gpa(unsigned long handle, unsigned long gpa,
-> > > >  			void *buf, unsigned long len, bool write)
-> > > >  {
-> > > >  	struct kvmgt_guest_info *info;
-> > > > -	struct kvm *kvm;
-> > > > -	int idx, ret;
-> > > > -	bool kthread = current->mm == NULL;
-> > > > +	int ret;
-> > > > +	struct intel_vgpu *vgpu;
-> > > > +	struct device *dev;
-> > > >  
-> > > >  	if (!handle_valid(handle))
-> > > >  		return -ESRCH;
-> > > >  
-> > > >  	info = (struct kvmgt_guest_info *)handle;
-> > > > -	kvm = info->kvm;
-> > > > -
-> > > > -	if (kthread) {
-> > > > -		if (!mmget_not_zero(kvm->mm))
-> > > > -			return -EFAULT;
-> > > > -		use_mm(kvm->mm);
-> > > > -	}
-> > > > -
-> > > > -	idx = srcu_read_lock(&kvm->srcu);
-> > > > -	ret = write ? kvm_write_guest(kvm, gpa, buf, len) :
-> > > > -		      kvm_read_guest(kvm, gpa, buf, len);
-> > > > -	srcu_read_unlock(&kvm->srcu, idx);
-> > > > +	vgpu = info->vgpu;
-> > > > +	dev = mdev_dev(vgpu->vdev.mdev);
-> > > >  
-> > > > -	if (kthread) {
-> > > > -		unuse_mm(kvm->mm);
-> > > > -		mmput(kvm->mm);
-> > > > -	}
-> > > > +	ret = write ? vfio_dma_rw(dev, gpa, buf, len, true) :
-> > > > +			vfio_dma_rw(dev, gpa, buf, len, false);  
-> > > 
-> > > As Paolo suggested previously, this can be simplified:
-> > > 
-> > > ret = vfio_dma_rw(dev, gpa, buf, len, write);
-> > >  
-> > > >  
-> > > >  	return ret;  
-> > > 
-> > > Or even more simple, remove the ret variable:
-> > > 
-> > > return vfio_dma_rw(dev, gpa, buf, len, write);
-> > >   
-> > oh, it seems that I missed Paolo's mail. will change it. thank you!
-> > 
-> > Thanks
-> > Yan
-> > >   
-> > > >  }  
-> > >   
-> > 
-> 
