@@ -2,99 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22A341420BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:18:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEBF71420B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:16:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgASXQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 18:16:32 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49724 "EHLO
+        id S1729275AbgASXQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 18:16:57 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49800 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728886AbgASXQb (ORCPT
+        with ESMTP id S1729047AbgASXQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 18:16:31 -0500
+        Sun, 19 Jan 2020 18:16:33 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id C34032991A; Sun, 19 Jan 2020 18:16:30 -0500 (EST)
+        id 8A1A8299A5; Sun, 19 Jan 2020 18:16:31 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-Id: <5057d7da0f23a99fb0945bb26e2a0100e7031e75.1579474569.git.fthain@telegraphics.com.au>
+Message-Id: <2f7d911960c9e625f85f1563d8cbd9ab296e7209.1579474569.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1579474569.git.fthain@telegraphics.com.au>
 References: <cover.1579474569.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 02/19] net/sonic: Remove redundant next_tx variable
+Subject: [PATCH net 16/19] net/sonic: Quiesce SONIC before re-initializing
+ descriptor memory
 Date:   Mon, 20 Jan 2020 09:56:09 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The eol_tx variable is the one that matters to the tx algorithm because
-packets are always placed at the end of the list. The next_tx variable
-just confuses things so remove it.
+Make sure the SONIC's DMA engine is idle before altering the transmit
+and receive descriptors. Add a helper for this as it will be needed
+again.
 
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 10 ++++++----
- drivers/net/ethernet/natsemi/sonic.h |  1 -
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/natsemi/sonic.c | 26 ++++++++++++++++++++++++++
+ drivers/net/ethernet/natsemi/sonic.h |  3 +++
+ 2 files changed, 29 insertions(+)
 
 diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 657b5327baf9..f31cb19ded50 100644
+index 343a8a7a6edf..b70470ce9c9c 100644
 --- a/drivers/net/ethernet/natsemi/sonic.c
 +++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -215,7 +215,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	struct sonic_local *lp = netdev_priv(dev);
- 	dma_addr_t laddr;
- 	int length;
--	int entry = lp->next_tx;
-+	int entry;
+@@ -150,6 +150,25 @@ static int sonic_open(struct net_device *dev)
+ 	return 0;
+ }
  
- 	netif_dbg(lp, tx_queued, dev, "%s: skb=%p\n", __func__, skb);
- 
-@@ -237,6 +237,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 		return NETDEV_TX_OK;
- 	}
- 
-+	entry = (lp->eol_tx + 1) & SONIC_TDS_MASK;
++/* Wait for the SONIC to become idle. */
 +
- 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
- 	sonic_tda_put(dev, entry, SONIC_TD_FRAG_COUNT, 1);   /* single fragment */
- 	sonic_tda_put(dev, entry, SONIC_TD_PKTSIZE, length); /* length of packet */
-@@ -260,8 +262,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 				  sonic_tda_get(dev, lp->eol_tx, SONIC_TD_LINK) & ~SONIC_EOL);
- 	lp->eol_tx = entry;
++static void sonic_quiesce(struct net_device *dev, u16 mask)
++{
++	struct sonic_local * __maybe_unused lp = netdev_priv(dev);
++	int i;
++	u16 bits;
++
++	for (i = 0; i < 1000; ++i) {
++		bits = SONIC_READ(SONIC_CMD) & mask;
++		if (!bits)
++			return;
++		if (irqs_disabled() || in_interrupt())
++			udelay(20);
++		else
++			usleep_range(100, 200);
++	}
++	WARN_ONCE(1, "command deadline expired! 0x%04x\n", bits);
++}
  
--	lp->next_tx = (entry + 1) & SONIC_TDS_MASK;
--	if (lp->tx_skb[lp->next_tx] != NULL) {
-+	entry = (entry + 1) & SONIC_TDS_MASK;
-+	if (lp->tx_skb[entry]) {
- 		/* The ring is full, the ISR has yet to process the next TD. */
- 		netif_dbg(lp, tx_queued, dev, "%s: stopping queue\n", __func__);
- 		netif_stop_queue(dev);
-@@ -684,7 +686,7 @@ static int sonic_init(struct net_device *dev)
- 
- 	SONIC_WRITE(SONIC_UTDA, lp->tda_laddr >> 16);
- 	SONIC_WRITE(SONIC_CTDA, lp->tda_laddr & 0xffff);
--	lp->cur_tx = lp->next_tx = 0;
-+	lp->cur_tx = 0;
- 	lp->eol_tx = SONIC_NUM_TDS - 1;
+ /*
+  * Close the SONIC device
+@@ -166,6 +185,9 @@ static int sonic_close(struct net_device *dev)
+ 	/*
+ 	 * stop the SONIC, disable interrupts
+ 	 */
++	SONIC_WRITE(SONIC_CMD, SONIC_CR_RXDIS);
++	sonic_quiesce(dev, SONIC_CR_ALL);
++
+ 	SONIC_WRITE(SONIC_IMR, 0);
+ 	SONIC_WRITE(SONIC_ISR, 0x7fff);
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+@@ -205,6 +227,9 @@ static void sonic_tx_timeout(struct net_device *dev)
+ 	 * put the Sonic into software-reset mode and
+ 	 * disable all interrupts before releasing DMA buffers
+ 	 */
++	SONIC_WRITE(SONIC_CMD, SONIC_CR_RXDIS);
++	sonic_quiesce(dev, SONIC_CR_ALL);
++
+ 	SONIC_WRITE(SONIC_IMR, 0);
+ 	SONIC_WRITE(SONIC_ISR, 0x7fff);
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+@@ -684,6 +709,7 @@ static int sonic_init(struct net_device *dev)
+ 	 */
+ 	SONIC_WRITE(SONIC_CMD, 0);
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RXDIS);
++	sonic_quiesce(dev, SONIC_CR_ALL);
  
  	/*
+ 	 * initialize the receive resource area
 diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 2b27f7049acb..e402dc29d2aa 100644
+index 61f253be92a0..e0d74ca9a77a 100644
 --- a/drivers/net/ethernet/natsemi/sonic.h
 +++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -318,7 +318,6 @@ struct sonic_local {
- 	unsigned int cur_tx;           /* first unacked transmit packet */
- 	unsigned int eol_rx;
- 	unsigned int eol_tx;           /* last unacked transmit packet */
--	unsigned int next_tx;          /* next free TD */
- 	int msg_enable;
- 	struct device *device;         /* generic device */
- 	struct net_device_stats stats;
+@@ -110,6 +110,9 @@
+ #define SONIC_CR_TXP            0x0002
+ #define SONIC_CR_HTX            0x0001
+ 
++#define SONIC_CR_ALL (SONIC_CR_LCAM | SONIC_CR_RRRA | \
++		      SONIC_CR_RXEN | SONIC_CR_TXP)
++
+ /*
+  * SONIC data configuration bits
+  */
 -- 
 2.24.1
 
