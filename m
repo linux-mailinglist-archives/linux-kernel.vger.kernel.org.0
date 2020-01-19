@@ -2,95 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 909DE142C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C22A142C1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbgATN0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:26:16 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:54619 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbgATN0P (ORCPT
+        id S1727048AbgATNdL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 Jan 2020 08:33:11 -0500
+Received: from [181.210.16.40] ([181.210.16.40]:48680 "EHLO
+        mail.ssis-sedis.gob.hn" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726728AbgATNdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:26:15 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 805063C04C1;
-        Mon, 20 Jan 2020 14:26:12 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0WEtl-NDxPMY; Mon, 20 Jan 2020 14:26:07 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 5FC4E3C00C5;
-        Mon, 20 Jan 2020 14:26:07 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Mon, 20 Jan
- 2020 14:26:07 +0100
-Date:   Mon, 20 Jan 2020 14:26:07 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 0/5] gpio: Add GPIO Aggregator
-Message-ID: <20200120132607.GB24951@lxhi-065.adit-jv.com>
-References: <20200115181523.23556-1-geert+renesas@glider.be>
+        Mon, 20 Jan 2020 08:33:11 -0500
+X-Greylist: delayed 62729 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 08:33:11 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.ssis-sedis.gob.hn (Postfix) with ESMTP id 34092E2316E;
+        Sun, 19 Jan 2020 14:16:07 -0600 (CST)
+Received: from mail.ssis-sedis.gob.hn ([127.0.0.1])
+        by localhost (mail.ssis-sedis.gob.hn [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Pqqc9ImqlhsX; Sun, 19 Jan 2020 14:16:05 -0600 (CST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.ssis-sedis.gob.hn (Postfix) with ESMTP id 53E8CDFBF35;
+        Sun, 19 Jan 2020 12:22:00 -0600 (CST)
+X-Virus-Scanned: amavisd-new at ssis-sedis.gob.hn
+Received: from mail.ssis-sedis.gob.hn ([127.0.0.1])
+        by localhost (mail.ssis-sedis.gob.hn [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id nwhssSMvcVBV; Sun, 19 Jan 2020 12:22:00 -0600 (CST)
+Received: from [10.8.0.2] (_gateway [10.30.6.1])
+        by mail.ssis-sedis.gob.hn (Postfix) with ESMTP id 939FDDF7AF6;
+        Sun, 19 Jan 2020 07:35:08 -0600 (CST)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200115181523.23556-1-geert+renesas@glider.be>
-X-Originating-IP: [10.72.93.66]
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Re: Hello Good Day
+To:     Recipients <tools@panoramahomecenter.com.br>
+From:   "James Brandy" <tools@panoramahomecenter.com.br>
+Date:   Sun, 19 Jan 2020 08:34:54 -0500
+Reply-To: infonarabemirates@gmail.com
+Message-Id: <20200119133509.939FDDF7AF6@mail.ssis-sedis.gob.hn>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+?Dear   
 
-On Wed, Jan 15, 2020 at 07:15:18PM +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> GPIO controllers are exported to userspace using /dev/gpiochip*
-> character devices.  Access control to these devices is provided by
-> standard UNIX file system permissions, on an all-or-nothing basis:
-> either a GPIO controller is accessible for a user, or it is not.
-> Currently no mechanism exists to control access to individual GPIOs.
-> 
-> Hence this adds a GPIO driver to aggregate existing GPIOs, and expose
-> them as a new gpiochip.  This is useful for implementing access control,
-> and assigning a set of GPIOs to a specific user.  Furthermore, this
-> simplifies and hardens exporting GPIOs to a virtual machine, as the VM
-> can just grab the full GPIO controller, and no longer needs to care
-> about which GPIOs to grab and which not, reducing the attack surface.
-> 
-> Recently, other use cases have been discovered[1]:
->   - Describing simple GPIO-operated devices in DT, and using the GPIO
->     Aggregator as a generic GPIO driver for userspace, which is useful
->     for industrial control.
+My name is James Brandy, I am a Financial Consultant of A&G Finance Ltd, I have a client who has an interest in Investing in your country into a Joint Venture / Partnership. He has funds available meant for investment.
 
-As per comments and test results in [*] (accidentally attached to v3):
+Please contact me if you are interested.
 
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Regards,
 
-[*] https://lore.kernel.org/linux-renesas-soc/20200120121439.GA24951@lxhi-065.adit-jv.com/
-    ("Re: [PATCH v3 0/7] gpio: Add GPIO Aggregator/Repeater")
-
--- 
-Best Regards,
-Eugeniu Rosca
+James Brandy
+Principal Partner
+A&G Finance Ltd.
+Email:jamesbrar677@gmail.com
