@@ -2,111 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC31142056
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75704142052
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:02:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbgASWCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 17:02:46 -0500
-Received: from mout.perfora.net ([74.208.4.197]:36725 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbgASWCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 17:02:45 -0500
-Received: from marcel-nb-toradex-int.cardiotech.int ([81.221.128.11]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 0LwYMD-1jhRgd1qLX-018NA9; Sun, 19 Jan 2020 23:02:16 +0100
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     info@logictechno.com, Sam Ravnborg <sam@ravnborg.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        j.bauer@endrich.com, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 3/3] dt-bindings: panel-simple: add bindings for logic technologies displays
-Date:   Sun, 19 Jan 2020 23:02:04 +0100
-Message-Id: <20200119220204.208751-3-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200119220204.208751-1-marcel@ziswiler.com>
-References: <20200119220204.208751-1-marcel@ziswiler.com>
+        id S1728855AbgASWCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 17:02:36 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52794 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbgASWCf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 17:02:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=s7rnapALkocYuGpPU7BNCPSg8c2Zf+5ywHOGUWObJQQ=; b=HlCxnC2RDqup9VGr0k+YNkHXX
+        O9T5UpS6DF2GbP5Buu//bhmQQgV6GJFB+g5dixq/ev7GgQ5vLVGoDIlHVYZQDCQo+h2Ir5JwwV8V5
+        5RBE65ajUuL+VK5HcLV7xjjf4wfFQK63kxLHJRhIlihsGJMc7ws9vICNd5F/ZdgI1JtNywyYMZyZK
+        IUdS9eRh9wDVDLFPsKFz4w42UO0yJfIC3J4v7hxZ4S/KpEEIdkLrhhFIjyjh+J39FUmyjo0NJ3+OI
+        p1VDBgFTM+r3vxQWlMz9CSUThMa3bbnrotuQLjEHvBdHeRDz6ltL5ymojf+yrmyLbYZ2+ZwI1ADDv
+        kNty7tT/A==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:57150)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1itIeN-0002F8-P9; Sun, 19 Jan 2020 22:02:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1itIeM-0002BY-BX; Sun, 19 Jan 2020 22:02:30 +0000
+Date:   Sun, 19 Jan 2020 22:02:30 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: linux-next: build failure after merge of the arm tree
+Message-ID: <20200119220230.GX25745@shell.armlinux.org.uk>
+References: <20200120082447.7fea4d55@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Hw82bcaPWPwRrI77lcUeqVX5rPe9mSITMwkyCj3DhwJV1Jy7sjF
- G5jsx6nFQbqTzb6c7zCwHoDT3mVvsPgQq9HaWVVQEiQIU5r3LbvE922LooRY79Ys/eJdkLT
- rb0w0yIimcbuvTtxCi3cUlDS05RlV+m/XBQwmFW7l/RS/Kc8kNc6KYvhfc3Aap2fAnpQ+n2
- bQ5usd69vFLeQONi3zBjw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/Dzw8OPAP0c=:LQ3DaTyXz5b3qvwlMcnIAE
- xYeeJhTSTiAR+EpElIKLBKyDResj1z89YLeTsTwZ3960xiI5ol+ngFfcCwCOs8D2ZcBg1TzSH
- RbRx0y0dhVB/OOnlVVJmNxuo+kW4hmN/KmQ3f2HWYuKzC0nMhPjvXYq2dg3IZ8HCNoNWw2HLY
- G5tZW8rqr1+8ewAKR6GCepQ/gqIHEHeZ5MQ83nchB7H2eIEyXnWollXxn/YRLmOow9EODN1ib
- VlriWgNh/b6hdmufy1Yok2qQCv2d+kZaP63EGJfGP3N8lxIrXDGaALdqj6h6l4dArAN4o64oa
- OD3GFwExVIxvt0pEPjsM5walBPrwFMWLFn5HHwtRgJ9P5O3a0i6O3JfkJkU/jRoRS5FyTA6Zu
- zr9O4Kuqao7M+39PfcbQaHKukFGSzftRWygKdD//Uh+L2/Qy3lj25wZnLo0pjc3fcJu2q2ee0
- JV6Cd2wCcB5Ck98IDWnWkHD3sV/fdpm5mA88etikI7A0rvufWyNgzSiaCWz+y/W2akJ4DxRI5
- pgDEMtG+Q0FLkR3aQ3XbOobwuGV+vqH7AvX8Un8Sc8zXW4kbQxo2E9CRpoMvqlnbbqMJOd3mY
- e+HiK9phSggXfYipt2d+OS1MT7jONZx8inZsdo8Cx8NJzE4mt93nH5sa1dsmx2BHEXtNzzq8F
- cgcZS062SXNJwpFiO50gbdEObRjfWruDqIUPPb/8oRUqkNJzVVxdfT5LD/X7lI+tpwIHKn5BP
- Y28Y/WG2gKxuE94wAaynZtNuv0TAVeYUsFboPlRnxBJ2a/y6w9/fKIHBuP5elp1Qp0qkV/AU2
- 4oYnccDfwd6glTzE62ur4ou2YzC9y9JdwFbVVvLsG/2Wvv43mYXvOgeiCS0dCzMirO/8eZPDF
- FzYgPv9udhzi0Cxh2F3A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120082447.7fea4d55@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Hi Stephen,
 
-Add bindings for the following 3 previously added display panels
-manufactured by Logic Technologies Limited:
+Patch dropped.
 
-- LT161010-2NHC e.g. as found in the Toradex Capacitive Touch Display
-7" Parallel [1]
-- LT161010-2NHR e.g. as found in the Toradex Resistive Touch Display 7"
-Parallel [2]
-- LT170410-2WHC e.g. as found in the Toradex Capacitive Touch Display
-10.1" LVDS [3]
+I think this needs to wait until it's been properly tested before I
+apply the next version.
 
-Those panels may also be distributed by Endrich Bauelemente Vertriebs
-GmbH [4].
+On Mon, Jan 20, 2020 at 08:24:47AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the arm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> 
+> Caused by commit
+> 
+>   e3a0e1427dcb ("ARM: 8953/1: decompressor: simplify libfdt builds")
+> 
+> My arm builds are ppc64le hosted cross compiles using Debian's cross
+> gcc package.
+> 
+> I have reverted that commit for today.
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-[1] https://docs.toradex.com/104497-7-inch-parallel-capacitive-touch-display-800x480-datasheet.pdf
-[2] https://docs.toradex.com/104498-7-inch-parallel-resistive-touch-display-800x480.pdf
-[3] https://docs.toradex.com/105952-10-1-inch-lvds-capacitive-touch-display-1280x800-datasheet.pdf
-[4] https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
----
-
-Changes in v3:
-- Add it to recently introduced panel-simple.yaml instead as suggested
-  by Sam.
-
-Changes in v2:
-- New patch adding display panel bindings as well as suggested by Rob.
-
- .../devicetree/bindings/display/panel/panel-simple.yaml     | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-index 4a8064e31793..f33c5d979f96 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-@@ -41,6 +41,12 @@ properties:
-       - frida,frd350h54004
-         # GiantPlus GPM940B0 3.0" QVGA TFT LCD panel
-       - giantplus,gpm940b0
-+        # Logic Technologies LT161010-2NHC 7" WVGA TFT Cap Touch Module
-+      - logictechno,lt161010-2nhc
-+        # Logic Technologies LT161010-2NHR 7" WVGA TFT Resistive Touch Module
-+      - logictechno,lt161010-2nhr
-+        # Logic Technologies LT170410-2WHC 10.1" 1280x800 IPS TFT Cap Touch Mod.
-+      - logictechno,lt170410-2whc
-         # Satoz SAT050AT40H12R2 5.0" WVGA TFT LCD panel
-       - satoz,sat050at40h12r2
-         # Sharp LS020B1DD01D 2.0" HQVGA TFT LCD panel
 -- 
-2.24.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
