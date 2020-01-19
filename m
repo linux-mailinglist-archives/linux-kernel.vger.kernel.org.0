@@ -2,85 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E081420DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:18:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49E71420A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 00:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbgASXSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 18:18:05 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49796 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728946AbgASXQc (ORCPT
+        id S1728981AbgASXIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 18:08:15 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39790 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbgASXIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 18:16:32 -0500
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 0F4862996F; Sun, 19 Jan 2020 18:16:31 -0500 (EST)
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Chris Zankel <chris@zankel.net>,
-        Laurent Vivier <laurent@vivier.eu>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <0975406d8cd8d821db7475e9546c32e94f680f0b.1579474569.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1579474569.git.fthain@telegraphics.com.au>
-References: <cover.1579474569.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 06/19] net/macsonic: Remove interrupt handler wrapper
-Date:   Mon, 20 Jan 2020 09:56:09 +1100
+        Sun, 19 Jan 2020 18:08:14 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itJft-00BhLp-Jl; Sun, 19 Jan 2020 23:08:09 +0000
+Date:   Sun, 19 Jan 2020 23:08:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200119230809.GW8904@ZenIV.linux.org.uk>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200119221455.bac7dc55g56q2l4r@pali>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On m68k, local irqs remain enabled while interrupt handlers execute.
-Therefore the macsonic driver has had to disable interrupts to avoid
-re-entering sonic_interrupt(). With the preceding patch,
-sonic_interrupt() was made re-entrant, which means its wrapper is now
-redundant.
+On Sun, Jan 19, 2020 at 11:14:55PM +0100, Pali Rohár wrote:
 
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/net/ethernet/natsemi/macsonic.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+> So when UTF-8 on VFS for VFAT is enabled, then for VFS <--> VFAT
+> conversion are used utf16s_to_utf8s() and utf8s_to_utf16s() functions.
+> But in fat_name_match(), vfat_hashi() and vfat_cmpi() functions is used
+> NLS table (default iso8859-1) with nls_strnicmp() and nls_tolower().
+> 
+> Which means that fat_name_match(), vfat_hashi() and vfat_cmpi() are
+> broken for vfat in UTF-8 mode.
+> 
+> I was thinking how to fix it, and the only possible way is to write a
+> uni_tolower() function which takes one Unicode code point and returns
+> lowercase of input's Unicode code point. We cannot do any Unicode
+> normalization as VFAT specification does not say anything about it and
+> MS reference fastfat.sys implementation does not do it neither.
 
-diff --git a/drivers/net/ethernet/natsemi/macsonic.c b/drivers/net/ethernet/natsemi/macsonic.c
-index 0f4d0c25d626..1b5559aacb38 100644
---- a/drivers/net/ethernet/natsemi/macsonic.c
-+++ b/drivers/net/ethernet/natsemi/macsonic.c
-@@ -114,17 +114,6 @@ static inline void bit_reverse_addr(unsigned char addr[6])
- 		addr[i] = bitrev8(addr[i]);
- }
- 
--static irqreturn_t macsonic_interrupt(int irq, void *dev_id)
--{
--	irqreturn_t result;
--	unsigned long flags;
--
--	local_irq_save(flags);
--	result = sonic_interrupt(irq, dev_id);
--	local_irq_restore(flags);
--	return result;
--}
--
- static int macsonic_open(struct net_device* dev)
- {
- 	int retval;
-@@ -135,12 +124,12 @@ static int macsonic_open(struct net_device* dev)
- 				dev->name, dev->irq);
- 		goto err;
- 	}
--	/* Under the A/UX interrupt scheme, the onboard SONIC interrupt comes
--	 * in at priority level 3. However, we sometimes get the level 2 inter-
--	 * rupt as well, which must prevent re-entrance of the sonic handler.
-+	/* Under the A/UX interrupt scheme, the onboard SONIC interrupt gets
-+	 * moved from level 2 to level 3. Unfortunately we still get some
-+	 * level 2 interrupts so register the handler for both.
- 	 */
- 	if (dev->irq == IRQ_AUTO_3) {
--		retval = request_irq(IRQ_NUBUS_9, macsonic_interrupt, 0,
-+		retval = request_irq(IRQ_NUBUS_9, sonic_interrupt, 0,
- 				     "sonic", dev);
- 		if (retval) {
- 			printk(KERN_ERR "%s: unable to get IRQ %d.\n",
--- 
-2.24.1
+Then how can that possibly be broken?  If it matches the native behaviour,
+that's it.
 
+> As you can see lowercase 'd' and uppercase 'D' are same, but lowercase
+> 'č' and uppercase 'Č' are not same. This is because 'č' is two bytes
+> 0xc4 0x8d sequence and comparing is done by Latin1 table. 0xc4 is in
+> Latin 'Ä' which is already in uppercase. 0x8d is control char so is not
+> changed by tolower/toupper function.
+
+Again, who the hell cares?  Does the behaviour match how Windows handles
+that thing?  "Case" is not something well-defined; the only definition
+is "whatever weird crap does the native implementation choose to do".
+That's the only reason to support that garbage at all...
