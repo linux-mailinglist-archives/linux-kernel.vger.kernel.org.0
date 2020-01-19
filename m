@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2249A141E18
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 14:14:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A80141E16
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 14:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgASNOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 08:14:46 -0500
+        id S1728977AbgASNOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 08:14:37 -0500
 Received: from mga06.intel.com ([134.134.136.31]:54272 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728898AbgASNOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 08:14:33 -0500
+        id S1726874AbgASNOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 08:14:35 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2020 05:14:33 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2020 05:14:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,338,1574150400"; 
-   d="scan'208";a="220464498"
+   d="scan'208";a="220464515"
 Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Jan 2020 05:14:32 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 19 Jan 2020 05:14:34 -0800
 From:   Wei Yang <richardw.yang@linux.intel.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Wei Yang <richardw.yang@linux.intel.com>
-Subject: [PATCH 2/4] mm/page_alloc.c: rename free_pages_check_bad() to check_free_page_bad()
-Date:   Sun, 19 Jan 2020 21:14:06 +0800
-Message-Id: <20200119131408.23247-3-richardw.yang@linux.intel.com>
+Subject: [PATCH 3/4] mm/page_alloc.c: rename free_pages_check() to check_free_page()
+Date:   Sun, 19 Jan 2020 21:14:07 +0800
+Message-Id: <20200119131408.23247-4-richardw.yang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200119131408.23247-1-richardw.yang@linux.intel.com>
 References: <20200119131408.23247-1-richardw.yang@linux.intel.com>
@@ -35,37 +35,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-free_pages_check_bad() is the counterpart of check_new_page_bad(), while
+free_pages_check() is the counterpart of check_new_page(), while
 their naming convention is a little different.
 
 Use verb at first and singular form.
 
 Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 ---
- mm/page_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/page_alloc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8cd06729169f..e2324df1b261 100644
+index e2324df1b261..87658a16af07 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1042,7 +1042,7 @@ static inline const char *__check_page(struct page *page)
- 	return bad_reason;
+@@ -1055,7 +1055,7 @@ static void check_free_page_bad(struct page *page)
+ 	bad_page(page, bad_reason, bad_flags);
  }
  
--static void free_pages_check_bad(struct page *page)
-+static void check_free_page_bad(struct page *page)
+-static inline int free_pages_check(struct page *page)
++static inline int check_free_page(struct page *page)
  {
- 	const char *bad_reason = NULL;
- 	unsigned long bad_flags = 0;
-@@ -1061,7 +1061,7 @@ static inline int free_pages_check(struct page *page)
+ 	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_FREE)))
  		return 0;
+@@ -1147,7 +1147,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 		for (i = 1; i < (1 << order); i++) {
+ 			if (compound)
+ 				bad += free_tail_pages_check(page, page + i);
+-			if (unlikely(free_pages_check(page + i))) {
++			if (unlikely(check_free_page(page + i))) {
+ 				bad++;
+ 				continue;
+ 			}
+@@ -1159,7 +1159,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	if (memcg_kmem_enabled() && PageKmemcg(page))
+ 		__memcg_kmem_uncharge(page, order);
+ 	if (check_free)
+-		bad += free_pages_check(page);
++		bad += check_free_page(page);
+ 	if (bad)
+ 		return false;
  
- 	/* Something has gone sideways, find it */
--	free_pages_check_bad(page);
-+	check_free_page_bad(page);
- 	return 1;
+@@ -1206,7 +1206,7 @@ static bool free_pcp_prepare(struct page *page)
+ static bool bulkfree_pcp_prepare(struct page *page)
+ {
+ 	if (debug_pagealloc_enabled_static())
+-		return free_pages_check(page);
++		return check_free_page(page);
+ 	else
+ 		return false;
  }
+@@ -1227,7 +1227,7 @@ static bool free_pcp_prepare(struct page *page)
+ 
+ static bool bulkfree_pcp_prepare(struct page *page)
+ {
+-	return free_pages_check(page);
++	return check_free_page(page);
+ }
+ #endif /* CONFIG_DEBUG_VM */
  
 -- 
 2.17.1
