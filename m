@@ -2,89 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B023141E0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 14:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4180C141E13
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 14:14:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgASNOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 08:14:07 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:52835 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728797AbgASNOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 08:14:05 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579439644; h=References: In-Reply-To: Message-Id: Date:
- Subject: To: From: Sender;
- bh=67cowGFMTCAAqZeDoH/TZ8xNbKLHy1J5B0pUFqY5uZQ=; b=QIKmadlANsUBJINfDfSyNcDVW6/uv2UIuBHgR7+5wB0FqiZCHZwbR8FCwVDExFZ254AYdiE+
- ADECanNwEInXvc5z5n09n/qz1sevWPCLozkmNyrnPcBm8s5DCAw+NfYxovLhG7On7VbqF1xq
- VI38GIAZKs4vi8HzGyPNb6lhAw4=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e245617.7f3635262538-smtp-out-n01;
- Sun, 19 Jan 2020 13:13:59 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 77EBFC447A9; Sun, 19 Jan 2020 13:13:58 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from srichara1-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51058C447A2;
-        Sun, 19 Jan 2020 13:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51058C447A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From:   Sricharan R <sricharan@codeaurora.org>
-To:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, sivaprak@codeaurora.org,
-        sricharan@codeaurora.org
-Subject: [PATCH V6 5/5] arm64: defconfig: Enable qcom ipq6018 clock and pinctrl
-Date:   Sun, 19 Jan 2020 18:43:21 +0530
-Message-Id: <1579439601-14810-6-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1579439601-14810-1-git-send-email-sricharan@codeaurora.org>
-References: <1579439601-14810-1-git-send-email-sricharan@codeaurora.org>
+        id S1728894AbgASNOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 08:14:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:39786 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726874AbgASNOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 08:14:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2020 05:14:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,338,1574150400"; 
+   d="scan'208";a="306696089"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga001.jf.intel.com with ESMTP; 19 Jan 2020 05:14:29 -0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH 0/4] mm/page_alloc.c: cleanup on check page
+Date:   Sun, 19 Jan 2020 21:14:04 +0800
+Message-Id: <20200119131408.23247-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These configs are required for booting kernel in qcom
-ipq6018 boards.
+The patch set does some cleanup related to check page:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+* extract the common part to do check page 
+* rename two functions for consistent name convention
+* remove two unnecessary variable assignments
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 43fa238..16aecea 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -405,6 +405,7 @@ CONFIG_PINCTRL_IMX8MN=y
- CONFIG_PINCTRL_IMX8MQ=y
- CONFIG_PINCTRL_IMX8QXP=y
- CONFIG_PINCTRL_IPQ8074=y
-+CONFIG_PINCTRL_IPQ6018=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
- CONFIG_PINCTRL_MSM8996=y
-@@ -718,6 +719,7 @@ CONFIG_QCOM_CLK_APCS_MSM8916=y
- CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_8074=y
-+CONFIG_IPQ_GCC_6018=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+No functional change.
+
+Wei Yang (4):
+  mm/page_alloc.c: extract commom part to check page
+  mm/page_alloc.c: rename free_pages_check_bad() to
+    check_free_page_bad()
+  mm/page_alloc.c: rename free_pages_check() to check_free_page()
+  mm/page_alloc.c: bad_[reason|flags] is not necessary when PageHWPoison
+
+ mm/page_alloc.c | 50 ++++++++++++++++++++++---------------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
+
 -- 
-2.7.4
+2.17.1
+
