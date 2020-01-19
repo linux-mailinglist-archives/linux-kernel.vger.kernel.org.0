@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8258B141F0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C577141F09
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgASQb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 11:31:26 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:45851 "EHLO
+        id S1728852AbgASQbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 11:31:09 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:42323 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727111AbgASQbH (ORCPT
+        by vger.kernel.org with ESMTP id S1727060AbgASQbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 11:31:07 -0500
+        Sun, 19 Jan 2020 11:31:08 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id AAD3D21B6A;
-        Sun, 19 Jan 2020 11:31:06 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 232BD213CA;
+        Sun, 19 Jan 2020 11:31:07 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 19 Jan 2020 11:31:06 -0500
+  by compute5.internal (MEProxy); Sun, 19 Jan 2020 11:31:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=GZvRpwCtvmTOQ
-        s2hXP6ts5mlEVgyPC4n0SpzvQR202w=; b=ESMVRuxN0vXPPtuiT2zQr0EW65308
-        EiIB3RT6slESVpejv8CzRCdvMtkb4vmK8O87E/lMv7kt6KN+awxXkMhtzqtU+XUC
-        JHvfTvKv/8m/mMHeNEk1zBtwgyB4N+uRnaIGF0c9MGokwgovvpw53ZRIgkwEQ0Wo
-        UdEsv1M7ZtDmTA11+XzuvIxm3dZyib30vbsm6n5wK8dl+69AtUGvqEyF04yVRD9d
-        ri4BScGHOU+R5MzRtG5J4uNmzfaUJhIefqQ631Aer120KwFV9pb/7ETrg39V6LZ/
-        DtjhpG8rLsCGt0Dno2OkWW9jQHmOEeqnpfpSDegveBwhyDlUz6XJOWYCQ==
+        :mime-version:content-transfer-encoding; s=fm1; bh=hRy0Rr9iYfUJ+
+        i5sc98uoqEzTLMSGVVLNQOlk6Dfgms=; b=BB2raS0tSvNhDlx9uap5mrxhESEnk
+        b5HKO+rF7HgUnhszuwTnFOlVJDiDJ0ByDPzXbm7eL3PA03YXetsg3r8zhBFwkSIB
+        3XgZKQ9aR8pPk+5fj1bd9uSWw2juRL+GZh8FxtiXwZju2NM+Cuvt9VvSAkHWkb1R
+        qm2WuF+yGb4yjBJPVCsIU3kfIuv3dQ8r0gI0vpD8YSch6T5TUov6JMIkALkkzvVB
+        z//ax0HueQB9xMcXIEb7c1O0O61AacQSyBxINFiNZsPfEuBRln2Y0ctXrrB3Tvk+
+        MJdkzNuJ7UnWKdGWkboEkh8++XgdjrsF+yNE3JVYTFtiri/kPPG6lpP3A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=GZvRpwCtvmTOQs2hXP6ts5mlEVgyPC4n0SpzvQR202w=; b=etS9mNPU
-        4wBC5IyNV/ChxhJopF7CIFEqH2u+a6PzedxFyK5F5hSWekittrRaPhUJmLash2QJ
-        EP1EWvhxXGNFa+sIWqFCiAaQsFcR8DwNCBFfw7upfVCOXIewrJoP8NgZvghCVZYP
-        GgQ1BuHxCbzXSuD6xURNTUTNLtKzSAZxAhoKKjxG4tWsTvvGLwind0sz498f75vm
-        UzXVsUHJ1c7EKM3XXmcRNjH0ejgEgYY+z2JiHLeU88L9g0qdnpV7V9mIv302FGb7
-        CgWyepxQfNhgi/RDmXpTbSdG7z83her0Jy+1Zh/98CwhIskwMcPdvnuBQ6lirhni
-        wBKpsJEXoiD4OA==
-X-ME-Sender: <xms:SoQkXpwepIZ0A2VKsjizHeWjRlqMilLJQ4ZvvXmL6_MBfgCsbx8y3A>
+        fm1; bh=hRy0Rr9iYfUJ+i5sc98uoqEzTLMSGVVLNQOlk6Dfgms=; b=i1jZnzmF
+        cgbUYlLNBbqn2QrpxPYx9jr2O8zQzDS6fViPj0o+xoYVmlmnGBfnYxeuDR3q102o
+        JblNdUw7hdRPmP88MFJxuJPxsmmpjk95+JAc/Y6ZIf4BysOgWn+vseWUKCmDn/Ms
+        ++8vuP1+U+NBr0YnMYSrC7PSiWcED/2C+UwBvm3BL7BvQ5cMarOWYycH9BTqH/q/
+        STqa9hgw6LHNnj1/HnDptfsI8Z1rFCe9oRzcZM7r7BETaHtANawlcaK43qcCt1BQ
+        t7a/OhfhRz7QKp6/9LAvMc/XECnCGumGrTavYA7v11cMrN5rb5TZDwB7V0HhUjn/
+        m+LSGpV4xNzKRg==
+X-ME-Sender: <xms:S4QkXgbQOtXRL8KS3Izt3CGzW64xSRYeUfwjqxpCzMWnu_CbZ36DDw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefgdekkecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -45,12 +45,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefgdekkecutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:SoQkXtYD9daVwESsliif9LOLmAk0OvhP_uB4RzschFRjLIYJr9G-NA>
-    <xmx:SoQkXu6lPQiVNdSYomxRveG-A3rLSCscsewozz8YflpEtIFgnSB-Og>
-    <xmx:SoQkXtz9wcLw6PSZkQ_oo0kIrqV3nv0Opk_JFxef_P2kSQBypHTdqQ>
-    <xmx:SoQkXj08oRFYLnhrLiRvCrbgtFfCNrc6wqwckdJuNMd8NVULEKRAqA>
+X-ME-Proxy: <xmx:S4QkXuRYA4ll5vDJt_LzzZRvQmqGJmRbov76jQ3oFz4dAN3AY6uo8w>
+    <xmx:S4QkXrxQ7ePJ_xMAe5Wv9IhNtb6vYJOBWYKfyNjThq4Rm_gLvWURng>
+    <xmx:S4QkXscdoemS9ta9DDpthFSZaY969Kh_WI3hugv7vj_Y9eywBTpmmQ>
+    <xmx:S4QkXrNsqwjeJx4QUzYXygy8RT5u5sLPYROA7YeZLr7ApTOO_0hTbQ>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1C9A48005A;
+        by mail.messagingengine.com (Postfix) with ESMTPA id 857B78005B;
         Sun, 19 Jan 2020 11:31:06 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
@@ -58,9 +58,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 4/9] arm64: dts: allwinner: pinebook: Sort device tree nodes
-Date:   Sun, 19 Jan 2020 10:30:59 -0600
-Message-Id: <20200119163104.13274-4-samuel@sholland.org>
+Subject: [PATCH 5/9] arm64: dts: allwinner: pinebook: Make simplefb more consistent
+Date:   Sun, 19 Jan 2020 10:31:00 -0600
+Message-Id: <20200119163104.13274-5-samuel@sholland.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200119163104.13274-1-samuel@sholland.org>
 References: <20200119163104.13274-1-samuel@sholland.org>
@@ -71,48 +71,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The r_i2c node should come before r_rsb, and in any case should not
-separate the axp803 node from its subnodes.
+Boards generally reference the simplefb nodes from the SoC dtsi by
+label, not by full path. simplefb_hdmi is already like this in the
+Pinebook DTS. Update simplefb_lcd to match.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- .../boot/dts/allwinner/sun50i-a64-pinebook.dts   | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ .../arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-index 8e7ce6ad28dd..97e412fc4e4b 100644
+index 97e412fc4e4b..af902b565b0a 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-@@ -172,6 +172,14 @@
- 	status = "okay";
+@@ -41,12 +41,6 @@
+ 
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+-
+-		framebuffer-lcd {
+-			panel-supply = <&reg_dc1sw>;
+-			dvdd25-supply = <&reg_dldo2>;
+-			dvdd12-supply = <&reg_fldo1>;
+-		};
+ 	};
+ 
+ 	gpio_keys {
+@@ -302,6 +296,12 @@
+ 	regulator-name = "vcc-rtc";
  };
  
-+/* The ANX6345 eDP-bridge is on r_i2c */
-+&r_i2c {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&r_i2c_pl89_pins>;
-+	status = "okay";
++&simplefb_lcd {
++	panel-supply = <&reg_dc1sw>;
++	dvdd25-supply = <&reg_dldo2>;
++	dvdd12-supply = <&reg_fldo1>;
 +};
 +
- &r_rsb {
- 	status = "okay";
- 
-@@ -183,14 +191,6 @@
- 	};
+ &simplefb_hdmi {
+ 	vcc-hdmi-supply = <&reg_dldo1>;
  };
- 
--/* The ANX6345 eDP-bridge is on r_i2c */
--&r_i2c {
--	clock-frequency = <100000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&r_i2c_pl89_pins>;
--	status = "okay";
--};
--
- #include "axp803.dtsi"
- 
- &ac_power_supply {
 -- 
 2.23.0
 
