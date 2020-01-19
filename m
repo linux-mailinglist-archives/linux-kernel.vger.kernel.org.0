@@ -2,135 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B874141D42
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 11:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C818141D50
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 11:37:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgASKMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 05:12:49 -0500
-Received: from mail-eopbgr40047.outbound.protection.outlook.com ([40.107.4.47]:41601
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726765AbgASKMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 05:12:49 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RTCcj32Wwq0uKN8EUjlG8PDneNDrRBJkcqvGSBrMAy0cYL4yz3O/lbBRFYb8nSDpxhzh1gw1TQEmAsV/HUrZi4TKfMMz/QKngIYM/izQDNyWfOX3t+0FNmRwQJ17dMvhprn4W7SAajXUD0iXGa4Teq4b6UbYjiNnYfoLrglugoOrptvBw7KZMdNLG6qX1e16pR2FJ+WJBMDhespWLFKIh7dX5Iw+cKKEgYrYNpzbIpqoFHBXfpEIXRU0n0+50Z/1g0F2aMCFquTZUzxgsVQENdBGTqC44Q9vUkRdXb2d6U3es8emet8qsJ9uQzB4Q41fxJyEKCtA0BxbzfmkfF5taQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dW4wqVvrv4KE+Tk5Jysq0WdyDmZh/sj/OhSriDtJQLw=;
- b=SFQJxehZ7qGp6ZpfwImOshHu4y6wy33R2DsySP6q4vJBaaMYxC+iyh8wZUl6LTC32I3F1NKn6kKDXPtrEqyrYlW/UKgm9I+W78l7gYC8S75yt3x32OC1zivZwiJs3IoMfkgEOzx7xlel8Y/V56yB/c2k0oH5kk9jZtX8jaE0DOvqCZIk9oPv0CQdse+jSSLzndTcw8aZeZ7ytxlk1Aap6SF+zKkOBCeDmQ9S7XfAbvg8eXHzrnE+V56qgseUThK9bZJ7/1Oyr4aKej6/zMMzS3ozz77sAh/YVHs235yujq4ndTl1R+Yz0R9ngzYuUW9bpNjLRveK9l2hmSURVUQ5aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dW4wqVvrv4KE+Tk5Jysq0WdyDmZh/sj/OhSriDtJQLw=;
- b=Vou3mHCa/skQ5X1jPgDyQvrbCIyNbTv2WuAz1eHPEE3IiWc0NVJ46Ev62lW7VaxAXAwgDD5e3Uq4DsjrRf+5aoh87MTM9TKkmpsjw9V67HT1TYLSBiVZvfagqV8SgfbXlsPdVvy/gqp/BL6T1AfEROQrdT4/AeenV9d7UkWoXxI=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0SPR01MB0058.eurprd04.prod.outlook.com (20.179.37.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.22; Sun, 19 Jan 2020 10:12:46 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2644.024; Sun, 19 Jan 2020
- 10:12:46 +0000
-Received: from localhost.localdomain (119.31.174.66) by HK0PR03CA0104.apcprd03.prod.outlook.com (2603:1096:203:b0::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.20 via Frontend Transport; Sun, 19 Jan 2020 10:12:41 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: imx8mp: add ocotp root clk
-Thread-Topic: [PATCH] clk: imx: imx8mp: add ocotp root clk
-Thread-Index: AQHVzrD+KCxt16k/UUaPoEt5ULSIVQ==
-Date:   Sun, 19 Jan 2020 10:12:46 +0000
-Message-ID: <1579428498-10068-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0104.apcprd03.prod.outlook.com
- (2603:1096:203:b0::20) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cdaf15f2-6689-402c-0dd7-08d79cc8212f
-x-ms-traffictypediagnostic: AM0SPR01MB0058:|AM0SPR01MB0058:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0SPR01MB0058475C3FFD38E11A1E754988330@AM0SPR01MB0058.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:546;
-x-forefront-prvs: 0287BBA78D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(66556008)(66476007)(66446008)(64756008)(2906002)(16526019)(186003)(6512007)(36756003)(478600001)(44832011)(26005)(66946007)(6486002)(4326008)(956004)(2616005)(8936002)(6636002)(81166006)(81156014)(6506007)(52116002)(86362001)(5660300002)(316002)(8676002)(110136005)(54906003)(71200400001)(69590400006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0SPR01MB0058;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: dOJ7reTn/7x5QHW5gqu6jc71Gpgb24s8wMQyEGtMLSpob1tHtymzD9UVQstSvdINsfeGVc/z5eAJNQC88Z/qMJWkWRgqb/a/PwSVmMCv/T/5Sdxanhje3TfdxhAsMvOmsXtYZk6BRsn5o5aQh2XpnDY8N5AHRPPKT6DkCyEtI7q90nioGZfmAn1H/IPM2OPhDSk1linXky8UVb08xyhWvvW3xjUD4zRcwEJZ8tCyKbBtE6IFmsXMeUmR6f+sf4SiD+Q1pqgMt5YYAsLLhDi27z298pWRDlj4xnCrZLHX+/7tChM8KsiYILg+fCAOBGAr96+fqxmM5XVhozqjEc84BnMOQMJqy05PP4+VtsRGHeG3S7W9icsyRbCfPG1kI4lJnjPtSK6KNKSEatBH4TX8JrHROf4A/TFL5biMvBT/6qvw1sky7iE8Mja2DSDT5AGZkiqMW44NE9uVtirEkomMdFZWW4j99OJGRljlWQQT5KsGXsC4eVeBqLNJ+i+ENNF/m7JrlYuosKBmprDNtoBk/g==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726935AbgASKhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 05:37:15 -0500
+Received: from the.earth.li ([46.43.34.31]:56474 "EHLO the.earth.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbgASKhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 05:37:14 -0500
+X-Greylist: delayed 1098 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Jan 2020 05:37:14 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+         s=the; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=H8tprnwxmiZt+wQA3U/ny9HmbZHVUfxyPk/oc8s5ef0=; b=SiAa/TgYvmlkajYrnB1SVulhx3
+        nPeacyVfg6lPsIkRUFzBw9DIWkrq8wCRy2jO5o79/1iQgf+F4EaUK4YXKd80GVXmpKNC45xAaB7As
+        7E6fROYs/94r1sJ1D1enmxwe3Q68QcITWu/H4rTEDPCLc4kbOHEjFojq0MKrzVxVx66qf74BzftdQ
+        yBSIEZVbq0T4hT1G8YXr7teohSn/CLXVMbg7DUMvTnJaXP2CGbiZU9mMTUaL3MM7PoHjAuhw3n4/Q
+        IimMDcDcIDlxXP7XfRu2yE2fbQjhbFELWR5x++OfJ+9gh2sP/JD8hkB+FkMoB4znsGHs6oqz0UzNu
+        CAj/TAHA==;
+Received: from noodles by the.earth.li with local (Exim 4.92)
+        (envelope-from <noodles@earth.li>)
+        id 1it7fT-0004QP-DQ; Sun, 19 Jan 2020 10:18:55 +0000
+Date:   Sun, 19 Jan 2020 10:18:55 +0000
+From:   Jonathan McDowell <noodles@earth.li>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ken Moffat <zarniwhoop73@googlemail.com>
+Subject: Re: [PATCH v2 0/5] hwmon: k10temp driver improvements
+Message-ID: <20200119101855.GA15446@earth.li>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdaf15f2-6689-402c-0dd7-08d79cc8212f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2020 10:12:46.4476
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zwfEUGR6/VpzQaxAUA1gZSRz7kx9sCRUANh35HUgMwQr3GebJ8OXwMcwWj1MnXGnlOu7LBHQ6vxbCbZqcMi25Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0SPR01MB0058
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200118172615.26329-1-linux@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
 
-Add ocotp root clk, then when using nvmem to read fuse, clk
-could be managed.
+In article <20200118172615.26329-1-linux@roeck-us.net> (earth.lists.linux-kernel) you wrote:
+> This patch series implements various improvements for the k10temp driver.
+...
+> The voltage and current information is limited to Ryzen CPUs. Voltage
+> and current reporting on Threadripper and EPYC CPUs is different, and the
+> reported information is either incomplete or wrong. Exclude it for the time
+> being; it can always be added if/when more information becomes available.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp.c | 1 +
- 1 file changed, 1 insertion(+)
+> Tested with the following Ryzen CPUs:
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index f6c120cca0d4..ee83aa2162d9 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -671,6 +671,7 @@ static int imx8mp_clocks_probe(struct platform_device *=
-pdev)
- 	hws[IMX8MP_CLK_I2C2_ROOT] =3D imx_clk_hw_gate4("i2c2_root_clk", "i2c2", c=
-cm_base + 0x4180, 0);
- 	hws[IMX8MP_CLK_I2C3_ROOT] =3D imx_clk_hw_gate4("i2c3_root_clk", "i2c3", c=
-cm_base + 0x4190, 0);
- 	hws[IMX8MP_CLK_I2C4_ROOT] =3D imx_clk_hw_gate4("i2c4_root_clk", "i2c4", c=
-cm_base + 0x41a0, 0);
-+	hws[IMX8MP_CLK_OCOTP_ROOT] =3D imx_clk_hw_gate4("ocotp_root_clk", "ipg_ro=
-ot", ccm_base + 0x4220, 0);
- 	hws[IMX8MP_CLK_PCIE_ROOT] =3D imx_clk_hw_gate4("pcie_root_clk", "pcie_aux=
-", ccm_base + 0x4250, 0);
- 	hws[IMX8MP_CLK_PWM1_ROOT] =3D imx_clk_hw_gate4("pwm1_root_clk", "pwm1", c=
-cm_base + 0x4280, 0);
- 	hws[IMX8MP_CLK_PWM2_ROOT] =3D imx_clk_hw_gate4("pwm2_root_clk", "pwm2", c=
-cm_base + 0x4290, 0);
---=20
-2.16.4
+Tested-By: Jonathan McDowell <noodles@earth.li>
 
+Tested on a Ryzen 7 2700 (patched on top of 5.4.13):
+
+| k10temp-pci-00c3
+| Adapter: PCI adapter
+| Vcore:        +0.80 V
+| Vsoc:         +0.81 V
+| Tdie:         +37.0°C
+| Tctl:         +37.0°C
+| Icore:        +8.31 A
+| Isoc:         +6.86 A
+
+Like the 1300X case I see a discrepancy compared to what the nct6779
+driver says Vcore is:
+
+| nct6779-isa-0290
+| Adapter: ISA adapter
+| Vcore:                  +0.33 V  (min =  +0.00 V, max =  +1.74 V)
+| in1:                    +0.32 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| AVCC:                   +3.39 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| +3.3V:                  +3.39 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in4:                    +1.88 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in5:                    +0.82 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in6:                    +0.30 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| 3VSB:                   +3.42 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| Vbat:                   +3.25 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in9:                    +0.00 V  (min =  +0.00 V, max =  +0.00 V)
+| in10:                   +0.22 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in11:                   +1.06 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in12:                   +1.70 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in13:                   +1.04 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| in14:                   +1.79 V  (min =  +0.00 V, max =  +0.00 V)  ALARM
+| fan1:                     0 RPM  (min =    0 RPM)
+| fan2:                  1708 RPM  (min =    0 RPM)
+| fan3:                     0 RPM  (min =    0 RPM)
+| fan4:                     0 RPM  (min =    0 RPM)
+| fan5:                     0 RPM  (min =    0 RPM)
+| SYSTIN:                 +33.0°C  (high =  +0.0°C, hyst =  +0.0°C)  ALARM
+| sensor = thermistor
+| CPUTIN:                 -62.5°C  (high = +80.0°C, hyst = +75.0°C)
+| sensor = thermistor
+| AUXTIN0:                +79.0°C    sensor = thermistor
+| AUXTIN1:                +96.0°C    sensor = thermistor
+| AUXTIN2:                +23.0°C    sensor = thermistor
+| AUXTIN3:                -22.0°C    sensor = thermistor
+| SMBUSMASTER 0:          +39.0°C
+| PCH_CHIP_CPU_MAX_TEMP:   +0.0°C
+| PCH_CHIP_TEMP:           +0.0°C
+| PCH_CPU_TEMP:            +0.0°C
+| intrusion0:            ALARM
+| intrusion1:            ALARM
+| beep_enable:           disabled
+
+I suspect the nct6779 is not reporting correctly (or needs some
+configuration) here, as I see that's what Ken is using with his 1300X as
+well.
+
+(ASRock B450M Pro4 motherboard, fwiw.)
+
+J.
+
+-- 
+Verily go thee not unto the internet for they will tell you both yea
+and nay
