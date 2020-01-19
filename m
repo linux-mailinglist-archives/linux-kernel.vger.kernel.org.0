@@ -2,113 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B3D14204F
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACB2F142058
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 23:02:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbgASV76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 16:59:58 -0500
-Received: from mail-dm6nam12on2045.outbound.protection.outlook.com ([40.107.243.45]:6184
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727556AbgASV75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 16:59:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i3tW48rlgUk2V9rcOMhba4gmmiw5Mj4fp2HK1Vppu+CEI+firDbKuiXD3IWr96/I1qQR0BJ8xtlj7j1ee3uN6IvisDbSeGYYqzsk3Q7NgUv2Ij7z2FEodU0to8GhYlceqcBHeSmpJytGWgEJAmn8Jac+OweOFTdj03A0hdvzjuTDlTsZq7TMOjaNcatZtAX9rUSuMimi8EfHhuWb0QXFvu9RWPVPR9nmkf5bvbroZDAW7eUFpZq5zAO29C4KC94sIE81DpUslgb+1Ql7wXkpG9fyOgwVnL2kx4SjknwNKbDtr0iAdgbPfhfUiAY8FnZuhoGEYwmNTl+7Rsnu7/pSOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=98q5R0TRIPZD3CGPWW5PlixD2HsMQX9jR9+5KQFJ/yY=;
- b=b9mQj089wH0BJPDR4Y8RC1q/QMFPV2MqPL4MqdnXMMnfosh3KQYEixCa9QrrWGKVdOvWt6d28g5VTho7IQJXKgwwdsgSkVG5Q91A8d9HkrYT55m3CRnvcqunZADYW52XOVvW04cYvGtFOIJfuA/AnaCo0VmKAR6LB4LM/VBxxKOQPI8M1diT4kBNmwKdiE6cnWoKYbAw3ne3H6w0rANctubmLJj5PN1iNZZhMPPOCL8yZpbCloTv9dVDk4IYYPxt846TOPoveQ4WSFANfoWIUANFieDJzZGDOCRRveSo3aZcF9uarQP9rI9gDB+hIYoBvG4Qvmd73XAq+aiJ7HaoRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=98q5R0TRIPZD3CGPWW5PlixD2HsMQX9jR9+5KQFJ/yY=;
- b=Dh9y9FlXNvj9OkWG/NHMtRPRfVF+KsrE3xGm5A4SX6NNn3fqVhyaYaVX5OqkQWaLTOEkcF1qzb3ZbjiVACaEd7S1Es5n809OStNG66eNH4LigmAbXFjv6PpCT92DmXpDv5X/EzdPpBK7IB9oe1yZswi2/h2H7WugtsohsWR5IDI=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
- BN7PR08MB4148.namprd08.prod.outlook.com (52.132.218.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.20; Sun, 19 Jan 2020 21:59:55 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2644.024; Sun, 19 Jan 2020
- 21:59:55 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Alim Akhtar <alim.akhtar@gmail.com>, Bean Huo <huobean@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Can Guo <cang@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH v3 0/8] Use UFS device indicated maximum LU
- number
-Thread-Topic: [EXT] Re: [PATCH v3 0/8] Use UFS device indicated maximum LU
- number
-Thread-Index: AQHVzoKXx2RhVm9OD0+j9uX/WAzyH6fyg3mA
-Date:   Sun, 19 Jan 2020 21:59:55 +0000
-Message-ID: <BN7PR08MB568498ED5D86FAA8098EE1C9DB330@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <20200119001327.29155-1-huobean@gmail.com>
- <CAGOxZ52xHFedU+1DUgL02xjXzG2CtXUk3MRaq=uSUZKX=7AeDw@mail.gmail.com>
-In-Reply-To: <CAGOxZ52xHFedU+1DUgL02xjXzG2CtXUk3MRaq=uSUZKX=7AeDw@mail.gmail.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTA0YzJlNjM1LTNiMDctMTFlYS04Yjg5LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFwwNGMyZTYzNi0zYjA3LTExZWEtOGI4OS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjkwNSIgdD0iMTMyMjM5NDQ3OTI5NzE3Nzk5IiBoPSJUOStYVFo0OTJieTNtRTNTaU5TRS9VbW1mWmM9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.86.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2e4cb49a-7803-438e-16c0-08d79d2aeb13
-x-ms-traffictypediagnostic: BN7PR08MB4148:|BN7PR08MB4148:|BN7PR08MB4148:
-x-microsoft-antispam-prvs: <BN7PR08MB4148E278A375E02B3A94BF49DB330@BN7PR08MB4148.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:1417;
-x-forefront-prvs: 0287BBA78D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(396003)(346002)(39860400002)(366004)(189003)(199004)(55236004)(6506007)(7696005)(9686003)(54906003)(33656002)(110136005)(26005)(52536014)(186003)(5660300002)(66446008)(64756008)(76116006)(2906002)(4744005)(7416002)(81166006)(81156014)(8936002)(8676002)(478600001)(66476007)(86362001)(55016002)(4326008)(71200400001)(66946007)(66556008)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4148;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZEQN7XznhRx64+tiBUtFfeSpZEmz/3in6dLv5B5iYqCFJ0nTUb7G7DPmM43BPVs/DCg57tDOBAhIkoRHT6fqt3Uyg9ZZ2DsK1co/twZdqzZLvs4NiJUTq9Ive6Zjf6+VXD9lXBWzfeQdBcw8HimtwvRN++0lAvz5UtRAkGydvZgGSwfUy3fw556oComv1nTmJu4J8KpdD58/cDCIeCE2bvzuznCcNdQA7mLMqPpsis8VhH5CJFaaqv+UIWfPxy6bK0P+jVTvrQIvecg1sel+MHX3YfMRczCm6IxNNonXWe4vroZX8CI5yStDbSxdDrxXPDaqdJcu5A/meB7s4S2e33CS85J4MVm56d6+mPtEyjLFZlrVMG4fvHF/yY2vIMwFH8q5LBPkwcey7jTkw9Ct94V4zB80I0jJ8OcIBlsAl3wROTa+Su9sRCZjh9lcV14q
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729021AbgASWCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 17:02:51 -0500
+Received: from mout.perfora.net ([74.208.4.196]:46211 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727556AbgASWCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 17:02:51 -0500
+Received: from marcel-nb-toradex-int.cardiotech.int ([81.221.128.11]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0M41XI-1jkRQf2XHm-00rZmO; Sun, 19 Jan 2020 23:02:12 +0100
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     info@logictechno.com, Sam Ravnborg <sam@ravnborg.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        j.bauer@endrich.com, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh@kernel.org>,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v3 1/3] dt-bindings: add vendor prefix for logic technologies limited
+Date:   Sun, 19 Jan 2020 23:02:02 +0100
+Message-Id: <20200119220204.208751-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e4cb49a-7803-438e-16c0-08d79d2aeb13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2020 21:59:55.2329
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RvYGbuKfX7rkizNR29no83TgMEsIfki+Cc4tXQ4NUDH+eP1tH7u/UPxw0JhPe+HJgrFiZsQffKThY28Nd1jz6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4148
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:jjLOqXuv2by4EJLQeH/ScEtpzVFtAz0VS19+C7zEHeSvWPbiTwy
+ LDFUP9YFQGhtKnV6lBHbWFwnRF1t3JEIaYS6/OMyLege+P6xIkp1c3kalQtWUVwFYanNoOV
+ rl6OMKDd2McWAR+kuocOyIzA262yJ1dvPoEtGSAuiRekP7NWGrWYrL9xhEUt1PSdl77X2fW
+ rViBk0Qzt8Nw+iHRc7JMg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PpJcJ+lEr9U=:ZQw6NSiEGAfGxuK9wNrxVj
+ sU4M386rfyma+qAxVEADpO7aQoqZYeiupu3Yk4NaCBT9iSsIBR+WMQydoVZFPkLEa4wKYgY/9
+ ggr37kVjRXLCbaUz45PJKIomKeXTK6qTtNVwi4Ca1tJf6SVSFdd6Cx141yGz/zrbnWRXE0XjE
+ qs9h8MIHNepTGAVkbT81XsMafbtKlEUytsEGeI7L09biQJcpAi0F7CzgfLzW+y58BEWlRwage
+ 2dEv3h/C0teHz5/avoJDG8yIY1oORLKRWltKBhjY4tQQXh0MCQkX4j7kcVbHbU0ZJb/6X28sO
+ dCcpXQ6RrI1af5Z7np88YKWq3Dwqh2hZpdWi08tCsVJRGMJv22FYUJwaXbMaFSmWwqq0WrXNA
+ E+C/Qzf4F7QeD6uB9btEuRSuzrC/K/94DGX4m5r1oaWW41H/4OGcjLvqXq89wHMDj2rRZ4liW
+ VHtJRobmYx7qsKJMPqvyv+cTqa252XAiW5ovJIeewIrXUvlAUrtIgnGk7EknFMLVek9q4P1fM
+ gAfP3fDLDyvQBRv5kEh0bCxMsE/0cwygZ/BpcXaYSvUNVs/jlYuLKzMPTRElElu4Vs2uhrdqU
+ kQvxzhROL+SzZX0vrSJPBiGptp/CcA6/Zw11S9hRZJ291ybwk22wSxeTG3LzXhMP02WzazTYn
+ 43iYrCQtYPauFBvh5q1QPf2aRHotNDd2K5Ep2CrVYp0IxcskpHYk8hVeApaz7U1HV7jOhVCq9
+ n2pxtu5J7qCio+wHhl6Ld/zlg0xSErrYU4DxvBG/hdeYZWnAs+cg9k+ESud5bD+GDsAFN+h2S
+ xRCUqIjRPhoo6YZGuf3v9yc8ErgN5XXYmRkx+av29wQSKn1ha0KpKMA2sAtj7llVCtWmTOCYC
+ Oa+ojSjUQoQa6Z96KwVQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEFsaW0NCg0KPiANCj4gSGkgQmVhbg0KPiANCj4gWW91ciBwYXRjaGVzIGJhc2VkIG9uIHdo
-aWNoIHRyZWU/IEF0IGxlYXN0IG9uIEphbWUncyBmb3ItbmV4dCwgaXQgZ2l2ZQ0KPiBjb21waWxh
-dGlvbiBlcnJvcnMuDQo+IChnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvamVqYi9zY3NpLmdpdCkNCj4gTG9va3MgbGlrZSBwYXRjaC0yIGludHJvZHVjZXMgYmVs
-b3cgZXJyb3I6DQoNCk15IHBhdGNoZXMgYXJlIGJhc2VkIG9uIHRoZSBNYXJ0aW4ncyB0cmVlIDUu
-Ni9zY3NpLXF1ZXVlLiBJIHRlc3RlZCBteSBwYXRjaGVzIG9uIEphbWVzJyB0cmVlLg0KRGlkbid0
-IGZpbmQgdGhlIGNvbXBpbGF0aW9uIGVycm9yIGFzIHlvdSBtZW50aW9uZWQuICBZb3UgY2FuIGNo
-ZWNrIHlvdXIgc291cmNlIGNvZGUgaWYgaXQgaXMgcHJldHR5IG5ldywNClRoZSBsYXN0IFVGUyBk
-cml2ZXIgdXBkYXRlZCBjb21taXQgaWQgc2hvdWxkIGJlIDoNCg0KDQpjb21taXQgZWE5MmMzMmJk
-MzM2ZWZiYTg5YzViMDljZjYwOWU2ZTI2ZTk2Mzc5Ng0KQXV0aG9yOiBTdGFubGV5IENodSA8c3Rh
-bmxleS5jaHVAbWVkaWF0ZWsuY29tPg0KRGF0ZTogICBTYXQgSmFuIDExIDE1OjExOjQ3IDIwMjAg
-KzA4MDANCg0KIHNjc2k6IHVmcy1tZWRpYXRlazogYWRkIGFwcGx5X2Rldl9xdWlya3MgdmFyaWFu
-dCBvcGVyYXRpb24NCg0KIEFkZCB2ZW5kb3Itc3BlY2lmaWMgdmFyaWFudCBjYWxsYmFjayAiYXBw
-bHlfZGV2X3F1aXJrcyIgdG8gTWVkaWFUZWsgVUZTIGRyaXZlci4NCg0KDQpUaGFua3MsDQoNCi8v
-QmVhbg0K
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+Add vendor prefix for Logic Technologies Limited [1] which is a Chinese
+display manufacturer e.g. distributed by German Endrich Bauelemente
+Vertriebs GmbH [2].
+
+[1] https://logictechno.com/contact-us/
+[2] https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Philippe Schenker <philippe.schenker@toradex.com>
+Acked-by: Rob Herring <robh@kernel.org>
+
+---
+
+Changes in v3: None
+Changes in v2:
+- Added Philippe's reviewed-by.
+- Added Rob's acked-by.
+
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index f9b84f24a382..ac4804d0a991 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -549,6 +549,8 @@ patternProperties:
+     description: Linear Technology Corporation
+   "^logicpd,.*":
+     description: Logic PD, Inc.
++  "^logictechno,.*":
++    description: Logic Technologies Limited
+   "^longcheer,.*":
+     description: Longcheer Technology (Shanghai) Co., Ltd.
+   "^lsi,.*":
+-- 
+2.24.1
+
