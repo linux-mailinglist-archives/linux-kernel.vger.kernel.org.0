@@ -2,103 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893E8141D54
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 11:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69AFB141D73
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 12:02:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgASKk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 05:40:59 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60054 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727665AbgASKk5 (ORCPT
+        id S1726894AbgASLBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 06:01:46 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:39089 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726775AbgASLBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 05:40:57 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1it80f-0001hM-Vp; Sun, 19 Jan 2020 11:40:50 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4F97D1C1A1D;
-        Sun, 19 Jan 2020 11:40:48 +0100 (CET)
-Date:   Sun, 19 Jan 2020 10:40:48 -0000
-From:   "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: core/headers] x86/platform/intel/quark: Explicitly include
- linux/io.h for virt_to_phys()
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <157475520975.21853.16355518818746065226.tip-bot2@tip-bot2>
-References: <157475520975.21853.16355518818746065226.tip-bot2@tip-bot2>
+        Sun, 19 Jan 2020 06:01:46 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 00JB0bem001025;
+        Sun, 19 Jan 2020 13:00:37 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 7546260328; Sun, 19 Jan 2020 13:00:37 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        avifishman70@gmail.com, tali.perry1@gmail.com, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, joel@jms.id.au
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 1/2] dt-binding: iio: add NPCM ADC reset support
+Date:   Sun, 19 Jan 2020 13:00:31 +0200
+Message-Id: <20200119110032.124745-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Message-ID: <157943044805.396.14194881165760729202.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the core/headers branch of tip:
+Add NPCM ADC reset binding documentation.
 
-Commit-ID:     f803e34d4a25e1cf43f89f21e05176ed19223dc1
-Gitweb:        https://git.kernel.org/tip/f803e34d4a25e1cf43f89f21e05176ed19223dc1
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Tue, 26 Nov 2019 08:00:09 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 10 Dec 2019 10:15:47 +01:00
-
-x86/platform/intel/quark: Explicitly include linux/io.h for virt_to_phys()
-
-Similarly to the previous patches by Sean Christopherson:
-
- "Through a labyrinthian sequence of includes, usage of virt_to_phys() is
-  dependent on the include of asm/io.h in x86's asm/realmode.h, which is
-  included in x86's asm/acpi.h and thus by linux/acpi.h.  Explicitly
-  include linux/io.h to break the dependency on realmode.h so that a
-  future patch can remove the realmode.h include from acpi.h without
-  breaking the build."
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Link: https://lkml.kernel.org/r/157475520975.21853.16355518818746065226.tip-bot2@tip-bot2
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- arch/x86/platform/intel-quark/imr.c          | 2 ++
- arch/x86/platform/intel-quark/imr_selftest.c | 2 ++
- 2 files changed, 4 insertions(+)
+ Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/platform/intel-quark/imr.c b/arch/x86/platform/intel-quark/imr.c
-index 6dd25dc..e9d97d5 100644
---- a/arch/x86/platform/intel-quark/imr.c
-+++ b/arch/x86/platform/intel-quark/imr.c
-@@ -29,6 +29,8 @@
- #include <asm/cpu_device_id.h>
- #include <asm/imr.h>
- #include <asm/iosf_mbi.h>
-+#include <asm/io.h>
-+
- #include <linux/debugfs.h>
- #include <linux/init.h>
- #include <linux/mm.h>
-diff --git a/arch/x86/platform/intel-quark/imr_selftest.c b/arch/x86/platform/intel-quark/imr_selftest.c
-index 42f879b..4307830 100644
---- a/arch/x86/platform/intel-quark/imr_selftest.c
-+++ b/arch/x86/platform/intel-quark/imr_selftest.c
-@@ -14,6 +14,8 @@
- #include <asm-generic/sections.h>
- #include <asm/cpu_device_id.h>
- #include <asm/imr.h>
-+#include <asm/io.h>
-+
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/types.h>
+diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
+index eb939fe77836..ef8eeec1a997 100644
+--- a/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
+@@ -6,6 +6,7 @@ Required properties:
+ - compatible: "nuvoton,npcm750-adc" for the NPCM7XX BMC.
+ - reg: specifies physical base address and size of the registers.
+ - interrupts: Contain the ADC interrupt with flags for falling edge.
++- resets : phandle to the reset control for this device.
+ 
+ Optional properties:
+ - clocks: phandle of ADC reference clock, in case the clock is not
+@@ -21,4 +22,5 @@ adc: adc@f000c000 {
+ 	reg = <0xf000c000 0x8>;
+ 	interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 	clocks = <&clk NPCM7XX_CLK_ADC>;
++	resets = <&rstc NPCM7XX_RESET_IPSRST1 NPCM7XX_RESET_ADC>;
+ };
+-- 
+2.22.0
+
