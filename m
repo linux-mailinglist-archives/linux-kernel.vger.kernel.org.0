@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C577141F09
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D333141F0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 17:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbgASQbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 11:31:09 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:42323 "EHLO
+        id S1728935AbgASQbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 11:31:20 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51537 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727060AbgASQbI (ORCPT
+        by vger.kernel.org with ESMTP id S1728733AbgASQbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 19 Jan 2020 11:31:08 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 232BD213CA;
+        by mailout.nyi.internal (Postfix) with ESMTP id 890B321B7C;
         Sun, 19 Jan 2020 11:31:07 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
   by compute5.internal (MEProxy); Sun, 19 Jan 2020 11:31:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=hRy0Rr9iYfUJ+
-        i5sc98uoqEzTLMSGVVLNQOlk6Dfgms=; b=BB2raS0tSvNhDlx9uap5mrxhESEnk
-        b5HKO+rF7HgUnhszuwTnFOlVJDiDJ0ByDPzXbm7eL3PA03YXetsg3r8zhBFwkSIB
-        3XgZKQ9aR8pPk+5fj1bd9uSWw2juRL+GZh8FxtiXwZju2NM+Cuvt9VvSAkHWkb1R
-        qm2WuF+yGb4yjBJPVCsIU3kfIuv3dQ8r0gI0vpD8YSch6T5TUov6JMIkALkkzvVB
-        z//ax0HueQB9xMcXIEb7c1O0O61AacQSyBxINFiNZsPfEuBRln2Y0ctXrrB3Tvk+
-        MJdkzNuJ7UnWKdGWkboEkh8++XgdjrsF+yNE3JVYTFtiri/kPPG6lpP3A==
+        :mime-version:content-transfer-encoding; s=fm1; bh=BdLsbiYqLIzZi
+        4myyOEJxDQqqWES1KD/D8a1k+nQK5c=; b=PdU80dp4KEjsSJhxcUV/NNV+wMYy+
+        5+5oxbkIrh1JalAnUzqi8i24Kzuoi6kz9Sp3pn7VJkzn7eksLlGL1OQfyH2O02RI
+        5esaS5y68LrOmziAsZZOCZhqp1DjI0W0vsTtXJWFzYfCq8UuwqYPRsWQ8hN/rvk0
+        2Oab2Nk1PsKm+t/qwaOFHXITFoUo6FCebO/deofRXhYG1swgm6I2clfgeXxxW4e4
+        itl3abrGzMOAwZr9cVxqwc4vquxih4XEAJ6Se3/uEGfDrDaB3cxG3CRxU+teIW6q
+        VKKmuK8ppptDtYGw4SVu9d0oEdBJkUAdAEq0PE92KcKFhuPxXmR19vT7w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=hRy0Rr9iYfUJ+i5sc98uoqEzTLMSGVVLNQOlk6Dfgms=; b=i1jZnzmF
-        cgbUYlLNBbqn2QrpxPYx9jr2O8zQzDS6fViPj0o+xoYVmlmnGBfnYxeuDR3q102o
-        JblNdUw7hdRPmP88MFJxuJPxsmmpjk95+JAc/Y6ZIf4BysOgWn+vseWUKCmDn/Ms
-        ++8vuP1+U+NBr0YnMYSrC7PSiWcED/2C+UwBvm3BL7BvQ5cMarOWYycH9BTqH/q/
-        STqa9hgw6LHNnj1/HnDptfsI8Z1rFCe9oRzcZM7r7BETaHtANawlcaK43qcCt1BQ
-        t7a/OhfhRz7QKp6/9LAvMc/XECnCGumGrTavYA7v11cMrN5rb5TZDwB7V0HhUjn/
-        m+LSGpV4xNzKRg==
-X-ME-Sender: <xms:S4QkXgbQOtXRL8KS3Izt3CGzW64xSRYeUfwjqxpCzMWnu_CbZ36DDw>
+        fm1; bh=BdLsbiYqLIzZi4myyOEJxDQqqWES1KD/D8a1k+nQK5c=; b=IMaLqF1C
+        koSUy1HRzvu3Mlv0fWI576H2tcQdsqwrzIf/Kmi9EQyzPcswy//rAYvIfT5J8Mea
+        kB3d8zfclikyHNWO9z6bouT8CF6dWUEO00flJ7xAVz2Zup8tGyYaVM7k4DG4R4Ek
+        v6fN2r1ywcM3J8dWZXPTWui3JTUiyC2no5YN/f7aXQ+EeH9d/VbTI02W2hux5NvS
+        YsbNvPzHvU6x7B97D18JXUwPM47Q/UUDpptsNyIXXRDWWTBHwGPdK5b2Xrj6elLS
+        gXeXEpNj6JcDA0YTe+XN1hKxFBayyrxBuDtszxMPVOIqE31+VqIltqE0nf3nNi0d
+        vrXW8yGOobYjmA==
+X-ME-Sender: <xms:S4QkXhvcz0sOxxdDEC8ftpsGCur5W8GSEgqZPaijUT8QB4aEj9JmSw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefgdekkecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -45,12 +45,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudefgdekkecutefuodetggdote
     ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppe
     ejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhu
     vghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:S4QkXuRYA4ll5vDJt_LzzZRvQmqGJmRbov76jQ3oFz4dAN3AY6uo8w>
-    <xmx:S4QkXrxQ7ePJ_xMAe5Wv9IhNtb6vYJOBWYKfyNjThq4Rm_gLvWURng>
-    <xmx:S4QkXscdoemS9ta9DDpthFSZaY969Kh_WI3hugv7vj_Y9eywBTpmmQ>
-    <xmx:S4QkXrNsqwjeJx4QUzYXygy8RT5u5sLPYROA7YeZLr7ApTOO_0hTbQ>
+X-ME-Proxy: <xmx:S4QkXqIMcYV_83Q3TiWwDN9XtafXx9cBPRcBjSYkiU3aZthoHdlxmQ>
+    <xmx:S4QkXo0tbc533YBGGfnQLjQlvDHGu-1qKwVHWkHaskR5chFkkYSuaQ>
+    <xmx:S4QkXtDOozcBr-bZibrkk8o3GYl02b1Tobrc6q-LXAT3lq3P-VpaIg>
+    <xmx:S4QkXlbsawf6WJMaAoeEPYHwsgtuaS0ogcEvfIaL1j0YTOWn6SinJw>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 857B78005B;
+        by mail.messagingengine.com (Postfix) with ESMTPA id ECBCF8005A;
         Sun, 19 Jan 2020 11:31:06 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
@@ -58,9 +58,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 5/9] arm64: dts: allwinner: pinebook: Make simplefb more consistent
-Date:   Sun, 19 Jan 2020 10:31:00 -0600
-Message-Id: <20200119163104.13274-5-samuel@sholland.org>
+Subject: [PATCH 6/9] arm64: dts: allwinner: pinebook: Document MMC0 CD pin name
+Date:   Sun, 19 Jan 2020 10:31:01 -0600
+Message-Id: <20200119163104.13274-6-samuel@sholland.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20200119163104.13274-1-samuel@sholland.org>
 References: <20200119163104.13274-1-samuel@sholland.org>
@@ -71,45 +71,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boards generally reference the simplefb nodes from the SoC dtsi by
-label, not by full path. simplefb_hdmi is already like this in the
-Pinebook DTS. Update simplefb_lcd to match.
+Normally GPIO pin references are followed by a comment giving the pin
+name for searchability. Add the comment here where it was missing.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
- .../arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-index 97e412fc4e4b..af902b565b0a 100644
+index af902b565b0a..7c6a3d204dba 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
-@@ -41,12 +41,6 @@
- 
- 	chosen {
- 		stdout-path = "serial0:115200n8";
--
--		framebuffer-lcd {
--			panel-supply = <&reg_dc1sw>;
--			dvdd25-supply = <&reg_dldo2>;
--			dvdd12-supply = <&reg_fldo1>;
--		};
- 	};
- 
- 	gpio_keys {
-@@ -302,6 +296,12 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_lcd {
-+	panel-supply = <&reg_dc1sw>;
-+	dvdd25-supply = <&reg_dldo2>;
-+	dvdd12-supply = <&reg_fldo1>;
-+};
-+
- &simplefb_hdmi {
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
+@@ -119,7 +119,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+ 	vmmc-supply = <&reg_dcdc1>;
+-	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+ 	disable-wp;
+ 	bus-width = <4>;
+ 	status = "okay";
 -- 
 2.23.0
 
