@@ -2,74 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95940141BFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 05:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D73B141C40
+	for <lists+linux-kernel@lfdr.de>; Sun, 19 Jan 2020 06:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgASElC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 18 Jan 2020 23:41:02 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:35078 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbgASElC (ORCPT
+        id S1726451AbgASFdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 00:33:08 -0500
+Received: from smtprelay0229.hostedemail.com ([216.40.44.229]:47155 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725792AbgASFdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 18 Jan 2020 23:41:02 -0500
-Received: by mail-il1-f200.google.com with SMTP id h18so22416608ilc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 18 Jan 2020 20:41:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=EHfWBR0huIHFcTJaoFUtGUR7IDOZ8MVrcyGekqx8mAE=;
-        b=KzzworalQ2fsCUf6g0VWw1zI1uARAhSKwLYU3i4+h0AX0lamulMfPet5nRY+moGBeW
-         j+eE9Prb9gjd+74XKRK7/Bh3/URVnAkuMt+xWjeo4FilmcMy4D+S1Z6b+OcNlFXeWJRd
-         huwPSFZ+3tHP6yV+DTa1VcmeKMmT3CLkyJg7V9NNAYPE6pGMr5M7fOuvRMkalX/0nZfm
-         D4seVe0sP/DVSxhIjli6qJE7bvXvrr/a15RSkS/LCZ23rAJR/jhNVw7XEgZsmNIU5AKt
-         VbiYHGBXnepo4XNFUJa1wON06vrl7tZy7YFmk6poED2luXF+iDYGvbNSYOx0Vpc7S2Pm
-         Ro7w==
-X-Gm-Message-State: APjAAAVXI4eLrBktNFbLYfflswDkXz+XFNZIlTD3pTAHpLk9fGNWiwCe
-        VwWUMKntw3x0ppRn80nJ5Vyw25a5pcEomBkHyxxPpoEJxUHJ
-X-Google-Smtp-Source: APXvYqxTvS9QIRjVWv+5NS7HReJdEStlb/ujZ5/QAI12PGUg0ITxDVVyZ+dB04yYCxhUmlbpujJjRydgNvYEngV+/fm8FPnQG0fR
+        Sun, 19 Jan 2020 00:33:07 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 43A46182251C0;
+        Sun, 19 Jan 2020 05:33:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1362:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2691:2828:3138:3139:3140:3141:3142:3351:3622:3867:3868:3872:3873:4321:4605:5007:6119:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14659:14721:21080:21365:21627:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: wheel05_8f543acaa5616
+X-Filterd-Recvd-Size: 1631
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 19 Jan 2020 05:33:04 +0000 (UTC)
+Message-ID: <b1437d2f1543e73a20250342a764185772167658.camel@perches.com>
+Subject: Re: [PATCH 3/3] Staging: comedi: usbdux: cleanup long line and
+ align it
+From:   Joe Perches <joe@perches.com>
+To:     Simon Fong <simon.fongnt@gmail.com>, abbotti@mev.co.uk
+Cc:     hsweeten@visionengravers.com, gregkh@linuxfoundation.org,
+        colin.king@canonical.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 18 Jan 2020 21:32:06 -0800
+In-Reply-To: <20200119035243.7819-1-simon.fongnt@gmail.com>
+References: <20200119035243.7819-1-simon.fongnt@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-Received: by 2002:a92:b712:: with SMTP id k18mr5669699ili.259.1579408861675;
- Sat, 18 Jan 2020 20:41:01 -0800 (PST)
-Date:   Sat, 18 Jan 2020 20:41:01 -0800
-In-Reply-To: <000000000000717523059c6cabc9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000027c814059c76c818@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_ip_gc
-From:   syzbot <syzbot+df0d0f5895ef1f41a65b@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, arvid.brodin@alten.se, coreteam@netfilter.org,
-        davem@davemloft.net, fw@strlen.de, info@metux.net,
-        jeremy@azazel.net, kadlec@netfilter.org,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Sun, 2020-01-19 at 11:52 +0800, Simon Fong wrote:
+> Clean up long line and align it
+[]
+> diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+[]
+> @@ -204,7 +204,8 @@ struct usbdux_private {
+>  	struct mutex mut;
+>  };
+>  
+> -static void usbdux_unlink_urbs(struct urb **urbs, int num_urbs)
 
-commit b9a1e627405d68d475a3c1f35e685ccfb5bbe668
-Author: Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu Jul 4 00:21:13 2019 +0000
+Why do you believe this to be a long line?
+It's only 63 characters.
 
-    hsr: implement dellink to clean up resources
+         1         2         3         4         5         6         7
+1234567890123456789012345678901234567890123456789012345678901234567890
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13ddfa85e00000
-start commit:   25e73aad Merge tag 'io_uring-5.5-2020-01-16' of git://git...
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=103dfa85e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ddfa85e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbb8fa33f49f9f3
-dashboard link: https://syzkaller.appspot.com/bug?extid=df0d0f5895ef1f41a65b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124774c9e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15aa48d6e00000
+static void usbdux_unlink_urbs(struct urb **urbs, int num_urbs)
 
-Reported-by: syzbot+df0d0f5895ef1f41a65b@syzkaller.appspotmail.com
-Fixes: b9a1e627405d ("hsr: implement dellink to clean up resources")
+> +static void usbdux_unlink_urbs(struct urb **urbs,
+> +			       int num_urbs)
+>  {
+>  	int i;
+>   
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
