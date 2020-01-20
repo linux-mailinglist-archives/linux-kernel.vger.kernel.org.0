@@ -2,125 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0BE5142805
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:16:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FE1D1427FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:16:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbgATKQa convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 Jan 2020 05:16:30 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:48231 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgATKQa (ORCPT
+        id S1726761AbgATKQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:16:09 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38530 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgATKQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:16:30 -0500
-Received: from xps13 (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 18B1C100004;
-        Mon, 20 Jan 2020 10:16:28 +0000 (UTC)
-Date:   Mon, 20 Jan 2020 11:16:26 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     shiva.linuxworks@gmail.com
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Shivamurthy Shastri <sshivamurthy@micron.com>
-Subject: Re: [PATCH 3/4] mtd: spinand: Add M70A series Micron SPI NAND
- devices
-Message-ID: <20200120111626.7cb2f6c5@xps13>
-In-Reply-To: <20200119145432.10405-4-sshivamurthy@micron.com>
-References: <20200119145432.10405-1-sshivamurthy@micron.com>
-        <20200119145432.10405-4-sshivamurthy@micron.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 20 Jan 2020 05:16:09 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KAFuIr042476;
+        Mon, 20 Jan 2020 04:15:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579515356;
+        bh=KyVH3zWSUl96d+3Kz0z4lRV0WTTLoc+PmB9suhnpFow=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=qKnpHeZgN9POcSaW/sgFbaPIeo4qWTas1IGF1xF7QzpagKVbebC/8GWA+maeCHoP6
+         hPqbriPqABeoroU/c2NUHgPoaSiaw/ONgCZC4PHVZu1C/p8LiRexu971bWe4o0aDAZ
+         yx1SRhf2+tTseU1AKMRV3TP9UuuD41xrpHV9rfT4=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KAFumX047513
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Jan 2020 04:15:56 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
+ Jan 2020 04:15:55 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 20 Jan 2020 04:15:55 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KAFrRn010845;
+        Mon, 20 Jan 2020 04:15:53 -0600
+Subject: Re: [PATCH v2] dmaengine: Create symlinks between DMA channels and
+ slaves
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200117153056.31363-1-geert+renesas@glider.be>
+ <d2b669e7-a5d4-20ec-5b54-103b71df7407@ti.com>
+ <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <1cdc4f71-f365-8c9e-4634-408c59e6a3f9@ti.com>
+Date:   Mon, 20 Jan 2020 12:16:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shiva,
 
-This is remark common to the four patches: you miss the 'v2' prefix in
-the object.
 
-shiva.linuxworks@gmail.com wrote on Sun, 19 Jan 2020 15:54:31 +0100:
-
-> From: Shivamurthy Shastri <sshivamurthy@micron.com>
+On 20/01/2020 11.01, Geert Uytterhoeven wrote:
+> Hi Peter,
 > 
-> Add device table for M70A series Micron SPI NAND devices.
+> On Fri, Jan 17, 2020 at 9:08 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>> On 1/17/20 5:30 PM, Geert Uytterhoeven wrote:
+>>> Currently it is not easy to find out which DMA channels are in use, and
+>>> which slave devices are using which channels.
+>>>
+>>> Fix this by creating two symlinks between the DMA channel and the actual
+>>> slave device when a channel is requested:
+>>>   1. A "slave" symlink from DMA channel to slave device,
+>>
+>> Have you considered similar link name as on the slave device:
+>> slave:<name>
+>>
+>> That way it would be easier to grasp which channel is used for what
+>> purpose by only looking under /sys/class/dma/ and no need to check the
+>> slave device.
 > 
-> While at it, disable the Continuous Read feature which is enabled by
-> default.
-
-Can you please give us more detail on why this is an issue?
-
-Shall we backport it to stable?
-
-As a rule of thumb, when you start a sentence by "while at it" in a
-commit message and this is not a trivial change : split the patch,
-please. Unless this is really related and in this case explain how and
-why in the commit message.
-
+> Would this really provide more information?
+> The device name is already provided in the target of the symlink:
 > 
-> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-> ---
->  drivers/mtd/nand/spi/micron.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-> index 5fd1f921ef12..45fc37c58f8a 100644
-> --- a/drivers/mtd/nand/spi/micron.c
-> +++ b/drivers/mtd/nand/spi/micron.c
-> @@ -131,6 +131,26 @@ static const struct spinand_info micron_spinand_table[] = {
->  		     0,
->  		     SPINAND_ECCINFO(&micron_8_ooblayout,
->  				     micron_8_ecc_get_status)),
-> +	/* M70A 4Gb 3.3V */
-> +	SPINAND_INFO("MT29F4G01ABAFD", 0x34,
-> +		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-> +		     NAND_ECCREQ(8, 512),
-> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> +					      &write_cache_variants,
-> +					      &update_cache_variants),
-> +		     0,
-> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
-> +				     micron_8_ecc_get_status)),
-> +	/* M70A 4Gb 1.8V */
-> +	SPINAND_INFO("MT29F4G01ABBFD", 0x35,
-> +		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-> +		     NAND_ECCREQ(8, 512),
-> +		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> +					      &write_cache_variants,
-> +					      &update_cache_variants),
-> +		     0,
-> +		     SPINAND_ECCINFO(&micron_8_ooblayout,
-> +				     micron_8_ecc_get_status)),
->  };
->  
->  static int micron_spinand_detect(struct spinand_device *spinand)
-> @@ -153,8 +173,19 @@ static int micron_spinand_detect(struct spinand_device *spinand)
->  	return 1;
->  }
->  
-> +static int micron_spinand_init(struct spinand_device *spinand)
-> +{
-> +	/*
-> +	 * M70A device series enable Continuous Read feature at Power-up,
-> +	 * which is not supported. Disable this bit to avoid any possible
-> +	 * failure.
-> +	 */
-> +	return spinand_upd_cfg(spinand, CFG_QUAD_ENABLE, 0);
-> +}
-> +
->  static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
->  	.detect = micron_spinand_detect,
-> +	.init = micron_spinand_init,
->  };
->  
->  const struct spinand_manufacturer micron_spinand_manufacturer = {
+> root@koelsch:~# readlink
+> /sys/devices/platform/soc/e6720000.dma-controller/dma/dma1chan2/slave
+> ../../../ee140000.sd
 
-Thanks,
-Miquèl
+e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
+e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
+
+It is hard to tell which one is the tx and RX channel without looking
+under the ee140000.sd:
+
+ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
+ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
+
+Another option would be to not have symlinks, but a debugfs file where
+this information can be extracted and would only compiled if debugfs is
+enabled.
+
+>>>   2. A "dma:<name>" symlink slave device to DMA channel.
+>>> When the channel is released, the symlinks are removed again.
+>>> The latter requires keeping track of the slave device and the channel
+>>> name in the dma_chan structure.
+>>>
+>>> Note that this is limited to channel request functions for requesting an
+>>> exclusive slave channel that take a device pointer (dma_request_chan()
+>>> and dma_request_slave_channel*()).
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> v2:
+>>>   - Add DMA_SLAVE_NAME macro,
+>>>   - Also handle channels from FIXME,
+>>>   - Add backlinks from slave device to DMA channel,
+>>>
+>>> On r8a7791/koelsch, the following new symlinks are created:
+>>>
+>>>     /sys/devices/platform/soc/
+>>>     ├── e6700000.dma-controller/dma/dma0chan0/slave -> ../../../e6e20000.spi
+>>>     ├── e6700000.dma-controller/dma/dma0chan1/slave -> ../../../e6e20000.spi
+>>>     ├── e6700000.dma-controller/dma/dma0chan2/slave -> ../../../ee100000.sd
+>>>     ├── e6700000.dma-controller/dma/dma0chan3/slave -> ../../../ee100000.sd
+>>>     ├── e6700000.dma-controller/dma/dma0chan4/slave -> ../../../ee160000.sd
+>>>     ├── e6700000.dma-controller/dma/dma0chan5/slave -> ../../../ee160000.sd
+>>>     ├── e6700000.dma-controller/dma/dma0chan6/slave -> ../../../e6e68000.serial
+>>>     ├── e6700000.dma-controller/dma/dma0chan7/slave -> ../../../e6e68000.serial
+>>>     ├── e6720000.dma-controller/dma/dma1chan0/slave -> ../../../e6b10000.spi
+>>>     ├── e6720000.dma-controller/dma/dma1chan1/slave -> ../../../e6b10000.spi
+>>>     ├── e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
+>>>     ├── e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
+>>>     ├── e6b10000.spi/dma:rx -> ../e6720000.dma-controller/dma/dma1chan1
+>>>     ├── e6b10000.spi/dma:tx -> ../e6720000.dma-controller/dma/dma1chan0
+>>>     ├── e6e20000.spi/dma:rx -> ../e6700000.dma-controller/dma/dma0chan1
+>>>     ├── e6e20000.spi/dma:tx -> ../e6700000.dma-controller/dma/dma0chan0
+>>>     ├── e6e68000.serial/dma:rx -> ../e6700000.dma-controller/dma/dma0chan7
+>>>     ├── e6e68000.serial/dma:tx -> ../e6700000.dma-controller/dma/dma0chan6
+>>>     ├── ee100000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan3
+>>>     ├── ee100000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan2
+>>>     ├── ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
+>>>     ├── ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
+>>>     ├── ee160000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan5
+>>>     └── ee160000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan4
+> 
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
