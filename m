@@ -2,66 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D6F7142213
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:39:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 687BA142217
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgATDjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 22:39:09 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37506 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbgATDjJ (ORCPT
+        id S1729064AbgATDmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 22:42:00 -0500
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:40204 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728949AbgATDmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 22:39:09 -0500
-Received: by mail-oi1-f193.google.com with SMTP id z64so27413181oia.4
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 19:39:09 -0800 (PST)
+        Sun, 19 Jan 2020 22:42:00 -0500
+Received: by mail-pf1-f171.google.com with SMTP id q8so15105315pfh.7
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 19:41:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=R5jh4O13VCbAcKvjpLbXw7G/sCwTcHPrIyMbBn1b+w0=;
-        b=AszwOWIyEbkfZ44e+iJfz1FyBQoHB+M3EpW/rPDH1zBAA4hnMR35Vzgb1XA/cvmDAh
-         MFD/pU7xgPHR6SMgwGv72KsRWRdga0cilVAd3vczbKtI1oca2ef2HId9OhTbsBLG+HAE
-         ejXW2QCujXCntkbso1Uku7k2vt3IN4XczOeGpazKY2aUjc0OLSGrfz3z2LNv+EzuzexP
-         InGmf0KSkYbUoeXzN63cySgrqwglz+L6WkatWVKus/+zIuD8n8pdO+d45QvS++sqqPrC
-         G+TgNWzWwf87OdpJPwMPzFbi3yGT+KBtYhLjLUIQMr/WVwfKS8Rsf01JUr2EakpdwnyC
-         iuTA==
+        h=from:to:cc:subject:date:message-id;
+        bh=ZSuENgj57EJKhDmrfo9UwbHjaQk00c2fnA9ZQ7sTuQY=;
+        b=PVXdAKWOv/6CJv7DJIkonwpRHjwNWN9U1j2HnbQnfUKvJVYLi2I0AHxah/DMJbjYAB
+         15pnV9iy/ntluqy5wyfXsoz84xPIQaXlMk66HygM/cxUzzt8RB8Z7SoLdHHfxQdO1z5A
+         LwmVO+q7oqnuRmutB129elUk5Xdvr3+MaXmB7y0Gqzusz28BYmPNKn4yvx4P4br8w1Gk
+         RI4zd+Po+aQEEbPIuJA2GInS3HBLbi4MPyuZ90Tmgcy7Gv0nmo95L2j4fB0yrGwM6VHf
+         qIBSKEMpPeB/Q5Yd0MALAtVCv9+loTzbHnE7kd1syTI+DmfWXvDlc2wnA0xc7sjdEDHo
+         JLVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=R5jh4O13VCbAcKvjpLbXw7G/sCwTcHPrIyMbBn1b+w0=;
-        b=ICCkA6HrdMS3dUA6PRXjlQgPpsxu3DvUMWQyKrOM9335JQcBbgf5jQIsAozw9FXcji
-         pWxwwLhsCZUD9URicr6zJn2CTR+ndQhIweY3bCTXi31i6vL/ApRQ1OnBRsTMqb1r0SUD
-         fU+lOO4g5ZhlrSF8JB2E5M2Cd2w7swAqZBrdv3RzhoeqwDMT2QNUYrOn/pOcTcV4P55f
-         5IVRuEFUoUI5Bp2Kl6kE6A7WQJrJSw5IdZ+pnmMiO3ZLHwsLeoXYBtWC1eoGUJM76tuq
-         5wWL7uXVVsqJhijc2IAkf4dreGjkQZrstLTnKgTM+eq47R/t8wilrofRTio/CsYJuu83
-         h0mA==
-X-Gm-Message-State: APjAAAU9z2Ah7QU3UVIa6pxbos2vEjmrow6FpI3f/pWwTUvTzgoAb/GE
-        1UPk2Ja10/a+3nWwnLY5zxT+AKqtpDNnbORjZpU=
-X-Google-Smtp-Source: APXvYqwy7JSuZ2MQkCxu+UZckViWml3dAMNujjqioOVKBxNPuy+TlsFTkoTubyTMXBHIpf8FcG+IlR70KD9SECbhh9w=
-X-Received: by 2002:aca:d484:: with SMTP id l126mr11260662oig.114.1579491548946;
- Sun, 19 Jan 2020 19:39:08 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a9d:6e0f:0:0:0:0:0 with HTTP; Sun, 19 Jan 2020 19:39:08
- -0800 (PST)
-Reply-To: keenmaxwell1981@gmail.com
-From:   keen maxwell <nataliafreedom148@gmail.com>
-Date:   Mon, 20 Jan 2020 03:39:08 +0000
-Message-ID: <CABBdKO7kmP0+rv+xeS7KWeC-qBXSPYEFBnTP=7UOGPQgP1HsGw@mail.gmail.com>
-Subject: =?UTF-8?Q?Dr=C4=ABz_atbildiet_man_l=C5=ABdzu?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZSuENgj57EJKhDmrfo9UwbHjaQk00c2fnA9ZQ7sTuQY=;
+        b=AbYlo6mis40+EcOty4cRdR5l9W13HTBMSHVqwZUmXmexdd/Ze5Fve6T3YgEjd9P0FR
+         RsfcG5B0UJqQ1Yy30Vxss2rbQ7ajfctnBIA9WoGe6SLWKBuzXaBl4k8dEGXr3G1yH2EG
+         EoA12FIfaHwo3O24JAbL0kXqCAyVkKWXfVKO3eET+2bqbVROnrw522c8jOSCAjXrT4hj
+         OzVAFFnuJXC6UDLAbsuKDIOg0NkZ8bg44Ce5V5RD63k01Pj4Oh9fuV6A4w5HcKdp0Ntl
+         wjyhpgZcm9GbSyHzWL/t6O7vVtLdA5IH1CDZTNfpmpi2S1ZLi60H2jNkaYNLG6wHHtRu
+         U9GA==
+X-Gm-Message-State: APjAAAUMVf3XtA5/zyEePDbblZeNGVUQwEuSIIBE6LrTE8H8LqNAGjoC
+        zGvBxYkiDMsknxgekj47ajo=
+X-Google-Smtp-Source: APXvYqx9SFiP+HJHo5vJ9WNDDRJqY9FfJU2DKgJp/f5tUP2r6Sg8iGBBo13UVak42TonbSh0tPg8Ng==
+X-Received: by 2002:aa7:961b:: with SMTP id q27mr15327820pfg.23.1579491719639;
+        Sun, 19 Jan 2020 19:41:59 -0800 (PST)
+Received: from huyue2.ccdomain.com ([103.29.143.67])
+        by smtp.gmail.com with ESMTPSA id e2sm37158327pfh.84.2020.01.19.19.41.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 19 Jan 2020 19:41:59 -0800 (PST)
+From:   Yue Hu <zbestahu@gmail.com>
+To:     minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com
+Cc:     linux-kernel@vger.kernel.org, huyue2@yulong.com
+Subject: [PATCH] zram: move backing_dev under macro CONFIG_ZRAM_WRITEBACK
+Date:   Mon, 20 Jan 2020 11:41:55 +0800
+Message-Id: <20200120034155.6048-1-zbestahu@gmail.com>
+X-Mailer: git-send-email 2.17.1.windows.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sveiks, d=C4=81rgais draugs,
+From: Yue Hu <huyue2@yulong.com>
 
-Es esmu Keens Maksvels no Amerikas Savienotaj=C4=81m Valst=C4=ABm, l=C5=ABd=
-zu, es
-v=C4=93los, lai b=C5=ABtu
-komunik=C4=81cija ar tevi.
+backing_dev is never used when not enable CONFIG_ZRAM_WRITEBACK and
+it's introduced from writeback feature. So it's needless also affect
+readability in that case.
 
-Es gaidu j=C5=ABsu atbildi.
+Signed-off-by: Yue Hu <huyue2@yulong.com>
+---
+ drivers/block/zram/zram_drv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index f2fd46d..1cb3b9a 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -112,8 +112,8 @@ struct zram {
+ 	 * zram is claimed so open request will be failed
+ 	 */
+ 	bool claim; /* Protected by bdev->bd_mutex */
+-	struct file *backing_dev;
+ #ifdef CONFIG_ZRAM_WRITEBACK
++	struct file *backing_dev;
+ 	spinlock_t wb_limit_lock;
+ 	bool wb_limit_enable;
+ 	u64 bd_wb_limit;
+-- 
+1.9.1
+
