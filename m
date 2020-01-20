@@ -2,73 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F58142266
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 05:33:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D7814226A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 05:47:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbgATEdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 23:33:36 -0500
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21115 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729043AbgATEdg (ORCPT
+        id S1729138AbgATErj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 23:47:39 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35658 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729043AbgATErj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 23:33:36 -0500
-X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Jan 2020 23:33:35 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1579493901;
-        s=selector01; d=brennan.io; i=stephen@brennan.io;
-        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        bh=stViw/vZBTTKFHulxgqF7UGf9elupV/iKpDOvA31W08=;
-        b=ABZX5WmdD1rtnsD7ma5/aoYcPqlJTkoaH6ppekhzsVYQNDnr9Opn+O+SL61R1iRr
-        eZh/7q+1MNG9vDcIIPycmU+XcPTY5DsoN0CIEb4uoctxYw3FyM5z2YzBF1sW3NHQ+c7
-        iv0LOkzXPNRYqx5Yx1pr2xTY8KdEpy1JyxkR7zN0=
-Received: from localhost (195.173.24.136.in-addr.arpa [136.24.173.195]) by mx.zohomail.com
-        with SMTPS id 1579493895817813.4788828872422; Sun, 19 Jan 2020 20:18:15 -0800 (PST)
-From:   Stephen Brennan <stephen@brennan.io>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Stephen Brennan <stephen@brennan.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-ID: <20200120041740.193485-1-stephen@brennan.io>
-Subject: [PATCH] ARM: dts: bcm2711: Use bcm2711 compatible for sdhci
-Date:   Sun, 19 Jan 2020 20:17:40 -0800
-X-Mailer: git-send-email 2.24.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
-Content-Type: text/plain; charset=utf8
+        Sun, 19 Jan 2020 23:47:39 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i23so15196085pfo.2
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 20:47:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ti8+hB0utpLZr3O4fYMQ5nwM3OICAeQdhYguP4pp9Gw=;
+        b=s08gSl21xfXw+lzR6rvvCCbZu5eiTr0vPpRL+4Ig80BO2Mwo6MwF9Zu0d7wvsBGBps
+         7NGR8uyTmaJppNfQ7XEx6J6yIOtL3s8do+X/rC9enda0tAfnpnDeWOsNb3Bp03+r1bTk
+         wGQlVd0o33KXbLJBFjStqFPPEID6NXcUwkwKt+ZmFzV0vkBwfTjIzQuTYpUX9XbrkAO3
+         wYjGRyOr1g1R8E5hFZ6g7y9Bje1SV3lX/GcJnMHkWaG3/Hat2+WhmyqQQrskNaGB6dG3
+         o+Rrx/QzfcQ62gfgLMdmeeDaW6zwMjYkimNx7RJ9dLViClQ8hoUXjk8srlQCdGAzEMCn
+         ytWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ti8+hB0utpLZr3O4fYMQ5nwM3OICAeQdhYguP4pp9Gw=;
+        b=A373/YkPY1Z8P5GpZEOlN7+jrnYu0OWpNxUxBs4aNNx+zDlkIO7pixv4ZHtWr0Itpg
+         AnMlHFpi0N3DA8FFY15FdK8SO5jRzSivS0vYYaOdCcpqShj1wSienpRH1REWXs+eY9PN
+         yX7t/z+60RGCFsRbu+sQx95yfnGRzUTMZK/Ow04IMUAiC5JhlzqwJGGFEJHhLaW2mqL2
+         ccpQ/uE5zoKWPtDaNOtrjK9fWasWiYHK6aW01EwDhHtwz5zeXt1La/JP2rqVUm3etXEe
+         tyzVBjLWLyIVswxBrd+qxYmY7U0euQo6iauRvw4abPq+hrIH5sxNmeooUQna0YUocYIe
+         azPw==
+X-Gm-Message-State: APjAAAUumR9x9L1DaqhBtxgtY45u3+iAVbwmOunNSdJx97ljliD0RyDF
+        A8cPbpZvb1eWMqYhTD2LKK35uKYp/bU=
+X-Google-Smtp-Source: APXvYqz18kh5Is5mWKOoszjfsXjhDjcW1TWkbN/4SMW60NJaSH1jBWkgUNLbPZ70Pd6LLSVdYNBu8g==
+X-Received: by 2002:aa7:8098:: with SMTP id v24mr15666527pff.33.1579495658415;
+        Sun, 19 Jan 2020 20:47:38 -0800 (PST)
+Received: from pek-lpggp6.wrs.com (unknown-105-123.windriver.com. [147.11.105.123])
+        by smtp.gmail.com with ESMTPSA id h3sm15791836pjs.0.2020.01.19.20.47.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 19 Jan 2020 20:47:38 -0800 (PST)
+From:   Kevin Hao <haokexin@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Daney <david.daney@cavium.com>
+Subject: [PATCH] irqdomain: Fix a memory leak in irq_domain_push_irq()
+Date:   Mon, 20 Jan 2020 12:35:47 +0800
+Message-Id: <20200120043547.22271-1-haokexin@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When booting Raspberry Pi 4B using a micro SDHC UHS class 1 card, the SD
-card partitions never appear in /dev.  According to the device tree
-bindings for Broadcom IPROC SDHCI controller, we should use
-"brcm,bcm2711-emmc2" compatible string on BCM2711. Set this compatible
-string, which allows these cards to be mounted.
+Fix a memory leak reported by kmemleak:
+unreferenced object 0xffff000bc6f50e80 (size 128):
+  comm "kworker/23:2", pid 201, jiffies 4294894947 (age 942.132s)
+  hex dump (first 32 bytes):
+    00 00 00 00 41 00 00 00 86 c0 03 00 00 00 00 00  ....A...........
+    00 a0 b2 c6 0b 00 ff ff 40 51 fd 10 00 80 ff ff  ........@Q......
+  backtrace:
+    [<00000000e62d2240>] kmem_cache_alloc_trace+0x1a4/0x320
+    [<00000000279143c9>] irq_domain_push_irq+0x7c/0x188
+    [<00000000d9f4c154>] thunderx_gpio_probe+0x3ac/0x438
+    [<00000000fd09ec22>] pci_device_probe+0xe4/0x198
+    [<00000000d43eca75>] really_probe+0xdc/0x320
+    [<00000000d3ebab09>] driver_probe_device+0x5c/0xf0
+    [<000000005b3ecaa0>] __device_attach_driver+0x88/0xc0
+    [<000000004e5915f5>] bus_for_each_drv+0x7c/0xc8
+    [<0000000079d4db41>] __device_attach+0xe4/0x140
+    [<00000000883bbda9>] device_initial_probe+0x18/0x20
+    [<000000003be59ef6>] bus_probe_device+0x98/0xa0
+    [<0000000039b03d3f>] deferred_probe_work_func+0x74/0xa8
+    [<00000000870934ce>] process_one_work+0x1c8/0x470
+    [<00000000e3cce570>] worker_thread+0x1f8/0x428
+    [<000000005d64975e>] kthread+0xfc/0x128
+    [<00000000f0eaa764>] ret_from_fork+0x10/0x18
 
-Signed-off-by: Stephen Brennan <stephen@brennan.io>
+Fixes: 495c38d3001f ("irqdomain: Add irq_domain_{push,pop}_irq() functions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kevin Hao <haokexin@gmail.com>
 ---
- arch/arm/boot/dts/bcm2711.dtsi | 1 +
+ kernel/irq/irqdomain.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dts=
-i
-index b64865ad5a41..48e3b0162bda 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
-@@ -853,6 +853,7 @@ &mailbox {
- };
-=20
- &sdhci {
-+=09compatible =3D "brcm,bcm2711-emmc2";
- =09interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
- };
-=20
---=20
-2.24.0
-
-
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index dd822fd8a7d5..480df3659720 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1459,6 +1459,7 @@ int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg)
+ 	if (rv) {
+ 		/* Restore the original irq_data. */
+ 		*root_irq_data = *child_irq_data;
++		kfree(child_irq_data);
+ 		goto error;
+ 	}
+ 
+-- 
+2.14.4
 
