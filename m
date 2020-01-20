@@ -2,29 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD2BC142B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21847142B8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:07:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgATNDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:03:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40964 "EHLO huawei.com"
+        id S1729031AbgATNGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:06:55 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44834 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726619AbgATNDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:03:41 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4503E6A5299E923BEBF9;
-        Mon, 20 Jan 2020 21:03:39 +0800 (CST)
+        id S1728792AbgATNGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 08:06:52 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E578B618678A3BA5CAF1;
+        Mon, 20 Jan 2020 21:06:49 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 Jan 2020 21:03:33 +0800
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 20 Jan 2020 21:06:32 +0800
 From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <dan.j.williams@intel.com>, <vkoul@kernel.org>
-CC:     <peng.ma@nxp.com>, <wen.he_1@nxp.com>, <jiaheng.fan@nxp.com>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH -next] dmaengine: fsl-qdma: fix duplicated argument to &&
-Date:   Mon, 20 Jan 2020 20:58:43 +0800
-Message-ID: <20200120125843.34398-1-chenzhou10@huawei.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
+        <jingoohan1@gmail.com>, <b.zolnierkie@samsung.com>
+CC:     <kgunda@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH -next] backlight: qcom-wled: fix unsigned comparison to zero
+Date:   Mon, 20 Jan 2020 21:01:43 +0800
+Message-ID: <20200120130143.35363-1-chenzhou10@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -36,30 +38,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is duplicated argument to && in function fsl_qdma_free_chan_resources,
-which looks like a typo, pointer fsl_queue->desc_pool also needs NULL check,
-fix it.
-Detected with coccinelle.
+Fixes coccicheck warning:
+./drivers/video/backlight/qcom-wled.c:1104:5-15:
+	WARNING: Unsigned expression compared with zero: string_len > 0
 
-Fixes: b092529e0aa0 ("dmaengine: fsl-qdma: Add qDMA controller driver for Layerscape SoCs")
+The unsigned variable string_len is assigned a return value from the call
+to wled_configure, which may return negative error code.
+
+Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for WLED3")
 Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- drivers/dma/fsl-qdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/backlight/qcom-wled.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
-index 8979208..95cc025 100644
---- a/drivers/dma/fsl-qdma.c
-+++ b/drivers/dma/fsl-qdma.c
-@@ -304,7 +304,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+index d46052d..3d276b3 100644
+--- a/drivers/video/backlight/qcom-wled.c
++++ b/drivers/video/backlight/qcom-wled.c
+@@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int version)
+ 	struct wled_config *cfg = &wled->cfg;
+ 	struct device *dev = wled->dev;
+ 	const __be32 *prop_addr;
+-	u32 size, val, c, string_len;
+-	int rc, i, j;
++	u32 size, val, c;
++	int rc, i, j, string_len;
  
- 	vchan_dma_desc_free_list(&fsl_chan->vchan, &head);
- 
--	if (!fsl_queue->comp_pool && !fsl_queue->comp_pool)
-+	if (!fsl_queue->comp_pool && !fsl_queue->desc_pool)
- 		return;
- 
- 	list_for_each_entry_safe(comp_temp, _comp_temp,
+ 	const struct wled_u32_opts *u32_opts = NULL;
+ 	const struct wled_u32_opts wled3_opts[] = {
 -- 
 2.7.4
 
