@@ -2,112 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AACAD14314E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CC2143157
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgATSLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 13:11:54 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58057 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728093AbgATSLx (ORCPT
+        id S1728139AbgATSOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 13:14:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53919 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726982AbgATSO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 13:11:53 -0500
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0A4A521D25;
-        Mon, 20 Jan 2020 13:11:52 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Mon, 20 Jan 2020 13:11:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=3eLX0e
-        f+TjguMEDNQ4OqQg1MbtOe1MZnC7yyN6gjokc=; b=J7JuvkDQay6+NBdblOPewo
-        RfJhDS3JUf0TWtuMcX/K5jGwDS+DYQXZbSyfL7aLx3XJVHJc86kle0a0PQoWy0zb
-        uRrXXyN+/XIX2kMU68B40hIjoq0pIjb3qUD6wBPFjfPgyYbgk+24BnVniW4cXVwk
-        cM5+3hKCLbGB2R0Q/szbK95h6NXXBihjkAlaF6sDuSQHFkW7fIVcCyGS9wDW/ArG
-        M80xbcpEbNLO81Wla/bfKr59DUUfKx36SudmTR/bX4Awzg9zi4losnWMUlxfgobV
-        8v/9sSkmkqu4hGGegfoz2YYGFPSViNbJZGWRVI7OdYeNvCMBx34gHEHGIMnBT/LQ
-        ==
-X-ME-Sender: <xms:Zu0lXslUU6-MGtXpdNaemRY51oWdb94kEKtoBTL76xtyU7Pg50dm1A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudeigdegiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrrhgvkhcu
-    ofgrrhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomhgrrhhmrghrvghksehinhhvih
-    hsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecuffhomhgrihhnpehlihhnuhigfhho
-    uhhnuggrthhiohhnrdhorhhgnecukfhppeeluddrieehrdefgedrfeefnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrrhhmrghrvghksehi
-    nhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomh
-X-ME-Proxy: <xmx:Zu0lXnoaJbkd_uCCkRJHVs_Qtq_KtTQ5GoLG4AUtHooRQGdGxzAetg>
-    <xmx:Zu0lXmAbXycj-ZHg1cCg2yo_pH2uZnhA0aA3LsppuUu2sjMbEawh8g>
-    <xmx:Zu0lXiElReVvpHFvWUg6rn9c3T1GOB1MGEp5OFSvKmPuSKe37bD3Ow>
-    <xmx:aO0lXkT8fumM0nUUeav2lWoz3rCOwjsGNqmDoUQFvyuhGJvG4rGAGg>
-Received: from mail-itl (ip5b412221.dynamic.kabel-deutschland.de [91.65.34.33])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A7280306099E;
-        Mon, 20 Jan 2020 13:11:49 -0500 (EST)
-Date:   Mon, 20 Jan 2020 19:11:46 +0100
-From:   Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fbdev: wait for references go away
-Message-ID: <20200120181146.GL1314@mail-itl>
-References: <CGME20200120100025eucas1p21f5e2da0fd7c1fcb33cb47a97e9e645c@eucas1p2.samsung.com>
- <20200120100014.23488-1-kraxel@redhat.com>
- <d143e43b-8a38-940e-3ae5-e7b830a74bb3@samsung.com>
+        Mon, 20 Jan 2020 13:14:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579544066;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=lg/ZhzUvCBxZUtp2Z0dP5Q+woJPKdQPaDnNC1ktU+j0=;
+        b=U0R1XvBh1vVCmrZo1GBJ/DsoMLzBhBC+e1Uu6hTx33oWQ55Wp9lqORgFNtg+39JXYkmR0f
+        CFKZXm+Vt3DUmLDns5p4/x6K+pXsoNwH6RMNtPQiZScD81CjRDJ3cmaQP/Kqsd2fB7kcpP
+        oFFNBm9jtxshJhzjEHa+TPMGZwaqnYg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-126-NIu47y58NIiheq6PSNufIQ-1; Mon, 20 Jan 2020 13:14:22 -0500
+X-MC-Unique: NIu47y58NIiheq6PSNufIQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 37B8918A8C81;
+        Mon, 20 Jan 2020 18:14:21 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B30D31001B30;
+        Mon, 20 Jan 2020 18:14:20 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/3] objtool: minor fixes
+Date:   Mon, 20 Jan 2020 12:14:06 -0600
+Message-Id: <cover.1579543924.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p0HNO2YbtFeVXwJ3"
-Content-Disposition: inline
-In-Reply-To: <d143e43b-8a38-940e-3ae5-e7b830a74bb3@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Three minor fixes which help objtool integrate better with the kernel
+build.
 
---p0HNO2YbtFeVXwJ3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] fbdev: wait for references go away
+Josh Poimboeuf (1):
+  objtool: Skip samples subdirectory
 
-On Mon, Jan 20, 2020 at 06:51:17PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> I guess that a problem is happening during DRM driver load while fbdev
-> driver is loaded? I assume do_unregister_framebuffer() is called inside
-> do_remove_conflicting_framebuffers()?
+Olof Johansson (1):
+  objtool: Silence build output
 
-Yes, exactly. More details here:
-https://lists.linuxfoundation.org/pipermail/virtualization/2020-January/045=
-026.html
+Shile Zhang (1):
+  objtool: Fix ARCH=3Dx86_64 build error
 
-> At first glance it seems to be an user-space issue as it should not be
-> holding references on /dev/fb0 while DRM driver is being loaded.
-
-How plymouth would know when exactly it needs to release /dev/fb0?
+ samples/Makefile            | 1 +
+ tools/objtool/Makefile      | 6 +-----
+ tools/objtool/sync-check.sh | 2 --
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
 --=20
-Best Regards,
-Marek Marczykowski-G=C3=B3recki
-Invisible Things Lab
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
+2.21.1
 
---p0HNO2YbtFeVXwJ3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAl4l7WIACgkQ24/THMrX
-1ywYwQgAimDeFDny3c/ar866L78Bc5TRyJynEGGbFlnb9BR/gCc9gpS1tNCyemPC
-keqTV3PxXHMFaTPnrJi2ebuUP+Lmj/YOK+tCXB8+ipwMs3Z1HZv1DR7D4s3gDDzk
-To8b4e0RnxpCdQJ4xpOoWL+XcueHy+RB8FtEXqXyVJTW/bJWGYGnuyQVSubBKQxL
-TyEp6ASDocGLFX0QsSrdVEkuVF/PMdfbyu6Th9MwQMtMmd0s2BuepAfJhDP3js1f
-JlMnL3N1wscxFOWn1TSAGywTMbAjwRctGwrCcULMDME2STVryuH0VNWpapKIMQpj
-PUlDFH5CMVOKGjXo2OkywONz4gP7kQ==
-=2hqv
------END PGP SIGNATURE-----
-
---p0HNO2YbtFeVXwJ3--
