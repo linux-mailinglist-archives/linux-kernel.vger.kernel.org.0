@@ -2,93 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CB31432D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 21:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F581432B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 21:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgATUVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 15:21:14 -0500
-Received: from outgoing4.flk.host-h.net ([188.40.0.90]:34885 "EHLO
-        outgoing4.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgATUVO (ORCPT
+        id S1726942AbgATUCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 15:02:05 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:35180 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgATUCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 15:21:14 -0500
-X-Greylist: delayed 2147 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 15:21:12 EST
-Received: from www31.flk1.host-h.net ([188.40.1.173])
-        by antispam1-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1itczB-0004Ot-OT; Mon, 20 Jan 2020 21:45:22 +0200
-Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
-        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1itcz9-0004Hk-Dw; Mon, 20 Jan 2020 21:45:19 +0200
-From:   Justin Swartz <justin.swartz@risingedge.co.za>
-To:     Jacob Chen <jacob-chen@iotwrt.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] media: rockchip/rga: add rk3228-rga to rockchip_rga_match[]
-Date:   Mon, 20 Jan 2020 19:41:54 +0000
-Message-Id: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: justin.swartz@risingedge.co.za
-X-Virus-Scanned: Clear
-X-Originating-IP: 188.40.1.173
-X-SpamExperts-Domain: risingedge.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.01)
-X-Recommended-Action: accept
-X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0Xm17NJf4el5vffImWwWrhCpSDasLI4SayDByyq9LIhVc0MzHfOnMfVI
- AlgH8Xwbq0TNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
- mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
- qhBpvAyWwieZyauFYqHkIbFa+ipFflSrcyn7M3A1M8P7YyCISF7Ax1jp5415hfbnHhmkWKwQ798N
- tjgwOHRNrKlsLSLsR2phe2H+VQ5drqtLHIQXdB2sPQC/ZXf7OFUBPjBV0jlRnibyCuwag8UEnjV9
- dfsBVFAo2VqRJ3PoUK3i2GylNtZWYK6FgocWFgIy83G1Ziw5PsG3ZK/CX16OekmbPreOnw2lIbsC
- g5hAk2rbw6y01wTJsjWw5+0eZIpQIcK9yrSpnIazZEQP7rhBhxNqNx7Ljd12v0hRQV2TuWFKPYIZ
- hSoXjZRXPZeF/ozRyNShALTpAuRsQ7f/A1SBbUaDAMpCdiFVwaP90eVaqnDphEW4xGx2bCpzxgBv
- RJlZffR315YiXq0P29rzRb3/fujGPSO0ZjPN6GBtX9ob7G66M73K7lEBopH59S/bhUmo0Kkx+QUC
- X/JlYVPK+a5jKpRW4VkG9koSZx4AE7ErDJQIhG9sWvIZWUifSNHSdOCLRQ7jpnXnmAJSLoHk+mB7
- rvqdepOw2titfOjo27VsmUXl5Dlu0Ez4hiPVrwbHSJw7Xp/7OsyH8g27Tr7mENICHJaR53upNsj0
- ZNx9ROADUXTdQZTyOamR3KMXZiZ/EdUuc9x8TOdIW6qv7Prfdfuh2V6P2IH+fu/1ze9XG6SFbqNq
- ARXGm2iH1Wgh6RAenBR+licROGZLSOPJ7pouDn/lmAaZNciLjY4Bum3Cz9zMKWDsCgJgzAyOo8uz
- gLvzPUQ4WO1VIxT90NysgdUUHBaOGnMZ3fVqqKS4K27k8O0AKLf9g2axxclWHXeuOCUCSaU4vgJw
- yjPlnmxH7Pd4xT6MyYGIdovMjseuwUIt8Ke1zYmTdImomsn9uPyWahCadieo4QRLnvbNjcvkOxlt
- YcJZ/YLv0cjthSk55ObUg7TpMbFmZ6g5Ky+1Stg9rJ7bhjXv2caQWgXrjuU3A3io6xJmD59iFVkb
- kXGPzFwfHhKt2wjdkKIWbyf+T8iepkOFBDDkCgKb9Tgwyo3k9+KsRmFMu5VQ9KBOovIJzflUDtG9
- b8caIarEvU/OX3xYChUDPsYuWEJtniNfuGO37qWHEu6DA1YYHSc7
-X-Report-Abuse-To: spam@antispammaster.host-h.net
+        Mon, 20 Jan 2020 15:02:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579550523;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yXBBxKgjxdPXPXxh/cc9O4GvaQfZZ5zC481c5ThX3+8=;
+        b=HkRIfJVzUIE/3aSamgtnEjQRZwY74N0ahaYkZ2BE0djKT3N0/prMfU0h64IOtkPDbkBhLc
+        nPSfZz44IUO2w5/97U4+4o642EI/tl+v3A1gSpqxeYZbEi7RXQ9FCGkgM//5faPslc8PWq
+        WZ+KLgIOk6RGsees9zU9H+lj6JhBMQc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-21-beGNQvrDNBCvUTRoImg-bw-1; Mon, 20 Jan 2020 15:02:00 -0500
+X-MC-Unique: beGNQvrDNBCvUTRoImg-bw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4466800D41;
+        Mon, 20 Jan 2020 20:01:58 +0000 (UTC)
+Received: from w520.home (ovpn-116-28.phx2.redhat.com [10.3.116.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A9321001B35;
+        Mon, 20 Jan 2020 20:01:58 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 13:01:57 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Yan Zhao <yan.y.zhao@intel.com>
+Cc:     "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: Re: [PATCH v2 2/2] drm/i915/gvt: subsitute kvm_read/write_guest
+ with vfio_dma_rw
+Message-ID: <20200120130157.0ee7042d@w520.home>
+In-Reply-To: <20200119100637.GD1759@joy-OptiPlex-7040>
+References: <20200115034132.2753-1-yan.y.zhao@intel.com>
+        <20200115035455.12417-1-yan.y.zhao@intel.com>
+        <20200115130651.29d7e9e0@w520.home>
+        <20200116054941.GB1759@joy-OptiPlex-7040>
+        <20200116083729.40983f38@w520.home>
+        <20200119100637.GD1759@joy-OptiPlex-7040>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an entry to the rockchip_rga_match array for "rockchip,rk3228-rga"
+On Sun, 19 Jan 2020 05:06:37 -0500
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
----
- drivers/media/platform/rockchip/rga/rga.c | 3 +++
- 1 file changed, 3 insertions(+)
+> On Thu, Jan 16, 2020 at 11:37:29PM +0800, Alex Williamson wrote:
+> > On Thu, 16 Jan 2020 00:49:41 -0500
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> >   
+> > > On Thu, Jan 16, 2020 at 04:06:51AM +0800, Alex Williamson wrote:  
+> > > > On Tue, 14 Jan 2020 22:54:55 -0500
+> > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
+> > > >     
+> > > > > As a device model, it is better to read/write guest memory using vfio
+> > > > > interface, so that vfio is able to maintain dirty info of device IOVAs.
+> > > > > 
+> > > > > Compared to kvm interfaces kvm_read/write_guest(), vfio_dma_rw() has ~600
+> > > > > cycles more overhead on average.
+> > > > > 
+> > > > > -------------------------------------
+> > > > > |    interface     | avg cpu cycles |
+> > > > > |-----------------------------------|
+> > > > > | kvm_write_guest  |     1554       |
+> > > > > | ----------------------------------|
+> > > > > | kvm_read_guest   |     707        |
+> > > > > |-----------------------------------|
+> > > > > | vfio_dma_rw(w)   |     2274       |
+> > > > > |-----------------------------------|
+> > > > > | vfio_dma_rw(r)   |     1378       |
+> > > > > -------------------------------------    
+> > > > 
+> > > > In v1 you had:
+> > > > 
+> > > > -------------------------------------
+> > > > |    interface     | avg cpu cycles |
+> > > > |-----------------------------------|
+> > > > | kvm_write_guest  |     1546       |
+> > > > | ----------------------------------|
+> > > > | kvm_read_guest   |     686        |
+> > > > |-----------------------------------|
+> > > > | vfio_iova_rw(w)  |     2233       |
+> > > > |-----------------------------------|
+> > > > | vfio_iova_rw(r)  |     1262       |
+> > > > -------------------------------------
+> > > > 
+> > > > So the kvm numbers remained within +0.5-3% while the vfio numbers are
+> > > > now +1.8-9.2%.  I would have expected the algorithm change to at least
+> > > > not be worse for small accesses and be better for accesses crossing
+> > > > page boundaries.  Do you know what happened?
+> > > >    
+> > > I only tested the 4 interfaces in GVT's environment, where most of the
+> > > guest memory accesses are less than one page.
+> > > And the different fluctuations should be caused by the locks.
+> > > vfio_dma_rw contends locks with other vfio accesses which are assumed to
+> > > be abundant in the case of GVT.  
+> > 
+> > Hmm, so maybe it's time to convert vfio_iommu.lock from a mutex to a
+> > rwsem?  Thanks,
+> >   
+> 
+> hi Alex
+> I tested your rwsem patches at (https://lkml.org/lkml/2020/1/16/1869).
+> They works without any runtime error at my side. :) 
+> However, I found out that the previous fluctuation may be because I didn't
+> take read/write counts in to account.
+> For example. though the two tests have different avg read/write cycles,
+> their average cycles are almost the same.
+>  ______________________________________________________________________
+> |        | avg read |            | avg write |            |            |
+> |        | cycles   | read cnt   | cycles    | write cnt  | avg cycles |
+> |----------------------------------------------------------------------|
+> | test 1 |   1339   | 29,587,120 |  2258     | 17,098,364 |    1676    |
+> | test 2 |   1340   | 28,454,262 |  2238     | 16,501,788 |    1670    |
+>  ----------------------------------------------------------------------
+> 
+> After measuring the exact read/write cnt and cycles of a specific workload,
+> I get below findings:
+> 
+> (1) with single VM running glmark2 inside.
+> glmark2: 40M+ read+write cnt, among which 63% is read.
+> among reads, 48% is of PAGE_SIZE, the rest is less than a page.
+> among writes, 100% is less than a page.
+> 
+>  __________________________________________________
+> |       cycles         | read | write |  avg | inc |
+> |--------------------------------------------------|
+> | kvm_read/write_page  |  694 |  1506 |  993 |  /  |
+> |--------------------------------------------------|
+> |  vfio_dma_rw(mutex)  | 1340 |  2248 | 1673 | 680 |
+> |--------------------------------------------------|
+> | vfio_dma_rw(rwsem r) | 1323 |  2198 | 1645 | 653 |
+>  ---------------------------------------------------
+> 
+> so vfio_dma_rw generally has 650+ more cycles per each read/write.
+> While kvm->srcu is of 160 cycles on average with one vm is running, the
+> cycles spending on locks for vfio_dma_rw spread like this:
+>  ___________________________
+> |        cycles       | avg |
+> |---------------------------|
+> |     iommu->lock     | 117 |
+> |---------------------------|
+> |   vfio.group_lock   | 108 |
+> |---------------------------|
+> | group->unbound_lock | 114 |
+> |---------------------------|
+> |  group->device_lock | 115 |
+> |---------------------------|
+> |     group->mutex    | 113 |
+>  ---------------------------
+> 
+> I measured the cycles for a mutex without any contention is 104 cycles
+> on average (including time for get_cycles() and measured in the same way
+> as other locks). So the contention of a single lock in a single vm
+> environment is light. probably because there's a vgpu lock hold in GVT already.
+> 
+> (2) with two VMs each running glmark2 inside.
+> The contention increases a little.
+> 
+>  ___________________________________________________
+> |       cycles         | read | write |  avg | inc  |
+> |---------------------------------------------------|
+> | kvm_read/write_page  | 1035 |  1832 | 1325 |  /   |
+> |---------------------------------------------------|
+> |  vfio_dma_rw(mutex)  | 2104 |  2886 | 2390 | 1065 |
+> |---------------------------------------------------|
+> | vfio_dma_rw(rwsem r) | 1965 |  2778 | 2260 | 935  |
+>  ---------------------------------------------------
+> 
+> 
+>  -----------------------------------------------
+> |     avg cycles       |   one VM   |  two VMs  |
+> |-----------------------------------------------|
+> |  iommu lock (mutex)  |     117    |   150     |
+> |-----------------------------------|-----------|
+> | iommu lock (rwsem r) |     117    |   156     |
+> |-----------------------------------|-----------|
+> |   kvm->srcu          |     160    |   213     |
+>  -----------------------------------------------
+> 
+> In the kvm case, avg cycles increased 332 cycles, while kvm->srcu only costed
+> 213 cycles. The rest 109 cycles may be spent on atomic operations.
+> But I didn't measure them, as get_cycles() operation itself would influence final
+> cycles by ~20 cycles.
 
-diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-index e9ff12b6b..268116cd5 100644
---- a/drivers/media/platform/rockchip/rga/rga.c
-+++ b/drivers/media/platform/rockchip/rga/rga.c
-@@ -956,6 +956,9 @@ static const struct dev_pm_ops rga_pm = {
- 
- static const struct of_device_id rockchip_rga_match[] = {
- 	{
-+		.compatible = "rockchip,rk3228-rga",
-+	},
-+	{
- 		.compatible = "rockchip,rk3288-rga",
- 	},
- 	{
--- 
-2.11.0
+It seems like we need to extend the vfio external user interface so
+that GVT-g can hold the group and container user references across
+multiple calls.  For instance if we had a
+vfio_group_get_external_user_from_dev() (based on
+vfio_group_get_external_user()) then i915 could get an opaque
+vfio_group pointer which it could use to call vfio_group_dma_rw() which
+would leave us with only the iommu rw_sem locking.  i915 would release
+the reference with vfio_group_put_external_user() when the device is
+released.  The same could be done with the pin pages interface to
+streamline that as well.  Thoughts?  Thanks,
+
+Alex
 
