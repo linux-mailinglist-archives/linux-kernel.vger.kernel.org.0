@@ -2,118 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 901ED1431ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 521F514320A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbgATTDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:03:06 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:58153 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgATTDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:03:04 -0500
-Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MHGPA-1ipALF2U3E-00DGre; Mon, 20 Jan 2020 20:03:01 +0100
-Received: by mail-qt1-f177.google.com with SMTP id v25so614991qto.7;
-        Mon, 20 Jan 2020 11:03:01 -0800 (PST)
-X-Gm-Message-State: APjAAAU2b19EsYgjPqf3lWEury14h744bF3DovOfFzCgBvQyc5ygBq/O
-        pAbY0ppqjuFg5QdSF2GDwlPUaRpz4ILiGD0V6Lc=
-X-Google-Smtp-Source: APXvYqz35x39I8DSspW1D7zXoSgFG6f385p7mWbzgBb6GjESNlGfr5iF1XLATEUOO8X7/j+CYWdeJN7g8IvYvApiM0E=
-X-Received: by 2002:ac8:768d:: with SMTP id g13mr805093qtr.7.1579546980409;
- Mon, 20 Jan 2020 11:03:00 -0800 (PST)
+        id S1726816AbgATTSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:18:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:8054 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726136AbgATTSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 14:18:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:18:51 -0800
+X-IronPort-AV: E=Sophos;i="5.70,343,1574150400"; 
+   d="scan'208";a="425268662"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:18:51 -0800
+Subject: [PATCH v3 0/6] Memory Hierarchy: Enable target node lookups for
+ reserved memory
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     David Hildenbrand <david@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        x86@kernel.org
+Date:   Mon, 20 Jan 2020 11:02:48 -0800
+Message-ID: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-References: <20200115165749.145649-1-elver@google.com> <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
- <CANpmjNOpTYnF3ssqrE_s+=UA-2MpfzzdrXoyaifb3A55_mc0uA@mail.gmail.com>
- <CAK8P3a3WywSsahH2vtZ_EOYTWE44YdN+Pj6G8nt_zrL3sckdwQ@mail.gmail.com>
- <CANpmjNMk2HbuvmN1RaZ=8OV+tx9qZwKyRySONDRQar6RCGM1SA@mail.gmail.com>
- <CAK8P3a066Knr-KC2v4M8Dr1phr0Gbb2KeZZLQ7Ana0fkrgPDPg@mail.gmail.com>
- <CANpmjNO395-atZXu_yEArZqAQ+ib3Ack-miEhA9msJ6_eJsh4g@mail.gmail.com>
- <CANpmjNOH1h=txXnd1aCXTN8THStLTaREcQpzd5QvoXz_3r=8+A@mail.gmail.com>
- <CAK8P3a0p9Y8080T-RR2pp-p2_A0FBae7zB-kSq09sMZ_X7AOhw@mail.gmail.com> <CANpmjNOUTed6FT8X0bUSc1tGBh3jrEJ0DRpQwBfoPF5ah8Wrhw@mail.gmail.com>
-In-Reply-To: <CANpmjNOUTed6FT8X0bUSc1tGBh3jrEJ0DRpQwBfoPF5ah8Wrhw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 20 Jan 2020 20:02:44 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
-Message-ID: <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
-Subject: Re: [PATCH -rcu] asm-generic, kcsan: Add KCSAN instrumentation for bitops
-To:     Marco Elver <elver@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:jR7dToZSz+pkZ+H0k5vLn3WxHAvBzUvp3ljrXIGkzvRot+PDpsg
- jvUS6yMJBrzIa5w8PoqfcIyUxp6R0ukVQsudQ5jcvbSZBzbkYiGpDO368uKbT3GS1zMTax6
- fYr6mXoL9VkOH4vxVc/626eppN3uzhWad2gTfMiDZowwRgFPV25v52+xoRoMQwhXws8s4O6
- XJlqCZts9DbDomGlf0i7A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:l3QBPowaTZQ=:sRbWnLFf27OK+UK7+9qpof
- kwPt46XaHvZva95NukcvqRN8B+WTktgovYpCxLpjyzoybNq9aSo4NoTE8QmBoUZS1RmHPBN3O
- JxuSWZwOcUWZcqjCmgwlDy5DyqJDaxkaPz/Nkgult+b7uI34ASguRqWm8dqFl7mm5sGqmi611
- HfMxJJUOIFDrrF6j66MWYHe7WJVFbRjATPfrdN+eP9IU85Gt78j+vrpL4onL9FsJqmuu7mEQE
- r6CbmFtYBc61T3+4ZfcoIdi0jxqcjbW6+cTwSwmhNbt5efjoxt1uXj8opXK8L4SDksSoi8HVl
- fAlVXG7rKO05DiAS06MkyjbZe+jGNDYPevAFAOkxSIUrcIthNQaSBtFHhLzQa3Nod0Vgl2lUW
- SMLHW53liptmhdTg0q4H8m5ChB9jWsVBRhvAbs6gvduiR/vq/goOgRKsr4AoDfXMmTwX7Ad6J
- 1A8MuGFWykbHCnXp1OpPsG1A7DHwGt0A00wmobx5RbsZs81otdVXhWH1yo+3meC6aMDN9YLNp
- KJswW9VlS/GYIjjv1KsGzn+pPNWxO+tHx8u9hRgZkDaB/F6u65dSDnnWrN7z00XA++XiOaoqW
- XGQKTCYTokGcjDohE/nGDmTVXpP3MSR6tKLgly1p7mly017IANjzQtZPiAJMVpojVW8Kg/YMb
- IA/A6xN+pNXterGSQo/Vm95Qxgq+PH7d68YGnXbRzLOiHhKVsT88gJrQFyI2W26ChyzBIZ4aP
- Tj9K5CbGego3mfwnPMdfSTmATTp0bm3ESuGDdokiE6CCIDgmXHVyh85xewT3AoxxJFP4W8OBd
- H898tlU9G2jc4aHY2LssA65PElWWQ1MfRAObEL+klzX2MphZ4oXhXqeAeJsNCryjxeA8V9z54
- ucpDaNXlOUyuEr5Kn9fg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 4:11 PM Marco Elver <elver@google.com> wrote:
-> On Mon, 20 Jan 2020 at 15:40, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Mon, Jan 20, 2020 at 3:23 PM Marco Elver <elver@google.com> wrote:
-> > > On Fri, 17 Jan 2020 at 14:14, Marco Elver <elver@google.com> wrote:
-> > > > On Fri, 17 Jan 2020 at 13:25, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > On Wed, Jan 15, 2020 at 9:50 PM Marco Elver <elver@google.com> wrote:
-> >
-> > > > > If you can't find any, I would prefer having the simpler interface
-> > > > > with just one set of annotations.
-> > > >
-> > > > That's fair enough. I'll prepare a v2 series that first introduces the
-> > > > new header, and then applies it to the locations that seem obvious
-> > > > candidates for having both checks.
-> > >
-> > > I've sent a new patch series which introduces instrumented.h:
-> > >    http://lkml.kernel.org/r/20200120141927.114373-1-elver@google.com
-> >
-> > Looks good to me, feel free to add
-> >
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > if you are merging this through your own tree or someone else's,
-> > or let me know if I should put it into the asm-generic git tree.
->
-> Thank you!  It seems there is still some debate around the user-copy
-> instrumentation.
->
-> The main question we have right now is if we should add pre/post hooks
-> for them. Although in the version above I added KCSAN checks after the
-> user-copies, it seems maybe we want it before. I personally don't have
-> a strong preference, and wanted to err on the side of being more
-> conservative.
->
-> If I send a v2, and it now turns out we do all the instrumentation
-> before the user-copies for KASAN and KCSAN, then we have a bunch of
-> empty hooks. However, for KMSAN we need the post-hook, at least for
-> copy_from_user. Do you mind a bunch of empty functions to provide
-> pre/post hooks for user-copies? Could the post-hooks be generally
-> useful for something else?
+Changes since v2 [1]:
+- Fix numa_cleanup_meminfo() to skip trimming reserved ranges to max_pfn.
 
-I'd prefer not to add any empty hooks, let's do that once they
-are actually used.
+- Collect Michael's acked-by
 
-      Arnd
+[1]: http://lore.kernel.org/r/157401267421.43284.2135775608523385279.stgit@dwillia2-desk3.amr.corp.intel.com
+
+---
+
+Merge notes:
+
+x86 folks: This has an ack from Rafael for ACPI, and Michael for Power.
+With an x86 ack I plan to take this through the libnvdimm tree provided
+the x86 touches look ok to you.
+
+---
+
+Cover:
+
+Arrange for platform numa info to be preserved for determining
+'target_node' data. Where a 'target_node' is the node a reserved memory
+range will become when it is onlined.
+
+This new infrastructure is expected to be more valuable over time for
+Memory Tiers / Hierarchy management as more platforms (via the ACPI HMAT
+and EFI Specific Purpose Memory) publish reserved or "soft-reserved"
+ranges to Linux. Linux system administrators will expect to be able to
+interact with those ranges with a unique numa node number when/if that
+memory is onlined via the dax_kmem driver [2].
+
+One configuration that currently fails to properly convey the target
+node for the resulting memory hotplug operation is persistent memory
+defined by the memmap=nn!ss parameter. For example, today if node1 is a
+memory only node, and all the memory from node1 is specified to
+memmap=nn!ss and subsequently onlined, it will end up being onlined as
+node0 memory. As it stands, memory_add_physaddr_to_nid() can only
+identify online nodes and since node1 in this example has no online cpus
+/ memory the target node is initialized node0.
+
+The fix is to preserve rather than discard the numa_meminfo entries that
+are relevant for reserved memory ranges, and to uplevel the node
+distance helper for determining the "local" (closest) node relative to
+an initiator node.
+
+[2]: https://pmem.io/ndctl/daxctl-reconfigure-device.html
+
+---
+
+Dan Williams (6):
+      ACPI: NUMA: Up-level "map to online node" functionality
+      mm/numa: Skip NUMA_NO_NODE and online nodes in numa_map_to_online_node()
+      powerpc/papr_scm: Switch to numa_map_to_online_node()
+      x86/mm: Introduce CONFIG_KEEP_NUMA
+      x86/numa: Provide a range-to-target_node lookup facility
+      libnvdimm/e820: Retrieve and populate correct 'target_node' info
+
+
+ arch/powerpc/platforms/pseries/papr_scm.c |   21 --------
+ arch/x86/Kconfig                          |    1 
+ arch/x86/mm/numa.c                        |   74 +++++++++++++++++++++++------
+ drivers/acpi/numa/srat.c                  |   41 ----------------
+ drivers/nvdimm/e820.c                     |   18 ++-----
+ include/linux/acpi.h                      |   23 +++++++++
+ include/linux/numa.h                      |   23 +++++++++
+ mm/Kconfig                                |    5 ++
+ mm/mempolicy.c                            |   35 ++++++++++++++
+ 9 files changed, 149 insertions(+), 92 deletions(-)
