@@ -2,161 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE1D1427FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E6E14280F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:17:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgATKQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 05:16:09 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38530 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgATKQJ (ORCPT
+        id S1727041AbgATKRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:17:30 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34200 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbgATKRa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:16:09 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KAFuIr042476;
-        Mon, 20 Jan 2020 04:15:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579515356;
-        bh=KyVH3zWSUl96d+3Kz0z4lRV0WTTLoc+PmB9suhnpFow=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qKnpHeZgN9POcSaW/sgFbaPIeo4qWTas1IGF1xF7QzpagKVbebC/8GWA+maeCHoP6
-         hPqbriPqABeoroU/c2NUHgPoaSiaw/ONgCZC4PHVZu1C/p8LiRexu971bWe4o0aDAZ
-         yx1SRhf2+tTseU1AKMRV3TP9UuuD41xrpHV9rfT4=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KAFumX047513
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Jan 2020 04:15:56 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
- Jan 2020 04:15:55 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 20 Jan 2020 04:15:55 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KAFrRn010845;
-        Mon, 20 Jan 2020 04:15:53 -0600
-Subject: Re: [PATCH v2] dmaengine: Create symlinks between DMA channels and
- slaves
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        <dmaengine@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200117153056.31363-1-geert+renesas@glider.be>
- <d2b669e7-a5d4-20ec-5b54-103b71df7407@ti.com>
- <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <1cdc4f71-f365-8c9e-4634-408c59e6a3f9@ti.com>
-Date:   Mon, 20 Jan 2020 12:16:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 20 Jan 2020 05:17:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gztlN05IQZuOK4W6S4SylxVz4OdRtg3T258KyW9CMgg=; b=XJcn4xDGGPQYbnCszSKBw9t5B
+        LU4e5ux4iin89IR5TGzNDbwlXg0z2XQRNSxQCDZiZpSfnOfQCxS/9UWQ9grbYMElOdqU+5/hzytEt
+        7/WwvYhZS+9yH3DN5SYdTjmRa+bJw98fpipggGjr7QaryGLJiy2xnLm/d6zio3YYvPnuNeyoe+Mu3
+        OUXa5Me3vOpovYKrLffPIfiVFbOuSHMyBRIkg1TvHQLmFbhs7Jwn5FmWDTsAJ1mCwe+BpreUZ+JY/
+        xVJUJoUXjNYaMcu92TMbR/8sYt3K6GtjeKvj8Cj9gtvLqbuem7BHnAcuSEoNgRZK8iGikF8i5F2Gs
+        7OvHbzpng==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itU75-0003c9-OY; Mon, 20 Jan 2020 10:16:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CE00F305E4E;
+        Mon, 20 Jan 2020 11:15:13 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 62A352041FB24; Mon, 20 Jan 2020 11:16:52 +0100 (CET)
+Date:   Mon, 20 Jan 2020 11:16:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        paulmck@kernel.org, tglx@linutronix.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/core: fix illegal RCU from offline CPUs
+Message-ID: <20200120101652.GM14879@hirez.programming.kicks-ass.net>
+References: <20200113190331.12788-1-cai@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200113190331.12788-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20/01/2020 11.01, Geert Uytterhoeven wrote:
-> Hi Peter,
+On Mon, Jan 13, 2020 at 02:03:31PM -0500, Qian Cai wrote:
+> In the CPU-offline process, it calls mmdrop() after idle entry and the
+> subsequent call to cpuhp_report_idle_dead(). Once execution passes the
+> call to rcu_report_dead(), RCU is ignoring the CPU, which results in
+> lockdep complaints when mmdrop() uses RCU from either memcg or
+> debugobjects, so it by scheduling mmdrop() on another online CPU.
 > 
-> On Fri, Jan 17, 2020 at 9:08 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->> On 1/17/20 5:30 PM, Geert Uytterhoeven wrote:
->>> Currently it is not easy to find out which DMA channels are in use, and
->>> which slave devices are using which channels.
->>>
->>> Fix this by creating two symlinks between the DMA channel and the actual
->>> slave device when a channel is requested:
->>>   1. A "slave" symlink from DMA channel to slave device,
->>
->> Have you considered similar link name as on the slave device:
->> slave:<name>
->>
->> That way it would be easier to grasp which channel is used for what
->> purpose by only looking under /sys/class/dma/ and no need to check the
->> slave device.
-> 
-> Would this really provide more information?
-> The device name is already provided in the target of the symlink:
-> 
-> root@koelsch:~# readlink
-> /sys/devices/platform/soc/e6720000.dma-controller/dma/dma1chan2/slave
-> ../../../ee140000.sd
-
-e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
-e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
-
-It is hard to tell which one is the tx and RX channel without looking
-under the ee140000.sd:
-
-ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
-ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
-
-Another option would be to not have symlinks, but a debugfs file where
-this information can be extracted and would only compiled if debugfs is
-enabled.
-
->>>   2. A "dma:<name>" symlink slave device to DMA channel.
->>> When the channel is released, the symlinks are removed again.
->>> The latter requires keeping track of the slave device and the channel
->>> name in the dma_chan structure.
->>>
->>> Note that this is limited to channel request functions for requesting an
->>> exclusive slave channel that take a device pointer (dma_request_chan()
->>> and dma_request_slave_channel*()).
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> v2:
->>>   - Add DMA_SLAVE_NAME macro,
->>>   - Also handle channels from FIXME,
->>>   - Add backlinks from slave device to DMA channel,
->>>
->>> On r8a7791/koelsch, the following new symlinks are created:
->>>
->>>     /sys/devices/platform/soc/
->>>     ├── e6700000.dma-controller/dma/dma0chan0/slave -> ../../../e6e20000.spi
->>>     ├── e6700000.dma-controller/dma/dma0chan1/slave -> ../../../e6e20000.spi
->>>     ├── e6700000.dma-controller/dma/dma0chan2/slave -> ../../../ee100000.sd
->>>     ├── e6700000.dma-controller/dma/dma0chan3/slave -> ../../../ee100000.sd
->>>     ├── e6700000.dma-controller/dma/dma0chan4/slave -> ../../../ee160000.sd
->>>     ├── e6700000.dma-controller/dma/dma0chan5/slave -> ../../../ee160000.sd
->>>     ├── e6700000.dma-controller/dma/dma0chan6/slave -> ../../../e6e68000.serial
->>>     ├── e6700000.dma-controller/dma/dma0chan7/slave -> ../../../e6e68000.serial
->>>     ├── e6720000.dma-controller/dma/dma1chan0/slave -> ../../../e6b10000.spi
->>>     ├── e6720000.dma-controller/dma/dma1chan1/slave -> ../../../e6b10000.spi
->>>     ├── e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
->>>     ├── e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
->>>     ├── e6b10000.spi/dma:rx -> ../e6720000.dma-controller/dma/dma1chan1
->>>     ├── e6b10000.spi/dma:tx -> ../e6720000.dma-controller/dma/dma1chan0
->>>     ├── e6e20000.spi/dma:rx -> ../e6700000.dma-controller/dma/dma0chan1
->>>     ├── e6e20000.spi/dma:tx -> ../e6700000.dma-controller/dma/dma0chan0
->>>     ├── e6e68000.serial/dma:rx -> ../e6700000.dma-controller/dma/dma0chan7
->>>     ├── e6e68000.serial/dma:tx -> ../e6700000.dma-controller/dma/dma0chan6
->>>     ├── ee100000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan3
->>>     ├── ee100000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan2
->>>     ├── ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
->>>     ├── ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
->>>     ├── ee160000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan5
->>>     └── ee160000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan4
-> 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
+> According to the commit a79e53d85683 ("x86/mm: Fix pgd_lock deadlock"),
+> mmdrop() is not interrupt-safe, and called from
+> smp_call_function_single() could end up running mmdrop() from the IPI
+> interrupt handler.
 > 
 
-- Péter
+<deletes ~100 lines of gunk>
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Surely the critical information contained in these nearly 100 lines of
+splat can be more consicely represented?
+
+
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 90e4b00ace89..1863a6fc4d82 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -6194,7 +6194,8 @@ void idle_task_exit(void)
+>  		current->active_mm = &init_mm;
+>  		finish_arch_post_lock_switch();
+>  	}
+> -	mmdrop(mm);
+> +	smp_call_function_single(cpumask_first(cpu_online_mask),
+> +				 (void (*)(void *))mmdrop_async, mm, 0);
+>  }
+
+Bah.. that's horrible. Surely we can find a better place to do this in
+the whole hotplug machinery.
+
+Perhaps you can have takedown_cpu() do the mmdrop()?
