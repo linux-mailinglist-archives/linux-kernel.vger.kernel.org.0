@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AC5142E89
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F13142E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:05:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgATPMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 10:12:55 -0500
-Received: from winds.org ([68.75.195.9]:44646 "EHLO winds.org"
+        id S1728668AbgATPFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 10:05:15 -0500
+Received: from mga04.intel.com ([192.55.52.120]:38825 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbgATPMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 10:12:55 -0500
-X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 10:12:54 EST
-Received: by winds.org (Postfix, from userid 100)
-        id A14705561B9; Mon, 20 Jan 2020 10:03:27 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by winds.org (Postfix) with ESMTP id 9ED7628F44;
-        Mon, 20 Jan 2020 10:03:27 -0500 (EST)
-Date:   Mon, 20 Jan 2020 10:03:27 -0500 (EST)
-From:   Byron Stanoszek <gandalf@winds.org>
-To:     jeffm@suse.com
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: reiserfs broke between 4.9.205 and 4.9.208
-Message-ID: <alpine.LNX.2.21.1.2001200956220.14639@winds.org>
-User-Agent: Alpine 2.21.1 (LNX 202 2017-01-01)
+        id S1726642AbgATPFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 10:05:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 07:05:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
+   d="scan'208";a="275590165"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 20 Jan 2020 07:05:11 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 20 Jan 2020 17:05:11 +0200
+Date:   Mon, 20 Jan 2020 17:05:11 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Thomas Hebb <tommyhebb@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] usb: typec: wcove: fix "op-sink-microwatt"
+ default that was in mW
+Message-ID: <20200120150511.GG32175@kuha.fi.intel.com>
+References: <d8be32512efd31995ad7d65b27df9d443131b07c.1579529334.git.tommyhebb@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8be32512efd31995ad7d65b27df9d443131b07c.1579529334.git.tommyhebb@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 15 Jan 2020, Jeff Mahoney wrote:
->On 1/9/20 7:12 AM, Jan Kara wrote:
->>
->> Hello,
->>
->> On Wed 08-01-20 15:42:58, Randy Dunlap wrote:
->>> On 1/8/20 11:36 AM, Michael Brunnbauer wrote:
->>>> after upgrading from 4.9.205 to 4.9.208, I get errors on two different
->>>> reiserfs filesystems when doing cp -a (the chown part seems to fail) and
->>>> on other occasions:
->>>>
->>>>  kernel: REISERFS warning (device sda1): jdm-20004 reiserfs_delete_xattrs: Couldn't delete all xattrs (-95)
->>>>
->>>>  kernel: REISERFS warning (device sdc1): jdm-20004 reiserfs_delete_xattrs: Couldn't delete all xattrs (-95)
->>>>
->>>> This behaviour disappeared after a downgrade to 4.9.205.
->>>>
->>>> I understand there have been changes to the file system code but I'm not
->>>> sure they affect reiserfs, e.g.
->>>>
->>>>  https://bugzilla.kernel.org/show_bug.cgi?id=205433
->>>>
->>>> Any Idea?
->>>>
->>>> Regards,
->>>>
->>>> Michael Brunnbauer
->>>>
->>>
->>> Looks to me like 4.9.207 contains reiserfs changes.
->>>
->>> Adding CC's.
->>
->> Looks like a regression from commit 60e4cf67a582 "reiserfs: fix extended
->> attributes on the root directory". We are getting -EOPNOTSUPP from
->> reiserfs_for_each_xattr() likely originally from open_xa_root(). Previously
->> we were returning -ENODATA from there which error reiserfs_for_each_xattr()
->> converted to 0. I don't understand reiserfs xattrs enough to quickly tell
->> what should actually be happening after the Jeff's change - naively I'd
->> think we should just silence the bogus warning in case of EOPNOTSUPP. Jeff,
->> can you have a look?
->>
->> Also Michael, I'd like to clarify: Does 'cp -a' return any error or is it
->> just that the kernel is spewing these annoying warnings?  Because from the
->> code reading I'd think that it is only the kernel spewing errors but
->> userspace should be fine...
->
->This error occurs when extended attributes are not enabled on the file
->system *and* the module is not built with extended attributes enabled.
->I've sent out the fix for it just now.
->
->-Jeff
+On Mon, Jan 20, 2020 at 06:09:05AM -0800, Thomas Hebb wrote:
+> commit 4c912bff46cc ("usb: typec: wcove: Provide fwnode for the port")
+> didn't convert this value from mW to uW when migrating to a new
+> specification format like it should have.
+> 
+> Fixes: 4c912bff46cc ("usb: typec: wcove: Provide fwnode for the port")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
 
-Hi Jeff,
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Can you share the patch with us for testing? I haven't seen this hit mainline
-yet.
+> ---
+> 
+> Changes in v3:
+> - Use the right stable email address
+> 
+> Changes in v2:
+> - Split fix into two patches
+> - Added stable cc
+> 
+>  drivers/usb/typec/tcpm/wcove.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/wcove.c b/drivers/usb/typec/tcpm/wcove.c
+> index edc271da14f4..9b745f432c91 100644
+> --- a/drivers/usb/typec/tcpm/wcove.c
+> +++ b/drivers/usb/typec/tcpm/wcove.c
+> @@ -597,7 +597,7 @@ static const struct property_entry wcove_props[] = {
+>  	PROPERTY_ENTRY_STRING("try-power-role", "sink"),
+>  	PROPERTY_ENTRY_U32_ARRAY("source-pdos", src_pdo),
+>  	PROPERTY_ENTRY_U32_ARRAY("sink-pdos", snk_pdo),
+> -	PROPERTY_ENTRY_U32("op-sink-microwatt", 15000),
+> +	PROPERTY_ENTRY_U32("op-sink-microwatt", 15000000),
+>  	{ }
+>  };
+>  
+> -- 
+> 2.24.1
 
-Thanks,
-  -Byron
+thanks,
 
+-- 
+heikki
