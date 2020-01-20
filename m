@@ -2,135 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25260142F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:02:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C6C142F26
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:02:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbgATQB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:01:58 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37086 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgATQB6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:01:58 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k14so186153otn.4;
-        Mon, 20 Jan 2020 08:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VXdi8XklB6KyAj015BObAUcQ6g4YJPJLnITnsX5a8ww=;
-        b=csVC36cU6dcTDf2Zl1DPXDbginAQmvFKepoEmSrz6AHr8li3hWipvvR0nBOgjUZSg4
-         4ho5z/o5q+gaikMgVTg32uC1Hk7fChYR9Ca5syroXzzPdy4g05HrGojpKPM7mTulLNzF
-         pXUUBhPE9CZgMeQcKAROPeFaw7brFGpZC2rrqJq90hqNZMuo6fX/KgJ4/STv3jTT/bSv
-         NBv3WeEf7kFm1cFhCk9TLVoHNc1YGCYzrzlGfvDTTWkf5HUl9GI7FAp0uqm4cPVadAgp
-         kKVHoYca8ghw58V8GDrEMc+BYi71RqtmazId7n5ufUOxdBXEVyZEaYGfgkovtB3r3clS
-         9A9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VXdi8XklB6KyAj015BObAUcQ6g4YJPJLnITnsX5a8ww=;
-        b=XiPoEfZFK1qZkdBIxDc9zJFfbsGEaQeyxdUNAPdWJcd6mYtyR7cpq1WoTzXWiLQJNf
-         DpNT9MzByOAxvpy7IHYHARrb/3piFsvrkoDbSj1pLW/yDXPXRtpv9tT3ROC9uZ/dKA+y
-         IsqqN6Jp2wQjttqmsFLue9sMzAc3QCwLVva6JAMyhFefud0NZlo3+GmCSaNZYtk7hr9o
-         P1tW6+KjiVxmVnCIIh/+J6mwccu785XXD7JoLPn1GEyvH6vzr6k6SM9eIYU/G7XOBQ8D
-         kHYteuF9X8SyYTwiqeWf26umvu4vjfvdGRS9Xlv5KV1Bzw+H/Nu8YzaGlNjom8+Dtutv
-         Q8xg==
-X-Gm-Message-State: APjAAAVDyHIXriS7X0UDbmXibqkz4clmDS8q1hVtO0tGBhHkE6qlYWNr
-        VA4JNH2uR3xNZAR8znr3rLgmDooBXH/P3w==
-X-Google-Smtp-Source: APXvYqwZI2TtC6m78G1th5QuelHiX6MJaJl849WvXQmag61gkQFFV9MuJxO8eAbcdIz9CZuKtD1OYg==
-X-Received: by 2002:a05:6830:11d2:: with SMTP id v18mr53623otq.151.1579536116813;
-        Mon, 20 Jan 2020 08:01:56 -0800 (PST)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id c10sm12409405otl.77.2020.01.20.08.01.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jan 2020 08:01:56 -0800 (PST)
-Subject: Re: Issues with "PCI/LINK: Report degraded links via link bandwidth
- notification"
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Alexandru Gagniuc <alex_gagniuc@dellteam.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Jan Vesely <jano.vesely@gmail.com>, Lukas Wunner <lukas@wunner.de>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Austin Bolen <austin_bolen@dell.com>,
-        Shyam Iyer <Shyam_Iyer@dell.com>,
-        Sinan Kaya <okaya@kernel.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200120023326.GA149019@google.com>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <b9764896-102c-84cb-32ea-c2a122b6f0db@gmail.com>
-Date:   Mon, 20 Jan 2020 10:01:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20200120023326.GA149019@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1729191AbgATQCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:02:45 -0500
+Received: from smtp.uniroma2.it ([160.80.6.23]:44075 "EHLO smtp.uniroma2.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728712AbgATQCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 11:02:44 -0500
+Received: from smtpauth-2019-1.uniroma2.it (smtpauth-2019-1.uniroma2.it [160.80.5.46])
+        by smtp-2015.uniroma2.it (8.14.4/8.14.4/Debian-8) with ESMTP id 00KG273t001572;
+        Mon, 20 Jan 2020 17:02:12 +0100
+Received: from lubuntu-18.04 (unknown [160.80.103.126])
+        by smtpauth-2019-1.uniroma2.it (Postfix) with ESMTPSA id 282991228FC;
+        Mon, 20 Jan 2020 17:02:03 +0100 (CET)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=uniroma2.it;
+        s=ed201904; t=1579536123; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jzn1+kiTTbQRfzDcKUMnYRw23BnDOCtFw37Gdplq3W8=;
+        b=UgSakFBK2frzr8ktrnPbuslLzIwZ3+mIvw1KP5lxywgFr98/1xB0S1glYN5EXGEm7ZyeZR
+        KrSCijXOkbVwLOCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniroma2.it; s=rsa201904;
+        t=1579536123; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jzn1+kiTTbQRfzDcKUMnYRw23BnDOCtFw37Gdplq3W8=;
+        b=k7RgmoAPij3y5m/i9wOIlSAtNnmTu7Mu73/otLExCtTLul+Vi976KpcWHj91zMSpO6srDf
+        Fn1KJDCdkwKBd6tvFPNbe0ip4DwqX7iPADlD3Th8po176BW1HljTwxjRKSr3+PlK8hvP21
+        SUDQWyvZ0VOHHygItLrpOF9HkRgutuJi1tt5FCEykJb3cLX+J4fge95uxEFT7QL7W+Jbgm
+        UlleyK0tXQAdzFPAd7WAYwghI74zil8IEBbz/uVM1YyPij8ncVZMd6M1V2ubyoyZ3/eRF4
+        aTWKheeOrljgrfMTLiIx9H943NXB5f8fHwGDeWUqdkVC8F1C873GU/R4IH7xyA==
+Date:   Mon, 20 Jan 2020 17:02:03 +0100
+From:   Andrea Mayer <andrea.mayer@uniroma2.it>
+To:     Sabrina Dubroca <sd@queasysnail.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Petr Machata <petrm@mellanox.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Litao jiao <jiaolitao@raisecom.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Lungaroni <paolo.lungaroni@cnit.it>,
+        Andrea Mayer <andrea.mayer@uniroma2.it>
+Subject: Re: [net] vxlan: fix vxlan6_get_route() adding a call to
+ xfrm_lookup_route()
+Message-Id: <20200120170203.19663047eb00b221778ff465@uniroma2.it>
+In-Reply-To: <20200116142839.98b04af5d16f8ec3ed209288@uniroma2.it>
+References: <20200115192231.3005-1-andrea.mayer@uniroma2.it>
+        <20200115211621.GA573446@bistromath.localdomain>
+        <20200116142839.98b04af5d16f8ec3ed209288@uniroma2.it>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.100.0 at smtp-2015
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 16 Jan 2020 14:28:39 +0100
+Andrea Mayer <andrea.mayer@uniroma2.it> wrote:
 
-
-On 1/19/20 8:33 PM, Bjorn Helgaas wrote:
-> [+cc NVMe, GPU driver folks]
+> On Wed, 15 Jan 2020 22:16:21 +0100
+> Sabrina Dubroca <sd@queasysnail.net> wrote:
 > 
-> On Wed, Jan 15, 2020 at 04:10:08PM -0600, Bjorn Helgaas wrote:
->> I think we have a problem with link bandwidth change notifications
->> (see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/pcie/bw_notification.c).
->>
->> Here's a recent bug report where Jan reported "_tons_" of these
->> notifications on an nvme device:
->> https://bugzilla.kernel.org/show_bug.cgi?id=206197
->>
->> There was similar discussion involving GPU drivers at
->> https://lore.kernel.org/r/20190429185611.121751-2-helgaas@kernel.org
->>
->> The current solution is the CONFIG_PCIE_BW config option, which
->> disables the messages completely.  That option defaults to "off" (no
->> messages), but even so, I think it's a little problematic.
->>
->> Users are not really in a position to figure out whether it's safe to
->> enable.  All they can do is experiment and see whether it works with
->> their current mix of devices and drivers.
->>
->> I don't think it's currently useful for distros because it's a
->> compile-time switch, and distros cannot predict what system configs
->> will be used, so I don't think they can enable it.
->>
->> Does anybody have proposals for making it smarter about distinguishing
->> real problems from intentional power management, or maybe interfaces
->> drivers could use to tell us when we should ignore bandwidth changes?
+> > 2020-01-15, 20:22:31 +0100, Andrea Mayer wrote:
+> > > currently IPSEC cannot be used to encrypt/decrypt IPv6 vxlan traffic.
+> > > The problem is that the vxlan module uses the vxlan6_get_route()
+> > > function to find out the route for transmitting an IPv6 packet, which in
+> > > turn uses ip6_dst_lookup() available in ip6_output.c.
+> > > Unfortunately ip6_dst_lookup() does not perform any xfrm route lookup,
+> > > so the xfrm framework cannot be used with vxlan6.
+> > 
+> > That's not the case anymore, since commit 6c8991f41546 ("net:
+> > ipv6_stub: use ip6_dst_lookup_flow instead of ip6_dst_lookup").
+> > 
+> > Can you retest on the latest net tree?
+> > 
+> > Thanks.
+> > 
+> > -- 
+> > Sabrina
+> > 
 > 
-> NVMe, GPU folks, do your drivers or devices change PCIe link
-> speed/width for power saving or other reasons?  When CONFIG_PCIE_BW=y,
-> the PCI core interprets changes like that as problems that need to be
-> reported.
+> Hi Sabrina,
+> thanks for sharing the fix.
+> Sorry, my net tree was a bit outdated. I will retest with the fix and let you know.
 > 
-> If drivers do change link speed/width, can you point me to where
-> that's done?  Would it be feasible to add some sort of PCI core
-> interface so the driver could say "ignore" or "pay attention to"
-> subsequent link changes?
-> 
-> Or maybe there would even be a way to move the link change itself into
-> the PCI core, so the core would be aware of what's going on?
+> -- 
+> Andrea Mayer <andrea.mayer@uniroma2.it>
 
-Funny thing is, I was going to suggest an in-kernel API for this.
-   * Driver requests lower link speed 'X'
-   * Link management interrupt fires
-   * If link speed is at or above 'X' then do not report it.
-I think an "ignore" flag would defeat the purpose of having link 
-bandwidth reporting in the first place. If some drivers set it, and 
-others don't, then it would be inconsistent enough to not be useful.
+Hi,
+I've tested the new net tree in my setup and now vxlan6 and IPSec seems to work good.
 
-A second suggestion is, if there is a way to ratelimit these messages on 
-a per-downstream port basis.
+Thanks.
 
-Alex
+-- 
+Andrea Mayer <andrea.mayer@uniroma2.it>
