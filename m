@@ -2,135 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ECA9142747
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE84F142740
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:28:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgATJaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 04:30:07 -0500
-Received: from twhmllg3.macronix.com ([122.147.135.201]:19761 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgATJaH (ORCPT
+        id S1726738AbgATJ24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 04:28:56 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:45459 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725872AbgATJ24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 04:30:07 -0500
-Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
-        by TWHMLLG3.macronix.com with ESMTP id 00K9SWMX073874;
-        Mon, 20 Jan 2020 17:28:32 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
-        by Forcepoint Email with ESMTP id 6B1B2630C9CB4D990834;
-        Mon, 20 Jan 2020 17:28:33 +0800 (CST)
-In-Reply-To: <20200117101346.3611dc0a@xps13>
-References: <1571902807-10388-1-git-send-email-masonccyang@mxic.com.tw> <1571902807-10388-2-git-send-email-masonccyang@mxic.com.tw>
-        <20200109172816.6c1d7be7@xps13> <OFECBDB130.03AD44B7-ON482584F2.002B40F2-482584F2.002B720F@mxic.com.tw> <20200117101346.3611dc0a@xps13>
-To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc:     bbrezillon@kernel.org, computersforpeace@gmail.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        juliensu@mxic.com.tw, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        mark.rutland@arm.com, richard@nod.at, robh+dt@kernel.org,
-        vigneshr@ti.com
-Subject: Re: [PATCH v4 1/2] mtd: rawnand: Add support for Macronix NAND randomizer
+        Mon, 20 Jan 2020 04:28:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579512535;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0iBlSiPbU11kx1FE6pEyiDrTybK6mV+iNStxOfr7SjY=;
+        b=BHJe91Oskt/yxwTLU46DcrfT4WpuaeJ5TLP1VlGXg9BpOP+nJDvtnKMBBC4A+lKtD78q9M
+        hAXss8J013T3As9D6DiEIWl9VN5ZLYF1Ey3HjmfMDrQUQ8GkYo1Iqv4JgfZ/pm0W54DBQB
+        U63R/IsguV3l4IMDEz9ro2mZB4WlmkE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-297-fHoWUM4WOTWhpkSy5ZLqjA-1; Mon, 20 Jan 2020 04:28:52 -0500
+X-MC-Unique: fHoWUM4WOTWhpkSy5ZLqjA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 47A808017CC;
+        Mon, 20 Jan 2020 09:28:50 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 295AF60C05;
+        Mon, 20 Jan 2020 09:28:46 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 10:28:44 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf symbols: Update the list of kernel idle symbols
+Message-ID: <20200120092844.GC608405@krava>
+References: <20200115222949.7247-1-kim.phillips@amd.com>
 MIME-Version: 1.0
-X-KeepSent: 1377603E:0BE29BC1-482584F5:00335731;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
-Message-ID: <OF1377603E.0BE29BC1-ON482584F5.00335731-482584F5.00340DE4@mxic.com.tw>
-From:   masonccyang@mxic.com.tw
-Date:   Mon, 20 Jan 2020 17:28:35 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2020/01/20 PM 05:28:33,
-        Serialize complete at 2020/01/20 PM 05:28:33
-Content-Type: text/plain; charset="US-ASCII"
-X-MAIL: TWHMLLG3.macronix.com 00K9SWMX073874
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115222949.7247-1-kim.phillips@amd.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Miquel,
-
-> > > > +}
-> > > > +
-> > > >  static void macronix_nand_onfi_init(struct nand_chip *chip)
-> > > >  {
-> > > >     struct nand_parameters *p = &chip->parameters;
-> > > >     struct nand_onfi_vendor_macronix *mxic;
-> > > > +   struct device_node *dn = nand_get_flash_node(chip);
-> > > > +   int rand_otp = 0;
-> > > > +   int ret;
-> > > > 
-> > > >     if (!p->onfi)
-> > > >        return;
-> > > > 
-> > > > +   if (of_find_property(dn, "mxic,enable-randomizer-otp", NULL))
-> > > > +      rand_otp = 1;
-> > > > +
-> > > >     mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
-> > > > +   /* Subpage write is prohibited in randomizer operatoin */ 
-> > > 
-> > >                                        with          operation
-> > > 
-> > > > +   if (rand_otp && chip->options & NAND_NO_SUBPAGE_WRITE &&
-> > > > +       mxic->reliability_func & MACRONIX_RANDOMIZER_BIT) {
-> > > > +      if (p->supports_set_get_features) {
-> > > > +         bitmap_set(p->set_feature_list,
-> > > > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-> > > > +         bitmap_set(p->get_feature_list,
-> > > > +               ONFI_FEATURE_ADDR_MXIC_RANDOMIZER, 1);
-> > > > +         ret = macronix_nand_randomizer_check_enable(chip);
-> > > > +         if (ret < 0)
-> > > > +            pr_info("Macronix NAND randomizer failed\n");
-> > > > +         else
-> > > > +            pr_info("Macronix NAND randomizer enabled\n"); 
-> > > 
-> > > Maybe we should update the bitmaps only if it succeeds? 
-> > 
-> > okay, will drop pr_info();
+On Wed, Jan 15, 2020 at 04:29:48PM -0600, Kim Phillips wrote:
+> "acpi_idle_do_entry", "acpi_processor_ffh_cstate_enter", and "idle_cpu"
+> appear in 'perf top' output, at least on AMD systems.
 > 
-> It's not my point, you can keep the pr_info, I just say that you should
-> check ret before updating the bitmap maybe? Otherwise if
-> macronix_nand_randomizer_check_enable() fails, you end up without the
-> feature but with its bit set in the bitmap.
+> Add them to perf's idle_symbols list, so they don't dominate 'perf top'
+> output.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Jin Yao <yao.jin@linux.intel.com>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Kim Phillips <kim.phillips@amd.com>
+> Cc: Song Liu <songliubraving@fb.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: linux-perf-users@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+> ---
+>  tools/perf/util/symbol.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 3b379b1296f1..f3120c4f47ad 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -635,9 +635,12 @@ int modules__parse(const char *filename, void *arg,
+>  static bool symbol__is_idle(const char *name)
+>  {
+>  	const char * const idle_symbols[] = {
+> +		"acpi_idle_do_entry",
+> +		"acpi_processor_ffh_cstate_enter",
+>  		"arch_cpu_idle",
+>  		"cpu_idle",
+>  		"cpu_startup_entry",
+> +		"idle_cpu",
+>  		"intel_idle",
+>  		"default_idle",
+>  		"native_safe_halt",
 
-Driver should set ONFI_FEATURE_ADDR_MXIC_RANDOMIZER in 
-p->set/get_feature_list
-before calling macronix_nand_randomizer_check_enable() for randomizer 
-set/get
-feature operation.
+ok, at some point we should put this in strlist ;-)
 
-I will patch bitmap_clear() if macronix_nand_randomizer_check_enable() 
-return fails.
+Acked-by: Jiri Olsa <jolsa@redhat.com
 
-thanks for your time & comments.
-Mason
-
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
-
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
+thanks,
+jirka
 
