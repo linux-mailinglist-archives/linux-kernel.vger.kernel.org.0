@@ -2,78 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF7F142A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AADD4142A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgATMJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:09:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:59192 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbgATMJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:09:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCA2B30E;
-        Mon, 20 Jan 2020 04:09:35 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B87A3F68E;
-        Mon, 20 Jan 2020 04:09:35 -0800 (PST)
-Date:   Mon, 20 Jan 2020 12:09:33 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
-        linux-kernel@vger.kernel.org,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v1 5/8] x86/quirks: Add a DMI quirk for Microsoft Surface
- 3
-Message-ID: <20200120120933.GB6852@sirena.org.uk>
-References: <20200117175626.56358-1-andriy.shevchenko@linux.intel.com>
- <20200117175626.56358-5-andriy.shevchenko@linux.intel.com>
+        id S1727144AbgATMKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:10:15 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:4271 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgATMKP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:10:15 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: XEy717sxOr71dn09PLikfej5708fGKlOQUL4mTn2B5K88s3962nMAUIWEZSTEpshtT/PAp/Fdj
+ pziXUOmrO/lKSGbPkGv9lTAP+rJtmx2z57XH+1aLpgxloj4d4r/gZ7k5Z9P89/aIBhxEeEw/3j
+ NiQvTci7gCsm4tfhhWzEx5onLERQFlv8P+ak5Fvpk3iU0nwQ6A4/E/vuTztuWxVTBT0oHooamO
+ 3AFG+OX2X4UQ88HLrAAEkC6quoyC11TivTefNwgmnCG9vQOVieGqOvFA+dWanrjXja2ebJMgSZ
+ tN0=
+X-IronPort-AV: E=Sophos;i="5.70,341,1574146800"; 
+   d="scan'208";a="63869209"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2020 05:10:13 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 20 Jan 2020 05:10:12 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Mon, 20 Jan 2020 05:10:10 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <linux@armlinux.org.uk>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/8] PM fixes and improvements for SAM9X60
+Date:   Mon, 20 Jan 2020 14:10:00 +0200
+Message-ID: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
-Content-Disposition: inline
-In-Reply-To: <20200117175626.56358-5-andriy.shevchenko@linux.intel.com>
-X-Cookie: I invented skydiving in 1989!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---0ntfKIWw70PvrIHh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series adds fixes and improvements for SAM9X60 as follows:
+- fix master clock register offset in pm_suspend.S
+- add support for disable/enable PLL for SAM9X60
+- minor fix in pm_suspend.S: s/sfr/sfrbu
+- move SAM9X60's macros for PLL in include/linux/clk/at91_pmc.h
 
-On Fri, Jan 17, 2020 at 07:56:23PM +0200, Andy Shevchenko wrote:
-> Add a DMI quirk for Microsoft Surface 3 which will be utilized by few drivers.
+Thank you,
+Claudiu Beznea
 
-I have patches 5 and 7 with no other context, what's going on with
-dependencies here?
+Claudiu Beznea (8):
+  ARM: at91: pm: use proper master clock register offset
+  Revert "ARM: at91: pm: do not disable/enable PLLA for ULP modes"
+  ARM: at91: pm: add macros for plla disable/enable
+  ARM: at91: pm: add pmc_version member to at91_pm_data
+  ARM: at91: pm: s/sfr/sfrbu in pm_suspend.S
+  clk: at91: move sam9x60's PLL register offsets to PMC header
+  ARM: at91: pm: add plla disable/enable support for sam9x60
+  ARM: at91: pm: add quirk for sam9x60's ulp1
 
---0ntfKIWw70PvrIHh
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm/mach-at91/pm.c              |  35 ++++++-
+ arch/arm/mach-at91/pm.h              |   2 +
+ arch/arm/mach-at91/pm_data-offsets.c |   4 +
+ arch/arm/mach-at91/pm_suspend.S      | 189 ++++++++++++++++++++++++++++++++---
+ drivers/clk/at91/clk-sam9x60-pll.c   |  91 +++++++----------
+ include/linux/clk/at91_pmc.h         |  23 +++++
+ 6 files changed, 270 insertions(+), 74 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.7.4
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4lmH0ACgkQJNaLcl1U
-h9BbAwf/WLuPHY9q8Tq7jRti9DUHNRsH7Ys+k7oM/sAMiV6OmaYgbYVCm7DwbKMV
-vZxXGwtIcBxeSc7ZmLpDYLz/xu8V/22A8c4t/ERKcN3HwbMMaewV5C/PAP91HdOw
-LjXZnjDD0ac6JJceAEHBzB1NmAeOAS1W8mcckBSrgDSObHQorWNPdgYXLuRLJq7t
-aHosto1MOnkOZaz3Gm+eKhi28ZrVNb4ZGrLKuOWyypGuYd5PzUPgsTT0c4hkNk8y
-DECEYWSRugoGdnOwEUuU1ctSjq/DkLCta51CaMRn2Z0QyiSmjsL/xAl/1bvFa+oo
-63d3fqxqXjR+PcwwUgz4Pzf57hg2Ag==
-=2r1u
------END PGP SIGNATURE-----
-
---0ntfKIWw70PvrIHh--
