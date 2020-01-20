@@ -2,123 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A647C142311
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEAF9142315
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:14:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgATGOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 01:14:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34316 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgATGN7 (ORCPT
+        id S1726738AbgATGOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 01:14:31 -0500
+Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:27902
+        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725783AbgATGO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 01:13:59 -0500
-Received: by mail-pl1-f194.google.com with SMTP id c9so7432663plo.1;
-        Sun, 19 Jan 2020 22:13:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HEnK5zOWrM4EtjOOUObaQ50k2YuQm6+zLeTAwK5KuFw=;
-        b=rHrnilphdbZXls873AYNAy/Pyu163ib9A5hLLJVruxIy8qlPn78vsdw6+F36xjOgce
-         XjdI2PGOVTosulcFr+I0I5kswvr43SJZMn35UnIJTas0+ticPMhCqLCULN2KicOVEwfn
-         qXAvCc5CQyI7g4xLpCZ9xC2j8R84/hke00FsZCqQsdXYz31l/7k3F4xLnT74wmJKZg5I
-         hy1WemXy5OyVXEZq2zrqKLxzuzGubxV+kdR3gdcoJef86dBgSeHCgXS1cpveLgr6SUW8
-         5iTXwX6/ZPItEwg6Z7uBF+4kanfO77E94NKSbqeL9wTWdW1qc2EvtdLE3TvJmMvhKg7S
-         pH1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HEnK5zOWrM4EtjOOUObaQ50k2YuQm6+zLeTAwK5KuFw=;
-        b=BNyztggntpaf99SXwGVptgf3KzqHcyWCf/jZrOkw8Y+ilToURnzknt/tm0K7bEhX46
-         BWVMlqzbBUdtzptXtBd6bfrHPAP0nFwkAhPZAw86Z8KGgNhg60hFhQDgc3JcjuSx8bdH
-         RUN3RtJJWs0tQCsKGcC/bHSu02yiu4eXMi6wnSIHi1iwZ5UfKjVoBpzcbyDJP8tkLwoG
-         EgvEcqYA2mqcpELuNGIadIPXqUka5hnYxeDFQr32TKCYbj3ZlePYhk/pWsVLehFu3Wak
-         +bBSUCtiqccdKjJkEaUTbPs/Mdwl/JNyTpYJi9nXHcvVIgBxXo1hLMVkUH/tLHyn0uIN
-         HWEA==
-X-Gm-Message-State: APjAAAUcGsI80EOxq5JOJvTCEc9BmNy5lnm6NLAak2uhgsLRQmuWHiB2
-        ZBDwT4183EdIPu9s/FbK1nA=
-X-Google-Smtp-Source: APXvYqy5vJY131Lor3YeVDhjCpeI3gktCtJOpO+P6J1mFr58LYnjO2gN5V2DNmNZVLK3YEshLDX/sA==
-X-Received: by 2002:a17:902:b617:: with SMTP id b23mr13530550pls.285.1579500839281;
-        Sun, 19 Jan 2020 22:13:59 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id y14sm37008006pfe.147.2020.01.19.22.13.58
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 19 Jan 2020 22:13:58 -0800 (PST)
-Date:   Mon, 20 Jan 2020 14:13:56 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     mmayer@broadcom.com, rjw@rjwysocki.net, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH v3] cpufreq: brcmstb-avs: fix imbalance of cpufreq policy
- refcount
-Message-ID: <20200120061356.GA5605@cqw-OptiPlex-7050>
-References: <1579417750-21984-1-git-send-email-qiwuchen55@gmail.com>
- <20200120053250.igkwofqfzvmqb3c3@vireshk-i7>
- <20200120055822.GB5185@cqw-OptiPlex-7050>
- <20200120060134.izotrbzjvzk327zx@vireshk-i7>
+        Mon, 20 Jan 2020 01:14:29 -0500
+Received: from mschiller01.dev.tdt.de (unknown [10.2.3.20])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 7FE782106A;
+        Mon, 20 Jan 2020 06:14:23 +0000 (UTC)
+From:   Martin Schiller <ms@dev.tdt.de>
+To:     kubakici@wp.pl, khc@pm.waw.pl, davem@davemloft.net
+Cc:     linux-x25@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH v3 1/2] wan/hdlc_x25: make lapb params configurable
+Date:   Mon, 20 Jan 2020 07:14:15 +0100
+Message-Id: <20200120061416.27714-1-ms@dev.tdt.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120060134.izotrbzjvzk327zx@vireshk-i7>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 11:31:34AM +0530, Viresh Kumar wrote:
-> On 20-01-20, 13:58, chenqiwu wrote:
-> > On Mon, Jan 20, 2020 at 11:02:50AM +0530, Viresh Kumar wrote:
-> > > On 19-01-20, 15:09, qiwuchen55@gmail.com wrote:
-> > > > From: chenqiwu <chenqiwu@xiaomi.com>
-> > > > 
-> > > > brcm_avs_cpufreq_get() calls cpufreq_cpu_get() to get the cpufreq policy,
-> > > > meanwhile, it also increments the kobject reference count to mark it busy.
-> > > > However, a corresponding call of cpufreq_cpu_put() is ignored to decrement
-> > > > the kobject reference count back, which may lead to a potential stuck risk
-> > > > that the cpuhp thread deadly waits for dropping of kobject refcount when
-> > > > cpufreq policy free.
-> > > > 
-> > > > For fixing this bug, cpufreq_get_policy() is referenced to do a proper
-> > > > cpufreq_cpu_get()/cpufreq_cpu_put() and fill a policy copy for the user.
-> > > > If the policy return NULL, we just return 0 to hit the code path of
-> > > > cpufreq_driver->get.
-> > > > 
-> > > > Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> > > > ---
-> > > >  drivers/cpufreq/brcmstb-avs-cpufreq.c | 12 ++++++++++--
-> > > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-> > > > index 77b0e5d..ee0d404 100644
-> > > > --- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
-> > > > +++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-> > > > @@ -452,8 +452,16 @@ static bool brcm_avs_is_firmware_loaded(struct private_data *priv)
-> > > >  
-> > > >  static unsigned int brcm_avs_cpufreq_get(unsigned int cpu)
-> > > >  {
-> > > > -	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> > > 
-> > > Why can't we just add a corresponding cpufreq_cpu_put() instead of all this ?
-> > > 
-> > 
-> > cpufreq_get_policy() does a proper cpufreq_cpu_get()/cpufreq_cpu_put(),
-> > meanwhile fills a policy copy for the user. It equals to using
-> > cpufreq_cpu_get() and a corresponding cpufreq_cpu_put() around access
-> > to the policy pointer. I think both methods are fine here.
-> > What do you think?
-> 
-> cpufreq_get_policy() does an extra memcpy as well, which isn't required at all
-> in your case.
-> 
-> -- 
-> viresh
+This enables you to configure mode (DTE/DCE), Modulo, Window, T1, T2, N2 via
+sethdlc (which needs to be patched as well).
 
-Huha..Do you worry about the race conditon with cpufreq policy free path?
-If the policy has been released, cpufreq_get_policy() will return -EINVAL,
-it won't do an extra memcpy.
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+---
+ drivers/net/wan/hdlc_x25.c      | 80 +++++++++++++++++++++++++++++++--
+ include/uapi/linux/hdlc/ioctl.h |  9 ++++
+ include/uapi/linux/if.h         |  1 +
+ 3 files changed, 87 insertions(+), 3 deletions(-)
 
-Qiwu
+diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
+index 5643675ff724..b0252b600ae2 100644
+--- a/drivers/net/wan/hdlc_x25.c
++++ b/drivers/net/wan/hdlc_x25.c
+@@ -21,8 +21,17 @@
+ #include <linux/skbuff.h>
+ #include <net/x25device.h>
+ 
++struct x25_state {
++	x25_hdlc_proto settings;
++};
++
+ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr);
+ 
++static struct x25_state *state(hdlc_device *hdlc)
++{
++	return (struct x25_state *)hdlc->state;
++}
++
+ /* These functions are callbacks called by LAPB layer */
+ 
+ static void x25_connect_disconnect(struct net_device *dev, int reason, int code)
+@@ -131,7 +140,6 @@ static netdev_tx_t x25_xmit(struct sk_buff *skb, struct net_device *dev)
+ 
+ static int x25_open(struct net_device *dev)
+ {
+-	int result;
+ 	static const struct lapb_register_struct cb = {
+ 		.connect_confirmation = x25_connected,
+ 		.connect_indication = x25_connected,
+@@ -140,10 +148,33 @@ static int x25_open(struct net_device *dev)
+ 		.data_indication = x25_data_indication,
+ 		.data_transmit = x25_data_transmit,
+ 	};
++	hdlc_device *hdlc = dev_to_hdlc(dev);
++	struct lapb_parms_struct params;
++	int result;
+ 
+ 	result = lapb_register(dev, &cb);
+ 	if (result != LAPB_OK)
+ 		return result;
++
++	result = lapb_getparms(dev, &params);
++	if (result != LAPB_OK)
++		return result;
++
++	if (state(hdlc)->settings.dce)
++		params.mode = params.mode | LAPB_DCE;
++
++	if (state(hdlc)->settings.modulo == 128)
++		params.mode = params.mode | LAPB_EXTENDED;
++
++	params.window = state(hdlc)->settings.window;
++	params.t1 = state(hdlc)->settings.t1;
++	params.t2 = state(hdlc)->settings.t2;
++	params.n2 = state(hdlc)->settings.n2;
++
++	result = lapb_setparms(dev, &params);
++	if (result != LAPB_OK)
++		return result;
++
+ 	return 0;
+ }
+ 
+@@ -186,7 +217,10 @@ static struct hdlc_proto proto = {
+ 
+ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ {
++	x25_hdlc_proto __user *x25_s = ifr->ifr_settings.ifs_ifsu.x25;
++	const size_t size = sizeof(x25_hdlc_proto);
+ 	hdlc_device *hdlc = dev_to_hdlc(dev);
++	x25_hdlc_proto new_settings;
+ 	int result;
+ 
+ 	switch (ifr->ifr_settings.type) {
+@@ -194,7 +228,13 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ 		if (dev_to_hdlc(dev)->proto != &proto)
+ 			return -EINVAL;
+ 		ifr->ifr_settings.type = IF_PROTO_X25;
+-		return 0; /* return protocol only, no settable parameters */
++		if (ifr->ifr_settings.size < size) {
++			ifr->ifr_settings.size = size; /* data size wanted */
++			return -ENOBUFS;
++		}
++		if (copy_to_user(x25_s, &state(hdlc)->settings, size))
++			return -EFAULT;
++		return 0;
+ 
+ 	case IF_PROTO_X25:
+ 		if (!capable(CAP_NET_ADMIN))
+@@ -203,12 +243,46 @@ static int x25_ioctl(struct net_device *dev, struct ifreq *ifr)
+ 		if (dev->flags & IFF_UP)
+ 			return -EBUSY;
+ 
++		/* backward compatibility */
++		if (ifr->ifr_settings.size = 0) {
++			new_settings.dce = 0;
++			new_settings.modulo = 8;
++			new_settings.window = 7;
++			new_settings.t1 = 3;
++			new_settings.t2 = 1;
++			new_settings.n2 = 10;
++		}
++		else {
++			if (copy_from_user(&new_settings, x25_s, size))
++				return -EFAULT;
++
++			if ((new_settings.dce != 0 &&
++			new_settings.dce != 1) ||
++			(new_settings.modulo != 8 &&
++			new_settings.modulo != 128) ||
++			new_settings.window < 1 ||
++			(new_settings.modulo == 8 &&
++			new_settings.window > 7) ||
++			(new_settings.modulo == 128 &&
++			new_settings.window > 127) ||
++			new_settings.t1 < 1 ||
++			new_settings.t1 > 255 ||
++			new_settings.t2 < 1 ||
++			new_settings.t2 > 255 ||
++			new_settings.n2 < 1 ||
++			new_settings.n2 > 255)
++				return -EINVAL;
++		}
++
+ 		result=hdlc->attach(dev, ENCODING_NRZ,PARITY_CRC16_PR1_CCITT);
+ 		if (result)
+ 			return result;
+ 
+-		if ((result = attach_hdlc_protocol(dev, &proto, 0)))
++		if ((result = attach_hdlc_protocol(dev, &proto,
++						   sizeof(struct x25_state))))
+ 			return result;
++
++		memcpy(&state(hdlc)->settings, &new_settings, size);
+ 		dev->type = ARPHRD_X25;
+ 		call_netdevice_notifiers(NETDEV_POST_TYPE_CHANGE, dev);
+ 		netif_dormant_off(dev);
+diff --git a/include/uapi/linux/hdlc/ioctl.h b/include/uapi/linux/hdlc/ioctl.h
+index 0fe4238e8246..b06341acab5e 100644
+--- a/include/uapi/linux/hdlc/ioctl.h
++++ b/include/uapi/linux/hdlc/ioctl.h
+@@ -79,6 +79,15 @@ typedef struct {
+     unsigned int timeout;
+ } cisco_proto;
+ 
++typedef struct {
++	unsigned short dce; /* 1 for DCE (network side) operation */
++	unsigned int modulo; /* modulo (8 = basic / 128 = extended) */
++	unsigned int window; /* frame window size */
++	unsigned int t1; /* timeout t1 */
++	unsigned int t2; /* timeout t2 */
++	unsigned int n2; /* frame retry counter */
++} x25_hdlc_proto;
++
+ /* PPP doesn't need any info now - supply length = 0 to ioctl */
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/include/uapi/linux/if.h b/include/uapi/linux/if.h
+index 4bf33344aab1..be714cd8c826 100644
+--- a/include/uapi/linux/if.h
++++ b/include/uapi/linux/if.h
+@@ -213,6 +213,7 @@ struct if_settings {
+ 		fr_proto		__user *fr;
+ 		fr_proto_pvc		__user *fr_pvc;
+ 		fr_proto_pvc_info	__user *fr_pvc_info;
++		x25_hdlc_proto		__user *x25;
+ 
+ 		/* interface settings */
+ 		sync_serial_settings	__user *sync;
+-- 
+2.20.1
+
