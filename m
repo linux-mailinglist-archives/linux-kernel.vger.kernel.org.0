@@ -2,100 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C3AF142582
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:28:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A3D142593
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:29:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbgATI1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:27:31 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60806 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgATI1a (ORCPT
+        id S1726970AbgATI31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:29:27 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39110 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgATI31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:27:30 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1itSOy-0002up-QL; Mon, 20 Jan 2020 09:27:16 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 68C631C1A3F;
-        Mon, 20 Jan 2020 09:27:15 +0100 (CET)
-Date:   Mon, 20 Jan 2020 08:27:15 -0000
-From:   "tip-bot2 for Maciej S. Szmigiero" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf clang: Fix build with Clang 9
-Cc:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Dennis Schridde <devurandom@gmx.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        clang-built-linux@googlegroups.com,
-        Denis Pronin <dannftk@yandex.ru>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Naohiro Aota <naota@elisp.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191228171314.946469-2-mail@maciej.szmigiero.name>
-References: <20191228171314.946469-2-mail@maciej.szmigiero.name>
+        Mon, 20 Jan 2020 03:29:27 -0500
+Received: by mail-oi1-f195.google.com with SMTP id z2so3823581oih.6;
+        Mon, 20 Jan 2020 00:29:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tFqMTtRLSSI+O8N4QG8hNcWnZ16xdlM9eDNxrV6706I=;
+        b=Ni4dqih2pHK5KtdSs6JX2cEdrng5NUqRigPBK2qTfDPInRjY+Pa2vNpG00Bc4YqtBJ
+         DouV4ilzczYR1wzNowVJgxnrUNi7WW9lCyyojQt6XSQ+zjozamhz7qIKc11EzVbZamqr
+         D34sH477iWtAOcrkFL/0BOFe9YSkLOVZVzEErIqGiMCdGZkDwG4ZTcFyrcmfoicwt6GL
+         0x42vnhdHF9S+/vBFOQef9/BmVtCBPuZqh6S9SI9ChbhDoTobHBH24nKEYfuVQMZYigG
+         wLy15C1pupCq+E/GL2px5UXGxCHkHd4+w393m6TB3KHwbRxSI6AMETCrS4NtNsB12UPZ
+         pw3Q==
+X-Gm-Message-State: APjAAAU9wT6rKPLQTIhIUQ96CaX2E9QMz4kcQRRAbLGjrqw1q570Sm0F
+        4kg1oVuiZddhXhBRVFfXh38Lv/WuMXaAxXnhN/j1Tw==
+X-Google-Smtp-Source: APXvYqwVtDCTbfv44Zscj3VBgtNuG+yGRutOTjquJ+HIEAaRmbCFgSCQTDGmGD10uzPKuyM0U7PMWaKUkATjSMvJbxc=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr11555422oia.148.1579508966488;
+ Mon, 20 Jan 2020 00:29:26 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157950883517.396.18261374196273837423.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <cover.1579474569.git.fthain@telegraphics.com.au> <b47662493a776811d4d457e5a75e18a7169aed23.1579474569.git.fthain@telegraphics.com.au>
+In-Reply-To: <b47662493a776811d4d457e5a75e18a7169aed23.1579474569.git.fthain@telegraphics.com.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Jan 2020 09:29:14 +0100
+Message-ID: <CAMuHMdWvJ975X7zz1C=1Sq=Yuf9nYY1zxWaJ=XCXJukfP=nygg@mail.gmail.com>
+Subject: Re: [PATCH net 04/19] net/sonic: Add mutual exclusion for accessing
+ shared state
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>,
+        Laurent Vivier <laurent@vivier.eu>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+Hi Finn,
 
-Commit-ID:     411c0ec0b8131457cf52812de29f11dcbf491ce6
-Gitweb:        https://git.kernel.org/tip/411c0ec0b8131457cf52812de29f11dcbf491ce6
-Author:        Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-AuthorDate:    Sat, 28 Dec 2019 18:13:14 +01:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 14 Jan 2020 12:02:19 -03:00
+On Mon, Jan 20, 2020 at 12:19 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> The netif_stop_queue() call in sonic_send_packet() races with the
+> netif_wake_queue() call in sonic_interrupt(). This causes issues
+> like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
+> Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
+> Update a comment to clarify the synchronization properties.
+>
+> Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-perf clang: Fix build with Clang 9
+Thanks for your patch!
 
-LLVM D59377 (included in Clang 9) refactored Clang VFS construction a
-bit, which broke perf clang build.  Let's fix it.
+> --- a/drivers/net/ethernet/natsemi/sonic.c
+> +++ b/drivers/net/ethernet/natsemi/sonic.c
+> @@ -242,7 +242,7 @@ static void sonic_tx_timeout(struct net_device *dev)
+>   *   wake the tx queue
+>   * Concurrently with all of this, the SONIC is potentially writing to
+>   * the status flags of the TDs.
+> - * Until some mutual exclusion is added, this code will not work with SMP. However,
+> + * A spin lock is needed to make this work on SMP platforms. However,
+>   * MIPS Jazz machines and m68k Macs were all uni-processor machines.
+>   */
+>
+> @@ -252,6 +252,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+>         dma_addr_t laddr;
+>         int length;
+>         int entry;
+> +       unsigned long flags;
+>
+>         netif_dbg(lp, tx_queued, dev, "%s: skb=%p\n", __func__, skb);
+>
+> @@ -273,6 +274,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
+>                 return NETDEV_TX_OK;
+>         }
+>
+> +       local_irq_save(flags);
+> +
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Reviewed-by: Dennis Schridde <devurandom@gmx.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: clang-built-linux@googlegroups.com
-Cc: Denis Pronin <dannftk@yandex.ru>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naohiro Aota <naota@elisp.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191228171314.946469-2-mail@maciej.szmigiero.name
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/c++/clang.cpp | 4 ++++
- 1 file changed, 4 insertions(+)
+Wouldn't it be better to use a spinlock instead?
+It looks like all currently supported platforms (Mac, Jazz, and XT2000)
+do no support SMP, but I'm not 100% sure about the latter.
+And this generic sonic.c core may end up being used on other platforms
+that do support SMP.
 
-diff --git a/tools/perf/util/c++/clang.cpp b/tools/perf/util/c++/clang.cpp
-index fc361c3..c8885df 100644
---- a/tools/perf/util/c++/clang.cpp
-+++ b/tools/perf/util/c++/clang.cpp
-@@ -71,7 +71,11 @@ getModuleFromSource(llvm::opt::ArgStringList CFlags,
- 	CompilerInstance Clang;
- 	Clang.createDiagnostics();
- 
-+#if CLANG_VERSION_MAJOR < 9
- 	Clang.setVirtualFileSystem(&*VFS);
-+#else
-+	Clang.createFileManager(&*VFS);
-+#endif
- 
- #if CLANG_VERSION_MAJOR < 4
- 	IntrusiveRefCntPtr<CompilerInvocation> CI =
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
