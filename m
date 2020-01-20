@@ -2,120 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 571A9142B40
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2C4142B46
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:49:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbgATMsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:48:40 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35746 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgATMsk (ORCPT
+        id S1726999AbgATMtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:49:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726589AbgATMtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:48:40 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KCmZfE074240;
-        Mon, 20 Jan 2020 06:48:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579524515;
-        bh=4wcdhSfhWRIfKcGWoUQfbdE/ag7R8VxL3fQKB4G2yFg=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=mlzcibfcx5zhfHfKaGMYHI6u2Gnu256hsy2l694Nmj7BQNkueRWZ5kixV1FnzbVCh
-         CF12ZFQZ6yB9XInP6ZOwQ2ukEpe49KOZxGiWMpMLJHm/ZpmKDnFqfp2NpHTcGpjGMD
-         rVaWByUryW8Ku5sUSMWFd+v8fi68EXcUR49K3d9s=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KCmZdx065725
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 Jan 2020 06:48:35 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
- Jan 2020 06:48:34 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 20 Jan 2020 06:48:34 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KCmWaC042059;
-        Mon, 20 Jan 2020 06:48:33 -0600
-Subject: Re: [PATCH v2] media: rcar_drif: Use dma_request_chan() instead
- dma_request_slave_channel()
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <mchehab@kernel.org>, <rashanmu@gmail.com>, <geert@linux-m68k.org>
-CC:     <vkoul@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-References: <20200120124754.26826-1-peter.ujfalusi@ti.com>
-Message-ID: <741c34ad-deb4-d4aa-770f-be68ce2cbb0b@ti.com>
-Date:   Mon, 20 Jan 2020 14:49:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 20 Jan 2020 07:49:46 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KCTW7q025559
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 07:49:45 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xmgbnyt7k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 07:49:44 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Mon, 20 Jan 2020 12:49:43 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 20 Jan 2020 12:49:40 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00KCmnmu50463050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Jan 2020 12:48:50 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BEDE3A4054;
+        Mon, 20 Jan 2020 12:49:39 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D3A3A405B;
+        Mon, 20 Jan 2020 12:49:37 +0000 (GMT)
+Received: from [9.199.49.60] (unknown [9.199.49.60])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 20 Jan 2020 12:49:37 +0000 (GMT)
+Subject: Re: [PATCH 1/3] perf annotate: Nuke privsize
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, namhyung@kernel.org, irogers@google.com,
+        songliubraving@fb.com, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
+ <20200117092612.30874-2-ravi.bangoria@linux.ibm.com>
+ <20200120100825.GG608405@krava>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Mon, 20 Jan 2020 18:19:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200120124754.26826-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20200120100825.GG608405@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 20012012-0020-0000-0000-000003A25DDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012012-0021-0000-0000-000021F9E8E0
+Message-Id: <633759b2-8d6c-24b8-b058-b4d4b365fcee@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-20_02:2020-01-20,2020-01-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ mlxlogscore=565 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-2001200110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
 
-On 20/01/2020 14.47, Peter Ujfalusi wrote:
-> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-> eating up the error code.
+On 1/20/20 3:38 PM, Jiri Olsa wrote:
+>> -/*
+>> - * Allocating the annotation line data with following
+>> - * structure:
+>> - *
+>> - *    --------------------------------------
+>> - *    private space | struct annotation_line
+>> - *    --------------------------------------
+>> - *
+>> - * Size of the private space is stored in 'struct annotation_line'.
+>> - *
+>> - */
+>> -static struct annotation_line *
+>> -annotation_line__new(struct annotate_args *args, size_t privsize)
+>> +static size_t disasm_line_size(int nr)
+>>   {
 > 
-> By using dma_request_chan() directly the driver can support deferred
-> probing against DMA.
+> I agree we can get rid of the 'users' privsize passed from symbol__annotate,
+> but could you please put it in separate patch, while keeping privsize in here?
+> 
+> and then put the rest of the code factoring into separate patch,
+> so we can see clearly the change and the benefits
+> 
+> your new annotation_line__new should be renamed to something like
+> annotation_line__init ... we keep __new suffix for functions that
+> return new objects
 
-yes, this is suppose to be v3, but missed to change the subject-prefix.
+Sure Jiri. Will resend with these changes.
 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Hi,
-> 
-> Changes since v2:
-> - Use %pe to print error name using the ch->dmach pointer
-> - Set ch->dmach to NULL in case of error
-> 
-> Changes since v1:
-> - Do not print error in case of EPROBE_DEFER
-> - Added Reviewed-by from Geert
-> 
-> Regards,
-> Peter
-> 
->  drivers/media/platform/rcar_drif.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
-> index 0f267a237b42..3d2451ac347d 100644
-> --- a/drivers/media/platform/rcar_drif.c
-> +++ b/drivers/media/platform/rcar_drif.c
-> @@ -275,10 +275,14 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
->  	for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
->  		struct rcar_drif *ch = sdr->ch[i];
->  
-> -		ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
-> -		if (!ch->dmach) {
-> -			rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
-> -			ret = -ENODEV;
-> +		ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
-> +		if (IS_ERR(ch->dmach)) {
-> +			ret = PTR_ERR(ch->dmach);
-> +			if (ret != -EPROBE_DEFER)
-> +				rdrif_err(sdr,
-> +					  "ch%u: dma channel req failed: %pe\n",
-> +					  i, ch->dmach);
-> +			ch->dmach = NULL;
->  			goto dmach_error;
->  		}
->  
-> 
+- Ravi
 
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
