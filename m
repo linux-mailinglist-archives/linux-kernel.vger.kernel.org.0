@@ -2,125 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D391431FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61EF0143217
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:22:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbgATTMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:12:45 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43908 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbgATTMp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:12:45 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p125so304462oif.10
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 11:12:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jjq97LN7paeiNndMMU1ClIoeahA1RUutU+l84dotge4=;
-        b=uFGXNyfNgrJ+upFgFfYunV6WO5EcN9VCh/V/DKbExjVb4WWlJ+Ehwmzu7hXQPaMh22
-         xiaBKh7uBfuXwN+Hc3CyI+9woOO7pHmqowDajfH8mGi6SRDre4+QwjLxqbPkr8SWey/N
-         gUYFBJc2jE6JuCbY5Ql3XJk7IiAUU1wC61oION3GXwbV6tbQMe89Tsk/jPmFG3TqJEOZ
-         AyhWvXHlMuV7wv1d49iMb0zrURCvkkw3QL9jghe3y+maBEuVOlDcWzG5MXzpKVPir0iM
-         Ge586IU3v0kPPJXQg6JDDHwJ7W9JHmGCFdnPltc16Af4V3fVj7rC2XW2cMAEEAXP+kN4
-         bfNA==
-X-Gm-Message-State: APjAAAWNJxntsIM8FYSRrhdX9K/6Bi4LTBOM9gJmbLQxwOSXfA01V6zk
-        vQCZtORSgHgjw+x12n7soZfff+UND0uiu+tFaColYw==
-X-Google-Smtp-Source: APXvYqx+QeBZerMZYsQXGnGVyHkqjvt/cNaN/+PihgCyBaDh1UaA25j/U0wI+4upj1pGyuPi7vWximhYHGkwDegIB+8=
-X-Received: by 2002:aca:5905:: with SMTP id n5mr287272oib.54.1579547564535;
- Mon, 20 Jan 2020 11:12:44 -0800 (PST)
+        id S1726890AbgATTVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:21:01 -0500
+Received: from mail-eopbgr700096.outbound.protection.outlook.com ([40.107.70.96]:54496
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726112AbgATTVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 14:21:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UE4i+A9OxCbEw3Vd6iYeO2trsAwnxvfLETfSXY7zz34ogr5/Kl/nrKbQ2CxeOxYg1YWJAETjZ4xbGA1pDD9plDiT5ljav688f7xjGi2ikON7bwnt1ZXH+vlvJ3cKlCHurXqu4/kKAuHhvzGooS23vLKINJeKRRbvnH+15I0D3+PqmVlttF0JnJ7GLE5WAf33m4KixSoXR1RTkWnn0pvIDIDZOlHCVmZLdX80z9wL2IYo+6QRs0YwQ9zbi0ToneTAmTnvm5So+K7Z00N0SFJGtGMowiaPzIeNNSqFzGbd9U55zE3zoaft1T1x5N0Vw+fOZ6ltc2zm6Dvzdj9GArQrmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3x/2wvarFaafKBA/ncA/914oMiFMpJG3q0P3TNAYR44=;
+ b=Rwz16knJcF6ciJcGLLXNttrskAr8z6Ri2ErZzp3Q1L/bW2q4aeQSQcicsf67LCE7zmVX6DtmF6YGodsoUWptpnJ5+ShRAcsYnG0Q4InFJcFlrPvERqpiQlLMU/aAMSE2RFl1dwOi2EQMzxnpAWAuWNjyKnpzamqEaUeh7a/yWNpl9O7g7cIlvKq7A7IHlan7+4TQ4/YbBaNqEqk0kdrHc3soJ57+cWKsQ3dMhEt3PIBePiqSvLyEB+J/izFkzaCmBIogURM5XCPVo+kPRt6N8GypfqMOwjvAlvidXpJ3Rkm2ni9uqT2vAiITSOLpjo4McK1ChhD2CpLxeH8tT5vBYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3x/2wvarFaafKBA/ncA/914oMiFMpJG3q0P3TNAYR44=;
+ b=VK1OGTI/vFWyN6VyqUtMIVM4VjyyozcCEEsnaVnpNIcg1ORYng6GzjnTOztP+fOnYFuMP7Rh/sdq3+q/ibmKZcyHO+nb2KTMOevMBQZwExhWlkRxcS7177Bb8wal9qdU41w42hyF7eceGfCJCKaBi+CCmES1iYYCG8fIhhXsMlU=
+Received: from MW2PR2101MB1052.namprd21.prod.outlook.com (52.132.149.16) by
+ MW2PR2101MB1019.namprd21.prod.outlook.com (52.132.146.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.5; Mon, 20 Jan 2020 19:20:57 +0000
+Received: from MW2PR2101MB1052.namprd21.prod.outlook.com
+ ([fe80::f1bb:c094:cb30:ba1f]) by MW2PR2101MB1052.namprd21.prod.outlook.com
+ ([fe80::f1bb:c094:cb30:ba1f%6]) with mapi id 15.20.2644.015; Mon, 20 Jan 2020
+ 19:20:57 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
+        "namit@vmware.com" <namit@vmware.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>
+CC:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        vkuznets <vkuznets@redhat.com>,
+        "eric.devolder@oracle.com" <eric.devolder@oracle.com>
+Subject: RE: [RFC PATCH V2 1/10] mm/resource: Move child to new resource when
+ release mem region.
+Thread-Topic: [RFC PATCH V2 1/10] mm/resource: Move child to new resource when
+ release mem region.
+Thread-Index: AQHVxVvKIEcG+CpTJkitsskMuv0x06f0AGew
+Date:   Mon, 20 Jan 2020 19:20:57 +0000
+Message-ID: <MW2PR2101MB1052BDB462E010C4BD751FF3D7320@MW2PR2101MB1052.namprd21.prod.outlook.com>
+References: <20200107130950.2983-1-Tianyu.Lan@microsoft.com>
+ <20200107130950.2983-2-Tianyu.Lan@microsoft.com>
+In-Reply-To: <20200107130950.2983-2-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2020-01-20T19:20:55.6363731Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=5adb0e3c-acc4-4f6e-96b3-346d06c8369d;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8cb52244-cf02-466d-e3ea-08d79ddde09a
+x-ms-traffictypediagnostic: MW2PR2101MB1019:|MW2PR2101MB1019:|MW2PR2101MB1019:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <MW2PR2101MB1019E57A9481489DB3022FCED7320@MW2PR2101MB1019.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:186;
+x-forefront-prvs: 0288CD37D9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(396003)(366004)(39860400002)(376002)(189003)(199004)(71200400001)(26005)(6506007)(7696005)(186003)(64756008)(2906002)(33656002)(66556008)(8990500004)(52536014)(66946007)(66446008)(76116006)(66476007)(5660300002)(10290500003)(55016002)(9686003)(54906003)(81166006)(81156014)(110136005)(8676002)(4326008)(8936002)(316002)(7416002)(86362001)(478600001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1019;H:MW2PR2101MB1052.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WkXMkSM8Vak/HstTZxVuAateHS9+Ng23z0sne4KOtcwjhFzb4aOmtDHhgm7uZM9jkLgg+r+wku/z6Eh9KsdudaNYBCSLwnbvjIEJAJ7nTafRz3wFOqxDX9OJAcOMc4ED4n0nLTawAu/UWNKE7wu6wpFhebqB8X6sc5oi4/3t7/fAmKpDZ8KABryvzkboF42c6hWtb3GSr60NIYkmmCgDTYlWkEPfp+c6z/6zzDmwKSIrsEqaEVMX5VpRqvxQs7grjCTORTLYSppWQ2L9yCEeh8vuI7Cgm4nzkUHekVa2XFH+ZugoNaiknv9tpKGqfqrUSUZHOBQ9y4ynBOoo7YNv0Ijx/IoKoOiIyqZ+J87tS846R1iVCYXmQ41/0sSdMLRWQ1cEMbpSCJGiTWbEXA183mNC0dF3vWcZi2AC/ClgOQEFkdYAJNwb10ykasCjpOkOrQ2h2fHthl0JirUXA9kSokTpGblPgaJ+bgqNESMPFJoILdhqyfGEzcV2RpcKYj36
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20180802193909.GA11443@ravnborg.org> <20180802194536.10820-2-sam@ravnborg.org>
- <CAMuHMdVP4UwGYuNcOphPO9F2pSCaHS1j-ODxYrv_LNOoo_4coA@mail.gmail.com> <20200120184804.GA7630@ravnborg.org>
-In-Reply-To: <20200120184804.GA7630@ravnborg.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 Jan 2020 20:12:23 +0100
-Message-ID: <CAMuHMdWR-EY+yBaOu_pL=5mfwi=ra76YwTt5d+GZ3Qy-e7Evzw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/5] pardata: new bus for parallel data access
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Noralf T <noralf@tronnes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cb52244-cf02-466d-e3ea-08d79ddde09a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2020 19:20:57.5816
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kRSZpuNq4DFHDlnS054feyjNEPZkIX49eX6wT7wVOw5YfVkZHnrSH4oyBqOgef5UmIh4n+X9l+TiuO3/aI9EA0mWpELMOuN6F9x5cw0d8PE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+From: Tianyu Lan <Tianyu.Lan@microsoft.com> Sent: Tuesday, January 7, 2020 =
+5:10 AM
+>=20
+> When release mem region, old mem region may be splited to
+> two regions. Current allocate new struct resource for high
+> end mem region but not move child resources whose ranges are
+> in the high end range to new resource. When adjust old mem
+> region's range, adjust_resource() detects child region's range
+> is out of new range and return error. Move child resources to
+> high end resource before adjusting old mem range.
 
-On Mon, Jan 20, 2020 at 7:48 PM Sam Ravnborg <sam@ravnborg.org> wrote:
-> On Mon, Jan 20, 2020 at 11:10:37AM +0100, Geert Uytterhoeven wrote:
-> > On Thu, Aug 2, 2018 at 9:46 PM Sam Ravnborg <sam@ravnborg.org> wrote:
-> > > The pardata supports implement a simple bus for devices
-> > > that are connected using a parallel bus driven by GPIOs.
-> > > The is often used in combination with simple displays
-> > > that is often seen in older embedded designs.
-> > > There is a demand for this support also in the linux
-> > > kernel for HW designs that uses these kind of displays.
-> > >
-> > > The pardata bus uses a platfrom_driver that when probed
-> > > creates devices for all child nodes in the DT,
-> > > which are then supposed to be handled by pardata_drivers.
-> > >
-> > > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> >
-> > > --- /dev/null
-> > > +++ b/Documentation/driver-api/pardata.rst
-> > > @@ -0,0 +1,60 @@
-> > > +.. SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +=========================
-> > > +Parallel Data Bus/Drivers
-> > > +=========================
-> > > +
-> > > +Displays may be connected using a simple parallel bus.
-> > > +This is often seen in embedded systems with a simple MCU, but is also
-> > > +used in Linux based systems to a small extent.
-> > > +
-> > > +The bus looks like this:
-> > > +
-> > > +.. code-block:: none
-> > > +
-> > > +       ----+
-> > > +           |  DB0-DB7 or DB4-DB7      +----
-> > > +           ===/========================
-> > > +           |  E - enable              |  D
-> > > +           ----------------------------  I
-> > > +        C  |  Reset                   |  S
-> > > +        P  ----------------------------  P
-> > > +        U  |  Read/Write (one or two) |  L
-> > > +           ----------------------------  A
-> > > +           |  RS - instruction/data   |  Y
-> > > +           ----------------------------
-> > > +           |                          +----
-> > > +       ----+
-> >
-> > Oh, cool!  Looks like this can be used by the hd44780 driver.
-> >
-> >     Documentation/devicetree/bindings/auxdisplay/hit,hd44780.txt
-> >     drivers/auxdisplay/hd44780.c
->
-> This patchset was from a time when I knew next to nothing about DRM.
-> Now I am just confused on a different level :-)
+Let me also suggests some wording improvements to the commit message:
 
-The more you know, the more you realize what you don't know ;-)
+When releasing a mem region, the old mem region may need to be
+split into two regions.  In this case, the current code allocates the new
+region and adjust the original region to specify a smaller range.  But chil=
+d
+regions that fall into the range of the new region are not moved to that
+new region.  Consequently, when running __adjust_resource() on the
+original region, it detects that the child region's range is out of the new
+range, and returns an error.
 
-> It is on my TODO list to make a mipi-dbi driver that in the future
-> replaces the auxdisplay driver for hd44780.
+Fix this by moving appropriate child resources to the new region before
+adjusting the original mem region range.
 
-Please note that hd44780 is a character controller.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>=20
+> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> ---
+>  kernel/resource.c | 38 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 34 insertions(+), 4 deletions(-)
+>=20
