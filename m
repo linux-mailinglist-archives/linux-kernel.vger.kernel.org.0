@@ -2,100 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38ACD142602
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025A214260A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbgATIoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:44:25 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36605 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgATIoZ (ORCPT
+        id S1727121AbgATIoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:44:55 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34007 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgATIoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:44:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p17so13796825wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 00:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=s+lxv8yS+tPPVLLVda+OIOe+B0+kZ5og8HXVAwOgVOE=;
-        b=DS89j9PWMbSs7Q0oYxvC9+QxP7mMSQtykSp6CPFm9blhsNBPlaMHsPGvSxHMFwMWYf
-         mce//OGWonh+G0xoWFBeMQ6MygHTpF/5MXnrL8h2bDTKR5wY8YOQ0tCm1yfjldA1AzcF
-         DdOkqgraTIAY2ENvTPKz6wEVvJaqaVn/g0objOAyDQ4PagQTQ75B5YcW+L3q6VG0qrLv
-         QOoQ/s7+hBCUPWP3K8MhMjLpe5THZ8jHhX5GoXsIBpf+VGSNSXshpqmK2meAgKvEwHQL
-         d7AxVplHo9ZfzqOwGdNhqWXXLBe8I9I0KxmqKoEYZvXF1IWpMDYPcXH9SUha06mzy86L
-         m3/g==
+        Mon, 20 Jan 2020 03:44:55 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a15so27990025otf.1;
+        Mon, 20 Jan 2020 00:44:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=s+lxv8yS+tPPVLLVda+OIOe+B0+kZ5og8HXVAwOgVOE=;
-        b=q6ss2YzLqXTUSfvJ5Ga4QhcUq+0rxLL26Hz7Gy7GaoYPD0QGTVno8cng6r/TMGvCep
-         8aXRnM18xvyv57LWCbwWhXhLOy+8byNCzviT1P+OUuNPHVTqtLbBLtB3S83F43mYWAhH
-         tXLh0mxn2fuGTuXCUMtorAgDo1MUnf7jkZn8M2eS7LqevggGKo9Ocbx3XtGKqLXqLJXH
-         RkLR8KFZHst3NNg7uuHHvntagfJ4s5NONRjZbXxqUZ25rNYuTCpiKeDLJ8FgWYOiadWx
-         dUN90Ca8MDSZJWoq54LSJP3HiIwAg47wyMQdJd01q43G7t4bdpe/5Xc8Zka8m5OZ65oj
-         sUAA==
-X-Gm-Message-State: APjAAAW4cJsT/FLjNX/Yc7GQLCIggUqe5F4fS9K4xdoOQRazXXwK1zuP
-        WovmEb1DFh5WPbiHpIByZsTXBQ==
-X-Google-Smtp-Source: APXvYqyxULuntfgFhWunP/TGRe20THFA3uILY3jQLy0UfU93w71D1ribWIK30iqLIEbqoWtsxy0iAQ==
-X-Received: by 2002:a1c:9cce:: with SMTP id f197mr18331493wme.133.1579509863421;
-        Mon, 20 Jan 2020 00:44:23 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id b137sm3009206wme.26.2020.01.20.00.44.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 00:44:22 -0800 (PST)
-Date:   Mon, 20 Jan 2020 08:44:39 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Wen Su <Wen.Su@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, wsd_upstream@mediatek.com
-Subject: Re: [RESEND 2/4] mfd: Add for PMIC MT6359 registers definition
-Message-ID: <20200120084439.GX15507@dell>
-References: <1579506450-21830-1-git-send-email-Wen.Su@mediatek.com>
- <1579506450-21830-3-git-send-email-Wen.Su@mediatek.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kdjFDmHpK9XF0winpVoDYfPnYppvi92C4n7zVPl2Zp0=;
+        b=Iysi9HCj2N98Hk3fWUHzYwuRHmIwoeXmlrRsY5GvEQ+LR1RQaJgyIZQ6U4dj/9ktAs
+         Ig8CsgC5GgIcMxy03L+HRx09nzP5xlVCYTFLSbs0IaaqpOzWKBZ8sU8NmhfV7w7/GZ3a
+         g7utZI0GkaG88IK+koYv4HDxnCdxD78Ftv/8GDoyseSKhw7AgpneOOk2kZHY2OOuX8f0
+         cQGH+XMWxg5W41xfyI9CyYk1ufBCNJdstDlCVKMfN/T+BiFy94zQhVYMyjU/23Ltwoiy
+         uVJsYKgnJvI+IbnzVqJ+vQ1/BDtztzl9Wa/pNHEL41xJdCvlqK5mo2sLIfUmFeTRubnK
+         bHRg==
+X-Gm-Message-State: APjAAAVxdZ8EFMLlpVsF8pne6ktHQ51RVi8SeJHtfY1NBairpTJsVEWT
+        Lrndl+gZPZeIBIfJ2rQOta4ilytbTLNccKIZrxo=
+X-Google-Smtp-Source: APXvYqy/30Y6RSrNBaAzSlxodfDb5Ph0XzdHPJUcUAO6HeXVBIyWvrHlP0eVPtLEofVgH2U4+d71oxhBLNJ2ZndvgxM=
+X-Received: by 2002:a05:6830:2141:: with SMTP id r1mr15192738otd.39.1579509894895;
+ Mon, 20 Jan 2020 00:44:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1579506450-21830-3-git-send-email-Wen.Su@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191224120709.18247-1-brgl@bgdev.pl> <20191224120709.18247-3-brgl@bgdev.pl>
+In-Reply-To: <20191224120709.18247-3-brgl@bgdev.pl>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Jan 2020 09:44:43 +0100
+Message-ID: <CAMuHMdWigj9_CDdDD49qU-y7r+he53v1NEKE9_0RBQCFUrY-Qw@mail.gmail.com>
+Subject: Re: [PATCH v4 02/13] gpiolib: have a single place of calling set_config()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020, Wen Su wrote:
+Hi Bartosz,
 
-> From: Wen Su <wen.su@mediatek.com>
-> 
-> This adds MediaTek PMIC MT6359 registers definition for the
-> following sub modules:
-> 
-> - Regulator
-> - RTC
-> - Interrupt
-> 
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+On Tue, Dec 24, 2019 at 1:08 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Instead of calling the gpiochip's set_config() callback directly and
+> checking its existence every time - just add a new routine that performs
+> this check internally. Call it in gpio_set_config() and
+> gpiod_set_transitory(). Also call it in gpiod_set_debounce() and drop
+> the check for chip->set() as it's irrelevant to this config option.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-FYI, this is a real Acked-by.
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3042,6 +3042,15 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+>   * rely on gpio_request() having been called beforehand.
+>   */
+>
+> +static int gpio_do_set_config(struct gpio_chip *gc, unsigned int offset,
+> +                             enum pin_config_param mode)
+> +{
+> +       if (!gc->set_config)
+> +               return -ENOTSUPP;
+> +
+> +       return gc->set_config(gc, offset, mode);
+> +}
+> +
+>  static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+>                            enum pin_config_param mode)
+>  {
+> @@ -3060,7 +3069,7 @@ static int gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+>         }
+>
+>         config = PIN_CONF_PACKED(mode, arg);
+> -       return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
+> +       return gpio_do_set_config(gc, offset, mode);
 
-Whoever takes this set can take this patch.
+These two lines are not equivalent: the new code no longer uses the
+packed value of mode and arg!
+Hence this leads to subsequent cleanups in commits e5e42ad224a040f9
+("gpiolib: remove set but not used variable 'config'") and d18fddff061d2796
+("gpiolib: Remove duplicated function gpio_do_set_config()").
 
-> Signed-off-by: Wen Su <wen.su@mediatek.com>
-> ---
->  include/linux/mfd/mt6359/registers.h | 531 +++++++++++++++++++++++++++++++++++
->  1 file changed, 531 insertions(+)
->  create mode 100644 include/linux/mfd/mt6359/registers.h
+However, what was the purpose of the PIN_CONF_PACKED() translation?
+Why is it no longer needed?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
