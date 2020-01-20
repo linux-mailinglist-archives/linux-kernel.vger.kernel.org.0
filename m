@@ -2,211 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19956142AE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1424142AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:36:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbgATMde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:33:34 -0500
-Received: from mga17.intel.com ([192.55.52.151]:8638 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbgATMde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:33:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 04:33:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
-   d="scan'208";a="258694891"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2020 04:33:32 -0800
-Date:   Mon, 20 Jan 2020 20:33:43 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, rientjes@google.com
-Subject: Re: [Patch v2 3/4] mm/page_alloc.c: pass all bad reasons to
- bad_page()
-Message-ID: <20200120123343.GD18028@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
- <20200120030415.15925-4-richardw.yang@linux.intel.com>
- <d234b84b-b735-09f2-d7f1-e048fb9a3f87@arm.com>
+        id S1727117AbgATMgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:36:22 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:32844 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgATMgW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:36:22 -0500
+Received: by mail-oi1-f193.google.com with SMTP id q81so13536099oig.0;
+        Mon, 20 Jan 2020 04:36:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h5LLv85IHqiD9bJHkYVPOat4WjpKlymYmibbM8KDiHI=;
+        b=bfTWbcMSbQdMNztDIHcYD4spp9FUSu9zPcH9ic7I8birk0tW/1CasmhDHemrbrf/hV
+         XGlWPPvj7xyX4G1rIMB5u3O2XNekZxuLNPphvctxffT3wUkgjCX3LzTBaJB93WYiH9Wq
+         jdutMFEpSzeEp11EwI2FmrEzAtpSV6nY4a4qqZngFS6BuK+uWBi9njb13dYnQLddJBzt
+         df/TCo2UP+SF1vMdm7eFLkBq4Iy8fl2LjL94qYQ64Zw9zbiG+xsXiRhysuGlaDzAZKAZ
+         W6kGACSrunTYhT/qO7djJE1VsChBVkStNVuzRQnxoUdtGTaV9I0208Ms9zUzJOgCo7f0
+         7Cdw==
+X-Gm-Message-State: APjAAAVK9WlikJyH7gCLrZ9vLVk39kQ+YTLOK0Oiiob8l+NNoRobJpfF
+        BDEirwaeVaR27h/Jk18hPnY59bIH+aFlscNlE9X/NTyJ
+X-Google-Smtp-Source: APXvYqw6I8qtOuyHTu5+mS/goZMEOclkdUxdtam6G+pmDKAAIhr9OjUJ+zVr5mfvRHGw5EzeX0ZkHm40aSRoXimn9Bg=
+X-Received: by 2002:a05:6808:292:: with SMTP id z18mr12124841oic.131.1579523781652;
+ Mon, 20 Jan 2020 04:36:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d234b84b-b735-09f2-d7f1-e048fb9a3f87@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191217104025.23318-1-peter.ujfalusi@ti.com> <CAMuHMdUPhabZrXJ3UqSVTdy2aWf6VG27q287MizKJ5q5tyRnwA@mail.gmail.com>
+ <c7eedf72-aa00-8ffe-8c8f-4946a4f54fa7@ti.com>
+In-Reply-To: <c7eedf72-aa00-8ffe-8c8f-4946a4f54fa7@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Jan 2020 13:36:10 +0100
+Message-ID: <CAMuHMdXU9_WY54iU5DY6UHZHmyaR06pW7X0nnyCWHA=R3GtcJA@mail.gmail.com>
+Subject: Re: [PATCH] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel()
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
+        Vinod <vkoul@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 12:03:20PM +0530, Anshuman Khandual wrote:
->
->
->On 01/20/2020 08:34 AM, Wei Yang wrote:
->> Now we can pass all bad reasons to __dump_page().
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->> ---
->>  mm/page_alloc.c | 52 ++++++++++++++++++++++++++-----------------------
->>  1 file changed, 28 insertions(+), 24 deletions(-)
->> 
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index a43b9d2482f2..a7b793c739fc 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -609,7 +609,7 @@ static inline int __maybe_unused bad_range(struct zone *zone, struct page *page)
->>  }
->>  #endif
->>  
->> -static void bad_page(struct page *page, const char *reason,
->> +static void bad_page(struct page *page, int nr, const char **reason,
->>  		unsigned long bad_flags)
->>  {
->>  	static unsigned long resume;
->> @@ -638,7 +638,7 @@ static void bad_page(struct page *page, const char *reason,
->>  
->>  	pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
->>  		current->comm, page_to_pfn(page));
->> -	__dump_page(page, 1, &reason);
->> +	__dump_page(page, nr, reason);
->>  	bad_flags &= page->flags;
->>  	if (bad_flags)
->>  		pr_alert("bad because of flags: %#lx(%pGp)\n",
->> @@ -1027,27 +1027,25 @@ static inline bool page_expected_state(struct page *page,
->>  
->>  static void free_pages_check_bad(struct page *page)
->>  {
->> -	const char *bad_reason;
->> -	unsigned long bad_flags;
->> -
->> -	bad_reason = NULL;
->> -	bad_flags = 0;
->> +	const char *bad_reason[5];
->
->s/5/NR_BAD_PAGE_REASONS
->
->
->> +	unsigned long bad_flags = 0;
->> +	int nr = 0;
->>  
->>  	if (unlikely(atomic_read(&page->_mapcount) != -1))
->> -		bad_reason = "nonzero mapcount";
->> +		bad_reason[nr++] = "nonzero mapcount";
->>  	if (unlikely(page->mapping != NULL))
->> -		bad_reason = "non-NULL mapping";
->> +		bad_reason[nr++] = "non-NULL mapping";
->>  	if (unlikely(page_ref_count(page) != 0))
->> -		bad_reason = "nonzero _refcount";
->> +		bad_reason[nr++] = "nonzero _refcount";
->>  	if (unlikely(page->flags & PAGE_FLAGS_CHECK_AT_FREE)) {
->> -		bad_reason = "PAGE_FLAGS_CHECK_AT_FREE flag(s) set";
->> +		bad_reason[nr++] = "PAGE_FLAGS_CHECK_AT_FREE flag(s) set";
->>  		bad_flags = PAGE_FLAGS_CHECK_AT_FREE;
->>  	}
->>  #ifdef CONFIG_MEMCG
->>  	if (unlikely(page->mem_cgroup))
->> -		bad_reason = "page still charged to cgroup";
->> +		bad_reason[nr++] = "page still charged to cgroup";
->>  #endif
->> -	bad_page(page, bad_reason, bad_flags);
->> +	bad_page(page, nr, bad_reason, bad_flags);
->>  }
->>  
->>  static inline int free_pages_check(struct page *page)
->> @@ -1062,6 +1060,7 @@ static inline int free_pages_check(struct page *page)
->>  
->>  static int free_tail_pages_check(struct page *head_page, struct page *page)
->>  {
->> +	const char *reason;
->>  	int ret = 1;
->>  
->>  	/*
->> @@ -1078,7 +1077,8 @@ static int free_tail_pages_check(struct page *head_page, struct page *page)
->>  	case 1:
->>  		/* the first tail page: ->mapping may be compound_mapcount() */
->>  		if (unlikely(compound_mapcount(page))) {
->> -			bad_page(page, "nonzero compound_mapcount", 0);
->> +			reason = "nonzero compound_mapcount";
->> +			bad_page(page, 1, &reason, 0);
->>  			goto out;
->>  		}
->>  		break;
->> @@ -1090,17 +1090,20 @@ static int free_tail_pages_check(struct page *head_page, struct page *page)
->>  		break;
->>  	default:
->>  		if (page->mapping != TAIL_MAPPING) {
->> -			bad_page(page, "corrupted mapping in tail page", 0);
->> +			reason = "corrupted mapping in tail page";
->> +			bad_page(page, 1, &reason, 0);
->>  			goto out;
->>  		}
->>  		break;
->>  	}
->>  	if (unlikely(!PageTail(page))) {
->> -		bad_page(page, "PageTail not set", 0);
->> +		reason = "PageTail not set";
->> +		bad_page(page, 1, &reason, 0);
->>  		goto out;
->>  	}
->>  	if (unlikely(compound_head(page) != head_page)) {
->> -		bad_page(page, "compound_head not consistent", 0);
->> +		reason = "compound_head not consistent";
->> +		bad_page(page, 1, &reason, 0);
->>  		goto out;
->>  	}
->>  	ret = 0;
->> @@ -2041,29 +2044,30 @@ static inline void expand(struct zone *zone, struct page *page,
->>  
->>  static void check_new_page_bad(struct page *page)
->>  {
->> -	const char *bad_reason = NULL;
->> +	const char *bad_reason[5];
->
->s/5/NR_BAD_PAGE_REASONS 
->
->>  	unsigned long bad_flags = 0;
->> +	int nr = 0;
->>  
->>  	if (unlikely(atomic_read(&page->_mapcount) != -1))
->> -		bad_reason = "nonzero mapcount";
->> +		bad_reason[nr++] = "nonzero mapcount";
->>  	if (unlikely(page->mapping != NULL))
->> -		bad_reason = "non-NULL mapping";
->> +		bad_reason[nr++] = "non-NULL mapping";
->>  	if (unlikely(page_ref_count(page) != 0))
->> -		bad_reason = "nonzero _refcount";
->> +		bad_reason[nr++] = "nonzero _refcount";
->>  	if (unlikely(page->flags & __PG_HWPOISON)) {
->>  		/* Don't complain about hwpoisoned pages */
->>  		page_mapcount_reset(page); /* remove PageBuddy */
->>  		return;
->>  	}
->>  	if (unlikely(page->flags & PAGE_FLAGS_CHECK_AT_PREP)) {
->> -		bad_reason = "PAGE_FLAGS_CHECK_AT_PREP flag set";
->> +		bad_reason[nr++] = "PAGE_FLAGS_CHECK_AT_PREP flag set";
->>  		bad_flags = PAGE_FLAGS_CHECK_AT_PREP;
->>  	}
->>  #ifdef CONFIG_MEMCG
->>  	if (unlikely(page->mem_cgroup))
->> -		bad_reason = "page still charged to cgroup";
->> +		bad_reason[nr++] = "page still charged to cgroup";
->>  #endif
->> -	bad_page(page, bad_reason, bad_flags);
->> +	bad_page(page, 1, bad_reason, bad_flags);
->This should be 'nr' here instead ?
->
+Hi Peter,
 
-Thanks, I missed this one.
+On Mon, Jan 20, 2020 at 1:09 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> On 20/01/2020 14.05, Geert Uytterhoeven wrote:
+> > On Tue, Dec 17, 2019 at 11:41 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> >> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> >> eating up the error code.
+> >>
+> >> By using dma_request_chan() directly the driver can support deferred
+> >> probing against DMA.
+> >>
+> >> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > One comment below.
+> >
+> >> --- a/drivers/media/platform/rcar_drif.c
+> >> +++ b/drivers/media/platform/rcar_drif.c
+> >> @@ -275,10 +275,10 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+> >>         for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
+> >>                 struct rcar_drif *ch = sdr->ch[i];
+> >>
+> >> -               ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
+> >> -               if (!ch->dmach) {
+> >> +               ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
+> >> +               if (IS_ERR(ch->dmach)) {
+> >>                         rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
+> >
+> > Now there is an error code, you might (1) want to print it, and (2) only
+> > do so when it is not due to probe deferral:
+> >
+> >         if (PTR_ERR(ch->dmach) != -EPROBE_DEFER)
+> >                 rdrif_err(sdr, "ch%u: dma channel req failed %pe\n",
+> > i, ch->dmach);
+>
+> Yes, this is true.
+>
+> >
+> >> -                       ret = -ENODEV;
+> >> +                       ret = PTR_ERR(ch->dmach);
+>
+> if (ret != -EPROBE_DEFER)
+>         rdrif_err(sdr, "ch%u: dma channel req failed (%d)\n", i, ret);
+>
+> might be simpler.
 
->>  }
->>  
->>  /*
->> 
+Sure, checking ret is simpler.
+But printing ch->dmach means you can use the new %pe format specifier
+to pretty-print the error code.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Wei Yang
-Help you, Help me
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
