@@ -2,77 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7220D142B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 992CB142B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbgATNDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:03:37 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39973 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbgATNDg (ORCPT
+        id S1727041AbgATNG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:06:29 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36168 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgATNG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:03:36 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b8so29392880edx.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 05:03:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=0/imIEsyEBeR7+n66JGCV921+E7S5EarGk9nq10BYk8=;
-        b=FtqmuR92by4GqkRJ/pL01HdPLlaDJuqGWNEDC5xuM69Om3ObsaUKfq63G6A3GdvqDV
-         soOYaEvN4w+YGnXrXmvhE+Zyt1fU9olzULADy4wClxSgPmA2CJXGYMMQWksMQuabsx4z
-         Hwi+fiOIjzYJ4V5IiVnI5n16rgROWhrm6Pn2SiJqb/lv0i0fEuVWRi28fyCwCoDrwltN
-         XsgTXVsdxnuH4zFrbtCTecVtDfx7u8Y1tfiB1q+cBS1QN6BGx9pjAaQ1Hmj3aQ3So4Xy
-         rlDQxUUNuWMMsNWc9sV7l8As6aiJnYx5FpnpE/Dp4DZQ+jod31iPg3Qv5MTWKLTuPFm5
-         c0aw==
+        Mon, 20 Jan 2020 08:06:29 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so14662913wma.1;
+        Mon, 20 Jan 2020 05:06:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=0/imIEsyEBeR7+n66JGCV921+E7S5EarGk9nq10BYk8=;
-        b=c3b+xKYW94w1X8mXaXFCc21zrProLbp7IJzt0zczfyg14l2o5gEl0hHSALrckjAv36
-         ae+nwhFt2o0ZVpgGP8nACnkKozCy5KXudrWj0HxdnVQWsUp34hMhgVK5Pj7whUQhEBWW
-         Jbb83HrmgWepJyJ4S78yLivO+KULivjXNBiq17l7hfxkEApyYohZZ43RvYvjVjOtSMTz
-         m+aBfLJhsmAXCqo4ynQ95bBa7oClSy399O+zI8Lhv4QbXR0gLe4Pl7myfcyTPVo1xrjN
-         W0DDgwiMUOdeNTvtxoVKzww56nSVq/rLxL04PGZdL6u0W0rC3l0k9cca8ny3o6N+g9Uq
-         5NIA==
-X-Gm-Message-State: APjAAAXFOSlylEn61GfnQfXf0WB3u69Ts0vqzIXNO2pBezqjwtcYQkgc
-        lkRdwQY6+7q5BqYfgbtCgRqEMMTYGmFuW3kt9og=
-X-Google-Smtp-Source: APXvYqzdFuRHxWC1bbGNO63rJEe7J9d+R9qkJSKHvI3/ppSXiDqbKGMw5U57eYodLbh5ZRnOubmV975yQrC9l3npJMk=
-X-Received: by 2002:a17:906:33db:: with SMTP id w27mr19950398eja.349.1579525414764;
- Mon, 20 Jan 2020 05:03:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yAP4AxE8jezFjjNwotXQWmTcKA84LGA03EpyU82A5NQ=;
+        b=JFQt4NA9ODEdbrhgqEnltqJvRrqhvFTw6q548TRUBfPZbxeV/NGixFVZHipaxPFn2R
+         PfshJIod+7e3W3xcMHzNt+N59SITEe/EbaKu4lmCqZ/D6IDD1KcIMB/uIREOuxpAivLJ
+         s6OSGP7hKkVU7ImbGWNyWPu8KyNKxV1waHyl/tSvQteXViGSCZAOGyW2PkJ1MceMRogF
+         TOpKj5GfTn5gVcH3xj9uMtIOHHma26n+Zd/gJwDZ+DWs65LpTsTuJuEz+MdSjwfuSz22
+         ga1rYipaN2UQEiuEZA08sr6SR6j5eI0xxSxPn2++JjeqCGrOhv1ozuryiU1U52pD6kaI
+         mZKg==
+X-Gm-Message-State: APjAAAUBHHU/cHq2FqddxOp5TTo21KmOlVI9Q6L1g19JY9VV5e2pqARL
+        54XeCGvTciiKJJNdOworKS8cV9Rl
+X-Google-Smtp-Source: APXvYqy9ZRyVn2Uj4Hak4b0GCXZIvQoCZGbEy/6ofUz59wN/vXZ2z+9kjnuxMPGnLSbwovzTlQdxwQ==
+X-Received: by 2002:a05:600c:22d3:: with SMTP id 19mr18745263wmg.20.1579525586658;
+        Mon, 20 Jan 2020 05:06:26 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id c195sm3106848wmd.45.2020.01.20.05.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 05:06:25 -0800 (PST)
+Date:   Mon, 20 Jan 2020 14:06:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     richardw.yang@linux.intel.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] mm: move_pages: fix the return value if there are
+ not-migrated pages
+Message-ID: <20200120130624.GD18451@dhcp22.suse.cz>
+References: <1579325203-16405-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Reply-To: info.maxwellkojo@gmail.com
-Received: by 2002:a17:906:901:0:0:0:0 with HTTP; Mon, 20 Jan 2020 05:03:34
- -0800 (PST)
-From:   Maxwell Kojo <mrmaxwellkojo@gmail.com>
-Date:   Mon, 20 Jan 2020 14:03:34 +0100
-X-Google-Sender-Auth: SqU8YRCAzqUvd5u5cRJZBj7_UGc
-Message-ID: <CAFZMWWrXEbF37f=_SmX8=mo2W_YvEA1Oe2w=xmV3nMaJcASCJw@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579325203-16405-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
+On Sat 18-01-20 13:26:43, Yang Shi wrote:
+> The do_move_pages_to_node() might return > 0 value, the number of pages
+> that are not migrated, then the value will be returned to userspace
+> directly.  But, move_pages() syscall would just return 0 or errno.  So,
+> we need reset the return value to 0 for such case as what pre-v4.17 did.
 
-I am Maxwell Kojo, I work with a bank in Burkina Faso. I have a
-proposal for you regarding the transfer of funds deposited by a late
-foreign client into our bank here.
+The patch is wrong. migrate_pages returns the number of pages it
+_hasn't_ migrated or -errno. Yeah that semantic sucks but...
+So err != 0 is always an error. Except err > 0 doesn't really provide
+any useful information to the userspace. I cannot really remember what
+was the actual behavior before my rework because there were some gotchas
+hidden there.
 
-If you are really sure of your integrity, trust and confidentiality to
-receive the fund, please answer me urgently for more details, contact
-my private email address(info.maxwellkojo@gmail.com).
+If you want to fix this properly then you have to query node status of
+each page unmigrated when migrate_pages fails with > 0. This would be
+easier if the fix is done on the latest cleanup posted to the list which
+consolidates all do_move_pages_to_node and store_status calls to a
+single function.
 
-Kindly send me the followings
+> Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Wei Yang <richardw.yang@linux.intel.com>
+> Cc: <stable@vger.kernel.org>    [4.17+]
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+>  mm/migrate.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 86873b6..3e75432 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1659,8 +1659,11 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>  			goto out_flush;
+>  
+>  		err = do_move_pages_to_node(mm, &pagelist, current_node);
+> -		if (err)
+> +		if (err) {
+> +			if (err > 0)
+> +				err = 0;
+>  			goto out;
+> +		}
+>  		if (i > start) {
+>  			err = store_status(status, start, current_node, i - start);
+>  			if (err)
+> -- 
+> 1.8.3.1
 
-Full Names
-Address
-Occupation
-Direct Mobile Telephone Lines
-Nationality
-
-Regards,
-Maxwell Kojo.
+-- 
+Michal Hocko
+SUSE Labs
