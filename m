@@ -2,86 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0CA142448
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 08:32:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44C9142440
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 08:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgATHcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 02:32:33 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:56870 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbgATHcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 02:32:32 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EA2081A058C;
-        Mon, 20 Jan 2020 08:32:30 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 77D441A02E4;
-        Mon, 20 Jan 2020 08:32:27 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EF3E8402C4;
-        Mon, 20 Jan 2020 15:32:22 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     lars@metafoo.de, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, john.stultz@linaro.org
-Subject: [PATCH] ASoC: soc-generic-dmaengine-pcm: Fix error handling
-Date:   Mon, 20 Jan 2020 15:28:06 +0800
-Message-Id: <1579505286-32085-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726796AbgATHas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 02:30:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44652 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgATHas (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 02:30:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itRWC-00BtNz-7S; Mon, 20 Jan 2020 07:30:40 +0000
+Date:   Mon, 20 Jan 2020 07:30:40 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120073040.GZ8904@ZenIV.linux.org.uk>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgkan57p.fsf@mail.parknet.co.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the return value checking, that is to align with the code
-before adding snd_dmaengine_pcm_refine_runtime_hwparams function.
+On Mon, Jan 20, 2020 at 01:04:42PM +0900, OGAWA Hirofumi wrote:
 
-Otherwise it causes a regression on the HiKey board:
+> Also, not directly same issue though. There is related issue for
+> case-insensitive. Even if we use some sort of internal wide char
+> (e.g. in nls, 16bits), dcache is holding name in user's encode
+> (e.g. utf8). So inefficient to convert cached name to wide char for each
+> access.
+> 
+> Relatively recent EXT4 case-insensitive may tackled this though, I'm not
+> checking it yet.
 
-[   17.721424] hi6210_i2s f7118000.i2s: ASoC: can't open component f7118000.i2s: -6
+What's more, comparisons in dcache lookups have to be very careful about
+the rename-related issues.  You can give false negatives if the name
+changes under you; it's not a problem.  You can even give a false positive
+in case of name change happening in the middle of comparison; ->d_seq
+mismatch will get caught and it will have the result discarded before it
+causes problems.  However, you can't e.g. assume that the string you are
+trying to convert from utf8 to 16bit won't be changing right under you.
+Again, the wrong result of comparison in such situation is not a problem;
+wrong return value is not the worst thing that can happen to a string
+function mistakenly assuming that the string is not changing under it.
 
-Fixes: e957204e732b ("ASoC: pcm_dmaengine: Extract snd_dmaengine_pcm_refine_runtime_hwparams")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reported-by: John Stultz <john.stultz@linaro.org>
----
- sound/soc/soc-generic-dmaengine-pcm.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+And you very much need to be careful about the things you can access
+there.  E.g. something like "oh, I'll just look at the flags in the
+inode of the parent of potential match" (as in the recently posted
+series) is a bloody bad idea on many levels.  Starting with "your
+potential match is getting moved right now, and what used to be its
+parent becomes negative by the time you get around to fetching its
+->d_inode.  Dereferencing the resulting NULL to get inode flags
+is not pretty".
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index a428ff393ea2..2b5f3b1b062b 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -117,7 +117,6 @@ dmaengine_pcm_set_runtime_hwparams(struct snd_soc_component *component,
- 	struct dma_chan *chan = pcm->chan[substream->stream];
- 	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct snd_pcm_hardware hw;
--	int ret;
- 
- 	if (pcm->config && pcm->config->pcm_hardware)
- 		return snd_soc_set_runtime_hwparams(substream,
-@@ -138,12 +137,15 @@ dmaengine_pcm_set_runtime_hwparams(struct snd_soc_component *component,
- 	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
- 		hw.info |= SNDRV_PCM_INFO_BATCH;
- 
--	ret = snd_dmaengine_pcm_refine_runtime_hwparams(substream,
--							dma_data,
--							&hw,
--							chan);
--	if (ret)
--		return ret;
-+	/**
-+	 * FIXME: Remove the return value check to align with the code
-+	 * before adding snd_dmaengine_pcm_refine_runtime_hwparams
-+	 * function.
-+	 */
-+	snd_dmaengine_pcm_refine_runtime_hwparams(substream,
-+						  dma_data,
-+						  &hw,
-+						  chan);
- 
- 	return snd_soc_set_runtime_hwparams(substream, &hw);
- }
--- 
-2.21.0
+<checks ext4>
+Yup, that bug is there as well, all right.  Look:
+#ifdef CONFIG_UNICODE
+static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
+                          const char *str, const struct qstr *name)
+{
+        struct qstr qstr = {.name = str, .len = len };
+        struct inode *inode = dentry->d_parent->d_inode;
 
+        if (!IS_CASEFOLDED(inode) || !EXT4_SB(inode->i_sb)->s_encoding) {
+
+Guess what happens if your (lockless) call of ->d_compare() runs
+into the following sequence:
+CPU1:	ext4_d_compare() fetches ->d_parent
+CPU1:	takes a hardware interrupt
+CPU2:	dentry gets evicted by memory pressure; so is its parent, since
+it was the only thing that used to keep it pinned.  Eviction of the parent
+calls dentry_unlink_inode() on the parent, which zeroes its ->d_inode.
+CPU1:	comes back
+CPU1:	fetches parent's ->d_inode and gets NULL
+CPU1:	oopses on null pointer dereference.
+
+It's not impossible to hit.  Note that e.g. vfat_cmpi() is not vulnerable
+to that problem - ->d_sb is stable and both the superblock and ->nls_io
+freeing is RCU-delayed.
+
+I hadn't checked ->d_compare() instances for a while; somebody needs to
+do that again, by the look of it.  The above definitely is broken;
+no idea how many other instaces had grown such bugs...
