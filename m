@@ -2,105 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8131433F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E96C143420
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:35:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbgATWdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 17:33:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37684 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbgATWdT (ORCPT
+        id S1728847AbgATWf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 17:35:27 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34461 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727011AbgATWf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 17:33:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6395EwuwLp7BSh0SHkkcV4mhJoN9KeSV8+Z7AuG+fu8=; b=qdGAVTw11fJXgxBM+eQAMaXxy
-        1D5Rtb7kkwChm7QKLWThgRIslj0MkAT3Nh8tdZnzBKf04NAnn023dCn3v4MReCFJcqiFJ9lpsrulq
-        VBGBFcwGMtRCWq/IsPbNktlx8xHUsz9OTJNoOqMnPVdVOZksbUynpdqa8Y4wtdhhSlD/hb2c+Q7gt
-        XVfiwdUli55oTSiwOJghgXCNnlZK+E9t/Yzz3Wp0pOKizHheqUVEKHOi5kF/fb6/3eN2gTN2nvIaz
-        Q0naYmLro/AwhffJm81aofZHsBgwwKAyliBny3UxLvmPjQUTrSAppabTsRFXSPcYd9I81TnMJmHDf
-        kfs0VGvYQ==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itfbi-0006nI-IH; Mon, 20 Jan 2020 22:33:18 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] Documentation: cpu-idle-cooling: fix a SEVERE docs
- build failure
-Message-ID: <712c1152-56b5-307f-b3f3-ed03a30b804a@infradead.org>
-Date:   Mon, 20 Jan 2020 14:33:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 20 Jan 2020 17:35:27 -0500
+Received: by mail-wm1-f66.google.com with SMTP id w5so835518wmi.1;
+        Mon, 20 Jan 2020 14:35:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7y+9jcXPCSZhEx3NX+qoACFZGUpTqdiKM8//qksV/wQ=;
+        b=e8/RztKUTOxk4TpVS0UaHQ7AW9nnb/saWhB32I4djbutPSNabLAyUcp2F5s+5lOjAL
+         LiN0siarHL8RNGI/YLUy1bvafhxUNeLp2JGNxIup899i50z7nCFAcegP1HhpKYXPWQp/
+         RsDvLtSVOP9Sp1ugLkjLzq+U22PnWE4wc8KM05IrEc08dANFerzmHbxKt6qjYvoz8wSM
+         8pPCRz5GVXtdfqR2HtESeRIA9YxnXhox95j1rjK2SM2B3QKgpep7i/IE6GLbM41pYm4R
+         dk+FFR9hFuH2vMntj+/I3U6IvAHbqMg0P6Gpx3m+ENY/MED6i7QJjMkFCBWkcP5cxdku
+         mbzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7y+9jcXPCSZhEx3NX+qoACFZGUpTqdiKM8//qksV/wQ=;
+        b=Al7kkJ323iWjuvqY/qc3RFUGyj/Ldu0yxghd4yELBML1prR+O3RS2In1ByG4T9lVJd
+         KEqOzVy0ikivuFA+voEOiBPtBjR7eJgP/yFFFiBXXXKkUE0Ed8n+jHzm9G5FZ6twfDyn
+         lEPJLWJiGZYvXACH/uEALGsoMR+tXtkAxb1vcn2SFwzkZJN81a+52WvLAK4DntkGGrwa
+         ETXCOR+fCslbj1x8FRMJ/dyLqPBxvzBZJ+K1il6l1mBL4iOVIT/jOD4t7vNWbFE0aeC3
+         5tv6CbxKyEMrTMOkxxBbIMos+CWbNqa+8M3U5VyOnkS4RA4HvopJWa29qgAHVu38+jpF
+         Ycfg==
+X-Gm-Message-State: APjAAAWZ6Y66lstRo593AxFvDCGik9fj7l12XOY9jqbaTJaVBESJQk49
+        9HjsZW3Sg5iCVYKCAKeeh0gOmjVNei6M
+X-Google-Smtp-Source: APXvYqwfucQ7OKW5yitDW5nNdnnZ48z8RtghuViGeJ+elzu4gbmME8rQaw5EBWB5OkcQHl/gC8bhhQ==
+X-Received: by 2002:a1c:1f56:: with SMTP id f83mr912984wmf.93.1579559725274;
+        Mon, 20 Jan 2020 14:35:25 -0800 (PST)
+Received: from ninjahost.lan (host-92-15-170-165.as43234.net. [92.15.170.165])
+        by smtp.googlemail.com with ESMTPSA id f207sm1213744wme.9.2020.01.20.14.35.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 14:35:24 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH 0/5] Lock warning clean up 
+Date:   Mon, 20 Jan 2020 22:35:15 +0000
+Message-Id: <20200120223515.51287-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+This patch series adds missing annotations to functions that register warnings of context imbalance when built with Sparse tool.
+The adds fix these warnings and give insight on what the functions are actually doing.
+In the core kernel,
 
-Sphinx ('make htmldocs') stops with a SEVERE error:
+1. IRQ and RCU subsystems: exactly patch 1 and 3,  __releases() annotations were added as these functions exit the critical section
+2. RCU subsystem again, patch 2 and 4, __acquire() annotations were added as the functions allow entry to the critical section.
+3. TIME subsystem, patch 5 where lock is held at entry and exit of the function, an __must_hold() annotation was added.
 
+Jules Irenge (5):
+  irq: Add  missing annotation for __irq_put_desc_unlock()
+  rcu: Add missing annotation for exit_tasks_rcu_start()
+  rcu: Add missing annotation for exit_tasks_rcu_finish()
+  rcu: Add missing annotation for rcu_nocb_bypass_lock()
+  time: Add missing annotation for __run_timer()
 
-Sphinx parallel build error:
-SystemMessage: /home/rdunlap/lnx/next/linux-next-20200120/Documentation/driver-api/thermal/cpu-idle-cooling.rst:69: (SEVERE/4) Unexpected section title.
+ kernel/irq/irqdesc.c     | 1 +
+ kernel/rcu/tree_plugin.h | 1 +
+ kernel/rcu/update.c      | 4 ++--
+ kernel/time/hrtimer.c    | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
 
-^
-|
-
-so fix the .rst file so that the SEVERE build error does not happen.
-Also fix another minor formatting warning (unexpected unindent).
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Amit Kucheria <amit.kucheria@verdurent.com>
-Cc: linux-pm@vger.kernel.org
-
----
- Documentation/driver-api/thermal/cpu-idle-cooling.rst |    5 +++++
- 1 file changed, 5 insertions(+)
-
---- linux-next-20200120.orig/Documentation/driver-api/thermal/cpu-idle-cooling.rst
-+++ linux-next-20200120/Documentation/driver-api/thermal/cpu-idle-cooling.rst
-@@ -65,6 +65,8 @@ We use a fixed duration of idle injectio
- performance penalty and a fixed latency. Mitigation can be increased
- or decreased by modulating the duty cycle of the idle injection.
- 
-+::
-+
-      ^
-      |
-      |
-@@ -91,6 +93,8 @@ computed.
- The governor will change the cooling device state thus the duty cycle
- and this variation will modulate the cooling effect.
- 
-+::
-+
-      ^
-      |
-      |
-@@ -154,6 +158,7 @@ equation:
- 
-  P(opp)target = ((Trunning x (P(opp)running) + (Tidle x P(opp)idle)) /
- 			(Trunning + Tidle)
-+
-   ...
- 
-  Tidle = Trunning x ((P(opp)running / P(opp)target) - 1)
+-- 
+2.24.1
 
