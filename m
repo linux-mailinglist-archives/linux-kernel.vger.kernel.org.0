@@ -2,124 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19CAD142C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20015142C35
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:38:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbgATNei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:34:38 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:36784 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbgATNei (ORCPT
+        id S1727041AbgATNiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:38:15 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:41157 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbgATNiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:34:38 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00KDX2dB045765;
-        Mon, 20 Jan 2020 13:34:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=4RZ/iUBw64s4UkNe4jkVsvA9CN5NJnP7F69TwV/NGVo=;
- b=eHtTY6c6KWRKZXDPTNU+vmhH+9B+LIypChrEtFpt+0u75e4IdnuFPIYUO3Ir3nrhg9t8
- rokp6/k59MhoGHeO/Gjop1grLGxQo+VyLSOVwzt/sYS9E+CpJ+NOXay/S+1cbPW6V1qI
- U51QKiAq4d5404tTkliPGRmnrXqV0OmS0GjRASj1oHNIl8pCfNKTKdrJaZQ16NGU51iW
- OQYkDEslJV/TwmUC+tY4qmRm6lSUXEV9MH53kmIquaAXvHxMWo3ARpMHC01NGh575+m8
- jaOa2+tdBd+k0kIobA5vcrPv/f691riU7cJkifbAvSoGRr72Hkfr3lrDbC9MdOrrIjS9 TA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2xkseu7kpw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Jan 2020 13:34:26 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00KDYLWk055891;
-        Mon, 20 Jan 2020 13:34:25 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2xmbj1wsef-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Jan 2020 13:34:25 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00KDY3wb012785;
-        Mon, 20 Jan 2020 13:34:03 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 20 Jan 2020 05:34:02 -0800
-Date:   Mon, 20 Jan 2020 16:37:58 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     syzbot <syzbot+afeecc39f502a8681560@syzkaller.appspotmail.com>,
-        arnd@arndb.de, dmitry.torokhov@gmail.com, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, stern@rowland.harvard.edu,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: linux-next boot error: KASAN: slab-out-of-bounds Read in
- post_usb_notification
-Message-ID: <20200120133758.GK19765@kadam>
-References: <20200120082335.GD21151@kadam>
- <0000000000001a91f9059c52f727@google.com>
- <929068.1579526141@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <929068.1579526141@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9505 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001200117
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9505 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001200117
+        Mon, 20 Jan 2020 08:38:15 -0500
+Received: by mail-qv1-f65.google.com with SMTP id x1so13964104qvr.8
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 05:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VsoGp109ufXvJlVZJZ7+0lYM452uESSHevplYutSYdo=;
+        b=Yc8FBZqTZ49PR5XXHmSJg+sa0E2yA2SnM6T59xCyidB4uZeLSzVy3UCVN/qMge68b1
+         fjqdT3489T5Z9hCB68ih4OOwJ7kCdrHvSclJqdiHN0Y/83q6BhWQUHxOOR2JZQKib/ol
+         IVT97/PKh0h37qHZrTsQV6nsAf4i2OqGL+rlxPdD/ODZU2JSFurICYGDHrm0NPhB4qo0
+         XOmN1zU5d3ygI6eneSowmjWlfPkWWHuEdhIc/aOG/ldQrdJZwuJ1zRX+h7e+jW3Bcb4I
+         szkVtjbdL6RtZQ/rzLdjS30XlWuEzg99yvFOAs9wPiGEQMnL+ioVC2Korl/zK2n8Pkdu
+         OyFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VsoGp109ufXvJlVZJZ7+0lYM452uESSHevplYutSYdo=;
+        b=KAZwjkZPn3tfRS102yX39n2bFXQho4zuskUeu9eIrZ1J48NzBef8sE+oUyIOl+iRuh
+         o/5IiwuuV7WOToddxUPlrkTpz1idW2hjBEgcsQONRgQ8Xc6YPUtkvFhUtg3MMSfFQv9Z
+         9Sl2jOxXig5DhKv089oi2Iie//aI5RI+69rNDLxZ0KsiIos+NLeXwSbCLesUMomv6SCF
+         u5iis7Vo1Vfj6mbQauCNkF3H2B5SCDFY62Sw5HkFKLv6tZqTbSHpuJbzR3KWAv24gg79
+         HHboFLQya/tK8/uRmIAme+VmI+8UL2TGDjY47jIWxCuXofF+XDOTCYjcscBhHcZazhI5
+         GXPg==
+X-Gm-Message-State: APjAAAUBbCkMJQSAJW57NM6Ycl793BZ3kYkRbLb07S1EHGmjrR8RI32R
+        Dj3hY+ZENWHzb/Nvfr2wVujPrA==
+X-Google-Smtp-Source: APXvYqzJWHkLYwbnfPaTEh8dSNBmbk2tJ+IQclnyI2T+yocRWe19nO7fmcyCO3qWekozAS8DWPvdzQ==
+X-Received: by 2002:a0c:a145:: with SMTP id d63mr21206033qva.120.1579527493658;
+        Mon, 20 Jan 2020 05:38:13 -0800 (PST)
+Received: from qians-mbp.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id i90sm17560198qtd.49.2020.01.20.05.38.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 Jan 2020 05:38:13 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH -mm v2] mm/page_isolation: fix potential warning from user
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <8c56268d-9b8a-f62e-eca9-7707852a2aaf@redhat.com>
+Date:   Mon, 20 Jan 2020 08:38:12 -0500
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <28542D23-FCB7-4342-B77C-65C7B1F162FC@lca.pw>
+References: <20200120131909.813-1-cai@lca.pw>
+ <8c56268d-9b8a-f62e-eca9-7707852a2aaf@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 01:15:41PM +0000, David Howells wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> >   2759          struct {
-> >   2760                  struct usb_notification n;
-> >   2761                  char more_name[USB_NOTIFICATION_MAX_NAME_LEN -
-> >   2762                                 (sizeof(struct usb_notification) -
-> >   2763                                  offsetof(struct usb_notification, name))];
-> >   2764          } n;
-> >   2765  
-> >   2766          name_len = strlen(devname);
-> >   2767          name_len = min_t(size_t, name_len, USB_NOTIFICATION_MAX_NAME_LEN);
-> >                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > This limit is too high.  It should be USB_NOTIFICATION_MAX_NAME_LEN -
-> > sizeof(struct usb_notification). or just
-> > "min_t(size_t, name_len, sizeof(n.more_name));".  n.n.name[] is a
-> > zero size array.
-> 
-> No.  It's not that simple.  If you look at the struct:
-> 
-> 	struct usb_notification {
-> 		struct watch_notification watch;
-> 		__u32	error;
-> 		__u32	reserved;
-> 		__u8	name_len;
-> 		__u8	name[0];
-> 	};
-> 
-> There are at least 3, if not 7, bytes of padding after name[] as the struct is
-> not packed - and isn't necessarily rounded up to a multiple of 8 bytes either.
-> If you look at the definition of more_name[] above, you'll see:
-> 
-> 	USB_NOTIFICATION_MAX_NAME_LEN -
-> 	(sizeof(struct usb_notification) -
-> 	 offsetof(struct usb_notification, name))
-> 
-> That calculates the amount of padding and then subtracts it from the amount of
-> name bufferage required.
-> 
-> USB_NOTIFICATION_MAX_NAME_LEN is 63, which is 64 minus one for the length.
 
-Ah yes...  You're right.  I didn't think about padding.  And even if I
-had, I would have thought the hole would have gone before name[] but
-it comes after as you say.
 
-regards,
-dan carpenter
+> On Jan 20, 2020, at 8:30 AM, David Hildenbrand <david@redhat.com> =
+wrote:
+>=20
+> On 20.01.20 14:19, Qian Cai wrote:
+>> It makes sense to call the WARN_ON_ONCE(zone_idx(zone) =3D=3D =
+ZONE_MOVABLE)
+>> from start_isolate_page_range(), but should avoid triggering it from
+>> userspace, i.e, from is_mem_section_removable() because it could be a
+>> DoS if warn_on_panic is set.
+>>=20
+>> While at it, simplify the code a bit by removing an unnecessary jump
+>> label and a local variable, so set_migratetype_isolate() could really
+>> return a bool.
+>>=20
+>> Suggested-by: Michal Hocko <mhocko@kernel.org>
+>> Signed-off-by: Qian Cai <cai@lca.pw>
+>> ---
+>>=20
+>> v2: Improve the commit log.
+>>    Warn for all start_isolate_page_range() users not just offlining.
+>>=20
+>> mm/page_alloc.c     | 11 ++++-------
+>> mm/page_isolation.c | 30 +++++++++++++++++-------------
+>> 2 files changed, 21 insertions(+), 20 deletions(-)
+>>=20
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 621716a25639..3c4eb750a199 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -8231,7 +8231,7 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+>> 		if (is_migrate_cma(migratetype))
+>> 			return NULL;
+>>=20
+>> -		goto unmovable;
+>> +		return page;
+>> 	}
+>>=20
+>> 	for (; iter < pageblock_nr_pages; iter++) {
+>> @@ -8241,7 +8241,7 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+>> 		page =3D pfn_to_page(pfn + iter);
+>>=20
+>> 		if (PageReserved(page))
+>> -			goto unmovable;
+>> +			return page;
+>>=20
+>> 		/*
+>> 		 * If the zone is movable and we have ruled out all =
+reserved
+>> @@ -8261,7 +8261,7 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+>> 			unsigned int skip_pages;
+>>=20
+>> 			if =
+(!hugepage_migration_supported(page_hstate(head)))
+>> -				goto unmovable;
+>> +				return page;
+>>=20
+>> 			skip_pages =3D compound_nr(head) - (page - =
+head);
+>> 			iter +=3D skip_pages - 1;
+>> @@ -8303,12 +8303,9 @@ struct page *has_unmovable_pages(struct zone =
+*zone, struct page *page,
+>> 		 * is set to both of a memory hole page and a _used_ =
+kernel
+>> 		 * page at boot.
+>> 		 */
+>> -		goto unmovable;
+>> +		return page;
+>> 	}
+>> 	return NULL;
+>> -unmovable:
+>> -	WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
+>> -	return pfn_to_page(pfn + iter);
+>> }
+>>=20
+>> #ifdef CONFIG_CONTIG_ALLOC
+>> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+>> index e70586523ca3..31f5516f5d54 100644
+>> --- a/mm/page_isolation.c
+>> +++ b/mm/page_isolation.c
+>> @@ -15,12 +15,12 @@
+>> #define CREATE_TRACE_POINTS
+>> #include <trace/events/page_isolation.h>
+>>=20
+>> -static int set_migratetype_isolate(struct page *page, int =
+migratetype, int isol_flags)
+>> +static bool set_migratetype_isolate(struct page *page, int =
+migratetype,
+>> +				    int isol_flags)
+>=20
+> Why this change?
+>=20
+>> {
+>> -	struct page *unmovable =3D NULL;
+>> +	struct page *unmovable =3D ERR_PTR(-EBUSY);
+>=20
+> Also, why this change?
+>=20
+>> 	struct zone *zone;
+>> 	unsigned long flags;
+>> -	int ret =3D -EBUSY;
+>>=20
+>> 	zone =3D page_zone(page);
+>>=20
+>> @@ -49,21 +49,25 @@ static int set_migratetype_isolate(struct page =
+*page, int migratetype, int isol_
+>> 									=
+NULL);
+>>=20
+>> 		__mod_zone_freepage_state(zone, -nr_pages, mt);
+>> -		ret =3D 0;
+>> 	}
+>>=20
+>> out:
+>> 	spin_unlock_irqrestore(&zone->lock, flags);
+>> -	if (!ret)
+>> +
+>> +	if (!unmovable) {
+>> 		drain_all_pages(zone);
+>> -	else if ((isol_flags & REPORT_FAILURE) && unmovable)
+>> -		/*
+>> -		 * printk() with zone->lock held will guarantee to =
+trigger a
+>> -		 * lockdep splat, so defer it here.
+>> -		 */
+>> -		dump_page(unmovable, "unmovable page");
+>> -
+>> -	return ret;
+>> +	} else {
+>> +		WARN_ON_ONCE(zone_idx(zone) =3D=3D ZONE_MOVABLE);
+>> +
+>> +		if ((isol_flags & REPORT_FAILURE) && !IS_ERR(unmovable))
+>> +			/*
+>=20
+> Why this change? (!IS_ERR)
+>=20
+>=20
+> Some things here look unrelated - or I am missing something :)
+
+The original =E2=80=9Cret=E2=80=9D variable looks ugly to me, so I just =
+removed that and consolidated with
+the =E2=80=9Cunmovable=E2=80=9D pointer to always be able to report an =
+error. Since this cleanup is really
+small, I did not bother send a separate patch for it.=
