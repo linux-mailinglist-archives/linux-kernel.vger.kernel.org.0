@@ -2,116 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5083014263B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:56:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDEAD142631
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:54:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbgATIzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:55:45 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60857 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgATIzn (ORCPT
+        id S1727005AbgATIy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:54:57 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42980 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbgATIy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:55:43 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1itSqH-0002Vt-QB; Mon, 20 Jan 2020 09:55:29 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1itSqF-0006s2-1P; Mon, 20 Jan 2020 09:55:27 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mon, 20 Jan 2020 03:54:56 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q6so28487064wro.9
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 00:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wFASbmAcjMPLyphRbOiX44SHWrp7PXj1/IhOzEqtzro=;
+        b=vDepYFXLBoVAdHKjwHAvg6Gv/5dJ2HbkMPPpNvh407VhcxpDu6rwVdq06AwjKNtA7z
+         yVjrmfzAr7J2P7/UahLaaxU+a9AEin1BmQ3qPLTeKJebJSXIg/GqD6eKP+QgCMTIHa5X
+         jBpSKQD6BwgTsW0J/wTt5Zr0L9ZVvXUPcN2VJBYBYxNPNOMRhV4Hfkpi0lDASbYL13e2
+         SEQiVDtM6nt9Q+3J9KyCbGBppcZCANbQ0HIohP6/TRBANJBA+oNkyK6r5wifm7b3mZgO
+         MkRAmiuzyekDPZPKh4U9itVgYWiSU0UvlIsEc7d/lTaMTBf5g+VlJWFL9+d0A2NRG0aR
+         unjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wFASbmAcjMPLyphRbOiX44SHWrp7PXj1/IhOzEqtzro=;
+        b=PeEDwbRJTG23JPVDBOU2cYeiO89wb3xap/r9+gsN40w4LccCWkm2nyRImPseVvYh/M
+         QeP45gGaBbuMl+MCVsR8d3Z5BXs2A5rKoHrmtjRcfpzsoEhS++hegYljVe3vY1jGUxLX
+         nSAATspZlphsVuOFAofDeK/tfKhkR6KE/9tYi4TnyCjGi2izZIHjR1rIgrh3Dd0bwvKV
+         FE8WLcAJbH7Y3WtkHawiDJPtNovs+kNTi2o2Ye4vfcULIE33zjHDrj5PrwYsvBF1XLZd
+         z5fE2trtr3wsb/hwAUj12lPKQvnrvVIrRocCuOirFicVSDq1vqR+lWMA7cGVVj0R8vYZ
+         3BjA==
+X-Gm-Message-State: APjAAAVBIKObtK1MES3kVErGDOv9dDHVaiJU6gnTGoFljMcLWF/JMHmU
+        7LjftlsaGPjwPXAbkmx9M55HBw==
+X-Google-Smtp-Source: APXvYqwCRnZUydx1xxyOAIBs26zb8aTMIoGVsErSpJUIql/6cfDBP9xZ/3XnLh11Kt0M950WObQehQ==
+X-Received: by 2002:adf:fc08:: with SMTP id i8mr16738404wrr.82.1579510494964;
+        Mon, 20 Jan 2020 00:54:54 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id m10sm47135255wrx.19.2020.01.20.00.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 00:54:54 -0800 (PST)
+Date:   Mon, 20 Jan 2020 08:55:10 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 2/2] driver core: convert probe error messages to use %de
-Date:   Mon, 20 Jan 2020 09:55:08 +0100
-Message-Id: <20200120085508.25522-3-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200120085508.25522-1-u.kleine-koenig@pengutronix.de>
-References: <20200120085508.25522-1-u.kleine-koenig@pengutronix.de>
+        Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v11 06/13] mfd: input: bd71828: Add power-key support
+Message-ID: <20200120085510.GB15507@dell>
+References: <cover.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
+ <aa965067acfbdaa862f5f5de8b66e2c161f276a0.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <aa965067acfbdaa862f5f5de8b66e2c161f276a0.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With this change
+On Mon, 20 Jan 2020, Matti Vaittinen wrote:
 
-	rtc-s35390a: probe of 3-0030 failed with error -EIO
+> Use gpio_keys to send power input-event to user-space when power
+> button (short) press is detected.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> ---
+> No changes since v10
+> 
+>  drivers/mfd/rohm-bd71828.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
-is emitted instead of
+Drop the "input:" tag from the subject line please.
 
-	rtc-s35390a: probe of 3-0030 failed with error -5
-
-. The former is more descriptive and so gives a better hint what is
-actually broken. The actual value of the error code isn't of any
-importance, so there is no relevant information lost.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/base/dd.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index d811e60610d3..e4e308ac187b 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -620,13 +620,13 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 		break;
- 	case -ENODEV:
- 	case -ENXIO:
--		pr_debug("%s: probe of %s rejects match %d\n",
-+		pr_debug("%s: probe of %s rejects match %de\n",
- 			 drv->name, dev_name(dev), ret);
- 		break;
- 	default:
- 		/* driver matched but the probe failed */
- 		printk(KERN_WARNING
--		       "%s: probe of %s failed with error %d\n",
-+		       "%s: probe of %s failed with error %de\n",
- 		       drv->name, dev_name(dev), ret);
- 	}
- 	/*
-@@ -652,7 +652,7 @@ static int really_probe_debug(struct device *dev, struct device_driver *drv)
- 	ret = really_probe(dev, drv);
- 	rettime = ktime_get();
- 	delta = ktime_sub(rettime, calltime);
--	printk(KERN_DEBUG "probe of %s returned %d after %lld usecs\n",
-+	printk(KERN_DEBUG "probe of %s returned %de after %lld usecs\n",
- 	       dev_name(dev), ret, (s64) ktime_to_us(delta));
- 	return ret;
- }
-@@ -813,7 +813,7 @@ static int __device_attach_driver(struct device_driver *drv, void *_data)
- 		dev_dbg(dev, "Device match requests probe deferral\n");
- 		driver_deferred_probe_add(dev);
- 	} else if (ret < 0) {
--		dev_dbg(dev, "Bus failed to match device: %d", ret);
-+		dev_dbg(dev, "Bus failed to match device: %de", ret);
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
-@@ -1046,7 +1046,7 @@ static int __driver_attach(struct device *dev, void *data)
- 		dev_dbg(dev, "Device match requests probe deferral\n");
- 		driver_deferred_probe_add(dev);
- 	} else if (ret < 0) {
--		dev_dbg(dev, "Bus failed to match device: %d", ret);
-+		dev_dbg(dev, "Bus failed to match device: %de", ret);
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
 -- 
-2.24.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
