@@ -2,200 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548061433F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:32:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E62041433F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgATWcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 17:32:00 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46349 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbgATWcA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 17:32:00 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z124so342529pgb.13;
-        Mon, 20 Jan 2020 14:31:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SWYcqg2MlYpijaEODGEzNEsD5V2NHEYSEaSIwio0+QA=;
-        b=JAmoLfquU6/yi6GBUhzXqhOYP7gTCknaSDDwne67CBH5XtA05EY6+2MkTdbXCFN+RI
-         gAskyhjOX/VXuTWLivj+Sg0W9jPcPG/X3vaEyVNkPhOw+GSqsw7R1uLqHKVEQpTyZMUy
-         EpOEs5PjYokQefzOSo1gSWH10STGuuRntbkxQs5C1MlPlWrXwyJJG8DuxzA8JF/SfDau
-         xugwqjK3cqC8qDD1Iz/pslRpWC78M2B6I5+7N9ewzMl0/E6oK0BRIoz7kqcs6tRbJWF5
-         vABpwkUxD9K2HO6xR9oeXLrJuZGXW/YpOtJHQe3r3jetrVzD7BGCvDe6Ihl+HBhTiSzc
-         RiSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SWYcqg2MlYpijaEODGEzNEsD5V2NHEYSEaSIwio0+QA=;
-        b=bZKfgB1obanYDAzN9+/SGq9aKOqkjSRVo0OSmb/Hr0mzE1YJWMnMRu0BxVt8NG1ZQP
-         9SbIxstAo8wGeHOqsl0sCjSuFDDL4e2PR/QwHLiudd+oKE0eLiiJR6ZfOw2XDh7Cl/v1
-         WZPoPUpmzadVoNakpfAJRB8Ir9P0FH/mBmundQNvqQeZTNQQZdEoCjdgL5nzrnM5+dgk
-         nyAfJ5sL7ZPNx8DfiRr5XgQ8u6e7GrEnqFuFxNX+MZq+xi8gmFmVw/X+RIfNabsGGu1f
-         6oLBSmW10wb0ezWH7vgftT5xvFEhuqgbHYZej2zkkPkQFiYS5ehKZ9NsoUAUD8qkw0RI
-         VJhg==
-X-Gm-Message-State: APjAAAU4JyLQLSs0LMpfCnx+rMgkZrW206GxwC8euZacQDvg0DN0pvM0
-        zHFiG+siRmaXUs0VckRjrsVKQ60PfkkFWqFvTZE=
-X-Google-Smtp-Source: APXvYqzLH6vwBU33tfO69+R/CxE5YMYT11Y4CRXA4Z/i/z3IK4BEGYKlQSOHVNc/0R7Wu9tv/YX6iNbBZPiuB4b+Kdc=
-X-Received: by 2002:a65:5242:: with SMTP id q2mr1986621pgp.74.1579559519299;
- Mon, 20 Jan 2020 14:31:59 -0800 (PST)
+        id S1728779AbgATWeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 17:34:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726607AbgATWeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 17:34:17 -0500
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5FBF217F4;
+        Mon, 20 Jan 2020 22:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579559657;
+        bh=xm885UhKFUwKfgBkYWfnG/AC3Rw6vyxcGdpz/w5UOxs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n9BG408GF/aokCw8EG9MBQ9hJw9mAgpR6LRC5KJXhFvrUD8dUEMcz1fPCmgxfOxnK
+         FYltkiqo8UTJrZL597rrakuG7LCaY6g0rVjw3rHQFWyQaaJluloPm74WLLPuT+6kjF
+         HwzLBOeRmONd/Z5cEVB5lRpaCnrKE0dDiJHJ32rU=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH v5 0/6] fscrypt preparations for encryption+casefolding
+Date:   Mon, 20 Jan 2020 14:31:55 -0800
+Message-Id: <20200120223201.241390-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-References: <20161202195416.58953-1-andriy.shevchenko@linux.intel.com>
- <20161202195416.58953-3-andriy.shevchenko@linux.intel.com>
- <20161215122856.7d24b7a8@endymion> <20161216023213.GA4505@dhcp-128-65.nay.redhat.com>
- <1481890738.9552.70.camel@linux.intel.com> <20161216143330.69e9c8ee@endymion>
- <20161217105721.GB6922@dhcp-128-65.nay.redhat.com> <20200120121927.GJ32742@smile.fi.intel.com>
- <87a76i9ksr.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87a76i9ksr.fsf@x220.int.ebiederm.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 21 Jan 2020 00:31:47 +0200
-Message-ID: <CAHp75VdjwWfqHtJ3n-UK_n5nzpgcpERbM+_9-Z3FrjJx7nHQzQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] firmware: dmi_scan: Pass dmi_entry_point to
- kexec'ed kernel
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Young <dyoung@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        kexec@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 9:28 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> > On Sat, Dec 17, 2016 at 06:57:21PM +0800, Dave Young wrote:
-> >> Ccing efi people.
-> >>
-> >> On 12/16/16 at 02:33pm, Jean Delvare wrote:
-> >> > On Fri, 16 Dec 2016 14:18:58 +0200, Andy Shevchenko wrote:
-> >> > > On Fri, 2016-12-16 at 10:32 +0800, Dave Young wrote:
-> >> > > > On 12/15/16 at 12:28pm, Jean Delvare wrote:
-> >> > > > > I am no kexec expert but this confuses me. Shouldn't the second
-> >> > > > > kernel have access to the EFI systab as the first kernel does? It
-> >> > > > > includes many more pointers than just ACPI and DMI tables, and it
-> >> > > > > would seem inconvenient to have to pass all these addresses
-> >> > > > > individually explicitly.
-> >> > > >
-> >> > > > Yes, in modern linux kernel, kexec has the support for EFI, I think it
-> >> > > > should work naturally at least in x86_64.
-> >> > >
-> >> > > Thanks for this good news!
-> >> > >
-> >> > > Unfortunately Intel Galileo is 32-bit platform.
-> >> >
-> >> > If it was done for X86_64 then maybe it can be generalized to X86?
-> >>
-> >> For X86_64, we have a new way for efi runtime memmory mapping, in i386
-> >> code it still use old ioremap way. It is impossible to use same way as
-> >> the X86_64 since the virtual address space is limited.
-> >>
-> >> But maybe for 32bit, kexec kernel can run in physical mode, but I'm not
-> >> sure, I would suggest Andy to do a test first with efi=noruntime for
-> >> kexec 2nd kernel.
-> >
-> > Guys, it was quite a long no hear from you. As I told you the proposed work
-> > around didn't help. Today I found that Microsoft Surface 3 also affected
-> > by this.
-> >
-> > Can we apply these patches for now until you will find better
-> > solution?
->
-> Not a chance.  The patches don't apply to any kernel in the git history.
->
-> Which may be part of your problem.  You are or at least were running
-> with code that has not been merged upstream.
+This is a cleaned up and fixed version of the fscrypt patches to prepare
+for directories that are both encrypted and casefolded.
 
-It's done against linux-next.
-Applied clearly. (Not the version in this more than yearly old series
-of course, that's why I told I can resend)
+Patches 1-3 start deriving a SipHash key for the new dirhash method that
+will be used by encrypted+casefolded directories.  To avoid unnecessary
+overhead, we only do this if the directory is actually casefolded.
 
-> > P.S. I may resend them rebased on recent vanilla.
->
-> Second.  I looked at your test results and they don't directly make
-> sense.  dmidecode bypasses the kernel completely or it did last time
-> I looked so I don't know why you would be using that to test if
-> something in the kernel is working.
->
-> However dmidecode failing suggests that the actual problem is something
-> in the first kernel is stomping the dmi tables.
+Patch 4 fixes a bug in UBIFS where it didn't gracefully handle invalid
+hash values in fscrypt no-key names.  This is an existing bug, but the
+new fscrypt no-key name format (patch 6) made it much easier to trigger;
+it started being hit by 'kvm-xfstests -c ubifs -g encrypt'.
 
-See below.
+Patch 5 updates UBIFS to make it ready for the new fscrypt no-key name
+format that always includes the dirhash.
 
-> Adding a command line option won't fix stomped tables.
+Patch 6 modifies the fscrypt no-key names to always include the dirhash,
+since with the new dirhash method the dirhash will no longer be
+computable from the ciphertext filename without the key.  It also fixes
+a longstanding issue where there could be collisions in the no-key
+names, due to not using a proper cryptographic hash to abbreviate names.
 
-It provides a mechanism, which seems to be absent, to the second
-kernel to know where to look for SMBIOS tables.
+For more information see the main patch series, which includes the
+filesystem-specific changes:
+https://lkml.kernel.org/linux-fscrypt/20200117214246.235591-1-drosen@google.com/T/#u
 
-> So what I would suggest is:
-> a) Verify that dmidecode works before kexec.
+This applies to fscrypt.git#master.
 
-Yes, it does.
+Changed v4 => v5:
+  - Fixed UBIFS encryption to work with the new no-key name format.
 
-> b) Test to see if dmidecode works after kexec.
+Daniel Rosenberg (3):
+  fscrypt: don't allow v1 policies with casefolding
+  fscrypt: derive dirhash key for casefolded directories
+  fscrypt: improve format of no-key names
 
-No, it doesn't.
+Eric Biggers (3):
+  fscrypt: clarify what is meant by a per-file key
+  ubifs: don't trigger assertion on invalid no-key filename
+  ubifs: allow both hash and disk name to be provided in no-key names
 
-> c) Once (a) shows that dmidecode works and (b) shows that dmidecode
->    fails figure out what is stomping your dmi tables during or before
->    kexec and that is what should get fixed.
-
-The problem here as I can see it that EFI and kexec protocols are not
-friendly to each other.
-I'm not an expert in either. That's why I'm asking for possible
-solutions. And this needs to be done in kernel to allow drivers to
-work.
-
-Does the
-
-commit 4996c02306a25def1d352ec8e8f48895bbc7dea9
-Author: Takao Indoh <indou.takao@jp.fujitsu.com>
-Date:   Thu Jul 14 18:05:21 2011 -0400
-
-    ACPI: introduce "acpi_rsdp=" parameter for kdump
-
-description shed a light on this?
-
-> Now using a non-efi method of dmi detection relies on the
-> tables being between 0xF0000 and 0x10000. AKA the last 64K
-> of the first 1MiB of memory.  You might check to see if your
-> dmi tables are in that address range.
-
-# dmidecode --no-sysfs
-# dmidecode 3.2
-Scanning /dev/mem for entry point.
-# No SMBIOS nor DMI entry point found, sorry.
-
-=== with patch applied ===
-# dmidecode
-...
-        Release Date: 03/10/2015
-...
-
->
-> Otherwise I suspect the good solution is to give efi it's own page
-> tables in the kernel and switch to it whenever efi functions are called.
->
-
-> But on 32bit the Linux kernel has historically been just fine directly
-> accessing the hardware, and ignoring efi and all of the other BIOS's.
-
-It seems not only for 32-bit Linux kernel anymore. MS Surface 3 runs
-64-bit code.
-
-> So if that doesn't work on Intel Galileo that is probably a firmware
-> problem.
-
-It's not only about Galileo anymore.
+ Documentation/filesystems/fscrypt.rst |  40 +++--
+ fs/crypto/Kconfig                     |   1 +
+ fs/crypto/fname.c                     | 239 ++++++++++++++++++++------
+ fs/crypto/fscrypt_private.h           |  19 +-
+ fs/crypto/hooks.c                     |  44 +++++
+ fs/crypto/keysetup.c                  |  81 ++++++---
+ fs/crypto/keysetup_v1.c               |   4 +-
+ fs/crypto/policy.c                    |   7 +
+ fs/inode.c                            |   3 +-
+ fs/ubifs/dir.c                        |   6 +-
+ fs/ubifs/journal.c                    |   4 +-
+ fs/ubifs/key.h                        |   1 -
+ include/linux/fscrypt.h               |  94 +++-------
+ 13 files changed, 365 insertions(+), 178 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.0
+
