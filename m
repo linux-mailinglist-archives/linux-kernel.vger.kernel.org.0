@@ -2,102 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F722142202
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D6F7142213
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbgATDeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 22:34:11 -0500
-Received: from ozlabs.org ([203.11.71.1]:41341 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729021AbgATDeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 22:34:11 -0500
-Received: by ozlabs.org (Postfix, from userid 1003)
-        id 481HMj19Cqz9sR1; Mon, 20 Jan 2020 14:34:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1579491249; bh=CYQ1aZ17JhSt3DjEaZvaRhmx5aaB56ZpLc9jKEgrQHg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XhZomLA0ZQA5ksrIQZqTYTjoL3DPHU68CbqTHKmAYu16fL/fIE1BYH7UjUNBUUN96
-         BOuEpy2CunYKbeiub7mIts8QMfAiWmeBeKcarVFg26ySQX+0isv7JeVEL1d4Z7b45d
-         5m7sEPD4iauKp3dpRpTlihU23q+pd7On1gqkqYQPHrJPglWg+MBbDBmbYJkatU8xz0
-         Uz3Fq5i/6DiaknB95EBdraZENg7mGA9XAyQVsRAdFWKMiy5SfqI7mq2lhpVa6uDvRO
-         oWMfXTCMsTK2ig1sBV5Ak32Iy5mNr3ucrWW4O2iQ2wR/sSeHCe8APza70YCBWrJGVb
-         GMaswqr6dHlKA==
-Date:   Mon, 20 Jan 2020 14:34:02 +1100
-From:   Paul Mackerras <paulus@ozlabs.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kurz <groug@kaod.org>
-Subject: Re: [PATCH v2 15/45] KVM: PPC: Move kvm_vcpu_init() invocation to
- common code
-Message-ID: <20200120033402.GC14307@blackberry>
-References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
- <20191218215530.2280-16-sean.j.christopherson@intel.com>
+        id S1729081AbgATDjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 22:39:09 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37506 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728949AbgATDjJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 22:39:09 -0500
+Received: by mail-oi1-f193.google.com with SMTP id z64so27413181oia.4
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 19:39:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=R5jh4O13VCbAcKvjpLbXw7G/sCwTcHPrIyMbBn1b+w0=;
+        b=AszwOWIyEbkfZ44e+iJfz1FyBQoHB+M3EpW/rPDH1zBAA4hnMR35Vzgb1XA/cvmDAh
+         MFD/pU7xgPHR6SMgwGv72KsRWRdga0cilVAd3vczbKtI1oca2ef2HId9OhTbsBLG+HAE
+         ejXW2QCujXCntkbso1Uku7k2vt3IN4XczOeGpazKY2aUjc0OLSGrfz3z2LNv+EzuzexP
+         InGmf0KSkYbUoeXzN63cySgrqwglz+L6WkatWVKus/+zIuD8n8pdO+d45QvS++sqqPrC
+         G+TgNWzWwf87OdpJPwMPzFbi3yGT+KBtYhLjLUIQMr/WVwfKS8Rsf01JUr2EakpdwnyC
+         iuTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=R5jh4O13VCbAcKvjpLbXw7G/sCwTcHPrIyMbBn1b+w0=;
+        b=ICCkA6HrdMS3dUA6PRXjlQgPpsxu3DvUMWQyKrOM9335JQcBbgf5jQIsAozw9FXcji
+         pWxwwLhsCZUD9URicr6zJn2CTR+ndQhIweY3bCTXi31i6vL/ApRQ1OnBRsTMqb1r0SUD
+         fU+lOO4g5ZhlrSF8JB2E5M2Cd2w7swAqZBrdv3RzhoeqwDMT2QNUYrOn/pOcTcV4P55f
+         5IVRuEFUoUI5Bp2Kl6kE6A7WQJrJSw5IdZ+pnmMiO3ZLHwsLeoXYBtWC1eoGUJM76tuq
+         5wWL7uXVVsqJhijc2IAkf4dreGjkQZrstLTnKgTM+eq47R/t8wilrofRTio/CsYJuu83
+         h0mA==
+X-Gm-Message-State: APjAAAU9z2Ah7QU3UVIa6pxbos2vEjmrow6FpI3f/pWwTUvTzgoAb/GE
+        1UPk2Ja10/a+3nWwnLY5zxT+AKqtpDNnbORjZpU=
+X-Google-Smtp-Source: APXvYqwy7JSuZ2MQkCxu+UZckViWml3dAMNujjqioOVKBxNPuy+TlsFTkoTubyTMXBHIpf8FcG+IlR70KD9SECbhh9w=
+X-Received: by 2002:aca:d484:: with SMTP id l126mr11260662oig.114.1579491548946;
+ Sun, 19 Jan 2020 19:39:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191218215530.2280-16-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a9d:6e0f:0:0:0:0:0 with HTTP; Sun, 19 Jan 2020 19:39:08
+ -0800 (PST)
+Reply-To: keenmaxwell1981@gmail.com
+From:   keen maxwell <nataliafreedom148@gmail.com>
+Date:   Mon, 20 Jan 2020 03:39:08 +0000
+Message-ID: <CABBdKO7kmP0+rv+xeS7KWeC-qBXSPYEFBnTP=7UOGPQgP1HsGw@mail.gmail.com>
+Subject: =?UTF-8?Q?Dr=C4=ABz_atbildiet_man_l=C5=ABdzu?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 01:55:00PM -0800, Sean Christopherson wrote:
-> Move the kvm_cpu_{un}init() calls to common PPC code as an intermediate
-> step towards removing kvm_cpu_{un}init() altogether.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Sveiks, d=C4=81rgais draugs,
 
-This doesn't compile:
+Es esmu Keens Maksvels no Amerikas Savienotaj=C4=81m Valst=C4=ABm, l=C5=ABd=
+zu, es
+v=C4=93los, lai b=C5=ABtu
+komunik=C4=81cija ar tevi.
 
-  CC [M]  arch/powerpc/kvm/book3s.o
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s.c: In function ‘kvmppc_core_vcpu_create’:
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s.c:794:9: error: ‘kvm’ undeclared (first use in this function)
-  return kvm->arch.kvm_ops->vcpu_create(vcpu);
-         ^
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s.c:794:9: note: each undeclared identifier is reported only once for each function it appears in
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s.c:795:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-make[3]: *** [/home/paulus/kernel/kvm/scripts/Makefile.build:266: arch/powerpc/kvm/book3s.o] Error 1
-
-> diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
-> index 13385656b90d..5ad20fc0c6a1 100644
-> --- a/arch/powerpc/kvm/book3s.c
-> +++ b/arch/powerpc/kvm/book3s.c
-> @@ -789,10 +789,9 @@ void kvmppc_decrementer_func(struct kvm_vcpu *vcpu)
->  	kvm_vcpu_kick(vcpu);
->  }
->  
-> -int kvmppc_core_vcpu_create(struct kvm *kvm, struct kvm_vcpu *vcpu,
-> -			    unsigned int id)
-> +int kvmppc_core_vcpu_create(struct kvm_vcpu *vcpu)
->  {
-> -	return kvm->arch.kvm_ops->vcpu_create(kvm, vcpu, id);
-> +	return kvm->arch.kvm_ops->vcpu_create(vcpu);
-
-Needs s/kvm/vcpu->kvm/ here.
-
-You also need to change the declaration of the vcpu_create function
-pointer in the kvmppc_ops struct in kvm_ppc.h to have just the vcpu
-parameter instead of 3 parameters.
-
-Paul.
+Es gaidu j=C5=ABsu atbildi.
