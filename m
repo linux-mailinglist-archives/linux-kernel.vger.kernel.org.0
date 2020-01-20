@@ -2,76 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AB7143156
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF87A14315B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbgATSO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 13:14:27 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42690 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726942AbgATSO1 (ORCPT
+        id S1728853AbgATSOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 13:14:53 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42145 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727465AbgATSOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 13:14:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579544066;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DffCrwEtoqXEWPOqeJbtVuBGvdg2skMrjjXRh5TdRho=;
-        b=FXGWBQr+u8oi3CKQk03XYo+zLBmXa9tdawh9d1jwDLkLFt15nIawwNdGIuqxlHrooUkD7v
-        VFPGEuYTvlJdJas8JC79EhMPxqmTUmSS1rzU9EOGjrL7SMy6nbihlJLnf/zcrlzRTUFJqR
-        dCHFvHcl/BGnNQ4BsbM3O5i9X93//dM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-135-5EY_tmCfMyG5M7QKHKWS7Q-1; Mon, 20 Jan 2020 13:14:25 -0500
-X-MC-Unique: 5EY_tmCfMyG5M7QKHKWS7Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 341558017CC;
-        Mon, 20 Jan 2020 18:14:24 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 95DDB1001B30;
-        Mon, 20 Jan 2020 18:14:23 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 3/3] objtool: Skip samples subdirectory
-Date:   Mon, 20 Jan 2020 12:14:09 -0600
-Message-Id: <c4cb4ef635ec606454ab834cb49fc3e9381fb1b1.1579543924.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1579543924.git.jpoimboe@redhat.com>
-References: <cover.1579543924.git.jpoimboe@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+        Mon, 20 Jan 2020 13:14:53 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q6so428051wro.9;
+        Mon, 20 Jan 2020 10:14:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to;
+        bh=pASj3PHz7/BmhyyPZk63EWRxJck53vekxxxhyP+qu28=;
+        b=diyU7YTUUl14k4utEaRKx3JvG1pR3pE4U0+CX9/4He9byqa5qUL+aEJV5fD2CE8y3R
+         nNjLWEUGgaa29WzFcAbk/sMRzl86c+xYJOk59m6pBUE75tGUO5iND1R+Ff05MwXZ5hmL
+         KnbAwJ1bL2w9zxa8hNiU/Svw8I3a3DCKgjTTQNOmt5acuI6+gGS/8EBFEeQfLnzceGvQ
+         B80gOcf4rczJJiutM5cdhZ0KtE1cxfoNBowqQy+2Q1TclujmU4VYiefdVOL5YdLQ93X+
+         CmfBQIlyTFPbMlnNJtJ+ZSOx7qiCUW6neqtmDmqyujNJhX3Ls6dP+z4O5ZAdWesHGBx7
+         2uqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
+        bh=pASj3PHz7/BmhyyPZk63EWRxJck53vekxxxhyP+qu28=;
+        b=uMPGqEDGyZosI49+PelveMDuHKY6WZpl02kQk11LvaziT+JzHXg90FQfLyMjxCNGHW
+         L4ergjEVL/q0nmiyab/lxqY3yx35eACOv1Gk9z8gUjCVKcJH/lIvUKavcZ45gN0le4SV
+         WlAk3np1ujANugCp5bmd1Hg1SvTILUqzcGY8GuyCL1EmLkkrKhVe+LndD8VJJkL2u8cE
+         glf0HIpJGdB+h3vWixhAC2lUKvARMwWmUlCXym7Q0JtonBWnTAA1M8rv4jmrDAfLSEcL
+         5iGoqxKe5dFGoG8dq4GZXq6Wws8BkQiUEOjZ2PPOU0zohObBJw+Q4Ixt7K35M3whl35B
+         JLNg==
+X-Gm-Message-State: APjAAAWxMCQp2o0g4tpQyvjohZehkdgSGDqHwwDdR1hTgJ5oyiwwONVF
+        04HliHCWm1qa9c1DMMdzcHA=
+X-Google-Smtp-Source: APXvYqxEY2tx0CadRCPP17+yiUQwhYPkpud6UyNjhfjqJyCHb075vcZRf7OytV34VyJ1xdnLa2zAag==
+X-Received: by 2002:adf:dd46:: with SMTP id u6mr733279wrm.13.1579544090544;
+        Mon, 20 Jan 2020 10:14:50 -0800 (PST)
+Received: from localhost.localdomain ([2a02:2450:10d2:194d:ec67:901a:8ee9:665d])
+        by smtp.gmail.com with ESMTPSA id d14sm51909528wru.9.2020.01.20.10.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 10:14:49 -0800 (PST)
+From:   SeongJae Park <sj38.park@gmail.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     SeongJae Park <sjpark@amazon.com>, akpm@linux-foundation.org,
+        SeongJae Park <sjpark@amazon.de>, acme@kernel.org,
+        brendan.d.gregg@gmail.com, corbet@lwn.net, mgorman@suse.de,
+        dwmw@amazon.com, amit@kernel.org, rostedt@goodmis.org,
+        sj38.park@gmail.com, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH 0/8] Introduce Data Access MONitor (DAMON)
+Date:   Mon, 20 Jan 2020 19:14:40 +0100
+Message-Id: <20200120181440.7826-1-sj38.park@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200120165551.codmosqc2pkcunpa@box> (raw)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code in the 'samples' subdirectory isn't part of the kernel, so
-there's no need to validate it.
+On Mon, 20 Jan 2020 19:55:51 +0300 "Kirill A. Shutemov" <kirill@shutemov.name> wrote:
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- samples/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+> On Mon, Jan 20, 2020 at 05:27:49PM +0100, SeongJae Park wrote:
+> > This patchset introduces a new kernel module for practical monitoring of
+> > data accesses, namely DAMON.
+> 
+> Looks like it's not integrated with perf at all right? Why?
+> Correlating measurements from different domains would help to see the
+> bigger picture.
 
-diff --git a/samples/Makefile b/samples/Makefile
-index a1848d674e9d..53867d9af971 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for Linux samples code
-+OBJECT_FILES_NON_STANDARD :=3D y
-=20
- obj-$(CONFIG_SAMPLE_ANDROID_BINDERFS)	+=3D binderfs/
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
---=20
-2.21.1
+Right, it's not integrated with perf.  DAMON provides only its debugfs
+interface.  Also I agree that correlating measurments will be helpful.  I do
+not integrate DAMON with perf with this patchset for following reasons.
 
+First of all, I think I have no deep understanding of perf, yet.  Partly for
+the reason, I couldn't figure out the best way to integrate DAMON with perf.
+Especially, I couldn't straightforwardly classify DAMON providing information
+into one of the categories of the perf events I know.
+
+Therefore, rather than integrating DAMON with perf in my arguable way and
+increasing the complexity of the code, I decided to keep the interface as
+simple and flexible as it can be for the first stage.  That said, I believe it
+would be not too hard to integrate DAMON with perf in a future.
+
+
+Thanks,
+SeongJae Park
+
+> 
+> -- 
+>  Kirill A. Shutemov
+> 
+> 
