@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0BA014257F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:28:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 815CC142585
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:28:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbgATI12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:27:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:60784 "EHLO
+        id S1728733AbgATI1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:27:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:60807 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgATI1Z (ORCPT
+        with ESMTP id S1727692AbgATI1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:27:25 -0500
+        Mon, 20 Jan 2020 03:27:30 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1itSOw-0002te-89; Mon, 20 Jan 2020 09:27:14 +0100
+        id 1itSOv-0002sd-RW; Mon, 20 Jan 2020 09:27:13 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CD7A41C1A3E;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 770DE1C1A3D;
         Mon, 20 Jan 2020 09:27:13 +0100 (CET)
 Date:   Mon, 20 Jan 2020 08:27:13 -0000
 From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] libperf: Setup initial evlist::all_cpus value
-Cc:     Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
+Subject: [tip: perf/core] perf tools: Use %define api.pure full instead of
+ %pure-parser
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Clark Williams <williams@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200110151537.153012-1-jolsa@kernel.org>
-References: <20200110151537.153012-1-jolsa@kernel.org>
+In-Reply-To: <20200112192259.GA35080@krava>
+References: <20200112192259.GA35080@krava>
 MIME-Version: 1.0
-Message-ID: <157950883357.396.5010464056338949713.tip-bot2@tip-bot2>
+Message-ID: <157950883323.396.4232988721783545505.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,47 +53,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     cb71f7d43ece3d5a4f400f510c61b2ec7c9ce9a1
-Gitweb:        https://git.kernel.org/tip/cb71f7d43ece3d5a4f400f510c61b2ec7c9ce9a1
-Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Fri, 10 Jan 2020 16:15:37 +01:00
+Commit-ID:     fc8c0a99223367b071c83711259d754b6bb7a379
+Gitweb:        https://git.kernel.org/tip/fc8c0a99223367b071c83711259d754b6bb7a379
+Author:        Jiri Olsa <jolsa@redhat.com>
+AuthorDate:    Sun, 12 Jan 2020 20:22:59 +01:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Tue, 14 Jan 2020 12:02:19 -03:00
 
-libperf: Setup initial evlist::all_cpus value
+perf tools: Use %define api.pure full instead of %pure-parser
 
-Jann Horn reported crash in perf ftrace because evlist::all_cpus isn't
-initialized if there's evlist without events, which is the case for perf
-ftrace.
+bison deprecated the "%pure-parser" directive in favor of "%define
+api.pure full".
 
-Adding initial initialization of evlist::all_cpus from given cpus,
-regardless of events in the evlist.
+The api.pure got introduced in bison 2.3 (Oct 2007), so it seems safe to
+use it without any version check.
 
-Fixes: 7736627b865d ("perf stat: Use affinity for closing file descriptors")
-Reported-by: Jann Horn <jannh@google.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20200110151537.153012-1-jolsa@kernel.org
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lore.kernel.org/lkml/20200112192259.GA35080@krava
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/perf/evlist.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/expr.y         | 3 ++-
+ tools/perf/util/parse-events.y | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-index ae9e65a..5b9f2ca 100644
---- a/tools/lib/perf/evlist.c
-+++ b/tools/lib/perf/evlist.c
-@@ -164,6 +164,9 @@ void perf_evlist__set_maps(struct perf_evlist *evlist,
- 		evlist->threads = perf_thread_map__get(threads);
- 	}
+diff --git a/tools/perf/util/expr.y b/tools/perf/util/expr.y
+index f9a20a3..7d22624 100644
+--- a/tools/perf/util/expr.y
++++ b/tools/perf/util/expr.y
+@@ -12,7 +12,8 @@
+ #define MAXIDLEN 256
+ %}
  
-+	if (!evlist->all_cpus && cpus)
-+		evlist->all_cpus = perf_cpu_map__get(cpus);
+-%pure-parser
++%define api.pure full
 +
- 	perf_evlist__propagate_maps(evlist);
- }
- 
+ %parse-param { double *final_val }
+ %parse-param { struct parse_ctx *ctx }
+ %parse-param { const char **pp }
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index e2eea4e..94f8bcd 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -1,4 +1,4 @@
+-%pure-parser
++%define api.pure full
+ %parse-param {void *_parse_state}
+ %parse-param {void *scanner}
+ %lex-param {void* scanner}
