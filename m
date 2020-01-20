@@ -2,65 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C721430D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 18:32:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B59701430E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 18:38:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgATRcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 12:32:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58516 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726642AbgATRcg (ORCPT
+        id S1727243AbgATRiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 12:38:18 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38834 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726642AbgATRiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 12:32:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579541555;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pupWMERdR1wMYcqgiWftw9KbT+PIN4ddg+q+dbnkviw=;
-        b=bl7RvJTMLKMcsc6aUZN+7w4IINeNQciSWQrVkiSixjgJkrQj5WA1aS3D1PqSnUXCxky3Zd
-        9AZpRGCxWruEClIamDXR7oJOg4nOeAsdwh5Matf9J/b9yQN8w9SYHRWyyovMttLE46eWS0
-        S+sjtGuXvCrI3zzs3gZfjcooAbQw5K4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-291-XM1RbWJUNBy5BmfE-J12dA-1; Mon, 20 Jan 2020 12:32:32 -0500
-X-MC-Unique: XM1RbWJUNBy5BmfE-J12dA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD0F3477;
-        Mon, 20 Jan 2020 17:32:30 +0000 (UTC)
-Received: from treble (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 050D684DBC;
-        Mon, 20 Jan 2020 17:32:29 +0000 (UTC)
-Date:   Mon, 20 Jan 2020 11:32:28 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     akpm@linux-foundation.org, trivial@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/Kconfig: Update HAVE_RELIABLE_STACKTRACE description
-Message-ID: <20200120173228.5nxa72ri5msywiop@treble>
-References: <20200120154042.9934-1-mbenes@suse.cz>
+        Mon, 20 Jan 2020 12:38:17 -0500
+Received: from callcc.thunk.org ([38.98.37.142])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00KHboLl005395
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Jan 2020 12:37:59 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 689AB420057; Mon, 20 Jan 2020 12:37:49 -0500 (EST)
+Date:   Mon, 20 Jan 2020 12:37:49 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "'Pali =?iso-8859-1?Q?Roh=E1r'?=" <pali.rohar@gmail.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120173749.GG15860@mit.edu>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120110438.ak7jpyy66clx5v6x@pali>
+ <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120154042.9934-1-mbenes@suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 04:40:42PM +0100, Miroslav Benes wrote:
-> save_stack_trace_tsk_reliable() is not the only function providing the
-> reliable stack traces anymore. Architecture might define ARCH_STACKWALK
-> which provides a newer stack walking interface and has
-> arch_stack_walk_reliable() function. Update the description accordingly.
+On Mon, Jan 20, 2020 at 03:07:20PM +0000, David Laight wrote:
+> What happens if the filesystem has filenames that invalid UTF8 sequences
+> or multiple filenames that decode from UTF8 to the same 'wchar' value.
+> Never mind ones that are just case-differences for the same filename.
 > 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+> UTF8 is just so broken it should never have been allowed to become
+> a standard.
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Internationalization is an overconstrained problem which is impacted
+and influenced by human politics, incuding from the Cold War and who
+attended which internal standards bodies meetings.  So much so that an
+I18N expert (very knowledgable about the problems in this domain) has
+been known to have said (in a bar, late at night, and after much
+alcohol) that it would be simpler to teach the entire human race
+English.
 
--- 
-Josh
+Unfortunately, that's not going to happen, and if we are going to deal
+with the market of "everyone which doesn't speak English", we're going
+to have to live with Unicode, warts at and all.  Seriously speaking,
+UTF-8 is the worst encoding, except for all of the others.  :-)
 
+						- Ted
