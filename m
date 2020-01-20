@@ -2,51 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E9B143159
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:14:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AB7143156
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbgATSOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 13:14:33 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40570 "EHLO
+        id S1727254AbgATSO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 13:14:27 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42690 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727465AbgATSO3 (ORCPT
+        by vger.kernel.org with ESMTP id S1726942AbgATSO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 13:14:29 -0500
+        Mon, 20 Jan 2020 13:14:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579544068;
+        s=mimecast20190719; t=1579544066;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=J71L9QdvENUhS9kjik2O6eWrK+QzMj6JCklsr38AS4E=;
-        b=HUbBarYyBaNQcNNR2hD5HN08vs2PoyxORV6oMEAAfOG+N5VFgHNvjrjy0xvC3mfzKdroZ9
-        1WgI2ZO9cY8qFAAEoGKEA2S8VO0cbaKIlyuPPFAyV3xGcvmcVfqMGP5dsZ2bV+Svk8t4ft
-        vVMTwITvljRYczFCU+f28l5V1xatKNE=
+        bh=DffCrwEtoqXEWPOqeJbtVuBGvdg2skMrjjXRh5TdRho=;
+        b=FXGWBQr+u8oi3CKQk03XYo+zLBmXa9tdawh9d1jwDLkLFt15nIawwNdGIuqxlHrooUkD7v
+        VFPGEuYTvlJdJas8JC79EhMPxqmTUmSS1rzU9EOGjrL7SMy6nbihlJLnf/zcrlzRTUFJqR
+        dCHFvHcl/BGnNQ4BsbM3O5i9X93//dM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-235-ms-BOgNoNcqCNc_msDZ9Jg-1; Mon, 20 Jan 2020 13:14:24 -0500
-X-MC-Unique: ms-BOgNoNcqCNc_msDZ9Jg-1
+ us-mta-135-5EY_tmCfMyG5M7QKHKWS7Q-1; Mon, 20 Jan 2020 13:14:25 -0500
+X-MC-Unique: 5EY_tmCfMyG5M7QKHKWS7Q-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6BBFE800D41;
-        Mon, 20 Jan 2020 18:14:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 341558017CC;
+        Mon, 20 Jan 2020 18:14:24 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-125-19.rdu2.redhat.com [10.10.125.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33A1E1001B30;
-        Mon, 20 Jan 2020 18:14:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 95DDB1001B30;
+        Mon, 20 Jan 2020 18:14:23 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: [PATCH 2/3] objtool: Fix ARCH=x86_64 build error
-Date:   Mon, 20 Jan 2020 12:14:08 -0600
-Message-Id: <d5d11370ae116df6c653493acd300ec3d7f5e925.1579543924.git.jpoimboe@redhat.com>
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH 3/3] objtool: Skip samples subdirectory
+Date:   Mon, 20 Jan 2020 12:14:09 -0600
+Message-Id: <c4cb4ef635ec606454ab834cb49fc3e9381fb1b1.1579543924.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1579543924.git.jpoimboe@redhat.com>
 References: <cover.1579543924.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,60 +52,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shile Zhang <shile.zhang@linux.alibaba.com>
+The code in the 'samples' subdirectory isn't part of the kernel, so
+there's no need to validate it.
 
-Building objtool with ARCH=3Dx86_64 fails with:
-
-   $make ARCH=3Dx86_64 -C tools/objtool
-   ...
-     CC       arch/x86/decode.o
-   arch/x86/decode.c:10:22: fatal error: asm/insn.h: No such file or dire=
-ctory
-    #include <asm/insn.h>
-                         ^
-   compilation terminated.
-   mv: cannot stat =E2=80=98arch/x86/.decode.o.tmp=E2=80=99: No such file=
- or directory
-   make[2]: *** [arch/x86/decode.o] Error 1
-   ...
-
-The root cause is that the command-line variable 'ARCH' cannot be
-overridden.  It can be replaced by 'SRCARCH', which is defined in
-'tools/scripts/Makefile.arch'.
-
-Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Reviewed-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- tools/objtool/Makefile | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ samples/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index d2a19b0bc05a..ee08aeff30a1 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -2,10 +2,6 @@
- include ../scripts/Makefile.include
- include ../scripts/Makefile.arch
+diff --git a/samples/Makefile b/samples/Makefile
+index a1848d674e9d..53867d9af971 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for Linux samples code
++OBJECT_FILES_NON_STANDARD :=3D y
 =20
--ifeq ($(ARCH),x86_64)
--ARCH :=3D x86
--endif
--
- # always use the host compiler
- HOSTAR	?=3D ar
- HOSTCC	?=3D gcc
-@@ -33,7 +29,7 @@ all: $(OBJTOOL)
-=20
- INCLUDES :=3D -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
--	    -I$(srctree)/tools/arch/$(ARCH)/include
-+	    -I$(srctree)/tools/arch/$(SRCARCH)/include
- WARNINGS :=3D $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wn=
-o-packed
- CFLAGS   :=3D -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(=
-LIBELF_FLAGS)
- LDFLAGS  +=3D $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
+ obj-$(CONFIG_SAMPLE_ANDROID_BINDERFS)	+=3D binderfs/
+ obj-$(CONFIG_SAMPLE_CONFIGFS)		+=3D configfs/
 --=20
 2.21.1
 
