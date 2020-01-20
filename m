@@ -2,273 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC71F14290A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 12:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F70A142954
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 12:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgATLQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 06:16:13 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34696 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgATLQN (ORCPT
+        id S1728760AbgATL0q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 06:26:46 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:36051 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726775AbgATL0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 06:16:13 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: aragua)
-        with ESMTPSA id C63A22925AE
-Message-ID: <ed7667b85c9aa9465f1b4bb97b672aa1099572ee.camel@collabora.com>
-Subject: Re: [PATCH] mfd / platform: cros_ec: Query EC protocol version if
- EC transitions between RO/RW
-From:   Fabien Lahoudere <fabien.lahoudere@collabora.com>
-To:     Yicheng Li <yichengli@google.com>
-Cc:     Yicheng Li <yichengli@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, bleung@chromium.org,
-        gwendal@chromium.org, enric.balletbo@collabora.com
-Date:   Mon, 20 Jan 2020 12:16:06 +0100
-In-Reply-To: <CAB8_tbG8NSQyLZBizhiKFcfOszOhfi1FFoRAi9SLcFFRTuJDzw@mail.gmail.com>
-References: <20191118200000.35484-1-yichengli@chromium.org>
-         <b5149024683189b78224f4c6639818e9d833e126.camel@collabora.com>
-         <CAB8_tbG8NSQyLZBizhiKFcfOszOhfi1FFoRAi9SLcFFRTuJDzw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 20 Jan 2020 06:26:45 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579519604; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=xDwR6rvudM19JzpXoego2eURGMlAKnT+NaTDfn5CpRw=; b=APZUfh4z97n4+2y4I7LWoRtM6C+dqTBYxedNtf4DW+CSVCFHiP5UMLbIfXjjY4tesBuunHI5
+ 8iz9mc9Hrf6OtLzVWaTWqbta1g0MNC+GlJfixipFuy9zqwxm0+5CIp+1zFDFqheh2nEA2hjA
+ qVawVVHDJEawGGYZgBsCpBhTmXk=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e258e73.7fc55b2f0768-smtp-out-n02;
+ Mon, 20 Jan 2020 11:26:43 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 05E94C447A5; Mon, 20 Jan 2020 11:26:43 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A5B5BC447A1;
+        Mon, 20 Jan 2020 11:26:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5B5BC447A1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+Subject: [PATCH V2 1/2] mmc: sdhci: Let a vendor driver supply and update ADMA descriptor size
+Date:   Mon, 20 Jan 2020 16:47:03 +0530
+Message-Id: <1579519045-26467-1-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1579194192-7942-2-git-send-email-vbadigan@codeaurora.org>
+References: <1579194192-7942-2-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yicheng,
+Let a vendor driver supply the maximum descriptor size that it
+can operate on. ADMA descriptor table would be allocated using this
+supplied size.
+If any SD Host controller is of version prior to v4.10 spec
+but supports 16byte descriptor, this change allows them to supply
+correct descriptor size for ADMA table allocation.
 
-Thanks for your quick answer.
+Also let a vendor driver update the descriptor size by overriding
+sdhc_host->desc_size if it has to operates on a different descriptor
+sizes in different conditions.
 
-I updated the firmware after my first email on friday.
-Now the version is correct:
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+---
+ drivers/mmc/host/sdhci.c | 13 +++++++------
+ drivers/mmc/host/sdhci.h |  3 ++-
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-   # ectool version --name=cros_fp
-   RO version:    nocturne_fp_v2.2.64-58cf5974e
-   RW version:    nocturne_fp_v2.2.191-1d529566e
-   Firmware copy: RW
-   Build info:    nocturne_fp_v2.2.191-1d529566e 2019-11-01 20:30:58
-   @chromeos-ci-legacy-us-central1-b-x32-72-dltd
-   Tool version:  v2.0.3031-9e0f24fad 2020-01-13 06:11:02 @chromeos-ci-
-   legacy-us-east1-d-x32-89-i09h
-
-The result does not change. This is the console output after I sent the
-reboot command.
-
-   $ ectool name=cros_fp output
-   ...
-   [250664.176204 HC 0xa9]
-   [250664.176287 HC 0xa9 err 1]
-   [250664.177413 HC 0x67]
-   [250664.177489 HC 0x67 err 9]
-   [250664.178434 HC 0x02]
-   [250664.180308 HC Suppressed: 0x97=127 0x98=138 0x115=0]
-   [250664.477987 HC 0x01]
-   [250892.898421 HC 0x02]
-   [250892.900447 HC 0x07]
-   [250892.901286 HC 0x0b]
-   [250902.139053 HC 0x02]
-   [250902.141059 HC 0x07]
-   [250902.141847 HC 0x0b]
-   [250902.142988 HC 0xd2]
-   [250902.143072 Executing host reboot command 1]
-   [250902.143176 HC 0xd2 err 4]
-   [250908.838254 HC 0x02]
-   [250908.840474 HC 0x07]
-   [250908.841391 HC 0x0b]
-
-it seems we have an error when executing the 0zd2 command.
-
-Any idea what is error 4?
-
-Thanks
-
-Fabien
-
-Le jeudi 16 janvier 2020 à 05:04 -0800, Yicheng Li a écrit :
-> Hi Fabien,
-> 
-> First, you need the new firmware which has RW 2.2.191 instead of
-> 2.2.110. It's available in release M80. The old firmware you were
-> using does not have the RO/RW protocol incompatibility problem
-> because RW 2.2.110 still only support versions 0 and 1 of
-> EC_CMD_GET_NEXT_EVENT, same as RO 2.2.64. RW 2.2.191 has version 2 of
-> EC_CMD_GET_NEXT_ EVENT, hence the issue described in the commit
-> message.
-> 
-> With RW 2.2.191, if the kernal does not have this patch, rebooting
-> cros_fp will leave you in an infinite loop in RO, as described in the
-> commit message. This patch solves the problem and you should be in RW
-> after the reboot. You can see more details on the commands sent to
-> cros_fp during RO if you have cros_fp.log 
-> 
-> Let me know if you have other questions. Thanks!
-> 
-> Best,
-> Yicheng
-> 
-> 
-> On Thu, Jan 16, 2020, 4:27 AM Fabien Lahoudere <
-> fabien.lahoudere@collabora.com> wrote:
-> > Hi,
-> > 
-> > I tried to test that patch but I cannot switch to RO firmware.
-> > I do the following steps:
-> > 
-> > root@debian:/sys/class/chromeos/cros_fp# cat version 
-> > RO version:    nocturne_fp_v2.2.64-58cf5974e
-> > RW version:    nocturne_fp_v2.2.110-b936c0a3c
-> > Firmware copy: RW
-> > Build info:    nocturne_fp_v2.2.110-b936c0a3c 2018-11-02 14:16:46
-> > @swarm-cros-461
-> > Chip vendor:   stm
-> > Chip name:     stm32h7x3
-> > Chip revision: 
-> > Board version: EC error 1
-> > root@debian:/sys/class/chromeos/cros_fp# echo ro > reboot
-> > root@debian:/sys/class/chromeos/cros_fp# cat version 
-> > RO version:    nocturne_fp_v2.2.64-58cf5974e
-> > RW version:    nocturne_fp_v2.2.110-b936c0a3c
-> > Firmware copy: RW
-> > Build info:    nocturne_fp_v2.2.110-b936c0a3c 2018-11-02 14:16:46
-> > @swarm-cros-461
-> > Chip vendor:   stm
-> > Chip name:     stm32h7x3
-> > Chip revision: 
-> > Board version: EC error 1
-> > root@debian:/sys/class/chromeos/cros_fp#
-> > 
-> > We see here that cros_fp is still RW.
-> > 
-> > I also tried with:
-> > 
-> > debian@debian:/src/ec$ sudo build/bds/util/ectool --name=cros_fp
-> > reboot_ec RO
-> > debian@debian:/src/ec$ sudo build/bds/util/ectool --name=cros_fp
-> > version     
-> > RO version:    nocturne_fp_v2.2.64-58cf5974e
-> > RW version:    nocturne_fp_v2.2.110-b936c0a3c
-> > Firmware copy: RW
-> > Build info:    nocturne_fp_v2.2.110-b936c0a3c 2018-11-02 14:16:46
-> > @swarm-cros-461
-> > Tool version:  v2.0.3074-a5052d4e7 2020-01-16 10:23:05 
-> > debian@debian
-> > debian@debian:/src/ec$
-> > 
-> > with the same result.
-> > 
-> > Can you decribe us steps you follow to test that patch?
-> > 
-> > Thanks
-> > 
-> > Fabien
-> > 
-> > Le lundi 18 novembre 2019 à 12:00 -0800, Yicheng Li a écrit :
-> > > RO and RW of EC may have different EC protocol version. If EC
-> > > transitions
-> > > between RO and RW, but AP does not reboot (this is true for
-> > > fingerprint
-> > > microcontroller / cros_fp, but not true for main ec / cros_ec),
-> > the
-> > > AP
-> > > still uses the protocol version queried before transition, which
-> > can
-> > > cause problems. In the case of fingerprint microcontroller, this
-> > > causes
-> > > AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in
-> > the
-> > > interrupt handler, which in turn prevents RO to clear the
-> > interrupt
-> > > line to AP, in an infinite loop.
-> > > 
-> > > Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that
-> > there
-> > > might have been a transition between RO and RW, so re-query the
-> > > protocol.
-> > > 
-> > > Signed-off-by: Yicheng Li <yichengli@chromium.org>
-> > > 
-> > > Change-Id: Ib58032ff4a8e113bdbd07212e8aff42807afff38
-> > > Series-to: LKML <linux-kernel@vger.kernel.org>
-> > > Series-cc: Benson Leung <bleung@chromium.org>, Enric Balletbo i
-> > Serra
-> > > <enric.balletbo@collabora.com>, Gwendal Grignou <
-> > gwendal@chromium.org
-> > > >
-> > > ---
-> > >  drivers/platform/chrome/cros_ec.c           | 24
-> > > +++++++++++++++++++++
-> > >  include/linux/platform_data/cros_ec_proto.h |  1 +
-> > >  2 files changed, 25 insertions(+)
-> > > 
-> > > diff --git a/drivers/platform/chrome/cros_ec.c
-> > > b/drivers/platform/chrome/cros_ec.c
-> > > index 9b2d07422e17..0c910846d99d 100644
-> > > --- a/drivers/platform/chrome/cros_ec.c
-> > > +++ b/drivers/platform/chrome/cros_ec.c
-> > > @@ -104,6 +104,23 @@ static int cros_ec_sleep_event(struct
-> > > cros_ec_device *ec_dev, u8 sleep_event)
-> > >       return ret;
-> > >  }
-> > >  
-> > > +static int cros_ec_ready_event(struct notifier_block *nb,
-> > > +     unsigned long queued_during_suspend, void *_notify)
-> > > +{
-> > > +     struct cros_ec_device *ec_dev = container_of(nb, struct
-> > > cros_ec_device,
-> > > +                                                 
-> > notifier_ready);
-> > > +     u32 host_event = cros_ec_get_host_event(ec_dev);
-> > > +
-> > > +     if (host_event &
-> > > EC_HOST_EVENT_MASK(EC_HOST_EVENT_INTERFACE_READY)) {
-> > > +             mutex_lock(&ec_dev->lock);
-> > > +             cros_ec_query_all(ec_dev);
-> > > +             mutex_unlock(&ec_dev->lock);
-> > > +             return NOTIFY_OK;
-> > > +     } else {
-> > > +             return NOTIFY_DONE;
-> > > +     }
-> > > +}
-> > > +
-> > >  /**
-> > >   * cros_ec_register() - Register a new ChromeOS EC, using the
-> > > provided info.
-> > >   * @ec_dev: Device to register.
-> > > @@ -201,6 +218,13 @@ int cros_ec_register(struct cros_ec_device
-> > > *ec_dev)
-> > >               dev_dbg(ec_dev->dev, "Error %d clearing sleep event
-> > to
-> > > ec",
-> > >                       err);
-> > >  
-> > > +     /* Register the notifier for EC_HOST_EVENT_INTERFACE_READY
-> > > event. */
-> > > +     ec_dev->notifier_ready.notifier_call = cros_ec_ready_event;
-> > > +     err = blocking_notifier_chain_register(&ec_dev-
-> > >event_notifier,
-> > > +                                            &ec_dev-
-> > > >notifier_ready);
-> > > +     if (err < 0)
-> > > +             dev_warn(ec_dev->dev, "Failed to register
-> > notifier\n");
-> > > +
-> > >       dev_info(dev, "Chrome EC device registered\n");
-> > >  
-> > >       return 0;
-> > > diff --git a/include/linux/platform_data/cros_ec_proto.h
-> > > b/include/linux/platform_data/cros_ec_proto.h
-> > > index 0d4e4aaed37a..9840408c0b01 100644
-> > > --- a/include/linux/platform_data/cros_ec_proto.h
-> > > +++ b/include/linux/platform_data/cros_ec_proto.h
-> > > @@ -161,6 +161,7 @@ struct cros_ec_device {
-> > >       int event_size;
-> > >       u32 host_event_wake_mask;
-> > >       u32 last_resume_result;
-> > > +     struct notifier_block notifier_ready;
-> > >  
-> > >       /* The platform devices used by the mfd driver */
-> > >       struct platform_device *ec;
-> > 
-
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 3140fe2..44fb446 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3822,14 +3822,15 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 		void *buf;
+ 
+ 		if (host->flags & SDHCI_USE_64_BIT_DMA) {
+-			host->adma_table_sz = host->adma_table_cnt *
+-					      SDHCI_ADMA2_64_DESC_SZ(host);
+-			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
++			if (!host->alloc_desc_sz)
++				host->alloc_desc_sz =
++					SDHCI_ADMA2_64_DESC_SZ(host);
+ 		} else {
+-			host->adma_table_sz = host->adma_table_cnt *
+-					      SDHCI_ADMA2_32_DESC_SZ;
+-			host->desc_sz = SDHCI_ADMA2_32_DESC_SZ;
++			host->alloc_desc_sz = SDHCI_ADMA2_32_DESC_SZ;
+ 		}
++		host->desc_sz = host->alloc_desc_sz;
++		host->adma_table_sz = host->adma_table_cnt *
++					      host->desc_sz;
+ 
+ 		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
+ 		/*
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 0ed3e0e..10bda3a 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -554,7 +554,8 @@ struct sdhci_host {
+ 	dma_addr_t adma_addr;	/* Mapped ADMA descr. table */
+ 	dma_addr_t align_addr;	/* Mapped bounce buffer */
+ 
+-	unsigned int desc_sz;	/* ADMA descriptor size */
++	unsigned int desc_sz;	/* ADMA current descriptor size */
++	unsigned int alloc_desc_sz;	/* ADMA descr. max size host supports */
+ 
+ 	struct workqueue_struct *complete_wq;	/* Request completion wq */
+ 	struct work_struct	complete_work;	/* Request completion work */
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
