@@ -2,142 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36670142B5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9986142B6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgATM5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:57:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51079 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726589AbgATM5G (ORCPT
+        id S1727254AbgATNAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:00:06 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:48280 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726619AbgATNAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:57:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579525024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FEDkrujKlTJc5+7hmDpzcA7gq/UPeEUXrVOs87I/0F4=;
-        b=PMRCjq8r3kflwb+497XgRMs6YzZG95l6goXTdFI0PNTAJFeEM/LR2Z/2wQOnxvxjCpa6f0
-        RBKedeVmwaaN6MYEmVfMaGiHxeXBdNG1ru7GSATFxLW9Wl/vkX0O/jIsDhAOnXX5DJojab
-        RsrwLlPxviQA5TzNlF5kB35UFibZtqE=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-367-vl_qzjN0NhGrL6xjVBCcAQ-1; Mon, 20 Jan 2020 07:57:02 -0500
-X-MC-Unique: vl_qzjN0NhGrL6xjVBCcAQ-1
-Received: by mail-lj1-f197.google.com with SMTP id b15so7513348ljp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 04:57:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=FEDkrujKlTJc5+7hmDpzcA7gq/UPeEUXrVOs87I/0F4=;
-        b=tDXUWb66nw9qZAaTTZl6REheNZDzEk1aA1OBPJVxhquvgB5kyR3fqJ5+yPJv8GMrXc
-         6fscGkayu5WVYGdWincA+HgAuKQVWWO4GxAb7ejv42G3ee5/MgxcAD/gqUH86AoOaxbE
-         4JxQZbOwjBUkHs46CMhXvrHTSFpmXmTNMfkh+8sWfJ5Zf2caClkCv2mgmQocQeH8qeVr
-         yM5AIo7uP1vWAzQKv3h6rIqu1HpRV3p1q9u8uVAU+jSuqfRrGb9nPk0sj6V8FBRJ3EBa
-         26vZvnraJB0Keyx7RPKr6lQ9w5zr92ie/ZKtoJ2D4nFL2Bt4K3n6Sby/JnLeEXcHCWFn
-         mZsA==
-X-Gm-Message-State: APjAAAUAG9Uw8+sPMWpaJr0AkdSQopYDWnkl6fypp8IQd47x3LEJp70M
-        N4Kzgn1JGDi2cD+ikayqSpHczpENXylp6z1Ok46HLLMT3HYx4PUJyqN2EMTh9WA9i5PaCuOo1w8
-        o9q6b1eskhcUUlw1HNCGUhlIz
-X-Received: by 2002:a2e:721a:: with SMTP id n26mr13678542ljc.128.1579525021238;
-        Mon, 20 Jan 2020 04:57:01 -0800 (PST)
-X-Google-Smtp-Source: APXvYqylZwrQxfS+zP3D15CF1fcweaXgkNnfdqeyFKArvqvKbNKna0d4DC4s5krAr4PrBm9NHLxAlw==
-X-Received: by 2002:a2e:721a:: with SMTP id n26mr13678516ljc.128.1579525020966;
-        Mon, 20 Jan 2020 04:57:00 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id 2sm16813782ljq.38.2020.01.20.04.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 04:57:00 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 5785F1804D6; Mon, 20 Jan 2020 13:56:59 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Doug Ledford <dledford@redhat.com>,
+        Mon, 20 Jan 2020 08:00:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=38;SR=0;TI=SMTPD_---0ToETcqo_1579525195;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToETcqo_1579525195)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 20 Jan 2020 20:59:57 +0800
+Subject: Re: [PATCH v8 03/10] mm/lru: replace pgdat lru_lock with lruvec lock
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, willy@infradead.org,
+        shakeelb@google.com, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org,
-        "open list\:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH bpf-next v4 04/10] tools/runqslower: Use consistent include paths for libbpf
-In-Reply-To: <CAEf4BzbAV0TmEUL=62jz+RD6SPmu927z-dhGL9JHepcAOGMSJA@mail.gmail.com>
-References: <157926819690.1555735.10756593211671752826.stgit@toke.dk> <157926820131.1555735.1177228853838027248.stgit@toke.dk> <CAEf4BzbAV0TmEUL=62jz+RD6SPmu927z-dhGL9JHepcAOGMSJA@mail.gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Mon, 20 Jan 2020 13:56:59 +0100
-Message-ID: <875zh6p9pg.fsf@toke.dk>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+References: <1579143909-156105-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1579143909-156105-4-git-send-email-alex.shi@linux.alibaba.com>
+ <20200116215222.GA64230@cmpxchg.org>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <9ee80b68-a78f-714a-c727-1f6d2b4f87ea@linux.alibaba.com>
+Date:   Mon, 20 Jan 2020 20:58:09 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200116215222.GA64230@cmpxchg.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
 
-> On Fri, Jan 17, 2020 at 5:37 AM Toke H=C3=B8iland-J=C3=B8rgensen <toke@re=
-dhat.com> wrote:
->>
->> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->>
->> Fix the runqslower tool to include libbpf header files with the bpf/
->> prefix, to be consistent with external users of the library. Also ensure
->> that all includes of exported libbpf header files (those that are export=
-ed
->> on 'make install' of the library) use bracketed includes instead of quot=
-ed.
->>
->> To not break the build, keep the old include path until everything has b=
-een
->> changed to the new one; a subsequent patch will remove that.
->>
->> Fixes: 6910d7d3867a ("selftests/bpf: Ensure bpf_helper_defs.h are taken =
-from selftests dir")
->> Acked-by: Andrii Nakryiko <andriin@fb.com>
->> Signed-off-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->> ---
->>  tools/bpf/runqslower/Makefile         |    5 +++--
->>  tools/bpf/runqslower/runqslower.bpf.c |    2 +-
->>  tools/bpf/runqslower/runqslower.c     |    4 ++--
->>  3 files changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/tools/bpf/runqslower/Makefile b/tools/bpf/runqslower/Makefi=
-le
->> index b62fc9646c39..9f022f7f2593 100644
->> --- a/tools/bpf/runqslower/Makefile
->> +++ b/tools/bpf/runqslower/Makefile
->> @@ -5,6 +5,7 @@ LLC :=3D llc
->>  LLVM_STRIP :=3D llvm-strip
->>  DEFAULT_BPFTOOL :=3D $(OUTPUT)/sbin/bpftool
->>  BPFTOOL ?=3D $(DEFAULT_BPFTOOL)
->> +INCLUDES :=3D -I$(OUTPUT) -I$(abspath ../../lib) -I$(abspath ../../lib/=
-bpf)
->>  LIBBPF_SRC :=3D $(abspath ../../lib/bpf)
->
-> drop LIBBPF_SRC, it's not used anymore
 
-It is: in the rule for building libbpf there's a '-C $(LIBBPF_SRC)'
+ÔÚ 2020/1/17 ÉÏÎç5:52, Johannes Weiner Ð´µÀ:
 
--Toke
+> You simply cannot serialize on page->mem_cgroup->lruvec when
+> page->mem_cgroup isn't stable. You need to serialize on the page
+> itself, one way or another, to make this work.
+> 
+> 
+> So here is a crazy idea that may be worth exploring:
+> 
+> Right now, pgdat->lru_lock protects both PageLRU *and* the lruvec's
+> linked list.
+> 
+> Can we make PageLRU atomic and use it to stabilize the lru_lock
+> instead, and then use the lru_lock only serialize list operations?
+> 
 
+Hi Johannes,
+
+I am trying to figure out the solution of atomic PageLRU, but is 
+blocked by the following sitations, when PageLRU and lru list was protected
+together under lru_lock, the PageLRU could be a indicator if page on lru list
+But now seems it can't be the indicator anymore.
+Could you give more clues of stabilization usage of PageLRU?
+  
+
+__page_cache_release/release_pages/compaction            __pagevec_lru_add
+if (TestClearPageLRU(page))                              if (!PageLRU())
+                                                                lruvec_lock();
+                                                                list_add();
+        			                                lruvec_unlock();
+        			                                SetPageLRU() //position 1
+        lock_page_lruvec_irqsave(page, &flags);
+        del_page_from_lru_list(page, lruvec, ..);
+        unlock_page_lruvec_irqrestore(lruvec, flags);
+                                                                SetPageLRU() //position 2
+Thanks a lot!
+Alex
+
+> I.e. in compaction, you'd do
+> 
+> 	if (!TestClearPageLRU(page))
+> 		goto isolate_fail;
+> 	/*
+> 	 * We isolated the page's LRU state and thereby locked out all
+> 	 * other isolators, including cgroup page moving, page reclaim,
+> 	 * page freeing etc. That means page->mem_cgroup is now stable
+> 	 * and we can safely look up the correct lruvec and take the
+> 	 * page off its physical LRU list.
+> 	 */
+> 	lruvec = mem_cgroup_page_lruvec(page);
+> 	spin_lock_irq(&lruvec->lru_lock);
+> 	del_page_from_lru_list(page, lruvec, page_lru(page));
+> 
+> Putback would mostly remain the same (although you could take the
+> PageLRU setting out of the list update locked section, as long as it's
+> set after the page is physically linked):
+> 
+> 	/* LRU isolation pins page->mem_cgroup */
+> 	lruvec = mem_cgroup_page_lruvec(page)
+> 	spin_lock_irq(&lruvec->lru_lock);
+> 	add_page_to_lru_list(...);
+> 	spin_unlock_irq(&lruvec->lru_lock);
+> 
+> 	SetPageLRU(page);
+> 
+> And you'd have to carefully review and rework other sites that rely on
+> PageLRU: reclaim, __page_cache_release(), __activate_page() etc.
+> 
+> Especially things like activate_page(), which used to only check
+> PageLRU to shuffle the page on the LRU list would now have to briefly
+> clear PageLRU and then set it again afterwards.
+> 
+> However, aside from a bit more churn in those cases, and the
+> unfortunate additional atomic operations, I currently can't think of a
+> fundamental reason why this wouldn't work.
+> 
+> Hugh, what do you think?
+> 
