@@ -2,275 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9355E142707
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79FA514270C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgATJUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 04:20:08 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34264 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgATJUH (ORCPT
+        id S1726626AbgATJU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 04:20:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35840 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726125AbgATJU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 04:20:07 -0500
-Received: by mail-lj1-f194.google.com with SMTP id z22so33077537ljg.1;
-        Mon, 20 Jan 2020 01:20:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8C/mZXwz1k16VddWbbfLduE+w20ODmNZVLLZydi7+ao=;
-        b=V9iESc7dTXL7mW5rbVZTW5kS66iRa0Gy3tCA/2NGByTDTBd04CmTwq2pS5NVclloMR
-         nf3heB5oYa6i04uqxrbfi9gNUDsozDBReJsSFVCOT8aPQcXfBMAH0w/EtBAPVN1bGGJC
-         H2dJPCnpalJTjdUvfRINUMlLxg/4ILatf59y5Q5IR2oqCl6w5DoXo4EuIMWlflNDX359
-         p6WNkzarv/2PSwKn8nsrBkmsYJqgLU3ploaIVdIQ+qhSffEZRyX8rrVJP7mqJJBkYX4E
-         OSbnDCVv9Y+LQcvfe6n5fH8Vl6j6zaQzK0GTndu3So+kO48l/neJTf+G409PAK9+vah9
-         FUJA==
-X-Gm-Message-State: APjAAAW87y10qEq9w0O8iNhUY6ke0I9Q4TONfbGSCoavxIiaxqnCeal5
-        TGRGYDVyBLhJS+rh7MMX1tw=
-X-Google-Smtp-Source: APXvYqxPafDNRwL3Zf9QxbwZM2C78B6K0bkMnhLwgZR1HeGiNQqfKBh/oavJhwz4A9zowlqfbk8IJw==
-X-Received: by 2002:a2e:8152:: with SMTP id t18mr12125035ljg.255.1579512003300;
-        Mon, 20 Jan 2020 01:20:03 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p136sm16558463lfa.8.2020.01.20.01.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 01:20:02 -0800 (PST)
-Date:   Mon, 20 Jan 2020 11:19:51 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mon, 20 Jan 2020 04:20:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579512056;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+        bh=3LjKB0WBZyDj73a7doCuA2b6bSfUFdmB/VV7sAfUFaA=;
+        b=JpZwFL97ZdWakcxGh6ulEEy6aJ6D3k8WV/XduHojW56pXmYf0gl8e3WyJVQkucfUzjX9Co
+        x02agavjy5GSma3K5ojFq1ImNHPlK3L1vSgDO9tn+fLZNNjX/Rb7YFRzfJ0i9ycFP9LMQ4
+        /4gV4Pi9R/KCHtoiVg9IbbtlnevjL7s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-432-38eAAG61MNSGJft5wiwpng-1; Mon, 20 Jan 2020 04:20:53 -0500
+X-MC-Unique: 38eAAG61MNSGJft5wiwpng-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E27661854330;
+        Mon, 20 Jan 2020 09:20:50 +0000 (UTC)
+Received: from [10.36.118.34] (unknown [10.36.118.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 455D689E95;
+        Mon, 20 Jan 2020 09:20:47 +0000 (UTC)
+Subject: Re: [PATCH RFC v1] mm: is_mem_section_removable() overhaul
+From:   David Hildenbrand <david@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH v12 07/10] clk: bd718x7: Support ROHM BD71828 clk block
-Message-ID: <18cb3983aab9e2398864e2c555f8957dc037221d.1579511114.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1579511114.git.matti.vaittinen@fi.rohmeurope.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        lantianyu1986@gmail.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20200117105759.27905-1-david@redhat.com>
+ <20200117113353.GT19428@dhcp22.suse.cz>
+ <c82a0dd7-a99b-6def-83d4-a19fbdd405d9@redhat.com>
+ <20200117145233.GB19428@dhcp22.suse.cz>
+ <65606e2e-1cf7-de3b-10b1-33653cb41a52@redhat.com>
+ <20200117152947.GK19428@dhcp22.suse.cz>
+ <CAPcyv4hHHzdPp4SQ0sePzx7XEvD7U_B+vZDT00O6VbFY8kJqjw@mail.gmail.com>
+ <25a94f61-46a1-59a6-6b54-8cc6b35790d2@redhat.com>
+ <CAPcyv4jvmYRbX9i+1_LvHoTDGABadHbYH3NVkqczKsQ4fsf74g@mail.gmail.com>
+ <20200120074816.GG18451@dhcp22.suse.cz>
+ <a5f0bd8d-de5e-9f27-5c94-7746a3d20a95@redhat.com>
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Red Hat GmbH
+Message-ID: <981134a1-67e3-536d-87d3-ba54f3744bfc@redhat.com>
+Date:   Mon, 20 Jan 2020 10:20:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1579511114.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <a5f0bd8d-de5e-9f27-5c94-7746a3d20a95@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BD71828GW is a single-chip power management IC for battery-powered portable
-devices. Add support for controlling BD71828 clk using bd718x7 driver.
+On 20.01.20 10:14, David Hildenbrand wrote:
+> On 20.01.20 08:48, Michal Hocko wrote:
+>> On Fri 17-01-20 08:57:51, Dan Williams wrote:
+>> [...]
+>>> Unless the user is willing to hold the device_hotplug_lock over the
+>>> evaluation then the result is unreliable.
+>>
+>> Do we want to hold the device_hotplug_lock from this user readable file
+>> in the first place? My book says that this just waits to become a
+>> problem.
+> 
+> It was the "big hammer" solution for this RFC.
+> 
+> I think we could do with a try_lock() on the device_lock() paired with a
+> device->removed flag. The latter is helpful for properly catching zombie
+> devices on the onlining/offlining path either way (and on my todo list).
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/Kconfig              |  6 ++---
- drivers/clk/clk-bd718x7.c        | 38 +++++++++++++++++++++++---------
- include/linux/mfd/rohm-bd70528.h |  6 -----
- include/linux/mfd/rohm-bd71828.h |  4 ----
- include/linux/mfd/rohm-bd718x7.h |  6 -----
- 5 files changed, 31 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 45653a0e6ecd..ac5981ce2477 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -305,10 +305,10 @@ config COMMON_CLK_MMP2
- 	  Support for Marvell MMP2 and MMP3 SoC clocks
- 
- config COMMON_CLK_BD718XX
--	tristate "Clock driver for ROHM BD718x7 PMIC"
--	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
-+	tristate "Clock driver for 32K clk gates on ROHM PMICs"
-+	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528 || MFD_ROHM_BD71828
- 	help
--	  This driver supports ROHM BD71837, ROHM BD71847 and
-+	  This driver supports ROHM BD71837, ROHM BD71847, ROHM BD71828 and
- 	  ROHM BD70528 PMICs clock gates.
- 
- config COMMON_CLK_FIXED_MMIO
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index 33699ee1bdf3..b52e8d6f660c 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -7,12 +7,25 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
--#include <linux/mfd/rohm-bd718x7.h>
--#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/mfd/rohm-generic.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/regmap.h>
- 
-+/* clk control registers */
-+/* BD70528 */
-+#define BD70528_REG_OUT32K	0x2c
-+/* BD71828 */
-+#define BD71828_REG_OUT32K	0x4B
-+/* BD71837 and BD71847 */
-+#define BD718XX_REG_OUT32K	0x2E
-+
-+/*
-+ * BD71837, BD71847, BD70528 and BD71828 all use bit [0] to clk output control
-+ */
-+#define CLK_OUT_EN_MASK		BIT(0)
-+
-+
- struct bd718xx_clk {
- 	struct clk_hw hw;
- 	u8 reg;
-@@ -21,10 +34,8 @@ struct bd718xx_clk {
- 	struct rohm_regmap_dev *mfd;
- };
- 
--static int bd71837_clk_set(struct clk_hw *hw, int status)
-+static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
- {
--	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
--
- 	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
- }
- 
-@@ -33,14 +44,16 @@ static void bd71837_clk_disable(struct clk_hw *hw)
- 	int rv;
- 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
- 
--	rv = bd71837_clk_set(hw, 0);
-+	rv = bd71837_clk_set(c, 0);
- 	if (rv)
- 		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
- }
- 
- static int bd71837_clk_enable(struct clk_hw *hw)
- {
--	return bd71837_clk_set(hw, 1);
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	return bd71837_clk_set(c, 0xffffffff);
- }
- 
- static int bd71837_clk_is_enabled(struct clk_hw *hw)
-@@ -92,11 +105,15 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	case ROHM_CHIP_TYPE_BD71837:
- 	case ROHM_CHIP_TYPE_BD71847:
- 		c->reg = BD718XX_REG_OUT32K;
--		c->mask = BD718XX_OUT32K_EN;
-+		c->mask = CLK_OUT_EN_MASK;
-+		break;
-+	case ROHM_CHIP_TYPE_BD71828:
-+		c->reg = BD71828_REG_OUT32K;
-+		c->mask = CLK_OUT_EN_MASK;
- 		break;
- 	case ROHM_CHIP_TYPE_BD70528:
--		c->reg = BD70528_REG_CLK_OUT;
--		c->mask = BD70528_CLK_OUT_EN_MASK;
-+		c->reg = BD70528_REG_OUT32K;
-+		c->mask = CLK_OUT_EN_MASK;
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Unknown clk chip\n");
-@@ -126,6 +143,7 @@ static const struct platform_device_id bd718x7_clk_id[] = {
- 	{ "bd71837-clk", ROHM_CHIP_TYPE_BD71837 },
- 	{ "bd71847-clk", ROHM_CHIP_TYPE_BD71847 },
- 	{ "bd70528-clk", ROHM_CHIP_TYPE_BD70528 },
-+	{ "bd71828-clk", ROHM_CHIP_TYPE_BD71828 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, bd718x7_clk_id);
-diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
-index 1013e60c5b25..2ad2320d0a96 100644
---- a/include/linux/mfd/rohm-bd70528.h
-+++ b/include/linux/mfd/rohm-bd70528.h
-@@ -89,10 +89,6 @@ struct bd70528_data {
- #define BD70528_REG_GPIO3_OUT	0x52
- #define BD70528_REG_GPIO4_OUT	0x54
- 
--/* clk control */
--
--#define BD70528_REG_CLK_OUT	0x2c
--
- /* RTC */
- 
- #define BD70528_REG_RTC_COUNT_H		0x2d
-@@ -309,8 +305,6 @@ enum {
- 
- #define BD70528_GPIO_IN_STATE_BASE 1
- 
--#define BD70528_CLK_OUT_EN_MASK 0x1
--
- /* RTC masks to mask out reserved bits */
- 
- #define BD70528_MASK_RTC_SEC		0x7f
-diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-index eb0557eb5314..d013e03f742d 100644
---- a/include/linux/mfd/rohm-bd71828.h
-+++ b/include/linux/mfd/rohm-bd71828.h
-@@ -183,9 +183,6 @@ enum {
- #define BD71828_REG_CHG_STATE		0x65
- #define BD71828_REG_CHG_FULL		0xd2
- 
--/* CLK */
--#define BD71828_REG_OUT32K		0x4B
--
- /* LEDs */
- #define BD71828_REG_LED_CTRL		0x4A
- #define BD71828_MASK_LED_AMBER		0x80
-@@ -417,7 +414,6 @@ enum {
- #define BD71828_INT_RTC1_MASK				0x2
- #define BD71828_INT_RTC2_MASK				0x4
- 
--#define BD71828_OUT32K_EN				0x1
- #define BD71828_OUT_TYPE_MASK				0x2
- #define BD71828_OUT_TYPE_OPEN_DRAIN			0x0
- #define BD71828_OUT_TYPE_CMOS				0x2
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-index 7f2dbde402a1..bee2474a8f9f 100644
---- a/include/linux/mfd/rohm-bd718x7.h
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -191,12 +191,6 @@ enum {
- #define IRQ_ON_REQ		0x02
- #define IRQ_STBY_REQ		0x01
- 
--/* BD718XX_REG_OUT32K bits */
--#define BD718XX_OUT32K_EN	0x01
--
--/* BD7183XX gated clock rate */
--#define BD718XX_CLK_RATE 32768
--
- /* ROHM BD718XX irqs */
- enum {
- 	BD718XX_INT_STBY_REQ,
--- 
-2.21.0
-
+We do have dev->p->dead which could come in handy.
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Thanks,
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+David / dhildenb
+
