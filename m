@@ -2,58 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E49AB1429B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 12:40:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD37D1429B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 12:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgATLku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 06:40:50 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726573AbgATLku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 06:40:50 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 058866AFF2DBAE7FB670;
-        Mon, 20 Jan 2020 19:40:48 +0800 (CST)
-Received: from [127.0.0.1] (10.173.220.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 Jan 2020
- 19:40:38 +0800
-Subject: Re: [PATCH] pwm: remove set but not set variable 'pwm'
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-CC:     <thierry.reding@gmail.com>, <linux-pwm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zhengbin13@huawei.com>,
-        <yi.zhang@huawei.com>
-References: <20200119122202.14502-1-yukuai3@huawei.com>
- <20200120073407.ck2fmk7qdvqsfqsy@pengutronix.de>
-From:   "yukuai (C)" <yukuai3@huawei.com>
-Message-ID: <55871ad5-4cb0-f3c8-a408-2c1be894126a@huawei.com>
-Date:   Mon, 20 Jan 2020 19:40:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726951AbgATLmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 06:42:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56526 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726573AbgATLmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 06:42:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 372D1AD5C;
+        Mon, 20 Jan 2020 11:42:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5CD301E0CF1; Mon, 20 Jan 2020 12:42:07 +0100 (CET)
+Date:   Mon, 20 Jan 2020 12:42:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     "yukuai (C)" <yukuai3@huawei.com>
+Cc:     Jan Kara <jack@suse.cz>, hch@infradead.org,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        houtao1@huawei.com, zhengbin13@huawei.com, yi.zhang@huawei.com
+Subject: Re: [RFC] iomap: fix race between readahead and direct write
+Message-ID: <20200120114207.GE19861@quack2.suse.cz>
+References: <20200116063601.39201-1-yukuai3@huawei.com>
+ <20200116153206.GF8446@quack2.suse.cz>
+ <ce4bc2f3-a23e-f6ba-0ef1-66231cd1057d@huawei.com>
+ <20200117110536.GE17141@quack2.suse.cz>
+ <976d09e1-e3b5-a6a6-d159-9bdac3a7dc84@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200120073407.ck2fmk7qdvqsfqsy@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.220.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <976d09e1-e3b5-a6a6-d159-9bdac3a7dc84@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2020/1/20 15:34, Uwe Kleine-König wrote:
-> Fixes: e926b12c611c ("pwm: Clear chip_data in pwm_put()")
-
-Thank you for your advise! I'll add 'Fixes' in a V2 patch.
-
-> Did you check that dropping the locking is save? (I didn't)
+On Sun 19-01-20 09:17:00, yukuai (C) wrote:
 > 
-> I'd assume that no harm is introduced, but mentioning that in the commit
-> log would be good.
+> 
+> On 2020/1/17 19:05, Jan Kara wrote:
+> > provide
+> > allocation for each page separately
+> 
+> Thank you for your response!
+> 
+> I do understand there will be additional CPU overhead. But page is allocated
+> in __do_page_cache_readahead(), which is called before
+> iomap_begin(). And I did not change that.
 
-I think dropping the lock is safe since there is nothing to be done
-inside the lock. However, I didn't run a full test. By the way, I'll
-mentioning it in a V2 patch.
+Sorry, I didn't express myself clearly. In "...one of the big points of iomap
+infrastructure is that you call filesystem once to give you large extent
+instead of calling it to provide allocation for each page separately." I
+meant that with your patch, you call into filesystem to provide "block
+allocation information" for each page separately. And it seems we both
+agree this is going to cause additional CPU usage in the common case to
+improve mostly unsupported corner case.
 
-Thanks!
-Yu Kuai
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
