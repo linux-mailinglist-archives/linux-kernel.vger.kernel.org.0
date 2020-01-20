@@ -2,159 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC79C142C2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:36:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C136142C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbgATNgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:36:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24082 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726728AbgATNgD (ORCPT
+        id S1727114AbgATN4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:56:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8202 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726738AbgATN4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:36:03 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KDIelB113894
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:20:23 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xmfyxsmq7-1
+        Mon, 20 Jan 2020 08:56:42 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KDIpd3072358
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:20:25 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xmgh9s7ty-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:20:22 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:20:24 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Mon, 20 Jan 2020 13:20:20 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 20 Jan 2020 13:20:23 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Jan 2020 13:20:18 -0000
+        Mon, 20 Jan 2020 13:20:20 -0000
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00KDKHlq60293158
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00KDKIZA38010888
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Jan 2020 13:20:17 GMT
+        Mon, 20 Jan 2020 13:20:18 GMT
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C92BA405F;
-        Mon, 20 Jan 2020 13:20:17 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id CA0A3A4068;
+        Mon, 20 Jan 2020 13:20:18 +0000 (GMT)
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF0A0A4054;
-        Mon, 20 Jan 2020 13:20:16 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 87267A4054;
+        Mon, 20 Jan 2020 13:20:18 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
         by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Jan 2020 13:20:16 +0000 (GMT)
+        Mon, 20 Jan 2020 13:20:18 +0000 (GMT)
 From:   Thomas Richter <tmricht@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         acme@kernel.org
 Cc:     gor@linux.ibm.com, sumanthk@linux.ibm.com,
         heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v2] perf test: Fix test case Merge cpu map
-Date:   Mon, 20 Jan 2020 14:20:09 +0100
+Subject: [PATCH v2] perf probe: Add ustring support for perf probe command
+Date:   Mon, 20 Jan 2020 14:20:10 +0100
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200120132011.64698-1-tmricht@linux.ibm.com>
+References: <20200120132011.64698-1-tmricht@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 20012013-0012-0000-0000-0000037F0F8E
+x-cbid: 20012013-0016-0000-0000-000002DF123B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012013-0013-0000-0000-000021BB4C7D
-Message-Id: <20200120132011.64698-1-tmricht@linux.ibm.com>
+x-cbparentid: 20012013-0017-0000-0000-00003341B5FD
+Message-Id: <20200120132011.64698-2-tmricht@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-01-20_02:2020-01-20,2020-01-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=2
- mlxlogscore=999 clxscore=1015 mlxscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 mlxlogscore=999 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-1910280000 definitions=main-2001200115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V2: Added Reviewed-by statement
+Kernel commit 88903c464321 ("tracing/probe: Add ustring type for user-space string")
+adds support for user-space strings when type 'ustring' is specified.
 
-Commit a2408a70368a ("perf evlist: Maintain evlist->all_cpus")
-introduces a test case for cpumap merge operation, see functions
-perf_cpu_map__merge() and test__cpu_map_merge().
+Here is an example using sysfs command line interface
+for kprobes:
 
-The test case fails on s390 with this error message:
- [root@m35lp76 perf]# ./perf test -Fvvvvv 52
- 52: Merge cpu map                                         :
- --- start ---
- cpumask list: 1-2,4-5,7
- perf: /root/linux/tools/include/linux/refcount.h:131:\
-          refcount_sub_and_test: Assertion `!(new > val)' failed.
- Aborted (core dumped)
- [root@m35lp76 perf]#
+Function to probe:
+  struct filename *
+  getname_flags(const char __user *filename, int flags, int *empty)
 
-The root cause is in the function test__cpu_map_merge():
-It creates two cpu_maps named 'a' and 'b':
+Setup:
+  # cd /sys/kernel/debug/tracing/
+  # echo 'p:tmr1 getname_flags +0(%r2):ustring' > kprobe_events
+  # cat events/kprobes/tmr1/format | fgrep print
+  print fmt: "(%lx) arg1=\"%s\"", REC->__probe_ip, REC->arg1
+  # echo 1 > events/kprobes/tmr1/enable
+  # touch /tmp/111
+  # echo 0 > events/kprobes/tmr1/enable
+  # cat trace|fgrep /tmp/111
+  touch-5846  [005] d..2 255520.717960: tmr1:\
+	  (getname_flags+0x0/0x400) arg1="/tmp/111"
 
-  struct perf_cpu_map *a = perf_cpu_map__new("4,2,1");
-  struct perf_cpu_map *b = perf_cpu_map__new("4,5,7");
+Doing the same with the perf tool fails.
+Using type 'string' succeeds:
+ # perf probe "vfs_getname=getname_flags:72 pathname=filename:string"
+ Added new event:
+   probe:vfs_getname (on getname_flags:72 with pathname=filename:string)
+   ....
+ # perf probe -d probe:vfs_getname
+ Removed event: probe:vfs_getname
 
-and creates a third map named 'c' which is the result of
-the merge of maps a and b:
+However using type 'ustring' fails (output before):
+ # perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+ Failed to write event: Invalid argument
+   Error: Failed to add events.
+ #
 
-  struct perf_cpu_map *c = perf_cpu_map__merge(a, b);
+Fix this by adding type 'ustring' in function
+convert_variable_type().
 
-After some verifaction of the merged cpu_map all three
-of them are have their reference count reduced and are
-freed:
+Using ustring succeeds (output after):
+ # ./perf probe "vfs_getname=getname_flags:72 pathname=filename:ustring"
+ Added new event:
+   probe:vfs_getname (on getname_flags:72 with pathname=filename:ustring)
 
-   perf_cpu_map__put(a); (1)
-   perf_cpu_map__put(b);
-   perf_cpu_map__put(c);
+ You can now use it in all perf tools, such as:
 
-The release of perf_cpu_map__put(a) is wrong. The map
-is already released and free'ed as part of the function
+	perf record -e probe:vfs_getname -aR sleep 1
 
-  perf_cpu_map__merge(struct perf_cpu_map *orig,
-  |	              struct perf_cpu_map *other)
-  +--> perf_cpu_map__put(orig);
-       |
-       +--> cpu_map__delete(orig)
+ #
 
-At the end perf_cpu_map_put() is called for map 'orig'
-alias 'a' and since the reference count is 1, the map
-is deleted, as can be seen by the following gdb trace:
-
- (gdb) where
- #0  tcache_put (tc_idx=0, chunk=0x156cc30) at malloc.c:2940
- #1  _int_free (av=0x3fffd49ee80 <main_arena>, p=0x156cc30,
-		     have_lock=<optimized out>) at malloc.c:4222
- #2  0x00000000012d5e78 in cpu_map__delete (map=0x156cc40) at cpumap.c:31
- #3  0x00000000012d5f7a in perf_cpu_map__put (map=0x156cc40) at cpumap.c:45
- #4  0x00000000012d723a in perf_cpu_map__merge (orig=0x156cc40,
-     other=0x156cc60) at cpumap.c:343
- #5  0x000000000110cdd0 in test__cpu_map_merge (
-     test=0x14ea6c8 <generic_tests+2856>, subtest=-1) at tests/cpumap.c:128
-
-Thus the perf_cpu_map__put(a) (see (1) above) frees map 'a'
-a second time and causes the failure. Fix this be removing that
-function call.
-
-Output after:
-  [root@m35lp76 perf]# ./perf test -Fvvvvv 52
-  52: Merge cpu map                                         :
-  --- start ---
-  cpumask list: 1-2,4-5,7
-  ---- end ----
-  Merge cpu map: Ok
-  [root@m35lp76 perf]#
+Note: This issue also exists on x86, it is not s390 specific.
 
 Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/tests/cpumap.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/util/probe-finder.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/cpumap.c b/tools/perf/tests/cpumap.c
-index 4ac56741ac5f..29c793ac7d10 100644
---- a/tools/perf/tests/cpumap.c
-+++ b/tools/perf/tests/cpumap.c
-@@ -131,7 +131,6 @@ int test__cpu_map_merge(struct test *test __maybe_unused, int subtest __maybe_un
- 	TEST_ASSERT_VAL("failed to merge map: bad nr", c->nr == 5);
- 	cpu_map__snprint(c, buf, sizeof(buf));
- 	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, "1-2,4-5,7"));
--	perf_cpu_map__put(a);
- 	perf_cpu_map__put(b);
- 	perf_cpu_map__put(c);
- 	return 0;
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index c470c49a804f..1c817add6ca4 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -303,7 +303,8 @@ static int convert_variable_type(Dwarf_Die *vr_die,
+ 	char prefix;
+ 
+ 	/* TODO: check all types */
+-	if (cast && strcmp(cast, "string") != 0 && strcmp(cast, "x") != 0 &&
++	if (cast && strcmp(cast, "string") != 0 && strcmp(cast, "ustring") &&
++	    strcmp(cast, "x") != 0 &&
+ 	    strcmp(cast, "s") != 0 && strcmp(cast, "u") != 0) {
+ 		/* Non string type is OK */
+ 		/* and respect signedness/hexadecimal cast */
 -- 
 2.21.0
 
