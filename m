@@ -2,116 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2252614315E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B4B143161
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgATSSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 13:18:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50745 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbgATSSF (ORCPT
+        id S1727740AbgATSVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 13:21:10 -0500
+Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:52101 "EHLO
+        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726982AbgATSVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 13:18:05 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a5so304002wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 10:18:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ueFhoq0888bObMU/MyWNjalID6TVX62BYMUk86CN9sY=;
-        b=URqlkO1HRRK4JEksGOMOKBeLeUw2xDoWJkLqihkgtjh2adEvHnEmR5yDIn4unCT45S
-         aFI8umb1/wYVs0ip9chXxIwjwYTv8fb+Lo9xbBt67VEjKe71syIiJEjSf+avDIUlgkMm
-         nR2TS/uAT9ysoaxOMFy3QHwy/79RTB8MB9eBRgdpfovmPUGEEmNuxqyf6trbybXWs7U5
-         6MVZwQ1HJ3tg5qIIDFq+SGn+dJsFh7VKygE4O/gkq9Trlit+pEb6pqGuCWb+a/PO4DdN
-         j30va57due0cY8AGVnhpGRp/pSPv9uepqdnyuBhF72i5RG3ZbdrxQY3eRtfEUYeyHjsR
-         OOFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ueFhoq0888bObMU/MyWNjalID6TVX62BYMUk86CN9sY=;
-        b=b6xE1+ncZoGnFEvvnPXgQJiNJKB75vU5gRkujOoy9WYbEvNpoEY7LXwUflRJ+dP9RS
-         WC2yB3lLnkSuUCG+2ZO4CX3QtIrbMd82oFu8wU4umXJf9EPsR6Q0A6OxfB/ua2NGl7b0
-         davFMOShZx9gDwmRGp+PLHdbKiIsTxChUFYzsJHR8tjtgwL9nPEMAR887JUhHzP5P0pe
-         BGGFnRgDqIIGJ9rVuDYbivWm+mo6hrbU0NJ+y1nVyVBytLJuZhyHgwY3yujecd9UOnoB
-         9hjvB+uEZGq49QOb4+zYC5RDfPo8pb4Gvns9M4Zql1eWO3TlYSqB033JeHKl38yAM0JU
-         q0Ng==
-X-Gm-Message-State: APjAAAV4gz9OtStNnpEDAvsdcDWMW6pcf8KBSLxXLM1k95gjmYamCpOY
-        TXQHlI3JWVgEsCVMHcVoptmpQQ==
-X-Google-Smtp-Source: APXvYqwhBmzOsrIOPrRrZOZmMA2xlzfmjsCTPyWP8T4P9O74PDIhglC7uHXDKLHNFKMef4S3xh3WHQ==
-X-Received: by 2002:a1c:f407:: with SMTP id z7mr180451wma.72.1579544283637;
-        Mon, 20 Jan 2020 10:18:03 -0800 (PST)
-Received: from cheddar.halon.org.uk (cheddar.halon.org.uk. [93.93.131.118])
-        by smtp.gmail.com with ESMTPSA id u84sm305253wmg.10.2020.01.20.10.18.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jan 2020 10:18:02 -0800 (PST)
-Received: from bsmtp by cheddar.halon.org.uk with local-bsmtp (Exim 4.89)
-        (envelope-from <steve.mcintyre@linaro.org>)
-        id 1itbcg-0002Fz-0e; Mon, 20 Jan 2020 18:18:02 +0000
-Received: from stemci01 by c30-smcintyre.einval.org with local (Exim 4.92)
-        (envelope-from <steve.mcintyre@linaro.org>)
-        id 1itbbu-0000zW-8O; Mon, 20 Jan 2020 18:17:14 +0000
-Date:   Mon, 20 Jan 2020 18:17:14 +0000
-From:   Steve McIntyre <steve.mcintyre@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     David Gibson <david@gibson.dropbear.id.au>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Simon Glass <sjg@chromium.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/3] dtc: Add dtb build information option
-Message-ID: <20200120181708.GN3697@linaro.org>
-References: <20200113181625.3130-1-alexandre.torgue@st.com>
- <20200113181625.3130-2-alexandre.torgue@st.com>
- <20200116005741.GB54439@umbus>
- <d2594b79-a45d-dcac-3642-90016a1408b8@st.com>
- <20200117090937.GU54439@umbus>
- <CAL_JsqKTsX9efYDMjGahFDxj0cEfzozeNrY1Nq1bECzgOZGqdQ@mail.gmail.com>
+        Mon, 20 Jan 2020 13:21:07 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id 9C66C98BCC
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 18:21:02 +0000 (GMT)
+Received: (qmail 15094 invoked from network); 20 Jan 2020 18:21:02 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Jan 2020 18:21:02 -0000
+Date:   Mon, 20 Jan 2020 18:21:00 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched, fair: Allow a small load imbalance between low
+ utilisation SD_NUMA domains v4
+Message-ID: <20200120182100.GU3466@techsingularity.net>
+References: <20200114101319.GO3466@techsingularity.net>
+ <20200117175631.GC20112@linux.vnet.ibm.com>
+ <20200117215853.GS3466@techsingularity.net>
+ <20200120080935.GD20112@linux.vnet.ibm.com>
+ <20200120083354.GT3466@techsingularity.net>
+ <20200120172706.GE20112@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqKTsX9efYDMjGahFDxj0cEfzozeNrY1Nq1bECzgOZGqdQ@mail.gmail.com>
-X-attached: none
+In-Reply-To: <20200120172706.GE20112@linux.vnet.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-wibble: sender_address steve.mcintyre@linaro.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 08:43:23AM -0600, Rob Herring wrote:
->On Fri, Jan 17, 2020 at 6:26 AM David Gibson
-><david@gibson.dropbear.id.au> wrote:
+On Mon, Jan 20, 2020 at 10:57:06PM +0530, Srikar Dronamraju wrote:
+> > And this is why I'm curious as to why your workload is affected at all
+> > because it uses many tasks.  I stopped allowing an imbalance for higher
+> > task counts partially on the basis of your previous report.
+> > 
+> 
+> With this hunk on top of your patch and 5 runs of numa02, there were 0
+> traces.
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index ade7a8dca5e4..7506cf67bde8 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8714,8 +8714,10 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>  			 * the risk that lower domains have to be rebalanced.
+>  			 */
+>  			imbalance_min = 2;
+> -			if (busiest->sum_nr_running <= imbalance_min)
+> +			if (busiest->sum_nr_running <= imbalance_min) {
+> +				trace_printk("Reseting imbalance: busiest->sum_nr_running=%d, local->sum_nr_running=%d\n", busiest->sum_nr_irunning, local->sum_nr_running);
+>  				env->imbalance = 0;
+> +			}
+>  		}
+>  
+>  		return;
+> 
 
-...
+Ok, thanks. No traces indicates that the patch should have no effect at
+all and any difference in performance is a coincidence. What about the
+other test programs?
 
->> What might be better would be to have a dtc option which force appends
->> an extra .dts to the mail .dts compiled.  You can then put an overlay
->> template in that file, something like:
->>
->> &{/} {
->>         linux,build-info = /incbin/ "build-info.txt;
->> }
->
->I like this suggestion either as an include another dts file or an
->overlay. The latter could be useful as a way to maintain current dtb
->files while splitting the source files into base and overlay dts
->files.
+> 
+> perf stat for the 5 iterations this time shows: 
+> 77.817 +- 0.995 seconds time elapsed  ( +-  1.28% )
+> which I think is significantly less than last time around.
+> 
+> So I think it may be some other noise that could have contributed to the
+> jump last time. Also since the time consumption of numa02 is very small, a
+> small disturbance can show up as a big number from a percentage perspective.
 
-ACK, that sounds like it could be helpful.
+Understood. At the moment, I'm going to assume that the patch has zero
+impact on your workload but confirmation that the other test programs
+trigger no traces would be appreciated.
 
->But no, let's not prepend this with 'linux'. It's not a property
->specific for Linux to consume.
-
-Right. We might be seeing the data coming through from U-Boot (or any
-other random bootloader) too.
-
-Cheers,
 -- 
-Steve McIntyre                                steve.mcintyre@linaro.org
-<http://www.linaro.org/> Linaro.org | Open source software for ARM SoCs
-
+Mel Gorman
+SUSE Labs
