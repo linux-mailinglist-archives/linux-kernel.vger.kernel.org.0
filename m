@@ -2,149 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5D0142676
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:00:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1186142685
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgATI7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:59:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53210 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbgATI7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:59:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 57E98AF93;
-        Mon, 20 Jan 2020 08:59:43 +0000 (UTC)
-Subject: Re: [PATCH] ARM: dts: bcm2711: Use bcm2711 compatible for sdhci
-To:     Stephen Brennan <stephen@brennan.io>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org
-References: <20200120041740.193485-1-stephen@brennan.io>
-From:   Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; prefer-encrypt=mutual; keydata=
- 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
- HxUCQ9Y1Y/Ct
-Message-ID: <895fbad5-8a14-36a5-dc80-21b3c2a7b97a@suse.com>
-Date:   Mon, 20 Jan 2020 09:59:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726650AbgATJCO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 Jan 2020 04:02:14 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39842 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgATJCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 04:02:13 -0500
+Received: by mail-oi1-f195.google.com with SMTP id z2so3892632oih.6;
+        Mon, 20 Jan 2020 01:02:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EDa/ZVNGvwyY4lRA+wxSdtjDm7nJG1InbdRTQhCgYUs=;
+        b=IwkMv58ZRHL1ohFY2z4UYBfLxjCUADjseozTDn+Rif1z1QSesm6F463J4/maGZd1/x
+         kFzGbBNJ3Qki2iNejZRJeUzhlkLICaUpVST7mKSj6LO2T8bAukwCfMIKtJBMyvOPy19t
+         c8jUF2+TfZu83U0IUHY8H1Jp4S8nA5pDlfLvWvtpLrGB57zOFmPwCk0epapK0kq64ud3
+         gs452+HseZPll6uiZjV4iCUJWRj206QLUXvePUzsTdC66u0dXc4UU1YKnsHL+S1/HEmx
+         uRnM/Bk/J3ePN7/qPxXanz4iJADwMsD/Y+tjUY3wGEaGrhJ4WOwIwFmNhuhwnN8jZYBt
+         NXdA==
+X-Gm-Message-State: APjAAAVHKvvIabGkeEbIx82yZioMstHHhJaV3pZxtOUxpeiSOVNz2xQk
+        kL1I3V8xm0XMDXGO/oC5BP3wKFazzpHe69boqRw=
+X-Google-Smtp-Source: APXvYqy2+nlFf8CNQvNrugEXLRUIQO11SX6/COqt7l6vSF13D0b6ZBMZc6d0k+QLUiI4gi0VYO0PziFbmhdmtWhG8GA=
+X-Received: by 2002:a05:6808:292:: with SMTP id z18mr11627160oic.131.1579510933130;
+ Mon, 20 Jan 2020 01:02:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200120041740.193485-1-stephen@brennan.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200117153056.31363-1-geert+renesas@glider.be> <d2b669e7-a5d4-20ec-5b54-103b71df7407@ti.com>
+In-Reply-To: <d2b669e7-a5d4-20ec-5b54-103b71df7407@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Jan 2020 10:01:51 +0100
+Message-ID: <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
+Subject: Re: [PATCH v2] dmaengine: Create symlinks between DMA channels and slaves
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
+
+On Fri, Jan 17, 2020 at 9:08 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> On 1/17/20 5:30 PM, Geert Uytterhoeven wrote:
+> > Currently it is not easy to find out which DMA channels are in use, and
+> > which slave devices are using which channels.
+> >
+> > Fix this by creating two symlinks between the DMA channel and the actual
+> > slave device when a channel is requested:
+> >   1. A "slave" symlink from DMA channel to slave device,
+>
+> Have you considered similar link name as on the slave device:
+> slave:<name>
+>
+> That way it would be easier to grasp which channel is used for what
+> purpose by only looking under /sys/class/dma/ and no need to check the
+> slave device.
+
+Would this really provide more information?
+The device name is already provided in the target of the symlink:
+
+root@koelsch:~# readlink
+/sys/devices/platform/soc/e6720000.dma-controller/dma/dma1chan2/slave
+../../../ee140000.sd
+
+> >   2. A "dma:<name>" symlink slave device to DMA channel.
+> > When the channel is released, the symlinks are removed again.
+> > The latter requires keeping track of the slave device and the channel
+> > name in the dma_chan structure.
+> >
+> > Note that this is limited to channel request functions for requesting an
+> > exclusive slave channel that take a device pointer (dma_request_chan()
+> > and dma_request_slave_channel*()).
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v2:
+> >   - Add DMA_SLAVE_NAME macro,
+> >   - Also handle channels from FIXME,
+> >   - Add backlinks from slave device to DMA channel,
+> >
+> > On r8a7791/koelsch, the following new symlinks are created:
+> >
+> >     /sys/devices/platform/soc/
+> >     ├── e6700000.dma-controller/dma/dma0chan0/slave -> ../../../e6e20000.spi
+> >     ├── e6700000.dma-controller/dma/dma0chan1/slave -> ../../../e6e20000.spi
+> >     ├── e6700000.dma-controller/dma/dma0chan2/slave -> ../../../ee100000.sd
+> >     ├── e6700000.dma-controller/dma/dma0chan3/slave -> ../../../ee100000.sd
+> >     ├── e6700000.dma-controller/dma/dma0chan4/slave -> ../../../ee160000.sd
+> >     ├── e6700000.dma-controller/dma/dma0chan5/slave -> ../../../ee160000.sd
+> >     ├── e6700000.dma-controller/dma/dma0chan6/slave -> ../../../e6e68000.serial
+> >     ├── e6700000.dma-controller/dma/dma0chan7/slave -> ../../../e6e68000.serial
+> >     ├── e6720000.dma-controller/dma/dma1chan0/slave -> ../../../e6b10000.spi
+> >     ├── e6720000.dma-controller/dma/dma1chan1/slave -> ../../../e6b10000.spi
+> >     ├── e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
+> >     ├── e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
+> >     ├── e6b10000.spi/dma:rx -> ../e6720000.dma-controller/dma/dma1chan1
+> >     ├── e6b10000.spi/dma:tx -> ../e6720000.dma-controller/dma/dma1chan0
+> >     ├── e6e20000.spi/dma:rx -> ../e6700000.dma-controller/dma/dma0chan1
+> >     ├── e6e20000.spi/dma:tx -> ../e6700000.dma-controller/dma/dma0chan0
+> >     ├── e6e68000.serial/dma:rx -> ../e6700000.dma-controller/dma/dma0chan7
+> >     ├── e6e68000.serial/dma:tx -> ../e6700000.dma-controller/dma/dma0chan6
+> >     ├── ee100000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan3
+> >     ├── ee100000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan2
+> >     ├── ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
+> >     ├── ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
+> >     ├── ee160000.sd/dma:rx -> ../e6700000.dma-controller/dma/dma0chan5
+> >     └── ee160000.sd/dma:tx -> ../e6700000.dma-controller/dma/dma0chan4
 
 
-On 20/01/2020 05:17, Stephen Brennan wrote:
-> When booting Raspberry Pi 4B using a micro SDHC UHS class 1 card, the SD
-> card partitions never appear in /dev.  According to the device tree
-> bindings for Broadcom IPROC SDHCI controller, we should use
-> "brcm,bcm2711-emmc2" compatible string on BCM2711. Set this compatible
-> string, which allows these cards to be mounted.
-> 
-> Signed-off-by: Stephen Brennan <stephen@brennan.io>
-> ---
->  arch/arm/boot/dts/bcm2711.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-> index b64865ad5a41..48e3b0162bda 100644
-> --- a/arch/arm/boot/dts/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/bcm2711.dtsi
-> @@ -853,6 +853,7 @@ &mailbox {
->  };
->  
->  &sdhci {
-> +	compatible = "brcm,bcm2711-emmc2";
->  	interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
->  };
->  
-> 
+Gr{oetje,eeting}s,
 
-hm, sdhci is used to drive the wifi chip:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/bcm2711-rpi-4-b.dts?h=v5.5-rc7#n79
+                        Geert
 
-Are you sure you use the upstream devicetree?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Regards,
-Matthias
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
