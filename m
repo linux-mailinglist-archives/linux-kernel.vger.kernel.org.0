@@ -2,109 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB859143222
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E811143231
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:31:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgATTYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:24:49 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34165 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbgATTYt (ORCPT
+        id S1726935AbgATTbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:31:24 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37231 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgATTbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:24:49 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1itcf6-0006Xb-98; Mon, 20 Jan 2020 20:24:36 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id ABF8A105BE6; Mon, 20 Jan 2020 20:24:35 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Marc Zyngier <maz@kernel.org>, John Garry <john.garry@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Ming Lei <ming.lei@redhat.com>,
-        "chenxiang \(M\)" <chenxiang66@hisilicon.com>
-Subject: Re: [PATCH] irqchip/gic-v3-its: Balance initial LPI affinity across CPUs
-In-Reply-To: <7dc37b35d8ec6c78e75969d8c6c2d2e9@kernel.org>
-References: <20200119190554.1002-1-maz@kernel.org> <5d04d904-d7ea-04ea-ac3b-8cdc90074a92@huawei.com> <afb60c5f9a176470449a83126db326a9@kernel.org> <83eb55b0-2f2d-3335-85cf-6d7ed379b3c7@huawei.com> <7dc37b35d8ec6c78e75969d8c6c2d2e9@kernel.org>
-Date:   Mon, 20 Jan 2020 20:24:35 +0100
-Message-ID: <87h80q2aoc.fsf@nanos.tec.linutronix.de>
+        Mon, 20 Jan 2020 14:31:24 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1itclc-0005rx-4z; Mon, 20 Jan 2020 20:31:20 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1itclb-0001lC-0P; Mon, 20 Jan 2020 20:31:19 +0100
+Date:   Mon, 20 Jan 2020 20:31:18 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] gpio: pca953x: Add Maxim MAX7313 PWM support
+Message-ID: <20200120193118.3vzwy5uxnsy2w4sv@pengutronix.de>
+References: <20200107133130.1338-1-miquel.raynal@bootlin.com>
+ <20200120121329.GC206171@ulmo>
+ <20200120134137.54dc307e@xps13>
+ <20200120141944.GD206171@ulmo>
+ <20200120144457.eznywc423ehw6kuc@pengutronix.de>
+ <20200120163822.232b1410@xps13>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200120163822.232b1410@xps13>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc,
+Hi Miquèl,
 
-Marc Zyngier <maz@kernel.org> writes:
-> We're stuck between a rock and a hard place here:
->
-> (1) We place all interrupts on the least loaded CPU that matches
->      the affinity -> results in performance issues on some funky
->      HW (like D05's SAS controller).
->
-> (2) We place managed interrupts on the least loaded CPU that matches
->      the affinity -> we have artificial load on NUMA boundaries, and
->      reduced spread of overlapping managed interrupts.
->
-> (3) We don't account for non-managed LPIs, and we run the risk of
->      unpredictable performance because we don't really know where
->      the *other* interrupts are.
->
-> My personal preference would be to go for (1), as in my original post.
-> I find (3) the least appealing, because we don't track things anymore.
-> (2) feels like "the least of all evils", as it is a decent performance
-> gain, seems to give predictable performance, and doesn't regress lesser
-> systems...
->
-> I'm definitely open to suggestions here.
+On Mon, Jan 20, 2020 at 04:38:22PM +0100, Miquel Raynal wrote:
+> One dumb question that I still have is: besides any backward
+> compatibility aspects, do we really care about the period/frequency of
+> the PWM? Why do we enforce a period and an active duration, while
+> we could limit ourselves to a ratio and let the driver use the most
+> suitable frequency if the hardware supports it?
 
-The way x86 does it and that's mostly ok except for some really broken
-setups is:
+There are situations where just fixing the ratio would (nearly) be good
+enough. For example if you drive an LED just requesting a ratio might
+look fine at first glance. But 
 
-1) Non-managed interrupts:
+	.period = 5000 ms, .duty_cycle = 2500 ms
 
-   If the interrupt is bound to a node, then we try to find a target
+has quite a different effect than
 
-     I)  in the intersection of affinity mask and node mask.
+	.period = 500 ns, .duty_cycle = 250 ns
 
-     II) in the nodemask itself
+while both are valid if you requested 50%.
 
-         Yes we ignore affinity mask there because that's pretty much
-         the same as if the given affinity does not contain an online
-         CPU.
+Having said that I think the lowlevel API (i.e. what a device driver has
+to implement) is sane, as it allows to implement all possible requests,
+even if there might be a consumer that cares more about the absolute
+value of duty-cycle than the duty-cycle/period ratio; and it matches
+what most hardware models implement. There is usually a register to
+specify the period and one to specify the duty-cycle.
 
-     If all of that fails then we try the nodeless mode
+And on top of that (at least once there is pwm_round_state()) you can
+implement all sort of helper functions that implement for example "best
+effort 50% with a period < 2ms".
 
-   If the interrupt is not bound to a node, then we try to find a target
+Best regards
+Uwe
 
-     I)  in the intersection of affinity mask and online mask.
-
-     II) in the onlinemask itself
-
-  Each step searches for the CPU in the searched mask which has the
-  least number of total interrupts assigned.
-
-2) Managed interrupts
-
-  For managed interrupts we just search in the intersection of assigned
-  mask and online CPUs for the CPU with the least number of managed
-  interrupts.
-
-  If no CPU is online then the interrupt is shutdown anyway, so no
-  fallback required.
-
-Don't know whether that's something you can map to ARM64, but I assume
-the principle of trying to enforce NUMA locality plus balancing the
-number of interrupts makes sense in general.
-
-Thanks,
-
-        tglx
-
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
