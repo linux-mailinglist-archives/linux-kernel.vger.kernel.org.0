@@ -2,76 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E936142A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68446142AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbgATMWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:22:21 -0500
-Received: from foss.arm.com ([217.140.110.172]:59452 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbgATMWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:22:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6580730E;
-        Mon, 20 Jan 2020 04:22:20 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3AA73F68E;
-        Mon, 20 Jan 2020 04:22:19 -0800 (PST)
-Date:   Mon, 20 Jan 2020 12:22:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        drinkcat@chromium.org, dianders@chromium.org,
-        Liam Girdwood <lgirdwood@gmail.com>, mka@chromium.org
-Subject: Re: [PATCH] regulator: vctrl-regulator: Avoid deadlock getting and
- setting the voltage
-Message-ID: <20200120122218.GC6852@sirena.org.uk>
-References: <20200116094543.2847321-1-enric.balletbo@collabora.com>
- <1fdaed3c-05e0-4756-5013-5cc59a766e2f@gmail.com>
- <20200120120830.GA6852@sirena.org.uk>
- <73a24487-d9ff-88c3-2516-69ae89915c88@collabora.com>
+        id S1727075AbgATM05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:26:57 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9213 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726642AbgATM04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:26:56 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B5353EF6A50EE0610B56;
+        Mon, 20 Jan 2020 20:26:53 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 20 Jan 2020 20:26:43 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH 0/7] hisi_sas: Misc patches
+Date:   Mon, 20 Jan 2020 20:22:30 +0800
+Message-ID: <1579522957-4393-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
-Content-Disposition: inline
-In-Reply-To: <73a24487-d9ff-88c3-2516-69ae89915c88@collabora.com>
-X-Cookie: I invented skydiving in 1989!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series introduces some misc patches for the driver for the v5.6
+cycle.
 
---MnLPg7ZWsaic7Fhd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Nothing especially interesting, but maybe the change to switch the v2
+driver to use reply map also, which improves performance.
 
-On Mon, Jan 20, 2020 at 01:10:18PM +0100, Enric Balletbo i Serra wrote:
-> On 20/1/20 13:08, Mark Brown wrote:
+There is also a change to switch the driver to use threaded interrupt
+handling over tasklets.
 
-> > Yes, you're right.
+John Garry (2):
+  scsi: hisi_sas: Rename hisi_sas_cq.pci_irq_mask
+  scsi: hisi_sas: Use reply map for v2 hw
 
-> Oops, right, Mark do you want me to send a follow-up patch, a second version or
-> you can just apply a fix?
+Luo Jiaxing (3):
+  scsi: hisi_sas: Replace magic number when handle channel interrupt
+  scsi: hisi_sas: Modify the file permissions of trigger_dump to write
+    only
+  scsi: hisi_sas: Add prints for v3 hw interrupt converge and automatic
+    affinity
 
-If you send a patch before I get round to writing one myself I'll apply
-it.
+Xiang Chen (2):
+  scsi: hisi_sas: use threaded irq to process CQ interrupts
+  scsi: hisi_sas: replace spin_lock_irqsave/spin_unlock_restore with
+    spin_lock/spin_unlock
 
---MnLPg7ZWsaic7Fhd
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/scsi/hisi_sas/hisi_sas.h       |  9 ++-
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 74 ++++++++++-----------
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 90 +++++++++++++++++++-------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 54 +++++++++-------
+ 4 files changed, 139 insertions(+), 88 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.17.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4lm3kACgkQJNaLcl1U
-h9CQUAf/efsDEbcnnk5BetvKzz/QA1IVZVudBFNlB/IWqG7fpYtpSYX7d8nY2Azl
-EA155XqmZKER5AgjeJECocwdiWPCVY+QLWNn3qLTQUGjgnkptF8VHgnidKwCBDTr
-M9iAobouq35k1gwV9/Kk53goXywRYdJcLXbZjf35pxRoXqDE/wM5vCfBnEI8Tt5o
-gbYMrZPBV+KAEfVgD5rFNKqCw7W51mNik7VUNH6lJYPDysv+IYw8yvM5+rzfWdur
-u+JnthUrENxCVHD6qw7Pvuqz6wsfh6eK46b9edAMp2iDQMz+KE9twKIge+RghnlK
-2hjL0mYRVz7Cw9R3uNoEtTLOIXQFGA==
-=SHV2
------END PGP SIGNATURE-----
-
---MnLPg7ZWsaic7Fhd--
