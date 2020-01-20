@@ -2,105 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F621142EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:39:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C64A2142EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 16:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbgATPjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 10:39:44 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:33525 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbgATPjn (ORCPT
+        id S1729117AbgATPkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 10:40:55 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36450 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbgATPkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 10:39:43 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1itZ9I-0002jr-Mg; Mon, 20 Jan 2020 16:39:32 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 555BE1C1A41;
-        Mon, 20 Jan 2020 16:39:32 +0100 (CET)
-Date:   Mon, 20 Jan 2020 15:39:32 -0000
-From:   "tip-bot2 for Tony W Wang-oc" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Remove redundant cpu_detect_cache_sizes() call
-Cc:     "Tony W Wang-oc" <TonyWWang-oc@zhaoxin.com>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
-References: <1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+        Mon, 20 Jan 2020 10:40:55 -0500
+Received: by mail-ot1-f66.google.com with SMTP id m2so129744otq.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 07:40:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bW+iYMzyJar5RkTMPGCcQG+bJOCaKWAlm479KJ6EAJc=;
+        b=VbUJNHV1v/I38PKXDVIMoFye1oZVkkX7SJwJbvOOD7n4G2y8o79w3tA+/PDj1eFIAr
+         hBmicIIU24JnBiwvffKhfRYNCEfdtJNfQDpOzvQIxdCjivxW5TSMA7Wa3nZ38oePzy2+
+         qMKkH9Hhv9vX7wSW3HPT+pv1+ZtAMMwRYppY6oMhDuRDLM3NRGDeaAU2AHd9NulTvFuI
+         4tbxl+rERpJJWSzspLh7RFLS9kNcBnhKkThxr+4aETQngE/KIIi4gJt+HmIyELS1PBJq
+         ROXOe+lauiiaT/nNfUG6bmuTrlVOETx5UwWtgS6yFYd3FPJsqD7HNq1LEOU6AJXJQblM
+         QIIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bW+iYMzyJar5RkTMPGCcQG+bJOCaKWAlm479KJ6EAJc=;
+        b=NmHA9SWzXGndSve1JdJUJHpWvXl+81kmcdaYljnbZXKFb2fz43XUff2Tse2LqpHx4m
+         6ae3sjRvQtzntGtwrnZ6121K7qQJVc4Uh4puljAiSannX43RFs0jduApc0/1mHf6yRKP
+         908CXcOeLsZVZFIcGjTe5FQpQ+Wixi5eKnP/r9wczwEwvJb0n42ZRUPjfNNjLocPja4F
+         /k7AqKxS7jl/5F0H4sXcuQ3puZWQOZ3lL1G+bF3TMBSDYvigYd5gzz9HFZi9cEBuaFbl
+         PGmS7MeSGvrthJ6ZNOUUNfQa5g4ZjszevpI6gnvGXD9AqCFw75zdASbalMkLg27Qb1vH
+         Amzg==
+X-Gm-Message-State: APjAAAWr/ktNXNRTBFP4l2WsNL+APIW8n+JyuJvfz8Q8agKZbM3Nclgq
+        komm16Fslu1ksp4IY5+1VPCrp31EJ9JoJTo+ltvcLQ==
+X-Google-Smtp-Source: APXvYqzYSYuKezAl7YpUgPSRKQPA6H2KEbg8/UlKlfYHOFR01Pivkt2lcBRDlUu5Mxcw6HJtVeDKxsfdhfFE+UFLaRQ=
+X-Received: by 2002:a05:6830:1d7b:: with SMTP id l27mr15490059oti.251.1579534853838;
+ Mon, 20 Jan 2020 07:40:53 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157953477207.396.16207362713509361883.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
+ <CACT4Y+YuTT6kZ-AkgU0c1o09qmQdFWr4_Sds4jaDg-Va6g6jkA@mail.gmail.com> <CACT4Y+acrXkA-ixjQXqNf1EC=fpgTWf3Rcevxxon0DfrPdD-UQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+acrXkA-ixjQXqNf1EC=fpgTWf3Rcevxxon0DfrPdD-UQ@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 20 Jan 2020 16:40:42 +0100
+Message-ID: <CANpmjNNcXUF-=Y-hmry9-xEoNpJd0WH+fOcJJM6kv2eRm5v-kg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
+        Kees Cook <keescook@chromium.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Mon, 20 Jan 2020 at 16:09, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Mon, Jan 20, 2020 at 3:58 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Mon, Jan 20, 2020 at 3:45 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > On Mon, Jan 20, 2020 at 3:19 PM Marco Elver <elver@google.com> wrote:
+> > > >
+> > > > This adds instrumented.h, which provides generic wrappers for memory
+> > > > access instrumentation that the compiler cannot emit for various
+> > > > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
+> > > > future this will also include KMSAN instrumentation.
+> > > >
+> > > > Note that, copy_{to,from}_user require special instrumentation,
+> > > > providing hooks before and after the access, since we may need to know
+> > > > the actual bytes accessed (currently this is relevant for KCSAN, and is
+> > > > also relevant in future for KMSAN).
+> > > >
+> > > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > > > Signed-off-by: Marco Elver <elver@google.com>
+> > > > ---
+> > > >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 153 insertions(+)
+> > > >  create mode 100644 include/linux/instrumented.h
+> > > >
+> > > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> > > > new file mode 100644
+> > > > index 000000000000..9f83c8520223
+> > > > --- /dev/null
+> > > > +++ b/include/linux/instrumented.h
+> > > > @@ -0,0 +1,153 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > > +
+> > > > +/*
+> > > > + * This header provides generic wrappers for memory access instrumentation that
+> > > > + * the compiler cannot emit for: KASAN, KCSAN.
+> > > > + */
+> > > > +#ifndef _LINUX_INSTRUMENTED_H
+> > > > +#define _LINUX_INSTRUMENTED_H
+> > > > +
+> > > > +#include <linux/compiler.h>
+> > > > +#include <linux/kasan-checks.h>
+> > > > +#include <linux/kcsan-checks.h>
+> > > > +#include <linux/types.h>
+> > > > +
+> > > > +/**
+> > > > + * instrument_read - instrument regular read access
+> > > > + *
+> > > > + * Instrument a regular read access. The instrumentation should be inserted
+> > > > + * before the actual read happens.
+> > > > + *
+> > > > + * @ptr address of access
+> > > > + * @size size of access
+> > > > + */
+> > >
+> > > Based on offline discussion, that's what we add for KMSAN:
+> > >
+> > > > +static __always_inline void instrument_read(const volatile void *v, size_t size)
+> > > > +{
+> > > > +       kasan_check_read(v, size);
+> > > > +       kcsan_check_read(v, size);
+> > >
+> > > KMSAN: nothing
+> >
+> > KMSAN also has instrumentation in
+> > copy_to_user_page/copy_from_user_page. Do we need to do anything for
+> > KASAN/KCSAN for these functions?
 
-Commit-ID:     283bab9809786cf41798512f5c1e97f4b679ba96
-Gitweb:        https://git.kernel.org/tip/283bab9809786cf41798512f5c1e97f4b679ba96
-Author:        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-AuthorDate:    Wed, 15 Jan 2020 16:00:57 +08:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 20 Jan 2020 16:32:35 +01:00
+copy_to_user_page/copy_from_user_page can be instrumented with
+instrument_copy_{to,from}_user_. I prefer keeping this series with no
+functional change intended for KASAN at least.
 
-x86/cpu: Remove redundant cpu_detect_cache_sizes() call
+> There is also copy_user_highpage.
+>
+> And ioread/write8/16/32_rep: do we need any instrumentation there. It
+> seems we want both KSAN and KCSAN too. One may argue that KCSAN
+> instrumentation there is to super critical at this point, but KASAN
+> instrumentation is important, if anything to prevent silent memory
+> corruptions. How do we instrument there? I don't see how it maps to
+> any of the existing instrumentation functions.
 
-Both functions call init_intel_cacheinfo() which computes L2 and L3 cache
-sizes from CPUID(4). But then they also call cpu_detect_cache_sizes() a
-bit later which computes ->x86_tlbsize and L2 size from CPUID(80000006).
+These should be able to use the regular instrument_{read,write}. I
+prefer keeping this series with no functional change intended for
+KASAN at least.
 
-However, the latter call is not needed because
+> There is also kmsan_check_skb/kmsan_handle_dma/kmsan_handle_urb that
+> does not seem to map to any of the instrumentation functions.
 
- - on these CPUs, CPUID(80000006).EBX for ->x86_tlbsize is reserved
+For now, I would rather that there are some one-off special
+instrumentation, like for KMSAN. Coming up with a unified interface
+here that, without the use-cases even settled, seems hard to justify.
+Once instrumentation for these have settled, unifying the interface
+would have better justification.
 
- - CPUID(80000006).ECX for the L2 size has the same result as CPUID(4)
+This patch series is merely supposed to introduce instrumented.h and
+replace the kasan_checks (also implicitly introducing kcsan_checks
+there), however, with no further functional change intended.
 
-Therefore, remove the latter call to simplify the code.
+I propose that adding entirely new instrumentation for both KASAN and
+KCSAN, we should send a separate patch-series.
 
- [ bp: Rewrite commit message. ]
-
-Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/1579075257-6985-1-git-send-email-TonyWWang-oc@zhaoxin.com
----
- arch/x86/kernel/cpu/centaur.c | 2 --
- arch/x86/kernel/cpu/zhaoxin.c | 2 --
- 2 files changed, 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
-index 02d99fe..4267925 100644
---- a/arch/x86/kernel/cpu/centaur.c
-+++ b/arch/x86/kernel/cpu/centaur.c
-@@ -64,8 +64,6 @@ static void init_c3(struct cpuinfo_x86 *c)
- 		c->x86_cache_alignment = c->x86_clflush_size * 2;
- 		set_cpu_cap(c, X86_FEATURE_REP_GOOD);
- 	}
--
--	cpu_detect_cache_sizes(c);
- }
- 
- enum {
-diff --git a/arch/x86/kernel/cpu/zhaoxin.c b/arch/x86/kernel/cpu/zhaoxin.c
-index 6b2d3b0..df1358b 100644
---- a/arch/x86/kernel/cpu/zhaoxin.c
-+++ b/arch/x86/kernel/cpu/zhaoxin.c
-@@ -51,8 +51,6 @@ static void init_zhaoxin_cap(struct cpuinfo_x86 *c)
- 
- 	if (c->x86 >= 0x6)
- 		set_cpu_cap(c, X86_FEATURE_REP_GOOD);
--
--	cpu_detect_cache_sizes(c);
- }
- 
- static void early_init_zhaoxin(struct cpuinfo_x86 *c)
+Thanks,
+-- Marco
