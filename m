@@ -2,70 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21847142B8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:07:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7220D142B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgATNGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:06:55 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44834 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728792AbgATNGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:06:52 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E578B618678A3BA5CAF1;
-        Mon, 20 Jan 2020 21:06:49 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 Jan 2020 21:06:32 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
-        <jingoohan1@gmail.com>, <b.zolnierkie@samsung.com>
-CC:     <kgunda@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] backlight: qcom-wled: fix unsigned comparison to zero
-Date:   Mon, 20 Jan 2020 21:01:43 +0800
-Message-ID: <20200120130143.35363-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726903AbgATNDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:03:37 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39973 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgATNDg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 08:03:36 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b8so29392880edx.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 05:03:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=0/imIEsyEBeR7+n66JGCV921+E7S5EarGk9nq10BYk8=;
+        b=FtqmuR92by4GqkRJ/pL01HdPLlaDJuqGWNEDC5xuM69Om3ObsaUKfq63G6A3GdvqDV
+         soOYaEvN4w+YGnXrXmvhE+Zyt1fU9olzULADy4wClxSgPmA2CJXGYMMQWksMQuabsx4z
+         Hwi+fiOIjzYJ4V5IiVnI5n16rgROWhrm6Pn2SiJqb/lv0i0fEuVWRi28fyCwCoDrwltN
+         XsgTXVsdxnuH4zFrbtCTecVtDfx7u8Y1tfiB1q+cBS1QN6BGx9pjAaQ1Hmj3aQ3So4Xy
+         rlDQxUUNuWMMsNWc9sV7l8As6aiJnYx5FpnpE/Dp4DZQ+jod31iPg3Qv5MTWKLTuPFm5
+         c0aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=0/imIEsyEBeR7+n66JGCV921+E7S5EarGk9nq10BYk8=;
+        b=c3b+xKYW94w1X8mXaXFCc21zrProLbp7IJzt0zczfyg14l2o5gEl0hHSALrckjAv36
+         ae+nwhFt2o0ZVpgGP8nACnkKozCy5KXudrWj0HxdnVQWsUp34hMhgVK5Pj7whUQhEBWW
+         Jbb83HrmgWepJyJ4S78yLivO+KULivjXNBiq17l7hfxkEApyYohZZ43RvYvjVjOtSMTz
+         m+aBfLJhsmAXCqo4ynQ95bBa7oClSy399O+zI8Lhv4QbXR0gLe4Pl7myfcyTPVo1xrjN
+         W0DDgwiMUOdeNTvtxoVKzww56nSVq/rLxL04PGZdL6u0W0rC3l0k9cca8ny3o6N+g9Uq
+         5NIA==
+X-Gm-Message-State: APjAAAXFOSlylEn61GfnQfXf0WB3u69Ts0vqzIXNO2pBezqjwtcYQkgc
+        lkRdwQY6+7q5BqYfgbtCgRqEMMTYGmFuW3kt9og=
+X-Google-Smtp-Source: APXvYqzdFuRHxWC1bbGNO63rJEe7J9d+R9qkJSKHvI3/ppSXiDqbKGMw5U57eYodLbh5ZRnOubmV975yQrC9l3npJMk=
+X-Received: by 2002:a17:906:33db:: with SMTP id w27mr19950398eja.349.1579525414764;
+ Mon, 20 Jan 2020 05:03:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Reply-To: info.maxwellkojo@gmail.com
+Received: by 2002:a17:906:901:0:0:0:0 with HTTP; Mon, 20 Jan 2020 05:03:34
+ -0800 (PST)
+From:   Maxwell Kojo <mrmaxwellkojo@gmail.com>
+Date:   Mon, 20 Jan 2020 14:03:34 +0100
+X-Google-Sender-Auth: SqU8YRCAzqUvd5u5cRJZBj7_UGc
+Message-ID: <CAFZMWWrXEbF37f=_SmX8=mo2W_YvEA1Oe2w=xmV3nMaJcASCJw@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
-./drivers/video/backlight/qcom-wled.c:1104:5-15:
-	WARNING: Unsigned expression compared with zero: string_len > 0
+Dear friend,
 
-The unsigned variable string_len is assigned a return value from the call
-to wled_configure, which may return negative error code.
+I am Maxwell Kojo, I work with a bank in Burkina Faso. I have a
+proposal for you regarding the transfer of funds deposited by a late
+foreign client into our bank here.
 
-Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for WLED3")
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/video/backlight/qcom-wled.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If you are really sure of your integrity, trust and confidentiality to
+receive the fund, please answer me urgently for more details, contact
+my private email address(info.maxwellkojo@gmail.com).
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index d46052d..3d276b3 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int version)
- 	struct wled_config *cfg = &wled->cfg;
- 	struct device *dev = wled->dev;
- 	const __be32 *prop_addr;
--	u32 size, val, c, string_len;
--	int rc, i, j;
-+	u32 size, val, c;
-+	int rc, i, j, string_len;
- 
- 	const struct wled_u32_opts *u32_opts = NULL;
- 	const struct wled_u32_opts wled3_opts[] = {
--- 
-2.7.4
+Kindly send me the followings
 
+Full Names
+Address
+Occupation
+Direct Mobile Telephone Lines
+Nationality
+
+Regards,
+Maxwell Kojo.
