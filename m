@@ -2,227 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E83A142A33
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:10:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A8B2142A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:09:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgATMKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:10:40 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:61402 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbgATMKh (ORCPT
+        id S1728516AbgATMJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:09:36 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60544 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbgATMJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:10:37 -0500
-Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa4.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: wVsjwRgYxpoPCNjz6v3XOvB01tWs8LM3U99MWnquZPnbuZLqcyOXSinwP+kZeHPJp4dGOMI4Ri
- PI/uSZokNUu3RPbJ8uD9EFNh8IqClgHbljsGwVnGOIsycVt6m+qTXQnnSGnBIbFBqLZgW0+JR5
- 3V3I/M16waWaRoFGzVXHdtRjVBGIzzJpzv66ehzF8bhD8JppW4PX9BzgzoGPK9AxsV8afiosAb
- LvTCAsqRoORfahdykU8L1mnIHIH+G/PZwJDfp2ulBbWyz9xl15YzregYQ/EsptDQYYoz6JuwZE
- Jb0=
-X-IronPort-AV: E=Sophos;i="5.70,341,1574146800"; 
-   d="scan'208";a="61577379"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2020 05:10:36 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 20 Jan 2020 05:10:36 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Mon, 20 Jan 2020 05:10:33 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 7/8] ARM: at91: pm: add plla disable/enable support for sam9x60
-Date:   Mon, 20 Jan 2020 14:10:07 +0200
-Message-ID: <1579522208-19523-8-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
+        Mon, 20 Jan 2020 07:09:36 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KC9VZk063374;
+        Mon, 20 Jan 2020 06:09:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579522171;
+        bh=9/SDI0K0Pj+c3i7x4wk45t+LI01ZuMhyaKeap/VbCWo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=QT4LLwOD3Z1W8fBcs1CWsdHPnF8xtpfpUpuITcUti+eIwNN+ZNC/n0qfFDihxiq5V
+         xgKQXzhFR9apiDRM9ms1czgf1en6Sp8oSJk/dxx0bboMMAp0z2taO4dMFjofgxd5Vz
+         2TGCCQlDMk29HFUrg6mQzarAkws7TDHcwYfkUTw8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KC9Vfj071771
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Jan 2020 06:09:31 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
+ Jan 2020 06:09:30 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 20 Jan 2020 06:09:30 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KC9Siu099356;
+        Mon, 20 Jan 2020 06:09:29 -0600
+Subject: Re: [PATCH] media: rcar_drif: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
+        Vinod <vkoul@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20191217104025.23318-1-peter.ujfalusi@ti.com>
+ <CAMuHMdUPhabZrXJ3UqSVTdy2aWf6VG27q287MizKJ5q5tyRnwA@mail.gmail.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <c7eedf72-aa00-8ffe-8c8f-4946a4f54fa7@ti.com>
+Date:   Mon, 20 Jan 2020 14:10:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAMuHMdUPhabZrXJ3UqSVTdy2aWf6VG27q287MizKJ5q5tyRnwA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PLLA enable/disable support for SAM9X60.
+Hi Geert,
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- arch/arm/mach-at91/pm_suspend.S | 117 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 113 insertions(+), 4 deletions(-)
+On 20/01/2020 14.05, Geert Uytterhoeven wrote:
+> On Tue, Dec 17, 2019 at 11:41 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+>> eating up the error code.
+>>
+>> By using dma_request_chan() directly the driver can support deferred
+>> probing against DMA.
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> One comment below.
+> 
+>> --- a/drivers/media/platform/rcar_drif.c
+>> +++ b/drivers/media/platform/rcar_drif.c
+>> @@ -275,10 +275,10 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+>>         for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
+>>                 struct rcar_drif *ch = sdr->ch[i];
+>>
+>> -               ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
+>> -               if (!ch->dmach) {
+>> +               ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
+>> +               if (IS_ERR(ch->dmach)) {
+>>                         rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
+> 
+> Now there is an error code, you might (1) want to print it, and (2) only
+> do so when it is not due to probe deferral:
+> 
+>         if (PTR_ERR(ch->dmach) != -EPROBE_DEFER)
+>                 rdrif_err(sdr, "ch%u: dma channel req failed %pe\n",
+> i, ch->dmach);
 
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index c898071e0c0b..4e9eb4f57f16 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -18,6 +18,7 @@
- pmc	.req	r0
- tmp1	.req	r4
- tmp2	.req	r5
-+tmp3	.req	r6
- 
- /*
-  * Wait until master clock is ready (after switching master clock source)
-@@ -331,6 +332,61 @@ ENDPROC(at91_backup_mode)
- 
- .macro at91_plla_disable
- 	/* Save PLLA setting and disable it */
-+	ldr	tmp1, .pmc_version
-+	cmp	tmp1, #AT91_PMC_V1
-+	beq	1f
-+
-+#ifdef CONFIG_SOC_SAM9X60
-+	/* Save PLLA settings. */
-+	ldr	tmp2, [pmc, #AT91_PMC_PLL_UPDT]
-+	bic	tmp2, tmp2, #AT91_PMC_PLL_UPDT_ID
-+	str	tmp2, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* save div. */
-+	mov	tmp1, #0
-+	ldr	tmp2, [pmc, #AT91_PMC_PLL_CTRL0]
-+	bic	tmp2, tmp2, #0xffffff00
-+	orr	tmp1, tmp1, tmp2
-+
-+	/* save mul. */
-+	ldr	tmp2, [pmc, #AT91_PMC_PLL_CTRL1]
-+	bic	tmp2, tmp2, #0xffffff
-+	orr	tmp1, tmp1, tmp2
-+	str	tmp1, .saved_pllar
-+
-+	/* step 2. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* step 3. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENPLLCK
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENPLL
-+	str	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+
-+	/* step 4. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* step 5. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENPLL
-+	str	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+
-+	/* step 7. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	b	2f
-+#endif
-+
-+1:	/* Save PLLA setting and disable it */
- 	ldr	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 	str	tmp1, .saved_pllar
- 
-@@ -338,17 +394,70 @@ ENDPROC(at91_backup_mode)
- 	mov	tmp1, #AT91_PMC_PLLCOUNT
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-+2:
- .endm
- 
- .macro at91_plla_enable
-+	ldr	tmp2, .saved_pllar
-+	ldr	tmp3, .pmc_version
-+	cmp	tmp3, #AT91_PMC_V1
-+	beq	4f
-+
-+#ifdef CONFIG_SOC_SAM9X60
-+	/* step 1. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* step 2. */
-+	ldr	tmp1, =#AT91_PMC_PLL_ACR_DEFAULT_PLLA
-+	str	tmp1, [pmc, #AT91_PMC_PLL_ACR]
-+
-+	/* step 3. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_CTRL1]
-+	mov	tmp3, tmp2
-+	bic	tmp3, tmp3, #0xffffff
-+	orr	tmp1, tmp1, tmp3
-+	str	tmp1, [pmc, #AT91_PMC_PLL_CTRL1]
-+
-+	/* step 8. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* step 9. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENLOCK
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENPLL
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_CTRL0_ENPLLCK
-+	bic	tmp1, tmp1, #0xff
-+	mov	tmp3, tmp2
-+	bic	tmp3, tmp3, #0xffffff00
-+	orr	tmp1, tmp1, tmp3
-+	str	tmp1, [pmc, #AT91_PMC_PLL_CTRL0]
-+
-+	/* step 10. */
-+	ldr	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+	orr	tmp1, tmp1, #AT91_PMC_PLL_UPDT_UPDATE
-+	bic	tmp1, tmp1, #AT91_PMC_PLL_UPDT_ID
-+	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
-+
-+	/* step 11. */
-+3:	ldr	tmp1, [pmc, #AT91_PMC_PLL_ISR0]
-+	tst	tmp1, #0x1
-+	beq	3b
-+	b	2f
-+#endif
-+
- 	/* Restore PLLA setting */
--	ldr	tmp1, .saved_pllar
--	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-+4:	str	tmp2, [pmc, #AT91_CKGR_PLLAR]
- 
- 	/* Enable PLLA. */
--	tst	tmp1, #(AT91_PMC_MUL &  0xff0000)
-+	tst	tmp2, #(AT91_PMC_MUL &  0xff0000)
- 	bne	1f
--	tst	tmp1, #(AT91_PMC_MUL & ~0xff0000)
-+	tst	tmp2, #(AT91_PMC_MUL & ~0xff0000)
- 	beq	2f
- 
- 1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
--- 
-2.7.4
+Yes, this is true.
 
+> 
+>> -                       ret = -ENODEV;
+>> +                       ret = PTR_ERR(ch->dmach);
+
+if (ret != -EPROBE_DEFER)
+	rdrif_err(sdr, "ch%u: dma channel req failed (%d)\n", i, ret);
+
+might be simpler.
+
+>>                         goto dmach_error;
+>>                 }
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
