@@ -2,133 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53DB3142F9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:28:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED320142FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgATQ2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:28:50 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32886 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbgATQ2t (ORCPT
+        id S1729397AbgATQ3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:29:02 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38842 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729210AbgATQ3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:28:49 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z16so16109785pfk.0;
-        Mon, 20 Jan 2020 08:28:49 -0800 (PST)
+        Mon, 20 Jan 2020 11:29:01 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so27704043ilq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:29:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GR1APR+Wyd2YLYbRnsV0u2x1C6uwTZZ2OEWNdjnqjo4=;
-        b=S6+Ui0Ryg93xsfEPW/3lRMkkxdRzUj5Lj4DWAsydzFghegwFbHnFn4k4+y4g+3n72x
-         aLHNWwUI48bhXguZbAg7T8bRrfqn+CD+jmkVdCFXplLf/ZegqNFp+Ew4+PciPqsf8fXO
-         2BPK9SKgxQpIhyNCP5UxRci1fAXsIj7TQHQ5KiBuZidvYnf8hRi/jZcgxyg+W8ckdvO+
-         yDKLUjJN5owNIXL43AP60swXX9MhAGAB8/9rcgWpoOfctWcx1kBj+csXRrMnOgfoFyqu
-         AEhRqyShDMoqtf8kGVGOvM20fPC/reJw4pAWJJZB2jh+qVq2w9eb1He8yJ32mbzTIzKi
-         WwEQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WhDafEfpWxCZW7N1ekgfBlfxmyFi2MY1suCA9Nt8g4g=;
+        b=dQWfSSaAoPOHR9zlU3AQWP+N+8XjUaOZog2voCI3BigUAoKt6IwPkXnmWjCUSujnhy
+         YGa8UPh9uxPhxWMvLZ3AGlafundnFv9d0pBpbAXKur7asg77zkQoTyVzyHvT1YwOLj8r
+         OvuMcYJi6YELFbOHDMdZLFdSUSTYqdB9PXiIG3gv0gfqOOyYYdqn4wq2ZrpKJD7X8ewt
+         uDCa93APw5k6rwdRrf9k5nHIXKSm+sMr/L0Z/bE7xA6q60hUoKma2D472uwBBN8nRocE
+         KwzaytgrF5c56O7X4gVj/3QzyQhnUiUHdV1Vp/+7mWwchTd/vYNQPyBJpy1Nicxge4Uo
+         VLAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GR1APR+Wyd2YLYbRnsV0u2x1C6uwTZZ2OEWNdjnqjo4=;
-        b=mNskvxqOWJ5iP9bubcdUuFdHhkMOR6db/7CpHNbH3sui4URrSDGp/AWc4Z1dnmfKG2
-         wPux+1PjC1OyjLYK1CtDP0vcdSfeLToHHh2gQ+rjuWKI2QtyQlS6HhS1Z39bwaHI7kKC
-         0zxAvcJNsIpAht+8Md0YeVmseryUd3LBpT33YKq71kA6RPX56HiGTKKGBDdqlV7gOuCJ
-         BM/IhN5YGE6G6flAE5cQkafVbB3TnYFbft+VgIIglpOZJqecFdPQ+Lkg8r/sBgryAfH9
-         OMrj9js3ZsfE/qR0f8eqBez9iJNvRvO+uuO6pxmCD/bGlEsX3y9BzNpL7cZSBly609Ij
-         GLfA==
-X-Gm-Message-State: APjAAAV2sawsrNSigsHieFIkLko6FsfAHBfKeLMSuOdE1wgtFnKLKKbu
-        9JAAhsin+Jg95q2wjJ0G9/g=
-X-Google-Smtp-Source: APXvYqwsolQ7KdarCdpFxI9kDgOcqi9S5elKUvLwcvNAHuPL+EqeFJc3kZAVTtrTKnyWkVXKShj07w==
-X-Received: by 2002:a63:3dc6:: with SMTP id k189mr453630pga.396.1579537728723;
-        Mon, 20 Jan 2020 08:28:48 -0800 (PST)
-Received: from localhost (64.64.229.47.16clouds.com. [64.64.229.47])
-        by smtp.gmail.com with ESMTPSA id w11sm38347342pfn.4.2020.01.20.08.28.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jan 2020 08:28:48 -0800 (PST)
-Date:   Tue, 21 Jan 2020 00:28:45 +0800
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com, joabreu@synopsys.com, davem@davemloft.net,
-        mcoquelin.stm32@gmail.com, martin.blumenstingl@googlemail.com,
-        treding@nvidia.com, andrew@lunn.ch, weifeng.voon@intel.com,
-        tglx@linutronix.de, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] net: stmmac: remove the useless member phy_mask
-Message-ID: <20200120162845.GA11480@nuc8i5>
-References: <20200108072550.28613-3-zhengdejin5@gmail.com>
- <202001181542.rImVkJEi%lkp@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WhDafEfpWxCZW7N1ekgfBlfxmyFi2MY1suCA9Nt8g4g=;
+        b=O0OP1eAWIuTc3ZF3kwsenrmOd2z6SQtkupZVaKSAlL4udNA6RENy63JY4EkZvwA4w4
+         MoYUY8QItenQrJPAbPKK0iPE9GTHrVXF8EdPjo285O5ASFQlOr230swrI48ZSb6h/vYd
+         wC0BwDp5y9ajYHKT8d46Y68KC3rLiyy2ri7OBmGjjxhe+Q7NF6mlN/ukHMqOhX+WT2JK
+         tevx6zTvBTHUGJxiPSlimpO9udqjvcktkkzWQnlK7WKjQpUtviXDFt8jEaKBEHXs8KFE
+         2hLO72/fDWs+hRb0gKAbOSVADb/65vyqOeN7zuO6KslvTkhUWILa46To+MLOt2fWOn1K
+         f4PA==
+X-Gm-Message-State: APjAAAWK3aKwHzgHBRcWDDeaLNIzOAAoPQHekPIdXA7vqnhh/vwSR4oH
+        QWoef30JLLIXuW2v2zDDRcoA+50VuwVLkiC6pZ4LsQ==
+X-Google-Smtp-Source: APXvYqwGOlg/bZzzVUqCT7xHmwP5mV9QXmWru21WXXC0v+hMyrf3Myr2Ep5G40vm+zE7B1I2Tme02g61dWoubr/dvfo=
+X-Received: by 2002:a92:9f1a:: with SMTP id u26mr11955936ili.72.1579537739870;
+ Mon, 20 Jan 2020 08:28:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202001181542.rImVkJEi%lkp@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200115102142.11229-1-cleger@kalray.eu> <088ceab9-f135-6e70-dcf6-f75ec46110b1@st.com>
+ <79048597.12371594.1579098506802.JavaMail.zimbra@kalray.eu>
+ <a1116656-cf2e-c1a1-7cc3-0fe2a79f076e@st.com> <612100872.12377996.1579101063237.JavaMail.zimbra@kalray.eu>
+ <20200117225217.GA27535@xps15> <377421261.12898679.1579462834671.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <377421261.12898679.1579462834671.JavaMail.zimbra@kalray.eu>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 20 Jan 2020 09:28:49 -0700
+Message-ID: <CANLsYky-dp3=J__x9d7BJtu1=ppEiFMfuJnRQ7ZTVn6X43BJ_g@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Add support for predefined notifyids
+To:     =?UTF-8?Q?Cl=C3=A9ment_Leger?= <cleger@kalray.eu>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 18, 2020 at 03:51:11PM +0800, kbuild test robot wrote:
-> Hi Dejin,
-> 
-> Thank you for the patch! Yet something to improve:
+On Sun, 19 Jan 2020 at 12:40, Cl=C3=A9ment Leger <cleger@kalray.eu> wrote:
 >
+> Hi Mathieu,
+>
+> ----- On 17 Jan, 2020, at 23:52, Mathieu Poirier mathieu.poirier@linaro.o=
+rg wrote:
+>
+> > Hey guys,
+> >
+> > On Wed, Jan 15, 2020 at 04:11:03PM +0100, Cl=C3=A9ment Leger wrote:
+> >>
+> >>
+> >> ----- On 15 Jan, 2020, at 16:09, Arnaud Pouliquen arnaud.pouliquen@st.=
+com wrote:
+> >>
+> >> > On 1/15/20 3:28 PM, Cl=C3=A9ment Leger wrote:
+> >> >> Hi Arnaud,
+> >> >>
+> >> >> ----- On 15 Jan, 2020, at 15:06, Arnaud Pouliquen arnaud.pouliquen@=
+st.com wrote:
+> >> >>
+> >> >>> Hi Cl=C3=A9ment,
+> >> >>>
+> >> >>> On 1/15/20 11:21 AM, Clement Leger wrote:
+> >> >>>> In order to support preallocated notify ids, if their value is
+> >> >>>> equal to FW_RSC_NOTIFY_ID_ANY, then do no allocate a notify id
+> >> >>>> dynamically but try to allocate the requested one. This is useful=
+ when
+> >> >>>> using custom ids to bind them to custom vendor resources. For ins=
+tance,
+> >> >>>> it allow to assign a group of queues to a specific interrupti in =
+order
+> >> >>>> to dispatch notifications.
+> >> >>>>
+> >> >>>> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> >> >>>> ---
+> >> >>>>  drivers/remoteproc/remoteproc_core.c | 27 +++++++++++++++++++---=
+-----
+> >> >>>>  include/linux/remoteproc.h           |  1 +
+> >> >>>>  2 files changed, 20 insertions(+), 8 deletions(-)
+> >> >>>>
+> >> >>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+> >> >>>> b/drivers/remoteproc/remoteproc_core.c
+> >> >>>> index 307df98347ba..b1485fcd0f11 100644
+> >> >>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >> >>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> >>>> @@ -351,14 +351,27 @@ int rproc_alloc_vring(struct rproc_vdev *rv=
+dev, int i)
+> >> >>>>         /*
+> >> >>>>          * Assign an rproc-wide unique index for this vring
+> >> >>>>          * TODO: assign a notifyid for rvdev updates as well
+> >> >>>> -        * TODO: support predefined notifyids (via resource table=
+)
+> >> >>>>          */
+> >> >>>> -       ret =3D idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KE=
+RNEL);
+> >> >>>> -       if (ret < 0) {
+> >> >>>> -               dev_err(dev, "idr_alloc failed: %d\n", ret);
+> >> >>>> -               return ret;
+> >> >>>> +       if (rsc->vring[i].notifyid =3D=3D FW_RSC_NOTIFY_ID_ANY) {
+> >> >>>> +               ret =3D idr_alloc(&rproc->notifyids, rvring, 0, 0=
+, GFP_KERNEL);
+> >> >>>> +               if (ret < 0) {
+> >> >>>> +                       dev_err(dev, "idr_alloc failed: %d\n", re=
+t);
+> >> >>>> +                       return ret;
+> >> >>>> +               }
+> >> >>>> +               notifyid =3D ret;
+> >> >>>> +
+> >> >>>> +               /* Let the rproc know the notifyid of this vring.=
+*/
+> >> >>>> +               rsc->vring[i].notifyid =3D notifyid;
+> >> >>>> +       } else {
+> >> >>>> +               /* Reserve requested notify_id */
+> >> >>>> +               notifyid =3D rsc->vring[i].notifyid;
+> >> >>>> +               ret =3D idr_alloc(&rproc->notifyids, rvring, noti=
+fyid,
+> >> >>>> +                               notifyid + 1, GFP_KERNEL);
+> >> >>>> +               if (ret < 0) {
+> >> >>>> +                       dev_err(dev, "idr_alloc failed: %d\n", re=
+t);
+> >> >>>> +                       return ret;
+> >> >>>> +               }
+> >> >>>>         }
+> >> >>>> -       notifyid =3D ret;
+> >> >>>>
+> >> >>>>         /* Potentially bump max_notifyid */
+> >> >>>>         if (notifyid > rproc->max_notifyid)
+> >> >>>> @@ -366,8 +379,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvde=
+v, int i)
+> >> >>>>
+> >> >>>>         rvring->notifyid =3D notifyid;
+> >> >>>>
+> >> >>>> -       /* Let the rproc know the notifyid of this vring.*/
+> >> >>>> -       rsc->vring[i].notifyid =3D notifyid;
+> >> >>>>         return 0;
+> >> >>>>  }
+> >> >>> The rproc_free_vring function resets the notifyid to -1 on free.
+> >> >>> This could generate a side effect if the resource table is not rel=
+oaded.
+> >> >>
+> >> >> Oh indeed, I did not thought of that. What would you recommend ?
+> >> >> If using -1 in free vring, notify ids will be reallocated at next
+> >> >> round.
+> >> > Regarding the code i'm not sure that it is useful to reset the notif=
+yID to -1 on
+> >> > free.
+> >
+> > I'm not sure setting notifyid to -1 in rproc_free_vring() is such a big=
+ problem.
+> > No matter the code path I look at, if rproc_free_vring() is called some=
+thing
+> > serious has happened and the resource table will be reloaded if another=
+ attempt
+> > at booting the remote processor is done.  It can also be that a gracefu=
+l
+> > shutdown is underway, in which case the resource table will be reloaded=
+ anyway
+> > if/when the slave is brought back in service.
+> >
+> > Let me know if I'm missing a scenario.
+>
+> No, you are actually right
+>
+> >
+> > To me the real problem is if a FW image has set the notifyids in the re=
+source
+> > table to 0xffffffff, thinking they will be overwritten.  In that case t=
+hings
+> > will really south.
+>
+> Hum, if set to 0xFFFFFFFF, then they will be assigned dynamically and upd=
+ated
+> in the resource table (with this patch). But your probably mean existing =
+code,
+> right ?
 
-Thanks for reminding, This patch has been dropped, the patch V3 that replaced
-it no longer contains this content, Please refer to
-https://patchwork.ozlabs.org/patch/1219694/ for details. It should be fine after
-giving up this commit.
+My apologies for not expressing myself clearly here - let me try again.
 
-Finally, Thanks a lot for Jose's help (Jose.Abreu@synopsys.com), he told me 
-that the phy_mask is useful and should be kept when I submit this commit.
+At this time notifyids in the firmware's resource table can be set to
+anything because the code will overwrite them.  With this patch
+firmware images that don't have their notifyids set to -1 will see a
+change in how ids are assigned, something that has the potential to
+break user space.
 
-BR,
-Dejin
+Regards,
+Mathieu
 
-> [auto build test ERROR on net-next/master]
-> [also build test ERROR on net/master linus/master v5.5-rc6]
-> [cannot apply to sparc-next/master next-20200117]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Dejin-Zheng/net-stmmac-remove-useless-code-of-phy_mask/20200110-011131
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git daea5b4dc16c3edc90392a512492dae504f1a37a
-> config: mips-randconfig-a001-20200118 (attached as .config)
-> compiler: mipsel-linux-gcc (GCC) 5.5.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=5.5.0 make.cross ARCH=mips 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> arch/mips//loongson32/common/platform.c:82:2: error: unknown field 'phy_mask' specified in initializer
->      .phy_mask = 0,
->      ^
-> 
-> vim +/phy_mask +82 arch/mips//loongson32/common/platform.c
-> 
-> f29ad10de6c345 arch/mips/loongson1/common/platform.c Kelvin Cheung 2014-10-10  79  
-> ca585cf9fb818b arch/mips/loongson1/common/platform.c Kelvin Cheung 2012-07-25  80  /* Synopsys Ethernet GMAC */
-> f29ad10de6c345 arch/mips/loongson1/common/platform.c Kelvin Cheung 2014-10-10  81  static struct stmmac_mdio_bus_data ls1x_mdio_bus_data = {
-> f29ad10de6c345 arch/mips/loongson1/common/platform.c Kelvin Cheung 2014-10-10 @82  	.phy_mask	= 0,
-> f29ad10de6c345 arch/mips/loongson1/common/platform.c Kelvin Cheung 2014-10-10  83  };
-> f29ad10de6c345 arch/mips/loongson1/common/platform.c Kelvin Cheung 2014-10-10  84  
-> 
-> :::::: The code at line 82 was first introduced by commit
-> :::::: f29ad10de6c345c8ae4cb33a99ba8ff29bdcd751 MIPS: Loongson1B: Some fixes/updates for LS1B
-> 
-> :::::: TO: Kelvin Cheung <keguang.zhang@gmail.com>
-> :::::: CC: Ralf Baechle <ralf@linux-mips.org>
-> 
-> ---
-> 0-DAY kernel test infrastructure                 Open Source Technology Center
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
-
-
+>
+> >
+> >> > In current version, on alloc, the notifyID is overwriten without che=
+ck.
+> >> > And as vdev status is updated, vring struct in resource table should=
+ be
+> >> > considered as invalid
+> >> > Except if i missed a usecase/race condition...
+> >> >
+> >> >>
+> >> >> I was also worried that it would break some existing user applicati=
+ons
+> >> >> which uses "0" as a notify id in vring but expect the id to be
+> >> >> allocated dynamically. With my modification, it means it will try t=
+o
+> >> >> use "0" as a predefined id, leading to allocation failure.
+> >
+> > From my point of view they will have been lucky for all this time.  Eve=
+n with
+> > a new version of the resource table (which I think is the right way go)
+> > cases like this will break.
+>
+> Agreed, and actually, I may have missread some code. I can't find were I =
+read
+> that. By the way, is there any documentation which state the allowed valu=
+es of
+> notify ids ?
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> >> >>
+> >> > Yes this could introduce regression for firmware that sets 0 as defa=
+ult value.
+> >> > Probably better to introduce this patch with a new version of the re=
+source table
+> >> > :)
+> >>
+> >> Understood ;)
+> >>
+> >> Regards,
+> >>
+> >> Cl=C3=A9ment
+> >>
+> >> >
+> >> > Regards
+> >> > Arnaud
+> >> >>>
+> >> >>>>
+> >> >>>> diff --git a/include/linux/remoteproc.h b/include/linux/remotepro=
+c.h
+> >> >>>> index 16ad66683ad0..dcae3394243e 100644
+> >> >>>> --- a/include/linux/remoteproc.h
+> >> >>>> +++ b/include/linux/remoteproc.h
+> >> >>>> @@ -123,6 +123,7 @@ enum fw_resource_type {
+> >> >>>>  };
+> >> >>>>
+> >> >>>>  #define FW_RSC_ADDR_ANY (-1)
+> >> >>>> +#define FW_RSC_NOTIFY_ID_ANY (-1)This define can also be used in
+> >> >>>> rproc_free_vring
+> >> >>
+> >> >> Indeed.
+> >> >>
+> >> >> Thanks for your review.
+> >> >>
+> >> >> Regards,
+> >> >>
+> >> >> Cl=C3=A9ment
+> >> >>
+> >> >>>
+> >> >>> Regards,
+> >> >>> Arnaud
+> >> >>>>
+> >> >>>>  /**
+> > > > >>>   * struct fw_rsc_carveout - physically contiguous memory reque=
+st
