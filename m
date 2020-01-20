@@ -2,243 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988B0143214
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:19:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B1271431F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:04:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbgATTT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:19:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:10005 "EHLO mga07.intel.com"
+        id S1727289AbgATTEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:04:30 -0500
+Received: from foss.arm.com ([217.140.110.172]:35904 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbgATTTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:19:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:19:25 -0800
-X-IronPort-AV: E=Sophos;i="5.70,343,1574150400"; 
-   d="scan'208";a="399447737"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:19:25 -0800
-Subject: [PATCH v3 6/6] libnvdimm/e820: Retrieve and populate correct
- 'target_node' info
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, x86@kernel.org
-Date:   Mon, 20 Jan 2020 11:03:22 -0800
-Message-ID: <157954700254.2239526.1027195131592572065.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1726642AbgATTEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 14:04:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A43931B;
+        Mon, 20 Jan 2020 11:04:29 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08FCE3F68E;
+        Mon, 20 Jan 2020 11:04:28 -0800 (PST)
+Date:   Mon, 20 Jan 2020 19:04:27 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Wen Su <Wen.Su@mediatek.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [RESEND 3/4] regulator: mt6359: Add support for MT6359 regulator
+Message-ID: <20200120190427.GO6852@sirena.org.uk>
+References: <1579506450-21830-1-git-send-email-Wen.Su@mediatek.com>
+ <1579506450-21830-4-git-send-email-Wen.Su@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Qa0ccP92Gc0Ko3P8"
+Content-Disposition: inline
+In-Reply-To: <1579506450-21830-4-git-send-email-Wen.Su@mediatek.com>
+X-Cookie: I invented skydiving in 1989!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new phys_to_target_node() and numa_map_to_online_node() helpers
-to retrieve the correct id for the 'numa_node' ("local" / online
-initiator node) and 'target_node' (offline target memory node) sysfs
-attributes.
 
-Below is an example from a 4 numa node system where all the memory on
-node2 is pmem / reserved. It should be noted that with the arrival of
-the ACPI HMAT table and EFI Specific Purpose Memory the kernel will
-start to see more platforms with reserved / performance differentiated
-memory in its own numa node. Hence all the stakeholders on the Cc for
-what is ostensibly a libnvdimm local patch.
+--Qa0ccP92Gc0Ko3P8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=== Before ===
+On Mon, Jan 20, 2020 at 03:47:29PM +0800, Wen Su wrote:
 
-/* Notice no online memory on node2 at start */
+This seems pretty good, a few comments below but they're fairly small
+and should be easy to address:
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3708 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
+> +static int mt6359_set_voltage_sel(struct regulator_dev *rdev,
+> +				  unsigned int selector)
+> +{
+> +	int idx, ret;
+> +	const u32 *pvol;
+> +	struct mt6359_regulator_info *info = rdev_get_drvdata(rdev);
+> +
+> +	pvol = info->index_table;
+> +
+> +	idx = pvol[selector];
+> +	ret = regmap_update_bits(rdev->regmap, info->desc.vsel_reg,
+> +				 info->desc.vsel_mask,
+> +				 idx << info->vsel_shift);
+> +
+> +	return ret;
+> +}
 
-/*
- * Put the pmem namespace into devdax mode so it can be assigned to the
- * kmem driver
- */
+This looks like you should be using regulator_list_voltage_table() and
+associated functions, probably map_voltage_ascend() or _iterate() and
+just a simple set_voltage_sel_regmap().
 
-# ndctl create-namespace -e namespace0.0 -m devdax -f
-{
-  "dev":"namespace0.0",
-  "mode":"devdax",
-  "map":"dev",
-  "size":"3.94 GiB (4.23 GB)",
-  "uuid":"1650af9b-9ba3-4704-acd6-10178399d9a3",
-  [..]
-}
+> +static int mt6359_get_status(struct regulator_dev *rdev)
+> +{
+> +	int ret;
+> +	u32 regval;
+> +	struct mt6359_regulator_info *info = rdev_get_drvdata(rdev);
+> +
+> +	ret = regmap_read(rdev->regmap, info->status_reg, &regval);
+> +	if (ret != 0) {
+> +		dev_err(&rdev->dev, "Failed to get enable reg: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return (regval & info->qi) ? REGULATOR_STATUS_ON : REGULATOR_STATUS_OFF;
 
-/* Online Persistent Memory as System RAM */
+Please write normal conditionl statements rather than using the ternery
+operator to improve legibility.
 
-# daxctl reconfigure-device --mode=system-ram dax0.0
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-libdaxctl: memblock_in_dev: dax0.0: memory0: Unable to determine phys_index: Success
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":0,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
+> +	switch (mode) {
+> +	case REGULATOR_MODE_FAST:
+> +		if (curr_mode == REGULATOR_MODE_IDLE) {
+> +			WARN_ON(1);
+> +			dev_notice(&rdev->dev,
+> +				   "BUCK %s is LP mode, can't FPWM\n",
+> +				   rdev->desc->name);
+> +			return -EIO;
 
-/* Note that the memory is onlined by default to the wrong node, node0 */
+I'd expect the device to go out of low power mode then into force PWM
+mode if it has to do that rather than reject the operation.
 
-# numactl --hardware
-available: 3 nodes (0-1,3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 7926 MB
-node 0 free: 7655 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3871 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3971 MB
-node distances:
-node   0   1   3
-  0:  10  21  21
-  1:  21  10  21
-  3:  21  21  10
+--Qa0ccP92Gc0Ko3P8
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-=== After ===
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4l+boACgkQJNaLcl1U
+h9CShAf/WdS4iLv8FmqgPQ6jxUZsWIHU4beM7oDoeI16KydYH71AEzVsF5AmZ/Fi
+q6qUuiabJm+9IVCwXc55mWA5IlFDMSoYM5VCt+QwxsUxaO2QoCjs/FgdkZcvNPyu
+KJfmVJdGPE3ZzA6UjDC7tVOR1CYCC8ey8U6Y45rhPU6ln4RDxTnVAFFtKlUM5UM7
+/Mw/NwmnR3AtdQvHw20WbLhTqWiNR8m5XAryzMRd+H35WuF/3xRlPSRvrGYjxkAL
+7R3Wbs2KsQ7J+bPCPbLf0N9WSvZurn/hMT++bQJKqeAei0V+bo2Phk66Iq7rQkgJ
+TGSDUr+2JcIj+zZtLcbRkcrnQUCt1w==
+=Vsrk
+-----END PGP SIGNATURE-----
 
-/* Notice that the "phys_index" error messages are gone */
-
-# daxctl reconfigure-device --mode=system-ram dax0.0
-[
-  {
-    "chardev":"dax0.0",
-    "size":4225761280,
-    "target_node":2,
-    "mode":"system-ram"
-  }
-]
-reconfigured 1 device
-
-/* Notice that node2 is now correctly populated */
-
-# numactl --hardware
-available: 4 nodes (0-3)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
-node 0 size: 3958 MB
-node 0 free: 3793 MB
-node 1 cpus: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
-node 1 size: 4027 MB
-node 1 free: 3851 MB
-node 2 cpus:
-node 2 size: 3968 MB
-node 2 free: 3968 MB
-node 3 cpus:
-node 3 size: 3994 MB
-node 3 free: 3908 MB
-node distances:
-node   0   1   2   3
-  0:  10  21  21  21
-  1:  21  10  21  21
-  2:  21  21  10  21
-  3:  21  21  21  10
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/Kconfig      |    1 +
- drivers/nvdimm/e820.c |   18 ++++--------------
- 2 files changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5e8949953660..3a827fe7afd6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1660,6 +1660,7 @@ config X86_PMEM_LEGACY
- 	depends on PHYS_ADDR_T_64BIT
- 	depends on BLK_DEV
- 	select X86_PMEM_LEGACY_DEVICE
-+	select KEEP_NUMA if NUMA
- 	select LIBNVDIMM
- 	help
- 	  Treat memory marked using the non-standard e820 type of 12 as used
-diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
-index e02f60ad6c99..4cd18be9d0e9 100644
---- a/drivers/nvdimm/e820.c
-+++ b/drivers/nvdimm/e820.c
-@@ -7,6 +7,7 @@
- #include <linux/memory_hotplug.h>
- #include <linux/libnvdimm.h>
- #include <linux/module.h>
-+#include <linux/numa.h>
- 
- static int e820_pmem_remove(struct platform_device *pdev)
- {
-@@ -16,27 +17,16 @@ static int e820_pmem_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_MEMORY_HOTPLUG
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return memory_add_physaddr_to_nid(addr);
--}
--#else
--static int e820_range_to_nid(resource_size_t addr)
--{
--	return NUMA_NO_NODE;
--}
--#endif
--
- static int e820_register_one(struct resource *res, void *data)
- {
- 	struct nd_region_desc ndr_desc;
- 	struct nvdimm_bus *nvdimm_bus = data;
-+	int nid = phys_to_target_node(res->start);
- 
- 	memset(&ndr_desc, 0, sizeof(ndr_desc));
- 	ndr_desc.res = res;
--	ndr_desc.numa_node = e820_range_to_nid(res->start);
--	ndr_desc.target_node = ndr_desc.numa_node;
-+	ndr_desc.numa_node = numa_map_to_online_node(nid);
-+	ndr_desc.target_node = nid;
- 	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
- 	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
- 		return -ENXIO;
-
+--Qa0ccP92Gc0Ko3P8--
