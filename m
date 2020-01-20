@@ -2,149 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23598143160
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A00143162
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 19:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbgATSVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 13:21:07 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2287 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726942AbgATSVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 13:21:06 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id AC278672C0F077319EE7;
-        Mon, 20 Jan 2020 18:21:03 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 20 Jan 2020 18:21:03 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 20 Jan
- 2020 18:21:03 +0000
-Subject: Re: [PATCH] irqchip/gic-v3-its: Balance initial LPI affinity across
- CPUs
-To:     Marc Zyngier <maz@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Ming Lei <ming.lei@redhat.com>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>
-References: <20200119190554.1002-1-maz@kernel.org>
- <5d04d904-d7ea-04ea-ac3b-8cdc90074a92@huawei.com>
- <afb60c5f9a176470449a83126db326a9@kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <83eb55b0-2f2d-3335-85cf-6d7ed379b3c7@huawei.com>
-Date:   Mon, 20 Jan 2020 18:21:02 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1728709AbgATSWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 13:22:02 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:33656 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727011AbgATSWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 13:22:01 -0500
+Received: by mail-io1-f72.google.com with SMTP id i8so186906ioi.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 10:22:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=MqDXOoM9vvTcTH3u9+KklRDGAKW3hOgR3ZSR/h+boWo=;
+        b=CT69srHHqlfZ7K/XvalpGbe3pUpo/Z+IUw2B68DuXebI0tpZRmEjRQrICgGCcJaHb3
+         XFEyGQiGs3N0PhX1DyIgLgWxHlgJRmtEftJkK6aXAf05h1sJ2jC2VrzCFxxNJr3nH0en
+         FBtiNXNShMCiSc9CsfzTzLXYFmxvpBStLwMGPgO5yhlvrtqGeUegu5vO5Fbx8o9Tp80q
+         Lkzt3DhJbTf8Z8pyGhPECPTlVDVeyjzi8slJqAEIZufA4CiwSaifAytJZ/a+2oyECapM
+         XUQNKDy2fA+qXlz0D4iQ1YWy9/mzKSqCNaxGfntdoOUUWGJTstD0GUyu5Wwyrbp2oq/+
+         DHDw==
+X-Gm-Message-State: APjAAAWTo4ECXm0tBLcXf6yUFJWQ4PLDY1leGTD5hl71unonMsy3PPjY
+        8O653TWSMa20v+5pjb9UvtxSrxv+tiWbAyf4ENywxM0VNJwx
+X-Google-Smtp-Source: APXvYqzfQyTnxVv2xv/HZdiNuXYYiHLNeNXNJ6hv0nTAZFxD/xXg/rkalEYxh8LA+d9fc9B6xIMLWxfmsZDaI5AWugpAqhqpGZ/4
 MIME-Version: 1.0
-In-Reply-To: <afb60c5f9a176470449a83126db326a9@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml718-chm.china.huawei.com (10.201.108.69) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a02:856a:: with SMTP id g97mr227401jai.97.1579544520986;
+ Mon, 20 Jan 2020 10:22:00 -0800 (PST)
+Date:   Mon, 20 Jan 2020 10:22:00 -0800
+In-Reply-To: <00000000000043aa29059c91459e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000149402059c965e75@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in bitmap_ipmac_gc
+From:   syzbot <syzbot+c1a1fb435465986efe35@syzkaller.appspotmail.com>
+To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        gregkh@linuxfoundation.org, info@metux.net, jeremy@azazel.net,
+        kadlec@netfilter.org, kstewart@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, lipeng321@huawei.com,
+        liuyonglong@huawei.com, mareklindner@neomailbox.ch,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, salil.mehta@huawei.com, sbrivio@redhat.com,
+        shuliubin@huawei.com, sw@simonwunderlich.de,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        yisen.zhuang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/01/2020 17:42, Marc Zyngier wrote:
+syzbot has bisected this bug to:
 
-Hi Marc,
+commit 0d581ba311a27762fe1a14e5db5f65d225b3d844
+Author: Yonglong Liu <liuyonglong@huawei.com>
+Date:   Wed Jul 3 11:12:30 2019 +0000
 
->>>      static u64 its_irq_get_msi_base(struct its_device *its_dev)
->>> @@ -2773,28 +2829,34 @@ static int its_irq_domain_activate(struct
->>> irq_domain *domain,
->>>    {
->>>    	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
->>>    	u32 event = its_get_event_id(d);
->>> -	const struct cpumask *cpu_mask = cpu_online_mask;
->>> -	int cpu;
->>> +	int ret = 0, cpu = nr_cpu_ids;
->>> +	const struct cpumask *reqmask;
->>> +	cpumask_var_t mask;
->>>    -	/* get the cpu_mask of local node */
->>> -	if (its_dev->its->numa_node >= 0)
->>> -		cpu_mask = cpumask_of_node(its_dev->its->numa_node);
->>> +	if (irqd_affinity_is_managed(d))
->>> +		reqmask = irq_data_get_affinity_mask(d);
->>> +	else
->>> +		reqmask = cpu_online_mask;
->>>    -	/* Bind the LPI to the first possible CPU */
->>> -	cpu = cpumask_first_and(cpu_mask, cpu_online_mask);
->>> -	if (cpu >= nr_cpu_ids) {
->>> -		if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144)
->>> -			return -EINVAL;
->>> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))
->>> +		return -ENOMEM;
->>>    -		cpu = cpumask_first(cpu_online_mask);
->>> +	its_compute_affinity(d, reqmask, mask);
->>> +	cpu = its_pick_target_cpu(mask);
->>> +	if (cpu >= nr_cpu_ids) {
->>> +		ret = -EINVAL;
->>> +		goto out;
->>>    	}
->>>    +	atomic_inc(per_cpu_ptr(&cpu_lpi_count, cpu));
->>
->> I wonder if we should only consider managed interrupts in this
->> accounting?
->>
->> So cpu0 is effectively going to be excluded from the balancing, as it
->> will have so many lpis targeted.
-> 
-> Maybe, but only if the provided managed affinity gives you the
-> opportunity of placing the LPI somewhere else. 
+    net: hns: add support for vlan TSO
 
-Of course, if there's no other cpu in the mask then so be it.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16d5dfaee00000
+start commit:   def9d278 Linux 5.5-rc7
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=15d5dfaee00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d5dfaee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cf8e288883e40aba
+dashboard link: https://syzkaller.appspot.com/bug?extid=c1a1fb435465986efe35
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153ac495e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153471d1e00000
 
-If the managed
-> affinity says CPU0 only, then that's where you end up.
-> 
+Reported-by: syzbot+c1a1fb435465986efe35@syzkaller.appspotmail.com
+Fixes: 0d581ba311a2 ("net: hns: add support for vlan TSO")
 
-If my debug code is correct (with the above fix), cpu0 had 763 
-interrupts targeted on my D06 initially :)
-
-But it's not just cpu0. I find initial non-managed interrupt affinity 
-masks are set generally on cpu cluster/numa node masks, so the first 
-cpus in those masks are bit over-subscribed, so then we may be spreading 
-the managed interrupts over less cpus in the mask.
-
-This is a taste of lpi distribution on my 96 core system:
-cpu0 763
-cpu1 2
-cpu3 1
-cpu4 2
-cpu5 2
-cpu6 0
-cpu7 0
-cpu8 2
-cpu9 1
-cpu10 0
-...
-cpu16 2
-...
-cpu24 8
-...
-cpu48 10 (numa node boundary)
-...
-
-
->> And, for the others, even if we balance all the LPIs, won't irqbalance
->> (if running, obviously) can come along and fiddle with these
->> non-managed interrupt affinities anyway?
-> 
-> Of course, irqbalance will move things around. But that should be to
-> CPUs that do not have too many screaming interrupts.
-> 
-> Thanks,
-> 
->           M.
-
-Cheers,
-John
-
-> 
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
