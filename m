@@ -2,48 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C17081427D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1696E1427DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgATKGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 05:06:51 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55280 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgATKGv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:06:51 -0500
-Received: from localhost (82-95-191-104.ip.xs4all.nl [82.95.191.104])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 69A29153DAC71;
-        Mon, 20 Jan 2020 02:06:49 -0800 (PST)
-Date:   Mon, 20 Jan 2020 11:06:47 +0100 (CET)
-Message-Id: <20200120.110647.1431085662863704351.davem@davemloft.net>
-To:     fthain@telegraphics.com.au
-Cc:     tsbogend@alpha.franken.de, chris@zankel.net, laurent@vivier.eu,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 00/19] Fixes for SONIC ethernet driver
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1579474569.git.fthain@telegraphics.com.au>
-References: <cover.1579474569.git.fthain@telegraphics.com.au>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 20 Jan 2020 02:06:50 -0800 (PST)
+        id S1727065AbgATKIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:08:01 -0500
+Received: from comms.puri.sm ([159.203.221.185]:40850 "EHLO comms.puri.sm"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbgATKIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 05:08:01 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 70A74DF2AA;
+        Mon, 20 Jan 2020 02:08:00 -0800 (PST)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7fE69IKM7W_p; Mon, 20 Jan 2020 02:07:59 -0800 (PST)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org
+Cc:     kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: [PATCH] arm64: dts: librem5-devkit: add lsm9ds1 mount matrix
+Date:   Mon, 20 Jan 2020 11:07:22 +0100
+Message-Id: <20200120100722.30359-1-martin.kepplinger@puri.sm>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The IMU chip on the librem5-devkit is not mounted at the "natural" place
+that would match normal phone orientation (see the documentation for the
+details about what that is).
 
-This is a mix of cleanups and other things and definitely not bug fixes.
+Since the lsm9ds1 driver supports providing a mount matrix, we can describe
+the orientation on the board in the dts:
 
-Please separate out the true actual bug fixes from the cleanups.
+Create a right-handed coordinate system (x * -1; see the datasheet for the
+axis) and rotate 180 degrees around the y axis because the device sits on
+the back side from the display.
 
-The bug fixes get submitted to 'net'
+Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+---
 
-And the rest go to 'net-next'
+tested on the librem5-devkit of course, finally fixing the orientation problem
+for the accelerometer :)
 
-Thank you.
+thanks,
+
+                            martin
+
+
+ arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+index 703254282b96..6c8ab009081b 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+@@ -457,6 +457,9 @@
+ 		reg = <0x6a>;
+ 		vdd-supply = <&reg_3v3_p>;
+ 		vddio-supply = <&reg_3v3_p>;
++		mount-matrix =  "1",  "0",  "0",
++				"0",  "1",  "0",
++				"0",  "0", "-1";
+ 	};
+ };
+ 
+-- 
+2.20.1
+
