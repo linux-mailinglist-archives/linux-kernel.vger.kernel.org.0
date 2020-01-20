@@ -2,104 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F7A14260F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38ACD142602
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbgATIo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:44:59 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54886 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726130AbgATIo6 (ORCPT
+        id S1727031AbgATIoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:44:25 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36605 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbgATIoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:44:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579509897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sl9pGanJyd/CB0uhWh/CfWGutDsL/HyC3562Uwp1M9s=;
-        b=T+MeGL1Ve80ggPr4HyzlsnilzcrRie5oW5/9TswKROvXbYw6eYmROYB4TQcdGlM453J3Hi
-        fjzQaEnyFqgZyLJj2cF9K8hr7+mpGhQm8AjSyjEDkSIyg7o0JdJ5YWLjRnBirlc81YKfd7
-        PLuDbyQWCFupeQAuxHPn4/2qR7WU8FA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-265-4Cog00rCO-GKLV2WFtukmw-1; Mon, 20 Jan 2020 03:44:54 -0500
-X-MC-Unique: 4Cog00rCO-GKLV2WFtukmw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 296C1DBA5;
-        Mon, 20 Jan 2020 08:44:52 +0000 (UTC)
-Received: from [10.72.12.173] (ovpn-12-173.pek2.redhat.com [10.72.12.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0FF810016E8;
-        Mon, 20 Jan 2020 08:44:35 +0000 (UTC)
-Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Shahaf Shuler <shahafs@mellanox.com>
-Cc:     Rob Miller <rob.miller@broadcom.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>,
-        "Wang, Xiao W" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "Zhu, Lingshan" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Ariel Adam <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-4-jasowang@redhat.com>
- <20200117070324-mutt-send-email-mst@kernel.org>
- <239b042c-2d9e-0eec-a1ef-b03b7e2c5419@redhat.com>
- <CAJPjb1+fG9L3=iKbV4Vn13VwaeDZZdcfBPvarogF_Nzhk+FnKg@mail.gmail.com>
- <AM0PR0502MB379553984D0D55FDE25426F6C3330@AM0PR0502MB3795.eurprd05.prod.outlook.com>
- <20200119045849-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <d4e7fc56-c9d8-f01f-1504-dd49d5658037@redhat.com>
-Date:   Mon, 20 Jan 2020 16:44:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 20 Jan 2020 03:44:25 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so13796825wma.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 00:44:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=s+lxv8yS+tPPVLLVda+OIOe+B0+kZ5og8HXVAwOgVOE=;
+        b=DS89j9PWMbSs7Q0oYxvC9+QxP7mMSQtykSp6CPFm9blhsNBPlaMHsPGvSxHMFwMWYf
+         mce//OGWonh+G0xoWFBeMQ6MygHTpF/5MXnrL8h2bDTKR5wY8YOQ0tCm1yfjldA1AzcF
+         DdOkqgraTIAY2ENvTPKz6wEVvJaqaVn/g0objOAyDQ4PagQTQ75B5YcW+L3q6VG0qrLv
+         QOoQ/s7+hBCUPWP3K8MhMjLpe5THZ8jHhX5GoXsIBpf+VGSNSXshpqmK2meAgKvEwHQL
+         d7AxVplHo9ZfzqOwGdNhqWXXLBe8I9I0KxmqKoEYZvXF1IWpMDYPcXH9SUha06mzy86L
+         m3/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=s+lxv8yS+tPPVLLVda+OIOe+B0+kZ5og8HXVAwOgVOE=;
+        b=q6ss2YzLqXTUSfvJ5Ga4QhcUq+0rxLL26Hz7Gy7GaoYPD0QGTVno8cng6r/TMGvCep
+         8aXRnM18xvyv57LWCbwWhXhLOy+8byNCzviT1P+OUuNPHVTqtLbBLtB3S83F43mYWAhH
+         tXLh0mxn2fuGTuXCUMtorAgDo1MUnf7jkZn8M2eS7LqevggGKo9Ocbx3XtGKqLXqLJXH
+         RkLR8KFZHst3NNg7uuHHvntagfJ4s5NONRjZbXxqUZ25rNYuTCpiKeDLJ8FgWYOiadWx
+         dUN90Ca8MDSZJWoq54LSJP3HiIwAg47wyMQdJd01q43G7t4bdpe/5Xc8Zka8m5OZ65oj
+         sUAA==
+X-Gm-Message-State: APjAAAW4cJsT/FLjNX/Yc7GQLCIggUqe5F4fS9K4xdoOQRazXXwK1zuP
+        WovmEb1DFh5WPbiHpIByZsTXBQ==
+X-Google-Smtp-Source: APXvYqyxULuntfgFhWunP/TGRe20THFA3uILY3jQLy0UfU93w71D1ribWIK30iqLIEbqoWtsxy0iAQ==
+X-Received: by 2002:a1c:9cce:: with SMTP id f197mr18331493wme.133.1579509863421;
+        Mon, 20 Jan 2020 00:44:23 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id b137sm3009206wme.26.2020.01.20.00.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 00:44:22 -0800 (PST)
+Date:   Mon, 20 Jan 2020 08:44:39 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Wen Su <Wen.Su@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, wsd_upstream@mediatek.com
+Subject: Re: [RESEND 2/4] mfd: Add for PMIC MT6359 registers definition
+Message-ID: <20200120084439.GX15507@dell>
+References: <1579506450-21830-1-git-send-email-Wen.Su@mediatek.com>
+ <1579506450-21830-3-git-send-email-Wen.Su@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20200119045849-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1579506450-21830-3-git-send-email-Wen.Su@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 20 Jan 2020, Wen Su wrote:
 
-On 2020/1/19 =E4=B8=8B=E5=8D=885:59, Michael S. Tsirkin wrote:
-> On Sun, Jan 19, 2020 at 09:07:09AM +0000, Shahaf Shuler wrote:
->>> Technically, we can keep the incremental API
->>> here and let the vendor vDPA drivers to record the full mapping
->>> internally which may slightly increase the complexity of vendor drive=
-r.
->> What will be the trigger for the driver to know it received the last m=
-apping on this series and it can now push it to the on-chip IOMMU?
-> Some kind of invalidate API?
->
+> From: Wen Su <wen.su@mediatek.com>
+> 
+> This adds MediaTek PMIC MT6359 registers definition for the
+> following sub modules:
+> 
+> - Regulator
+> - RTC
+> - Interrupt
+> 
+> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-The problem is how to deal with the case of vIOMMU. When vIOMMU is=20
-enabling there's no concept of last mapping.
+FYI, this is a real Acked-by.
 
-Thanks
+Whoever takes this set can take this patch.
 
+> Signed-off-by: Wen Su <wen.su@mediatek.com>
+> ---
+>  include/linux/mfd/mt6359/registers.h | 531 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 531 insertions(+)
+>  create mode 100644 include/linux/mfd/mt6359/registers.h
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
