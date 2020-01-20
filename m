@@ -2,245 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC71E142D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5AFF142D48
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbgATOY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 09:24:26 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8648 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbgATOYX (ORCPT
+        id S1728741AbgATOXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 09:23:36 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35699 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbgATOXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 09:24:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e25b7ec0002>; Mon, 20 Jan 2020 06:23:40 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 20 Jan 2020 06:24:22 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 20 Jan 2020 06:24:22 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 20 Jan
- 2020 14:24:22 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 20 Jan 2020 14:24:22 +0000
-Received: from audio.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e25b8110000>; Mon, 20 Jan 2020 06:24:22 -0800
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <perex@perex.cz>, <tiwai@suse.com>, <robh+dt@kernel.org>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
-        <viswanathl@nvidia.com>, <rlokhande@nvidia.com>,
-        <dramesh@nvidia.com>, <atalambedu@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH 9/9] arm64: tegra: enable AHUB modules for few Tegra chips
-Date:   Mon, 20 Jan 2020 19:53:18 +0530
-Message-ID: <1579530198-13431-10-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
-References: <1579530198-13431-1-git-send-email-spujar@nvidia.com>
+        Mon, 20 Jan 2020 09:23:35 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i15so28828731oto.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 06:23:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nnn4KKkHt1EljhMT9CxicHtKv9oSHz/LL7W2XJ6R4BE=;
+        b=Z/QAqXKhkQnUrpb+hI+53DRu6kDqnE+w9xmmPN4YoUerubfVB2WR6JMzQ3mJz9cQbH
+         LideBY2IOx+BJVlFZUsnma1lZQJfcr6Kg+pLY/xZf4eISp/1ylSzHEMsPYWd/KcFWQ3S
+         wrHfZj6dbCU/c8MXu9eAa8fN+oW6CmHUsX4TGeodRCUVzA/7DT/GK9w7uSCOl04hnC12
+         HOs16UTTPfptMBrB8nPXLjCJs1ntcYAhUFc2mbsqbtzpbSAryYC4l/159I4ga/7cczhc
+         A/BS2UZS1V2fnFDMRJ02FK+54ZMb/p/Kk8WM2MWKtEKxJpe30SIxauSjIwE57zSFTpnE
+         Iogg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nnn4KKkHt1EljhMT9CxicHtKv9oSHz/LL7W2XJ6R4BE=;
+        b=HxCnjVpHCRJg5u+9FSChUTwyxESwAFJum7hGIBHbyBYLCr0lVAYaY6P9BS8h/KmldR
+         FslRDySh2E8TmweytmxvbC/jmWw2YB+u0RqYlu2MehOFBCmtVytKtT1aX5L2ZNBSz57I
+         emcWMmK8OcLh2tt9GVbxk4SvCUJDLA6yXzfr9oMyHs2JVO6wkEH8B4lZqrlraEiV+ACA
+         mN9EB+O8WV4eia3d4sd8WfQC2Whu0sChXzmGwHfYmB5jCVjqRgGqQTWLhrp2yEhPGxqm
+         4/ZSKlc/at8WKWF8wK2H4Ufj3jmaXtQ+6I+gkwVu7LPZngRqzLzkNjHOt2+g5X+rDd8V
+         dGCA==
+X-Gm-Message-State: APjAAAXjePY2hgmwUogwNTe5X6h0qEhtUKuzmkHIxtFmkZ0GDGqZJQj2
+        nRqVazMGJMNMjp4Cfhu0OA6x4uLVjxAS7lqpS75P7Q==
+X-Google-Smtp-Source: APXvYqxOOKWrDtxXbMNrSjzwDWgHr5x/Rbu/3eVl2qJzSvBh1Z3fza5fTtePRCaaRAiuXUv6TT88BF1UAwh9j96+taE=
+X-Received: by 2002:a9d:7f12:: with SMTP id j18mr16933059otq.17.1579530214919;
+ Mon, 20 Jan 2020 06:23:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579530220; bh=QLJog4DfYyxTa/pGhw8zE2jdA/xz/qI7iFpPR8p4Zno=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:Content-Type;
-        b=OK/DzpV4HbhmKsexkuMvmA+q3VySwGYKQRrylVrBUtDATeRaxSP5ESUf9CLgPpKfN
-         9G/FyJkD+6uAxeRL3vBBRW5hMmIuoggLp6wT/tAdXfrtry2Xm0MOj6jA0Q8q1Wwxmp
-         92GGVO6XLpzTmT6S2/UIU4Vnzlypu+AjhMT7fb85Nlu3rgZvtaC1uRrdMGWNjIadMP
-         KAA8cINzkNN5xI/RY7pqDCim7t3pKJBYER+EEhPAgl4jM8Zkv5RUxRKSK7STW9dyh9
-         X7MPNRU+tq7o/Hx4H774UPIVXKmclkoZJI4o/P+l4ng1ZV8/GzP5r+tj25mWQtbKDT
-         YwZn5Mfuir6Ig==
+References: <20200115165749.145649-1-elver@google.com> <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
+ <CANpmjNOpTYnF3ssqrE_s+=UA-2MpfzzdrXoyaifb3A55_mc0uA@mail.gmail.com>
+ <CAK8P3a3WywSsahH2vtZ_EOYTWE44YdN+Pj6G8nt_zrL3sckdwQ@mail.gmail.com>
+ <CANpmjNMk2HbuvmN1RaZ=8OV+tx9qZwKyRySONDRQar6RCGM1SA@mail.gmail.com>
+ <CAK8P3a066Knr-KC2v4M8Dr1phr0Gbb2KeZZLQ7Ana0fkrgPDPg@mail.gmail.com> <CANpmjNO395-atZXu_yEArZqAQ+ib3Ack-miEhA9msJ6_eJsh4g@mail.gmail.com>
+In-Reply-To: <CANpmjNO395-atZXu_yEArZqAQ+ib3Ack-miEhA9msJ6_eJsh4g@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 20 Jan 2020 15:23:23 +0100
+Message-ID: <CANpmjNOH1h=txXnd1aCXTN8THStLTaREcQpzd5QvoXz_3r=8+A@mail.gmail.com>
+Subject: Re: [PATCH -rcu] asm-generic, kcsan: Add KCSAN instrumentation for bitops
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        Daniel Axtens <dja@axtens.net>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables AHUB, ADMAIF modules for following Tegra platforms.
-Along with this specific instances of I/O modules are enabled as per
-the board design.
+On Fri, 17 Jan 2020 at 14:14, Marco Elver <elver@google.com> wrote:
+>
+> On Fri, 17 Jan 2020 at 13:25, Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Wed, Jan 15, 2020 at 9:50 PM Marco Elver <elver@google.com> wrote:
+> > > On Wed, 15 Jan 2020 at 20:55, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > On Wed, Jan 15, 2020 at 8:51 PM Marco Elver <elver@google.com> wrote:
+> > > > > On Wed, 15 Jan 2020 at 20:27, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > Are there any that really just want kasan_check_write() but not one
+> > > > of the kcsan checks?
+> > >
+> > > If I understood correctly, this suggestion would amount to introducing
+> > > a new header, e.g. 'ksan-checks.h', that provides unified generic
+> > > checks. For completeness, we will also need to consider reads. Since
+> > > KCSAN provides 4 check variants ({read,write} x {plain,atomic}), we
+> > > will need 4 generic check variants.
+> >
+> > Yes, that was the idea.
+> >
+> > > I certainly do not feel comfortable blindly introducing kcsan_checks
+> > > in all places where we have kasan_checks, but it may be worthwhile
+> > > adding this infrastructure and starting with atomic-instrumented and
+> > > bitops-instrumented wrappers. The other locations you list above would
+> > > need to be evaluated on a case-by-case basis to check if we want to
+> > > report data races for those accesses.
+> >
+> > I think the main question to answer is whether it is more likely to go
+> > wrong because we are missing checks when one caller accidentally
+> > only has one but not the other, or whether they go wrong because
+> > we accidentally check both when we should only be checking one.
+> >
+> > My guess would be that the first one is more likely to happen, but
+> > the second one is more likely to cause problems when it happens.
+>
+> Right, I guess both have trade-offs.
+>
+> > > As a minor data point, {READ,WRITE}_ONCE in compiler.h currently only
+> > > has kcsan_checks and not kasan_checks.
+> >
+> > Right. This is because we want an explicit "atomic" check for kcsan
+> > but we want to have the function inlined for kasan, right?
+>
+> Yes, correct.
+>
+> > > My personal preference would be to keep the various checks explicit,
+> > > clearly opting into either KCSAN and/or KASAN. Since I do not think
+> > > it's obvious if we want both for the existing and potentially new
+> > > locations (in future), the potential for error by blindly using a
+> > > generic 'ksan_check' appears worse than potentially adding a dozen
+> > > lines or so.
+> > >
+> > > Let me know if you'd like to proceed with 'ksan-checks.h'.
+> >
+> > Could you have a look at the files I listed and see if there are any
+> > other examples that probably a different set of checks between the
+> > two, besides the READ_ONCE() example?
+>
+> All the user-copy related code should probably have kcsan_checks as well.
+>
+> > If you can't find any, I would prefer having the simpler interface
+> > with just one set of annotations.
+>
+> That's fair enough. I'll prepare a v2 series that first introduces the
+> new header, and then applies it to the locations that seem obvious
+> candidates for having both checks.
 
- * Jetson TX1
-   - I2S1, I2S2, I2S3, I2S4 and I2S5
-   - DMIC1, DMIC2 and DMIC3
+I've sent a new patch series which introduces instrumented.h:
+   http://lkml.kernel.org/r/20200120141927.114373-1-elver@google.com
 
- * Jetson TX2
-   - I2S1, I2S2, I2S3, I2S4, I2S5 and I2S6
-   - DMIC1, DMIC2 and DMIC3
-   - DSPK2
-
- * Jetson AGX Xavier
-   - I2S1, I2S2, I2S4 and I2S6
-   - DMIC2 and DMIC3
-   - DSPK1
-
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 48 ++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts | 36 ++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 40 ++++++++++++++++++
- 3 files changed, 124 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index f1de4ff..717993c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -20,6 +20,54 @@
- 		interrupt-controller@2a40000 {
- 			status = "okay";
- 		};
-+
-+		ahub@2900800 {
-+			status = "okay";
-+
-+			admaif@290f000 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901000 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901100 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901200 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901300 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901400 {
-+				status = "okay";
-+			};
-+
-+			i2s@2901500 {
-+				status = "okay";
-+			};
-+
-+			dmic@2904000 {
-+				status = "okay";
-+			};
-+
-+			dmic@2904100 {
-+				status = "okay";
-+			};
-+
-+			dmic@2904200 {
-+				status = "okay";
-+			};
-+
-+			dspk@2905100 {
-+				status = "okay";
-+			};
-+		};
- 	};
- 
- 	i2c@3160000 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 985e7d8..f5d5832 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -21,6 +21,42 @@
- 			interrupt-controller@2a40000 {
- 				status = "okay";
- 			};
-+
-+			ahub@2900800 {
-+				status = "okay";
-+
-+				admaif@290f000 {
-+					status = "okay";
-+				};
-+
-+				i2s@2901000 {
-+					status = "okay";
-+				};
-+
-+				i2s@2901100 {
-+					status = "okay";
-+				};
-+
-+				i2s@2901300 {
-+					status = "okay";
-+				};
-+
-+				i2s@2901500 {
-+					status = "okay";
-+				};
-+
-+				dmic@2904100 {
-+					status = "okay";
-+				};
-+
-+				dmic@2904200 {
-+					status = "okay";
-+				};
-+
-+				dspk@2905000 {
-+					status = "okay";
-+				};
-+			};
- 		};
- 
- 		ddc: i2c@31c0000 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index a3cafe3..c8d2c21 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -123,5 +123,45 @@
- 		agic@702f9000 {
- 			status = "okay";
- 		};
-+
-+		ahub@702d0800 {
-+			status = "okay";
-+
-+			admaif@702d0000 {
-+				status = "okay";
-+			};
-+
-+			i2s@702d1000 {
-+				status = "okay";
-+			};
-+
-+			i2s@702d1100 {
-+				status = "okay";
-+			};
-+
-+			i2s@702d1200 {
-+				status = "okay";
-+			};
-+
-+			i2s@702d1300 {
-+				status = "okay";
-+			};
-+
-+			i2s@702d1400 {
-+				status = "okay";
-+			};
-+
-+			dmic@702d4000 {
-+				status = "okay";
-+			};
-+
-+			dmic@702d4100 {
-+				status = "okay";
-+			};
-+
-+			dmic@702d4200 {
-+				status = "okay";
-+			};
-+		};
- 	};
- };
--- 
-2.7.4
-
+Thanks,
+-- Marco
