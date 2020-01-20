@@ -2,233 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 904E7142FA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:29:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA94A142F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgATQ3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:29:06 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:45832 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbgATQ3B (ORCPT
+        id S1729288AbgATQ2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:28:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37318 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbgATQ2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:29:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1579537740; x=1611073740;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=izvBTIQXa2EvAogeErXSklqQs4ieTuQHhNTxNOQYoGk=;
-  b=RmcoRByRxHfu1q7x8aFSteXDJI/hMb239z75FCeP3vvJ1S8f8X72Pp6A
-   /IyTlwoFQU6gvrMI17zsElsbswz9WiOMevBCf2gfyk9nehtjxudaaApOr
-   S6mZoeH42WOWecsF44fZRup5nLeCCQ7HY7aMKUGnyE0GybdWHIFj3KyxO
-   M=;
-IronPort-SDR: FJdhGH/wWsoJC2iw6OFie3zwBucIuPjzdDcVFkGAx9FVa0L4e5+TYiiPKSkKj2KltK0es0lGFH
- n7meafouL+sA==
-X-IronPort-AV: E=Sophos;i="5.70,342,1574121600"; 
-   d="scan'208";a="12341486"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 20 Jan 2020 16:28:59 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-d0be17ee.us-west-2.amazon.com (Postfix) with ESMTPS id E43ACA2026;
-        Mon, 20 Jan 2020 16:28:57 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Mon, 20 Jan 2020 16:28:57 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.253) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 20 Jan 2020 16:28:51 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     <akpm@linux-foundation.org>
-CC:     SeongJae Park <sjpark@amazon.de>, <acme@kernel.org>,
-        <brendan.d.gregg@gmail.com>, <corbet@lwn.net>, <mgorman@suse.de>,
-        <dwmw@amazon.com>, <amit@kernel.org>, <rostedt@goodmis.org>,
-        <sj38.park@gmail.com>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/8] mm/damon: Apply dynamic memory mapping changes
-Date:   Mon, 20 Jan 2020 17:27:53 +0100
-Message-ID: <20200120162757.32375-5-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200120162757.32375-1-sjpark@amazon.com>
-References: <20200120162757.32375-1-sjpark@amazon.com>
+        Mon, 20 Jan 2020 11:28:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RVGteCNPSxBOd3jK5jlnv8Bj2S7v0sx7k9crBQcFwxA=; b=sH+7R311dDI3YHDxOL9qPuV7e
+        zNgsq/1Ta2uXWfwAoIZJf1Nyehl5lb/ctom1kmqSqtPGPAtMYRn8dGQB6TrlPqJUmgzbsqvGh2Qa2
+        lb7OxA6F7zc/2mvNhfNlWT2JIokyTS0fp8Y6rjEzHEmpU4yXg6AgZtNdmeEgqrlsvUIOx1ui1OyCA
+        OyRkoBbdmS8GFh9GmPJ9l3YMOCaDKDghwc1kPtA0nzjeEWfyYAdQ4g/4NvNc5eUfCJz5plxV+f2A3
+        W7IoEzlCMJgBZj7lV4j3mUdh7NHcQV+BQ1BBdNKw9OQOScTiO4hxyvxUvXi/x/I3xWyP2QGAwr7JJ
+        l/oVSXTSA==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itZuH-0002Bv-Ha; Mon, 20 Jan 2020 16:28:05 +0000
+Subject: Re: [PATCH] cpuidle: fix kernel doc warnings
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>, rjw@rjwysocki.net,
+        daniel.lezcano@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200120130701.29948-1-benjamin.gaignard@st.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ab9ae316-e01e-117c-36d5-0f733c407217@infradead.org>
+Date:   Mon, 20 Jan 2020 08:28:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.161.253]
-X-ClientProxiedBy: EX13D14UWC002.ant.amazon.com (10.43.162.214) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+In-Reply-To: <20200120130701.29948-1-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sjpark@amazon.de>
+On 1/20/20 5:07 AM, Benjamin Gaignard wrote:
+> Fix cpuidle_find_deepest_state() kernel documentation to avoid warnings when compiling with W=1.
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>  drivers/cpuidle/cpuidle.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+> index 33d19c8eb027..19c6dee88921 100644
+> --- a/drivers/cpuidle/cpuidle.c
+> +++ b/drivers/cpuidle/cpuidle.c
+> @@ -121,6 +121,9 @@ void cpuidle_use_deepest_state(u64 latency_limit_ns)
+>   * cpuidle_find_deepest_state - Find the deepest available idle state.
+>   * @drv: cpuidle driver for the given CPU.
+>   * @dev: cpuidle device for the given CPU.
+> + * @latency_limit_ns: Idle state exit latency limit
+> + *
+> + * Returns the index of the deepest available idle state.
 
-Only a number of parts in the virtual address space of the processes is
-mapped to physical memory and accessed.  Thus, tracking the unmapped
-address regions is just wasteful.  However, tracking every memory
-mapping change might incur an overhead.  For the reason, DAMON applies
-the dynamic memory mapping changes to the tracking regions only for each
-of a user-specified time interval (``regions update interval``).
+Preferably:
 
-Signed-off-by: SeongJae Park <sjpark@amazon.de>
----
- mm/damon.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 93 insertions(+), 2 deletions(-)
+  * Return: the index of the deepest available idle state.
 
-diff --git a/mm/damon.c b/mm/damon.c
-index 5012d8c25b8b..9252a2ba825d 100644
---- a/mm/damon.c
-+++ b/mm/damon.c
-@@ -63,14 +63,18 @@ static LIST_HEAD(damon_tasks_list);
-  * For each 'sample_interval', DAMON checks whether each region is accessed or
-  * not.  It aggregates and keeps the access information (number of accesses to
-  * each region) for 'aggr_interval' and then flushes it to the result buffer if
-- * an 'aggr_interval' surpassed.
-+ * an 'aggr_interval' surpassed.  And for each 'regions_update_interval', damon
-+ * checks whether the memory mapping of the target tasks has changed (e.g., by
-+ * mmap() calls from the applications) and applies the changes.
-  *
-  * All time intervals are in micro-seconds.
-  */
- static unsigned long sample_interval = 5 * 1000;
- static unsigned long aggr_interval = 100 * 1000;
-+static unsigned long regions_update_interval = 1000 * 1000;
- 
- static struct timespec64 last_aggregate_time;
-+static struct timespec64 last_regions_update_time;
- 
- static unsigned long min_nr_regions = 10;
- static unsigned long max_nr_regions = 1000;
-@@ -726,6 +730,87 @@ static void kdamond_split_regions(void)
- 		damon_split_regions_of(t);
- }
- 
-+/*
-+ * Check whether it is time to check and apply the dynamic mmap changes
-+ *
-+ * Returns true if it is.
-+ */
-+static bool kdamond_need_update_regions(void)
-+{
-+	return damon_check_reset_time_interval(&last_regions_update_time,
-+			regions_update_interval);
-+}
-+
-+static bool damon_intersect(struct damon_region *r, struct region *re)
-+{
-+	return !(r->vm_end <= re->start || re->end <= r->vm_start);
-+}
-+
-+/*
-+ * Update damon regions for the three big regions of the given task
-+ *
-+ * t		the given task
-+ * bregions	the three big regions of the task
-+ */
-+static void damon_apply_three_regions(struct damon_task *t,
-+				struct region bregions[3])
-+{
-+	struct damon_region *r, *next;
-+	unsigned int i = 0;
-+
-+	/* Remove regions which isn't in the three big regions now */
-+	damon_for_each_region_safe(r, next, t) {
-+		for (i = 0; i < 3; i++) {
-+			if (damon_intersect(r, &bregions[i]))
-+				break;
-+		}
-+		if (i == 3)
-+			damon_destroy_region(r);
-+	}
-+
-+	/* Adjust intersecting regions to fit with the threee big regions */
-+	for (i = 0; i < 3; i++) {
-+		struct damon_region *first = NULL, *last;
-+		struct damon_region *newr;
-+		struct region *br;
-+
-+		br = &bregions[i];
-+		/* Get the first and last regions which intersects with br */
-+		damon_for_each_region(r, t) {
-+			if (damon_intersect(r, br)) {
-+				if (!first)
-+					first = r;
-+				last = r;
-+			}
-+			if (r->vm_start >= br->end)
-+				break;
-+		}
-+		if (!first) {
-+			/* no damon_region intersects with this big region */
-+			newr = damon_new_region(br->start, br->end);
-+			damon_add_region(newr, damon_prev_region(r), r);
-+		} else {
-+			first->vm_start = br->start;
-+			last->vm_end = br->end;
-+		}
-+	}
-+}
-+
-+/*
-+ * Update regions for current memory mappings
-+ */
-+static void kdamond_update_regions(void)
-+{
-+	struct region three_regions[3];
-+	struct damon_task *t;
-+
-+	damon_for_each_task(t) {
-+		if (damon_three_regions_of(t, three_regions))
-+			continue;
-+		damon_apply_three_regions(t, three_regions);
-+	}
-+}
-+
- /*
-  * Check whether current monitoring should be stopped
-  *
-@@ -789,6 +874,9 @@ static int kdamond_fn(void *data)
- 			kdamond_split_regions();
- 		}
- 
-+		if (kdamond_need_update_regions())
-+			kdamond_update_regions();
-+
- 		usleep_range(sample_interval, sample_interval + 1);
- 	}
- 	damon_flush_rbuffer();
-@@ -895,6 +983,7 @@ static long damon_set_pids(unsigned long *pids, ssize_t nr_pids)
-  *
-  * sample_int		time interval between samplings
-  * aggr_int		time interval between aggregations
-+ * regions_update_int	time interval between vma update checks
-  * min_nr_reg		minimal number of regions
-  * max_nr_reg		maximum number of regions
-  * path_to_rfile	path to the monitor result files
-@@ -905,7 +994,7 @@ static long damon_set_pids(unsigned long *pids, ssize_t nr_pids)
-  * Returns 0 on success, negative error code otherwise.
-  */
- static long damon_set_attrs(unsigned long sample_int,
--		unsigned long aggr_int,
-+		unsigned long aggr_int, unsigned long regions_update_int,
- 		unsigned long min_nr_reg, unsigned long max_nr_reg,
- 		char *path_to_rfile)
- {
-@@ -927,6 +1016,7 @@ static long damon_set_attrs(unsigned long sample_int,
- 
- 	sample_interval = sample_int;
- 	aggr_interval = aggr_int;
-+	regions_update_interval = regions_update_int;
- 	min_nr_regions = min_nr_reg;
- 	max_nr_regions = max_nr_reg;
- 	strncpy(rfile_path, path_to_rfile, LEN_RES_FILE_PATH);
-@@ -939,6 +1029,7 @@ static int __init damon_init(void)
- 
- 	prandom_seed_state(&rndseed, 42);
- 	ktime_get_coarse_ts64(&last_aggregate_time);
-+	last_regions_update_time = last_aggregate_time;
- 	return 0;
- }
- 
+>   */
+>  int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
+>  			       struct cpuidle_device *dev,
+> 
+
+thanks.
 -- 
-2.17.1
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
