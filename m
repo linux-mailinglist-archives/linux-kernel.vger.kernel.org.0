@@ -2,137 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60FDB142D2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27583142D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:21:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbgATOVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 09:21:13 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:55200 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726819AbgATOVM (ORCPT
+        id S1729081AbgATOV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 09:21:26 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36475 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbgATOVZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 09:21:12 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KEHdMG020981;
-        Mon, 20 Jan 2020 09:21:09 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xkyta4mvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Jan 2020 09:21:09 -0500
-Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 00KEL8ph044586
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Mon, 20 Jan 2020 09:21:08 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Mon, 20 Jan
- 2020 09:21:08 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Mon, 20 Jan 2020 09:21:08 -0500
-Received: from saturn.ad.analog.com ([10.48.65.124])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00KEKwie024435;
-        Mon, 20 Jan 2020 09:21:04 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <devel@driverdev.osuosl.org>, <dragos.bogdan@analog.com>,
-        <nuno.sa@analog.com>, <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 4/4] iio: adis16460: Make use of __adis_initial_startup
-Date:   Mon, 20 Jan 2020 16:20:51 +0200
-Message-ID: <20200120142051.28533-4-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200120142051.28533-1-alexandru.ardelean@analog.com>
-References: <20200120142051.28533-1-alexandru.ardelean@analog.com>
+        Mon, 20 Jan 2020 09:21:25 -0500
+Received: by mail-pg1-f195.google.com with SMTP id k3so15626195pgc.3;
+        Mon, 20 Jan 2020 06:21:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8E3LRqxKWSJfkkJ8nF8BrhNVWHzr4oovt9xNy2ECPZw=;
+        b=MrGpEq5f95RjzKX+K9agMHoOO/DR9lCooXV9nSQor1+iUOs5bjVIMQRkZRlnrSpzEv
+         r9IGrEYlAPlU0NBC0Yh/FIstYIIle18S1d5za6NJkNmqBlfXJIGUMHvPPhq6d7rl4Uem
+         mkZyeuw+JXdokXpLl3ezX6lzhQr396xs350Nkk0RU7lHFDl/rBe11B//6o+udFkZ89Qi
+         T3I0C1/66EvJAOelxMHyCuEGeWqIYdIVJM4Jxq54CGtGLiyD6J7AK0ZlMfi7qrUyTegz
+         oSc1r+BlIINicegh2kPjvLn96/xGLBh2/gWT6tqwo1BTkI2FDhuiMJhnie+9FK6gXS9t
+         udbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8E3LRqxKWSJfkkJ8nF8BrhNVWHzr4oovt9xNy2ECPZw=;
+        b=V0/Ln2JaPtNF08MaIGr4OuJ6T56L7HrEYoxWmGtw3sSp5CVbB3+aO54Wf8PsmGiieK
+         mWWoBj0+qU6U2YUOThrZRU3C5QW4Jpi5obvnqIkSMGKW2ozhy6nKKxsaEB/96y9pnxMO
+         lMBynFwzWVN+zO2QbnZwTsiS7QItVis2y5W/m0XnCGYzXXNXNCeCLz+1dyVFBAqJcWUG
+         MWKarbi0rTZqiZhz8ZkovbxoIRQG9RXNvld5WcQh3Gkjs67uyqK7Db6RswVyVdyUK1Re
+         OOVx/IdEgnOfe8ccWApWnPycdUth31DBPRmQYlvZtbr4WHrk21mOSwNQU0JEW2L/VAn1
+         xF4g==
+X-Gm-Message-State: APjAAAV8LzO+LQOSoXE1i064Rw4v16QwD9RpHEsdF7row96VQCHpEQ1p
+        G0Ptj73keU6xv0riP3lU42A=
+X-Google-Smtp-Source: APXvYqy5CAGjZ7NT2LD5lX6OlrEIwIIRCga5Q5oavOeqTRD4chaXDJD4yFNzZEWW+AbQp/4/4WdGHQ==
+X-Received: by 2002:a63:cb06:: with SMTP id p6mr60103196pgg.236.1579530083959;
+        Mon, 20 Jan 2020 06:21:23 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g9sm40314223pfm.150.2020.01.20.06.21.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jan 2020 06:21:21 -0800 (PST)
+Subject: Re: [Bug ?] usb :typec :tcpm :fusb302
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Markus Reichl <m.reichl@fivetechno.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org
+References: <0ac6bbe7-6395-526d-213c-ac58a19d8673@fivetechno.de>
+ <20200120115828.GC32175@kuha.fi.intel.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e05b6c1f-5e00-c000-23b9-1683230fd9f7@roeck-us.net>
+Date:   Mon, 20 Jan 2020 06:21:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200120115828.GC32175@kuha.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-20_02:2020-01-20,2020-01-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- impostorscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001200123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nuno Sá <nuno.sa@analog.com>
+On 1/20/20 3:58 AM, Heikki Krogerus wrote:
+> Hi Markus,
+> 
+> On Thu, Jan 09, 2020 at 05:29:07PM +0100, Markus Reichl wrote:
+>> Hi,
+>>
+>> I'm working with a ROC-RK3399-PC arm64 board from firefly, circuit sheet [1].
+>> The board is powered from an USB-C type connector via an FUSB302 PD controller.
+>> With measured 15W+ power consumption it should use higher voltage PD modes than
+>> the standard 5V USB-C mode.
+>>
+>> When I add the related connector node in DTS [2] the FUSB302 initializes
+>> the right PD mode (e.g. 15V/3A).
+>>
+>> But during initialisation the PD is switched off shortly and the board has a blackout.
+>> When I inject a backup supply voltage behind the FUSB302 (e.g. at SYS_12V line) during boot
+>> I can remove the backup after succesfull setting up the PD and the board will run fine.
+>>
+>> Is it possible to change the behaviour of the fusb302 driver to not power down the PD supply
+>> during init?
+> 
+> I guess it's also possible that the problem is with tcpm.c instead of
+> fusb302.c. tcpm.c provides the USB PD state matchines. Guenter! Can
+> you take a look at this?
+> 
 
-All of the actions done in `adis16460_initial_setup()` are now done in
-`__adis_initial_startup()` so, there's no need for code duplication.
+There was always a problem with handoff from the bootloader. tcpm_init() calls
+tcpm_reset_port() which turns vbus and vconn off, which I imagine can
+trigger the situation.
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/imu/adis16460.c | 37 ++-----------------------------------
- 1 file changed, 2 insertions(+), 35 deletions(-)
+Unfortunately I was never able to solve the puzzle. The Type-C protocol does
+not support any kind of "hand-off" from one component in the system to another.
+If the state machine doesn't start from a clean state, there is pretty
+much no guarantee that it ever synchronizes.
 
-diff --git a/drivers/iio/imu/adis16460.c b/drivers/iio/imu/adis16460.c
-index 42fa473c6d81..6f94e81c41eb 100644
---- a/drivers/iio/imu/adis16460.c
-+++ b/drivers/iio/imu/adis16460.c
-@@ -333,40 +333,6 @@ static int adis16460_enable_irq(struct adis *adis, bool enable)
- 	return 0;
- }
- 
--static int adis16460_initial_setup(struct iio_dev *indio_dev)
--{
--	struct adis16460 *st = iio_priv(indio_dev);
--	uint16_t prod_id;
--	unsigned int device_id;
--	int ret;
--
--	adis_reset(&st->adis);
--	msleep(222);
--
--	ret = adis_write_reg_16(&st->adis, ADIS16460_REG_GLOB_CMD, BIT(1));
--	if (ret)
--		return ret;
--	msleep(75);
--
--	ret = adis_check_status(&st->adis);
--	if (ret)
--		return ret;
--
--	ret = adis_read_reg_16(&st->adis, ADIS16460_REG_PROD_ID, &prod_id);
--	if (ret)
--		return ret;
--
--	ret = sscanf(indio_dev->name, "adis%u\n", &device_id);
--	if (ret != 1)
--		return -EINVAL;
--
--	if (prod_id != device_id)
--		dev_warn(&indio_dev->dev, "Device ID(%u) and product ID(%u) do not match.",
--				device_id, prod_id);
--
--	return 0;
--}
--
- #define ADIS16460_DIAG_STAT_IN_CLK_OOS	7
- #define ADIS16460_DIAG_STAT_FLASH_MEM	6
- #define ADIS16460_DIAG_STAT_SELF_TEST	5
-@@ -392,6 +358,7 @@ static const struct adis_timeout adis16460_timeouts = {
- static const struct adis_data adis16460_data = {
- 	.diag_stat_reg = ADIS16460_REG_DIAG_STAT,
- 	.glob_cmd_reg = ADIS16460_REG_GLOB_CMD,
-+	.prod_id_reg = ADIS16460_REG_PROD_ID,
- 	.self_test_mask = BIT(2),
- 	.self_test_reg = ADIS16460_REG_GLOB_CMD,
- 	.has_paging = false,
-@@ -441,7 +408,7 @@ static int adis16460_probe(struct spi_device *spi)
- 
- 	adis16460_enable_irq(&st->adis, 0);
- 
--	ret = adis16460_initial_setup(indio_dev);
-+	ret = __adis_initial_startup(&st->adis);
- 	if (ret)
- 		goto error_cleanup_buffer;
- 
--- 
-2.20.1
+Maybe someone can find a better solution, but when I wrote the code I just
+could not get it to work reliably without resetting everything during
+registration.
+
+Note that v4.4 did not include the upstream tcpm code, suggesting the
+code in the vendor kernel was possibly using a different or backported
+state machine. Impossible to say what was done there without access
+to the code.
+
+Guenter
+
+> Both tcpm.c and fusb302.c create debugfs entries that have a more
+> detailed log about things that are happening. Can you check what you
+> have in those (when you boot with the mains cable plugged it)?
+> 
+>          % mount debugfs -t debugfs /sys/kernel/debug
+>          % cat /sys/kernel/debug/tcpm*
+>          % cat /sys/kernel/debug/fusb302/*
+> 
+> Which kernel are you running by the way?
+> 
+>> In vendor kernel (4.4) this is done somehow but the sources are too different for me to find
+>> out how.
+>>
+>> Gruß,
+>> -- 
+>> Markus Reichl
+>>
+>> [1]
+>> http://download.t-firefly.com/product/RK3399/Docs/Hardware/%E5%8E%9F%E7%90%86%E5%9B%BE%E5%92%8C%E8%B4%B4%E7%89%87%E5%9B%BE/ROC-RK3399-PC/ROC-3399-PC-V10-A-20180804_%E5%8E%9F%E7%90%86%E5%9B%BE.pdf
+>>
+>> [2]
+>> https://lkml.org/lkml/2019/12/10/517
+> 
 
