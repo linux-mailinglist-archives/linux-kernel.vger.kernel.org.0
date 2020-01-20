@@ -2,75 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE791425F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4439D1425FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgATInV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:43:21 -0500
-Received: from mga17.intel.com ([192.55.52.151]:58883 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgATInU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:43:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 00:43:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,341,1574150400"; 
-   d="scan'208";a="258630796"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2020 00:43:18 -0800
-Subject: Re: [PATCH -next] mmc: sdhci-milbeaut: Remove redundant
- platform_get_irq error message
-To:     YueHaibing <yuehaibing@huawei.com>, ulf.hansson@linaro.org,
-        orito.takao@socionext.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200116144322.57308-1-yuehaibing@huawei.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <ba5fbdf9-a9c8-408e-ac28-8ff98566678f@intel.com>
-Date:   Mon, 20 Jan 2020 10:42:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726780AbgATIoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:44:17 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:56992 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725872AbgATIoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 03:44:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579509855;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NaXsioYjljuVY6jZb4aFMxl3jkckcuLg1JicxfVLDqk=;
+        b=bY+YZNNZR7kqxotMZLFNxFshZfuQwpll3OmWdIUXznhwqCEEl5LUyl9KIb7LvjaGWsIhls
+        gQ6Rqe9YXfoznJOFdMIoBP28rb45SiqPHGh2jmdg0gxSK5PphP0uoK9USa0A7GsxWz5UHE
+        BnZ1DQ43AxTWJqoT0J00M7uOqr2mG/M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-264-bGkbTfTSOqe8wSHGCrl1cw-1; Mon, 20 Jan 2020 03:44:14 -0500
+X-MC-Unique: bGkbTfTSOqe8wSHGCrl1cw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3508800D50;
+        Mon, 20 Jan 2020 08:44:11 +0000 (UTC)
+Received: from [10.72.12.173] (ovpn-12-173.pek2.redhat.com [10.72.12.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7B53272A1;
+        Mon, 20 Jan 2020 08:43:55 +0000 (UTC)
+Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+To:     Shahaf Shuler <shahafs@mellanox.com>,
+        Rob Miller <rob.miller@broadcom.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>,
+        "Wang, Xiao W" <xiao.w.wang@intel.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "Zhu, Lingshan" <lingshan.zhu@intel.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Ariel Adam <aadam@redhat.com>,
+        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "hanand@xilinx.com" <hanand@xilinx.com>,
+        "mhabets@solarflare.com" <mhabets@solarflare.com>
+References: <20200116124231.20253-1-jasowang@redhat.com>
+ <20200116124231.20253-4-jasowang@redhat.com>
+ <20200117070324-mutt-send-email-mst@kernel.org>
+ <239b042c-2d9e-0eec-a1ef-b03b7e2c5419@redhat.com>
+ <CAJPjb1+fG9L3=iKbV4Vn13VwaeDZZdcfBPvarogF_Nzhk+FnKg@mail.gmail.com>
+ <AM0PR0502MB379553984D0D55FDE25426F6C3330@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <d69918ca-8af4-44b2-9652-633530d4c113@redhat.com>
+Date:   Mon, 20 Jan 2020 16:43:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200116144322.57308-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <AM0PR0502MB379553984D0D55FDE25426F6C3330@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/01/20 4:43 pm, YueHaibing wrote:
-> platform_get_irq() will call dev_err() itself on failure,
-> so there is no need for the driver to also do this.
-> This is detected by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On 2020/1/19 =E4=B8=8B=E5=8D=885:07, Shahaf Shuler wrote:
+> Friday, January 17, 2020 4:13 PM, Rob Miller:
+> Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+>>> On 2020/1/17 =E4=B8=8B=E5=8D=888:13, Michael S. Tsirkin wrote:
+>>>> On Thu, Jan 16, 2020 at 08:42:29PM +0800, Jason Wang wrote:
+> [...]
+>
+>>>> + * @set_map:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 Set device memory mapping, optional
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 and only needed for device that using
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 device specific DMA translation
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 (on-chip IOMMU)
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 @vdev: vdpa device
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 @iotlb: vhost memory mapping to be
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 used by the vDPA
+>>>> + *=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 Returns integer: success (0) or error (< 0)
+>>> OK so any change just swaps in a completely new mapping?
+>>> Wouldn't this make minor changes such as memory hotplug
+>>> quite expensive?
+> What is the concern? Traversing the rb tree or fully replace the on-chi=
+p IOMMU translations?
+> If the latest, then I think we can take such optimization on the driver=
+ level (i.e. to update only the diff between the two mapping).
 
-> ---
->  drivers/mmc/host/sdhci-milbeaut.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-milbeaut.c b/drivers/mmc/host/sdhci-milbeaut.c
-> index e6245b7..92f30a1 100644
-> --- a/drivers/mmc/host/sdhci-milbeaut.c
-> +++ b/drivers/mmc/host/sdhci-milbeaut.c
-> @@ -246,10 +246,8 @@ static int sdhci_milbeaut_probe(struct platform_device *pdev)
->  	struct f_sdhost_priv *priv;
->  
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0) {
-> -		dev_err(dev, "%s: no irq specified\n", __func__);
-> +	if (irq < 0)
->  		return irq;
-> -	}
->  
->  	host = sdhci_alloc_host(dev, sizeof(struct f_sdhost_priv));
->  	if (IS_ERR(host))
-> 
+
+This is similar to the design of platform IOMMU part of vhost-vdpa. We=20
+decide to send diffs to platform IOMMU there. If it's ok to do that in=20
+driver, we can replace set_map with incremental API like map()/unmap().
+
+Then driver need to maintain rbtree itself.
+
+
+> If the first one, then I think memory hotplug is a heavy flow regardles=
+s. Do you think the extra cycles for the tree traverse will be visible in=
+ any way?
+
+
+I think if the driver can pause the DMA during the time for setting up=20
+new mapping, it should be fine.
+
+
+>  =20
+>
+>> My understanding is that the incremental updating of the on chip IOMMU
+>> may degrade the=C2=A0 performance. So vendor vDPA drivers may want to =
+know
+>> all the mappings at once.
+> Yes exact. For Mellanox case for instance many optimization can be perf=
+ormed on a given memory layout.
+>
+>> Technically, we can keep the incremental API
+>> here and let the vendor vDPA drivers to record the full mapping
+>> internally which may slightly increase the complexity of vendor driver=
+.
+> What will be the trigger for the driver to know it received the last ma=
+pping on this series and it can now push it to the on-chip IOMMU?
+
+
+For GPA->HVA(HPA) mapping, we can have flag for this.
+
+But for GIOVA_>HVA(HPA) mapping which could be changed by guest, it=20
+looks to me there's no concept of "last mapping" there. I guess in this=20
+case, mappings needs to be set from the ground. This could be expensive=20
+but consider most application uses static mappings (e.g dpdk in guest).=20
+It should be ok.
+
+Thanks
+
+
+>
+>> We need more inputs from vendors here.
+>>
+>> Thanks
+>
 
