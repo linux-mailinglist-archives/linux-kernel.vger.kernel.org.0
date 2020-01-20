@@ -2,106 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65084142BD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:12:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD4F142BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:15:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbgATNMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:12:32 -0500
-Received: from mail-dm6nam12on2079.outbound.protection.outlook.com ([40.107.243.79]:6086
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        id S1727114AbgATNPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:15:03 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51446 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726589AbgATNMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:12:32 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iVwkC3SOXr3LbWw2d8fcXzPonhJ2cZVmF9ds3LC9QGl9yeujHax9GlnN9suMZpc8FSyWN83fYMm6F5bmRCA4cLBULJCasisu7gI+xs7VDFb8bkiT5OHLu4JdPRMzV9aCU34+LIXaAJmt1cak4gLgqf57t9GyUjrtAegQ+EOc2GmupRviyCnl/c28oP9RCI5W0+d6fqYmKPl2qmX6MjKldlJKkHM4daNqaDmuifz5WY3bH6ZRRJjWs+c3tTcOY+9FctbxbcBnFTZlgaWhswA41HntL+MCb1j80KrLl26rv2emRpyqPDiGzWyv4b3gglrYovFQomj6OVHLAwq4P8UUVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LWXtRO0oxX0CosugYUHVLQvvqGYOC/0ceyj03DSd7h8=;
- b=TezXfhhLZY55uJYpTJImv5XKv0sVoObpZBtCpCu0RxdrS+0ki2TMvJIYmwPUdWBEVcJuxasd0FKvREkRH/GZxbcnnlp8mP6viu5/SHOIV5Gm1yQOmaWvIqVEouhLkC/2H579J5a7rdFq9u6pKFO/x5TjonEGdmnxosHYqzvdp5o0gP0qfsmBtXORKqpPVxNRyW44wRpx8MLqphWtW+iq8wZLW81dvy05NkuQRON6EA8pTy9Tj0l8fseQ/ENPWPrlMYJeB+JvESqKAU7fp3IPeky5DKxuWB8qdJJrfotqAm7vIKcGAQwHalJpLqMdUSjwAHmH0+YL8iFYVfuKsWBZ0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LWXtRO0oxX0CosugYUHVLQvvqGYOC/0ceyj03DSd7h8=;
- b=fOeScMRdsJY03wbEg3NRFvUCZnirOQVkTkgkHGjlgK6zsAbMr+yop027SOKOxkt3dzYVDakRGUxDh4uIsoDjoiot2ic2KpUv9COSaTriURB6grIV0wYeXYiiogRnMSqUhLuZtlCHI/VNK+8hC0yNiEGDvCjv1cMZOYnyTjuc0rQ=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
- BN7PR08MB5060.namprd08.prod.outlook.com (20.176.27.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.23; Mon, 20 Jan 2020 13:12:29 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::981f:90d7:d45f:fd11]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::981f:90d7:d45f:fd11%7]) with mapi id 15.20.2644.024; Mon, 20 Jan 2020
- 13:12:29 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Alim Akhtar <alim.akhtar@gmail.com>
-CC:     Bean Huo <huobean@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Can Guo <cang@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH v3 0/8] Use UFS device indicated maximum LU
- number
-Thread-Topic: [EXT] Re: [PATCH v3 0/8] Use UFS device indicated maximum LU
- number
-Thread-Index: AQHVzoKXx2RhVm9OD0+j9uX/WAzyH6fyg3mAgABiEICAAKOPIA==
-Date:   Mon, 20 Jan 2020 13:12:29 +0000
-Message-ID: <BN7PR08MB5684126151178FB8BBB39A11DB320@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <20200119001327.29155-1-huobean@gmail.com>
- <CAGOxZ52xHFedU+1DUgL02xjXzG2CtXUk3MRaq=uSUZKX=7AeDw@mail.gmail.com>
- <BN7PR08MB568498ED5D86FAA8098EE1C9DB330@BN7PR08MB5684.namprd08.prod.outlook.com>
- <CAGOxZ52qVH4M=dSa3ynhzToki-TPN5D5YevvvuuKyJtepp2zMg@mail.gmail.com>
-In-Reply-To: <CAGOxZ52qVH4M=dSa3ynhzToki-TPN5D5YevvvuuKyJtepp2zMg@mail.gmail.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYmVhbmh1b1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTdlNDkzNmQ4LTNiODYtMTFlYS04Yjg5LWRjNzE5NjFmOWRkM1xhbWUtdGVzdFw3ZTQ5MzZkYS0zYjg2LTExZWEtOGI4OS1kYzcxOTYxZjlkZDNib2R5LnR4dCIgc3o9IjM2NiIgdD0iMTMyMjM5OTk1NDI4OTA3NzczIiBoPSJ2Nytic0p2TDdDa2EvamE2YTM1dHVpL1oyZ0k9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: true
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [195.89.176.137]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 952d23fa-98b3-4531-e3b8-08d79daa6748
-x-ms-traffictypediagnostic: BN7PR08MB5060:|BN7PR08MB5060:|BN7PR08MB5060:
-x-microsoft-antispam-prvs: <BN7PR08MB5060E4E88AB1D5FCB1D50B0BDB320@BN7PR08MB5060.namprd08.prod.outlook.com>
-x-ms-exchange-transport-forked: True
-x-ms-oob-tlc-oobclassifiers: OLM:820;
-x-forefront-prvs: 0288CD37D9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(376002)(136003)(396003)(189003)(199004)(6916009)(4326008)(5660300002)(54906003)(81166006)(81156014)(7416002)(558084003)(2906002)(478600001)(8676002)(6506007)(86362001)(316002)(7696005)(33656002)(9686003)(66946007)(66556008)(66446008)(64756008)(186003)(66476007)(26005)(55016002)(76116006)(8936002)(71200400001)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5060;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: e/pFjsExfK2KFWA0zLd688F1xtDxo7VU53pm/fVQjWp1IFldwNEaprL6yUlUT9CsZIZzadRaHmjIMMoa0QjaNgxvw5jiWvdYCtUb44Qs4DmyXpz4i/toSAGka5FBvePsxF6CpWu7bk4bSlxzGGTkXCHUQKfroIuC9SJIgrIWHBii0tzXxW2oeCZgw0Gxh3A8I5RVwWOePDKfLx66+XhVCumswlpbzo2EScjU1aWl5ui1ytsbxr/jHzFfSrEh4bZRWX+cruziCqyHIROnNJJyWAqbsOVg6Qqj2ANrKzp4N++r/GQ9jrAOZl51yAPt3nmV7EnlN8f0KSwUuReRDgg987ed3S5+XP6TJkgJhKXlCZFuX0Iy7p/p4cPPLQFqn6FnHQKPnqEyuDuesYnbTZkASRX0+NDbSKQbKA8yuNlej/M7LvuBSLFquNFyKWkI0pFb
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726619AbgATNPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 08:15:02 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DC48F2AC7CA908E68B80;
+        Mon, 20 Jan 2020 21:15:00 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.183) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 Jan 2020
+ 21:14:52 +0800
+Subject: Re: [PATCH V3] brd: check and limit max_part par
+To:     Ming Lei <ming.lei@redhat.com>
+CC:     Jens Axboe <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mingfangsen <mingfangsen@huawei.com>, Guiyao <guiyao@huawei.com>,
+        zhangsaisai <zhangsaisai@huawei.com>,
+        "wubo (T)" <wubo40@huawei.com>
+References: <c8236e55-f64f-ef40-b394-8b7e86ce50df@huawei.com>
+ <20200115022725.GA14585@ming.t460p>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Message-ID: <ce5823ea-2183-90df-05b0-c02d1f654be3@huawei.com>
+Date:   Mon, 20 Jan 2020 21:14:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 952d23fa-98b3-4531-e3b8-08d79daa6748
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2020 13:12:29.7606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u20PIgQI9c3QCS/EWwYbOQbXwVQ4TF867h+MZ39rZWk9TPbPQLNrc0mtToOTTfMw2+3eFijPNSIOuASTcOhjlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5060
+In-Reply-To: <20200115022725.GA14585@ming.t460p>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.173.220.183]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEFsaW0NCg0KPiBJIGFtIG9uIGdjYzogYWFyY2g2NC1saW51eC1nbnUtZ2NjIChVYnVudHUv
-TGluYXJvIDcuNC4wLTF1YnVudHUxfjE4LjA0LjEpDQo+IDcuNC4wDQo+IA0KPiBBbSBJIG1pc3Nl
-ZCBhbnkgcGF0Y2hlcyB3aGljaCBpcyBuZWVkZWQ/DQoNCllvdSBkaWRuJ3QgbWlzcyBhbnkgcGF0
-Y2gsIEl0IGlzIG15IGZhdWx0LCBJIGhhdmUgZml4ZWQgaXQgaW4gbXkgbmV3IHZlcnNpb24uIFlv
-dSBjYW4gY2hlY2sgbm93Lg0KVGhhbmtzLA0KDQovL0JlYW4NCg==
+
+
+On 2020/1/15 10:27, Ming Lei wrote:
+
+> 
+>>  MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
+>>
+>>  unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+>>  module_param(rd_size, ulong, 0444);
+>>  MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+>>
+>> -static int max_part = 1;
+>> -module_param(max_part, int, 0444);
+>> +static unsigned int max_part = 1;
+>> +module_param(max_part, uint, 0444);
+> 
+> The above change isn't needed.
+Thanks for your suggestion.
+I will remove that in v4 patch.
+> 
+>>  MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
+>>
+>>  MODULE_LICENSE("GPL");
+>> @@ -393,7 +393,14 @@ static struct brd_device *brd_alloc(int i)
+>>  	if (!disk)
+>>  		goto out_free_queue;
+>>  	disk->major		= RAMDISK_MAJOR;
+>> -	disk->first_minor	= i * max_part;
+>> +	/*
+>> +	 * Clear .minors when running out of consecutive minor space since
+>> +	 * GENHD_FL_EXT_DEVT is set, and we can allocate from extended devt.
+>> +	 */
+>> +	if ((i * disk->minors) & ~MINORMASK)
+>> +		disk->minors = 0;
+>> +	else
+>> +		disk->first_minor = i * disk->minors;
+> 
+> The above looks a bit ugly, one nice way could be to change in
+> brd_alloc():
+> 
+> 	disk = brd->brd_disk = alloc_disk(((i * max_part) & ~MINORMASK) ?
+> 		0 : max_part);
+
+I will change it as your suggestion.
+
+> 
+>>  	disk->fops		= &brd_fops;
+>>  	disk->private_data	= brd;
+>>  	disk->queue		= brd->brd_queue;
+>> @@ -468,6 +475,21 @@ static struct kobject *brd_probe(dev_t dev, int *part, void *data)
+>>  	return kobj;
+>>  }
+>>
+>> +static inline void brd_check_and_reset_par(void)
+>> +{
+>> +	if (unlikely(!rd_nr))
+>> +		rd_nr = 1;
+> 
+> zero rd_nr should work as expected, given user can create dev file via
+> mknod, and brd_probe() will be called for populate brd disk/queue when
+> the disk file is opened.
+> 
+>> +static inline void brd_check_and_reset_par(void)
+>> +{
+>> +       if (unlikely(!rd_nr))
+>> +               rd_nr = 1;
+>> +
+>> +       if (unlikely(!max_part))
+>> +               max_part = 1;
+> 
+> Another limit is that 'max_part' needs to be divided exactly by (1U <<
+> MINORBITS), something like:
+> 
+> 	max_part = 1UL << fls(max_part)
+
+Do we have to limit that 'max_part' needs to be divided exactly by (1U <<
+> MINORBITS)? As your suggestion, the i * max_part is larger than MINORMASK,
+we can allocate from extended devt.
+
+Thanks,
+Zhiqiang Liu
+
