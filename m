@@ -2,57 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 987FD1431EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 425C714320C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgATTDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:03:01 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:34141 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgATTDB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:03:01 -0500
-Received: from p5b06da22.dip0.t-ipconnect.de ([91.6.218.34] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1itcK7-0006Ja-EC; Mon, 20 Jan 2020 20:02:55 +0100
-Received: by nanos.tec.linutronix.de (Postfix, from userid 1000)
-        id BCE58105BE6; Mon, 20 Jan 2020 20:02:54 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Anthony Steinhauser <asteinhauser@google.com>,
-        linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, bp@alien8.de,
-        Anthony Steinhauser <asteinhauser@google.com>
-Subject: Re: [PATCH] Return ENXIO instead of EPERM when speculation control is unimplemented
-In-Reply-To: <20191229164830.62144-1-asteinhauser@google.com>
-References: <20191229164830.62144-1-asteinhauser@google.com>
-Date:   Mon, 20 Jan 2020 20:02:54 +0100
-Message-ID: <87o8uy2boh.fsf@nanos.tec.linutronix.de>
+        id S1727032AbgATTTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:19:04 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35333 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726942AbgATTTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 14:19:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:19:03 -0800
+X-IronPort-AV: E=Sophos;i="5.70,343,1574150400"; 
+   d="scan'208";a="275110101"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:19:02 -0800
+Subject: [PATCH v3 2/6] mm/numa: Skip NUMA_NO_NODE and online nodes in
+ numa_map_to_online_node()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        peterz@infradead.org, vishal.l.verma@intel.com,
+        dave.hansen@linux.intel.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        x86@kernel.org
+Date:   Mon, 20 Jan 2020 11:02:59 -0800
+Message-ID: <157954697957.2239526.17206272633668977957.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anthony,
+Update numa_map_to_online_node() to stop falling back to numa node 0
+when the input is NUMA_NO_NODE. Also, skip the lookup if @node is
+online. This makes the routine compatible with other arch node mapping
+routines.
 
-Anthony Steinhauser <asteinhauser@google.com> writes:
->  		return "";
->  
->  	switch (spectre_v2_user) {
-> -	case SPECTRE_V2_USER_NONE:
-> +	case SPECTRE_V2_USER_UNAVAILABLE:
-> +		return ", STIBP: unavailable";
+Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Link: https://lore.kernel.org/r/157401275716.43284.13185549705765009174.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ mm/mempolicy.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Shouldn't this for correctness differentiate between the case where the
-STIBP mitigation feature is not available and the case where STIBP is
-not used because SMT is not possible?
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 4cff069279f6..30d76db718bf 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -137,8 +137,8 @@ int numa_map_to_online_node(int node)
+ {
+ 	int min_node;
+ 
+-	if (node == NUMA_NO_NODE)
+-		node = 0;
++	if (node == NUMA_NO_NODE || node_online(node))
++		return node;
+ 
+ 	min_node = node;
+ 	if (!node_online(node)) {
 
-Thanks,
-
-        tglx
