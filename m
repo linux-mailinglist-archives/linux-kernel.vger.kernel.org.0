@@ -2,98 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B3F514272C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:23:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A94CD14272F
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:24:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbgATJXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 04:23:12 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41274 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbgATJXL (ORCPT
+        id S1726942AbgATJYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 04:24:01 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22821 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726039AbgATJYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 04:23:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4uEiMVm/2RivzprYXuYQzMtYidTlX8YQdwZ9M5LzWJ4=; b=XSHHxChOVmqtgqoywdk9bNqWL
-        I4EuDnnLiBTMkuhcDZ/9nrRIMupvn9VaQBoObNgj5yAoEuIiRwQUsxTtvr/6TIF/QyIfNrrogywW2
-        DkePG5DtROgRlLevwB956wgkpcf8Q0SOpdXSggLzBjF0GnprkFVykDJGNnkDqK5LYj5zTpX03c8/4
-        uj1Mbao42UwkxwlMaN/UxdmoFpYDfb3HSV9E5B3whDka9yetIOkpKcOYVeutQJIx3MZyjxjfGxMPx
-        r9Iwq/zeSwKAPj/svpkg/Ci9jJlx3IZLHvee8RzUlUhhMZPIswiYsKqX/Ir3OwnqHQMWB6G187i9U
-        PcGFdo5sA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itTGx-0007mM-57; Mon, 20 Jan 2020 09:23:03 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 3BBD4305D3F;
-        Mon, 20 Jan 2020 10:21:21 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1F3FF2041FB24; Mon, 20 Jan 2020 10:23:00 +0100 (CET)
-Date:   Mon, 20 Jan 2020 10:23:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     eranian@google.com, acme@redhat.com, mingo@kernel.org,
-        mpe@ellerman.id.au, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, vitaly.slobodskoy@intel.com,
-        pavel.gerasimov@intel.com, ak@linux.intel.com
-Subject: Re: [RESEND PATCH V5 1/2] perf/core: Add new branch sample type for
- HW index of raw branch records
-Message-ID: <20200120092300.GK14879@hirez.programming.kicks-ass.net>
-References: <20200116155757.19624-1-kan.liang@linux.intel.com>
- <20200116155757.19624-2-kan.liang@linux.intel.com>
+        Mon, 20 Jan 2020 04:24:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579512240;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rrHv7U16b0hpMhKonKhllashBRa3U27D9d/xyzuh1sY=;
+        b=HLUe6bgCiU0E9krIr4sw+di2zGVpAXh7upPJknNUV3pabLHeUDVp6Q33xw7HvWqxC48cd+
+        INtwvv9nKc11cflMd9iZn4Lu9umTVn14xo0ouyxDNXXW1gEbw3ylM4aYoLwJxNkqn2Wd/i
+        iSde7h0MfMDijJMUw2FnXk3tQi5xomY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-265-bTPf7-FSNuyHvO3jE0m2VA-1; Mon, 20 Jan 2020 04:23:58 -0500
+X-MC-Unique: bTPf7-FSNuyHvO3jE0m2VA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D594718A6EC0;
+        Mon, 20 Jan 2020 09:23:56 +0000 (UTC)
+Received: from krava (unknown [10.43.17.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6854A84D9F;
+        Mon, 20 Jan 2020 09:23:54 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 10:23:52 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     kajoljain <kjain@linux.ibm.com>
+Cc:     "Jin, Yao" <yao.jin@linux.intel.com>, acme@kernel.org,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH] tools/perf/metricgroup: Fix printing event names of
+ metric group with multiple events incase of overlapping events
+Message-ID: <20200120092352.GA608405@krava>
+References: <20200108065844.4030-1-kjain@linux.ibm.com>
+ <e866c12a-7328-8524-fd0e-668301da6875@linux.intel.com>
+ <822bcb9d-4c08-39c5-e6e7-9c3e20d77852@linux.ibm.com>
+ <20200108160249.GD402774@krava>
+ <dde66abd-6025-31e3-9bda-a6eb1986eea8@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200116155757.19624-2-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <dde66abd-6025-31e3-9bda-a6eb1986eea8@linux.ibm.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 07:57:56AM -0800, kan.liang@linux.intel.com wrote:
+On Mon, Jan 20, 2020 at 02:23:19PM +0530, kajoljain wrote:
+>=20
+> On 1/8/20 9:32 PM, Jiri Olsa wrote:
+> > On Wed, Jan 08, 2020 at 02:41:35PM +0530, kajoljain wrote:
+> >=20
+> > SNIP
+> >=20
+> > > > > -=A0=A0=A0 int i =3D 0;
+> > > > > +=A0=A0=A0 int i =3D 0, j =3D 0;
+> > > > >  =A0=A0=A0=A0=A0 bool leader_found;
+> > > > >  =A0 =A0=A0=A0=A0=A0 evlist__for_each_entry (perf_evlist, ev) {
+> > > > > +=A0=A0=A0=A0=A0=A0=A0 j++;
+> > > > > +=A0=A0=A0=A0=A0=A0=A0 if (j <=3D iterator_perf_evlist)
+> > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 continue;
+> > > > >  =A0=A0=A0=A0=A0=A0=A0=A0=A0 if (!strcmp(ev->name, ids[i])) {
+> > > > >  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (!metric_events[i])
+> > > > >  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 metric_eve=
+nts[i] =3D ev;
+> > > > > @@ -146,6 +151,7 @@ static struct evsel *find_evsel_group(struc=
+t
+> > > > > evlist *perf_evlist,
+> > > > >  =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }
+> > > > >  =A0=A0=A0=A0=A0=A0=A0=A0=A0 }
+> > > > >  =A0=A0=A0=A0=A0 }
+> > > > > +=A0=A0=A0 iterator_perf_evlist =3D j;
+> > > > >  =A0 =A0=A0=A0=A0=A0 return metric_events[0];
+> > > > >  =A0 }
+> > > > >=20
+> > > > Thanks for reporting and fixing this issue.
+> > > >=20
+> > > > I just have one question, do we really need a *static variable* t=
+o track
+> > > > the matched events? Perhaps using an input parameter?
+> > > Hi Jin,
+> > >=20
+> > > The other way I come up with to solve this issue is, making change =
+in
+> > > perf_evlist itself by adding some flag in event name, to keep track=
+ of
+> > > matched events.
+> > >=20
+> > > As if we change event name itself, next time when we compare it won=
+'t
+> > > matched. But in that case we need to remove those flag later. Which=
+ will
+> > > increase the
+> > >=20
+> > > complexity. If you have any suggestions, please let me know.
+> > we already keep evsel::cpu_iter for similar concept
+> >=20
+> > so I guess we could have some iterator_perf_evlist variable in evlist=
+..
+> > that is if we don't find other solution (other than static varable)
+>=20
+> Hi Jiri,
+>=20
+> =A0=A0=A0=A0=A0=A0=A0=A0 Thanks for reviewing the patch. I checked 'evs=
+el::cpu_iter'
+> variable, I think it added recently and I am not able to find any simil=
+ar
+> kind of variable in
+>=20
+> =A0=A0=A0 =A0=A0=A0=A0 evlist. Please let me know if my understanding i=
+s fine. Do you want
+> me to add new variable in evlist itself or there is any other way possi=
+ble.
 
->  struct perf_branch_stack {
->  	__u64				nr;
-> +	__u64				hw_idx;
->  	struct perf_branch_entry	entries[0];
->  };
+please check Arnaldo's tree:
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/core
 
-The above and below order doesn't match.
+jirka
 
-> @@ -849,7 +853,11 @@ enum perf_event_type {
->  	 *	  char                  data[size];}&& PERF_SAMPLE_RAW
->  	 *
->  	 *	{ u64                   nr;
-> -	 *        { u64 from, to, flags } lbr[nr];} && PERF_SAMPLE_BRANCH_STACK
-> +	 *        { u64 from, to, flags } lbr[nr];
-> +	 *
-> +	 *        # only available if PERF_SAMPLE_BRANCH_HW_INDEX is set
-> +	 *        u64			hw_idx;
-> +	 *      } && PERF_SAMPLE_BRANCH_STACK
-
-That wants to be written as:
-
-		{ u64			nr;
-		  { u64 from, to, flags; } entries[nr];
-		  { u64	hw_idx; } && PERF_SAMPLE_BRANCH_HW_INDEX
-		} && PERF_SAMPLE_BRANCH_STACK
-
-But the big question is; why isn't it:
-
-		{ u64			nr;
-		  { u64	hw_idx; } && PERF_SAMPLE_BRANCH_HW_INDEX
-		  { u64 from, to, flags; } entries[nr];
-		} && PERF_SAMPLE_BRANCH_STACK
-
-to match the struct perf_branch_stack order. Having that variable sized
-entry in the middle just seems weird.
-
->  	 *
->  	 * 	{ u64			abi; # enum perf_sample_regs_abi
->  	 * 	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
