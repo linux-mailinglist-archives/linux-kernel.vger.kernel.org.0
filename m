@@ -2,131 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCDE1431E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:02:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44D114320B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbgATTC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:02:57 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:41884 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgATTC4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:02:56 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 3032120023;
-        Mon, 20 Jan 2020 20:02:50 +0100 (CET)
-Date:   Mon, 20 Jan 2020 20:02:49 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     David Lechner <david@lechnology.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH] dt-bindings: restrict properties for sitronix,st7735r
-Message-ID: <20200120190249.GA9619@ravnborg.org>
-References: <20200115124548.3951-1-geert+renesas@glider.be>
- <20200115124548.3951-2-geert+renesas@glider.be>
- <ba21d2c8-ccc6-2704-fa1f-d28239700547@lechnology.com>
+        id S1726935AbgATTS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:18:58 -0500
+Received: from mga02.intel.com ([134.134.136.20]:8054 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726136AbgATTS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 14:18:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:18:57 -0800
+X-IronPort-AV: E=Sophos;i="5.70,343,1574150400"; 
+   d="scan'208";a="250045448"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 11:18:56 -0800
+Subject: [PATCH v3 1/6] ACPI: NUMA: Up-level "map to online node"
+ functionality
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     Michal Hocko <mhocko@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        peterz@infradead.org, vishal.l.verma@intel.com,
+        dave.hansen@linux.intel.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        x86@kernel.org
+Date:   Mon, 20 Jan 2020 11:02:53 -0800
+Message-ID: <157954697378.2239526.8519934035316197692.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <157954696789.2239526.17707265517154476652.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba21d2c8-ccc6-2704-fa1f-d28239700547@lechnology.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
-        a=WZHNqt2aAAAA:8 a=VwQbUJbxAAAA:8 a=e5mUnYsNAAAA:8 a=UoRE_DPNZI_mX2jt1NQA:9
-        a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=CjuIK1q_8ugA:10
-        a=E9Po1WZjFZOl8hwRPBS3:22 a=PrHl9onO2p7xFKlKy1af:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=Vxmtnl_E_bksehYqCbjh:22
-        a=pHzHmUro8NiASowvMSCR:22 a=n87TN5wuljxrRezIQYnT:22
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David.
+The acpi_map_pxm_to_online_node() helper is used to find the closest
+online node to a given proximity domain. This is used to map devices in
+a proximity domain with no online memory or cpus to the closest online
+node and populate a device's 'numa_node' property. The numa_node
+property allows applications to be migrated "close" to a resource.
 
-> > +allOf:
-> > +  - $ref: panel/panel-common.yaml#
-> 
-> not all of these properties are applicable.
-> 
+In preparation for providing a generic facility to optionally map an
+address range to its closest online node, or the node the range would
+represent were it to be onlined (target_node), up-level the core of
+acpi_map_pxm_to_online_node() to a generic mm/numa helper.
 
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - dc-gpios
-> > +  - reset-gpios
-> 
-> Missing optional rotation and backlight properties.
-
-Thanks for catching this. I have written a little .yaml files
-since I applied this - and learned a little more of the syntax.
-
-See attached patch for my attempt to fix this.
-Please review.
-
-	Sam
-
-From 6b54fb0a071c0732cd4bd5b88f456b5a85bcf4f2 Mon Sep 17 00:00:00 2001
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Mon, 20 Jan 2020 19:55:04 +0100
-Subject: [PATCH] dt-bindings: restrict properties for sitronix,st7735r
-
-David Lechner noticed (paraphrased):
-- not all properties from panel-common are applicable.
-- missing optional rotation and backlight properties
-
-Fix this by listing all allowed properties, and do not allow other properties.
-
-Fixes: abdd9e3705c8 ("dt-bindings: display: sitronix,st7735r: Convert to DT schema")
-Reported-by: David Lechner <david@lechnology.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: David Lechner <david@lechnology.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org
+Cc: Michal Hocko <mhocko@suse.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- .../devicetree/bindings/display/sitronix,st7735r.yaml      | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/acpi/numa/srat.c |   41 -----------------------------------------
+ include/linux/acpi.h     |   23 ++++++++++++++++++++++-
+ include/linux/numa.h     |    9 +++++++++
+ mm/mempolicy.c           |   30 ++++++++++++++++++++++++++++++
+ 4 files changed, 61 insertions(+), 42 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml b/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
-index 8892d79e6e10..0cebaaefda03 100644
---- a/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
-+++ b/Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
-@@ -39,12 +39,19 @@ properties:
-     maxItems: 1
-     description: Display data/command selection (D/CX)
+diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
+index eadbf90e65d1..47b4969d9b93 100644
+--- a/drivers/acpi/numa/srat.c
++++ b/drivers/acpi/numa/srat.c
+@@ -72,47 +72,6 @@ int acpi_map_pxm_to_node(int pxm)
+ }
+ EXPORT_SYMBOL(acpi_map_pxm_to_node);
  
-+  backlight: true
-+  reg: true
-+  reset-gpios: true
-+  rotation: true
-+
- required:
-   - compatible
-   - reg
-   - dc-gpios
-   - reset-gpios
+-/**
+- * acpi_map_pxm_to_online_node - Map proximity ID to online node
+- * @pxm: ACPI proximity ID
+- *
+- * This is similar to acpi_map_pxm_to_node(), but always returns an online
+- * node.  When the mapped node from a given proximity ID is offline, it
+- * looks up the node distance table and returns the nearest online node.
+- *
+- * ACPI device drivers, which are called after the NUMA initialization has
+- * completed in the kernel, can call this interface to obtain their device
+- * NUMA topology from ACPI tables.  Such drivers do not have to deal with
+- * offline nodes.  A node may be offline when a device proximity ID is
+- * unique, SRAT memory entry does not exist, or NUMA is disabled, ex.
+- * "numa=off" on x86.
+- */
+-int acpi_map_pxm_to_online_node(int pxm)
+-{
+-	int node, min_node;
+-
+-	node = acpi_map_pxm_to_node(pxm);
+-
+-	if (node == NUMA_NO_NODE)
+-		node = 0;
+-
+-	min_node = node;
+-	if (!node_online(node)) {
+-		int min_dist = INT_MAX, dist, n;
+-
+-		for_each_online_node(n) {
+-			dist = node_distance(node, n);
+-			if (dist < min_dist) {
+-				min_dist = dist;
+-				min_node = n;
+-			}
+-		}
+-	}
+-
+-	return min_node;
+-}
+-EXPORT_SYMBOL(acpi_map_pxm_to_online_node);
+-
+ static void __init
+ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ {
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 0f37a7d5fa77..69b73ecfbee4 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -401,9 +401,30 @@ extern void acpi_osi_setup(char *str);
+ extern bool acpi_osi_is_win8(void);
  
-+additionalProperties: false
+ #ifdef CONFIG_ACPI_NUMA
+-int acpi_map_pxm_to_online_node(int pxm);
+ int acpi_map_pxm_to_node(int pxm);
+ int acpi_get_node(acpi_handle handle);
 +
- examples:
-   - |
-     #include <dt-bindings/gpio/gpio.h>
--- 
-2.20.1
++/**
++ * acpi_map_pxm_to_online_node - Map proximity ID to online node
++ * @pxm: ACPI proximity ID
++ *
++ * This is similar to acpi_map_pxm_to_node(), but always returns an online
++ * node.  When the mapped node from a given proximity ID is offline, it
++ * looks up the node distance table and returns the nearest online node.
++ *
++ * ACPI device drivers, which are called after the NUMA initialization has
++ * completed in the kernel, can call this interface to obtain their device
++ * NUMA topology from ACPI tables.  Such drivers do not have to deal with
++ * offline nodes.  A node may be offline when a device proximity ID is
++ * unique, SRAT memory entry does not exist, or NUMA is disabled, ex.
++ * "numa=off" on x86.
++ */
++static inline int acpi_map_pxm_to_online_node(int pxm)
++{
++	int node = acpi_map_pxm_to_node(pxm);
++
++	return numa_map_to_online_node(node);
++}
+ #else
+ static inline int acpi_map_pxm_to_online_node(int pxm)
+ {
+diff --git a/include/linux/numa.h b/include/linux/numa.h
+index 110b0e5d0fb0..20f4e44b186c 100644
+--- a/include/linux/numa.h
++++ b/include/linux/numa.h
+@@ -13,4 +13,13 @@
+ 
+ #define	NUMA_NO_NODE	(-1)
+ 
++#ifdef CONFIG_NUMA
++int numa_map_to_online_node(int node);
++#else
++static inline int numa_map_to_online_node(int node)
++{
++	return NUMA_NO_NODE;
++}
++#endif
++
+ #endif /* _LINUX_NUMA_H */
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 067cf7d3daf5..4cff069279f6 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -127,6 +127,36 @@ static struct mempolicy default_policy = {
+ 
+ static struct mempolicy preferred_node_policy[MAX_NUMNODES];
+ 
++/**
++ * numa_map_to_online_node - Find closest online node
++ * @nid: Node id to start the search
++ *
++ * Lookup the next closest node by distance if @nid is not online.
++ */
++int numa_map_to_online_node(int node)
++{
++	int min_node;
++
++	if (node == NUMA_NO_NODE)
++		node = 0;
++
++	min_node = node;
++	if (!node_online(node)) {
++		int min_dist = INT_MAX, dist, n;
++
++		for_each_online_node(n) {
++			dist = node_distance(node, n);
++			if (dist < min_dist) {
++				min_dist = dist;
++				min_node = n;
++			}
++		}
++	}
++
++	return min_node;
++}
++EXPORT_SYMBOL_GPL(numa_map_to_online_node);
++
+ struct mempolicy *get_task_policy(struct task_struct *p)
+ {
+ 	struct mempolicy *pol = p->mempolicy;
 
