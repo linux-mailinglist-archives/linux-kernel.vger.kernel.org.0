@@ -2,121 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1331C142368
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:35:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A46142347
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgATGfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 01:35:23 -0500
-Received: from mga11.intel.com ([192.55.52.93]:55427 "EHLO mga11.intel.com"
+        id S1726465AbgATGa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 01:30:28 -0500
+Received: from ozlabs.org ([203.11.71.1]:34939 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbgATGfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 01:35:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jan 2020 22:35:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,340,1574150400"; 
-   d="asc'?scan'208";a="226972871"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.14])
-  by orsmga003.jf.intel.com with ESMTP; 19 Jan 2020 22:35:21 -0800
-Date:   Mon, 20 Jan 2020 14:23:30 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Cc:     intel-gvt-dev@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Zhenyu Wang <zhenyuw@linux.intel.com>, hang.yuan@intel.com,
-        dri-devel@lists.freedesktop.org, zhiyuan.lv@intel.com
-Subject: Re: [RFC PATCH 2/4] drm/i915/gvt: remove unused vblank_done
- completion
-Message-ID: <20200120062330.GB14597@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <4079ce7c26a2d2a3c7e0828ed1ea6008d6e2c805.camel@cyberus-technology.de>
- <20200109171357.115936-1-julian.stecklina@cyberus-technology.de>
- <20200109171357.115936-3-julian.stecklina@cyberus-technology.de>
+        id S1725837AbgATGa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 01:30:28 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 481MH43wr9z9sRf;
+        Mon, 20 Jan 2020 17:30:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1579501825;
+        bh=ULh8c+M+Meu7IrxmRr9gXX7nZrh656kZljxewgU6B8w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=RU7uxv5p7zIF8Mxd5NfmpsoCcX/IHBTs+Fn/UYnsk514xEKhQfJjE7egErxDfgYvQ
+         uF2V4U9J80LEmYCroS+tFVFPLBVqo8ftlVHMOb2m3JZrbj+koTUfM0mev1e/Oiktcn
+         LzHgaGuX9WQD5frBeUarFPmwOt+sD4EdCiYFK1C8S1ASB4ngf7dp5FEk6glmCq9kNg
+         RbO+MJSsmDMpoDNlMIrgE1+9T+OVCfd2ilAY8VQIhU8P5Lk5U8aj2ItgbAMRdEcz3+
+         Q9kuKwl2mYlmxov4OT9uBT7lPbPtFJzFWguznwU3LFnpoBTxTZU1cXuNgr4/ai8ufW
+         QFgkjx7SYgiSw==
+Date:   Mon, 20 Jan 2020 17:30:16 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Message-ID: <20200120173016.077dfda0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
-Content-Disposition: inline
-In-Reply-To: <20200109171357.115936-3-julian.stecklina@cyberus-technology.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: multipart/signed; boundary="Sig_/gjXME8QNH4.L5b1_MOJCvQu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---H+4ONPRPur6+Ovig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/gjXME8QNH4.L5b1_MOJCvQu
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On 2020.01.09 19:13:55 +0200, Julian Stecklina wrote:
-> This variable is used nowhere, so remove it.
->=20
-> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
->=20
-> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> ---
+Hi all,
 
-Thanks for catching this.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+  arch/x86/kernel/apic/x2apic_uv_x.c
 
->  drivers/gpu/drm/i915/gvt/gvt.h   | 2 --
->  drivers/gpu/drm/i915/gvt/kvmgt.c | 2 --
->  2 files changed, 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/gvt.h b/drivers/gpu/drm/i915/gvt/gv=
-t.h
-> index 2604739e5680..8cf292a8d6bd 100644
-> --- a/drivers/gpu/drm/i915/gvt/gvt.h
-> +++ b/drivers/gpu/drm/i915/gvt/gvt.h
-> @@ -203,8 +203,6 @@ struct intel_vgpu {
->  	struct mutex dmabuf_lock;
->  	struct idr object_idr;
-> =20
-> -	struct completion vblank_done;
-> -
->  	u32 scan_nonprivbb;
->  };
-> =20
-> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/=
-kvmgt.c
-> index d725a4fb94b9..9a435bc1a2f0 100644
-> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-> @@ -1817,8 +1817,6 @@ static int kvmgt_guest_init(struct mdev_device *mde=
-v)
->  	kvmgt_protect_table_init(info);
->  	gvt_cache_init(vgpu);
-> =20
-> -	init_completion(&vgpu->vblank_done);
-> -
->  	info->track_node.track_write =3D kvmgt_page_track_write;
->  	info->track_node.track_flush_slot =3D kvmgt_page_track_flush_slot;
->  	kvm_page_track_register_notifier(kvm, &info->track_node);
-> --=20
-> 2.24.1
->=20
-> _______________________________________________
-> intel-gvt-dev mailing list
-> intel-gvt-dev@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
+between commit:
+
+  d0b778880448 ("x86/apic/uv: Avoid unused variable warning")
+
+from the tip tree and patch:
+
+  "proc: convert everything to "struct proc_ops""
+
+from the akpm-current tree.
+
+I fixed it up (I just used the tip tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
-Open Source Technology Center, Intel ltd.
+Cheers,
+Stephen Rothwell
 
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---H+4ONPRPur6+Ovig
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/gjXME8QNH4.L5b1_MOJCvQu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXiVHYgAKCRCxBBozTXgY
-J7O4AJ48ARBfZBHass37yOR8ijzI27ZMOACffEnlES5GbM0gcAfSIxey2K4EXZo=
-=xnFl
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4lSPgACgkQAVBC80lX
+0GzJwAf/bTjvrM3WnHJzcH/Zak2FR1Si7p2E/hQnIqE/gAF/OjphmSgTjxggsgXU
+C56a69ZqPx9Uvtp4pHakKSv8RTvjmhreFpj/ecMTMyfKD97y4wyoXLl42IBZP25n
+GNlpJq4M3XrskdOk3DPD1Y4vuaHtMflJ50cTADBGbLSUs7PQ4TIdlsB5lIuNu6ls
+tP1Ygxr2sqfixTrSFNgfkTa4d9u8Gy9qu/vakjKjWKSXIMcCKelVyeLY09FzU37c
+p6io8R68vAkBWQ8WaeSnthyaunNU9jEjpadCf7xRQ48VrFbDqAJnLXn2vqpSeD/a
+H4vfwxZMYrBmlCVJaJ6VTxN5Tf5WnQ==
+=DkMj
 -----END PGP SIGNATURE-----
 
---H+4ONPRPur6+Ovig--
+--Sig_/gjXME8QNH4.L5b1_MOJCvQu--
