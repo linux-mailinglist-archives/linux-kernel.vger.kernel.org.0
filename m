@@ -2,100 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB4D1431E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 901ED1431ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgATTAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:00:52 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46112 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgATTAv (ORCPT
+        id S1727121AbgATTDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 14:03:06 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:58153 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbgATTDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:00:51 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r9so651627otp.13;
-        Mon, 20 Jan 2020 11:00:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PDpQAF+i2pq2uHsVICQDd7TG2O7Wyb3VR4zR7cxgZZ4=;
-        b=PgYpMeXtihwo3UHMOxBKlsQe4971PvToO4dB2O8HWjcXfBeadRdQP8crFLAWI+0PCQ
-         o02RAX0zyIbXaAdopDWAKJyXJQR2vYqqaJd0A/Rf3bbGLs3/FYkMFAsqb8AxQKeVVVe8
-         uBAE/jMhmnENlSb1cCQxZvs6FkloOy9uTWY12LNUPRioi1g10aVBc8utX4QuC/coPuxr
-         qA+1VW6ttoiAvKLAenNTDP5Vz/KbxHjr3wC4S74iuzEypKQJIqWRdNAiZJ2tFuYCOcpm
-         JydHWn0HCmXBtNKBdyT31Y9DJ+TT6zXWMStdzNskgLJTtqb1EmaNVAZDZD1lXFQ+v3Ne
-         LpIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PDpQAF+i2pq2uHsVICQDd7TG2O7Wyb3VR4zR7cxgZZ4=;
-        b=nWVJF9L91U2pVbtYlp7XzvU2NJD3Jte/JEp8WKwPU2RstuvnmsRPn9EW6FeMxAGXmk
-         MhxLlVdqiZHF88E5ZcQSENuZT+4ZyYzrP0e/nGbAPJBW5f8QQ6znwkNkgFHY1i6JZuy5
-         j+a1BmFlpimWkDmyCUAt8TPBErQiayXRrLmNiFuxodsz+92VSgsNJchwZf+cwtkUJh9S
-         G93IINsZbPa8qOvNHgHr9V9caj2EhVN5/B1d4tDqA2HgYpZkIDZEy4E2Ipa5HO0cBIyG
-         MFCMtcIX0UmfzwzvcDH/FXeUwJ7Qp1E1rOr5lJMu3BSRs7QQRDzF26YSbvYumGx31ksu
-         2ZVQ==
-X-Gm-Message-State: APjAAAWKV6IXUoGXQnwFzyzy7LnUtX7xrOisc1HH6kgR3rPxJeX7pITF
-        Eli+dooWdAlG1Kp/6EqO+V4=
-X-Google-Smtp-Source: APXvYqxxGUypQRdE6ZNJl9t7UwurrtKJL2Fgml/ADb4BkoE3IFa3lbxtMrMqIvSjt9gGAfKpMuu2RQ==
-X-Received: by 2002:a9d:7b4a:: with SMTP id f10mr747171oto.4.1579546850655;
-        Mon, 20 Jan 2020 11:00:50 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id i20sm12641352otp.14.2020.01.20.11.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 11:00:50 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michael Reed <mdr@sgi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: qla1280: Fix a use of QLA_64BIT_PTR
-Date:   Mon, 20 Jan 2020 12:00:21 -0700
-Message-Id: <20200120190021.26460-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        Mon, 20 Jan 2020 14:03:04 -0500
+Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MHGPA-1ipALF2U3E-00DGre; Mon, 20 Jan 2020 20:03:01 +0100
+Received: by mail-qt1-f177.google.com with SMTP id v25so614991qto.7;
+        Mon, 20 Jan 2020 11:03:01 -0800 (PST)
+X-Gm-Message-State: APjAAAU2b19EsYgjPqf3lWEury14h744bF3DovOfFzCgBvQyc5ygBq/O
+        pAbY0ppqjuFg5QdSF2GDwlPUaRpz4ILiGD0V6Lc=
+X-Google-Smtp-Source: APXvYqz35x39I8DSspW1D7zXoSgFG6f385p7mWbzgBb6GjESNlGfr5iF1XLATEUOO8X7/j+CYWdeJN7g8IvYvApiM0E=
+X-Received: by 2002:ac8:768d:: with SMTP id g13mr805093qtr.7.1579546980409;
+ Mon, 20 Jan 2020 11:03:00 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20200115165749.145649-1-elver@google.com> <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
+ <CANpmjNOpTYnF3ssqrE_s+=UA-2MpfzzdrXoyaifb3A55_mc0uA@mail.gmail.com>
+ <CAK8P3a3WywSsahH2vtZ_EOYTWE44YdN+Pj6G8nt_zrL3sckdwQ@mail.gmail.com>
+ <CANpmjNMk2HbuvmN1RaZ=8OV+tx9qZwKyRySONDRQar6RCGM1SA@mail.gmail.com>
+ <CAK8P3a066Knr-KC2v4M8Dr1phr0Gbb2KeZZLQ7Ana0fkrgPDPg@mail.gmail.com>
+ <CANpmjNO395-atZXu_yEArZqAQ+ib3Ack-miEhA9msJ6_eJsh4g@mail.gmail.com>
+ <CANpmjNOH1h=txXnd1aCXTN8THStLTaREcQpzd5QvoXz_3r=8+A@mail.gmail.com>
+ <CAK8P3a0p9Y8080T-RR2pp-p2_A0FBae7zB-kSq09sMZ_X7AOhw@mail.gmail.com> <CANpmjNOUTed6FT8X0bUSc1tGBh3jrEJ0DRpQwBfoPF5ah8Wrhw@mail.gmail.com>
+In-Reply-To: <CANpmjNOUTed6FT8X0bUSc1tGBh3jrEJ0DRpQwBfoPF5ah8Wrhw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Jan 2020 20:02:44 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
+Message-ID: <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
+Subject: Re: [PATCH -rcu] asm-generic, kcsan: Add KCSAN instrumentation for bitops
+To:     Marco Elver <elver@google.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        Daniel Axtens <dja@axtens.net>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:jR7dToZSz+pkZ+H0k5vLn3WxHAvBzUvp3ljrXIGkzvRot+PDpsg
+ jvUS6yMJBrzIa5w8PoqfcIyUxp6R0ukVQsudQ5jcvbSZBzbkYiGpDO368uKbT3GS1zMTax6
+ fYr6mXoL9VkOH4vxVc/626eppN3uzhWad2gTfMiDZowwRgFPV25v52+xoRoMQwhXws8s4O6
+ XJlqCZts9DbDomGlf0i7A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:l3QBPowaTZQ=:sRbWnLFf27OK+UK7+9qpof
+ kwPt46XaHvZva95NukcvqRN8B+WTktgovYpCxLpjyzoybNq9aSo4NoTE8QmBoUZS1RmHPBN3O
+ JxuSWZwOcUWZcqjCmgwlDy5DyqJDaxkaPz/Nkgult+b7uI34ASguRqWm8dqFl7mm5sGqmi611
+ HfMxJJUOIFDrrF6j66MWYHe7WJVFbRjATPfrdN+eP9IU85Gt78j+vrpL4onL9FsJqmuu7mEQE
+ r6CbmFtYBc61T3+4ZfcoIdi0jxqcjbW6+cTwSwmhNbt5efjoxt1uXj8opXK8L4SDksSoi8HVl
+ fAlVXG7rKO05DiAS06MkyjbZe+jGNDYPevAFAOkxSIUrcIthNQaSBtFHhLzQa3Nod0Vgl2lUW
+ SMLHW53liptmhdTg0q4H8m5ChB9jWsVBRhvAbs6gvduiR/vq/goOgRKsr4AoDfXMmTwX7Ad6J
+ 1A8MuGFWykbHCnXp1OpPsG1A7DHwGt0A00wmobx5RbsZs81otdVXhWH1yo+3meC6aMDN9YLNp
+ KJswW9VlS/GYIjjv1KsGzn+pPNWxO+tHx8u9hRgZkDaB/F6u65dSDnnWrN7z00XA++XiOaoqW
+ XGQKTCYTokGcjDohE/nGDmTVXpP3MSR6tKLgly1p7mly017IANjzQtZPiAJMVpojVW8Kg/YMb
+ IA/A6xN+pNXterGSQo/Vm95Qxgq+PH7d68YGnXbRzLOiHhKVsT88gJrQFyI2W26ChyzBIZ4aP
+ Tj9K5CbGego3mfwnPMdfSTmATTp0bm3ESuGDdokiE6CCIDgmXHVyh85xewT3AoxxJFP4W8OBd
+ H898tlU9G2jc4aHY2LssA65PElWWQ1MfRAObEL+klzX2MphZ4oXhXqeAeJsNCryjxeA8V9z54
+ ucpDaNXlOUyuEr5Kn9fg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+On Mon, Jan 20, 2020 at 4:11 PM Marco Elver <elver@google.com> wrote:
+> On Mon, 20 Jan 2020 at 15:40, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Mon, Jan 20, 2020 at 3:23 PM Marco Elver <elver@google.com> wrote:
+> > > On Fri, 17 Jan 2020 at 14:14, Marco Elver <elver@google.com> wrote:
+> > > > On Fri, 17 Jan 2020 at 13:25, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > On Wed, Jan 15, 2020 at 9:50 PM Marco Elver <elver@google.com> wrote:
+> >
+> > > > > If you can't find any, I would prefer having the simpler interface
+> > > > > with just one set of annotations.
+> > > >
+> > > > That's fair enough. I'll prepare a v2 series that first introduces the
+> > > > new header, and then applies it to the locations that seem obvious
+> > > > candidates for having both checks.
+> > >
+> > > I've sent a new patch series which introduces instrumented.h:
+> > >    http://lkml.kernel.org/r/20200120141927.114373-1-elver@google.com
+> >
+> > Looks good to me, feel free to add
+> >
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > if you are merging this through your own tree or someone else's,
+> > or let me know if I should put it into the asm-generic git tree.
+>
+> Thank you!  It seems there is still some debate around the user-copy
+> instrumentation.
+>
+> The main question we have right now is if we should add pre/post hooks
+> for them. Although in the version above I added KCSAN checks after the
+> user-copies, it seems maybe we want it before. I personally don't have
+> a strong preference, and wanted to err on the side of being more
+> conservative.
+>
+> If I send a v2, and it now turns out we do all the instrumentation
+> before the user-copies for KASAN and KCSAN, then we have a bunch of
+> empty hooks. However, for KMSAN we need the post-hook, at least for
+> copy_from_user. Do you mind a bunch of empty functions to provide
+> pre/post hooks for user-copies? Could the post-hooks be generally
+> useful for something else?
 
-../drivers/scsi/qla1280.c:1702:5: warning: 'QLA_64BIT_PTR' is not
-defined, evaluates to 0 [-Wundef]
-if QLA_64BIT_PTR
-    ^
-1 warning generated.
+I'd prefer not to add any empty hooks, let's do that once they
+are actually used.
 
-The rest of this driver uses #ifdef QLA_64BIT_PTR, do the same thing at
-this site to remove this warning.
-
-Fixes: ba304e5b4498 ("scsi: qla1280: Fix dma firmware download, if dma address is 64bit")
-Link: https://github.com/ClangBuiltLinux/linux/issues/843
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/qla1280.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-index 607cbddcdd14..3337cd341d21 100644
---- a/drivers/scsi/qla1280.c
-+++ b/drivers/scsi/qla1280.c
-@@ -1699,7 +1699,7 @@ qla1280_load_firmware_pio(struct scsi_qla_host *ha)
- 	return err;
- }
- 
--#if QLA_64BIT_PTR
-+#ifdef QLA_64BIT_PTR
- #define LOAD_CMD	MBC_LOAD_RAM_A64_ROM
- #define DUMP_CMD	MBC_DUMP_RAM_A64_ROM
- #define CMD_ARGS	(BIT_7 | BIT_6 | BIT_4 | BIT_3 | BIT_2 | BIT_1 | BIT_0)
--- 
-2.25.0
-
+      Arnd
