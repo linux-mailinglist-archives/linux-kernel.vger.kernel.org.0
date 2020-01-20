@@ -2,69 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7981142D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DAC9142D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 15:19:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbgATORA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 09:17:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53248 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726982AbgATORA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 09:17:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9F57EACD7;
-        Mon, 20 Jan 2020 14:16:58 +0000 (UTC)
-Date:   Mon, 20 Jan 2020 15:16:57 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/26] docs: i2c: smbus-protocol: properly name start
- and stop conditions
-Message-ID: <20200120151657.50725d9e@endymion>
-In-Reply-To: <20200105225012.11701-12-luca@lucaceresoli.net>
-References: <20200105224006.10321-1-luca@lucaceresoli.net>
-        <20200105225012.11701-1-luca@lucaceresoli.net>
-        <20200105225012.11701-12-luca@lucaceresoli.net>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728512AbgATOTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 09:19:44 -0500
+Received: from mail-wm1-f74.google.com ([209.85.128.74]:36646 "EHLO
+        mail-wm1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbgATOTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 09:19:43 -0500
+Received: by mail-wm1-f74.google.com with SMTP id f25so3754407wmb.1
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 06:19:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Nfa3SPvPtmfv9OXDVBjRxJwd9iLaWZX/BpfniwtezQo=;
+        b=UhbxWX6ASocBqYOmExgZzHhGzoGU/XgRLrivmvNu5RQg6NKZq6hO7pdIzkpWFJULHM
+         atx/Qq2QEwL/yg/3qSS8SdwGO+jGGjp6w9Nl2ioB1mmyE00P7+fySO9bQICvMzQNmbHo
+         bpDwCLx4VyPkgdqvfYQXDk3UKXXTFa7uGl77QnFdrl3ZLGHfKaq5u/nwlZ86la4up6y7
+         Xv8aDxNsRXVJFiQFWxXVDd6XSJ5XNpBik2BdIhdGQoUW1A3dAohysmdYUMsMwNCXG2VC
+         r7EEcIVSqnpXmXHGucnsjd/QiIp5W0m9qRgBtoFDX+WZJ0yTeIhWDxtuYWhmQhaqWGIl
+         S+XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Nfa3SPvPtmfv9OXDVBjRxJwd9iLaWZX/BpfniwtezQo=;
+        b=UyE5pJgE4YeWhfinaXR4YkVhU2rrDhumNstd7ou48Tn32BLG0fm2gHbdRxbV5y5AmN
+         ZUhR2GM6WW2cyQ37+Nm5lDA11GHscXrRyYokhmjMXz+6TlBJKPkOMit4YDITjDQZTSTx
+         a9kzU2ZbbWK5lslxJMWpg4LRGneIAEr2vBxDhsK8i4tMHmGQ7/HFL+swtqVpdOqSP5V2
+         YBWEdZIkmfMdGVPsNiB0AQgUu8Y71cIrE57EpsYuF+5vPsQYrN4jiYG/TTBG+VZ4Uu6n
+         71Ip+lQrcXuEvi49/+I8C9oCUTS6pIxvG65zdtLQwqg2af+ltVEtiRzsz6sngfWe4X5x
+         zrLA==
+X-Gm-Message-State: APjAAAXp0yRTBF00alKarxVLW20qBmWd7V6HxNUJtuTBowu6ZooJdT2Z
+        h/2pD9ALrZgKFYe0WlPNmLaR71Ab0w==
+X-Google-Smtp-Source: APXvYqx4qC4nxJBlx0ET7P5Aq/iTgxx89uovXuTSxsSVUW7EBw+E/3iA8A0MlYCrgRwHYCEa9EvzdlcpYw==
+X-Received: by 2002:a5d:45c4:: with SMTP id b4mr18022313wrs.303.1579529980939;
+ Mon, 20 Jan 2020 06:19:40 -0800 (PST)
+Date:   Mon, 20 Jan 2020 15:19:23 +0100
+Message-Id: <20200120141927.114373-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com
+Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
+        dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        arnd@arndb.de, viro@zeniv.linux.org.uk, christophe.leroy@c-s.fr,
+        dja@axtens.net, mpe@ellerman.id.au, rostedt@goodmis.org,
+        mhiramat@kernel.org, mingo@kernel.org,
+        christian.brauner@ubuntu.com, daniel@iogearbox.net,
+        cyphar@cyphar.com, keescook@chromium.org,
+        linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  5 Jan 2020 23:49:58 +0100, Luca Ceresoli wrote:
-> In I2C there is no such thing as a "start bit" or a "stop bit". Use the
-> proper naming: "start condition" and "stop condition".
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  Documentation/i2c/smbus-protocol.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/i2c/smbus-protocol.rst b/Documentation/i2c/smbus-protocol.rst
-> index 1600b09ec0be..8510eeda1dd0 100644
-> --- a/Documentation/i2c/smbus-protocol.rst
-> +++ b/Documentation/i2c/smbus-protocol.rst
-> @@ -35,8 +35,8 @@ Key to symbols
->  ==============
->  
->  =============== =============================================================
-> -S     (1 bit) : Start bit
-> -P     (1 bit) : Stop bit
-> +S             : Start condition
-> +P             : Stop condition
->  Rd/Wr (1 bit) : Read/Write bit. Rd equals 1, Wr equals 0.
->  A, NA (1 bit) : Accept and reverse accept bit.
->  Addr  (7 bits): I2C 7 bit address. Note that this can be expanded as usual to
+This adds instrumented.h, which provides generic wrappers for memory
+access instrumentation that the compiler cannot emit for various
+sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
+future this will also include KMSAN instrumentation.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Note that, copy_{to,from}_user require special instrumentation,
+providing hooks before and after the access, since we may need to know
+the actual bytes accessed (currently this is relevant for KCSAN, and is
+also relevant in future for KMSAN).
 
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
+ create mode 100644 include/linux/instrumented.h
+
+diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+new file mode 100644
+index 000000000000..9f83c8520223
+--- /dev/null
++++ b/include/linux/instrumented.h
+@@ -0,0 +1,153 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * This header provides generic wrappers for memory access instrumentation that
++ * the compiler cannot emit for: KASAN, KCSAN.
++ */
++#ifndef _LINUX_INSTRUMENTED_H
++#define _LINUX_INSTRUMENTED_H
++
++#include <linux/compiler.h>
++#include <linux/kasan-checks.h>
++#include <linux/kcsan-checks.h>
++#include <linux/types.h>
++
++/**
++ * instrument_read - instrument regular read access
++ *
++ * Instrument a regular read access. The instrumentation should be inserted
++ * before the actual read happens.
++ *
++ * @ptr address of access
++ * @size size of access
++ */
++static __always_inline void instrument_read(const volatile void *v, size_t size)
++{
++	kasan_check_read(v, size);
++	kcsan_check_read(v, size);
++}
++
++/**
++ * instrument_write - instrument regular write access
++ *
++ * Instrument a regular write access. The instrumentation should be inserted
++ * before the actual write happens.
++ *
++ * @ptr address of access
++ * @size size of access
++ */
++static __always_inline void instrument_write(const volatile void *v, size_t size)
++{
++	kasan_check_write(v, size);
++	kcsan_check_write(v, size);
++}
++
++/**
++ * instrument_atomic_read - instrument atomic read access
++ *
++ * Instrument an atomic read access. The instrumentation should be inserted
++ * before the actual read happens.
++ *
++ * @ptr address of access
++ * @size size of access
++ */
++static __always_inline void instrument_atomic_read(const volatile void *v, size_t size)
++{
++	kasan_check_read(v, size);
++	kcsan_check_atomic_read(v, size);
++}
++
++/**
++ * instrument_atomic_write - instrument atomic write access
++ *
++ * Instrument an atomic write access. The instrumentation should be inserted
++ * before the actual write happens.
++ *
++ * @ptr address of access
++ * @size size of access
++ */
++static __always_inline void instrument_atomic_write(const volatile void *v, size_t size)
++{
++	kasan_check_write(v, size);
++	kcsan_check_atomic_write(v, size);
++}
++
++/**
++ * instrument_copy_to_user_pre - instrument reads of copy_to_user
++ *
++ * Instrument reads from kernel memory, that are due to copy_to_user (and
++ * variants).
++ *
++ * The instrumentation must be inserted before the accesses. At this point the
++ * actual number of bytes accessed is not yet known.
++ *
++ * @dst destination address
++ * @size maximum access size
++ */
++static __always_inline void
++instrument_copy_to_user_pre(const volatile void *src, size_t size)
++{
++	/* Check before, to warn before potential memory corruption. */
++	kasan_check_read(src, size);
++}
++
++/**
++ * instrument_copy_to_user_post - instrument reads of copy_to_user
++ *
++ * Instrument reads from kernel memory, that are due to copy_to_user (and
++ * variants).
++ *
++ * The instrumentation must be inserted after the accesses. At this point the
++ * actual number of bytes accessed should be known.
++ *
++ * @dst destination address
++ * @size maximum access size
++ * @left number of bytes left that were not copied
++ */
++static __always_inline void
++instrument_copy_to_user_post(const volatile void *src, size_t size, size_t left)
++{
++	/* Check after, to avoid false positive if memory was not accessed. */
++	kcsan_check_read(src, size - left);
++}
++
++/**
++ * instrument_copy_from_user_pre - instrument writes of copy_from_user
++ *
++ * Instrument writes to kernel memory, that are due to copy_from_user (and
++ * variants).
++ *
++ * The instrumentation must be inserted before the accesses. At this point the
++ * actual number of bytes accessed is not yet known.
++ *
++ * @dst destination address
++ * @size maximum access size
++ */
++static __always_inline void
++instrument_copy_from_user_pre(const volatile void *dst, size_t size)
++{
++	/* Check before, to warn before potential memory corruption. */
++	kasan_check_write(dst, size);
++}
++
++/**
++ * instrument_copy_from_user_post - instrument writes of copy_from_user
++ *
++ * Instrument writes to kernel memory, that are due to copy_from_user (and
++ * variants).
++ *
++ * The instrumentation must be inserted after the accesses. At this point the
++ * actual number of bytes accessed should be known.
++ *
++ * @dst destination address
++ * @size maximum access size
++ * @left number of bytes left that were not copied
++ */
++static __always_inline void
++instrument_copy_from_user_post(const volatile void *dst, size_t size, size_t left)
++{
++	/* Check after, to avoid false positive if memory was not accessed. */
++	kcsan_check_write(dst, size - left);
++}
++
++#endif /* _LINUX_INSTRUMENTED_H */
 -- 
-Jean Delvare
-SUSE L3 Support
+2.25.0.341.g760bfbb309-goog
+
