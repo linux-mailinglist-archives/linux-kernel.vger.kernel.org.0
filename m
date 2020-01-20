@@ -2,93 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD99514280E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ECCA142810
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:17:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbgATKRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 05:17:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37836 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbgATKRX (ORCPT
+        id S1727113AbgATKRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:17:43 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36496 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726796AbgATKRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:17:23 -0500
-Received: by mail-wr1-f65.google.com with SMTP id w15so28945989wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 02:17:22 -0800 (PST)
+        Mon, 20 Jan 2020 05:17:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579515462;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3Kn3eF1bDp58ABo+Z+VK7m/se8AJ6JmDqRXHpdzmrrQ=;
+        b=N4kAnv8FyaeBpT/U+DneiQLEAqOjHWzqFxCI1hBnEn6ZN7kWZESpfXFUZDmakgzk9C8HC/
+        wndmQmZdzAFlXKv4ognXfZHTpM1SeXatCu5LuedbbS37oiwhsZPdJbk9iYyB06yZyj7oue
+        dS2VJHPJ5VlHaSrtWZyrMP6xK0CUEic=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-328-BCEGrRCkOX2A5cFVF0rs9Q-1; Mon, 20 Jan 2020 05:17:40 -0500
+X-MC-Unique: BCEGrRCkOX2A5cFVF0rs9Q-1
+Received: by mail-wm1-f69.google.com with SMTP id c4so3543335wmb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 02:17:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZWtKAlymkxn/gH1l7V+xHFOqcydyy10v++EHcLObYNk=;
-        b=FiwqNvYYaNMOzCyeRqQypMVRRDi68lVdteTmggQjVeH5QDm/vQ3NJLymyI7xb7KFdL
-         3RBK9CM+ycPa0pgjVrvRy5C1U9p3O+OQmacE2Yw5FjZ91mzE7zqSftX2w7sTtGogAoDF
-         JoZh3p4QX2nmWfoeITtL9Il+4gYAl0dIMa7y6J5ytdgluZFVIhgEljREPEioScPFGXMh
-         aLcej5WDsMXeo0ofbvYKb6b6eFxPXLgIVE8Jm65QyEk4uKmwFg2HLpgeoy/XSoRWhjCP
-         lqewgvWsy2uO/Q/d57KvDLjS/g0ZGN6ylQYje0ptiqq1DwQ9fvpRj4b579vEs9sFCC68
-         WsuQ==
-X-Gm-Message-State: APjAAAUEmO0NGURWxXl9toMldy4lc1HBQnRUclta/vhofi9gAn36cgXH
-        KF7YzYO+mepPspGwQB10fyc=
-X-Google-Smtp-Source: APXvYqw6G6CWyw178bZoCJJYiYvmx7kmBo6dOVR6B1f6aRMKThAMiNGu8thSS9KqYzNS10oKwTjEAA==
-X-Received: by 2002:adf:c746:: with SMTP id b6mr17235605wrh.298.1579515441695;
-        Mon, 20 Jan 2020 02:17:21 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id q15sm46956102wrr.11.2020.01.20.02.17.20
+         :mime-version:content-disposition:in-reply-to;
+        bh=3Kn3eF1bDp58ABo+Z+VK7m/se8AJ6JmDqRXHpdzmrrQ=;
+        b=VD4IcmHg1S/XWCGZMMd+Ptx/NkfnNPjgXXCMsH+MpByFw6Y75DoQP3sY/gSBqJsGFf
+         KJSLaXAFo6/sERFcI0HEXlR3OExb06uOxsrgVB3xmggM0iZeV4wzfdGoKjiULQKooEWo
+         JkHfPtf0fftTe4A2NpjQXCBnpeMC5d4nWYHMjgfeUlZqHEikDV/MTsrujPBGGjCFW0Fg
+         E6oeVE0A+AUMrcKRBGOyi+bVRPN/aeMGlmkVi2FWymAEWbFG3t5kEpucFUR6odwGYfgZ
+         I2AMsGV7R/O7eQ0AWcNaAbrDPKtzdo1IK0Ks6mw4wcP6UpZF0Vp5eWHgafGAJLWV4lkl
+         w2dg==
+X-Gm-Message-State: APjAAAUlIYMZ7THlEKbMxGRo7TfuqJTjBEElmJ4qTk7P0uUrGO7WPPqJ
+        S5z28DXcYL0YOqip7zgp/ebPAs/Kai9VLusElhK5gVh5mNSOVpbBUUy2mYMVg2qyU/sQyLoZXeC
+        1Vlq0+g9loA6BECIZLl2Zj+No
+X-Received: by 2002:a5d:4c8c:: with SMTP id z12mr17204959wrs.222.1579515459302;
+        Mon, 20 Jan 2020 02:17:39 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx8nPgpJZeiHtCAtqFdRM5avjMVn14ZlpARF6xuxaOm5EpPLbYY6JuPnFuxmQoQgypkH/rg3g==
+X-Received: by 2002:a5d:4c8c:: with SMTP id z12mr17204936wrs.222.1579515459017;
+        Mon, 20 Jan 2020 02:17:39 -0800 (PST)
+Received: from steredhat (host84-49-dynamic.31-79-r.retail.telecomitalia.it. [79.31.49.84])
+        by smtp.gmail.com with ESMTPSA id p18sm22504644wmb.8.2020.01.20.02.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 02:17:20 -0800 (PST)
-Date:   Mon, 20 Jan 2020 11:17:20 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, rientjes@google.com
-Subject: Re: [Patch v2 2/4] mm/page_alloc.c: bad_[reason|flags] is not
- necessary when PageHWPoison
-Message-ID: <20200120101720.GV18451@dhcp22.suse.cz>
-References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
- <20200120030415.15925-3-richardw.yang@linux.intel.com>
+        Mon, 20 Jan 2020 02:17:38 -0800 (PST)
+Date:   Mon, 20 Jan 2020 11:17:35 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jhansen@vmware.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        stefanha@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-hyperv@vger.kernel.org, mst@redhat.com, decui@microsoft.com
+Subject: Re: [PATCH net-next 1/3] vsock: add network namespace support
+Message-ID: <20200120101735.uyh4o64gb4njakw5@steredhat>
+References: <20200116172428.311437-1-sgarzare@redhat.com>
+ <20200116172428.311437-2-sgarzare@redhat.com>
+ <20200120.100610.546818167633238909.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120030415.15925-3-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200120.100610.546818167633238909.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 20-01-20 11:04:13, Wei Yang wrote:
-> Since function returns directly, bad_[reason|flags] is not used any
-> where.
+On Mon, Jan 20, 2020 at 10:06:10AM +0100, David Miller wrote:
+> From: Stefano Garzarella <sgarzare@redhat.com>
+> Date: Thu, 16 Jan 2020 18:24:26 +0100
 > 
-> This is a following cleanup for commit e570f56cccd21 ("mm:
-> check_new_page_bad() directly returns in __PG_HWPOISON case")
+> > This patch adds 'netns' module param to enable this new feature
+> > (disabled by default), because it changes vsock's behavior with
+> > network namespaces and could break existing applications.
 > 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-
-This is a left over from loong time ago. AFAICS bad_reason and flags hav
-never been used.
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/page_alloc.c | 2 --
->  1 file changed, 2 deletions(-)
+> Sorry, no.
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 0cf6218aaba7..a43b9d2482f2 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2051,8 +2051,6 @@ static void check_new_page_bad(struct page *page)
->  	if (unlikely(page_ref_count(page) != 0))
->  		bad_reason = "nonzero _refcount";
->  	if (unlikely(page->flags & __PG_HWPOISON)) {
-> -		bad_reason = "HWPoisoned (hardware-corrupted)";
-> -		bad_flags = __PG_HWPOISON;
->  		/* Don't complain about hwpoisoned pages */
->  		page_mapcount_reset(page); /* remove PageBuddy */
->  		return;
-> -- 
-> 2.17.1
+> I wonder if you can even design a legitimate, reasonable, use case
+> where these netns changes could break things.
 
--- 
-Michal Hocko
-SUSE Labs
+I forgot to mention the use case.
+I tried the RFC with Kata containers and we found that Kata shim-v1
+doesn't work (Kata shim-v2 works as is) because there are the following
+processes involved:
+- kata-runtime (runs in the init_netns) opens /dev/vhost-vsock and
+  passes it to qemu
+- kata-shim (runs in a container) wants to talk with the guest but the
+  vsock device is assigned to the init_netns and kata-shim runs in a
+  different netns, so the communication is not allowed
+
+But, as you said, this could be a wrong design, indeed they already
+found a fix, but I was not sure if others could have the same issue.
+
+In this case, do you think it is acceptable to make this change in
+the vsock's behavior with netns and ask the user to change the design?
+
+> 
+> I am totally against adding a module parameter for this, it's
+> incredibly confusing for users and will create a test scenerio
+> that is strongly less likely to be covered.
+> 
+
+Got it, I'll remove the module parameter!
+
+Thanks,
+Stefano
+
