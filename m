@@ -2,288 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E5B7142AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 426F4142AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:32:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbgATMay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:30:54 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38136 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbgATMax (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:30:53 -0500
-Received: by mail-vs1-f67.google.com with SMTP id v12so18827416vsv.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 04:30:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8ytGdwpcZgz+l1IsVkcphclobVWDkaAqfesVy/sJ81w=;
-        b=CjOuG5Fr+IfSBMB7vcLkYCgIGbVypeHGBgKc3xtoTVaagiJO9+xYneiK79TwTsAgZA
-         Rp3XrhE4vF/hdgKQtqfE5SOfEWGJytqg9Z/rCu1w+ccWrkJ4e9YJ1HJ5PGjDOnD9p0WM
-         7B8DceH4GH3jJH5BzHsikq+q7Hj0h5fvM8+71ZloKh5TWhG/+enIXs/7OtQumgoZXsac
-         5PefUSumrvmMhRLsVd1AHSrevlfmrjI1Lqk+qyV5VhTneVwgJf1CNMUSc44UDRfRCHd1
-         /Bp57GAko/jZtyX9O4kp1XcaQyxmEsVsNFOoLMOslOUFiFzDhG0vcrBoBhWaJ45UPQO0
-         WtBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8ytGdwpcZgz+l1IsVkcphclobVWDkaAqfesVy/sJ81w=;
-        b=s28iCaM2R+EuMC59YhbcJY7iOnKFjNPBBWY8pGLQxrM3/E4h8bMy+3Xp6pqnIbMEiZ
-         BF9sepCCVtBgoHOaSLndVGFWwjyj1lryYz2EJIlrrTH1NuFn58RzM8gQPxz4vUbPfPwa
-         X4cQdZLjoINQ6E0X6iUe4AEbwK2KUTeAVt42EW16mNdKjZi1Q1InTekrB+dns6LKSUmS
-         vYO9M8LcKV4xA4Dgcj/BZ4LSjTPB8by6+LUsr/g9aG9G0F+PVMc3nBPdHRRTN1XaR5Lc
-         vNfmaStsUnr9mi+rS7ZUUy9KvJGGXpngZlI/1W4QSd2+iGjq9BpL4IzNP4oPIIeX9boO
-         btFA==
-X-Gm-Message-State: APjAAAU3brKQAioijqOV5mrdxUZgr6UKOuXF58HC4zIkSKft9dZdhUV7
-        a/kyhYnsfAUdlQAwCNf42Vyjzk3Tn/d/o3cgp9qHxQ==
-X-Google-Smtp-Source: APXvYqx/32gaJjwq5JIgE16xycMPDYZWG/VspqgyqiJHUQuPr95p1nuRKfWvhqO/K6or8mMLp1RJQH2QBU5UIqTx3Qw=
-X-Received: by 2002:a67:e9da:: with SMTP id q26mr12201344vso.34.1579523450926;
- Mon, 20 Jan 2020 04:30:50 -0800 (PST)
+        id S1727009AbgATMcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:32:50 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19059 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbgATMct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:32:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 04:32:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
+   d="scan'208";a="399361636"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 20 Jan 2020 04:32:45 -0800
+Subject: Re: [PATCH 2/3] mmc: sdhci_am654: Update OTAPDLY writes
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org
+References: <20200108150920.14547-1-faiz_abbas@ti.com>
+ <20200108150920.14547-3-faiz_abbas@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <dfa97953-7990-e1b5-5e83-9ab6cbdd54e9@intel.com>
+Date:   Mon, 20 Jan 2020 14:31:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org> <1579194192-7942-3-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1579194192-7942-3-git-send-email-vbadigan@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 20 Jan 2020 13:30:13 +0100
-Message-ID: <CAPDyKFpOtW5ZkFEhamCLPNsD-ECH1c1gERzMwT5MRMWc_9q_OQ@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Add CQHCI support for sdhci-msm
-To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>, cang@codeaurora.org,
-        Ram Prakash Gupta <rampraka@codeaurora.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        BOUGH CHEN <haibo.chen@nxp.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200108150920.14547-3-faiz_abbas@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 at 18:05, Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
->
-> From: Ritesh Harjani <riteshh@codeaurora.org>
->
-> This adds CQHCI support for sdhci-msm platforms.
->
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+On 8/01/20 5:09 pm, Faiz Abbas wrote:
+> According to the latest AM65x Data Manual[1], a different output tap
+> delay value is optimum for a given speed mode. Therefore, deprecate the
+> ti,otap-del-sel binding and introduce a new binding for each of the
+> possible MMC/SD speed modes. If the legacy mode is not found, fall back
+> to old binding to maintain dts compatibility.
+> 
+> [1] http://www.ti.com/lit/gpn/am6526
+> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
 > ---
->  drivers/mmc/host/Kconfig     |   1 +
->  drivers/mmc/host/sdhci-msm.c | 133 ++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 133 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index d06b2df..7f2ae59 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -501,6 +501,7 @@ config MMC_SDHCI_MSM
->         depends on ARCH_QCOM || (ARM && COMPILE_TEST)
->         depends on MMC_SDHCI_PLTFM
->         select MMC_SDHCI_IO_ACCESSORS
-> +       select MMC_CQHCI
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           support present in Qualcomm SOCs. The controller supports
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 3d0bb5e..0b4d01f 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -15,6 +15,7 @@
->  #include <linux/regulator/consumer.h>
->
->  #include "sdhci-pltfm.h"
-> +#include "cqhci.h"
->
->  #define CORE_MCI_VERSION               0x50
->  #define CORE_VERSION_MAJOR_SHIFT       28
-> @@ -122,6 +123,10 @@
->  #define msm_host_writel(msm_host, val, host, offset) \
->         msm_host->var_ops->msm_writel_relaxed(val, host, offset)
->
-> +/* CQHCI vendor specific registers */
-> +#define CQHCI_VENDOR_CFG1      0xA00
-> +#define CQHCI_VENDOR_DIS_RST_ON_CQ_EN  (0x3 << 13)
-> +
->  struct sdhci_msm_offset {
->         u32 core_hc_mode;
->         u32 core_mci_data_cnt;
-> @@ -1567,6 +1572,127 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->         __sdhci_msm_set_clock(host, clock);
->  }
->
-> +/*****************************************************************************\
-> + *                                                                           *
-> + * MSM Command Queue Engine (CQE)                                            *
-> + *                                                                           *
-> +\*****************************************************************************/
-> +
-> +static u32 sdhci_msm_cqe_irq(struct sdhci_host *host, u32 intmask)
-> +{
-> +       int cmd_error = 0;
-> +       int data_error = 0;
-> +
-> +       if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-> +               return intmask;
-> +
-> +       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       return 0;
-> +}
-> +
-> +void sdhci_msm_cqe_disable(struct mmc_host *mmc, bool recovery)
-> +{
-> +       struct sdhci_host *host = mmc_priv(mmc);
-> +       unsigned long flags;
-> +       u32 ctrl;
-> +
-> +       /*
-> +        * When CQE is halted, the legacy SDHCI path operates only
-> +        * on 16-byte descriptors in 64bit mode.
-> +        */
-> +       if (host->flags & SDHCI_USE_64_BIT_DMA)
-> +               host->desc_sz = 16;
-> +
-> +       spin_lock_irqsave(&host->lock, flags);
-> +
-> +       /*
-> +        * During CQE command transfers, command complete bit gets latched.
-> +        * So s/w should clear command complete interrupt status when CQE is
-> +        * either halted or disabled. Otherwise unexpected SDCHI legacy
-> +        * interrupt gets triggered when CQE is halted/disabled.
-> +        */
-> +       ctrl = sdhci_readl(host, SDHCI_INT_ENABLE);
-> +       ctrl |= SDHCI_INT_RESPONSE;
-> +       sdhci_writel(host,  ctrl, SDHCI_INT_ENABLE);
-> +       sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
-> +
-> +       spin_unlock_irqrestore(&host->lock, flags);
-> +
-> +       sdhci_cqe_disable(mmc, recovery);
-> +}
-> +
-> +static const struct cqhci_host_ops sdhci_msm_cqhci_ops = {
-> +       .enable         = sdhci_cqe_enable,
-> +       .disable        = sdhci_msm_cqe_disable,
+>  drivers/mmc/host/sdhci_am654.c | 123 ++++++++++++++++++++++++++++-----
+>  include/linux/mmc/host.h       |   2 +
+>  2 files changed, 107 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index b8fe94fd9525..bb977de43f7d 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -81,7 +81,8 @@ static struct regmap_config sdhci_am654_regmap_config = {
+>  
+>  struct sdhci_am654_data {
+>  	struct regmap *base;
+> -	int otap_del_sel;
+> +	bool legacy_otapdly;
+> +	int otap_del_sel[11];
+>  	int trm_icp;
+>  	int drv_strength;
+>  	bool dll_on;
+> @@ -98,11 +99,34 @@ struct sdhci_am654_driver_data {
+>  #define DLL_PRESENT	(1 << 3)
+>  };
+>  
+> +struct timing_data {
+> +	const char *binding;
+> +	u32 capability;
 > +};
 > +
-> +static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
-> +                               struct platform_device *pdev)
+> +static const struct timing_data td[] = {
+> +	[MMC_TIMING_LEGACY] = {"ti,otap-del-sel-legacy", 0},
+> +	[MMC_TIMING_MMC_HS] = {"ti,otap-del-sel-mmc-hs", MMC_CAP_MMC_HIGHSPEED},
+> +	[MMC_TIMING_SD_HS]  = {"ti,otap-del-sel-sd-hs", MMC_CAP_SD_HIGHSPEED},
+> +	[MMC_TIMING_UHS_SDR12] = {"ti,otap-del-sel-sdr12", MMC_CAP_UHS_SDR12},
+> +	[MMC_TIMING_UHS_SDR25] = {"ti,otap-del-sel-sdr25", MMC_CAP_UHS_SDR25},
+> +	[MMC_TIMING_UHS_SDR50] = {"ti,otap-del-sel-sdr50", MMC_CAP_UHS_SDR50},
+> +	[MMC_TIMING_UHS_SDR104] = {"ti,otap-del-sel-sdr104",
+> +				   MMC_CAP_UHS_SDR104},
+> +	[MMC_TIMING_UHS_DDR50] = {"ti,otap-del-sel-ddr50", MMC_CAP_UHS_DDR50},
+> +	[MMC_TIMING_MMC_DDR52] = {"ti,otap-del-sel-ddr52", MMC_CAP_DDR},
+> +	[MMC_TIMING_MMC_HS200] = {"ti,otap-del-sel-hs200", MMC_CAP2_HS200},
+> +	[MMC_TIMING_MMC_HS400] = {"ti,otap-del-sel-hs400", MMC_CAP2_HS400},
+> +};
+> +
+>  static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +	unsigned char timing = host->mmc->ios.timing;
+>  	int sel50, sel100, freqsel;
+> +	u32 otap_del_sel;
+> +	u32 otap_del_ena;
+>  	u32 mask, val;
+>  	int ret;
+>  
+> @@ -116,22 +140,29 @@ static void sdhci_am654_set_clock(struct sdhci_host *host, unsigned int clock)
+>  
+>  	if (clock > CLOCK_TOO_SLOW_HZ) {
+>  		/* Setup DLL Output TAP delay */
+> +		if (sdhci_am654->legacy_otapdly)
+> +			otap_del_sel = sdhci_am654->otap_del_sel[0];
+> +		else
+> +			otap_del_sel = sdhci_am654->otap_del_sel[timing];
+> +
+> +		otap_del_ena = (timing > MMC_TIMING_UHS_SDR25) ? 1 : 0;
+> +
+>  		mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
+> -		val = (1 << OTAPDLYENA_SHIFT) |
+> -		      (sdhci_am654->otap_del_sel << OTAPDLYSEL_SHIFT);
+> -		regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, val);
+> +		val = (otap_del_ena << OTAPDLYENA_SHIFT) |
+> +		      (otap_del_sel << OTAPDLYSEL_SHIFT);
+> +
+>  		/* Write to STRBSEL for HS400 speed mode */
+> -		if (host->mmc->ios.timing == MMC_TIMING_MMC_HS400) {
+> +		if (timing == MMC_TIMING_MMC_HS400) {
+>  			if (sdhci_am654->flags & STRBSEL_4_BIT)
+> -				mask = STRBSEL_4BIT_MASK;
+> +				mask |= STRBSEL_4BIT_MASK;
+>  			else
+> -				mask = STRBSEL_8BIT_MASK;
+> +				mask |= STRBSEL_8BIT_MASK;
+>  
+> -			regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask,
+> -					   sdhci_am654->strb_sel <<
+> -					   STRBSEL_SHIFT);
+> +			val |= sdhci_am654->strb_sel << STRBSEL_SHIFT;
+>  		}
+>  
+> +		regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, val);
+> +
+>  		if (sdhci_am654->flags & FREQSEL_2_BIT) {
+>  			switch (clock) {
+>  			case 200000000:
+> @@ -198,11 +229,19 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> -	int val, mask;
+> +	unsigned char timing = host->mmc->ios.timing;
+> +	u32 otap_del_sel;
+> +	u32 mask, val;
+> +
+> +	/* Setup DLL Output TAP delay */
+> +	if (sdhci_am654->legacy_otapdly)
+> +		otap_del_sel = sdhci_am654->otap_del_sel[0];
+> +	else
+> +		otap_del_sel = sdhci_am654->otap_del_sel[timing];
+>  
+>  	mask = OTAPDLYENA_MASK | OTAPDLYSEL_MASK;
+> -	val = (1 << OTAPDLYENA_SHIFT) |
+> -	      (sdhci_am654->otap_del_sel << OTAPDLYSEL_SHIFT);
+> +	val = (0x1 << OTAPDLYENA_SHIFT) |
+> +	      (otap_del_sel << OTAPDLYSEL_SHIFT);
+>  	regmap_update_bits(sdhci_am654->base, PHY_CTRL4, mask, val);
+>  
+>  	sdhci_set_clock(host, clock);
+> @@ -371,6 +410,55 @@ static int sdhci_am654_cqe_add_host(struct sdhci_host *host)
+>  	return ret;
+>  }
+>  
+> +static int sdhci_am654_get_otap_delay(struct sdhci_host *host,
+> +				      struct sdhci_am654_data *sdhci_am654)
 > +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +       struct cqhci_host *cq_host;
-> +       bool dma64;
-> +       u32 cqcfg;
-> +       int ret;
+> +	struct device *dev = mmc_dev(host->mmc);
+> +	int i;
+> +	int ret;
 > +
-> +       /*
-> +        * When CQE is halted, SDHC operates only on 16byte ADMA descriptors.
-> +        * So ensure ADMA table is allocated for 16byte descriptors.
-> +        */
-> +       if (host->caps & SDHCI_CAN_64BIT)
-> +               host->alloc_desc_sz = 16;
+> +	ret = device_property_read_u32(dev, td[MMC_TIMING_LEGACY].binding,
+> +				 &sdhci_am654->otap_del_sel[MMC_TIMING_LEGACY]);
+> +	if (ret) {
+> +		/*
+> +		 * ti,otap-del-sel-legacy is mandatory, look for old binding
+> +		 * if not found.
+> +		 */
+> +		ret = device_property_read_u32(dev, "ti,otap-del-sel",
+> +					       &sdhci_am654->otap_del_sel[0]);
+> +		if (ret) {
+> +			dev_err(dev, "Couldn't find otap-del-sel\n");
 > +
-> +       ret = sdhci_setup_host(host);
-> +       if (ret)
-> +               return ret;
+> +			return ret;
+> +		}
 > +
-> +       cq_host = cqhci_pltfm_init(pdev);
-> +       if (IS_ERR(cq_host)) {
-> +               ret = PTR_ERR(cq_host);
-> +               dev_err(&pdev->dev, "cqhci-pltfm init: failed: %d\n", ret);
-> +               goto cleanup;
-> +       }
+> +		dev_info(dev, "Using legacy binding ti,otap-del-sel\n");
+> +		sdhci_am654->legacy_otapdly = true;
 > +
-> +       msm_host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-> +       cq_host->ops = &sdhci_msm_cqhci_ops;
+> +		return 0;
+> +	}
 > +
-> +       dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> +	for (i = MMC_TIMING_MMC_HS; i <= MMC_TIMING_MMC_HS400; i++) {
 > +
-> +       ret = cqhci_init(cq_host, host->mmc, dma64);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "%s: CQE init: failed (%d)\n",
-> +                               mmc_hostname(host->mmc), ret);
-> +               goto cleanup;
-> +       }
+> +		ret = device_property_read_u32(dev, td[i].binding,
+> +					       &sdhci_am654->otap_del_sel[i]);
+> +		if (ret) {
+> +			dev_dbg(dev, "Couldn't find %s\n",
+> +				td[i].binding);
+> +			/*
+> +			 * Remove the corresponding capability
+> +			 * if an otap-del-sel value is not found
+> +			 */
+> +			if (i <= MMC_TIMING_MMC_DDR52)
+> +				host->mmc->caps &= ~td[i].capability;
+> +			else
+> +				host->mmc->caps2 &= ~td[i].capability;
+> +		}
+> +	}
 > +
-> +       /* Disable cqe reset due to cqe enable signal */
-> +       cqcfg = cqhci_readl(cq_host, CQHCI_VENDOR_CFG1);
-> +       cqcfg |= CQHCI_VENDOR_DIS_RST_ON_CQ_EN;
-> +       cqhci_writel(cq_host, cqcfg, CQHCI_VENDOR_CFG1);
-> +
-> +       /*
-> +        * SDHC expects 12byte ADMA descriptors till CQE is enabled.
-> +        * So limit desc_sz to 12 so that the data commands that are sent
-> +        * during card initialization (before CQE gets enabled) would
-> +        * get executed without any issues.
-> +        */
-> +       if (host->flags & SDHCI_USE_64_BIT_DMA)
-> +               host->desc_sz = 12;
-> +
-> +       ret = __sdhci_add_host(host);
-> +       if (ret)
-> +               goto cleanup;
-> +
-> +       dev_info(&pdev->dev, "%s: CQE init: success\n",
-> +                       mmc_hostname(host->mmc));
-> +       return ret;
-> +
-> +cleanup:
-> +       sdhci_cleanup_host(host);
-> +       return ret;
+> +	return 0;
 > +}
 > +
->  /*
->   * Platform specific register write functions. This is so that, if any
->   * register write needs to be followed up by platform specific actions,
-> @@ -1731,6 +1857,7 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->         .set_uhs_signaling = sdhci_msm_set_uhs_signaling,
->         .write_w = sdhci_msm_writew,
->         .write_b = sdhci_msm_writeb,
-> +       .irq    = sdhci_msm_cqe_irq,
->  };
->
->  static const struct sdhci_pltfm_data sdhci_msm_pdata = {
-> @@ -1754,6 +1881,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         u8 core_major;
->         const struct sdhci_msm_offset *msm_offset;
->         const struct sdhci_msm_variant_info *var_info;
-> +       struct device_node *node = pdev->dev.of_node;
->
->         host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
->         if (IS_ERR(host))
-> @@ -1952,7 +2080,10 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         pm_runtime_use_autosuspend(&pdev->dev);
->
->         host->mmc_host_ops.execute_tuning = sdhci_msm_execute_tuning;
-> -       ret = sdhci_add_host(host);
-> +       if (of_property_read_bool(node, "supports-cqe"))
-> +               ret = sdhci_msm_cqe_add_host(host, pdev);
-> +       else
-> +               ret = sdhci_add_host(host);
->         if (ret)
->                 goto pm_runtime_disable;
->         sdhci_msm_set_regulator_caps(msm_host);
-> --
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+>  static int sdhci_am654_init(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -419,6 +507,10 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>  	if (ret)
+>  		goto err_cleanup_host;
+>  
+> +	ret = sdhci_am654_get_otap_delay(host, sdhci_am654);
+> +	if (ret)
+> +		goto err_cleanup_host;
+> +
+>  	ret = __sdhci_add_host(host);
+>  	if (ret)
+>  		goto err_cleanup_host;
+> @@ -437,11 +529,6 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>  	int drv_strength;
+>  	int ret;
+>  
+> -	ret = device_property_read_u32(dev, "ti,otap-del-sel",
+> -				       &sdhci_am654->otap_del_sel);
+> -	if (ret)
+> -		return ret;
+> -
+>  	if (sdhci_am654->flags & DLL_PRESENT) {
+>  		ret = device_property_read_u32(dev, "ti,trm-icp",
+>  					       &sdhci_am654->trm_icp);
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index ba703384bea0..a22a10456c62 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -322,6 +322,8 @@ struct mmc_host {
+>  #define MMC_CAP_3_3V_DDR	(1 << 11)	/* Host supports eMMC DDR 3.3V */
+>  #define MMC_CAP_1_8V_DDR	(1 << 12)	/* Host supports eMMC DDR 1.8V */
+>  #define MMC_CAP_1_2V_DDR	(1 << 13)	/* Host supports eMMC DDR 1.2V */
+> +#define MMC_CAP_DDR		(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR | \
+> +				 MMC_CAP_1_2V_DDR)
+>  #define MMC_CAP_POWER_OFF_CARD	(1 << 14)	/* Can power off after boot */
+>  #define MMC_CAP_BUS_WIDTH_TEST	(1 << 15)	/* CMD14/CMD19 bus width ok */
+>  #define MMC_CAP_UHS_SDR12	(1 << 16)	/* Host supports UHS SDR12 mode */
+> 
+
