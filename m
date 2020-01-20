@@ -2,88 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F89E1421F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 928C2142204
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:34:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbgATDZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 22:25:23 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:47081 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728949AbgATDZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 22:25:22 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y8so12541191pll.13;
-        Sun, 19 Jan 2020 19:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=gGTltzfrdckJmMP0SmbR/3670dsenUvBc1hdDm8j+Co=;
-        b=PlzVDVIVTYL+JvwV8Jivonm8IKSry0nGRLpyb41XKV64sw14IXqFXP0KBNUvAUasmh
-         sH6hrK+/CndaAbTha23UoL6t4mg94f3dyLgm1wYq5MnfbNPt5RVhOd+DHoF/2FQ6uYd2
-         PIL5rCiztacJ2sxELOkNZmdaIxcgrwxrIieV53Mmpn7MzoRZ96uJUBxITxWew+TpJ8Jv
-         nF9EbTRrzV3phT6GGptkpVktkihXTGRcC92Vw5J/W6a76cv5AVmsKAxxs781FvyRsh7W
-         /Oyqo+v4tu6se3dWBBK4DeLH1OdRB/Y9+X6SbHaj48PfIn5oL7umCuweerN3mXbK9juH
-         dGHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gGTltzfrdckJmMP0SmbR/3670dsenUvBc1hdDm8j+Co=;
-        b=UPneMEwa+X8cIyYf6ODjS+PWyVaBjCvZadDg+HUYEefQk2Yvzlr4myLWd/M4QLVEmR
-         8xtM4eS1qsKZ+BeaEMrYiK8sPGSLZUZQoI1NPPm2JzmdfKe1M3mIF4XH88KIOJikjjav
-         V0cjng2yz4ULrTV6EvQnzturkcC/JI82B4/2duQ4rT0Kg2MmwU8jvHTl61sQsw0ZF0ij
-         9kXLk6tH1AytHjU1XW8RIm3NdGCi7YUScHpLdd/fkoL/v+mFIiQFB+2WdwXcYdMHq+b9
-         9eOi+jGRI13Rfn9QIJ9YWWQRVvZxJyonF5n/uz0Epjg+F7gQenMPpTL+NNC/xgmJM33G
-         UZfw==
-X-Gm-Message-State: APjAAAWG9frmB3cmqkjZgjtIB1C2HC09z/nPHpLDweshksyi/AU/mkkD
-        it5QXqFTJ8kwLk6mTzh2ID0=
-X-Google-Smtp-Source: APXvYqxkf/BUOusDpiYDUNsBIuxzh5pWYB7+AVHM5lunzVYC7OtQorC1S2H37IiMbr2g1HMudSsKIQ==
-X-Received: by 2002:a17:902:bd96:: with SMTP id q22mr12244457pls.318.1579490722243;
-        Sun, 19 Jan 2020 19:25:22 -0800 (PST)
-Received: from ZB-PF11LQ25.360buyad.local ([103.90.76.242])
-        by smtp.gmail.com with ESMTPSA id k44sm491901pjb.20.2020.01.19.19.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2020 19:25:21 -0800 (PST)
-From:   "xiaofeng.yan" <xiaofeng.yan2012@gmail.com>
-To:     arvid.brodin@alten.se, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     xiaofeng.yan2012@gmail.com, yanxiaofeng7@jd.com
-Subject: [PATCH] hsr: Fix a compilation error
-Date:   Mon, 20 Jan 2020 11:26:39 +0800
-Message-Id: <20200120032639.2963-1-xiaofeng.yan2012@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729145AbgATDeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 22:34:13 -0500
+Received: from ozlabs.org ([203.11.71.1]:37193 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729011AbgATDeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 22:34:12 -0500
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 481HMj02PMz9sRK; Mon, 20 Jan 2020 14:34:08 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1579491249; bh=Bx1QENbI/taNJYozRF14LNd8JjoLRwCSpGh5bRXaoZc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BalvDW2whNPsvCmtISkbOhDMpZauUgvHl09Uaty2WElwJ6Cza+b4DeHGcnUNwOLV3
+         g6DRm1DMzCI/vBJ1PlZfghThTKRiDTXm/9cEYl1gDtPWzG4q+29NKYsabkOFnLKJZW
+         pu7HnKn8KFD4ACQ0z1wJAaZ09+iERSqPxVmZuqJ9tVnb3xT4AbRscYT7AxP5jHVWa0
+         3Gb0VAa6x9zDA27RPpRqnF9yfWp6Q9n39W6+HvqOjYYy/h9z34BptPYaZs8RzgPLLz
+         x8CTvY8aTo7+f8KU7v7y459Sv+srWbj2FDlNPNQXb3Ix1Y7vabAiDRVuXNEoR2XexB
+         QTFYCAbB5+mEg==
+Date:   Mon, 20 Jan 2020 13:57:16 +1100
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [PATCH v2 01/45] KVM: PPC: Book3S HV: Uninit vCPU if vcore
+ creation fails
+Message-ID: <20200120025716.GA14307@blackberry>
+References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+ <20191218215530.2280-2-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218215530.2280-2-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "xiaofeng.yan" <yanxiaofeng7@jd.com>
+On Wed, Dec 18, 2019 at 01:54:46PM -0800, Sean Christopherson wrote:
+> Call kvm_vcpu_uninit() if vcore creation fails to avoid leaking any
+> resources allocated by kvm_vcpu_init(), i.e. the vcpu->run page.
+> 
+> Fixes: 371fefd6f2dc4 ("KVM: PPC: Allow book3s_hv guests to use SMT processor modes")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/powerpc/kvm/book3s_hv.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index dc53578193ee..d07d2f5273e5 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -2368,7 +2368,7 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
+>  	mutex_unlock(&kvm->lock);
+>  
+>  	if (!vcore)
+> -		goto free_vcpu;
+> +		goto uninit_vcpu;
+>  
+>  	spin_lock(&vcore->lock);
+>  	++vcore->num_threads;
+> @@ -2385,6 +2385,8 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_hv(struct kvm *kvm,
+>  
+>  	return vcpu;
+>  
+> +uninit_vcpu:
+> +	kvm_vcpu_uninit(vcpu);
+>  free_vcpu:
+>  	kmem_cache_free(kvm_vcpu_cache, vcpu);
+>  out:
+> -- 
+> 2.24.1
 
-A compliation error happen when building branch 5.5-rc7
+Looks correct.
 
-In file included from net/hsr/hsr_main.c:12:0:
-net/hsr/hsr_main.h:194:20: error: two or more data types in declaration specifiers
- static inline void void hsr_debugfs_rename(struct net_device *dev)
-
-So Removed one void.
-
-Signed-off-by: xiaofeng.yan <yanxiaofeng7@jd.com>
----
- net/hsr/hsr_main.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/hsr/hsr_main.h b/net/hsr/hsr_main.h
-index d40de84..754d84b 100644
---- a/net/hsr/hsr_main.h
-+++ b/net/hsr/hsr_main.h
-@@ -191,7 +191,7 @@ static inline u16 hsr_get_skb_sequence_nr(struct sk_buff *skb)
- void hsr_debugfs_create_root(void);
- void hsr_debugfs_remove_root(void);
- #else
--static inline void void hsr_debugfs_rename(struct net_device *dev)
-+static inline void hsr_debugfs_rename(struct net_device *dev)
- {
- }
- static inline void hsr_debugfs_init(struct hsr_priv *priv,
--- 
-1.8.3.1
-
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
