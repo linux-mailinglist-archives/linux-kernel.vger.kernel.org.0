@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 011F5142AFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98894142AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbgATMgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:36:23 -0500
-Received: from mga05.intel.com ([192.55.52.43]:63518 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbgATMgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:36:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 04:36:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
-   d="scan'208";a="228378979"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga006.jf.intel.com with ESMTP; 20 Jan 2020 04:36:10 -0800
-Date:   Mon, 20 Jan 2020 20:36:21 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, rientjes@google.com
-Subject: Re: [Patch v2 4/4] mm/page_alloc.c: extract commom part to check page
-Message-ID: <20200120123621.GE18028@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
- <20200120030415.15925-5-richardw.yang@linux.intel.com>
- <3987ae0f-cbfc-1066-c78f-c5c6efc570ed@arm.com>
+        id S1727048AbgATMf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:35:59 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56054 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgATMf7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:35:59 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KCZsje062199;
+        Mon, 20 Jan 2020 06:35:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579523754;
+        bh=m+zTuRnfuAntSFFi0NvmMn8KC9SHkTO7IO7+B4/ZUJo=;
+        h=From:To:CC:Subject:Date;
+        b=ahlzDhBQT2oRSfOHOMYboJUmnydPvx2wVToARkTASScwgTaMyRTz3SVZRC0Nyxh6R
+         fHDHdURuwYyiweARqvkuIIHHgFg5KvWG+uhGo88nGi8nO7oMVfcpzv91Hbg+OdAa94
+         tISmyuy/2sZEQFLJIBtzKv1WBzXIQUlNdUtDeSbE=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KCZsFA113501
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Jan 2020 06:35:54 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
+ Jan 2020 06:35:53 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 20 Jan 2020 06:35:53 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KCZp1f027202;
+        Mon, 20 Jan 2020 06:35:51 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <mchehab@kernel.org>, <rashanmu@gmail.com>, <geert@linux-m68k.org>
+CC:     <vkoul@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel()
+Date:   Mon, 20 Jan 2020 14:36:31 +0200
+Message-ID: <20200120123631.24799-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3987ae0f-cbfc-1066-c78f-c5c6efc570ed@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 12:13:38PM +0530, Anshuman Khandual wrote:
->
->
->On 01/20/2020 08:34 AM, Wei Yang wrote:
->> During free and new page, we did some check on the status of page
->> struct. There is some common part, just extract them.
->
->Makes sense.
->
->> 
->> Besides this, this patch also rename two functions to keep the name
->> convention, since free_pages_check_bad/free_pages_check are counterparts
->> of check_new_page_bad/check_new_page.
->
->This probably should be in a different patch.
->
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
-In v1, they are in two separate patches. While David Suggest to merge it.
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
 
-I am not sure whether my understanding is correct.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Hi,
 
->> 
->> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->> ---
->>  mm/page_alloc.c | 49 ++++++++++++++++++++++++-------------------------
->>  1 file changed, 24 insertions(+), 25 deletions(-)
->> 
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index a7b793c739fc..7f23cc836f90 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1025,36 +1025,44 @@ static inline bool page_expected_state(struct page *page,
->>  	return true;
->>  }
->>  
->> -static void free_pages_check_bad(struct page *page)
->> +static inline int __check_page(struct page *page, int nr,
->> +				const char **bad_reason)
->
->free and new page checks are in and out of the buddy allocator, hence
->this common factored function should have a more relevant name.
+Changes since v1:
+- Do not print error in case of EPROBE_DEFER
+- Added Reviewed-by from Geert
 
-Hmm... naming is really difficult. Do you have any suggestion?
+Regards,
+Peter
 
+ drivers/media/platform/rcar_drif.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+index 0f267a237b42..33251f4bf181 100644
+--- a/drivers/media/platform/rcar_drif.c
++++ b/drivers/media/platform/rcar_drif.c
+@@ -275,10 +275,13 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+ 	for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
+ 		struct rcar_drif *ch = sdr->ch[i];
+ 
+-		ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
+-		if (!ch->dmach) {
+-			rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
+-			ret = -ENODEV;
++		ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
++		if (IS_ERR(ch->dmach)) {
++			ret = PTR_ERR(ch->dmach);
++			if (ret != -EPROBE_DEFER)
++				rdrif_err(sdr,
++					  "ch%u: dma channel req failed (%d)\n",
++					  i, ret);
+ 			goto dmach_error;
+ 		}
+ 
 -- 
-Wei Yang
-Help you, Help me
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
