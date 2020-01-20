@@ -2,101 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C32631433E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:23:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F9AE1433E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 23:25:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbgATWXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 17:23:41 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44068 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbgATWXl (ORCPT
+        id S1728655AbgATWZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 17:25:46 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46693 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgATWZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 17:23:41 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 0FECF27E71;
-        Mon, 20 Jan 2020 17:23:36 -0500 (EST)
-Date:   Tue, 21 Jan 2020 09:23:34 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     "David S. Miller" <davem@davemloft.net>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Chris Zankel <chris@zankel.net>,
-        Laurent Vivier <laurent@vivier.eu>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 04/19] net/sonic: Add mutual exclusion for accessing
- shared state
-In-Reply-To: <CAMuHMdWvJ975X7zz1C=1Sq=Yuf9nYY1zxWaJ=XCXJukfP=nygg@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1.2001210914150.8@nippy.intranet>
-References: <cover.1579474569.git.fthain@telegraphics.com.au> <b47662493a776811d4d457e5a75e18a7169aed23.1579474569.git.fthain@telegraphics.com.au> <CAMuHMdWvJ975X7zz1C=1Sq=Yuf9nYY1zxWaJ=XCXJukfP=nygg@mail.gmail.com>
+        Mon, 20 Jan 2020 17:25:46 -0500
+Received: by mail-oi1-f194.google.com with SMTP id 13so750971oij.13;
+        Mon, 20 Jan 2020 14:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iTPep2W7UwVeIZMm8WjEHSoy+SW5Y3J2SshdpaxNQvs=;
+        b=cyEOldZvI1XX0p3OtEkJp8j0rHACG/6fsXC57nk04r4DAFsobmen2NeoRyoMGfN17C
+         4/H952OLxM0HnFoaY3rLbUWbhZ2uirP1ulrzRrR68vUE8RWcm7ntKnUlaJ5mzNJjr6wa
+         ZTBqHMux/Si62iIXrhdCzsFKu0fdPgWp2hFRThl27EBF67nExLBTzU3lO3CoAXQz6F3f
+         T5qU5NOmgckqy8MeqJoEPUNSlW0zYDC+Ku+vy5l1RqtV9Rz5A1H2b84Bi4gcd6Mzxp+n
+         Vbgi5cVOAUURsaB7OCfcTJB/VjS2DhH5n1FzNDQV06Qrc3FR3nMQpaiCQHjUVt/NTFrY
+         A4Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iTPep2W7UwVeIZMm8WjEHSoy+SW5Y3J2SshdpaxNQvs=;
+        b=Lj9WKHIWCQmS2KU1BTYpsipp8VBXRBXQpbifdPL6MfUw4MHn7UPPXiVJAKKrNXaqGY
+         er26NwWLinri77NTSbvvHaxTERXd/gGqQA5msSfI60ho5ru9cpRWdkB33uXLdTnPERiM
+         IRLDXoE6UO79tPF5Ky7Oy4qQEkqcpzWAt8OLhCMUpz9RCsoRC08EqVKBfh1BtLUxJax4
+         wxgX84p2M2QJ23A9Lf4eRuooYWuROmPsnN20gCr8WEfRmtAPLzmT5v07aYqv+me1Zi9y
+         1yK7kdLuh4vNSgYIkJ7ZWvheBSVTjR6rXNWqMtP+hDb80t3ptPjytZXk8TVRNVwkdgo7
+         0fDA==
+X-Gm-Message-State: APjAAAVkoUWLSqSOF6pKQHW6DC+1rGwv9I0h82Fu3vri6TpNw8lXKrSF
+        VehrkO4pqDxKwkCbfB/fnqt8z/Db+AfXYuPBCunQItli
+X-Google-Smtp-Source: APXvYqwq0b2pMVQJOfgCMPHaSxATrV3Ufremupr1l64dVBNqdAL+wUSdN7MtzrC/KTaQiRiNedf6zR6k9Dg75LGTZuQ=
+X-Received: by 2002:aca:3cd7:: with SMTP id j206mr822744oia.142.1579559145464;
+ Mon, 20 Jan 2020 14:25:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20200110221500.19678-1-xiyou.wangcong@gmail.com> <20200120132812.384274d3@gandalf.local.home>
+In-Reply-To: <20200120132812.384274d3@gandalf.local.home>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 20 Jan 2020 14:25:33 -0800
+Message-ID: <CAM_iQpX6vGB5hczhJDOCY-Z-8At+rYEAqexryXZd_Tnd8km3Xw@mail.gmail.com>
+Subject: Re: [PATCH] block: introduce block_rq_error tracepoint
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020, Geert Uytterhoeven wrote:
+On Mon, Jan 20, 2020 at 10:28 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> The ring buffer will hold a pointer to a location that may no longer
+> exist, and cause a fault when read. Also, this makes the user space
+> utilities trace-cmd and perf useless to know what the name is, as they
+> read the raw ring buffer data directly.
 
-> Hi Finn,
-> 
-> On Mon, Jan 20, 2020 at 12:19 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> > The netif_stop_queue() call in sonic_send_packet() races with the
-> > netif_wake_queue() call in sonic_interrupt(). This causes issues
-> > like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
-> > Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
-> > Update a comment to clarify the synchronization properties.
-> >
-> > Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> 
-> Thanks for your patch!
-> 
-> > --- a/drivers/net/ethernet/natsemi/sonic.c
-> > +++ b/drivers/net/ethernet/natsemi/sonic.c
-> > @@ -242,7 +242,7 @@ static void sonic_tx_timeout(struct net_device *dev)
-> >   *   wake the tx queue
-> >   * Concurrently with all of this, the SONIC is potentially writing to
-> >   * the status flags of the TDs.
-> > - * Until some mutual exclusion is added, this code will not work with SMP. However,
-> > + * A spin lock is needed to make this work on SMP platforms. However,
-> >   * MIPS Jazz machines and m68k Macs were all uni-processor machines.
-> >   */
-> >
-> > @@ -252,6 +252,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
-> >         dma_addr_t laddr;
-> >         int length;
-> >         int entry;
-> > +       unsigned long flags;
-> >
-> >         netif_dbg(lp, tx_queued, dev, "%s: skb=%p\n", __func__, skb);
-> >
-> > @@ -273,6 +274,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
-> >                 return NETDEV_TX_OK;
-> >         }
-> >
-> > +       local_irq_save(flags);
-> > +
-> 
-> Wouldn't it be better to use a spinlock instead?
+Yeah, my bad, I will send an updated patch.
 
-Yes, better in the sense of "more portable". And worse in the sense of 
-"needless complexity".
-
-> It looks like all currently supported platforms (Mac, Jazz, and XT2000) 
-> do no support SMP, but I'm not 100% sure about the latter. And this 
-> generic sonic.c core may end up being used on other platforms that do 
-> support SMP.
-> 
-
-I'm not sure about XT2000 either. It would be surprising if they 
-overlooked this. But I'll add the spinlock, just in case.
-
-Thanks for your review.
-
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> 
+Thanks.
