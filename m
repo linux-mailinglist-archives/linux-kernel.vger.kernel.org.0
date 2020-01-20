@@ -2,95 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE0914220F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A73142200
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 04:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbgATDeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 Jan 2020 22:34:16 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:34613 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729015AbgATDeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 Jan 2020 22:34:12 -0500
-Received: by ozlabs.org (Postfix, from userid 1003)
-        id 481HMj2M00z9sRQ; Mon, 20 Jan 2020 14:34:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1579491249; bh=6J0yPKo/kn+WbG/Jx05ZU6+6m/AlQNEvaTssDj+re3g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J+bOs+MonJV9E7pI5lPc45XM0RCY2NjfQhio5m6/DttgJzWYQ3HNgH1xNUIV476t1
-         ts+G5ufVu2nlLxna51nc4RLV4i+BMxNIj8OtXWtlekVH++JUnEo50tNL+EcDdMfnkK
-         0tKNeAH0zTIwzwjt/ddygd75H6MloM9kMawF09dx8px7N8Z19MLfg0DZDiMcl7Jxj9
-         O7BDLwTM/8mWG+Mi5fGu3SEx+TpDcDN2c+ViWcUIssgNg+IQQZy1GA8JrmdTUkDUam
-         B5LzqGm2UwjQc0vxq2SUD2N7ikcbM2cnwWO5UhkiGCsdd5z9MQlNdr+cIMYXi//Jw1
-         JWsmSqN7nCbMg==
-Date:   Mon, 20 Jan 2020 14:00:41 +1100
-From:   Paul Mackerras <paulus@ozlabs.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kurz <groug@kaod.org>
-Subject: Re: [PATCH v2 02/45] KVM: PPC: Book3S PR: Free shared page if mmu
- initialization fails
-Message-ID: <20200120030041.GB14307@blackberry>
-References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
- <20191218215530.2280-3-sean.j.christopherson@intel.com>
+        id S1729078AbgATDcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 Jan 2020 22:32:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44572 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729011AbgATDcb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 Jan 2020 22:32:31 -0500
+Received: by mail-pg1-f193.google.com with SMTP id x7so14804873pgl.11;
+        Sun, 19 Jan 2020 19:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kaVyaqcx1+XyBwYscJJnTfM3SI5pH5G1DrO35gYdNN4=;
+        b=FoJD4gJL5PJkh212LMvylohSi2Pb6AWHmppyyaghq1/vQjhDr+LM984p7OCt0bSBJU
+         ZcLHbDukrD4zyoTRSkCJZWyqpp/pAT2VmDhseq1ttMG5TeMdfQVsuKt0CpjEY3plY4H/
+         KUF0zX8/wMbYUV+xaAHCfUH27nMPy+zL/sH/Nltm3atm3IpVSAfMR5ugoUuiSxZovJYb
+         qHnKPiLoNegSV9k9WmMIz8OHYUXJ8/rvWHfkntpqM4E+jrFBilAsqKdIihXVfZtdWA0q
+         u0b+swRvR4G8td2aTRGqdbYH+CLU1D+kZsdmG3x3ay9DZBlZA/miXsOFe9e6OMy5FkSo
+         Bdcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kaVyaqcx1+XyBwYscJJnTfM3SI5pH5G1DrO35gYdNN4=;
+        b=SU50LFMlaERkEimpW4tCvHiYUhzPIx5CPqNUHzWdUgi3O8GfA0CF2HLmnKyZSaVguB
+         vIC1H6rZzNbomS9fxXMHQdSNqMP3KLOMVc1gXYPD39SiajNggzKJdb9IKB7TD1fo4niv
+         fXsoF5ge5NFI2Ak01y1SD5ZBtPCT8Ew6Ga6tRrICtM5hmuj/lVfH8ZXi3fOON2/hxRz5
+         qZUPTBi2EHo3A7zupOAEzECn2CBgVe2QCU7p1uce6JzYS35ooajUzYX2jfupPA+2P+EJ
+         4BMCh5YS7iIPSrPohdUvXLvXaY6J2NgzQFL8wFkhBWH5QnpS0+8iGOcOftOCkZeiHxX1
+         LNwg==
+X-Gm-Message-State: APjAAAUAc3huAdwP8Yja/TbTyS39TwJJSdOIytAltTTe1Zox7Rf0iR3l
+        1/Q+1fF3//6B9DDqSv54gN2gBKA6
+X-Google-Smtp-Source: APXvYqySOgkid6AmSPFPjXJEhZ9w/R1sZ3Uc8tyKbT54CuTFc0wlYPuZ3eSoA/jw9fdxcpQkz9pBTA==
+X-Received: by 2002:a63:1204:: with SMTP id h4mr56608273pgl.288.1579491150642;
+        Sun, 19 Jan 2020 19:32:30 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id d4sm14746798pjz.12.2020.01.19.19.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jan 2020 19:32:29 -0800 (PST)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+X-Google-Original-From: Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Faiz Abbas <faiz_abbas@ti.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        linux-mmc@vger.kernel.org, clang-built-linux@googlegroups.com,
+        linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH v2] mmc: sdhci: fix an issue of mixing different types
+Date:   Mon, 20 Jan 2020 11:32:23 +0800
+Message-Id: <20200120033223.897-1-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200120031023.32482-1-zhang.chunyan@linaro.org>
+References: <20200120031023.32482-1-zhang.chunyan@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218215530.2280-3-sean.j.christopherson@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 01:54:47PM -0800, Sean Christopherson wrote:
-> Explicitly free the shared page if kvmppc_mmu_init() fails during
-> kvmppc_core_vcpu_create(), as the page is freed only in
-> kvmppc_core_vcpu_free(), which is not reached via kvm_vcpu_uninit().
-> 
-> Fixes: 96bc451a15329 ("KVM: PPC: Introduce shared page")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Greg Kurz <groug@kaod.org>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/powerpc/kvm/book3s_pr.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
-> index ce4fcf76e53e..26ca62b6d773 100644
-> --- a/arch/powerpc/kvm/book3s_pr.c
-> +++ b/arch/powerpc/kvm/book3s_pr.c
-> @@ -1806,10 +1806,12 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_pr(struct kvm *kvm,
->  
->  	err = kvmppc_mmu_init(vcpu);
->  	if (err < 0)
-> -		goto uninit_vcpu;
-> +		goto free_shared_page;
->  
->  	return vcpu;
->  
-> +free_shared_page:
-> +	free_page((unsigned long)vcpu->arch.shared);
->  uninit_vcpu:
->  	kvm_vcpu_uninit(vcpu);
->  free_shadow_vcpu:
-> -- 
-> 2.24.1
+Fix an issue reported by sparse, since mixed types of parameters are
+used on calling dmaengine_prep_slave_sg().
 
-Looks correct.
+Fixes: 36e1da441fec (mmc: sdhci: add support for using external DMA devices)
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+Changes from v1:
+* address comments from Nathan Chancellor
+- define a new variable to avoid type conversions.
+---
+ drivers/mmc/host/sdhci.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Acked-by: Paul Mackerras <paulus@ozlabs.org>
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 30b5a624b50e..f9e0b5f2c692 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1201,6 +1201,7 @@ static int sdhci_external_dma_setup(struct sdhci_host *host,
+ 				    struct mmc_command *cmd)
+ {
+ 	int ret, i;
++	enum dma_transfer_direction dir;
+ 	struct dma_async_tx_descriptor *desc;
+ 	struct mmc_data *data = cmd->data;
+ 	struct dma_chan *chan;
+@@ -1234,8 +1235,8 @@ static int sdhci_external_dma_setup(struct sdhci_host *host,
+ 	if (sg_cnt <= 0)
+ 		return -EINVAL;
+ 
+-	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+-				       mmc_get_dma_dir(data),
++	dir = data->flags & MMC_DATA_WRITE ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
++	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len, dir,
+ 				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!desc)
+ 		return -EINVAL;
+-- 
+2.20.1
+
