@@ -2,93 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A82B142879
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00167142883
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgATKua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 05:50:30 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33164 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbgATKu3 (ORCPT
+        id S1727047AbgATKvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:51:14 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45939 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgATKvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:50:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OCp9nsRDYcWQsrV3GjryqLOSAJxrAWhH+tupDptDjZo=; b=G2Unp/Kt5L8sqcRcZviY2SFcr
-        YPso8Lk+HuRnFhCgRGPkqSajiuXbYlc/M+AW3gxjxO604q0mH71Suv+HduzqpTa+I4BavJ0yCV8fd
-        K9YZSh99KUPq0ix7i2+FrIiEOGQUplA/be98njgBOFTPSXJ7o54X4vNNsisZ6ePdPDlNHEKTznFVq
-        fqyUN7uFkkrXBcnBK5GwzKpvXA17gS+wT8hdp0WZWKQok8EDjyIk7YemEc+prQPVKKuE8/dklRCjY
-        EcpumKNUKaMqnBBC1+IrtgZJxcNscvU+1z8szaDfPYhnvQaE+bUotpT0VoPkcMoXrNhbr7dgKS7hT
-        vnAKfX2/g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40826)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1itUdT-0005bt-Vi; Mon, 20 Jan 2020 10:50:24 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1itUdQ-0002mK-U8; Mon, 20 Jan 2020 10:50:20 +0000
-Date:   Mon, 20 Jan 2020 10:50:20 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next] net: phy: Add basic support for Synopsys XPCS
- using a PHY driver
-Message-ID: <20200120105020.GB25745@shell.armlinux.org.uk>
-References: <4953fc69a26bee930bccdeb612f1ce740a4294df.1578921062.git.Jose.Abreu@synopsys.com>
- <20200113133845.GD11788@lunn.ch>
- <BN8PR12MB32666F34D45D7881BDD4CAB3D3350@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20200113141817.GN25745@shell.armlinux.org.uk>
- <BN8PR12MB3266EC7870338BA4A65E8A6CD3320@BN8PR12MB3266.namprd12.prod.outlook.com>
+        Mon, 20 Jan 2020 05:51:13 -0500
+Received: by mail-oi1-f194.google.com with SMTP id n16so28120739oie.12;
+        Mon, 20 Jan 2020 02:51:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uvHX7RkeGS1j3292t6lYP6xOMynSovwccmbxVM2lgsw=;
+        b=YJJeXw6ae7qgYqMitzMkrRdQUq6678B5XnQgKb/ZREeHQabqsvViNGCVCe2Cd0CbpB
+         vkUIlB+o+Ah+Vnrfrrakp/bsJodJD1YrNYwnReGQdoPXOdPPT5KiedYaLeMZuwx635Fn
+         c/Q/oZBsRrSa6WL3Jho1o/gy4/zL/4x44ZX+xKDbLvzpbmtSmYK5lDK/Do3KHPJUPBaH
+         yqZLHU63OMyjYkowR16M1/7Gcbwpv8AetwMJ0qJTKO31q/V9UIzkj/Z4d1FpOCs6Kr4s
+         IcBa+txrrmu71Sd56llLT4wFOha9QSJ5LxFi7n68nPXGU/08d7XGgu/6HPpmO3BKM2xa
+         99HQ==
+X-Gm-Message-State: APjAAAWZnXldiqx7hro8oaOENIw2xL1oxzn+8D7uaheiPVjrbeIlKKKo
+        F3iKCXXezOagHsj7RK3fHGyTX5gJ2YzE8+BMUeo=
+X-Google-Smtp-Source: APXvYqyKxm5Fxmfn34wBVirSiayi+wKFT6KoBe9Fd0oC618a+sBxaaTmyWk2Wq5mWaKcGGVoGFHx5+VXEDE0rH0qqjw=
+X-Received: by 2002:a05:6808:292:: with SMTP id z18mr11864654oic.131.1579517473071;
+ Mon, 20 Jan 2020 02:51:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN8PR12MB3266EC7870338BA4A65E8A6CD3320@BN8PR12MB3266.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200117153056.31363-1-geert+renesas@glider.be>
+ <d2b669e7-a5d4-20ec-5b54-103b71df7407@ti.com> <CAMuHMdVzQCWvH-LJ9ME5dRyafudZBHQLaJQzkSCPnughv_q2aA@mail.gmail.com>
+ <1cdc4f71-f365-8c9e-4634-408c59e6a3f9@ti.com>
+In-Reply-To: <1cdc4f71-f365-8c9e-4634-408c59e6a3f9@ti.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 20 Jan 2020 11:51:01 +0100
+Message-ID: <CAMuHMdU=-Eo29=DQmq96OegdYAvW7Vw9PpgNWSTfjDWVF5jd-A@mail.gmail.com>
+Subject: Re: [PATCH v2] dmaengine: Create symlinks between DMA channels and slaves
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        dmaengine@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 10:31:17AM +0000, Jose Abreu wrote:
-> From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-> Date: Jan/13/2020, 14:18:17 (UTC+00:00)
-> 
-> > I've recently suggested a patch to phylink to add a generic helper to
-> > read the state from a generic 802.3 clause 37 PCS, but I guess that
-> > won't be sufficient for an XPCS.  However, it should give some clues
-> > if you're intending to use phylink.
-> 
-> So, I think for my particular setup (that has no "real" PHY) we can have 
-> something like this in SW PoV:
-> 
-> stmmac -> xpcs -> SW-PHY / Fixed PHY
-> 
-> - stmmac + xpcs state would be handled by phylink (MAC side)
-> - SW-PHY / Fixed PHY state would be handled by phylink (PHY side)
-> 
-> This would need updates for Fixed PHY to support >1G speeds.
+Hi Peter,
 
-You don't want to do that if you have 1G SFPs.  Yes, you *can* do it
-and make it work, but you miss out completely on the fact that the
-link is supposed to be negotiated across the SFP link for 1G speeds,
-and then you're into the realms of having to provide users ways to
-edit the DT and reboot if the parameters at the link partner change.
+On Mon, Jan 20, 2020 at 11:16 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> On 20/01/2020 11.01, Geert Uytterhoeven wrote:
+> > On Fri, Jan 17, 2020 at 9:08 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> >> On 1/17/20 5:30 PM, Geert Uytterhoeven wrote:
+> >>> Currently it is not easy to find out which DMA channels are in use, and
+> >>> which slave devices are using which channels.
+> >>>
+> >>> Fix this by creating two symlinks between the DMA channel and the actual
+> >>> slave device when a channel is requested:
+> >>>   1. A "slave" symlink from DMA channel to slave device,
+> >>
+> >> Have you considered similar link name as on the slave device:
+> >> slave:<name>
+> >>
+> >> That way it would be easier to grasp which channel is used for what
+> >> purpose by only looking under /sys/class/dma/ and no need to check the
+> >> slave device.
+> >
+> > Would this really provide more information?
+> > The device name is already provided in the target of the symlink:
+> >
+> > root@koelsch:~# readlink
+> > /sys/devices/platform/soc/e6720000.dma-controller/dma/dma1chan2/slave
+> > ../../../ee140000.sd
+>
+> e6720000.dma-controller/dma/dma1chan2/slave -> ../../../ee140000.sd
+> e6720000.dma-controller/dma/dma1chan3/slave -> ../../../ee140000.sd
+>
+> It is hard to tell which one is the tx and RX channel without looking
+> under the ee140000.sd:
+>
+> ee140000.sd/dma:rx -> ../e6720000.dma-controller/dma/dma1chan3
+> ee140000.sd/dma:tx -> ../e6720000.dma-controller/dma/dma1chan2
 
-Please, avoid fixed-links with SFPs where possible, and let's
-implement things correctly.
+Oh, you meant the name of the channel, not the name of the device.
+My mistake.
+
+As this name is a property of the slave device, not of the DMA channel,
+I don't think it belongs under dma*chan*.
+
+> Another option would be to not have symlinks, but a debugfs file where
+> this information can be extracted and would only compiled if debugfs is
+> enabled.
+
+Like /proc/interrupts?
+That brings the complexity of traversing all channels etc.
+
+What do other people think?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
