@@ -2,186 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B698C142F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:06:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 893E5142F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbgATQG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:06:29 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42127 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbgATQG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:06:29 -0500
-Received: by mail-qk1-f196.google.com with SMTP id z14so30548920qkg.9
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rKBXxvKIRJE9r95Oq/vyPWMrKks8UEDi+Qo4dUocXJw=;
-        b=Baf6RJnN+FgpGw0uph9xwLD0Y+xAcJSaSvv3RdARcDa7LNpveANlU1k6FDswjvy2Xc
-         LObElRWDHMKUj3ZjRSNTBeO/htrBIYiKHweFN5P4tGQq8ToBhQbvCWcvJrSKxEPS3cBd
-         oHUw3dHvbBeOVXV8JvEvvJHoJixZ5NHOGHvztKvlXrnUFBej3ua1JqsCjxG+qkttVE8F
-         iRT1A16DFSmFPRw9dEtVOy/TAHOtJc7+TtiB8sAHFVcUtWX/WqYyo/TcgEJcEDcmRV2R
-         Rz0lHHDuPohMF0E/czlHX+sLN/V8zBqp2azUpf0GHBEpP5dOVwAoA58Zmf9LD/Oro79O
-         wE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rKBXxvKIRJE9r95Oq/vyPWMrKks8UEDi+Qo4dUocXJw=;
-        b=WfjsoDdL5V3I775MGHc8pSyNbjVtjXXBt9X+B4WVPYBPm2DiRckM2Ji7I7NEAaNPDv
-         DVR49rSLx8sufjy+nirP61mQWePkLtwHgdqPkPA38v5mOAEw1wZT5ce72sAS+Zx7QnT2
-         CoRZ3npAwOe34IYAbzqx2AXE0a27r3q4ymUy6rPuF19quHrXH8F9kMPvIYm/0E+SJFPw
-         MI444kVSkICYpm7u+xoO+hp9FgL9EdyYRLbxbZQqpUvjTiAYjtTAOi6sbON8SN2mFHaU
-         HhZSax1blHXfqte/qehPBw5khRWesTtnnlJH07qy7QgDdbMxjajC5znPS/3TkahCiZb5
-         9lfg==
-X-Gm-Message-State: APjAAAXqnWtBNhctR1UARIJrE0Q77/m6iOGSg0IG3zhNpKlQ5varDx30
-        RnEVxCwwZLOju3/Lwj90Vf71CWz4xC7ErkJgynkeUw==
-X-Google-Smtp-Source: APXvYqwT5+NGklKeJW9N17LjaUMueBSxha4MJyQJj2jm+eal1mEy4e4CAbkxKeRN2PB93VKB3+yirSo4Y26EHFlBDZ8=
-X-Received: by 2002:a05:620a:1136:: with SMTP id p22mr240817qkk.8.1579536388045;
- Mon, 20 Jan 2020 08:06:28 -0800 (PST)
+        id S1729368AbgATQIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:08:40 -0500
+Received: from mga09.intel.com ([134.134.136.24]:19096 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726626AbgATQIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 11:08:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 08:08:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
+   d="scan'208";a="374357098"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 20 Jan 2020 08:08:13 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id CC470107; Mon, 20 Jan 2020 18:08:12 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH v2 0/9] x86: Easy way of detecting MS Surface 3
+Date:   Mon, 20 Jan 2020 18:07:52 +0200
+Message-Id: <20200120160801.53089-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
- <CACT4Y+YuTT6kZ-AkgU0c1o09qmQdFWr4_Sds4jaDg-Va6g6jkA@mail.gmail.com>
- <CACT4Y+acrXkA-ixjQXqNf1EC=fpgTWf3Rcevxxon0DfrPdD-UQ@mail.gmail.com> <CANpmjNNcXUF-=Y-hmry9-xEoNpJd0WH+fOcJJM6kv2eRm5v-kg@mail.gmail.com>
-In-Reply-To: <CANpmjNNcXUF-=Y-hmry9-xEoNpJd0WH+fOcJJM6kv2eRm5v-kg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 20 Jan 2020 17:06:16 +0100
-Message-ID: <CACT4Y+bD3cNxfaWOuhHz338MoVoaHpw-E8+b7v6mo_ir2KD46Q@mail.gmail.com>
-Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
-To:     Marco Elver <elver@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
-        Kees Cook <keescook@chromium.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 4:40 PM Marco Elver <elver@google.com> wrote:
-> > > > > This adds instrumented.h, which provides generic wrappers for memory
-> > > > > access instrumentation that the compiler cannot emit for various
-> > > > > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
-> > > > > future this will also include KMSAN instrumentation.
-> > > > >
-> > > > > Note that, copy_{to,from}_user require special instrumentation,
-> > > > > providing hooks before and after the access, since we may need to know
-> > > > > the actual bytes accessed (currently this is relevant for KCSAN, and is
-> > > > > also relevant in future for KMSAN).
-> > > > >
-> > > > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > > ---
-> > > > >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
-> > > > >  1 file changed, 153 insertions(+)
-> > > > >  create mode 100644 include/linux/instrumented.h
-> > > > >
-> > > > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> > > > > new file mode 100644
-> > > > > index 000000000000..9f83c8520223
-> > > > > --- /dev/null
-> > > > > +++ b/include/linux/instrumented.h
-> > > > > @@ -0,0 +1,153 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > +
-> > > > > +/*
-> > > > > + * This header provides generic wrappers for memory access instrumentation that
-> > > > > + * the compiler cannot emit for: KASAN, KCSAN.
-> > > > > + */
-> > > > > +#ifndef _LINUX_INSTRUMENTED_H
-> > > > > +#define _LINUX_INSTRUMENTED_H
-> > > > > +
-> > > > > +#include <linux/compiler.h>
-> > > > > +#include <linux/kasan-checks.h>
-> > > > > +#include <linux/kcsan-checks.h>
-> > > > > +#include <linux/types.h>
-> > > > > +
-> > > > > +/**
-> > > > > + * instrument_read - instrument regular read access
-> > > > > + *
-> > > > > + * Instrument a regular read access. The instrumentation should be inserted
-> > > > > + * before the actual read happens.
-> > > > > + *
-> > > > > + * @ptr address of access
-> > > > > + * @size size of access
-> > > > > + */
-> > > >
-> > > > Based on offline discussion, that's what we add for KMSAN:
-> > > >
-> > > > > +static __always_inline void instrument_read(const volatile void *v, size_t size)
-> > > > > +{
-> > > > > +       kasan_check_read(v, size);
-> > > > > +       kcsan_check_read(v, size);
-> > > >
-> > > > KMSAN: nothing
-> > >
-> > > KMSAN also has instrumentation in
-> > > copy_to_user_page/copy_from_user_page. Do we need to do anything for
-> > > KASAN/KCSAN for these functions?
->
-> copy_to_user_page/copy_from_user_page can be instrumented with
-> instrument_copy_{to,from}_user_. I prefer keeping this series with no
-> functional change intended for KASAN at least.
->
-> > There is also copy_user_highpage.
-> >
-> > And ioread/write8/16/32_rep: do we need any instrumentation there. It
-> > seems we want both KSAN and KCSAN too. One may argue that KCSAN
-> > instrumentation there is to super critical at this point, but KASAN
-> > instrumentation is important, if anything to prevent silent memory
-> > corruptions. How do we instrument there? I don't see how it maps to
-> > any of the existing instrumentation functions.
->
-> These should be able to use the regular instrument_{read,write}. I
-> prefer keeping this series with no functional change intended for
-> KASAN at least.
+While working on RTC regression, I noticed that we are using the same DMI check
+over and over in the drivers for MS Surface 3 platform. This series dedicated
+for making it easier in the same way how it's done for Apple machines.
 
-instrument_{read,write} will not contain any KMSAN instrumentation,
-which means we will effectively remove KMSAN instrumentation, which is
-weird because we instrumented these functions because of KMSAN in the
-first place...
+Changelog v2:
+- removed RTC patches for now
+- added couple more clean ups to arch/x86/kernel/quirks.c
+- redone DMI quirk to use driver_data instead of callback
+- simplified check in soc-acpi-intel-cht-match.c to be oneliner
+- added a new patch to cover rt5645 codec driver
 
-> > There is also kmsan_check_skb/kmsan_handle_dma/kmsan_handle_urb that
-> > does not seem to map to any of the instrumentation functions.
->
-> For now, I would rather that there are some one-off special
-> instrumentation, like for KMSAN. Coming up with a unified interface
-> here that, without the use-cases even settled, seems hard to justify.
-> Once instrumentation for these have settled, unifying the interface
-> would have better justification.
+Cc: Cezary Rojewski <cezary.rojewski@intel.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: Jie Yang <yang.jie@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org
 
-I would assume they may also require an annotation that checks the
-memory region under all 3 tools and we don't have such annotation
-(same as the previous case and effectively copy_to_user). I would
-expect such annotation will be used in more places once we start
-looking for more opportunities.
+Andy Shevchenko (9):
+  x86/platform: Rename x86/apple.h -> x86/machine.h
+  x86/quirks: Add missed include to satisfy static checker
+  x86/quirks: Introduce hpet_dev_print_force_hpet_address() helper
+  x86/quirks: Join string literals back
+  x86/quirks: Convert DMI matching to use a table
+  x86/quirks: Add a DMI quirk for Microsoft Surface 3
+  platform/x86: surface3_wmi: Switch DMI table match to a test of
+    variable
+  ASoC: rt5645: Switch DMI table match to a test of variable
+  ASoC: Intel: Switch DMI table match to a test of variable
 
-> This patch series is merely supposed to introduce instrumented.h and
-> replace the kasan_checks (also implicitly introducing kcsan_checks
-> there), however, with no further functional change intended.
->
-> I propose that adding entirely new instrumentation for both KASAN and
-> KCSAN, we should send a separate patch-series.
->
-> Thanks,
-> -- Marco
+ arch/x86/kernel/quirks.c                      | 91 +++++++++++++------
+ drivers/platform/x86/surface3-wmi.c           | 16 +---
+ include/linux/platform_data/x86/apple.h       | 14 +--
+ include/linux/platform_data/x86/machine.h     | 20 ++++
+ sound/soc/codecs/rt5645.c                     | 14 ++-
+ .../intel/common/soc-acpi-intel-cht-match.c   | 33 +------
+ 6 files changed, 93 insertions(+), 95 deletions(-)
+ create mode 100644 include/linux/platform_data/x86/machine.h
+
+-- 
+2.24.1
+
