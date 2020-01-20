@@ -2,74 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCF91423AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E2F1423C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:46:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbgATGmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 01:42:18 -0500
-Received: from foss.arm.com ([217.140.110.172]:56322 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbgATGmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 01:42:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6844E31B;
-        Sun, 19 Jan 2020 22:42:17 -0800 (PST)
-Received: from [10.162.16.78] (p8cg001049571a15.blr.arm.com [10.162.16.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D66743F52E;
-        Sun, 19 Jan 2020 22:45:48 -0800 (PST)
-Subject: Re: [Patch v2 4/4] mm/page_alloc.c: extract commom part to check page
-To:     Wei Yang <richardw.yang@linux.intel.com>, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        rientjes@google.com
-References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
- <20200120030415.15925-5-richardw.yang@linux.intel.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <3987ae0f-cbfc-1066-c78f-c5c6efc570ed@arm.com>
-Date:   Mon, 20 Jan 2020 12:13:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726584AbgATGp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 01:45:58 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40354 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726388AbgATGp6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 01:45:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579502757;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vqNKhNygXBIFN97LCULqdWGu9X9CxFiSHBJuN0O9XTc=;
+        b=OyGgjdD9TH/4jWXHc31Pyzwii6vmkp21qFGhov2MOCLZ1L7TuR4er5tTZ2xJohkeqViurY
+        w42BEokqdx3fG/mbji0KKdh6Mt4t6Cn3+GOISFoFbdpbBUBNT4M7Feiu/ZqrB5+Tctce9R
+        t+Ba1e9RdW+/EnRXWLBszdC+tYJEVr4=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-29-sSfJzVA0PaCbHXe8qaYNVg-1; Mon, 20 Jan 2020 01:45:54 -0500
+X-MC-Unique: sSfJzVA0PaCbHXe8qaYNVg-1
+Received: by mail-pj1-f71.google.com with SMTP id c31so10191624pje.9
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 22:45:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vqNKhNygXBIFN97LCULqdWGu9X9CxFiSHBJuN0O9XTc=;
+        b=ncoySzM7hCumb6irwvuDmMQTeuZ0/nNykFOpbgArT8bNqF6Mb8DzEkGoEBEBMeWff+
+         lnf+5e8gZz8ymM6bdAWFmgqd8iash2+C5/AqHUFwa4qP7PuBhO6hVZX+t0aDbApDj1tr
+         JWhTv8lNnmVrhiHTuuAFLWMoTve8hgTLkMpNy/4Phe5a9MTcZbXto1zmXINYuBfIywQt
+         623vuBkhfLNsFBzQYwTU1OjEJ6aSLt6EAwt6ywBwMgxXVWxRPHPixR7iMbMGjUAHo2KD
+         FosFqJTTMeo7uavb+snZg+tlNSF+vOzn+38pfk3fxhE5kCKK6y93RrQ+Qq87hXEnw47I
+         fpgw==
+X-Gm-Message-State: APjAAAUykBk8j42zouMXpRwspfpQZW47NhQ778n1e1aznZSdKR5g3R49
+        IIArP5dCc5nzHTvulQabLLmo09lHIPMuRLxq7FVtZgt+2JMugY5BjIiswfwPqnR18wn9z+VT0aG
+        hnooQiD5C5jWtCe/5DdmhF2bo
+X-Received: by 2002:a17:902:bc85:: with SMTP id bb5mr13239911plb.208.1579502753214;
+        Sun, 19 Jan 2020 22:45:53 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx8wxSabuAGXP8LHVag7+1TwIUhVg8HOPxfCSJFySXCs0RiXtk0jFc9Dqlntqp4v6sH9fYKvw==
+X-Received: by 2002:a17:902:bc85:: with SMTP id bb5mr13239902plb.208.1579502752949;
+        Sun, 19 Jan 2020 22:45:52 -0800 (PST)
+Received: from xz-x1 ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z16sm38786923pff.125.2020.01.19.22.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jan 2020 22:45:52 -0800 (PST)
+Date:   Mon, 20 Jan 2020 14:45:40 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v3 09/21] KVM: X86: Don't track dirty for
+ KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+Message-ID: <20200120064540.GB380565@xz-x1>
+References: <20200109145729.32898-1-peterx@redhat.com>
+ <20200109145729.32898-10-peterx@redhat.com>
+ <5af8e2ff-4bde-9652-fb25-4fe1f74daae2@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200120030415.15925-5-richardw.yang@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <5af8e2ff-4bde-9652-fb25-4fe1f74daae2@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/20/2020 08:34 AM, Wei Yang wrote:
-> During free and new page, we did some check on the status of page
-> struct. There is some common part, just extract them.
-
-Makes sense.
-
+On Sun, Jan 19, 2020 at 10:01:50AM +0100, Paolo Bonzini wrote:
+> On 09/01/20 15:57, Peter Xu wrote:
+> > -int __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa, u32 size)
+> > +/*
+> > + * If `uaddr' is specified, `*uaddr' will be returned with the
+> > + * userspace address that was just allocated.  `uaddr' is only
+> > + * meaningful if the function returns zero, and `uaddr' will only be
+> > + * valid when with either the slots_lock or with the SRCU read lock
+> > + * held.  After we release the lock, the returned `uaddr' will be invalid.
+> > + */
 > 
-> Besides this, this patch also rename two functions to keep the name
-> convention, since free_pages_check_bad/free_pages_check are counterparts
-> of check_new_page_bad/check_new_page.
+> In practice the address is still protected by the refcount, isn't it?
+> Only destroying the VM could invalidate it.
 
-This probably should be in a different patch.
+Yes I think so.  I wanted to make it clear that uaddr is temporary,
+however "will be invalid" could be be too strong...  Thanks,
 
-> 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> ---
->  mm/page_alloc.c | 49 ++++++++++++++++++++++++-------------------------
->  1 file changed, 24 insertions(+), 25 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index a7b793c739fc..7f23cc836f90 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1025,36 +1025,44 @@ static inline bool page_expected_state(struct page *page,
->  	return true;
->  }
->  
-> -static void free_pages_check_bad(struct page *page)
-> +static inline int __check_page(struct page *page, int nr,
-> +				const char **bad_reason)
+-- 
+Peter Xu
 
-free and new page checks are in and out of the buddy allocator, hence
-this common factored function should have a more relevant name.
