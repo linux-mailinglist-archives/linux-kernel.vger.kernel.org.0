@@ -2,95 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3C21427F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:14:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 110E4142802
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 11:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbgATKOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 05:14:18 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:32831 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbgATKOS (ORCPT
+        id S1726876AbgATKQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 05:16:25 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44347 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgATKQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 05:14:18 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1itU4O-0005BH-Qg; Mon, 20 Jan 2020 11:14:09 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id D3FD11C1A3F;
-        Mon, 20 Jan 2020 11:14:07 +0100 (CET)
-Date:   Mon, 20 Jan 2020 10:14:07 -0000
-From:   "tip-bot2 for Arvind Sankar" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/sysfb: Fix check for bad VRAM size
-Cc:     Christopher Head <chead@chead.ca>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Borislav Petkov <bp@suse.de>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200107230410.2291947-1-nivedita@alum.mit.edu>
-References: <20200107230410.2291947-1-nivedita@alum.mit.edu>
+        Mon, 20 Jan 2020 05:16:24 -0500
+Received: by mail-ot1-f65.google.com with SMTP id h9so28126436otj.11;
+        Mon, 20 Jan 2020 02:16:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u5bfxqdMUxSLxjM/r63YRuvggOpa5byidD0DwyaZom4=;
+        b=BJw11PzLeRkKzO/CHRO8sze+GG7+j9Be0HQtfPyl0qgvAv5+vvfXHqPx7TrjzRHFbI
+         Q80LNt1tJOi2MQy+bEeyq0yEk4QqQUPrFme401ywrTggdsThTOYJEAEM1kpUAjTVodVA
+         tHq5xi9rgwEJ6QGWdbatxaVuJrOcmDRuSqNf76taYooDeNTKifesV09mcyJIz0J8VeYp
+         djlaj16F05ki93VU56VeuJW55KLDtC9+r7X18yc4n+YxmNPWHZ9YjUssnKTWTwwBzi63
+         pmeABfAD/aYVTTF6pyq63bh6zFs4PaPM5QL+Y+aUdO3qKX01pIOzqzu+d3XZ8x8dHfTk
+         0APw==
+X-Gm-Message-State: APjAAAUyEAkm7iVUV8hL1e8eE9qAH9iOTjWKThntY3qEC/AUxXVj7RWN
+        5pWmf4umuhJrkOoWliUNn1MNftRAAF72fpUbXfI=
+X-Google-Smtp-Source: APXvYqxrwVFJWvVYhz0+b+fpElzaDaCSySYGJ7rKzf41+oOEN1Oq5O54xFDy9zfFdwaqOiO/kBtXrBYBLdJPrZgt+wY=
+X-Received: by 2002:a05:6830:1651:: with SMTP id h17mr14630787otr.167.1579515383764;
+ Mon, 20 Jan 2020 02:16:23 -0800 (PST)
 MIME-Version: 1.0
-Message-ID: <157951524757.396.6875449897563073243.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <201911151357.A9MjGImg%lkp@intel.com> <CAMuHMdX6-jb1W8uC2_237m8ctCpsnGp=JCxqt8pCWVqNXHmkVg@mail.gmail.com>
+In-Reply-To: <CAMuHMdX6-jb1W8uC2_237m8ctCpsnGp=JCxqt8pCWVqNXHmkVg@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 20 Jan 2020 11:16:12 +0100
+Message-ID: <CAJZ5v0i4nezntZJRSpv-LOwE_ZkE5Vr+YHkwJ8tX5GgG64gB=Q@mail.gmail.com>
+Subject: Re: drivers/acpi/processor_thermal.c:66:1: warning: the frame size of
+ 2160 bytes is larger than 2048 bytes
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        kbuild-all@lists.01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/boot branch of tip:
+On Fri, Jan 17, 2020 at 4:51 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Rafael, Viresh,
+>
+> On Fri, Nov 15, 2019 at 6:23 AM kbuild test robot <lkp@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > head:   96b95eff4a591dbac582c2590d067e356a18aacb
+> > commit: 3000ce3c52f8b8db093e4dc649cd172390f71137 cpufreq: Use per-policy frequency QoS
+> > date:   4 weeks ago
+> > config: ia64-randconfig-a001-20191115 (attached as .config)
+> > compiler: ia64-linux-gcc (GCC) 7.4.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout 3000ce3c52f8b8db093e4dc649cd172390f71137
+> >         # save the attached .config to linux build tree
+> >         GCC_VERSION=7.4.0 make.cross ARCH=ia64
+> >
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kbuild test robot <lkp@intel.com>
+>
+> Seeing similar warnings on arm64, so this triggered my attention.
+>
+> > --
+> >    drivers/cpufreq/cpufreq.c: In function 'refresh_frequency_limits.part.33':
+> > >> drivers/cpufreq/cpufreq.c:1116:1: warning: the frame size of 2160 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>
+> |       struct cpufreq_policy new_policy;
+>
+> That's a large struct on the stack...
+>
+> |       if (!policy_is_inactive(policy)) {
+> |               new_policy = *policy;
+>
+> Let's make a copy?
+> How well does this work, given struct cpufreq_policy contains a
+> work_struct, list_head, kobject, completion, semaphore, spinlock_t,
+> wait_queue_head_t, and two notifier_blocks, which are all objects you
+> cannot just copy and reuse?
+>
+> |               pr_debug("updating policy for CPU %u\n", policy->cpu);
+> |
+> |               cpufreq_set_policy(policy, &new_policy);
+>
+> If cpufreq_set_policy() uses only a few fields from new_policy,
 
-Commit-ID:     dacc9092336be20b01642afe1a51720b31f60369
-Gitweb:        https://git.kernel.org/tip/dacc9092336be20b01642afe1a51720b31f60369
-Author:        Arvind Sankar <nivedita@alum.mit.edu>
-AuthorDate:    Tue, 07 Jan 2020 18:04:10 -05:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 20 Jan 2020 10:57:53 +01:00
+That's really the case.
 
-x86/sysfb: Fix check for bad VRAM size
+> it might be a good idea to extract those into its own structure.
 
-When checking whether the reported lfb_size makes sense, the height
-* stride result is page-aligned before seeing whether it exceeds the
-reported size.
+Or organize the code differently.
 
-This doesn't work if height * stride is not an exact number of pages.
-For example, as reported in the kernel bugzilla below, an 800x600x32 EFI
-framebuffer gets skipped because of this.
+This is old code that hasn't been change, but I'll look at it since it
+is problematic.
 
-Move the PAGE_ALIGN to after the check vs size.
-
-Reported-by: Christopher Head <chead@chead.ca>
-Tested-by: Christopher Head <chead@chead.ca>
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206051
-Link: https://lkml.kernel.org/r/20200107230410.2291947-1-nivedita@alum.mit.edu
----
- arch/x86/kernel/sysfb_simplefb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/sysfb_simplefb.c b/arch/x86/kernel/sysfb_simplefb.c
-index 01f0e22..298fc1e 100644
---- a/arch/x86/kernel/sysfb_simplefb.c
-+++ b/arch/x86/kernel/sysfb_simplefb.c
-@@ -90,11 +90,11 @@ __init int create_simplefb(const struct screen_info *si,
- 	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB)
- 		size <<= 16;
- 	length = mode->height * mode->stride;
--	length = PAGE_ALIGN(length);
- 	if (length > size) {
- 		printk(KERN_WARNING "sysfb: VRAM smaller than advertised\n");
- 		return -EINVAL;
- 	}
-+	length = PAGE_ALIGN(length);
- 
- 	/* setup IORESOURCE_MEM as framebuffer memory */
- 	memset(&res, 0, sizeof(res));
+Thanks!
