@@ -2,91 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47176143343
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 22:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22A6C143349
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 22:13:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbgATVLy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 16:11:54 -0500
-Received: from www62.your-server.de ([213.133.104.62]:47586 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbgATVLy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 16:11:54 -0500
-Received: from sslproxy01.your-server.de ([88.198.220.130])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iteKb-0003tQ-OR; Mon, 20 Jan 2020 22:11:33 +0100
-Received: from [178.197.248.27] (helo=pc-9.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iteKa-00019l-UX; Mon, 20 Jan 2020 22:11:33 +0100
-Subject: Re: [PATCH bpf-next] bpf: add bpf_ct_lookup_{tcp,udp}() helpers
-To:     Matt Cover <werekraken@gmail.com>,
-        John Fastabend <john.fastabend@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Matthew Cover <matthew.cover@stackpath.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Jiong Wang <jiong.wang@netronome.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-References: <20200118000128.15746-1-matthew.cover@stackpath.com>
- <5e23c773d7a67_13602b2359ea05b824@john-XPS-13-9370.notmuch>
- <CAGyo_hrUXWzui9FNiZpNGXjsphSreLEYYm4K7xkp+H+de=QKSA@mail.gmail.com>
- <CAGyo_hpcO-f9uxQFDfKZNz=1t6Yux+LzxN1qLHKf6PXMAtWQ-w@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <360a11cd-2c41-159e-b92a-c7c1ec42767f@iogearbox.net>
-Date:   Mon, 20 Jan 2020 22:11:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727372AbgATVN1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 Jan 2020 16:13:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726607AbgATVN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 16:13:27 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A45A722527;
+        Mon, 20 Jan 2020 21:13:25 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 16:13:23 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Unresolved reference for histogram variable
+Message-ID: <20200120161323.5efa7c58@gandalf.local.home>
+In-Reply-To: <1579298690.4518.15.camel@kernel.org>
+References: <20200116154216.58ca08eb@gandalf.local.home>
+        <20200116165658.4e8d15fb@gandalf.local.home>
+        <1579298690.4518.15.camel@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAGyo_hpcO-f9uxQFDfKZNz=1t6Yux+LzxN1qLHKf6PXMAtWQ-w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25701/Mon Jan 20 12:41:43 2020)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/20/20 9:10 PM, Matt Cover wrote:
-> On Mon, Jan 20, 2020 at 11:11 AM Matt Cover <werekraken@gmail.com> wrote:
->> On Sat, Jan 18, 2020 at 8:05 PM John Fastabend <john.fastabend@gmail.com> wrote:
->>> Matthew Cover wrote:
->>>> Allow looking up an nf_conn. This allows eBPF programs to leverage
->>>> nf_conntrack state for similar purposes to socket state use cases,
->>>> as provided by the socket lookup helpers. This is particularly
->>>> useful when nf_conntrack state is locally available, but socket
->>>> state is not.
->>>>
->>>> Signed-off-by: Matthew Cover <matthew.cover@stackpath.com>
->>>> ---
->>>
->>> Couple coding comments below. Also looks like a couple build errors
->>> so fix those up. I'm still thinking over this though.
->>
->> Thank you for taking the time to look this over. I will be looking
->> into the build issues.
-> 
-> Looks like I missed static inline on a couple functions when
-> nf_conntrack isn't builtin. I'll include the fix in v2.
+On Fri, 17 Jan 2020 16:04:50 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-One of the big issues I'd see with this integration is that literally no-one
-will be able to use it unless they manually recompile their distro kernel with
-ct as builtin instead of module .. Have you considered writing a tcp/udp ct in
-plain bpf? Perhaps would make sense to have some sort of tools/lib/bpf/util/
-with bpf prog library code that can be included.
+> Reviewed-by: Tom Zanuss <zanussi@kernel.org>
+> Tested-by: Tom Zanussi <zanussi@kernel.org>
+
+Thanks! BTW, here's the final version of the patch that I'm starting
+testing on:
+
+-- Steve
+
+From 8bcebc77e85f3d7536f96845a0fe94b1dddb6af0 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Mon, 20 Jan 2020 13:07:31 -0500
+Subject: [PATCH] tracing: Fix histogram code when expression has same var as
+ value
+
+While working on a tool to convert SQL syntex into the histogram language of
+the kernel, I discovered the following bug:
+
+ # echo 'first u64 start_time u64 end_time pid_t pid u64 delta' >> synthetic_events
+ # echo 'hist:keys=pid:start=common_timestamp' > events/sched/sched_waking/trigger
+ # echo 'hist:keys=next_pid:delta=common_timestamp-$start,start2=$start:onmatch(sched.sched_waking).trace(first,$start2,common_timestamp,next_pid,$delta)' > events/sched/sched_switch/trigger
+
+Would not display any histograms in the sched_switch histogram side.
+
+But if I were to swap the location of
+
+  "delta=common_timestamp-$start" with "start2=$start"
+
+Such that the last line had:
+
+ # echo 'hist:keys=next_pid:start2=$start,delta=common_timestamp-$start:onmatch(sched.sched_waking).trace(first,$start2,common_timestamp,next_pid,$delta)' > events/sched/sched_switch/trigger
+
+The histogram works as expected.
+
+What I found out is that the expressions clear out the value once it is
+resolved. As the variables are resolved in the order listed, when
+processing:
+
+  delta=common_timestamp-$start
+
+The $start is cleared. When it gets to "start2=$start", it errors out with
+"unresolved symbol" (which is silent as this happens at the location of the
+trace), and the histogram is dropped.
+
+When processing the histogram for variable references, instead of adding a
+new reference for a variable used twice, use the same reference. That way,
+not only is it more efficient, but the order will no longer matter in
+processing of the variables.
+
+From Tom Zanussi:
+
+ "Just to clarify some more about what the problem was is that without
+  your patch, we would have two separate references to the same variable,
+  and during resolve_var_refs(), they'd both want to be resolved
+  separately, so in this case, since the first reference to start wasn't
+  part of an expression, it wouldn't get the read-once flag set, so would
+  be read normally, and then the second reference would do the read-once
+  read and also be read but using read-once.  So everything worked and
+  you didn't see a problem:
+
+   from: start2=$start,delta=common_timestamp-$start
+
+  In the second case, when you switched them around, the first reference
+  would be resolved by doing the read-once, and following that the second
+  reference would try to resolve and see that the variable had already
+  been read, so failed as unset, which caused it to short-circuit out and
+  not do the trigger action to generate the synthetic event:
+
+   to: delta=common_timestamp-$start,start2=$start
+
+  With your patch, we only have the single resolution which happens
+  correctly the one time it's resolved, so this can't happen."
+
+Link: https://lore.kernel.org/r/20200116154216.58ca08eb@gandalf.local.home
+
+Cc: stable@vger.kernel.org
+Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist triggers")
+Reviewed-by: Tom Zanuss <zanussi@kernel.org>
+Tested-by: Tom Zanussi <zanussi@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_hist.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index d33b046f985a..6ac35b9e195d 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -116,6 +116,7 @@ struct hist_field {
+ 	struct ftrace_event_field	*field;
+ 	unsigned long			flags;
+ 	hist_field_fn_t			fn;
++	unsigned int			ref;
+ 	unsigned int			size;
+ 	unsigned int			offset;
+ 	unsigned int                    is_signed;
+@@ -2427,8 +2428,16 @@ static int contains_operator(char *str)
+ 	return field_op;
+ }
+ 
++static void get_hist_field(struct hist_field *hist_field)
++{
++	hist_field->ref++;
++}
++
+ static void __destroy_hist_field(struct hist_field *hist_field)
+ {
++	if (--hist_field->ref > 1)
++		return;
++
+ 	kfree(hist_field->var.name);
+ 	kfree(hist_field->name);
+ 	kfree(hist_field->type);
+@@ -2470,6 +2479,8 @@ static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
+ 	if (!hist_field)
+ 		return NULL;
+ 
++	hist_field->ref = 1;
++
+ 	hist_field->hist_data = hist_data;
+ 
+ 	if (flags & HIST_FIELD_FL_EXPR || flags & HIST_FIELD_FL_ALIAS)
+@@ -2665,6 +2676,17 @@ static struct hist_field *create_var_ref(struct hist_trigger_data *hist_data,
+ {
+ 	unsigned long flags = HIST_FIELD_FL_VAR_REF;
+ 	struct hist_field *ref_field;
++	int i;
++
++	/* Check if the variable already exists */
++	for (i = 0; i < hist_data->n_var_refs; i++) {
++		ref_field = hist_data->var_refs[i];
++		if (ref_field->var.idx == var_field->var.idx &&
++		    ref_field->var.hist_data == var_field->hist_data) {
++			get_hist_field(ref_field);
++			return ref_field;
++		}
++	}
+ 
+ 	ref_field = create_hist_field(var_field->hist_data, NULL, flags, NULL);
+ 	if (ref_field) {
+-- 
+2.20.1
+
