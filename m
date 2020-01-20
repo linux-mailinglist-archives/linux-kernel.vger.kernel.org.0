@@ -2,90 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B2571432AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 20:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CB31432D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 21:21:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgATT7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 14:59:21 -0500
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21128 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbgATT7V (ORCPT
+        id S1727065AbgATUVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 15:21:14 -0500
+Received: from outgoing4.flk.host-h.net ([188.40.0.90]:34885 "EHLO
+        outgoing4.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbgATUVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 14:59:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1579550348;
-        s=selector01; d=brennan.io; i=stephen@brennan.io;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Date:Subject:From:To:Cc:Message-Id;
-        bh=zGEdNMOLYUYRRFqkqQsKe15wlZAeAg0gSQKMVkqOP1g=;
-        b=Pwe9wDFD2vVddbh4roqz2VZ+YSXzOhU7ZRLVdYZHQNQ4wDVmXyadx67RG0G5iEob
-        Cl7YPIGzVqy1fqpo08WLBkZEVb7ytHY1ooWF4rfqvPuNcrOXAQ/YHRk+dt96FxDd3Nt
-        LqisxORP7jbEwJheB7gfR5YRBhv8aQaFNCIC9WxM=
-Received: from localhost (195.173.24.136.in-addr.arpa [136.24.173.195]) by mx.zohomail.com
-        with SMTPS id 1579550343636345.40512828000374; Mon, 20 Jan 2020 11:59:03 -0800 (PST)
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Originaldate: Mon Jan 20, 2020 at 12:03 PM
-Originalfrom: "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
-Original: =?utf-8?q?Hi_Stephen,
- =0D=0A=0D=0AOn_Sun,_2020-01-19_at_20:17_-0800,_Steph?=
- =?utf-8?q?en_Brennan_wrote:=0D=0A>_When_booting_Raspberry_Pi_4B_using_a_m?=
- =?utf-8?q?icro_SDHC_UHS_class_1_card,_the_SD=0D=0A>_card_partitions_never?=
- =?utf-8?q?_appear_in_/dev.__According_to_the_device_tree=0D=0A>_bindings_?=
- =?utf-8?q?for_Broadcom_IPROC_SDHCI_controller,_we_should_use=0D=0A>_"brcm?=
- =?utf-8?q?,bcm2711-emmc2"_compatible_string_on_BCM2711._Set_this_compatib?=
- =?utf-8?q?le=0D=0A>_string,_which_allows_these_cards_to_be_mounted.=0D=0A?=
- =?utf-8?q?>=3D20=0D=0A>_Signed-off-by:_Stephen_Brennan_<stephen@brennan.i?=
- =?utf-8?q?o>=0D=0A=0D=0AYour_UHS_class_1_card_should_work_out_of_the_box_?=
- =?utf-8?q?using_the_current_kernel=0D=0Aversion._Note_that_the_device_nod?=
- =?utf-8?q?e_is_defined_here:=0D=0A=0D=0Ahttps://git.kernel.org/pub/scm/li?=
- =?utf-8?q?nux/kernel/git/torvalds/linux.git/tree/arc=3D=0D=0Ah/arm/boot/d?=
- =?utf-8?q?ts/bcm2711.dtsi=3Fh=3D3Dv5.5-rc7#n255=0D=0A=0D=0Aand_enabled_he?=
- =?utf-8?q?re:=0D=0A=0D=0Ahttps://git.kernel.org/pub/scm/linux/kernel/git/?=
- =?utf-8?q?torvalds/linux.git/tree/arc=3D=0D=0Ah/arm/boot/dts/bcm2711-rpi-?=
- =?utf-8?q?4-b.dts=3Fh=3D3Dv5.5-rc7#n98=0D=0A=0D=0ARegards,=0D=0ANicolas?=
- =?utf-8?q?=0D=0A=0D=0A?=
-In-Reply-To: <936f10bbeca467ea8ebc669280a50c688730689d.camel@suse.de>
-Date:   Mon, 20 Jan 2020 11:59:00 -0800
-Subject: Re: [PATCH] ARM: dts: bcm2711: Use bcm2711 compatible for sdhci
-From:   "Stephen Brennan" <stephen@brennan.io>
-To:     "Nicolas Saenz Julienne" <nsaenzjulienne@suse.de>
-Cc:     "Mark Rutland" <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>
-Message-Id: <C00VV4QDHC2Q.20QYUR6KOPB8G@pride>
-X-ZohoMailClient: External
+        Mon, 20 Jan 2020 15:21:14 -0500
+X-Greylist: delayed 2147 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 15:21:12 EST
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam1-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1itczB-0004Ot-OT; Mon, 20 Jan 2020 21:45:22 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1itcz9-0004Hk-Dw; Mon, 20 Jan 2020 21:45:19 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Jacob Chen <jacob-chen@iotwrt.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] media: rockchip/rga: add rk3228-rga to rockchip_rga_match[]
+Date:   Mon, 20 Jan 2020 19:41:54 +0000
+Message-Id: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.01)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0Xm17NJf4el5vffImWwWrhCpSDasLI4SayDByyq9LIhVc0MzHfOnMfVI
+ AlgH8Xwbq0TNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
+ qhBpvAyWwieZyauFYqHkIbFa+ipFflSrcyn7M3A1M8P7YyCISF7Ax1jp5415hfbnHhmkWKwQ798N
+ tjgwOHRNrKlsLSLsR2phe2H+VQ5drqtLHIQXdB2sPQC/ZXf7OFUBPjBV0jlRnibyCuwag8UEnjV9
+ dfsBVFAo2VqRJ3PoUK3i2GylNtZWYK6FgocWFgIy83G1Ziw5PsG3ZK/CX16OekmbPreOnw2lIbsC
+ g5hAk2rbw6y01wTJsjWw5+0eZIpQIcK9yrSpnIazZEQP7rhBhxNqNx7Ljd12v0hRQV2TuWFKPYIZ
+ hSoXjZRXPZeF/ozRyNShALTpAuRsQ7f/A1SBbUaDAMpCdiFVwaP90eVaqnDphEW4xGx2bCpzxgBv
+ RJlZffR315YiXq0P29rzRb3/fujGPSO0ZjPN6GBtX9ob7G66M73K7lEBopH59S/bhUmo0Kkx+QUC
+ X/JlYVPK+a5jKpRW4VkG9koSZx4AE7ErDJQIhG9sWvIZWUifSNHSdOCLRQ7jpnXnmAJSLoHk+mB7
+ rvqdepOw2titfOjo27VsmUXl5Dlu0Ez4hiPVrwbHSJw7Xp/7OsyH8g27Tr7mENICHJaR53upNsj0
+ ZNx9ROADUXTdQZTyOamR3KMXZiZ/EdUuc9x8TOdIW6qv7Prfdfuh2V6P2IH+fu/1ze9XG6SFbqNq
+ ARXGm2iH1Wgh6RAenBR+licROGZLSOPJ7pouDn/lmAaZNciLjY4Bum3Cz9zMKWDsCgJgzAyOo8uz
+ gLvzPUQ4WO1VIxT90NysgdUUHBaOGnMZ3fVqqKS4K27k8O0AKLf9g2axxclWHXeuOCUCSaU4vgJw
+ yjPlnmxH7Pd4xT6MyYGIdovMjseuwUIt8Ke1zYmTdImomsn9uPyWahCadieo4QRLnvbNjcvkOxlt
+ YcJZ/YLv0cjthSk55ObUg7TpMbFmZ6g5Ky+1Stg9rJ7bhjXv2caQWgXrjuU3A3io6xJmD59iFVkb
+ kXGPzFwfHhKt2wjdkKIWbyf+T8iepkOFBDDkCgKb9Tgwyo3k9+KsRmFMu5VQ9KBOovIJzflUDtG9
+ b8caIarEvU/OX3xYChUDPsYuWEJtniNfuGO37qWHEu6DA1YYHSc7
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+Add an entry to the rockchip_rga_match array for "rockchip,rk3228-rga"
 
-You're right, this patch doesn't work (it doesn't even touch the correct=20
-device tree node). My bad.
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+---
+ drivers/media/platform/rockchip/rga/rga.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> Your UHS class 1 card should work out of the box using the current
-> kernel version.
-
-I've been debugging an issue (reproduced on today's linux-next) in which my=
-=20
-UHS class 1 card's partitions don't show up in `/dev`. For example, if I do=
-=20
-`ls /dev | grep mmc`, I get just one result, "mmcblk1". I thought my patch=
-=20
-fixed the issue, but it turns out that the issue is sporadic: on some=20
-boots, the issue manifests. On others, the partitions appear in /dev as=20
-normal. When I tested this patch, the issue had sporadically disappeared,=
-=20
-leading me to believe the patch was effective.
-
-Sorry for the noise! If you have any suggestions on debugging this, I'd=20
-appreciate it. As far as I know it could be anything - the particular card,=
-=20
-the particular Pi, etc.
-
-Thanks,
-Stephen
+diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+index e9ff12b6b..268116cd5 100644
+--- a/drivers/media/platform/rockchip/rga/rga.c
++++ b/drivers/media/platform/rockchip/rga/rga.c
+@@ -956,6 +956,9 @@ static const struct dev_pm_ops rga_pm = {
+ 
+ static const struct of_device_id rockchip_rga_match[] = {
+ 	{
++		.compatible = "rockchip,rk3228-rga",
++	},
++	{
+ 		.compatible = "rockchip,rk3288-rga",
+ 	},
+ 	{
+-- 
+2.11.0
 
