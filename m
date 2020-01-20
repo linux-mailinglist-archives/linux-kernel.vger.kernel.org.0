@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7505B142AB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB983142AC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgATM05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728899AbgATM05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 20 Jan 2020 07:26:57 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9215 "EHLO huawei.com"
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9217 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727011AbgATM04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726796AbgATM04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 Jan 2020 07:26:56 -0500
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BE73EDACE6526C636755;
+        by Forcepoint Email with ESMTP id CC23A55811EA30424DD9;
         Mon, 20 Jan 2020 20:26:53 +0800 (CST)
 Received: from localhost.localdomain (10.69.192.58) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
@@ -23,9 +23,9 @@ CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>,
         Luo Jiaxing <luojiaxing@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 3/7] scsi: hisi_sas: Replace magic number when handle channel interrupt
-Date:   Mon, 20 Jan 2020 20:22:33 +0800
-Message-ID: <1579522957-4393-4-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 4/7] scsi: hisi_sas: Modify the file permissions of trigger_dump to write only
+Date:   Mon, 20 Jan 2020 20:22:34 +0800
+Message-ID: <1579522957-4393-5-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
 In-Reply-To: <1579522957-4393-1-git-send-email-john.garry@huawei.com>
 References: <1579522957-4393-1-git-send-email-john.garry@huawei.com>
@@ -40,58 +40,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Luo Jiaxing <luojiaxing@huawei.com>
 
-We use magic number as offset and mask when handle channel interrupt, so
-use marco to replace it.
+The trigger_dump file is only used to manually trigger the dump, and did
+not provide a read callback function for it, so it's file permission
+setting to 600 is wrong, and should be changed to 200.
 
 Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 34a3781a2a85..878530f6945f 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -495,6 +495,13 @@ struct hisi_sas_err_record_v3 {
- #define BASE_VECTORS_V3_HW  16
- #define MIN_AFFINE_VECTORS_V3_HW  (BASE_VECTORS_V3_HW + 1)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 3e103e86e964..61db3376b1f9 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -3930,7 +3930,7 @@ void hisi_sas_debugfs_init(struct hisi_hba *hisi_hba)
  
-+#define CHNL_INT_STS_MSK	0xeeeeeeee
-+#define CHNL_INT_STS_PHY_MSK	0xe
-+#define CHNL_INT_STS_INT0_MSK BIT(1)
-+#define CHNL_INT_STS_INT1_MSK BIT(2)
-+#define CHNL_INT_STS_INT2_MSK BIT(3)
-+#define CHNL_WIDTH 4
-+
- enum {
- 	DSM_FUNC_ERR_HANDLE_MSI = 0,
- };
-@@ -1819,19 +1826,19 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
- 	int phy_no = 0;
- 
- 	irq_msk = hisi_sas_read32(hisi_hba, CHNL_INT_STATUS)
--				& 0xeeeeeeee;
-+		  & CHNL_INT_STS_MSK;
- 
- 	while (irq_msk) {
--		if (irq_msk & (2 << (phy_no * 4)))
-+		if (irq_msk & (CHNL_INT_STS_INT0_MSK << (phy_no * CHNL_WIDTH)))
- 			handle_chl_int0_v3_hw(hisi_hba, phy_no);
- 
--		if (irq_msk & (4 << (phy_no * 4)))
-+		if (irq_msk & (CHNL_INT_STS_INT1_MSK << (phy_no * CHNL_WIDTH)))
- 			handle_chl_int1_v3_hw(hisi_hba, phy_no);
- 
--		if (irq_msk & (8 << (phy_no * 4)))
-+		if (irq_msk & (CHNL_INT_STS_INT2_MSK << (phy_no * CHNL_WIDTH)))
- 			handle_chl_int2_v3_hw(hisi_hba, phy_no);
- 
--		irq_msk &= ~(0xe << (phy_no * 4));
-+		irq_msk &= ~(CHNL_INT_STS_PHY_MSK << (phy_no * CHNL_WIDTH));
- 		phy_no++;
- 	}
- 
+ 	hisi_hba->debugfs_dir = debugfs_create_dir(dev_name(dev),
+ 						   hisi_sas_debugfs_dir);
+-	debugfs_create_file("trigger_dump", 0600,
++	debugfs_create_file("trigger_dump", 0200,
+ 			    hisi_hba->debugfs_dir,
+ 			    hisi_hba,
+ 			    &hisi_sas_debugfs_trigger_dump_fops);
 -- 
 2.17.1
 
