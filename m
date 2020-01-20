@@ -2,144 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C459C14246C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 08:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D5A142471
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 08:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbgATHr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 02:47:59 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51689 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726130AbgATHr5 (ORCPT
+        id S1727144AbgATHsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 02:48:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46456 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgATHsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 02:47:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579506476;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DRxgwdNfsPjpaqCnob500hqCEgh7ZacCIxaAxxV7tMc=;
-        b=ggdLx6MGMjMwo0+7H2ug9tQPC3LQsXtfK5iy6UwHKvf8rStcmA3GtEloz+ZLb5BlSujeKS
-        sd/D26zaOU2zRn67i/Jxf3P7jDF7U5Ydx1mUaaZhQl1Bc09yBnD/0KVHijGuW2owo1z0Nw
-        K6KMchosMPaLHyxsZzPfQHrP9LSpmcM=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-47-61dsQsstPtC5zn8NuS9_Lg-1; Mon, 20 Jan 2020 02:47:53 -0500
-X-MC-Unique: 61dsQsstPtC5zn8NuS9_Lg-1
-Received: by mail-qk1-f199.google.com with SMTP id 24so19892373qka.16
-        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 23:47:53 -0800 (PST)
+        Mon, 20 Jan 2020 02:48:20 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z7so28328562wrl.13
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 23:48:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DRxgwdNfsPjpaqCnob500hqCEgh7ZacCIxaAxxV7tMc=;
-        b=GtILMTdgy5B00eqce5dns80afQpCwrUyfAJ8YX0qx7CodviDRo8G5X48HQ2Mt/ebq2
-         grNvTYcMVyVvmH6KgBv6RvDHkMMYx0Wr7K9BvglYDiRveU5QIjKfDIDWVQPMod16Uo3L
-         ocf8CXnQN0xN8Nqj7FG0co87S3HbB0DJTjMXGXX5p0D1JFVi5Kdnj99KHnVgN3i/tNDs
-         nAsadad9bPfvANRGf9HbDBEzIQ4024JqF7iFVL7BYWmaT1kmmZie9ZAZ8goSLVs2yW+o
-         0r/VYRX72GO/Ldwk72ExOh/Gwnep52juFOOrNv+ws07ZQihP0vE8LcmAzhHJiPkKT93t
-         yxmA==
-X-Gm-Message-State: APjAAAW31ID+O7BxwJVUMYO0H5B6c1CkEqrJGng5K5govFHw0tl6WI8I
-        n0Vxnnz7Nrc3fLa2YOA+9Rv6iVY/W7yTxdRjZBak+9ECSKvrf4DtFurfpTrHYAyYm8F89z82boD
-        02+O9Rz8n8U0FONjGK+U28MRn
-X-Received: by 2002:ad4:52cb:: with SMTP id p11mr19032837qvs.40.1579506473109;
-        Sun, 19 Jan 2020 23:47:53 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxEtY1SIzk7pMswk1YUQyizl2SeTF2C4wWLaIi1wnQRoKNrV6mfhMbDyW+/x5CqEr86nb11+g==
-X-Received: by 2002:ad4:52cb:: with SMTP id p11mr19032827qvs.40.1579506472874;
-        Sun, 19 Jan 2020 23:47:52 -0800 (PST)
-Received: from redhat.com (bzq-79-179-85-180.red.bezeqint.net. [79.179.85.180])
-        by smtp.gmail.com with ESMTPSA id q126sm15453824qkd.21.2020.01.19.23.47.48
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zqYxlN8e9d1Xz81Z1GDVgte6q0CcV1j9cxyhLBRYIzc=;
+        b=p9HJ4veXNlarLtqol+jWVef50Ud8fmZLsaTdr6oy7YjUfCJ4slTr2I95kv42hZ0G2B
+         OLpBphP+Po4QuGnSrO9zHIUJrGrr10wJqjLKK3BEVpndpM34JORhtxvNDNaM6ayslwwW
+         HLZza1W04k7HGK1rPrMvMr9DI0EOSzD399z/XOWxB/I/KTlAkVUv8Jui8ly0JoRfyNII
+         yYi9d7l+C44a1A8/8v0Ibosrb4fAkifY+Xa6FTJntoc31l7YcbI9rsZj46d5cyKj5dKu
+         W+AvtAwVE6BGtw/Atbkfl9x+NtsF12CXazE3KbPc5YQqH6ntItZO2XGoPNm2uD7d3Ogn
+         CWhA==
+X-Gm-Message-State: APjAAAXEphApqkzNxw2kSVKzsNnOJSrLq4UCZd367Y/Z8WC/LNDtB9rr
+        1Ry196x2hDzR10Q0gnFINoGNU93M
+X-Google-Smtp-Source: APXvYqz1nmDNYIQNXhicabxXmw6QCSsn8nPgAPz6zQN+UoT7JCsFPNK6ech+vI4kj8faRntichl/eA==
+X-Received: by 2002:adf:fe8c:: with SMTP id l12mr16459256wrr.215.1579506498444;
+        Sun, 19 Jan 2020 23:48:18 -0800 (PST)
+Received: from localhost (ip-37-188-138-155.eurotel.cz. [37.188.138.155])
+        by smtp.gmail.com with ESMTPSA id u16sm3099104wmj.41.2020.01.19.23.48.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2020 23:47:52 -0800 (PST)
-Date:   Mon, 20 Jan 2020 02:47:46 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Kevin <kevin.tian@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Lei Cao <lei.cao@stratus.com>
-Subject: Re: [PATCH v3 12/21] KVM: X86: Implement ring-based dirty memory
- tracking
-Message-ID: <20200120024717-mutt-send-email-mst@kernel.org>
-References: <20200109145729.32898-1-peterx@redhat.com>
- <20200109145729.32898-13-peterx@redhat.com>
- <20200109110110-mutt-send-email-mst@kernel.org>
- <20200109191514.GD36997@xz-x1>
- <22bcd5fc-338c-6b72-2bda-47ba38d7e8ef@redhat.com>
- <20200119051145-mutt-send-email-mst@kernel.org>
- <20200120072915.GD380565@xz-x1>
+        Sun, 19 Jan 2020 23:48:17 -0800 (PST)
+Date:   Mon, 20 Jan 2020 08:48:16 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        lantianyu1986@gmail.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH RFC v1] mm: is_mem_section_removable() overhaul
+Message-ID: <20200120074816.GG18451@dhcp22.suse.cz>
+References: <20200117105759.27905-1-david@redhat.com>
+ <20200117113353.GT19428@dhcp22.suse.cz>
+ <c82a0dd7-a99b-6def-83d4-a19fbdd405d9@redhat.com>
+ <20200117145233.GB19428@dhcp22.suse.cz>
+ <65606e2e-1cf7-de3b-10b1-33653cb41a52@redhat.com>
+ <20200117152947.GK19428@dhcp22.suse.cz>
+ <CAPcyv4hHHzdPp4SQ0sePzx7XEvD7U_B+vZDT00O6VbFY8kJqjw@mail.gmail.com>
+ <25a94f61-46a1-59a6-6b54-8cc6b35790d2@redhat.com>
+ <CAPcyv4jvmYRbX9i+1_LvHoTDGABadHbYH3NVkqczKsQ4fsf74g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120072915.GD380565@xz-x1>
+In-Reply-To: <CAPcyv4jvmYRbX9i+1_LvHoTDGABadHbYH3NVkqczKsQ4fsf74g@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 03:29:15PM +0800, Peter Xu wrote:
-> On Sun, Jan 19, 2020 at 05:12:35AM -0500, Michael S. Tsirkin wrote:
-> > On Sun, Jan 19, 2020 at 10:09:53AM +0100, Paolo Bonzini wrote:
-> > > On 09/01/20 20:15, Peter Xu wrote:
-> > > > Regarding dropping the indices: I feel like it can be done, though we
-> > > > probably need two extra bits for each GFN entry, for example:
-> > > > 
-> > > >   - Bit 0 of the GFN address to show whether this is a valid publish
-> > > >     of dirty gfn
-> > > > 
-> > > >   - Bit 1 of the GFN address to show whether this is collected by the
-> > > >     user
-> > > 
-> > > We can use bit 62 and 63 of the GFN.
-> > 
-> > If we are short on bits we can just use 1 bit. E.g. set if
-> > userspace has collected the GFN.
-> 
-> I'm still unsure whether we can use only one bit for this.  Say,
-> otherwise how does the userspace knows the entry is valid?  For
-> example, the entry with all zeros ({.slot = 0, gfn = 0}) could be
-> recognized as a valid dirty page on slot 0 gfn 0, even if it's
-> actually an unused entry.
+On Fri 17-01-20 08:57:51, Dan Williams wrote:
+[...]
+> Unless the user is willing to hold the device_hotplug_lock over the
+> evaluation then the result is unreliable.
 
-So I guess the reverse: valid entry has bit set, userspace sets it to
-0 when it collects it?
+Do we want to hold the device_hotplug_lock from this user readable file
+in the first place? My book says that this just waits to become a
+problem.
 
-
-> > 
-> > > I think this can be done in a secure way.  Later in the thread you say:
-> > > 
-> > > > We simply check fetch_index (sorry I
-> > > > meant this when I said reset_index, anyway it's the only index that we
-> > > > expose to userspace) to make sure:
-> > > > 
-> > > >   reset_index <= fetch_index <= dirty_index
-> > > 
-> > > So this means that KVM_RESET_DIRTY_RINGS should only test the "collected
-> > > by user" flag on dirty ring entries between reset_index and dirty_index.
-> > > 
-> > > Also I would make it
-> > > 
-> > >    00b (invalid GFN) ->
-> > >      01b (valid gfn published by kernel, which is dirty) ->
-> > >        1*b (gfn dirty page collected by userspace) ->
-> > >          00b (gfn reset by kernel, so goes back to invalid gfn)
-> > > That is 10b and 11b are equivalent.  The kernel doesn't read that bit if
-> > > userspace has collected the page.
-> 
-> Yes "1*b" is good too (IMHO as long as we can define three states for
-> an entry).  However do you want me to change to that?  Note that I
-> still think we need to read the rest of the field (in this case,
-> "slot" and "gfn") besides the two bits to do re-protect.  Should we
-> trust that unconditionally if writable?
-> 
-> Thanks,
-> 
-> -- 
-> Peter Xu
-
+Really, the interface is flawed and should have never been merged in the
+first place. We cannot simply remove it altogether I am afraid so let's
+at least remove the bogus code and pretend that the world is a better
+place where everything is removable except the reality sucks...
+-- 
+Michal Hocko
+SUSE Labs
