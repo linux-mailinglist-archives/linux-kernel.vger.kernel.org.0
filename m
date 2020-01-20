@@ -2,149 +2,373 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 320341424AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:02:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B90371424C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:03:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbgATIBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:01:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54647 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726039AbgATIBg (ORCPT
+        id S1727117AbgATIC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:02:27 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45652 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbgATIC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:01:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579507295;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Iz/qjvodYnEnB5eFL79FzYhZwFSrGU3EpRLL9cwpXcI=;
-        b=EURITZ+SqOjV5q7tLanZ7k6cj3rvCr7qPBFeWkFZ7XF0NeUWzqDey1P9JYPhqooprN6qg6
-        DG4Es+o7q7Z5QtYZ2Pb0BbyUi8g9PVA+eQlYO6u7UjbtwgoN99sw4lVJ5A/8HCnaGlhJv3
-        5ASmLblzD+5ajZwzWH35AFFxwTfTQDk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-68-gYKPL3i1Oa25naBeSRDvIw-1; Mon, 20 Jan 2020 03:01:33 -0500
-X-MC-Unique: gYKPL3i1Oa25naBeSRDvIw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA35A10054E3;
-        Mon, 20 Jan 2020 08:01:30 +0000 (UTC)
-Received: from [10.72.12.173] (ovpn-12-173.pek2.redhat.com [10.72.12.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B046510013A7;
-        Mon, 20 Jan 2020 08:01:11 +0000 (UTC)
-Subject: Re: [PATCH 5/5] vdpasim: vDPA device simulator
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "mst@redhat.com" <mst@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "cunming.liang@intel.com" <cunming.liang@intel.com>,
-        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
-        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
-        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "aadam@redhat.com" <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>,
-        "kuba@kernel.org" <kuba@kernel.org>
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-6-jasowang@redhat.com>
- <20200116154658.GJ20978@mellanox.com>
- <aea2bff8-82c8-2c0f-19ee-e86db73e199f@redhat.com>
- <20200117141021.GW20978@mellanox.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <cd5477b1-7e41-aeeb-c592-09b2ec81566a@redhat.com>
-Date:   Mon, 20 Jan 2020 16:01:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 20 Jan 2020 03:02:27 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 59so27866455otp.12;
+        Mon, 20 Jan 2020 00:02:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5RtFjxIBbNUQwYy+E+qDUEnF9UPSzsDuxYOPJ8RkUG0=;
+        b=Ythy0xDMRaV3xWCi7xk7VVVhoAXxwGfbiQaGyRdO9s/byYzsYH+aThlhl8MPzT9Alk
+         7mNnY2Zh/JxbEqDCfiKl3aOO93j8bIOuYDIUXQGxynxFx5wOsg/WDrhduWyCJNqTfGGy
+         uNElgv47OYetLPODfRzWbxXrlHhtZyBrSKlFfMlD82PImg/VA/Ap/TcaOCvYa33dKLdX
+         Faaoo9GcDM2oqWscKCnH6sfJH4PMYz7ZNrnqHPmRb8h/PEpYRBda1+Y5GQ+IBzHjoysy
+         D67M/p1abdjyBHlQItTbbiKurGxXE1DCi/4d2/Nrm7b5rYyVhjiBzzREdPODpuN7Ynnv
+         g+lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5RtFjxIBbNUQwYy+E+qDUEnF9UPSzsDuxYOPJ8RkUG0=;
+        b=DOAm274Ah5tiSQIdCu0eNhWjCPyrIMG/3oPbgoLc9a2QhENNKz3MGjdJMoU9k4rkva
+         Y71FqufcbJ21VpNfhHSkZ2aLUQMuuiajkB0N3IWymXlRF6sJXzJlW6wxGQeM0DB6PDYY
+         RMPx2+58XgBffnrkJmw2fRDKJYVgoL0VrDGv+nHNiPP57+ygLFh5MRylhq21+MGKJfhN
+         76jD+yzmDj091iGSKvYwzGdV8QKugx/20hD1y+lVpN/0h7oJocoM9SMwTK+joDKL0XtJ
+         OU+VktHwIi+sTjNzcz56BgK8dEVQuXmoistnqlGjgYnQrpPrZB9YDSEsP0DegkW+cL3a
+         arkw==
+X-Gm-Message-State: APjAAAXjMHFN+HHM92S39qswd3dtVIBhQgBm2lo/sdUf80MW17unsPEv
+        tA9gTsLDjisI8Didn1W6h2MkROybSdQRL+vdhJw=
+X-Google-Smtp-Source: APXvYqwppD9Fnuam2rNm6TutuCQht8fMKUSKD7dpHWeOVsBuEYXglMXkJ0uEr2kwlvWrKQwW+YYf9yC0mI/6tdRmWFg=
+X-Received: by 2002:a9d:70cb:: with SMTP id w11mr15698400otj.230.1579507346138;
+ Mon, 20 Jan 2020 00:02:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200117141021.GW20978@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-Content-Transfer-Encoding: quoted-printable
+References: <CAGi-RUJvqJoCXWN2YugRn=WYEk9yzt7m3OPfX_o++PmJWQ3woQ@mail.gmail.com>
+ <87wo9ub5f6.fsf@nanos.tec.linutronix.de> <CAGi-RUK_TA+WWvXJSrsa=_Pwq0pV1ffUKOCBu5c1t8O5Xs+UJg@mail.gmail.com>
+ <CAGi-RUJG=SB7az5FFVTzzgefn_VXUbyQX1dtBN+9gkR7MgyC6g@mail.gmail.com>
+ <87imldbqe3.fsf@nanos.tec.linutronix.de> <CAGi-RULNwpiNGYALYRG84SOUzkvNTbgctmXoS=Luh29xDHJzYw@mail.gmail.com>
+ <87v9pcw55q.fsf@nanos.tec.linutronix.de> <CAGi-RUJPJ59AMZp3Wap=9zSWLmQSXVDtkbD+O6Hofizf8JWyRg@mail.gmail.com>
+ <87pnfjwxtx.fsf@nanos.tec.linutronix.de> <CAGi-RUJtqdLtFBVMxL8TOQ3LGRqqrV4Ge7Fu9mTyDoQVYxtA5g@mail.gmail.com>
+ <87zhem172r.fsf@nanos.tec.linutronix.de> <CAGi-RUJkr0gPbynYe+Gkk-JoeyCHdSvd9zdgCv4Hij5vfGVMEA@mail.gmail.com>
+ <87sgke1004.fsf@nanos.tec.linutronix.de> <CAGi-RUJTGMA2VuhxA--0hvYgEPJydBPT9uHXD2YBToKgf3Zmbg@mail.gmail.com>
+ <87lfq54s5b.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <87lfq54s5b.fsf@nanos.tec.linutronix.de>
+From:   Ramon Fried <rfried.dev@gmail.com>
+Date:   Mon, 20 Jan 2020 10:02:15 +0200
+Message-ID: <CAGi-RULamPDegeULJ0ssA89xRyTK7j3MjfEBARTNUK34sVtsbg@mail.gmail.com>
+Subject: Re: MSI irqchip configured as IRQCHIP_ONESHOT_SAFE causes spurious IRQs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     hkallweit1@gmail.com, Bjorn Helgaas <bhelgaas@google.com>,
+        maz@kernel.org, lorenzo.pieralisi@arm.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2020/1/17 =E4=B8=8B=E5=8D=8810:10, Jason Gunthorpe wrote:
-> On Fri, Jan 17, 2020 at 05:32:39PM +0800, Jason Wang wrote:
->> On 2020/1/16 =E4=B8=8B=E5=8D=8811:47, Jason Gunthorpe wrote:
->>> On Thu, Jan 16, 2020 at 08:42:31PM +0800, Jason Wang wrote:
->>>> This patch implements a software vDPA networking device. The datapat=
-h
->>>> is implemented through vringh and workqueue. The device has an on-ch=
-ip
->>>> IOMMU which translates IOVA to PA. For kernel virtio drivers, vDPA
->>>> simulator driver provides dma_ops. For vhost driers, set_map() metho=
-ds
->>>> of vdpa_config_ops is implemented to accept mappings from vhost.
->>>>
->>>> A sysfs based management interface is implemented, devices are
->>>> created and removed through:
->>>>
->>>> /sys/devices/virtual/vdpa_simulator/netdev/{create|remove}
->>> This is very gross, creating a class just to get a create/remove and
->>> then not using the class for anything else? Yuk.
->>
->> It includes more information, e.g the devices and the link from vdpa_s=
-im
->> device and vdpa device.
-> I feel like regardless of how the device is created there should be a
-> consistent virtio centric management for post-creation tasks, such as
-> introspection and destruction
-
-
-Right, actually, this is something that could be done by sysfs as well.=20
-Having an intermediate steps as "activate" and introducing attributes=20
-for post-creation tasks.
-
-
+On Sat, Jan 18, 2020 at 12:47 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
-> A virto struct device should already have back pointers to it's parent
-> device, which should be enough to discover the vdpa_sim, none of the
-> extra sysfs munging should be needed.
+> Ramon,
 >
->>>> Netlink based lifecycle management could be implemented for vDPA
->>>> simulator as well.
->>> This is just begging for a netlink based approach.
->>>
->>> Certainly netlink driven removal should be an agreeable standard for
->>> all devices, I think.
->>
->> Well, I think Parav had some proposals during the discussion of mdev
->> approach. But I'm not sure if he had any RFC codes for me to integrate=
- it
->> into vdpasim.
->>
->> Or do you want me to propose the netlink API? If yes, would you prefer=
- to a
->> new virtio dedicated one or be a subset of devlink?
-> Well, lets see what feed back Parav has
+> Ramon Fried <rfried.dev@gmail.com> writes:
+> > On Fri, Jan 17, 2020 at 7:11 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >> The device which incorporates the MSI endpoint.
+> >
+> > This is not how the MSI specs describe it, so I'm confused.
+> > According to spec, MSI is just an ordinary post PCIe TLP to a certain
+> > memory on the root-complex.
 >
-> Jason
+> That's the message transport itself.
+>
+> > The only information it has whether to send an MSI or not is the
+> > masked/pending register in the config space.
+>
+> Correct.
+>
+> > So, basically, back to my original question, without tinkering with
+> > these bits, the device will always send the MSI's,
+>
+> What do you mean with 'always send'?
+>
+> It will send ONE message every time the device IP block raises an
+> interrupt as long as it's not masked in the config space.
+>
+> > it's just that they will be masked on the MSI controller on the
+> > host. right ?
+>
+> No. If you mask them on the host then you can lose interupts.
+>
+> Lets take an example. Network card.
+>
+>    Incoming packet
+>    network controller raises interrupt
+>    MSI endpoint sends message
+>    Message raises interrupt in CPU
+>
+>    interrupt is serviced
+>       handle_edge_irq()
+>         acknowledge interrupt at the CPU level
+>         call_driver_interrupt_handler()
+>            fiddle_with_device()
+>    return from interrupt
+>
+> So now if you use a threaded handler in that driver (or use force
+> threading) then this looks so:
+>
+>    Incoming packet
+>    network controller raises interrupt
+>    MSI endpoint sends message
+>    Message raises interrupt in CPU
+>
+>    interrupt is serviced
+>       handle_edge_irq()
+>       acknowledge interrupt at the CPU level
+>       call_primary_interrupt_handler()
+>           wake_irq_thread()
+>   return from interrupt
+>
+>   run_irq_thread()
+>       call_driver_interrupt_handler()
+>         fiddle_with_device()
+>       wait_for_next_irq();
+>
+> In both cases the network controller can raise another interrupt
+> _before_ the intial one has been fully handled and of course the MSI
+> endpoint will send a new message which triggers the pending logic in the
+> edge handler or in case of a threaded handler kicks the thread to run
+> another round.
+>
+> Now you might think that if there are tons of incoming packets then the
+> network controller will raise tons of interrupts before the interrupt
+> handler completes. That would be outright stupid. So what the network
+> controller (assumed it is sanely designed) does is:
+>
+>   packet arrives
+>   if (!raised_marker) {
+>      raise_interrupt;
+>      set raised_marker;
+>   }
+>
+> So now the interrupt handler comes around to talk to the device and the
+> processing clears the raised_marker at some point. Either by software or
+> automatically when the queue is empty.
+>
+> If you translate that into a electrical diagram:
+>
+> Packet    1    2      3        4
+>
+>             ________     _____   _
+> NetC-Int  _|        |___|     |_| |_____
+>
+> MSI-EP     M            M       M          M = Message
+>
+> CPU INT     |            |       |
+>
+> Driver        _______      _________
+> handler  ____|       |____|         |______
+>
+> If you look at packet #4 then you notice that the interrupt for this
+> packet is raised and the message is sent _before_ the handler finishes.
+>
+> And that's where we need to look at interrupt masking.
+>
+> 1) Masking at the MSI endpoint (PCI configspace)
+>
+>    This is slow and depending on the PCI host this might require
+>    to take global locks, which is even worse if you have multi queue
+>    devices firing all at the same time.
+>
+>    So, no this is horrible and it's also not required.
+>
+> 2) Masking at the host interrupt controller
+>
+>    Depending on the implementation of the controller masking can cause
+>    interrupt loss. In the above case the message for packet #4 could
+>    be dropped by the controller. And yes, there are interrupt
+>    controllers out there which have exactly this problem.
+>
+>    That's why the edge handler does not mask the interrupt in the first
+>    place.
+>
+> So now you can claim that your MSI host controller does not have that
+> problem. Fine, then you could do masking at the host controller level,
+> but what does that buy you? Lets look at the picture again:
+>
+> Packet    1    2      3        4
+>
+>             ________     _____   ____
+> NetC-Int  _|        |___|     |_|    |__
+>
+> MSI-EP     M            M       M             M = Message
+>
+> CPU INT     |            |         |
+> Driver       _________    ________   __
+> handler  ____M       U____M       U_M  U____  M = Mask, U = Unmask
+>
+> You unmask just to get the next interrupt so you mask/handle/unmask
+> again. That's actually slower because you get the overhead of unmask,
+> which raises the next interrupt in the CPU (it's already latched in the
+> MSI translator) and then yet another mask/unmask pair.  No matter what,
+> you'll lose.
+>
+> And if you take a look at network drivers, then you find quite some of
+> them which do only one thing in their interrupt service routine:
+>
+>      napi_schedule();
+>
+> That's raising the NAPI softirq and nothing else. They touch not even
+> the device at all and delegate all the processing to softirq
+> context. They rely on the sanity of the network controller not to send
+> gazillions of interrupts before the pending stuff has been handled.
+>
+> That's not any different than interrupt threading. It's exactly the same
+> except that the handling runs in softirq context and not in an dedicated
+> interrupt thread.
+>
+> So if you observe issues with your PCI device that it sends gazillions
+> of interrupts before the pending ones are handled, then you might talk
+> to the people who created that beast or you need to do what some of the
+> network controllers do:
+>
+>   hard_interrupt_handler()
+>     tell_device_to_shutup();
+>     napi_schedule();
+>
+> and then something in the NAPI handling tells the device that it can
+> send interrupts again.
+>
+> You can do exactly the same thing with interrupt threading. Register a
+> primary handler and a threaded handler and let the primary handler do:
+>
+>   hard_interrupt_handler()
+>     tell_device_to_shutup();
+>     return IRQ_WAKE_THREAD;
+>
+> Coming back to your mask/unmask thing. That has another downside which
+> is layering violation and software complexity.
+>
+> MSI interrupts are edge type by specification:
+>
+>   "MSI and MSI-X are edge-triggered interrupt mechanisms; neither the
+>    PCI Local Bus Specification nor this specification support
+>    level-triggered MSI/MSI-X interrupts."
+>
+> The whole point of edge-triggered interrupts is that they are just a
+> momentary notification which means that they can avoid the whole
+> mask/unmask dance and other issues. There are some limitations to edge
+> type interrupts:
+>
+>   - Cannot be shared, which is a good thing. Shared interrupts are
+>     a pain in all aspects
+>
+>   - Can be lost if the momentary notification does not reach the
+>     receiver. For actual electrical edge type interrupts this happens
+>     when the active state is too short so that the edge detection
+>     on the receiver side fails to detect it.
+>
+>     For MSI this is usually not a problem. If the message gets lost on
+>     the bus then you have other worries than the lost interrupt.
+>
+>     But for both electrical and message based the interrupt receiver on
+>     the host/CPU side can be a problem when masking is in play. There
+>     are quite some broken controllers out there which have that issue
+>     and it's not trivial to get it right especially with message based
+>     interrupts due to the async nature of the involved parts.
+>
+> That's one thing, but now lets look at the layering.
+>
+> Your MSI host side IP is not an interrupt controller. It is a bridge
+> which translates incoming MSI messages and multiplexes them to a level
+> interrupt on the GIC. It provides a status register which allows you to
+> demultiplex the pending interrupts so you don't have to poll all
+> registered handlers to figure out which device actually fired an
+> interrupt. Additionally it allows masking, but that's an implementation
+> detail and you really should just ignore it except for startup/shutdown.
+>
+> From the kernels interrupt system POV the MSI host side controller is
+> just a bridge between MSI and GIC.
+>
+> That's clearly reflected in the irq hierarchy:
+>
+> |-------------|
+> |             |
+> | GIC         |
+> |             |
+> |-------------|
+>
+> |-------------|         |----------|
+> |             |         |          |
+> | MSI bridge  |---------| PCI/MSI  |
+> |             |         |          |
+> |-------------|         |----------|
+>
+> The GIC and the MSI bridge are independent components. The fact that the
+> MSI bridge has an interrupt output which is connected to the GIC does
+> not create an hierarchy. From the GIC point of view the MSI bridge is
+> just like any other peripheral which is connected to one of its input
+> lines.
+>
+> But the PCI/MSI domain has a hierarchical parent, the MSI Bridge. The
+> reason why this relationship exists is that the PCI/MSI domain needs a
+> way to allocate a message/address for interrupt delivery. And that
+> information is provided by the MSI bridge domain.
+>
+> In an interrupt hierarchy the type of the interrupt (edge/level) and the
+> required handler is determined by the outmost domain, in this case the
+> PCI/MSI domain. This domain mandates edge type and the edge handler.
+>
+> And that outermost domain is the primary interrupt chip which is
+> involved when the core code manages and handles interrupts. So
+> mask/unmask happens at the pci_msi interrupt chip which fiddles with the
+> MSI config space. The outermost device can call down into the hierarchy
+> to let the underlying domain take further action or delegate certain
+> actions completely to the underlying domain, but that delegation is
+> pretty much restricted. One example for delegation is the irq_ack()
+> action. The ack has to hit the underlying domain usually as on the MSI
+> endpoint there is no such thing. If the underlying domain does not need
+> that then the irq_ack() routine in the underlying domain is just empty
+> or not implemented. But you cannot delegate mask/unmask and other
+> fundamental actions because they must happen on the MSI endpoint no
+> matter what.
+>
+> You cannot create some artifical level semantics on the PCI/MSI side and
+> you cannot artificially connect your demultiplexing handler to the
+> threaded handler of the PCI interrupt without violating all basic rules
+> of engineering and common sense at once.
+>
+> Let me show you the picture from above expanded with your situation:
+>
+> Packet    1    2      3        4
+>
+>             ________     _____   _
+> NetC-Int  _|        |___|     |_| |_____
+>
+> MSI-EP     M            M       M               M = Message
+>
+>              _            _      _
+> Bridge    __| |__________| |____| |_______
+>
+>              _            _      _
+> GIC input __| |__________| |____| |_______
+>
+> CPU INT     |            |       |
+>
+> Demux         _            _      _
+> handler    __A |__________A |____A |_______     A == Acknowledge in the bridge
+>
+> Thread         _______      _________
+> handler   ____|       |____|         |______
+>
+> Hope that helps and clarifies it.
+>
+> Thanks,
+>
+>         tglx
+Wow Thomas, this is an amazing answer, I need to go over it few times
+to see that I understand everything.
+I wish we there was a way to pin this somewhere, so it won't get lost
+in the mailing list archive, I think it's a very
+nice explanation that should have it's wiki page or something.
 
-
-Ok.
-
-Thanks
-
+Thanks,
+Ramon.
