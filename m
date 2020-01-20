@@ -2,200 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A39142F85
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:25:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F11142F8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729126AbgATQZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:25:44 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40252 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbgATQZn (ORCPT
+        id S1729262AbgATQ1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:27:05 -0500
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:35565 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbgATQ1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:25:43 -0500
-Received: by mail-ot1-f65.google.com with SMTP id w21so243627otj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 08:25:43 -0800 (PST)
+        Mon, 20 Jan 2020 11:27:05 -0500
+Received: by mail-wr1-f53.google.com with SMTP id g17so111165wro.2;
+        Mon, 20 Jan 2020 08:27:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7cSDWZohrZmB4Lsh7kYAZSQYpOg12wvWZ6eMxNAuFio=;
-        b=A1XqDsGutwFYPrzCqsKq2d73/8yvcyJB2N6mF7qLKpxGRtCDQBJhJNDfiIp0E4b04M
-         jLdXD9eC1j56EauzFYnsgq6TAZRDs8Q7vxfxbCgD3Df/4Mv8pkNU4Ui73qOxG1dpFTKO
-         ozGG9ypd8Lpbp9MkJApJbOseJQtLs9MMNFzddPXErWHa3zc8xtbpQ779xaPZspAF4FMe
-         zEbYXgFSUilSpJpyfogMDbnBuhrG++MGfxtDebXb7B2/TNzO6rxxEk8RLXt1q8XP46U/
-         DYkBHnWfaOb+D0mPBibSXr10JIhJCq7R+8JGaBx3F6a0T6ij3tm//YzNE76wAOpTrj05
-         zTXA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C43kfEsLFxRZy2sK+w1qIwr4+TCPdvXSm3RH+wVd5qU=;
+        b=mOBZLXtlqfsLVlIR51FbTNLAtsf8o72Td2ObDsLY0Xvk4B35HFcU0PGjNo42BCMnb7
+         DQ2ygZ+HOQFTyzmPJ2xwCZ5W+lVyYAOGDFeIfxjZG+jyJGsi9TljdlUHpm1Mz1Ed0BWP
+         4k3ukTI1O3iEuHCDFLb0oVX3m0Q5+m9ZxSrYltgb6+9KIjp60+WoRN0m/Txw5M0jF8E0
+         aSOVuApB0s+J72PL325fy97uhYnT3v18qkM2zrHFuTtWvIjagRhWvTqqGGB1ARaIRK8r
+         V3SVCXGCeWF1q6on5zWLJa0Dgxgma4DbLbtSZE8SYjk2NXaZRDAh1K4VA3mgEhxnrOEd
+         AXLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7cSDWZohrZmB4Lsh7kYAZSQYpOg12wvWZ6eMxNAuFio=;
-        b=KPXsAbRQi8T0V3L2+XVm0B8zKnOErYzPZBqPsR1dd4LsM539REUt+ajkI2i2NNKdmC
-         3B2HKX/GBCDpvltPisQY9i9ls26XXMMC6V6DpKIPI/vw5ZcNVcE5TDdjFv95w7deC+3S
-         6Rojn6+jr42O+eZAcEJ9GIxVkvdxBjVg6wJ70hOMcOOA/220rjFJ+sJTwu0PFw6FG1zN
-         FFK08HeGdFJuzswbnW/a5OdiEu5eMxvKAcF30NQ01dx5TG8dXv240bPxDl7/pNwKR+FQ
-         wT21AuSd1ye9GkQXuS01GQDG6upBJX7Zn7LxXedFVHKcG06EdBhQsBqjRDn89LiAXaTb
-         GSZw==
-X-Gm-Message-State: APjAAAUvzJpe1wjkLxrYVWb7IMdPQffyicEZvgnczyfdUEZ0uwnLFjW6
-        IJIHjEgx2dB/yx7hxHBSEUhHJn9facIbPdD2jv76mQ==
-X-Google-Smtp-Source: APXvYqx80QzaPWpNwaBjtr4lRxleoT9Gpjc00N18ryoIv2GI2DE3IQCFsyL079bZbygHNdnGpGbmw+e6WM5ylFg7V3w=
-X-Received: by 2002:a05:6830:1d7b:: with SMTP id l27mr136144oti.251.1579537542903;
- Mon, 20 Jan 2020 08:25:42 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C43kfEsLFxRZy2sK+w1qIwr4+TCPdvXSm3RH+wVd5qU=;
+        b=jws0d4Peko9XZXBIOqpdPC5UEugHIgMb3G/OGdSLr1MtfJ2nqx5ifBkKuyEi+GRO8r
+         4CzBzDZUoky8cCZsXHTsIybUR++dv9fzIuopy23gqbiLhicIlvY6usUMLTbi1rwWITJ6
+         ezWrfxQEo2oFBcUSZqKQnDbW5LDSkgxiNaOeygn8BnXZhXDd8FAnu0hB1BG/J55H7041
+         w2VsvunntVg1+Hcakrt0afPYx28wzarO3SwSogOcg/ddxevw04fAZwTugvLpPgaB2bEp
+         OBbDhbalu+cv5jKoiEehJY091M2Ydvi+9lkaysyFKkqYnq/PmaAoLogfPXt3z3JIScbv
+         CvxA==
+X-Gm-Message-State: APjAAAUqLw9rv3O5roLIRpN1pJP7dxH6T14Gdnq+8H/M4QZI3lHOT2Mq
+        3WTq0epIMdysS8zNpPoa1iI=
+X-Google-Smtp-Source: APXvYqwcrRPnd5O+FjCmMVilD1cPlUDyEkN+L8g3frQ/hOzgsjRVTtow3OsdeXH80y8Ed+5KPrAWAQ==
+X-Received: by 2002:a05:6000:cb:: with SMTP id q11mr356257wrx.14.1579537623030;
+        Mon, 20 Jan 2020 08:27:03 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id r6sm49550041wrq.92.2020.01.20.08.27.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2020 08:27:02 -0800 (PST)
+Date:   Mon, 20 Jan 2020 17:27:01 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120162701.guxcrmqysejaqw6y@pali>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120110438.ak7jpyy66clx5v6x@pali>
+ <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
+ <20200120152009.5vbemgmvhke4qupq@pali>
+ <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
 MIME-Version: 1.0
-References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
- <CACT4Y+YuTT6kZ-AkgU0c1o09qmQdFWr4_Sds4jaDg-Va6g6jkA@mail.gmail.com>
- <CACT4Y+acrXkA-ixjQXqNf1EC=fpgTWf3Rcevxxon0DfrPdD-UQ@mail.gmail.com>
- <CANpmjNNcXUF-=Y-hmry9-xEoNpJd0WH+fOcJJM6kv2eRm5v-kg@mail.gmail.com> <CACT4Y+bD3cNxfaWOuhHz338MoVoaHpw-E8+b7v6mo_ir2KD46Q@mail.gmail.com>
-In-Reply-To: <CACT4Y+bD3cNxfaWOuhHz338MoVoaHpw-E8+b7v6mo_ir2KD46Q@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 20 Jan 2020 17:25:31 +0100
-Message-ID: <CANpmjNN-8CLN9v7MehNUXy=iEXOfFHwpAUEPivGM573EQqmCZw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
-        Kees Cook <keescook@chromium.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="rb3yd7yh2odisgq3"
+Content-Disposition: inline
+In-Reply-To: <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020 at 17:06, Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Mon, Jan 20, 2020 at 4:40 PM Marco Elver <elver@google.com> wrote:
-> > > > > > This adds instrumented.h, which provides generic wrappers for memory
-> > > > > > access instrumentation that the compiler cannot emit for various
-> > > > > > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
-> > > > > > future this will also include KMSAN instrumentation.
-> > > > > >
-> > > > > > Note that, copy_{to,from}_user require special instrumentation,
-> > > > > > providing hooks before and after the access, since we may need to know
-> > > > > > the actual bytes accessed (currently this is relevant for KCSAN, and is
-> > > > > > also relevant in future for KMSAN).
-> > > > > >
-> > > > > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > > > ---
-> > > > > >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
-> > > > > >  1 file changed, 153 insertions(+)
-> > > > > >  create mode 100644 include/linux/instrumented.h
-> > > > > >
-> > > > > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..9f83c8520223
-> > > > > > --- /dev/null
-> > > > > > +++ b/include/linux/instrumented.h
-> > > > > > @@ -0,0 +1,153 @@
-> > > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > > +
-> > > > > > +/*
-> > > > > > + * This header provides generic wrappers for memory access instrumentation that
-> > > > > > + * the compiler cannot emit for: KASAN, KCSAN.
-> > > > > > + */
-> > > > > > +#ifndef _LINUX_INSTRUMENTED_H
-> > > > > > +#define _LINUX_INSTRUMENTED_H
-> > > > > > +
-> > > > > > +#include <linux/compiler.h>
-> > > > > > +#include <linux/kasan-checks.h>
-> > > > > > +#include <linux/kcsan-checks.h>
-> > > > > > +#include <linux/types.h>
-> > > > > > +
-> > > > > > +/**
-> > > > > > + * instrument_read - instrument regular read access
-> > > > > > + *
-> > > > > > + * Instrument a regular read access. The instrumentation should be inserted
-> > > > > > + * before the actual read happens.
-> > > > > > + *
-> > > > > > + * @ptr address of access
-> > > > > > + * @size size of access
-> > > > > > + */
-> > > > >
-> > > > > Based on offline discussion, that's what we add for KMSAN:
-> > > > >
-> > > > > > +static __always_inline void instrument_read(const volatile void *v, size_t size)
-> > > > > > +{
-> > > > > > +       kasan_check_read(v, size);
-> > > > > > +       kcsan_check_read(v, size);
-> > > > >
-> > > > > KMSAN: nothing
-> > > >
-> > > > KMSAN also has instrumentation in
-> > > > copy_to_user_page/copy_from_user_page. Do we need to do anything for
-> > > > KASAN/KCSAN for these functions?
-> >
-> > copy_to_user_page/copy_from_user_page can be instrumented with
-> > instrument_copy_{to,from}_user_. I prefer keeping this series with no
-> > functional change intended for KASAN at least.
-> >
-> > > There is also copy_user_highpage.
-> > >
-> > > And ioread/write8/16/32_rep: do we need any instrumentation there. It
-> > > seems we want both KSAN and KCSAN too. One may argue that KCSAN
-> > > instrumentation there is to super critical at this point, but KASAN
-> > > instrumentation is important, if anything to prevent silent memory
-> > > corruptions. How do we instrument there? I don't see how it maps to
-> > > any of the existing instrumentation functions.
-> >
-> > These should be able to use the regular instrument_{read,write}. I
-> > prefer keeping this series with no functional change intended for
-> > KASAN at least.
->
-> instrument_{read,write} will not contain any KMSAN instrumentation,
-> which means we will effectively remove KMSAN instrumentation, which is
-> weird because we instrumented these functions because of KMSAN in the
-> first place...
->
-> > > There is also kmsan_check_skb/kmsan_handle_dma/kmsan_handle_urb that
-> > > does not seem to map to any of the instrumentation functions.
-> >
-> > For now, I would rather that there are some one-off special
-> > instrumentation, like for KMSAN. Coming up with a unified interface
-> > here that, without the use-cases even settled, seems hard to justify.
-> > Once instrumentation for these have settled, unifying the interface
-> > would have better justification.
->
-> I would assume they may also require an annotation that checks the
-> memory region under all 3 tools and we don't have such annotation
-> (same as the previous case and effectively copy_to_user). I would
-> expect such annotation will be used in more places once we start
-> looking for more opportunities.
 
-Agreed, I'm certainly not against adding these. We may need to
-introduce 'instrument_dma_' etc. However, would it be reasonable to do
-this in a separate follow-up patch-series, to avoid stalling bitops
-instrumentation?  Assuming that the 8 hooks in instrumented.h right
-now are reasonable, and such future changes add new hooks, I think
-that would be the more pragmatic approach.
+--rb3yd7yh2odisgq3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
--- Marco
+On Monday 20 January 2020 15:47:22 David Laight wrote:
+> From: Pali Roh=C3=A1r
+> > Sent: 20 January 2020 15:20
+> ...
+> > This is not possible. There is 1:1 mapping between UTF-8 sequence and
+> > Unicode code point. wchar_t in kernel represent either one Unicode code
+> > point (limited up to U+FFFF in NLS framework functions) or 2bytes in
+> > UTF-16 sequence (only in utf8s_to_utf16s() and utf16s_to_utf8s()
+> > functions).
+>=20
+> Unfortunately there is neither a 1:1 mapping of all possible byte sequenc=
+es
+> to wchar_t (or unicode code points),
 
->
-> > This patch series is merely supposed to introduce instrumented.h and
-> > replace the kasan_checks (also implicitly introducing kcsan_checks
-> > there), however, with no further functional change intended.
-> >
-> > I propose that adding entirely new instrumentation for both KASAN and
-> > KCSAN, we should send a separate patch-series.
-> >
-> > Thanks,
-> > -- Marco
+I was talking about valid UTF-8 sequence (invalid, illformed is out of
+game and for sure would always cause problems).
+
+> nor a 1:1 mapping of all possible wchar_t values to UTF-8.
+
+This is not truth. There is exactly only one way how to convert sequence
+of Unicode code points to UTF-8. UTF is Unicode Transformation Format
+and has exact definition how is Unicode Transformed.
+
+If you have valid UTF-8 sequence then it describe one exact sequence of
+Unicode code points. And if you have sequence (ordinals) of Unicode code
+points there is exactly one and only one its representation in UTF-8.
+
+I would suggest you to read Unicode standard, section 2.5 Encoding Forms.
+
+> Really both need to be defined - even for otherwise 'invalid' sequences.
+>=20
+> Even the 16-bit values above 0xd000 can appear on their own in
+> windows filesystems (according to wikipedia).
+
+If you are talking about UTF-16 (which is _not_ 16-bit as you wrote),
+look at my previous email:
+
+"MS FAT32 implementations allows half of UTF-16 surrogate pair stored in FS=
+=2E"
+
+> It is all to easy to get sequences of values that cannot be converted
+> to/from UTF-8.
+>=20
+> 	David
+>=20
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
+ 1PT, UK
+> Registration No: 1397386 (Wales)
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--rb3yd7yh2odisgq3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiXU0wAKCRCL8Mk9A+RD
+UlffAJ0elMMTIUY0wtAoDO7B5Dqo/pfzcwCdFon3xWqzyaeLu9BTsknYE0wNmjE=
+=ZCx6
+-----END PGP SIGNATURE-----
+
+--rb3yd7yh2odisgq3--
