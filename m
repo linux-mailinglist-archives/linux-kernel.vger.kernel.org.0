@@ -2,156 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D570F142F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6AD142F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:26:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgATQY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:24:26 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:30569 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbgATQYZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:24:25 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Don.Brace@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Don.Brace@microchip.com";
-  x-sender="Don.Brace@microchip.com"; x-conformance=spf_only;
-  x-record-type="v=spf1"; x-record-text="v=spf1 mx
-  a:ushub1.microchip.com a:smtpout.microchip.com
-  -exists:%{i}.spf.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Don.Brace@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Don.Brace@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 4iDLFhaG2ispnJhPU6FSTVX35iAEXaZ7DG/SlDgIaSxNXEnINjNzrmBjUYScpP45e6IM+0/0CH
- eHeMQS7bKYRGHoR2o/EvCgi65V1gryM2PsfPgEdDQ79yhrqjgLVels48qnWOM/ayp+kSFjiNfv
- zlpwc5cZqxcgIEoEM/59msRXVI+Wv4Z7u5LyhvzKAFUBmK9roeAmQA1gHkfuPZmR9sCQSewgDI
- 4dVBqPyI7+jgUvLqFJa0mQczgmjf/+8rbQKR2Kac9B4DHu0SyDK/jpea81SnxUxeGH8LRTiY8D
- vYU=
-X-IronPort-AV: E=Sophos;i="5.70,342,1574146800"; 
-   d="scan'208";a="63899866"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2020 09:24:24 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 20 Jan 2020 09:24:19 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 20 Jan 2020 09:24:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eJOs2/8d3BlvoJvFIYTXw662aTikbs2+UgQay6uGEMd7J0RQwqBfWhXVT/DFcNQ0PyzKeyCDvddux0Cywjx6pWDwF+K/K/XB0/7Pf/5CljDYMJPjXaJ7yWYEyQofF/Z5ap8oLxNfnd1i/C5VLb+72XF32zJ/2XbKEsb5tMRDLPH1bUtUEwPfiv+BHaIuquP9QOD07ACWhbsZ+TnI4ABfE2h4xksAaQrEAuJEENcYggtgD4zwSdENjXftEpxIP/rPaSRvI/oUXIscJCnOHH/D4/nx2Cl2sdn7HCKxhkBJ4MewVl/XYR2jGq246X0z9V5wod7nykINPy2orkc6ms8W7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LIXoMzSsNSY1kxjyFdNWueEu66r/MCRjhggS2jJVqzQ=;
- b=UsQ/QP5O3NZdlN/DleReDH5+qf5SYb8YykbdM78OrQAibCqQfOlCEvqyFf38F1SmrOKx5XRzxcRcnaunfpkeII0PW9/S+EvlkWugyzv4tB3lYbNAOZSMLF+k4f+jvDPjFwZHaOxyRu6Dza/YnP/yCzJZNbukEhhrg/gDrwViYQf4jehejHP7FbGrVCES4WZSTkVT1Lm9loL1JJYCUJVv99bp98qn4KA7LzeY/Vw5nprd2JXSpop/R+Nv+r/vMxIQv6gIpfzFmWlKhFFwKMCVLSHbRaOLvYZE9DHyJaGJVsltehkFE4watBrCWatW7u/s3vaGw57kM85ObtON5YcSAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LIXoMzSsNSY1kxjyFdNWueEu66r/MCRjhggS2jJVqzQ=;
- b=pZvBFxz79kAVKD0UEHcLIdgYvQpodWjgXfE2mZb8hcPkZMmrtwu5qAR86VnvvRM6xU+QBsPWEouZw0ucQhiSSVqm+RZ54LOTM5sJnCp5p8ViLdldV2GB5yVfzBoFcHbNC+YV6LW0xJ5mpwR50JoPao1lxbCKfbjqbOdKKjNN04A=
-Received: from SN6PR11MB2767.namprd11.prod.outlook.com (52.135.92.154) by
- SN6PR11MB3183.namprd11.prod.outlook.com (52.135.112.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.24; Mon, 20 Jan 2020 16:24:17 +0000
-Received: from SN6PR11MB2767.namprd11.prod.outlook.com
- ([fe80::89b1:1764:88f7:bbd8]) by SN6PR11MB2767.namprd11.prod.outlook.com
- ([fe80::89b1:1764:88f7:bbd8%7]) with mapi id 15.20.2644.024; Mon, 20 Jan 2020
- 16:24:17 +0000
-From:   <Don.Brace@microchip.com>
-To:     <hslester96@gmail.com>
-CC:     <don.brace@microsemi.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <esc.storagedev@microsemi.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH resend] scsi: smartpqi: add missed free_irq in suspend
-Thread-Topic: [PATCH resend] scsi: smartpqi: add missed free_irq in suspend
-Thread-Index: AQHVqcrK3AMbNjW5nEeQNYbWML5+Dqf0B2CA
-Date:   Mon, 20 Jan 2020 16:24:17 +0000
-Message-ID: <SN6PR11MB276708CE42A1B7B8FF6BDB74E1320@SN6PR11MB2767.namprd11.prod.outlook.com>
-References: <20191203111337.13054-1-hslester96@gmail.com>
-In-Reply-To: <20191203111337.13054-1-hslester96@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [216.54.225.58]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 40ac5421-e420-4213-f29d-08d79dc53246
-x-ms-traffictypediagnostic: SN6PR11MB3183:
-x-microsoft-antispam-prvs: <SN6PR11MB3183D7C156B82E750D57CCB9E1320@SN6PR11MB3183.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 0288CD37D9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(366004)(39860400002)(396003)(199004)(189003)(52536014)(478600001)(76116006)(15650500001)(4744005)(9686003)(6916009)(8936002)(33656002)(81156014)(26005)(8676002)(54906003)(186003)(81166006)(66446008)(55016002)(64756008)(66946007)(86362001)(66556008)(316002)(66476007)(5660300002)(2906002)(71200400001)(7696005)(6506007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB3183;H:SN6PR11MB2767.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: WjepupZgfHt0AwmwYzPRY+tf6pud/JFQWA8b0ocPegRXnRU5S3D31hFERjtLGV2cRywh3msAuNjD8Cjx6aPZ4PyZedpMN6XqEyDRBAzoAb6CNHDhE+YrqbUsYL/tGipY0749sxntv8jMWTU/ul1QqVoVTznDYyBGC9eVTF0GQeKk+IY9BItPj4xRknzvMWt9+SBpA8rMVwv7mLNo+ybRRBBWGhhM2KhQduHsdYUYlFGi859kYrt8bwCUGWHqyr5sI0lmkHNxlIP3GOnDuiLFdODYu6QykYgvTiuZrvhiQDgV4jTZmtaHdIw8yqo8trLAUcwF10vDYkdkkGZEOtNTFbbnC+LrZn94KsKVHrLspP76n6DXMLKmyGhFqepN5DtW9e/RcRuLYXIueXQ+J/5o1wpyjJa4UODVsCHNNmmUcEux27CVL5TiouVW8Tn+Fj+r
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729232AbgATQ0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:26:02 -0500
+Received: from mga01.intel.com ([192.55.52.88]:5400 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726897AbgATQ0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 11:26:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 08:26:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,342,1574150400"; 
+   d="scan'208";a="425234062"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Jan 2020 08:25:59 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1itZsF-000EpB-5f; Tue, 21 Jan 2020 00:25:59 +0800
+Date:   Tue, 21 Jan 2020 00:24:58 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "x86-ml" <x86@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [tip:x86/boot] BUILD SUCCESS
+ dacc9092336be20b01642afe1a51720b31f60369
+Message-ID: <5e25d45a.JA5PtaysUcqHjtCi%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40ac5421-e420-4213-f29d-08d79dc53246
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2020 16:24:17.2204
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e61ZLJF4NS3YozWIbv1r4zBSM5XJqdF7fEW4uk4mZvEFam/1HgjDfNlz2/EpJ7WnfZW9XQm747J65tU9r6Iw9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3183
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------Original Message-----
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git  x86/boot
+branch HEAD: dacc9092336be20b01642afe1a51720b31f60369  x86/sysfb: Fix check for bad VRAM size
 
-The driver calls request_irq in resume but does not call free_irq in suspen=
-d.
-Add the missed call to fix it.
+elapsed time: 283m
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+configs tested: 134
+configs skipped: 34
 
-NAK: free_irq is called in pqi_resume after checking for correct power stat=
-e change. (in pqi_free_interrupts())
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Thanks for your review,
-Don
-
+parisc                            allnoconfig
+parisc                            allyesonfig
+parisc                         b180_defconfig
+parisc                        c3000_defconfig
+parisc                              defconfig
+arc                              allyesconfig
+arc                                 defconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                          multi_defconfig
+m68k                           sun3_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+x86_64               randconfig-d001-20200120
+x86_64               randconfig-d002-20200120
+x86_64               randconfig-d003-20200120
+i386                 randconfig-d001-20200120
+i386                 randconfig-d002-20200120
+i386                 randconfig-d003-20200120
+c6x                              allyesconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                    or1ksim_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+ia64                                defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                               rhel-7.6
+x86_64               randconfig-g001-20200120
+x86_64               randconfig-g002-20200120
+x86_64               randconfig-g003-20200120
+i386                 randconfig-g001-20200120
+i386                 randconfig-g002-20200120
+i386                 randconfig-g003-20200120
+x86_64               randconfig-c001-20200120
+x86_64               randconfig-c002-20200120
+x86_64               randconfig-c003-20200120
+i386                 randconfig-c001-20200120
+i386                 randconfig-c002-20200120
+i386                 randconfig-c003-20200120
+x86_64               randconfig-f001-20200120
+x86_64               randconfig-f002-20200120
+x86_64               randconfig-f003-20200120
+i386                 randconfig-f001-20200120
+i386                 randconfig-f002-20200120
+i386                 randconfig-f003-20200120
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+c6x                  randconfig-a001-20200120
+h8300                randconfig-a001-20200120
+microblaze           randconfig-a001-20200120
+nios2                randconfig-a001-20200120
+sparc64              randconfig-a001-20200120
+sh                               allmodconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+csky                 randconfig-a001-20200120
+openrisc             randconfig-a001-20200120
+s390                 randconfig-a001-20200120
+sh                   randconfig-a001-20200120
+xtensa               randconfig-a001-20200120
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arc                  randconfig-a001-20200120
+arm                  randconfig-a001-20200120
+arm64                randconfig-a001-20200120
+ia64                 randconfig-a001-20200120
+powerpc              randconfig-a001-20200120
+sparc                randconfig-a001-20200120
+x86_64               randconfig-b001-20200120
+x86_64               randconfig-b002-20200120
+x86_64               randconfig-b003-20200120
+i386                 randconfig-b001-20200120
+i386                 randconfig-b002-20200120
+i386                 randconfig-b003-20200120
+x86_64               randconfig-h001-20200120
+x86_64               randconfig-h002-20200120
+x86_64               randconfig-h003-20200120
+i386                 randconfig-h001-20200120
+i386                 randconfig-h002-20200120
+i386                 randconfig-h003-20200120
 
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/=
-smartpqi_init.c
-index 7b7ef3acb504..2251c39afb1b 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -8078,6 +8078,8 @@ static __maybe_unused int pqi_suspend(struct pci_dev =
-*pci_dev, pm_message_t stat
-        pqi_ctrl_wait_for_pending_io(ctrl_info, NO_TIMEOUT);
-        pqi_stop_heartbeat_timer(ctrl_info);
-
-+       free_irq(pci_irq_vector(pci_dev, 0),=20
-+ &ctrl_info->queue_groups[0]);
-+
-        if (state.event =3D=3D PM_EVENT_FREEZE)
-                return 0;
-
---
-2.24.0
-
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
