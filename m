@@ -2,91 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DB614264C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A12142666
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:59:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbgATI6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:58:15 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37970 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgATI6O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:58:14 -0500
-Received: by mail-pg1-f195.google.com with SMTP id a33so15226963pgm.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 00:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OtvuAZ/43/mZHHfizo8i6GGUaKzklYrgQcNWjIYaCCE=;
-        b=WdDp0lZvPJmeAzRMpIwzwDhesFmt4i0sEFxsoWiXOtYFS56QGmK9RMbCK6kw8m7QEI
-         0X5HiIFpbovQKTm2dPFyoK+0BD8h+9nyX/EFDXoRsjNg9SiNa1Dw9kMgtS9ic0wJ/tEG
-         oZuRKII7pM05FfYMOJ3FqF18EyzDEVz6sDyEGT2vwoMuUIYkc04jldFVMxGXrGzXmA+k
-         qj0YNEJsKBVQNQVF/I6qffKSeeh1cr9HqY0z+JZtXKYILrthO4WKzF5wlkNwEJgwKAte
-         f11oQtwy1F8rNTly7RHk8geriY8aPkf0JWTAO66sju9daX5QTYNgOspqFFcF7ixy3mPQ
-         jYCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OtvuAZ/43/mZHHfizo8i6GGUaKzklYrgQcNWjIYaCCE=;
-        b=cfY23+/afDzfrYh6pVOTUP9COfUePJxK/6SF19rZQZIzX+2n/IMs03QVWnqRamRsoL
-         sjMFvtKL1jlsucdyDw1MLwyq9pSihz60YNiiFuvHDFowlgmDRqkpr6/8JXyJiH9D+Wa4
-         08WAYOBh6EN47+h6BgBwW6Qlq/2s54VzcTCrubri+Mr4A7GKDNI+YZJ8mU1913Up8kM/
-         mFRHC+wy5qvIU3iYqpr/pmy/jk3BVFE/oC5HemiHFHoV40s+8Dfks2UUjPcEVoJ0abND
-         97+mbWT+ftYRb7h88d3dptY3EPfJmkdIJ/CjJgEbQb37a+YGT3WVy90BHYkvDbfyizwR
-         TXIA==
-X-Gm-Message-State: APjAAAVuQ4fn5BSShCL14YF9+DdnwFofWHAyZ1gYttQXGuLYzEDx0Q5p
-        i4SvQrh/NK9KRp9uxYA+LjHHntDtwHePAeFqRQs=
-X-Google-Smtp-Source: APXvYqxDKYl6lynrRj2aQbMI8J4UD8eLFvatdUCj7kFSIsY6n7F0dc4aX6kmUr5QAY/bvs1TX2M2j/bAQhNekoygjc0=
-X-Received: by 2002:a63:220b:: with SMTP id i11mr58192051pgi.50.1579510693988;
- Mon, 20 Jan 2020 00:58:13 -0800 (PST)
+        id S1727243AbgATI7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:59:10 -0500
+Received: from mga02.intel.com ([134.134.136.20]:36396 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726988AbgATI7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 03:59:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 00:59:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,341,1574150400"; 
+   d="scan'208";a="258634448"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Jan 2020 00:59:06 -0800
+Subject: Re: [PATCH V2 1/2] mmc: sdhci: Let a vendor driver supply and update
+ ADMA descriptor size
+To:     Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        ulf.hansson@linaro.org
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        sayalil@codeaurora.org, cang@codeaurora.org,
+        rampraka@codeaurora.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <1579194192-7942-1-git-send-email-vbadigan@codeaurora.org>
+ <1579194192-7942-2-git-send-email-vbadigan@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <aaffb145-69ab-af11-7470-e887b45583a9@intel.com>
+Date:   Mon, 20 Jan 2020 10:58:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20200117125834.14552-1-sergey.dyasli@citrix.com> <20200117125834.14552-5-sergey.dyasli@citrix.com>
-In-Reply-To: <20200117125834.14552-5-sergey.dyasli@citrix.com>
-From:   Paul Durrant <pdurrant@gmail.com>
-Date:   Mon, 20 Jan 2020 08:58:02 +0000
-Message-ID: <CACCGGhApXXnQwfBN_LioAh+8bk-cAAQ2ciua-MnnQoMBUfap6g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] xen/netback: fix grant copy across page boundary
-To:     Sergey Dyasli <sergey.dyasli@citrix.com>
-Cc:     xen-devel@lists.xen.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        George Dunlap <george.dunlap@citrix.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Wei Liu <wei.liu@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1579194192-7942-2-git-send-email-vbadigan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 at 12:59, Sergey Dyasli <sergey.dyasli@citrix.com> wrote:
->
-> From: Ross Lagerwall <ross.lagerwall@citrix.com>
->
-> When KASAN (or SLUB_DEBUG) is turned on, there is a higher chance that
-> non-power-of-two allocations are not aligned to the next power of 2 of
-> the size. Therefore, handle grant copies that cross page boundaries.
->
-> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
-> ---
-> v1 --> v2:
-> - Use sizeof_field(struct sk_buff, cb)) instead of magic number 48
-> - Slightly update commit message
->
-> RFC --> v1:
-> - Added BUILD_BUG_ON to the netback patch
-> - xenvif_idx_release() now located outside the loop
->
-> CC: Wei Liu <wei.liu@kernel.org>
-> CC: Paul Durrant <paul@xen.org>
+On 16/01/20 7:03 pm, Veerabhadrarao Badiganti wrote:
+> Let a vendor driver supply the maximum descriptor size that it
+> can operate on. ADMA descriptor table would be allocated using this
+> supplied size.
+> If any SD Host controller is of version prior to v4.10 spec
+> but supports 16byte descriptor, this change allows them to supply
+> correct descriptor size for ADMA table allocation.
+> 
+> Also let a vendor driver update the descriptor size by overriding
+> sdhc_host->desc_size if it has to operates on a different descriptor
+> sizes in different conditions.
+> 
+> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
 
-Acked-by: Paul Durrant <paul@xen.org>
+A couple of minor comments below but with those changes:
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/sdhci.c | 7 +++++--
+>  drivers/mmc/host/sdhci.h | 1 +
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 3140fe2..19a5ad3 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3822,9 +3822,12 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  		void *buf;
+>  
+>  		if (host->flags & SDHCI_USE_64_BIT_DMA) {
+> +			if (!host->alloc_desc_sz)
+> +				host->alloc_desc_sz =
+> +					SDHCI_ADMA2_64_DESC_SZ(host);
+> +			host->desc_sz = host->alloc_desc_sz;
+>  			host->adma_table_sz = host->adma_table_cnt *
+> -					      SDHCI_ADMA2_64_DESC_SZ(host);
+> -			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+> +					      host->desc_sz;
+>  		} else {
+>  			host->adma_table_sz = host->adma_table_cnt *
+>  					      SDHCI_ADMA2_32_DESC_SZ;
+
+Please also initialize host->alloc_desc_sz for the 32-bit case here.
+
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 0ed3e0e..8e7c77d 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -555,6 +555,7 @@ struct sdhci_host {
+>  	dma_addr_t align_addr;	/* Mapped bounce buffer */
+>  
+>  	unsigned int desc_sz;	/* ADMA descriptor size */
+
+Please  amend the comment above to:
+				/* ADMA current descriptor size */
+
+> +	unsigned int alloc_desc_sz;	/* ADMA descr. max size host supports */
+>  
+>  	struct workqueue_struct *complete_wq;	/* Request completion wq */
+>  	struct work_struct	complete_work;	/* Request completion work */
+> 
+
