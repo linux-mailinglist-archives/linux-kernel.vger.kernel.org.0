@@ -2,131 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9798514349C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 00:57:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A8FB1434B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 01:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgATX5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 18:57:49 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33038 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbgATX5s (ORCPT
+        id S1728811AbgAUAOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 19:14:02 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.113]:26512 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727009AbgAUAOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 18:57:48 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b6so1364472wrq.0;
-        Mon, 20 Jan 2020 15:57:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5QYZIUaddkQAqu0RUP+KLHfCsCgj864Qo1r0sEum0F0=;
-        b=vYHX8bSYfpWC+sYRQLUDopiHu8VErwVl3RCNxpygJ3Hu+xVXKheoTzrFHlqIMG7ryP
-         nMhuut3hGGyUEXuqCLVX7q3H1Ta48QbPNbySiS0LfmLQ7v8BI+xYJk1C1knpyqI+1wG8
-         cgk0sVa27Jzg4bMjJqYvKiuGdl1XuIQBVuHoGGcR1XrMi3IcX0LeFgJ/Ifc38+8v4UnO
-         rMH45V7GlvUDuzF7kUJ81Hma4CUiRz0YVMeZjKMLsn2w/HMlXFQ59daweicYt355pPO8
-         cuTXCf0XxIrJkaVTtu8hu3if+5dqd8bUBmLiEH4G0/YrMglQ+shDL8ivVt/1WwNttYuO
-         cz/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5QYZIUaddkQAqu0RUP+KLHfCsCgj864Qo1r0sEum0F0=;
-        b=aKXIou/4h+CfMBOiIU/+E/2A7LDFGIcnkVhaYzrJh6DPhPDELJ3griGVPSWIDzrFv1
-         frFuyZC6aSenUUpAteKAw0gEZo5HrzY9D0CNhGzk0xYLcRSGVHJBGBLa3GWvASGR0Qhq
-         5mrBaog3cZdTeb5eySFI2R1y62uRJzfSUE2Y3ucJ9vMISDKyrK1rolWsjo/eDW05ODTw
-         bbZS4e810jWpHNQ0Kkhx+3wVl9crJbc6KEGNDrKtX7ReYsphuOcwz4DZ28XEEUdf4fwx
-         lcnEj7flggvY6ynAKi1GhsPbKTLUZc6t8UWIcgZ5zLb/vQkALQV6RmSmme8AvGnumnWH
-         o1aQ==
-X-Gm-Message-State: APjAAAXs7d35RSOIw+I3aNlfRw8xOoikUPooemV+B3qdvSD1aITYQdVc
-        /YbB+fEOuqWvTWhjNKxeaOk=
-X-Google-Smtp-Source: APXvYqzx43G3GKSHcSQouLLAY0ppr3ZdgpRR3uIAPEsu23DNu0OHoKOMHuni5nlIH25QcD0ymIZrAQ==
-X-Received: by 2002:a5d:5283:: with SMTP id c3mr1976002wrv.148.1579564666799;
-        Mon, 20 Jan 2020 15:57:46 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id q14sm1306850wmj.14.2020.01.20.15.57.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 15:57:46 -0800 (PST)
-Date:   Tue, 21 Jan 2020 00:57:45 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-Message-ID: <20200120235745.hzza3fkehlmw5s45@pali>
-References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
- <20200120110438.ak7jpyy66clx5v6x@pali>
- <875zh6pc0f.fsf@mail.parknet.co.jp>
- <20200120214046.f6uq7rlih7diqahz@pali>
- <20200120224625.GE8904@ZenIV.linux.org.uk>
+        Mon, 20 Jan 2020 19:14:00 -0500
+X-Greylist: delayed 1231 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 19:14:00 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 7277C141ADEF
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 17:53:28 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tgrIiZbYB9jb7tgrIigbNb; Mon, 20 Jan 2020 17:53:28 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=xxAzhTqbOqe1BRFg2/D6CHH4pUnAKV9fRR68rERoFdo=; b=cdURJ4B2sUTFx/0XYpxi8YfVRe
+        ZluDtH1/J/eWhM4ZhDHvMayLsFgRrnBpF37tElMKjlhiQrMOBiVi2RJuy5LJmCgE6XlVZ2WuM3/8j
+        6cv2Ru7V6SCeZoJqvGgXnR1ZiGoR2Jq47TiCkZnHys2Hdu9rI0B0nte+GQuCxcHal1ec9O4A+jw70
+        smaPrztSNaecMnmYzyHWMqDzBSv3Ua7ztO45zm5FmaWaOhvME8xLNAJZhRxk/v8d9XS+SSSWn9iRX
+        n8jMvpVJjCaQ7yy/td1V3yeCDupgun+USnAgjDw0nS+YvtU+8NFMaa03OXcN0cF7Crg3AAlhH+dov
+        VnKCp1AQ==;
+Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:44974 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1itgrH-003oDh-72; Mon, 20 Jan 2020 17:53:27 -0600
+Date:   Mon, 20 Jan 2020 17:53:26 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] char: hpet: Use flexible-array member
+Message-ID: <20200120235326.GA29231@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="eehs7cllwbppgvtc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120224625.GE8904@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.252.62
+X-Source-L: No
+X-Exim-ID: 1itgrH-003oDh-72
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:44974
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Old code in the kernel uses 1-byte and 0-byte arrays to indicate the
+presence of a "variable length array":
 
---eehs7cllwbppgvtc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+struct something {
+    int length;
+    u8 data[1];
+};
 
-On Monday 20 January 2020 22:46:25 Al Viro wrote:
-> On Mon, Jan 20, 2020 at 10:40:46PM +0100, Pali Roh=C3=A1r wrote:
->=20
-> > Ok, I did some research. It took me it longer as I thought as lot of
-> > stuff is undocumented and hard to find all relevant information.
-> >=20
-> > So... fastfat.sys is using ntos function RtlUpcaseUnicodeString() which
-> > takes UTF-16 string and returns upper case UTF-16 string. There is no
-> > mapping table in fastfat.sys driver itself.
->=20
-> Er...  Surely it's OK to just tabulate that function on 65536 values
-> and see how could that be packed into something more compact?
+struct something *instance;
 
-It is OK, but too complicated. That function is in nt kernel. So you
-need to build a new kernel module and also decide where to put output of
-that function. It is a long time since I did some nt kernel hacking and
-nowadays you need to download 10GB+ of Visual Studio code, then addons
-for building kernel modules, figure out how to write and compile simple
-kernel module via Visual Studio, write ini install file, try to load it
-and then you even fail as recent Windows kernels refuse to load kernel
-modules which are not signed...
+instance = kmalloc(sizeof(*instance) + size, GFP_KERNEL);
+instance->length = size;
+memcpy(instance->data, source, size);
 
-So it was easier to me to look at different sources (WRK, ReactOS, Wine,
-github, OSR forums, ...) and figure out what is RtlUpcaseUnicodeString()
-doing here.
+There is also 0-byte arrays. Both cases pose confusion for things like
+sizeof(), CONFIG_FORTIFY_SOURCE, etc.[1] Instead, the preferred mechanism
+to declare variable-length types such as the one above is a flexible array
+member[2] which need to be the last member of a structure and empty-sized:
 
-> Whatever
-> the license of that function might be, this should fall under
-> interoperability exceptions...
->=20
-> Actually, I wouldn't be surprised if f(x) - x would turn out to be consta=
-nt
-> on large enough intervals to provide sufficiently compact representation.=
-=2E.
->=20
-> What am I missing here?
+struct something {
+        int stuff;
+        u8 data[];
+};
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+Also, by making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+unadvertenly introduced[3] to the codebase from now on.
 
---eehs7cllwbppgvtc
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://github.com/KSPP/linux/issues/21
+[2] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/char/hpet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiY+dwAKCRCL8Mk9A+RD
-UjV6AJ93GUeZYXGcsHMDO4i2IJLY4TDovwCfTnlZ00Tl1jxorBEPiFSGFcSiebE=
-=T55m
------END PGP SIGNATURE-----
+diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
+index 9ac6671bb514..aed2c45f7968 100644
+--- a/drivers/char/hpet.c
++++ b/drivers/char/hpet.c
+@@ -110,7 +110,7 @@ struct hpets {
+ 	unsigned long hp_delta;
+ 	unsigned int hp_ntimer;
+ 	unsigned int hp_which;
+-	struct hpet_dev hp_dev[1];
++	struct hpet_dev hp_dev[];
+ };
+ 
+ static struct hpets *hpets;
+-- 
+2.23.0
 
---eehs7cllwbppgvtc--
