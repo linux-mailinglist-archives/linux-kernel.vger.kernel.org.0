@@ -2,95 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1293D142314
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:14:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2686F142318
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 07:15:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbgATGO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 01:14:28 -0500
-Received: from host-88-217-225-28.customer.m-online.net ([88.217.225.28]:22570
-        "EHLO mail.dev.tdt.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725783AbgATGO1 (ORCPT
+        id S1726798AbgATGO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 01:14:59 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34746 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbgATGO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 01:14:27 -0500
-Received: from mschiller01.dev.tdt.de (unknown [10.2.3.20])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id 98061210C5;
-        Mon, 20 Jan 2020 06:14:25 +0000 (UTC)
-From:   Martin Schiller <ms@dev.tdt.de>
-To:     kubakici@wp.pl, khc@pm.waw.pl, davem@davemloft.net
-Cc:     linux-x25@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
-Subject: [PATCH v3 2/2] wan/hdlc_x25: fix skb handling
-Date:   Mon, 20 Jan 2020 07:14:16 +0100
-Message-Id: <20200120061416.27714-2-ms@dev.tdt.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200120061416.27714-1-ms@dev.tdt.de>
-References: <20200120061416.27714-1-ms@dev.tdt.de>
+        Mon, 20 Jan 2020 01:14:58 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l136so27605821oig.1
+        for <linux-kernel@vger.kernel.org>; Sun, 19 Jan 2020 22:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XcKOx6X1xb0tdZjWwv0Dj2TEaA6LrjG3UmiZoBUklqY=;
+        b=VsFzxHafM8zW3iEWuRTvUi1/iDuY2LLPXCOdVOn9fu3RYvyZrx3A9HdnfJHO4hhjg7
+         gFrWlJR0uVZawSfI6K7S4LuqoggVf0IXmVI7CN6EfxzaHttD8owD6XGleTOWkqz2gr4q
+         7e0wLddvbhZTfSFj6uCEcD06kntvPLESOSnwHxHHJhOL+6/k+PT5OqPOV8sTNeINTl8i
+         uy2CJJ1AEr+pqQa2tUHifhlOp0uaKpJGL2HAAvT9suiHQi75Pu5I6+t6o6QiaJ9vlV3r
+         JL999uvprvZ81dOdxYuyzU+/dBNKfwHfNBthDeqgCaYUv7NGNi9fOlcd5nq7/RysS5YZ
+         I1yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XcKOx6X1xb0tdZjWwv0Dj2TEaA6LrjG3UmiZoBUklqY=;
+        b=HJTtjNwfCYpTelVHiv8nQ6ipnUggGZsGgOt61XPmoNcjMAWHc/OVNnvgfysHLn/un9
+         yGiTBXCEU6DypXgbHDxKapIJNCoSZsv4NmGlRegzmgIVI4qTT/U+35PMpnHO87bMinpi
+         8qLc/xws7WMoLWyWav84D10FM9WNZAarhrGoM5L2raM2aHJ4y1icFDWCfHQb4ax38O/b
+         kGmIQ1B3Eax1vvBnumW/N6fAYowA4tMNx0mVZ3h3ePWtrJ+iNC7Qbz+cw1gE/h8rObKq
+         soH/GWExcOLJzlSdKNbakGdHQGxs/WpDkOdStQEWtq5xGPHxmmGZee5x3deRgmqNOKfe
+         vjRg==
+X-Gm-Message-State: APjAAAWcvgJocNFBRyxDzTqWwG7uBH6zBMZHhmd+tUIvjM+MnGuLDYqp
+        1Qq4jZAOBuTiv95zDT3evvaWsLctZEYSQPpXFMJQdg==
+X-Google-Smtp-Source: APXvYqxM/zhzb27sDa9VoakRkPFPvj2/D+oyWzJBmyyZWfFmAYU+lGYmVmYwynvwr+Dm1q1CG0OGBcpdd7GAgm7zxeg=
+X-Received: by 2002:aca:1913:: with SMTP id l19mr11221306oii.47.1579500897580;
+ Sun, 19 Jan 2020 22:14:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dev.tdt.de
+References: <1578876627-11938-1-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <1578876627-11938-1-git-send-email-wanpengli@tencent.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Mon, 20 Jan 2020 14:14:46 +0800
+Message-ID: <CANRm+CwHP63YJ_nbVaNOZhPWNYNwHSTjT3j7aiVnx1pVEf3K9A@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2] sched/nohz: Optimize get_nohz_timer_target()
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- o call skb_reset_network_header() before hdlc->xmit()
- o change skb proto to HDLC (0x0019) before hdlc->xmit()
- o call dev_queue_xmit_nit() before hdlc->xmit()
-
-This changes make it possible to trace (tcpdump) outgoing layer2
-(ETH_P_HDLC) packets
-
-Additionally call skb_reset_network_header() after each skb_push() /
-skb_pull().
-
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
----
- drivers/net/wan/hdlc_x25.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wan/hdlc_x25.c b/drivers/net/wan/hdlc_x25.c
-index b0252b600ae2..5d047011ab0e 100644
---- a/drivers/net/wan/hdlc_x25.c
-+++ b/drivers/net/wan/hdlc_x25.c
-@@ -71,11 +71,12 @@ static int x25_data_indication(struct net_device *dev, struct sk_buff *skb)
- {
- 	unsigned char *ptr;
- 
--	skb_push(skb, 1);
--
- 	if (skb_cow(skb, 1))
- 		return NET_RX_DROP;
- 
-+	skb_push(skb, 1);
-+	skb_reset_network_header(skb);
-+
- 	ptr  = skb->data;
- 	*ptr = X25_IFACE_DATA;
- 
-@@ -88,6 +89,13 @@ static int x25_data_indication(struct net_device *dev, struct sk_buff *skb)
- static void x25_data_transmit(struct net_device *dev, struct sk_buff *skb)
- {
- 	hdlc_device *hdlc = dev_to_hdlc(dev);
-+
-+	skb_reset_network_header(skb);
-+	skb->protocol = hdlc_type_trans(skb, dev);
-+
-+	if (dev_nit_active(dev))
-+		dev_queue_xmit_nit(skb, dev);
-+
- 	hdlc->xmit(skb, dev); /* Ignore return value :-( */
- }
- 
-@@ -102,6 +110,7 @@ static netdev_tx_t x25_xmit(struct sk_buff *skb, struct net_device *dev)
- 	switch (skb->data[0]) {
- 	case X25_IFACE_DATA:	/* Data to be transmitted */
- 		skb_pull(skb, 1);
-+		skb_reset_network_header(skb);
- 		if ((result = lapb_data_request(dev, skb)) != LAPB_OK)
- 			dev_kfree_skb(skb);
- 		return NETDEV_TX_OK;
--- 
-2.20.1
-
+ping Thomas,
+On Mon, 13 Jan 2020 at 08:50, Wanpeng Li <kernellwp@gmail.com> wrote:
+>
+> From: Wanpeng Li <wanpengli@tencent.com>
+>
+> On a machine, cpu 0 is used for housekeeping, the other 39 cpus in the
+> same socket are in nohz_full mode. We can observe huge time burn in the
+> loop for seaching nearest busy housekeeper cpu by ftrace.
+>
+>   2)               |                        get_nohz_timer_target() {
+>   2)   0.240 us    |                          housekeeping_test_cpu();
+>   2)   0.458 us    |                          housekeeping_test_cpu();
+>
+>   ...
+>
+>   2)   0.292 us    |                          housekeeping_test_cpu();
+>   2)   0.240 us    |                          housekeeping_test_cpu();
+>   2)   0.227 us    |                          housekeeping_any_cpu();
+>   2) + 43.460 us   |                        }
+>
+> This patch optimizes the searching logic by finding a nearest housekeeper
+> cpu in the housekeeping cpumask, it can minimize the worst searching time
+> from ~44us to < 10us in my testing. In addition, the last iterated busy
+> housekeeper can become a random candidate while current CPU is a better
+> fallback if it is a housekeeper.
+>
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> v1 -> v2:
+>  * current CPU is a better fallback if it is a housekeeper
+>
+>  kernel/sched/core.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 102dfcf..04a0f6a 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -539,27 +539,32 @@ void resched_cpu(int cpu)
+>   */
+>  int get_nohz_timer_target(void)
+>  {
+> -       int i, cpu = smp_processor_id();
+> +       int i, cpu = smp_processor_id(), default_cpu = -1;
+>         struct sched_domain *sd;
+>
+> -       if (!idle_cpu(cpu) && housekeeping_cpu(cpu, HK_FLAG_TIMER))
+> -               return cpu;
+> +       if (housekeeping_cpu(cpu, HK_FLAG_TIMER)) {
+> +               if (!idle_cpu(cpu))
+> +                       return cpu;
+> +               default_cpu = cpu;
+> +       }
+>
+>         rcu_read_lock();
+>         for_each_domain(cpu, sd) {
+> -               for_each_cpu(i, sched_domain_span(sd)) {
+> +               for_each_cpu_and(i, sched_domain_span(sd),
+> +                       housekeeping_cpumask(HK_FLAG_TIMER)) {
+>                         if (cpu == i)
+>                                 continue;
+>
+> -                       if (!idle_cpu(i) && housekeeping_cpu(i, HK_FLAG_TIMER)) {
+> +                       if (!idle_cpu(i)) {
+>                                 cpu = i;
+>                                 goto unlock;
+>                         }
+>                 }
+>         }
+>
+> -       if (!housekeeping_cpu(cpu, HK_FLAG_TIMER))
+> -               cpu = housekeeping_any_cpu(HK_FLAG_TIMER);
+> +       if (default_cpu == -1)
+> +               default_cpu = housekeeping_any_cpu(HK_FLAG_TIMER);
+> +       cpu = default_cpu;
+>  unlock:
+>         rcu_read_unlock();
+>         return cpu;
+> --
+> 1.8.3.1
+>
