@@ -2,196 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86581142744
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:29:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA5214274B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbgATJ3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 04:29:42 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41629 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726451AbgATJ3l (ORCPT
+        id S1726819AbgATJbE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 Jan 2020 04:31:04 -0500
+Received: from relay-b01.edpnet.be ([212.71.1.221]:51167 "EHLO
+        relay-b01.edpnet.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbgATJbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 04:29:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579512579;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=y2AyZJjezQPayOoYoOZDjEemml5k2ADZSs5c/XlCC8U=;
-        b=Tmx/4xWozigOVvRqXg4lM299C/5sP+UIbw9T2vnDnGPcZfgAro0JDyRBrlx9IdcpotS5ur
-        s/cgukkB9mKMvGAnxKyY4MIDVVvAp73sIrsvY2WiKStVoFRueYcy2tqHaz+URL74LEIQGR
-        5zeuvdFgMtGC14wqfhODsGPRefC6eu8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-30-sFTa31syPk-YGwtq8dhJxQ-1; Mon, 20 Jan 2020 04:29:35 -0500
-X-MC-Unique: sFTa31syPk-YGwtq8dhJxQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A83A0DB21;
-        Mon, 20 Jan 2020 09:29:33 +0000 (UTC)
-Received: from krava (unknown [10.43.17.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B25A360C05;
-        Mon, 20 Jan 2020 09:29:30 +0000 (UTC)
-Date:   Mon, 20 Jan 2020 10:29:28 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] perf stat: don't report a null stalled cycles per
- insn metric
-Message-ID: <20200120092928.GD608405@krava>
-References: <20200115222949.7247-1-kim.phillips@amd.com>
- <20200115222949.7247-2-kim.phillips@amd.com>
+        Mon, 20 Jan 2020 04:31:04 -0500
+X-Greylist: delayed 1146 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 04:31:01 EST
+X-ASG-Debug-ID: 1579511512-0a7ff5137b3a2cc30001-xx1T2L
+Received: from zotac.vandijck-laurijssen.be (77.109.123.72.adsl.dyn.edpnet.net [77.109.123.72]) by relay-b01.edpnet.be with ESMTP id rtg1bnLzyDpKkdEq; Mon, 20 Jan 2020 10:11:52 +0100 (CET)
+X-Barracuda-Envelope-From: dev.kurt@vandijck-laurijssen.be
+X-Barracuda-Effective-Source-IP: 77.109.123.72.adsl.dyn.edpnet.net[77.109.123.72]
+X-Barracuda-Apparent-Source-IP: 77.109.123.72
+Received: from x1.vandijck-laurijssen.be (x1.vandijck-laurijssen.be [IPv6:fd01::1a1d:eaff:fe02:d339])
+        by zotac.vandijck-laurijssen.be (Postfix) with ESMTPSA id BCE8FC64006;
+        Mon, 20 Jan 2020 10:11:51 +0100 (CET)
+Date:   Mon, 20 Jan 2020 10:11:46 +0100
+From:   Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+To:     Oliver Hartkopp <socketcan@hartkopp.net>
+Cc:     mkl@pengutronix.de, o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: general protection fault in can_rx_register
+Message-ID: <20200120091146.GD11138@x1.vandijck-laurijssen.be>
+X-ASG-Orig-Subj: Re: general protection fault in can_rx_register
+Mail-Followup-To: Oliver Hartkopp <socketcan@hartkopp.net>,
+        mkl@pengutronix.de, o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <00000000000030dddb059c562a3f@google.com>
+ <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200115222949.7247-2-kim.phillips@amd.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
+User-Agent: Mutt/1.5.22 (2013-10-16)
+X-Barracuda-Connect: 77.109.123.72.adsl.dyn.edpnet.net[77.109.123.72]
+X-Barracuda-Start-Time: 1579511512
+X-Barracuda-URL: https://212.71.1.221:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at edpnet.be
+X-Barracuda-Scan-Msg-Size: 6997
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6949 1.0000 1.3308
+X-Barracuda-Spam-Score: 1.33
+X-Barracuda-Spam-Status: No, SCORE=1.33 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=7.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.79457
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 04:29:49PM -0600, Kim Phillips wrote:
-> For data collected on machines with front end stalled cycles supported,
-> such as found on modern AMD CPU families, commit 146540fb545b ("perf
-> stat: Always separate stalled cycles per insn") introduces a new line
-> in CSV output with a leading comma that upsets some automated scripts.
-> Scripts have to use "-e ex_ret_instr" to work around this issue, after
-> upgrading to a version of perf with that commit.
-> 
-> We could add "if (have_frontend_stalled && !config->csv_sep)"
-> to the not (total && avg) else clause, to emphasize that CSV users
-> are usually scripts, and are written to do only what is needed, i.e.,
-> they wouldn't typically invoke "perf stat" without specifying an
-> explicit event list.
-> 
-> But - let alone CSV output - why should users now tolerate a constant
-> 0-reporting extra line in regular terminal output?:
-> 
-> BEFORE:
-> 
-> $ sudo perf stat --all-cpus -einstructions,cycles -- sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->        181,110,981      instructions              #    0.58  insn per cycle
->                                                   #    0.00  stalled cycles per insn
->        309,876,469      cycles
-> 
->        1.002202582 seconds time elapsed
-> 
-> The user would not like to see the now permanent
-> "0.00  stalled cycles per insn" line fixture, as it gives
-> no useful information.
-> 
-> So this patch removes the printing of the zeroed stalled cycles
-> line altogether, almost reverting the very original commit fb4605ba47e7
-> ("perf stat: Check for frontend stalled for metrics"), which seems
-> like it was written to normalize --metric-only column output
-> of common Intel machines at the time: modern Intel machines
-> have ceased to support the genericised frontend stalled metrics AFAICT.
-> 
-> AFTER:
-> 
-> $ sudo perf stat --all-cpus -einstructions,cycles -- sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->        244,071,432      instructions              #    0.69  insn per cycle
->        355,353,490      cycles
-> 
->        1.001862516 seconds time elapsed
-> 
-> Output behaviour when stalled cycles is indeed measured is not affected
-> (BEFORE == AFTER):
-> 
-> $ sudo perf stat --all-cpus -einstructions,cycles,stalled-cycles-frontend -- sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->        247,227,799      instructions              #    0.63  insn per cycle
->                                                   #    0.26  stalled cycles per insn
->        394,745,636      cycles
->         63,194,485      stalled-cycles-frontend   #   16.01% frontend cycles idle
-> 
->        1.002079770 seconds time elapsed
+If bisect was right with this:
 
-looks reasonable to me, Andi, are you ok with this?
+> >The bug was bisected to:
+> >
+> >commit 9868b5d44f3df9dd75247acd23dddff0a42f79be
+> >Author: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+> >Date:   Mon Oct 8 09:48:33 2018 +0000
+> >
+> >     can: introduce CAN_REQUIRED_SIZE macro
 
-Acked-by: Jiri Olsa <jolsa@redhat.com
+Then I'd start looking in malformed sockaddr_can data instead.
 
-thanks,
-jirka
+Is this code what triggers the bug?
+> >C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f5db9e00000
 
+Kind regards,
+Kurt
+
+On vr, 17 jan 2020 21:02:48 +0100, Oliver Hartkopp wrote:
+> Hi Marc, Oleksij, Kurt,
 > 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Cong Wang <xiyou.wangcong@gmail.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Jin Yao <yao.jin@linux.intel.com>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Kim Phillips <kim.phillips@amd.com>
-> Cc: Song Liu <songliubraving@fb.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: linux-perf-users@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Fixes: 146540fb545b ("perf stat: Always separate stalled cycles per insn")
-> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-> ---
->  tools/perf/util/stat-shadow.c | 6 ------
->  1 file changed, 6 deletions(-)
+> On 17/01/2020 14.46, syzbot wrote:
+> >Hello,
+> >
+> >syzbot found the following crash on:
+> >
+> >HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
+> >git tree:       upstream
+> >console output: https://syzkaller.appspot.com/x/log.txt?x=1033df15e00000
+> >kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbb8fa33f49f9f3
+> >dashboard link:
+> >https://syzkaller.appspot.com/bug?extid=c3ea30e1e2485573f953
+> >compiler:       clang version 10.0.0
+> >(https://github.com/llvm/llvm-project/
+> >c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> >syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13204f15e00000
+> >C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138f5db9e00000
+> >
+> >The bug was bisected to:
+> >
+> >commit 9868b5d44f3df9dd75247acd23dddff0a42f79be
+> >Author: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+> >Date:   Mon Oct 8 09:48:33 2018 +0000
+> >
+> >     can: introduce CAN_REQUIRED_SIZE macro
+> >
+> >bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129bfdb9e00000
+> >final crash:    https://syzkaller.appspot.com/x/report.txt?x=119bfdb9e00000
+> >console output: https://syzkaller.appspot.com/x/log.txt?x=169bfdb9e00000
+> >
+> >IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >Reported-by: syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com
+> >Fixes: 9868b5d44f3d ("can: introduce CAN_REQUIRED_SIZE macro")
+> >
+> >kasan: CONFIG_KASAN_INLINE enabled
+> >kasan: GPF could be caused by NULL-ptr deref or user memory access
+> >general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> >CPU: 0 PID: 9593 Comm: syz-executor302 Not tainted 5.5.0-rc6-syzkaller #0
+> >Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >Google 01/01/2011
+> >RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
+> >RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
 > 
-> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-> index 2c41d47f6f83..90d23cc3c8d4 100644
-> --- a/tools/perf/util/stat-shadow.c
-> +++ b/tools/perf/util/stat-shadow.c
-> @@ -18,7 +18,6 @@
->   * AGGR_NONE: Use matching CPU
->   * AGGR_THREAD: Not supported?
->   */
-> -static bool have_frontend_stalled;
->  
->  struct runtime_stat rt_stat;
->  struct stats walltime_nsecs_stats;
-> @@ -144,7 +143,6 @@ void runtime_stat__exit(struct runtime_stat *st)
->  
->  void perf_stat__init_shadow_stats(void)
->  {
-> -	have_frontend_stalled = pmu_have_event("cpu", "stalled-cycles-frontend");
->  	runtime_stat__init(&rt_stat);
->  }
->  
-> @@ -853,10 +851,6 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
->  			print_metric(config, ctxp, NULL, "%7.2f ",
->  					"stalled cycles per insn",
->  					ratio);
-> -		} else if (have_frontend_stalled) {
-> -			out->new_line(config, ctxp);
-> -			print_metric(config, ctxp, NULL, "%7.2f ",
-> -				     "stalled cycles per insn", 0);
->  		}
->  	} else if (perf_evsel__match(evsel, HARDWARE, HW_BRANCH_MISSES)) {
->  		if (runtime_stat_n(st, STAT_BRANCHES, ctx, cpu) != 0)
-> -- 
-> 2.24.1
+> include/linux/rculist.h:528 is
 > 
-
+> struct hlist_node *first = h->first;
+> 
+> which would mean that 'h' must be NULL.
+> 
+> But the h parameter is rcv_list from
+> rcv_list = can_rcv_list_find(&can_id, &mask, dev_rcv_lists);
+> 
+> Which can not return NULL - at least when dev_rcv_lists is a proper pointer
+> to the dev_rcv_lists provided by can_dev_rcv_lists_find().
+> 
+> So either dev->ml_priv is NULL in the case of having a CAN interface (here
+> vxcan) or we have not allocated net->can.rx_alldev_list in can_pernet_init()
+> properly (which would lead to an -ENOMEM which is reported to whom?).
+> 
+> Hm. I'm lost. Any ideas?
+> 
+> Regards,
+> Oliver
+> 
+> 
+> >Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 4c
+> >89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 05 00
+> >00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
+> >RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
+> >RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
+> >RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
+> >RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
+> >R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
+> >R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
+> >FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000)
+> >knlGS:0000000000000000
+> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
+> >DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >Call Trace:
+> >  raw_enable_filters net/can/raw.c:189 [inline]
+> >  raw_enable_allfilters net/can/raw.c:255 [inline]
+> >  raw_bind+0x326/0x1230 net/can/raw.c:428
+> >  __sys_bind+0x2bd/0x3a0 net/socket.c:1649
+> >  __do_sys_bind net/socket.c:1660 [inline]
+> >  __se_sys_bind net/socket.c:1658 [inline]
+> >  __x64_sys_bind+0x7a/0x90 net/socket.c:1658
+> >  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >RIP: 0033:0x446ba9
+> >Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> >48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> >ff 0f 83 5b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> >RSP: 002b:00007fb132f25d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+> >RAX: ffffffffffffffda RBX: 00000000006dbc88 RCX: 0000000000446ba9
+> >RDX: 0000000000000008 RSI: 0000000020000180 RDI: 0000000000000003
+> >RBP: 00000000006dbc80 R08: 00007fb132f26700 R09: 0000000000000000
+> >R10: 00007fb132f26700 R11: 0000000000000246 R12: 00000000006dbc8c
+> >R13: 0000000000000000 R14: 0000000000000000 R15: 068500100000003c
+> >Modules linked in:
+> >---[ end trace 0dedabb13ca8e7d7 ]---
+> >RIP: 0010:hlist_add_head_rcu include/linux/rculist.h:528 [inline]
+> >RIP: 0010:can_rx_register+0x43b/0x600 net/can/af_can.c:476
+> >Code: 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 89 22 8a fa 4c
+> >89 33 4d 89 e5 49 c1 ed 03 48 b8 00 00 00 00 00 fc ff df <41> 80 7c 05 00
+> >00 74 08 4c 89 e7 e8 c5 21 8a fa 4d 8b 34 24 4c 89
+> >RSP: 0018:ffffc90003e27d00 EFLAGS: 00010202
+> >RAX: dffffc0000000000 RBX: ffff8880a77336c8 RCX: ffff88809306a100
+> >RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8880a77336c0
+> >RBP: ffffc90003e27d58 R08: ffffffff87289cd6 R09: fffff520007c4f94
+> >R10: fffff520007c4f94 R11: 0000000000000000 R12: 0000000000000008
+> >R13: 0000000000000001 R14: ffff88809fbcf000 R15: ffff8880a7733690
+> >FS:  00007fb132f26700(0000) GS:ffff8880aec00000(0000)
+> >knlGS:0000000000000000
+> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >CR2: 000000000178f590 CR3: 00000000996d6000 CR4: 00000000001406f0
+> >DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >
+> >
+> >---
+> >This bug is generated by a bot. It may contain errors.
+> >See https://goo.gl/tpsmEJ for more information about syzbot.
+> >syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> >syzbot will keep track of this bug report. See:
+> >https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >For information about bisection process see:
+> >https://goo.gl/tpsmEJ#bisection
+> >syzbot can test patches for this bug, for details see:
+> >https://goo.gl/tpsmEJ#testing-patches
