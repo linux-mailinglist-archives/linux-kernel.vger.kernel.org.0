@@ -2,140 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9F8142C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD720142C8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 14:50:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbgATNrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 08:47:20 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60876 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726738AbgATNrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:47:20 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KDbQJC019186;
-        Mon, 20 Jan 2020 14:47:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=STMicroelectronics;
- bh=RQpTI3zFQW+ChdmHDDySJ08NSVtL9lOc5ZIv6JMCj74=;
- b=gj+P8sv4Kh+ikTblV4bXosCD65PqoiQrtdSjmKPqhDTn9Famk0YKrnA5y9NbgGK4AgdB
- 5LUwZgXMEyEQGIGWjY7HQhZvgLnifjWudJFodUW5bv0F0gR1FJSDA2etBRn3jutiq5zn
- q1kLb+ahj90oshPM/IUOpXMWP0TPWkZuhWzx11JOoUNcEefAE4slkoxsVH7vDrfUdCOK
- WBgbOJ5raNdUAtk/hjIypmiNSZsU8pblgD9dYRDUFHPBlnqZmfWZZ4J7J9AaKoraRgGP
- uKvNxHrMvOuXg9skKPOeZmj8W0eqycQdYGyMS3DquZPfoDbyKTTJnQxiNAk2T2AjidYt UA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2xkssnsg0w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Jan 2020 14:47:05 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C7356100034;
-        Mon, 20 Jan 2020 14:47:00 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 916642BF9A8;
-        Mon, 20 Jan 2020 14:47:00 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG6NODE3.st.com (10.75.127.18)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 20 Jan 2020 14:47:00
- +0100
-From:   Yannick Fertre <yannick.fertre@st.com>
-To:     Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/stm: ltdc: enable/disable depends on encoder
-Date:   Mon, 20 Jan 2020 14:46:53 +0100
-Message-ID: <1579528013-28445-1-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727121AbgATNuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 08:50:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40258 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726819AbgATNuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 08:50:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 854D9B04C;
+        Mon, 20 Jan 2020 13:50:50 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 14:50:49 +0100
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/26] docs: i2c: i2c-protocol: use proper names for ACK
+ and NACK
+Message-ID: <20200120145049.32239ee2@endymion>
+In-Reply-To: <20200105225012.11701-10-luca@lucaceresoli.net>
+References: <20200105224006.10321-1-luca@lucaceresoli.net>
+        <20200105225012.11701-1-luca@lucaceresoli.net>
+        <20200105225012.11701-10-luca@lucaceresoli.net>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-20_02:2020-01-20,2020-01-20 signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yannick Fertré <yannick.fertre@st.com>
+On Sun,  5 Jan 2020 23:49:56 +0100, Luca Ceresoli wrote:
+> Use the proper ACK and NACK naming from the I2C specification instead of
+> "accept" and "reverse accept".
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  Documentation/i2c/i2c-protocol.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/i2c/i2c-protocol.rst b/Documentation/i2c/i2c-protocol.rst
+> index 66adac3a5afd..9a4ac944cf9d 100644
+> --- a/Documentation/i2c/i2c-protocol.rst
+> +++ b/Documentation/i2c/i2c-protocol.rst
+> @@ -11,7 +11,7 @@ Key to symbols
+>  S               Start condition
+>  P               Stop condition
+>  Rd/Wr (1 bit)   Read/Write bit. Rd equals 1, Wr equals 0.
+> -A, NA (1 bit)   Accept and reverse accept bit.
+> +A, NA (1 bit)   Acknowledge (ACK) and Not Acknowledge (NACK) bit
+>  Addr  (7 bits)  I2C 7 bit address. Note that this can be expanded as usual to
+>                  get a 10 bit I2C address.
+>  Comm  (8 bits)  Command byte, a data byte which often selects a register on
 
-When connected to a dsi host, the ltdc display controller
-must send frames only after the end of the dsi panel
-initialization to avoid errors when the dsi host sends
-commands to the dsi panel (dsi px fifo full).
-To avoid this issue, the display controller must be
-enabled/disabled when the encoder is enabled/disabled.
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
----
- drivers/gpu/drm/stm/ltdc.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 719dfc5..9ef125d 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -437,9 +437,6 @@ static void ltdc_crtc_atomic_enable(struct drm_crtc *crtc,
- 	/* Commit shadow registers = update planes at next vblank */
- 	reg_set(ldev->regs, LTDC_SRCR, SRCR_VBR);
- 
--	/* Enable LTDC */
--	reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
--
- 	drm_crtc_vblank_on(crtc);
- }
- 
-@@ -453,9 +450,6 @@ static void ltdc_crtc_atomic_disable(struct drm_crtc *crtc,
- 
- 	drm_crtc_vblank_off(crtc);
- 
--	/* disable LTDC */
--	reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
--
- 	/* disable IRQ */
- 	reg_clear(ldev->regs, LTDC_IER, IER_RRIE | IER_FUIE | IER_TERRIE);
- 
-@@ -1058,9 +1052,13 @@ static const struct drm_encoder_funcs ltdc_encoder_funcs = {
- static void ltdc_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct drm_device *ddev = encoder->dev;
-+	struct ltdc_device *ldev = ddev->dev_private;
- 
- 	DRM_DEBUG_DRIVER("\n");
- 
-+	/* Disable LTDC */
-+	reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
-+
- 	/* Set to sleep state the pinctrl whatever type of encoder */
- 	pinctrl_pm_select_sleep_state(ddev->dev);
- }
-@@ -1068,6 +1066,7 @@ static void ltdc_encoder_disable(struct drm_encoder *encoder)
- static void ltdc_encoder_enable(struct drm_encoder *encoder)
- {
- 	struct drm_device *ddev = encoder->dev;
-+	struct ltdc_device *ldev = ddev->dev_private;
- 
- 	DRM_DEBUG_DRIVER("\n");
- 
-@@ -1078,6 +1077,9 @@ static void ltdc_encoder_enable(struct drm_encoder *encoder)
- 	 */
- 	if (encoder->encoder_type == DRM_MODE_ENCODER_DPI)
- 		pinctrl_pm_select_default_state(ddev->dev);
-+
-+	/* Enable LTDC */
-+	reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
- }
- 
- static const struct drm_encoder_helper_funcs ltdc_encoder_helper_funcs = {
 -- 
-2.7.4
-
+Jean Delvare
+SUSE L3 Support
