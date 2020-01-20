@@ -2,119 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A1EF142629
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B995F142637
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 09:55:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgATIyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 03:54:23 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36279 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgATIyW (ORCPT
+        id S1727041AbgATIzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 03:55:18 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:43363 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726148AbgATIzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 03:54:22 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so28604197wru.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 00:54:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=kioLvgS74f9sJjCTsbx/ZLFmZG4mkGnzw8r1w1WYA/4=;
-        b=we/6y6edkk3YpKlsBXl/AgdVTKspovJ98gF9DwytZxXRdKu2lf0yHGZ9cqG+OHNl43
-         1D3wAY7FLKrkB72RdPqnamX5YdLo51GRCa74KmSY6GD35joffcxpIlx05IcZqarzXOP6
-         +x+WZdL8Gs45yw6pNJWCoKrxJUIpW0Icot9uVJGDAki8AJAjxn9VczF5OAkFpdczph4B
-         RkCNnyR+3vU+CuNo9xNEbZOrEsQFIuCf9xPQu0wKKvvAO/Bx0ch6NjL4QHxAd+wfp2yG
-         0v3gxZaqF1zpen8HTiUQZ68tg3+k1M5szuubctad3xbmDv0AW6NzZw39zcETHvk5c+cj
-         kz9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=kioLvgS74f9sJjCTsbx/ZLFmZG4mkGnzw8r1w1WYA/4=;
-        b=qfc9D0o/9Dt0EGtALz+Hkila54tQklDf83XDPeg3K/dnTklg7X013Od12HKIB2bdTF
-         v//MXF//0pARME7vWBW98yFHhfeWAYfTSgSiRMV2gEOmLBSS93U6DUMaN1W21zVaDTYI
-         1QQNNpHiCG7We7Tp7ZTN/1+danUGu+F+/PtPLYUAPJHp01D/ypzGNXLhKkAyZ9K4oXzz
-         dCBwjM5ezocdHv3hhZvio8hZA97WPD7lVHpSAxYwWu9m4kA0x6nWkI4OHAW36gDS/P2r
-         f2sbMqxtm6ClLlRf2+toMyYYxs9Yl6d3gJy64BxYLt9XPkbyLymgWblvnynqPj2USuCR
-         GzMA==
-X-Gm-Message-State: APjAAAU5Khw47PxQtgAALoZIUmFhYnHVogupjLL0lwdJ/eMkVPdcYzS6
-        by3ioJRBC/kiuDhPJfymM4TMKw==
-X-Google-Smtp-Source: APXvYqxCEa3WXWluxoJWVXwFldWEGwXwSD1xXL7D/5WNmT4sWEkYFaFe3u9dMJfoNyljA8GfrAY9CA==
-X-Received: by 2002:a5d:5304:: with SMTP id e4mr17084301wrv.426.1579510460638;
-        Mon, 20 Jan 2020 00:54:20 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id b21sm11998wmd.37.2020.01.20.00.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 00:54:20 -0800 (PST)
-Date:   Mon, 20 Jan 2020 08:54:35 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v11 03/13] mfd: rohm PMICs - use platform_device_id to
- match MFD sub-devices
-Message-ID: <20200120085435.GA15507@dell>
-References: <cover.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
- <13994480cab6d5d6376c8f5228572e55ca06e479.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
+        Mon, 20 Jan 2020 03:55:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579510516;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fI1fVeRIsOBuPL3W4q06PtSWODULRySXWyy020h2K1k=;
+        b=M0m7vaNmHu41XUDY7/QG5kUUZoaX9dDYpYJzeW2mA97SQRsvDU8SfGPN4ScxF7EdzzgW6U
+        fuOOYtga97bzlKNvO9HDj/olkLA9qrhcbVPEclbf+CjVoc5VYXxDX5yxV2OcEUgDvd5mRA
+        ydyYDaOnJDXeGAaawylX3sW0V/6SQ4s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-99-LBseXebTN2qYkvWetKJbug-1; Mon, 20 Jan 2020 03:55:15 -0500
+X-MC-Unique: LBseXebTN2qYkvWetKJbug-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96CA061264;
+        Mon, 20 Jan 2020 08:55:13 +0000 (UTC)
+Received: from gondolin (ovpn-205-161.brq.redhat.com [10.40.205.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A17D65C21A;
+        Mon, 20 Jan 2020 08:55:03 +0000 (UTC)
+Date:   Mon, 20 Jan 2020 09:55:00 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>
+Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v4 11/12] samples: add vfio-mdev-pci driver
+Message-ID: <20200120095500.1659a4ea.cohuck@redhat.com>
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A18878E@SHSMSX104.ccr.corp.intel.com>
+References: <1578398509-26453-1-git-send-email-yi.l.liu@intel.com>
+        <1578398509-26453-12-git-send-email-yi.l.liu@intel.com>
+        <20200115133027.228452fd.cohuck@redhat.com>
+        <A2975661238FB949B60364EF0F2C25743A184041@SHSMSX104.ccr.corp.intel.com>
+        <20200116184027.2954c3f5.cohuck@redhat.com>
+        <A2975661238FB949B60364EF0F2C25743A18878E@SHSMSX104.ccr.corp.intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <13994480cab6d5d6376c8f5228572e55ca06e479.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020, Matti Vaittinen wrote:
+On Sat, 18 Jan 2020 14:23:45 +0000
+"Liu, Yi L" <yi.l.liu@intel.com> wrote:
 
-> Thanks to Stephen Boyd I today learned we can use platform_device_id
-> to do device and module matching for MFD sub-devices!
+> > From: Cornelia Huck [mailto:cohuck@redhat.com]
+> > Sent: Friday, January 17, 2020 1:40 AM
+> > To: Liu, Yi L <yi.l.liu@intel.com>
+> > Subject: Re: [PATCH v4 11/12] samples: add vfio-mdev-pci driver
+> > 
+> > On Thu, 16 Jan 2020 13:23:28 +0000
+> > "Liu, Yi L" <yi.l.liu@intel.com> wrote:
+> >   
+> > > > From: Cornelia Huck [mailto:cohuck@redhat.com]
+> > > > Sent: Wednesday, January 15, 2020 8:30 PM
+> > > > To: Liu, Yi L <yi.l.liu@intel.com>
+> > > > Subject: Re: [PATCH v4 11/12] samples: add vfio-mdev-pci driver
+> > > >
+> > > > On Tue,  7 Jan 2020 20:01:48 +0800
+> > > > Liu Yi L <yi.l.liu@intel.com> wrote:  
+> >   
+> > > > > diff --git a/samples/Kconfig b/samples/Kconfig index
+> > > > > 9d236c3..50d207c 100644
+> > > > > --- a/samples/Kconfig
+> > > > > +++ b/samples/Kconfig
+> > > > > @@ -190,5 +190,15 @@ config SAMPLE_INTEL_MEI
+> > > > >  	help
+> > > > >  	  Build a sample program to work with mei device.
+> > > > >
+> > > > > +config SAMPLE_VFIO_MDEV_PCI
+> > > > > +	tristate "Sample driver for wrapping PCI device as a mdev"
+> > > > > +	select VFIO_PCI_COMMON
+> > > > > +	select VFIO_PCI  
+> > > >
+> > > > Why does this still need to select VFIO_PCI? Shouldn't all needed
+> > > > infrastructure rather be covered by VFIO_PCI_COMMON already?  
+> > >
+> > > VFIO_PCI_COMMON is supposed to be the dependency of both VFIO_PCI and
+> > > SAMPLE_VFIO_MDEV_PCI. However, the source code of VFIO_PCI_COMMON are
+> > > under drivers/vfio/pci which is compiled per the configuration of VFIO_PCI.
+> > > Besides of letting SAMPLE_VFIO_MDEV_PCI select VFIO_PCI, I can also
+> > > add a line in drivers/vfio/Makefile to make the source code under
+> > > drivers/vfio/pci to be compiled when either VFIO_PCI or
+> > > VFIO_PCI_COMMON are configed. But I'm afraid it is a bit ugly. So I
+> > > choose to let SAMPLE_VFIO_MDEV_PCI select VFIO_PCI. If you have other
+> > > idea, I would be pleased to know it. :-)  
+> > 
+> > Shouldn't building drivers/vfio/pci/ for CONFIG_VFIO_PCI_COMMON already be
+> > enough (the Makefile changes look fine to me)? Or am I missing something obvious?  
 > 
-> Do device matching using the platform_device_id instead of using
-> explicit module_aliases to load modules and custom parent-data field
-> to do module loading and sub-device matching.
+> The problem is in the drivers/vfio/Makefile. If CONFIG_VFIO_PCI is not
+> selected then the pci/ directory is not compiled. Even CONFIG_VFIO_PCI=M,
+> it will throw error if SAMPLE_VFIO_MDEV_PCI=y. So I let SAMPLE_VFIO_MDEV_PCI
+> select CONFIG_VFIO_PCI all the same. I'm not sure if this is good. Or maybe
+> there is better way to ensure pci/ is compiled.
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
-> No changes since v10
+> # SPDX-License-Identifier: GPL-2.0
+> vfio_virqfd-y := virqfd.o
 > 
->  drivers/clk/clk-bd718x7.c             | 12 ++++++++-
->  drivers/mfd/rohm-bd70528.c            |  3 +--
->  drivers/mfd/rohm-bd718x7.c            | 39 ++++++++++++++++++++++-----
->  drivers/regulator/bd718x7-regulator.c | 17 +++++++++---
->  include/linux/mfd/rohm-generic.h      |  3 +--
->  5 files changed, 58 insertions(+), 16 deletions(-)
+> obj-$(CONFIG_VFIO) += vfio.o
+> obj-$(CONFIG_VFIO_VIRQFD) += vfio_virqfd.o
+> obj-$(CONFIG_VFIO_IOMMU_TYPE1) += vfio_iommu_type1.o
+> obj-$(CONFIG_VFIO_IOMMU_SPAPR_TCE) += vfio_iommu_spapr_tce.o
+> obj-$(CONFIG_VFIO_SPAPR_EEH) += vfio_spapr_eeh.o
+> obj-$(CONFIG_VFIO_PCI) += pci/
 
-Still needs Clk and Regulator Acks.
+That's actually what I meant: s/CONFIG_VFIO_PCI/CONFIG_VFIO_PCI_COMMON/ here.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> obj-$(CONFIG_VFIO_PLATFORM) += platform/
+> obj-$(CONFIG_VFIO_MDEV) += mdev/
+> 
+> Thanks,
+> Yi Liu
+> 
+
