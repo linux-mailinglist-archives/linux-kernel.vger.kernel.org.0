@@ -2,67 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D613142A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9321A142A44
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgATMKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:10:25 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35236 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728783AbgATMKX (ORCPT
+        id S1727071AbgATMN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:13:26 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:43999 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbgATMN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:10:23 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 5E31C292B10
-Subject: Re: [PATCH] regulator: vctrl-regulator: Avoid deadlock getting and
- setting the voltage
-To:     Mark Brown <broonie@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        drinkcat@chromium.org, dianders@chromium.org,
-        Liam Girdwood <lgirdwood@gmail.com>, mka@chromium.org
-References: <20200116094543.2847321-1-enric.balletbo@collabora.com>
- <1fdaed3c-05e0-4756-5013-5cc59a766e2f@gmail.com>
- <20200120120830.GA6852@sirena.org.uk>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <73a24487-d9ff-88c3-2516-69ae89915c88@collabora.com>
-Date:   Mon, 20 Jan 2020 13:10:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 20 Jan 2020 07:13:26 -0500
+X-Originating-IP: 84.44.14.226
+Received: from nexussix.ar.arcelik (unknown [84.44.14.226])
+        (Authenticated sender: cengiz@kernel.wtf)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id CDA4B60007;
+        Mon, 20 Jan 2020 12:13:23 +0000 (UTC)
+From:   Cengiz Can <cengiz@kernel.wtf>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Cengiz Can <cengiz@kernel.wtf>
+Subject: [PATCH] fs: fuse: check return value of fuse_simple_request
+Date:   Mon, 20 Jan 2020 15:13:11 +0300
+Message-Id: <20200120121310.17601-1-cengiz@kernel.wtf>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200120120830.GA6852@sirena.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In `fs/fuse/file.c` `fuse_simple_request` is used in multiple places,
+with its return value properly checked for possible errors.
 
+However the usage on `fuse_file_put` ignores its return value. And the
+following `fuse_release_end` call used hard-coded error value of `0`.
 
-On 20/1/20 13:08, Mark Brown wrote:
-> On Fri, Jan 17, 2020 at 07:28:04PM +0300, Dmitry Osipenko wrote:
->> 16.01.2020 12:45, Enric Balletbo i Serra пишет:
-> 
->>> +EXPORT_SYMBOL(regulator_set_voltage_rdev);
->>>  
->>>  static int regulator_limit_voltage_step(struct regulator_dev *rdev,
->>>  					int *current_uV, int *min_uV)
->>> @@ -4034,6 +4035,7 @@ int regulator_get_voltage_rdev(struct regulator_dev *rdev)
->>>  		return ret;
->>>  	return ret - rdev->constraints->uV_offset;
->>>  }
->>> +EXPORT_SYMBOL(regulator_get_voltage_rdev);
-> 
->> I think it should be EXPORT_SYMBOL_GPL().
-> 
-> Yes, you're right.
-> 
+This triggers a warning in static analyzers and such.
 
-Oops, right, Mark do you want me to send a follow-up patch, a second version or
-you can just apply a fix?
+I've added a variable to capture `fuse_simple_request` result and passed
+that to `fuse_release_end` instead.
 
-Thanks,
- Enric
+Signed-off-by: Cengiz Can <cengiz@kernel.wtf>
+---
+ fs/fuse/file.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index a63d779eac10..9914ee2af311 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -110,6 +110,7 @@ static void fuse_release_end(struct fuse_conn *fc, struct fuse_args *args,
+
+ static void fuse_file_put(struct fuse_file *ff, bool sync, bool isdir)
+ {
++	int err;
+ 	if (refcount_dec_and_test(&ff->count)) {
+ 		struct fuse_args *args = &ff->release_args->args;
+
+@@ -117,8 +118,8 @@ static void fuse_file_put(struct fuse_file *ff, bool sync, bool isdir)
+ 			/* Do nothing when client does not implement 'open' */
+ 			fuse_release_end(ff->fc, args, 0);
+ 		} else if (sync) {
+-			fuse_simple_request(ff->fc, args);
+-			fuse_release_end(ff->fc, args, 0);
++			err = fuse_simple_request(ff->fc, args);
++			fuse_release_end(ff->fc, args, err);
+ 		} else {
+ 			args->end = fuse_release_end;
+ 			if (fuse_simple_background(ff->fc, args,
+--
+2.25.0
+
