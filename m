@@ -2,108 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 408DF14275A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 652F7142778
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 10:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgATJgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 04:36:51 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33470 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgATJgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 04:36:50 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b6so28775885wrq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 01:36:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MbCOasBOEdSpgnmOMd9yAHR0ouGjEpqXs0BkDYxSv4Q=;
-        b=KFvohQzspbzOVC/9mGmVDbbAwNYQQSP9KcBbaK2zbrojXILd5gsmBDR68FrRxKwnSg
-         0uwuw6J3mnq46xhPxJSLkqv1XvJ7xDVS+FkIiDOalDycpoQOZe/X+vl2wq3AMun1OB7j
-         uTJzVHhBZrdl5LtN+yLPsf8AxhW6D1htw5FVHZd3iIGXQzClkMYshs1wMnWz77+1ReU9
-         SIFsb70oGJ8HRtueKarqK9q/sOlkDf/ucgRnqS00LumHrHV5l+t/VSQMdH66jV+P9Pfz
-         YqdP0NpjeUKkOW5uDfHqgGo9uEFiZNtodomEjOp8OgCME7r/3XloATLg9+Y4t5sRtMOQ
-         bGCQ==
-X-Gm-Message-State: APjAAAVB9lzezpJ3kCe0pV63rHHGXJvgYPPTp1Gh8dc5qB6Fc7wPyNA4
-        KX0CObFtqI9ZlbBjDbjQ4h0=
-X-Google-Smtp-Source: APXvYqxGS+Q/bpi1ot1FWRFUP5CKPAmVdWKV6iQZEi3QP3a4zdKu/vqZaGcj+HkyGtNaCBXjZXORmQ==
-X-Received: by 2002:adf:e6d2:: with SMTP id y18mr17108531wrm.262.1579513008584;
-        Mon, 20 Jan 2020 01:36:48 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id y17sm665482wma.36.2020.01.20.01.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 01:36:47 -0800 (PST)
-Date:   Mon, 20 Jan 2020 10:36:46 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yang.shi@linux.alibaba.com
-Subject: Re: [PATCH 1/8] mm/migrate.c: skip node check if done in last round
-Message-ID: <20200120093646.GL18451@dhcp22.suse.cz>
-References: <20200119030636.11899-1-richardw.yang@linux.intel.com>
- <20200119030636.11899-2-richardw.yang@linux.intel.com>
+        id S1726650AbgATJjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 04:39:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:57640 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbgATJja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 04:39:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A61C30E;
+        Mon, 20 Jan 2020 01:39:30 -0800 (PST)
+Received: from [192.168.0.7] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A27B63F68E;
+        Mon, 20 Jan 2020 01:39:28 -0800 (PST)
+Subject: Re: sched/fair: scheduler not running high priority process on idle
+ cpu
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Steven Rostedt' <rostedt@goodmis.org>
+Cc:     'Vincent Guittot' <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <212fabd759b0486aa8df588477acf6d0@AcuMS.aculab.com>
+ <20200114115906.22f952ff@gandalf.local.home>
+ <5ba2ae2d426c4058b314c20c25a9b1d0@AcuMS.aculab.com>
+ <20200114124812.4d5355ae@gandalf.local.home>
+ <878a35a6642d482aa0770a055506bd5e@AcuMS.aculab.com>
+ <20200115081830.036ade4e@gandalf.local.home>
+ <9f98b2dd807941a3b85d217815a4d9aa@AcuMS.aculab.com>
+ <20200115103049.06600f6e@gandalf.local.home>
+ <ab54668ad13d48da8aa43f955631ef9e@AcuMS.aculab.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <26b2f8f7-b11f-0df0-5260-a232e1d5bf1a@arm.com>
+Date:   Mon, 20 Jan 2020 10:39:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200119030636.11899-2-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <ab54668ad13d48da8aa43f955631ef9e@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 19-01-20 11:06:29, Wei Yang wrote:
-> Before move page to target node, we would check if the node id is valid.
-> In case we would try to move pages to the same target node, it is not
-> necessary to do the check each time.
+On 15/01/2020 18:07, David Laight wrote:
+> From Steven Rostedt
+>> Sent: 15 January 2020 15:31
+> ...
+>>> For this case an idle cpu doing a unlocked check for a processes that has
+>>> been waiting 'ages' to preempt the running process may not be too
+>>> expensive.
+>>
+>> How do you measure a process waiting for ages on another CPU? And then
+>> by the time you get the information to pull it, there's always the race
+>> that the process will get the chance to run. And if you think about it,
+>> by looking for a process waiting for a long time, it is likely it will
+>> start to run because "ages" means it's probably close to being released.
 > 
-> This patch tries to skip the check if the node has been checked.
+> Without a CBU (Crystal Ball Unit) you can always be unlucky.
+> But once you get over the 'normal' delays for a system call you probably
+> get an exponential (or is it logarithmic) distribution and the additional
+> delay is likely to be at least some fraction of the time it has already waited.
 > 
-> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> ---
->  mm/migrate.c | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
+> While not entirely the same, but something I still need to look at further.
+> This is a histogram of time taken (in ns) to send on a raw IPv4 socket.
+> 0k: 1874462617
+> 96k: 260350
+> 160k: 30771
+> 224k: 14812
+> 288k: 770
+> 352k: 593
+> 416k: 489
+> 480k: 368
+> 544k: 185
+> 608k: 63
+> 672k: 27
+> 736k: 6
+> 800k: 1
+> 864k: 2
+> 928k: 3
+> 992k: 4
+> 1056k: 1
+> 1120k: 0
+> 1184k: 1
+> 1248k: 1
+> 1312k: 2
+> 1376k: 3
+> 1440k: 1
+> 1504k: 1
+> 1568k: 1
+> 1632k: 4
+> 1696k: 0 (5 times)
+> 2016k: 1
+> 2080k: 0
+> 2144k: 1
+> total: 1874771078, average 32k
 > 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 430fdccc733e..ba7cf4fa43a0 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1612,15 +1612,18 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
->  			goto out_flush;
->  		addr = (unsigned long)untagged_addr(p);
->  
-> -		err = -ENODEV;
-> -		if (node < 0 || node >= MAX_NUMNODES)
-> -			goto out_flush;
-> -		if (!node_state(node, N_MEMORY))
-> -			goto out_flush;
-> +		/* Check node if it is not checked. */
-> +		if (current_node == NUMA_NO_NODE || node != current_node) {
-> +			err = -ENODEV;
-> +			if (node < 0 || node >= MAX_NUMNODES)
-> +				goto out_flush;
-> +			if (!node_state(node, N_MEMORY))
-> +				goto out_flush;
+> I've improved it no end by using per-thread sockets and setting
+> the socket write queue size large.
+> But there are still some places where it takes > 600us.
+> The top end is rather more linear than one might expect.
+> 
+>>> I presume the locks are in place for the migrate itself.
+>>
+>> Note, by grabbing locks on another CPU will incur overhead on that
+>> other CPU. I've seen huge latency caused by doing just this.
+> 
+> I'd have thought this would only be significant if the cache line
+> ends up being used by both cpus?
+> 
+>>> The only downside is that the process's data is likely to be in the wrong cache,
+>>> but unless the original cpu becomes available just after the migrate it is
+>>> probably still a win.
+>>
+>> If you are doing this with just tasks that are waiting for the CPU to
+>> be preemptable, then it is most likely not a win at all.
+> 
+> You'd need a good guess that the wait would be long.
+> 
+>> Now, the RT tasks do have an aggressive push / pull logic, that keeps
+>> track of which CPUs are running lower priority tasks and will work hard
+>> to keep all RT tasks running (and aggressively migrate them). But this
+>> logic still only takes place at preemption points (cond_resched(), etc).
+> 
+> I guess this only 'gives away' extra RT processes.
+> Rather than 'stealing' them - which is what I need.
 
-This makes the code harder to read IMHO. The original code checks the
-valid node first and it doesn't conflate that with the node caching
-logic which your change does.
+Isn't part of the problem that RT doesn't maintain
+cp->pri_to_cpu[CPUPRI_IDLE] (CPUPRI_IDLE = 0).
 
->  
-> -		err = -EACCES;
-> -		if (!node_isset(node, task_nodes))
-> -			goto out_flush;
-> +			err = -EACCES;
-> +			if (!node_isset(node, task_nodes))
-> +				goto out_flush;
-> +		}
->  
->  		if (current_node == NUMA_NO_NODE) {
->  			current_node = node;
-> -- 
-> 2.17.1
+So push/pull (find_lowest_rq()) never returns a mask of idle CPUs.
 
--- 
-Michal Hocko
-SUSE Labs
+There was
+https://lore.kernel.org/r/1415260327-30465-2-git-send-email-pang.xunlei@linaro.org
+in 2014 but it didn't go mainline.
+
+There was a similar question in Nov last year:
+
+https://lore.kernel.org/r/CH2PR19MB3896AFE1D13AD88A17160860FC700@CH2PR19MB3896.namprd19.prod.outlook.com
+
+
+
+
+
