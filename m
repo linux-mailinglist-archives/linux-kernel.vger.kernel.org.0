@@ -2,227 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D30143030
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:46:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B97014303A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 17:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbgATQqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 11:46:01 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:50119 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgATQqB (ORCPT
+        id S1729331AbgATQr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 11:47:26 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:33653 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729259AbgATQrZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:46:01 -0500
-Received: from localhost ([217.91.205.33]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MZTyi-1j6BdY0P4Q-00WUV8; Mon, 20 Jan 2020 17:45:42 +0100
-Date:   Mon, 20 Jan 2020 17:45:41 +0100
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        rpi-receiver@htl-steyr.ac.at, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] iio: srf04: add power management feature
-Message-ID: <20200120164540.GA8725@arbad>
+        Mon, 20 Jan 2020 11:47:25 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1itaCm-00043A-Gz; Mon, 20 Jan 2020 17:47:12 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1AF581C1A42;
+        Mon, 20 Jan 2020 17:47:12 +0100 (CET)
+Date:   Mon, 20 Jan 2020 16:47:11 -0000
+From:   "tip-bot2 for Xiaochen Shen" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/resctrl: Fix a deadlock due to inaccurate reference
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Xiaochen Shen <xiaochen.shen@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <1578500886-21771-4-git-send-email-xiaochen.shen@intel.com>
+References: <1578500886-21771-4-git-send-email-xiaochen.shen@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:3hCyP3wz1c4WNIC8NGVeJsBSI1zAjBZAjz1ma3u4tSTLyexJTXg
- RLrVcj9jQSOjdNE9+ZeoZ8tOIKi2N3OoOVog1GXNx0AuH0CWIL3KQFIJMpf1AL/eSPXEuuS
- oUPOHFziMrpVaXjshUgdSfOILvbibmPRE5wVNdkIZJJzksXF6OOCFqOc2TPrD+0X918k816
- 6G2IUtfOKxDmTYKaWvkpA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9G8UZvti0Co=:Z5lnGF5Gj3/IXYsIy9Zo7N
- wg4VefxQVSXyNAVIlSCwmzsY87jtd+7qm/aCSV/m4qL26dQVhALVQTFhRpoEekNFUpHK8lCJz
- hAPkWE9wHoyESRdqwxIiDV4SZCIIiUAJCNYgYVjYYOUvQcYXSeVbgbsohelcyr/J74HGVdC/5
- VvGdGGJBdTFmhRDtnTOmdbjqF+u+ssDJseWlbA490Kj05JedEN8qIDjLtlAKGzpANIsaDYLTh
- X3yt/kQ7a4IjM07HqI64fXz/zu3CaAnGHLKpjqurWAWA1k5ggtn1Y9pIxfgpHF/9f8z4jQOy2
- 7ENy5Usn0IoJZNfBSYVcYCdFOBm/K5K2UVCYYuyjPc14P92U4hkLC6kcywFBzT5CGUDaFedml
- fLIs0Zl7cE4Iip+3I8G21mtWzHSHxHT+zRB0PjDhEhJW+ECeqcSEjEjo7xPqFieS53v0bhxIe
- DxlnZva8t4C8NhklCTpweU5IxKHW9vnLAXoBF0nYd8E1WbPA8NbVNC88BRgTdZ3TuHT62zxRA
- K6H6bDSQfaEOGFVXIfUnJCk9bgrMLZvFNngoWP6ICHT8Q+juz/che7gCw+PHVG6HQn5OY0egw
- q8/Eprkn5sllo/0TF1/Ic0WDq9a84b81hwoLQywMthX6wPUoKfCOzmDmKohewXKik3LA2ImS/
- 1bheaTtRQMb1TDlIdZ3oTcN6OMhEmED7KTcyuTVivnRj6YldrIoP9uQspA4YAkxodWKvJc4OL
- iR/gd47Y7Iiu0Fk5hw1fJ5me2qxQXJS/k7BRI0EShUZu23JCt4gYfZoHzMa5XoIaAPml2mlkz
- 1hLYTtYab5hXMBCzJht6zF8lqozMrpttuk2md17WQaWh/Ubwx1tq3lO6cwRzOg9r4ecDpLfsS
- 86T/RWLB/JPbZukqkbqQ==
+Message-ID: <157953883190.396.13475989556891199147.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add suspend and resume operations for being used by optional power
-management.
+The following commit has been merged into the x86/urgent branch of tip:
 
-The suspend function is switching off an GPIO which can be used by the
-hardware to switch power off. The resume function is switching the GPIO
-on and sleeps an adjustable time to give the device a chance to be up
-and running.
+Commit-ID:     334b0f4e9b1b4a1d475f803419d202f6c5e4d18e
+Gitweb:        https://git.kernel.org/tip/334b0f4e9b1b4a1d475f803419d202f6c5e4d18e
+Author:        Xiaochen Shen <xiaochen.shen@intel.com>
+AuthorDate:    Thu, 09 Jan 2020 00:28:05 +08:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Mon, 20 Jan 2020 16:57:53 +01:00
 
-If activated the driver gets into autosuspend after some time of
-inactivity.
+x86/resctrl: Fix a deadlock due to inaccurate reference
 
-Suggested-by: Franz Parzer <rpi-receiver@htl-steyr.ac.at>
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+There is a race condition which results in a deadlock when rmdir and
+mkdir execute concurrently:
+
+$ ls /sys/fs/resctrl/c1/mon_groups/m1/
+cpus  cpus_list  mon_data  tasks
+
+Thread 1: rmdir /sys/fs/resctrl/c1
+Thread 2: mkdir /sys/fs/resctrl/c1/mon_groups/m1
+
+3 locks held by mkdir/48649:
+ #0:  (sb_writers#17){.+.+}, at: [<ffffffffb4ca2aa0>] mnt_want_write+0x20/0x50
+ #1:  (&type->i_mutex_dir_key#8/1){+.+.}, at: [<ffffffffb4c8c13b>] filename_create+0x7b/0x170
+ #2:  (rdtgroup_mutex){+.+.}, at: [<ffffffffb4a4389d>] rdtgroup_kn_lock_live+0x3d/0x70
+
+4 locks held by rmdir/48652:
+ #0:  (sb_writers#17){.+.+}, at: [<ffffffffb4ca2aa0>] mnt_want_write+0x20/0x50
+ #1:  (&type->i_mutex_dir_key#8/1){+.+.}, at: [<ffffffffb4c8c3cf>] do_rmdir+0x13f/0x1e0
+ #2:  (&type->i_mutex_dir_key#8){++++}, at: [<ffffffffb4c86d5d>] vfs_rmdir+0x4d/0x120
+ #3:  (rdtgroup_mutex){+.+.}, at: [<ffffffffb4a4389d>] rdtgroup_kn_lock_live+0x3d/0x70
+
+Thread 1 is deleting control group "c1". Holding rdtgroup_mutex,
+kernfs_remove() removes all kernfs nodes under directory "c1"
+recursively, then waits for sub kernfs node "mon_groups" to drop active
+reference.
+
+Thread 2 is trying to create a subdirectory "m1" in the "mon_groups"
+directory. The wrapper kernfs_iop_mkdir() takes an active reference to
+the "mon_groups" directory but the code drops the active reference to
+the parent directory "c1" instead.
+
+As a result, Thread 1 is blocked on waiting for active reference to drop
+and never release rdtgroup_mutex, while Thread 2 is also blocked on
+trying to get rdtgroup_mutex.
+
+Thread 1 (rdtgroup_rmdir)   Thread 2 (rdtgroup_mkdir)
+(rmdir /sys/fs/resctrl/c1)  (mkdir /sys/fs/resctrl/c1/mon_groups/m1)
+-------------------------   -------------------------
+                            kernfs_iop_mkdir
+                              /*
+                               * kn: "m1", parent_kn: "mon_groups",
+                               * prgrp_kn: parent_kn->parent: "c1",
+                               *
+                               * "mon_groups", parent_kn->active++: 1
+                               */
+                              kernfs_get_active(parent_kn)
+kernfs_iop_rmdir
+  /* "c1", kn->active++ */
+  kernfs_get_active(kn)
+
+  rdtgroup_kn_lock_live
+    atomic_inc(&rdtgrp->waitcount)
+    /* "c1", kn->active-- */
+    kernfs_break_active_protection(kn)
+    mutex_lock
+
+  rdtgroup_rmdir_ctrl
+    free_all_child_rdtgrp
+      sentry->flags = RDT_DELETED
+
+    rdtgroup_ctrl_remove
+      rdtgrp->flags = RDT_DELETED
+      kernfs_get(kn)
+      kernfs_remove(rdtgrp->kn)
+        __kernfs_remove
+          /* "mon_groups", sub_kn */
+          atomic_add(KN_DEACTIVATED_BIAS, &sub_kn->active)
+          kernfs_drain(sub_kn)
+            /*
+             * sub_kn->active == KN_DEACTIVATED_BIAS + 1,
+             * waiting on sub_kn->active to drop, but it
+             * never drops in Thread 2 which is blocked
+             * on getting rdtgroup_mutex.
+             */
+Thread 1 hangs here ---->
+            wait_event(sub_kn->active == KN_DEACTIVATED_BIAS)
+            ...
+                              rdtgroup_mkdir
+                                rdtgroup_mkdir_mon(parent_kn, prgrp_kn)
+                                  mkdir_rdt_prepare(parent_kn, prgrp_kn)
+                                    rdtgroup_kn_lock_live(prgrp_kn)
+                                      atomic_inc(&rdtgrp->waitcount)
+                                      /*
+                                       * "c1", prgrp_kn->active--
+                                       *
+                                       * The active reference on "c1" is
+                                       * dropped, but not matching the
+                                       * actual active reference taken
+                                       * on "mon_groups", thus causing
+                                       * Thread 1 to wait forever while
+                                       * holding rdtgroup_mutex.
+                                       */
+                                      kernfs_break_active_protection(
+                                                               prgrp_kn)
+                                      /*
+                                       * Trying to get rdtgroup_mutex
+                                       * which is held by Thread 1.
+                                       */
+Thread 2 hangs here ---->             mutex_lock
+                                      ...
+
+The problem is that the creation of a subdirectory in the "mon_groups"
+directory incorrectly releases the active protection of its parent
+directory instead of itself before it starts waiting for rdtgroup_mutex.
+This is triggered by the rdtgroup_mkdir() flow calling
+rdtgroup_kn_lock_live()/rdtgroup_kn_unlock() with kernfs node of the
+parent control group ("c1") as argument. It should be called with kernfs
+node "mon_groups" instead. What is currently missing is that the
+kn->priv of "mon_groups" is NULL instead of pointing to the rdtgrp.
+
+Fix it by pointing kn->priv to rdtgrp when "mon_groups" is created. Then
+it could be passed to rdtgroup_kn_lock_live()/rdtgroup_kn_unlock()
+instead. And then it operates on the same rdtgroup structure but handles
+the active reference of kernfs node "mon_groups" to prevent deadlock.
+The same changes are also made to the "mon_data" directories.
+
+This results in some unused function parameters that will be cleaned up
+in follow-up patch as the focus here is on the fix only in support of
+backporting efforts.
+
+Fixes: c7d9aac61311 ("x86/intel_rdt/cqm: Add mkdir support for RDT monitoring")
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1578500886-21771-4-git-send-email-xiaochen.shen@intel.com
 ---
- drivers/iio/proximity/srf04.c | 96 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 95 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iio/proximity/srf04.c b/drivers/iio/proximity/srf04.c
-index 01eb8cc63076..568b76e06385 100644
---- a/drivers/iio/proximity/srf04.c
-+++ b/drivers/iio/proximity/srf04.c
-@@ -45,6 +45,7 @@
- #include <linux/sched.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/pm_runtime.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index caab397..954fd04 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1970,7 +1970,7 @@ static int rdt_get_tree(struct fs_context *fc)
  
-@@ -56,6 +57,7 @@ struct srf04_data {
- 	struct device		*dev;
- 	struct gpio_desc	*gpiod_trig;
- 	struct gpio_desc	*gpiod_echo;
-+	struct gpio_desc	*gpiod_power;
- 	struct mutex		lock;
- 	int			irqnr;
- 	ktime_t			ts_rising;
-@@ -63,6 +65,7 @@ struct srf04_data {
- 	struct completion	rising;
- 	struct completion	falling;
- 	const struct srf04_cfg	*cfg;
-+	int			startup_time_ms;
- };
- 
- static const struct srf04_cfg srf04_cfg = {
-@@ -97,6 +100,9 @@ static int srf04_read(struct srf04_data *data)
- 	u64 dt_ns;
- 	u32 time_ns, distance_mm;
- 
-+	if (data->gpiod_power)
-+		pm_runtime_get_sync(data->dev);
-+
+ 	if (rdt_mon_capable) {
+ 		ret = mongroup_create_dir(rdtgroup_default.kn,
+-					  NULL, "mon_groups",
++					  &rdtgroup_default, "mon_groups",
+ 					  &kn_mongrp);
+ 		if (ret < 0)
+ 			goto out_info;
+@@ -2454,7 +2454,7 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
  	/*
- 	 * just one read-echo-cycle can take place at a time
- 	 * ==> lock against concurrent reading calls
-@@ -110,6 +116,11 @@ static int srf04_read(struct srf04_data *data)
- 	udelay(data->cfg->trigger_pulse_us);
- 	gpiod_set_value(data->gpiod_trig, 0);
+ 	 * Create the mon_data directory first.
+ 	 */
+-	ret = mongroup_create_dir(parent_kn, NULL, "mon_data", &kn);
++	ret = mongroup_create_dir(parent_kn, prgrp, "mon_data", &kn);
+ 	if (ret)
+ 		return ret;
  
-+	if (data->gpiod_power) {
-+		pm_runtime_mark_last_busy(data->dev);
-+		pm_runtime_put_autosuspend(data->dev);
-+	}
-+
- 	/* it should not take more than 20 ms until echo is rising */
- 	ret = wait_for_completion_killable_timeout(&data->rising, HZ/50);
- 	if (ret < 0) {
-@@ -268,6 +279,22 @@ static int srf04_probe(struct platform_device *pdev)
- 		return PTR_ERR(data->gpiod_echo);
- 	}
+@@ -2653,7 +2653,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	uint files = 0;
+ 	int ret;
  
-+	data->gpiod_power = devm_gpiod_get_optional(dev, "power",
-+								GPIOD_OUT_LOW);
-+	if (IS_ERR(data->gpiod_power)) {
-+		dev_err(dev, "failed to get power-gpios: err=%ld\n",
-+						PTR_ERR(data->gpiod_power));
-+		return PTR_ERR(data->gpiod_power);
-+	}
-+	if (data->gpiod_power) {
-+
-+		if (of_property_read_u32(dev->of_node, "startup-time-ms",
-+						&data->startup_time_ms))
-+			data->startup_time_ms = 100;
-+		dev_dbg(dev, "using power gpio: startup-time-ms=%d\n",
-+							data->startup_time_ms);
-+	}
-+
- 	if (gpiod_cansleep(data->gpiod_echo)) {
- 		dev_err(data->dev, "cansleep-GPIOs not supported\n");
- 		return -ENODEV;
-@@ -296,14 +323,81 @@ static int srf04_probe(struct platform_device *pdev)
- 	indio_dev->channels = srf04_chan_spec;
- 	indio_dev->num_channels = ARRAY_SIZE(srf04_chan_spec);
+-	prdtgrp = rdtgroup_kn_lock_live(prgrp_kn);
++	prdtgrp = rdtgroup_kn_lock_live(parent_kn);
+ 	if (!prdtgrp) {
+ 		ret = -ENODEV;
+ 		goto out_unlock;
+@@ -2726,7 +2726,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	kernfs_activate(kn);
  
--	return devm_iio_device_register(dev, indio_dev);
-+	ret = iio_device_register(indio_dev);
-+	if (ret < 0) {
-+		dev_err(data->dev, "iio_device_register: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (data->gpiod_power) {
-+		pm_runtime_set_autosuspend_delay(data->dev, 1000);
-+		pm_runtime_use_autosuspend(data->dev);
-+
-+		ret = pm_runtime_set_active(data->dev);
-+		if (ret) {
-+			dev_err(data->dev, "pm_runtime_set_active: %d\n", ret);
-+			iio_device_unregister(indio_dev);
-+		}
-+
-+		pm_runtime_enable(data->dev);
-+		pm_runtime_idle(data->dev);
-+	}
-+
-+	return ret;
+ 	/*
+-	 * The caller unlocks the prgrp_kn upon success.
++	 * The caller unlocks the parent_kn upon success.
+ 	 */
+ 	return 0;
+ 
+@@ -2737,7 +2737,7 @@ out_destroy:
+ out_free_rgrp:
+ 	kfree(rdtgrp);
+ out_unlock:
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
  }
  
-+static int srf04_remove(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct srf04_data *data = iio_priv(indio_dev);
-+
-+	iio_device_unregister(indio_dev);
-+
-+	if (data->gpiod_power) {
-+		pm_runtime_disable(data->dev);
-+		pm_runtime_set_suspended(data->dev);
-+	}
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused srf04_pm_runtime_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = container_of(dev,
-+						struct platform_device, dev);
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct srf04_data *data = iio_priv(indio_dev);
-+
-+	gpiod_set_value(data->gpiod_power, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused srf04_pm_runtime_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = container_of(dev,
-+						struct platform_device, dev);
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct srf04_data *data = iio_priv(indio_dev);
-+
-+	gpiod_set_value(data->gpiod_power, 1);
-+	msleep(data->startup_time_ms);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops srf04_pm_ops = {
-+	SET_RUNTIME_PM_OPS(srf04_pm_runtime_suspend,
-+				srf04_pm_runtime_resume, NULL)
-+};
-+
- static struct platform_driver srf04_driver = {
- 	.probe		= srf04_probe,
-+	.remove		= srf04_remove,
- 	.driver		= {
- 		.name		= "srf04-gpio",
- 		.of_match_table	= of_srf04_match,
-+		.pm		= &srf04_pm_ops,
- 	},
- };
+@@ -2775,7 +2775,7 @@ static int rdtgroup_mkdir_mon(struct kernfs_node *parent_kn,
+ 	 */
+ 	list_add_tail(&rdtgrp->mon.crdtgrp_list, &prgrp->mon.crdtgrp_list);
  
--- 
-2.20.1
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
+ }
+ 
+@@ -2818,7 +2818,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 		 * Create an empty mon_groups directory to hold the subset
+ 		 * of tasks and cpus to monitor.
+ 		 */
+-		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
++		ret = mongroup_create_dir(kn, rdtgrp, "mon_groups", NULL);
+ 		if (ret) {
+ 			rdt_last_cmd_puts("kernfs subdir error\n");
+ 			goto out_del_list;
+@@ -2834,7 +2834,7 @@ out_id_free:
+ out_common_fail:
+ 	mkdir_rdt_prepare_clean(rdtgrp);
+ out_unlock:
+-	rdtgroup_kn_unlock(prgrp_kn);
++	rdtgroup_kn_unlock(parent_kn);
+ 	return ret;
+ }
+ 
