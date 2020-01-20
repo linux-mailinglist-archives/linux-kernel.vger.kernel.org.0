@@ -2,109 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B2C4142B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0EA142B50
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 Jan 2020 13:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbgATMtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 07:49:46 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726589AbgATMtq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:49:46 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00KCTW7q025559
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 07:49:45 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xmgbnyt7k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 07:49:44 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 20 Jan 2020 12:49:43 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 Jan 2020 12:49:40 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00KCmnmu50463050
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 Jan 2020 12:48:50 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BEDE3A4054;
-        Mon, 20 Jan 2020 12:49:39 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D3A3A405B;
-        Mon, 20 Jan 2020 12:49:37 +0000 (GMT)
-Received: from [9.199.49.60] (unknown [9.199.49.60])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 Jan 2020 12:49:37 +0000 (GMT)
-Subject: Re: [PATCH 1/3] perf annotate: Nuke privsize
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, namhyung@kernel.org, irogers@google.com,
-        songliubraving@fb.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20200117092612.30874-1-ravi.bangoria@linux.ibm.com>
- <20200117092612.30874-2-ravi.bangoria@linux.ibm.com>
- <20200120100825.GG608405@krava>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Mon, 20 Jan 2020 18:19:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727071AbgATMyp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 07:54:45 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9671 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726589AbgATMyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 07:54:45 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 58230D174755C140357B;
+        Mon, 20 Jan 2020 20:54:43 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 20 Jan 2020 20:54:33 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+        <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH -next v2] net: hns3: replace snprintf with scnprintf in hns3_dbg_cmd_read
+Date:   Mon, 20 Jan 2020 20:49:43 +0800
+Message-ID: <20200120124943.30274-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200120100825.GG608405@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012012-0020-0000-0000-000003A25DDE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012012-0021-0000-0000-000021F9E8E0
-Message-Id: <633759b2-8d6c-24b8-b058-b4d4b365fcee@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-20_02:2020-01-20,2020-01-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxlogscore=565 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- mlxscore=0 bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
- definitions=main-2001200110
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The return value of snprintf may be greater than the size of
+HNS3_DBG_READ_LEN, use scnprintf instead in hns3_dbg_cmd_read.
 
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
 
-On 1/20/20 3:38 PM, Jiri Olsa wrote:
->> -/*
->> - * Allocating the annotation line data with following
->> - * structure:
->> - *
->> - *    --------------------------------------
->> - *    private space | struct annotation_line
->> - *    --------------------------------------
->> - *
->> - * Size of the private space is stored in 'struct annotation_line'.
->> - *
->> - */
->> -static struct annotation_line *
->> -annotation_line__new(struct annotate_args *args, size_t privsize)
->> +static size_t disasm_line_size(int nr)
->>   {
-> 
-> I agree we can get rid of the 'users' privsize passed from symbol__annotate,
-> but could you please put it in separate patch, while keeping privsize in here?
-> 
-> and then put the rest of the code factoring into separate patch,
-> so we can see clearly the change and the benefits
-> 
-> your new annotation_line__new should be renamed to something like
-> annotation_line__init ... we keep __new suffix for functions that
-> return new objects
+changes in v2:
+- fix checkpatch style problem.
 
-Sure Jiri. Will resend with these changes.
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- Ravi
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+index 6b328a2..92ee1f5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+@@ -297,8 +297,8 @@ static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	len = snprintf(buf, HNS3_DBG_READ_LEN, "%s\n",
+-		       "Please echo help to cmd to get help information");
++	len = scnprintf(buf, HNS3_DBG_READ_LEN, "%s\n",
++			"Please echo help to cmd to get help information");
+ 	uncopy_bytes = copy_to_user(buffer, buf, len);
+ 
+ 	kfree(buf);
+-- 
+2.7.4
 
