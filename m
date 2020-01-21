@@ -2,186 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77597144243
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A36A14424C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:38:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbgAUQfy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 11:35:54 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:58810 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbgAUQfy (ORCPT
+        id S1729288AbgAUQh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:37:59 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37923 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729080AbgAUQh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:35:54 -0500
-Received: from marcel-macpro.fritz.box (p4FEFC5A7.dip0.t-ipconnect.de [79.239.197.167])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 00A92CECE3;
-        Tue, 21 Jan 2020 17:45:10 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [RFC PATCH 1/2] Bluetooth: Add mgmt op set_wake_capable
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20200117132623.RFC.1.I797e2f4cb824299043e771f3ab9cef86ee09f4db@changeid>
-Date:   Tue, 21 Jan 2020 17:35:51 +0100
-Cc:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>, alainm@chromium.org,
-        linux-bluetooth@vger.kernel.org,
-        chromeos-bluetooth-upstreaming@chromium.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <ACAE240C-345B-43F9-B6C8-8967AF436CE9@holtmann.org>
-References: <20200117212705.57436-1-abhishekpandit@chromium.org>
- <20200117132623.RFC.1.I797e2f4cb824299043e771f3ab9cef86ee09f4db@changeid>
-To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        Tue, 21 Jan 2020 11:37:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579624677;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Yf4F2Q+jP5jpb9BsV98BXepooKGbqCkOI9lfShBlAeQ=;
+        b=X9PZg8HO1/T0iLnm2bUaCaf46MVsQELz/8OFLSL3xgR0PJ5VBWgmtkAA+QnmLXNqzSVc6E
+        t/eXu1Wob6OO7Pk2kdhnUZlmocHH6W7nPybuCxBAvBTJAkt49efynWkUlP2vcV6ftT6RlI
+        Ax3dtQU8rOFjCxDorkHaPk/tdqaQtHY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-113-VrUfivWiNLS7ip51Icjx2g-1; Tue, 21 Jan 2020 11:37:52 -0500
+X-MC-Unique: VrUfivWiNLS7ip51Icjx2g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AB33C2F2E;
+        Tue, 21 Jan 2020 16:37:50 +0000 (UTC)
+Received: from treble (ovpn-122-154.rdu2.redhat.com [10.10.122.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 309105C1BB;
+        Tue, 21 Jan 2020 16:37:49 +0000 (UTC)
+Date:   Tue, 21 Jan 2020 10:37:47 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Julien Thierry <jthierry@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        peterz@infradead.org, raphael.gault@arm.com,
+        catalin.marinas@arm.com, will@kernel.org
+Subject: Re: [RFC v5 08/57] objtool: Make ORC support optional
+Message-ID: <20200121163747.kbasjd2wn4q44vcf@treble>
+References: <20200109160300.26150-1-jthierry@redhat.com>
+ <20200109160300.26150-9-jthierry@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200109160300.26150-9-jthierry@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On Thu, Jan 09, 2020 at 04:02:11PM +0000, Julien Thierry wrote:
+> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> index d2a19b0bc05a..24d653e0b6ec 100644
+> --- a/tools/objtool/Makefile
+> +++ b/tools/objtool/Makefile
+> @@ -6,6 +6,10 @@ ifeq ($(ARCH),x86_64)
+>  ARCH := x86
+>  endif
+>  
+> +ifeq ($(ARCH),x86)
+> +OBJTOOL_ORC := y
+> +endif
 
-> When the system is suspended, only some connected Bluetooth devices
-> cause user input that should wake the system (mostly HID devices). Add
-> a list to keep track of devices that can wake the system and add
-> a management API to let userspace tell the kernel whether a device is
-> wake capable or not.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
-> 
-> include/net/bluetooth/hci_core.h |  1 +
-> include/net/bluetooth/mgmt.h     |  7 ++++++
-> net/bluetooth/hci_core.c         |  1 +
-> net/bluetooth/mgmt.c             | 42 ++++++++++++++++++++++++++++++++
-> 4 files changed, 51 insertions(+)
-> 
-> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-> index 89ecf0a80aa1..ce4bebcb0265 100644
-> --- a/include/net/bluetooth/hci_core.h
-> +++ b/include/net/bluetooth/hci_core.h
-> @@ -394,6 +394,7 @@ struct hci_dev {
-> 	struct list_head	mgmt_pending;
-> 	struct list_head	blacklist;
-> 	struct list_head	whitelist;
-> +	struct list_head	wakeable;
-> 	struct list_head	uuids;
-> 	struct list_head	link_keys;
-> 	struct list_head	long_term_keys;
-> diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-> index a90666af05bd..283ba5320bdb 100644
-> --- a/include/net/bluetooth/mgmt.h
-> +++ b/include/net/bluetooth/mgmt.h
-> @@ -671,6 +671,13 @@ struct mgmt_cp_set_blocked_keys {
-> } __packed;
-> #define MGMT_OP_SET_BLOCKED_KEYS_SIZE 2
-> 
-> +#define MGMT_OP_SET_WAKE_CAPABLE	0x0047
-> +#define MGMT_SET_WAKE_CAPABLE_SIZE	8
-> +struct mgmt_cp_set_wake_capable {
-> +	struct mgmt_addr_info addr;
-> +	u8 wake_capable;
-> +} __packed;
-> +
+I think this should check SRCARCH instead, a la:
 
-please also send a patch for doc/mgmt-api.txt describing these opcodes. I would also like to have the discussion if it might be better to add an extra Action parameter to Add Device. We want to differentiate between allow incoming connection that allows to wakeup and the one that doesn’t.
+  https://lkml.kernel.org/r/d5d11370ae116df6c653493acd300ec3d7f5e925.1579543924.git.jpoimboe@redhat.com
 
-Another option is to create an Add Extended Device command. Main reason here is that I don’t want to end up in the situation where you have to add a device and then send another 10 commands to set its features.
-
-> #define MGMT_EV_CMD_COMPLETE		0x0001
-> struct mgmt_ev_cmd_complete {
-> 	__le16	opcode;
-> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> index 1ca7508b6ca7..7057b9b65173 100644
-> --- a/net/bluetooth/hci_core.c
-> +++ b/net/bluetooth/hci_core.c
-> @@ -3299,6 +3299,7 @@ struct hci_dev *hci_alloc_dev(void)
-> 	INIT_LIST_HEAD(&hdev->mgmt_pending);
-> 	INIT_LIST_HEAD(&hdev->blacklist);
-> 	INIT_LIST_HEAD(&hdev->whitelist);
-> +	INIT_LIST_HEAD(&hdev->wakeable);
-> 	INIT_LIST_HEAD(&hdev->uuids);
-> 	INIT_LIST_HEAD(&hdev->link_keys);
-> 	INIT_LIST_HEAD(&hdev->long_term_keys);
-> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-> index 0dc610faab70..95092130f16c 100644
-> --- a/net/bluetooth/mgmt.c
-> +++ b/net/bluetooth/mgmt.c
-> @@ -106,7 +106,10 @@ static const u16 mgmt_commands[] = {
-> 	MGMT_OP_START_LIMITED_DISCOVERY,
-> 	MGMT_OP_READ_EXT_INFO,
-> 	MGMT_OP_SET_APPEARANCE,
-> +	MGMT_OP_GET_PHY_CONFIGURATION,
-> +	MGMT_OP_SET_PHY_CONFIGURATION,
-
-These are unrelated to this patch.
-
-> 	MGMT_OP_SET_BLOCKED_KEYS,
-> +	MGMT_OP_SET_WAKE_CAPABLE,
-> };
-> 
-> static const u16 mgmt_events[] = {
-> @@ -4663,6 +4666,37 @@ static int set_fast_connectable(struct sock *sk, struct hci_dev *hdev,
-> 	return err;
-> }
-> 
-> +static int set_wake_capable(struct sock *sk, struct hci_dev *hdev, void *data,
-> +			    u16 len)
-> +{
-> +	int err;
-> +	u8 status;
-> +	struct mgmt_cp_set_wake_capable *cp = data;
-> +	u8 addr_type = cp->addr.type == BDADDR_BREDR ?
-> +			       cp->addr.type :
-> +			       le_addr_type(cp->addr.type);
-> +
-> +	BT_DBG("Set wake capable %pMR (type 0x%x) = 0x%x\n", &cp->addr.bdaddr,
-> +	       addr_type, cp->wake_capable);
-> +
-> +	if (cp->wake_capable)
-> +		err = hci_bdaddr_list_add(&hdev->wakeable, &cp->addr.bdaddr,
-> +					  addr_type);
-> +	else
-> +		err = hci_bdaddr_list_del(&hdev->wakeable, &cp->addr.bdaddr,
-> +					  addr_type);
-> +
-> +	if (!err || err == -EEXIST || err == -ENOENT)
-> +		status = MGMT_STATUS_SUCCESS;
-> +	else
-> +		status = MGMT_STATUS_FAILED;
-> +
-> +	err = mgmt_cmd_complete(sk, hdev->id, MGMT_OP_SET_WAKE_CAPABLE, status,
-> +				cp, sizeof(*cp));
-> +
-> +	return err;
-> +}
-> +
-> static void set_bredr_complete(struct hci_dev *hdev, u8 status, u16 opcode)
-> {
-> 	struct mgmt_pending_cmd *cmd;
-> @@ -5791,6 +5825,13 @@ static int remove_device(struct sock *sk, struct hci_dev *hdev,
-> 			err = hci_bdaddr_list_del(&hdev->whitelist,
-> 						  &cp->addr.bdaddr,
-> 						  cp->addr.type);
-> +
-> +			/* Don't check result since it either succeeds or device
-> +			 * wasn't there (not wakeable or invalid params as
-> +			 * covered by deleting from whitelist).
-> +			 */
-> +			hci_bdaddr_list_del(&hdev->wakeable, &cp->addr.bdaddr,
-> +					    cp->addr.type);
-> 			if (err) {
-> 				err = mgmt_cmd_complete(sk, hdev->id,
-> 							MGMT_OP_REMOVE_DEVICE,
-> @@ -6990,6 +7031,7 @@ static const struct hci_mgmt_handler mgmt_handlers[] = {
-> 	{ set_phy_configuration,   MGMT_SET_PHY_CONFIGURATION_SIZE },
-> 	{ set_blocked_keys,	   MGMT_OP_SET_BLOCKED_KEYS_SIZE,
-> 						HCI_MGMT_VAR_LEN },
-> +	{ set_wake_capable,	   MGMT_SET_WAKE_CAPABLE_SIZE },
-> };
-> 
-
-Regards
-
-Marcel
+-- 
+Josh
 
