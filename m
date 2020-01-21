@@ -2,74 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0391446CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA5901446D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgAUWBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:01:37 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42967 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728904AbgAUWBg (ORCPT
+        id S1728998AbgAUWF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:05:59 -0500
+Received: from outgoing2.flk.host-h.net ([188.40.0.84]:53907 "EHLO
+        outgoing2.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbgAUWF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:01:36 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so4413976otd.9;
-        Tue, 21 Jan 2020 14:01:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WLamrH1KcwfwPOF7XObLexp7z6M67I0bzxIY4IB2VTI=;
-        b=YhoBsbiJxcXZp/lcxUzSb2KCWnDAJndgQZco12qzO4sPMiXHL92cU7QUTljYZdgA3C
-         LIPdzKH7Kbz/bKT3NFJh0HupbcH32vU7/wigvwAwIh6PjnCp2LQjkaFDWgEkcTbGxgeD
-         zTR3JH2MxKQH5h+M3T10mMZ+yYoP0l7d0+SDw4otd+R/W1ArPdqa8i0ejT7ROOKtV/uv
-         49zLUiH172/wakj6++T8bDRTjiUjKjGksZJ2nUrQmvaeKBQVeathUUx08iRNjz9M7ywy
-         fYsirte6uH25XhuiHPHva2tYlVdfOuRfyHaEkYarW/d+rnPvG5vZUJq6n/BudtCPKEol
-         kRUA==
-X-Gm-Message-State: APjAAAVcFCwFt9n5GGByjDhHtFF2BhkMsYUk48J7izf3tQ0TlfTr0PE2
-        1EEI3td+q/4f07FXGbfCmw==
-X-Google-Smtp-Source: APXvYqwYUtpnZeBhFJqfIbqggpjOxvmlOgiW69hH8RKvbBjceT9T20olL0zhaSZwIuY0rUy9QYz9lw==
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr5244408otd.266.1579644095826;
-        Tue, 21 Jan 2020 14:01:35 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g19sm13994048otj.1.2020.01.21.14.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 14:01:35 -0800 (PST)
-Received: (nullmailer pid 15322 invoked by uid 1000);
-        Tue, 21 Jan 2020 22:01:34 -0000
-Date:   Tue, 21 Jan 2020 16:01:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V2 3/3] dt-bindings: clock: Refine i.MX8MN clock binding
-Message-ID: <20200121220134.GA15267@bogus>
-References: <1578965167-31588-1-git-send-email-Anson.Huang@nxp.com>
- <1578965167-31588-3-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578965167-31588-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Jan 2020 17:05:58 -0500
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam3-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1iu1el-00029d-Il; Wed, 22 Jan 2020 00:05:56 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1iu1el-0007M5-2j; Wed, 22 Jan 2020 00:05:55 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Add rga to rk322x device tree
+Date:   Tue, 21 Jan 2020 22:02:39 +0000
+Message-Id: <20200121220242.22815-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
+References: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.09)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fKZ8wcD78QFAaYhvfMzLIKpSDasLI4SayDByyq9LIhV23wXp1juvjMS
+ OEH+q8/4dUTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0jxJtcVJProrT987X1VDPOqN+OoDzRTdku7DidYUZdNf38Sp7Of4wP429AA
+ f49baR+f3He7jw4SoVhmTJ/3eP9ORQWVx8ds1M4qmk3/bYr2p8zbg4Paoa3pNVQ0zl7t/+UfQLYB
+ qEPnp1U88kqVD8AM2G81dFO0E3gi+MOI1foZYzDggRXhpvoPtF3cVkniFXU3qJSqpdJudO6+rkiw
+ E5i8Wl78Q18OeOfsy4h7jF1Uv9lnibl3vcBqVmvQB4A18afGobc9zMSInvi52IxlvH99AVXirbLu
+ Jjy3NtnGWLbnBGfrUBEXB2fYGLNieGQuoHtJvp0r29Rf3ZjFwL+MhHEWw/0qBlNDp8uABz3dkWV+
+ ttWGem52QLIiDo2hv5/Q58JTycYLFeAN4+MGwnsp7SkU6CLbyF0Zq4b1/7rjUzETJrWks4pbbQJq
+ 6gWopI3ep45X19ZysgQ+31LcAX8eoFXAhohfegXGH2GIVQVglJFbK771YV8YbC29CtmpcTqTfSIf
+ CWq9oj7OiT8GwpAriB+3/81I3rvR8KJ2fK9jiDYgijyqqY0rATpzHKGfmtNsYTr4SmDZ/bGW8xZC
+ RRs6ZD24UhFcZZEpLhnBCwImTQNvxaLyCc35VA7RvW/HGiGqxL09Cymermt8NAa/gGopT3kKfO4C
+ gvcKmV0o9jYzsFpuc43pp/LzIs3ornuRuAAdgrkq+6l7ZLNYJcf7Z6PCydDzoYZgInuDxgFOs7AZ
+ TwbwMaed1BaNkB2/QnXFItfl/CWDIhbqNEFVGKIiMD+EmR4V38NrFoXSENXH6UXfnav35JPA4YfM
+ 6tBkXsqvKY6zoLLTPpuFqUUQz+mM8JAD4ECWNo09vb0YLIRnK477e9Xake5PIWKjIXX7qe2zOXoS
+ fow2DcCKDCW/05VaEq40AdXEGSmqbzCCNZ763xR+/P/4zmbjO41FyBEqIaDudcVplPE6wCr6GXU1
+ lCw88ijyus1sGnWknJqS8gGhNQxpB5P3qu7c1xMljx2PG/R+pKBSKy8hXOgvE1zSS7XUhkYEQYeb
+ 3jR5NeVaJQBh0uawl0Cg8j+knAzOA9mmoJvkuhKHiekUuskYaI6ERCKp8gXWqnT9kLHhStr5fiGK
+ 7KncpWELuTEvuGslKTrRIXcXpFg5ivY=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Jan 2020 09:26:07 +0800, Anson Huang wrote:
-> Refine i.MX8MN clock binding by removing useless content and
-> updating the example, it makes all i.MX8M SoCs' clock binding
-> aligned.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No change.
-> ---
->  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 48 +---------------------
->  1 file changed, 2 insertions(+), 46 deletions(-)
-> 
+This patchset aims to enable use of Rockchip's RGA, a 2D raster
+graphic acceleration unit, on rk322x based devices.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Changed in v3:
+  - Relocate rga node to the correct position in rk322x.dtsi, as
+    indicated by Johan Jonker.
+
+Changes in v2:
+  - Remove unnecessary "rockchip,rk3228-rga" device tree compatibility
+    string patch, as advised by Ezequiel Garcia.
+
+  - Use both "rockchip,rk3228-rga" and "rockchip,rk3288-rga" in the
+    rga node's compatibility property, as suggested by Heiko Stuebner.
+
+Justin Swartz (2):
+  ARM: dts: rockchip: add rga node for rk322x
+  ARM: dts: rockchip: enable rga for rk3229-xms6
+
+ arch/arm/boot/dts/rk3229-xms6.dts |  4 ++++
+ arch/arm/boot/dts/rk322x.dtsi     | 11 +++++++++++
+ 2 files changed, 15 insertions(+)
+
+-- 
+2.11.0
+
