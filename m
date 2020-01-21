@@ -2,90 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0106F143B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52287143B4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:43:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbgAUKmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:42:54 -0500
-Received: from relay.sw.ru ([185.231.240.75]:57354 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729605AbgAUKmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:42:53 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1itqzf-0006QF-AK; Tue, 21 Jan 2020 13:42:47 +0300
-Subject: [PATCH v4 5/7] block: Add blk_queue_max_allocate_sectors()
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com, ktkhai@virtuozzo.com
-Date:   Tue, 21 Jan 2020 13:42:47 +0300
-Message-ID: <157960336718.108120.10388241536544475227.stgit@localhost.localdomain>
-In-Reply-To: <157960325642.108120.13626623438131044304.stgit@localhost.localdomain>
-References: <157960325642.108120.13626623438131044304.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1729864AbgAUKnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:43:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54658 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729431AbgAUKnF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 05:43:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f/Sbte5snp8vFWptEWtDAMlixV4m6d9CvFlccJ4poOk=; b=egfoudPNXA31Bxuon8KtbBTgh
+        1R5wwQKVCoGN4P+5QE07asDkPsAy+Wi+tpiWydRhz6RB+zJ9eQOIONJebb8SR4DcPXyqXLeRFHn6d
+        eVfxUPc+Lzt2s5RwgyM5eSilannu0YNWz9cImfiFtfpY27VoL19JbGXO6f/3IgkxAJq/XnN+Nt+s0
+        ujtgc8Anm2mlxNzgdjRA8GEqUu9oill6MyXLzaK+OXdT7PxWRmVtlkfkoF3Q0ScQxH/FqhlnM352f
+        QS+1BHZE5GUPNjGdOx0gEIwgJn+IqH8t4oXTU51RUBCBbP2dxs9XqsMA3v4XwiqJ8OMW5C6qfazN+
+        lzJuHMKXA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itqzj-0004bn-26; Tue, 21 Jan 2020 10:42:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E1BC9305FEA;
+        Tue, 21 Jan 2020 11:41:08 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D13EE2041FB24; Tue, 21 Jan 2020 11:42:47 +0100 (CET)
+Date:   Tue, 21 Jan 2020 11:42:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Parth Shah <parth@linux.ibm.com>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched, fair: Allow a small load imbalance between low
+ utilisation SD_NUMA domains v4
+Message-ID: <20200121104247.GI14914@hirez.programming.kicks-ass.net>
+References: <20200114101319.GO3466@techsingularity.net>
+ <20200117175631.GC20112@linux.vnet.ibm.com>
+ <20200117215853.GS3466@techsingularity.net>
+ <20200120080935.GD20112@linux.vnet.ibm.com>
+ <20200120083354.GT3466@techsingularity.net>
+ <20200120172706.GE20112@linux.vnet.ibm.com>
+ <20200120182100.GU3466@techsingularity.net>
+ <20200121085501.GF20112@linux.vnet.ibm.com>
+ <20200121091148.GV3466@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200121091148.GV3466@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a new helper to assign max_allocate_sectors
-limit of block device queue.
+On Tue, Jan 21, 2020 at 09:11:48AM +0000, Mel Gorman wrote:
+> On Tue, Jan 21, 2020 at 02:25:01PM +0530, Srikar Dronamraju wrote:
+> > * Mel Gorman <mgorman@techsingularity.net> [2020-01-20 18:21:00]:
+> > 
+> > > Understood. At the moment, I'm going to assume that the patch has zero
+> > > impact on your workload but confirmation that the other test programs
+> > > trigger no traces would be appreciated.
+> > > 
+> > 
+> > Yes, I confirm there were no traces when run with other test programs too.
+> > 
+> 
+> Ok, great, thanks for confirming that!
+> 
+> Peter or Ingo, I think at this point all review comments have been
+> addressed. Is there anything else you'd like before picking the patch
+> up?
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- block/blk-settings.c   |   13 +++++++++++++
- include/linux/blkdev.h |    2 ++
- 2 files changed, 15 insertions(+)
-
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 81468cd454a6..8d2fcbd693f9 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -259,6 +259,19 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- }
- EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
- 
-+/**
-+ * blk_queue_max_allocate_sectors - set max sectors for a single
-+ *                                  allocate request
-+ * @q:  the request queue for the device
-+ * @max_allocate_sectors: maximum number of sectors to write per command
-+ **/
-+void blk_queue_max_allocate_sectors(struct request_queue *q,
-+		unsigned int max_allocate_sectors)
-+{
-+	q->limits.max_allocate_sectors = max_allocate_sectors;
-+}
-+EXPORT_SYMBOL(blk_queue_max_allocate_sectors);
-+
- /**
-  * blk_queue_max_segments - set max hw segments for a request for this queue
-  * @q:  the request queue for the device
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 20c94a7f9411..249dce6dd436 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1089,6 +1089,8 @@ extern void blk_queue_max_write_same_sectors(struct request_queue *q,
- 		unsigned int max_write_same_sectors);
- extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- 		unsigned int max_write_same_sectors);
-+extern void blk_queue_max_allocate_sectors(struct request_queue *q,
-+		unsigned int max_allocate_sectors);
- extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
- extern void blk_queue_physical_block_size(struct request_queue *, unsigned int);
- extern void blk_queue_alignment_offset(struct request_queue *q,
-
-
+I've already queued it a few days ago, should show up in tip soonish :-)
