@@ -2,66 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78229143A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:06:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2159C143A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:06:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbgAUKGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:06:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727220AbgAUKGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:06:02 -0500
-Received: from localhost (unknown [171.76.119.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0B2720882;
-        Tue, 21 Jan 2020 10:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579601161;
-        bh=by/ZFP+d2IFD++mSGmVgfuhVMux5YdwvzjSotswQIBM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CCoZRaJNRW05YlM3J56kx+KwtlOrhJYGGsuccGejlCeLkt0fWrqPQxbXF5Yzgh4My
-         pRddkMj6MvdcVfCgcYQ5zXrhQopmKitl/2N3CTgU/Oc4h3PiaxuKe9R67u0ltBwqsp
-         64H8w0Cmteb7LujxWMbnn5OkB9d3QYiJ5oWyxzNo=
-Date:   Tue, 21 Jan 2020 15:35:57 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, psodagud@codeaurora.org,
-        tsoni@codeaurora.org, jshriram@codeaurora.org, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Add device tree and clock drivers for SM8250 SoC
-Message-ID: <20200121100557.GO2841@vkoul-mobl>
-References: <1579217994-22219-1-git-send-email-vnkgutta@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579217994-22219-1-git-send-email-vnkgutta@codeaurora.org>
+        id S1729536AbgAUKGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:06:16 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:55668 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbgAUKGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 05:06:15 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id sy6A210035USYZQ01y6ANN; Tue, 21 Jan 2020 11:06:13 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1itqQE-0000UK-24; Tue, 21 Jan 2020 11:06:10 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1itqQD-0008ON-Vk; Tue, 21 Jan 2020 11:06:10 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: arch timer: Drop unneeded select GENERIC_CLOCKEVENTS
+Date:   Tue, 21 Jan 2020 11:06:08 +0100
+Message-Id: <20200121100608.32218-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-01-20, 15:39, Venkata Narendra Kumar Gutta wrote:
-> This series adds device tree support and clock drivers support
-> for SM8250 SoC.
-> As part of the device tree, the sm8250 dts file has basic nodes
-> like CPU, PSCI, intc, timer and clock controller.
-> 
-> Required clock controller driver and RPMH cloks are added to
-> support peripherals like USB.
-> 
-> All this configuration is added to support SM8250 to boot up to the
-> serial console.
-> 
-> This patchset depends on one of the RPMH clock driver fix
-> https://patchwork.kernel.org/patch/11318949/
+The ARM Architected timer is available on ARMv7 SoCs only.
+As both ARCH_MULTIPLATFORM and ARM_SINGLE_ARMV7M select
+GENERIC_CLOCKEVENTS, there is no need for HAVE_ARM_ARCH_TIMER to select
+GENERIC_CLOCKEVENTS.
 
-Whole series:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Tested-by: Vinod Koul <vkoul@kernel.org>
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 96dab76da3b3962b..ea3ed263d3f50bb4 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1246,7 +1246,6 @@ config HAVE_ARM_ARCH_TIMER
+ 	bool "Architected timer support"
+ 	depends on CPU_V7
+ 	select ARM_ARCH_TIMER
+-	select GENERIC_CLOCKEVENTS
+ 	help
+ 	  This option enables support for the ARM architected timer
+ 
 -- 
-~Vinod
+2.17.1
+
