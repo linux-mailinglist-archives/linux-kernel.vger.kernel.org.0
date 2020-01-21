@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC32E1445C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 21:20:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5951445C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 21:20:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbgAUUUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 15:20:20 -0500
+        id S1729221AbgAUUUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 15:20:12 -0500
 Received: from mga06.intel.com ([134.134.136.31]:7229 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbgAUUUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 15:20:05 -0500
+        id S1729126AbgAUUUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 15:20:06 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 12:20:04 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 12:20:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,347,1574150400"; 
-   d="scan'208";a="307313113"
+   d="scan'208";a="307313121"
 Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
   by orsmga001.jf.intel.com with ESMTP; 21 Jan 2020 12:20:04 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
@@ -35,9 +35,9 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Fenghua Yu <fenghua.yu@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v2 7/8] x86/fpu/xstate: Update copy_kernel_to_xregs_err() for XSAVES supervisor states
-Date:   Tue, 21 Jan 2020 12:18:42 -0800
-Message-Id: <20200121201843.12047-8-yu-cheng.yu@intel.com>
+Subject: [PATCH v2 8/8] x86/fpu/xstate: Restore supervisor xstates for __fpu__restore_sig()
+Date:   Tue, 21 Jan 2020 12:18:43 -0800
+Message-Id: <20200121201843.12047-9-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200121201843.12047-1-yu-cheng.yu@intel.com>
 References: <20200121201843.12047-1-yu-cheng.yu@intel.com>
@@ -48,44 +48,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function copy_kernel_to_xregs_err() uses XRSTOR, which can work with
-standard or compacted format without supervisor xstates.  However, when
-supervisor xstates are present, XRSTORS must be used.  Fix it by using
-XRSTORS when XSAVES is enabled.
+When returning from a signal, there is user state in a userspace memory
+buffer and supervisor state in registers.  The in-kernel buffer has neither
+valid user or supervisor state.  To restore both, save supervisor fpregs
+first (and protect them across context switches), then restore it along
+with user state.
 
-I also considered if there were additional cases where XRSTOR might be
-mistakenly called instead of XRSTORS.  There are only three XRSTOR sites
-in kernel:
+This patch introduces saving and restoring of supervisor xstates for a
+sigreturn in the following steps:
 
-1. copy_kernel_to_xregs_booting(), already switches between XRSTOR and
-   XRSTORS based on X86_FEATURE_XSAVES.
-2. copy_user_to_xregs(), which *needs* XRSTOR because it is copying from
-   userspace and must never copy supervisor state with XRSTORS.
-3. copy_kernel_to_xregs_err() mistakenly used XRSTOR only.  Fixed in
-   this patch.
+- Preserve supervisor register values by saving the whole fpu xstates.
+  Saving the whole is necessary because doing XSAVES with a partial
+  requested-feature bitmap (RFBM) changes xcomp_bv.  Since user xstates are
+  to be restored from a user buffer, saved user xstates are discarded.
+
+- Set TIF_NEED_FPU_LOAD, and do __fpu_invalidate_fpregs_state().
+  This prevents a context switch from corrupting the saved xstates,
+  and xstate is considered to be loaded again on return to userland.
+
+- Under fpregs_lock(), restore user xstates (from the user buffer), and
+  then supervisor xstates (from previously saved content).
+
+- When both parts of the restoration succeed, mark fpregs as valid.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 ---
- arch/x86/include/asm/fpu/internal.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kernel/fpu/signal.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index a42fcb4b690d..42159f45bf9c 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -400,7 +400,10 @@ static inline int copy_kernel_to_xregs_err(struct xregs_state *xstate, u64 mask)
- 	u32 hmask = mask >> 32;
- 	int err;
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index e3781a4a52a8..0d3e06a772b0 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -327,14 +327,22 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 	}
  
--	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
-+	if (static_cpu_has(X86_FEATURE_XSAVES))
-+		XSTATE_OP(XRSTORS, xstate, lmask, hmask, err);
-+	else
-+		XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
+ 	/*
+-	 * The current state of the FPU registers does not matter. By setting
+-	 * TIF_NEED_FPU_LOAD unconditionally it is ensured that the our xstate
+-	 * is not modified on context switch and that the xstate is considered
++	 * Supervisor xstates are not modified by user space input, and
++	 * need to be saved and restored.  Save the whole because doing
++	 * partial XSAVES changes xcomp_bv.
++	 * By setting TIF_NEED_FPU_LOAD it is ensured that our xstate is
++	 * not modified on context switch and that the xstate is considered
+ 	 * to be loaded again on return to userland (overriding last_cpu avoids
+ 	 * the optimisation).
+ 	 */
+-	set_thread_flag(TIF_NEED_FPU_LOAD);
++	fpregs_lock();
++	if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
++		if (xfeatures_mask_supervisor())
++			copy_xregs_to_kernel(&fpu->state.xsave);
++		set_thread_flag(TIF_NEED_FPU_LOAD);
++	}
+ 	__fpu_invalidate_fpregs_state(fpu);
++	fpregs_unlock();
  
- 	return err;
- }
+ 	if ((unsigned long)buf_fx % 64)
+ 		fx_only = 1;
+@@ -360,6 +368,9 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		ret = copy_user_to_fpregs_zeroing(buf_fx, xfeatures_user, fx_only);
+ 		pagefault_enable();
+ 		if (!ret) {
++			if (xfeatures_mask_supervisor())
++				copy_kernel_to_xregs(&fpu->state.xsave,
++						     xfeatures_mask_supervisor());
+ 			fpregs_mark_activate();
+ 			fpregs_unlock();
+ 			return 0;
+@@ -389,7 +400,12 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		fpregs_lock();
+ 		if (unlikely(init_bv))
+ 			copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
+-		ret = copy_kernel_to_xregs_err(&fpu->state.xsave, xfeatures_user);
++		/*
++		 * Restore previously saved supervisor xstates along with
++		 * copied-in user xstates.
++		 */
++		ret = copy_kernel_to_xregs_err(&fpu->state.xsave,
++					       xfeatures_user | xfeatures_mask_supervisor());
+ 
+ 	} else if (use_fxsr()) {
+ 		ret = __copy_from_user(&fpu->state.fxsave, buf_fx, state_size);
 -- 
 2.21.0
 
