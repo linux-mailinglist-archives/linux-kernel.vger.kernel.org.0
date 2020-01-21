@@ -2,185 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A236F144195
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671681441A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:07:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbgAUQFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:05:41 -0500
-Received: from mail-wm1-f73.google.com ([209.85.128.73]:36899 "EHLO
-        mail-wm1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgAUQFk (ORCPT
+        id S1729251AbgAUQHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:07:36 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37365 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbgAUQHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:05:40 -0500
-Received: by mail-wm1-f73.google.com with SMTP id t4so800924wmf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:05:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=rQnN5kw1tCui7wtVtPb4liBxMrcaouM2L/Dj3ZF7x/U=;
-        b=vEveYDGlq4RapLlWOaserIRgSK9CDsyfKU3vmnx8XdRv89p7akoY0T/V3FT18RGMDw
-         OnIRpz8GZABv+03aNv6SYWdpma0cOtw9nwvYssWK3KfbfLDiVatxE0ZU6mONsyJ2gVsi
-         uUph1vinxudveUkuNN+jZVXoh30xw79QZx/d492IQ/ZJsFu58ixFWPEECOIRa11zW598
-         4k41E4HwH4oJuUbSy/y9Vzf1ZfTjNMvyp9/8EXNCZcZ3zUHKkQro+p+EUuLpGaaGn5t3
-         bL84bLB/URIi83z+l9RZ5xR4S1qwN1Cfzc9oVp+rnNjvEL2wQ4NlOUKRJ+AqA2/tiu9+
-         5rMQ==
+        Tue, 21 Jan 2020 11:07:35 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k14so3404148otn.4;
+        Tue, 21 Jan 2020 08:07:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=rQnN5kw1tCui7wtVtPb4liBxMrcaouM2L/Dj3ZF7x/U=;
-        b=BCN6u3c8Z/9muwqQho04zkcEOKXJcIbmGHxvRttBOQqcogVYlfDTHzD0CMv0ljZOGx
-         4iCBskvtjbpTvQ1yPs4pU5+bp/DIZPNIFqeTRvvRXiDBEXKSZnfRsXXAfIC6aGuEMmQr
-         Jmv7wRQIzXKZi0+FEm3eO5/iYcE1S//bULCCZH26DtUYBXoPlzIUARHrombxM1eJMY7o
-         v6ljUdjd1Hi1gJG/HklZHHSQuBydnYM+fjsIVgVvq22pCxUDqCc8vuIve1uUAWvwJFLu
-         BnLRl/+D7IO4YB3nsZ94qlG+MwZkEgjc+2lw4afTcSTY7nRZwy6+Lc9jA5h7BhVI9gF8
-         1t1w==
-X-Gm-Message-State: APjAAAUrxHtGWJ8iOYh/AHRk9BbtbiOU4xQQ8aArMvQnhdAVAbgOH36I
-        oybP8usVJAQfm6/5gpxqlEVHbAIKsg==
-X-Google-Smtp-Source: APXvYqzSYKwCpC+hKJKIhtUj8+J/YqJXlcIiLtIGbS/jcM8OFkz4phDJWMJlx1Zu6jZidhoMoTP5+XYtHA==
-X-Received: by 2002:a05:6000:50:: with SMTP id k16mr5659732wrx.145.1579622738696;
- Tue, 21 Jan 2020 08:05:38 -0800 (PST)
-Date:   Tue, 21 Jan 2020 17:05:12 +0100
-In-Reply-To: <20200121160512.70887-1-elver@google.com>
-Message-Id: <20200121160512.70887-5-elver@google.com>
-Mime-Version: 1.0
-References: <20200121160512.70887-1-elver@google.com>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v2 5/5] copy_to_user, copy_from_user: Use generic instrumented.h
-From:   Marco Elver <elver@google.com>
-To:     elver@google.com
-Cc:     paulmck@kernel.org, andreyknvl@google.com, glider@google.com,
-        dvyukov@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        arnd@arndb.de, viro@zeniv.linux.org.uk, dja@axtens.net,
-        christophe.leroy@c-s.fr, mpe@ellerman.id.au, mhiramat@kernel.org,
-        rostedt@goodmis.org, mingo@kernel.org,
-        christian.brauner@ubuntu.com, daniel@iogearbox.net,
-        keescook@chromium.org, cyphar@cyphar.com,
-        linux-arch@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B8ych26z3AXNCbZFGLBZKaxG5qsV0F9LivF0I3NpuHM=;
+        b=WVTvmDFyW1kXlKZxuLyScVltiuJKqzwh67rsphlEFWQqlERJQjV7iZ7xT8eLb1qYLV
+         fFm1ywUaS9shlDjl6OdfZ94+z6xIdJfmUnZPKZ6l4YkkBuqwp5zOxQ3VvDPjLlU+rtbZ
+         2lC2pu1vf5ZnZ7/ocOfp2AmVHBbSt8lexqN4Bhq399t96Xn9cQ/ujaa7eO0LVL1lRKJ6
+         ikwwss4ZD4SBmHEJOMI2HrKeQR8c+QqSi1xsKitrWONfR945myR0I1z1Lx1LvepxHtKo
+         tIS35O31FOsg1gffJy/jOhyvnmkhJvdbbXKCQaOqNmN4H9qHC4qjQaV3zQukzQRV8I9o
+         Kxzw==
+X-Gm-Message-State: APjAAAUCFQeZX4b1s8VdDJVZ7vWTjXVwmNLh/MicDboUCSJFhKootdrC
+        odHBe+Uyo719svBeTZbyBJgNakNaLkbWkshr+oetgQ==
+X-Google-Smtp-Source: APXvYqzW0Iot2FkUM+XXy/qsy+zxC0zxSVszNHm2yg6QZXRu2RVIGdcdFV3nOXiV1tovriJ1VgWYSagoFQaWuhmZW3w=
+X-Received: by 2002:a9d:7653:: with SMTP id o19mr3974233otl.118.1579622854894;
+ Tue, 21 Jan 2020 08:07:34 -0800 (PST)
+MIME-Version: 1.0
+References: <20200121134157.20396-1-sakari.ailus@linux.intel.com> <20200121134157.20396-3-sakari.ailus@linux.intel.com>
+In-Reply-To: <20200121134157.20396-3-sakari.ailus@linux.intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 21 Jan 2020 17:07:23 +0100
+Message-ID: <CAJZ5v0j8z3eiv6vG6sGeQM=f-BMoq_5OeARjm=LdO20gcOEybA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] ACPI: Add a convenience function to tell a device
+ is in low power state
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
+        Hyungwoo Yang <hyungwoo.yang@intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Mani, Rajmohan" <rajmohan.mani@intel.com>,
+        Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This replaces the KASAN instrumentation with generic instrumentation,
-implicitly adding KCSAN instrumentation support.
+On Tue, Jan 21, 2020 at 2:41 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Add a convenience function to tell whether a device is in low power state,
+> primarily for use in drivers' probe or remove functions on busses where
+> the custom is to power on the device for the duration of both.
+>
+> Returns false on non-ACPI systems.
+>
+> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-For KASAN no functional change is intended.
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Marco Elver <elver@google.com>
----
-v2:
-* Use updated instrumented.h, removing post-hooks for user-copies.
----
- include/linux/uaccess.h | 14 +++++++-------
- lib/usercopy.c          |  7 ++++---
- 2 files changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 67f016010aad..8a215c5c1aed 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -2,9 +2,9 @@
- #ifndef __LINUX_UACCESS_H__
- #define __LINUX_UACCESS_H__
- 
-+#include <linux/instrumented.h>
- #include <linux/sched.h>
- #include <linux/thread_info.h>
--#include <linux/kasan-checks.h>
- 
- #define uaccess_kernel() segment_eq(get_fs(), KERNEL_DS)
- 
-@@ -58,7 +58,7 @@
- static __always_inline __must_check unsigned long
- __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
- {
--	kasan_check_write(to, n);
-+	instrument_copy_from_user(to, from, n);
- 	check_object_size(to, n, false);
- 	return raw_copy_from_user(to, from, n);
- }
-@@ -67,7 +67,7 @@ static __always_inline __must_check unsigned long
- __copy_from_user(void *to, const void __user *from, unsigned long n)
- {
- 	might_fault();
--	kasan_check_write(to, n);
-+	instrument_copy_from_user(to, from, n);
- 	check_object_size(to, n, false);
- 	return raw_copy_from_user(to, from, n);
- }
-@@ -88,7 +88,7 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
- static __always_inline __must_check unsigned long
- __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
- {
--	kasan_check_read(from, n);
-+	instrument_copy_to_user(to, from, n);
- 	check_object_size(from, n, true);
- 	return raw_copy_to_user(to, from, n);
- }
-@@ -97,7 +97,7 @@ static __always_inline __must_check unsigned long
- __copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	might_fault();
--	kasan_check_read(from, n);
-+	instrument_copy_to_user(to, from, n);
- 	check_object_size(from, n, true);
- 	return raw_copy_to_user(to, from, n);
- }
-@@ -109,7 +109,7 @@ _copy_from_user(void *to, const void __user *from, unsigned long n)
- 	unsigned long res = n;
- 	might_fault();
- 	if (likely(access_ok(from, n))) {
--		kasan_check_write(to, n);
-+		instrument_copy_from_user(to, from, n);
- 		res = raw_copy_from_user(to, from, n);
- 	}
- 	if (unlikely(res))
-@@ -127,7 +127,7 @@ _copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	might_fault();
- 	if (access_ok(to, n)) {
--		kasan_check_read(from, n);
-+		instrument_copy_to_user(to, from, n);
- 		n = raw_copy_to_user(to, from, n);
- 	}
- 	return n;
-diff --git a/lib/usercopy.c b/lib/usercopy.c
-index cbb4d9ec00f2..4bb1c5e7a3eb 100644
---- a/lib/usercopy.c
-+++ b/lib/usercopy.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <linux/uaccess.h>
- #include <linux/bitops.h>
-+#include <linux/instrumented.h>
-+#include <linux/uaccess.h>
- 
- /* out-of-line parts */
- 
-@@ -10,7 +11,7 @@ unsigned long _copy_from_user(void *to, const void __user *from, unsigned long n
- 	unsigned long res = n;
- 	might_fault();
- 	if (likely(access_ok(from, n))) {
--		kasan_check_write(to, n);
-+		instrument_copy_from_user(to, from, n);
- 		res = raw_copy_from_user(to, from, n);
- 	}
- 	if (unlikely(res))
-@@ -25,7 +26,7 @@ unsigned long _copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	might_fault();
- 	if (likely(access_ok(to, n))) {
--		kasan_check_read(from, n);
-+		instrument_copy_to_user(to, from, n);
- 		n = raw_copy_to_user(to, from, n);
- 	}
- 	return n;
--- 
-2.25.0.341.g760bfbb309-goog
-
+> ---
+>  drivers/acpi/device_pm.c | 31 +++++++++++++++++++++++++++++++
+>  include/linux/acpi.h     |  5 +++++
+>  2 files changed, 36 insertions(+)
+>
+> diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+> index 5e4a8860a9c0c..d3174c6edf915 100644
+> --- a/drivers/acpi/device_pm.c
+> +++ b/drivers/acpi/device_pm.c
+> @@ -1348,4 +1348,35 @@ int acpi_dev_pm_attach(struct device *dev, bool power_on)
+>         return 1;
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_dev_pm_attach);
+> +
+> +/**
+> + * acpi_dev_state_low_power - Check the current ACPI power state of a device.
+> + * @dev: Physical device the ACPI power state of which to check
+> + *
+> + * On a system without ACPI, return false. On a system with ACPI, return true if
+> + * the current ACPI power state of the device is not D0, or false otherwise.
+> + *
+> + * Note that the power state of a device is not well-defined after it has been
+> + * passed to acpi_device_set_power() and before that function returns, so it is
+> + * not valid to ask for the ACPI power state of the device in that time frame.
+> + */
+> +bool acpi_dev_state_low_power(struct device *dev)
+> +{
+> +       struct acpi_device *adev = ACPI_COMPANION(dev);
+> +       int power_state;
+> +       int ret;
+> +
+> +       if (!adev)
+> +               return false;
+> +
+> +       ret = acpi_device_get_power(adev, &power_state);
+> +       if (ret) {
+> +               dev_dbg(dev, "Cannot obtain power state (%d)\n", ret);
+> +               return false;
+> +       }
+> +
+> +       return power_state != ACPI_STATE_D0;
+> +}
+> +EXPORT_SYMBOL_GPL(acpi_dev_state_low_power);
+> +
+>  #endif /* CONFIG_PM */
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 0f37a7d5fa774..aa666da311444 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -926,6 +926,7 @@ int acpi_dev_resume(struct device *dev);
+>  int acpi_subsys_runtime_suspend(struct device *dev);
+>  int acpi_subsys_runtime_resume(struct device *dev);
+>  int acpi_dev_pm_attach(struct device *dev, bool power_on);
+> +bool acpi_dev_state_low_power(struct device *dev);
+>  #else
+>  static inline int acpi_dev_runtime_suspend(struct device *dev) { return 0; }
+>  static inline int acpi_dev_runtime_resume(struct device *dev) { return 0; }
+> @@ -935,6 +936,10 @@ static inline int acpi_dev_pm_attach(struct device *dev, bool power_on)
+>  {
+>         return 0;
+>  }
+> +static inline bool acpi_dev_state_low_power(struct device *dev)
+> +{
+> +       return false;
+> +}
+>  #endif
+>
+>  #if defined(CONFIG_ACPI) && defined(CONFIG_PM_SLEEP)
+> --
+> 2.20.1
+>
