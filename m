@@ -2,199 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2FF1437E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:50:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8C11437D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:46:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbgAUHuF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 02:50:05 -0500
-Received: from mx1.unisoc.com ([222.66.158.135]:26334 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726729AbgAUHuF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:50:05 -0500
-Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-        by SHSQR01.spreadtrum.com with ESMTPS id 00L7jS2v074702
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 21 Jan 2020 15:45:28 +0800 (CST)
-        (envelope-from Orson.Zhai@unisoc.com)
-Received: from lenovo (10.0.74.130) by BJMBX01.spreadtrum.com (10.0.64.7) with
- Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 21 Jan 2020 15:46:04 +0800
-Date:   Tue, 21 Jan 2020 15:46:02 +0800
-From:   Orson Zhai <orson.zhai@spreadtrum.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     Orson Zhai <orson.zhai@unisoc.com>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-kernel@vger.kernel.org>, <baolin.wang@unisoc.com>,
-        <chunyan.zhang@unisoc.com>, <orson.unisoc@gmail.com>
-Subject: Re: [PATCH v4] mfd: syscon: Add arguments support for syscon
- reference
-Message-ID: <20200121074602.GA9019@lenovo>
-References: <1579397619-28547-1-git-send-email-orson.zhai@unisoc.com>
- <20200120080508.GR15507@dell>
+        id S1727813AbgAUHq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:46:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726052AbgAUHq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 02:46:26 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 340E72253D;
+        Tue, 21 Jan 2020 07:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579592784;
+        bh=rw/q1eKTxy1R/L3kxDffH//ga8HGU6wB5aShJH7OQrI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pOYYNI+zgyKtTmEQY2SENWnIkfmZzqHlN0pNfSTqifD5KmvBZXzUfWPSsQstT2cHD
+         hB1v1JOBC+ikZVJvz/tDVpFIc9b2hEOILTWxeqf38pJh6Hm1qE7Nkb1GgsPE8FAMyZ
+         x825X+JhajqCw8tl/8tUtwcaX3vO2iCDr2PuzDto=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Namhyung Kim <namhyung@kernel.org>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= 
+        <thoiland@redhat.com>, Jean-Tsung Hsiao <jhsiao@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] tracing/uprobe: Fix to make trace_uprobe_filter alignment safe
+Date:   Tue, 21 Jan 2020 16:46:19 +0900
+Message-Id: <157959277950.16074.9855390705890955393.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200120124022.GA14897@hirez.programming.kicks-ass.net>
+References: <20200120124022.GA14897@hirez.programming.kicks-ass.net>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200120080508.GR15507@dell>
-X-Originating-IP: [10.0.74.130]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL: SHSQR01.spreadtrum.com 00L7jS2v074702
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+Commit 99c9a923e97a ("tracing/uprobe: Fix double perf_event
+linking on multiprobe uprobe") moved trace_uprobe_filter on
+trace_probe_event. However, since it introduced a flexible
+data structure with char array and type casting, the
+alignment of trace_uprobe_filter can be broken.
 
-On Mon, Jan 20, 2020 at 08:05:08AM +0000, Lee Jones wrote:
-> On Sun, 19 Jan 2020, Orson Zhai wrote:
->
-> > There are a lot of similar global registers being used across multiple SoCs
-> > from Unisoc. But most of these registers are assigned with different offset
-> > for different SoCs. It is hard to handle all of them in an all-in-one
-> > kernel image.
-> >
-> > Add a helper function to get regmap with arguments where we could put some
-> > extra information such as the offset value.
-> >
-> > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
-> > Tested-by: Baolin Wang <baolin.wang@unisoc.com>
-> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >
-> > V3 Change:
-> >  Rebase on latest kernel v5.5-rc6 for Lee.
-> >
-> > V4 Change:
-> >  Remove trailing spaces according to checkpatch.
-> >
-> >  drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
-> >  include/linux/mfd/syscon.h | 14 ++++++++++++++
-> >  2 files changed, 43 insertions(+)
->
-> Nope, still not working:
+This changes the type of the array to trace_uprobe_filter
+data strucure to fix it.
 
-I am very very sorry about this.
-I have found these wrong spaces are generated by unisoc mail system
-_automatically_.
-It always sucks but it is out of my expectation this time.
-I have stopped using it and sent V5 patch by gmail.
+Fixes: 99c9a923e97a ("tracing/uprobe: Fix double perf_event linking on multiprobe uprobe")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ kernel/trace/trace_kprobe.c |    2 +-
+ kernel/trace/trace_probe.c  |    9 ++++++---
+ kernel/trace/trace_probe.h  |   10 ++++++++--
+ kernel/trace/trace_uprobe.c |   29 +++++++----------------------
+ 4 files changed, 22 insertions(+), 28 deletions(-)
 
-So sorry for wasting your so much time.
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 3e5f9c7d939c..3f54dc2f6e1c 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -290,7 +290,7 @@ static struct trace_kprobe *alloc_trace_kprobe(const char *group,
+ 	INIT_HLIST_NODE(&tk->rp.kp.hlist);
+ 	INIT_LIST_HEAD(&tk->rp.kp.list);
+ 
+-	ret = trace_probe_init(&tk->tp, event, group, 0);
++	ret = trace_probe_init(&tk->tp, event, group, false);
+ 	if (ret < 0)
+ 		goto error;
+ 
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index bba18cf44a30..9ae87be422f2 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -984,16 +984,19 @@ void trace_probe_cleanup(struct trace_probe *tp)
+ }
+ 
+ int trace_probe_init(struct trace_probe *tp, const char *event,
+-		     const char *group, size_t event_data_size)
++		     const char *group, bool alloc_filter)
+ {
+ 	struct trace_event_call *call;
++	size_t size = sizeof(struct trace_probe_event);
+ 	int ret = 0;
+ 
+ 	if (!event || !group)
+ 		return -EINVAL;
+ 
+-	tp->event = kzalloc(sizeof(struct trace_probe_event) + event_data_size,
+-			    GFP_KERNEL);
++	if (alloc_filter)
++		size += sizeof(struct trace_uprobe_filter);
++
++	tp->event = kzalloc(size, GFP_KERNEL);
+ 	if (!tp->event)
+ 		return -ENOMEM;
+ 
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 03e4e180058d..a0ff9e200ef6 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -223,6 +223,12 @@ struct probe_arg {
+ 	const struct fetch_type	*type;	/* Type of this argument */
+ };
+ 
++struct trace_uprobe_filter {
++	rwlock_t		rwlock;
++	int			nr_systemwide;
++	struct list_head	perf_events;
++};
++
+ /* Event call and class holder */
+ struct trace_probe_event {
+ 	unsigned int			flags;	/* For TP_FLAG_* */
+@@ -230,7 +236,7 @@ struct trace_probe_event {
+ 	struct trace_event_call		call;
+ 	struct list_head 		files;
+ 	struct list_head		probes;
+-	char				data[0];
++	struct trace_uprobe_filter	filter[0];
+ };
+ 
+ struct trace_probe {
+@@ -323,7 +329,7 @@ static inline bool trace_probe_has_single_file(struct trace_probe *tp)
+ }
+ 
+ int trace_probe_init(struct trace_probe *tp, const char *event,
+-		     const char *group, size_t event_data_size);
++		     const char *group, bool alloc_filter);
+ void trace_probe_cleanup(struct trace_probe *tp);
+ int trace_probe_append(struct trace_probe *tp, struct trace_probe *to);
+ void trace_probe_unlink(struct trace_probe *tp);
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index f66e202fec13..21fb512d6a66 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -34,12 +34,6 @@ struct uprobe_trace_entry_head {
+ #define DATAOF_TRACE_ENTRY(entry, is_return)		\
+ 	((void*)(entry) + SIZEOF_TRACE_ENTRY(is_return))
+ 
+-struct trace_uprobe_filter {
+-	rwlock_t		rwlock;
+-	int			nr_systemwide;
+-	struct list_head	perf_events;
+-};
+-
+ static int trace_uprobe_create(int argc, const char **argv);
+ static int trace_uprobe_show(struct seq_file *m, struct dyn_event *ev);
+ static int trace_uprobe_release(struct dyn_event *ev);
+@@ -263,14 +257,6 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
+ }
+ NOKPROBE_SYMBOL(process_fetch_insn)
+ 
+-static struct trace_uprobe_filter *
+-trace_uprobe_get_filter(struct trace_uprobe *tu)
+-{
+-	struct trace_probe_event *event = tu->tp.event;
+-
+-	return (struct trace_uprobe_filter *)&event->data[0];
+-}
+-
+ static inline void init_trace_uprobe_filter(struct trace_uprobe_filter *filter)
+ {
+ 	rwlock_init(&filter->rwlock);
+@@ -358,8 +344,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	if (!tu)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	ret = trace_probe_init(&tu->tp, event, group,
+-				sizeof(struct trace_uprobe_filter));
++	ret = trace_probe_init(&tu->tp, event, group, true);
+ 	if (ret < 0)
+ 		goto error;
+ 
+@@ -367,7 +352,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	tu->consumer.handler = uprobe_dispatcher;
+ 	if (is_ret)
+ 		tu->consumer.ret_handler = uretprobe_dispatcher;
+-	init_trace_uprobe_filter(trace_uprobe_get_filter(tu));
++	init_trace_uprobe_filter(tu->tp.event.filter);
+ 	return tu;
+ 
+ error:
+@@ -1076,7 +1061,7 @@ static void __probe_event_disable(struct trace_probe *tp)
+ 	struct trace_uprobe *tu;
+ 
+ 	tu = container_of(tp, struct trace_uprobe, tp);
+-	WARN_ON(!uprobe_filter_is_empty(trace_uprobe_get_filter(tu)));
++	WARN_ON(!uprobe_filter_is_empty(tu->tp.event.filter));
+ 
+ 	list_for_each_entry(pos, trace_probe_probe_list(tp), list) {
+ 		tu = container_of(pos, struct trace_uprobe, tp);
+@@ -1117,7 +1102,7 @@ static int probe_event_enable(struct trace_event_call *call,
+ 	}
+ 
+ 	tu = container_of(tp, struct trace_uprobe, tp);
+-	WARN_ON(!uprobe_filter_is_empty(trace_uprobe_get_filter(tu)));
++	WARN_ON(!uprobe_filter_is_empty(tu->tp.event.filter));
+ 
+ 	if (enabled)
+ 		return 0;
+@@ -1281,7 +1266,7 @@ static int uprobe_perf_close(struct trace_event_call *call,
+ 		return -ENODEV;
+ 
+ 	tu = container_of(tp, struct trace_uprobe, tp);
+-	if (trace_uprobe_filter_remove(trace_uprobe_get_filter(tu), event))
++	if (trace_uprobe_filter_remove(tu->tp.event.filter, event))
+ 		return 0;
+ 
+ 	list_for_each_entry(pos, trace_probe_probe_list(tp), list) {
+@@ -1306,7 +1291,7 @@ static int uprobe_perf_open(struct trace_event_call *call,
+ 		return -ENODEV;
+ 
+ 	tu = container_of(tp, struct trace_uprobe, tp);
+-	if (trace_uprobe_filter_add(trace_uprobe_get_filter(tu), event))
++	if (trace_uprobe_filter_add(tu->tp.event.filter, event))
+ 		return 0;
+ 
+ 	list_for_each_entry(pos, trace_probe_probe_list(tp), list) {
+@@ -1328,7 +1313,7 @@ static bool uprobe_perf_filter(struct uprobe_consumer *uc,
+ 	int ret;
+ 
+ 	tu = container_of(uc, struct trace_uprobe, consumer);
+-	filter = trace_uprobe_get_filter(tu);
++	filter = tu->tp.event.filter;
+ 
+ 	read_lock(&filter->rwlock);
+ 	ret = __uprobe_perf_filter(filter, mm);
 
-Regards,
-Orson
-
->
->  Applying patch #1181935 using "git am -s -3"
->  Description: [v4] mfd: syscon: Add arguments support for syscon reference
->  Applying: mfd: syscon: Add arguments support for syscon reference
->  Using index info to reconstruct a base tree...
->  M    drivers/mfd/syscon.c
->  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:25: indent with spaces.
->                                         const char *property,
->  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:26: indent with spaces.
->                                         int arg_count,
->  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:27: indent with spaces.
->                                         unsigned int *out_args)
->  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:36: indent with spaces.
->                         0, &args);
->  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:38: indent with spaces.
->                 return ERR_PTR(rc);
->  error: patch failed: drivers/mfd/syscon.c:224
->  error: drivers/mfd/syscon.c: patch does not apply
->  error: patch failed: include/linux/mfd/syscon.h:23
->  error: include/linux/mfd/syscon.h: patch does not apply
->  error: Did you hand edit your patch?
->  It does not apply to blobs recorded in its index.
->  Patch failed at 0001 mfd: syscon: Add arguments support for syscon reference
->  hint: Use 'git am --show-current-patch' to see the failed patch
->  When you have resolved this problem, run "git am --continue".
->  If you prefer to skip this patch, run "git am --skip" instead.
->  To restore the original branch and stop patching, run "git am --abort".
->  'git am' failed with exit status 128
->
-> Please talk me through how you are sending the patch.
->
-> > diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> > index e22197c..2918b05 100644
-> > --- a/drivers/mfd/syscon.c
-> > +++ b/drivers/mfd/syscon.c
-> > @@ -224,6 +224,35 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
-> >  }
-> >  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
-> >
-> > +struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
-> > +                                       const char *property,
-> > +                                       int arg_count,
-> > +                                       unsigned int *out_args)
-> > +{
-> > +       struct device_node *syscon_np;
-> > +       struct of_phandle_args args;
-> > +       struct regmap *regmap;
-> > +       unsigned int index;
-> > +       int rc;
-> > +
-> > +       rc = of_parse_phandle_with_fixed_args(np, property, arg_count,
-> > +                       0, &args);
-> > +       if (rc)
-> > +               return ERR_PTR(rc);
-> > +
-> > +       syscon_np = args.np;
-> > +       if (!syscon_np)
-> > +               return ERR_PTR(-ENODEV);
-> > +
-> > +       regmap = syscon_node_to_regmap(syscon_np);
-> > +       for (index = 0; index < arg_count; index++)
-> > +               out_args[index] = args.args[index];
-> > +       of_node_put(syscon_np);
-> > +
-> > +       return regmap;
-> > +}
-> > +EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle_args);
-> > +
-> >  static int syscon_probe(struct platform_device *pdev)
-> >  {
-> >         struct device *dev = &pdev->dev;
-> > diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-> > index 112dc66..714cab1 100644
-> > --- a/include/linux/mfd/syscon.h
-> > +++ b/include/linux/mfd/syscon.h
-> > @@ -23,6 +23,11 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
-> >  extern struct regmap *syscon_regmap_lookup_by_phandle(
-> >                                         struct device_node *np,
-> >                                         const char *property);
-> > +extern struct regmap *syscon_regmap_lookup_by_phandle_args(
-> > +                                       struct device_node *np,
-> > +                                       const char *property,
-> > +                                       int arg_count,
-> > +                                       unsigned int *out_args);
-> >  #else
-> >  static inline struct regmap *device_node_to_regmap(struct device_node *np)
-> >  {
-> > @@ -45,6 +50,15 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
-> >  {
-> >         return ERR_PTR(-ENOTSUPP);
-> >  }
-> > +
-> > +static struct regmap *syscon_regmap_lookup_by_phandle_args(
-> > +                                       struct device_node *np,
-> > +                                       const char *property,
-> > +                                       int arg_count,
-> > +                                       unsigned int *out_args)
-> > +{
-> > +       return ERR_PTR(-ENOTSUPP);
-> > +}
-> >  #endif
-> >
-> >  #endif /* __LINUX_MFD_SYSCON_H__ */
->
-> --
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-________________________________
- This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
-本邮件及其附件具有保密性质，受法律保护不得泄露，仅发送给本邮件所指特定收件人。严禁非经授权使用、宣传、发布或复制本邮件或其内容。若非该特定收件人，请勿阅读、复制、 使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件的方式即刻告知发件人。无法保证互联网通信及时、安全、无误或防毒。发件人对任何错漏均不承担责任。
