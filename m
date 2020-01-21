@@ -2,72 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA71143942
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7917E143955
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbgAUJQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:16:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59126 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgAUJQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:16:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 198EABB09;
-        Tue, 21 Jan 2020 09:16:44 +0000 (UTC)
-Date:   Tue, 21 Jan 2020 10:16:37 +0100
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 19/26] docs: i2c: smbus-protocol: improve I2C Block
- transactions description
-Message-ID: <20200121101637.07513417@endymion>
-In-Reply-To: <20200105225012.11701-19-luca@lucaceresoli.net>
-References: <20200105224006.10321-1-luca@lucaceresoli.net>
-        <20200105225012.11701-1-luca@lucaceresoli.net>
-        <20200105225012.11701-19-luca@lucaceresoli.net>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1729163AbgAUJTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:19:01 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9227 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729017AbgAUJTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:19:01 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C4CAB24DD88B7E0210E3;
+        Tue, 21 Jan 2020 17:18:57 +0800 (CST)
+Received: from [127.0.0.1] (10.177.131.64) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Tue, 21 Jan 2020
+ 17:18:51 +0800
+Subject: Re: [PATCH -next] drivers: net: declance: fix comparing pointer to 0
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        <davem@davemloft.net>, <mhabets@solarflare.com>, <kuba@kernel.org>
+References: <20200121013553.15252-1-chenzhou10@huawei.com>
+ <40eb3815-f677-c2fd-3e67-4b39bb332f48@cogentembedded.com>
+ <86f4d4a0-627d-84aa-c785-4dac426b7cc6@huawei.com>
+ <c223c347-4c19-176f-4626-b096c12c0558@cogentembedded.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Chen Zhou <chenzhou10@huawei.com>
+Message-ID: <63bef062-6a5a-c919-c805-798f19be5632@huawei.com>
+Date:   Tue, 21 Jan 2020 17:18:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <c223c347-4c19-176f-4626-b096c12c0558@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.131.64]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  5 Jan 2020 23:50:05 +0100, Luca Ceresoli wrote:
-> Clarify from the beginning what these transactions are, and specifically
-> how they differ from the SMBus counterparts, i.e. the lack of a Count byte.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  Documentation/i2c/smbus-protocol.rst | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/i2c/smbus-protocol.rst b/Documentation/i2c/smbus-protocol.rst
-> index 7350e4b2c2fa..0edaf6069ac1 100644
-> --- a/Documentation/i2c/smbus-protocol.rst
-> +++ b/Documentation/i2c/smbus-protocol.rst
-> @@ -282,9 +282,10 @@ This is implemented the following way in the Linux kernel:
->  I2C Block Transactions
->  ======================
->  
-> -The following I2C block transactions are supported by the
-> -SMBus layer and are described here for completeness.
-> -They are *NOT* defined by the SMBus specification.
-> +The following I2C block transactions are similar to the SMBus Block Read
-> +and Write operations, except these do not have a Count byte. They are
-> +supported by the SMBus layer and are described here for completeness, but
-> +they are *NOT* defined by the SMBus specification.
->  
->  I2C block transactions do not limit the number of bytes transferred
->  but the SMBus layer places a limit of 32 bytes.
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
--- 
-Jean Delvare
-SUSE L3 Support
+On 2020/1/21 17:01, Sergei Shtylyov wrote:
+> On 21.01.2020 11:54, Chen Zhou wrote:
+> 
+>>>> Fixes coccicheck warning:
+>>>>
+>>>> ./drivers/net/ethernet/amd/declance.c:611:14-15:
+>>>>      WARNING comparing pointer to 0
+>>>>
+>>>> Compare pointer-typed values to NULL rather than 0.
+>>>
+>>>     I don't see NULL in the patch -- you used ! instead.
+>>
+>> Yeah, i used ! here.
+> 
+>    Make the patch description match the diff, please.
+
+ok, i will fix this in next version.
+
+Thanks,
+Chen Zhou
+
+> 
+>> Thanks,
+>> Chen Zhou
+> 
+> MBR, Sergei
+> 
+> 
+
