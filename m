@@ -2,91 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E202B143566
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3041D14356E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:56:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbgAUBxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 20:53:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:58946 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbgAUBxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 20:53:17 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 17:53:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,344,1574150400"; 
-   d="scan'208";a="220797769"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Jan 2020 17:53:15 -0800
-Date:   Tue, 21 Jan 2020 09:53:26 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
-        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@kernel.org
-Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
- than zero
-Message-ID: <20200121015326.GE1567@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
+        id S1728898AbgAUB4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 20:56:46 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45722 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726935AbgAUB4q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 20:56:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0ToGEFrG_1579571799;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0ToGEFrG_1579571799)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 21 Jan 2020 09:56:40 +0800
+Subject: [PATCH v8 0/2] sched/numa: introduce numa locality
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
+ <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+ <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
+Message-ID: <b9249375-fe8c-034e-c3bd-cacfe4e89658@linux.alibaba.com>
+Date:   Tue, 21 Jan 2020 09:56:39 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200119065753.21694-1-richardw.yang@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 19, 2020 at 02:57:53PM +0800, Wei Yang wrote:
->If we get here after successfully adding page to list, err would be
->1 to indicate the page is queued in the list.
->
->Current code has two problems:
->
->  * on success, 0 is not returned
->  * on error, if add_page_for_migratioin() return 1, and the following err1
->    from do_move_pages_to_node() is set, the err1 is not returned since err
->    is 1
->
->And these behaviors break the user interface.
->
->Fixes: e0153fc2c760 ("mm: move_pages: return valid node id in status if the
->page is already on the target node").
->Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->
->---
->v2:
->  * put more words to explain the error case
->---
-> mm/migrate.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/mm/migrate.c b/mm/migrate.c
->index 86873b6f38a7..430fdccc733e 100644
->--- a/mm/migrate.c
->+++ b/mm/migrate.c
->@@ -1676,7 +1676,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
-> 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
-> 	if (!err1)
-> 		err1 = store_status(status, start, current_node, i - start);
->-	if (!err)
->+	if (err >= 0)
-> 		err = err1;
+v8:
+  * document edited
+v7:
+  * rebased on latest linux-next
+v6:
+  * fix compile failure when NUMA disabled
+v5:
+  * improved documentation
+v4:
+  * fix comments and improved documentation
+v3:
+  * simplified the locality concept & implementation
+v2:
+  * improved documentation
 
-Ok, as mentioned by Yang and Michal, only err == 0 means no error.
+Modern production environment could use hundreds of cgroup to control
+the resources for different workloads, along with the complicated
+resource binding.
 
-Sounds this regression should be fixed in another place. Let me send out
-another patch.
+On NUMA platforms where we have multiple nodes, things become even more
+complicated, we hope there are more local memory access to improve the
+performance, and NUMA Balancing keep working hard to achieve that,
+however, wrong memory policy or node binding could easily waste the
+effort, result a lot of remote page accessing.
 
-> out:
-> 	return err;
->-- 
->2.17.1
+We need to notice such problems, then we got chance to fix it before
+there are too much damages, however, there are no good monitoring
+approach yet to help catch the mouse who introduced the remote access.
+
+This patch set is trying to fill in the missing pieces， by introduce
+the per-cgroup NUMA locality info, with this new statistics, we could
+achieve the daily monitoring on NUMA efficiency, to give warning when
+things going too wrong.
+
+Please check the second patch for more details.
+
+Michael Wang (2):
+  sched/numa: introduce per-cgroup NUMA locality info
+  sched/numa: documentation for per-cgroup numa statistics
+
+ Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst             |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+ include/linux/sched.h                           |  15 ++
+ include/linux/sched/sysctl.h                    |   6 +
+ init/Kconfig                                    |  11 ++
+ kernel/sched/core.c                             |  75 ++++++++++
+ kernel/sched/fair.c                             |  62 +++++++++
+ kernel/sched/sched.h                            |  12 ++
+ kernel/sysctl.c                                 |  11 ++
+ 11 files changed, 384 insertions(+)
+ create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
 
 -- 
-Wei Yang
-Help you, Help me
+2.14.4.44.g2045bb6
+
