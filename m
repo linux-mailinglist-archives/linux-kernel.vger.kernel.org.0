@@ -2,305 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A8B14469F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 22:47:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 678D71446A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 22:50:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbgAUVq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 16:46:56 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:53727 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728988AbgAUVq4 (ORCPT
+        id S1729143AbgAUVuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 16:50:02 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:42379 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728827AbgAUVuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 16:46:56 -0500
-Received: by mail-pj1-f68.google.com with SMTP id n96so2021483pjc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 13:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fDebCTy0hik3MCAYelFozwWXYlboP6WEdTNaFFOa6Qo=;
-        b=g30stGNcYAYejmqPX3QGMvQRcfFYude+JWw8giSfr6OiDPS6RgCMxeYyWrOWHq+hN7
-         G4T+QgKQlJFRyXr3XKP0PnoLjzJDYv+5Tg4NQTTY0Dwa9Zys5wjgljyCNrYPFRaUA+Lt
-         Cyz8+3gjAdpNq9jmtNj/snkr5YrjKsYZ2TCu1bdIO0DKEIF8nBiHFKXVhfJRSSxrmqDp
-         UP/U2g8PnSouPfx41wGqUEfyTlnT5Yh8zAEKEUGlRYAXP1I4SC15d0zuQS59s4mxIt/Q
-         6ksTVAjlWU/9BtaQ6Bc6A99czuhN10EKxoTSVovJIoQdPdD4KoXnwA7zqqeo2Nz2snro
-         y5Ag==
+        Tue, 21 Jan 2020 16:50:02 -0500
+Received: by mail-io1-f69.google.com with SMTP id e7so2664109iog.9
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 13:50:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fDebCTy0hik3MCAYelFozwWXYlboP6WEdTNaFFOa6Qo=;
-        b=qIm6JBhmUU5mv8ERMRwZk9pjH/6WjQ+gV/A507oW/u6pjJxmRqzZPcsufn60CljKlO
-         jQIY0X8Ij74kgjjE/CZFmHQmxHbfBSX2sFEK6Gr6KdZmM8HSuMIu6J2BB7vCdySoi38e
-         aNGU2Ida6/+8rPXiImM4j1rBv4DEDLoySjz4x5C0zImQ2+QboXAp0fYTAg+pVr/VaMoF
-         XjT47ttZPw4WVQi66Q41gg3TUrAl0tuhbcenvPfwKSSy+5D9Dj5hkUzn5ooVe2ftcirJ
-         ksnBVmhjbhY01L94Fwhcvg1Tq2bcevy0YE6nsRhw2kV0H3ZZKP4Kxwl2EBnoqYyPt09w
-         eOXg==
-X-Gm-Message-State: APjAAAXbV+g4d2yAs468JH4ZL5k2NjnuaLOQWj8T+o9gXND6lUgfW7TE
-        0WURqKkHn8qdXwzkh093/Jdgqg==
-X-Google-Smtp-Source: APXvYqzL17T1P75u/Pe+CI1aCwnfHfGPivOy1oNvEdfupTQflxd5O9q6b7QrC7Bu4Lhgfa9EcF1OlA==
-X-Received: by 2002:a17:902:302:: with SMTP id 2mr7725527pld.58.1579643215103;
-        Tue, 21 Jan 2020 13:46:55 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id d20sm406338pjs.2.2020.01.21.13.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 13:46:54 -0800 (PST)
-Date:   Tue, 21 Jan 2020 13:46:49 -0800
-From:   Benson Leung <bleung@google.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        groeck@chromium.org, bleung@chromium.org, dtor@chromium.org,
-        gwendal@chromium.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: Re: [PATCH v2] platform/chrome: cros_ec: Match implementation with
- headers
-Message-ID: <20200121214649.GA31808@google.com>
-References: <20200117144356.247696-1-enric.balletbo@collabora.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=1nu34KWVojNJ0iYFVQZsR/2nmBumiBAt3h2LvuI970Y=;
+        b=R+eEChWq7K1TAktlt5yRj9n48f8vgy7p7Hp/50hTKKs6kfA75cm2j2VJbqWdJ8dWiB
+         SWnH8Yq1slQLYUeLh7tBfNuRHXOzKNrxbdZOMsZQVeXNY2YznGk8sJ1tzRzc8y829rwL
+         FuE2ymQpx8/gAINR82pntheVGxPoksBodmxmeGtiCG25/aHeTg1Gc0n46/233eTxiv9E
+         9xCPCrTS4pfzTZ1wDlXYC8XgrS1webRjRYaoTSTiCztPBclGLynARz9jCgUim/LmwJkS
+         Jp83yMy0R7UU6OEk0Lti/c/lZjFHoo0Y6S58OklJPXX+48nhNofYPclhWOk0rjidDwVU
+         N70w==
+X-Gm-Message-State: APjAAAVMvGfItpzyrwWVXjRz+sUcoQiMIyVRwCWm6GkBrGhgD3j3alvq
+        3M2bmhjVfQm7MlRTHFRNvYUUZjH5HJs49lFZivJTDzxIloQ2
+X-Google-Smtp-Source: APXvYqxQ4rOLGRXLTbwmviB3A/+GgBIvEUj4X8+0mXpwIfIkcZe7psrzASaNmKDPlT3fRnC4f73MzzR9V1/NkWOy3R3G2dY3dwD9
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
-Content-Disposition: inline
-In-Reply-To: <20200117144356.247696-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:5503:: with SMTP id j3mr4657404iob.142.1579643401878;
+ Tue, 21 Jan 2020 13:50:01 -0800 (PST)
+Date:   Tue, 21 Jan 2020 13:50:01 -0800
+In-Reply-To: <000000000000367175059c90b6bf@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d747bf059cad63b0@google.com>
+Subject: Re: KASAN: use-after-free Read in __nf_tables_abort
+From:   syzbot <syzbot+29125d208b3dae9a7019@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, dan.carpenter@oracle.com,
+        davem@davemloft.net, fw@strlen.de, kadlec@netfilter.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot has bisected this bug to:
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit ec7470b834fe7b5d7eff11b6677f5d7fdf5e9a91
+Author: Pablo Neira Ayuso <pablo@netfilter.org>
+Date:   Mon Jan 13 17:09:58 2020 +0000
 
-Hi Enric!
+    netfilter: nf_tables: store transaction list locally while requesting module
 
-Thanks for V2!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14890721e00000
+start commit:   d96d875e Merge tag 'fixes_for_v5.5-rc8' of git://git.kerne..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=16890721e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12890721e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=83c00afca9cf5153
+dashboard link: https://syzkaller.appspot.com/bug?extid=29125d208b3dae9a7019
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1203f521e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a706a5e00000
 
-On Fri, Jan 17, 2020 at 03:43:56PM +0100, Enric Balletbo i Serra wrote:
-> The 'cros_ec' core driver is the common interface for the cros_ec
-> transport drivers to do the shared operations to register, unregister,
-> suspend and resume. The interface is provided by including the header
-> 'include/linux/platform_data/cros_ec_proto.h', however, instead of have
-> the implementation of these functions in cros_ec_proto.c, it is in
-> 'cros_ec.c', which is a different kernel module. Apart from being a bad
-> practice, this can induce confusions allowing the users of the cros_ec
-> protocol to call these functions.
->=20
-> The register, unregister, suspend and resume functions *should* only be
-> called by the different transport drivers (i2c, spi, lpc, etc.), so make
-> this a bit less confusing by moving these functions from the public
-> in-kernel space to a private include in platform/chrome, and then, the
-> interface for cros_ec module and for the cros_ec_proto module is clean.
->=20
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->=20
-> Changes in v2:
-> - Mention that moves cros_ec_handle_event in commit description (Benson L=
-=2E)
+Reported-by: syzbot+29125d208b3dae9a7019@syzkaller.appspotmail.com
+Fixes: ec7470b834fe ("netfilter: nf_tables: store transaction list locally while requesting module")
 
-Doesn't look like v2 has any commit message change. Could you double check?
-
-> - Update copyright to 2020 (Benson L.)
-> - Do not move EC_REBOOT_DELAY_MS (Benson L.)
->=20
->  drivers/platform/chrome/cros_ec.c           |  2 ++
->  drivers/platform/chrome/cros_ec.h           | 19 +++++++++++++++++++
->  drivers/platform/chrome/cros_ec_i2c.c       |  2 ++
->  drivers/platform/chrome/cros_ec_ishtp.c     |  2 ++
->  drivers/platform/chrome/cros_ec_lpc.c       |  1 +
->  drivers/platform/chrome/cros_ec_rpmsg.c     |  2 ++
->  drivers/platform/chrome/cros_ec_spi.c       |  2 ++
->  include/linux/platform_data/cros_ec_proto.h | 12 +-----------
->  8 files changed, 31 insertions(+), 11 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_ec.h
->=20
-> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/=
-cros_ec.c
-> index 6d6ce86a1408..65c3207d2d90 100644
-> --- a/drivers/platform/chrome/cros_ec.c
-> +++ b/drivers/platform/chrome/cros_ec.c
-> @@ -18,6 +18,8 @@
->  #include <linux/suspend.h>
->  #include <asm/unaligned.h>
-> =20
-> +#include "cros_ec.h"
-> +
->  #define CROS_EC_DEV_EC_INDEX 0
->  #define CROS_EC_DEV_PD_INDEX 1
-> =20
-> diff --git a/drivers/platform/chrome/cros_ec.h b/drivers/platform/chrome/=
-cros_ec.h
-> new file mode 100644
-> index 000000000000..e69fc1ff68b4
-> --- /dev/null
-> +++ b/drivers/platform/chrome/cros_ec.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * ChromeOS Embedded Controller core interface.
-> + *
-> + * Copyright (C) 2020 Google LLC
-> + */
-> +
-> +#ifndef __CROS_EC_H
-> +#define __CROS_EC_H
-> +
-> +int cros_ec_register(struct cros_ec_device *ec_dev);
-> +int cros_ec_unregister(struct cros_ec_device *ec_dev);
-> +
-> +int cros_ec_suspend(struct cros_ec_device *ec_dev);
-> +int cros_ec_resume(struct cros_ec_device *ec_dev);
-> +
-> +bool cros_ec_handle_event(struct cros_ec_device *ec_dev);
-> +
-> +#endif /* __CROS_EC_H */
-> diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chr=
-ome/cros_ec_i2c.c
-> index 9bd97bc8454b..6119eccd8a18 100644
-> --- a/drivers/platform/chrome/cros_ec_i2c.c
-> +++ b/drivers/platform/chrome/cros_ec_i2c.c
-> @@ -14,6 +14,8 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> =20
-> +#include "cros_ec.h"
-> +
->  /**
->   * Request format for protocol v3
->   * byte 0	0xda (EC_COMMAND_PROTOCOL_3)
-> diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/c=
-hrome/cros_ec_ishtp.c
-> index e5996821d08b..e1fdb491a9a7 100644
-> --- a/drivers/platform/chrome/cros_ec_ishtp.c
-> +++ b/drivers/platform/chrome/cros_ec_ishtp.c
-> @@ -14,6 +14,8 @@
->  #include <linux/platform_data/cros_ec_proto.h>
->  #include <linux/intel-ish-client-if.h>
-> =20
-> +#include "cros_ec.h"
-> +
->  /*
->   * ISH TX/RX ring buffer pool size
->   *
-> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chr=
-ome/cros_ec_lpc.c
-> index dccf479c6625..3e8ddd84bc41 100644
-> --- a/drivers/platform/chrome/cros_ec_lpc.c
-> +++ b/drivers/platform/chrome/cros_ec_lpc.c
-> @@ -23,6 +23,7 @@
->  #include <linux/printk.h>
->  #include <linux/suspend.h>
-> =20
-> +#include "cros_ec.h"
->  #include "cros_ec_lpc_mec.h"
-> =20
->  #define DRV_NAME "cros_ec_lpcs"
-> diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/c=
-hrome/cros_ec_rpmsg.c
-> index bd068afe43b5..dbc3f5523b83 100644
-> --- a/drivers/platform/chrome/cros_ec_rpmsg.c
-> +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
-> @@ -13,6 +13,8 @@
->  #include <linux/rpmsg.h>
->  #include <linux/slab.h>
-> =20
-> +#include "cros_ec.h"
-> +
->  #define EC_MSG_TIMEOUT_MS	200
->  #define HOST_COMMAND_MARK	1
->  #define HOST_EVENT_MARK		2
-> diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chr=
-ome/cros_ec_spi.c
-> index a831bd5a5b2f..46786d2d679a 100644
-> --- a/drivers/platform/chrome/cros_ec_spi.c
-> +++ b/drivers/platform/chrome/cros_ec_spi.c
-> @@ -14,6 +14,8 @@
->  #include <linux/spi/spi.h>
->  #include <uapi/linux/sched/types.h>
-> =20
-> +#include "cros_ec.h"
-> +
->  /* The header byte, which follows the preamble */
->  #define EC_MSG_HEADER			0xec
-> =20
-> diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/=
-platform_data/cros_ec_proto.h
-> index 119b9951c055..35051da5a2fa 100644
-> --- a/include/linux/platform_data/cros_ec_proto.h
-> +++ b/include/linux/platform_data/cros_ec_proto.h
-> @@ -25,7 +25,7 @@
->   * The EC is unresponsive for a time after a reboot command.  Add a
->   * simple delay to make sure that the bus stays locked.
->   */
-> -#define EC_REBOOT_DELAY_MS		50
-> +#define EC_REBOOT_DELAY_MS	50
-
-Looks like you put this back, but made a whitespace change in the process.
-Remove this diff, please!
-
-> =20
->  /*
->   * Max bus-specific overhead incurred by request/responses.
-> @@ -206,10 +206,6 @@ struct cros_ec_dev {
-> =20
->  #define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class=
-_dev)
-> =20
-> -int cros_ec_suspend(struct cros_ec_device *ec_dev);
-> -
-> -int cros_ec_resume(struct cros_ec_device *ec_dev);
-> -
->  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->  		       struct cros_ec_command *msg);
-> =20
-> @@ -222,10 +218,6 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
->  int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
->  			    struct cros_ec_command *msg);
-> =20
-> -int cros_ec_register(struct cros_ec_device *ec_dev);
-> -
-> -int cros_ec_unregister(struct cros_ec_device *ec_dev);
-> -
->  int cros_ec_query_all(struct cros_ec_device *ec_dev);
-> =20
->  int cros_ec_get_next_event(struct cros_ec_device *ec_dev,
-> @@ -238,8 +230,6 @@ int cros_ec_check_features(struct cros_ec_dev *ec, in=
-t feature);
-> =20
->  int cros_ec_get_sensor_count(struct cros_ec_dev *ec);
-> =20
-> -bool cros_ec_handle_event(struct cros_ec_device *ec_dev);
-> -
->  /**
->   * cros_ec_get_time_ns() - Return time in ns.
->   *
-> --=20
-> 2.24.1
->=20
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXidxSQAKCRBzbaomhzOw
-wjC1AQDnEJ6K9Ja0wqK6V7PX5Abmn46YyRJ23CyrmTWIff8TtAD/bw4MThtt52XY
-w2IBXai6TJyIfWemnUC2mE6D/cQ9nwU=
-=YlGN
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
