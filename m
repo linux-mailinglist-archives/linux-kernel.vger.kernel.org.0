@@ -2,109 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F679143A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:14:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C900143A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:14:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbgAUKON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:14:13 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2288 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727220AbgAUKOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:14:12 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 3F14B58FB758E2E8A7C0;
-        Tue, 21 Jan 2020 10:14:09 +0000 (GMT)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- lhreml704-cah.china.huawei.com (10.201.108.45) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 21 Jan 2020 10:14:08 +0000
-Received: from [127.0.0.1] (10.202.226.43) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 21 Jan
- 2020 10:14:08 +0000
-Subject: Re: [RFC PATCH 0/4] iommu: Per-group default domain type
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <jacob.jun.pan@intel.com>, Robin Murphy <robin.murphy@arm.com>,
-        "Christoph Hellwig" <hch@lst.de>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-References: <20200101052648.14295-1-baolu.lu@linux.intel.com>
- <ba7a7e6a-8b23-fca0-a8bb-72c4dbfa8390@huawei.com>
- <f417cd0b-1bf7-7da2-3a64-b8b74b03da02@linux.intel.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <0fbcbd62-cf8a-1c3c-c702-f9bf59497867@huawei.com>
-Date:   Tue, 21 Jan 2020 10:14:07 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        id S1729459AbgAUKOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:14:21 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:24102 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727220AbgAUKOU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 05:14:20 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00LA7mnA015236;
+        Tue, 21 Jan 2020 11:14:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=fDNwiFZy5CZXyHgGGVM3ojrT2gDVM3TeYsu274+e8sk=;
+ b=kvcb/h3lu7vWmL9lvSxH0sm7BiUsG94BYCNDhj1TbPVhaT1jq9iL0Pixr+riZJXA30H1
+ HKpYFQKiAaSXqgURAQAdjXBsN2PRQwcHbNHFH0QY/n/FxECQS3RYHSK1+dwxU44m0e23
+ 6xUYuLO0jNgmaqs2rZMpfXrpyJchzeWzb7TZG3Dn8SefPmJcC+rSOVA+jO454IqSKwKq
+ xC8Efn4kXkCDewkVMtMWpqc+9O77kHuX29CH/5DGsJ/HaCU2fZIgZ9MvKJ+4vIRZWkqy
+ CBZn+HE9EthdiJF2iaduoCbjGYq8MyR5BHJU2L0zaI3EwFQXXXmXXYcxVqkuSLC6aZGO rQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2xkr1dx2q1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Jan 2020 11:14:13 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CA87110002A;
+        Tue, 21 Jan 2020 11:14:12 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BAC9F2B1872;
+        Tue, 21 Jan 2020 11:14:12 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG6NODE1.st.com (10.75.127.16)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 Jan 2020 11:14:11
+ +0100
+From:   Yannick Fertre <yannick.fertre@st.com>
+To:     Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/stm: ltdc: check crtc state before enabling LIE
+Date:   Tue, 21 Jan 2020 11:14:10 +0100
+Message-ID: <1579601650-7055-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <f417cd0b-1bf7-7da2-3a64-b8b74b03da02@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-ClientProxiedBy: lhreml741-chm.china.huawei.com (10.201.108.191) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-21_02:2020-01-21,2020-01-21 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/2020 00:43, Lu Baolu wrote:
->>> An IOMMU group represents the smallest set of devices that are 
->>> considered
->>> to be isolated. All devices belonging to an IOMMU group share a default
->>> domain for DMA APIs. There are two types of default domain: 
->>> IOMMU_DOMAIN_DMA
->>> and IOMMU_DOMAIN_IDENTITY. The former means IOMMU translation, while the
->>> latter means IOMMU by-pass.
->>>
->>> Currently, the default domain type for the IOMMU groups is determined
->>> globally. All IOMMU groups use a single default domain type. The global
->>> default domain type can be adjusted by kernel build configuration or
->>> kernel parameters.
->>>
->>> More and more users are looking forward to a fine grained default domain
->>> type. For example, with the global default domain type set to 
->>> translation,
->>> the OEM verndors or end users might want some trusted and fast-speed 
->>> devices
->>> to bypass IOMMU for performance gains. On the other hand, with global
->>> default domain type set to by-pass, some devices with limited system
->>> memory addressing capability might want IOMMU translation to remove the
->>> bounce buffer overhead.
->>
->> Hi Lu Baolu,
->>
->> Do you think that it would be a more common usecase to want 
->> kernel-managed devices to be passthrough for performance reasons and 
->> some select devices to be in DMA domain, like those with limited 
->> address cap or whose drivers request huge amounts of memory?
->>
->> I just think it would be more manageable to set kernel commandline 
->> parameters for this, i.e. those select few which want DMA domain.
->>
+Following investigations of a hardware bug, the LIE interrupt
+can occur while the display controller is not activated.
+LIE interrupt (vblank) don't have to be set if the CRTC is not
+enabled.
 
-Hi Baolu,
+Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
+---
+ drivers/gpu/drm/stm/ltdc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> 
-> It's just two sides of a coin. Currently, iommu subsystem make DMA
-> domain by default, that's the reason why I selected to let user set
-> which devices are willing to use identity domains.
-> 
-
-OK, understood.
-
-There was an alternate solution here which would allow per-group type to 
-be updated via sysfs:
-
-https://lore.kernel.org/linux-iommu/cover.1566353521.git.sai.praneeth.prakhya@intel.com/
-
-Any idea what happened to that?
-
-Cheers,
-John
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index c2815e8..ea654c7 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -648,9 +648,14 @@ static const struct drm_crtc_helper_funcs ltdc_crtc_helper_funcs = {
+ static int ltdc_crtc_enable_vblank(struct drm_crtc *crtc)
+ {
+ 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
++	struct drm_crtc_state *state = crtc->state;
+ 
+ 	DRM_DEBUG_DRIVER("\n");
+-	reg_set(ldev->regs, LTDC_IER, IER_LIE);
++
++	if (state->enable)
++		reg_set(ldev->regs, LTDC_IER, IER_LIE);
++	else
++		return -EPERM;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
 
