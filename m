@@ -2,65 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0441438BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD6F1438E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbgAUIt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:49:56 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:41058 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727220AbgAUItz (ORCPT
+        id S1728689AbgAUJAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:00:03 -0500
+Received: from bmailout2.hostsharing.net ([83.223.78.240]:33871 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUJAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:49:55 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0ToHVM6y_1579596590;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHVM6y_1579596590)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 16:49:51 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net/bluetooth: remove __get_channel/dir
-Date:   Tue, 21 Jan 2020 16:49:43 +0800
-Message-Id: <1579596583-258090-1-git-send-email-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 21 Jan 2020 04:00:03 -0500
+X-Greylist: delayed 611 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 04:00:01 EST
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 9A15028005389;
+        Tue, 21 Jan 2020 09:49:48 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 6406035EEC; Tue, 21 Jan 2020 09:49:48 +0100 (CET)
+Date:   Tue, 21 Jan 2020 09:49:48 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Ivan
+         =?iso-8859-15?B?pmmodO1rIC0gM0sgU29sdXRpb25zLCBzLiByLiBvLg==?= 
+        <sistik@3ksolutions.sk>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: Re: [PATCH] tty: serial: amba-pl011: added RS485 support
+Message-ID: <20200121084948.7d6om2fgaa7ikmof@wunner.de>
+References: <20200106235203.27256-1-sistik@3ksolutions.sk>
+ <20200116132954.5tcxmezs5qhseiem@wunner.de>
+ <4e082c29-9a47-accc-425b-8d1854fb6ac6@3ksolutions.sk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e082c29-9a47-accc-425b-8d1854fb6ac6@3ksolutions.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These 2 macros are never used from first git commit Linux-2.6.12-rc2. So
-better to remove them.
+On Fri, Jan 17, 2020 at 01:58:57AM +0100, Ivan ¦i¨tík - 3K Solutions, s. r. o. wrote:
+> On 16. 1. 2020 at 14:29 Lukas Wunner wrote:
+> > So I've implemented rs485 support for amba-pl011.c two years ago
+> > but the patches need a little more polishing before they can be
+> > upstreamed and I haven't gotten around to that yet.  I apologize
+> > that it meant you had to reinvent the wheel.
+> > You can find my implementation on this branch:
+> > https://github.com/RevolutionPi/linux/commits/revpi-4.19
+> > 
+> > Specifically this commit:
+> > https://github.com/RevolutionPi/linux/commit/0099313962a5
+> 
+> The wheel with octagonal shape is still not perfect. I made it more
+> smoother. Your implementation in recommended commit use an active
+> waiting (pl011_rs485_tx_start, pl011_rs485_tx_stop) and that could
+> cause lots of problems in upper layers of tty driver or application.
+> I think you forgot to implement possibility to start TX during
+> "delay after send", too.
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Marcel Holtmann <marcel@holtmann.org> 
-Cc: Johan Hedberg <johan.hedberg@gmail.com> 
-Cc: "David S. Miller" <davem@davemloft.net> 
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com> 
-Cc: linux-bluetooth@vger.kernel.org 
-Cc: netdev@vger.kernel.org 
-Cc: linux-kernel@vger.kernel.org 
----
- net/bluetooth/rfcomm/core.c | 2 --
- 1 file changed, 2 deletions(-)
+Are these delays ever set to a value > 0 in practice?  struct serial_rs485
+supports millisecond delays, but all RS485 transceivers I know of only
+require delays in the microsecond or nanosecond range.  It was likely
+a mistake that the delays were originally declared as millisecond values.
+However we can't easily change that now because it's ABI and thus set in
+stone.
 
-diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
-index 3a9e9d9670be..825adff79f13 100644
---- a/net/bluetooth/rfcomm/core.c
-+++ b/net/bluetooth/rfcomm/core.c
-@@ -73,8 +73,6 @@ static struct rfcomm_session *rfcomm_session_create(bdaddr_t *src,
- 
- /* ---- RFCOMM frame parsing macros ---- */
- #define __get_dlci(b)     ((b & 0xfc) >> 2)
--#define __get_channel(b)  ((b & 0xf8) >> 3)
--#define __get_dir(b)      ((b & 0x04) >> 2)
- #define __get_type(b)     ((b & 0xef))
- 
- #define __test_ea(b)      ((b & 0x01))
--- 
-1.8.3.1
+E.g. the MAXM22510 has a "Driver Enable to Output" delay of 2.540 usec.
+In practice no delay is necessary at all because the MMIO operations
+performed by the driver take longer:
 
+https://datasheets.maximintegrated.com/en/ds/MAXM22510-MAXM22511.pdf
+
+
+> > I took a completely different approach:  I converted amba-pl011.c
+> > to threaded interrupt handling using two kthreads, one for sending,
+> > one for receiving.  This allows simultaneous writing to and reading
+> > from the FIFO.  The driver keeps track of the FIFO fill level,
+> > which allows writing to the FIFO blindly.  The hardirq handler
+> > updates the fill level counter and wakes either of the IRQ threads.
+> 
+> I do not see any used thread in link:
+> https://github.com/RevolutionPi/linux/commit/0099313962a5
+> I am not kernel thread expert but I think that thread is not as
+> lightweight as hrtimer. According to my knowledge the hrtimer use some
+> kind of interrupt. Compare to this the kthread is created as thread
+> with all its scheduling structures. Did you implemented proper thread
+> shutdown? Has the thread right priority? There are many questions
+> like this...
+
+You're not seeing the conversion to threaded IRQ handling because it's
+in separate commits on the above-linked branch, e.g.
+
+serial: pl011: Use threaded interrupt for RX
+https://github.com/RevolutionPi/linux/commit/4f3a6e9ea335
+
+serial: pl011: Use threaded interrupt for TX
+https://github.com/RevolutionPi/linux/commit/fae65b5a2c5b
+
+I implemented threaded IRQ handling to maximize TX throughput
+and minimize RX FIFO overruns at high baudrates.  Additionally,
+threaded IRQ handling integrates more nicely with the realtime
+patch set.  So the ability to simply use msleep() for rs485 delays
+is merely a by-product.
+
+The IRQ threads run at RT priority -50 with SCHED_FIFO policy just
+as any other IRQ thread and user space may adjust that with chrt(1)
+if desired.
+
+Thanks,
+
+Lukas
