@@ -2,106 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B6811446F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2CF51446FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgAUWKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:10:38 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44800 "EHLO
+        id S1729091AbgAUWKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:10:36 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44722 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729094AbgAUWKh (ORCPT
+        with ESMTP id S1728139AbgAUWKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:10:37 -0500
+        Tue, 21 Jan 2020 17:10:36 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 62FC022D7F; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
+        id DDD5229980; Tue, 21 Jan 2020 17:10:35 -0500 (EST)
+Message-Id: <cover.1579641728.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net v2 00/12] Fixes for SONIC ethernet driver
+Date:   Wed, 22 Jan 2020 08:22:08 +1100
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <0a1ecf29f4d0f876aa3ba2691264e24b026a0732.1579641728.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1579641728.git.fthain@telegraphics.com.au>
-References: <cover.1579641728.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v2 07/12] net/sonic: Improve receive descriptor status
- flag check
-Date:   Wed, 22 Jan 2020 08:22:08 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After sonic_tx_timeout() calls sonic_init(), it can happen that
-sonic_rx() will subsequently encounter a receive descriptor with no
-flags set. Remove the comment that says that this can't happen.
+Hi David,
 
-When giving a receive descriptor to the SONIC, clear the descriptor
-status field. That way, any rx descriptor with flags set can only be
-a newly received packet.
+Various SONIC driver problems have become apparent over the years,
+including tx watchdog timeouts, lost packets and duplicated packets.
 
-Don't process a descriptor without the LPKT bit set. The buffer is
-still in use by the SONIC.
+The problems are mostly caused by bugs in buffer handling, locking and
+(re-)initialization code.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+This patch series resolves these problems.
+
+This series has been tested on National Semiconductor hardware (macsonic),
+qemu-system-m68k (macsonic) and qemu-system-mips64el (jazzsonic).
+
+The emulated dp8393x device used in QEMU also has bugs.
+I have fixed the bugs that I know of in a series of patches at,
+https://github.com/fthain/qemu/commits/sonic
 ---
- drivers/net/ethernet/natsemi/sonic.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+Changed since v1:
+ - Minor revisions as described in commit logs.
+ - Deferred net-next patches.
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 431a6e46c08c..bec06f357011 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -430,7 +430,6 @@ static inline int index_from_addr(struct sonic_local *lp, dma_addr_t addr,
- static void sonic_rx(struct net_device *dev)
- {
- 	struct sonic_local *lp = netdev_priv(dev);
--	int status;
- 	int entry = lp->cur_rx;
- 	int prev_entry = lp->eol_rx;
- 
-@@ -441,9 +440,11 @@ static void sonic_rx(struct net_device *dev)
- 		u16 bufadr_l;
- 		u16 bufadr_h;
- 		int pkt_len;
-+		u16 status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
-+
-+		/* If the RD has LPKT set, the chip has finished with the RB */
- 
--		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
--		if (status & SONIC_RCR_PRX) {
-+		if ((status & SONIC_RCR_PRX) && (status & SONIC_RCR_LPKT)) {
- 			u32 addr = (sonic_rda_get(dev, entry,
- 						  SONIC_RD_PKTPTR_H) << 16) |
- 				   sonic_rda_get(dev, entry, SONIC_RD_PKTPTR_L);
-@@ -491,10 +492,6 @@ static void sonic_rx(struct net_device *dev)
- 			bufadr_h = (unsigned long)new_laddr >> 16;
- 			sonic_rra_put(dev, i, SONIC_RR_BUFADR_L, bufadr_l);
- 			sonic_rra_put(dev, i, SONIC_RR_BUFADR_H, bufadr_h);
--		} else {
--			/* This should only happen, if we enable accepting broken packets. */
--		}
--		if (status & SONIC_RCR_LPKT) {
- 			/*
- 			 * this was the last packet out of the current receive buffer
- 			 * give the buffer back to the SONIC
-@@ -507,12 +504,11 @@ static void sonic_rx(struct net_device *dev)
- 					  __func__);
- 				SONIC_WRITE(SONIC_ISR, SONIC_INT_RBE); /* clear the flag */
- 			}
--		} else
--			printk(KERN_ERR "%s: rx desc without RCR_LPKT. Shouldn't happen !?\n",
--			     dev->name);
-+		}
- 		/*
- 		 * give back the descriptor
- 		 */
-+		sonic_rda_put(dev, entry, SONIC_RD_STATUS, 0);
- 		sonic_rda_put(dev, entry, SONIC_RD_IN_USE, 1);
- 
- 		prev_entry = entry;
+
+Finn Thain (12):
+  net/sonic: Add mutual exclusion for accessing shared state
+  net/sonic: Clear interrupt flags immediately
+  net/sonic: Use MMIO accessors
+  net/sonic: Fix interface error stats collection
+  net/sonic: Fix receive buffer handling
+  net/sonic: Avoid needless receive descriptor EOL flag updates
+  net/sonic: Improve receive descriptor status flag check
+  net/sonic: Fix receive buffer replenishment
+  net/sonic: Quiesce SONIC before re-initializing descriptor memory
+  net/sonic: Fix command register usage
+  net/sonic: Fix CAM initialization
+  net/sonic: Prevent tx watchdog timeout
+
+ drivers/net/ethernet/natsemi/sonic.c | 380 ++++++++++++++++-----------
+ drivers/net/ethernet/natsemi/sonic.h |  44 +++-
+ 2 files changed, 262 insertions(+), 162 deletions(-)
+
 -- 
 2.24.1
 
