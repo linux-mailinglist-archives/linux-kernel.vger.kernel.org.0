@@ -2,75 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E2A143FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6895D143FC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbgAUOj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 09:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56166 "EHLO mail.kernel.org"
+        id S1729463AbgAUOk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:40:27 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:48290 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729096AbgAUOj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 09:39:58 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 453C72467C;
-        Tue, 21 Jan 2020 14:39:58 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1ituhB-000dz4-5x; Tue, 21 Jan 2020 09:39:57 -0500
-Message-Id: <20200121143957.062447110@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Tue, 21 Jan 2020 09:38:52 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Masami Ichikawa <masami256@gmail.com>
-Subject: [for-linus][PATCH 5/5] tracing: Do not set trace clock if tracefs lockdown is in effect
-References: <20200121143847.609307852@goodmis.org>
+        id S1729427AbgAUOk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 09:40:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=eanzNlQOXiyQv7SY2HxEu4R1QjiEvG/A8Il3e6bRKMk=; b=ZcgPsiCF79tdrPQ/9tIwj0ppNQ
+        WhFSPgtG//uXN5jaJouR/qFhNXHIFbuZUm97Gls0sURalRsyDyDMMxxApWK3hv/2a2Qw+EkQxIxQo
+        eUeKPlt9kBn0hAMIzrnfDp+Fx+e+tFhUrSakt0R7dEyQynYb6HMvQ+mMxFJKpHehIgpY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ituhX-0004hj-5C; Tue, 21 Jan 2020 15:40:19 +0100
+Date:   Tue, 21 Jan 2020 15:40:19 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: No master_xfer_atomic for i2c-mv64xxx.c
+Message-ID: <20200121144019.GD16902@lunn.ch>
+References: <da0061d1-917f-d807-a7ac-05d302d88565@gmail.com>
+ <20200121094023.jywheey6sjsgrr44@gilmour.lan>
+ <CAGb2v65Kz0ymDapbyJ_WTebEGOs5=wkqMXUZV-mQJhdKr8ZGhA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65Kz0ymDapbyJ_WTebEGOs5=wkqMXUZV-mQJhdKr8ZGhA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Ichikawa <masami256@gmail.com>
+> > However, I'm not entirely sure how we could implement it without
+> > sleeping. The controller is basically a state machine that triggers an
+> > interrupt on each state change, so you first set the address, get an
+> > interrupt, then set the direction, then you get an interrupt, etc.
+> >
+> > I guess we could implement it using polling, but I'm not sure if
+> > that's wise in an interrupt context either.
+> 
+> I believe that is actually how some of the other drivers handle it,
+> using polling. You can mask or disable the interrupts while in the
+> xfer_atomic callback, and the i2c core won't schedule two transfers
+> at the same time anyway.
 
-When trace_clock option is not set and unstable clcok detected,
-tracing_set_default_clock() sets trace_clock(ThinkPad A285 is one of
-case). In that case, if lockdown is in effect, null pointer
-dereference error happens in ring_buffer_set_clock().
+The ocore driver is similar to the Marvell driver, a big state
+machine. It implements polling for atomic transfers. It needs polling
+support anyway, because some instantiations of the hardware have
+broken interrupts :-(
 
-Link: http://lkml.kernel.org/r/20200116131236.3866925-1-masami256@gmail.com
+Maybe there is some code which can be copied from the ocore driver?
 
-Cc: stable@vger.kernel.org
-Fixes: 17911ff38aa58 ("tracing: Add locked_down checks to the open calls of files created for tracefs")
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1788488
-Signed-off-by: Masami Ichikawa <masami256@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ddb7e7f5fe8d..5b6ee4aadc26 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -9420,6 +9420,11 @@ __init static int tracing_set_default_clock(void)
- {
- 	/* sched_clock_stable() is determined in late_initcall */
- 	if (!trace_boot_clock && !sched_clock_stable()) {
-+		if (security_locked_down(LOCKDOWN_TRACEFS)) {
-+			pr_warn("Can not set tracing clock due to lockdown\n");
-+			return -EPERM;
-+		}
-+
- 		printk(KERN_WARNING
- 		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
- 		       "If you want to keep using the local clock, then add:\n"
--- 
-2.24.1
-
-
+      Andrew
