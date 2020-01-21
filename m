@@ -2,75 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A61F11437D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:44:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2FF1437E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:50:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgAUHoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:44:54 -0500
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:60307 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725890AbgAUHoy (ORCPT
+        id S1728709AbgAUHuF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 02:50:05 -0500
+Received: from mx1.unisoc.com ([222.66.158.135]:26334 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726729AbgAUHuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:44:54 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R901e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0ToHBzO4_1579592692;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHBzO4_1579592692)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 15:44:53 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Nick Terrell <terrelln@fb.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] lib/zstd: remove unused macros
-Date:   Tue, 21 Jan 2020 15:44:50 +0800
-Message-Id: <1579592690-3047-1-git-send-email-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 21 Jan 2020 02:50:05 -0500
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id 00L7jS2v074702
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 21 Jan 2020 15:45:28 +0800 (CST)
+        (envelope-from Orson.Zhai@unisoc.com)
+Received: from lenovo (10.0.74.130) by BJMBX01.spreadtrum.com (10.0.64.7) with
+ Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 21 Jan 2020 15:46:04 +0800
+Date:   Tue, 21 Jan 2020 15:46:02 +0800
+From:   Orson Zhai <orson.zhai@spreadtrum.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     Orson Zhai <orson.zhai@unisoc.com>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>, <baolin.wang@unisoc.com>,
+        <chunyan.zhang@unisoc.com>, <orson.unisoc@gmail.com>
+Subject: Re: [PATCH v4] mfd: syscon: Add arguments support for syscon
+ reference
+Message-ID: <20200121074602.GA9019@lenovo>
+References: <1579397619-28547-1-git-send-email-orson.zhai@unisoc.com>
+ <20200120080508.GR15507@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200120080508.GR15507@dell>
+X-Originating-IP: [10.0.74.130]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com 00L7jS2v074702
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FSE_TYPE_NAME/FSE_FUNCTION_NAME/FSE_CAT are never used from introduced
-commit 73f3d1b48f506 ("lib: Add zstd modules"). Better to remove them.
+Hi Lee,
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Nick Terrell <terrelln@fb.com>
-Cc: linux-kernel@vger.kernel.org 
----
- lib/zstd/fse_compress.c   | 5 -----
- lib/zstd/fse_decompress.c | 5 -----
- 2 files changed, 10 deletions(-)
+On Mon, Jan 20, 2020 at 08:05:08AM +0000, Lee Jones wrote:
+> On Sun, 19 Jan 2020, Orson Zhai wrote:
+>
+> > There are a lot of similar global registers being used across multiple SoCs
+> > from Unisoc. But most of these registers are assigned with different offset
+> > for different SoCs. It is hard to handle all of them in an all-in-one
+> > kernel image.
+> >
+> > Add a helper function to get regmap with arguments where we could put some
+> > extra information such as the offset value.
+> >
+> > Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+> > Tested-by: Baolin Wang <baolin.wang@unisoc.com>
+> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >
+> > V3 Change:
+> >  Rebase on latest kernel v5.5-rc6 for Lee.
+> >
+> > V4 Change:
+> >  Remove trailing spaces according to checkpatch.
+> >
+> >  drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
+> >  include/linux/mfd/syscon.h | 14 ++++++++++++++
+> >  2 files changed, 43 insertions(+)
+>
+> Nope, still not working:
 
-diff --git a/lib/zstd/fse_compress.c b/lib/zstd/fse_compress.c
-index ef3d1741d532..20367cd2eaa0 100644
---- a/lib/zstd/fse_compress.c
-+++ b/lib/zstd/fse_compress.c
-@@ -77,11 +77,6 @@
- #error "FSE_FUNCTION_TYPE must be defined"
- #endif
- 
--/* Function names */
--#define FSE_CAT(X, Y) X##Y
--#define FSE_FUNCTION_NAME(X, Y) FSE_CAT(X, Y)
--#define FSE_TYPE_NAME(X, Y) FSE_CAT(X, Y)
--
- /* Function templates */
- 
- /* FSE_buildCTable_wksp() :
-diff --git a/lib/zstd/fse_decompress.c b/lib/zstd/fse_decompress.c
-index a84300e5a013..7fcafe5f2615 100644
---- a/lib/zstd/fse_decompress.c
-+++ b/lib/zstd/fse_decompress.c
-@@ -85,11 +85,6 @@
- #error "FSE_FUNCTION_TYPE must be defined"
- #endif
- 
--/* Function names */
--#define FSE_CAT(X, Y) X##Y
--#define FSE_FUNCTION_NAME(X, Y) FSE_CAT(X, Y)
--#define FSE_TYPE_NAME(X, Y) FSE_CAT(X, Y)
--
- /* Function templates */
- 
- size_t FSE_buildDTable_wksp(FSE_DTable *dt, const short *normalizedCounter, unsigned maxSymbolValue, unsigned tableLog, void *workspace, size_t workspaceSize)
--- 
-1.8.3.1
+I am very very sorry about this.
+I have found these wrong spaces are generated by unisoc mail system
+_automatically_.
+It always sucks but it is out of my expectation this time.
+I have stopped using it and sent V5 patch by gmail.
 
+So sorry for wasting your so much time.
+
+Regards,
+Orson
+
+>
+>  Applying patch #1181935 using "git am -s -3"
+>  Description: [v4] mfd: syscon: Add arguments support for syscon reference
+>  Applying: mfd: syscon: Add arguments support for syscon reference
+>  Using index info to reconstruct a base tree...
+>  M    drivers/mfd/syscon.c
+>  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:25: indent with spaces.
+>                                         const char *property,
+>  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:26: indent with spaces.
+>                                         int arg_count,
+>  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:27: indent with spaces.
+>                                         unsigned int *out_args)
+>  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:36: indent with spaces.
+>                         0, &args);
+>  /home/lee/projects/linux/kernel/.git/worktrees/mfd/rebase-apply/patch:38: indent with spaces.
+>                 return ERR_PTR(rc);
+>  error: patch failed: drivers/mfd/syscon.c:224
+>  error: drivers/mfd/syscon.c: patch does not apply
+>  error: patch failed: include/linux/mfd/syscon.h:23
+>  error: include/linux/mfd/syscon.h: patch does not apply
+>  error: Did you hand edit your patch?
+>  It does not apply to blobs recorded in its index.
+>  Patch failed at 0001 mfd: syscon: Add arguments support for syscon reference
+>  hint: Use 'git am --show-current-patch' to see the failed patch
+>  When you have resolved this problem, run "git am --continue".
+>  If you prefer to skip this patch, run "git am --skip" instead.
+>  To restore the original branch and stop patching, run "git am --abort".
+>  'git am' failed with exit status 128
+>
+> Please talk me through how you are sending the patch.
+>
+> > diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> > index e22197c..2918b05 100644
+> > --- a/drivers/mfd/syscon.c
+> > +++ b/drivers/mfd/syscon.c
+> > @@ -224,6 +224,35 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+> >  }
+> >  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+> >
+> > +struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
+> > +                                       const char *property,
+> > +                                       int arg_count,
+> > +                                       unsigned int *out_args)
+> > +{
+> > +       struct device_node *syscon_np;
+> > +       struct of_phandle_args args;
+> > +       struct regmap *regmap;
+> > +       unsigned int index;
+> > +       int rc;
+> > +
+> > +       rc = of_parse_phandle_with_fixed_args(np, property, arg_count,
+> > +                       0, &args);
+> > +       if (rc)
+> > +               return ERR_PTR(rc);
+> > +
+> > +       syscon_np = args.np;
+> > +       if (!syscon_np)
+> > +               return ERR_PTR(-ENODEV);
+> > +
+> > +       regmap = syscon_node_to_regmap(syscon_np);
+> > +       for (index = 0; index < arg_count; index++)
+> > +               out_args[index] = args.args[index];
+> > +       of_node_put(syscon_np);
+> > +
+> > +       return regmap;
+> > +}
+> > +EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle_args);
+> > +
+> >  static int syscon_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev = &pdev->dev;
+> > diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
+> > index 112dc66..714cab1 100644
+> > --- a/include/linux/mfd/syscon.h
+> > +++ b/include/linux/mfd/syscon.h
+> > @@ -23,6 +23,11 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
+> >  extern struct regmap *syscon_regmap_lookup_by_phandle(
+> >                                         struct device_node *np,
+> >                                         const char *property);
+> > +extern struct regmap *syscon_regmap_lookup_by_phandle_args(
+> > +                                       struct device_node *np,
+> > +                                       const char *property,
+> > +                                       int arg_count,
+> > +                                       unsigned int *out_args);
+> >  #else
+> >  static inline struct regmap *device_node_to_regmap(struct device_node *np)
+> >  {
+> > @@ -45,6 +50,15 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
+> >  {
+> >         return ERR_PTR(-ENOTSUPP);
+> >  }
+> > +
+> > +static struct regmap *syscon_regmap_lookup_by_phandle_args(
+> > +                                       struct device_node *np,
+> > +                                       const char *property,
+> > +                                       int arg_count,
+> > +                                       unsigned int *out_args)
+> > +{
+> > +       return ERR_PTR(-ENOTSUPP);
+> > +}
+> >  #endif
+> >
+> >  #endif /* __LINUX_MFD_SYSCON_H__ */
+>
+> --
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+________________________________
+ This email (including its attachments) is intended only for the person or entity to which it is addressed and may contain information that is privileged, confidential or otherwise protected from disclosure. Unauthorized use, dissemination, distribution or copying of this email or the information herein or taking any action in reliance on the contents of this email or the information herein, by anyone other than the intended recipient, or an employee or agent responsible for delivering the message to the intended recipient, is strictly prohibited. If you are not the intended recipient, please do not read, copy, use or disclose any part of this e-mail to others. Please notify the sender immediately and permanently delete this e-mail and any attachments if you received it in error. Internet communications cannot be guaranteed to be timely, secure, error-free or virus-free. The sender does not accept liability for any errors or omissions.
+本邮件及其附件具有保密性质，受法律保护不得泄露，仅发送给本邮件所指特定收件人。严禁非经授权使用、宣传、发布或复制本邮件或其内容。若非该特定收件人，请勿阅读、复制、 使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件的方式即刻告知发件人。无法保证互联网通信及时、安全、无误或防毒。发件人对任何错漏均不承担责任。
