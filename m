@@ -2,74 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 903FB14391E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 381AD143921
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:09:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbgAUJIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:08:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbgAUJIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:08:25 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01F5A20882;
-        Tue, 21 Jan 2020 09:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579597704;
-        bh=V/N4fJDuFow+RDfqLPVuw2V+0R91MFUR/t+PMQloXb0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c/9yZ47/q3p0PhEQaxR5nGPIUsC9W0grdwpmH//oUnfRmSwE/oJlRnHIomBQvU24t
-         BIfJppGmOTDGZ1WHvvC9dmji0hbzU91zAO0lRosPwvVyQheFQXaITv/nzQsr1HYRNR
-         o1OO29wAsE/eSjbp/bqysGFzr5lkwy4FSi9I7ya4=
-Date:   Tue, 21 Jan 2020 10:08:22 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 9/9] arm64: dts: allwinner: pinebook: Fix 5v0 boost
- regulator
-Message-ID: <20200121090822.77pjto5xh4hoybej@gilmour.lan>
-References: <20200119163104.13274-1-samuel@sholland.org>
- <20200119163104.13274-9-samuel@sholland.org>
+        id S1729122AbgAUJJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:09:02 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:50817 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUJJC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:09:02 -0500
+Received: from mail-qv1-f46.google.com ([209.85.219.46]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MkIAB-1jMWMn1ljF-00kjVj for <linux-kernel@vger.kernel.org>; Tue, 21 Jan
+ 2020 10:09:00 +0100
+Received: by mail-qv1-f46.google.com with SMTP id o18so1118231qvf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:09:00 -0800 (PST)
+X-Gm-Message-State: APjAAAUi4SNy6DvjuHL6XZubUjRrU9ojWgzzD1QgUF0XwT9rIZAxxYPm
+        PM4dGp+pCuALUSfmefTJ/IWesmnoU9jv9tssH5U=
+X-Google-Smtp-Source: APXvYqy0lqLxIxKvl4NzSCuQ5JILGaII7vvEzP5ZVNMUF7o0+IiDeTWAI19y5yRZ2g/sjt5GRimbrfWLUPYCIocsAow=
+X-Received: by 2002:a0c:8e08:: with SMTP id v8mr3888671qvb.4.1579597739397;
+ Tue, 21 Jan 2020 01:08:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qackdqofuyqe3hmn"
-Content-Disposition: inline
-In-Reply-To: <20200119163104.13274-9-samuel@sholland.org>
+References: <1579596524-257369-1-git-send-email-alex.shi@linux.alibaba.com>
+In-Reply-To: <1579596524-257369-1-git-send-email-alex.shi@linux.alibaba.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 21 Jan 2020 10:08:43 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0kPaxs9PQM87mRtBbA5jn0v2PV8S4cntXZeXN_Xex3mA@mail.gmail.com>
+Message-ID: <CAK8P3a0kPaxs9PQM87mRtBbA5jn0v2PV8S4cntXZeXN_Xex3mA@mail.gmail.com>
+Subject: Re: [PATCH] agp/via: remove unused current_size
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:1Qk2uXiW7mIFjDZk/b4aGnySQsDRipW2VVpsATVNIM+BSqomgZa
+ a4F1ODMhn83fL71Tu8KodJjkZC7HgmPXt3oiYWfbdW2wymibNXOn0KYgLumYo0Nh1KfKhpU
+ 7371ZVnEBdQ/TcDYIlLkZGT+EKYdhaEHf6I7pE0BclPA9wtuI2qqI+Lv7adj338W23pN85z
+ n671MdsWDARZLzUnFzU9A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sS6wAaj3Hh0=:TZ8bvlSbNq4daPBUk/Pcj8
+ 6/2hx4YokLNwIKgpaeYAIYvE9ma025fi0aiCxLsfad7wnBol/3HYE5Otsw4xdW0HUB62O9q3U
+ Qymxhrl56W0C5kQYCt53cghjvfqTCEd/e8N/B7CFH3Pq5DToQ4oRnwbwTrXvWpRO2HP+GGAUs
+ 4gh51w3WWImL7WELSKtxOjdmszb8sJMgd1yXhFbD54Ob7dHhu2odAwbQtIl9avCsdXsBGf7Gs
+ ozFvgRS143PMF5+wUEcK1wE6y06/iG5FVhffruspjZ2/IaCrq9SeMMc7WSxNJkE9zr+WMsQPI
+ mbNmuVvV3mVWjCzLvleWjXYS905yASAjYwqHrRHpvbSssI6WX5uHft+fpMnO1hElIe604dXhx
+ mQLiQMBG7uhLjy/VkLXMDP6XSLt59pyyeq2zA22RPoRTm3Zv2Amsk/KaBjzuTnsKTjTdp2FOH
+ Ja65wv+Dy2VqCMBvlA43DkBsANa3+cY3BLDBZALoLS5BQnl70OB+eD9qXyNxZcnX8pjRhcaNW
+ y2LwF4F7xP9+nnTNj0L4XQ4Qejc7/UmNMAehAHRn5WoHPkPcZMzYAmZS9j6TMEotEh80V60J2
+ Lqpuqt5l6ytT8mhUkwj71RlxAZlX6XwaVfzLfCIxU5nM9O62wRiVv/vet/CQYPBytTjgcnOTR
+ /ClJtShok86aF2JbyNWVKsnQYryP5SCAirkeUKZWLtL4BDc1gulz9opzvLuOKVIqt7sV7MNgZ
+ Nda/pKTk9CqzUTDXAUo7LQ0DnI0LQdiYHzAuLnkO8WmfxDb+fUH49KucU/FwsTj6S5ShNppA7
+ WTyTr6+hgjVIw2exu9WgSAm4L28/0FpDt9lBbv8yvyI8ikY+kd/OkAADpWnqTQ1vzCt6o8xKx
+ pq0MJVMT5zxdO7/c8MJw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---qackdqofuyqe3hmn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Jan 19, 2020 at 10:31:04AM -0600, Samuel Holland wrote:
-> Now that AXP803 GPIO support is available, we can properly model
-> the hardware. Replace the use of GPIO0-LDO with a fixed regulator
-> controlled by GPIO0. This boost regulator is used to power the
-> (internal and external) USB ports, as well as the speakers.
+On Tue, Jan 21, 2020 at 9:48 AM Alex Shi <alex.shi@linux.alibaba.com> wrote:
 >
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> No one care the current_size, so don't bother to get current_size.
+>
+> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org
 
-Applied, thanks!
-Maxime
-
---qackdqofuyqe3hmn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXia/hgAKCRDj7w1vZxhR
-xfofAPYyu4j1NVQCLPclIpVo8s1pk99EUtMOVuQYEBl0ifMZAP9MEShdqJiLf4xw
-l8v1MunFWBbjeNlIadaab/Zpxm2VBA==
-=qHzz
------END PGP SIGNATURE-----
-
---qackdqofuyqe3hmn--
+Acked-by: Arnd Bergmann <arnd@arndb.de>
