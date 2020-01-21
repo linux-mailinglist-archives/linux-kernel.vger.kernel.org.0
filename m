@@ -2,194 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9BFE143569
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:53:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E202B143566
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:53:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbgAUBx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 20:53:29 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33940 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgAUBx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 20:53:28 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d10so804726qke.1;
-        Mon, 20 Jan 2020 17:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DLwWB53t6sz09f9B1uK0zwEN9SxdL7h+I/vAqzXh1rs=;
-        b=IUMcFpRQ8vz/Oz098DsJ/MlfrAlkASfp0SYSePY2V0VNezU4rSDADZWDuogLY83ITE
-         6qOiftcsBHTGequV+QapUdKtSjbKt+Lu/mUFk4ZyU+XNjiuz67a5JUmyh7cgP3cDXB4u
-         h3CtmwJqCqQUK9zrwgIefdFvbNJZ8pnnLyo0s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DLwWB53t6sz09f9B1uK0zwEN9SxdL7h+I/vAqzXh1rs=;
-        b=RFVwYGJeImdSbgdeNHWPVDCP5OayzcCwJ35wPeUFJCEJfr6srXiJDKnSqXXvbcAwVE
-         A1Ayxnca7ojSDDmd8mS01uWYIJcCi+Tx+sjgN3mcRZ0l1jCfBNcBlFS93ccAIr3EO40Y
-         L69F9o/1p+2eZoniGI51w1dBewdLzHyvS31stD9J9tcf/Xnasvuro4v6MmfRZ/E0az2d
-         Ygtyeg2so8fp8cCVFeduOXXcovEHiwjxsSnkh8GOK7kv5QbBC5zQ9KU1qdjQEa461cRB
-         fOEnKGSWpl8FtNS+gGAugVWJKUklihxP+q7UDw4qaBf4uK7fqLaawCKssJ2V9JFPKnhR
-         sUCQ==
-X-Gm-Message-State: APjAAAXNbyniISMoW3E248uLxl3SyOmr97DcoN6Pitg6BuF1/mhoT5RF
-        7qtUx54zr7A1uA1nSYQVbhNER0tXYvrRZ/+8AwE=
-X-Google-Smtp-Source: APXvYqwu+C+7GEOmDwQMJ1OCXr0L1MJ1vO3XA/YvvHsO/1Pr4qqlLpiL2FeuSh8Rtqj95aStJGWL/5FEIAlw9Nv83x8=
-X-Received: by 2002:a37:a43:: with SMTP id 64mr36517qkk.292.1579571606933;
- Mon, 20 Jan 2020 17:53:26 -0800 (PST)
+        id S1728827AbgAUBxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 20:53:17 -0500
+Received: from mga17.intel.com ([192.55.52.151]:58946 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726890AbgAUBxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 20:53:17 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 17:53:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,344,1574150400"; 
+   d="scan'208";a="220797769"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Jan 2020 17:53:15 -0800
+Date:   Tue, 21 Jan 2020 09:53:26 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
+        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@kernel.org
+Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
+ than zero
+Message-ID: <20200121015326.GE1567@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
 MIME-Version: 1.0
-References: <20200120150113.2565-1-linux@neuralgames.com>
-In-Reply-To: <20200120150113.2565-1-linux@neuralgames.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 21 Jan 2020 01:53:15 +0000
-Message-ID: <CACPK8XfuVN3Q=npEoOP-amQS0-wemxcx6LKaHHZEsBAHzq1wzA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] hwrng: Add support for ASPEED RNG
-To:     Oscar A Perez <linux@neuralgames.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200119065753.21694-1-richardw.yang@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, 20 Jan 2020 at 15:12, Oscar A Perez <linux@neuralgames.com> wrote:
+On Sun, Jan 19, 2020 at 02:57:53PM +0800, Wei Yang wrote:
+>If we get here after successfully adding page to list, err would be
+>1 to indicate the page is queued in the list.
 >
-> This minimal driver adds support for the Hardware Random Number Generator
-> that comes with the AST2400/AST2500/AST2600 SOCs from AspeedTech.
+>Current code has two problems:
 >
-> The HRNG on these SOCs uses Ring Oscillators working together to generate
-> a stream of random bits that can be read by the platform via a 32bit data
-> register.
-
-Thanks for the patch.
-
-We've been using the timeriomem-rng driver for the past few years on
-aspeed hardware. You can see how that's set up by looking at
-arch/arm/boot/dts/aspeed-g{4,5,6}.dtsi
-
-I suggest we continue to use the generic driver.
-
-Cheers,
-
-Joel
-
-
-
+>  * on success, 0 is not returned
+>  * on error, if add_page_for_migratioin() return 1, and the following err1
+>    from do_move_pages_to_node() is set, the err1 is not returned since err
+>    is 1
 >
-> Signed-off-by: Oscar A Perez <linux@neuralgames.com>
-> ---
->  .../devicetree/bindings/rng/aspeed-rng.yaml   | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/aspeed-rng.yaml
+>And these behaviors break the user interface.
 >
-> diff --git a/Documentation/devicetree/bindings/rng/aspeed-rng.yaml b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
-> new file mode 100644
-> index 000000000000..06070ebe1c33
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rng/aspeed-rng.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/rng/aspeed-rng.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +
-> +title: Bindings for Aspeed Hardware Random Number Generator
-> +
-> +
-> +maintainers:
-> +  - Oscar A Perez <linux@neuralgames.com>
-> +
-> +
-> +description: |
-> +  The HRNG on the AST2400/AST2500/AST2600 SOCs from AspeedTech  uses four Ring
-> +  Oscillators working together to generate a stream of random bits that can be
-> +  read by the platform via a 32bit data register every one microsecond.
-> +  All the platform has to do is to provide to the driver the 'quality' entropy
-> +  value, the  'mode' in which the combining  ROs will generate the  stream  of
-> +  random bits and, the 'period' value that is used as a wait-time between reads
-> +  from the 32bit data register.
-> +
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - aspeed,ast2400-rng
-> +              - aspeed,ast2500-rng
-> +              - aspeed,ast2600-rng
-> +
-> +
-> +  reg:
-> +    description:
-> +      Base address and length of the register set of this block.
-> +      Currently 'reg' must be eight bytes wide and 32-bit aligned.
-> +
-> +    maxItems: 1
-> +
-> +
-> +  period:
-> +    description:
-> +      Wait time in microseconds to be used between reads.
-> +      The RNG on these Aspeed SOCs generates 32bit of random data
-> +      every one microsecond. Choose between 1 and n microseconds.
-> +
-> +    maxItems: 1
-> +
-> +
-> +  mode:
-> +    description:
-> +      One of the eight modes in which the four internal ROs (Ring
-> +      Oscillators)  are combined to generate a stream  of random
-> +      bits. The default mode is seven which is the default method
-> +      of combining RO random bits on these Aspeed SOCs.
-> +
-> +    maxItems: 1
-> +
-> +
-> +  quality:
-> +    description:
-> +      Estimated number of bits of entropy per 1024 bits read from
-> +      the RNG.  Note that the default quality is zero which stops
-> +      this HRNG from automatically filling the kernel's entropy
-> +      pool with data.
-> +
-> +    maxItems: 1
-> +
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - period
-> +  - quality
-> +
-> +
-> +examples:
-> +  - |
-> +    rng: hwrng@1e6e2074 {
-> +         compatible = "aspeed,ast2500-rng";
-> +         reg = <0x1e6e2074 0x8>;
-> +         period = <4>;
-> +         quality = <128>;
-> +         mode = <0x7>;
-> +    };
-> +
-> +
-> +...
-> --
-> 2.17.1
+>Fixes: e0153fc2c760 ("mm: move_pages: return valid node id in status if the
+>page is already on the target node").
+>Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 >
+>---
+>v2:
+>  * put more words to explain the error case
+>---
+> mm/migrate.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/mm/migrate.c b/mm/migrate.c
+>index 86873b6f38a7..430fdccc733e 100644
+>--- a/mm/migrate.c
+>+++ b/mm/migrate.c
+>@@ -1676,7 +1676,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+> 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
+> 	if (!err1)
+> 		err1 = store_status(status, start, current_node, i - start);
+>-	if (!err)
+>+	if (err >= 0)
+> 		err = err1;
+
+Ok, as mentioned by Yang and Michal, only err == 0 means no error.
+
+Sounds this regression should be fixed in another place. Let me send out
+another patch.
+
+> out:
+> 	return err;
+>-- 
+>2.17.1
+
+-- 
+Wei Yang
+Help you, Help me
