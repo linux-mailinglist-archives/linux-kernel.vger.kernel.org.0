@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BED114455B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E90014455D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgAUTsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:48:14 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43101 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbgAUTsN (ORCPT
+        id S1729174AbgAUTsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:48:17 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45967 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbgAUTsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:48:13 -0500
-Received: by mail-pg1-f196.google.com with SMTP id k197so2050083pga.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:48:13 -0800 (PST)
+        Tue, 21 Jan 2020 14:48:14 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b9so2039297pgk.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:48:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rMMAFQfcSz2Ny4QcMJ2+IjNjBaQLZnItVjFQDEF8YTc=;
-        b=UpO9XYMQtahmwQ1m6pd4F9SG5x52rmQ4bs41zUHh04id2ISgpOG0pHptiObAwGUopl
-         edQWATgRMjzkQ1O/Q6tKE0sw4836emXMUufwfvbkuwMBneHZV+mlpgdOoX0sTBXtpbc5
-         b0phRnp5v/A5IsXKdQG9bVulKFh11hbxL4C5Q=
+        bh=sPH/l+8hw3X+2SRweCDGnoCi5kFG7zbW84SQPOKqJsY=;
+        b=keJv9mvAwwIZ8NG2BLIt6H8OJALqAkODzWi7AiT8rlYzH57fO2hTcszd+rhVZfMl6p
+         GILvVsdgmRLxD1Y+hbG88HNhtRFwmAaeFWidQGNE7jVyO6nqmMchL/Ph6Id+2SOOkBLL
+         0D5Xo/JQJu7TGxuJ5w1k/VFiRIWaUzY8TeApU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rMMAFQfcSz2Ny4QcMJ2+IjNjBaQLZnItVjFQDEF8YTc=;
-        b=amMbcMr/mjI4xAOEfXIxaabWJh/zAdgisaNiXAaJHaBsWJdnyzno+F9iRQGEQhPBSx
-         fKekMr+zAv4OUfuUXNA0PeW3QalVH85kSfIN7tiZBpZBRGQMeGPZR4ELLNd7FLveccX1
-         3fgAv30VbN/kPvzyqgWpbOqe0V6+oQer/zzW3VYQ+dS491bmNXlV00lj/DYRc8eMWslD
-         wzWOKR5OjKY72atRytcKqroJL3JidRTDSqWXvEST3wNxO5+rq4bbyy91DxEs7fqaWh0z
-         aC6TfrXojFMdWHH+u0l9NffdJtKKBASj5jSO0UTaaHq5CtTcYgAfMQmJzRJKRB8mlm9B
-         MivA==
-X-Gm-Message-State: APjAAAX0X9YP2n5k8DpGtUVjBI5DDq2hH5kuGBx+67C6RbhZMrtZIu5P
-        MXWNUkhgMPEWpADzUwkAN28NxUVM//uczQ==
-X-Google-Smtp-Source: APXvYqzgfKm+Zgb6jveGV5EhvCDFXpIOakl6kyuAASuoZqjpzIkqq0TRhMGCvUxnVOhlyBa5Ep1YmA==
-X-Received: by 2002:aa7:8b17:: with SMTP id f23mr6101870pfd.197.1579636093306;
-        Tue, 21 Jan 2020 11:48:13 -0800 (PST)
+        bh=sPH/l+8hw3X+2SRweCDGnoCi5kFG7zbW84SQPOKqJsY=;
+        b=Q50GA3hki/8O/mJeNJVNWgAzl4nep2mTpsh5jgBFpD49AamWPaeqrMjUyrdqUHqz0B
+         wrOAnu3NCQ6GXu+HrahoTdUxRExDyj6hib2H7JU/xkdKPwnvJ9zgxeOU3Gjj1L+eL9D0
+         YPl65QOATXCNz/A0Xl0oXEG2WA4V3NSHzm94sHYX+aB5NkE+Hi60at1lnOEet5kxjvB+
+         gloCXIVk7zaHuNkzmw+ZbRARUewqgjLhlWRlsJ7Vt4sR1+zj8fQNm3lGQBv9gpU8ow0H
+         Jy6dJhjSuqm9d7y0ha595E01Rz+jkhvoLBPMXINfnd3ngm0HQDKfK8CSQ+JZPZIh/D0z
+         smvg==
+X-Gm-Message-State: APjAAAXn+lXepQ/smS+3pYiwEtWygsUskFZlDDl6yEIVBxrbpK77JWYN
+        G8wKX2p3zQQ0LabGttLk9Lopqw==
+X-Google-Smtp-Source: APXvYqyVRukVLGNYxmN37P+dHCtO3bKNTDxAuXyZDJz8aRlJp5SsX7Pb3cp71XwTHZTdI6GEo59cqQ==
+X-Received: by 2002:a62:6342:: with SMTP id x63mr5996631pfb.103.1579636094112;
+        Tue, 21 Jan 2020 11:48:14 -0800 (PST)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u7sm44004674pfh.128.2020.01.21.11.48.12
+        by smtp.gmail.com with ESMTPSA id u7sm44004674pfh.128.2020.01.21.11.48.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 11:48:12 -0800 (PST)
+        Tue, 21 Jan 2020 11:48:13 -0800 (PST)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 1/3] alarmtimer: Make alarmtimer platform device child of RTC device
-Date:   Tue, 21 Jan 2020 11:48:09 -0800
-Message-Id: <20200121194811.145644-2-swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v2 2/3] alarmtimer: Use wakeup source from alarmtimer platform device
+Date:   Tue, 21 Jan 2020 11:48:10 -0800
+Message-Id: <20200121194811.145644-3-swboyd@chromium.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200121194811.145644-1-swboyd@chromium.org>
 References: <20200121194811.145644-1-swboyd@chromium.org>
@@ -60,91 +59,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The alarmtimer_suspend() function will fail if an RTC device is on a bus
-such as SPI or i2c and that RTC device registers and probes after
-alarmtimer_init() registers and probes the 'alarmtimer' platform device.
-This is because system wide suspend suspends devices in the reverse
-order of their probe. When alarmtimer_suspend() attempts to program the
-RTC for a wakeup it will try to program an RTC device on a bus that has
-already been suspended.
+Use the wakeup source that can be associated with the 'alarmtimer'
+platform device instead of registering another one by hand.
 
-Let's move the alarmtimer device registration to be when the RTC we use
-for wakeup is registered. Register the 'alarmtimer' platform device as a
-child of the RTC device too, so that we can be guaranteed that the RTC
-device won't be suspended when alarmtimer_suspend() is called.
-
-Reported-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- kernel/time/alarmtimer.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ kernel/time/alarmtimer.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 9dc7a0913190..e1a863b5c0bf 100644
+index e1a863b5c0bf..0c9e97054da8 100644
 --- a/kernel/time/alarmtimer.c
 +++ b/kernel/time/alarmtimer.c
-@@ -91,6 +91,7 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+@@ -58,8 +58,6 @@ static DEFINE_SPINLOCK(freezer_delta_lock);
+ #endif
+ 
+ #ifdef CONFIG_RTC_CLASS
+-static struct wakeup_source *ws;
+-
+ /* rtc timer and device for setting alarm wakeups at suspend */
+ static struct rtc_timer		rtctimer;
+ static struct rtc_device	*rtcdev;
+@@ -90,7 +88,6 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ {
  	unsigned long flags;
  	struct rtc_device *rtc = to_rtc_device(dev);
- 	struct wakeup_source *__ws;
-+	struct platform_device *pdev;
+-	struct wakeup_source *__ws;
+ 	struct platform_device *pdev;
  	int ret = 0;
  
- 	if (rtcdev)
-@@ -102,9 +103,11 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+@@ -102,12 +99,13 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 	if (!device_may_wakeup(rtc->dev.parent))
  		return -1;
  
- 	__ws = wakeup_source_register(dev, "alarmtimer");
-+	pdev = platform_device_register_data(dev, "alarmtimer",
-+					     PLATFORM_DEVID_AUTO, NULL, 0);
+-	__ws = wakeup_source_register(dev, "alarmtimer");
+ 	pdev = platform_device_register_data(dev, "alarmtimer",
+ 					     PLATFORM_DEVID_AUTO, NULL, 0);
++	if (!IS_ERR(pdev))
++		device_init_wakeup(&pdev->dev, true);
  
  	spin_lock_irqsave(&rtcdev_lock, flags);
--	if (!rtcdev) {
-+	if (__ws && !IS_ERR(pdev) && !rtcdev) {
+-	if (__ws && !IS_ERR(pdev) && !rtcdev) {
++	if (!IS_ERR(pdev) && !rtcdev) {
  		if (!try_module_get(rtc->owner)) {
  			ret = -1;
  			goto unlock;
-@@ -115,10 +118,14 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+@@ -116,8 +114,6 @@ static int alarmtimer_rtc_add_device(struct device *dev,
+ 		rtcdev = rtc;
+ 		/* hold a reference so it doesn't go away */
  		get_device(dev);
- 		ws = __ws;
- 		__ws = NULL;
-+		pdev = NULL;
-+	} else {
-+		ret = - 1;
- 	}
- unlock:
+-		ws = __ws;
+-		__ws = NULL;
+ 		pdev = NULL;
+ 	} else {
+ 		ret = - 1;
+@@ -126,7 +122,6 @@ static int alarmtimer_rtc_add_device(struct device *dev,
  	spin_unlock_irqrestore(&rtcdev_lock, flags);
  
-+	platform_device_unregister(pdev);
- 	wakeup_source_unregister(__ws);
+ 	platform_device_unregister(pdev);
+-	wakeup_source_unregister(__ws);
  
  	return ret;
-@@ -905,8 +912,7 @@ static void get_boottime_timespec(struct timespec64 *tp)
-  */
- static int __init alarmtimer_init(void)
- {
--	struct platform_device *pdev;
--	int error = 0;
-+	int error;
- 	int i;
+ }
+@@ -293,7 +288,7 @@ static int alarmtimer_suspend(struct device *dev)
+ 		return 0;
  
- 	alarmtimer_rtc_timer_init();
-@@ -931,15 +937,7 @@ static int __init alarmtimer_init(void)
- 	if (error)
- 		goto out_if;
+ 	if (ktime_to_ns(min) < 2 * NSEC_PER_SEC) {
+-		__pm_wakeup_event(ws, 2 * MSEC_PER_SEC);
++		pm_wakeup_event(dev, 2 * MSEC_PER_SEC);
+ 		return -EBUSY;
+ 	}
  
--	pdev = platform_device_register_simple("alarmtimer", -1, NULL, 0);
--	if (IS_ERR(pdev)) {
--		error = PTR_ERR(pdev);
--		goto out_drv;
--	}
- 	return 0;
--
--out_drv:
--	platform_driver_unregister(&alarmtimer_driver);
- out_if:
- 	alarmtimer_rtc_interface_remove();
- 	return error;
+@@ -308,7 +303,7 @@ static int alarmtimer_suspend(struct device *dev)
+ 	/* Set alarm, if in the past reject suspend briefly to handle */
+ 	ret = rtc_timer_start(rtc, &rtctimer, now, 0);
+ 	if (ret < 0)
+-		__pm_wakeup_event(ws, MSEC_PER_SEC);
++		pm_wakeup_event(dev, MSEC_PER_SEC);
+ 	return ret;
+ }
+ 
 -- 
 Sent by a computer, using git, on the internet
 
