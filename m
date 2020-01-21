@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3801143B23
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D89A143B2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbgAUKhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:37:54 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:41136 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbgAUKh3 (ORCPT
+        id S1729629AbgAUKh2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:37:28 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:38472 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729499AbgAUKh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:37:29 -0500
+        Tue, 21 Jan 2020 05:37:27 -0500
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id sydS2100R5USYZQ01ydSJe; Tue, 21 Jan 2020 11:37:26 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id sydS210185USYZQ06ydSoE; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-00011t-FO; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-00011w-GD; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-0000Ua-E9; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-0000Ud-F0; Tue, 21 Jan 2020 11:37:26 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
         Olof Johansson <olof@lixom.net>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 18/20] ARM: realview: Drop unneeded select of multi-platform features
-Date:   Tue, 21 Jan 2020 11:37:20 +0100
-Message-Id: <20200121103722.1781-18-geert+renesas@glider.be>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 19/20] ARM: s3c64xx: Drop unneeded select of TIMER_OF
+Date:   Tue, 21 Jan 2020 11:37:21 +0100
+Message-Id: <20200121103722.1781-19-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200121103722.1781-1-geert+renesas@glider.be>
 References: <20200121103413.1337-1-geert+renesas@glider.be>
@@ -40,79 +42,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for ARM Ltd. RealView systems depends on ARCH_MULTIPLATFORM,
-which selects USE_OF.
-Support for ARMv6 and ARMv7 variants depends on ARCH_MULTI_V6 or
-ARCH_MULTI_V7, which both select ARCH_MULTI_V6_V7 and thus
-MIGHT_HAVE_CACHE_L2X0.
-Support for ARMv7 variants depends on ARCH_MULTI_V7, which selects
-HAVE_SMP.
-Hence there is no need for the affected RealView-specific symbols to
-select any of them.
+Support for Samsung S3C64XX systems depends on ARCH_MULTI_V6, and thus
+on ARCH_MULTIPLATFORM.
+As the latter selects TIMER_OF, there is no need for MACH_S3C64XX_DT to
+select TIMER_OF.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
 ---
 All patches in this series are independent of each other.
 Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
 
- arch/arm/mach-realview/Kconfig | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm/mach-s3c64xx/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-realview/Kconfig b/arch/arm/mach-realview/Kconfig
-index 44ebbf9ec67364db..0f139a20e113d6c3 100644
---- a/arch/arm/mach-realview/Kconfig
-+++ b/arch/arm/mach-realview/Kconfig
-@@ -21,7 +21,6 @@ menuconfig ARCH_REALVIEW
- 	select POWER_RESET_VERSATILE
- 	select POWER_SUPPLY
- 	select SOC_REALVIEW
--	select USE_OF
- 	help
- 	  This enables support for ARM Ltd RealView boards.
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 5700822e3c74b8e4..ac3e3563487fc6f9 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -336,7 +336,6 @@ config MACH_WLF_CRAGG_6410
  
-@@ -56,8 +55,6 @@ config REALVIEW_EB_ARM1176
- config REALVIEW_EB_A9MP
- 	bool "Support Multicore Cortex-A9 Tile"
- 	depends on MACH_REALVIEW_EB && ARCH_MULTI_V7
--	select HAVE_SMP
--	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Enable support for the Cortex-A9MPCore tile fitted to the
- 	  Realview(R) Emulation Baseboard platform.
-@@ -66,7 +63,6 @@ config REALVIEW_EB_ARM11MP
- 	bool "Support ARM11MPCore Tile"
- 	depends on MACH_REALVIEW_EB && ARCH_MULTI_V6
- 	select HAVE_SMP
--	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Enable support for the ARM11MPCore tile fitted to the Realview(R)
- 	  Emulation Baseboard platform.
-@@ -75,7 +71,6 @@ config MACH_REALVIEW_PB11MP
- 	bool "Support RealView(R) Platform Baseboard for ARM11MPCore"
- 	depends on ARCH_MULTI_V6
- 	select HAVE_SMP
--	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Include support for the ARM(R) RealView(R) Platform Baseboard for
- 	  the ARM11MPCore.  This platform has an on-board ARM11MPCore and has
-@@ -87,7 +82,6 @@ config MACH_REALVIEW_PB1176
- 	depends on ARCH_MULTI_V6
- 	select CPU_V6
- 	select HAVE_TCM
--	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Include support for the ARM(R) RealView(R) Platform Baseboard for
- 	  ARM1176JZF-S.
-@@ -103,8 +97,6 @@ config MACH_REALVIEW_PBA8
- config MACH_REALVIEW_PBX
- 	bool "Support RealView(R) Platform Baseboard Explore for Cortex-A9"
- 	depends on ARCH_MULTI_V7
--	select HAVE_SMP
--	select MIGHT_HAVE_CACHE_L2X0
- 	select ZONE_DMA
- 	help
- 	  Include support for the ARM(R) RealView(R) Platform Baseboard
+ config MACH_S3C64XX_DT
+ 	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
+-	select TIMER_OF
+ 	select CPU_S3C6400
+ 	select CPU_S3C6410
+ 	select PINCTRL
 -- 
 2.17.1
 
