@@ -2,78 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9E1143AFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A71143AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:27:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbgAUK2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:28:15 -0500
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:53626 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728931AbgAUK2P (ORCPT
+        id S1729324AbgAUK1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:27:40 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34017 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbgAUK1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:28:15 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ToHg3hQ_1579602492;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHg3hQ_1579602492)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 18:28:13 +0800
-Subject: Re: [PATCH] fs/gfs2: remove IS_DINODE
-To:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1579596552-257820-1-git-send-email-alex.shi@linux.alibaba.com>
- <CAHpGcMJ6DazJ_rMPB2uUKfH-1oxVy=RoLvt2nMEvcdWWCnWjDw@mail.gmail.com>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <e29431c1-1dfc-5e65-fa43-829184ed7209@linux.alibaba.com>
-Date:   Tue, 21 Jan 2020 18:26:24 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        Tue, 21 Jan 2020 05:27:40 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l18so1852910lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 02:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SMMEyvcnG2pHD47DYznHA3pzNWYIWShQugit/uStDZ4=;
+        b=W+mtMBsPULmyhpTjqsmmsHWep5n8rZ+yDCZYhIdCuQ4wN5tk3y8wKVFcofU+NxY4/F
+         P/Uq11AtX8gIEsOki4qun8WXyufwSyQyXSvxh6WHGNGe+BuaON+UV5LpaF/161O+8X+P
+         vkh4fekf9Era9GYaVTJ7VNd/gg0D3jlD5sGMo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SMMEyvcnG2pHD47DYznHA3pzNWYIWShQugit/uStDZ4=;
+        b=kLVkZ36ZoQ4G5kGDGTZeP5Z2g0rUDrX9Ic3a8qJrMWhNnEou5UxLsOmOsnK4rL5glJ
+         zET+S6HFPsLzuMpGesN4pEoEk67SAClUBT7nzi+blLOPde6x/JMLwPlpAQ6KPuEMYXCB
+         wphBSytteUOg/veubG/Mpz8mS+JEM4LRPx70NIMfA2NlzjTZijNePSIJ7Mb/Ui0dZq5B
+         1KPXLCOPU0t+dnaiZK9i52wksz4ZuiqYRs9kGInBT3xsrGMCqEWNsOaoIhlsa5NjNVOa
+         +57GWqKvgt47iboW7wah60BiAsSxfp1oYWsh01nT3YjiWVx9ieZJKEBf5qPP5gBydFob
+         0Tyw==
+X-Gm-Message-State: APjAAAWCKiT1lg2dIOpAvXCB+Xwc0Cr4FxB8N9P9V/FECQ8h/d8YstSJ
+        iTXN8ZMPGhwxcqPFmEBWazQlKQ==
+X-Google-Smtp-Source: APXvYqw8UA1rEjZLDAkIU+mKRQkrGHqdT0Xd8lU1o38AWPs+rMj77qBWNAmOxCQFBtwXwuAErulNcw==
+X-Received: by 2002:ac2:43af:: with SMTP id t15mr2390891lfl.154.1579602455818;
+        Tue, 21 Jan 2020 02:27:35 -0800 (PST)
+Received: from [172.16.11.50] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id y29sm18199445ljd.88.2020.01.21.02.27.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 02:27:35 -0800 (PST)
+Subject: Re: [PATCH 0/2] printf: add support for %de
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+References: <20200120085508.25522-1-u.kleine-koenig@pengutronix.de>
+ <CAHp75Vei9_xqxiiAWBrcMp3yOWmMNmdRmNEwO=Ht+URsnoD4Pw@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <f039631b-8a90-48fc-c80f-1160628469a9@rasmusvillemoes.dk>
+Date:   Tue, 21 Jan 2020 11:27:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CAHpGcMJ6DazJ_rMPB2uUKfH-1oxVy=RoLvt2nMEvcdWWCnWjDw@mail.gmail.com>
+In-Reply-To: <CAHp75Vei9_xqxiiAWBrcMp3yOWmMNmdRmNEwO=Ht+URsnoD4Pw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-在 2020/1/21 下午6:23, Andreas Grünbacher 写道:
-> Alex,
+On 20/01/2020 10.32, Andy Shevchenko wrote:
+> On Mon, Jan 20, 2020 at 10:57 AM Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
 > 
-> Am Di., 21. Jan. 2020 um 09:50 Uhr schrieb Alex Shi
-> <alex.shi@linux.alibaba.com>:
->> After commit 1579343a73e3 ("GFS2: Remove dirent_first() function"), this
->> macro isn't used any more. so remove it.
+>> this is an reiteration of my patch from some time ago that introduced
+>> %dE with the same semantic. Back then this resulted in the support for
+>> %pe which was less contentious.
 >>
->> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
->> Cc: Bob Peterson <rpeterso@redhat.com>
->> Cc: Andreas Gruenbacher <agruenba@redhat.com>
->> Cc: cluster-devel@redhat.com
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  fs/gfs2/dir.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
->> index eb9c0578978f..636a8d0f3dab 100644
->> --- a/fs/gfs2/dir.c
->> +++ b/fs/gfs2/dir.c
->> @@ -74,7 +74,6 @@
->>  #include "util.h"
->>
->>  #define IS_LEAF     1 /* Hashed (leaf) directory */
->> -#define IS_DINODE   2 /* Linear (stuffed dinode block) directory */
 > 
-> The same is true for the IS_LEAF macro. I'm adjusting the patch accordingly.
+>> I still consider %de (now with a small 'e' to match %pe) useful.
+> 
+> Please, don't spread the extensions over the standard specifiers. The
+> %p* extensions are enough for my opinion.
+> NAK.
 > 
 
-I oversee this. Sorry.
+As I think I already mentioned (and what led me to do the %pe), I'm with
+Andy and Joe here, I don't think modifying the behaviour of stuff other
+than %p is a good idea - especially not when it's only about saving a
+few characters to avoid the ERR_PTR() wrapping.
 
-> The other patch removing the LBIT macros looks good as well, so I'm
-> applying both.
-
-Thanks a lot!
-Alex
+Rasmus
