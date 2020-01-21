@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2D4143B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:37:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3801143B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:37:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbgAUKhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:37:31 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58134 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729429AbgAUKh2 (ORCPT
+        id S1729882AbgAUKhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:37:54 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:41136 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729536AbgAUKh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:37:28 -0500
+        Tue, 21 Jan 2020 05:37:29 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id sydS2100x5USYZQ01ydSpd; Tue, 21 Jan 2020 11:37:26 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id sydS2100R5USYZQ01ydSJe; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-00011q-EW; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-00011t-FO; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-0000UX-DL; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-0000Ua-E9; Tue, 21 Jan 2020 11:37:26 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
         Olof Johansson <olof@lixom.net>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Barry Song <baohua@kernel.org>
-Subject: [PATCH 17/20] ARM: prima2: Drop unneeded select of HAVE_SMP
-Date:   Tue, 21 Jan 2020 11:37:19 +0100
-Message-Id: <20200121103722.1781-17-geert+renesas@glider.be>
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 18/20] ARM: realview: Drop unneeded select of multi-platform features
+Date:   Tue, 21 Jan 2020 11:37:20 +0100
+Message-Id: <20200121103722.1781-18-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200121103722.1781-1-geert+renesas@glider.be>
 References: <20200121103413.1337-1-geert+renesas@glider.be>
@@ -40,31 +40,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for CSR SiRF SoCs depends on ARCH_MULTI_V7.
-As the latter selects HAVE_SMP, there is no need for ARCH_ATLAS7 to
-select HAVE_SMP.
+Support for ARM Ltd. RealView systems depends on ARCH_MULTIPLATFORM,
+which selects USE_OF.
+Support for ARMv6 and ARMv7 variants depends on ARCH_MULTI_V6 or
+ARCH_MULTI_V7, which both select ARCH_MULTI_V6_V7 and thus
+MIGHT_HAVE_CACHE_L2X0.
+Support for ARMv7 variants depends on ARCH_MULTI_V7, which selects
+HAVE_SMP.
+Hence there is no need for the affected RealView-specific symbols to
+select any of them.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Barry Song <baohua@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
 All patches in this series are independent of each other.
 Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
 
- arch/arm/mach-prima2/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-realview/Kconfig | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/mach-prima2/Kconfig b/arch/arm/mach-prima2/Kconfig
-index 6f66785fab01bbc9..ea077f66372dd55a 100644
---- a/arch/arm/mach-prima2/Kconfig
-+++ b/arch/arm/mach-prima2/Kconfig
-@@ -30,7 +30,6 @@ config ARCH_ATLAS7
- 	select ARM_GIC
- 	select ATLAS7_TIMER
- 	select HAVE_ARM_SCU if SMP
--	select HAVE_SMP
+diff --git a/arch/arm/mach-realview/Kconfig b/arch/arm/mach-realview/Kconfig
+index 44ebbf9ec67364db..0f139a20e113d6c3 100644
+--- a/arch/arm/mach-realview/Kconfig
++++ b/arch/arm/mach-realview/Kconfig
+@@ -21,7 +21,6 @@ menuconfig ARCH_REALVIEW
+ 	select POWER_RESET_VERSATILE
+ 	select POWER_SUPPLY
+ 	select SOC_REALVIEW
+-	select USE_OF
  	help
-           Support for CSR SiRFSoC ARM Cortex A7 Platform
+ 	  This enables support for ARM Ltd RealView boards.
  
+@@ -56,8 +55,6 @@ config REALVIEW_EB_ARM1176
+ config REALVIEW_EB_A9MP
+ 	bool "Support Multicore Cortex-A9 Tile"
+ 	depends on MACH_REALVIEW_EB && ARCH_MULTI_V7
+-	select HAVE_SMP
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Enable support for the Cortex-A9MPCore tile fitted to the
+ 	  Realview(R) Emulation Baseboard platform.
+@@ -66,7 +63,6 @@ config REALVIEW_EB_ARM11MP
+ 	bool "Support ARM11MPCore Tile"
+ 	depends on MACH_REALVIEW_EB && ARCH_MULTI_V6
+ 	select HAVE_SMP
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Enable support for the ARM11MPCore tile fitted to the Realview(R)
+ 	  Emulation Baseboard platform.
+@@ -75,7 +71,6 @@ config MACH_REALVIEW_PB11MP
+ 	bool "Support RealView(R) Platform Baseboard for ARM11MPCore"
+ 	depends on ARCH_MULTI_V6
+ 	select HAVE_SMP
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Include support for the ARM(R) RealView(R) Platform Baseboard for
+ 	  the ARM11MPCore.  This platform has an on-board ARM11MPCore and has
+@@ -87,7 +82,6 @@ config MACH_REALVIEW_PB1176
+ 	depends on ARCH_MULTI_V6
+ 	select CPU_V6
+ 	select HAVE_TCM
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Include support for the ARM(R) RealView(R) Platform Baseboard for
+ 	  ARM1176JZF-S.
+@@ -103,8 +97,6 @@ config MACH_REALVIEW_PBA8
+ config MACH_REALVIEW_PBX
+ 	bool "Support RealView(R) Platform Baseboard Explore for Cortex-A9"
+ 	depends on ARCH_MULTI_V7
+-	select HAVE_SMP
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	select ZONE_DMA
+ 	help
+ 	  Include support for the ARM(R) RealView(R) Platform Baseboard
 -- 
 2.17.1
 
