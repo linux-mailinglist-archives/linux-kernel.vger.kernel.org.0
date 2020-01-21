@@ -2,91 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E90F14408C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B9614408F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:34:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbgAUPdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 10:33:40 -0500
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:40581 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbgAUPdk (ORCPT
+        id S1729180AbgAUPeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 10:34:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57050 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbgAUPeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 10:33:40 -0500
-Received: by mail-qt1-f171.google.com with SMTP id v25so2906391qto.7
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:33:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yQSao6a+Ppy+4IZJ+9ifO0X+dGmBtWenG0uMva+ys4Q=;
-        b=Wu6mRIJrRHilWp4LN+ydNPxuYoUG0Uc1A3WXEnAsSL8sKN5yWIYvwcLak7AafqmgjA
-         tsJcOMNHDTiEw6xRCt0InkdWJuH70RuxHOyjyNHWILN6/q896hgQgE9qrrDo+rrUdXzr
-         MjhnMiAMHUJ3fdlb5tThbxR4Cw2upgniAmPQQMRlM9MeP3R/8XLGK01ZnD61Abtl6gVo
-         pN2D8rriMl06+chDE5Nzm4J2HqLndwUjR8qDJNtrB5J8ky1q+zNkXRuqge5lA8TLnna7
-         eegGpA0SYbV5G+raQ5Jvjl7s7ygXws+oLijR0GkKFeOkYjdRZYke7CCrSLP858zojU3m
-         58Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yQSao6a+Ppy+4IZJ+9ifO0X+dGmBtWenG0uMva+ys4Q=;
-        b=UZgKV03fyl+TQgDS15jYiqTfb0uOey0Du+LwTdu3TOKBL7WedMmqnHi5zMRL5bv6FS
-         b1lsg9QMHC1T88Gqwk+LQfTN06ErCCai4dB+sDA4GA8sS1lseGMGuht3ZqGvIx4dKP5K
-         Yw9O59QBBWGfou+Xq+ezC46vmjI0e4JdIdEIgO5fgU82HWsnwP613yfZ/3alcBTb2FXx
-         9man1x8jjk/3DNkRyadB5KFDIc7XKvu86mGxtbxN/eZ3TSMO21UCggdJc2N8XBkNCovd
-         ELsz55EOju1+MiBqMArw+TrrP2r4phhLVAF+6O85ZwzKByoHvWrxnjIER2dL+3MiQe3t
-         aFLA==
-X-Gm-Message-State: APjAAAWqBskSEZI/nZLP4honO6UPjW9r9+OPLDTCHYVHgmqH1bxn6XX0
-        h6QX/ilB7xlWgpI1wwsVaAWlrA==
-X-Google-Smtp-Source: APXvYqyw4EDF8dlsXzfOhK/eO2nnxB+7zMS3dQiMJb675hngPd+nQbABTuj7xAqrgkIBU7KXGKV1Iw==
-X-Received: by 2002:ac8:70d3:: with SMTP id g19mr713587qtp.209.1579620819357;
-        Tue, 21 Jan 2020 07:33:39 -0800 (PST)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id x34sm19503703qtd.20.2020.01.21.07.33.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 Jan 2020 07:33:38 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH -next] x86/mm/pat: silence a data race in cpa_4k_install
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20200121152853.GI7808@zn.tnic>
-Date:   Tue, 21 Jan 2020 10:33:37 -0500
-Cc:     Marco Elver <elver@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <44A4276D-5530-4DAA-8FC7-753D03ADD2F3@lca.pw>
-References: <20200121151503.2934-1-cai@lca.pw>
- <CANpmjNPR+mbadR0DDKGUhTkaXJi=vsHmhvq3+Rz0Hrx=E9V_Qg@mail.gmail.com>
- <20200121152853.GI7808@zn.tnic>
-To:     Borislav Petkov <bp@alien8.de>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        Tue, 21 Jan 2020 10:34:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vA3uUy3GrF8RYVPYOTynNZKRmmcxfIVUNw9zl1QYAEI=; b=lvsQrUsO5T59sixx/qC96PxtO
+        ZcwZGmusAGkrzdC/8G9yEFW27ewMBeAAOTc831iHAZfqx4PgzHaI7410ncfix8I74I2qkyUPKMxTo
+        dO6KG76adZRu7OBvg67WItfWHjTOHcp0ChxgZ5+ayi/EukK3cxO8qToC7fbd1qjev1sfb/xbqseZp
+        ry7Q3Oi2QzLRtfHTocUZWjYMR5kwmXnxSY9g6qChRQbYLVM5aZjOO8ySGre3+z+fe+Zo/PAXjYKsG
+        JJTzGa5dfc3sfWOM0S7cconEixjBW4lxUWNGDC141a+kXcznVaDoGKCsnfiLP5iyIGr36doj7qBLf
+        EBIu3ClsQ==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itvY8-00077j-7k; Tue, 21 Jan 2020 15:34:40 +0000
+Subject: Re: [PATCH v1 06/11] Documentation: pstore/blk: blkoops: create
+ document for pstore_blk
+To:     liaoweixiong <liaoweixiong@allwinnertech.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <1579482233-2672-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1579482233-2672-7-git-send-email-liaoweixiong@allwinnertech.com>
+ <b9cd734b-8bb1-5e26-a7ed-fbc79ab2d958@infradead.org>
+ <c87bdf3a-f129-a2a7-40b2-2220f79b505a@allwinnertech.com>
+ <40d7f57a-119e-e51f-99a5-63e85ab5ab91@infradead.org>
+ <3337f687-a668-c058-178b-a1438641c519@allwinnertech.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <597e2b49-667a-490e-91b6-641ca25401d8@infradead.org>
+Date:   Tue, 21 Jan 2020 07:34:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <3337f687-a668-c058-178b-a1438641c519@allwinnertech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/21/20 12:19 AM, liaoweixiong wrote:
+> hi Randy Dunlap,
+> 
+> On 2020/1/21 2:36 PM, Randy Dunlap wrote:
+>> On 1/20/20 9:23 PM, liaoweixiong wrote:
+>>> hi Randy Dunlap,
+>>>
+>>> On 2020/1/21 PM12:13, Randy Dunlap wrote:
+>>>> Hi,
+>>>>
+>>>> I have some documentation comments for you:
+>>>>
+>>>>
+>>>> On 1/19/20 5:03 PM, WeiXiong Liao wrote:
+>>>>> The document, at Documentation/admin-guide/pstore-block.rst, tells us
+>>>>> how to use pstore/blk and blkoops.
+>>>>>
+>>>>> Signed-off-by: WeiXiong Liao <liaoweixiong@allwinnertech.com>
+>>>>> ---
+>>>>>   Documentation/admin-guide/pstore-block.rst | 278 +++++++++++++++++++++++++++++
+>>>>>   MAINTAINERS                                |   1 +
+>>>>>   fs/pstore/Kconfig                          |   2 +
+>>>>>   3 files changed, 281 insertions(+)
+>>>>>   create mode 100644 Documentation/admin-guide/pstore-block.rst
+>>>>>
+>>>>> diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
+>>>>> new file mode 100644
+>>>>> index 000000000000..58418d429c55
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/admin-guide/pstore-block.rst
+>>>>> +
+>>>>> +
+>>>>> +dmesg_size
+>>>>> +~~~~~~~~~~
+>>>>> +
+>>>>> +The chunk size in bytes for dmesg(oops/panic). It **MUST** be a multiple of
+>>>>> +4096. If you don't need it, safely set it 0 or ignore it.
+>>>>
+>>>>                                        set it to 0 or ignore it.
+>>>>
+>>>
+>>> I will fix it, thank you.
+>>>
+>>>> The example above is:  blkoops.dmesg_size=64
+>>>> where 64 is not a multiple of 4096. (?)
+>>>>
+>>>
+>>> The module parameter dmesg_size is in unit KB.
+>>
+>> I didn't see that documented anywhere.
+>>
+> 
+> Oh, sorry, that is my oversight. It seems that not only the other size introductions but also introductions on Kconfig should be corrected. Thank you very much and is the following modification OK?
+> 
+> The chunk size in KB for dmesg(oops/panic). It **MUST** be a multiple of 4.
+
+OK.
 
 
-> On Jan 21, 2020, at 10:28 AM, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> On Tue, Jan 21, 2020 at 04:19:22PM +0100, Marco Elver wrote:
->> Could you remove the verbatim copy of my email? Maybe something like:
->>=20
->> "Increments to cpa_4k_install may happen concurrently, as detected by =
-KCSAN:
->>=20
->> <....... the stack traces ......>
->=20
-> ... and drop the stack traces and fix your subject to say what you're
-> actually "fixing".
+>>>>> +Compression and header
+>>>>> +----------------------
+>>>>> +
+>>>>> +Block device is large enough for uncompressed dmesg data. Actually we do not
+>>>>> +recommend data compression because pstore/blk will insert some information into
+>>>>> +the first line of dmesg data. For example::
+>>>>> +
+>>>>> +        Panic: Total 16 times
+>>>>> +
+>>>>> +It means that it's the 16th times panic log since the first booting. Sometimes
+>>>>
+>>>>                                 time of a panic log since ...
+>>>>
+>>>
+>>> Should it be like this?
+>>> It means the time of a panic log since the first booting.
+>>
+>> That sounds like clock time, not the number of instances or occurrences.
+>>
+> 
+> It is an oops/panic counter too. How about this?
+> 
+> It means that it's OOPS/PANIC for the 16th time since the first booting.
 
-Does this title work for you?
+                                                  since the last booting {or boot}.
 
-x86/mm/pat: silence an data race for KCSAN=
+thanks.
+-- 
+~Randy
+
