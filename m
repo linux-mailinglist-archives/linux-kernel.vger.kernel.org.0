@@ -2,106 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF5914424B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 891A114424E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgAUQh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:37:56 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46906 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729080AbgAUQhz (ORCPT
+        id S1729345AbgAUQiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:38:02 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44614 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbgAUQiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:37:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579624674;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=abtmIMJm04CNK0z3Gup9HgLlCssSlhpt5m2hBJjGsNQ=;
-        b=VlYZOAJtX1F5DKzpJkDVBuG150ngoiormNDlHuUuDTW+iWRR6pX8O0y4HYyn27/5jnrXiK
-        MKIRcirpvEakzt8xoMVFOfD3rf37PYezqaXMO4tDbJZUu4K0mbubicJwFL0/fwDx5OIXIk
-        AT57kOe/v88cpZ1kZtlqfikddph4YDU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-4NcSvj2hPyCPOsShpi4Cpw-1; Tue, 21 Jan 2020 11:37:52 -0500
-X-MC-Unique: 4NcSvj2hPyCPOsShpi4Cpw-1
-Received: by mail-wr1-f69.google.com with SMTP id c6so1564499wrm.18
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:37:51 -0800 (PST)
+        Tue, 21 Jan 2020 11:38:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q8so3456519ljj.11;
+        Tue, 21 Jan 2020 08:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DBI+jODin8/dMS+5H2zNTFg95Djh8pY+zf0IHmhXRG8=;
+        b=Pv+3PsrHCYaOFbnWFHFI+7cKpgoY60PPXChSB7KMOjkNfyybXkzqpywC1uqhg4SYs6
+         LXdorsv+aABlBBDFLFpGHM3SyT4v/qNyddTJhnxM42bRp7umH9J/Hzr8awqVI5W747Cv
+         fmEJwt289q5EgAN40rDHZ36mZQfjCzWQhqxA89hVnOf2CwwTGBCUpOXg3AkkpRSTHzbo
+         99YGkvbzcHz/+kGbK6g8nKKDGQrpiHsKA5LVPbR4rh2TyAyJJtQ3E2mBddwwLnc8YNid
+         rgQ8eqZcJoSNSeAY/r1Qttw8cuYshy+5pQyPn+C74CVrOxzu5/eR/ZSyqElHcEaYNVD4
+         AH8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=abtmIMJm04CNK0z3Gup9HgLlCssSlhpt5m2hBJjGsNQ=;
-        b=odIWNYHL6Oj4R53Zxx5Vilt8R0pXI0TsAg5KPRDiud+8870Iq6C3+ARqrhrLwfTv2Z
-         +dM7Qt2czt16YX5kpGP4Z5uKMhj4QsSweN98TH0JoPjqjQTs2xVtluGxD1ZZIh7I6W4o
-         ZTaHcLzzMMyQszO8CHv2n/DLsXa/inTLiPnqio6TRgYQEsxqEDj0kUCGxI313Se3kh2H
-         9sO4cjOZEjUpaLFGFZ2s2t7A6JD6BDD1OCnM35CwZ3qQkRcubLlvirO7DPelp0D/6Qaz
-         7D2zPMU6HrmvkwD+kqFBhBZ6bccBDfxxLXZjTmSHj9/55BoBuku39g0ToqoZL2ihVKU2
-         WZZw==
-X-Gm-Message-State: APjAAAWDGBXnLyTTEUdfSr23lVcKsptZoN7w3xkLq/mn9q8FydMC1lNh
-        SzSc4XyOcC9UmYxfB/KqVl0SyHOu9RShdW+LHrTVZ3W6T/bGLiA6Xna5tSWA7Vt9ANP0swUc/Gk
-        d7N5pi0QO0GXS+vFu1ePbD8xJ
-X-Received: by 2002:a1c:2355:: with SMTP id j82mr5012327wmj.135.1579624671071;
-        Tue, 21 Jan 2020 08:37:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzFcLJHP5VCbWnoFVzJPWaritQLFg2yRWXQXM6+awZuDF3lGaFzhf0XxVGrw2rCcAXhcivCKQ==
-X-Received: by 2002:a1c:2355:: with SMTP id j82mr5012320wmj.135.1579624670914;
-        Tue, 21 Jan 2020 08:37:50 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g9sm53310585wro.67.2020.01.21.08.37.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 08:37:50 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Waiman Long <longman@redhat.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH RFC] x86/speculation: Clarify Spectre-v2 mitigation when STIBP/IBPB features are unsupported
-In-Reply-To: <20c1c0f2-046e-eb77-d655-75f62ebafcb2@redhat.com>
-References: <20200121160257.302999-1-vkuznets@redhat.com> <20c1c0f2-046e-eb77-d655-75f62ebafcb2@redhat.com>
-Date:   Tue, 21 Jan 2020 17:37:49 +0100
-Message-ID: <87sgk8epeq.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DBI+jODin8/dMS+5H2zNTFg95Djh8pY+zf0IHmhXRG8=;
+        b=sntdV7HXiXKmHRbFkMUSLwF4yINxqUlrZNv/wNkPyGHkD0JXA8vfNT+5m3il2RoLUk
+         uWzaewZE4n0kk0xGpOWRhzgbRf60r6w+giokfeQeAqnLaoJYZY0yTQdp9hSUH5uQvD8R
+         wCYG/xGUjOA3KPb4wbWnEUj5HTbvlnzOso+Lbz0Tev6FelQjU1aZV0A9EhJnpCXemSAV
+         +0ys0+2fenUeDhktmKHH59OZZ5L+fevmMlbnzwEmwsjcD/rNSTbGr/Ak/9ONAoO1BCbP
+         ZSnHDcqu2Lj0/RoUnT8bAb+rVmPMLdCSQf6YZhr9XsNrBUAs3X3VBJesRyE3eFdenSyH
+         F48A==
+X-Gm-Message-State: APjAAAUuxWQnZoTbGbi195E9lV4moiTtzSl9YEZMjgsrJi9/bIsZ6eDe
+        qhOwpAAtZunvVIFtv5NqxjU=
+X-Google-Smtp-Source: APXvYqy8D1Ip80IsabWyLUnIo2JOJ5Xg28dG3ICjm1MLwvisIb0LgBo+OfgL8zsWMq2eY1CiqGdeZA==
+X-Received: by 2002:a2e:3a13:: with SMTP id h19mr17101772lja.16.1579624679207;
+        Tue, 21 Jan 2020 08:37:59 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id f8sm1984854lfc.22.2020.01.21.08.37.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 08:37:58 -0800 (PST)
+Subject: Re: [PATCH] serial: 8250_tegra: Create Tegra specific 8250 driver
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Jeff Brasen <jbrasen@nvidia.com>
+References: <20200120160149.29072-1-jonathanh@nvidia.com>
+ <f02faa4c-5838-15d2-1b76-75c17fcc0d9d@gmail.com>
+Message-ID: <788ba1e1-0b00-ee89-dd65-56aba7cb3f19@gmail.com>
+Date:   Tue, 21 Jan 2020 19:37:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <f02faa4c-5838-15d2-1b76-75c17fcc0d9d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Waiman Long <longman@redhat.com> writes:
+21.01.2020 19:31, Dmitry Osipenko пишет:
+> Hello Jon,
+> 
+> 20.01.2020 19:01, Jon Hunter пишет:
+> 
+> [snip]
+> 
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	if (!res)
+>> +		return -ENODEV;
+>> +
+>> +	port->membase = devm_ioremap(&pdev->dev, res->start,
+>> +				     resource_size(res));
+> 
+> devm_platform_ioremap_resource()
+> 
+>> +	if (!port->membase)
+>> +		return -ENOMEM;
+>> +
+>> +	port->mapbase = res->start;
+>> +	port->mapsize = resource_size(res);
+>> +
+>> +	uart->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
+> 
+> Why reset is shared? It shall not be shared at least on T20/30/124/210..
+> 
+> [snip]
+> 
 
-> On 1/21/20 11:02 AM, Vitaly Kuznetsov wrote:
->> When STIBP/IBPB features are not supported (no microcode update,
->> AWS/Azure/... instances deliberately hiding SPEC_CTRL for performance
->> reasons,...) /sys/devices/system/cpu/vulnerabilities/spectre_v2 looks like
->>
->>   Mitigation: Full generic retpoline, STIBP: disabled, RSB filling
->>
->> and this looks imperfect. In particular, STIBP is 'disabled' and 'IBPB'
->> is not mentioned while both features are just not supported. Also, for
->> STIBP the 'disabled' state (SPECTRE_V2_USER_NONE) can represent both
->> the absence of hardware support and deliberate user's choice
->> (spectre_v2_user=off)
->>
->> Make the following adjustments:
->> - Output 'unsupported' for both STIBP/IBPB when there's no support in
->>   hardware.
->> - Output 'unneeded' for STIBP when SMT is disabled/missing (and this
->>   switch_to_cond_stibp is off).
->
-> I support outputting "unsupported" when the microcode doesn't support
-> it. However, I am not sure if "unneeded" is really necessary or not.
-> STIBP is not needed when SMT is disabled or when Enhanced IBRS is
-> available and used. Your patch handles the first case, but not the
-> second. I think it may be easier to just leave it out in case it is not
-> needed.
-
-Makes sense. Or, alternatively, we can output 'unneeded' in both cases
-to make things explicit and  to distinguish it from the current state of
-IBPB where missing means 'unsupported by hardware'.
-
--- 
-Vitaly
-
+Actually, looks like use of a shared reset for a not-really-shared reset
+should be fine.
