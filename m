@@ -2,125 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC60143907
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5E214390A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbgAUJF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:05:59 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36816 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbgAUJF6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:05:58 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200121090556euoutp0193d6cf1f06509726e0d5db30a4cb6b92~r25vl5lyz2027620276euoutp01M
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 09:05:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200121090556euoutp0193d6cf1f06509726e0d5db30a4cb6b92~r25vl5lyz2027620276euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579597556;
-        bh=9xHQc8okiqybV1YN6dc4s7Wz7hhBmQY7/b9uNlqCsR0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=vNzzFajpHZ5qjD4s60UVmW0ZqSiYDw/NKgicN2G96qCsenKHD9rn9Q1DQNf0oYv0Z
-         R/NtISWOncLa0Av84S2zC14KFl7pha7Hm3FVaoN8wDg8nnWwjQfdjslW5EHCwTgcmF
-         EdtfGHg0RMoko2I2Zi/6o8IHQs8c9tKmkba6jiLI=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200121090556eucas1p271ac049b78f8edb2d02c50d97f1e75cb~r25vJEoCW2931029310eucas1p23;
-        Tue, 21 Jan 2020 09:05:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 38.34.60698.4FEB62E5; Tue, 21
-        Jan 2020 09:05:56 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200121090556eucas1p23b76b9fbcc3d1795b07289b874411564~r25u2TK0e2932029320eucas1p2X;
-        Tue, 21 Jan 2020 09:05:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200121090556eusmtrp19308df1748af91a600c0a6973b9311b8~r25u1ZEVX2107521075eusmtrp1f;
-        Tue, 21 Jan 2020 09:05:56 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-17-5e26bef46499
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.A5.08375.4FEB62E5; Tue, 21
-        Jan 2020 09:05:56 +0000 (GMT)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200121090555eusmtip14f01174020b8a5776563945a29e58c1b~r25t-MZ691588815888eusmtip1V;
-        Tue, 21 Jan 2020 09:05:55 +0000 (GMT)
-Subject: Re: [PATCH v4 3/3] dt-bindings: drm: bridge: adv7511: Add ADV7535
- support
-To:     Bogdan Togorean <bogdan.togorean@analog.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
-        mark.rutland@arm.com, narmstrong@baylibre.com,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@siol.net, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, sam@ravnborg.org, alexander.deucher@amd.com,
-        matt.redfearn@thinci.com, robdclark@chromium.org,
-        wsa+renesas@sang-engineering.com, linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <5e6fbff8-435a-33b8-241d-5ade2d635a16@samsung.com>
-Date:   Tue, 21 Jan 2020 10:05:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.2.2
+        id S1729247AbgAUJGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:06:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727220AbgAUJGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:06:14 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78A8A217F4;
+        Tue, 21 Jan 2020 09:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579597573;
+        bh=IP8TTw8eR6SNbEms/U3ClJl6G3JlSnBntMjeiJR+aLw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ulkwydaYKwH9sf+SVZaVUZfxrIobH2lusklXVx+kmgK+Kzk5JDwSZMEaSUrba1W69
+         63heEO5/XmOh2pRT6cDt7Mm/Io6roY0YChYpLaWIhPlgbRMXjNjyvIN1OC1MBYb8su
+         IXsv/WISN1AU7847ysZLyc/zGZD20HXf0JuMnuXo=
+Date:   Tue, 21 Jan 2020 10:06:11 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 4/9] arm64: dts: allwinner: pinebook: Sort device tree
+ nodes
+Message-ID: <20200121090611.nnhfpudc2qlws6mi@gilmour.lan>
+References: <20200119163104.13274-1-samuel@sholland.org>
+ <20200119163104.13274-4-samuel@sholland.org>
 MIME-Version: 1.0
-In-Reply-To: <20200121082719.27972-4-bogdan.togorean@analog.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se2xLbxjHvec9PT1dfl3edaRPViEac0tcK7z5+YVNJDshEgkJIS4HJyPW
-        kh5z+0fpxozNGJttWLHFwphsOlZWMpdZ0G6srosaNTZsxLZf6jZtD7H/Pu/3eb7P832Sl8e6
-        w1wcv9ayUbJaxBQjF8VW3w56xna7Ryyb0FUcR7M8DQzNa7miojvTD2HaV30A0+aeLo7aT1Vw
-        1Pd/O6YNH3ws3XOgRE0fuo5ytPRxE0NdfgdD67KX0EfB15im195U07KgE9GqysOYZnuSEnRC
-        +oMfnNDhSxTKj5cjoetJuloosjWxQm2vgxWKMgpUQuWZPZxwJ+cBI3R6PGrhUu9LlXDtWLla
-        8O+tZ4SSPB8ntJ2oYIXrWbnsPN3iqP9WSylrN0nW8dNXRK356bZzGzqZLY+/u1U2dJHJRBoe
-        yGSo+rRfFWYdKUNwzjZK4W4EpX1JmSgqxF8QXN3r5P4Y0vx2rBROI/B6rzHK4yMCd04nG+6K
-        JQvgXcUrdZgHkvnQ8zmXDTdhko2h+9wOHC5wZDT8qHoaGsvzWjIdgm8NYZkl8fDQ0RfxDiKL
-        IND8OhJPS2KgoSAQma8hCVAdaIvomAwFu7MIK6yHZ4HiSCAgjTw0ek9hJfYscKV9UykcCx31
-        F9UKD4a7uftYhbeDvywNK+YMBM4LNb/N06DF8zUSFIdCV7jGK3Ii3Oj4EJGBRMOTjzFKhmg4
-        WJ2PFVkLGbt0Svcw8N93/h6oh9LGHi4HGQv7XVbY75rCftcU/t3rQOwZpJdSZXOyJJss0uZx
-        smiWUy3J41atN1ei0Ge9+7O+5zJyf19ZhwiPjP9oE/Lil+lU4iZ5q7kOAY+NA7WOnSFJu1rc
-        uk2yrl9uTU2R5Dpk4FmjXms62b5UR5LFjdI6SdogWf9UGV4TZ0M1vvISMxN4H5y0ON8wI9Gb
-        ubtrYeuzT1PPTku6WRYT+6K1JfWkTHfHXDdNej9gdmb+nPZ/54qGrHsLN7fWu2py2s5/Oyre
-        Gtk75IjhTW2B/uqVIJkyeeYx9dR2m8YCpm3Jp/Psw19pvLG2e3M7UoY9iibeNFvz9vgm04TO
-        HQ3m5yuMrLxGnDgGW2XxF+UPaI6oAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfSzUcRzH+/6e7qe59nPId6rVblNT67hDvlqJrda39U+rVo3ExW9Yzul+
-        p6e1si4rjNGDcsK1sJhljihGdQm3coUUPYzqSJTWk1x56Dht/nvt/fm83ttn+7CkpIz2ZOMT
-        tbwmUZkgZRZSj6da36792bTygK/tO4kyLWYC5b5poNGZ1Eskmq7NIdHzX18ZpLtRyaDu359I
-        ZP7cTaG0nGIR6qq/xqCSlx0Equ8zEMiUFY5e2D6QKLWxWYRu2m4DVG28TKIsy9YQCU7tnGTw
-        cHcoriisAPhrT6oI56d0ULhxzEDh/PN5NDaWpzG4LbuTwKMWiwjXjfXT+F5BhQj3ZbQSuDi3
-        m8GD1yspfD/zIrVDEibboFEna/kVcWpBu1EaLkcKmTwIyRT+QTK5X2DEekWA1Cd4QwyfEH+E
-        1/gER8nippp0TNIocezlRBOdAmqIdODEQs4fnu3TkelgISvhSgAcLrhKOgYesKHoyxy7wokX
-        6YxjaQTAdt2TWduV2w2HKt+LZtiN2wW/TfbMMsllkbD9j5dDMAOov/x5VmA4bzhZ3WtvYlkx
-        FwxtH5fMxBTnBbsM07OuO7cPfvnbS8+wmHOB5jwrNcNOXAistQ7Sjv5VcKKwk3Twcqi7nT/H
-        HvCVtYjIBhL9PF0/T9HPU/TzFAOgyoEbnyyoYlWCXCYoVUJyYqwsWq0yAvub1LbYqu+Azqpd
-        JsCxQOosDsn1OiChlUeE4yoTgCwpdRMbztgjcYzy+Aleo47UJCfwggkE2I/LIT3do9X2p0vU
-        RsoD5IEoSB7oF+i3Dkk9xOe5B/slXKxSyx/i+SRe898jWCfPFKDW7qQLD/aPb7ulWhNO6BaE
-        FA5IMt41+U4f7bU+jDNs3CNu2AtGlh6O2G5UN1wJvXHh1FiVwjIqaiGVbXm4P/TupvG6Z86v
-        x7NLs3IVh4011ke1mwkXz9LKgR/+6xalNDee5hed7Bo0WqKmWMu5pwFlzmFbtnQ4L/5o/mQa
-        8u5YJqWEOKV8NakRlP8A863J2TwDAAA=
-X-CMS-MailID: 20200121090556eucas1p23b76b9fbcc3d1795b07289b874411564
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200121084137eucas1p1832626abf31456285276d322495ba6ed
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200121084137eucas1p1832626abf31456285276d322495ba6ed
-References: <20200121082719.27972-1-bogdan.togorean@analog.com>
-        <CGME20200121084137eucas1p1832626abf31456285276d322495ba6ed@eucas1p1.samsung.com>
-        <20200121082719.27972-4-bogdan.togorean@analog.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kyhjvp2xlumhq76a"
+Content-Disposition: inline
+In-Reply-To: <20200119163104.13274-4-samuel@sholland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.01.2020 09:27, Bogdan Togorean wrote:
-> ADV7535 is a part compatible with ADV7533 but it supports 1080p@60hz and
-> v1p2 supply is fixed to 1.8V
+
+--kyhjvp2xlumhq76a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, Jan 19, 2020 at 10:30:59AM -0600, Samuel Holland wrote:
+> The r_i2c node should come before r_rsb, and in any case should not
+> separate the axp803 node from its subnodes.
 >
-> Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
- --
-Regards
-Andrzej
+Applied, thanks!
+Maxime
 
+--kyhjvp2xlumhq76a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXia/AwAKCRDj7w1vZxhR
+xeUkAPsHyBiBu4ddK9CKV4lDlwvilSLPKPU3fxtE40NQ0dpbtQEAj3n7bHXSXtlf
+0dJ+UHMRUsdK2cvMIHQjLcGzUq0ZogM=
+=9Udq
+-----END PGP SIGNATURE-----
+
+--kyhjvp2xlumhq76a--
