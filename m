@@ -2,216 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A42144096
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B2114409B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgAUPgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 10:36:36 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:39515 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgAUPgg (ORCPT
+        id S1729190AbgAUPhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 10:37:02 -0500
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:43259 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727817AbgAUPhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 10:36:36 -0500
-Received: by mail-vs1-f67.google.com with SMTP id y125so2069612vsb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:36:35 -0800 (PST)
+        Tue, 21 Jan 2020 10:37:01 -0500
+Received: by mail-oi1-f178.google.com with SMTP id p125so2901527oif.10
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:37:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dm+EjHz5gQfDlcnO77UBCrI8pK69LI0tzp8XG7vuR8g=;
-        b=XTurd9BDKUcxvJf5RTHXzaacovXIdpecVJyxkSGn5gl0WCmmK+A8Uo8XnuDPixXMSA
-         mPtUlq24BCUcrXMbNRGqzep7r7P+Z5MBYlQm4pv75lqxKj1yMJ9aEklBU1gZ8gWzsOgQ
-         3JhQlYX06TTXxbLEuZ5Pu6mSeG5dMFhN/KCZmbFA8Pn4Vzo3RCxrs1DZicvoBD+h6TEl
-         /knYh7zfD2EhP5GGicT31COccv70zrvdtI3G3wrFds5+5jysF0UAYOqj2UPL4WPxbk1y
-         dgc11E6YLooYX4EDXDG/4IRp/IN7O7ApZ9sl0aCiPYy9uduDyd051xSWKbPsQAsT4wYX
-         sGsg==
+         :cc;
+        bh=RmViYAa1rRPt72/wIccYehar/+HNwKCjcTf+igUl6VA=;
+        b=fh+L/HgWv3D9ttnggU6JGqSQStDK5h3ktOJkYmdzLKBOJ9Iqsa+rnenXs+L7x9noRb
+         yMJZgzsETDV0BK+WrUpmkr8t8pLkm/0XpC4tPvC88sMPcN30eVKswEi9iIY8M1OOedSx
+         r6Ux/4FHN44flxoqAmMDp+172AbujOl8cYd9hXmQDpvmNOaAG/HZVSAyAd+QWunblMIE
+         dCyDRMzerFinT5IJe3xbo/pr58qOHuZ9TTe8P6Vkm2Asvz/aqqFLTZ+3x1L8hvwq0LDJ
+         AYndPKkW/Y/T9tjiN2/8CTbyHu/VMWEGbj70+my8Y//1mLgdiH+BNz6c631UisVP+T1A
+         gaTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dm+EjHz5gQfDlcnO77UBCrI8pK69LI0tzp8XG7vuR8g=;
-        b=WLSdMck8w3SXpKCXVX7MAt0d2lzZgJG3qwr/fO9KHRtzHo4Jc5lBl4j7wbOd7t6nrk
-         z5Sihy2cOr7txDjuo4AToY90jaiOTrs6VGVZUcic8Xk87aI3UP3xuRzvPDHMQQcaz3zs
-         ssZK9JAg6akxkT99kx0NoKIM+tM62WIg+3q7IMcN+XefaT1BzyPrBr9iQzynt87wiqP3
-         P7e3+3umfv3n80Qcvrxu8edDWLPl0lfHXTkLkY2Cv5vJ2tRxJdmX8vibHNX/b7uTp/m0
-         INWi0f4pQltfq9ZfAqXTEOcqWSRFrAWYPpiT1xSDcdg4D7FnjEPvq4O6tM4o12vWtigx
-         2IuQ==
-X-Gm-Message-State: APjAAAWdL6EDG5eKLAUGIMDevZjZEYo0vl7oIIC0txqFGF2DlB2VT1Z7
-        qHTBl5mU1WX+lALiOBHf8+7MIG8xmABcHBcwa4zzWA==
-X-Google-Smtp-Source: APXvYqwF8nUGTk7YJ+jaigtyMHUWqUxdALfwxj5j8yfBoyOkJDM4SY1d1rvPYsE6N4XSpsYZEWaE3AGqAEC3lWTkNcc=
-X-Received: by 2002:a67:cc3:: with SMTP id 186mr3175706vsm.200.1579620994915;
- Tue, 21 Jan 2020 07:36:34 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=RmViYAa1rRPt72/wIccYehar/+HNwKCjcTf+igUl6VA=;
+        b=lk5apzTLjPXG5zbg7wKdUrTmV2gph/Wvq1RTL+ci6HrPVMRh75csfFAAUpzxPyBmD+
+         mZpJqnXNbrcal1SS/t82jiBgaMhqyPQQsP99yQHa4rQr94V+oc8RTl9NF8UqYaj4L4Jy
+         DzONMlPa6Esg6wz1HvnOMWyN/XZCA3QiOmoQqA11QuzGy2khjV3p3RZFdrRbDispeSLU
+         p6fCmHuuK055cM1lGn5nMP289flTgAtyx/fdN9z2MQAdgZ5HHTj6ZpsFX0mhyATlBXas
+         uUV2HT5XC6+hxvCyBatdV+izJPiawuRLp3LPr8vU5XwWa78Hc5HI20uC8/j/5Svtmt5A
+         PpdA==
+X-Gm-Message-State: APjAAAVnzvcHBo1rirjdEIq/oY8b73YDbviEQaBRRNXJO6PJV41Zz/XY
+        Vi2WSefHTjDYv4YJWQJDKUZ1B0tHdlAhSD4TPg5YXQ==
+X-Google-Smtp-Source: APXvYqxDYp2UrR+9SpJuK4r2uuLGqMJPe2AdBEeH8RoVdrYxxO67IpVFxAeZLnpSAHJhlfxNbzI2+d8IgMfl6/Rwz1Q=
+X-Received: by 2002:a05:6808:8d5:: with SMTP id k21mr3542611oij.121.1579621020494;
+ Tue, 21 Jan 2020 07:37:00 -0800 (PST)
 MIME-Version: 1.0
-References: <fb942066b18940c863573ccb3fc09031d7f920d3.1576346084.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <fb942066b18940c863573ccb3fc09031d7f920d3.1576346084.git.mirq-linux@rere.qmqm.pl>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 21 Jan 2020 16:35:58 +0100
-Message-ID: <CAPDyKFqnj5=2jbZD+9V=NXt0JG4QxotzN=fUTBaiuk5c1eB-HA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: avoid blocking CPU for long BKOPS
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200121151503.2934-1-cai@lca.pw> <CANpmjNPR+mbadR0DDKGUhTkaXJi=vsHmhvq3+Rz0Hrx=E9V_Qg@mail.gmail.com>
+ <20200121152853.GI7808@zn.tnic> <44A4276D-5530-4DAA-8FC7-753D03ADD2F3@lca.pw>
+In-Reply-To: <44A4276D-5530-4DAA-8FC7-753D03ADD2F3@lca.pw>
+From:   Marco Elver <elver@google.com>
+Date:   Tue, 21 Jan 2020 16:36:49 +0100
+Message-ID: <CANpmjNO7mTEMc6pvpVVXdu2r6cMg_N8QkRffEHHG-WNFXE4CjA@mail.gmail.com>
+Subject: Re: [PATCH -next] x86/mm/pat: silence a data race in cpa_4k_install
+To:     Qian Cai <cai@lca.pw>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 14 Dec 2019 at 18:59, Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qm=
-qm.pl> wrote:
+On Tue, 21 Jan 2020 at 16:33, Qian Cai <cai@lca.pw> wrote:
 >
-> Since the timeout for a command might be 10 minutes (fallback), don't
-> eat all CPU power spinning for completion (triggering lockup detector).
-> Implement delay with exponential backoff and a one second limit.
 >
-> [158480.011769] watchdog: BUG: soft lockup - CPU#3 stuck for 23s! [fsck.f=
-2fs:962]
-> [158480.014911] Modules linked in: brcmfmac brcmutil cfg80211 mmc_block s=
-dhci_tegra cqhci sdhci_pltfm sdhci pwrseq_simple pwrseq_emmc mmc_core
-> [158480.018291] CPU: 3 PID: 962 Comm: fsck.f2fs Not tainted 5.5.0-rc1-nex=
-t-20191209mq-00173-g716e74177313-dirty #95
-> [158480.021479] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [158480.024934] PC is at sdhci_card_busy+0x28/0x44 [sdhci]
-> [158480.028858] LR is at __mmc_switch+0x180/0x330 [mmc_core]
-> [158480.032449] pc : [<af03b118>]    lr : [<af009fcc>]    psr: 60000013
-> [158480.036004] sp : e79c9b38  ip : ee01dfd0  fp : 00f23d31
-> [158480.039339] r10: 00000000  r9 : 0000e020  r8 : b0c04900
-> [158480.042939] r7 : e763e000  r6 : 00000000  r5 : ee189000  r4 : ee18900=
-0
-> [158480.044909] r3 : f002b600  r2 : af03b0f0  r1 : ee01db00  r0 : 1fe7000=
-0
-> [158480.046857] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segm=
-ent user
-> [158480.048870] Control: 10c5387d  Table: b76ac04a  DAC: 00000055
-> [158480.050807] CPU: 3 PID: 962 Comm: fsck.f2fs Not tainted 5.5.0-rc1-nex=
-t-20191209mq-00173-g716e74177313-dirty #95
-> [158480.052913] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [...]
-> [158480.098604] [<b0101ab8>] (__irq_svc) from [<af03b118>] (sdhci_card_bu=
-sy+0x28/0x44 [sdhci])
-> [158480.101406] [<af03b118>] (sdhci_card_busy [sdhci]) from [<af009fcc>] =
-(__mmc_switch+0x180/0x330 [mmc_core])
-> [158480.104348] [<af009fcc>] (__mmc_switch [mmc_core]) from [<af00a3bc>] =
-(mmc_run_bkops+0xdc/0x114 [mmc_core])
-> [158480.107209] [<af00a3bc>] (mmc_run_bkops [mmc_core]) from [<af067d88>]=
- (mmc_blk_mq_complete_prev_req.part.4+0x8c/0x21c [mmc_block])
-> [158480.110043] [<af067d88>] (mmc_blk_mq_complete_prev_req.part.4 [mmc_bl=
-ock]) from [<af067f94>] (mmc_blk_rw_wait+0x7c/0x11c [mmc_block])
-> [158480.112914] [<af067f94>] (mmc_blk_rw_wait [mmc_block]) from [<af068c3=
-4>] (mmc_blk_mq_issue_rq+0x318/0x898 [mmc_block])
-> [158480.115733] [<af068c34>] (mmc_blk_mq_issue_rq [mmc_block]) from [<af0=
-69608>] (mmc_mq_queue_rq+0x124/0x244 [mmc_block])
-> [158480.118466] [<af069608>] (mmc_mq_queue_rq [mmc_block]) from [<b04560b=
-0>] (__blk_mq_try_issue_directly+0x118/0x1a0)
-> [158480.121200] [<b04560b0>] (__blk_mq_try_issue_directly) from [<b04571c=
-0>] (blk_mq_request_issue_directly+0x40/0x5c)
-> [158480.123980] [<b04571c0>] (blk_mq_request_issue_directly) from [<b0457=
-228>] (blk_mq_try_issue_list_directly+0x4c/0xc0)
-> [158480.126780] [<b0457228>] (blk_mq_try_issue_list_directly) from [<b045=
-bc70>] (blk_mq_sched_insert_requests+0x1b0/0x234)
-> [158480.129601] [<b045bc70>] (blk_mq_sched_insert_requests) from [<b04570=
-a8>] (blk_mq_flush_plug_list+0x318/0x3f0)
-> [158480.132446] [<b04570a8>] (blk_mq_flush_plug_list) from [<b044bcb0>] (=
-blk_flush_plug_list+0xc0/0xc8)
-> [158480.135292] [<b044bcb0>] (blk_flush_plug_list) from [<b044bcec>] (blk=
-_finish_plug+0x34/0x4c)
-> [158480.138113] [<b044bcec>] (blk_finish_plug) from [<b024104c>] (read_pa=
-ges+0x60/0x150)
-> [158480.140988] [<b024104c>] (read_pages) from [<b0241338>] (__do_page_ca=
-che_readahead+0x1fc/0x20c)
-> [158480.143893] [<b0241338>] (__do_page_cache_readahead) from [<b02361f8>=
-] (generic_file_read_iter+0x9ac/0xd28)
-> [158480.146818] [<b02361f8>] (generic_file_read_iter) from [<b02b6920>] (=
-__vfs_read+0x128/0x1a8)
-> [158480.149695] [<b02b6920>] (__vfs_read) from [<b02b6a34>] (vfs_read+0x9=
-4/0x11c)
-> [158480.152638] [<b02b6a34>] (vfs_read) from [<b02b6d34>] (ksys_read+0x50=
-/0xbc)
-> [158480.155601] [<b02b6d34>] (ksys_read) from [<b0101000>] (ret_fast_sysc=
-all+0x0/0x50)
-> [158480.158490] Exception stack(0xe79c9fa8 to 0xe79c9ff0)
-> [158480.161430] 9fa0:                   00000003 01bec3b8 00000003 01bec3=
-b8 00001000 00000000
-> [158480.164422] 9fc0: 00000003 01bec3b8 00000000 00000003 01bec3b8 01bdf1=
-78 a6fc3f70 00000000
-> [158480.167385] 9fe0: a6f95074 aecadaf8 a6f82c58 a6ef2284
-
-Thanks for looking into this, it's been on my TODO list for quite a while.
-
-Just so I understand correctly, the "soft lock up", gets released when
-mmc_run_bkops() completes after 23s? Or are you triggering this via
-some other "manual hacks"?
-
 >
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> ---
->  drivers/mmc/core/mmc_ops.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> > On Jan 21, 2020, at 10:28 AM, Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Tue, Jan 21, 2020 at 04:19:22PM +0100, Marco Elver wrote:
+> >> Could you remove the verbatim copy of my email? Maybe something like:
+> >>
+> >> "Increments to cpa_4k_install may happen concurrently, as detected by KCSAN:
+> >>
+> >> <....... the stack traces ......>
+> >
+> > ... and drop the stack traces and fix your subject to say what you're
+> > actually "fixing".
 >
-> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-> index 09113b9ad679..e3005e5b9509 100644
-> --- a/drivers/mmc/core/mmc_ops.c
-> +++ b/drivers/mmc/core/mmc_ops.c
-> @@ -20,6 +20,7 @@
->  #include "mmc_ops.h"
+> Does this title work for you?
 >
->  #define MMC_OPS_TIMEOUT_MS     (10 * 60 * 1000) /* 10 minute timeout */
-> +#define MMC_MAX_POLL_MS                (1000) /* 1 second */
->
->  static const u8 tuning_blk_pattern_4bit[] =3D {
->         0xff, 0x0f, 0xff, 0x00, 0xff, 0xcc, 0xc3, 0xcc,
-> @@ -454,6 +455,7 @@ static int mmc_poll_for_busy(struct mmc_card *card, u=
-nsigned int timeout_ms,
->         struct mmc_host *host =3D card->host;
->         int err;
->         unsigned long timeout;
-> +       unsigned int wait_ms;
->         u32 status =3D 0;
->         bool expired =3D false;
->         bool busy =3D false;
-> @@ -473,6 +475,7 @@ static int mmc_poll_for_busy(struct mmc_card *card, u=
-nsigned int timeout_ms,
->         }
->
->         timeout =3D jiffies + msecs_to_jiffies(timeout_ms) + 1;
-> +       wait_ms =3D 1;
->         do {
->                 /*
->                  * Due to the possibility of being preempted while pollin=
-g,
-> @@ -482,6 +485,11 @@ static int mmc_poll_for_busy(struct mmc_card *card, =
-unsigned int timeout_ms,
->
->                 if (host->ops->card_busy) {
->                         busy =3D host->ops->card_busy(host);
-> +                       if (busy && !expired) {
-> +                               mmc_delay(wait_ms);
-> +                               if (wait_ms < MMC_MAX_POLL_MS)
-> +                                       wait_ms *=3D 2;
+> x86/mm/pat: silence an data race for KCSAN
 
-I am not sure a pure exponential method is the best solution, but
-let's discuss this.
+Isn't the intent "x86/mm/pat: Mark intentional data race" ?  The fact
+that KCSAN no longer shows the warning is a side-effect.  At least
+that's how I see it.
 
-For example, let's assume timeout_ms is 250ms. The actual time it
-takes for the card to stop signalling busy (in the ideal case), is
-50ms.
-
-How far off would we then be from 50ms by using the above solution?
-
-Another example is when timeout_ms is set to 60s, but we should hit as
-close as possible to 5s. How far off would the solution above be from
-that?
-
-
-> +                       }
->                 } else {
->                         err =3D mmc_send_status(card, &status);
->                         if (retry_crc_err && err =3D=3D -EILSEQ) {
-> --
-> 2.20.1
->
-
-Kind regards
-Uffe
+Thanks,
+-- Marco
