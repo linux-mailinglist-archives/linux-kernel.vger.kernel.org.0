@@ -2,178 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FB81436CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 06:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F315F1436D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 06:55:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbgAUFra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 00:47:30 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53497 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727829AbgAUFr3 (ORCPT
+        id S1728927AbgAUFym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 00:54:42 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:51896 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728847AbgAUFyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 00:47:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579585648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mRIHR//6+tMI2y6i3aA+ZdSwTH32dw9nU4PtvoJMAts=;
-        b=hpSMJeHpJplNoQRwgJF9wxj1ZInOwkWrf8Dyv0pFeM96h5QIJNtRblrUCPHlObwxoivQ1L
-        opqaUJ2FtidtyNnzs4GtFqhgR93bku3ZH5AgXOoPqa6dnoeamyZ6JxPBGVSbBpdV2435F4
-        5iCFFm7AdhHLThoeEpcS2LvMSkxqR2I=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-c8_gJOG6OyG9tAhk-LwQww-1; Tue, 21 Jan 2020 00:47:26 -0500
-X-MC-Unique: c8_gJOG6OyG9tAhk-LwQww-1
-Received: by mail-qv1-f70.google.com with SMTP id g15so916719qvq.20
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 21:47:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mRIHR//6+tMI2y6i3aA+ZdSwTH32dw9nU4PtvoJMAts=;
-        b=bJZIXzZVc8EJeoCG4J0/K7jo/nVNa5ChLLOxsHgGDJ4ie3jprc2BcoC2yugmNL41Mq
-         eNrdmo3r2mJudM6Ap0JT/ZLJDSfQuxWGlJujpA1zHID6MvsMRB+9JHKIonlfMGqbQ1oH
-         ArXzHoCv60NvLUpmnwgx5hbHIhyy3R6xgiTtWxLAeWO+Txi/nnARNW6TUf8aa3dvpurK
-         Rv3m7rrae9STvlx0yGCiKF8z4HoGCsLvKzcprdoCFHlxjwYMpCKIA1AZQlx7MVy9HkXa
-         2pvXzGz3A3riwTmLPKxzLJDJCYYIfx68ZaB19cIsThUX7X3B8MS/5PXqcy3eEaUgNmmP
-         0pww==
-X-Gm-Message-State: APjAAAVIDJP24xAZYCi4P7LNPU2ZL+IABaiX5RPuYzyGPhKgSxzLK9Cs
-        zguJ7R+24PXAgJb1g9k2g1Cl3s2+C4Dv5yXhUFGzv2WjFAaOQC2ZUJM4z10SNFYJeiSiSUvRNJG
-        LBXE4eiQMqAobrwUJIn86zR2x
-X-Received: by 2002:a37:a3c7:: with SMTP id m190mr3086746qke.212.1579585646172;
-        Mon, 20 Jan 2020 21:47:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwfdKT9tkT26VsOESb0T418l/eNKuGfLtPJgnWBbUAbKn1jVX+EvvcLfJEE9PfxETYES/rukQ==
-X-Received: by 2002:a37:a3c7:: with SMTP id m190mr3086726qke.212.1579585645935;
-        Mon, 20 Jan 2020 21:47:25 -0800 (PST)
-Received: from redhat.com (bzq-79-179-85-180.red.bezeqint.net. [79.179.85.180])
-        by smtp.gmail.com with ESMTPSA id x3sm18835929qts.35.2020.01.20.21.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 21:47:24 -0800 (PST)
-Date:   Tue, 21 Jan 2020 00:47:15 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Shahaf Shuler <shahafs@mellanox.com>,
-        Rob Miller <rob.miller@broadcom.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
-        "Liang, Cunming" <cunming.liang@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>,
-        "Wang, Xiao W" <xiao.w.wang@intel.com>,
-        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
-        "Zhu, Lingshan" <lingshan.zhu@intel.com>,
-        "eperezma@redhat.com" <eperezma@redhat.com>,
-        "lulu@redhat.com" <lulu@redhat.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Ariel Adam <aadam@redhat.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "hanand@xilinx.com" <hanand@xilinx.com>,
-        "mhabets@solarflare.com" <mhabets@solarflare.com>
-Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
-Message-ID: <20200121004047-mutt-send-email-mst@kernel.org>
-References: <20200116124231.20253-1-jasowang@redhat.com>
- <20200116124231.20253-4-jasowang@redhat.com>
- <20200117070324-mutt-send-email-mst@kernel.org>
- <239b042c-2d9e-0eec-a1ef-b03b7e2c5419@redhat.com>
- <CAJPjb1+fG9L3=iKbV4Vn13VwaeDZZdcfBPvarogF_Nzhk+FnKg@mail.gmail.com>
- <AM0PR0502MB379553984D0D55FDE25426F6C3330@AM0PR0502MB3795.eurprd05.prod.outlook.com>
- <d69918ca-8af4-44b2-9652-633530d4c113@redhat.com>
- <20200120174933.GB3891@mellanox.com>
- <2a324cec-2863-58f4-c58a-2414ee32c930@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Tue, 21 Jan 2020 00:54:39 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1itmQK-0006oP-A0; Mon, 20 Jan 2020 23:50:00 -0600
+Message-ID: <0948b2f469c5e9d9241477e7f0cba677bbcd1780.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     =?UTF-8?Q?=E7=8E=8B=E6=96=87=E8=99=8E?= <wenhu.wang@vivo.com>
+Cc:     wangwenhu <wenhu.pku@gmail.com>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        trivial@kernel.org, Rai Harninder <harninder.rai@nxp.com>
+Date:   Mon, 20 Jan 2020 23:49:59 -0600
+In-Reply-To: <AFAA8AA0CH7o6kMJF-XfXKq9.3.1579584019640.Hmail.wenhu.wang@vivo.com>
+References: <AFAA8AA0CH7o6kMJF-XfXKq9.3.1579584019640.Hmail.wenhu.wang@vivo.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a324cec-2863-58f4-c58a-2414ee32c930@redhat.com>
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: wenhu.wang@vivo.com, wenhu.pku@gmail.com, galak@kernel.crashing.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, trivial@kernel.org, harninder.rai@nxp.com
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH] powerpc/Kconfig: Make FSL_85XX_CACHE_SRAM configurable
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 12:00:57PM +0800, Jason Wang wrote:
-> 
-> On 2020/1/21 上午1:49, Jason Gunthorpe wrote:
-> > On Mon, Jan 20, 2020 at 04:43:53PM +0800, Jason Wang wrote:
-> > > This is similar to the design of platform IOMMU part of vhost-vdpa. We
-> > > decide to send diffs to platform IOMMU there. If it's ok to do that in
-> > > driver, we can replace set_map with incremental API like map()/unmap().
+On Tue, 2020-01-21 at 13:20 +0800, 王文虎 wrote:
+> From: Scott Wood <oss@buserror.net>
+> Date: 2020-01-21 11:25:25
+> To:  wangwenhu <wenhu.pku@gmail.com>,Kumar Gala <galak@kernel.crashing.org>,
+> Benjamin Herrenschmidt <benh@kernel.crashing.org>,Paul Mackerras <
+> paulus@samba.org>,Michael Ellerman <mpe@ellerman.id.au>,
+> linuxppc-dev@lists.ozlabs.org,linux-kernel@vger.kernel.org
+> Cc:  trivial@kernel.org,wenhu.wang@vivo.com,Rai Harninder <
+> harninder.rai@nxp.com>
+> Subject: Re: [PATCH] powerpc/Kconfig: Make FSL_85XX_CACHE_SRAM
+> configurable>On Mon, 2020-01-20 at 06:43 -0800, wangwenhu wrote:
+> > > From: wangwenhu <wenhu.wang@vivo.com>
 > > > 
-> > > Then driver need to maintain rbtree itself.
-> > I think we really need to see two modes, one where there is a fixed
-> > translation without dynamic vIOMMU driven changes and one that
-> > supports vIOMMU.
-> 
-> 
-> I think in this case, you meant the method proposed by Shahaf that sends
-> diffs of "fixed translation" to device?
-> 
-> It would be kind of tricky to deal with the following case for example:
-> 
-> old map [4G, 16G) new map [4G, 8G)
-> 
-> If we do
-> 
-> 1) flush [4G, 16G)
-> 2) add [4G, 8G)
-> 
-> There could be a window between 1) and 2).
-> 
-> It requires the IOMMU that can do
-> 
-> 1) remove [8G, 16G)
-> 2) flush [8G, 16G)
-> 3) change [4G, 8G)
-> 
-> ....
-
-Basically what I had in mind is something like qemu memory api
-
-0. begin
-1. remove [8G, 16G)
-2. add [4G, 8G)
-3. commit
-
-Anyway, I'm fine with a one-shot API for now, we can
-improve it later.
-
+> > > When generating .config file with menuconfig on Freescale BOOKE
+> > > SOC, FSL_85XX_CACHE_SRAM is not configurable for the lack of
+> > > description in the Kconfig field, which makes it impossible
+> > > to support L2Cache-Sram driver. Add a description to make it
+> > > configurable.
+> > > 
+> > > Signed-off-by: wangwenhu <wenhu.wang@vivo.com>
 > > 
-> > There are different optimization goals in the drivers for these two
-> > configurations.
+> > The intent was that drivers using the SRAM API would select the
+> > symbol.  What
+> > is the use case for selecting it manually?
 > > 
-> > > > If the first one, then I think memory hotplug is a heavy flow
-> > > > regardless. Do you think the extra cycles for the tree traverse
-> > > > will be visible in any way?
-> > > I think if the driver can pause the DMA during the time for setting up new
-> > > mapping, it should be fine.
-> > This is very tricky for any driver if the mapping change hits the
-> > virtio rings. :(
-> > 
-> > Even a IOMMU using driver is going to have problems with that..
-> > 
-> > Jason
 > 
-> 
-> Or I wonder whether ATS/PRI can help here. E.g during I/O page fault,
-> driver/device can wait for the new mapping to be set and then replay the
-> DMA.
-> 
-> Thanks
-> 
+> With a repository of multiple products(meaning different defconfigs) and
+> multiple
+> developers, the Kconfigs of the Kernel Source Tree change frequently. So the
+> "make menuconfig"
+> process is needed for defconfigs' re-generating or updating for the
+> complexity of dependencies
+> between different features defined in the Kconfigs.
 
+That doesn't answer my question of how the SRAM code would be useful other
+than to some other driver that uses the API (which would use "select").  There
+is no userspace API.  You could use the kernel command line to configure the
+SRAM but you need to get the address of it for it to be useful.
 
--- 
-MST
+> > Since this code was added almost ten years ago and there are still no (in-
+> > tree?) users of the API, we should just remove the sram code (unless this
+> > prods someone to submit such a user very soon).
+> > 
+> 
+> Yes, pretty long a time. But we DO really use the API now for
+> PPCE500/Freescale SoC.
+
+I do not see any users in the kernel tree.  Are you talking about out-of-tree
+code, or something that you've submitted or will submit soon?  Or are you
+accessing it via /dev/mem?
+
+> Like sometimes we need to reset the whole RAM, then the L2-Cache would be
+> used as
+> SRAM for backup using. Since it is useful for us now, a re-consideration is
+> recommanded.
+
+Where is the code that would do this?
+
+-Scott
+> 
 
