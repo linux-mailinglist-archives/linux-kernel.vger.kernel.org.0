@@ -2,79 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA081437A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 082A11437B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbgAUHcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:32:53 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41076 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgAUHcw (ORCPT
+        id S1728890AbgAUHe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:34:27 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:51053 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727453AbgAUHe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:32:52 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00L7Wncx036835;
-        Tue, 21 Jan 2020 01:32:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579591969;
-        bh=8qCt/ZQ3iz3tMMfpD2VbPrdk7zpQZjklAyzKBKWUJmE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FNH2XfbBRitmg0do+So31j13NDPdukVw+O0tgipIqClNiOte2OIXlvMz+fjInYLTH
-         rTuXktlSsRdEWUBsRHHk3gPjyPLke53PmAvZU3JeiYdBz9818DhAwuZ9y3s+MaldZH
-         oyaH1ip/v7xyJbC01lCuZnPwjVq3afFIAWu7YhNw=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00L7Wn2G001973;
-        Tue, 21 Jan 2020 01:32:49 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 21
- Jan 2020 01:32:48 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 21 Jan 2020 01:32:48 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00L7WjQj037082;
-        Tue, 21 Jan 2020 01:32:46 -0600
-Subject: Re: [Patch v4 01/10] clk: ti: dra7: add cam clkctrl data
-To:     Stephen Boyd <sboyd@kernel.org>, Benoit Parrot <bparrot@ti.com>,
-        Tony Lindgren <tony@atomide.com>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191211140558.10407-1-bparrot@ti.com>
- <20191211140558.10407-2-bparrot@ti.com>
- <20191230195823.D48E1206CB@mail.kernel.org>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <8fd606d3-0840-ae7c-247c-fce992500535@ti.com>
-Date:   Tue, 21 Jan 2020 09:32:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191230195823.D48E1206CB@mail.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 21 Jan 2020 02:34:26 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ToHCg0j_1579592053;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHCg0j_1579592053)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 21 Jan 2020 15:34:13 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs/raid56: remove unused actions
+Date:   Tue, 21 Jan 2020 15:34:10 +0800
+Message-Id: <1579592050-86280-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/12/2019 21:58, Stephen Boyd wrote:
-> Quoting Benoit Parrot (2019-12-11 06:05:49)
->> Add clkctrl data for CAM domain.
->>
->> Signed-off-by: Benoit Parrot <bparrot@ti.com>
->> Acked-by: Tony Lindgren <tony@atomide.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
+No one care p_stripe in its functions. Guess it's safe to remove.
 
-Queued this patch towards 5.6, thanks.
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Chris Mason <clm@fb.com> 
+Cc: Josef Bacik <josef@toxicpanda.com> 
+Cc: David Sterba <dsterba@suse.com> 
+Cc: linux-btrfs@vger.kernel.org 
+Cc: linux-kernel@vger.kernel.org 
+---
+ fs/btrfs/raid56.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index a8e53c8e7b01..fbee5681e690 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1196,7 +1196,6 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 	int nr_data = rbio->nr_data;
+ 	int stripe;
+ 	int pagenr;
+-	int p_stripe = -1;
+ 	int q_stripe = -1;
+ 	struct bio_list bio_list;
+ 	struct bio *bio;
+@@ -1204,14 +1203,10 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 
+ 	bio_list_init(&bio_list);
+ 
+-	if (rbio->real_stripes - rbio->nr_data == 1) {
+-		p_stripe = rbio->real_stripes - 1;
+-	} else if (rbio->real_stripes - rbio->nr_data == 2) {
+-		p_stripe = rbio->real_stripes - 2;
++	if (rbio->real_stripes - rbio->nr_data == 2)
+ 		q_stripe = rbio->real_stripes - 1;
+-	} else {
++	else
+ 		BUG();
+-	}
+ 
+ 	/* at this point we either have a full stripe,
+ 	 * or we've read the full stripe from the drive.
+-- 
+1.8.3.1
+
