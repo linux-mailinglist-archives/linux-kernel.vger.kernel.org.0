@@ -2,73 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E7F21443D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:01:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A45931443DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgAUSA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:00:57 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:39816 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbgAUSA4 (ORCPT
+        id S1729388AbgAUSCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 13:02:01 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34423 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbgAUSCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:00:56 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F394D20B4798;
-        Tue, 21 Jan 2020 10:00:55 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F394D20B4798
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1579629656;
-        bh=rEbmD/ZAcgYTqg5lv22gHg3BuIS3XcVwAuyZ8ZucRnY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ke+o3F8JNJKUXLW8G/r7NY15sJb0k8OJM9cH1u8tH7ydq01p/8XTMiTadGcYv3rUa
-         2tbdZzpRJxsThyHa+kheNH82qgi/wgWn1w7/aohJqryUVu5MVMUM9kjGPsgrFHMe7z
-         RQPun7nIlFwFKrJQhM6JNZT4TNq9OUZ0rfkEO2Vk=
-Subject: Re: [PATCH] IMA: Turn IMA_MEASURE_ASYMMETRIC_KEYS off by default
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org
-References: <20200121171302.4935-1-nramas@linux.microsoft.com>
- <1579628090.3390.28.camel@HansenPartnership.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <47a0ef08-3142-3e7c-a136-784767ba8370@linux.microsoft.com>
-Date:   Tue, 21 Jan 2020 10:00:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 21 Jan 2020 13:02:00 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l136so3452526oig.1;
+        Tue, 21 Jan 2020 10:02:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6/QK3q9NCXm+bnCLIspTgs5FXLWf1OX2s+9532Imp1Q=;
+        b=lNEhaJ0iu0GREHNynfcbm6/n1jXIdrdYOXjKlG9A7bWAf31fpW4r8Zu2q/lFgoRDG3
+         IeBGz68x5tlbfXsZWO7jb7BOZTiwlpkCIqz9ixX6B8vJeAwjDz7Ff/5UBeYw7UtVBodw
+         a0mrp1YD4B++wbWF4CQLrgTUHyO6o38aVjesZLzwBLr9eVB/dNdYaht1Kb12CGTJhLqm
+         u67cRGAbLGxzgAzs/bTTFUXd0f4I7ynDG/pxD6//rp7bBg3LwRIf2asObf4BnxCz7SjD
+         Et+amYMZGUDhARIO04zUsazAQ6ly61s7odLSJTLAS80Vwn9lMYyv/XWfE/+BFLspYJij
+         5AmQ==
+X-Gm-Message-State: APjAAAW7xRFEQv7tiS4GooPu+lRhaPio+y6RI9nwNsDiWFYnn3kXeVHr
+        28LIKbVRZ2C2SMJhkCIs0w==
+X-Google-Smtp-Source: APXvYqxDXrKf5Kwy/DOlvRO4xmWfgKDz7oKWNV+bJKDYSK9C+HDRXw27pcPVs5UUIatIALYzQ2/QyQ==
+X-Received: by 2002:aca:3cd7:: with SMTP id j206mr2460188oia.142.1579629719880;
+        Tue, 21 Jan 2020 10:01:59 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y13sm13663899otk.40.2020.01.21.10.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 10:01:59 -0800 (PST)
+Received: (nullmailer pid 3058 invoked by uid 1000);
+        Tue, 21 Jan 2020 18:01:58 -0000
+Date:   Tue, 21 Jan 2020 12:01:58 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Konrad Kociolek <konrad@cadence.com>
+Cc:     Konrad Kociolek <konrad@cadence.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] spi: Add dt-bindings schema for Cadence XSPI
+ controller driver
+Message-ID: <20200121180158.GA2461@bogus>
+References: <20200120125443.9523-1-konrad@cadence.com>
 MIME-Version: 1.0
-In-Reply-To: <1579628090.3390.28.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120125443.9523-1-konrad@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/20 9:34 AM, James Bottomley wrote:
-
-> What exactly do you expect distributions to do with this?  I can tell
-> you that most of them will take the default option, so this gets set to
-> N and you may as well not have got the patches upstream because you
-> won't be able to use them in any distro with this setting.
-
-I agree - distros that are not sure or don't care about key measurement 
-are anyway not going to choose this option. Only those that really care 
-will opt in.
-
-My goal is to not burden the vast majority of the users with this 
-additional overhead if they don't need it - particularly, small systems 
-such as embedded devices, etc.
-
+On Mon, 20 Jan 2020 13:54:31 +0100, Konrad Kociolek wrote:
+> Add dt-bindings documentation for Cadence XSPI controller to support
+> SPI based flash memories.
 > 
-> Well, no they can't ... it's rather rare nowadays for people to build
-> their own kernels.  The vast majority of Linux consumers take what the
-> distros give them.  Think carefully before you decide a config option
-> is the solution to this problem.
+> Signed-off-by: Konrad Kociolek <konrad@cadence.com>
+> ---
+>  .../devicetree/bindings/spi/cdns,xspi.yaml         | 164 +++++++++++++++++++++
+>  1 file changed, 164 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/cdns,xspi.yaml
 > 
-> James
-> 
-If you have suggestions for how I can handle it in a different way 
-(other than config option), I'll be happy to try it out.
 
-thanks,
-  -lakshmi
+My bot found errors running 'make dt_binding_check' on your patch:
+
+Documentation/devicetree/bindings/spi/cdns,xspi.yaml: $id: path/filename 'spi/cadence,xspi.yaml' doesn't match actual filename
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/spi/cdns,xspi.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/spi/cdns,xspi.example.dts] Error 1
+Makefile:1263: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1225933
+Please check and re-submit.
