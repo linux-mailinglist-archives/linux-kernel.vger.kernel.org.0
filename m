@@ -2,88 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C83751439D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3C71439D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbgAUJvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:51:07 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:41568 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728803AbgAUJvG (ORCPT
+        id S1729345AbgAUJv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:51:59 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40177 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbgAUJv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:51:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vUHBLbLhjyX4/SbY4q0MCiU+xt76lqs8Hy6X88cWrUs=; b=emoyzERPXmgfEdcmBsCTVlGwD
-        yvTrzWRe7fSWou2IcshDCfiyaJ2mXyGHuLjM554HGqo0JeViQFP0tWGGoEev2SKUkHkXo+yXWWwAE
-        uCr97qhCHyvdN2vstC64M5i8Xef03Rw9Y3jos4wd5yx4RvgePsG97Fr3e9wutfD9uoUvQXTWh3Jat
-        8OMHFPOtUQmCmCYkQOtJ4OtdEn26AyH8RKzCPAdLoa6YAjd2E+v2GFDo1O+QNyFIMt2coOlTgqUO0
-        ijOzebkZ1WGX0N3BybW+6aNzJnL1RkR0yZEXpbGE8rL/YSCN8PVn2df18xtlRguwl/InjFhdnRrVV
-        4eOG/WeDg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itqBR-0003zD-3h; Tue, 21 Jan 2020 09:50:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0967B300B8D;
-        Tue, 21 Jan 2020 10:49:12 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 191E820983E34; Tue, 21 Jan 2020 10:50:51 +0100 (CET)
-Date:   Tue, 21 Jan 2020 10:50:51 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Marco Elver <elver@google.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Qian Cai <cai@lca.pw>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] x86/mm/pat: fix a data race in cpa_inc_4k_install
-Message-ID: <20200121095051.GG14914@hirez.programming.kicks-ass.net>
-References: <20200121041200.2260-1-cai@lca.pw>
- <20200121072744.GA7808@zn.tnic>
- <CANpmjNPFRCRg9wnFwyJpZVg8Urb9HAdZ++e3xbh1LXPjgAs4kw@mail.gmail.com>
+        Tue, 21 Jan 2020 04:51:59 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t14so2238094wmi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:51:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gS+im0irDRkIpBOIxh0kBgop9pZ/8UFs7AEVh7IT1XM=;
+        b=k5YqhzWsmtaevRKLBveGSXHbJ+jS0UE3AFL+ggoEmJDPmMezqWJu4cYFv87tGVqj1+
+         dA+glBi8pVmrnGoBNcRJjao98GtsyfevEnG4moYXuiFut5o3a+Th2CTdKJYxEo/g28xR
+         7lna9Hc4cOwnz9Ia8i7waKKBLTmZMbizpEEbu7DajHLURDWm/usKN3i+5Ot+2ukBGxVk
+         L38OMFDC2sBrKu9d16AXkmAf/6dxx9Y1jKGVvSDqkUV7+BGKnRvpGc4UkWzokq3jU4HQ
+         oG4HArkTB/Rg6zeZo5S71GD2HAph9pGjJZSUdwga24jTgxv7ZCFNtEjjbRn1kQmWyCpe
+         Mw8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gS+im0irDRkIpBOIxh0kBgop9pZ/8UFs7AEVh7IT1XM=;
+        b=Cl3QtT8UzUxOw4PqwTsz+kY0mVzk8ZgT9WYRrjG6i43JDbMQChA4SsIiyK1hyHqRT4
+         0LYKowWzxnXv3HP8OXr6xpiL5KRNj6jDlJVLjpXJF5hCZfRbuFaFAMH1ln6Ij9yICo0/
+         l986IzbLgJRlzzlfmhjc1Cij5E8L2axGCEepVt416geCHoPBvL5LUPa94ofknkRebE1K
+         2ZTOQq/haXbRt+bxwCARlPR17+4SOuwVOYB9B8vbFF95/3A3p0wuRoaYBFizwbEARrH/
+         30YQ6uU1t9fJNAqM2vRXQL1ERVdTWqjjP36oNtsMGT89myOIDB9vu1/M1fMvlMY1fG9p
+         fLvw==
+X-Gm-Message-State: APjAAAXfR+mjKMz5Y93was/64BwGAskTy8/UJMCcsgislEbv6VBzuS5X
+        FBpp+nK1fedGJBofoQXLZ8ZLjYs2QEPpTJeacAbumEkN9zU=
+X-Google-Smtp-Source: APXvYqySBjrfH9msv3yjAVX+psBOoVmoNSdn5FqtxTiOBRmWLSLdQtHhiPdrzBOO1B3Jh6WxpM6urcMjW7D6vYtdHgA=
+X-Received: by 2002:a1c:6406:: with SMTP id y6mr3604057wmb.144.1579600316779;
+ Tue, 21 Jan 2020 01:51:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPFRCRg9wnFwyJpZVg8Urb9HAdZ++e3xbh1LXPjgAs4kw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1578577931.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1578577931.git.michal.simek@xilinx.com>
+From:   Michal Simek <monstr@monstr.eu>
+Date:   Tue, 21 Jan 2020 10:51:45 +0100
+Message-ID: <CAHTX3dL-rO9h=+5A2QS7r1aWi+bOdkEmZQHXAmGB=TnSJrVdeg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] arm64: zynqmp: Various DT fixes
+To:     linux-arm <linux-arm-kernel@lists.infradead.org>,
+        git <git@xilinx.com>
+Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        Harini Katakam <harini.katakam@xilinx.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Venkatesh Yadav Abbarapu <venkatesh.abbarapu@xilinx.com>,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 09:19:18AM +0100, Marco Elver wrote:
-> On Tue, 21 Jan 2020 at 08:27, Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > On Mon, Jan 20, 2020 at 11:12:00PM -0500, Qian Cai wrote:
-> > > diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-> > > index 20823392f4f2..31e4a73ae70e 100644
-> > > --- a/arch/x86/mm/pat/set_memory.c
-> > > +++ b/arch/x86/mm/pat/set_memory.c
-> > > @@ -128,7 +128,7 @@ static inline void cpa_inc_2m_checked(void)
-> > >
-> > >  static inline void cpa_inc_4k_install(void)
-> > >  {
-> > > -     cpa_4k_install++;
-> > > +     WRITE_ONCE(cpa_4k_install, READ_ONCE(cpa_4k_install) + 1);
-> 
-> As I said in my email that you also copied to the message, this is
-> just a stats counter. For the general case, I think we reached
-> consensus that such accesses should intentionally remain data races:
->   https://lore.kernel.org/linux-fsdevel/CAHk-=wg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDnFqbY7HL5AB2g@mail.gmail.com/T/#u
-> 
-> Either you can use the data_race() macro, making this
-> 'data_race(cpa_4k_install++)' -- this effectively documents the
-> intentional data race --
+=C4=8Dt 9. 1. 2020 v 14:52 odes=C3=ADlatel Michal Simek <michal.simek@xilin=
+x.com> napsal:
+>
+> Hi,
+>
+> I am sending various DT fixes which have been found over the xilinx
+> release.
+> 1-2 patches are fixing reported description issues
+> 3-8 patches are actual fixes.
+>
+> Thanks,
+> Michal
+>
+> Changes in v2:
+> - Add missing patch
+> - Add missing patch
+>
+> Michal Simek (7):
+>   arm64: zynqmp: Use ethernet-phy as node name for ethernet phys
+>   arm64: zynqmp: Remove addition number in node name
+>   arm64: zynqmp: Fix address for tca6416_u97 chip on zcu104
+>   arm64: zynqmp: Turn comment to gpio-line-names
+>   arm64: zynqmp: Setup clock-output-names for si570 chips
+>   arm64: zynqmp: Remove broken-cd from zcu100-revC
+>   arm64: zynqmp: Setup default number of chipselects for zcu100
+>
+> Venkatesh Yadav Abbarapu (1):
+>   arm64: zynqmp: Fix the si570 clock frequency on zcu111
+>
+>  .../dts/xilinx/zynqmp-zc1751-xm015-dc1.dts    |  2 +-
+>  .../dts/xilinx/zynqmp-zc1751-xm016-dc2.dts    |  6 +--
+>  .../dts/xilinx/zynqmp-zc1751-xm017-dc3.dts    |  2 +-
+>  .../dts/xilinx/zynqmp-zc1751-xm019-dc5.dts    |  2 +-
+>  .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    |  3 +-
+>  .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    | 47 +++++--------------
+>  .../boot/dts/xilinx/zynqmp-zcu102-revB.dts    |  4 +-
+>  .../boot/dts/xilinx/zynqmp-zcu104-revA.dts    |  6 +--
+>  .../boot/dts/xilinx/zynqmp-zcu106-revA.dts    |  4 +-
+>  .../boot/dts/xilinx/zynqmp-zcu111-revA.dts    |  6 ++-
+>  10 files changed, 32 insertions(+), 50 deletions(-)
+>
+> --
+> 2.24.0
+>
 
-Yes, that sounds useful.
+Applied all.
 
-But this patch, as presented, is just plain wrong. It doesn't fix
-anything.
+Thanks,
+Michal
+
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
