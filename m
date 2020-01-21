@@ -2,199 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD671440B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A696D1440CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgAUPnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 10:43:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33572 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgAUPnX (ORCPT
+        id S1729361AbgAUPo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 10:44:27 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:44971 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbgAUPo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 10:43:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1DHaRfj9byvefme7qGDMY+kU+gO1Qm0+4GU3VEJcAKg=; b=RMMcdbz8xsLOJ3x4fe1EjGnU1
-        +q+9Gql1yVzaJljBo3envrkc04fxiJX80wPUriUBIn2CEGLXMD7t6UlcM+hBFEBf5Pbi8w/0RQfRA
-        UlcOXCNHRxCXAX7Q5GlSzeey82/kLd266J0eQBbimbpRkkgXYWvjThdBMBhv6imXSBWgVSKlyCcPp
-        YzQARI5wFbAGm3Mb+Mqt1SFpESSZQPIRNbn6UAEWKvQXu4fW+f3kHGwS1NmeD0HGisFaYPNwBzROm
-        zRbCLBsQD3ERSIGVfXFYYwxm8KMtb8r0Q8h5MVa0QbPLW/8QiqwdipHZ1e4bLEvp0MUkvULQpBAcS
-        nf1EyEwTA==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itvgT-0002Ir-2K; Tue, 21 Jan 2020 15:43:17 +0000
-Subject: Re: linux-next: Tree for Oct 14 (insn_decoder_test)
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masami Hiramatsu <mhiramat@redhat.com>,
-        X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20191014174707.469f596f@canb.auug.org.au>
- <2d83682b-6206-4992-63cc-342d61641c0a@infradead.org>
- <20191023144916.2cbd0ea16363b4cd4574f5ad@kernel.org>
- <3fe0f2d7-eab6-8224-bc48-ef513c7ce8e3@infradead.org>
-Message-ID: <aab93029-158a-5554-9976-b20aa48fef1d@infradead.org>
-Date:   Tue, 21 Jan 2020 07:43:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 21 Jan 2020 10:44:26 -0500
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 00LFi5Mr030302;
+        Wed, 22 Jan 2020 00:44:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 00LFi5Mr030302
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1579621446;
+        bh=ZtcJE4J/VnghOLG5BqGNTkLhqnSDrYqFSMA9B/PJv3k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=22uMx27sxZ4iLBL3b5a2GCT1vzgo36uJ/LkCdpC+Q7rUalnLH5X93rBvfJ6r+Pom6
+         0o/uI4mds34zlVe9kLrre0jf42OJ0h6Gzs6WuXnE3PqgqJiehf0iyvPKh61HIb9reM
+         BK6m+Iaq+nXKGZa35YP1Knxk4wopevX6IhVA76h5v+ep8FbEuU2JO402pv2ViHJIt9
+         7Iud1SK2G/mcT+9GzKuU/rxMhwmetJtvRMMv3bXSnuBWDiS8fgTXfAPaC8RNTslYjI
+         ucrY32VBEYpSntsGXkqvTxzJ+9NFzMU9NSQRABiXCmgOsiY6dsEFA/WyMc11os2pwG
+         p7Az2qT9YUBVA==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id y3so1163058uae.3;
+        Tue, 21 Jan 2020 07:44:06 -0800 (PST)
+X-Gm-Message-State: APjAAAUIX/hzPtjGqxcamIsKsUBtz/8JnpF32BOlP7pCQ7YfG0RAouv5
+        MCZ3SpbQ/fB7pbbHEmABw4EupSw5tXLktnGUuuA=
+X-Google-Smtp-Source: APXvYqxKN7+aDx4+rhRRBTGSg5TMBpRLbtTObTQdzxulxrRZeJxHYNHdH9TfFK4spH3h0GZVhCOVCIk1jgp5oP8+2Vg=
+X-Received: by 2002:ab0:7049:: with SMTP id v9mr3149137ual.95.1579621444684;
+ Tue, 21 Jan 2020 07:44:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <3fe0f2d7-eab6-8224-bc48-ef513c7ce8e3@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1579248206.git.michal.simek@xilinx.com> <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
+In-Reply-To: <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 22 Jan 2020 00:43:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
+Message-ID: <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] asm-generic: Make dma-contiguous.h a mandatory
+ include/asm header
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, git@xilinx.com,
+        Christoph Hellwig <hch@lst.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>, X86 ML <x86@kernel.org>,
+        Guo Ren <guoren@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[adding x86 people]
+Hi.
 
-I am still seeing this insn_decoder warning in linux-next.
-
-Can we get this patch applied, please?
-
-Masami, you might need to resend it...
-
-thanks.
+On Fri, Jan 17, 2020 at 5:03 PM Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> dma-continuguous.h is generic for all architectures except arm32 which has
+> its own version.
 
 
-On 11/27/19 4:04 PM, Randy Dunlap wrote:
-> On 10/22/19 10:49 PM, Masami Hiramatsu wrote:
->> Hi,
->>
->> On Mon, 14 Oct 2019 08:30:02 -0700
->> Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->>> On 10/13/19 11:47 PM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20191011:
->>>>
->>>
->>> on x86_64:
->>>
->>>   HOSTCC  arch/x86/tools/insn_decoder_test
->>>   HOSTCC  arch/x86/tools/insn_sanity
->>>   TEST    posttest
->>> arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
->>> arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
->>> arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
->>> arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
->>>   TEST    posttest
->>> arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
->>
->> Hmm, curious.
->>
->> x86-opcode-map.txt said,
->> f7: Grp3_2 Ev (1A)
->>
->> and "0x0b" is 00001011b, Group encoding bits are 5,4,3 (reg field),
->> so group index is 001.
->>
->> GrpTable: Grp3_2
->> 0: TEST Ev,Iz
->> 1:
->>
->> Hmm, "f7 0b" is not assigned to any instruction... (testl should be f7 03)
->>
->> I've checked Intel SDM May 2019 version(*), but the Opcode Map (Table A-6. Opecode
->> Extensions for One- and Two-byte Opecodes by Group Number) showed the group index
->> 001 is still blank. I've also checked that Table B-13 (General Purpose Instruction
->>  Formats and Encodings for Non-64-Bit Modes (Note that this has no REX prefix)) but
->> I couldn't find "f7 0b".
->>
->> At last, I found that on AMD64 Architecture Programmer's Manual Volume 3, Appendix A.2
->> Table A-6. ModRM.reg Extensions for the Primary Opcode Map(**), which shows that both
->> f7 + reg=000 and f7 + reg=001 are same. So only on AMD64, it is officially available
->> instruction.
->>
->> (*) https://software.intel.com/sites/default/files/managed/a4/60/325383-sdm-vol-2abcd.pdf
->> (**) https://www.amd.com/system/files/TechDocs/24594.pdf
->>
->> OK, so this should be fixed with below patch.
->>
->> ------
->> >From b3f45b86df25be59fcf417730ab4c69c6310eaad Mon Sep 17 00:00:00 2001
->> From: Masami Hiramatsu <mhiramat@kernel.org>
->> Date: Wed, 23 Oct 2019 14:45:35 +0900
->> Subject: [PATCH] x86/decoder: Add TEST opcode to Group3-2
->>
->> Add TEST opcode to Group3-2 reg=001b as same as Group3-1 does.
->>
->> Commit 12a78d43de76 ("x86/decoder: Add new TEST instruction pattern")
->> added a TEST opcode assignment to f6 XX/001/XXX (Group 3-1), but not
->> added f7 XX/001/XXX (Group 3-2). Actually these TEST opcode is not
->> described in Intel SDM Vol2, but described in AMD64 Architecture
->> Programmer's Manual Vol.3, Appendix A.2 Table A-6. ModRM.reg
->> Extensions for the Primary Opcode Map.
->>
->> Without this fix, Randy found a warning by insn_decoder_test related
->> to this issue as below.
->>
->>   HOSTCC  arch/x86/tools/insn_decoder_test
->>   HOSTCC  arch/x86/tools/insn_sanity
->>   TEST    posttest
->> arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
->> arch/x86/tools/insn_decoder_test: warning: ffffffff81000bf1:	f7 0b 00 01 08 00    	testl  $0x80100,(%rbx)
->> arch/x86/tools/insn_decoder_test: warning: objdump says 6 bytes, but insn_get_length() says 2
->> arch/x86/tools/insn_decoder_test: warning: Decoded and checked 11913894 instructions with 1 failures
->>   TEST    posttest
->> arch/x86/tools/insn_sanity: Success: decoded and checked 1000000 random instructions with 0 errors (seed:0x871ce29c)
->>
->> To fix this error, add TEST opcode according to AMD64 APM Vol.3.
->>
->> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks.
-> 
->> ---
->>  arch/x86/lib/x86-opcode-map.txt       | 2 +-
->>  tools/arch/x86/lib/x86-opcode-map.txt | 2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
->> index e0b85930dd77..4635ce298d1d 100644
->> --- a/arch/x86/lib/x86-opcode-map.txt
->> +++ b/arch/x86/lib/x86-opcode-map.txt
->> @@ -907,7 +907,7 @@ EndTable
->>  
->>  GrpTable: Grp3_2
->>  0: TEST Ev,Iz
->> -1:
->> +1: TEST Ev,Iz
->>  2: NOT Ev
->>  3: NEG Ev
->>  4: MUL rAX,Ev
->> diff --git a/tools/arch/x86/lib/x86-opcode-map.txt b/tools/arch/x86/lib/x86-opcode-map.txt
->> index e0b85930dd77..4635ce298d1d 100644
->> --- a/tools/arch/x86/lib/x86-opcode-map.txt
->> +++ b/tools/arch/x86/lib/x86-opcode-map.txt
->> @@ -907,7 +907,7 @@ EndTable
->>  
->>  GrpTable: Grp3_2
->>  0: TEST Ev,Iz
->> -1:
->> +1: TEST Ev,Iz
->>  2: NOT Ev
->>  3: NEG Ev
->>  4: MUL rAX,Ev
->>
-> 
-> 
+
+Currently, <asm/dma-contiguous.h> is present
+for only architectures that select HAVE_DMA_CONTIGUOUS.
+
+After this commit, the other architectures will end
+up with generating the unused header.
+
+That would not be a big deal, but
+it could be mentioned in the commit message?
+
+
+
+> Similar change was done for msi.h by commit a1b39bae16a6
+> ("asm-generic: Make msi.h a mandatory include/asm header")
+>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>
+> Changes in v2:
+> - New patch suggested by Christoph
+>
+>  arch/arm64/include/asm/Kbuild  | 1 -
+>  arch/csky/include/asm/Kbuild   | 1 -
+>  arch/mips/include/asm/Kbuild   | 1 -
+>  arch/riscv/include/asm/Kbuild  | 1 -
+>  arch/s390/include/asm/Kbuild   | 1 -
+>  arch/x86/include/asm/Kbuild    | 1 -
+>  arch/xtensa/include/asm/Kbuild | 1 -
+>
+>  include/asm-generic/Kbuild     | 1 +
+>  8 files changed, 1 insertion(+), 7 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
+> index bd23f87d6c55..d3077c991962 100644
+> --- a/arch/arm64/include/asm/Kbuild
+> +++ b/arch/arm64/include/asm/Kbuild
+> @@ -3,7 +3,6 @@ generic-y += bugs.h
+>  generic-y += delay.h
+>  generic-y += div64.h
+>  generic-y += dma.h
+> -generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+>  generic-y += early_ioremap.h
+>  generic-y += emergency-restart.h
+> diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
+> index 4d4754e6bf89..bc15a26c782f 100644
+> --- a/arch/csky/include/asm/Kbuild
+> +++ b/arch/csky/include/asm/Kbuild
+> @@ -7,7 +7,6 @@ generic-y += delay.h
+>  generic-y += device.h
+>  generic-y += div64.h
+>  generic-y += dma.h
+> -generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+> diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
+> index 61b0fc2026e6..179403ae5837 100644
+> --- a/arch/mips/include/asm/Kbuild
+> +++ b/arch/mips/include/asm/Kbuild
+> @@ -6,7 +6,6 @@ generated-y += syscall_table_64_n64.h
+>  generated-y += syscall_table_64_o32.h
+>  generic-y += current.h
+>  generic-y += device.h
+> -generic-y += dma-contiguous.h
+>  generic-y += emergency-restart.h
+>  generic-y += export.h
+>  generic-y += irq_work.h
+> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+> index 1efaeddf1e4b..ec0ca8c6ab64 100644
+> --- a/arch/riscv/include/asm/Kbuild
+> +++ b/arch/riscv/include/asm/Kbuild
+> @@ -7,7 +7,6 @@ generic-y += div64.h
+>  generic-y += extable.h
+>  generic-y += flat.h
+>  generic-y += dma.h
+> -generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+> diff --git a/arch/s390/include/asm/Kbuild b/arch/s390/include/asm/Kbuild
+> index 2531f673f099..1832ae6442ef 100644
+> --- a/arch/s390/include/asm/Kbuild
+> +++ b/arch/s390/include/asm/Kbuild
+> @@ -7,7 +7,6 @@ generated-y += unistd_nr.h
+>  generic-y += asm-offsets.h
+>  generic-y += cacheflush.h
+>  generic-y += device.h
+> -generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+>  generic-y += div64.h
+>  generic-y += emergency-restart.h
+> diff --git a/arch/x86/include/asm/Kbuild b/arch/x86/include/asm/Kbuild
+> index 8b52bc5ddf69..ea34464d6221 100644
+> --- a/arch/x86/include/asm/Kbuild
+> +++ b/arch/x86/include/asm/Kbuild
+> @@ -7,7 +7,6 @@ generated-y += unistd_32_ia32.h
+>  generated-y += unistd_64_x32.h
+>  generated-y += xen-hypercalls.h
+>
+> -generic-y += dma-contiguous.h
+>  generic-y += early_ioremap.h
+>  generic-y += export.h
+>  generic-y += mcs_spinlock.h
+> diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
+> index 3acc31e55e02..271917c24b7f 100644
+> --- a/arch/xtensa/include/asm/Kbuild
+> +++ b/arch/xtensa/include/asm/Kbuild
+> @@ -4,7 +4,6 @@ generic-y += bug.h
+>  generic-y += compat.h
+>  generic-y += device.h
+>  generic-y += div64.h
+> -generic-y += dma-contiguous.h
+>  generic-y += dma-mapping.h
+>  generic-y += emergency-restart.h
+>  generic-y += exec.h
+> diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
+> index ddfee1bd9dc1..cd17d50697cc 100644
+> --- a/include/asm-generic/Kbuild
+> +++ b/include/asm-generic/Kbuild
+> @@ -4,5 +4,6 @@
+>  # (This file is not included when SRCARCH=um since UML borrows several
+>  # asm headers from the host architecutre.)
+>
+> +mandatory-y += dma-contiguous.h
+>  mandatory-y += msi.h
+>  mandatory-y += simd.h
+> --
+> 2.25.0
+>
 
 
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Best Regards
+Masahiro Yamada
