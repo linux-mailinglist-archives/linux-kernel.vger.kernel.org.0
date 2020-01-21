@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA850144152
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A8F144160
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:05:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbgAUQCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:02:18 -0500
-Received: from mga05.intel.com ([192.55.52.43]:19343 "EHLO mga05.intel.com"
+        id S1729856AbgAUQCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:02:30 -0500
+Received: from mga09.intel.com ([134.134.136.24]:62805 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729535AbgAUQBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:01:35 -0500
+        id S1729469AbgAUQBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 11:01:32 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:34 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:31 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="219998914"
+   d="scan'208";a="228885587"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 21 Jan 2020 08:01:27 -0800
+  by orsmga006.jf.intel.com with ESMTP; 21 Jan 2020 08:01:27 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 2CD38100E; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
+        id 34CF910D5; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Mark Brown <broonie@kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 33/38] platform/x86: intel_pmc_ipc: Use octal permissions in sysfs attributes
-Date:   Tue, 21 Jan 2020 19:01:09 +0300
-Message-Id: <20200121160114.60007-34-mika.westerberg@linux.intel.com>
+Subject: [PATCH v4 34/38] platform/x86: intel_pmc_ipc: Propagate error from kstrtoul()
+Date:   Tue, 21 Jan 2020 19:01:10 +0300
+Message-Id: <20200121160114.60007-35-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
 References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
@@ -51,41 +51,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the current preferred way so replace the S_IWUSR with the
-corresponding octal value. While there move the attributes to follow
-directly their store functions.
+kstrtoul() already returns negative error if the input was not valid so
+return it directly.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 9796656f534a..f912f2a40512 100644
+index f912f2a40512..eb4d65768531 100644
 --- a/drivers/platform/x86/intel_pmc_ipc.c
 +++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -215,6 +215,7 @@ static ssize_t intel_pmc_ipc_simple_cmd_store(struct device *dev,
- 	}
- 	return (ssize_t)count;
- }
-+static DEVICE_ATTR(simplecmd, 0200, NULL, intel_pmc_ipc_simple_cmd_store);
+@@ -226,8 +226,9 @@ static ssize_t intel_pmc_ipc_northpeak_store(struct device *dev,
+ 	int subcmd;
+ 	int ret;
  
- static ssize_t intel_pmc_ipc_northpeak_store(struct device *dev,
- 					     struct device_attribute *attr,
-@@ -239,11 +240,7 @@ static ssize_t intel_pmc_ipc_northpeak_store(struct device *dev,
- 	}
- 	return (ssize_t)count;
- }
--
--static DEVICE_ATTR(simplecmd, S_IWUSR,
--		   NULL, intel_pmc_ipc_simple_cmd_store);
--static DEVICE_ATTR(northpeak, S_IWUSR,
--		   NULL, intel_pmc_ipc_northpeak_store);
-+static DEVICE_ATTR(northpeak, 0200, NULL, intel_pmc_ipc_northpeak_store);
+-	if (kstrtoul(buf, 0, &val))
+-		return -EINVAL;
++	ret = kstrtoul(buf, 0, &val);
++	if (ret)
++		return ret;
  
- static struct attribute *intel_ipc_attrs[] = {
- 	&dev_attr_northpeak.attr,
+ 	if (val)
+ 		subcmd = 1;
 -- 
 2.24.1
 
