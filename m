@@ -2,102 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491241441CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:14:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE4001441D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbgAUQOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:14:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46060 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728904AbgAUQOJ (ORCPT
+        id S1729375AbgAUQOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:14:21 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:32835 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729045AbgAUQOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:14:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579623248;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IqGKWE4vljjAcPx0vpPhn72zDnBvqdvK17Xs6yePlDY=;
-        b=QesSCW9LAOUG9wOBSlOL30XGeFCwGoX2yrhb9l6eS+HzrbU2phsRRKANeDwyvzapLUmSR6
-        fq6BXjA019FgGiXrR3VWp7gL3VaUPCsr+coyNrYzS1liPyrSLijqMUb7AZX7HlD1g4S9cg
-        4FMSMd9j1an558A+sdhi7W2mliLmx+M=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-47-uPVloHShM7ORF9CbFbrLBw-1; Tue, 21 Jan 2020 11:14:05 -0500
-X-MC-Unique: uPVloHShM7ORF9CbFbrLBw-1
-Received: by mail-wr1-f70.google.com with SMTP id r2so1519363wrp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:14:05 -0800 (PST)
+        Tue, 21 Jan 2020 11:14:18 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q81so3094110oig.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:14:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IXf7v5u4QW5b0oUhqlEbSYsuPaK7kUXwuaQl8tSfrCE=;
+        b=D/Pop3pi/9T/J/oSC1bENHywcgIYAFOPdwbx0MZrz7SJzbwnbXbwEHEtiexEN5OR6w
+         K3pzmf5ThEt1CKco6axerkBYKjN2f7T/IPcVceQcETFetnu+tgnhRan+8LBYwMN2+EsI
+         0oSmjMRQ5JpH1+QZPW8Ql8uOjW34wd5/1uV7QnvWT6NvF2wgAd6Jl1ofygKTujFGE83o
+         5xKnDfG6RZr5T9CnI0LoQL5LVm8aKF+bY+qFV2cYSrLiSV6BJI1WiwddD/3/dUhyidQz
+         9gjFnKPglx7sMKHDEFzBOI0A72G84TjJYZ1t0vzif9x10I0ne+T9eg3XfpEfuYRsm2jr
+         W30A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IqGKWE4vljjAcPx0vpPhn72zDnBvqdvK17Xs6yePlDY=;
-        b=JoEEGTVp/ZiVyBZNfoVyzBMULGYa3OLU9+dSnrEMCPZuuyKIrR2/6G2MnJzc+t2SGm
-         zAdQrXZvZrL0/ZF3ias7M7CTm62pAugmd3eWmnQg2TJVuIUZh9pfT9NyWHx9btLgRI98
-         E2CZ6QAK7QtLyYE49TBndGrPdXzJIjQyJJ2z0Sx1RocS/nHs7mGIQ3DmbrDWgqmLLUWk
-         TB+GhYBIwEkJNP1HV5wfxK05ZOEYDTNOqosGHeZ89XrM+JdzEE9YDV94jrDdbDkDUcRE
-         l1TF4295KEUFMyBbF6L6tRYmd5RSMwO5/PFex0Rxr8bFrfgiTKs41Y//P4qj+7OkaGgN
-         fZgA==
-X-Gm-Message-State: APjAAAXm5rlogO32ux6wYlNCAzIa63aevsuQRoLVJ08fK7d7fyEAi1BV
-        qn+zHzRL7r9zPdfQWlwY3eUm5/aZYYf2YUhtgw61Bt6BlnA6eycUdwYJnN7R4ujuEq+0suiH8jq
-        v/ad2J2Bn1wDpBI/y1hF6+eB1
-X-Received: by 2002:a05:600c:cd:: with SMTP id u13mr4971796wmm.24.1579623244197;
-        Tue, 21 Jan 2020 08:14:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyLcl/lYmcft/LqZTO4NiEq6Lyk5s/oCPqY3EBAJJlr/q/iZw7reeRokvq1TEUD+WfWoLmTWA==
-X-Received: by 2002:a05:600c:cd:: with SMTP id u13mr4971768wmm.24.1579623243901;
-        Tue, 21 Jan 2020 08:14:03 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b509:fc01:ee8a:ca8a? ([2001:b07:6468:f312:b509:fc01:ee8a:ca8a])
-        by smtp.gmail.com with ESMTPSA id t8sm53079354wrp.69.2020.01.21.08.14.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 08:14:03 -0800 (PST)
-Subject: Re: [PATCH v3 09/21] KVM: X86: Don't track dirty for
- KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Peter Xu <peterx@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Kevin Kevin <kevin.tian@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-References: <20200109145729.32898-1-peterx@redhat.com>
- <20200109145729.32898-10-peterx@redhat.com>
- <20200121155657.GA7923@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <c2f556fa-8562-f2d3-37a0-220af33732cd@redhat.com>
-Date:   Tue, 21 Jan 2020 17:14:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IXf7v5u4QW5b0oUhqlEbSYsuPaK7kUXwuaQl8tSfrCE=;
+        b=bl4V11K04NbdcZRuu7MgXhC9wNR9pv3EYdUhKs4hcaF3fWXK1yVlz8NqvEXPGAu17O
+         oVZJ/TQ4DJNRkkW2KSlvFj5xEw7hRxKN9IcHNYwFjKczC6rST/yHGRdsT3mA85+Uo2U1
+         ADBll/xtlzKygy/ENy21WCM0iU+VUd6RJnDagTtLeC4qy0sW++um3F3/Ckxj+8LVI44R
+         1tYDmoV3SL/2zmjXRAqzVuPQZ+csUips+Z1Bvxo4Gp77RsNk/aZeuhi/cpsgRWFzUc50
+         ptrw15N2yNRCQ2dVRbd1I2V3i4pRieOP8NQ9R65Ef/LGWxwTqtn1JEkoEUY46yTLSPj+
+         Txvw==
+X-Gm-Message-State: APjAAAXyAF5+HqWFApM/xJ9swOk1lMnBBz0TNTYyHdqJsXueb7ttCpdJ
+        CiQsW92vwXe3fD67RlZ0EzwpgrlyTRALaNy8jg+ZwzatuTeTiw==
+X-Google-Smtp-Source: APXvYqxIvT2Q0nsN72pnq7MpH8LjZasGCfvRThBdyz359N8AxeOSUHaZ4FY6s6nVTXidaWPzw/IBpd8DDv9QJUjeIWM=
+X-Received: by 2002:aca:2112:: with SMTP id 18mr3379090oiz.155.1579623256839;
+ Tue, 21 Jan 2020 08:14:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200121155657.GA7923@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
+ <CACT4Y+bjAn0g980ZCxCn4MkgCsg7KrA69CExCeJZ63eRON5fXw@mail.gmail.com>
+In-Reply-To: <CACT4Y+bjAn0g980ZCxCn4MkgCsg7KrA69CExCeJZ63eRON5fXw@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Tue, 21 Jan 2020 17:14:05 +0100
+Message-ID: <CANpmjNOQPwn-+iL38RkfsJ6tWj8pZyB_dfh8174FmaYz5tfBTA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
+        Kees Cook <keescook@chromium.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/20 16:56, Sean Christopherson wrote:
-> This code also needs to be tested by doing unrestricted_guest=0 when
-> loading kvm_intel, because it's obviously broken.
+On Tue, 21 Jan 2020 at 14:01, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Mon, Jan 20, 2020 at 3:45 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Mon, Jan 20, 2020 at 3:19 PM Marco Elver <elver@google.com> wrote:
+> > >
+> > > This adds instrumented.h, which provides generic wrappers for memory
+> > > access instrumentation that the compiler cannot emit for various
+> > > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
+> > > future this will also include KMSAN instrumentation.
+> > >
+> > > Note that, copy_{to,from}_user require special instrumentation,
+> > > providing hooks before and after the access, since we may need to know
+> > > the actual bytes accessed (currently this is relevant for KCSAN, and is
+> > > also relevant in future for KMSAN).
+> > >
+> > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > > Signed-off-by: Marco Elver <elver@google.com>
+> > > ---
+> > >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 153 insertions(+)
+> > >  create mode 100644 include/linux/instrumented.h
+> > >
+> > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> > > new file mode 100644
+> > > index 000000000000..9f83c8520223
+> > > --- /dev/null
+> > > +++ b/include/linux/instrumented.h
+> > > @@ -0,0 +1,153 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +/*
+> > > + * This header provides generic wrappers for memory access instrumentation that
+> > > + * the compiler cannot emit for: KASAN, KCSAN.
+> > > + */
+> > > +#ifndef _LINUX_INSTRUMENTED_H
+> > > +#define _LINUX_INSTRUMENTED_H
+> > > +
+> > > +#include <linux/compiler.h>
+> > > +#include <linux/kasan-checks.h>
+> > > +#include <linux/kcsan-checks.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +/**
+> > > + * instrument_read - instrument regular read access
+> > > + *
+> > > + * Instrument a regular read access. The instrumentation should be inserted
+> > > + * before the actual read happens.
+> > > + *
+> > > + * @ptr address of access
+> > > + * @size size of access
+> > > + */
+> >
+> > Based on offline discussion, that's what we add for KMSAN:
+> >
+> > > +static __always_inline void instrument_read(const volatile void *v, size_t size)
+> > > +{
+> > > +       kasan_check_read(v, size);
+> > > +       kcsan_check_read(v, size);
+> >
+> > KMSAN: nothing
+> >
+> > > +}
+> > > +
+> > > +/**
+> > > + * instrument_write - instrument regular write access
+> > > + *
+> > > + * Instrument a regular write access. The instrumentation should be inserted
+> > > + * before the actual write happens.
+> > > + *
+> > > + * @ptr address of access
+> > > + * @size size of access
+> > > + */
+> > > +static __always_inline void instrument_write(const volatile void *v, size_t size)
+> > > +{
+> > > +       kasan_check_write(v, size);
+> > > +       kcsan_check_write(v, size);
+> >
+> > KMSAN: nothing
+> >
+> > > +}
+> > > +
+> > > +/**
+> > > + * instrument_atomic_read - instrument atomic read access
+> > > + *
+> > > + * Instrument an atomic read access. The instrumentation should be inserted
+> > > + * before the actual read happens.
+> > > + *
+> > > + * @ptr address of access
+> > > + * @size size of access
+> > > + */
+> > > +static __always_inline void instrument_atomic_read(const volatile void *v, size_t size)
+> > > +{
+> > > +       kasan_check_read(v, size);
+> > > +       kcsan_check_atomic_read(v, size);
+> >
+> > KMSAN: nothing
+> >
+> > > +}
+> > > +
+> > > +/**
+> > > + * instrument_atomic_write - instrument atomic write access
+> > > + *
+> > > + * Instrument an atomic write access. The instrumentation should be inserted
+> > > + * before the actual write happens.
+> > > + *
+> > > + * @ptr address of access
+> > > + * @size size of access
+> > > + */
+> > > +static __always_inline void instrument_atomic_write(const volatile void *v, size_t size)
+> > > +{
+> > > +       kasan_check_write(v, size);
+> > > +       kcsan_check_atomic_write(v, size);
+> >
+> > KMSAN: nothing
+> >
+> > > +}
+> > > +
+> > > +/**
+> > > + * instrument_copy_to_user_pre - instrument reads of copy_to_user
+> > > + *
+> > > + * Instrument reads from kernel memory, that are due to copy_to_user (and
+> > > + * variants).
+> > > + *
+> > > + * The instrumentation must be inserted before the accesses. At this point the
+> > > + * actual number of bytes accessed is not yet known.
+> > > + *
+> > > + * @dst destination address
+> > > + * @size maximum access size
+> > > + */
+> > > +static __always_inline void
+> > > +instrument_copy_to_user_pre(const volatile void *src, size_t size)
+> > > +{
+> > > +       /* Check before, to warn before potential memory corruption. */
+> > > +       kasan_check_read(src, size);
+> >
+> > KMSAN: check that (src,size) is initialized
+> >
+> > > +}
+> > > +
+> > > +/**
+> > > + * instrument_copy_to_user_post - instrument reads of copy_to_user
+> > > + *
+> > > + * Instrument reads from kernel memory, that are due to copy_to_user (and
+> > > + * variants).
+> > > + *
+> > > + * The instrumentation must be inserted after the accesses. At this point the
+> > > + * actual number of bytes accessed should be known.
+> > > + *
+> > > + * @dst destination address
+> > > + * @size maximum access size
+> > > + * @left number of bytes left that were not copied
+> > > + */
+> > > +static __always_inline void
+> > > +instrument_copy_to_user_post(const volatile void *src, size_t size, size_t left)
+> > > +{
+> > > +       /* Check after, to avoid false positive if memory was not accessed. */
+> > > +       kcsan_check_read(src, size - left);
+> >
+> > KMSAN: nothing
+>
+> One detail I noticed for KMSAN is that kmsan_copy_to_user has a
+> special case when @to address is in kernel-space (compat syscalls
+> doing tricky things), in that case it only copies metadata. We can't
+> handle this with existing annotations.
+>
+>
+>  * actually copied to ensure there was no information leak. If @to belongs to
+>  * the kernel space (which is possible for compat syscalls), KMSAN just copies
+>  * the metadata.
+>  */
+> void kmsan_copy_to_user(const void *to, const void *from, size_t
+> to_copy, size_t left);
 
-... as I had just found out after starting tests on kvm/queue.  Unqueued
-this patch.
+Sent v2: http://lkml.kernel.org/r/20200121160512.70887-1-elver@google.com
+I hope it'll satisfy our various constraints for now.
 
-Paolo
-
-> __x86_set_memory_region()
-> takes an "unsigned long *", interpreted as a "pointer to a usersepace
-> address", i.e. a "void __user **".  But the callers are treating the param
-> as a "unsigned long in userpace", e.g. init_rmode_identity_map() declares
-> uaddr as an "unsigned long *", when really it should be declaring a
-> straight "unsigned long" and passing "&uaddr".  The only thing that saves
-> KVM from dereferencing a bad pointer in __x86_set_memory_region() is that
-> uaddr is initialized to NULL 
-
+Thanks,
+-- Marco
