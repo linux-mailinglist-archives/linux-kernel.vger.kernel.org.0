@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 132621435FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 04:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 942981435F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 04:37:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgAUDhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728981AbgAUDhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 20 Jan 2020 22:37:23 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:19187 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728827AbgAUDhW (ORCPT
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:53982 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726935AbgAUDhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 Jan 2020 22:37:22 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0ToGalXN_1579577829;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToGalXN_1579577829)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0ToGalaE_1579577838;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToGalaE_1579577838)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 11:37:09 +0800
+          Tue, 21 Jan 2020 11:37:18 +0800
 From:   Alex Shi <alex.shi@linux.alibaba.com>
 Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
@@ -23,12 +23,12 @@ Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         ChenGang <cg.chen@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Richard Fontana <rfontana@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] OCFS2: remove unused macros
-Date:   Tue, 21 Jan 2020 11:37:07 +0800
-Message-Id: <1579577827-251796-1-git-send-email-alex.shi@linux.alibaba.com>
+Subject: [PATCH] OCFS2: remove useless err
+Date:   Tue, 21 Jan 2020 11:37:16 +0800
+Message-Id: <1579577836-251879-1-git-send-email-alex.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,10 +36,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-O2HB_DEFAULT_BLOCK_BITS/DLM_THREAD_MAX_ASTS/DLM_MIGRATION_RETRY_MS and
-OCFS2_MAX_RESV_WINDOW_BITS/OCFS2_MIN_RESV_WINDOW_BITS are
-never used from they were introduced to kernel. so better to remove
-them.
+We don't need 'err' in these 2 places, better to remove them.
 
 Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
 Cc: Mark Fasheh <mark@fasheh.com> 
@@ -49,69 +46,58 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org> 
 Cc: Kate Stewart <kstewart@linuxfoundation.org> 
 Cc: ChenGang <cg.chen@huawei.com> 
-Cc: Thomas Gleixner <tglx@linutronix.de> 
 Cc: Richard Fontana <rfontana@redhat.com> 
+Cc: Thomas Gleixner <tglx@linutronix.de> 
 Cc: ocfs2-devel@oss.oracle.com 
 Cc: linux-kernel@vger.kernel.org 
 ---
- fs/ocfs2/cluster/heartbeat.c | 2 --
- fs/ocfs2/dlm/dlmmaster.c     | 2 --
- fs/ocfs2/dlm/dlmthread.c     | 1 -
- fs/ocfs2/reservations.c      | 3 ---
- 4 files changed, 8 deletions(-)
+ fs/ocfs2/cluster/tcp.c | 3 +--
+ fs/ocfs2/dir.c         | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index a368350d4c27..78cb48d6a596 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -101,8 +101,6 @@ struct o2hb_debug_buf {
- 
- static struct o2hb_callback *hbcall_from_type(enum o2hb_callback_type type);
- 
--#define O2HB_DEFAULT_BLOCK_BITS       9
--
- enum o2hb_heartbeat_modes {
- 	O2HB_HEARTBEAT_LOCAL		= 0,
- 	O2HB_HEARTBEAT_GLOBAL,
-diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-index 74b768ca1cd8..123b6873d9fa 100644
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -2751,8 +2751,6 @@ static int dlm_migrate_lockres(struct dlm_ctxt *dlm,
- 	return ret;
- }
- 
--#define DLM_MIGRATION_RETRY_MS  100
--
- /*
-  * Should be called only after beginning the domain leave process.
-  * There should not be any remaining locks on nonlocal lock resources,
-diff --git a/fs/ocfs2/dlm/dlmthread.c b/fs/ocfs2/dlm/dlmthread.c
-index 61c51c268460..2dd9727537fe 100644
---- a/fs/ocfs2/dlm/dlmthread.c
-+++ b/fs/ocfs2/dlm/dlmthread.c
-@@ -680,7 +680,6 @@ static void dlm_flush_asts(struct dlm_ctxt *dlm)
- 
- #define DLM_THREAD_TIMEOUT_MS (4 * 1000)
- #define DLM_THREAD_MAX_DIRTY  100
--#define DLM_THREAD_MAX_ASTS   10
- 
- static int dlm_thread(void *data)
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index 48a3398f0bf5..9261c1f06a9f 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1948,7 +1948,6 @@ static void o2net_accept_many(struct work_struct *work)
  {
-diff --git a/fs/ocfs2/reservations.c b/fs/ocfs2/reservations.c
-index 0249e8ca1028..bf3842e34fb9 100644
---- a/fs/ocfs2/reservations.c
-+++ b/fs/ocfs2/reservations.c
-@@ -33,9 +33,6 @@
+ 	struct socket *sock = o2net_listen_sock;
+ 	int	more;
+-	int	err;
  
- static DEFINE_SPINLOCK(resv_lock);
+ 	/*
+ 	 * It is critical to note that due to interrupt moderation
+@@ -1963,7 +1962,7 @@ static void o2net_accept_many(struct work_struct *work)
+ 	 */
  
--#define	OCFS2_MIN_RESV_WINDOW_BITS	8
--#define	OCFS2_MAX_RESV_WINDOW_BITS	1024
--
- int ocfs2_dir_resv_allowed(struct ocfs2_super *osb)
- {
- 	return (osb->osb_resv_level && osb->osb_dir_resv_level);
+ 	for (;;) {
+-		err = o2net_accept_one(sock, &more);
++		o2net_accept_one(sock, &more);
+ 		if (!more)
+ 			break;
+ 		cond_resched();
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index bdef72c0f099..5761060d2ba8 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -676,7 +676,7 @@ static struct buffer_head *ocfs2_find_entry_el(const char *name, int namelen,
+ 	int ra_ptr = 0;		/* Current index into readahead
+ 				   buffer */
+ 	int num = 0;
+-	int nblocks, i, err;
++	int nblocks, i;
+ 
+ 	sb = dir->i_sb;
+ 
+@@ -708,7 +708,7 @@ static struct buffer_head *ocfs2_find_entry_el(const char *name, int namelen,
+ 				num++;
+ 
+ 				bh = NULL;
+-				err = ocfs2_read_dir_block(dir, b++, &bh,
++				ocfs2_read_dir_block(dir, b++, &bh,
+ 							   OCFS2_BH_READAHEAD);
+ 				bh_use[ra_max] = bh;
+ 			}
 -- 
 1.8.3.1
 
