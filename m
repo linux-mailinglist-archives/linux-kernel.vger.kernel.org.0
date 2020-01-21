@@ -2,109 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA2914455C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5AB144564
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:52:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbgAUTsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:48:17 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45967 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbgAUTsP (ORCPT
+        id S1728760AbgAUTwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:52:21 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:10390 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbgAUTwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:48:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b9so2039312pgk.12
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:48:15 -0800 (PST)
+        Tue, 21 Jan 2020 14:52:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KVUuHS8j8qP6vbkik8K3geWbDTbCR+aoBmPYq95z0cM=;
-        b=egYkuTZL1depEEQib24k5h3ddHSXD1ZZlZmsByYcjmpeWtPWJKRCsfkAigbW3ZrMH5
-         cxHgbl5tkBkXSRSjmZN1foxKsA8XvXIbNX4MuIz7PCENX+gBaQatGtQXEpg5RJP0wsvK
-         H/Vdf/2gwENuZw8QwAgUzXGsF0je1NpoMOikQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KVUuHS8j8qP6vbkik8K3geWbDTbCR+aoBmPYq95z0cM=;
-        b=QbgQA3uOVQ0EbW6zvjCGjUIHbS8MQukKc8B+V+cRWFOoTg/KmM9TQfzHx9+30gkScx
-         ReWHC6vIV57pZBJAawDxC12JYBUIU9L+u869dRrlG4HPt4ORxrfNgIsi+gY6ee5rfwCy
-         knZGUCxdZ5G1wjrVx0S//NZLD1R99FHn+5XWhn0BasctGkUPBs3j76Zfz+cmPh4M86Oy
-         iz9MU60idTFNI4BkhC/S6pPfu1k3joJsXCxaKOz8vK+bj20fcgHxMlZG0/9JceZO4FAF
-         QjaOj183uY4KlJGoLUOCN0jwTvZzUO6a6kWYxBA3HuvEOBydtd69wmz3yCaGLJ+GKHhZ
-         siDA==
-X-Gm-Message-State: APjAAAWXyuuBrH43T9z1aTuIjZXJ+cv8j+RvHRtlqvscRoU/VHenqx3W
-        IbsaFYp3hOtKFCQNfhSybgPEQS/9c7R7/A==
-X-Google-Smtp-Source: APXvYqzO+XtZ0RlmgKs9cHH7F+QWjjr+y7ahjfy+81ySWmFPSkrAtbzOuIa/bjlCqD9Xq8MhxSvKTw==
-X-Received: by 2002:a63:d411:: with SMTP id a17mr7532269pgh.333.1579636094783;
-        Tue, 21 Jan 2020 11:48:14 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u7sm44004674pfh.128.2020.01.21.11.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 11:48:14 -0800 (PST)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v2 3/3] alarmtimer: Always export alarmtimer_get_rtcdev() and update docs
-Date:   Tue, 21 Jan 2020 11:48:11 -0800
-Message-Id: <20200121194811.145644-4-swboyd@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200121194811.145644-1-swboyd@chromium.org>
-References: <20200121194811.145644-1-swboyd@chromium.org>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1579636341; x=1611172341;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=XmzH6UUhf2fq7wRQ6JDGuAiXl76NE0nd9fhU95gyxxs=;
+  b=qUR3604KmaGylsWJv41ZjQNQJDSgE+7kaDFHtMOr7vQxKvEmsFYfu0YD
+   GyG5f55Y4wO5FYj7bRnYH5EtQ9FXOKnfnKWvdogPbaDCMSP+ml4W2/tY4
+   x7/hqgBu3dmQ6js57OOE4MOtqmJmgx41CORriPml0Zh+DKAAT4LANHehy
+   c=;
+IronPort-SDR: cUrWtJYzh5SkjSAWnROiY1GCaVFVcrwkJBLQYslWMGOqBtqCnoh+iGPltozsC/AFszrvhLxt4b
+ VZ6W6RyVqaPQ==
+X-IronPort-AV: E=Sophos;i="5.70,347,1574121600"; 
+   d="scan'208";a="20200140"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 21 Jan 2020 19:52:09 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com (Postfix) with ESMTPS id 9F5ECA05E3;
+        Tue, 21 Jan 2020 19:52:07 +0000 (UTC)
+Received: from EX13D11UWB002.ant.amazon.com (10.43.161.20) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 21 Jan 2020 19:52:07 +0000
+Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
+ EX13D11UWB002.ant.amazon.com (10.43.161.20) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 21 Jan 2020 19:52:07 +0000
+Received: from EX13D01UWB002.ant.amazon.com ([10.43.161.136]) by
+ EX13d01UWB002.ant.amazon.com ([10.43.161.136]) with mapi id 15.00.1367.000;
+ Tue, 21 Jan 2020 19:52:07 +0000
+From:   "Singh, Balbir" <sblbir@amazon.com>
+To:     "hch@lst.de" <hch@lst.de>
+CC:     "Sangaraju, Someswarudu" <ssomesh@amazon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "Chaitanya.Kulkarni@wdc.com" <Chaitanya.Kulkarni@wdc.com>
+Subject: Re: [resend v1 4/5] drivers/nvme/host/core.c: Convert to use
+ disk_set_capacity
+Thread-Topic: [resend v1 4/5] drivers/nvme/host/core.c: Convert to use
+ disk_set_capacity
+Thread-Index: AQHVwUG1iZmE8Pm/G0CenFe4gZ349afc0u0AgAQUfoCAFL6VAA==
+Date:   Tue, 21 Jan 2020 19:52:06 +0000
+Message-ID: <40580ebc0991c4ffc3be67d60aeaf269703854ac.camel@amazon.com>
+References: <20200102075315.22652-1-sblbir@amazon.com>
+         <20200102075315.22652-5-sblbir@amazon.com>
+         <BYAPR04MB57490FFCC025A88F4D97D40A86220@BYAPR04MB5749.namprd04.prod.outlook.com>
+         <1b88bedc6d5435fa7154f3356fa3f1a3e6888ded.camel@amazon.com>
+         <20200108150447.GC10975@lst.de>
+In-Reply-To: <20200108150447.GC10975@lst.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.160.8]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6425CB2DE728D54BA14C729788634425@amazon.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The export isn't there for the stubbed version of
-alarmtimer_get_rtcdev(), so move the export outside of the ifdef. And
-rtcdev isn't used outside of this ifdef so we don't need to redefine it
-as NULL.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- kernel/time/alarmtimer.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 0c9e97054da8..6ea08fa62c46 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -67,8 +67,6 @@ static DEFINE_SPINLOCK(rtcdev_lock);
-  * alarmtimer_get_rtcdev - Return selected rtcdevice
-  *
-  * This function returns the rtc device to use for wakealarms.
-- * If one has not already been chosen, it checks to see if a
-- * functional rtc device is available.
-  */
- struct rtc_device *alarmtimer_get_rtcdev(void)
- {
-@@ -81,7 +79,6 @@ struct rtc_device *alarmtimer_get_rtcdev(void)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(alarmtimer_get_rtcdev);
- 
- static int alarmtimer_rtc_add_device(struct device *dev,
- 				struct class_interface *class_intf)
-@@ -149,11 +146,11 @@ struct rtc_device *alarmtimer_get_rtcdev(void)
- {
- 	return NULL;
- }
--#define rtcdev (NULL)
- static inline int alarmtimer_rtc_interface_setup(void) { return 0; }
- static inline void alarmtimer_rtc_interface_remove(void) { }
- static inline void alarmtimer_rtc_timer_init(void) { }
- #endif
-+EXPORT_SYMBOL_GPL(alarmtimer_get_rtcdev);
- 
- /**
-  * alarmtimer_enqueue - Adds an alarm timer to an alarm_base timerqueue
--- 
-Sent by a computer, using git, on the internet
-
+T24gV2VkLCAyMDIwLTAxLTA4IGF0IDE2OjA0ICswMTAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
+biBNb24sIEphbiAwNiwgMjAyMCBhdCAxMjo0NjoyNkFNICswMDAwLCBTaW5naCwgQmFsYmlyIHdy
+b3RlOg0KPiA+IE9uIFNhdCwgMjAyMC0wMS0wNCBhdCAyMjoyNyArMDAwMCwgQ2hhaXRhbnlhIEt1
+bGthcm5pIHdyb3RlOg0KPiA+ID4gUXVpY2sgcXVlc3Rpb24gaGVyZSBpZiB1c2VyIGV4ZWN1dGVz
+IG52bWUgbnMtcmVzY2FuIC9kZXYvbnZtZTENCj4gPiA+IHdpbGwgZm9sbG93aW5nIGNvZGUgcmVz
+dWx0IGluIHRyaWdnZXJpbmcgdWV2ZW50KHMpIGZvcg0KPiA+ID4gdGhlIG5hbWVzcGFjZShzKCBm
+b3Igd2hpY2ggdGhlcmUgaXMgbm8gY2hhbmdlIGluIHRoZSBzaXplID8NCj4gPiA+IA0KPiA+ID4g
+SWYgc28gaXMgdGhhdCBhbiBleHBlY3RlZCBiZWhhdmlvciA/DQo+ID4gPiANCj4gPiANCj4gPiBN
+eSBvbGQgY29kZSBoYWQgYSBjaGVjayB0byBzZWUgaWYgb2xkX2NhcGFjaXR5ICE9IG5ld19jYXBh
+Y2l0eSBhcyB3ZWxsLg0KPiA+IEkgY2FuIHJlZG8gdGhvc2UgYml0cyBpZiBuZWVkZWQuDQo+ID4g
+DQo+ID4gVGhlIGV4cGVjdGVkIGJlaGF2aW91ciBpcyBub3QgY2xlYXIsIGJ1dCB0aGUgZnVuY3Rp
+b25hbGl0eSBpcyBub3QgYnJva2VuLA0KPiA+IHVzZXINCj4gPiBzcGFjZSBzaG91bGQgYmUgYWJs
+ZSB0byBkZWFsIHdpdGggYSByZXNpemUgZXZlbnQgd2hlcmUgdGhlIHByZXZpb3VzDQo+ID4gY2Fw
+YWNpdHkNCj4gPiA9PSBuZXcgY2FwYWNpdHkgSU1ITy4NCj4gDQo+IEkgdGhpbmsgaXQgbWFrZXMg
+c2Vuc2UgdG8gbm90IGJvdGhlciB3aXRoIGEgbm90aWZpY2F0aW9uIHVubGVzcyB0aGVyZQ0KPiBp
+cyBhbiBhY3R1YWwgY2hhbmdlLg0KDQpbU29ycnkgZm9yIHRoZSBkZWxheWVkIHJlc3BvbnNlLCBq
+dXN0IGJhY2sgZnJvbSBMQ0FdDQoNCkFncmVlZCENCg0KQmFsYmlyIFNpbmdoDQo=
