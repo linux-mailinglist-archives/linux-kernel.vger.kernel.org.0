@@ -2,222 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADCB143767
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A61143786
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgAUHFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:05:23 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45364 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUHFX (ORCPT
+        id S1728931AbgAUHX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:23:58 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54427 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUHX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:05:23 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200121070521euoutp0218e5e50de91459f5c00fe348da581857~r1QcnFjO72351723517euoutp02b
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:05:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200121070521euoutp0218e5e50de91459f5c00fe348da581857~r1QcnFjO72351723517euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579590321;
-        bh=jz6YdJe+9oiv3h/P57nB26DlekL22/ed76FQBVgaSrY=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=s/8kj1l7tfs2HhdCctTtxpgpPHXDVKLe1BqaH/X3xHeuwYn266LNYVFpurUt0klUP
-         8G430K+qe/QDCh1GQwG3qpQApxcn5lbGj3TLLeKTtZ5PruCm0vIo/m1RFnY7YPeChQ
-         Q0PootTQZfF/W1y+PWUaW7prKeK/avWkAtDu0OHI=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200121070520eucas1p1661b2a62ef7419e85b38bb21dcf6e19f~r1QcLwOsC0793607936eucas1p1M;
-        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id C5.57.60679.0B2A62E5; Tue, 21
-        Jan 2020 07:05:20 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da~r1Qb1Vxbf3176231762eucas1p23;
-        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200121070520eusmtrp28b76c75abbbe60b93670cba358a3f8f2~r1Qb0rSk31202912029eusmtrp2C;
-        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-e8-5e26a2b00467
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DF.45.07950.0B2A62E5; Tue, 21
-        Jan 2020 07:05:20 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200121070519eusmtip2238a581f3dbd3c7f444f819c61f486ec~r1QbcZOYR2994429944eusmtip2Q;
-        Tue, 21 Jan 2020 07:05:19 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos: Add GPU thermal zone cooling maps for
- Odroid XU3/XU4/HC1
-Date:   Tue, 21 Jan 2020 08:05:10 +0100
-Message-Id: <20200121070510.31520-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7djPc7obFqnFGcx5JGWxccZ6VovrX56z
-        Wpw/v4Hd4vKuOWwWM87vY7JYe+QuuwObx6ZVnWwefVtWMXp83iQXwBzFZZOSmpNZllqkb5fA
-        lbH+51vmgocSFXMf7GNtYPwq2MXIySEhYCLxuOEDcxcjF4eQwApGiek/t7NBOF8YJe6sv8UM
-        UiUk8JlR4tgDEZiOtqa/UEXLGSWeT/zAAtdxsO0MO0gVm4ChRNfbLjYQW0TAWaJhaiMTSBGz
-        wDZGidcLZoIVCQskSJyesIaxi5GDg0VAVaJtJlg9r4CtxOMntxkhtslLrN5wAOw+CYEDbBJt
-        d14yQyRcJLZObWaHsIUlXh3fAmXLSPzfOZ8JoqGZUeLhubXsEE4Po8TlphlQY60l7pz7xQay
-        mVlAU2L9Ln2IsKNE1+OP7CBhCQE+iRtvwYHEDGRO2jadGSLMK9HRJgRRrSYx6/g6uLUHL1yC
-        Os1DYv2v9eyQkIuV2HLmBdMERrlZCLsWMDKuYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93E
-        CIz30/+Of9nBuOtP0iFGAQ5GJR7eF5NV44RYE8uKK3MPMUpwMCuJ8C5oAgrxpiRWVqUW5ccX
-        leakFh9ilOZgURLnNV70MlZIID2xJDU7NbUgtQgmy8TBKdXAqFbiK+J9cvuRpcLrGN5vcdsl
-        elRld1yFzxr9rcm6msUTfns+upTwqiaiWsPkiNf71O7+ebtYVBzWzTQ0FJwpzbvmXf3N9XO3
-        mLvq2CbZXj60yuiczQJ7/+bPfQrpx0T7k6bbfvVOiDb0Drq+tZ6tUeb3k6T1hlkFPzpq6jeF
-        sYVyyJsI3ctTYinOSDTUYi4qTgQAgyVECfMCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xe7obFqnFGcw9yWGxccZ6VovrX56z
-        Wpw/v4Hd4vKuOWwWM87vY7JYe+QuuwObx6ZVnWwefVtWMXp83iQXwBylZ1OUX1qSqpCRX1xi
-        qxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7H+51vmgocSFXMf7GNtYPwq
-        2MXIySEhYCLR1vSXrYuRi0NIYCmjxNHZE1khEjISJ6c1QNnCEn+udUEVfWKUWH3/LCNIgk3A
-        UKLrLUiCk0NEwFXi0IpeZpAiZoEdjBLdLRfYQRLCAnESZ1o/snQxcnCwCKhKtM0Eq+cVsJV4
-        /OQ2I8QCeYnVGw4wT2DkWcDIsIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwzLYd+7llB2PX
-        u+BDjAIcjEo8vA7TVOOEWBPLiitzDzFKcDArifAuaAIK8aYkVlalFuXHF5XmpBYfYjQF2j2R
-        WUo0OR8YA3kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhgP6Dak
-        ztq690m/2co9felvKg9oPFdKDs45zPytqvvK3vlKJZMaTZMdlgksW5RtbHbxWPpaA8HP1/nm
-        layKnBM58Uzo8rkpeVK2R23543ZmTLT306sq52/5bMq36FyQ7TW5GSv3n9q1aWnrRUf28mdO
-        pY4fGbt4Pprsnx7FmbRSf8NLQ3+mlg4lluKMREMt5qLiRABVraLlSQIAAA==
-X-CMS-MailID: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
-References: <CGME20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da@eucas1p2.samsung.com>
+        Tue, 21 Jan 2020 02:23:58 -0500
+Received: by mail-pj1-f67.google.com with SMTP id kx11so929030pjb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 23:23:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mlCaxydkOgZv4ICsJLgzeMxdhOBrk2+0L4LhoOYBItQ=;
+        b=YA2vPBq0mvDVXP8id2Mt+w6fhK+0j+w96F+sTtR46ecrXWWm5mihMNdZA0EBwrxV5W
+         T48gHL/VukRPT0lY0JDHqc85r9U9TVwS3pK/EytkWy6PzFgod7I0J/kygHhxCb82K6cR
+         MgY6eXsdO6BLOnxHwfKKiYer/PjvxC90hiygpj0qZUgNmAvTkAtX85gBk1KxNObDFy8A
+         YP1t0c0RyG1xCX0GmabiEt7hNp84d4+SNrZh1v3cN9iBaS55hdxKvjbFhZP0025kRkxT
+         rOAC7VuqnvTQsJBQvIQlzhe1MfUt+7Qi3zskvjw8gVAYT6WWhCCx3zRFu0LAv81aXO0U
+         NwBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mlCaxydkOgZv4ICsJLgzeMxdhOBrk2+0L4LhoOYBItQ=;
+        b=NmEY2LNAPU+CUG/AwUYh4mq3uDkrm+OO0doT1H1kA2H8XEWGKP6NKNtFaHmLOE71AG
+         pOwbXbsTf5NWo4gejceggLiA14N3qemvLbkVN7JZJHRPsN7rvfX+ysTO/mua3l0YvDMc
+         N1ZAUvuNIrNc6EiNNKLcsUuqvD1TJd5Vjzxqfc8GYJz+pDuv7EVSwxIOY9Azw7eU3y4H
+         IJIb6RrsiV8+ceqycieF96JsSIeGpreDr4g9lu8siEY6Sz9kVzwGF7R8gJT+06waiPNm
+         1eH6y+/01noXm2O6UG/Xgn+sVEvEiQo5QKTl5JapGyQ/MHJYG5R2cf1RqvPTg5dNyKuY
+         txFg==
+X-Gm-Message-State: APjAAAU+lpUQugrm5vad7h/7aa19yRWpDCRIgALS/PkJ+rMAC+Q9XaG2
+        NHz/HP2I+M95bRlmtjsE0Og=
+X-Google-Smtp-Source: APXvYqxH90T8L70K8dJA329+Zf1S8Be+Rn1LWaWxcGb0IEj638DwpurPkx5Mc1G8s06NbyFGNq0xAA==
+X-Received: by 2002:a17:90b:8b:: with SMTP id bb11mr3865357pjb.27.1579591437792;
+        Mon, 20 Jan 2020 23:23:57 -0800 (PST)
+Received: from lenovo.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id a9sm41495866pfn.38.2020.01.20.23.23.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 Jan 2020 23:23:57 -0800 (PST)
+From:   Orson Zhai <orson.unisoc@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, baolin.wang@unisoc.com,
+        chunyan.zhang@unisoc.com, Orson Zhai <orson.zhai@unisoc.com>
+Subject: [PATCH V5] mfd: syscon: Add arguments support for syscon reference
+Date:   Tue, 21 Jan 2020 15:09:38 +0800
+Message-Id: <1579590578-8709-1-git-send-email-orson.unisoc@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add trip points and cooling maps for GPU thermal zone for Odroid
-XU3/XU4/HC1 boards. Trip points are based on the CPU thermal zone for the
-those boards.
+From: Orson Zhai <orson.zhai@unisoc.com>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+There are a lot of similar global registers being used across multiple SoCs
+from Unisoc. But most of these registers are assigned with different offset
+for different SoCs. It is hard to handle all of them in an all-in-one
+kernel image.
+
+Add a helper function to get regmap with arguments where we could put some
+extra information such as the offset value.
+
+Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
+Tested-by: Baolin Wang <baolin.wang@unisoc.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
-v2:
-- removed polling-delay related properties for HC1 as requested by Krzysztof
---
- arch/arm/boot/dts/exynos5422-odroidhc1.dts    | 30 ++++++++++
- .../boot/dts/exynos5422-odroidxu3-common.dtsi | 59 +++++++++++++++++++
- 2 files changed, 89 insertions(+)
+Change V5:
+	Removed unexpected preceding spaces replaced by email system.
+	The patch has been tested for local mailing and applying.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidhc1.dts b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-index f163206265bb..812659260278 100644
---- a/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-@@ -215,6 +215,36 @@
- 				};
- 			};
- 		};
-+		gpu_thermal: gpu-thermal {
-+			thermal-sensors = <&tmu_gpu 0>;
-+			trips {
-+				gpu_alert0: gpu-alert-0 {
-+					temperature = <70000>;
-+					hysteresis = <10000>;
-+					type = "active";
-+				};
-+				gpu_alert1: gpu-alert-1 {
-+					temperature = <85000>;
-+					hysteresis = <10000>;
-+					type = "active";
-+				};
-+				gpu_crit0: gpu-crit-0 {
-+					temperature = <120000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu_alert0>;
-+					cooling-device = <&gpu 0 2>;
-+				};
-+				map1 {
-+					trip = <&gpu_alert1>;
-+					cooling-device = <&gpu 3 6>;
-+				};
-+			};
-+		};
- 	};
- 
- };
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 1865a708b49f..5da2d81e3be2 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -357,6 +357,65 @@
- 				};
- 			};
- 		};
-+		gpu_thermal: gpu-thermal {
-+			thermal-sensors = <&tmu_gpu 0>;
-+			polling-delay-passive = <250>;
-+			polling-delay = <0>;
-+			trips {
-+				gpu_alert0: gpu-alert-0 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				gpu_alert1: gpu-alert-1 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				gpu_alert2: gpu-alert-2 {
-+					temperature = <70000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+				gpu_crit0: gpu-crit-0 {
-+					temperature = <120000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+				gpu_alert3: gpu-alert-3 {
-+					temperature = <70000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+				gpu_alert4: gpu-alert-4 {
-+					temperature = <85000>;
-+					hysteresis = <10000>;
-+					type = "passive";
-+				};
-+			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu_alert0>;
-+					cooling-device = <&fan0 0 1>;
-+				};
-+				map1 {
-+					trip = <&gpu_alert1>;
-+					cooling-device = <&fan0 1 2>;
-+				};
-+				map2 {
-+					trip = <&gpu_alert2>;
-+					cooling-device = <&fan0 2 3>;
-+				};
-+				map3 {
-+					trip = <&gpu_alert3>;
-+					cooling-device = <&gpu 0 2>;
-+				};
-+				map4 {
-+					trip = <&gpu_alert4>;
-+					cooling-device = <&gpu 3 6>;
-+				};
-+			};
-+		};
- 	};
- };
- 
--- 
-2.17.1
+ drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
+ include/linux/mfd/syscon.h | 14 ++++++++++++++
+ 2 files changed, 43 insertions(+)
+
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index e22197c..2918b05 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -224,6 +224,35 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+ }
+ EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+
++struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
++					const char *property,
++					int arg_count,
++					unsigned int *out_args)
++{
++	struct device_node *syscon_np;
++	struct of_phandle_args args;
++	struct regmap *regmap;
++	unsigned int index;
++	int rc;
++
++	rc = of_parse_phandle_with_fixed_args(np, property, arg_count,
++			0, &args);
++	if (rc)
++		return ERR_PTR(rc);
++
++	syscon_np = args.np;
++	if (!syscon_np)
++		return ERR_PTR(-ENODEV);
++
++	regmap = syscon_node_to_regmap(syscon_np);
++	for (index = 0; index < arg_count; index++)
++		out_args[index] = args.args[index];
++	of_node_put(syscon_np);
++
++	return regmap;
++}
++EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle_args);
++
+ static int syscon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
+index 112dc66..714cab1 100644
+--- a/include/linux/mfd/syscon.h
++++ b/include/linux/mfd/syscon.h
+@@ -23,6 +23,11 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
+ extern struct regmap *syscon_regmap_lookup_by_phandle(
+ 					struct device_node *np,
+ 					const char *property);
++extern struct regmap *syscon_regmap_lookup_by_phandle_args(
++					struct device_node *np,
++					const char *property,
++					int arg_count,
++					unsigned int *out_args);
+ #else
+ static inline struct regmap *device_node_to_regmap(struct device_node *np)
+ {
+@@ -45,6 +50,15 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
+ {
+ 	return ERR_PTR(-ENOTSUPP);
+ }
++
++static struct regmap *syscon_regmap_lookup_by_phandle_args(
++					struct device_node *np,
++					const char *property,
++					int arg_count,
++					unsigned int *out_args)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
+ #endif
+
+ #endif /* __LINUX_MFD_SYSCON_H__ */
+--
+2.7.4
 
