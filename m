@@ -2,95 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 398FE143D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71909143D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbgAUMnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 07:43:15 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:54714 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729993AbgAUMnH (ORCPT
+        id S1728898AbgAUMn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 07:43:58 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:47930 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727350AbgAUMn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 07:43:07 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID 00LCh3nZ011028, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (smtpsrv.realtek.com[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id 00LCh3nZ011028
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 21 Jan 2020 20:43:03 +0800
-Received: from fc30.localdomain (172.21.177.138) by RTITCASV01.realtek.com.tw
- (172.21.6.18) with Microsoft SMTP Server id 14.3.468.0; Tue, 21 Jan 2020
- 20:43:01 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     <netdev@vger.kernel.org>
-CC:     <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <pmalani@chromium.org>,
-        <grundler@chromium.org>, Hayes Wang <hayeswang@realtek.com>
-Subject: [PATCH net 9/9] r8152: disable DelayPhyPwrChg
-Date:   Tue, 21 Jan 2020 20:40:35 +0800
-Message-ID: <1394712342-15778-347-Taiwan-albertk@realtek.com>
-X-Mailer: Microsoft Office Outlook 11
-In-Reply-To: <1394712342-15778-338-Taiwan-albertk@realtek.com>
-References: <1394712342-15778-338-Taiwan-albertk@realtek.com>
+        Tue, 21 Jan 2020 07:43:56 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-188-kQ6x5fBGN4GK5w_8SJObUg-1; Tue, 21 Jan 2020 12:43:54 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 21 Jan 2020 12:43:53 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 21 Jan 2020 12:43:53 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     =?utf-8?B?J1BhbGkgUm9ow6FyJw==?= <pali.rohar@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        "Gabriel Krisman Bertazi" <krisman@collabora.com>
+Subject: RE: vfat: Broken case-insensitive support for UTF-8
+Thread-Topic: vfat: Broken case-insensitive support for UTF-8
+Thread-Index: AQHVz+1oiOVqsS4Qp0SucuDN4afIhKf1D3Ng
+Date:   Tue, 21 Jan 2020 12:43:53 +0000
+Message-ID: <2f8f667b149d4a3e97a924ecbb102875@AcuMS.aculab.com>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp> <20200120110438.ak7jpyy66clx5v6x@pali>
+ <875zh6pc0f.fsf@mail.parknet.co.jp> <20200120214046.f6uq7rlih7diqahz@pali>
+ <20200120224625.GE8904@ZenIV.linux.org.uk>
+ <20200120235745.hzza3fkehlmw5s45@pali>
+In-Reply-To: <20200120235745.hzza3fkehlmw5s45@pali>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [172.21.177.138]
+X-MC-Unique: kQ6x5fBGN4GK5w_8SJObUg-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable DelayPhyPwrChg let the device fail enter the power saving mode
-of P3.
-
-Signed-off-by: Hayes Wang <hayeswang@realtek.com>
----
- drivers/net/usb/r8152.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 0998b9587943..c999a58ddda9 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -31,7 +31,7 @@
- #define NETNEXT_VERSION		"11"
- 
- /* Information for net */
--#define NET_VERSION		"10"
-+#define NET_VERSION		"11"
- 
- #define DRIVER_VERSION		"v1." NETNEXT_VERSION "." NET_VERSION
- #define DRIVER_AUTHOR "Realtek linux nic maintainers <nic_swsd@realtek.com>"
-@@ -109,6 +109,7 @@
- #define PLA_BP_EN		0xfc38
- 
- #define USB_USB2PHY		0xb41e
-+#define USB_SSPHYLINK1		0xb426
- #define USB_SSPHYLINK2		0xb428
- #define USB_U2P3_CTRL		0xb460
- #define USB_CSR_DUMMY1		0xb464
-@@ -384,6 +385,9 @@
- #define USB2PHY_SUSPEND		0x0001
- #define USB2PHY_L1		0x0002
- 
-+/* USB_SSPHYLINK1 */
-+#define DELAY_PHY_PWR_CHG	BIT(1)
-+
- /* USB_SSPHYLINK2 */
- #define pwd_dn_scale_mask	0x3ffe
- #define pwd_dn_scale(x)		((x) << 1)
-@@ -4993,6 +4997,10 @@ static void rtl8153_up(struct r8152 *tp)
- 	ocp_data &= ~LANWAKE_PIN;
- 	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_LWAKE_CTRL_REG, ocp_data);
- 
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_SSPHYLINK1);
-+	ocp_data &= ~DELAY_PHY_PWR_CHG;
-+	ocp_write_word(tp, MCU_TYPE_USB, USB_SSPHYLINK1, ocp_data);
-+
- 	r8153_aldps_en(tp, true);
- 
- 	switch (tp->version) {
--- 
-2.21.0
+RnJvbTogUGFsaSBSb2jDoXINCj4gU2VudDogMjAgSmFudWFyeSAyMDIwIDIzOjU4DQouLi4NCj4g
+SXQgaXMgT0ssIGJ1dCB0b28gY29tcGxpY2F0ZWQuIFRoYXQgZnVuY3Rpb24gaXMgaW4gbnQga2Vy
+bmVsLiBTbyB5b3UNCj4gbmVlZCB0byBidWlsZCBhIG5ldyBrZXJuZWwgbW9kdWxlIGFuZCBhbHNv
+IGRlY2lkZSB3aGVyZSB0byBwdXQgb3V0cHV0IG9mDQo+IHRoYXQgZnVuY3Rpb24uIEl0IGlzIGEg
+bG9uZyB0aW1lIHNpbmNlIEkgZGlkIHNvbWUgbnQga2VybmVsIGhhY2tpbmcgYW5kDQo+IG5vd2Fk
+YXlzIHlvdSBuZWVkIHRvIGRvd25sb2FkIDEwR0IrIG9mIFZpc3VhbCBTdHVkaW8gY29kZSwgdGhl
+biBhZGRvbnMNCj4gZm9yIGJ1aWxkaW5nIGtlcm5lbCBtb2R1bGVzLCBmaWd1cmUgb3V0IGhvdyB0
+byB3cml0ZSBhbmQgY29tcGlsZSBzaW1wbGUNCj4ga2VybmVsIG1vZHVsZSB2aWEgVmlzdWFsIFN0
+dWRpbywgd3JpdGUgaW5pIGluc3RhbGwgZmlsZSwgdHJ5IHRvIGxvYWQgaXQNCj4gYW5kIHRoZW4g
+eW91IGV2ZW4gZmFpbCBhcyByZWNlbnQgV2luZG93cyBrZXJuZWxzIHJlZnVzZSB0byBsb2FkIGtl
+cm5lbA0KPiBtb2R1bGVzIHdoaWNoIGFyZSBub3Qgc2lnbmVkLi4uDQoNCkFjdHVhbGx5IGl0IGlz
+bid0IHF1aXRlIHRoYXQgaGFyZC4NCllvdSBjYW4gZG93bmxvYWQgV2luZGJnLmV4ZSAod2l0aG91
+dCB0b28gbXVjaCBvdGhlciBqdW5rIGlmIHlvdSBmaW5kIHRoZSByaWdodCBwbGFjZSkuDQpVc2Ug
+YmNkZWRpdCB0byBsZXQgaXQgbG9vayBhdCB0aGUgY3VycmVudCBrZXJuZWwgKGFuZCByZWJvb3Qp
+Lg0KVGhlbiB5b3UgY2FuIGdyb3ZlbCB0aHJvdWdoIHRoZSBsaXZlIHN5c3RlbSBrZXJuZWwgd2l0
+aCBhbG1vc3Qgbm8gcmVzdHJpY3Rpb24uDQpQb2ludCBpdCBhdCB0aGUgJ3N5bWJvbCBzZXJ2ZXIn
+IGFuZCBpdCBrbm93cyB0aGUgbGF5b3V0cyBvZiBhIGxvdCBvZiBrZXJuZWwgc3RydWN0dXJlcy4N
+Ck9UT0ggaXQncyBjb21tYW5kIHN5bnRheCBpcyBzcGVjdGFjdWxhcmx5IGhvcnJpZC4NCg0KVGhl
+cmUgaXMgYWxzbyBhIGJvb3QgZmxhZyB0byBsZXQgeW91IGxvYWQgJ3Rlc3Qgc2lnbmVkJyBkcml2
+ZXJzLg0KT1RPSCBzaWduaW5nIGRyaXZlcnMgZm9yIGEgcmVsZWFzZSBpcyBub3cgYSByZWFsIFBJ
+VEEuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkg
+Um9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlv
+biBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
