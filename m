@@ -2,63 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2DFC144061
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F5514406C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbgAUPVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 10:21:00 -0500
-Received: from mga05.intel.com ([192.55.52.43]:16101 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbgAUPVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 10:21:00 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 07:20:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="227364523"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga003.jf.intel.com with ESMTP; 21 Jan 2020 07:20:58 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1itvKt-0007VP-Dm; Tue, 21 Jan 2020 17:20:59 +0200
-Date:   Tue, 21 Jan 2020 17:20:59 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jonathan McDowell <noodles@earth.li>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] x86/quirks: Convert DMI matching to use a table
-Message-ID: <20200121152059.GV32742@smile.fi.intel.com>
-References: <20200120160801.53089-6-andriy.shevchenko@linux.intel.com>
- <20200121115124.GA16758@earth.li>
+        id S1729157AbgAUPYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 10:24:34 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:50360 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbgAUPYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 10:24:34 -0500
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 00LFOMvC020513
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 00:24:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 00LFOMvC020513
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1579620263;
+        bh=hT4cfrVYUNJPdXLZYNW8nx8XfS2S9IHAEXWJB9a5qQs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M4yK3QiNsYp2WtgSLE2CSMBYuT65r8bdKaGgNUoH9A3GwxOCqXfrqgvCedtc4cHuW
+         U2Ndj5mItH2ouvZh3Xy293mYrqIy+5dlbn4FlmQE6litXXljm91rDXlm6OVnjpVktA
+         eXCNb9WLqUxMT2bcO+8z3KlaAjqovFNQGltKW7Mb//jkBNypFcevW2TVu782EaHopk
+         0B37JO6L7ImHPZMyFaVpSs47VyQSS3AMrGiIS2A5PQIpaZkSnV9N6ZN/LzHAbs4GJl
+         ClV5OZ5HXoI41Jh9jodXw5+eJPU6lHmg6UPJghFgMpSg+TfLTzfV4sooSp4X+/oS6T
+         wT5btMazsdpxQ==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id 73so1125554uac.6
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:24:22 -0800 (PST)
+X-Gm-Message-State: APjAAAWRTJnIYKYmnmhmN/YuxxHB8d6tCPYVWIY4ByZLEqRrC7ABUk1X
+        kwj5EtCOE04ZmvPENIiWbh1Hc5EIRoUxzHmyA7Q=
+X-Google-Smtp-Source: APXvYqyVG2I15i8f1wNhUebZbsH9RXVtwMlz5AWZnFTIjvszireuTZHsziwZJOZYG1kUq0zCfifxuyjcHdP3rerRO7Q=
+X-Received: by 2002:ab0:6509:: with SMTP id w9mr3190475uam.121.1579620261607;
+ Tue, 21 Jan 2020 07:24:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121115124.GA16758@earth.li>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200121134739.22879-1-erosca@de.adit-jv.com>
+In-Reply-To: <20200121134739.22879-1-erosca@de.adit-jv.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 22 Jan 2020 00:23:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASm=7P3cJ=SB3hmPjqWTii1Lv2pf3p0xc-hx0XNTdaJHw@mail.gmail.com>
+Message-ID: <CAK7LNASm=7P3cJ=SB3hmPjqWTii1Lv2pf3p0xc-hx0XNTdaJHw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kbuild: remove compressed images on 'make
+ ARCH=arm64 (dist)clean'
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 11:51:25AM +0000, Jonathan McDowell wrote:
-> In article <20200120160801.53089-6-andriy.shevchenko@linux.intel.com> you wrote:
-> > In order to extend the DMI based quirks, convert them to a table.
+Hi.
 
-> > +static void __init early_platfrom_detect_quirk(void)
-> 
-> "platform"
+On Tue, Jan 21, 2020 at 10:48 PM Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
+>
+> From: Dirk Behme <dirk.behme@de.bosch.com>
+>
+> Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
+> Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
+> AArch64 images. However, the commit missed adding support for removing
+> those images on 'make ARCH=arm64 (dist)clean'.
+>
+> Fix this by adding them to the target list.
+> Make sure to match the order of the recipes in the makefile.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> > +	early_platfrom_detect_quirk();
-> 
-> As above.
+Please change Cc with my
 
-Thanks! Will fix in v3.
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+Thanks.
+
+
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> ---
+>  arch/arm64/boot/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/Makefile b/arch/arm64/boot/Makefile
+> index 1f012c506434..cd3414898d10 100644
+> --- a/arch/arm64/boot/Makefile
+> +++ b/arch/arm64/boot/Makefile
+> @@ -16,7 +16,7 @@
+>
+>  OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
+>
+> -targets := Image Image.gz
+> +targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+>
+>  $(obj)/Image: vmlinux FORCE
+>         $(call if_changed,objcopy)
+> --
+> 2.25.0
+>
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best Regards
+Masahiro Yamada
