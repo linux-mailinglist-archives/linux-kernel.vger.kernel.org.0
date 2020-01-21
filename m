@@ -2,98 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15078143D2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:43:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B227143D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:01:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbgAUMm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 07:42:56 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50626 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728898AbgAUMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 07:42:53 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8B9C710EB62758289330
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 20:42:45 +0800 (CST)
-Received: from huawei.com (10.175.104.245) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 21 Jan 2020
- 20:42:33 +0800
-From:   l00520965 <liuchao173@huawei.com>
-To:     <tglx@linutronix.de>
-CC:     <linfeilong@huawei.com>, <hushiyuan@huawei.com>,
-        LiuChao <liuchao173@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [RFC] irq: Skip printing irq when desc->action is null even if any_count is not zero
-Date:   Tue, 21 Jan 2020 21:09:59 +0800
-Message-ID: <20200121130959.22589-1-liuchao173@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1728709AbgAUNB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 08:01:27 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:35156 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbgAUNB1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 08:01:27 -0500
+Received: by mail-qv1-f68.google.com with SMTP id u10so1379343qvi.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 05:01:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z9x75RFBujs35vp0kR9dshO1qIssZRWX2b+4uOymJ80=;
+        b=FCqcb4ygTmSBXXYx4QWOeURFbw2FrZIkV2jK+GI0RDrqM0YVXN0Uovq1h2on15KGzE
+         3cKrBBsI+Kb089CmH9jgl7IzkYUNIH/bYmArxTDum6UnYykFFVJiAtvAfGsqaNpaREI0
+         K5BJrYvIgf897fvawh7hR8+yNaPTiqWJJvpAcYeWAi64Mjmq0hg+GdYl6o9xUp7/JRCN
+         DRG6+FleFXdEKjYuWJDIKV8lnhL77igKISKBXzpJ8k5nFopWlnDSEc8RpjJld0Cfdmt1
+         5MIKMSLhqrrOf7ZVxjw1CoeTn4SUIJ84jhadU742gu2A2hBSuQMe1xX8Z3rTfJJhOnoK
+         wwkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z9x75RFBujs35vp0kR9dshO1qIssZRWX2b+4uOymJ80=;
+        b=Dr5KTGhn6aQ+xa2cZp1+qnG5+qacKb8SwLD1R1g4Oe57E/6RBh2tDF21rPhx6QJywx
+         x/2tblPRqRDPl01/3O2DtB4mGGzZF2qjJsPSvZ8h+zdjWEFkmVK5ZPcSKsCtCW54oLLr
+         go6d4jwMM7xgcqDbIEnU8etTDqXwLyBuxrfU1RZovtIkVW0mPjHy4Dx2Ji0Bk+EUbdUR
+         0z/x3PKvVzOjawDFG8Mm7QbvqOpbH0q0A86BLc1/zQuFA9i9e73J7Zi/Y8D4vE3SW883
+         L4LeF2Kqo3Reh8cmSVbTRrxgNvarpM84L1X/sPqeQApowH8CJDuxWv2FFazqVMSnrVMn
+         ehpA==
+X-Gm-Message-State: APjAAAUfH8bJLoifr/uEtfJZ1wqyAvDYqAiNAC+HKYEG1BdWgzbly+bX
+        CgWaS3BXYcz0ezLZ9uFo3HxX2cIwW8HlTNF1mgg+mw==
+X-Google-Smtp-Source: APXvYqzTs36y76+Ax1v7ZHC0Ws6VwBO4HXtUDbFUhZveQnJnQSlEBxHmvNMaydYMvKVFdtV7j0xnLpmxsRnTAiuAAKA=
+X-Received: by 2002:ad4:5a53:: with SMTP id ej19mr4652000qvb.34.1579611685771;
+ Tue, 21 Jan 2020 05:01:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.245]
-X-CFilter-Loop: Reflected
+References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
+In-Reply-To: <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 21 Jan 2020 14:01:13 +0100
+Message-ID: <CACT4Y+bjAn0g980ZCxCn4MkgCsg7KrA69CExCeJZ63eRON5fXw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
+To:     Marco Elver <elver@google.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
+        Kees Cook <keescook@chromium.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: LiuChao <liuchao173@huawei.com>
+On Mon, Jan 20, 2020 at 3:45 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Mon, Jan 20, 2020 at 3:19 PM Marco Elver <elver@google.com> wrote:
+> >
+> > This adds instrumented.h, which provides generic wrappers for memory
+> > access instrumentation that the compiler cannot emit for various
+> > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
+> > future this will also include KMSAN instrumentation.
+> >
+> > Note that, copy_{to,from}_user require special instrumentation,
+> > providing hooks before and after the access, since we may need to know
+> > the actual bytes accessed (currently this is relevant for KCSAN, and is
+> > also relevant in future for KMSAN).
+> >
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Marco Elver <elver@google.com>
+> > ---
+> >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 153 insertions(+)
+> >  create mode 100644 include/linux/instrumented.h
+> >
+> > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> > new file mode 100644
+> > index 000000000000..9f83c8520223
+> > --- /dev/null
+> > +++ b/include/linux/instrumented.h
+> > @@ -0,0 +1,153 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +
+> > +/*
+> > + * This header provides generic wrappers for memory access instrumentation that
+> > + * the compiler cannot emit for: KASAN, KCSAN.
+> > + */
+> > +#ifndef _LINUX_INSTRUMENTED_H
+> > +#define _LINUX_INSTRUMENTED_H
+> > +
+> > +#include <linux/compiler.h>
+> > +#include <linux/kasan-checks.h>
+> > +#include <linux/kcsan-checks.h>
+> > +#include <linux/types.h>
+> > +
+> > +/**
+> > + * instrument_read - instrument regular read access
+> > + *
+> > + * Instrument a regular read access. The instrumentation should be inserted
+> > + * before the actual read happens.
+> > + *
+> > + * @ptr address of access
+> > + * @size size of access
+> > + */
+>
+> Based on offline discussion, that's what we add for KMSAN:
+>
+> > +static __always_inline void instrument_read(const volatile void *v, size_t size)
+> > +{
+> > +       kasan_check_read(v, size);
+> > +       kcsan_check_read(v, size);
+>
+> KMSAN: nothing
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_write - instrument regular write access
+> > + *
+> > + * Instrument a regular write access. The instrumentation should be inserted
+> > + * before the actual write happens.
+> > + *
+> > + * @ptr address of access
+> > + * @size size of access
+> > + */
+> > +static __always_inline void instrument_write(const volatile void *v, size_t size)
+> > +{
+> > +       kasan_check_write(v, size);
+> > +       kcsan_check_write(v, size);
+>
+> KMSAN: nothing
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_atomic_read - instrument atomic read access
+> > + *
+> > + * Instrument an atomic read access. The instrumentation should be inserted
+> > + * before the actual read happens.
+> > + *
+> > + * @ptr address of access
+> > + * @size size of access
+> > + */
+> > +static __always_inline void instrument_atomic_read(const volatile void *v, size_t size)
+> > +{
+> > +       kasan_check_read(v, size);
+> > +       kcsan_check_atomic_read(v, size);
+>
+> KMSAN: nothing
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_atomic_write - instrument atomic write access
+> > + *
+> > + * Instrument an atomic write access. The instrumentation should be inserted
+> > + * before the actual write happens.
+> > + *
+> > + * @ptr address of access
+> > + * @size size of access
+> > + */
+> > +static __always_inline void instrument_atomic_write(const volatile void *v, size_t size)
+> > +{
+> > +       kasan_check_write(v, size);
+> > +       kcsan_check_atomic_write(v, size);
+>
+> KMSAN: nothing
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_copy_to_user_pre - instrument reads of copy_to_user
+> > + *
+> > + * Instrument reads from kernel memory, that are due to copy_to_user (and
+> > + * variants).
+> > + *
+> > + * The instrumentation must be inserted before the accesses. At this point the
+> > + * actual number of bytes accessed is not yet known.
+> > + *
+> > + * @dst destination address
+> > + * @size maximum access size
+> > + */
+> > +static __always_inline void
+> > +instrument_copy_to_user_pre(const volatile void *src, size_t size)
+> > +{
+> > +       /* Check before, to warn before potential memory corruption. */
+> > +       kasan_check_read(src, size);
+>
+> KMSAN: check that (src,size) is initialized
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_copy_to_user_post - instrument reads of copy_to_user
+> > + *
+> > + * Instrument reads from kernel memory, that are due to copy_to_user (and
+> > + * variants).
+> > + *
+> > + * The instrumentation must be inserted after the accesses. At this point the
+> > + * actual number of bytes accessed should be known.
+> > + *
+> > + * @dst destination address
+> > + * @size maximum access size
+> > + * @left number of bytes left that were not copied
+> > + */
+> > +static __always_inline void
+> > +instrument_copy_to_user_post(const volatile void *src, size_t size, size_t left)
+> > +{
+> > +       /* Check after, to avoid false positive if memory was not accessed. */
+> > +       kcsan_check_read(src, size - left);
+>
+> KMSAN: nothing
 
-When desc->action is empty, there is no need to print out the irq and its'
-count in each cpu. The desc is not alloced in request_irq or freed in
-free_irq. So some PCI devices, such as rtl8139, uses request_irq and
-free_irq, which only modify the action of desc. So /proc/interrupts could
-be like this:
+One detail I noticed for KMSAN is that kmsan_copy_to_user has a
+special case when @to address is in kernel-space (compat syscalls
+doing tricky things), in that case it only copies metadata. We can't
+handle this with existing annotations.
 
-           CPU0       CPU1
-  2:      69397      69267     GICv3  27 Level     arch_timer
-  4:          0          0     GICv3  33 Level     uart-pl011
- 38:         46          0     GICv3  36 Level     ehci_hcd:usb1
- 39:         66          0     GICv3  37 Level
- 40:          0          0     GICv3  38 Level     virtio1
- 42:          0          0     GICv3  23 Level     arm-pmu
- 43:          0          0  ARMH0061:00   3 Edge      ACPI:Event
- 44:          1          0   ITS-MSI 32768 Edge      PCIe PME, pciehp
- 45:          0          0   ITS-MSI 32769 Edge      aerdrv
 
-Irqbalance gets the list of interrupts according to /proc/interrupts. In
-this case, irqbalance does not remove the interrupt from the balance list,
-and the last string in this line,which is Level, is used as irq_name.
+ * actually copied to ensure there was no information leak. If @to belongs to
+ * the kernel space (which is possible for compat syscalls), KMSAN just copies
+ * the metadata.
+ */
+void kmsan_copy_to_user(const void *to, const void *from, size_t
+to_copy, size_t left);
 
-Or we can clear desc->kstat_irqs in each cpu in free_irq when desc->action
-is null?
 
-Signed-off-by: LiuChao <liuchao173@huawei.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
----
- kernel/irq/proc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index cfc4f088a0e7..b27169e587f4 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -439,7 +439,7 @@ int show_interrupts(struct seq_file *p, void *v)
- {
- 	static int prec;
- 
--	unsigned long flags, any_count = 0;
-+	unsigned long flags;
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-@@ -466,11 +466,7 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc)
- 		goto outsparse;
- 
--	if (desc->kstat_irqs)
--		for_each_online_cpu(j)
--			any_count |= *per_cpu_ptr(desc->kstat_irqs, j);
--
--	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
-+	if (!desc->action || irq_desc_is_chained(desc))
- 		goto outsparse;
- 
- 	seq_printf(p, "%*d: ", prec, i);
--- 
-2.19.1
-
+> > +}
+> > +
+> > +/**
+> > + * instrument_copy_from_user_pre - instrument writes of copy_from_user
+> > + *
+> > + * Instrument writes to kernel memory, that are due to copy_from_user (and
+> > + * variants).
+> > + *
+> > + * The instrumentation must be inserted before the accesses. At this point the
+> > + * actual number of bytes accessed is not yet known.
+> > + *
+> > + * @dst destination address
+> > + * @size maximum access size
+> > + */
+> > +static __always_inline void
+> > +instrument_copy_from_user_pre(const volatile void *dst, size_t size)
+> > +{
+> > +       /* Check before, to warn before potential memory corruption. */
+> > +       kasan_check_write(dst, size);
+>
+> KMSAN: nothing
+>
+> > +}
+> > +
+> > +/**
+> > + * instrument_copy_from_user_post - instrument writes of copy_from_user
+> > + *
+> > + * Instrument writes to kernel memory, that are due to copy_from_user (and
+> > + * variants).
+> > + *
+> > + * The instrumentation must be inserted after the accesses. At this point the
+> > + * actual number of bytes accessed should be known.
+> > + *
+> > + * @dst destination address
+> > + * @size maximum access size
+> > + * @left number of bytes left that were not copied
+> > + */
+> > +static __always_inline void
+> > +instrument_copy_from_user_post(const volatile void *dst, size_t size, size_t left)
+> > +{
+> > +       /* Check after, to avoid false positive if memory was not accessed. */
+> > +       kcsan_check_write(dst, size - left);
+>
+> KMSAN: mark (dst, size-left) as initialized
+>
+> > +}
+> > +
+> > +#endif /* _LINUX_INSTRUMENTED_H */
+> > --
+> > 2.25.0.341.g760bfbb309-goog
+> >
