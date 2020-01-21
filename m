@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A8F144160
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:05:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1553A144140
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbgAUQCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:02:30 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62805 "EHLO mga09.intel.com"
+        id S1729636AbgAUQBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:01:45 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18291 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729469AbgAUQBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:01:32 -0500
+        id S1729501AbgAUQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 11:01:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:31 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="228885587"
+   d="scan'208";a="221744525"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 21 Jan 2020 08:01:27 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 21 Jan 2020 08:01:29 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 34CF910D5; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
+        id 3CBF91182; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Mark Brown <broonie@kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 34/38] platform/x86: intel_pmc_ipc: Propagate error from kstrtoul()
-Date:   Tue, 21 Jan 2020 19:01:10 +0300
-Message-Id: <20200121160114.60007-35-mika.westerberg@linux.intel.com>
+Subject: [PATCH v4 35/38] platform/x86: intel_pmc_ipc: Switch to use driver->dev_groups
+Date:   Tue, 21 Jan 2020 19:01:11 +0300
+Message-Id: <20200121160114.60007-36-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
 References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
@@ -51,30 +51,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kstrtoul() already returns negative error if the input was not valid so
-return it directly.
+The driver core provides support for adding additional attributes for
+devices via new ->dev_groups member of struct device_driver. Convert the
+driver to use that instead of adding the attributes manually.
 
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index f912f2a40512..eb4d65768531 100644
+index eb4d65768531..c006609ef74b 100644
 --- a/drivers/platform/x86/intel_pmc_ipc.c
 +++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -226,8 +226,9 @@ static ssize_t intel_pmc_ipc_northpeak_store(struct device *dev,
- 	int subcmd;
- 	int ret;
+@@ -253,6 +253,11 @@ static const struct attribute_group intel_ipc_group = {
+ 	.attrs = intel_ipc_attrs,
+ };
  
--	if (kstrtoul(buf, 0, &val))
--		return -EINVAL;
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
++static const struct attribute_group *intel_ipc_groups[] = {
++	&intel_ipc_group,
++	NULL
++};
++
+ static struct resource punit_res_array[] = {
+ 	/* Punit BIOS */
+ 	{
+@@ -597,28 +602,13 @@ static int ipc_plat_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- 	if (val)
- 		subcmd = 1;
+-	ret = sysfs_create_group(&pdev->dev.kobj, &intel_ipc_group);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to create sysfs group %d\n",
+-			ret);
+-		goto err_devs;
+-	}
+-
+ 	ipcdev.has_gcr_regs = true;
+ 
+ 	return 0;
+-
+-err_devs:
+-	platform_device_unregister(ipcdev.tco_dev);
+-	platform_device_unregister(ipcdev.punit_dev);
+-	platform_device_unregister(ipcdev.telemetry_dev);
+-
+-	return ret;
+ }
+ 
+ static int ipc_plat_remove(struct platform_device *pdev)
+ {
+-	sysfs_remove_group(&pdev->dev.kobj, &intel_ipc_group);
+ 	platform_device_unregister(ipcdev.tco_dev);
+ 	platform_device_unregister(ipcdev.punit_dev);
+ 	platform_device_unregister(ipcdev.telemetry_dev);
+@@ -632,6 +622,7 @@ static struct platform_driver ipc_plat_driver = {
+ 	.driver = {
+ 		.name = "pmc-ipc-plat",
+ 		.acpi_match_table = ACPI_PTR(ipc_acpi_ids),
++		.dev_groups = intel_ipc_groups,
+ 	},
+ };
+ 
 -- 
 2.24.1
 
