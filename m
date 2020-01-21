@@ -2,77 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F6F214387A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4065A143886
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:43:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgAUIk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:40:59 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:43851 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727255AbgAUIk7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:40:59 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07484;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0ToHVJLk_1579596056;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHVJLk_1579596056)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 16:40:56 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Waiman Long <longman@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/iperm: remove unused pointers
-Date:   Tue, 21 Jan 2020 16:40:54 +0800
-Message-Id: <1579596054-254032-1-git-send-email-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S1729093AbgAUImd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 03:42:33 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47718 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727969AbgAUImb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 03:42:31 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F0B8BBC162D6B6F1ED93;
+        Tue, 21 Jan 2020 16:42:29 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 21 Jan 2020 16:42:20 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <huangdaode@huawei.com>, <linuxarm@huawei.com>, <kuba@kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 0/9] net: hns3: misc updates for -net-next
+Date:   Tue, 21 Jan 2020 16:42:04 +0800
+Message-ID: <1579596133-54842-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No one use the prev/next pointers in its function after commit 22fe5b0439dd
-("x86/ioperm: Move TSS bitmap update to exit to user work"). So better to
-remove them.
+This series includes some misc updates for the HNS3 ethernet driver.
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Thomas Gleixner <tglx@linutronix.de> 
-Cc: Ingo Molnar <mingo@redhat.com> 
-Cc: Borislav Petkov <bp@alien8.de> 
-Cc: "H. Peter Anvin" <hpa@zytor.com> 
-Cc: x86@kernel.org 
-Cc: Andy Lutomirski <luto@kernel.org> 
-Cc: Rik van Riel <riel@surriel.com> 
-Cc: Dave Hansen <dave.hansen@intel.com> 
-Cc: Waiman Long <longman@redhat.com> 
-Cc: Marcelo Tosatti <mtosatti@redhat.com> 
-Cc: linux-kernel@vger.kernel.org 
----
- arch/x86/kernel/process.c | 4 ----
- 1 file changed, 4 deletions(-)
+[patch 1] adds a limitation for the error log in the
+hns3_clean_tx_ring().
+[patch 2] adds a check for pfmemalloc flag before reusing pages
+since these pages may be used some special case.
+[patch 3] assigns a default reset type 'HNAE3_NONE_RESET' to
+VF's reset_type after initializing or reset.
+[patch 4] unifies macro HCLGE_DFX_REG_TYPE_CNT's definition into
+header file.
+[patch 5] refines the parameter 'size' of snprintf() in the
+hns3_init_module().
+[patch 6] rewrites a debug message in hclge_put_vector().
+[patch 7~9] adds some cleanups related to coding style.
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 61e93a318983..839b5244e3b7 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -615,12 +615,8 @@ void speculation_ctrl_update_current(void)
- 
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
--	struct thread_struct *prev, *next;
- 	unsigned long tifp, tifn;
- 
--	prev = &prev_p->thread;
--	next = &next_p->thread;
--
- 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
- 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
- 
+Guangbin Huang (1):
+  net: hns3: delete unnecessary blank line and space for cleanup
+
+Guojia Liao (2):
+  net: hns3: move duplicated macro definition into header
+  net: hns3: refine the input parameter 'size' for snprintf()
+
+Huazhong Tan (3):
+  net: hns3: set VF's default reset_type to HNAE3_NONE_RESET
+  net: hns3: remove redundant print on ENOMEM
+  net: hns3: cleanup some coding style issue
+
+Yonglong Liu (1):
+  net: hns3: rewrite a log in hclge_put_vector()
+
+Yunsheng Lin (2):
+  net: hns3: limit the error logging in the hns3_clean_tx_ring()
+  net: hns3: do not reuse pfmemalloc pages
+
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  6 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 22 +++---
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c |  2 -
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c |  6 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 91 +++++++---------------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  2 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 37 ++++-----
+ 7 files changed, 59 insertions(+), 107 deletions(-)
+
 -- 
-1.8.3.1
+2.7.4
 
