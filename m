@@ -2,85 +2,465 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03BD7143F50
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69417143F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbgAUOVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 09:21:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45332 "EHLO mail.kernel.org"
+        id S1729331AbgAUOWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:22:14 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:32990 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727508AbgAUOVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 09:21:10 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80C6B217F4;
-        Tue, 21 Jan 2020 14:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579616469;
-        bh=d8N8bHZ6gdDEoq72Z0eXZ2581jVoflv+KRkpsia+jf0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=wQU1jn0f+AejKAp8s5GeUNVqP/8LaBtPd48e/iolHpmgJpHp/ooZAfw2WQjb86wDS
-         mdFBntGtw0ism+j4JSYEpc+jGoSB6Zg91mSfmgsusq6AwSuWZQWpezQO1f0FFT4+7V
-         H/nyp0F5+UCTbpc32OKHAcP90xtw2UILUTQJec2k=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 54B7F35227E4; Tue, 21 Jan 2020 06:21:09 -0800 (PST)
-Date:   Tue, 21 Jan 2020 06:21:09 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Marco Elver <elver@google.com>, andreyknvl@google.com,
-        glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will@kernel.org, boqun.feng@gmail.com, arnd@arndb.de,
-        viro@zeniv.linux.org.uk, christophe.leroy@c-s.fr, dja@axtens.net,
-        mpe@ellerman.id.au, rostedt@goodmis.org, mhiramat@kernel.org,
-        mingo@kernel.org, christian.brauner@ubuntu.com,
-        daniel@iogearbox.net, cyphar@cyphar.com, keescook@chromium.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 3/5] asm-generic, kcsan: Add KCSAN instrumentation for
- bitops
-Message-ID: <20200121142109.GQ2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20200120141927.114373-1-elver@google.com>
- <20200120141927.114373-3-elver@google.com>
- <20200120144048.GB14914@hirez.programming.kicks-ass.net>
- <20200120162725.GE2935@paulmck-ThinkPad-P72>
- <20200120165223.GC14914@hirez.programming.kicks-ass.net>
- <20200120202359.GF2935@paulmck-ThinkPad-P72>
- <20200121091501.GF14914@hirez.programming.kicks-ass.net>
+        id S1727508AbgAUOWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 09:22:13 -0500
+Received: from ip092042140082.rev.nessus.at ([92.42.140.82] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ituPT-000404-Bh; Tue, 21 Jan 2020 15:21:39 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Emmanuel Vadot <manu@freebsd.org>, pbrobinson@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.yan@rock-chips.com,
+        robin.murphy@arm.com, nick@khadas.com, kever.yang@rock-chips.com,
+        m.reichl@fivetechno.de, aballier@gentoo.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add initial support for Pinebook Pro
+Date:   Tue, 21 Jan 2020 15:21:38 +0100
+Message-ID: <3785040.Baxn5HRXxd@phil>
+In-Reply-To: <477e2602-d740-5954-5573-87db5fd83888@manjaro.org>
+References: <20200116225617.6318-1-manu@freebsd.org> <20200116225617.6318-2-manu@freebsd.org> <477e2602-d740-5954-5573-87db5fd83888@manjaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121091501.GF14914@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 10:15:01AM +0100, Peter Zijlstra wrote:
-> On Mon, Jan 20, 2020 at 12:23:59PM -0800, Paul E. McKenney wrote:
-> > We also don't have __atomic_read() and __atomic_set(), yet atomic_read()
-> > and atomic_set() are considered to be non-racy, right?
+Hi,
+
+Am Dienstag, 21. Januar 2020, 15:13:06 CET schrieb Tobias Schramm:
+> I do strongly oppose merging this DTS. It is missing several device
+> components (for example the eDP panel and the lid switch) and the power
+> supply setup does not reflect the implementation in the device at all.
+> Also some control/irq GPIOs are incorrect. See comments below.
 > 
-> What is racy? :-) You can make data races with atomic_{read,set}() just
-> fine.
-
-Like "fairness", lots of definitions of "racy".  ;-)
-
-> Anyway, traditionally we call the read-modify-write stuff atomic, not
-> the trivial load-store stuff. The only reason we care about the
-> load-store stuff in the first place is because C compilers are shit.
+> The schematic of the Pinebook Pro can be found here:
+> http://files.pine64.org/doc/PinebookPro/pinebookpro_v2.1_mainboard_schematic.pdf
 > 
-> atomic_read() / test_bit() are just a load, all we need is the C
-> compiler not to be an ass and split it. Yes, we've invented the term
-> single-copy atomicity for that, but that doesn't make it more or less of
-> a load.
+> I'm currently planning on submitting a DTS with correct power supply and
+> GPIO setup as well as more supported hardware components late February.
+> Unfortunately I won't get around to doing it any sooner.
 > 
-> And exactly because it is just a load, there is no __test_bit(), which
-> would be the exact same load.
+> Current state of the DTS can be found here:
+> https://gitlab.manjaro.org/tsys/linux-pinebook-pro/blob/v5.5-rc7/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
 
-Very good!  Shouldn't KCSAN then define test_bit() as non-racy just as
-for atomic_read()?
+I really like power trees that match the actual schematics, so I'm all
+for it ;-) . I don't have a Pinebook Pro myself, so won't be comparing
+the power-tree to the schematics myself though.
 
-							Thanx, Paul
+As for timing, it's too late for 5.6 anyway, so you have time until
+around 5.6-rc5 gets released so around 8 weeks.
+
+The other parts you can coordinate between you ;-)
+
+
+Heiko
+
+> > From: Peter Robinson <pbrobinson@gmail.com>
+> > 
+> 
+> > +	gpio-keys {
+> > +		compatible = "gpio-keys";
+> > +		autorepeat;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&pwrbtn>;
+> > +
+> > +		power {
+> > +			debounce-interval = <100>;
+> > +			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
+> > +			label = "GPIO Key Power";
+> > +			linux,code = <KEY_POWER>;
+> > +			wakeup-source;
+> > +		};
+> 
+> Missing lid switch
+> > +	};
+> > +
+> > +	leds {
+> > +		status = "okay";
+> > +		compatible = "gpio-leds";
+> > +
+> > +		work-led {
+> > +			label = "work";
+> > +			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+> > +		};
+> > +
+> > +		standby-led {
+> > +			label = "standby";
+> > +			gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+> > +		};
+> > +	};
+> > +
+> > +	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
+> vcc1v8_s3 and vcca1v8_s3 are not the same. They are powered from
+> different vin supplies.
+> 
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "vcc1v8_s3";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +		vin-supply = <&vcc_1v8>;
+> > +	};
+> > +
+> > +	dc_12v: dc-12v {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "dc_12v";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <12000000>;
+> > +		regulator-max-microvolt = <12000000>;
+> > +	};
+> There is no primary 12 V supply on the Pinebook Pro
+> 
+> > +
+> > +	vcc3v3_sys: vcc3v3-sys {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "vcc3v3_sys";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +		vin-supply = <&vcc_sys>;
+> > +	};
+> > +
+> > +	vcc5v0_host: vcc5v0-host-regulator {
+> > +		compatible = "regulator-fixed";
+> > +		gpio = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&host_vbus_drv>;
+> > +		regulator-name = "vcc5v0_host";
+> > +	};
+> > +
+> > +	vcc5v0_usb3_host: vcc5v0-usb3-host-regulator {
+> > +		compatible = "regulator-fixed";
+> > +		enable-active-high;
+> > +		gpio = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&host_usb3_drv>;
+> > +		regulator-name = "vcc5v0_usb3_host";
+> > +		regulator-always-on;
+> > +	};
+> > +
+> > +	vcc3v3_s0: vcc3v3-s0-regulator {
+> > +		compatible = "regulator-fixed";
+> > +		enable-active-high;
+> > +		gpio = <&gpio1 RK_PC6 GPIO_ACTIVE_HIGH>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&lcdvcc_en>;
+> > +		regulator-name = "vcc3v3_s0";
+> > +		regulator-always-on;
+> > +	};
+> > +
+> > +	vcc_sys: vcc-sys {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "vcc_sys";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <5000000>;
+> > +		regulator-max-microvolt = <5000000>;
+> > +		vin-supply = <&dc_12v>;
+> > +	};
+> > +The main system voltage is not 5 V and it is not powered by a 12 V rail
+> 
+> > +	vdd_log: vdd-log {
+> > +		compatible = "pwm-regulator";
+> > +		pwms = <&pwm2 0 25000 1>;
+> > +		pwm-supply = <&vcc_sys>;
+> > +		regulator-name = "vdd_log";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-init-microvolt = <950000>;
+> > +		regulator-min-microvolt = <800000>;
+> > +		regulator-max-microvolt = <1400000>;
+> > +	};
+> > +};
+> > +
+> 
+> Regulators for backlight, 0.9 V rail, USB-C power out and SD card power
+> are missing
+> 
+> Also most regulator names do not match the names of the power rails in
+> the schematic
+> 
+> > +&cpu_l0 {
+> > +	cpu-supply = <&vdd_cpu_l>;
+> > +};
+> > +
+> > +&cpu_l1 {
+> > +	cpu-supply = <&vdd_cpu_l>;
+> > +};
+> > +
+> > +&cpu_l2 {
+> > +	cpu-supply = <&vdd_cpu_l>;
+> > +};
+> > +
+> > +&cpu_l3 {
+> > +	cpu-supply = <&vdd_cpu_l>;
+> > +};
+> > +
+> > +&emmc_phy {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&i2c0 {
+> > +	clock-frequency = <400000>;
+> > +	i2c-scl-rising-time-ns = <168>;
+> > +	i2c-scl-falling-time-ns = <4>;
+> > +	status = "okay";
+> > +
+> > +	rk808: pmic@1b {
+> > +		compatible = "rockchip,rk808";
+> > +		reg = <0x1b>;
+> > +		interrupt-parent = <&gpio1>;
+> > +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> Interrupt GPIO is not correct, should be 10. This will stop the RTC from
+> working correctly.
+> 
+> > +		#clock-cells = <1>;
+> > +		clock-output-names = "xin32k", "rk808-clkout2";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&pmic_int_l>;
+> > +		rockchip,system-power-controller;
+> > +		wakeup-source;
+> > +
+> > +		vcc1-supply = <&vcc_sys>;
+> > +		vcc2-supply = <&vcc_sys>;
+> > +		vcc3-supply = <&vcc_sys>;
+> > +		vcc4-supply = <&vcc_sys>;
+> > +		vcc6-supply = <&vcc_sys>;
+> > +		vcc7-supply = <&vcc_sys>;
+> > +		vcc8-supply = <&vcc3v3_sys>;
+> > +		vcc9-supply = <&vcc_sys>;
+> > +		vcc10-supply = <&vcc_sys>;
+> > +		vcc11-supply = <&vcc_sys>;
+> > +		vcc12-supply = <&vcc3v3_sys>;
+> > +		vddio-supply = <&vcc_1v8>;
+> vddio-supply is not vcc_1v8 but vcc_3v0
+> 
+> > +
+> > +		regulators {
+> > +			vdd_center: DCDC_REG1 {
+> > +				regulator-name = "vdd_center";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <750000>;
+> > +				regulator-max-microvolt = <1350000>;
+> > +				regulator-ramp-delay = <6001>;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdd_cpu_l: DCDC_REG2 {
+> > +				regulator-name = "vdd_cpu_l";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <750000>;
+> > +				regulator-max-microvolt = <1350000>;
+> > +				regulator-ramp-delay = <6001>;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_ddr: DCDC_REG3 {
+> > +				regulator-name = "vcc_ddr";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_1v8: DCDC_REG4 {
+> > +				regulator-name = "vcc_1v8";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <1800000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcc1v8_dvp: LDO_REG1 {
+> > +				regulator-name = "vcc1v8_dvp";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc3v0_touch: LDO_REG2 {
+> > +				regulator-name = "vcc3v0_touch";
+> > +				regulator-min-microvolt = <3000000>;
+> > +				regulator-max-microvolt = <3000000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <3000000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcc1v8_pmu: LDO_REG3 {
+> > +				regulator-name = "vcc1v8_pmu";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <1800000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_sdio: LDO_REG4 {
+> > +				regulator-name = "vcc_sdio";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <3300000>;
+> > +				regulator-max-microvolt = <3300000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <3300000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcca3v0_codec: LDO_REG5 {
+> > +				regulator-name = "vcca3v0_codec";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <3000000>;
+> > +				regulator-max-microvolt = <3000000>;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_1v5: LDO_REG6 {
+> > +				regulator-name = "vcc_1v5";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1500000>;
+> > +				regulator-max-microvolt = <1500000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <1500000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcca1v8_codec: LDO_REG7 {
+> > +				regulator-name = "vcca1v8_codec";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_3v0: LDO_REG8 {
+> > +				regulator-name = "vcc_3v0";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <3000000>;
+> > +				regulator-max-microvolt = <3000000>;
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt = <3000000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcc3v3_s3: SWITCH_REG1 {
+> > +				regulator-name = "vcc3v3_s3";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			switch_reg2: SWITCH_REG2 {
+> > +				regulator-name = "SWITCH_REG2";
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +
+> > +	vdd_cpu_b: regulator@40 {
+> > +		compatible = "silergy,syr827";
+> > +		reg = <0x40>;
+> > +		fcs,suspend-voltage-selector = <1>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&vsel1_gpio>;
+> > +		vsel-gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
+> > +		regulator-compatible = "fan53555-reg";
+> > +		regulator-name = "vdd_cpu_b";
+> > +		regulator-min-microvolt = <712500>;
+> > +		regulator-max-microvolt = <1500000>;
+> > +		regulator-ramp-delay = <1000>;
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		vin-supply = <&vcc_sys>;
+> > +
+> > +		regulator-state-mem {
+> > +			regulator-off-in-suspend;
+> > +		};
+> > +	};
+> > +
+> > +	vdd_gpu: regulator@41 {
+> > +		compatible = "silergy,syr828";
+> > +		reg = <0x41>;
+> > +		fcs,suspend-voltage-selector = <1>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&vsel2_gpio>;
+> > +		vsel-gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
+> > +		regulator-compatible = "fan53555-reg";
+> > +		regulator-name = "vdd_gpu";
+> > +		regulator-min-microvolt = <712500>;
+> > +		regulator-max-microvolt = <1500000>;
+> > +		regulator-ramp-delay = <1000>;
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		vin-supply = <&vcc_sys>;
+> > +
+> > +		regulator-state-mem {
+> > +			regulator-off-in-suspend;
+> > +		};
+> > +	};
+> > +
+> > +};
+> 
+> Additionally there a quite a few components missing. This includes the
+> aforementioned lid switch and eDP panel but there are also a battery
+> gauge, two chargers, a es8316 audio codec, two speaker amplifiers and a
+> BT/WiFi module.
+> 
+> Best regards,
+> 
+> Tobias
+> 
+> 
+
+
+
+
