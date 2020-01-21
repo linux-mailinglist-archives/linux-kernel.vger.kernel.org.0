@@ -2,118 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 225741444C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:04:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7E61444B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:01:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbgAUTEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:04:06 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62583 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728829AbgAUTEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:04:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 11:04:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="227431773"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
-  by orsmga003.jf.intel.com with ESMTP; 21 Jan 2020 11:04:05 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
-Date:   Tue, 21 Jan 2020 11:01:25 -0800
-Message-Id: <20200121190125.3389-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729190AbgAUTBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:01:43 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44900 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728829AbgAUTBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 14:01:42 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0ToInc38_1579633297;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0ToInc38_1579633297)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 22 Jan 2020 03:01:40 +0800
+Subject: Re: [PATCH] mm: move_pages: fix the return value if there are
+ not-migrated pages
+To:     Michal Hocko <mhocko@kernel.org>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <1579325203-16405-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200120130624.GD18451@dhcp22.suse.cz>
+ <20200120131744.GE18451@dhcp22.suse.cz> <20200121014416.GC1567@richard>
+ <20200121084040.GC29276@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <27b993f4-cc50-d5a9-1cda-89dd022aea16@linux.alibaba.com>
+Date:   Tue, 21 Jan 2020 11:01:30 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200121084040.GC29276@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
-
-Perf doesn't take the left period into account when auto-reload is
-enabled with fixed period sampling mode in context switch.
-
-Here is the MSR trace of the perf command as below.
-(The MSR trace is simplified from a ftrace log.)
-
-    #perf record -e cycles:p -c 2000000 -- ./triad_loop
-
-      //The MSR trace of task schedule out
-      //perf disable all counters, disable PEBS, disable GP counter 0,
-      //read GP counter 0, and re-enable all counters.
-      //The counter 0 stops at 0xfffffff82840
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
-      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
-      rdpmc: 0, value fffffff82840
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
 
 
-      //The MSR trace of the same task schedule in again
-      //perf disable all counters, enable and set GP counter 0,
-      //enable PEBS, and re-enable all counters.
-      //0xffffffe17b80 (-2000000) is written to GP counter 0.
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PMC0(4c1), value ffffffe17b80
-      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+On 1/21/20 12:40 AM, Michal Hocko wrote:
+> On Tue 21-01-20 09:44:16, Wei Yang wrote:
+>> On Mon, Jan 20, 2020 at 02:17:44PM +0100, Michal Hocko wrote:
+>>> On Mon 20-01-20 14:06:26, Michal Hocko wrote:
+>>>> On Sat 18-01-20 13:26:43, Yang Shi wrote:
+>>>>> The do_move_pages_to_node() might return > 0 value, the number of pages
+>>>>> that are not migrated, then the value will be returned to userspace
+>>>>> directly.  But, move_pages() syscall would just return 0 or errno.  So,
+>>>>> we need reset the return value to 0 for such case as what pre-v4.17 did.
+>>>> The patch is wrong. migrate_pages returns the number of pages it
+>>>> _hasn't_ migrated or -errno. Yeah that semantic sucks but...
+>>>> So err != 0 is always an error. Except err > 0 doesn't really provide
+>>>> any useful information to the userspace. I cannot really remember what
+>>>> was the actual behavior before my rework because there were some gotchas
+>>>> hidden there.
+>>> OK, so I've double checked. do_move_page_to_node_array would carry the
+>>> error code over to do_pages_move and it would store the status stored
+>>> in the pm array. It contains page_to_nid(page) so the resulting code
+>>> indeed behaves properly before my change and this is a regression. I
+>> Thanks, I see the change.
+>>
+>>> have a very vague recollection that this has been brought up already.
+>>> <...looks in notes...>
+>>> Found it! The report is
+>>> http://lkml.kernel.org/r/0329efa0984b9b0252ef166abb4498c0795fab36.1535113317.git.jstancek@redhat.com
+>>> and my proposed workaround was http://lkml.kernel.org/r/20180829145537.GZ10223@dhcp22.suse.cz
+>> Well, the above two links return 404.
+> You are right. They are not archived for some reason. Anyway, the patch
+> I was proposing back then is below:
+>
+> commit cfb88c266b645197135cde2905c2bfc82f6d82a9
+> Author: Michal Hocko <mhocko@suse.com>
+> Date:   Wed Nov 14 12:19:09 2018 +0100
+>
+>      mm: fix do_pages_move error reporting
+>      
+>      a49bd4d71637 ("mm, numa: rework do_pages_move") has changed the way how
+>      we report error to layers above. As the changelog mentioned the semantic
+>      was quite unclear previously because the return 0 could mean both
+>      success and failure.
+>      
+>      The above mentioned commit didn't get all the way down to fix this
+>      completely because it doesn't report pages that we even haven't
+>      attempted to migrate and therefore we cannot simply say that the
+>      semantic is:
+>      - err < 0 - errno
+>      - err >= 0 number of non-migrated pages.
+>      
+>      Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
+>      Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-When the same task schedule in again, the counter should starts from
-previous left. However, it starts from the fixed period -2000000 again.
+Thanks, Michal. But, it looks this patch still could return > 0 value 
+(the total number of non-migrated pages, including not even attempted 
+pages) too, but the problem we are trying to fix is to make 
+do_pages_move() return <= 0 value only since the man page of 
+move_pages() doesn't allow return > 0 value.
 
-A special variant of intel_pmu_save_and_restart() is used for
-auto-reload, which doesn't update the hwc->period_left.
-When the monitored task schedules in again, perf doesn't know the left
-period. The fixed period is used, which is inaccurate.
+And, by looking into the old code (v4.16), I spotted another problem. 
+The migrate_pages() would store the migration failure error code into 
+page_to_node->status. So, When do_move_page_to_node_array() returns > 0 
+value, the return value would be reset to 0 and the migration error 
+codes for non-migrated pages would be stored into status to return to 
+userspace. But, the rework removed this.
 
-With auto-reload, the counter always has a negative counter value. So
-the left period is -value. Update the period_left in
-intel_pmu_save_and_restart_reload().
+I didn't dig into the intention of the rework, is it expected?
 
-With the patch,
-      //The MSR trace of task schedule out
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
-      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
-      rdpmc: 0, value ffffffe25cbc
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-      //The MSR trace of the same task schedule in again
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
-      write_msr: MSR_IA32_PMC0(4c1), value ffffffe25cbc
-      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
-      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
-      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
-
-Fixes: d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-
-Changes since V1
-- Update description
-
- arch/x86/events/intel/ds.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index ce83950036c5..e5ad97a82342 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1713,6 +1713,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
- 	old = ((s64)(prev_raw_count << shift) >> shift);
- 	local64_add(new - old + count * period, &event->count);
- 
-+	local64_set(&hwc->period_left, -new);
-+
- 	perf_event_update_userpage(event);
- 
- 	return 0;
--- 
-2.17.1
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index f7e4bfdc13b7..aa53ebc523eb 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1615,8 +1615,16 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>   			goto out_flush;
+>   
+>   		err = do_move_pages_to_node(mm, &pagelist, current_node);
+> -		if (err)
+> +		if (err) {
+> +			/*
+> +			 * Possitive err means the number of failed pages to
+> +			 * migrate. Make sure to report the rest of the
+> +			 * nr_pages is not migrated as well.
+> +			 */
+> +			if (err > 0)
+> +				err += nr_pages - i - 1;
+>   			goto out;
+> +		}
+>   		if (i > start) {
+>   			err = store_status(status, start, current_node, i - start);
+>   			if (err)
 
