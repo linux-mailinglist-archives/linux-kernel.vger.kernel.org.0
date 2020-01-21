@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5755B143ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6ED143ECA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbgAUOBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 09:01:11 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10122 "EHLO huawei.com"
+        id S1729423AbgAUOBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:01:15 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9229 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729347AbgAUOBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 09:01:10 -0500
+        id S1729398AbgAUOBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 09:01:13 -0500
 Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4005B1B279A62B193AAF;
-        Tue, 21 Jan 2020 22:01:07 +0800 (CST)
+        by Forcepoint Email with ESMTP id 4850046AF737AF7CA74B;
+        Tue, 21 Jan 2020 22:01:12 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 21 Jan 2020 22:01:00 +0800
+ 14.3.439.0; Tue, 21 Jan 2020 22:01:02 +0800
 From:   Chen Zhou <chenzhou10@huawei.com>
 To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
         <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
@@ -24,9 +24,9 @@ CC:     <tao.zhou1@amd.com>, <Hawking.Zhang@amd.com>,
         <Felix.Kuehling@amd.com>, <amd-gfx@lists.freedesktop.org>,
         <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
         <chenzhou10@huawei.com>
-Subject: [PATCH -next 12/14] drm/amdgpu: remove unnecessary conversion to bool in athub_v2_0.c
-Date:   Tue, 21 Jan 2020 21:55:38 +0800
-Message-ID: <20200121135540.165798-13-chenzhou10@huawei.com>
+Subject: [PATCH -next 13/14] drm/amdgpu: remove unnecessary conversion to bool in sdma_v4_0.c
+Date:   Tue, 21 Jan 2020 21:55:39 +0800
+Message-ID: <20200121135540.165798-14-chenzhou10@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200121135540.165798-1-chenzhou10@huawei.com>
 References: <20200121135540.165798-1-chenzhou10@huawei.com>
@@ -42,29 +42,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes coccicheck warning:
 
-./drivers/gpu/drm/amd/amdgpu/athub_v2_0.c:80:40-45: WARNING:
+./drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c:2180:40-45: WARNING
 	conversion to bool not needed here
-./drivers/gpu/drm/amd/amdgpu/athub_v2_0.c:82:40-45: WARNING:
-	conversion to bool not needed here
+
+and many more similar messages.
 
 Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- drivers/gpu/drm/amd/amdgpu/athub_v2_0.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/athub_v2_0.c b/drivers/gpu/drm/amd/amdgpu/athub_v2_0.c
-index ceb9aa4..921a69a 100644
---- a/drivers/gpu/drm/amd/amdgpu/athub_v2_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/athub_v2_0.c
-@@ -77,9 +77,9 @@ int athub_v2_0_set_clockgating(struct amdgpu_device *adev,
- 	case CHIP_NAVI14:
- 	case CHIP_NAVI12:
- 		athub_v2_0_update_medium_grain_clock_gating(adev,
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+index 01898d2..9d479a0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
+@@ -2177,9 +2177,9 @@ static int sdma_v4_0_set_clockgating_state(void *handle,
+ 	case CHIP_ARCTURUS:
+ 	case CHIP_RENOIR:
+ 		sdma_v4_0_update_medium_grain_clock_gating(adev,
 -				state == AMD_CG_STATE_GATE ? true : false);
 +				state == AMD_CG_STATE_GATE);
- 		athub_v2_0_update_medium_grain_light_sleep(adev,
+ 		sdma_v4_0_update_medium_grain_light_sleep(adev,
 -				state == AMD_CG_STATE_GATE ? true : false);
 +				state == AMD_CG_STATE_GATE);
+ 		break;
+ 	default:
+ 		break;
+@@ -2195,7 +2195,7 @@ static int sdma_v4_0_set_powergating_state(void *handle,
+ 	switch (adev->asic_type) {
+ 	case CHIP_RAVEN:
+ 		sdma_v4_1_update_power_gating(adev,
+-				state == AMD_PG_STATE_GATE ? true : false);
++				state == AMD_PG_STATE_GATE);
  		break;
  	default:
  		break;
