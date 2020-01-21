@@ -2,134 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1D514394B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:17:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 968B614393B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgAUJRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:17:54 -0500
-Received: from mxs2.seznam.cz ([77.75.76.125]:52620 "EHLO mxs2.seznam.cz"
+        id S1728797AbgAUJQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:16:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728093AbgAUJRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:17:54 -0500
-X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 04:17:52 EST
-Received: from email.seznam.cz
-        by email-smtpc10b.ng.seznam.cz (email-smtpc10b.ng.seznam.cz [10.23.14.45])
-        id 665b938ad300f29866527659;
-        Tue, 21 Jan 2020 10:17:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1579598270; bh=11V/WRJMhVLt/Jk+BSNeFSL8z5NFiwJOOmighuL7pHo=;
-        h=Received:Reply-To:Subject:To:Cc:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=dx2NQ4G44JTU0iiXzopo/YxfzBHAGrd70V6Zuo3EfCmKeucfbe+vX3mdWVit+Nk8N
-         RGodWqhotLrhzc+BosTcn9bSOTeayGybrnuu30V4q56SH+t1wvht0OGdJseyONHHXQ
-         CRA3HPg24j1STMQs6GkuuCAUYjrB0slPB+/06s9g=
-Received: from [77.75.76.48] (unknown-62-130.xilinx.com [149.199.62.130])
-        by email-relay3.ng.seznam.cz (Seznam SMTPD 1.3.108) with ESMTP;
-        Tue, 21 Jan 2020 10:15:56 +0100 (CET)  
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH V4 3/4] firmware: xilinx: Add ZynqMP aes API for AES
- functionality
-To:     Kalyani Akula <kalyani.akula@xilinx.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     git <git@xilinx.com>, Harsh Jain <harshj@xilinx.com>,
-        Sarat Chand Savitala <saratcha@xilinx.com>,
-        Mohan <mohand@xilinx.com>, Kalyani Akul <kalyania@xilinx.com>
-References: <1574235842-7930-1-git-send-email-kalyani.akula@xilinx.com>
- <1574235842-7930-4-git-send-email-kalyani.akula@xilinx.com>
-From:   Michal Simek <monstr@seznam.cz>
-Message-ID: <3357664b-d502-ca0c-c166-679001de5f39@seznam.cz>
-Date:   Tue, 21 Jan 2020 10:15:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1725789AbgAUJQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:16:02 -0500
+Received: from localhost (unknown [171.76.119.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A1E320882;
+        Tue, 21 Jan 2020 09:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579598162;
+        bh=Kgec1nZPQAAponRzf6rEO6T4Atrgbblqp3fSPi8Yzt4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1FX+52DYbBAxlgBwBERsAfQOz1QGHCdYjT83CEzqvEwQDKSpFw8dj2XI2+FOHXDFp
+         Af4JkUlC2ExQ35/3Qau71HCf1+tTEX+7wJTbIIolAE2Dd0Ze8x7iMBD2FRSxLnSutq
+         enCGP174y9tpcVarujhc+OV5MHgMlSeuuGekGjw0=
+Date:   Tue, 21 Jan 2020 14:45:58 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dave Jiang <dave.jiang@intel.com>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.j.williams@intel.com, tony.luck@intel.com, jing.lin@intel.com,
+        ashok.raj@intel.com, sanjay.k.kumar@intel.com, megha.dey@intel.com,
+        jacob.jun.pan@intel.com, yi.l.liu@intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, fenghua.yu@intel.com, hpa@zytor.com
+Subject: Re: [PATCH v4 0/9] idxd driver for Intel Data Streaming Accelerator
+Message-ID: <20200121091558.GF2841@vkoul-mobl>
+References: <157842940405.27241.1146722525082010210.stgit@djiang5-desk3.ch.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1574235842-7930-4-git-send-email-kalyani.akula@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157842940405.27241.1146722525082010210.stgit@djiang5-desk3.ch.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20. 11. 19 8:44, Kalyani Akula wrote:
-> Add ZynqMP firmware AES API to perform encryption/decryption of given data.
-> 
-> Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp.c     | 23 +++++++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h |  2 ++
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index fd3d837..7ddf38e 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -664,6 +664,28 @@ static int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
->  				   qos, ack, NULL);
->  }
->  
-> +/**
-> + * zynqmp_pm_aes - Access AES hardware to encrypt/decrypt the data using
-> + * AES-GCM core.
-> + * @address:	Address of the AesParams structure.
-> + * @out:	Returned output value
-> + *
-> + * Return:	Returns status, either success or error code.
-> + */
-> +static int zynqmp_pm_aes_engine(const u64 address, u32 *out)
-> +{
-> +	u32 ret_payload[PAYLOAD_ARG_CNT];
-> +	int ret;
-> +
-> +	if (!out)
-> +		return -EINVAL;
-> +
-> +	ret = zynqmp_pm_invoke_fn(PM_SECURE_AES, upper_32_bits(address),
-> +				  lower_32_bits(address),
-> +				  0, 0, ret_payload);
-> +	*out = ret_payload[1];
+Hi Dave,
 
-newline here please.
+On 07-01-20, 13:40, Dave Jiang wrote:
+> v4:
+> Borislav:
+> - Merge unused __iowrite512() into iosubmit_cmds512().
+> - Fix various comments for iosubmit_cmds512() patch.
+> Vinod:
+> - Drop dmanegine request API and supporting code
+> - Update to use existing dmaengine API
 
-> +	return ret;
-> +}
+This looks okay to me but needs a rebase on top of dmaengine-next,
+Peters patches applied earlier move code around a bit
 
+Thanks
 
-newline here please.
-
->  static const struct zynqmp_eemi_ops eemi_ops = {
->  	.get_api_version = zynqmp_pm_get_api_version,
->  	.get_chipid = zynqmp_pm_get_chipid,
-> @@ -687,6 +709,7 @@ static int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
->  	.set_requirement = zynqmp_pm_set_requirement,
->  	.fpga_load = zynqmp_pm_fpga_load,
->  	.fpga_get_status = zynqmp_pm_fpga_get_status,
-> +	.aes = zynqmp_pm_aes_engine,
->  };
->  
->  /**
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index 778abbb..508edd7 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -77,6 +77,7 @@ enum pm_api_id {
->  	PM_CLOCK_GETRATE,
->  	PM_CLOCK_SETPARENT,
->  	PM_CLOCK_GETPARENT,
-> +	PM_SECURE_AES = 47,
->  };
->  
->  /* PMU-FW return status codes */
-> @@ -294,6 +295,7 @@ struct zynqmp_eemi_ops {
->  			       const u32 capabilities,
->  			       const u32 qos,
->  			       const enum zynqmp_pm_request_ack ack);
-> +	int (*aes)(const u64 address, u32 *out);
->  };
->  
->  int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
-> 
-
-Thanks,
-Michal
+-- 
+~Vinod
