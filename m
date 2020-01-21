@@ -2,91 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8510B1444BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 215491444C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbgAUTCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:02:48 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41281 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbgAUTCs (ORCPT
+        id S1729271AbgAUTFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:05:12 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:37864 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729162AbgAUTFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:02:48 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x8so1988313pgk.8
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:02:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bNyNTjqh9Xf964gmgRKYgFMexU7pALAJvxvUiv7FDAM=;
-        b=QnkelPvoyCek/r3fVqWEWqRt2VWTazFJ35gDQ3rIydzcJf8VYUEEgydphXGlar9B9B
-         L/nbv+r3Nt8yiEZn7HXvAqbQZ8jDBzjsziJs2KaZPknA6gwzaqJ/U3u70sjPypk1Qxye
-         iE3iVONYSJdZaaTynfmlZRAPNoFeTzU2KolmhDfhHdSCHBk9mIzloYXtzr4mTuAnAfYN
-         532TyXVUZIIw4BIa2xoOCZnfrgKZcJF2/C8s5zc6UBDJwSKYPbaKGSobvA8SJoh1cO4l
-         9pJutOqYAGV20YN9JVeI+8ZOv2Mict70bsy66uQC5hxEIoCk+vbc5DMmDwFLfKlDUYYO
-         5IfQ==
+        Tue, 21 Jan 2020 14:05:11 -0500
+Received: by mail-io1-f71.google.com with SMTP id s6so2383217iod.4
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:05:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bNyNTjqh9Xf964gmgRKYgFMexU7pALAJvxvUiv7FDAM=;
-        b=NMwp1ZUoduf8lRzeubz8VGPblir2E9uuswNDV+0de1ET6Ma5RYH0EkQRlWiHT1fGer
-         vUx/4h240UTj94TtEbNLqtXvvadYLP3uXTFrEo0UT4zbbFU7ClHQKvrQ+++pcn//6uj1
-         v98fAqAnIXeF0EVy6Y9Lyb9UErrAJz7s+uSEqR62JVEd2VuJsq8HEhR6R3n7xD2/Avms
-         UUEqo6A6Xp0XjDkxSPsXPZSPk67VVr1GhLDbqw7EqA53OKFx2iZMa06lZRPb1AQ0syoD
-         XgoZjj5UjrPN+/Bd5BR7MnKXtbrO70NaP7dzTVmayzm+uB+cq0AkowsPELNrfKZfhrGn
-         8Nxg==
-X-Gm-Message-State: APjAAAUiSLKWme7GnfL3KDzi6oy/ZTHmVw0BC4syx/r83qj1IIYWGRZR
-        vB5dP4X7yigY6C25qfdYieH8nRXeT1QeKDO74dbwrA==
-X-Google-Smtp-Source: APXvYqz+kwhVtEFOOWgrHq5khPjnSYd1iPUmGwSt6xL/jKXDQF+zvcWVb6HOt2Te5svw2+maZGEdiKzjFbchDLVy6So=
-X-Received: by 2002:a63:d249:: with SMTP id t9mr7155939pgi.263.1579633367158;
- Tue, 21 Jan 2020 11:02:47 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=hh2ESy2i/NiRcbPskm2nSqHQ3QN16smrsuvBjfTZgUM=;
+        b=pOBQG0T2/+SKnit9/0CfzlpLZWWANBZnuRgBEBIqEYGc+7fXEU2BvHkq21c79+iJoO
+         hTZbm3BrI3I5w4P0QrOKXWWTzxoalDXL/Q54Aai8OMosxFjsAzRlJ2WkBWvRbQlAzcd/
+         k9yyhP3UvY0dIW81KF6U8qcvKvMtGzBpfV5LTb7evRfI+3u0MfCSNZxxnZEy5GgVidGy
+         uS6XIwr7KZnMOUjKtw4hBKGMK8Oa6Xj5crktzo9QfvLbw5s47hMRDjmcdjaKzQnA34E5
+         pwUIAyYTL9Qi9zY5uA3SH6rfY6sUn7JSSYnMa6oMt3OZNILURiuTCVJJvTKdpX7Sl3yq
+         6Ycg==
+X-Gm-Message-State: APjAAAUj9woExAQvCgGVrGItvl5i0QVmBrUrZlgeTKHEySvulsrtMGW7
+        NBU0t/eB1SVT5Qp1BmI2b1cuLexL4kQCRjygn04gLFrEiunA
+X-Google-Smtp-Source: APXvYqyZ1QuvEk+mqTzqtnA/MZi4neaIzQRg7ExQ7pNjV6hYabWrj6Ictf/X0GhvKHIRjlto/mdRrhfEOUAUluhnhGm+/UvwnEzI
 MIME-Version: 1.0
-References: <20200120190021.26460-1-natechancellor@gmail.com>
- <CAKwvOd=30bpBXqrT6LfwDb+YrTcGtTg5NL34dpc3Vkfe11KvFQ@mail.gmail.com> <20200121185834.GA3941@ubuntu-x2-xlarge-x86>
-In-Reply-To: <20200121185834.GA3941@ubuntu-x2-xlarge-x86>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 21 Jan 2020 11:02:36 -0800
-Message-ID: <CAKwvOd=ZjbN+3ObaOXYcQBa6e_2UqzALeOikruR=9Sn1Rb65Uw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: qla1280: Fix a use of QLA_64BIT_PTR
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Michael Reed <mdr@sgi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+X-Received: by 2002:a5e:a614:: with SMTP id q20mr3966732ioi.36.1579633510714;
+ Tue, 21 Jan 2020 11:05:10 -0800 (PST)
+Date:   Tue, 21 Jan 2020 11:05:10 -0800
+In-Reply-To: <00000000000031a8d7059c27c540@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000048111c059cab1695@google.com>
+Subject: Re: general protection fault in free_verifier_state (3)
+From:   syzbot <syzbot+b296579ba5015704d9fa@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        clang-built-linux@googlegroups.com, daniel@iogearbox.net,
+        davem@davemloft.net, hawk@kernel.org, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, kafai@fb.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 10:58 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Tue, Jan 21, 2020 at 10:43:06AM -0800, Nick Desaulniers wrote:
-> > On Mon, Jan 20, 2020 at 11:00 AM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> > > -#if QLA_64BIT_PTR
-> > > +#ifdef QLA_64BIT_PTR
-> >
-> > Thomas should test this, as it implies the previous patch was NEVER
-> > using the "true case" values, making it in effect a
-> > no-functional-change (NFC).
->
-> QLA_64BIT_PTR is defined to 1 when CONFIG_ARCH_DMA_ADDR_T_64BIT is set
-> so the true should have always worked, unless I am misunderstanding what
-> you are saying. The false case should have also worked because it is
-> still evaluated to 0 but it throws the warning to make sure that was
-> intended (again, as I understand it).
->
-> > >  #define LOAD_CMD       MBC_LOAD_RAM_A64_ROM
-> > >  #define DUMP_CMD       MBC_DUMP_RAM_A64_ROM
-> > >  #define CMD_ARGS       (BIT_7 | BIT_6 | BIT_4 | BIT_3 | BIT_2 | BIT_1 | BIT_0)
+syzbot has found a reproducer for the following crash on:
 
-Ah, right, so either QLA_64BIT_PTR is defined with a value of 1, or
-not defined at all.  My bad.
--- 
-Thanks,
-~Nick Desaulniers
+HEAD commit:    2e3a94aa bpf: Fix memory leaks in generic update/delete ba..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15aefc6ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a736c99e9fe5a676
+dashboard link: https://syzkaller.appspot.com/bug?extid=b296579ba5015704d9fa
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a4280de00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1411544ee00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b296579ba5015704d9fa@syzkaller.appspotmail.com
+
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441339
+RDX: 0000000000000048 RSI: 00000000200017c0 RDI: 0000000000000005
+RBP: 00000000006cc018 R08: 0000000000000002 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402280
+R13: 0000000000402310 R14: 0000000000000000 R15: 0000000000000000
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9996 Comm: syz-executor310 Not tainted 5.5.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:free_verifier_state+0x49/0x1d0 kernel/bpf/verifier.c:744
+Code: db 48 83 ec 20 48 89 45 b8 48 c1 e8 03 4c 01 f8 89 75 c4 48 89 45 c8 e8 05 9c f2 ff 4c 63 f3 4f 8d 2c f4 4c 89 e8 48 c1 e8 03 <42> 80 3c 38 00 0f 85 2b 01 00 00 4f 8d 34 f4 49 8b 3e 48 85 ff 48
+RSP: 0018:ffffc90002007688 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8184dd58
+RDX: 0000000000000000 RSI: ffffffff8182644b RDI: 0000000000000000
+RBP: ffffc900020076d0 R08: ffff888098656280 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000000000236b880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 0000000098345000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_check_common+0x2ec7/0x9650 kernel/bpf/verifier.c:9597
+ do_check_main kernel/bpf/verifier.c:9654 [inline]
+ bpf_check+0x84ed/0xbb07 kernel/bpf/verifier.c:10009
+ bpf_prog_load+0xeab/0x17f0 kernel/bpf/syscall.c:2095
+ __do_sys_bpf+0x1521/0x41e0 kernel/bpf/syscall.c:3387
+ __se_sys_bpf kernel/bpf/syscall.c:3346 [inline]
+ __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:3346
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441339
+Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe7971f348 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441339
+RDX: 0000000000000048 RSI: 00000000200017c0 RDI: 0000000000000005
+RBP: 00000000006cc018 R08: 0000000000000002 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402280
+R13: 0000000000402310 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace af38d247c1b207c2 ]---
+RIP: 0010:free_verifier_state+0x49/0x1d0 kernel/bpf/verifier.c:744
+Code: db 48 83 ec 20 48 89 45 b8 48 c1 e8 03 4c 01 f8 89 75 c4 48 89 45 c8 e8 05 9c f2 ff 4c 63 f3 4f 8d 2c f4 4c 89 e8 48 c1 e8 03 <42> 80 3c 38 00 0f 85 2b 01 00 00 4f 8d 34 f4 49 8b 3e 48 85 ff 48
+RSP: 0018:ffffc90002007688 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8184dd58
+RDX: 0000000000000000 RSI: ffffffff8182644b RDI: 0000000000000000
+RBP: ffffc900020076d0 R08: ffff888098656280 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000000000236b880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 0000000098345000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
