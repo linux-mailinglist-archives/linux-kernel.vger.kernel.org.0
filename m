@@ -2,72 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB283143B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1B3143B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:46:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgAUKpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:45:10 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47134 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbgAUKpK (ORCPT
+        id S1729602AbgAUKql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:46:41 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:36174 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbgAUKql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:45:10 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id ED66F293365
-Message-ID: <241033bf82fc7e955dd20c0084bfd4f6fc9fc75b.camel@collabora.com>
-Subject: Re: [PATCH 1/4] media: rockchip/rga: add rk3228-rga to
- rockchip_rga_match[]
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 21 Jan 2020 07:45:01 -0300
-In-Reply-To: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
-References: <20200120194158.25357-1-justin.swartz@risingedge.co.za>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
+        Tue, 21 Jan 2020 05:46:41 -0500
+Received: from localhost (82-95-191-104.ip.xs4all.nl [82.95.191.104])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5226715C0CFC6;
+        Tue, 21 Jan 2020 02:46:39 -0800 (PST)
+Date:   Tue, 21 Jan 2020 11:46:37 +0100 (CET)
+Message-Id: <20200121.114637.1232865870207165672.davem@davemloft.net>
+To:     tanhuazhong@huawei.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        huangdaode@huawei.com, linuxarm@huawei.com, kuba@kernel.org
+Subject: Re: [PATCH net-next 0/9] net: hns3: misc updates for -net-next
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1579596133-54842-1-git-send-email-tanhuazhong@huawei.com>
+References: <1579596133-54842-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.3
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 21 Jan 2020 02:46:40 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2020-01-20 at 19:41 +0000, Justin Swartz wrote:
-> Add an entry to the rockchip_rga_match array for "rockchip,rk3228-rga"
+From: Huazhong Tan <tanhuazhong@huawei.com>
+Date: Tue, 21 Jan 2020 16:42:04 +0800
+
+> This series includes some misc updates for the HNS3 ethernet driver.
 > 
-> Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
-> ---
->  drivers/media/platform/rockchip/rga/rga.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
-> index e9ff12b6b..268116cd5 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.c
-> +++ b/drivers/media/platform/rockchip/rga/rga.c
-> @@ -956,6 +956,9 @@ static const struct dev_pm_ops rga_pm = {
->  
->  static const struct of_device_id rockchip_rga_match[] = {
->  	{
-> +		.compatible = "rockchip,rk3228-rga",
-> +	},
+> [patch 1] adds a limitation for the error log in the
+> hns3_clean_tx_ring().
+> [patch 2] adds a check for pfmemalloc flag before reusing pages
+> since these pages may be used some special case.
+> [patch 3] assigns a default reset type 'HNAE3_NONE_RESET' to
+> VF's reset_type after initializing or reset.
+> [patch 4] unifies macro HCLGE_DFX_REG_TYPE_CNT's definition into
+> header file.
+> [patch 5] refines the parameter 'size' of snprintf() in the
+> hns3_init_module().
+> [patch 6] rewrites a debug message in hclge_put_vector().
+> [patch 7~9] adds some cleanups related to coding style.
 
-Unless you need to tune something in the driver
-specifically for rk3228, then you don't need a
-new compatible string.
-
-As the name implies, it's just a "compatible",
-so you may simply declare your rga dts node as
-compatible to "rockchip,rk3288-rga".
-
-(Of course, this means we shouldn't have added
-the rk3399 compatible string.)
-
-Regards,
-Ezequiel
-
+Series applied, thanks.
