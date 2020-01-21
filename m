@@ -2,107 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8556A144404
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43534144427
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbgAUSGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:06:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41898 "EHLO mail.kernel.org"
+        id S1729180AbgAUSTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 13:19:48 -0500
+Received: from gecko.sbs.de ([194.138.37.40]:59271 "EHLO gecko.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728829AbgAUSGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:06:39 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E08622522;
-        Tue, 21 Jan 2020 18:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579629999;
-        bh=h8gel9+ZWFI2KSlFXQlpEwZFOgZtFp2KVYnNAC0U2o8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PM5WHoDBv54h3MGiQW20dJ1ybQfHW8zwo+pvOYn/uL+C4NA9y4LrlTFIJ4MK6v4Q1
-         0yhc4cUeQXFU6N7qgJWi6TR1LZCsbZwJ0LExBXT/bzFaceBw9ZVoIJy0MSj9ADP4Iu
-         HWnCah0wdkJ0WMr9Ri5owCsQjGH9/VqIBIdgyETc=
-Date:   Tue, 21 Jan 2020 18:06:34 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Julien Thierry <jthierry@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, raphael.gault@arm.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [RFC v5 00/57] objtool: Add support for arm64
-Message-ID: <20200121180632.GA13592@willie-the-truck>
-References: <20200109160300.26150-1-jthierry@redhat.com>
- <20200112084258.GA44004@ubuntu-x2-xlarge-x86>
- <d5bf34f0-22cc-ba46-41b4-96a52d7acfa4@redhat.com>
- <20200121103101.GE11154@willie-the-truck>
- <CAKwvOd=_PqQWUvd_WZRpEr+T==3w6LpsHKBz3E9ybaQ0javVkw@mail.gmail.com>
+        id S1728186AbgAUSTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 13:19:47 -0500
+X-Greylist: delayed 660 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 13:19:45 EST
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+        by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 00LI8VZ3031796
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jan 2020 19:08:31 +0100
+Received: from [167.87.4.158] ([167.87.4.158])
+        by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 00LI8T8P017464;
+        Tue, 21 Jan 2020 19:08:30 +0100
+Subject: Re: [FYI PATCH 0/7] Mitigation for CVE-2018-12207
+To:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     "Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>
+References: <1573593697-25061-1-git-send-email-pbonzini@redhat.com>
+ <23353382-53ea-8b20-7e30-763ef6df374c@siemens.com>
+ <ea5a084b-e047-6677-b8fe-d7bb6f8c0ef8@redhat.com>
+ <dffb19ab-daa2-a513-531e-c43279d8a4bf@intel.com>
+ <e86c01a8-8265-5e42-2fae-2c42c7e3d961@siemens.com>
+ <60b2a488-74b8-897c-4b25-e228d3fe7d55@oth-regensburg.de>
+From:   Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <9f8b95d1-7b5f-d16d-2e5a-52f4b9cd0922@siemens.com>
+Date:   Tue, 21 Jan 2020 19:08:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=_PqQWUvd_WZRpEr+T==3w6LpsHKBz3E9ybaQ0javVkw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <60b2a488-74b8-897c-4b25-e228d3fe7d55@oth-regensburg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 09:08:29AM -0800, Nick Desaulniers wrote:
-> On Tue, Jan 21, 2020 at 2:31 AM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Mon, Jan 13, 2020 at 07:57:48AM +0000, Julien Thierry wrote:
-> > > On 1/12/20 8:42 AM, Nathan Chancellor wrote:
-> > > > The 0day bot reported a couple of issues with clang with this series;
-> > > > the full report is available here (clang reports are only sent to our
-> > > > mailing lists for manual triage for the time being):
-> > > >
-> > > > https://groups.google.com/d/msg/clang-built-linux/MJbl_xPxawg/mWjgDgZgBwAJ
-> > > >
-> > >
-> > > Thanks, I'll have a look at those.
-> > >
-> > > > The first obvious issue is that this series appears to depend on a GCC
-> > > > plugin? I'll be quite honest, objtool and everything it does is rather
-> > > > over my head but I see this warning during configuration (allyesconfig):
-> > > >
-> > > > WARNING: unmet direct dependencies detected for GCC_PLUGIN_SWITCH_TABLES
-> > > >    Depends on [n]: GCC_PLUGINS [=n] && ARM64 [=y]
-> > > >      Selected by [y]:
-> > > >        - ARM64 [=y] && STACK_VALIDATION [=y]
-> > > >
-> > > > Followed by the actual error:
-> > > >
-> > > > error: unable to load plugin
-> > > > './scripts/gcc-plugins/arm64_switch_table_detection_plugin.so':
-> > > > './scripts/gcc-plugins/arm64_switch_table_detection_plugin.so: cannot
-> > > > open shared object file: No such file or directory'
-> > > >
-> > > > If this plugin is absolutely necessary and can't be implemented in
-> > > > another way so that clang can be used, seems like STACK_VALIDATION
-> > > > should only be selected on ARM64 when CONFIG_CC_IS_GCC is not zero.
-> > > >
-> > >
-> > > So currently the plugin is necessary for proper validation. One option can
-> > > be to just let objtool output false positives on files containing jump
-> > > tables when the plugin cannot be used. But overall I guess it makes more
-> > > sense to disable stack validation for non-gcc builds, for now.
-> >
-> > Alternatively, could we add '-fno-jump-tables' to the KBUILD_CFLAGS if
-> > STACK_VALIDATION is selected but we're not using GCC? Is that sufficient
-> > to prevent generation of these things?
+On 18.11.19 14:58, Ralf Ramsauer wrote:
+> Hi Dave,
 > 
-> Surely we wouldn't want to replace jump tables with long chains of
-> comparisons just because objtool couldn't validate jump tables without
-> a GCC plugin for aarch64 for some reason, right?  objtool validation
-> is valuable, but tying runtime performance to a GCC plugin used for
-> validation seems bad.
+> On 11/14/19 9:09 AM, Jan Kiszka wrote:
+>> On 13.11.19 22:24, Dave Hansen wrote:
+>>> On 11/13/19 12:23 AM, Paolo Bonzini wrote:
+>>>> On 13/11/19 07:38, Jan Kiszka wrote:
+>>>>> When reading MCE, error code 0150h, ie. SRAR, I was wondering if that
+>>>>> couldn't simply be handled by the host. But I suppose the symptom of
+>>>>> that erratum is not "just" regular recoverable MCE, rather
+>>>>> sometimes/always an unrecoverable CPU state, despite the error code,
+>>>>> right?
+>>>> The erratum documentation talks explicitly about hanging the system, but
+>>>> it's not clear if it's just a result of the OS mishandling the MCE, or
+>>>> something worse.  So I don't know. :(  Pawan, do you?
+>>>
+>>> It's "something worse".
+>>>
+>>> I built a kernel module reproducer for this a long time ago.  The
+>>> symptom I observed was the whole system hanging hard, requiring me to go
+>>> hit the power button.  The MCE software machinery was not involved at
+>>> all from what I could tell.
+>>
+>> Thanks for clarifying this - too bad.
+>>
+>>>
+>>> About creating a unit test, I'd be personally happy to share my
+>>> reproducer, but I built it before this issue was root-caused.  There are
+> 
+> I'd appreciate if you could share your code.
+> 
+>>> actually quite a few underlying variants and a good unit test would make
+>>> sure to exercise all of them.  My reproducer probably only exercised a
+>>> single case.
+> 
+> Still, it triggers the issue, that's enough to compare it to my reproducer.
+> 
+>>>
+>>
+>> Would be interesting to see this. Ralf and tried something quickly, but
+>> there seems to be a detail missing or wrong.
+> 
+> Yep, we still can't reproduce the issue on an affected CPU, and don't
+> know what we miss.
 
-I'm only suggesting it if STACK_VALIDATION is selected. It's off by default,
-and lives in Kconfig.debug. I'd prefer that to "cross your fingers are do
-nothing differently", which is what the other option seems to be.
+I just realized that this thread stranded. Ralf told me that he got no 
+access to that reproducer which would be very valuable for us right now 
+to validate a static mitigation method in Jailhouse. Any chance to get 
+the access?
 
-Will
+Thanks a lot,
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
