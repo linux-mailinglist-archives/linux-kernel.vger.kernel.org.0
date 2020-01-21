@@ -2,155 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A61143786
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3150C143790
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:28:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgAUHX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:23:58 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:54427 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUHX6 (ORCPT
+        id S1727969AbgAUH2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:28:02 -0500
+Received: from 3.mo173.mail-out.ovh.net ([46.105.34.1]:42354 "EHLO
+        3.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUH2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:23:58 -0500
-Received: by mail-pj1-f67.google.com with SMTP id kx11so929030pjb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 23:23:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mlCaxydkOgZv4ICsJLgzeMxdhOBrk2+0L4LhoOYBItQ=;
-        b=YA2vPBq0mvDVXP8id2Mt+w6fhK+0j+w96F+sTtR46ecrXWWm5mihMNdZA0EBwrxV5W
-         T48gHL/VukRPT0lY0JDHqc85r9U9TVwS3pK/EytkWy6PzFgod7I0J/kygHhxCb82K6cR
-         MgY6eXsdO6BLOnxHwfKKiYer/PjvxC90hiygpj0qZUgNmAvTkAtX85gBk1KxNObDFy8A
-         YP1t0c0RyG1xCX0GmabiEt7hNp84d4+SNrZh1v3cN9iBaS55hdxKvjbFhZP0025kRkxT
-         rOAC7VuqnvTQsJBQvIQlzhe1MfUt+7Qi3zskvjw8gVAYT6WWhCCx3zRFu0LAv81aXO0U
-         NwBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mlCaxydkOgZv4ICsJLgzeMxdhOBrk2+0L4LhoOYBItQ=;
-        b=NmEY2LNAPU+CUG/AwUYh4mq3uDkrm+OO0doT1H1kA2H8XEWGKP6NKNtFaHmLOE71AG
-         pOwbXbsTf5NWo4gejceggLiA14N3qemvLbkVN7JZJHRPsN7rvfX+ysTO/mua3l0YvDMc
-         N1ZAUvuNIrNc6EiNNKLcsUuqvD1TJd5Vjzxqfc8GYJz+pDuv7EVSwxIOY9Azw7eU3y4H
-         IJIb6RrsiV8+ceqycieF96JsSIeGpreDr4g9lu8siEY6Sz9kVzwGF7R8gJT+06waiPNm
-         1eH6y+/01noXm2O6UG/Xgn+sVEvEiQo5QKTl5JapGyQ/MHJYG5R2cf1RqvPTg5dNyKuY
-         txFg==
-X-Gm-Message-State: APjAAAU+lpUQugrm5vad7h/7aa19yRWpDCRIgALS/PkJ+rMAC+Q9XaG2
-        NHz/HP2I+M95bRlmtjsE0Og=
-X-Google-Smtp-Source: APXvYqxH90T8L70K8dJA329+Zf1S8Be+Rn1LWaWxcGb0IEj638DwpurPkx5Mc1G8s06NbyFGNq0xAA==
-X-Received: by 2002:a17:90b:8b:: with SMTP id bb11mr3865357pjb.27.1579591437792;
-        Mon, 20 Jan 2020 23:23:57 -0800 (PST)
-Received: from lenovo.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id a9sm41495866pfn.38.2020.01.20.23.23.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 Jan 2020 23:23:57 -0800 (PST)
-From:   Orson Zhai <orson.unisoc@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, baolin.wang@unisoc.com,
-        chunyan.zhang@unisoc.com, Orson Zhai <orson.zhai@unisoc.com>
-Subject: [PATCH V5] mfd: syscon: Add arguments support for syscon reference
-Date:   Tue, 21 Jan 2020 15:09:38 +0800
-Message-Id: <1579590578-8709-1-git-send-email-orson.unisoc@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 21 Jan 2020 02:28:02 -0500
+X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 02:28:01 EST
+Received: from player695.ha.ovh.net (unknown [10.108.54.119])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 6CFBA12D604
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:12:11 +0100 (CET)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player695.ha.ovh.net (Postfix) with ESMTPSA id 478D9E528FFF;
+        Tue, 21 Jan 2020 07:11:28 +0000 (UTC)
+Date:   Tue, 21 Jan 2020 08:11:26 +0100
+From:   Greg Kurz <groug@kaod.org>
+To:     Andrew Donnellan <ajd@linux.ibm.com>
+Cc:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 05/27] powerpc: Map & release OpenCAPI LPC memory
+Message-ID: <20200121081126.2f9c6972@bahia.lan>
+In-Reply-To: <f33979a2-a083-dd0e-3273-7ebff66d6385@linux.ibm.com>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
+        <20191203034655.51561-6-alastair@au1.ibm.com>
+        <f33979a2-a083-dd0e-3273-7ebff66d6385@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 11838274572983900498
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrudejgddutdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtgfesthejredtredtvdenucfhrhhomhepifhrvghgucfmuhhriicuoehgrhhouhhgsehkrghougdrohhrgheqnecukfhppedtrddtrddtrddtpdekvddrvdehfedrvddtkedrvdegkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrheileehrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepghhrohhugheskhgrohgurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Orson Zhai <orson.zhai@unisoc.com>
+On Tue, 21 Jan 2020 17:46:12 +1100
+Andrew Donnellan <ajd@linux.ibm.com> wrote:
 
-There are a lot of similar global registers being used across multiple SoCs
-from Unisoc. But most of these registers are assigned with different offset
-for different SoCs. It is hard to handle all of them in an all-in-one
-kernel image.
+> On 3/12/19 2:46 pm, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > This patch adds platform support to map & release LPC memory.
+> 
+> Might want to explain what LPC is.
+> 
+> Otherwise:
+> 
+> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+> 
+> > 
+> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > ---
+> >   arch/powerpc/include/asm/pnv-ocxl.h   |  2 ++
+> >   arch/powerpc/platforms/powernv/ocxl.c | 42 +++++++++++++++++++++++++++
+> >   2 files changed, 44 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/include/asm/pnv-ocxl.h b/arch/powerpc/include/asm/pnv-ocxl.h
+> > index 7de82647e761..f8f8ffb48aa8 100644
+> > --- a/arch/powerpc/include/asm/pnv-ocxl.h
+> > +++ b/arch/powerpc/include/asm/pnv-ocxl.h
+> > @@ -32,5 +32,7 @@ extern int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle)
+> >   
+> >   extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
+> >   extern void pnv_ocxl_free_xive_irq(u32 irq);
+> > +extern u64 pnv_ocxl_platform_lpc_setup(struct pci_dev *pdev, u64 size);
+> > +extern void pnv_ocxl_platform_lpc_release(struct pci_dev *pdev);
+> 
+> nit: I don't think these need to be extern?
+> 
+> 
 
-Add a helper function to get regmap with arguments where we could put some
-extra information such as the offset value.
+And even if they were, as verified by checkpatch:
 
-Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
-Tested-by: Baolin Wang <baolin.wang@unisoc.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
-Change V5:
-	Removed unexpected preceding spaces replaced by email system.
-	The patch has been tested for local mailing and applying.
-
- drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
- include/linux/mfd/syscon.h | 14 ++++++++++++++
- 2 files changed, 43 insertions(+)
-
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index e22197c..2918b05 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -224,6 +224,35 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
-
-+struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
-+					const char *property,
-+					int arg_count,
-+					unsigned int *out_args)
-+{
-+	struct device_node *syscon_np;
-+	struct of_phandle_args args;
-+	struct regmap *regmap;
-+	unsigned int index;
-+	int rc;
-+
-+	rc = of_parse_phandle_with_fixed_args(np, property, arg_count,
-+			0, &args);
-+	if (rc)
-+		return ERR_PTR(rc);
-+
-+	syscon_np = args.np;
-+	if (!syscon_np)
-+		return ERR_PTR(-ENODEV);
-+
-+	regmap = syscon_node_to_regmap(syscon_np);
-+	for (index = 0; index < arg_count; index++)
-+		out_args[index] = args.args[index];
-+	of_node_put(syscon_np);
-+
-+	return regmap;
-+}
-+EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle_args);
-+
- static int syscon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-index 112dc66..714cab1 100644
---- a/include/linux/mfd/syscon.h
-+++ b/include/linux/mfd/syscon.h
-@@ -23,6 +23,11 @@ extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
- extern struct regmap *syscon_regmap_lookup_by_phandle(
- 					struct device_node *np,
- 					const char *property);
-+extern struct regmap *syscon_regmap_lookup_by_phandle_args(
-+					struct device_node *np,
-+					const char *property,
-+					int arg_count,
-+					unsigned int *out_args);
- #else
- static inline struct regmap *device_node_to_regmap(struct device_node *np)
- {
-@@ -45,6 +50,15 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle(
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
-+
-+static struct regmap *syscon_regmap_lookup_by_phandle_args(
-+					struct device_node *np,
-+					const char *property,
-+					int arg_count,
-+					unsigned int *out_args)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
- #endif
-
- #endif /* __LINUX_MFD_SYSCON_H__ */
---
-2.7.4
-
+"extern prototypes should be avoided in .h files"
