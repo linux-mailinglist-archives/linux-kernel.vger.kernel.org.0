@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1553A144140
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:02:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5713814415E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:05:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbgAUQBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:01:45 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18291 "EHLO mga07.intel.com"
+        id S1729838AbgAUQC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:02:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:15612 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729501AbgAUQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729496AbgAUQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Jan 2020 11:01:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:32 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="221744525"
+   d="scan'208";a="250299158"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Jan 2020 08:01:29 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 21 Jan 2020 08:01:29 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 3CBF91182; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
+        id 4515F11EC; Tue, 21 Jan 2020 18:01:16 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Mark Brown <broonie@kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 35/38] platform/x86: intel_pmc_ipc: Switch to use driver->dev_groups
-Date:   Tue, 21 Jan 2020 19:01:11 +0300
-Message-Id: <20200121160114.60007-36-mika.westerberg@linux.intel.com>
+Subject: [PATCH v4 36/38] platform/x86: intel_telemetry: Add telemetry_get_pltdata()
+Date:   Tue, 21 Jan 2020 19:01:12 +0300
+Message-Id: <20200121160114.60007-37-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
 References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
@@ -51,70 +51,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver core provides support for adding additional attributes for
-devices via new ->dev_groups member of struct device_driver. Convert the
-driver to use that instead of adding the attributes manually.
+Add new function that allows telemetry modules to get pointer to the
+platform specific configuration. This is needed to allow the telemetry
+debugfs module to fetch PMC IPC instance in the subsequent patch.
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_pmc_ipc.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/intel_telemetry.h      |  1 +
+ drivers/platform/x86/intel_telemetry_core.c | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index eb4d65768531..c006609ef74b 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -253,6 +253,11 @@ static const struct attribute_group intel_ipc_group = {
- 	.attrs = intel_ipc_attrs,
- };
+diff --git a/arch/x86/include/asm/intel_telemetry.h b/arch/x86/include/asm/intel_telemetry.h
+index e19deb776003..1335565c43b5 100644
+--- a/arch/x86/include/asm/intel_telemetry.h
++++ b/arch/x86/include/asm/intel_telemetry.h
+@@ -99,6 +99,7 @@ int telemetry_set_pltdata(const struct telemetry_core_ops *ops,
+ int telemetry_clear_pltdata(void);
  
-+static const struct attribute_group *intel_ipc_groups[] = {
-+	&intel_ipc_group,
-+	NULL
-+};
-+
- static struct resource punit_res_array[] = {
- 	/* Punit BIOS */
- 	{
-@@ -597,28 +602,13 @@ static int ipc_plat_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+ int telemetry_pltconfig_valid(void);
++struct telemetry_plt_config *telemetry_get_pltdata(void);
  
--	ret = sysfs_create_group(&pdev->dev.kobj, &intel_ipc_group);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to create sysfs group %d\n",
--			ret);
--		goto err_devs;
--	}
--
- 	ipcdev.has_gcr_regs = true;
- 
- 	return 0;
--
--err_devs:
--	platform_device_unregister(ipcdev.tco_dev);
--	platform_device_unregister(ipcdev.punit_dev);
--	platform_device_unregister(ipcdev.telemetry_dev);
--
--	return ret;
+ int telemetry_get_evtname(enum telemetry_unit telem_unit,
+ 			  const char **name, int len);
+diff --git a/drivers/platform/x86/intel_telemetry_core.c b/drivers/platform/x86/intel_telemetry_core.c
+index d4040bb222b4..e11b79d1b3a7 100644
+--- a/drivers/platform/x86/intel_telemetry_core.c
++++ b/drivers/platform/x86/intel_telemetry_core.c
+@@ -369,6 +369,18 @@ int telemetry_pltconfig_valid(void)
  }
+ EXPORT_SYMBOL_GPL(telemetry_pltconfig_valid);
  
- static int ipc_plat_remove(struct platform_device *pdev)
++/**
++ * telemetry_get_pltdata() - Return telemetry platform config
++ *
++ * May be used by other telemetry modules to get platform specific
++ * configuration.
++ */
++struct telemetry_plt_config *telemetry_get_pltdata(void)
++{
++	return telm_core_conf.plt_config;
++}
++EXPORT_SYMBOL_GPL(telemetry_get_pltdata);
++
+ static inline int telemetry_get_pssevtname(enum telemetry_unit telem_unit,
+ 					   const char **name, int len)
  {
--	sysfs_remove_group(&pdev->dev.kobj, &intel_ipc_group);
- 	platform_device_unregister(ipcdev.tco_dev);
- 	platform_device_unregister(ipcdev.punit_dev);
- 	platform_device_unregister(ipcdev.telemetry_dev);
-@@ -632,6 +622,7 @@ static struct platform_driver ipc_plat_driver = {
- 	.driver = {
- 		.name = "pmc-ipc-plat",
- 		.acpi_match_table = ACPI_PTR(ipc_acpi_ids),
-+		.dev_groups = intel_ipc_groups,
- 	},
- };
- 
 -- 
 2.24.1
 
