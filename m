@@ -2,152 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB84B143B9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6DF0143BD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbgAULFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 06:05:07 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52523 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728899AbgAULFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 06:05:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579604705;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d9MsVbaNk7uS2Z+64id6QtYbk8dUZDS6e1+y0CQGu/U=;
-        b=ZKp24iBGCt+3zyrHYZVdp2H73Ixhe5CSWfXp10IsdJrFXXOENfm7ywZcdThMBa8KllAcwm
-        GbW65C+VNcPmsOK59916ruWQRbjJoVXuA6TJXarJhYXO5DpvIgEcsKeEQ5U6w5hoZ1r4SQ
-        WEANir1A9KoluhZmjlPE7Bs0SOOlj3c=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-248-EWPQojWCPnyuYhbd1imWhQ-1; Tue, 21 Jan 2020 06:05:04 -0500
-X-MC-Unique: EWPQojWCPnyuYhbd1imWhQ-1
-Received: by mail-wr1-f70.google.com with SMTP id u18so1144049wrn.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:05:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d9MsVbaNk7uS2Z+64id6QtYbk8dUZDS6e1+y0CQGu/U=;
-        b=qhnsL/sGen38l45M97/AcZc7Yzw6jDbNyO4QtV4DEMdCXW8+2rOB7CaUtn6BbzhbYh
-         nHfOYl6j+WtBR5PNqPG9+J4PBVqMxeXmJ8qfObEZZvd5+juIzacVas++j3eNUh06vxVL
-         HS4or6WAxh3qiYslEh7mn8rDVamSXQ1zjZOfy5fYSMAwIXY0UpnRXr2tolCynqi3xzCZ
-         wVHCnbhcc9R+tmluG0TlaqIiJonrI8Um2SX032SSI5uVH55AKIDEDTEeDwJR8pEs2LpS
-         jI2if1vTN5U+dBrV07zNeifxjSbCu7n0eOPsZuVExMhfLglb2SyYVw2PHL2JiE60BTyc
-         mzyQ==
-X-Gm-Message-State: APjAAAV0zZHXP3IniAxH39/5aIDSd1QJT0u/qLHR7wBM+wTR9bzA0YFM
-        o0lp8joChzco2RymLO6zl7sWkXC1Q4d5/heP5VCudoN4r0MuSkidyiH0gDK6s/wdS0iOc1WgkGT
-        n1iyxyTHuGbKCcNkJEJv8KODP
-X-Received: by 2002:adf:978c:: with SMTP id s12mr4583933wrb.408.1579604702659;
-        Tue, 21 Jan 2020 03:05:02 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxC6B3CUIhPHui5yyVc53K8mg8DvgmB+n/aXEy4G4Rxw9ic8vDj4v06pAmlaTd9zgfxWEA28g==
-X-Received: by 2002:adf:978c:: with SMTP id s12mr4583882wrb.408.1579604702280;
-        Tue, 21 Jan 2020 03:05:02 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b509:fc01:ee8a:ca8a? ([2001:b07:6468:f312:b509:fc01:ee8a:ca8a])
-        by smtp.gmail.com with ESMTPSA id s8sm50551793wrt.57.2020.01.21.03.05.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 03:05:01 -0800 (PST)
-Subject: Re: [PATCH v2 12/45] KVM: PPC: Allocate vcpu struct in common PPC
- code
-To:     Paul Mackerras <paulus@ozlabs.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kurz <groug@kaod.org>
-References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
- <20191218215530.2280-13-sean.j.christopherson@intel.com>
- <20200120040412.GF14307@blackberry>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <fcd2aaf1-6f6e-303a-d7c6-f6b0c0a4555c@redhat.com>
-Date:   Tue, 21 Jan 2020 12:05:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20200120040412.GF14307@blackberry>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728898AbgAULO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 06:14:29 -0500
+Received: from mx.blih.net ([212.83.155.74]:43013 "EHLO mx.blih.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727255AbgAULO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 06:14:29 -0500
+X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 06:14:27 EST
+Received: from tails (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        by mx.blih.net (OpenSMTPD) with ESMTPSA id 228fe892 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Tue, 21 Jan 2020 11:07:47 +0000 (UTC)
+Date:   Tue, 21 Jan 2020 12:07:49 +0100
+From:   Emmanuel Vadot <manu@bidouilliste.net>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Emmanuel Vadot <manu@freebsd.org>, wens@csie.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: allwinner: a64: Add gpio bank supply for
+ A64-Olinuxino
+Message-Id: <20200121120749.4ee4d0e23a289c52462c1f2d@bidouilliste.net>
+In-Reply-To: <20200121091026.qfj2fv47f24wt2tp@gilmour.lan>
+References: <20200118152459.17199-1-manu@FreeBSD.Org>
+        <20200121091026.qfj2fv47f24wt2tp@gilmour.lan>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd13.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/01/20 05:04, Paul Mackerras wrote:
-> On Wed, Dec 18, 2019 at 01:54:57PM -0800, Sean Christopherson wrote:
->> Move allocation of all flavors of PPC vCPUs to common PPC code.  All
->> variants either allocate 'struct kvm_vcpu' directly, or require that
->> the embedded 'struct kvm_vcpu' member be located at offset 0, i.e.
->> guarantee that the allocation can be directly interpreted as a 'struct
->> kvm_vcpu' object.
->>
->> Remove the message from the build-time assertion regarding placement of
->> the struct, as compatibility with the arch usercopy region is no longer
->> the sole dependent on 'struct kvm_vcpu' being at offset zero.
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> This fails to compile for Book E configs:
-> 
->   CC      arch/powerpc/kvm/e500.o
-> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500.c: In function ‘kvmppc_core_vcpu_create_e500’:
-> /home/paulus/kernel/kvm/arch/powerpc/kvm/e500.c:464:9: error: return makes integer from pointer without a cast [-Werror=int-conversion]
->   return vcpu;
->          ^
-> cc1: all warnings being treated as errors
-> make[3]: *** [/home/paulus/kernel/kvm/scripts/Makefile.build:266: arch/powerpc/kvm/e500.o] Error 1
-> 
-> There is a "return vcpu" statement in kvmppc_core_vcpu_create_e500(),
-> and another in kvmppc_core_vcpu_create_e500mc(), which both need to be
-> changed to "return 0".
-> 
-> (By the way, I do appreciate you fixing the PPC code, even if there
-> are some errors.)
+On Tue, 21 Jan 2020 10:10:26 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-Squashed:
+> Hi,
+> 
+> On Sat, Jan 18, 2020 at 04:24:59PM +0100, Emmanuel Vadot wrote:
+> > From: Emmanuel Vadot <manu@freebsd.org>
+> >
+> > Add the regulators for each bank on this boards.
+> > For VCC-PL only add a comment on what regulator is used. We cannot add
+> > the property without causing a circular dependency as the PL pins are
+> > used to talk to the PMIC.
+> >
+> > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> 
+> It seems that you sent it twice?
 
-diff --git a/arch/powerpc/kvm/e500.c b/arch/powerpc/kvm/e500.c
-index 96d9cde3d2e3..f5dd2c7adcd4 100644
---- a/arch/powerpc/kvm/e500.c
-+++ b/arch/powerpc/kvm/e500.c
-@@ -461,7 +461,7 @@ static int kvmppc_core_vcpu_create_e500(struct kvm *kvm, struct kvm_vcpu *vcpu,
- 		goto uninit_tlb;
- 	}
- 
--	return vcpu;
-+	return 0;
- 
- uninit_tlb:
- 	kvmppc_e500_tlb_uninit(vcpu_e500);
-diff --git a/arch/powerpc/kvm/e500mc.c b/arch/powerpc/kvm/e500mc.c
-index aea588f73bf7..7c0d392f667a 100644
---- a/arch/powerpc/kvm/e500mc.c
-+++ b/arch/powerpc/kvm/e500mc.c
-@@ -327,7 +327,7 @@ static int kvmppc_core_vcpu_create_e500mc(struct kvm *kvm, struct kvm_vcpu *vcpu
- 		goto uninit_tlb;
- 	}
- 
--	return vcpu;
-+	return 0;
- 
- uninit_tlb:
- 	kvmppc_e500_tlb_uninit(vcpu_e500);
+ Yes sorry mail server hickups.
+
+> I applied the second. It was not applying properly though, make sure
+> to base your patches on next.
+
+ Ah right, sorry again, I've used master, will use next the next time.
+ Thanks.
+
+> Maxime
 
 
+-- 
+Emmanuel Vadot <manu@bidouilliste.com>
