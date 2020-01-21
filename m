@@ -2,76 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F9B143ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E2F143EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:00:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbgAUOBS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 09:01:18 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9228 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729253AbgAUOBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 09:01:14 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 40F61A60D87D0269834C;
-        Tue, 21 Jan 2020 22:01:12 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 21 Jan 2020 22:01:04 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <tao.zhou1@amd.com>, <Hawking.Zhang@amd.com>,
-        <Felix.Kuehling@amd.com>, <amd-gfx@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH -next 14/14] drm/amdgpu: remove unnecessary conversion to bool in gfx_v9_0.c
-Date:   Tue, 21 Jan 2020 21:55:40 +0800
-Message-ID: <20200121135540.165798-15-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200121135540.165798-1-chenzhou10@huawei.com>
-References: <20200121135540.165798-1-chenzhou10@huawei.com>
+        id S1729045AbgAUOAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:00:39 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41225 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgAUOAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 09:00:39 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k40so2627617qtk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 06:00:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T3pQh4UckFpVVYMnTU2C2nEcKAWZ5QNLADQwFYgscxc=;
+        b=s1NxKgcB7b2fWkPqDuWtLBrJmbzy3Gu/G0nXXFUWS78t64NBLo20y2YZSuUdMCk3Yz
+         jYaCNwqEW92+eDZplCRchAjcgns8MD3xrEKum4irgThfd6wJ3m3NEZtti3VRiBEtqZMX
+         0DY2DoqphpU2VTi6QKgibhWu46oYTnHcS37hDbPsTcJCdOhRNayyalaEWCBQ7N8Y/RjX
+         pmfPS7JwWzYnQGP015HgEYi8rJA6gdT5rWXQD0vov6sjex5rC60W5fPGhwL7jEWqsIeN
+         tnlLJRc+ykSzCTdhMqLc37iCtwOYbusZX7wFDY/ARsizrqbK6RmrObrUywI9LI8ZCauK
+         gRRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T3pQh4UckFpVVYMnTU2C2nEcKAWZ5QNLADQwFYgscxc=;
+        b=kOZ9Hn9jzy0bLhtYYiQLXllyQbFrCEzLdwoMTCgDmTb/6A5ZEqsRsQwIcSKkPNpFV6
+         3Gd/8c2XXP71Z6o9RVa2RaUj4Rf7cvwyqv9vh3xuU70isqjgZue9VnCnSoAGu5+OJyDq
+         XFjAbxGw7O3SKknbwddE70Aff/phCWIvwZind59CVG7IITGnM08vy6/ugNS799EhaT5E
+         K3z8g5UzYmXE3i8tLwdYUTrxsHTqpZB4ocCbgNlb4pdr2EyufJc29Gqpb0egbj1PFW4J
+         H5ZEssV5Ia9X3xv4k/UPJ4JlQSCMKkDw9O9Hh/7Mw1hewVwLvQVtL7sO63PCqxChpT3H
+         X5ig==
+X-Gm-Message-State: APjAAAXqYKT1Hw1Og5QIMNrj7blSgqjKT56odY7hQqV05xuYGpEVUAFJ
+        mBhsi/YAebcQkpU8UuNwfG8igwh4pRUxMA==
+X-Google-Smtp-Source: APXvYqx3fQrBeqZBE7DHfQCEm1KagdXQie8eYLDq2jkZfFZ5KwawetnBY3UW3WmqbvJIAJYtq6VOFA==
+X-Received: by 2002:ac8:4657:: with SMTP id f23mr4584941qto.378.1579615237725;
+        Tue, 21 Jan 2020 06:00:37 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::822a])
+        by smtp.gmail.com with ESMTPSA id a36sm19768784qtk.29.2020.01.21.06.00.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 06:00:36 -0800 (PST)
+Subject: Re: [PATCH] nbd: add a flush_workqueue in nbd_start_device
+To:     Sun Ke <sunke32@huawei.com>, axboe@kernel.dk, mchristi@redhat.com
+Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+References: <20200121124813.13332-1-sunke32@huawei.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <82a3eb7e-883c-a091-feec-27f3937491ab@toxicpanda.com>
+Date:   Tue, 21 Jan 2020 09:00:35 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200121124813.13332-1-sunke32@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
+On 1/21/20 7:48 AM, Sun Ke wrote:
+> When kzalloc fail, may cause trying to destroy the
+> workqueue from inside the workqueue.
+> 
+> If num_connections is m (2 < m), and NO.1 ~ NO.n
+> (1 < n < m) kzalloc are successful. The NO.(n + 1)
+> failed. Then, nbd_start_device will return ENOMEM
+> to nbd_start_device_ioctl, and nbd_start_device_ioctl
+> will return immediately without running flush_workqueue.
+> However, we still have n recv threads. If nbd_release
+> run first, recv threads may have to drop the last
+> config_refs and try to destroy the workqueue from
+> inside the workqueue.
+> 
+> To fix it, add a flush_workqueue in nbd_start_device.
+> 
+> Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> ---
+>   drivers/block/nbd.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index b4607dd96185..dd1f8c2c6169 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -1264,7 +1264,12 @@ static int nbd_start_device(struct nbd_device *nbd)
+>   
+>   		args = kzalloc(sizeof(*args), GFP_KERNEL);
+>   		if (!args) {
+> -			sock_shutdown(nbd);
+> +			if (i == 0)
+> +				sock_shutdown(nbd);
+> +			else {
+> +				sock_shutdown(nbd);
+> +				flush_workqueue(nbd->recv_workq);
+> +			}
 
-./drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c:4737:43-48: WARNING:
-	conversion to bool not needed here
+Just for readability sake why don't we just flush_workqueue() unconditionally, 
+and add a comment so we know why in the future.  Thanks,
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 2f782c3..e4744ae 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -4672,7 +4672,7 @@ static int gfx_v9_0_set_powergating_state(void *handle,
- 					  enum amd_powergating_state state)
- {
- 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
--	bool enable = (state == AMD_PG_STATE_GATE) ? true : false;
-+	bool enable = state == AMD_PG_STATE_GATE;
- 
- 	switch (adev->asic_type) {
- 	case CHIP_RAVEN:
-@@ -4734,7 +4734,7 @@ static int gfx_v9_0_set_clockgating_state(void *handle,
- 	case CHIP_ARCTURUS:
- 	case CHIP_RENOIR:
- 		gfx_v9_0_update_gfx_clock_gating(adev,
--						 state == AMD_CG_STATE_GATE ? true : false);
-+						 state == AMD_CG_STATE_GATE);
- 		break;
- 	default:
- 		break;
--- 
-2.7.4
-
+Josef
