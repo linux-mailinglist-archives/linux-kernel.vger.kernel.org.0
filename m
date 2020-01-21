@@ -2,147 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1582C143881
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:41:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8CD14383A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbgAUIlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:41:47 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:21946 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728456AbgAUIlq (ORCPT
+        id S1728741AbgAUIas convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 03:30:48 -0500
+Received: from relay-b01.edpnet.be ([212.71.1.221]:58701 "EHLO
+        relay-b01.edpnet.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgAUIas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:41:46 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00L8be4c015298;
-        Tue, 21 Jan 2020 03:41:10 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2xkyta6tgt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Jan 2020 03:41:10 -0500
-Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 00L8f9QR054542
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 21 Jan 2020 03:41:09 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 21 Jan
- 2020 03:41:08 -0500
-Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 21 Jan 2020 03:41:03 -0500
-Received: from btogorean-pc.ad.analog.com ([10.48.65.146])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00L8Sm9c001010;
-        Tue, 21 Jan 2020 03:40:58 -0500
-From:   Bogdan Togorean <bogdan.togorean@analog.com>
-To:     <dri-devel@lists.freedesktop.org>
-CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <a.hajda@samsung.com>,
-        <narmstrong@baylibre.com>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@siol.net>,
-        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <sam@ravnborg.org>, <alexander.deucher@amd.com>,
-        <matt.redfearn@thinci.com>, <robdclark@chromium.org>,
-        <wsa+renesas@sang-engineering.com>, <linux-kernel@vger.kernel.org>,
-        Bogdan Togorean <bogdan.togorean@analog.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v4 3/3] dt-bindings: drm: bridge: adv7511: Add ADV7535 support
-Date:   Tue, 21 Jan 2020 10:27:24 +0200
-Message-ID: <20200121082719.27972-4-bogdan.togorean@analog.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200121082719.27972-1-bogdan.togorean@analog.com>
-References: <20200121082719.27972-1-bogdan.togorean@analog.com>
+        Tue, 21 Jan 2020 03:30:48 -0500
+X-ASG-Debug-ID: 1579595444-0a7ff5137c3b1e810001-xx1T2L
+Received: from zotac.vandijck-laurijssen.be ([77.109.89.38]) by relay-b01.edpnet.be with ESMTP id jSHJfcOBIiAaokUu; Tue, 21 Jan 2020 09:30:44 +0100 (CET)
+X-Barracuda-Envelope-From: dev.kurt@vandijck-laurijssen.be
+X-Barracuda-Effective-Source-IP: UNKNOWN[77.109.89.38]
+X-Barracuda-Apparent-Source-IP: 77.109.89.38
+Received: from x1.vandijck-laurijssen.be (74.250-240-81.adsl-static.isp.belgacom.be [81.240.250.74])
+        by zotac.vandijck-laurijssen.be (Postfix) with ESMTPSA id AEFB2C67EEC;
+        Tue, 21 Jan 2020 09:30:44 +0100 (CET)
+Date:   Tue, 21 Jan 2020 09:30:35 +0100
+From:   Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+To:     Oliver Hartkopp <socketcan@hartkopp.net>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>, linux-can@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in can_rx_register
+Message-ID: <20200121083035.GD14537@x1.vandijck-laurijssen.be>
+X-ASG-Orig-Subj: Re: general protection fault in can_rx_register
+Mail-Followup-To: Oliver Hartkopp <socketcan@hartkopp.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>, linux-can@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <00000000000030dddb059c562a3f@google.com>
+ <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
+ <20200120091146.GD11138@x1.vandijck-laurijssen.be>
+ <CACT4Y+a+GusEA1Gs+z67uWjtwBRp_s7P4Wd_SMmgpCREnDu3kg@mail.gmail.com>
+ <8332ec7f-2235-fdf6-9bda-71f789c57b37@hartkopp.net>
+ <2a676c0e-20f2-61b5-c72b-f51947bafc7d@hartkopp.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-21_02:2020-01-20,2020-01-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=1
- impostorscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001210073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <2a676c0e-20f2-61b5-c72b-f51947bafc7d@hartkopp.net>
+User-Agent: Mutt/1.5.22 (2013-10-16)
+X-Barracuda-Connect: UNKNOWN[77.109.89.38]
+X-Barracuda-Start-Time: 1579595444
+X-Barracuda-URL: https://212.71.1.221:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at edpnet.be
+X-Barracuda-Scan-Msg-Size: 3259
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: SPAM GLOBAL 0.9309 1.0000 3.5604
+X-Barracuda-Spam-Score: 3.56
+X-Barracuda-Spam-Status: No, SCORE=3.56 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=7.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.79477
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ADV7535 is a part compatible with ADV7533 but it supports 1080p@60hz and
-v1p2 supply is fixed to 1.8V
+On ma, 20 jan 2020 23:35:16 +0100, Oliver Hartkopp wrote:
+> Answering myself ...
+> 
+> On 20/01/2020 23.02, Oliver Hartkopp wrote:
+> 
+> >
+> >Added some code to check whether dev->ml_priv is NULL:
+> >
+> >~/linux$ git diff
+> >diff --git a/net/can/af_can.c b/net/can/af_can.c
+> >index 128d37a4c2e0..6fb4ae4c359e 100644
+> >--- a/net/can/af_can.c
+> >+++ b/net/can/af_can.c
+> >@@ -463,6 +463,10 @@ int can_rx_register(struct net *net, struct
+> >net_device *dev, canid_t can_id,
+> >         spin_lock_bh(&net->can.rcvlists_lock);
+> >
+> >         dev_rcv_lists = can_dev_rcv_lists_find(net, dev);
+> >+       if (!dev_rcv_lists) {
+> >+               pr_err("dev_rcv_lists == NULL! %p\n", dev);
+> >+               goto out_unlock;
+> >+       }
+> >         rcv_list = can_rcv_list_find(&can_id, &mask, dev_rcv_lists);
+> >
+> >         rcv->can_id = can_id;
+> >@@ -479,6 +483,7 @@ int can_rx_register(struct net *net, struct net_device
+> >*dev, canid_t can_id,
+> >         rcv_lists_stats->rcv_entries++;
+> >         rcv_lists_stats->rcv_entries_max =
+> >max(rcv_lists_stats->rcv_entries_max,
+> >
+> >rcv_lists_stats->rcv_entries);
+> >+out_unlock:
+> >         spin_unlock_bh(&net->can.rcvlists_lock);
+> >
+> >         return err;
+> >
+> >And the output (after some time) is:
+> >
+> >[  758.505841] netlink: 'crash': attribute type 1 has an invalid length.
+> >[  758.508045] bond7148: (slave vxcan1): The slave device specified does
+> >not support setting the MAC address
+> >[  758.508057] bond7148: (slave vxcan1): Error -22 calling dev_set_mtu
+> >[  758.532025] bond10413: (slave vxcan1): The slave device specified does
+> >not support setting the MAC address
+> >[  758.532043] bond10413: (slave vxcan1): Error -22 calling dev_set_mtu
+> >[  758.532254] dev_rcv_lists == NULL! 000000006b9d257f
+> >[  758.547392] netlink: 'crash': attribute type 1 has an invalid length.
+> >[  758.549310] bond7145: (slave vxcan1): The slave device specified does
+> >not support setting the MAC address
+> >[  758.549313] bond7145: (slave vxcan1): Error -22 calling dev_set_mtu
+> >[  758.550464] netlink: 'crash': attribute type 1 has an invalid length.
+> >[  758.552301] bond7146: (slave vxcan1): The slave device specified does
+> >not support setting the MAC address
+> >
+> >So we can see that we get a ml_priv pointer which is NULL which should not
+> >be possible due to this:
+> >
+> >https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/can/dev.c#n743
+> 
+> This reference doesn't point to the right code as vxcan has its own handling
+> do assign ml_priv in vxcan.c .
+> 
+> >Btw. the variable 'size' is set two times at the top of alloc_candev_mqs()
+> >depending on echo_skb_max. This looks wrong.
+> 
+> No. It looks right as I did not get behind the ALIGN() macro at first sight.
+> 
+> But it is still open why dev->ml_priv is not set correctly in vxcan.c as all
+> the settings for .priv_size and in vxcan_setup look fine.
 
-Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- .../bindings/display/bridge/adi,adv7511.txt   | 23 ++++++++++---------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+Maybe I got completely lost:
+Shouldn't can_ml_priv and vxcan_priv not be similar?
+Where is the dev_rcv_lists in the vxcan case?
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-index 2c887536258c..e8ddec5d9d91 100644
---- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
-@@ -1,10 +1,10 @@
--Analog Device ADV7511(W)/13/33 HDMI Encoders
-+Analog Device ADV7511(W)/13/33/35 HDMI Encoders
- -----------------------------------------
- 
--The ADV7511, ADV7511W, ADV7513 and ADV7533 are HDMI audio and video transmitters
--compatible with HDMI 1.4 and DVI 1.0. They support color space conversion,
--S/PDIF, CEC and HDCP. ADV7533 supports the DSI interface for input pixels, while
--the others support RGB interface.
-+The ADV7511, ADV7511W, ADV7513, ADV7533 and ADV7535 are HDMI audio and video
-+transmitters compatible with HDMI 1.4 and DVI 1.0. They support color space
-+conversion, S/PDIF, CEC and HDCP. ADV7533/5 supports the DSI interface for input
-+pixels, while the others support RGB interface.
- 
- Required properties:
- 
-@@ -13,6 +13,7 @@ Required properties:
- 		"adi,adv7511w"
- 		"adi,adv7513"
- 		"adi,adv7533"
-+		"adi,adv7535"
- 
- - reg: I2C slave addresses
-   The ADV7511 internal registers are split into four pages exposed through
-@@ -52,14 +53,14 @@ The following input format properties are required except in "rgb 1x" and
- - bgvdd-supply: A 1.8V supply that powers up the BGVDD pin. This is
-   needed only for ADV7511.
- 
--The following properties are required for ADV7533:
-+The following properties are required for ADV7533 and ADV7535:
- 
- - adi,dsi-lanes: Number of DSI data lanes connected to the DSI host. It should
-   be one of 1, 2, 3 or 4.
- - a2vdd-supply: 1.8V supply that powers up the A2VDD pin on the chip.
- - v3p3-supply: A 3.3V supply that powers up the V3P3 pin on the chip.
- - v1p2-supply: A supply that powers up the V1P2 pin on the chip. It can be
--  either 1.2V or 1.8V.
-+  either 1.2V or 1.8V for ADV7533 but only 1.8V for ADV7535.
- 
- Optional properties:
- 
-@@ -71,9 +72,9 @@ Optional properties:
- - adi,embedded-sync: The input uses synchronization signals embedded in the
-   data stream (similar to BT.656). Defaults to separate H/V synchronization
-   signals.
--- adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
--  generator. The chip will rely on the sync signals in the DSI data lanes,
--  rather than generate its own timings for HDMI output.
-+- adi,disable-timing-generator: Only for ADV7533 and ADV7535. Disables the
-+  internal timing generator. The chip will rely on the sync signals in the
-+  DSI data lanes, rather than generate its own timings for HDMI output.
- - clocks: from common clock binding: reference to the CEC clock.
- - clock-names: from common clock binding: must be "cec".
- - reg-names : Names of maps with programmable addresses.
-@@ -85,7 +86,7 @@ Required nodes:
- The ADV7511 has two video ports. Their connections are modelled using the OF
- graph bindings specified in Documentation/devicetree/bindings/graph.txt.
- 
--- Video port 0 for the RGB, YUV or DSI input. In the case of ADV7533, the
-+- Video port 0 for the RGB, YUV or DSI input. In the case of ADV7533/5, the
-   remote endpoint phandle should be a reference to a valid mipi_dsi_host device
-   node.
- - Video port 1 for the HDMI output
--- 
-2.24.1
-
+> 
+> Best regards,
+> Oliver
