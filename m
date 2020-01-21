@@ -2,124 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C139143C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:33:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB95143C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgAULdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 06:33:25 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:57976 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbgAULdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 06:33:25 -0500
-Received: from zn.tnic (p200300EC2F0B0400D59E977D8F003815.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:400:d59e:977d:8f00:3815])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 008791EC0CDF;
-        Tue, 21 Jan 2020 12:33:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579606404;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=J6F93+LsImtFtzVA+R6J81QBkEV14BOR4MTybNBm7XQ=;
-        b=Z6icbBGVtkuf+ecXMCU+0qwQRFabuAUEH8giGTDkFz/48jyTHrvTXJIcUv7z+waDPP6xka
-        ZGwSTTQ4yl24R6CvmRO9xKhQ+UdS6JphHhyBXLGbr2gWSSF1FumIBhPczw9xoq7Lcbj5/5
-        1lHnrIpj4mMozjcF6y5hSsjf78AU0Jw=
-Date:   Tue, 21 Jan 2020 12:33:17 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Anthony Steinhauser <asteinhauser@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com
-Subject: Re: [PATCH] Return ENXIO instead of EPERM when speculation control
- is unimplemented
-Message-ID: <20200121113317.GH7808@zn.tnic>
-References: <20191229164830.62144-1-asteinhauser@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191229164830.62144-1-asteinhauser@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729219AbgAULg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 06:36:57 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44038 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbgAULg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 06:36:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id d9so1212168plo.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mSKpRLLmbCG6NNfebkoa+LCU9XJGFgAItRsjHqAjc1o=;
+        b=SDIpZhKQNyx4xuef9Gkz5k0dDHQ8mQBmax4z8lK8mYTkm/PzS4JtLMfCgPsR87nNwp
+         /TiTYHJOymsTuXIbLHcuc9VifK9a1JZBRYMAeLUE9gVO8T6d4ivMlwOslF8DSP86KxuG
+         QfaT18YZ5oml6I467FIO92SmiEbsgUXXrNBgyzeihf+wcKCzB2yS4STqWj7PPyJ2uAzT
+         Mxo9Fxk0SEI4kOPXyfhTBclYWQhTxSCqzzgQgmmgjVTjumQXCv0d9rs9f/2Y8I7HFmCA
+         CA+OF+BOfOS/LHAFTzHPFv7puRU4yDvGpIg2uWR9tzB8VYE1AUEGol/MQrJkpILRtX+/
+         Uwhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mSKpRLLmbCG6NNfebkoa+LCU9XJGFgAItRsjHqAjc1o=;
+        b=lWk6L2TacmP4ORwZKa/BWLQCXjMTFY0n6qQtjWy1U+TnCGkq+Tc6JTnvXaGoaQVF4H
+         NsyewLViWDyVcWiSV27BmCzn/FcaO+VB0vNCigFaPcVyq1v9u0TZTtcBhkcjKAg9cbgG
+         j9tyZZBAEdjzTQw1qm9QoKoxQqW3NVuLD+m+7MmPPDoZAtEYOfJFiTIaIltD2Apr4DVK
+         Mwzy9GfmmeQeEBtP6gmJDo7ZeMg/VSWNGWysEYTTttN+YXNo1I/gsjM/8ws1QMNWFZ4l
+         ZGx/SzSEwCy6wz5tdGghmpe/CHCZLeWz6N+XFNGVJQ0bH9nuAHYwNs+kDx4Ll16eeQWO
+         o6/w==
+X-Gm-Message-State: APjAAAVvMwilxtfxMNUOIV31ri5R1kN9pOz4Cx/IaE2TDn1Otwn+MYqX
+        bVUOmssqO7yqD0EpKN45uxycRitB
+X-Google-Smtp-Source: APXvYqwGP9+tBT7zQvy1Ma71uI4Uyo6azGWeXHha8tYl+uCoAHxIuHwMnVT/y8uMGG0bxcivo4KBQA==
+X-Received: by 2002:a17:90a:200d:: with SMTP id n13mr5038407pjc.16.1579606616331;
+        Tue, 21 Jan 2020 03:36:56 -0800 (PST)
+Received: from huyue2.ccdomain.com ([103.29.143.67])
+        by smtp.gmail.com with ESMTPSA id z29sm42971824pge.21.2020.01.21.03.36.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Jan 2020 03:36:55 -0800 (PST)
+From:   Yue Hu <zbestahu@gmail.com>
+To:     minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com
+Cc:     linux-kernel@vger.kernel.org, huyue2@yulong.com
+Subject: [PATCH] zram: do not set ZRAM_IDLE bit for idlepage writeback in writeback_store()
+Date:   Tue, 21 Jan 2020 19:35:57 +0800
+Message-Id: <20200121113557.11608-1-zbestahu@gmail.com>
+X-Mailer: git-send-email 2.17.1.windows.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 08:48:30AM -0800, Anthony Steinhauser wrote:
-> @@ -602,7 +603,7 @@ spectre_v2_parse_user_cmdline(enum spectre_v2_mitigation_cmd v2_cmd)
->  static void __init
->  spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
->  {
-> -	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
-> +	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_UNAVAILABLE;
->  	bool smt_possible = IS_ENABLED(CONFIG_SMP);
->  	enum spectre_v2_user_cmd cmd;
+From: Yue Hu <huyue2@yulong.com>
 
-So here in the code, right under this line we check IBPB and STIBP and
-whether SMT is force_disabled/possible and set smt_possible if not. We
-parse cmdline, pick apart selection, etc...
+Currently, we will call zram_set_flag() to set ZRAM_IDLE bit even for
+idlepage writeback. That is pointless. Let's set it only for hugepage mode.
 
-> @@ -616,6 +617,7 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
->  	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
->  	switch (cmd) {
->  	case SPECTRE_V2_USER_CMD_NONE:
-> +		mode = SPECTRE_V2_USER_DISABLED;
->  		goto set_mode;
->  	case SPECTRE_V2_USER_CMD_FORCE:
->  		mode = SPECTRE_V2_USER_STRICT;
-> @@ -676,7 +678,7 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
->  	 * mode.
->  	 */
->  	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
-> -		mode = SPECTRE_V2_USER_NONE;
-> +		mode = SPECTRE_V2_USER_UNAVAILABLE;
-
-... but here we do that evaluation again. But I think that *if* the
-required hw support is not there - either SMT is not possible or STIBP
-not present - then there's no real need to parse the cmdline and do all
-that.
-
-IOW, the filtering out of the cases where the user can't do any changes
-due to not present hw should be concentrated at the function entry and
-mode left at SPECTRE_V2_USER_UNAVAILABLE.
-
-IOW 2, unless I'm not missing some of the gazillion use cases with this
-;-\ I think that check needs to be moved up and integrated into the
-entry checks. I.e., this ontop or a separate patch...:
-
+Signed-off-by: Yue Hu <huyue2@yulong.com>
 ---
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 2e9299816530..ffe5e4fa4611 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -618,8 +618,10 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 		return;
- 
- 	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
--	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
-+	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED) {
- 		smt_possible = false;
-+		return;
-+	}
- 
- 	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
- 	switch (cmd) {
-@@ -679,13 +681,6 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 	/* If enhanced IBRS is enabled no STIBP required */
- 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
--
--	/*
--	 * If SMT is not possible or STIBP is not available clear the STIBP
--	 * mode.
--	 */
--	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
--		mode = SPECTRE_V2_USER_UNAVAILABLE;
- set_mode:
- 	spectre_v2_user = mode;
- 	/* Only print the STIBP mode when SMT possible */
+ drivers/block/zram/zram_drv.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 4285e75..eef5767 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -689,16 +689,18 @@ static ssize_t writeback_store(struct device *dev,
+ 		if (mode == IDLE_WRITEBACK &&
+ 			  !zram_test_flag(zram, index, ZRAM_IDLE))
+ 			goto next;
+-		if (mode == HUGE_WRITEBACK &&
+-			  !zram_test_flag(zram, index, ZRAM_HUGE))
+-			goto next;
++		if (mode == HUGE_WRITEBACK) {
++			if (!zram_test_flag(zram, index, ZRAM_HUGE))
++				goto next;
++			/* Need for hugepage writeback racing */
++			zram_set_flag(zram, index, ZRAM_IDLE);
++		}
++
+ 		/*
+ 		 * Clearing ZRAM_UNDER_WB is duty of caller.
+ 		 * IOW, zram_free_page never clear it.
+ 		 */
+ 		zram_set_flag(zram, index, ZRAM_UNDER_WB);
+-		/* Need for hugepage writeback racing */
+-		zram_set_flag(zram, index, ZRAM_IDLE);
+ 		zram_slot_unlock(zram, index);
+ 		if (zram_bvec_read(zram, &bvec, index, 0, NULL)) {
+ 			zram_slot_lock(zram, index);
 -- 
-Regards/Gruss,
-    Boris.
+1.9.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
