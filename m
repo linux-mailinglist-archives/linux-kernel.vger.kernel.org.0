@@ -2,99 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED04143936
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7933A14393D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:16:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgAUJOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:14:22 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43158 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727220AbgAUJOW (ORCPT
+        id S1728978AbgAUJQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:16:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:41306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUJQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:14:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579598060;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=t567CbMgA9338UWtr+w2ck6M2sm+WFvSEhuhDePLGcE=;
-        b=R5dVhzNLZOfmt0xHFXVBSsJ0aRK/PIk0VWK1VPox3p1+oI3qhG4yCrJZMpnO25q5p9Djie
-        YwX6I9ajhd3tssOVwn/JGMncuywyhnI47OHX56CqX2lT8kHGyPRPsKWh8RYgR7za7zlK4h
-        ZMDVYCwfnvCoTFOtIoJnsNcpeQoZJKE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-210-hBsuaRHiNmqReei7iLM-0A-1; Tue, 21 Jan 2020 04:14:19 -0500
-X-MC-Unique: hBsuaRHiNmqReei7iLM-0A-1
-Received: by mail-wr1-f69.google.com with SMTP id c17so1031501wrp.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:14:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=t567CbMgA9338UWtr+w2ck6M2sm+WFvSEhuhDePLGcE=;
-        b=EnJOGZ6TaOp6WvBEnVLBwDvMAua9lY9Xi8oH8ErjSKwwQOmKerIjpHEj3u22KDjXm8
-         oq0nkGTQnRDJ2nezzJGH3jrapj8C7mCqTgvfWhKePBQqxT6EAEQpZPiD41vDhtziKCf4
-         /vJyaj6OP7BsqeU0q5pZkEkBREi7ub60m4BkCswhyvaLk4ix0nDC32QIe1Cs9Uj7YZo+
-         OZP8+EEfL9CDB8M+F1fU725ijua8GWpzqV0lbpivI9Ldyg1J5KPc2fp7tTe6Q8AimVRR
-         BQFTrf/Lm87LPi2+e35px50cdcMqqO+fRq6O0QbFc0y1vw3DLCa6Tx/bSA5F2j/Xq+KW
-         /JOQ==
-X-Gm-Message-State: APjAAAWBmFxHiwyx15HfXDmxAFCWjKmK5FMeGEexmETwsyz8cRzqzsbJ
-        XXWP9gZEjmrnN4Smx2Sq0hssTHg1oShYfJooO8cL2gYT4FhfxddI4ncHdtQiZ/6OjgmdK9v/FSN
-        y2Ysaz/PFHuQxL9VUtrY52HCO
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr4026375wro.310.1579598058560;
-        Tue, 21 Jan 2020 01:14:18 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwKY3be808KwDxDQnSOCDMPaR4S7dKImMyC2RkCvhOEp+act0tw14nv6fN+cok8F0tDj6w5qw==
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr4026354wro.310.1579598058342;
-        Tue, 21 Jan 2020 01:14:18 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id t8sm51641178wrp.69.2020.01.21.01.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 01:14:17 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     linmiaohe@huawei.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, wanpengli@tencent.com,
-        jmattson@google.com, joro@8bytes.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Subject: Re: [PATCH] KVM: VMX: remove duplicated segment cache clear
-In-Reply-To: <20200121151518.27530-1-linmiaohe@huawei.com>
-References: <20200121151518.27530-1-linmiaohe@huawei.com>
-Date:   Tue, 21 Jan 2020 10:14:16 +0100
-Message-ID: <87eevtf9xz.fsf@vitty.brq.redhat.com>
+        Tue, 21 Jan 2020 04:16:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LyuFNpAXFwCRQciuWpZEuClZCiBhfl/IXNpqcj5ve08=; b=BkLy0jiLon7chhIXqqOzzzgP0
+        OGa1wl43bmLxo30SES4dQs5uEFUD5np7nDMlTBVqRIoKnPnfq9mfW8i7dZ8nGIy8Pq2YRnFSEllG+
+        L5yL+dH1/WigcYzbYRhDRyTH2EpKwxojfsdYlesiMsPMnavRyxUNPvBC9se8kvXYMrSZXl+Ze3iuO
+        7pu902VrDsuN5S1o1gZqBos9F5rsYBVgFG+NkkDChX2YRR+KN37vkzRwJVv6sgDLWggikpPV2PD+g
+        8Lx/321hVttbQGi6X8DIz+aG5VWIPjjr+gVXalOQ8yB8rZuoY3en1eMdsUv3BC59+5x2/wPAvHetC
+        isYQLbwTQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itpcm-0003XR-Jc; Tue, 21 Jan 2020 09:15:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2BB0E30067C;
+        Tue, 21 Jan 2020 10:13:22 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3645F20983E34; Tue, 21 Jan 2020 10:15:01 +0100 (CET)
+Date:   Tue, 21 Jan 2020 10:15:01 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Marco Elver <elver@google.com>, andreyknvl@google.com,
+        glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will@kernel.org, boqun.feng@gmail.com, arnd@arndb.de,
+        viro@zeniv.linux.org.uk, christophe.leroy@c-s.fr, dja@axtens.net,
+        mpe@ellerman.id.au, rostedt@goodmis.org, mhiramat@kernel.org,
+        mingo@kernel.org, christian.brauner@ubuntu.com,
+        daniel@iogearbox.net, cyphar@cyphar.com, keescook@chromium.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH 3/5] asm-generic, kcsan: Add KCSAN instrumentation for
+ bitops
+Message-ID: <20200121091501.GF14914@hirez.programming.kicks-ass.net>
+References: <20200120141927.114373-1-elver@google.com>
+ <20200120141927.114373-3-elver@google.com>
+ <20200120144048.GB14914@hirez.programming.kicks-ass.net>
+ <20200120162725.GE2935@paulmck-ThinkPad-P72>
+ <20200120165223.GC14914@hirez.programming.kicks-ass.net>
+ <20200120202359.GF2935@paulmck-ThinkPad-P72>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120202359.GF2935@paulmck-ThinkPad-P72>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miaohe Lin <linmiaohe@huawei.com> writes:
+On Mon, Jan 20, 2020 at 12:23:59PM -0800, Paul E. McKenney wrote:
+> We also don't have __atomic_read() and __atomic_set(), yet atomic_read()
+> and atomic_set() are considered to be non-racy, right?
 
-> vmx_set_segment() clears segment cache unconditionally, so we should not
-> clear it again by calling vmx_segment_cache_clear().
->
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index b5a0c2e05825..b32236e6b513 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2688,8 +2688,6 @@ static void enter_pmode(struct kvm_vcpu *vcpu)
->  
->  	vmx->rmode.vm86_active = 0;
->  
-> -	vmx_segment_cache_clear(vmx);
-> -
->  	vmx_set_segment(vcpu, &vmx->rmode.segs[VCPU_SREG_TR], VCPU_SREG_TR);
->  
->  	flags = vmcs_readl(GUEST_RFLAGS);
+What is racy? :-) You can make data races with atomic_{read,set}() just
+fine.
 
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Anyway, traditionally we call the read-modify-write stuff atomic, not
+the trivial load-store stuff. The only reason we care about the
+load-store stuff in the first place is because C compilers are shit.
 
--- 
-Vitaly
+atomic_read() / test_bit() are just a load, all we need is the C
+compiler not to be an ass and split it. Yes, we've invented the term
+single-copy atomicity for that, but that doesn't make it more or less of
+a load.
 
+And exactly because it is just a load, there is no __test_bit(), which
+would be the exact same load.
