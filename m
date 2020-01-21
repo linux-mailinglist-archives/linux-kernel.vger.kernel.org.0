@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 455BB144454
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:32:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3319A14445B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbgAUScw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:32:52 -0500
-Received: from foss.arm.com ([217.140.110.172]:47280 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbgAUScv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:32:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DC861FB;
-        Tue, 21 Jan 2020 10:32:51 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F7533F6C4;
-        Tue, 21 Jan 2020 10:32:50 -0800 (PST)
-Date:   Tue, 21 Jan 2020 18:32:47 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 2/2] drm: sun4i: hdmi: Add support for sun4i HDMI
- encoder audio
-Message-ID: <20200121183247.GL4656@sirena.org.uk>
-References: <20200120123326.30743-1-stefan@olimex.com>
- <20200120123326.30743-3-stefan@olimex.com>
- <20200121182905.pxs72ojqx5fz2gi3@gilmour.lan>
- <20200121182937.2ak72e4eklk4za2u@gilmour.lan>
+        id S1729262AbgAUSfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 13:35:03 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15840 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbgAUSfC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 13:35:02 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e27442a0002>; Tue, 21 Jan 2020 10:34:18 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 21 Jan 2020 10:35:01 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 21 Jan 2020 10:35:01 -0800
+Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 Jan
+ 2020 18:35:00 +0000
+Subject: Re: [PATCH] serial: 8250_tegra: Create Tegra specific 8250 driver
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, Jeff Brasen <jbrasen@nvidia.com>
+References: <20200120160149.29072-1-jonathanh@nvidia.com>
+ <f02faa4c-5838-15d2-1b76-75c17fcc0d9d@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <714eb00b-bb49-9536-ce9c-8928941edef3@nvidia.com>
+Date:   Tue, 21 Jan 2020 18:34:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gwtGiOGliFx8mAnm"
-Content-Disposition: inline
-In-Reply-To: <20200121182937.2ak72e4eklk4za2u@gilmour.lan>
-X-Cookie: You too can wear a nose mitten.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f02faa4c-5838-15d2-1b76-75c17fcc0d9d@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579631658; bh=G0EhICBZ/7BEBO1885NXBKojV5dMQEqiDzFaZpuvJ+0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lSh6Xeynbe2WGZFmEK52DQGQNq3ePnS9KPflCUxmFWrP3wAukmriI9D8mezv2rUed
+         Ap5Omov8OiMR6jiMs4XWY1spLpOwW5W80E8gAVRQFcVJUPLtkU+Mr++zGRpjsRrd2Y
+         oPWwHkpqd7phv1UqtFIx48PNEtpAw5MBvkLn9TJA9lWcygePTM5QtcCmjFzcMOgp86
+         Y0qA6JnNJx3sGf3enXmV7ZnH0IGvrrg/UwDnTApOwvtijroNVousWxUE4I7cngusHg
+         ok27KIBGr5RReOe6+GoDKSM6khr2iHKswVEV6HM6uPRfuIfXKmLu1ZaZZf0xOiDfy6
+         +/CuGB1eWl12Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gwtGiOGliFx8mAnm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 21/01/2020 16:31, Dmitry Osipenko wrote:
+> Hello Jon,
+>=20
+> 20.01.2020 19:01, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>=20
+> [snip]
+>=20
+>> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	if (!res)
+>> +		return -ENODEV;
+>> +
+>> +	port->membase =3D devm_ioremap(&pdev->dev, res->start,
+>> +				     resource_size(res));
+>=20
+> devm_platform_ioremap_resource()
 
-On Tue, Jan 21, 2020 at 07:29:37PM +0100, Maxime Ripard wrote:
+That would be ideal, but we cannot. The driver needs the res structure
+as well later on.
 
-> > Mark, our issue here is that we have a driver tied to a device that is
-> > an HDMI encoder. Obviously, we'll want to register into DRM, which is
-> > what we were doing so far, with the usual case where at remove /
-> > unbind time, in order to free the resources, we just retrieve our
-> > pointer to our private structure using the device's drvdata.
+Jon
 
-> > Now, snd_soc_register_card also sets that pointer to the card we try
-> > to register, which is problematic. It seems that it's used to handle
-> > suspend / resume automatically, which in this case would be also not
-> > really fit for us (or rather, we would need to do more that just
-> > suspend the audio part).
-
-There's a drvdata field in the snd_soc_card for cases like this - would
-that work for you?
-
---gwtGiOGliFx8mAnm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4nQ84ACgkQJNaLcl1U
-h9DTsQf/ZXhHyM/3fgvqMJFm1rMy0RUSq2MP43zhb1/fioi7vxLOoPvc5jQzGwUw
-0WCUnqbv87LZXwtMbvIx1TS2xVzFt1EvAuRX+XwwVYlmTP2svfRkN+pjdNGscEcY
-Y9dO1Klqekk2WyzZsQ9fkDM8hoJtjXZ0oFRrPlUsae9jbmymykgqmK48XLVKFd3x
-AaeVd0BuUIXA+6jlFqTBgaIA35TffdliRrgSxjwxoy3Jk+wrW562WgM/isGD2qjK
-Jn+alQQhlwRYsN3Xmuni7Fd4P9zf5r7o8twcyijEOH/Um76H8d+vSjrwI2tCJfAm
-c0+F7U3m8NTne3fCjVXvL4/ipHzMGQ==
-=km+F
------END PGP SIGNATURE-----
-
---gwtGiOGliFx8mAnm--
+--=20
+nvpublic
