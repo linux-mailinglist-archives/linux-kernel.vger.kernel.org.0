@@ -2,65 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72BD014397B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC78143972
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbgAUJaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:30:02 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:10121 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727220AbgAUJaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:30:01 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 77E63953C003BFDE2BD5;
-        Tue, 21 Jan 2020 17:29:59 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 21 Jan 2020 17:29:48 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <davem@davemloft.net>, <mhabets@solarflare.com>, <kuba@kernel.org>,
-        <sergei.shtylyov@cogentembedded.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH -next v2] drivers: net: declance: fix comparing pointer to 0
-Date:   Tue, 21 Jan 2020 17:24:55 +0800
-Message-ID: <20200121092455.82983-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729291AbgAUJZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:25:53 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24603 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729247AbgAUJZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:25:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579598752;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yTWClkvRm84UsaK/GnS4LaoXz+1p5+iKBQeI9MLnG6A=;
+        b=LQsN/n30XrhGZywv08IKBrTqrb+2ERjZripUxXuh1pMk+V5qCnRq4pQ3fEDe/Q+TGrpW++
+        2RAa2BKxZ/S+9BV5L3HgfG+7Z48TF8zvTtG4T9Ig0CmxiOfdNc/3clVdc+sxUYY76b6K3w
+        CRVWB704TSEQ2lmC3Cy9GtZW7+Rb4yk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-10-BUYzRYjyPoSpRXvZP5GDjA-1; Tue, 21 Jan 2020 04:25:51 -0500
+X-MC-Unique: BUYzRYjyPoSpRXvZP5GDjA-1
+Received: by mail-wr1-f69.google.com with SMTP id t3so1026805wrm.23
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:25:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=yTWClkvRm84UsaK/GnS4LaoXz+1p5+iKBQeI9MLnG6A=;
+        b=if+SLyRt7Qzqsqb48yi/+YSq8PVHbP6zD/AbpX5Jnl08YA2ASbwhn3UzZkz4Yp9dop
+         sM7kVaX1cBR4vxqWWnQF2GugKZQaZwnHSwnOw63ulfUwXsm8a4daZB48QpW97zK+KdLy
+         /YC/5aYk2Yd7zKEW5WjFFkZCtcSM8/WcSIa5H29SbgbX1002ra9qLejpn81kZ4VpVqPx
+         I8AlEPJEkb7N7IKlyLiRO4GdI9r9/5nQrDM3534mw9ZRvOEk5WrOoFQWW/MWrU7HySnj
+         KxkCUsT42VXXnoGdzSvwFpLMXvp9pnibNRO2J//8vr5ejmLETJesUf/h95af3CvUUvBc
+         bWuQ==
+X-Gm-Message-State: APjAAAUP9mJfRXBU7Pdr2bSALsp2Xb7dFsHIdkV6GzgtKPy0edZaLJjh
+        ZhHDXjmWKdDe6R8vF2VXc6mIbSQgX7EFCvK0RZiOhq69MyHKFUv9uxhq4sVX++bQ5pNxF3yYpRv
+        ddW3E7biw522OsWHoc2SYsg1e
+X-Received: by 2002:a05:600c:2059:: with SMTP id p25mr3469030wmg.161.1579598749666;
+        Tue, 21 Jan 2020 01:25:49 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwntllOcXBc5ZbJO2Sw42hDG7IYCOlW+56XpA6R4RYZb3Npr2xPu9XRyD+bLAu6RHPhX+isXQ==
+X-Received: by 2002:a05:600c:2059:: with SMTP id p25mr3469002wmg.161.1579598749442;
+        Tue, 21 Jan 2020 01:25:49 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id x10sm50834685wrp.58.2020.01.21.01.25.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 01:25:48 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer\:X86 ARCHITECTURE \(32-BIT AND 64-BIT\)" <x86@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "open list\:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" 
+        <linux-pci@vger.kernel.org>, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pci: hyperv: Move retarget related struct definitions into tlfs
+In-Reply-To: <20200121015713.69691-2-boqun.feng@gmail.com>
+References: <20200121015713.69691-1-boqun.feng@gmail.com> <20200121015713.69691-2-boqun.feng@gmail.com>
+Date:   Tue, 21 Jan 2020 10:25:47 +0100
+Message-ID: <87blqxf9es.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
+Boqun Feng <boqun.feng@gmail.com> writes:
 
-./drivers/net/ethernet/amd/declance.c:611:14-15:
-	WARNING comparing pointer to 0
+> For future support of virtual PCI on non-x86 architecture.
+>
+> Signed-off-by: Boqun Feng (Microsoft) <boqun.feng@gmail.com>
+> ---
+>  arch/x86/include/asm/hyperv-tlfs.h  | 38 +++++++++++++++++++++++++++++
+>  arch/x86/include/asm/mshyperv.h     |  8 ++++++
+>  drivers/pci/controller/pci-hyperv.c | 38 +++--------------------------
+>  3 files changed, 50 insertions(+), 34 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+> index b9ebc20b2385..debe017ae748 100644
+> --- a/arch/x86/include/asm/hyperv-tlfs.h
+> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+> @@ -912,4 +912,42 @@ struct hv_tlb_flush_ex {
+>  struct hv_partition_assist_pg {
+>  	u32 tlb_lock_count;
+>  };
+> +
+> +union hv_msi_entry {
+> +	u64 as_uint64;
+> +	struct {
+> +		u32 address;
+> +		u32 data;
+> +	} __packed;
+> +};
 
-Replace "skb == 0" with "!skb".
+While Hyper-V code is full of this, I was once told that 'Union aliasing
+is UB. Avoid it for good.' Maybe we should start getting rid of it
+instead of adding more?
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/net/ethernet/amd/declance.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +
+> +struct hv_interrupt_entry {
+> +	u32 source;			/* 1 for MSI(-X) */
+> +	u32 reserved1;
+> +	union hv_msi_entry msi_entry;
+> +} __packed;
+> +
+> +/*
+> + * flags for hv_device_interrupt_target.flags
+> + */
+> +#define HV_DEVICE_INTERRUPT_TARGET_MULTICAST		1
+> +#define HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET	2
+> +
+> +struct hv_device_interrupt_target {
+> +	u32 vector;
+> +	u32 flags;
+> +	union {
+> +		u64 vp_mask;
+> +		struct hv_vpset vp_set;
+> +	};
+> +} __packed;
+> +
+> +/* HvRetargetDeviceInterrupt hypercall */
+> +struct hv_retarget_device_interrupt {
+> +	u64 partition_id;
+> +	u64 device_id;
+> +	struct hv_interrupt_entry int_entry;
+> +	u64 reserved2;
+> +	struct hv_device_interrupt_target int_target;
+> +} __packed __aligned(8);
+>  #endif
+> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+> index 6b79515abb82..d13319d82f6b 100644
+> --- a/arch/x86/include/asm/mshyperv.h
+> +++ b/arch/x86/include/asm/mshyperv.h
+> @@ -240,6 +240,14 @@ bool hv_vcpu_is_preempted(int vcpu);
+>  static inline void hv_apic_init(void) {}
+>  #endif
+>  
+> +#if IS_ENABLED(CONFIG_PCI_HYPERV)
+> +#define hv_set_msi_address_from_desc(msi_entry, msi_desc)	\
+> +do {								\
+> +	(msi_entry)->address = (msi_desc)->msg.address_lo;	\
+> +} while (0)
+> +
+> +#endif /* CONFIG_PCI_HYPERV */
 
-diff --git a/drivers/net/ethernet/amd/declance.c b/drivers/net/ethernet/amd/declance.c
-index 6592a2d..7282ce5 100644
---- a/drivers/net/ethernet/amd/declance.c
-+++ b/drivers/net/ethernet/amd/declance.c
-@@ -608,7 +608,7 @@ static int lance_rx(struct net_device *dev)
- 			len = (*rds_ptr(rd, mblength, lp->type) & 0xfff) - 4;
- 			skb = netdev_alloc_skb(dev, len + 2);
- 
--			if (skb == 0) {
-+			if (!skb) {
- 				dev->stats.rx_dropped++;
- 				*rds_ptr(rd, mblength, lp->type) = 0;
- 				*rds_ptr(rd, rmd1, lp->type) =
+It seems to be pointless to put defines under #if IS_ENABLED(): in case
+it is not enabled and used you'll get a compilation error, in case it is
+enabled and not used no code is going to be generated anyways.
+
+> +
+>  #else /* CONFIG_HYPERV */
+>  static inline void hyperv_init(void) {}
+>  static inline void hyperv_setup_mmu_ops(void) {}
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index aacfcc90d929..2240f2b3643e 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -406,36 +406,6 @@ struct pci_eject_response {
+>  
+>  static int pci_ring_size = (4 * PAGE_SIZE);
+>  
+> -struct hv_interrupt_entry {
+> -	u32	source;			/* 1 for MSI(-X) */
+> -	u32	reserved1;
+> -	u32	address;
+> -	u32	data;
+> -};
+> -
+> -/*
+> - * flags for hv_device_interrupt_target.flags
+> - */
+> -#define HV_DEVICE_INTERRUPT_TARGET_MULTICAST		1
+> -#define HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET	2
+> -
+> -struct hv_device_interrupt_target {
+> -	u32	vector;
+> -	u32	flags;
+> -	union {
+> -		u64		 vp_mask;
+> -		struct hv_vpset vp_set;
+> -	};
+> -};
+> -
+> -struct retarget_msi_interrupt {
+> -	u64	partition_id;		/* use "self" */
+> -	u64	device_id;
+> -	struct hv_interrupt_entry int_entry;
+> -	u64	reserved2;
+> -	struct hv_device_interrupt_target int_target;
+> -} __packed __aligned(8);
+> -
+>  /*
+>   * Driver specific state.
+>   */
+> @@ -482,7 +452,7 @@ struct hv_pcibus_device {
+>  	struct workqueue_struct *wq;
+>  
+>  	/* hypercall arg, must not cross page boundary */
+> -	struct retarget_msi_interrupt retarget_msi_interrupt_params;
+> +	struct hv_retarget_device_interrupt retarget_msi_interrupt_params;
+>  
+>  	/*
+>  	 * Don't put anything here: retarget_msi_interrupt_params must be last
+> @@ -1178,7 +1148,7 @@ static void hv_irq_unmask(struct irq_data *data)
+>  {
+>  	struct msi_desc *msi_desc = irq_data_get_msi_desc(data);
+>  	struct irq_cfg *cfg = irqd_cfg(data);
+> -	struct retarget_msi_interrupt *params;
+> +	struct hv_retarget_device_interrupt *params;
+>  	struct hv_pcibus_device *hbus;
+>  	struct cpumask *dest;
+>  	cpumask_var_t tmp;
+> @@ -1200,8 +1170,8 @@ static void hv_irq_unmask(struct irq_data *data)
+>  	memset(params, 0, sizeof(*params));
+>  	params->partition_id = HV_PARTITION_ID_SELF;
+>  	params->int_entry.source = 1; /* MSI(-X) */
+> -	params->int_entry.address = msi_desc->msg.address_lo;
+> -	params->int_entry.data = msi_desc->msg.data;
+> +	hv_set_msi_address_from_desc(&params->int_entry.msi_entry, msi_desc);
+
+I don't quite see why this hv_set_msi_address_from_desc() is needed at
+all.
+
+> +	params->int_entry.msi_entry.data = msi_desc->msg.data;
+>  	params->device_id = (hbus->hdev->dev_instance.b[5] << 24) |
+>  			   (hbus->hdev->dev_instance.b[4] << 16) |
+>  			   (hbus->hdev->dev_instance.b[7] << 8) |
+
 -- 
-2.7.4
+Vitaly
 
