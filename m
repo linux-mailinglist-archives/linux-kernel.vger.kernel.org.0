@@ -2,27 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2818E1435F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 04:37:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 132621435FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 04:37:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbgAUDhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 22:37:15 -0500
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:34202 "EHLO
+        id S1728912AbgAUDhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 22:37:23 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:19187 "EHLO
         out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726935AbgAUDhP (ORCPT
+        by vger.kernel.org with ESMTP id S1728827AbgAUDhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 22:37:15 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ToGbVG5_1579577823;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToGbVG5_1579577823)
+        Mon, 20 Jan 2020 22:37:22 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0ToGalXN_1579577829;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToGalXN_1579577829)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 11:37:03 +0800
+          Tue, 21 Jan 2020 11:37:09 +0800
 From:   Alex Shi <alex.shi@linux.alibaba.com>
 Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        ChenGang <cg.chen@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
         ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] OCFS2: remove FS_OCFS2_NM
-Date:   Tue, 21 Jan 2020 11:36:52 +0800
-Message-Id: <1579577812-251572-1-git-send-email-alex.shi@linux.alibaba.com>
+Subject: [PATCH] OCFS2: remove unused macros
+Date:   Tue, 21 Jan 2020 11:37:07 +0800
+Message-Id: <1579577827-251796-1-git-send-email-alex.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -30,32 +36,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This macro is't used from commit ab09203e302b ("sysctl fs: Remove
-dead binary sysctl support"). Better to remove it.
+O2HB_DEFAULT_BLOCK_BITS/DLM_THREAD_MAX_ASTS/DLM_MIGRATION_RETRY_MS and
+OCFS2_MAX_RESV_WINDOW_BITS/OCFS2_MIN_RESV_WINDOW_BITS are
+never used from they were introduced to kernel. so better to remove
+them.
 
 Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
 Cc: Mark Fasheh <mark@fasheh.com> 
 Cc: Joel Becker <jlbec@evilplan.org> 
 Cc: Joseph Qi <joseph.qi@linux.alibaba.com> 
+Cc: Andrew Morton <akpm@linux-foundation.org> 
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org> 
+Cc: Kate Stewart <kstewart@linuxfoundation.org> 
+Cc: ChenGang <cg.chen@huawei.com> 
+Cc: Thomas Gleixner <tglx@linutronix.de> 
+Cc: Richard Fontana <rfontana@redhat.com> 
 Cc: ocfs2-devel@oss.oracle.com 
 Cc: linux-kernel@vger.kernel.org 
 ---
- fs/ocfs2/stackglue.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/ocfs2/cluster/heartbeat.c | 2 --
+ fs/ocfs2/dlm/dlmmaster.c     | 2 --
+ fs/ocfs2/dlm/dlmthread.c     | 1 -
+ fs/ocfs2/reservations.c      | 3 ---
+ 4 files changed, 8 deletions(-)
 
-diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
-index 8aa6a667860c..a191094694c6 100644
---- a/fs/ocfs2/stackglue.c
-+++ b/fs/ocfs2/stackglue.c
-@@ -656,8 +656,6 @@ static int ocfs2_sysfs_init(void)
-  * and easier to preserve the name.
-  */
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index a368350d4c27..78cb48d6a596 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -101,8 +101,6 @@ struct o2hb_debug_buf {
  
--#define FS_OCFS2_NM		1
+ static struct o2hb_callback *hbcall_from_type(enum o2hb_callback_type type);
+ 
+-#define O2HB_DEFAULT_BLOCK_BITS       9
 -
- static struct ctl_table ocfs2_nm_table[] = {
- 	{
- 		.procname	= "hb_ctl_path",
+ enum o2hb_heartbeat_modes {
+ 	O2HB_HEARTBEAT_LOCAL		= 0,
+ 	O2HB_HEARTBEAT_GLOBAL,
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 74b768ca1cd8..123b6873d9fa 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -2751,8 +2751,6 @@ static int dlm_migrate_lockres(struct dlm_ctxt *dlm,
+ 	return ret;
+ }
+ 
+-#define DLM_MIGRATION_RETRY_MS  100
+-
+ /*
+  * Should be called only after beginning the domain leave process.
+  * There should not be any remaining locks on nonlocal lock resources,
+diff --git a/fs/ocfs2/dlm/dlmthread.c b/fs/ocfs2/dlm/dlmthread.c
+index 61c51c268460..2dd9727537fe 100644
+--- a/fs/ocfs2/dlm/dlmthread.c
++++ b/fs/ocfs2/dlm/dlmthread.c
+@@ -680,7 +680,6 @@ static void dlm_flush_asts(struct dlm_ctxt *dlm)
+ 
+ #define DLM_THREAD_TIMEOUT_MS (4 * 1000)
+ #define DLM_THREAD_MAX_DIRTY  100
+-#define DLM_THREAD_MAX_ASTS   10
+ 
+ static int dlm_thread(void *data)
+ {
+diff --git a/fs/ocfs2/reservations.c b/fs/ocfs2/reservations.c
+index 0249e8ca1028..bf3842e34fb9 100644
+--- a/fs/ocfs2/reservations.c
++++ b/fs/ocfs2/reservations.c
+@@ -33,9 +33,6 @@
+ 
+ static DEFINE_SPINLOCK(resv_lock);
+ 
+-#define	OCFS2_MIN_RESV_WINDOW_BITS	8
+-#define	OCFS2_MAX_RESV_WINDOW_BITS	1024
+-
+ int ocfs2_dir_resv_allowed(struct ocfs2_super *osb)
+ {
+ 	return (osb->osb_resv_level && osb->osb_dir_resv_level);
 -- 
 1.8.3.1
 
