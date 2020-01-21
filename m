@@ -2,100 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1544914434E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2221144356
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:34:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgAURdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 12:33:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31467 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728829AbgAURdO (ORCPT
+        id S1729159AbgAURex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 12:34:53 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60408 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728186AbgAURew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 12:33:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579627993;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X+1nAC0+SxgPPTs8vkrGO5Iz83uXJrfWdyhSIti9ZQE=;
-        b=f4upiMyNr2zvFixS4co9SvZ6N3lVMln7tuYLwzX+9eiHKFbmhyRvGmPtAUXYB8W4q1tdEk
-        A4IdCjhHuquGC0cSK6JW0toFH2LkV2AbktEvuFZ5JUKdbq+P7x+8bFP4MzzBl/1PqI5AbI
-        U6aCsXrBFNODTw5rOTtHcAtbyzfUuTQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-147-8ATiIqFlPqyuRUumYZ_QDA-1; Tue, 21 Jan 2020 12:33:10 -0500
-X-MC-Unique: 8ATiIqFlPqyuRUumYZ_QDA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 21 Jan 2020 12:34:52 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 597FC8EE180;
+        Tue, 21 Jan 2020 09:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579628092;
+        bh=vcYNFOeLQG9On2rFmCpXuIKj7cjYAwyM8qk3B50z018=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NUOVdFzkm+/32Ol+TaRpDzUod5DduXpbCNSF8OsNEf6HDz60bv/uluBHVBUMr8ik2
+         dCycmIpURSjQJn4fnBapBJys6DMybqorjLUWebT6pdJFytEB8mfcDEiw8Cgaq4+CEA
+         HfOF6FEiV5ZyD5km00z2s4lbdZv0+NwIq42pdxI8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8c7TChbFVXin; Tue, 21 Jan 2020 09:34:52 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83410107ACC4;
-        Tue, 21 Jan 2020 17:33:08 +0000 (UTC)
-Received: from treble (ovpn-122-154.rdu2.redhat.com [10.10.122.154])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C49184DB2;
-        Tue, 21 Jan 2020 17:33:07 +0000 (UTC)
-Date:   Tue, 21 Jan 2020 11:33:05 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Julien Thierry <jthierry@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        peterz@infradead.org, raphael.gault@arm.com,
-        catalin.marinas@arm.com, will@kernel.org
-Subject: Re: [RFC v5 12/57] objtool: check: Allow jumps from an alternative
- group to itself
-Message-ID: <20200121173305.urv77ral76su26cs@treble>
-References: <20200109160300.26150-1-jthierry@redhat.com>
- <20200109160300.26150-13-jthierry@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200109160300.26150-13-jthierry@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7AF088EE0C9;
+        Tue, 21 Jan 2020 09:34:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579628092;
+        bh=vcYNFOeLQG9On2rFmCpXuIKj7cjYAwyM8qk3B50z018=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NUOVdFzkm+/32Ol+TaRpDzUod5DduXpbCNSF8OsNEf6HDz60bv/uluBHVBUMr8ik2
+         dCycmIpURSjQJn4fnBapBJys6DMybqorjLUWebT6pdJFytEB8mfcDEiw8Cgaq4+CEA
+         HfOF6FEiV5ZyD5km00z2s4lbdZv0+NwIq42pdxI8=
+Message-ID: <1579628090.3390.28.camel@HansenPartnership.com>
+Subject: Re: [PATCH] IMA: Turn IMA_MEASURE_ASYMMETRIC_KEYS off by default
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 21 Jan 2020 09:34:50 -0800
+In-Reply-To: <20200121171302.4935-1-nramas@linux.microsoft.com>
+References: <20200121171302.4935-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 04:02:15PM +0000, Julien Thierry wrote:
-> Alternatives can contain instructions that jump to another instruction
-> in the same alternative group. This is actually a common pattern on
-> arm64.
-> 
-> Keep track of instructions jumping within their own alternative group
-> and carry on validating such branches.
-> 
-> Signed-off-by: Julien Thierry <jthierry@redhat.com>
-> ---
->  tools/objtool/check.c | 48 ++++++++++++++++++++++++++++++++++---------
->  tools/objtool/check.h |  1 +
->  2 files changed, 39 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 8f2ff030936d..c7b3f1e2a628 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -722,6 +722,14 @@ static int handle_group_alt(struct objtool_file *file,
->  	sec_for_each_insn_from(file, insn) {
->  		if (insn->offset >= special_alt->orig_off + special_alt->orig_len)
->  			break;
-> +		/* Is insn a jump to an instruction within the alt_group */
-> +		if (insn->jump_dest && insn->sec == insn->jump_dest->sec &&
-> +		    (insn->type == INSN_JUMP_CONDITIONAL ||
-> +		     insn->type == INSN_JUMP_UNCONDITIONAL)) {
-> +			dest_off = insn->jump_dest->offset;
-> +			insn->intra_group_jump = special_alt->orig_off <= dest_off &&
-> +				dest_off < special_alt->orig_off + special_alt->orig_len;
-> +		}
+On Tue, 2020-01-21 at 09:13 -0800, Lakshmi Ramasubramanian wrote:
+> Enabling IMA and ASYMMETRIC_PUBLIC_KEY_SUBTYPE configs will
+> automatically enable the IMA hook to measure asymmetric keys. Keys
+> created or updated early in the boot process are queued up whether
+> or not a custom IMA policy is provided. Although the queued keys will
+> be freed if a custom IMA policy is not loaded within 5 minutes, it
+> could still cause significant performance impact on smaller systems.
 
-This patch adds some complexity, just so we can keep the
+What exactly do you expect distributions to do with this?  I can tell
+you that most of them will take the default option, so this gets set to
+N and you may as well not have got the patches upstream because you
+won't be able to use them in any distro with this setting.
 
-  "don't know how to handle branch to middle of alternative instruction group"
+> This patch turns the config IMA_MEASURE_ASYMMETRIC_KEYS off by
+> default.  Since a custom IMA policy that defines key measurement is
+> required to measure keys, systems that require key measurement can
+> enable this config option in addition to providing a custom IMA
+> policy.
 
-warning for the case where code from outside an alternative insn group
-is branching to inside the group.  But I've never actually seen that
-case in practice, and I get the feeling that warning isn't very useful
-or realistic.
+Well, no they can't ... it's rather rare nowadays for people to build
+their own kernels.  The vast majority of Linux consumers take what the
+distros give them.  Think carefully before you decide a config option
+is the solution to this problem.
 
-How about we just remove the warning?
-
--- 
-Josh
+James
 
