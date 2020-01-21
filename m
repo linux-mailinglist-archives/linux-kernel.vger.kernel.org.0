@@ -2,118 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E63081437ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:56:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4642E1437F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:57:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgAUH45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:56:57 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:34765 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUH44 (ORCPT
+        id S1728842AbgAUH5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:57:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59476 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725789AbgAUH5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:56:56 -0500
-Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MrQN5-1jN4gy1L1j-00oVpR for <linux-kernel@vger.kernel.org>; Tue, 21 Jan
- 2020 08:56:55 +0100
-Received: by mail-qk1-f176.google.com with SMTP id x129so1804996qke.8
-        for <linux-kernel@vger.kernel.org>; Mon, 20 Jan 2020 23:56:55 -0800 (PST)
-X-Gm-Message-State: APjAAAWtYuRWYftvoxM0Q9pnIOkIRr9Ox23ymBFxDj78bM6AN/2YTdda
-        LypIvFKlPKgKKU7e6kYtqNzrk4vg/2DelfsWAT8=
-X-Google-Smtp-Source: APXvYqz4tiDJoI2migNnImA2omna2zj+7OgcgTO5jqY48X4PjHVty245HTtfMAVLuNHgqnoCcyHNuiGdUN5ZOP4kl94=
-X-Received: by 2002:a37:2f02:: with SMTP id v2mr3229598qkh.3.1579593414178;
- Mon, 20 Jan 2020 23:56:54 -0800 (PST)
+        Tue, 21 Jan 2020 02:57:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579593472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fHgdj4+QyHLUaUegzU6HDHgoygSNPCN+x1Fke+h7szM=;
+        b=FcoTTLoGB9J5UGg299GDJZMK7IKLIf1/AiGGqvm1xb7K4gZUVsVjplczud2Ji62ohpFS4U
+        ZI8ZT3y8phx+YqKQv7jxHp2hVUl5U2uyIFyTyUq4mv/QpjtKCa5KtNxZK+n/EBTEVru52t
+        MlcuLvuw/zZjMyFpGeX4TkoGzTw6240=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-367-mcFzT5QdNfSlCBvpmZk-Kg-1; Tue, 21 Jan 2020 02:57:50 -0500
+X-MC-Unique: mcFzT5QdNfSlCBvpmZk-Kg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE3871005510;
+        Tue, 21 Jan 2020 07:57:46 +0000 (UTC)
+Received: from [10.72.12.103] (ovpn-12-103.pek2.redhat.com [10.72.12.103])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A313319C6A;
+        Tue, 21 Jan 2020 07:57:30 +0000 (UTC)
+Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+To:     Shahaf Shuler <shahafs@mellanox.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Rob Miller <rob.miller@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "Liang, Cunming" <cunming.liang@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>,
+        "Wang, Xiao W" <xiao.w.wang@intel.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "Zhu, Lingshan" <lingshan.zhu@intel.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        Ariel Adam <aadam@redhat.com>,
+        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "hanand@xilinx.com" <hanand@xilinx.com>,
+        "mhabets@solarflare.com" <mhabets@solarflare.com>
+References: <20200116124231.20253-4-jasowang@redhat.com>
+ <20200117070324-mutt-send-email-mst@kernel.org>
+ <239b042c-2d9e-0eec-a1ef-b03b7e2c5419@redhat.com>
+ <CAJPjb1+fG9L3=iKbV4Vn13VwaeDZZdcfBPvarogF_Nzhk+FnKg@mail.gmail.com>
+ <AM0PR0502MB379553984D0D55FDE25426F6C3330@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <d69918ca-8af4-44b2-9652-633530d4c113@redhat.com>
+ <20200120174933.GB3891@mellanox.com>
+ <AM0PR0502MB3795C92485338180FC8059CFC3320@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <20200120162449-mutt-send-email-mst@kernel.org>
+ <AM0PR0502MB3795A7BE7F434964D6102517C3320@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+ <20200120165640-mutt-send-email-mst@kernel.org>
+ <AM0PR0502MB3795940D8E0A269D4A32FF8FC30D0@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <ef3ca685-2cbe-ce7c-c9c0-cbb5caa08db2@redhat.com>
+Date:   Tue, 21 Jan 2020 15:57:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAFH1YnOad7aVjoX_PR6mLqT=pXQjpBW9ZDHkKYzNkeistFkA4A@mail.gmail.com>
- <CAK8P3a3DwaZnRff7CCrJoSxP_MeVUn1S6nRd+hb5rHnv9dBgLQ@mail.gmail.com>
- <CAFH1YnMDL1gBNT4vr+C=eGGoCYJvkVDnoXUVN8OL9Xs3668Z+Q@mail.gmail.com>
- <CAK8P3a0aFr546fF+=LDm3rwZ-sK-xC8VLYTZjOEn+o6fVixRHg@mail.gmail.com> <20200120221323.GJ15860@mit.edu>
-In-Reply-To: <20200120221323.GJ15860@mit.edu>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 21 Jan 2020 08:56:37 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
-Message-ID: <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
-Subject: Re: Question about dynamic minor number of misc device
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:UcYfFRlinOqwCjCCYDRzvoYlDPafztP3ta4y9slIdqm2BtQ8Mtk
- Lhp5V7Ve2x7fahWEBguMbjl9B9tSfOSdfq1dxkh0DnzO/CKQSJAvccm//s5yKKSjWK+cxfW
- uv41vNAKiGTzcZ7J7nAtkFKPx1A9lKxeajsssmEOv99iCjjkrD4VN8FHP1wmPyfyzaMbKIB
- ezgRLlhqUezCfF9f4juSg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tmR6Eac6mUY=:ej3nGrtUr/oiI8d3CFxebz
- 08Mm+FUmhHmaCjg7Rb53ecpIDQe1vYQr8W/Hc2g3Ryb7JSyu5teN20jxl8Syt5tb4GmynWhBG
- hpd7KFiCsPM9Dx5GaMbwKXXySZqEI8dBgeB0wAhRadgD3HmXt4E8N9okFOvxRtfVUwEH08fse
- GoxdoxfCOmqax/RGdTGEDGM6TvXlH63aEwIKLt/RzsP2TYGkoDX/lAwc5DuEaZ9D75W8uVf6K
- fCzF27QQn73lmYeVp9NY6a2jH0w/TSTiJyIyleaU79EL5TgLwcUE0wWM0NThl17MP60rx0Akd
- 6HjU46KUTQVekFIqVKtVfaTmxipZfyH7YqJ5v3hVqZrB63vwezl+G6/kKPAmRcDJBn4xjkj7T
- qquSO+YkxO+a99GUZocIiZ7fdyxzv3+tUwYZU5mlX9dghDMVxg3DYGSRYaDSy1ib31phyWjpS
- 1wKi4427kF1wOTQYyVfHfVSuwQyo5PmTY4g/XTEVREsp3CtPzzMd+pw/qLgwqE1OMyuNJyhdW
- F1pRaR8JllHBPO1neLg5y+7G2p26T35ITC6eIrzBWWS3+CBaqIUfyF6dHYMtfkcCAD3g3ajdF
- SYiKy0zXE9z/PsR9CoxUjrSbRfbRejgrUP7N3xxjbQzHHTieGFl0Y3yQsnEvVQqjis8CtC/I8
- I7nrfWY4UuBm/ROOjNwJiebNPDefnkT8keNhyh86HXXJsRkTH+VzpHO667Dor/Dhdd9vs5oHF
- UMRafpjwX7B3u00DbUuSjgl0+SKgRPNdhE9y1B2pkdoEWC+j14VlqFEkM6SClyA1PVbc6FtgH
- X1R6axf4nCP5AC+QDf2dYhhbwBuwcuHhizqx7/SVUAk+kg8wiAZvp8HSNyiv5kzPDtPDIMkie
- v6yIlgyvTGu3RLWH+XOA==
+In-Reply-To: <AM0PR0502MB3795940D8E0A269D4A32FF8FC30D0@AM0PR0502MB3795.eurprd05.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 11:13 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Mon, Jan 20, 2020 at 11:59:32AM +0100, Arnd Bergmann wrote:
-> > On Mon, Jan 20, 2020 at 11:26 AM Zhenzhong Duan
-> > <zhenzhong.duan@gmail.com> wrote:
-> > > On Mon, Jan 20, 2020 at 6:03 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > On Mon, Jan 20, 2020 at 9:33 AM Zhenzhong Duan <zhenzhong.duan@gmail.com> wrote:
-> > > > On a  related note, I checked for drivers that call misc_register()
-> > > > with a minor number that is not defined in include/linux/misc.h
-> > > > and found a bunch, including some that have conflicting numbers,
-> > > > conflicting names  or numbers from the dynamic range:
-> > > >
-> > > > drivers/staging/speakup/devsynth.c:#define SYNTH_MINOR 25
-> > > > drivers/staging/speakup/speakup_soft.c:#define SOFTSYNTH_MINOR 26 /*
-> > > > drivers/staging/speakup/speakup_soft.c:#define SOFTSYNTHU_MINOR 27 /*
-> > > > drivers/macintosh/via-pmu.c:#define PMU_MINOR           154
-> > > > drivers/macintosh/ans-lcd.h:#define ANSLCD_MINOR                156
-> > > > drivers/auxdisplay/charlcd.c:#define LCD_MINOR          156
-> > > > drivers/char/applicom.c:#define AC_MINOR 157
-> > > > drivers/char/nwbutton.h:#define BUTTON_MINOR 158
-> > > > arch/arm/include/asm/nwflash.h:#define FLASH_MINOR               160
-> > > > drivers/sbus/char/envctrl.c:#define ENVCTRL_MINOR       162
-> > > > drivers/sbus/char/flash.c:#define FLASH_MINOR   152
-> > > > drivers/sbus/char/uctrl.c:#define UCTRL_MINOR   174
-> > > > drivers/char/toshiba.c:#define TOSH_MINOR_DEV 181
-> > > > arch/um/drivers/random.c:#define RNG_MISCDEV_MINOR
-> > > > drivers/auxdisplay/panel.c:#define KEYPAD_MINOR         185
-> > > > drivers/video/fbdev/pxa3xx-gcu.c:#define MISCDEV_MINOR  197
-> > > > kernel/power/user.c:#define SNAPSHOT_MINOR      231
-> > > > drivers/parisc/eisa_eeprom.c:#define    EISA_EEPROM_MINOR 241
-> > > >
-> > > > If you would like to help clean that up, you are definitely welcome
-> > > > to send patches.
-> > >
-> > > Ok, should that be a patch for all drivers or seperate patch for each driver?
-> >
-> > I think one patch to move the ones with unique names would be fine,
-> > but then separate patches for
-> >
-> > - FLASH_MINOR move and rename to avoid conflict
-> > - change speakup to dynamic minors
-> > - support for high dynamic minor numbers if you are really motivated
-> >   (probably nobody needs these)
->
-> Are we sure that reassigning minor device number conflits isn't going
-> to break systems?  Especially those on random, older, architectures
-> they might not be using udev.
 
-To clarify: the only numbers that I think should be changed to dynamic
-allocation are for drivers/staging/speakup. While this is a fairly old
-subsystem, I would expect that it being staging means we can be a
-little more progressive with the changes.
+On 2020/1/21 =E4=B8=8B=E5=8D=882:01, Shahaf Shuler wrote:
+> Tuesday, January 21, 2020 12:00 AM, Michael S. Tsirkin:
+>> Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+>>
+>> On Mon, Jan 20, 2020 at 09:47:18PM +0000, Shahaf Shuler wrote:
+>>> Monday, January 20, 2020 11:25 PM, Michael S. Tsirkin:
+>>>> Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+>>>>
+>>>> On Mon, Jan 20, 2020 at 08:51:43PM +0000, Shahaf Shuler wrote:
+>>>>> Monday, January 20, 2020 7:50 PM, Jason Gunthorpe:
+>>>>>> Subject: Re: [PATCH 3/5] vDPA: introduce vDPA bus
+>>>>>>
+>>>>>> On Mon, Jan 20, 2020 at 04:43:53PM +0800, Jason Wang wrote:
+>>>>>>> This is similar to the design of platform IOMMU part of
+>>>>>>> vhost-vdpa. We decide to send diffs to platform IOMMU there.
+>>>>>>> If it's ok to do that in driver, we can replace set_map with
+>>>>>>> incremental API
+>>>> like map()/unmap().
+>>>>>>> Then driver need to maintain rbtree itself.
+>>>>>> I think we really need to see two modes, one where there is a
+>>>>>> fixed translation without dynamic vIOMMU driven changes and one
+>>>>>> that supports vIOMMU.
+>>>>>>
+>>>>>> There are different optimization goals in the drivers for these
+>>>>>> two configurations.
+>>>>> +1.
+>>>>> It will be best to have one API for static config (i.e. mapping
+>>>>> can be set only before virtio device gets active), and one API for
+>>>>> dynamic changes that can be set after the virtio device is active.
+>>>> Frankly I don't see when we'd use the static one.
+>>>> Memory hotplug is enabled for most guests...
+>>> The fact memory hotplug is enabled doesn't necessarily means there is=
+ not
+>> cold-plugged memory on the hot plugged slots.
+>>> So your claim is majority of guests are deployed w/o any cold-plugged
+>> memory?
+>>
+>> Sorry for not being clear. I was merely saying that dynamic one can't =
+be
+>> optional, and static one can. So how about we start just with the dyna=
+mic
+>> one, then add the static one as a later optimization?
+> Since we have the use case (cold plugged memory to guest, e.g. when pop=
+ulated w/ hugepages) I think we should start w/ both. The static one can =
+be optional for drivers.
+>
+> Moreover am not yet clear about the suggested API for dynamic, can you =
+share the prototype you have in mind?
+> Also will it be :
+> 1. multiple add_map and then flag the driver to set
+> Or
+> 2. each add_map should be set by the driver as stand alone.
 
-      Arnd
+
+For dynamic one, it looks to me that introducing add_map()/del_map() bus=20
+operations is much more cleaner than reusing current set_map() one.
+
+Thanks
+
+
+>
+
