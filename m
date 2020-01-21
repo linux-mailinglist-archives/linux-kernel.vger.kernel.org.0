@@ -2,77 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27CFD144507
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EEE41444FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:22:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbgAUTXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:23:15 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43649 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbgAUTXM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:23:12 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 9so3251934lfq.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8rCcwlzRHHVYg3hiCBv7NmxGLfftNkVC0+svQxkapXc=;
-        b=HoAKMG0wQ2wIiKTC05L+Bn7mtOknDgXQI4PO9uIp4w2SGyA4WKzyeicjM+2gCmY1jr
-         vp7Mvfiy1LQGZhgbceOZp21oRkuxUd4XkR1DsidRJ+8vvN8/hSyc9kwfO3vsE4cQ1Lnu
-         C9t8CGrIJFnHRmoI4O30boqJZqDvvlnB7z7GY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8rCcwlzRHHVYg3hiCBv7NmxGLfftNkVC0+svQxkapXc=;
-        b=qeY201tcqDanezTyO5EsHa60p1nyy+9XeonaBBxcE3aA07ZvaskTsbY1qfheK1R5Zo
-         FsWrtGXP7Q3nrO6gfD36K1TPhVu0k+Q4Q37x7pQneHqW3+sGTo3JfPiu2lKBOXvK7WSC
-         sqeKktplkEvW4+ZtUkc5p/7cf4GXgkdcpvlG5ztkGgdkKPxYVKY4Id+ZQHN127WeOXMt
-         G780QSqhQtgcJQI/mJmbY0TuM9u0n2Jo3Ey9XikrhA5VZZBw0nACfHnqOtzbaSBG6/NQ
-         4r2Qw/cBBsBibCi8leJkmxjMlcesS9RSzMHSfv6VozugZmMRqSd785lpNvtcNzzP6c2i
-         Q4Zw==
-X-Gm-Message-State: APjAAAU0Yig0WA0+AO/xmMGI354VAflnM1/iTI1t+t4HEgbUCsjDsTTp
-        Q9QcPDFXqzTLE6gQRfErKxM9u21HXII=
-X-Google-Smtp-Source: APXvYqzppbWoRepa/Fgc7nUGeGVPBeq4Ldm0HD2pd+S7Jph7d6PqCNEOwILt0sK/3OGII35QRw3AkQ==
-X-Received: by 2002:a05:6512:2035:: with SMTP id s21mr3191308lfs.99.1579634590235;
-        Tue, 21 Jan 2020 11:23:10 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id p15sm19366566lfo.88.2020.01.21.11.23.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 11:23:09 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id y4so4021923ljj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 11:23:08 -0800 (PST)
-X-Received: by 2002:a2e:87ca:: with SMTP id v10mr3453604ljj.253.1579634587850;
- Tue, 21 Jan 2020 11:23:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20200117135130.3605-1-sibis@codeaurora.org> <20200117135130.3605-4-sibis@codeaurora.org>
-In-Reply-To: <20200117135130.3605-4-sibis@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 21 Jan 2020 11:22:31 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6WN52R1BckbgK9XCTB8TTY5Z6mh3QooceHTTtzVUmFLw@mail.gmail.com>
-Message-ID: <CAE=gft6WN52R1BckbgK9XCTB8TTY5Z6mh3QooceHTTtzVUmFLw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] remoteproc: qcom: q6v5-mss: Rename boot status timeout
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>
+        id S1728984AbgAUTWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:22:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726229AbgAUTWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 14:22:40 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C5AF20678;
+        Tue, 21 Jan 2020 19:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579634559;
+        bh=IFgkmdAa0Mm5sr+/85Uezi3G42yK2R9/kPC0zvCu+ng=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qmqm6pMf5yC7/ShOx8REH67pE0gPGGu4YO915BcHD+uHbRTHBJPqkBf1tV2jWZMu5
+         kIde/5PF5PzHkqfBv9cWhLrRlcAhAPxWdMSFJISKODQIKTuRC70Zy4yWJkQz+TaDux
+         y1X/fhdtR8pDWEH8kijgzUZJFcXDAYA4Zr6S1i/4=
+Message-ID: <1579634558.19595.5.camel@kernel.org>
+Subject: Re: [PATCH v2 07/12] tracing: Add trace_synth_event() and related
+ functions
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Date:   Tue, 21 Jan 2020 13:22:38 -0600
+In-Reply-To: <20200121120348.01399a47@gandalf.local.home>
+References: <cover.1578688120.git.zanussi@kernel.org>
+         <fde7210e7807c29783fff0e2a06d0561d810c7cf.1578688120.git.zanussi@kernel.org>
+         <20200121120348.01399a47@gandalf.local.home>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 5:51 AM Sibi Sankar <sibis@codeaurora.org> wrote:
->
-> Rename the FSM timeout on SC7180 to BOOT_STATUS_TIMEOUT_US.
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Hi Steve,
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+On Tue, 2020-01-21 at 12:03 -0500, Steven Rostedt wrote:
+> On Fri, 10 Jan 2020 14:35:13 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > +struct synth_event;
+> > +
+> > +struct synth_gen_state {
+> > +	struct trace_event_buffer fbuffer;
+> > +	struct synth_trace_event *entry;
+> > +	struct ring_buffer *buffer;
+> > +	struct synth_event *event;
+> > +	unsigned int cur_field;
+> > +	unsigned int n_u64;
+> > +	bool enabled;
+> > +	bool add_next;
+> > +	bool add_name;
+> > +};
+> > +
+> 
+> Yes, please rebase on my for-next branch, as the ring_buffer
+> structure
+> has been renamed, and will break these patches :-/
+> 
+
+OK, I'll rebase on for-next, and will also adapt a couple of Masami's
+boot trace patches to these.
+
+Thanks,
+
+Tom
+
+> -- Steve
