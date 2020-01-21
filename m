@@ -2,131 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DC901441C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 491241441CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:14:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbgAUQMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:12:48 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44689 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgAUQMs (ORCPT
+        id S1729205AbgAUQOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:14:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46060 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728904AbgAUQOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:12:48 -0500
-Received: by mail-oi1-f195.google.com with SMTP id d62so3022142oia.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:12:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t0oGkq5Pa6BFHnIeKryyeGImhC+iJMmb3104WkR55ys=;
-        b=Fk/VjSwGo6GnY3If9r3BBaqW1BeNkMxKbSCn5mjEMyVclU3rQ3/ne2lWpRcEMJgza4
-         jIYmyAjNm8MrTni/EjaAfJt95jEF/+6hOhSxUbyKVnI7PffuAMOrDaeKXIMEbq40Fnno
-         Bws0lgNoPJJFPANsvWWyZRRtS9BdKjOJg88OIvvyeVTMJwFu2WYMVV7jOKkt7XlyKmYX
-         DhS+DaOzT2wNmQF4Z2uKwzBVpfNnpn4NkF4z21jx2FplBKqiiTTKeSP9f0dTv7mdEp2b
-         d6VrVr68fT7x0jmDN1KlV4NWZUNUXqDEVhV00y7RJ7pNcGmSVoJ9oX/xMQSf5qGoEARN
-         rg/A==
+        Tue, 21 Jan 2020 11:14:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579623248;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IqGKWE4vljjAcPx0vpPhn72zDnBvqdvK17Xs6yePlDY=;
+        b=QesSCW9LAOUG9wOBSlOL30XGeFCwGoX2yrhb9l6eS+HzrbU2phsRRKANeDwyvzapLUmSR6
+        fq6BXjA019FgGiXrR3VWp7gL3VaUPCsr+coyNrYzS1liPyrSLijqMUb7AZX7HlD1g4S9cg
+        4FMSMd9j1an558A+sdhi7W2mliLmx+M=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-47-uPVloHShM7ORF9CbFbrLBw-1; Tue, 21 Jan 2020 11:14:05 -0500
+X-MC-Unique: uPVloHShM7ORF9CbFbrLBw-1
+Received: by mail-wr1-f70.google.com with SMTP id r2so1519363wrp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:14:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t0oGkq5Pa6BFHnIeKryyeGImhC+iJMmb3104WkR55ys=;
-        b=rlIwdo34tkUuu2qbRua2YzxkRkIzPGvLDuyjm6+4rsjkpDyoQFKPM16qqytSO+Qz/z
-         4EhMwtK+LyAktDhvEkNgOCvHdGUFfNa0PoCY8ouMnZxler0uC3EydkRmDgNcSyBQYXsh
-         DUlvBK/dF/h+6milSP6fA/go0UD8q0rjEQRLpvBcQOjBJn+AgezLVtkMkoKZOkfntDGZ
-         cEKAHd0tSLvCSFZ6kvJiK8bOSC12cKtChbH4RRuD7VXo5SMCj6KU7A01JOiAsuvdtFwv
-         8QnzN0JOz4Y5p2oW/g3cI58FnRsZwq5tfcRLB00A6JH+H7PwZs6e5F7b2KKNvt5qjCMe
-         94dA==
-X-Gm-Message-State: APjAAAW0aqgPneruNc/nXGlEZYzNIekeLnmoHKgApKSeihkuD6RbLD6a
-        uope2WnwwueW/TIZ+gjKDtLfe8J9+jIlfjItwe9cYw==
-X-Google-Smtp-Source: APXvYqwqMngfefQgGxQ3H4Pw5AafxYDK/vfOwxFn9yLaQb9nfiuyLLjnlS286+QldnFKWDZc87i2Y3UTkGFU5aPJZcI=
-X-Received: by 2002:aca:b183:: with SMTP id a125mr3673714oif.83.1579623167224;
- Tue, 21 Jan 2020 08:12:47 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IqGKWE4vljjAcPx0vpPhn72zDnBvqdvK17Xs6yePlDY=;
+        b=JoEEGTVp/ZiVyBZNfoVyzBMULGYa3OLU9+dSnrEMCPZuuyKIrR2/6G2MnJzc+t2SGm
+         zAdQrXZvZrL0/ZF3ias7M7CTm62pAugmd3eWmnQg2TJVuIUZh9pfT9NyWHx9btLgRI98
+         E2CZ6QAK7QtLyYE49TBndGrPdXzJIjQyJJ2z0Sx1RocS/nHs7mGIQ3DmbrDWgqmLLUWk
+         TB+GhYBIwEkJNP1HV5wfxK05ZOEYDTNOqosGHeZ89XrM+JdzEE9YDV94jrDdbDkDUcRE
+         l1TF4295KEUFMyBbF6L6tRYmd5RSMwO5/PFex0Rxr8bFrfgiTKs41Y//P4qj+7OkaGgN
+         fZgA==
+X-Gm-Message-State: APjAAAXm5rlogO32ux6wYlNCAzIa63aevsuQRoLVJ08fK7d7fyEAi1BV
+        qn+zHzRL7r9zPdfQWlwY3eUm5/aZYYf2YUhtgw61Bt6BlnA6eycUdwYJnN7R4ujuEq+0suiH8jq
+        v/ad2J2Bn1wDpBI/y1hF6+eB1
+X-Received: by 2002:a05:600c:cd:: with SMTP id u13mr4971796wmm.24.1579623244197;
+        Tue, 21 Jan 2020 08:14:04 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyLcl/lYmcft/LqZTO4NiEq6Lyk5s/oCPqY3EBAJJlr/q/iZw7reeRokvq1TEUD+WfWoLmTWA==
+X-Received: by 2002:a05:600c:cd:: with SMTP id u13mr4971768wmm.24.1579623243901;
+        Tue, 21 Jan 2020 08:14:03 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:b509:fc01:ee8a:ca8a? ([2001:b07:6468:f312:b509:fc01:ee8a:ca8a])
+        by smtp.gmail.com with ESMTPSA id t8sm53079354wrp.69.2020.01.21.08.14.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 08:14:03 -0800 (PST)
+Subject: Re: [PATCH v3 09/21] KVM: X86: Don't track dirty for
+ KVM_SET_[TSS_ADDR|IDENTITY_MAP_ADDR]
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Xu <peterx@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christophe de Dinechin <dinechin@redhat.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Yan Zhao <yan.y.zhao@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Kevin Kevin <kevin.tian@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+References: <20200109145729.32898-1-peterx@redhat.com>
+ <20200109145729.32898-10-peterx@redhat.com>
+ <20200121155657.GA7923@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <c2f556fa-8562-f2d3-37a0-220af33732cd@redhat.com>
+Date:   Tue, 21 Jan 2020 17:14:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20200115165749.145649-1-elver@google.com> <CAK8P3a3b=SviUkQw7ZXZF85gS1JO8kzh2HOns5zXoEJGz-+JiQ@mail.gmail.com>
- <CANpmjNOpTYnF3ssqrE_s+=UA-2MpfzzdrXoyaifb3A55_mc0uA@mail.gmail.com>
- <CAK8P3a3WywSsahH2vtZ_EOYTWE44YdN+Pj6G8nt_zrL3sckdwQ@mail.gmail.com>
- <CANpmjNMk2HbuvmN1RaZ=8OV+tx9qZwKyRySONDRQar6RCGM1SA@mail.gmail.com>
- <CAK8P3a066Knr-KC2v4M8Dr1phr0Gbb2KeZZLQ7Ana0fkrgPDPg@mail.gmail.com>
- <CANpmjNO395-atZXu_yEArZqAQ+ib3Ack-miEhA9msJ6_eJsh4g@mail.gmail.com>
- <CANpmjNOH1h=txXnd1aCXTN8THStLTaREcQpzd5QvoXz_3r=8+A@mail.gmail.com>
- <CAK8P3a0p9Y8080T-RR2pp-p2_A0FBae7zB-kSq09sMZ_X7AOhw@mail.gmail.com>
- <CANpmjNOUTed6FT8X0bUSc1tGBh3jrEJ0DRpQwBfoPF5ah8Wrhw@mail.gmail.com> <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
-In-Reply-To: <CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 21 Jan 2020 17:12:35 +0100
-Message-ID: <CANpmjNMe4a8O9ztaVCVym36au9jaaCooUorYnFd0egUQSfn7gQ@mail.gmail.com>
-Subject: Re: [PATCH -rcu] asm-generic, kcsan: Add KCSAN instrumentation for bitops
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200121155657.GA7923@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020 at 20:03, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Jan 20, 2020 at 4:11 PM Marco Elver <elver@google.com> wrote:
-> > On Mon, 20 Jan 2020 at 15:40, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > On Mon, Jan 20, 2020 at 3:23 PM Marco Elver <elver@google.com> wrote:
-> > > > On Fri, 17 Jan 2020 at 14:14, Marco Elver <elver@google.com> wrote:
-> > > > > On Fri, 17 Jan 2020 at 13:25, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > > On Wed, Jan 15, 2020 at 9:50 PM Marco Elver <elver@google.com> wrote:
-> > >
-> > > > > > If you can't find any, I would prefer having the simpler interface
-> > > > > > with just one set of annotations.
-> > > > >
-> > > > > That's fair enough. I'll prepare a v2 series that first introduces the
-> > > > > new header, and then applies it to the locations that seem obvious
-> > > > > candidates for having both checks.
-> > > >
-> > > > I've sent a new patch series which introduces instrumented.h:
-> > > >    http://lkml.kernel.org/r/20200120141927.114373-1-elver@google.com
-> > >
-> > > Looks good to me, feel free to add
-> > >
-> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > >
-> > > if you are merging this through your own tree or someone else's,
-> > > or let me know if I should put it into the asm-generic git tree.
-> >
-> > Thank you!  It seems there is still some debate around the user-copy
-> > instrumentation.
-> >
-> > The main question we have right now is if we should add pre/post hooks
-> > for them. Although in the version above I added KCSAN checks after the
-> > user-copies, it seems maybe we want it before. I personally don't have
-> > a strong preference, and wanted to err on the side of being more
-> > conservative.
-> >
-> > If I send a v2, and it now turns out we do all the instrumentation
-> > before the user-copies for KASAN and KCSAN, then we have a bunch of
-> > empty hooks. However, for KMSAN we need the post-hook, at least for
-> > copy_from_user. Do you mind a bunch of empty functions to provide
-> > pre/post hooks for user-copies? Could the post-hooks be generally
-> > useful for something else?
->
-> I'd prefer not to add any empty hooks, let's do that once they
-> are actually used.
+On 21/01/20 16:56, Sean Christopherson wrote:
+> This code also needs to be tested by doing unrestricted_guest=0 when
+> loading kvm_intel, because it's obviously broken.
 
-I hope I found a solution to the various constraints:
-http://lkml.kernel.org/r/20200121160512.70887-1-elver@google.com
+... as I had just found out after starting tests on kvm/queue.  Unqueued
+this patch.
 
-I removed your Acks from the patches that were changed in v2. Please
-have another look.
+Paolo
 
-Re tree: Once people are happy with the patches, since this depends on
-KCSAN it'll probably have to go through Paul's -rcu tree, since KCSAN
-is not yet in mainline (currently only in -rcu, -tip, and -next).
+> __x86_set_memory_region()
+> takes an "unsigned long *", interpreted as a "pointer to a usersepace
+> address", i.e. a "void __user **".  But the callers are treating the param
+> as a "unsigned long in userpace", e.g. init_rmode_identity_map() declares
+> uaddr as an "unsigned long *", when really it should be declaring a
+> straight "unsigned long" and passing "&uaddr".  The only thing that saves
+> KVM from dereferencing a bad pointer in __x86_set_memory_region() is that
+> uaddr is initialized to NULL 
 
-Thanks,
--- Marco
