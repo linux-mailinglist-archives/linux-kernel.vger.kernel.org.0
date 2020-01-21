@@ -2,120 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79BC01443D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1E01443DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgAUSAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:00:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:10991 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728829AbgAUSAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:00:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 10:00:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="374663571"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jan 2020 10:00:15 -0800
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1itxp1-0001Ib-2w; Tue, 21 Jan 2020 20:00:15 +0200
-Date:   Tue, 21 Jan 2020 20:00:15 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        id S1729277AbgAUSBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 13:01:50 -0500
+Received: from mail.suchdamage.org ([52.9.186.167]:40058 "EHLO
+        mail.suchdamage.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbgAUSBt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 13:01:49 -0500
+X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 13:01:49 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.suchdamage.org (Postfix) with ESMTP id 5E9192F536;
+        Tue, 21 Jan 2020 12:54:23 -0500 (EST)
+Received: from mail.suchdamage.org ([127.0.0.1])
+        by localhost (mail.suchdamage.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WfyCN7mdvcTx; Tue, 21 Jan 2020 12:54:22 -0500 (EST)
+Received: from carter-zimmerman.suchdamage.org (c-24-147-244-250.hsd1.ma.comcast.net [24.147.244.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "laptop", Issuer "laptop" (not verified))
+        (Authenticated sender: hartmans-laptop)
+        by mail.suchdamage.org (Postfix) with ESMTPSA;
+        Tue, 21 Jan 2020 12:54:22 -0500 (EST)
+Received: by carter-zimmerman.suchdamage.org (Postfix, from userid 8042)
+        id 8EB97C3B78; Tue, 21 Jan 2020 12:54:21 -0500 (EST)
+From:   Sam Hartman <hartmans@debian.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Sam Hartman <hartmans@debian.org>,
+        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Brown <broonie@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 36/38] platform/x86: intel_telemetry: Add
- telemetry_get_pltdata()
-Message-ID: <20200121180015.GC32742@smile.fi.intel.com>
-References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
- <20200121160114.60007-37-mika.westerberg@linux.intel.com>
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Question about dynamic minor number of misc device
+References: <CAFH1YnOad7aVjoX_PR6mLqT=pXQjpBW9ZDHkKYzNkeistFkA4A@mail.gmail.com>
+        <CAK8P3a3DwaZnRff7CCrJoSxP_MeVUn1S6nRd+hb5rHnv9dBgLQ@mail.gmail.com>
+        <CAFH1YnMDL1gBNT4vr+C=eGGoCYJvkVDnoXUVN8OL9Xs3668Z+Q@mail.gmail.com>
+        <CAK8P3a0aFr546fF+=LDm3rwZ-sK-xC8VLYTZjOEn+o6fVixRHg@mail.gmail.com>
+        <20200120221323.GJ15860@mit.edu>
+        <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
+        <20200121163110.GK15860@mit.edu>
+Date:   Tue, 21 Jan 2020 12:54:21 -0500
+In-Reply-To: <20200121163110.GK15860@mit.edu> (Theodore Y. Ts'o's message of
+        "Tue, 21 Jan 2020 11:31:10 -0500")
+Message-ID: <tslh80o3dbm.fsf@suchdamage.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121160114.60007-37-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 07:01:12PM +0300, Mika Westerberg wrote:
-> Add new function that allows telemetry modules to get pointer to the
-> platform specific configuration. This is needed to allow the telemetry
-> debugfs module to fetch PMC IPC instance in the subsequent patch.
+>>>>> "Theodore" == Theodore Y Ts'o <tytso@mit.edu> writes:
 
-One comment below.
-After addressing,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    Theodore> Sam,
 
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  arch/x86/include/asm/intel_telemetry.h      |  1 +
->  drivers/platform/x86/intel_telemetry_core.c | 12 ++++++++++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/intel_telemetry.h b/arch/x86/include/asm/intel_telemetry.h
-> index e19deb776003..1335565c43b5 100644
-> --- a/arch/x86/include/asm/intel_telemetry.h
-> +++ b/arch/x86/include/asm/intel_telemetry.h
-> @@ -99,6 +99,7 @@ int telemetry_set_pltdata(const struct telemetry_core_ops *ops,
->  int telemetry_clear_pltdata(void);
->  
->  int telemetry_pltconfig_valid(void);
-> +struct telemetry_plt_config *telemetry_get_pltdata(void);
->  
->  int telemetry_get_evtname(enum telemetry_unit telem_unit,
->  			  const char **name, int len);
-> diff --git a/drivers/platform/x86/intel_telemetry_core.c b/drivers/platform/x86/intel_telemetry_core.c
-> index d4040bb222b4..e11b79d1b3a7 100644
-> --- a/drivers/platform/x86/intel_telemetry_core.c
-> +++ b/drivers/platform/x86/intel_telemetry_core.c
-> @@ -369,6 +369,18 @@ int telemetry_pltconfig_valid(void)
->  }
->  EXPORT_SYMBOL_GPL(telemetry_pltconfig_valid);
->  
-> +/**
-> + * telemetry_get_pltdata() - Return telemetry platform config
-> + *
-> + * May be used by other telemetry modules to get platform specific
-> + * configuration.
-> + */
-> +struct telemetry_plt_config *telemetry_get_pltdata(void)
-> +{
-> +	return telm_core_conf.plt_config;
-> +}
-> +EXPORT_SYMBOL_GPL(telemetry_get_pltdata);
+    Theodore> Would you happen to know how commonly used the speakup system would be
+    Theodore> --- in particular, on non-udev systems where changing the minor number
+    Theodore> of the device node might break some folks?  Does your hardware system
+    Theodore> use speakup, or some other interface?
 
-Effectively this may replace telemetry_pltconfig_valid().
+Speakup is used by things like the Debian Installer in speech mode.
+I'd assume D-I uses udev.
 
-> +
->  static inline int telemetry_get_pssevtname(enum telemetry_unit telem_unit,
->  					   const char **name, int len)
->  {
-> -- 
-> 2.24.1
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
+However Speakup is also likely to be used by blind people who prefer
+older environments--no GUI, no pulseaudio, that sort of thing.
+No udev is kind of pushing that mindset to the extreme though.
+Speakup is not typically used without a keyboard or similar, so you're
+not going to see it on embedded systems.
 
 
+
+
+
+    Theodore> Also, who would be the best people to reach out at the
+    Theodore> linux-speakup.org project to verify what the potential impact might be
+    Theodore> of making this change.  It looks like some of the web pages are a bit
+    Theodore> dated, so I wasn't sure what's up to date.
+
+I might ask on debian-accessibility@lists.debian.org.
+My recollection is that the upstream is not very energetic, and that the
+distros keep speakup working because it's quite important for some
+people.
+We broke it on hda_intel for the original Buster release and that
+certainly generated lots of user feedback.
+
+debian-accessibility is Debian specific.  There is the more general
+blinux-l@lists.redhat.com (blind linux users), but that lists tends to
+be so user focused that you might not get good feedback to a question
+like this.
+
+--Sam
