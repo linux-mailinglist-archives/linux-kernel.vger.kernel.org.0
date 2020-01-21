@@ -2,280 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A346114358D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 03:09:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31BCD143591
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 03:11:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgAUCJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 21:09:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41208 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgAUCJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 21:09:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rXMrLf9/G2BXHIeWJSwrtnOkiG4UyCzSBXmzSIQzq4A=; b=EZgmCQgJYHsDxvUDK8yK7/g3o
-        +CX5b0H01VeUS7//LnlZySMfD05BfNplR8c0LfnHOVaYjD2bBJyhV3ZpiLMqAeUOyq7BAIej8rKj9
-        XLiuGN1xeO6Fqdaq1aB3r9CWpBRq4YyvZ2if5Cm6ax0VWPv3++YwJ49ES285wn9cxB9T4rtFfS12C
-        JsOC3nwU41t0Ldh4zyP6IXnoydtWUosWaquA1N1ip/cezLzGwSa/kDhvjV14uVzwePWXq099p4k+9
-        egShldfwZplbNuvSz2Jnyc15RQgNGOWKNSgEsBgNKGkrFy17kJvlqzG6YRTkRHu0SiEUEPuxRd8U/
-        do8lJ/PTw==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itiyQ-0000Lj-Co; Tue, 21 Jan 2020 02:08:58 +0000
-Subject: Re: [PATCH v8 2/2] sched/numa: documentation for per-cgroup numa,
- statistics
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
- <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
- <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
- <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
- <b9249375-fe8c-034e-c3bd-cacfe4e89658@linux.alibaba.com>
- <23fc0493-967c-d0e1-767b-89e8f7c85718@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5c299da6-762e-1d2d-dafb-cfe3a0082d56@infradead.org>
-Date:   Mon, 20 Jan 2020 18:08:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1729027AbgAUCLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 21:11:37 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9223 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726890AbgAUCLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 21:11:36 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB7ED5D8A0920FDB57A4;
+        Tue, 21 Jan 2020 10:11:33 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 21 Jan 2020
+ 10:11:23 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <pkshih@realtek.com>, <kvalo@codeaurora.org>,
+        <davem@davemloft.net>, <Larry.Finger@lwfinger.net>,
+        <yuehaibing@huawei.com>
+CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] rtlwifi: rtl8821ae: remove unused variables
+Date:   Tue, 21 Jan 2020 10:09:58 +0800
+Message-ID: <20200121020958.27548-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <23fc0493-967c-d0e1-767b-89e8f7c85718@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/20/20 5:57 PM, 王贇 wrote:
-> Add the description for 'numa_locality', also a new doc to explain
-> the details on how to deal with the per-cgroup numa statistics.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Koutný <mkoutny@suse.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:142:17:
+ warning: cckswing_table_ch1ch13 defined but not used [-Wunused-const-variable=]
+drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:178:17:
+ warning: cckswing_table_ch14 defined but not used [-Wunused-const-variable=]
+drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:96:18:
+ warning: ofdmswing_table defined but not used [-Wunused-const-variable=]
 
-Thanks for the updates.
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+These variable is never used, so remove them.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ .../net/wireless/realtek/rtlwifi/rtl8821ae/dm.c    | 118 ---------------------
+ 1 file changed, 118 deletions(-)
 
-> ---
->  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
->  Documentation/admin-guide/index.rst             |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  init/Kconfig                                    |   2 +
->  5 files changed, 194 insertions(+)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-> 
-> diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-> new file mode 100644
-> index 000000000000..1106eb1e4050
-> --- /dev/null
-> +++ b/Documentation/admin-guide/cg-numa-stat.rst
-> @@ -0,0 +1,178 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===============================
-> +Per-cgroup NUMA statistics
-> +===============================
-> +
-> +Background
-> +----------
-> +
-> +On NUMA platforms, remote memory accessing always has a performance penalty.
-> +Although we have NUMA balancing working hard to maximize the access locality,
-> +there are still situations it can't help.
-> +
-> +This could happen in modern production environment. When a large number of
-> +cgroups are used to classify and control resources, this creates a complex
-> +configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-> +balancing could end up with the wrong memory policy or exhausted local NUMA
-> +node, which would lead to low percentage of local page accesses.
-> +
-> +We need to detect such cases, figure out which workloads from which cgroup
-> +have introduced the issues, then we get chance to do adjustment to avoid
-> +performance degradation.
-> +
-> +However, there are no hardware counters for per-task local/remote accessing
-> +info, we don't know how many remote page accesses have occurred for a
-> +particular task.
-> +
-> +NUMA Locality
-> +-------------
-> +
-> +Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-> +page fault periodically, giving us the opportunity to record per-task page
-> +accessing info, when the CPU fall into PF is from the same node of pages, we
-> +consider task as doing local page accessing, otherwise the remote page
-> +accessing, we call these two counters the locality info.
-> +
-> +On each tick, we acquire the locality info of current task on that CPU, update
-> +the increments into its cgroup, becoming the group locality info.
-> +
-> +By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-> +'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-> +the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-> +
-> +  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-> +
-> +We define 'NUMA locality' as::
-> +
-> +  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-> +
-> +This per-cgroup percentage number helps to represent the NUMA Balancing behavior.
-> +
-> +Note that the accounting is hierarchical, which means the NUMA locality info for
-> +a given group represents not only the workload of this group, but also the
-> +workloads of all its descendants.
-> +
-> +For example the 'cpu.numa_stat' shows::
-> +
-> +  page_access local=129909383 remote=18265810
-> +
-> +The NUMA locality calculated as::
-> +
-> +  129909383 * 100 / (129909383 + 18265810) = 87.67
-> +
-> +Thus we know the workload of this group and its descendants have totally done
-> +129909383 times of local page accessing and 18265810 times of remotes, locality
-> +is 87.67% which implies most of the memory access are local.
-> +
-> +NUMA Consumption
-> +----------------
-> +
-> +There are also other cgroup entries which help us to estimate NUMA efficiency.
-> +They are 'cpuacct.usage_percpu' and 'memory.numa_stat'.
-> +
-> +By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-> +info (in hierarchy) as::
-> +
-> +  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-> +
-> +Combined with the info from::
-> +
-> +  cat /sys/devices/system/node/nodeX/cpulist
-> +
-> +We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-> +per-cgroup node runtime info.
-> +
-> +By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-> +info as::
-> +
-> +  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-> +
-> +Together we call these the per-cgroup NUMA consumption info, telling us how many
-> +resources a particular workload has consumed, on a particular NUMA node.
-> +
-> +Monitoring
-> +----------
-> +
-> +By monitoring the increments of locality info, we can easily know whether NUMA
-> +Balancing is working well for a particular workload.
-> +
-> +For example we take a 5 seconds sample period, then on each sampling we have::
-> +
-> +  local_diff = last_nr_local_page_access - nr_local_page_access
-> +  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-> +
-> +and we get the locality in this period as::
-> +
-> +  locality = local_diff * 100 / (local_diff + remote_diff)
-> +
-> +We can plot a line for locality. When the line is close to 100%, things are
-> +good; when getting close to 0% something is wrong. We can pick a proper
-> +watermark to trigger warning message.
-> +
-> +You may want to drop the data if the local/remote_diff is too small, which
-> +implies there are not many available pages for NUMA Balancing to scan, ignoring
-> +would be fine since most likely the workload is insensitive to NUMA, or the
-> +memory topology is already good enough.
-> +
-> +Monitoring root group helps you control the overall situation, while you may
-> +also want to monitor all the leaf groups which contain the workloads, this
-> +helps to catch the mouse.
-> +
-> +Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-> +Balancing is disabled or locality becomes too small, we may want to monitor
-> +the per-node runtime & memory info to see if the node consumption meet the
-> +requirements.
-> +
-> +For NUMA node X on each sampling we have::
-> +
-> +  runtime_X_diff = runtime_X - last_runtime_X
-> +  runtime_all_diff = runtime_all - last_runtime_all
-> +
-> +  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-> +  memory_percent_X = memory_X * 100 / memory_all
-> +
-> +These two percentages are usually matched on each node, workload should execute
-> +mostly on the node that contains most of its memory, but it's not guaranteed.
-> +
-> +The workload may only access a small part of its memory, in such cases although
-> +the majority of memory are remote, locality could still be good.
-> +
-> +Thus to tell if things are fine or not depends on the understanding of system
-> +resource deployment, however, if you find node X got 100% memory percent but 0%
-> +runtime percent, definitely something is wrong.
-> +
-> +Troubleshooting
-> +---------------
-> +
-> +After identifying which workload introduced the bad locality, check:
-> +
-> +1). Is the workload bound to a particular NUMA node?
-> +2). Has any NUMA node run out of resources?
-> +
-> +There are several ways to bind task's memory with a NUMA node, the strict way
-> +like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-> +node where to allocate pages. In this situation, admin should make sure the
-> +task is allowed to run on the CPUs of that NUMA node, and make sure there are
-> +available CPU resources there.
-> +
-> +There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-> +sched_setaffinity() syscall. In this situation, NUMA Balancing helps to migrate
-> +pages into that node, admin should make sure there is available memory there.
-> +
-> +Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-> +change then observe the statistics to see if things get better until the
-> +situation is acceptable.
-> +
-> +Highlights
-> +----------
-> +
-> +For some tasks, NUMA Balancing may be found to be unnecessary to scan pages,
-> +and locality could always be 0 or small number, don't pay attention to them
-> +since they most likely insensitive to NUMA.
-> +
-> +There is no accounting until the option is turned on, so enable it in advance
-> +if you want to have the whole history.
-> +
-> +We have per-task migfailed counter to tell how many page migrations have
-> +failed for a particular task; you will find it in /proc/PID/sched entry.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+index b542304..f57e879 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
+@@ -93,124 +93,6 @@ static const u32 rtl8821ae_txscaling_table[TXSCALE_TABLE_SIZE] = {
+ 	0x3FE  /* 36, +6.0dB */
+ };
+ 
+-static const u32 ofdmswing_table[] = {
+-	0x0b40002d, /* 0, -15.0dB */
+-	0x0c000030, /* 1, -14.5dB */
+-	0x0cc00033, /* 2, -14.0dB */
+-	0x0d800036, /* 3, -13.5dB */
+-	0x0e400039, /* 4, -13.0dB */
+-	0x0f00003c, /* 5, -12.5dB */
+-	0x10000040, /* 6, -12.0dB */
+-	0x11000044, /* 7, -11.5dB */
+-	0x12000048, /* 8, -11.0dB */
+-	0x1300004c, /* 9, -10.5dB */
+-	0x14400051, /* 10, -10.0dB */
+-	0x15800056, /* 11, -9.5dB */
+-	0x16c0005b, /* 12, -9.0dB */
+-	0x18000060, /* 13, -8.5dB */
+-	0x19800066, /* 14, -8.0dB */
+-	0x1b00006c, /* 15, -7.5dB */
+-	0x1c800072, /* 16, -7.0dB */
+-	0x1e400079, /* 17, -6.5dB */
+-	0x20000080, /* 18, -6.0dB */
+-	0x22000088, /* 19, -5.5dB */
+-	0x24000090, /* 20, -5.0dB */
+-	0x26000098, /* 21, -4.5dB */
+-	0x288000a2, /* 22, -4.0dB */
+-	0x2ac000ab, /* 23, -3.5dB */
+-	0x2d4000b5, /* 24, -3.0dB */
+-	0x300000c0, /* 25, -2.5dB */
+-	0x32c000cb, /* 26, -2.0dB */
+-	0x35c000d7, /* 27, -1.5dB */
+-	0x390000e4, /* 28, -1.0dB */
+-	0x3c8000f2, /* 29, -0.5dB */
+-	0x40000100, /* 30, +0dB */
+-	0x43c0010f, /* 31, +0.5dB */
+-	0x47c0011f, /* 32, +1.0dB */
+-	0x4c000130, /* 33, +1.5dB */
+-	0x50800142, /* 34, +2.0dB */
+-	0x55400155, /* 35, +2.5dB */
+-	0x5a400169, /* 36, +3.0dB */
+-	0x5fc0017f, /* 37, +3.5dB */
+-	0x65400195, /* 38, +4.0dB */
+-	0x6b8001ae, /* 39, +4.5dB */
+-	0x71c001c7, /* 40, +5.0dB */
+-	0x788001e2, /* 41, +5.5dB */
+-	0x7f8001fe  /* 42, +6.0dB */
+-};
+-
+-static const u8 cckswing_table_ch1ch13[CCK_TABLE_SIZE][8] = {
+-	{0x09, 0x08, 0x07, 0x06, 0x04, 0x03, 0x01, 0x01}, /* 0, -16.0dB */
+-	{0x09, 0x09, 0x08, 0x06, 0x05, 0x03, 0x01, 0x01}, /* 1, -15.5dB */
+-	{0x0a, 0x09, 0x08, 0x07, 0x05, 0x03, 0x02, 0x01}, /* 2, -15.0dB */
+-	{0x0a, 0x0a, 0x09, 0x07, 0x05, 0x03, 0x02, 0x01}, /* 3, -14.5dB */
+-	{0x0b, 0x0a, 0x09, 0x08, 0x06, 0x04, 0x02, 0x01}, /* 4, -14.0dB */
+-	{0x0b, 0x0b, 0x0a, 0x08, 0x06, 0x04, 0x02, 0x01}, /* 5, -13.5dB */
+-	{0x0c, 0x0c, 0x0a, 0x09, 0x06, 0x04, 0x02, 0x01}, /* 6, -13.0dB */
+-	{0x0d, 0x0c, 0x0b, 0x09, 0x07, 0x04, 0x02, 0x01}, /* 7, -12.5dB */
+-	{0x0d, 0x0d, 0x0c, 0x0a, 0x07, 0x05, 0x02, 0x01}, /* 8, -12.0dB */
+-	{0x0e, 0x0e, 0x0c, 0x0a, 0x08, 0x05, 0x02, 0x01}, /* 9, -11.5dB */
+-	{0x0f, 0x0f, 0x0d, 0x0b, 0x08, 0x05, 0x03, 0x01}, /* 10, -11.0dB */
+-	{0x10, 0x10, 0x0e, 0x0b, 0x08, 0x05, 0x03, 0x01}, /* 11, -10.5dB */
+-	{0x11, 0x11, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01}, /* 12, -10.0dB */
+-	{0x12, 0x12, 0x0f, 0x0c, 0x09, 0x06, 0x03, 0x01}, /* 13, -9.5dB */
+-	{0x13, 0x13, 0x10, 0x0d, 0x0a, 0x06, 0x03, 0x01}, /* 14, -9.0dB */
+-	{0x14, 0x14, 0x11, 0x0e, 0x0b, 0x07, 0x03, 0x02}, /* 15, -8.5dB */
+-	{0x16, 0x15, 0x12, 0x0f, 0x0b, 0x07, 0x04, 0x01}, /* 16, -8.0dB */
+-	{0x17, 0x16, 0x13, 0x10, 0x0c, 0x08, 0x04, 0x02}, /* 17, -7.5dB */
+-	{0x18, 0x17, 0x15, 0x11, 0x0c, 0x08, 0x04, 0x02}, /* 18, -7.0dB */
+-	{0x1a, 0x19, 0x16, 0x12, 0x0d, 0x09, 0x04, 0x02}, /* 19, -6.5dB */
+-	{0x1b, 0x1a, 0x17, 0x13, 0x0e, 0x09, 0x04, 0x02}, /* 20, -6.0dB */
+-	{0x1d, 0x1c, 0x18, 0x14, 0x0f, 0x0a, 0x05, 0x02}, /* 21, -5.5dB */
+-	{0x1f, 0x1e, 0x1a, 0x15, 0x10, 0x0a, 0x05, 0x02}, /* 22, -5.0dB */
+-	{0x20, 0x20, 0x1b, 0x16, 0x11, 0x08, 0x05, 0x02}, /* 23, -4.5dB */
+-	{0x22, 0x21, 0x1d, 0x18, 0x11, 0x0b, 0x06, 0x02}, /* 24, -4.0dB */
+-	{0x24, 0x23, 0x1f, 0x19, 0x13, 0x0c, 0x06, 0x03}, /* 25, -3.5dB */
+-	{0x26, 0x25, 0x21, 0x1b, 0x14, 0x0d, 0x06, 0x03}, /* 26, -3.0dB */
+-	{0x28, 0x28, 0x22, 0x1c, 0x15, 0x0d, 0x07, 0x03}, /* 27, -2.5dB */
+-	{0x2b, 0x2a, 0x25, 0x1e, 0x16, 0x0e, 0x07, 0x03}, /* 28, -2.0dB */
+-	{0x2d, 0x2d, 0x27, 0x1f, 0x18, 0x0f, 0x08, 0x03}, /* 29, -1.5dB */
+-	{0x30, 0x2f, 0x29, 0x21, 0x19, 0x10, 0x08, 0x03}, /* 30, -1.0dB */
+-	{0x33, 0x32, 0x2b, 0x23, 0x1a, 0x11, 0x08, 0x04}, /* 31, -0.5dB */
+-	{0x36, 0x35, 0x2e, 0x25, 0x1c, 0x12, 0x09, 0x04} /* 32, +0dB */
+-};
+-
+-static const u8 cckswing_table_ch14[CCK_TABLE_SIZE][8] = {
+-	{0x09, 0x08, 0x07, 0x04, 0x00, 0x00, 0x00, 0x00}, /* 0, -16.0dB */
+-	{0x09, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00}, /* 1, -15.5dB */
+-	{0x0a, 0x09, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00}, /* 2, -15.0dB */
+-	{0x0a, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00}, /* 3, -14.5dB */
+-	{0x0b, 0x0a, 0x09, 0x05, 0x00, 0x00, 0x00, 0x00}, /* 4, -14.0dB */
+-	{0x0b, 0x0b, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00}, /* 5, -13.5dB */
+-	{0x0c, 0x0c, 0x0a, 0x06, 0x00, 0x00, 0x00, 0x00}, /* 6, -13.0dB */
+-	{0x0d, 0x0c, 0x0b, 0x06, 0x00, 0x00, 0x00, 0x00}, /* 7, -12.5dB */
+-	{0x0d, 0x0d, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00}, /* 8, -12.0dB */
+-	{0x0e, 0x0e, 0x0c, 0x07, 0x00, 0x00, 0x00, 0x00}, /* 9, -11.5dB */
+-	{0x0f, 0x0f, 0x0d, 0x08, 0x00, 0x00, 0x00, 0x00}, /* 10, -11.0dB */
+-	{0x10, 0x10, 0x0e, 0x08, 0x00, 0x00, 0x00, 0x00}, /* 11, -10.5dB */
+-	{0x11, 0x11, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00}, /* 12, -10.0dB */
+-	{0x12, 0x12, 0x0f, 0x09, 0x00, 0x00, 0x00, 0x00}, /* 13, -9.5dB */
+-	{0x13, 0x13, 0x10, 0x0a, 0x00, 0x00, 0x00, 0x00}, /* 14, -9.0dB */
+-	{0x14, 0x14, 0x11, 0x0a, 0x00, 0x00, 0x00, 0x00}, /* 15, -8.5dB */
+-	{0x16, 0x15, 0x12, 0x0b, 0x00, 0x00, 0x00, 0x00}, /* 16, -8.0dB */
+-	{0x17, 0x16, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x00}, /* 17, -7.5dB */
+-	{0x18, 0x17, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00}, /* 18, -7.0dB */
+-	{0x1a, 0x19, 0x16, 0x0d, 0x00, 0x00, 0x00, 0x00}, /* 19, -6.5dB */
+-	{0x1b, 0x1a, 0x17, 0x0e, 0x00, 0x00, 0x00, 0x00}, /* 20, -6.0dB */
+-	{0x1d, 0x1c, 0x18, 0x0e, 0x00, 0x00, 0x00, 0x00}, /* 21, -5.5dB */
+-	{0x1f, 0x1e, 0x1a, 0x0f, 0x00, 0x00, 0x00, 0x00}, /* 22, -5.0dB */
+-	{0x20, 0x20, 0x1b, 0x10, 0x00, 0x00, 0x00, 0x00}, /* 23, -4.5dB */
+-	{0x22, 0x21, 0x1d, 0x11, 0x00, 0x00, 0x00, 0x00}, /* 24, -4.0dB */
+-	{0x24, 0x23, 0x1f, 0x12, 0x00, 0x00, 0x00, 0x00}, /* 25, -3.5dB */
+-	{0x26, 0x25, 0x21, 0x13, 0x00, 0x00, 0x00, 0x00}, /* 26, -3.0dB */
+-	{0x28, 0x28, 0x24, 0x14, 0x00, 0x00, 0x00, 0x00}, /* 27, -2.5dB */
+-	{0x2b, 0x2a, 0x25, 0x15, 0x00, 0x00, 0x00, 0x00}, /* 28, -2.0dB */
+-	{0x2d, 0x2d, 0x17, 0x17, 0x00, 0x00, 0x00, 0x00}, /* 29, -1.5dB */
+-	{0x30, 0x2f, 0x29, 0x18, 0x00, 0x00, 0x00, 0x00}, /* 30, -1.0dB */
+-	{0x33, 0x32, 0x2b, 0x19, 0x00, 0x00, 0x00, 0x00}, /* 31, -0.5dB */
+-	{0x36, 0x35, 0x2e, 0x1b, 0x00, 0x00, 0x00, 0x00} /* 32, +0dB */
+-};
+-
+ static const u32 edca_setting_dl[PEER_MAX] = {
+ 	0xa44f,		/* 0 UNKNOWN */
+ 	0x5ea44f,	/* 1 REALTEK_90 */
+-- 
+2.7.4
+
 
