@@ -2,81 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F32C143C2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:43:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AADCD143C36
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbgAULn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 06:43:29 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36482 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgAULn3 (ORCPT
+        id S1729417AbgAULq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 06:46:28 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:42287 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbgAULq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 06:43:29 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so2433757ljg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:43:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zDdhun4ABRxY94wjs4jI9+9VhoTcNIW8MtiXNBzEmj0=;
-        b=aLqMzWAPRfkY6hltEOk5gzzWOvQc0Q4DqSjPbfb49hBW0OKn40AMrmxjd+UH+Gx13T
-         Dq2psHKs70owY6S/5qXtw3siC4d2gNUrWa7iVxb/F5jEoicCiHGjxS9OE44+i/1K7z6L
-         qqqeW5SA5gpWcuoM8sbmEpCiJdrO6t7OxrW3PeEUEwtIaLjll5BVqQiczoommBlgsVyP
-         LSBqo7NHUQxOIkJkuKTHUAm6l8a7WB/MubDDl/K331tPcFIGQCZqCZDeLOcHtAX20R/+
-         ycmRYgvwqG7nzxsENPjqb3PR2fuMqg3LgvENDEfvYsT8EeIG+VBqZK19Mbtpz/4n1FPv
-         dntw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zDdhun4ABRxY94wjs4jI9+9VhoTcNIW8MtiXNBzEmj0=;
-        b=gk30il2SsxuQXDgBO+/BH2BXiiUryMFow/W6bpAqJLajSkoU0nit9W1e79jtFxrpsW
-         c4yT/hywihRpZEuwcnHojdktuBkor1diwcifBHadXuPR3YWL90A9pkbhtJKzLmMAJQdt
-         ZPy5XENI0NleWubvgYIDpX8rmnuts84GMmK4+ZRy0kXiARp3xVlcCuJ7WVVRJu/E2/Q7
-         tbnRTHTiEzRVd5wO3wY7BwWCOp4eVZAo+b9jJCkJFeCuUmvId+8SLhdAvyG/ZmorOlSj
-         FoBAwXZqdkSQn3gyTGr4/bFCoO/JJxhzwDDoxdbuNla+JUH5rTrmo+5KflP5ZIDKk7I/
-         wwQw==
-X-Gm-Message-State: APjAAAWYbGWHitTFRy/81F1vxWY9wrW25UJBIMR75WUFnIuY4EQQnXwG
-        EXxi7pvav8Pe9UYsBKx/WWvAq1wv
-X-Google-Smtp-Source: APXvYqyTKi8j0xgLfs8/+c1CJdJvt+nQSsVj5USAgjxYncSADx3KpoMospsM/FdOJEEKzHiibEPJVg==
-X-Received: by 2002:a05:651c:21c:: with SMTP id y28mr15903217ljn.164.1579607007649;
-        Tue, 21 Jan 2020 03:43:27 -0800 (PST)
-Received: from uranus.localdomain ([5.18.171.94])
-        by smtp.gmail.com with ESMTPSA id g25sm18223732ljn.107.2020.01.21.03.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 03:43:26 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 352B34617C8; Tue, 21 Jan 2020 14:43:26 +0300 (MSK)
-Date:   Tue, 21 Jan 2020 14:43:26 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
+        Tue, 21 Jan 2020 06:46:27 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N5mSj-1jhyoV2BSN-017CgH; Tue, 21 Jan 2020 12:46:00 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/fpu: remove unused macros
-Message-ID: <20200121114326.GF2437@uranus>
-References: <1579596611-258536-1-git-send-email-alex.shi@linux.alibaba.com>
+Subject: [PATCH] drm/etnaviv: only reject timeouts with tv_nsec >= 2 seconds
+Date:   Tue, 21 Jan 2020 12:45:25 +0100
+Message-Id: <20200121114553.2667556-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579596611-258536-1-git-send-email-alex.shi@linux.alibaba.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:mC7FeQHazeOL/EsiloGVwenBqO1CqSzKh9a3azedjzvSyEdynvt
+ PTIDkCtpkmSAi0hqrYtN76EzktImZwsEkh0+c9a1+oN67MRE439lpwzjVi5IyhqBMsix/Vx
+ ifIKxKovG+T653zcUc8vdD0nVKWHd8AxwwkoaF51DpPrCMvQ6d624FEzGnKgvuIAkIAFp4Y
+ KI3camDDhBDgIB75lVIAA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9P78OmeT3W0=:SH2hT2Gyde3yA/AfdHEewi
+ 9UYWvun/XZNKgNXHoEQkKw8tmTTgY1IFjtViM9tiCn20dQzXqDeKTUnw4/puATqhanXuGAjml
+ 4mqXuyhHPbPPmXmfKN7n14u1uY+0OHeWBp1ZAaUkkxdRYLeOjJfq57z2VhNnP813Dzhvoie0A
+ ix6fxh9pb9aEyR9Z541+Vr9l5s+a/gX6TS2+0VuZrx4MhpEgsSYpkqFpXOCFN2kljTVjrYSA0
+ SQSC24h5OGcq2HD2Y7GDBWzWkfWpABo5qm66hilTrfGxm89HZ3EHc01W3pe91YZ7U3hMSR3OW
+ D62+2Itr5NXjtNhvjidNeBd2UcqLfu7VoymS0X895yV92hwNnZQOqVhOdawxYAcihXzeZOzov
+ 1UKwsZv9IFebv9faPCPdHG2CRkOsFbhx+kZK8ZOwddoaHS3/KePFQZE3i9675NdwnrUzvmq9N
+ y0brONYTtiRHLfC079hEng50khqQG9Q3+9YicMrlQQwMTw2Tt2mncuQbXaAk1rPQjmm1enOLQ
+ C70OKrGiQNCaR8YsPOTa48OJhh2syTB1wgi1WGrgScEyZpTmTTWCL2Sh9rkfUmPPEVbNJT26G
+ XxlELPJs4QaCLaT26iGicdw0SKgPb2TEkO8cpAI51ghu0+XpVXgcUJW+A4J6smoNcq3GeX/J6
+ WCCrlkbTCr0lY2B8MrgypKacuQjDqXPif5uwJmd2grONww6wMfrzoTFAqdyJxjVEOnPbNbrmD
+ lFlPnGjmwnS/3xsCLTZrrR9u3EyM7Y1DVXMwe9LwSFzapRaJayFC9kqXk9KzLNQJhbD1SpdsD
+ q4TN7NSZfSOQZoCHf32AOxAfg/6l5nStTyKH3Txx+cF3PkFqo7A8ZCeF5LJeJ094CiUhNKfc9
+ oyoLcIVRJgqFsOVsDiDg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 04:50:11PM +0800, Alex Shi wrote:
-> NR_VALID_PKRU_BITS/PKRU_VALID_MASK are never used after it was
-> introduced. So better to remove them.
+As Guido Günther reported, get_abs_timeout() in the etnaviv user space
+sometimes passes timeouts with nanosecond values larger than 1000000000,
+which gets rejected after my first patch.
 
-Dave moved them in so while they are not used indeed better to
-get approve from him (to be sure they were not reserved for
-future development).
+To avoid breaking this, while also not allowing completely arbitrary
+values, set the limit to 1999999999 and use set_normalized_timespec64()
+to get the correct format before comparing it.
 
-Initial commit 8459429693395ca9e8d18101300b120ad9171795
+This also addresses the off-by-1 glitch reported by Ben Hutchings.
+
+Fixes: 172a216ff334 ("drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC")
+Cc: Guido Günther <agx@sigxcpu.org>
+Link: https://patchwork.kernel.org/patch/11291089/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h |  6 ++----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index 3eb0f9223bea..d94740c123d3 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -292,7 +292,11 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
+ 	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
+ 		return -EINVAL;
+ 
+-	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++	/*
++	 * existing user space passes non-normalized timespecs, but never
++	 * more than 2 seconds worth of nanoseconds
++	 */
++	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
+ 		return -EINVAL;
+ 
+ 	obj = drm_gem_object_lookup(file, args->handle);
+@@ -358,7 +362,7 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
+-	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
+ 		return -EINVAL;
+ 
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+@@ -412,7 +416,7 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
+ 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
+ 		return -EINVAL;
+ 
+-	if (args->timeout.tv_nsec > NSEC_PER_SEC)
++	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
+ 		return -EINVAL;
+ 
+ 	if (args->pipe >= ETNA_MAX_PIPES)
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+index efc656efeb0f..3e47050af706 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+@@ -109,12 +109,10 @@ static inline size_t size_vstruct(size_t nelem, size_t elem_size, size_t base)
+ static inline unsigned long etnaviv_timeout_to_jiffies(
+ 	const struct drm_etnaviv_timespec *timeout)
+ {
+-	struct timespec64 ts, to = {
+-		.tv_sec = timeout->tv_sec,
+-		.tv_nsec = timeout->tv_nsec,
+-	};
++	struct timespec64 ts, to;
+ 
+ 	ktime_get_ts64(&ts);
++	set_normalized_timespec64(&to, timeout->tv_sec, timeout->tv_nsec);
+ 
+ 	/* timeouts before "now" have already expired */
+ 	if (timespec64_compare(&to, &ts) <= 0)
+-- 
+2.25.0
+
