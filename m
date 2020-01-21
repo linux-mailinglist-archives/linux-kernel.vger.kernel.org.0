@@ -2,138 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 542AE1446F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45F68144705
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbgAUWKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:10:43 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44790 "EHLO
+        id S1729486AbgAUWLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:11:23 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44792 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729043AbgAUWKh (ORCPT
+        with ESMTP id S1729064AbgAUWKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Jan 2020 17:10:37 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4A79029994; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
+        id 5C724299A4; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <e20133bf43ec6f5967a3330dacaf38f653bf3061.1579641728.git.fthain@telegraphics.com.au>
+Message-Id: <960febac5aedee833195d0270ca1cde5d81a5d43.1579641728.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1579641728.git.fthain@telegraphics.com.au>
 References: <cover.1579641728.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v2 05/12] net/sonic: Fix receive buffer handling
+Subject: [PATCH net v2 06/12] net/sonic: Avoid needless receive descriptor EOL
+ flag updates
 Date:   Wed, 22 Jan 2020 08:22:08 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SONIC can sometimes advance its rx buffer pointer (RRP register)
-without advancing its rx descriptor pointer (CRDA register). As a result
-the index of the current rx descriptor may not equal that of the current
-rx buffer. The driver mistakenly assumes that they are always equal.
-This assumption leads to incorrect packet lengths and possible packet
-duplication. Avoid this by calling a new function to locate the buffer
-corresponding to a given descriptor.
+The while loop in sonic_rx() traverses the rx descriptor ring. It stops
+when it reaches a descriptor that the SONIC has not used. Each iteration
+advances the EOL flag so the SONIC can keep using more descriptors.
+Therefore, the while loop has no definite termination condition.
+
+The algorithm described in the National Semiconductor literature is quite
+different. It consumes descriptors up to the one with its EOL flag set
+(which will also have its "in use" flag set). All freed descriptors are
+then returned to the ring at once, by adjusting the EOL flags (and link
+pointers).
+
+Adopt the algorithm from datasheet as it's simpler, terminates quickly
+and avoids a lot of pointless descriptor EOL flag changes.
 
 Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 36 ++++++++++++++++++++++++----
- drivers/net/ethernet/natsemi/sonic.h |  5 ++--
- 2 files changed, 34 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/natsemi/sonic.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 5ba705ad7d4e..3387f7bc1a80 100644
+index 3387f7bc1a80..431a6e46c08c 100644
 --- a/drivers/net/ethernet/natsemi/sonic.c
 +++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -408,6 +408,22 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+@@ -432,6 +432,7 @@ static void sonic_rx(struct net_device *dev)
+ 	struct sonic_local *lp = netdev_priv(dev);
+ 	int status;
+ 	int entry = lp->cur_rx;
++	int prev_entry = lp->eol_rx;
  
-+/* Return the array index corresponding to a given Receive Buffer pointer. */
+ 	while (sonic_rda_get(dev, entry, SONIC_RD_IN_USE) == 0) {
+ 		struct sk_buff *used_skb;
+@@ -512,13 +513,21 @@ static void sonic_rx(struct net_device *dev)
+ 		/*
+ 		 * give back the descriptor
+ 		 */
+-		sonic_rda_put(dev, entry, SONIC_RD_LINK,
+-			sonic_rda_get(dev, entry, SONIC_RD_LINK) | SONIC_EOL);
+ 		sonic_rda_put(dev, entry, SONIC_RD_IN_USE, 1);
+-		sonic_rda_put(dev, lp->eol_rx, SONIC_RD_LINK,
+-			sonic_rda_get(dev, lp->eol_rx, SONIC_RD_LINK) & ~SONIC_EOL);
+-		lp->eol_rx = entry;
+-		lp->cur_rx = entry = (entry + 1) & SONIC_RDS_MASK;
 +
-+static inline int index_from_addr(struct sonic_local *lp, dma_addr_t addr,
-+				  unsigned int last)
-+{
-+	unsigned int i = last;
++		prev_entry = entry;
++		entry = (entry + 1) & SONIC_RDS_MASK;
++	}
 +
-+	do {
-+		i = (i + 1) & SONIC_RRS_MASK;
-+		if (addr == lp->rx_laddr[i])
-+			return i;
-+	} while (i != last);
++	lp->cur_rx = entry;
 +
-+	return -ENOENT;
-+}
-+
- /*
-  * We have a good packet(s), pass it/them up the network stack.
-  */
-@@ -427,6 +443,16 @@ static void sonic_rx(struct net_device *dev)
- 
- 		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
- 		if (status & SONIC_RCR_PRX) {
-+			u32 addr = (sonic_rda_get(dev, entry,
-+						  SONIC_RD_PKTPTR_H) << 16) |
-+				   sonic_rda_get(dev, entry, SONIC_RD_PKTPTR_L);
-+			int i = index_from_addr(lp, addr, entry);
-+
-+			if (i < 0) {
-+				WARN_ONCE(1, "failed to find buffer!\n");
-+				break;
-+			}
-+
- 			/* Malloc up new buffer. */
- 			new_skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
- 			if (new_skb == NULL) {
-@@ -448,7 +474,7 @@ static void sonic_rx(struct net_device *dev)
- 
- 			/* now we have a new skb to replace it, pass the used one up the stack */
- 			dma_unmap_single(lp->device, lp->rx_laddr[entry], SONIC_RBSIZE, DMA_FROM_DEVICE);
--			used_skb = lp->rx_skb[entry];
-+			used_skb = lp->rx_skb[i];
- 			pkt_len = sonic_rda_get(dev, entry, SONIC_RD_PKTLEN);
- 			skb_trim(used_skb, pkt_len);
- 			used_skb->protocol = eth_type_trans(used_skb, dev);
-@@ -457,13 +483,13 @@ static void sonic_rx(struct net_device *dev)
- 			lp->stats.rx_bytes += pkt_len;
- 
- 			/* and insert the new skb */
--			lp->rx_laddr[entry] = new_laddr;
--			lp->rx_skb[entry] = new_skb;
-+			lp->rx_laddr[i] = new_laddr;
-+			lp->rx_skb[i] = new_skb;
- 
- 			bufadr_l = (unsigned long)new_laddr & 0xffff;
- 			bufadr_h = (unsigned long)new_laddr >> 16;
--			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_L, bufadr_l);
--			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_H, bufadr_h);
-+			sonic_rra_put(dev, i, SONIC_RR_BUFADR_L, bufadr_l);
-+			sonic_rra_put(dev, i, SONIC_RR_BUFADR_H, bufadr_h);
- 		} else {
- 			/* This should only happen, if we enable accepting broken packets. */
- 		}
-diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 9e4ff8dd032d..e6d47e45c5c2 100644
---- a/drivers/net/ethernet/natsemi/sonic.h
-+++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -275,8 +275,9 @@
- #define SONIC_NUM_RDS   SONIC_NUM_RRS /* number of receive descriptors */
- #define SONIC_NUM_TDS   16            /* number of transmit descriptors */
- 
--#define SONIC_RDS_MASK  (SONIC_NUM_RDS-1)
--#define SONIC_TDS_MASK  (SONIC_NUM_TDS-1)
-+#define SONIC_RRS_MASK  (SONIC_NUM_RRS - 1)
-+#define SONIC_RDS_MASK  (SONIC_NUM_RDS - 1)
-+#define SONIC_TDS_MASK  (SONIC_NUM_TDS - 1)
- 
- #define SONIC_RBSIZE	1520          /* size of one resource buffer */
- 
++	if (prev_entry != lp->eol_rx) {
++		/* Advance the EOL flag to put descriptors back into service */
++		sonic_rda_put(dev, prev_entry, SONIC_RD_LINK, SONIC_EOL |
++			      sonic_rda_get(dev, prev_entry, SONIC_RD_LINK));
++		sonic_rda_put(dev, lp->eol_rx, SONIC_RD_LINK, ~SONIC_EOL &
++			      sonic_rda_get(dev, lp->eol_rx, SONIC_RD_LINK));
++		lp->eol_rx = prev_entry;
+ 	}
+ 	/*
+ 	 * If any worth-while packets have been received, netif_rx()
 -- 
 2.24.1
 
