@@ -2,193 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49E2F14372C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 07:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2D7143721
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 07:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgAUGfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 01:35:06 -0500
-Received: from mout0.freenet.de ([195.4.92.90]:33188 "EHLO mout0.freenet.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbgAUGfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 01:35:05 -0500
-X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 01:35:03 EST
-Received: from [195.4.92.165] (helo=mjail2.freenet.de)
-        by mout0.freenet.de with esmtpa (ID andihartmann@freenet.de) (port 25) (Exim 4.92 #3)
-        id 1itn34-0004wO-8u
-        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:30:02 +0100
-Received: from [::1] (port=48248 helo=mjail2.freenet.de)
-        by mjail2.freenet.de with esmtpa (ID andihartmann@freenet.de) (Exim 4.92 #3)
-        id 1itn34-0002y4-75
-        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:30:02 +0100
-Received: from sub8.freenet.de ([195.4.92.127]:59914)
-        by mjail2.freenet.de with esmtpa (ID andihartmann@freenet.de) (Exim 4.92 #3)
-        id 1itn0z-00026u-M3
-        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:27:53 +0100
-Received: from p200300de571bdf00505400fffe15ac42.dip0.t-ipconnect.de ([2003:de:571b:df00:5054:ff:fe15:ac42]:57682 helo=mail.maya.org)
-        by sub8.freenet.de with esmtpsa (ID andihartmann@freenet.de) (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (port 465) (Exim 4.92 #3)
-        id 1itn0z-0007Q7-Jw
-        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:27:53 +0100
-Received: internal info suppressed
-References: <20200118172615.26329-1-linux@roeck-us.net>
-To:     Kernel-Mailingliste <linux-kernel@vger.kernel.org>
-From:   Andreas Hartmann <andihartmann@01019freenet.de>
-Autocrypt: addr=andihartmann@01019freenet.de; keydata=
- xsDiBDz/vtQRBAC+OSpes1p57fA8ENLYy3Nl/CpEvtRoDdhy7DPyc1+adE57vpK52naRfaZB
- f0RSMvIZwJYggMio+emiN5Du7kL9y2IEjmHBvp/1x68dEwswHP9X4hJmHmyOJL3IB2WsvEdh
- QF97913bWX34MYCeuOoSJ1OWvBLGfNs0zv70HOTfJwCgricyy8N1itEryLwoeu5HWz0SmDED
- /2IiuDhPZ332i0Ylp40RQb2Wb0xBvpscVeRZDItsYYbJ/Sgmso1sn93sFFWmmrvGUyg3MNCt
- +u+7P8Wg3VXte8cHbNwdzNtXHTfYyTcgZXC4xJN2akZt4pdR531mXyP2kFxmKtAEmW6bNpvV
- oNnkgZVWvoT4BHLloLzA62JUEgFJA/9dHilAVS3Ezv5ECB02Lt2vNNzMvPlyNbxBhWnrb6VC
- mFMCRg9bOK2io1zYb8C4gEpJ33wl8hEBxOWfCOEEKesAUCjViosNvxqGNtGWjk5p1O2QBWE2
- D6u5+itACQRqhmmgNl+dK6Of2yGG9GxOYWozIELEfL9ZB4xQ7A2tDFR0Zs1HQW5kcmVhcyBI
- YXJ0bWFubiAod2VpbCBkZXIgUmVjaG5lciBuZXUgaGVpc3N0KSA8YW5kcmVhc0BkdWFsYy5t
- YXlhLm9yZz7CYAQTEQIAIAUCTMsY3gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBhU
- mcTgYeNVT1QAoJ4cJ2jl6Jgmi+PmWCXPk4m8lgAGAKCjkxgK/PjE3+cNsLa/xEpReqYwRs7A
- TQQ8/77WEAQAqBBex8oxPC1srpaSFbq8NCM/Gy7SKucKsQPqG/De46WQESbmnMElVft2xCBC
- rOJ7E02k10h/twe0yQnNdXMJDMDM0w0EEyX9ljekIr3SFbXpU2S4wUl3C6CW2hizUgOyLsg0
- chpfGMB9+wiVycyjZahafoc14wuuDj5BqWEOCccAAwcD/14lh1PTPKx4hs7ITtFZh5TI6+5f
- xAWIBBUeQL+GEt+CKwyNc/hWp8YTPJ3SAedmDrEMX+2yPO95KeIfg6bnnIVvI/aTR/vJFsWK
- GKMx+KaKx+IEwuhCpNIMUASpJWRvVlo3lMIvqAMJIBj79uKq/X9fppblcJst29QVO6aWf3Gh
- wkYEGBECAAYFAjz/vtYACgkQGFSZxOBh41VBAgCfZRiPCQ+jNvdT5iR2fEblqTtBrF0An0nb
- M8B1Lpkm44214BbtIQKneVrYwkYEGBECAAYFAjz/vtcACgkQGFSZxOBh41UjjgCgoua1QYf+
- FcHpxrRgoioO3D7ddkUAnAkRf8FH9i94x8f6LfS4npozycQc
-Subject: Re: [PATCH v2 0/5] hwmon: k10temp driver improvements
-Message-ID: <c5d5aafb-282e-9ed1-ff1e-be6105446d39@01019freenet.de>
-Date:   Tue, 21 Jan 2020 07:27:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20200118172615.26329-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SURBL_BLOCKED,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on mail.maya.org
-X-Originated-At: 2003:de:571b:df00:5054:ff:fe15:ac42!57682
+        id S1728799AbgAUGdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 01:33:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6092 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726911AbgAUGdT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 01:33:19 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00L6WgmH008989
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:33:17 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2xmg38n9uv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:33:17 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
+        Tue, 21 Jan 2020 06:33:15 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 Jan 2020 06:33:11 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00L6XAgO48890036
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jan 2020 06:33:10 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 57696A4053;
+        Tue, 21 Jan 2020 06:33:10 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58B42A4057;
+        Tue, 21 Jan 2020 06:33:08 +0000 (GMT)
+Received: from localhost.in.ibm.com (unknown [9.124.35.158])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Jan 2020 06:33:08 +0000 (GMT)
+From:   Parth Shah <parth@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, patrick.bellasi@matbug.net,
+        valentin.schneider@arm.com, pavel@ucw.cz, dsmythies@telus.net,
+        qperret@google.com, tim.c.chen@linux.intel.com
+Subject: [RFC v6 0/5] TurboSched: A scheduler for sustaining Turbo Frequencies for longer durations
+Date:   Tue, 21 Jan 2020 12:03:02 +0530
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 20012106-4275-0000-0000-000003997BEF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012106-4276-0000-0000-000038AD8348
+Message-Id: <20200121063307.17221-1-parth@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-21_01:2020-01-20,2020-01-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-2001210056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.01.20 at 18:26 Guenter Roeck wrote:
-> This patch series implements various improvements for the k10temp driver.
+This is the 5th version of the patch series to sustain Turbo frequencies
+for longer durations.
 
-Tested with Asus Prime X370-PRO / 1700X / Linux 5.4.x
+The previous versions can be found here:
+v5: https://lkml.org/lkml/2019/10/7/118
+v4: https://lkml.org/lkml/2019/7/25/296
+v3: https://lkml.org/lkml/2019/6/25/25
+v2: https://lkml.org/lkml/2019/5/15/1258
+v1: https://lwn.net/Articles/783959/
 
-Tested-By: Andreas Hartmann <andihartmann@01019freenet.de>
+The changes in this versions are:
+v5 -> v6:
+- Addressed comments from Vincent Guittot and Hillf Danton
+- Re based the series on the top of latency_nice patch series defined at
+  https://lkml.org/lkml/2020/1/16/319. This allows [1] to use the
+  latency_nice framework for small background tasks classification from the
+  userspace.
+ToDo:
+- Add Documentation for TurboSched including possible regression as per the
+  comment from Pavel Machek
 
-Idle:
+v4 -> v5:
+- Remove Core capacity calculation for finding non-idle core
+- Use idle_cpu() and cpu_overutilized() to find the core for task packing
+- This changes functionality a bit. Updated new results for POWER9 system
+- Re-named ambiguous naming "jitter" to "small background" tasks
 
-it8665-isa-0290
-Adapter: ISA adapter
-in0:          +0.88 V  (min =  +1.27 V, max =  +2.00 V)
-in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
-in2:          +2.05 V  (min =  +1.23 V, max =  +0.16 V)
-in3:          +2.01 V  (min =  +1.53 V, max =  +2.25 V)
-in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
-in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
-in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
-3VSB:         +3.31 V  (min =  +2.46 V, max =  +5.43 V)
-Vbat:         +3.25 V
-+3.3V:        +3.31 V
-Fan CPU:      594 RPM  (min =   10 RPM)
-Fan back:     380 RPM  (min =   11 RPM)
-Fan front:    415 RPM  (min =   12 RPM)
-fan5:           0 RPM  (min =   -1 RPM)  ALARM
-fan6:           0 RPM  (min =   -1 RPM)  ALARM
-CPU:          +28.0°C  (low  = +112.0°C, high =  -5.0°C)
-Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
-temp3:        +29.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
-temp4:        +29.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
-temp5:        +29.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
-temp6:        +29.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
-intrusion0:  ALARM
+v3 -> v4:
+- Based on Patrick Bellasi's comments, removed the use of UCLAMP based
+  mechanism to classify tasks as jitter
+- Added support to sched_setattr to mark the task as jitter by adding a new
+  flag to the existing task_struct->flags attribute. This is decided to not
+  have any new variable inside task_struct and thus get rid of size
+  bloating.
+- No functional changes
 
-k10temp-pci-00c3
-Adapter: PCI adapter
-Vcore:        +0.90 V
-Vsoc:         +0.90 V
-CPU:          +28.6°C  (high = +70.0°C)
-Tctl:         +48.6°C
-Icore:        +5.20 A
-Isoc:         +7.21 A
+v2 -> v3:
+- Added a new attribute in task_struct to allow per task jitter
+  classification so that scheduler can use this as request to change wakeup
+  path for task packing
+- Use syscall for jitter classification, removed cgroup based task
+  classification
+- Use mutex over spinlock to get rid of task sleeping problem
+- Changed _Bool->int everywhere
+- Split few patches to have arch specific code separate from core scheduler
+  code
 
-
-Load:
-
-it8665-isa-0290
-Adapter: ISA adapter
-in0:          +1.38 V  (min =  +1.27 V, max =  +2.00 V)
-in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
-in2:          +2.04 V  (min =  +1.23 V, max =  +0.16 V)
-in3:          +2.01 V  (min =  +1.53 V, max =  +2.25 V)
-in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
-in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
-in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
-3VSB:         +3.33 V  (min =  +2.46 V, max =  +5.43 V)
-Vbat:         +3.25 V
-+3.3V:        +3.33 V
-Fan CPU:      798 RPM  (min =   10 RPM)
-Fan back:     481 RPM  (min =   11 RPM)
-Fan front:    460 RPM  (min =   12 RPM)
-fan5:           0 RPM  (min =   -1 RPM)  ALARM
-fan6:           0 RPM  (min =   -1 RPM)  ALARM
-CPU:          +43.0°C  (low  = +112.0°C, high =  -5.0°C)
-Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
-temp3:        +33.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
-temp4:        +33.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
-temp5:        +33.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
-temp6:        +33.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
-intrusion0:  ALARM
-
-k10temp-pci-00c3
-Adapter: PCI adapter
-Vcore:        +1.30 V
-Vsoc:         +0.90 V
-CPU:          +49.5°C  (high = +70.0°C)
-Tctl:         +69.5°C
-Icore:       +77.94 A
-Isoc:         +9.02 A
+v1 -> v2:
+- No CPU bound tasks' classification, only jitter tasks are classified from
+  the cpu cgroup controller
+- Use of Spinlock rather than mutex to count number of jitters in the
+  system classified from cgroup
+- Architecture specific implementation of Core capacity multiplication
+  factor changes dynamically based on the number of active threads in the
+  core
+- Selection of non idle core in the system is bounded by DIE domain
+- Use of UCLAMP mechanism to classify jitter tasks
+- Removed "highutil_cpu_mask", and rather uses sd for DIE domain to find
+  better fit
 
 
-it8665-isa-0290
-Adapter: ISA adapter
-in0:          +1.36 V  (min =  +1.27 V, max =  +2.00 V)
-in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
-in2:          +2.04 V  (min =  +1.23 V, max =  +0.16 V)
-in3:          +2.00 V  (min =  +1.53 V, max =  +2.25 V)
-in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
-in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
-in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
-3VSB:         +3.33 V  (min =  +2.46 V, max =  +5.43 V)
-Vbat:         +3.25 V
-+3.3V:        +3.33 V
-Fan CPU:     1044 RPM  (min =   10 RPM)
-Fan back:     722 RPM  (min =   11 RPM)
-Fan front:    633 RPM  (min =   12 RPM)
-fan5:           0 RPM  (min =   -1 RPM)  ALARM
-fan6:           0 RPM  (min =   -1 RPM)  ALARM
-CPU:          +49.0°C  (low  = +112.0°C, high =  -5.0°C)
-Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
-temp3:        +39.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
-temp4:        +39.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
-temp5:        +39.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
-temp6:        +39.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
-intrusion0:  ALARM
 
-k10temp-pci-00c3
-Adapter: PCI adapter
-Vcore:        +1.30 V
-Vsoc:         +0.90 V
-CPU:          +52.1°C  (high = +70.0°C)
-Tctl:         +72.1°C
-Icore:       +78.98 A
-Isoc:         +9.02 A
+Abstract
+========
 
+The modern servers allows multiple cores to run at range of frequencies
+higher than rated range of frequencies. But the power budget of the system
+inhibits sustaining these higher frequencies for longer durations.
 
-=> I can see slight differences regarding CPU temperature and Vcore between it8665 and k10temp - especially on high load (kernel compile).
+However when certain cores are put to idle states, the power can be
+effectively channelled to other busy cores, allowing them to sustain the
+higher frequency.
+
+One way to achieve this is to pack tasks onto fewer cores keeping others
+idle, but it may lead to performance penalty for such tasks and sustaining
+higher frequencies proves to be of no benefit. But if one can identify
+unimportant low utilization tasks which can be packed on the already active
+cores then waking up of new cores can be avoided. Such tasks are short
+and/or bursty "background tasks" and waking up new core is expensive for
+such case.
+
+Current CFS algorithm in kernel scheduler is performance oriented and hence
+tries to assign any idle CPU first for the waking up of new tasks. This
+policy is perfect for major categories of the workload, but for background
+tasks, one can save energy by packing them onto the active cores and allow
+those cores to run at higher frequencies.
+
+These patch-set tunes the task wake up logic in scheduler to pack
+exclusively classified background tasks onto busy cores. The work involves
+the such tasks classifications by using syscall based mechanisms.
+
+In brief, if we can pack such small background tasks on busy cores then we
+can save power by keeping other cores idle and allow busier cores to run at
+turbo frequencies, patch-set tries to meet this solution in simplest
+manner by only packing tasks with latency_nice==19 and util <= 12.5%.
 
 
-Thanks
-Andreas
+Implementation
+==============
+
+These patches uses latency_nice [3] syscall based mechanism to classify the
+tasks as small background noises. The task wakeup logic uses this
+information to pack such tasks onto cores which are already running busy
+with CPU intensive tasks.  The task packing is done at
+`select_task_rq_fair` only so that in case of wrong decision load balancer
+may pull the classified background tasks for maximizing performance.
+
+We define a core to be non-idle if any CPU has >12.5% utilization and not
+more than 1 CPU is overutilized (>80% utilization); the background tasks
+are packed over these cores using First-fit approach.
+
+The value 12.5% utilization indicates the CPU is sufficiently busy to not
+go to deeper IDLE-states (target_residency >= 10ms) and tasks can be packed
+here.
+
+To demonstrate/benchmark, patches uses turbo_bench, a synthetic workload
+generator [2].
+
+Following snippet demonstrates the use of TurboSched feature:
+```
+i=8; ./turbo_bench -t 30 -h $i -n $((i*2)) -j
+```
+This spawns 2*i total threads: of which i-CPU bound and i-low util threads.
+
+Current implementation uses only small background classified tasks to be
+packed on the first busy cores, but can be further optimized by getting
+userspace input of important tasks and keeping track of such tasks. This
+leads to optimized searching of non idle cores and also more accurate as
+userspace hints are safer than auto classified busy cores/tasks.
+
+
+Result
+======
+
+The patch-set proves to be useful for the system and the workload where
+frequency boost is found to be useful than packing tasks into cores. IBM
+POWER 9 system shows the frequency benefit can be up to 18% which can be
+translated to the maximum workload benefit up to 14%.
+
+(higher is better)
+
+                 Frequency benefit of TurboSched w.r.t. CFS               
+   +-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+
+20 +-+ + + +  + + + + + + + +  + + + + + + + +  + + + + + + + +  + + + +-+
+   |                    **                Frequency benefit in %         |
+   |                    **                                               |
+15 +-+                  **                                             +-+
+   |              ****  **  **                                           |
+   |            * ****  ******                                           |
+10 +-+          * ****  ******                                         +-+
+   |            * ****  ******                                           |
+   |          * * ************   *                                       |
+ 5 +-+        * * ************ * *   **                                +-+
+   |       ** * * ************ * *   ****                                |
+ 0 +-******** * * ************ * * ************ * * * ********** * * * **+
+   |   **                                                                |
+   |                                                                     |
+-5 +-+                                                                 +-+
+   | + + + +  + + + + + + + +  + + + + + + + +  + + + + + + + +  + + + + |
+   +-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+
+     0 1 2 3  4 5 6 7 8 91011 1213141516171819 2021222324252627 28293031  
+                           No. of workload threads                        
+
+                 Performance benefit of TurboSched w.r.t. CFS             
+20 +-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+
+   | + + + +  + + + + + + + +  + + + + + + + +  + + + + + + + +  + + + + |
+   |                                    Performance benefit in %         |
+15 +-+                  **                                             +-+
+   |                    **                                               |
+   |                    ******                                           |
+10 +-+                  ******                                         +-+
+   |                **********                                           |
+   |              ************                                           |
+ 5 +-+            ************   *     **                              +-+
+   |              ************   *   ****                                |
+   |            * ************ * *   ******  **                          |
+ 0 +-******** * * ************ * * ************ * * * ********** * * * **+
+   |                                       **             **     *       |
+   |                                                                     |
+-5 +-+                                                                 +-+
+   | + + + +  + + + + + + + +  + + + + + + + +  + + + + + + + +  + + + + |
+   +-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+-+-+-+--+-+-+-+-+
+     0 1 2 3  4 5 6 7 8 91011 1213141516171819 2021222324252627 28293031  
+                           No. of workload threads                        
+                                                                       
+
+These numbers are w.r.t. `turbo_bench.c` multi-threaded test benchmark
+which can create two kinds of tasks: CPU bound (High Utilization) and
+Background (Low Utilization). N in X-axis represents N-CPU bound and
+N-background tasks spawned. The performance (Operations per Seconds) graph
+indicates the benefit with TurboSched can be upto 14% compared to the CFS
+task placement strategy for such background classified tasks.
+
+
+Series organization
+==============
+- Patches 1-2: Small background tasks classification using syscall
+- Patch   3  : Tune CFS task wakeup logic to pack tasks onto busy cores
+- Patches 4-5: Change non-idle core search domain to LLC by default and
+  	       provide arch hooks to change to NUMA for powerpc.
+
+Series can be applied on top of latency_nice attribute introduction
+patches [3].
+
+
+References
+==========
+[1]. Usecases for the per-task latency-nice attribute,
+     https://lkml.org/lkml/2019/9/30/215
+[2]. Test Benchmark: turbobench,
+     https://github.com/parthsl/tools/blob/master/benchmarks/turbo_bench.c
+[3]. Introduce per-task latency_nice for scheduler hints,
+     https://lkml.org/lkml/2020/1/16/319
+
+
+Parth Shah (5):
+  sched: Introduce switch to enable TurboSched for task packing
+  sched/core: Update turbo_sched count only when required
+  sched/fair: Tune task wake-up logic to pack small background tasks on
+    fewer cores
+  sched/fair: Provide arch hook to find domain for non idle core search
+    scan
+  powerpc: Set turbo domain to NUMA node for task packing
+
+ arch/powerpc/include/asm/topology.h |  3 +
+ arch/powerpc/kernel/smp.c           |  7 +++
+ kernel/sched/core.c                 | 37 +++++++++++
+ kernel/sched/fair.c                 | 95 ++++++++++++++++++++++++++++-
+ kernel/sched/sched.h                | 15 +++++
+ 5 files changed, 156 insertions(+), 1 deletion(-)
+
+-- 
+2.17.2
+
