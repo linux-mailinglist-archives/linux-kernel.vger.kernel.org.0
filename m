@@ -2,128 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 143BE143FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7245143FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:42:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbgAUOkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 09:40:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58489 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729275AbgAUOku (ORCPT
+        id S1729235AbgAUOmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:42:49 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36518 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbgAUOms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 09:40:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579617649;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JSSit0Wm+RQr1Jgst7x5naV4XKUyLXD3AhAyDv7TiYs=;
-        b=X8Vf3vjCA3YtJBkZkSUNtCpTyRDiA+Fjs1kniCHWWWO0N22Lx0snkoE0zs2t5PcS4yqAPK
-        M1Pp2aO5DeZjXsDOtsDZEK6CwfTq2yK7hU96FHqc2jxWey9MbmN8xv2U2qiamZoH7k+7dJ
-        NGogPIPHs0nQ5cYjXi2g78L8Rw9EawU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-316-kARLWSK8PtqZVT-nfxWL9Q-1; Tue, 21 Jan 2020 09:40:46 -0500
-X-MC-Unique: kARLWSK8PtqZVT-nfxWL9Q-1
-Received: by mail-wr1-f71.google.com with SMTP id z10so1382794wrt.21
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 06:40:46 -0800 (PST)
+        Tue, 21 Jan 2020 09:42:48 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k3so1610318pgc.3;
+        Tue, 21 Jan 2020 06:42:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ho6/jrDBRa+qlME4ElhlvhhdyNa7g2+wumSYNnk2HpM=;
+        b=jsNBVquhp9YEvTIbGj344GhZmUkGmUViStGkA5XLwF7n40ZvK1NwgWc8TcH38238P5
+         pgyY1t/pEaTfvbQ7Urrhg98WDKF5cWSwb4ycylm2Bkm9q/u/Rd92iBdoDlhrXl63e4wE
+         J/9YGad6moCGPu43D5IgDiZJ2bXn+oeGvTZYdUu5unudQJFgWTl9hwN6vBUGpQq0IxoV
+         zb2V7qgp9wY0yF7VlcMPxJiPFa/JgOAk+6xaCYgYdAwhKTm4gRx0fjEljGKVh4xl/iAi
+         WbvY2AHttYXA5Opr3bTBt4vOXJpYAkTSOjh3NpLKC8qwgW70YzMcHI5dM73+tJLU0tf8
+         v0RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JSSit0Wm+RQr1Jgst7x5naV4XKUyLXD3AhAyDv7TiYs=;
-        b=CD/I1SwkE4f4rkRV5mtNUZp7FtSPcneZK/sf7kDkYeghOg3Wj9DOsykOjDdV3YYtj7
-         Ft2pRfks1/6dKXIDHnlSB3Q4EfIlULtN4Jfen5mSatDILKrPHzhNRD2AVxmRMNRR4Ns3
-         88dnBCfoSekkcv3QqGHZfsq57rqb7OQ9zQEdTxCiRxDbL8Hx4DqRbZx/unFU+9dJBVjr
-         J5KlSt0yVW6q13Tqz2a/6gMtdrP2JFEez3mshk4+ta3ly4EsdY+boPucgv3aasIvA2Du
-         1xS6CPQd4Y99qtrL7SAY+0rgdUm1GgSUnJFEuyA/JAYZg2AaJe2Ucsz5Gu9h/xdVL4aj
-         ACiA==
-X-Gm-Message-State: APjAAAXXaLiQh5i/vnpGTEBlstN5CUASkzgXlYgNychTIsPiV9+L+DOS
-        6e/eyPQB8W+mOY30YpEqe0Ha0LA69ql6aX2nQPSS6ACEuczZKyEgaPL+a8Wl0MZIC8Eixty4zHN
-        rPHAdi6xMPZ5jMcRZaOwj4kcc
-X-Received: by 2002:a7b:c851:: with SMTP id c17mr4596881wml.71.1579617645321;
-        Tue, 21 Jan 2020 06:40:45 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyUkg5d8MSonCO4Ge0L397jZ+4TsON4lVJzpAggAw2WjkJCWhAHkQt1Jw0IPvgT93BvWQD3aw==
-X-Received: by 2002:a7b:c851:: with SMTP id c17mr4596848wml.71.1579617645022;
-        Tue, 21 Jan 2020 06:40:45 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b509:fc01:ee8a:ca8a? ([2001:b07:6468:f312:b509:fc01:ee8a:ca8a])
-        by smtp.gmail.com with ESMTPSA id b67sm4417502wmc.38.2020.01.21.06.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 06:40:44 -0800 (PST)
-Subject: Re: [PATCH 07/14] KVM: x86/mmu: Walk host page tables to find THP
- mappings
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paul Mackerras <paulus@ozlabs.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Barret Rhoden <brho@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Zeng <jason.zeng@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-References: <20200108202448.9669-1-sean.j.christopherson@intel.com>
- <20200108202448.9669-8-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <6e9987a2-c34f-362d-a123-7dc4849811d1@redhat.com>
-Date:   Tue, 21 Jan 2020 15:40:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20200108202448.9669-8-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ho6/jrDBRa+qlME4ElhlvhhdyNa7g2+wumSYNnk2HpM=;
+        b=XOhiyh5AO72G/NH2xf8qYjo4zY2pViImvrNVLWpn88B9dHRNGIy2w59UFzq/X9eVWM
+         Qi0zJnfjbbwqeejx78phaphcGxohS/5sL1G6P1LCoCNEW2qhbcfVs5F2f93aCKkYKEPb
+         qbbj+TAC2RAcQPisO9py/0OwQAcC3BFvlUSs30GSh2LT3VfZ2/CPN2JU2jRLCwSV8+zw
+         oPlv3t6tukGoJB2W4g3+NXHJX/ql35CRlHWu+W5ZfCqtUrsGb+I9jRmUaq7ethmFOhdL
+         ZkUS8vg5zn/idjUgmNofRqL0gk2NQNLjF9gd1EQaGDIoylLuE8APq1HVTKL2xTFHqcF8
+         mCgg==
+X-Gm-Message-State: APjAAAWB0y+KZ8E6/SV+5hWg4MBE23UuSs1qY7vYZMIVl8Q4XIjRAjwl
+        2aHMcUD7fIOITFZkvJz+6HM=
+X-Google-Smtp-Source: APXvYqwMKEAnNSX+TGWzB787XPcY6RFZ3bCX7/tned/Kkuel9gMZ2ZNOfaOl0ntGU4XjiYQaJiF5fw==
+X-Received: by 2002:a62:1684:: with SMTP id 126mr4902444pfw.234.1579617767699;
+        Tue, 21 Jan 2020 06:42:47 -0800 (PST)
+Received: from localhost.localdomain ([106.206.23.174])
+        by smtp.googlemail.com with ESMTPSA id x22sm44055441pgc.2.2020.01.21.06.42.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 21 Jan 2020 06:42:47 -0800 (PST)
+From:   Vipul Kumar <vipulk0511@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     <linux-kernel@vger.kernel.org>, Stable <stable@vger.kernel.org>,
+        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
+        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
+        Vipul Kumar <vipulk0511@gmail.com>, x86@kernel.org,
+        Bin Gao <bin.gao@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Vipul Kumar <vipul_kumar@mentor.com>
+Subject: [v3] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
+Date:   Tue, 21 Jan 2020 20:11:57 +0530
+Message-Id: <1579617717-4098-1-git-send-email-vipulk0511@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/20 21:24, Sean Christopherson wrote:
-> +
-> +	/*
-> +	 * Manually do the equivalent of kvm_vcpu_gfn_to_hva() to avoid the
-> +	 * "writable" check in __gfn_to_hva_many(), which will always fail on
-> +	 * read-only memslots due to gfn_to_hva() assuming writes.  Earlier
-> +	 * page fault steps have already verified the guest isn't writing a
-> +	 * read-only memslot.
-> +	 */
-> +	slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
-> +	if (!memslot_valid_for_gpte(slot, true))
-> +		return PT_PAGE_TABLE_LEVEL;
-> +
-> +	hva = __gfn_to_hva_memslot(slot, gfn);
-> +
+From: Vipul Kumar <vipul_kumar@mentor.com>
 
-Using gfn_to_memslot_dirty_bitmap is also a good excuse to avoid
-kvm_vcpu_gfn_to_hva.
+commit f3a02ecebed7 ("x86/tsc: Set TSC_KNOWN_FREQ and TSC_RELIABLE
+flags on Intel Atom SoCs"), is setting TSC_KNOWN_FREQ and TSC_RELIABLE
+flags for Soc's which is causing time drift on Valleyview/Bay trail Soc.
 
-+	slot = gfn_to_memslot_dirty_bitmap(vcpu, gfn, true);
-+	if (!slot)
-+		return PT_PAGE_TABLE_LEVEL;
+This patch introduces a new macro to skip these flags.
+
+Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+Cc: stable@vger.kernel.org
+---
+Changes in V2:
+- Added linux-stable along with kernel version in CC
+
+Changes in V3:
+- Intead of cpuid-level, used macro to skip the flags
+
+Tested-on: SIEMENS-IPC227E board
+---
+ arch/x86/Kconfig          | 10 ++++++++++
+ arch/x86/kernel/tsc_msr.c |  4 ++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 5e89499..f6c175d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1155,6 +1155,16 @@ config X86_THERMAL_VECTOR
+ 	def_bool y
+ 	depends on X86_MCE_INTEL
+ 
++config X86_FEATURE_TSC_UNKNOWN_FREQ
++	bool "Support to skip tsc known frequency flag"
++	help
++	  Include support to skip X86_FEATURE_TSC_KNOWN_FREQ flag
 +
-+	hva = __gfn_to_hva_memslot(slot, gfn);
-
-(I am planning to remove gfn_to_hva_memslot so that __gfn_to_hva_memslot
-can lose the annoying underscores).
-
-Paolo
++	  X86_FEATURE_TSC_KNOWN_FREQ flag is causing time-drift on Valleyview/
++	  Baytrail SoC.
++	  By selecting this option, user can skip X86_FEATURE_TSC_KNOWN_FREQ
++	  flag to use refine tsc freq calibration.
++
+ source "arch/x86/events/Kconfig"
+ 
+ config X86_LEGACY_VM86
+diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
+index e0cbe4f..60c3a4a 100644
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -112,6 +112,10 @@ unsigned long cpu_khz_from_msr(void)
+ 	lapic_timer_period = (freq * 1000) / HZ;
+ #endif
+ 
++#ifdef CONFIG_X86_FEATURE_TSC_UNKNOWN_FREQ
++	return res;
++#endif
++
+ 	/*
+ 	 * TSC frequency determined by MSR is always considered "known"
+ 	 * because it is reported by HW.
+-- 
+1.9.1
 
