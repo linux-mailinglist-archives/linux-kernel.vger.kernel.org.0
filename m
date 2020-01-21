@@ -2,28 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4471D143535
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:33:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13DB414353C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 02:37:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgAUBda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 20:33:30 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9221 "EHLO huawei.com"
+        id S1728931AbgAUBg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 20:36:56 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9672 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727009AbgAUBd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 20:33:29 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DF10D2200792A4E24220;
-        Tue, 21 Jan 2020 09:33:26 +0800 (CST)
+        id S1727009AbgAUBgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 20:36:55 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2A1821F9D21F6B68683B;
+        Tue, 21 Jan 2020 09:36:53 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 21 Jan 2020 09:33:18 +0800
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 21 Jan 2020 09:36:43 +0800
 From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <b.zolnierkie@samsung.com>, <axboe@kernel.dk>
-CC:     <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <mpe@ellerman.id.au>
+CC:     <gregkh@linuxfoundation.org>, <nivedita@alum.mit.edu>,
+        <tglx@linutronix.de>, <allison@lohutok.net>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
         <chenzhou10@huawei.com>
-Subject: [PATCH -next] ata: pata_macio: fix comparing pointer to 0
-Date:   Tue, 21 Jan 2020 09:28:27 +0800
-Message-ID: <20200121012827.1036-1-chenzhou10@huawei.com>
+Subject: [PATCH -next] powerpc/maple: fix comparing pointer to 0
+Date:   Tue, 21 Jan 2020 09:31:53 +0800
+Message-ID: <20200121013153.9937-1-chenzhou10@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -36,30 +39,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes coccicheck warning:
-
-./drivers/ata/pata_macio.c:982:31-32:
-	WARNING comparing pointer to 0, suggest !E
+./arch/powerpc/platforms/maple/setup.c:232:15-16:
+	WARNING comparing pointer to 0
 
 Compare pointer-typed values to NULL rather than 0.
 
 Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 ---
- drivers/ata/pata_macio.c | 2 +-
+ arch/powerpc/platforms/maple/setup.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 1bfd015..e47a282 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -979,7 +979,7 @@ static void pata_macio_invariants(struct pata_macio_priv *priv)
- 	priv->aapl_bus_id =  bidp ? *bidp : 0;
- 
- 	/* Fixup missing Apple bus ID in case of media-bay */
--	if (priv->mediabay && bidp == 0)
-+	if (priv->mediabay && !bidp)
- 		priv->aapl_bus_id = 1;
- }
- 
+diff --git a/arch/powerpc/platforms/maple/setup.c b/arch/powerpc/platforms/maple/setup.c
+index 47f7310..00a0780 100644
+--- a/arch/powerpc/platforms/maple/setup.c
++++ b/arch/powerpc/platforms/maple/setup.c
+@@ -229,7 +229,7 @@ static void __init maple_init_IRQ(void)
+ 	root = of_find_node_by_path("/");
+ 	naddr = of_n_addr_cells(root);
+ 	opprop = of_get_property(root, "platform-open-pic", &opplen);
+-	if (opprop != 0) {
++	if (opprop) {
+ 		openpic_addr = of_read_number(opprop, naddr);
+ 		has_isus = (opplen > naddr);
+ 		printk(KERN_DEBUG "OpenPIC addr: %lx, has ISUs: %d\n",
 -- 
 2.7.4
 
