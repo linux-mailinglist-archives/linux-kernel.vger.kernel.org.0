@@ -2,187 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0CE8144121
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D02DA144134
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:02:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbgAUQAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:00:09 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35155 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729030AbgAUQAJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:00:09 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i23so1719561pfo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:00:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=RGHqVegSf46OSrC+vq5Pv4eGAqLOtAwhyN30PfSx9gU=;
-        b=zoinFZ0mYrahd5Hl1dR/pT8vt/qq41K+qA8Hu0uEzs6mlFAFNlvnAch12rsopzsna0
-         MNXC+r7/nPCC9+9CUKJwbajVlDzmdO6Qgu+H3wuh85tZslqyxdccc4VrsLuTqhRfyDyd
-         MGVpXxoWhYOpTRPzk6Z62zIvWWq9vGnpCkB/mRCo54/h0TzeVtku4lgq589YqsBHdkbJ
-         dnHSE4oCmvIZnG4aEQ3l4mcwVPt9P7qoGGUTGBqLcU8WjhYHGZFAjN9MF1ZnenLyrxVD
-         VMWieaMITU5HC9uhCOAsCsHkG3XVRElBFX2UKbnzLw9BhbBEG3q0JF9z3KxmQ6wWDu4Q
-         GiaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=RGHqVegSf46OSrC+vq5Pv4eGAqLOtAwhyN30PfSx9gU=;
-        b=SHTXJziGh3WPzp7pTvlsIvO+irheY/TeY075VHxVZi6H3WqaniCcKRUwKyITLwCyDz
-         Iojab/amx/VaOV4PSNW3j/lNtkVTpuxT5l34vurxb6uArEFxz+fat6DefYZEL5itRkri
-         /MkLLcC5W1GvuDYAEBM72Ek6YmIicvVPmOtEquIIBOY7YWTqt6POvowqAbmgB5Gne9BY
-         7Xwum9dJhQQdautpM7ZiLyYeNsp9SOLUtQV8KBnkYXV3GRnER5XFyM/D/gSlERHBdTXB
-         tC50Ejaj63HPyJBENSk+uAZoqnC09XK2Hi2N/4D8ZqXyMB9HykUPlXI56kDJkU188KED
-         97fw==
-X-Gm-Message-State: APjAAAXX2dPfe8n3DppMqI1QFPe/M2cPaFhCf5TjHd49ANLTryCnpWIX
-        iIldwEwM+pWGOYttvajd8bnILQ==
-X-Google-Smtp-Source: APXvYqxuVoSpYzHo96UzVZPSuSADBuFnCVj4+LOj72UvgSuwSuN2rKsj1LKEx0Md+mb4O0Cvw/uxpQ==
-X-Received: by 2002:a62:8782:: with SMTP id i124mr5101047pfe.22.1579622408512;
-        Tue, 21 Jan 2020 08:00:08 -0800 (PST)
-Received: from localhost ([2620:10d:c090:180::f3e0])
-        by smtp.gmail.com with ESMTPSA id o98sm4261120pjb.15.2020.01.21.08.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 08:00:07 -0800 (PST)
-Date:   Tue, 21 Jan 2020 11:00:05 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, willy@infradead.org,
-        shakeelb@google.com, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v8 03/10] mm/lru: replace pgdat lru_lock with lruvec lock
-Message-ID: <20200121160005.GA69293@cmpxchg.org>
-References: <1579143909-156105-1-git-send-email-alex.shi@linux.alibaba.com>
- <1579143909-156105-4-git-send-email-alex.shi@linux.alibaba.com>
- <20200116215222.GA64230@cmpxchg.org>
- <9ee80b68-a78f-714a-c727-1f6d2b4f87ea@linux.alibaba.com>
+        id S1729271AbgAUQBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:01:21 -0500
+Received: from mga17.intel.com ([192.55.52.151]:15566 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727817AbgAUQBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 11:01:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
+   d="scan'208";a="228885431"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 21 Jan 2020 08:01:15 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id A3B631AD; Tue, 21 Jan 2020 18:01:14 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/38] platform/x86: Rework intel_scu_ipc and intel_pmc_ipc drivers
+Date:   Tue, 21 Jan 2020 19:00:36 +0300
+Message-Id: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ee80b68-a78f-714a-c727-1f6d2b4f87ea@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 08:58:09PM +0800, Alex Shi wrote:
-> 
-> 
-> 在 2020/1/17 上午5:52, Johannes Weiner 写道:
-> 
-> > You simply cannot serialize on page->mem_cgroup->lruvec when
-> > page->mem_cgroup isn't stable. You need to serialize on the page
-> > itself, one way or another, to make this work.
-> > 
-> > 
-> > So here is a crazy idea that may be worth exploring:
-> > 
-> > Right now, pgdat->lru_lock protects both PageLRU *and* the lruvec's
-> > linked list.
-> > 
-> > Can we make PageLRU atomic and use it to stabilize the lru_lock
-> > instead, and then use the lru_lock only serialize list operations?
-> > 
-> 
-> Hi Johannes,
-> 
-> I am trying to figure out the solution of atomic PageLRU, but is 
-> blocked by the following sitations, when PageLRU and lru list was protected
-> together under lru_lock, the PageLRU could be a indicator if page on lru list
-> But now seems it can't be the indicator anymore.
-> Could you give more clues of stabilization usage of PageLRU?
+Hi,
 
-There are two types of PageLRU checks: optimistic and deterministic.
+Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
+IPC communications with minor differences. This duplication does not make
+much sense so this series reworks the two drivers so that there is only a
+single implementation of the SCU IPC. In addition to that the API will be
+updated to take SCU instance pointer as an argument, and most of the
+callers will be converted to this new API. The old API is left there but
+the plan is to get rid the callers and then the old API as well (this is
+something we are working with Andy Shevchenko).
 
-The check in activate_page() for example is optimistic and the result
-unstable, but that's okay, because if we miss a page here and there
-it's not the end of the world.
+The intel_pmc_ipc.c is then moved under MFD which suits better for this
+kind of a driver that pretty much sets up the SCU IPC and then creates a
+bunch of platform devices for the things sitting behind the PMC. The driver
+is renamed to intel_pmc_bxt.c which should follow the existing conventions
+under drivers/mfd (and it is only meant for Intel Broxton derivatives).
 
-But the check in __activate_page() is deterministic, because we need
-to be sure before del_page_from_lru_list(). Currently it's made
-deterministic by testing under the lock: whoever acquires the lock
-first gets to touch the LRU state. The same can be done with an atomic
-TestClearPagLRU: whoever clears the flag first gets to touch the LRU
-state (the lock is then only acquired to not corrupt the linked list,
-in case somebody adds or removes a different page at the same time).
+Previous version of the series:
 
-I.e. in my proposal, if you want to get a stable read of PageLRU, you
-have to clear it atomically. But AFAICS, everybody who currently does
-need a stable read either already clears it or can easily be converted
-to clear it and then set it again (like __activate_page and friends).
+  v3: https://www.spinics.net/lists/platform-driver-x86/msg20583.html
+  v2: https://www.spinics.net/lists/platform-driver-x86/msg20446.html
+  v1: https://www.spinics.net/lists/platform-driver-x86/msg20359.html
 
-> __page_cache_release/release_pages/compaction            __pagevec_lru_add
-> if (TestClearPageLRU(page))                              if (!PageLRU())
->                                                                 lruvec_lock();
->                                                                 list_add();
->         			                                lruvec_unlock();
->         			                                SetPageLRU() //position 1
->         lock_page_lruvec_irqsave(page, &flags);
->         del_page_from_lru_list(page, lruvec, ..);
->         unlock_page_lruvec_irqrestore(lruvec, flags);
->                                                                 SetPageLRU() //position 2
+Changes from v3:
 
-Hm, that's not how __pagevec_lru_add() looks. In fact,
-__pagevec_lru_add_fn() has a BUG_ON(PageLRU).
+  * Rename intel_scu_ipc_probe() to intel_scu_ipc_register() and _remove()
+    to _unregister() accordingly.
+  * Make intel_scu_ipc_register() to perform handle resource request and
+    ioremap itself.
+  * Add devm_intel_scu_ipc_register().
+  * Improve kernel-docs of struct intel_soc_pmic.
+  * Add Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt to document the
+    two sysfs attributes the driver exposes.
+  * Fix typos in the MFD driver
+  * Drop gcr_data_readq() wrapper
+  * No need to check for !pmcdev.gcr_mem_base in the MFD accessors
+  * Allocate PMC instance dynamically and pass this from the callers
+    (telemetry) as well
+  * Take the lock in intel_pmc_s0ix_counter_read() to be consistent with other
+    register accessors (and serialize them).
+  * Use kstrtoul() return value directly (new patch)
+  * Use static const MFD cell and resources where possible. Take a copy of
+    these before they get populated and passed to the MFD code.
+  * Use module_platform_driver() in the MFD driver
+  * Drop dev_dbg() prints.
+  * Return -EINVAL instead of -ENXIO when platform_get_resource() for
+    mandatory resources.
+  * Clarify "residency" in intel_pmc_s0ix_counter_read().
 
-That's because only one thread can own the isolation state at a time.
+Did not convert to use regmap because register access is 64-bit and it
+looks like regmap read/write API does not support this.
 
-If PageLRU is set, only one thread can claim it. Right now, whoever
-takes the lock first and clears it wins. When we replace it with
-TestClearPageLRU, it's the same thing: only one thread can win.
+I also dropped Andy's reviewed-by tag from the MFD patch (37/38) because it
+changed quite much from the previous version.
 
-And you cannot set PageLRU, unless you own it. Either you isolated the
-page using TestClearPageLRU, or you allocated a new page.
+Changes from v2:
 
-So you can have multiple threads trying to isolate a page from the LRU
-list, hence the atomic testclear. But no two threads should ever be
-racing to add a page to the LRU list, because only one thread can own
-the isolation state.
+  * Added review tags from Andy
+  * Patch 12: Put intel_scu_ipc_probe() prototype and implementation in one line
+  * Patch 12: Correct wording in Kconfig description.
+  * Patch 12: Put devm_request_irq() in one line.
+  * Patch 14: Add blank line before intel_scu_ipc_dev_update() in header.
+  * Patch 14: intel_scu_ipc_dev_update() move 'u8 data' to the next line in header.
+  * Patch 14: Drop outlen check in intel_scu_ipc_dev_command_with_size().
+  * Patch 16: Added Guenter's ack.
+  * Patch 25: Put intel_scu_ipc_dev_command() call in one line.
+  * Patch 25: Put intel_scu_ipc_dev_simple_command() call in one line.
+  * Patch 32: Drop X86_INTEL_MID dependency from INTEL_SCU_PCI.
+  * Patch 34: Split MFD_INTEL_PMC_BXT dependencies one per line.
+  * Patch 35: Reorder to happen before patch 34.
+  * Patch 35: Drop comma from terminating line.
 
-With the atomic PageLRU flag, the sequence would be this:
+Changes from v1:
 
-__pagevec_lru_add:
+  * Update changelog of patch 16 according to what the patch actually does.
+  * Add kernel-doc for struct intel_soc_pmic.
+  * Move octal permission patch to be before MFD conversion.
+  * Convert the intel_pmc_bxt.c to MFD APIs whilst it is being moved under
+    drivers/mfd.
 
-  BUG_ON(PageLRU()) // Caller *must* own the isolation state
+I would prefer this to be merged through platform/x86 or MFD trees assuming
+there are no objections.
 
-  lruvec_lock()     // The lruvec is stable, because changing
-                    // page->mem_cgroup requires owning the
-                    // isolation state (PageLRU) and we own it
+I have tested this on Intel Edison (Merrifield) and Joule (Broxton-M).
 
-  list_add()        // Linked list protected by lru_lock
+Mika Westerberg (38):
+  platform/x86: intel_mid_powerbtn: Take a copy of ddata
+  platform/x86: intel_scu_ipcutil: Remove default y from Kconfig
+  platform/x86: intel_scu_ipc: Add constants for register offsets
+  platform/x86: intel_scu_ipc: Remove Lincroft support
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_i2c_cntrl()
+  platform/x86: intel_scu_ipc: Fix interrupt support
+  platform/x86: intel_scu_ipc: Sleeping is fine when polling
+  platform/x86: intel_scu_ipc: Drop unused prototype intel_scu_ipc_fw_update()
+  platform/x86: intel_scu_ipc: Drop unused macros
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_io[read|write][8|16]()
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_raw_command()
+  platform/x86: intel_scu_ipc: Split out SCU IPC functionality from the SCU driver
+  platform/x86: intel_scu_ipc: Reformat kernel-doc comments of exported functions
+  platform/x86: intel_scu_ipc: Introduce new SCU IPC API
+  platform/x86: intel_mid_powerbtn: Convert to use new SCU IPC API
+  watchdog: intel-mid_wdt: Convert to use new SCU IPC API
+  platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Make intel_pmc_gcr_update() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_simple_command() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_raw_cmd() static
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_gcr_read() and intel_pmc_gcr_write()
+  platform/x86: intel_pmc_ipc: Drop ipc_data_readb()
+  platform/x86: intel_pmc_ipc: Get rid of unnecessary includes
+  platform/x86: intel_scu_ipc: Add managed function to register SCU IPC
+  platform/x86: intel_pmc_ipc: Start using SCU IPC
+  mfd: intel_soc_pmic: Add SCU IPC member to struct intel_soc_pmic
+  mfd: intel_soc_pmic_bxtwc: Convert to use new SCU IPC API
+  mfd: intel_soc_pmic_mrfld: Convert to use new SCU IPC API
+  platform/x86: intel_telemetry: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_ipc_command()
+  x86/platform/intel-mid: Add empty stubs for intel_scu_devices_[create|destroy]()
+  platform/x86: intel_pmc_ipc: Move PCI IDs to intel_scu_pcidrv.c
+  platform/x86: intel_pmc_ipc: Use octal permissions in sysfs attributes
+  platform/x86: intel_pmc_ipc: Propagate error from kstrtoul()
+  platform/x86: intel_pmc_ipc: Switch to use driver->dev_groups
+  platform/x86: intel_telemetry: Add telemetry_get_pltdata()
+  platform/x86: intel_pmc_ipc: Convert to MFD
+  MAINTAINERS: Update entry for Intel Broxton PMC driver
 
-  lruvec_unlock()
+ .../ABI/obsolete/sysfs-driver-intel_pmc_bxt   |   22 +
+ MAINTAINERS                                   |   13 +-
+ arch/x86/Kconfig                              |    2 +-
+ arch/x86/include/asm/intel-mid.h              |    9 +-
+ arch/x86/include/asm/intel_pmc_ipc.h          |   91 --
+ arch/x86/include/asm/intel_scu_ipc.h          |  107 +-
+ arch/x86/include/asm/intel_scu_ipc_legacy.h   |   76 ++
+ arch/x86/include/asm/intel_telemetry.h        |    5 +
+ drivers/mfd/Kconfig                           |   20 +-
+ drivers/mfd/Makefile                          |    1 +
+ drivers/mfd/intel_pmc_bxt.c                   |  496 ++++++++
+ drivers/mfd/intel_soc_pmic_bxtwc.c            |   22 +-
+ drivers/mfd/intel_soc_pmic_mrfld.c            |   10 +-
+ drivers/platform/x86/Kconfig                  |   49 +-
+ drivers/platform/x86/Makefile                 |    2 +-
+ drivers/platform/x86/intel_mid_powerbtn.c     |   20 +-
+ drivers/platform/x86/intel_pmc_ipc.c          | 1031 -----------------
+ drivers/platform/x86/intel_scu_ipc.c          |  732 ++++++------
+ drivers/platform/x86/intel_scu_ipcutil.c      |   43 +-
+ drivers/platform/x86/intel_scu_pcidrv.c       |   68 ++
+ drivers/platform/x86/intel_telemetry_core.c   |   12 +
+ .../platform/x86/intel_telemetry_debugfs.c    |   12 +-
+ drivers/platform/x86/intel_telemetry_pltdrv.c |  103 +-
+ drivers/usb/typec/tcpm/Kconfig                |    2 +-
+ drivers/watchdog/intel-mid_wdt.c              |   53 +-
+ include/linux/mfd/intel_pmc_bxt.h             |   21 +
+ include/linux/mfd/intel_soc_pmic.h            |   15 +
+ 27 files changed, 1348 insertions(+), 1689 deletions(-)
+ create mode 100644 Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt
+ delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
+ create mode 100644 arch/x86/include/asm/intel_scu_ipc_legacy.h
+ create mode 100644 drivers/mfd/intel_pmc_bxt.c
+ delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
+ create mode 100644 drivers/platform/x86/intel_scu_pcidrv.c
+ create mode 100644 include/linux/mfd/intel_pmc_bxt.h
 
-  SetPageLRU()      // The page has been added to the linked
-                    // list, give up our isolation state. Once
-                    // this flag becomes visible, other threads
-                    // can isolate the page from the LRU list
+-- 
+2.24.1
+
