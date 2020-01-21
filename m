@@ -2,79 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EEE41444FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:22:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA71114450A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:24:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgAUTWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 14:22:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbgAUTWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:22:40 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C5AF20678;
-        Tue, 21 Jan 2020 19:22:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579634559;
-        bh=IFgkmdAa0Mm5sr+/85Uezi3G42yK2R9/kPC0zvCu+ng=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qmqm6pMf5yC7/ShOx8REH67pE0gPGGu4YO915BcHD+uHbRTHBJPqkBf1tV2jWZMu5
-         kIde/5PF5PzHkqfBv9cWhLrRlcAhAPxWdMSFJISKODQIKTuRC70Zy4yWJkQz+TaDux
-         y1X/fhdtR8pDWEH8kijgzUZJFcXDAYA4Zr6S1i/4=
-Message-ID: <1579634558.19595.5.camel@kernel.org>
-Subject: Re: [PATCH v2 07/12] tracing: Add trace_synth_event() and related
- functions
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Date:   Tue, 21 Jan 2020 13:22:38 -0600
-In-Reply-To: <20200121120348.01399a47@gandalf.local.home>
-References: <cover.1578688120.git.zanussi@kernel.org>
-         <fde7210e7807c29783fff0e2a06d0561d810c7cf.1578688120.git.zanussi@kernel.org>
-         <20200121120348.01399a47@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727523AbgAUTYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:24:18 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39621 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727800AbgAUTYS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 14:24:18 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so4610579wrt.6;
+        Tue, 21 Jan 2020 11:24:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=d0px2i8+1RnbTOMeb6bSQy20/g4X1fdKW2WT1DhnaIc=;
+        b=f01L+ITZtZQnYqNIoitmaZkjZI5eBo5Wo/P2W3JB3e3nK7fJYwwZKdXPJCdr66V6Lz
+         YaNNMOeXa0raTDdJbpDUQPVpEoKgHiB+fe3fJWn6YDMamXwSbXIAaLtNefPZ3OuQoJB+
+         XqSLkXuXp2fGZQPg56dya8vg4P8SeCDFXbssV54DM7BPs01XlJvLTixLe5S8SSsVi0Lz
+         pLyH8TebcZ12YMZVdX0hYefWZjSmVurBomV6qBTRU7L6P1d1ICheUkuzLdRkK+KSBUdW
+         Sru3hltXi+3gQAXVcLGPvDbRDsHlIRJseF2Mm8+4Cm3MLfu7sURrb942D9TM9Cx6EHDf
+         LuwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d0px2i8+1RnbTOMeb6bSQy20/g4X1fdKW2WT1DhnaIc=;
+        b=ldv1vpdzXLfbNMOdqX0eqqmOCmnThbxRr4d2zNrCoG/X+m6bP6rnrLNuGIQpDpHoGG
+         iAqyR5zl2qOyiqA4hSFhQtVR8hNkkIlrWxG5Uya9pPtq7YnIAepss+R1hDwey059mvWU
+         Z1ZbDZDxTFrnM4ppT5+8UJi4mNlAZOjynyNI3zVk4PLk0uy7NYS/DT2B1SBBviErNzfq
+         d/5XGXozbddScDipreA8/qbKDcLmJOdzSzDVkg0590MiCIcYJbg2ulCIAp6SM3OhDO4b
+         GkoAt3JtlmLLVVcmQTE3k36ihrbolYiblQ3hWTIPItSKJoAEUMFPSPPZMeRZn0daltZH
+         BA/Q==
+X-Gm-Message-State: APjAAAXXGZSQ7H6Vc9tpH193F3hS6bWmzQzVSo8M4Mh0MwTS+PGGCTO0
+        tZ/scFi0MsV1QsseCEy9fjk=
+X-Google-Smtp-Source: APXvYqwLqk8ISBzNTYObgq4JlUegGB200/Ok27JHRpxFzpP5B4fMvG40Odn5sNRBHmQ41SUfOnLiwg==
+X-Received: by 2002:adf:eb89:: with SMTP id t9mr6843387wrn.5.1579634655451;
+        Tue, 21 Jan 2020 11:24:15 -0800 (PST)
+Received: from localhost.localdomain (p5B3F62F0.dip0.t-ipconnect.de. [91.63.98.240])
+        by smtp.gmail.com with ESMTPSA id o1sm53401333wrn.84.2020.01.21.11.24.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 11:24:14 -0800 (PST)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7] dt-bindings: regulator: add document bindings for mpq7920
+Date:   Tue, 21 Jan 2020 20:24:05 +0100
+Message-Id: <20200121192405.25382-1-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+Add device tree binding information for mpq7920 regulator driver.
+Example bindings for mpq7920 are added.
 
-On Tue, 2020-01-21 at 12:03 -0500, Steven Rostedt wrote:
-> On Fri, 10 Jan 2020 14:35:13 -0600
-> Tom Zanussi <zanussi@kernel.org> wrote:
-> 
-> > +struct synth_event;
-> > +
-> > +struct synth_gen_state {
-> > +	struct trace_event_buffer fbuffer;
-> > +	struct synth_trace_event *entry;
-> > +	struct ring_buffer *buffer;
-> > +	struct synth_event *event;
-> > +	unsigned int cur_field;
-> > +	unsigned int n_u64;
-> > +	bool enabled;
-> > +	bool add_next;
-> > +	bool add_name;
-> > +};
-> > +
-> 
-> Yes, please rebase on my for-next branch, as the ring_buffer
-> structure
-> has been renamed, and will break these patches :-/
-> 
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
 
-OK, I'll rebase on for-next, and will also adapt a couple of Masami's
-boot trace patches to these.
+Notes:
+    Changes on v7 :
+      - added regualtors child-node under patternProperties, added required
+      - mps,buck-ovp-disable is not common property, regulator subsystem provides
+        only over current protection support.
 
-Thanks,
+ .../bindings/regulator/mps,mpq7920.yaml       | 118 ++++++++++++++++++
+ 1 file changed, 118 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
 
-Tom
+diff --git a/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+new file mode 100644
+index 000000000000..d853690f34c4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/mps,mpq7920.yaml
+@@ -0,0 +1,118 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/mps,mpq7920.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Monolithic Power System MPQ7920 PMIC
++
++maintainers:
++  - Saravanan Sekar <sravanhome@gmail.com>
++
++properties:
++  $nodename:
++    pattern: "pmic@[0-9a-f]{1,2}"
++  compatible:
++    enum:
++      - mps,mpq7920
++
++  reg:
++    maxItems: 1
++
++  regulators:
++    type: object
++    allOf:
++      - $ref: regulator.yaml#
++    description: |
++      list of regulators provided by this controller, must be named
++      after their hardware counterparts BUCK[1-4], one LDORTC, and LDO[2-5]
++
++    properties:
++      mps,switch-freq:
++        $ref: "/schemas/types.yaml#/definitions/uint8"
++        enum: [ 0, 1, 2, 3 ]
++        default: 2
++        description: |
++          switching frequency must be one of following corresponding value
++          1.1MHz, 1.65MHz, 2.2MHz, 2.75MHz
++
++    patternProperties:
++      "^ldo[1-4]$":
++        type: object
++        allOf:
++          - $ref: regulator.yaml#
++
++      "^ldortc$":
++        type: object
++        allOf:
++          - $ref: regulator.yaml#
++
++      "^buck[1-4]$":
++        type: object
++        allOf:
++          - $ref: regulator.yaml#
++
++        properties:
++          mps,buck-softstart:
++            $ref: "/schemas/types.yaml#/definitions/uint8"
++            enum: [ 0, 1, 2, 3 ]
++            description: |
++              defines the soft start time of this buck, must be one of the following
++              corresponding values 150us, 300us, 610us, 920us
++
++          mps,buck-phase-delay:
++            $ref: "/schemas/types.yaml#/definitions/uint8"
++            enum: [ 0, 1, 2, 3 ]
++            description: |
++              defines the phase delay of this buck, must be one of the following
++              corresponding values 0deg, 90deg, 180deg, 270deg
++
++          mps,buck-ovp-disable:
++            type: boolean
++            description: |
++              disables over voltage protection of this buck
++
++      additionalProperties: false
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - regulators
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        pmic@69 {
++          compatible = "mps,mpq7920";
++          reg = <0x69>;
++
++          regulators {
++            mps,switch-freq = <1>;
++
++            buck1 {
++             regulator-name = "buck1";
++             regulator-min-microvolt = <400000>;
++             regulator-max-microvolt = <3587500>;
++             regulator-min-microamp  = <460000>;
++             regulator-max-microamp  = <7600000>;
++             regulator-boot-on;
++             mps,buck-ovp-disable;
++             mps,buck-phase-delay = /bits/ 8 <2>;
++             mps,buck-softstart = /bits/ 8 <1>;
++            };
++
++            ldo2 {
++             regulator-name = "ldo2";
++             regulator-min-microvolt = <650000>;
++             regulator-max-microvolt = <3587500>;
++            };
++         };
++       };
++     };
++...
+-- 
+2.17.1
 
-> -- Steve
