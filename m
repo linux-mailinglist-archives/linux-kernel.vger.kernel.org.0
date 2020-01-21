@@ -2,97 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0950143D7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15078143D2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:43:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbgAUM6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 07:58:34 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44821 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbgAUM6a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 07:58:30 -0500
-Received: by mail-pg1-f196.google.com with SMTP id x7so1430664pgl.11;
-        Tue, 21 Jan 2020 04:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=riQeoCpIjGKHvSbMIa1Ue7ypVDo9yukWYqavka5JSLY=;
-        b=l6hgVgrSsGoG9H77LMGWrav12mfQfmVUoyA8wcQ2jB46XgAnvV04Jemqlh1Cmk4lDn
-         2IAGntMOhyUKJ961oVjo0HSS6Y/39AYD3Iuv27z53dQR0+wWCk5RQmtsStZBojvj6eJ5
-         XiqiOIOYwFnLwoKD1tatHsZ1wZoFxx3UVgaEU2pKBpd/S7ErLyoIj1y8UGt6RC6jA+iI
-         PYOUPbVTSywRrdmXn939sJpUDnADaUxp8QjZohbTVuI8EgIhfEPyeh2wOgYpKI04ob7r
-         eSqs1mOwdE1xvWd8ZfRSUmrPZG7alEomnJy1jPozq7o1qKx4NO7OsMLg031Ljp8tsrSe
-         yg7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=riQeoCpIjGKHvSbMIa1Ue7ypVDo9yukWYqavka5JSLY=;
-        b=QnG5eQRDqYOzXaOymmM40dja2mwX1fupUI9FjtjqXPyF2yEmMtTY+iKpdK74w0DBHv
-         ucqP+e4XuhfN6WUEQ+GW31V2WX/zquIsD2uZnkzjHt4w328su/qYvFS5TbVwEZ8L7koZ
-         CvHxHeo2oJc3So+e/sskR0pXsurQXuEIshVZTy/T+l+kZ0hMB+dW37Knm9IQYJ5lxVRX
-         jDCiZzAI9z9w14g/Mi8Fyms6KmQoKfacRBa5Ib3Rho/2jW51bVk3ZMhqCHBHfx1/UBeC
-         PdjZLhnnRM7FsBLjkQOfJ/rJSQ5Jb/ir/Fi3S+gQYr5o9cghZ8XgZ6NYmtc5j+eMK4Ru
-         kYXg==
-X-Gm-Message-State: APjAAAUONYVBLcw23TZcgdLneVPQR51/hmz5gEO6b0pMz/77YiEtiEiv
-        bOfoJGSyGPgDQOcBupCBQ1ndnF4V
-X-Google-Smtp-Source: APXvYqzF9b3tt3QWm2AbHIOJSfkoQWBiFOr1khoVFKHMh5FnVS3dSphUwdWa1ztHgUYdxRtK0R5zSw==
-X-Received: by 2002:a63:d108:: with SMTP id k8mr5190543pgg.434.1579611509844;
-        Tue, 21 Jan 2020 04:58:29 -0800 (PST)
-Received: from localhost.localdomain ([221.146.116.86])
-        by smtp.gmail.com with ESMTPSA id v4sm43130132pfn.181.2020.01.21.04.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 04:58:29 -0800 (PST)
-From:   Namjae Jeon <linkinjeon@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, pali.rohar@gmail.com, arnd@arndb.de,
-        namjae.jeon@samsung.com, viro@zeniv.linux.org.uk,
-        Namjae Jeon <linkinjeon@gmail.com>
-Subject: [PATCH v13 13/13] staging: exfat: make staging/exfat and fs/exfat mutually exclusive
-Date:   Tue, 21 Jan 2020 21:57:27 +0900
-Message-Id: <20200121125727.24260-14-linkinjeon@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200121125727.24260-1-linkinjeon@gmail.com>
-References: <20200121125727.24260-1-linkinjeon@gmail.com>
+        id S1729795AbgAUMm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 07:42:56 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50626 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728898AbgAUMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 07:42:53 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8B9C710EB62758289330
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 20:42:45 +0800 (CST)
+Received: from huawei.com (10.175.104.245) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 21 Jan 2020
+ 20:42:33 +0800
+From:   l00520965 <liuchao173@huawei.com>
+To:     <tglx@linutronix.de>
+CC:     <linfeilong@huawei.com>, <hushiyuan@huawei.com>,
+        LiuChao <liuchao173@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [RFC] irq: Skip printing irq when desc->action is null even if any_count is not zero
+Date:   Tue, 21 Jan 2020 21:09:59 +0800
+Message-ID: <20200121130959.22589-1-liuchao173@huawei.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.245]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Namjae Jeon <namjae.jeon@samsung.com>
+From: LiuChao <liuchao173@huawei.com>
 
-Make staging/exfat and fs/exfat mutually exclusive to select the one
-between two same filesystem.
+When desc->action is empty, there is no need to print out the irq and its'
+count in each cpu. The desc is not alloced in request_irq or freed in
+free_irq. So some PCI devices, such as rtl8139, uses request_irq and
+free_irq, which only modify the action of desc. So /proc/interrupts could
+be like this:
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+           CPU0       CPU1
+  2:      69397      69267     GICv3  27 Level     arch_timer
+  4:          0          0     GICv3  33 Level     uart-pl011
+ 38:         46          0     GICv3  36 Level     ehci_hcd:usb1
+ 39:         66          0     GICv3  37 Level
+ 40:          0          0     GICv3  38 Level     virtio1
+ 42:          0          0     GICv3  23 Level     arm-pmu
+ 43:          0          0  ARMH0061:00   3 Edge      ACPI:Event
+ 44:          1          0   ITS-MSI 32768 Edge      PCIe PME, pciehp
+ 45:          0          0   ITS-MSI 32769 Edge      aerdrv
+
+Irqbalance gets the list of interrupts according to /proc/interrupts. In
+this case, irqbalance does not remove the interrupt from the balance list,
+and the last string in this line,which is Level, is used as irq_name.
+
+Or we can clear desc->kstat_irqs in each cpu in free_irq when desc->action
+is null?
+
+Signed-off-by: LiuChao <liuchao173@huawei.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/staging/exfat/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/irq/proc.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
-index 292a19dfcaf5..9a0fccec65d9 100644
---- a/drivers/staging/exfat/Kconfig
-+++ b/drivers/staging/exfat/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config STAGING_EXFAT_FS
- 	tristate "exFAT fs support"
--	depends on BLOCK
-+	depends on BLOCK && !EXFAT_FS
- 	select NLS
- 	help
- 	  This adds support for the exFAT file system.
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index cfc4f088a0e7..b27169e587f4 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -439,7 +439,7 @@ int show_interrupts(struct seq_file *p, void *v)
+ {
+ 	static int prec;
+ 
+-	unsigned long flags, any_count = 0;
++	unsigned long flags;
+ 	int i = *(loff_t *) v, j;
+ 	struct irqaction *action;
+ 	struct irq_desc *desc;
+@@ -466,11 +466,7 @@ int show_interrupts(struct seq_file *p, void *v)
+ 	if (!desc)
+ 		goto outsparse;
+ 
+-	if (desc->kstat_irqs)
+-		for_each_online_cpu(j)
+-			any_count |= *per_cpu_ptr(desc->kstat_irqs, j);
+-
+-	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
++	if (!desc->action || irq_desc_is_chained(desc))
+ 		goto outsparse;
+ 
+ 	seq_printf(p, "%*d: ", prec, i);
 -- 
-2.17.1
+2.19.1
 
