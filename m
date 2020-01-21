@@ -2,132 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019001444B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 225741444C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 20:04:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbgAUS6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:58:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39915 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbgAUS6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:58:37 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 77so3930647oty.6;
-        Tue, 21 Jan 2020 10:58:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wImdtgcbSrkhoSK27g0eKsb6+1rafcjtO7KTRZ4V1r4=;
-        b=KS4/gjFX8RLU8xw4Y4jb2dGqfyRzE2ih7bElbeuJuLfIBYj0cdvYQ2A62tLh22gkLj
-         ZewJmJrScTrzwLNyDuu6CBbRVsFppVFTDiOjh3MtRKu3Yr/fY0nk8FV05Spuy9YSCUpF
-         FlzKYGAA/jm+yPm1FihgD4gVwHDI4JZGseRtSQsmyAW5xRtWRvBEZqkKf7TTFlNr8xgi
-         LSeZwTjHudUO/VemOFNN+3y8OnKKo4+BV/CdJ66rZPqddQ8bDFrZjT46NDOsXCkYsLlW
-         3/HiTGDtU1uZFxeZQiPu8dnTQJLB6e7vfIPrQne8QYHksXd8H3ZUqPUsnUT18QARO3dn
-         RtuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wImdtgcbSrkhoSK27g0eKsb6+1rafcjtO7KTRZ4V1r4=;
-        b=PjbKefEwzqfrhlkWJAoP+KW39I1HFGsFVPsW/XclwS+9BvokNo/p0qveni4sFkhYUm
-         6jGb6ky/+dKuR1s2kXMQUGVi18+IUBC63l79nAMUmSSOWSEro2Hq233gWugHNsSBLEXK
-         0vInxnrBBK8E0o2Q8bNl9evHj+B5N600ngvJxazsqP41QgTVT0dFSyQ2jZ2sJ1MY9B0/
-         6l0nL0HCtjBeZB0sn00ZBh2nt9UAQtyWsNzf3F3ypztzp5HbTfZxB1hjE5ZEsxhphe7T
-         lwJHU/7d008p2rApBjieM1enX32WYOEm3SDqNzViJjFIJ1BZP5aPw8QDXB5y8t8/WfZF
-         jBsw==
-X-Gm-Message-State: APjAAAWAk9eoq7ICuPM5kmhwYq90MgvXi/M5J4wEIKma6p42BOAXDUaJ
-        V3pwKjkN90X93LliyG6Srsc=
-X-Google-Smtp-Source: APXvYqxUL4vHfUywEsR6K6TIQFtq146ZLrDQHka57ywFVBZtGEG1vQCHfTH2ti0F01Kkd+dROS4QQg==
-X-Received: by 2002:a05:6830:1e16:: with SMTP id s22mr4692577otr.340.1579633116712;
-        Tue, 21 Jan 2020 10:58:36 -0800 (PST)
-Received: from ubuntu-x2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id l82sm12233220oib.41.2020.01.21.10.58.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Jan 2020 10:58:36 -0800 (PST)
-Date:   Tue, 21 Jan 2020 11:58:34 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Michael Reed <mdr@sgi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] scsi: qla1280: Fix a use of QLA_64BIT_PTR
-Message-ID: <20200121185834.GA3941@ubuntu-x2-xlarge-x86>
-References: <20200120190021.26460-1-natechancellor@gmail.com>
- <CAKwvOd=30bpBXqrT6LfwDb+YrTcGtTg5NL34dpc3Vkfe11KvFQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=30bpBXqrT6LfwDb+YrTcGtTg5NL34dpc3Vkfe11KvFQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1729397AbgAUTEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 14:04:06 -0500
+Received: from mga04.intel.com ([192.55.52.120]:62583 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728829AbgAUTEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 14:04:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 11:04:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
+   d="scan'208";a="227431773"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.45])
+  by orsmga003.jf.intel.com with ESMTP; 21 Jan 2020 11:04:05 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
+Date:   Tue, 21 Jan 2020 11:01:25 -0800
+Message-Id: <20200121190125.3389-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 10:43:06AM -0800, Nick Desaulniers wrote:
-> On Mon, Jan 20, 2020 at 11:00 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang warns:
-> >
-> > ../drivers/scsi/qla1280.c:1702:5: warning: 'QLA_64BIT_PTR' is not
-> > defined, evaluates to 0 [-Wundef]
-> > if QLA_64BIT_PTR
-> >     ^
-> > 1 warning generated.
-> >
-> > The rest of this driver uses #ifdef QLA_64BIT_PTR, do the same thing at
-> > this site to remove this warning.
-> >
-> > Fixes: ba304e5b4498 ("scsi: qla1280: Fix dma firmware download, if dma address is 64bit")
-> 
-> ^ The above SHA is valid only in linux-next. Won't it change when
-> merged into mainline?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Not unless Martin rebases his tree (in which case, this patch should
-just be folded into the original one).
+Perf doesn't take the left period into account when auto-reload is
+enabled with fixed period sampling mode in context switch.
 
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/843
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> 
-> Thanks for the patch.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Here is the MSR trace of the perf command as below.
+(The MSR trace is simplified from a ftrace log.)
 
-Thanks for the review :)
+    #perf record -e cycles:p -c 2000000 -- ./triad_loop
 
-> > ---
-> >  drivers/scsi/qla1280.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-> > index 607cbddcdd14..3337cd341d21 100644
-> > --- a/drivers/scsi/qla1280.c
-> > +++ b/drivers/scsi/qla1280.c
-> > @@ -1699,7 +1699,7 @@ qla1280_load_firmware_pio(struct scsi_qla_host *ha)
-> >         return err;
-> >  }
-> >
-> > -#if QLA_64BIT_PTR
-> > +#ifdef QLA_64BIT_PTR
-> 
-> Thomas should test this, as it implies the previous patch was NEVER
-> using the "true case" values, making it in effect a
-> no-functional-change (NFC).
+      //The MSR trace of task schedule out
+      //perf disable all counters, disable PEBS, disable GP counter 0,
+      //read GP counter 0, and re-enable all counters.
+      //The counter 0 stops at 0xfffffff82840
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
+      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
+      rdpmc: 0, value fffffff82840
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
 
-QLA_64BIT_PTR is defined to 1 when CONFIG_ARCH_DMA_ADDR_T_64BIT is set
-so the true should have always worked, unless I am misunderstanding what
-you are saying. The false case should have also worked because it is
-still evaluated to 0 but it throws the warning to make sure that was
-intended (again, as I understand it).
 
-> >  #define LOAD_CMD       MBC_LOAD_RAM_A64_ROM
-> >  #define DUMP_CMD       MBC_DUMP_RAM_A64_ROM
-> >  #define CMD_ARGS       (BIT_7 | BIT_6 | BIT_4 | BIT_3 | BIT_2 | BIT_1 | BIT_0)
-> > --
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+      //The MSR trace of the same task schedule in again
+      //perf disable all counters, enable and set GP counter 0,
+      //enable PEBS, and re-enable all counters.
+      //0xffffffe17b80 (-2000000) is written to GP counter 0.
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      write_msr: MSR_IA32_PMC0(4c1), value ffffffe17b80
+      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
+      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+
+When the same task schedule in again, the counter should starts from
+previous left. However, it starts from the fixed period -2000000 again.
+
+A special variant of intel_pmu_save_and_restart() is used for
+auto-reload, which doesn't update the hwc->period_left.
+When the monitored task schedules in again, perf doesn't know the left
+period. The fixed period is used, which is inaccurate.
+
+With auto-reload, the counter always has a negative counter value. So
+the left period is -value. Update the period_left in
+intel_pmu_save_and_restart_reload().
+
+With the patch,
+      //The MSR trace of task schedule out
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 0
+      write_msr: MSR_P6_EVNTSEL0(186), value 40003003c
+      rdpmc: 0, value ffffffe25cbc
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+
+      //The MSR trace of the same task schedule in again
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value 0
+      write_msr: MSR_IA32_PMC0(4c1), value ffffffe25cbc
+      write_msr: MSR_P6_EVNTSEL0(186), value 40043003c
+      write_msr: MSR_IA32_PEBS_ENABLE(3f1), value 1
+      write_msr: MSR_CORE_PERF_GLOBAL_CTRL(38f), value f000000ff
+
+Fixes: d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+Changes since V1
+- Update description
+
+ arch/x86/events/intel/ds.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index ce83950036c5..e5ad97a82342 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1713,6 +1713,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
+ 	old = ((s64)(prev_raw_count << shift) >> shift);
+ 	local64_add(new - old + count * period, &event->count);
+ 
++	local64_set(&hwc->period_left, -new);
++
+ 	perf_event_update_userpage(event);
+ 
+ 	return 0;
+-- 
+2.17.1
+
