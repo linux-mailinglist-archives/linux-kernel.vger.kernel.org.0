@@ -2,104 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E971438E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:57:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 243141438E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbgAUI44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:56:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36290 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725789AbgAUI4z (ORCPT
+        id S1728797AbgAUJAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:00:52 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51422 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbgAUJAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:56:55 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00L8rBXT088013
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:56:55 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xmg5t6m6p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:56:54 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Tue, 21 Jan 2020 08:55:08 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 Jan 2020 08:55:05 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00L8t4FU64159800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Jan 2020 08:55:04 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1ABB0AE055;
-        Tue, 21 Jan 2020 08:55:04 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C53B5AE053;
-        Tue, 21 Jan 2020 08:55:01 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Tue, 21 Jan 2020 08:55:01 +0000 (GMT)
-Date:   Tue, 21 Jan 2020 14:25:01 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched, fair: Allow a small load imbalance between low
- utilisation SD_NUMA domains v4
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20200114101319.GO3466@techsingularity.net>
- <20200117175631.GC20112@linux.vnet.ibm.com>
- <20200117215853.GS3466@techsingularity.net>
- <20200120080935.GD20112@linux.vnet.ibm.com>
- <20200120083354.GT3466@techsingularity.net>
- <20200120172706.GE20112@linux.vnet.ibm.com>
- <20200120182100.GU3466@techsingularity.net>
+        Tue, 21 Jan 2020 04:00:52 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so2051763wmd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:00:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2lqF7a8plZ8V2KVyRIs80uv+I50WzzSKH8CLyPZhybY=;
+        b=I5vVuGt7CkNPsqA3FGyR5dyQf+g5xwTC2PbwjByEK5dViTehJ2IAPEpO+WMOiboDvj
+         zO08y2kQ7QxCcvtUJC8t0XaJC949t9OYSIWvjYfKMmk6v9y3vEifhUU8XoGTozgmZHfh
+         2f08H02Emw2l5GjdeXn2UYcqNAJs053fyCzbVXMHgrEZqlTAqQ+CY+jVHUoIWu5ufxm/
+         zAJFy+25Q3xqCaYYbOMDeA8WhUQX0hYn19RHqS/oLX53cEM9iWMOBVZCjQvaXBQouArS
+         aTJ+X81Gs4XglD7gJQSXvx6IxrE9LO2LF6PdsfTgKBWaZpRU608Mdra7RVRgrb7e7rdy
+         mORg==
+X-Gm-Message-State: APjAAAUs/0/bgRurUUsfpHJ4kaGQpQRams4OXn12fZvixBwhDcLYDLwO
+        Bgo1TVZxuuyDqEdLmrLActs=
+X-Google-Smtp-Source: APXvYqwwT2fszaSN+hspfYkrHGm4hGdKvDJG9i/v0amOZy7O+n/Kuo41UfeG82AoV+zBTIHM0CrJSg==
+X-Received: by 2002:a7b:c416:: with SMTP id k22mr3390379wmi.10.1579597250018;
+        Tue, 21 Jan 2020 01:00:50 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id j12sm55633547wrw.54.2020.01.21.01.00.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 01:00:49 -0800 (PST)
+Date:   Tue, 21 Jan 2020 10:00:48 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm: avoid blocking lock_page() in kcompactd
+Message-ID: <20200121090048.GG29276@dhcp22.suse.cz>
+References: <20200109225646.22983-1-xiyou.wangcong@gmail.com>
+ <20200110073822.GC29802@dhcp22.suse.cz>
+ <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120182100.GU3466@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 20012108-0016-0000-0000-000002DF4B3D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012108-0017-0000-0000-00003341F1EC
-Message-Id: <20200121085501.GF20112@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-21_02:2020-01-20,2020-01-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 bulkscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 mlxlogscore=885 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001210076
+In-Reply-To: <CAM_iQpVN4MNhcK0TXvhmxsCdkVOqQ4gZBzkDHykLocPC6Va7LQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mel Gorman <mgorman@techsingularity.net> [2020-01-20 18:21:00]:
-
-> Understood. At the moment, I'm going to assume that the patch has zero
-> impact on your workload but confirmation that the other test programs
-> trigger no traces would be appreciated.
+On Mon 20-01-20 14:48:05, Cong Wang wrote:
+> Hi, Michal
 > 
+> On Thu, Jan 9, 2020 at 11:38 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > [CC Mel and Vlastimil]
+> >
+> > On Thu 09-01-20 14:56:46, Cong Wang wrote:
+> > > We observed kcompactd hung at __lock_page():
+> > >
+> > >  INFO: task kcompactd0:57 blocked for more than 120 seconds.
+> > >        Not tainted 4.19.56.x86_64 #1
+> > >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > >  kcompactd0      D    0    57      2 0x80000000
+> > >  Call Trace:
+> > >   ? __schedule+0x236/0x860
+> > >   schedule+0x28/0x80
+> > >   io_schedule+0x12/0x40
+> > >   __lock_page+0xf9/0x120
+> > >   ? page_cache_tree_insert+0xb0/0xb0
+> > >   ? update_pageblock_skip+0xb0/0xb0
+> > >   migrate_pages+0x88c/0xb90
+> > >   ? isolate_freepages_block+0x3b0/0x3b0
+> > >   compact_zone+0x5f1/0x870
+> > >   kcompactd_do_work+0x130/0x2c0
+> > >   ? __switch_to_asm+0x35/0x70
+> > >   ? __switch_to_asm+0x41/0x70
+> > >   ? kcompactd_do_work+0x2c0/0x2c0
+> > >   ? kcompactd+0x73/0x180
+> > >   kcompactd+0x73/0x180
+> > >   ? finish_wait+0x80/0x80
+> > >   kthread+0x113/0x130
+> > >   ? kthread_create_worker_on_cpu+0x50/0x50
+> > >   ret_from_fork+0x35/0x40
+> > >
+> > > which faddr2line maps to:
+> > >
+> > >   migrate_pages+0x88c/0xb90:
+> > >   lock_page at include/linux/pagemap.h:483
+> > >   (inlined by) __unmap_and_move at mm/migrate.c:1024
+> > >   (inlined by) unmap_and_move at mm/migrate.c:1189
+> > >   (inlined by) migrate_pages at mm/migrate.c:1419
+> > >
+> > > Sometimes kcompactd eventually got out of this situation, sometimes not.
+> >
+> > What does this mean exactly? Who is holding the page lock?
+> 
+> As I explained in other email, I didn't locate the process holding the page
+> lock before I sent out this patch, as I was fooled by /proc/X/stack.
+> 
+> But now I got its stack trace with `perf`:
+> 
+>  ffffffffa722aa06 shrink_inactive_list
+>  ffffffffa722b3d7 shrink_node_memcg
+>  ffffffffa722b85f shrink_node
+>  ffffffffa722bc89 do_try_to_free_pages
+>  ffffffffa722c179 try_to_free_mem_cgroup_pages
+>  ffffffffa7298703 try_charge
+>  ffffffffa729a886 mem_cgroup_try_charge
+>  ffffffffa720ec03 __add_to_page_cache_locked
+>  ffffffffa720ee3a add_to_page_cache_lru
+>  ffffffffa7312ddb iomap_readpages_actor
+>  ffffffffa73133f7 iomap_apply
+>  ffffffffa73135da iomap_readpages
+>  ffffffffa722062e read_pages
+>  ffffffffa7220b3f __do_page_cache_readahead
+>  ffffffffa7210554 filemap_fault
+>  ffffffffc039e41f __xfs_filemap_fault
+>  ffffffffa724f5e7 __do_fault
+>  ffffffffa724c5f2 __handle_mm_fault
+>  ffffffffa724cbc6 handle_mm_fault
+>  ffffffffa70a313e __do_page_fault
+>  ffffffffa7a00dfe page_fault
+> 
+> It got stuck somewhere along the call path of mem_cgroup_try_charge(),
+> and the trace events of mm_vmscan_lru_shrink_inactive() indicates this
+> too:
 
-Yes, I confirm there were no traces when run with other test programs too.
+So it seems that you are condending on the page lock. It is really
+unexpected that the reclaim would take that long though. Please try to
+enable more vmscan tracepoints to see where the time is spent.
 
-> -- 
-> Mel Gorman
-> SUSE Labs
-
+Thanks!
 -- 
-Thanks and Regards
-Srikar Dronamraju
-
+Michal Hocko
+SUSE Labs
