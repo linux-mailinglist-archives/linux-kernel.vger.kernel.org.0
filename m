@@ -2,100 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAFDB143B4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C072143B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbgAUKnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:43:09 -0500
-Received: from relay.sw.ru ([185.231.240.75]:57444 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbgAUKnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:43:06 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1itqzq-0006R9-Dg; Tue, 21 Jan 2020 13:42:58 +0300
-Subject: [PATCH v4 7/7] loop: Add support for REQ_ALLOCATE
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com, ktkhai@virtuozzo.com
-Date:   Tue, 21 Jan 2020 13:42:58 +0300
-Message-ID: <157960337828.108120.15650028156076032048.stgit@localhost.localdomain>
-In-Reply-To: <157960325642.108120.13626623438131044304.stgit@localhost.localdomain>
-References: <157960325642.108120.13626623438131044304.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1729590AbgAUKpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:45:46 -0500
+Received: from mail-bn8nam11on2059.outbound.protection.outlook.com ([40.107.236.59]:16768
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729384AbgAUKpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 05:45:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bKEW2BLo3FqupHoGsrViGZ7m5OBazr2+4CotKRXkazitkoDP02fsm+woVyFUOSTX1egtS3zEATqvA5BmSeVxAgOeBH1pwKw45w5d4X87c6aMWBK/iLxh0pE7gP30u5yEIKKqulD8m5JLhBIkt89soBjvWdckflxsqHhC+M2ikQ04zw6X/F0R+9iWhUmAZ2Z5qfYEqPlpzYhI/deH8rsTfADCCtbo945J0AWze+3Fv+O493JhSyKxltfNZomq/q72ncwRRBc3b5B0lGSJPlKzPTr2MV35RpBHAtaaxRzNO/Reyi/9Tg9rremxXmvbpCPBRY5f0it6AIg6Z//XI4iNTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gsxLewS2dixLfjG50YVYM/MuaQAk7d0HQnNIliQqXg0=;
+ b=iIwIUBYvbNAv9WivVP2DgcHIpHKwLuMmD5hPNx5POBPPRP/rjbe28TIsANU1tV/3Vp80zsCYF7qKkkxDs3c8i1MG64WVZKuC0CT+8WKksc9oTevLS4MvkRQsjtYM4FsHONffEN0EYUgxOqDEGdctX7hXgijCeXiprf2RMyCUp5jfRrb4vFSHfcxdH9vbeKth58PmxyhooE25ymPv1G/0OdWyPG7gI9JDuxD5o5/WipbFRLEnp4IZ33GkZkSodDT0sHMwbKL2loAtEWb1ti4Ee0AwI5sPH+CAW5qp2ayK49HEv1dlWtSQyPKdB2AqM0zzPVnN2liVgDuKyNQx8mr5gA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gsxLewS2dixLfjG50YVYM/MuaQAk7d0HQnNIliQqXg0=;
+ b=yjfJizqlLk9240sV8PAoTN6hZgdGXRntScmVkdDfeBRPGL9am5FNw4aaE77enASqk1utPbeAi10D/LrS9VzDrWFQKJ4IBtJCP8Tr/w8bSWM3FoLupIKqUYNHXKwGfOmbTWqtuCxG0Ig1whC0K4ejzY9sk4gWaNsQR+60Be6+PZA=
+Received: from BN6PR1201CA0019.namprd12.prod.outlook.com
+ (2603:10b6:405:4c::29) by MN2PR12MB3277.namprd12.prod.outlook.com
+ (2603:10b6:208:103::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.20; Tue, 21 Jan
+ 2020 10:45:40 +0000
+Received: from DM6NAM11FT049.eop-nam11.prod.protection.outlook.com
+ (2a01:111:f400:7eaa::206) by BN6PR1201CA0019.outlook.office365.com
+ (2603:10b6:405:4c::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2644.18 via Frontend
+ Transport; Tue, 21 Jan 2020 10:45:40 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXMB02.amd.com (165.204.84.17) by
+ DM6NAM11FT049.mail.protection.outlook.com (10.13.172.188) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.2644.19 via Frontend Transport; Tue, 21 Jan 2020 10:45:39 +0000
+Received: from SATLEXMB01.amd.com (10.181.40.142) by SATLEXMB02.amd.com
+ (10.181.40.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 21 Jan
+ 2020 04:45:37 -0600
+Received: from vishnu-All-Series.amd.com (10.180.168.240) by
+ SATLEXMB01.amd.com (10.181.40.142) with Microsoft SMTP Server id 15.1.1713.5
+ via Frontend Transport; Tue, 21 Jan 2020 04:45:33 -0600
+From:   Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+CC:     <Alexander.Deucher@amd.com>, <broonie@kernel.org>,
+        "Ravulapati Vishnu vardhan rao" <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        "open list" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: Fix for Subsequent Playback issue.
+Date:   Tue, 21 Jan 2020 16:13:35 +0530
+Message-ID: <1579603421-24571-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(396003)(346002)(376002)(428003)(199004)(189003)(426003)(26005)(316002)(54906003)(2906002)(86362001)(7696005)(8936002)(81156014)(81166006)(36756003)(186003)(8676002)(5660300002)(70586007)(70206006)(2616005)(4326008)(109986005)(478600001)(336012)(356004)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3277;H:SATLEXMB02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6fe5831a-755b-46b9-457b-08d79e5f0e59
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3277:
+X-Microsoft-Antispam-PRVS: <MN2PR12MB3277025A325CBC020C7DAB32E70D0@MN2PR12MB3277.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
+X-Forefront-PRVS: 0289B6431E
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ckclESf3GrC4g5SiRonl4XQl90JDNW5BqPh6w3YsHLizPkgTuV8ih3o7YVDiJ+Bri0mqAAJuQWyeqMgGmaicrq/uFJ/h31QD1HKGm9ayYPN9m45+vgrR8STyTUVcat2Dvo9HFHznt6qTRkWocdYx3iafqI5GmbbGMPTPRNw2EtaYYdsnHhZoqtpCNvP7DC1qCSBbVonvpL3o+JkSWpL7B+2Nvm5WaI5SAVVuB59nWOrrsLuB2It4qx6xGbSVNIoZfkcXI8RouBEa/RjFer2R25SVZeDWrblvK1lmHCxO10vGQ99xWg5Lo9AO+Yno6Rl4fwCLj3jdJO4s5clFem3on3HKDfDz43Dli3Pg93DYqRfBsIsEe1KW+HvIyItmBZtWWidZ366I7SHPF6flcjJWWam6fK0ZAuZtLP6XV+YWDB2uzRWN/UaBCyGqmJMXaoQVFwAx2dzS1rC3ZA9GyvzBRGnkWduNqCTfa38L06xjkb8=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2020 10:45:39.5045
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fe5831a-755b-46b9-457b-08d79e5f0e59
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3277
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for new modifier of REQ_OP_WRITE_ZEROES command.
-This results in allocation extents in backing file instead
-of actual blocks zeroing.
+If we play audio back to back, which kills one playback
+and immediately start another, we can hear clicks.
+This patch fixes the issue.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
 ---
- drivers/block/loop.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 739b372a5112..bfe76d9adf09 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -581,6 +581,15 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
+index 5c3ec3c..916649a 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
++++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
+@@ -344,25 +344,28 @@ static int acp3x_dma_close(struct snd_soc_component *component,
+ {
+ 	struct snd_soc_pcm_runtime *prtd;
+ 	struct i2s_dev_data *adata;
++	struct i2s_stream_instance *rtd;
+ 
+ 	prtd = substream->private_data;
+ 	component = snd_soc_rtdcom_lookup(prtd, DRV_NAME);
+ 	adata = dev_get_drvdata(component->dev);
++	rtd = substream->runtime->private_data;
+ 
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		adata->play_stream = NULL;
+-		adata->i2ssp_play_stream = NULL;
+-	} else {
+-		adata->capture_stream = NULL;
+-		adata->i2ssp_capture_stream = NULL;
+-	}
+ 
+ 	/* Disable ACP irq, when the current stream is being closed and
+ 	 * another stream is also not active.
+ 	 */
++	kfree(rtd);
+ 	if (!adata->play_stream && !adata->capture_stream &&
+ 		!adata->i2ssp_play_stream && !adata->i2ssp_capture_stream)
+ 		rv_writel(0, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		adata->play_stream = NULL;
++		adata->i2ssp_play_stream = NULL;
++	} else {
++		adata->capture_stream = NULL;
++		adata->i2ssp_capture_stream = NULL;
++	}
  	return 0;
  }
  
-+static unsigned int write_zeroes_to_fallocate_mode(unsigned int flags)
-+{
-+	if (flags & REQ_ALLOCATE)
-+		return 0;
-+	if (flags & REQ_NOUNMAP)
-+		return FALLOC_FL_ZERO_RANGE;
-+	return FALLOC_FL_PUNCH_HOLE;
-+}
-+
- static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- {
- 	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
-@@ -604,9 +613,7 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 		 * write zeroes the range.  Otherwise, punch them out.
- 		 */
- 		return lo_fallocate(lo, rq, pos,
--			(rq->cmd_flags & REQ_NOUNMAP) ?
--				FALLOC_FL_ZERO_RANGE :
--				FALLOC_FL_PUNCH_HOLE);
-+			write_zeroes_to_fallocate_mode(rq->cmd_flags));
- 	case REQ_OP_DISCARD:
- 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
- 	case REQ_OP_WRITE:
-@@ -877,6 +884,7 @@ static void loop_config_discard(struct loop_device *lo)
- 		q->limits.discard_alignment = 0;
- 		blk_queue_max_discard_sectors(q, 0);
- 		blk_queue_max_write_zeroes_sectors(q, 0);
-+		blk_queue_max_allocate_sectors(q, 0);
- 		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
- 		return;
- 	}
-@@ -886,6 +894,7 @@ static void loop_config_discard(struct loop_device *lo)
- 
- 	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
- 	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-+	blk_queue_max_allocate_sectors(q, UINT_MAX >> 9);
- 	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
- }
- 
-
+-- 
+2.7.4
 
