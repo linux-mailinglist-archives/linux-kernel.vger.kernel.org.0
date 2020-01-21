@@ -2,79 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4F1143977
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 047F9143973
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbgAUJ1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:27:40 -0500
-Received: from mxs2.seznam.cz ([77.75.76.125]:24951 "EHLO mxs2.seznam.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727360AbgAUJ1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:27:40 -0500
-Received: from email.seznam.cz
-        by email-smtpc4a.ng.seznam.cz (email-smtpc4a.ng.seznam.cz [10.23.10.105])
-        id 7f9a8daecac1ecbc7f93687d;
-        Tue, 21 Jan 2020 10:26:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1579598787; bh=B98H5CD1TrItHXF6OHCM5qRVUqCXcpTVW1s6/kNp8NM=;
-        h=Received:Reply-To:Subject:To:Cc:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=EeUMomcUvbdia5xMiMgS/ckb35431lCh8nixHcvjBtTu+akWDIIHtfpjIIqkdPWfO
-         mHb+mXIlplyVziMXDJTSotOecBLgAZQm8Bm+UXXuO7eqSsOTiYpsbTe2k1WfGVsqPR
-         f8b46TlZPtw0yCtNlo3bz7D7ITrE4H8W0THlTpVw=
-Received: from [77.75.76.48] (unknown-62-130.xilinx.com [149.199.62.130])
-        by email-relay18.ng.seznam.cz (Seznam SMTPD 1.3.108) with ESMTP;
-        Tue, 21 Jan 2020 10:26:14 +0100 (CET)  
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH V4 0/4] Add Xilinx's ZynqMP AES-GCM driver support
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Kalyani Akula <kalyania@xilinx.com>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        git <git@xilinx.com>, Harsh Jain <harshj@xilinx.com>,
-        Sarat Chand Savitala <saratcha@xilinx.com>,
-        Mohan Marutirao Dhanawade <mohand@xilinx.com>
-References: <1574235842-7930-1-git-send-email-kalyani.akula@xilinx.com>
- <BN7PR02MB51241CCD25BD1269B4394D9AAF320@BN7PR02MB5124.namprd02.prod.outlook.com>
- <20200120075559.kra4dqdphbbnid5h@gondor.apana.org.au>
-From:   Michal Simek <monstr@seznam.cz>
-Message-ID: <1abdf222-9517-976e-b3d3-bfc1c92c4663@seznam.cz>
-Date:   Tue, 21 Jan 2020 10:26:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729317AbgAUJ0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:26:50 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34810 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgAUJ0t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:26:49 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a15so2347166otf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:26:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=015iS5ab+bbbbqMto8iml1toavjBX/achPCg/YdPZXI=;
+        b=mBGUwf1spvYZf9aFcmTrpdCatsnzV28NF2Iulhvl37FQidV/Sb8q/fRo66G5tdixYK
+         pySnzNwWjF6pb3nTpQB4v+3FxmP1dgO4YpwDNaZAg14XI+VvjkyQth+VWsr3vmy6VqA1
+         +XcquIQgOrsv8XkWpJ828ZuXnZZQRdVW6N7hyQbpxaT4xVe+sjyxOeaa8fGVMeLQvpaW
+         NJTxAeq3X8BwieYTtkGrdGXQ0doEtBkNZFaSpsriMwTZcioKK1ypCfIJPvSgUNiu0Wy6
+         iDtSJNKspPd6vUHJPAs/WJjBCno4ysLB8vgTCjmtLanqQSbVOnkuMDk94fWQ9y+f8gQg
+         /VBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=015iS5ab+bbbbqMto8iml1toavjBX/achPCg/YdPZXI=;
+        b=J5dfZ8Nri1PV7aSNRWyXZ8LFKd74ao63fp+UzUWSZhYAnqP7UIWJ373xmA4W9OXQX8
+         pJVtt/+ZRHkq1tnrRdB2+hAWPFYmR+8P2xUgZw56sxIiPEhC5EQgRAcPtOOIVzP7scpN
+         +uCtAQ4QhGu7rau2y5k7gzRsY19MK7xaJS3rFGMG6EMUJbPLGKTFpW+VadyL5nPWBxK4
+         tVQsC0q1n1sscAOjjEJzlATNVLmHWqhg78cLXIAH0dOy1TOJ4ovHhmYJbcckjppk35Ey
+         ym8bjLVOOsmdJmeymYZp9J48/a/XBEPOQYM7ft3aFU83eRKPlcQnHaiRTlqgciJ1stxg
+         Te1A==
+X-Gm-Message-State: APjAAAWwYksnj9vFMMwWZfPnRwmVdZegk3HTeEQzdJA8B7BDdTT6t4Hk
+        BKBT45tm/LR72yci8GyNVgWfQxfkXz6qvrwZ9YRD/g==
+X-Google-Smtp-Source: APXvYqx5S5usi1vwj/772yfSdbnumknzUZMoWDH+DDcFbK+cc/0m2U2mpFUD46GX+AyVTi7VBQQ9tuKuy4LUEAbLPQA=
+X-Received: by 2002:a9d:7410:: with SMTP id n16mr3006138otk.23.1579598807989;
+ Tue, 21 Jan 2020 01:26:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200120075559.kra4dqdphbbnid5h@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200121041200.2260-1-cai@lca.pw> <20200121072744.GA7808@zn.tnic>
+ <CANpmjNPFRCRg9wnFwyJpZVg8Urb9HAdZ++e3xbh1LXPjgAs4kw@mail.gmail.com> <20200121091633.GF7808@zn.tnic>
+In-Reply-To: <20200121091633.GF7808@zn.tnic>
+From:   Marco Elver <elver@google.com>
+Date:   Tue, 21 Jan 2020 10:26:36 +0100
+Message-ID: <CANpmjNMi8ULSt3MJ+MGUQRHj4xYE1FY4PmTSbHZr3TTe4-g7TQ@mail.gmail.com>
+Subject: Re: [PATCH -next] x86/mm/pat: fix a data race in cpa_inc_4k_install
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+On Tue, 21 Jan 2020 at 10:16, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Tue, Jan 21, 2020 at 09:19:18AM +0100, Marco Elver wrote:
+> > As I said in my email that you also copied to the message, this is
+> > just a stats counter. For the general case, I think we reached
+> > consensus that such accesses should intentionally remain data races:
+> >   https://lore.kernel.org/linux-fsdevel/CAHk-=wg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDnFqbY7HL5AB2g@mail.gmail.com/T/#u
+>
+> Yap, I agree with Linus on the legibility aspect.
+>
+> > Either you can use the data_race() macro, making this
+> > 'data_race(cpa_4k_install++)' -- this effectively documents the
+> > intentional data race --
+> >
+> > or just blacklist the entire file by putting
+> >   KCSAN_SANITIZE_set_memory.o := n
+> > into the Makefile.
+> >
+> > [ Note that there are 2 more ways to blacklist:
+> >   - __no_kcsan function attribute, for blacklisting entire functions.
+> >   - KCSAN_SANITIZE :=n in the Makefile, blacklisting all compilation
+> > units in the Makefile. ]
+>
+> Do we have all those official methods how to make KCSAN happy,
+> documented somewhere?
 
-On 20. 01. 20 8:55, Herbert Xu wrote:
-> On Mon, Jan 20, 2020 at 06:59:22AM +0000, Kalyani Akula wrote:
->> Hi Herbert,
->>
->> Any review comments on below patch set.
-> 
-> Please resubmit your patch series once you have acks for the
-> non-crypto bits ready.  Please also state how you want it to
-> be merged, i.e., whether only the crypto patch is meant  for
-> the crypto tree or whether it needs to go in as a whole.
+Yes, it's in Documentation/dev-tools/kcsan.rst. I sent a patch last
+month, which is in the -rcu tree:
+  http://lkml.kernel.org/r/20191212000709.166889-1-elver@google.com
 
-All these drivers which requires firmware interface extension can be
-added via your tree or I can take them via arm-soc tree with your ack.
+> > I leave it to you what makes more sense. I don't know if there are
+> > other data races lurking here, since cpa_4k_install is not the only
+> > stats counter.
+>
+> In this particular case and if it were me, I'd prefer the __no_kcsan
+> function attribute because it is kept outside of the function body. But
+> I can't find __no_kcsan in current tip:
+>
+> $ git grep __no_kcsan
+> .h:204:static __no_kcsan_or_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
+> include/linux/compiler.h:215:# define __no_kcsan_or_inline __no_sanitize_thread notrace __maybe_unused
+> include/linux/compiler.h:216:# define __no_sanitize_or_inline __no_kcsan_or_inline
+> include/linux/compiler.h:218:# define __no_kcsan_or_inline __always_inline
+> include/linux/compiler.h:225:static __no_kcsan_or_inline
+> include/linux/compiler.h:238:static __no_kcsan_or_inline
+>
+> just this "glued together" thing __no_kcsan_or_inline.
 
-It is really up to you. I am happy to just ack patches out of crypto and
-feel free to take them via your tree.
-Or please let me know when you are done with review and I will take them.
-
-Kalyani: Please fix that stuff I have reported and we are waiting for v5.
+As far as I can tell it's not yet in -tip, but only in -rcu (and
+-next). I believe it should be in -tip soon.
 
 Thanks,
-Michal
-
+-- Marco
