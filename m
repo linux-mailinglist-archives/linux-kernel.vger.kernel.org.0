@@ -2,103 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F982143E79
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AF59143E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:48:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbgAUNrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 08:47:08 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43850 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728811AbgAUNrI (ORCPT
+        id S1729308AbgAUNsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 08:48:15 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:33746 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729195AbgAUNsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 08:47:08 -0500
-Received: by mail-wr1-f66.google.com with SMTP id d16so3231874wre.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 05:47:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=GlVSvFefthhvDndxHquihB1g9N3pysqIKkyZHPQ+LOQ=;
-        b=gWqXTSOR7c3TA7dwjaF4xYiCZIGscmbPPMzPaK//HkoFkOPNoFymt3z3u6KM3fEdJo
-         YdpnAcVFZ2kRZHa3fL5p8xP9qWPKL4baQ6IbaO03oLZxR+yb0uQEQY21sWxcUupxqrWG
-         OSLv6wjpHspDdc6KPDJtJ57aDFgM088BwF6iY0b7XYd/e2m1jikcBKO6sMpTafb0s33D
-         HkaSpCRuNxe84bWRJ3Gd3AT/ZgGU/BQ/YCMGczMY8g9FymMb9JfrIRVa831npeV1d5Gv
-         Uds0sYJ9LXBRLiha54LT8le77VzIwPA20s1Xw/Xx+4YBG/4QP1b9x6amWyftIdn7F06l
-         lBGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=GlVSvFefthhvDndxHquihB1g9N3pysqIKkyZHPQ+LOQ=;
-        b=PKIE/aitB0QCRhghnyaHAkbSNZ0OjtfYA/QA8PSZRZNcKhtbt0gOqgN3yz23LIOHoc
-         kbhdaA9l48Uu4Cn3PkCyxYhGHZyjZPOfZXziIXVKZj2zGGgYErmx08lSFk561eUjRX0c
-         uD4sGoLnj2/Q6h7B3mtf2ONQrMkh7tqRmHXA8xLlRw//KAjDu1BPbf23Fd9H4gv6mTKe
-         2G7KUyPy/TvPohMbroL3C5IPutVyVVt6fGcd/uPnlKDa4nbYbE/o4jfnafVZ9QaN1zy3
-         Us9cHndHcL3iVDG7N6yZXJAyeDVnA8fisccY+KASFTN9z1xSnHnLYPWUfaRS/EEdz2b2
-         RecA==
-X-Gm-Message-State: APjAAAWzKBFeNN5bdu4mStKBngRjoUbiqqygOf5BXqfz+FjT6mIBQxte
-        Ck5AWXggePRdx8aJjPkXmNvDKCZZGYk=
-X-Google-Smtp-Source: APXvYqw9ozq/43cGjkx6h7pBZMO6XPg/SApSBU9iRuCkRi8YdUpV7oxeAri8PTODt89gXFbTc2u3Bg==
-X-Received: by 2002:adf:c54e:: with SMTP id s14mr5150884wrf.385.1579614426236;
-        Tue, 21 Jan 2020 05:47:06 -0800 (PST)
-Received: from linux ([62.96.18.94])
-        by smtp.gmail.com with ESMTPSA id u8sm3870475wmm.15.2020.01.21.05.47.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 05:47:05 -0800 (PST)
-Date:   Tue, 21 Jan 2020 14:47:05 +0100
-From:   Sandesh Kenjana Ashok <sandeshkenjanaashok@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: mt7621-pinctrl: Align to fix warnings of line over
- 80 characters
-Message-ID: <20200121134705.GA28240@SandeshPC>
+        Tue, 21 Jan 2020 08:48:13 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 7CD053C0579;
+        Tue, 21 Jan 2020 14:48:12 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7gAHNuPTEEUS; Tue, 21 Jan 2020 14:48:06 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id E599C3C00C5;
+        Tue, 21 Jan 2020 14:48:06 +0100 (CET)
+Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 21 Jan
+ 2020 14:48:06 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH] arm64: kbuild: remove compressed images on 'make ARCH=arm64 (dist)clean'
+Date:   Tue, 21 Jan 2020 14:47:39 +0100
+Message-ID: <20200121134739.22879-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.72.93.66]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Issue found by checkpatch.
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-Signed-off-by: Sandesh Kenjana Ashok <sandeshkenjanaashok@gmail.com>
+Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
+Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
+AArch64 images. However, the commit missed adding support for removing
+those images on 'make ARCH=arm64 (dist)clean'.
+
+Fix this by adding them to the target list.
+Make sure to match the order of the recipes in the makefile.
+
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 ---
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/arm64/boot/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-index d0f06790d38f..df5da5fce630 100644
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -159,7 +159,8 @@ static int rt2880_pmx_group_enable(struct pinctrl_dev *pctrldev,
- }
+diff --git a/arch/arm64/boot/Makefile b/arch/arm64/boot/Makefile
+index 1f012c506434..cd3414898d10 100644
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -16,7 +16,7 @@
  
- static int rt2880_pmx_group_gpio_request_enable(struct pinctrl_dev *pctrldev,
--						struct pinctrl_gpio_range *range,
-+						struct pinctrl_gpio_range
-+						*range,
- 						unsigned int pin)
- {
- 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
-@@ -218,10 +219,10 @@ static int rt2880_pinmux_index(struct rt2880_priv *p)
- 	p->func_count++;
+ OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
  
- 	/* allocate our function and group mapping index buffers */
--	f = p->func = devm_kcalloc(p->dev,
--				   p->func_count,
--				   sizeof(struct rt2880_pmx_func),
--				   GFP_KERNEL);
-+	f = p->func;
-+	p->func =  devm_kcalloc(p->dev, p->func_count,
-+				sizeof(struct rt2880_pmx_func), GFP_KERNEL);
-+
- 	gpio_func.groups = devm_kcalloc(p->dev, p->group_count, sizeof(int),
- 					GFP_KERNEL);
- 	if (!f || !gpio_func.groups)
+-targets := Image Image.gz
++targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
+ 
+ $(obj)/Image: vmlinux FORCE
+ 	$(call if_changed,objcopy)
 -- 
-2.17.1
+2.25.0
 
