@@ -2,86 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5FC314385D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB04143864
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbgAUIfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:35:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39638 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgAUIfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:35:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8588FAE09;
-        Tue, 21 Jan 2020 08:35:30 +0000 (UTC)
-Date:   Tue, 21 Jan 2020 09:35:28 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-In-Reply-To: <20200120165039.6hohicj5o52gdghu@treble>
-Message-ID: <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz>
-References: <20191011125903.GN2359@hirez.programming.kicks-ass.net> <20191015130739.GA23565@linux-8ccs> <20191015135634.GK2328@hirez.programming.kicks-ass.net> <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz> <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
- <20191015153120.GA21580@linux-8ccs> <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com> <20191015182705.1aeec284@gandalf.local.home> <20191016074217.GL2328@hirez.programming.kicks-ass.net> <20191021150549.bitgqifqk2tbd3aj@treble>
- <20200120165039.6hohicj5o52gdghu@treble>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1729049AbgAUIgN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 03:36:13 -0500
+Received: from relay-b01.edpnet.be ([212.71.1.221]:33576 "EHLO
+        relay-b01.edpnet.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728783AbgAUIgM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 03:36:12 -0500
+X-ASG-Debug-ID: 1579595768-0a7ff5137c3b1fe50001-xx1T2L
+Received: from zotac.vandijck-laurijssen.be ([77.109.89.38]) by relay-b01.edpnet.be with ESMTP id EJYwLFMUGYbaNCj7; Tue, 21 Jan 2020 09:36:08 +0100 (CET)
+X-Barracuda-Envelope-From: dev.kurt@vandijck-laurijssen.be
+X-Barracuda-Effective-Source-IP: UNKNOWN[77.109.89.38]
+X-Barracuda-Apparent-Source-IP: 77.109.89.38
+Received: from x1.vandijck-laurijssen.be (74.250-240-81.adsl-static.isp.belgacom.be [81.240.250.74])
+        by zotac.vandijck-laurijssen.be (Postfix) with ESMTPSA id 7E2F4C67F07;
+        Tue, 21 Jan 2020 09:36:08 +0100 (CET)
+Date:   Tue, 21 Jan 2020 09:35:59 +0100
+From:   Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+To:     Oliver Hartkopp <socketcan@hartkopp.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>, linux-can@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in can_rx_register
+Message-ID: <20200121083559.GE14537@x1.vandijck-laurijssen.be>
+X-ASG-Orig-Subj: Re: general protection fault in can_rx_register
+Mail-Followup-To: Oliver Hartkopp <socketcan@hartkopp.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, o.rempel@pengutronix.de,
+        syzbot <syzbot+c3ea30e1e2485573f953@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>, linux-can@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <00000000000030dddb059c562a3f@google.com>
+ <55ad363b-1723-28aa-78b1-8aba5565247e@hartkopp.net>
+ <20200120091146.GD11138@x1.vandijck-laurijssen.be>
+ <CACT4Y+a+GusEA1Gs+z67uWjtwBRp_s7P4Wd_SMmgpCREnDu3kg@mail.gmail.com>
+ <8332ec7f-2235-fdf6-9bda-71f789c57b37@hartkopp.net>
+ <2a676c0e-20f2-61b5-c72b-f51947bafc7d@hartkopp.net>
+ <20200121083035.GD14537@x1.vandijck-laurijssen.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200121083035.GD14537@x1.vandijck-laurijssen.be>
+User-Agent: Mutt/1.5.22 (2013-10-16)
+X-Barracuda-Connect: UNKNOWN[77.109.89.38]
+X-Barracuda-Start-Time: 1579595768
+X-Barracuda-URL: https://212.71.1.221:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at edpnet.be
+X-Barracuda-Scan-Msg-Size: 3533
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: SPAM GLOBAL 0.9309 1.0000 3.5604
+X-Barracuda-Spam-Score: 3.56
+X-Barracuda-Spam-Status: No, SCORE=3.56 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=7.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.79477
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020, Josh Poimboeuf wrote:
-
-> On Mon, Oct 21, 2019 at 10:05:49AM -0500, Josh Poimboeuf wrote:
-> > On Wed, Oct 16, 2019 at 09:42:17AM +0200, Peter Zijlstra wrote:
-> > > > which are not compatible with livepatching. GCC upstream now has
-> > > > -flive-patching option, which disables all those interfering optimizations.
-> > > 
-> > > Which, IIRC, has a significant performance impact and should thus really
-> > > not be used...
-> > > 
-> > > If distros ship that crap, I'm going to laugh at them the next time they
-> > > want a single digit performance improvement because *important*.
+On di, 21 jan 2020 09:30:35 +0100, Kurt Van Dijck wrote:
+> On ma, 20 jan 2020 23:35:16 +0100, Oliver Hartkopp wrote:
+> > Answering myself ...
 > > 
-> > I have a crazy plan to try to use objtool to detect function changes at
-> > a binary level, which would hopefully allow us to drop this flag.
+> > On 20/01/2020 23.02, Oliver Hartkopp wrote:
 > > 
-> > But regardless, I wonder if we enabled this flag prematurely.  We still
-> > don't have a reasonable way to use it for creating source-based live
-> > patches upstream, and it should really be optional for CONFIG_LIVEPATCH,
-> > since kpatch-build doesn't need it.
+> > >
+> > >Added some code to check whether dev->ml_priv is NULL:
+> > >
+> > >~/linux$ git diff
+> > >diff --git a/net/can/af_can.c b/net/can/af_can.c
+> > >index 128d37a4c2e0..6fb4ae4c359e 100644
+> > >--- a/net/can/af_can.c
+> > >+++ b/net/can/af_can.c
+> > >@@ -463,6 +463,10 @@ int can_rx_register(struct net *net, struct
+> > >net_device *dev, canid_t can_id,
+> > >         spin_lock_bh(&net->can.rcvlists_lock);
+> > >
+> > >         dev_rcv_lists = can_dev_rcv_lists_find(net, dev);
+> > >+       if (!dev_rcv_lists) {
+> > >+               pr_err("dev_rcv_lists == NULL! %p\n", dev);
+> > >+               goto out_unlock;
+> > >+       }
+> > >         rcv_list = can_rcv_list_find(&can_id, &mask, dev_rcv_lists);
+> > >
+> > >         rcv->can_id = can_id;
+> > >@@ -479,6 +483,7 @@ int can_rx_register(struct net *net, struct net_device
+> > >*dev, canid_t can_id,
+> > >         rcv_lists_stats->rcv_entries++;
+> > >         rcv_lists_stats->rcv_entries_max =
+> > >max(rcv_lists_stats->rcv_entries_max,
+> > >
+> > >rcv_lists_stats->rcv_entries);
+> > >+out_unlock:
+> > >         spin_unlock_bh(&net->can.rcvlists_lock);
+> > >
+> > >         return err;
+> > >
+> > >And the output (after some time) is:
+> > >
+> > >[  758.505841] netlink: 'crash': attribute type 1 has an invalid length.
+> > >[  758.508045] bond7148: (slave vxcan1): The slave device specified does
+> > >not support setting the MAC address
+> > >[  758.508057] bond7148: (slave vxcan1): Error -22 calling dev_set_mtu
+> > >[  758.532025] bond10413: (slave vxcan1): The slave device specified does
+> > >not support setting the MAC address
+> > >[  758.532043] bond10413: (slave vxcan1): Error -22 calling dev_set_mtu
+> > >[  758.532254] dev_rcv_lists == NULL! 000000006b9d257f
+> > >[  758.547392] netlink: 'crash': attribute type 1 has an invalid length.
+> > >[  758.549310] bond7145: (slave vxcan1): The slave device specified does
+> > >not support setting the MAC address
+> > >[  758.549313] bond7145: (slave vxcan1): Error -22 calling dev_set_mtu
+> > >[  758.550464] netlink: 'crash': attribute type 1 has an invalid length.
+> > >[  758.552301] bond7146: (slave vxcan1): The slave device specified does
+> > >not support setting the MAC address
+> > >
+> > >So we can see that we get a ml_priv pointer which is NULL which should not
+> > >be possible due to this:
+> > >
+> > >https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/can/dev.c#n743
+> > 
+> > This reference doesn't point to the right code as vxcan has its own handling
+> > do assign ml_priv in vxcan.c .
+> > 
+> > >Btw. the variable 'size' is set two times at the top of alloc_candev_mqs()
+> > >depending on echo_skb_max. This looks wrong.
+> > 
+> > No. It looks right as I did not get behind the ALIGN() macro at first sight.
+> > 
+> > But it is still open why dev->ml_priv is not set correctly in vxcan.c as all
+> > the settings for .priv_size and in vxcan_setup look fine.
 > 
-> I also just discovered that -flive-patching is responsible for all those
-> "unreachable instruction" objtool warnings which Randy has been
-> dutifully bugging me about over the last several months.  For some
-> reason it subtly breaks GCC implicit noreturn detection for local
-> functions.
+> Maybe I got completely lost:
+> Shouldn't can_ml_priv and vxcan_priv not be similar?
+> Where is the dev_rcv_lists in the vxcan case?
 
-Ugh, that is unfortunate. Have you reported it?
- 
-> At this point, I only see downsides of -flive-patching, at least until
-> we actually have real upstream code which needs it.
+IMHO, net/can/af_can.c:306 is wrong in the vxcan case.
 
-Can you explain this? The option makes GCC to avoid optimizations which 
-are difficult to detect and would make live patching unsafe. I consider it 
-useful as it is, so if you shared the other downsides and what you meant 
-by real upstream code, we could discuss it.
-
-> If there aren't any objections I'll be posting a patch soon to revert.
-
-I think it would be a setback.
-
-Regards
-Miroslav
+> 
+> > 
+> > Best regards,
+> > Oliver
