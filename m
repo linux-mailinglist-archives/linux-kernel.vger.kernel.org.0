@@ -2,136 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A236143782
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE87E14378A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 08:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbgAUHVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 02:21:50 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12752 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725789AbgAUHVu (ORCPT
+        id S1728829AbgAUHZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 02:25:18 -0500
+Received: from sonic302-1.consmr.mail.bf2.yahoo.com ([74.6.135.40]:39280 "EHLO
+        sonic302-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725789AbgAUHZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:21:50 -0500
-X-UUID: 7f0d56b122ea46fb82bc2fb160158317-20200121
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=RTFuTKew6Bbm3rHXc1VuNfPD8aZnX6svfZSE96XCyyo=;
-        b=G6GJ0WK0KJLZHBZHmKZEHKQeb4uL81/0+KuDml2kO3lqqls2rmeHT7qjXZCGRjvPPCKCT4yuve7e7RtrIj8s2Q1HHudI6Ir3vgdTqIpCLhM00xmyz7Tl5FAXsFJv1b42jxHrTD3hk6bWY/Wiub4o/g5n7iu2LLiTtMvEajDytCg=;
-X-UUID: 7f0d56b122ea46fb82bc2fb160158317-20200121
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <yong.mao@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1503164164; Tue, 21 Jan 2020 15:21:47 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 21 Jan 2020 15:21:06 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 21 Jan 2020 15:19:25 +0800
-From:   Yong Mao <yong.mao@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        yong mao <yong.mao@mediatek.com>
-Subject: [PATCH] mmc: mediatek: fix SDIO irq issue
-Date:   Tue, 21 Jan 2020 15:20:58 +0800
-Message-ID: <1579591258-30940-2-git-send-email-yong.mao@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1579591258-30940-1-git-send-email-yong.mao@mediatek.com>
-References: <1579591258-30940-1-git-send-email-yong.mao@mediatek.com>
+        Tue, 21 Jan 2020 02:25:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1579591516; bh=AOGonAn92nStPthnxgXlFu27UaMmeJ9tVgUwqWkJ+Rs=; h=Date:From:Reply-To:Subject:References:From:Subject; b=UFY+wsGGaSpQ7wJvtGAwp1m0Fxfx3XGEl18AqyHY7lc1L96ZVFbpST+bF1nBDeE30Xib2q8AWvykvW2TuERCp0N4jPmegV2x7/dD51tV341f5wcD5w2EqgEZCnj6Kd6bdwtCbt7Nq2p6P1CQxbIohx7/pNyz/ThzpIANbo/ZrSqvyNG4ZZKS68lgggaNVmO6HuKg5vblFqROogu3FNheMappZqfXN6F2cdFMHXua/crJZ/yEegULqs6wW7sLYI3+9CqBuFncQwe5DYmEdTjbwcNqrs1dz0Kd5zXsBBn12RylHd6Z2UUQoLjW8hCIlXgPBYkU0TtP9PEbL0YmVPA71Q==
+X-YMail-OSG: ATnMXh4VM1mVW0rGzIkeRgmG9tL8z0lEGdcu3xMf.C1LcECAMAw56zkSjA5GQWa
+ YsTyzBi28eTq1Hx1BwM.Fpklun8SYVjLGdq9T9B02ufULXDI7biZjuLoyr1PV69ySWSD7vrW9CPf
+ 7vk4i_KRPaY8ioFlZktfFD7pfylXPRnikydrPFWXHmnXVjCySmHsS_wtyCYXYm6vFh0NyV_FpAAv
+ jCdD52JKyahu_n9rb4GiKA9bOsjiZcq1hdoQru2GRQ7VTVRZXGwJru7WorB663Q3MykpIZsQ8uZf
+ NvEq8fH29tDtLcDXZxTenSv.AHaTT5lVWx1J5WSbAb610kLR9Upm6DJF65NWaz7VRQm5Tr9pEHEt
+ LXWw_Xo4R_WljTiOr3yqVtkdm03SSyQKotXIvi.weyVOhe0zoBjvIr5A20obO1P.oikY0VnKU9xj
+ WI1tIkCBcSzIrRpnsJ3rSPEryGHIfEu40vzB.GXpa6lbxvWP.eAI7INp0O34vkt8zpKxEeD0vHr.
+ 2tyLRg7aEFvwKUfQ30aGPbkqamjiOavGYyOsM19jCD6JYuXP7d2oS72T1UiXkZy6nJLwDiL1VPP7
+ zl6PzjQkAblkQlEt0a2be_5k.4jYG.IO.A_Pgt_fnOGilURK_93EzA7gxat7QysGnjbipKmX5_c8
+ gklcJa_q0kE6JajbBvio.6DWkjqkcti98N1OQxfFLK6GeIoGXwmo1n0uL5.ZyBcoXZNNI3B6CBe5
+ MnZPrvjpVXAV8Sz3l3L7s2ZSWbe5IVIWbhX_qlB5Yg7zY39DfdcprVNp97wklmhd.fy2yeXDsuTn
+ YG7Cz8_Oa3exr2KxDkpSDKP0tehWsn1qs9pVc0MHfkBYFyDNEZgtiyQzUYs240KB7Cn1GyPYjH_x
+ pdq5Ez9GHVo3FIxD8yov9D8CssnkMHT4HriNXPNqF6ifvdmJFi0ItQ6P_UyyOPkNxch2m19kIRDn
+ ZE00QownbdZHNGJMofRtyw7PaE0Jy1z99H3mmgCBHEB_11ISeFtJv.oY0uYMvn992WC38L0p1aai
+ Ji_DMzqkb_6mvNGNnqJPs3PqMIK_Nef731XjNcuZgN7X8aVEL6pt2Tk6IAf_jzHGQUmShrtwF36v
+ tW1pxFQpN3V_oAmORQqif3DdD32gkBpMAqQIbuFqXcBmqzAcLMG8urKqf.RfXYs_Ptt9zfwCcY_5
+ P2WNbcMfUIlfRgYEFCV7SPNun1QBeJ7JlU_erSkY_s7nN.sgzapl958v4i_tQqeIPPWArx24TSrt
+ Kl7EgMCyuRpohcDHvH_I3_JOmz3.r_NhI4UcorJIO1Df4PcnL8RRdjQIEKxb_qfrP9XdVy9iOJm0
+ vAXQo3G69_L6RFp8NfCLjOYgXNynO3KSWFQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Tue, 21 Jan 2020 07:25:16 +0000
+Date:   Tue, 21 Jan 2020 07:25:13 +0000 (UTC)
+From:   "Miss.Amina Ibrahim" <ai262034@gmail.com>
+Reply-To: aminaibrahim0007@gmail.com
+Message-ID: <267202765.9781067.1579591513342@mail.yahoo.com>
+Subject: Please I Need Your Urgent Reply,
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <267202765.9781067.1579591513342.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36 OPR/65.0.3467.78
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogeW9uZyBtYW8gPHlvbmcubWFvQG1lZGlhdGVrLmNvbT4NCg0KSG9zdCBjb250cm9sbGVy
-IG1heSBsb3N0IGludGVycnVwdCBpbiBzb21lIHNwZWNhaWwgY2FzZS4NCkFkZCBTRElPIGlycSBy
-ZWNoZWNrIG1lY2hhbmlzbSB0byBtYWtlIHN1cmUgYWxsIGludGVycnVwdHMNCmNhbiBiZSBwcm9j
-ZXNzZWQgaW1tZWRpYXRlbHkuDQoNClNpZ25lZC1vZmYtYnk6IFlvbmcgTWFvIDx5b25nLm1hb0Bt
-ZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL21tYy9ob3N0L210ay1zZC5jIHwgMzggKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiAxIGZpbGUgY2hhbmdlZCwgMzggaW5z
-ZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC9tdGstc2QuYyBiL2Ry
-aXZlcnMvbW1jL2hvc3QvbXRrLXNkLmMNCmluZGV4IDc3MjZkY2YuLjE4YTFiODYgMTAwNjQ0DQot
-LS0gYS9kcml2ZXJzL21tYy9ob3N0L210ay1zZC5jDQorKysgYi9kcml2ZXJzL21tYy9ob3N0L210
-ay1zZC5jDQpAQCAtMTI4LDYgKzEyOCw3IEBADQogI2RlZmluZSBNU0RDX1BTX0NEU1RTICAgICAg
-ICAgICAoMHgxIDw8IDEpCS8qIFIgICovDQogI2RlZmluZSBNU0RDX1BTX0NEREVCT1VOQ0UgICAg
-ICAoMHhmIDw8IDEyKQkvKiBSVyAqLw0KICNkZWZpbmUgTVNEQ19QU19EQVQgICAgICAgICAgICAg
-KDB4ZmYgPDwgMTYpCS8qIFIgICovDQorI2RlZmluZSBNU0RDX1BTX0RBVEExICAgICAgICAgICAo
-MHgxIDw8IDE3KQkvKiBSICAqLw0KICNkZWZpbmUgTVNEQ19QU19DTUQgICAgICAgICAgICAgKDB4
-MSA8PCAyNCkJLyogUiAgKi8NCiAjZGVmaW5lIE1TRENfUFNfV1AgICAgICAgICAgICAgICgweDEg
-PDwgMzEpCS8qIFIgICovDQogDQpAQCAtMzYxLDYgKzM2Miw3IEBAIHN0cnVjdCBtc2RjX3NhdmVf
-cGFyYSB7DQogDQogc3RydWN0IG10a19tbWNfY29tcGF0aWJsZSB7DQogCXU4IGNsa19kaXZfYml0
-czsNCisJYm9vbCByZWNoZWNrX3NkaW9faXJxOw0KIAlib29sIGhzNDAwX3R1bmU7IC8qIG9ubHkg
-dXNlZCBmb3IgTVQ4MTczICovDQogCXUzMiBwYWRfdHVuZV9yZWc7DQogCWJvb2wgYXN5bmNfZmlm
-bzsNCkBAIC00MzYsNiArNDM4LDcgQEAgc3RydWN0IG1zZGNfaG9zdCB7DQogDQogc3RhdGljIGNv
-bnN0IHN0cnVjdCBtdGtfbW1jX2NvbXBhdGlibGUgbXQ4MTM1X2NvbXBhdCA9IHsNCiAJLmNsa19k
-aXZfYml0cyA9IDgsDQorCS5yZWNoZWNrX3NkaW9faXJxID0gZmFsc2UsDQogCS5oczQwMF90dW5l
-ID0gZmFsc2UsDQogCS5wYWRfdHVuZV9yZWcgPSBNU0RDX1BBRF9UVU5FLA0KIAkuYXN5bmNfZmlm
-byA9IGZhbHNlLA0KQEAgLTQ0OCw2ICs0NTEsNyBAQCBzdHJ1Y3QgbXNkY19ob3N0IHsNCiANCiBz
-dGF0aWMgY29uc3Qgc3RydWN0IG10a19tbWNfY29tcGF0aWJsZSBtdDgxNzNfY29tcGF0ID0gew0K
-IAkuY2xrX2Rpdl9iaXRzID0gOCwNCisJLnJlY2hlY2tfc2Rpb19pcnEgPSB0cnVlLA0KIAkuaHM0
-MDBfdHVuZSA9IHRydWUsDQogCS5wYWRfdHVuZV9yZWcgPSBNU0RDX1BBRF9UVU5FLA0KIAkuYXN5
-bmNfZmlmbyA9IGZhbHNlLA0KQEAgLTQ2MCw2ICs0NjQsNyBAQCBzdHJ1Y3QgbXNkY19ob3N0IHsN
-CiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19tbWNfY29tcGF0aWJsZSBtdDgxODNfY29tcGF0
-ID0gew0KIAkuY2xrX2Rpdl9iaXRzID0gMTIsDQorCS5yZWNoZWNrX3NkaW9faXJxID0gZmFsc2Us
-DQogCS5oczQwMF90dW5lID0gZmFsc2UsDQogCS5wYWRfdHVuZV9yZWcgPSBNU0RDX1BBRF9UVU5F
-MCwNCiAJLmFzeW5jX2ZpZm8gPSB0cnVlLA0KQEAgLTQ3Miw2ICs0NzcsNyBAQCBzdHJ1Y3QgbXNk
-Y19ob3N0IHsNCiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19tbWNfY29tcGF0aWJsZSBtdDI3
-MDFfY29tcGF0ID0gew0KIAkuY2xrX2Rpdl9iaXRzID0gMTIsDQorCS5yZWNoZWNrX3NkaW9faXJx
-ID0gZmFsc2UsDQogCS5oczQwMF90dW5lID0gZmFsc2UsDQogCS5wYWRfdHVuZV9yZWcgPSBNU0RD
-X1BBRF9UVU5FMCwNCiAJLmFzeW5jX2ZpZm8gPSB0cnVlLA0KQEAgLTQ4NCw2ICs0OTAsNyBAQCBz
-dHJ1Y3QgbXNkY19ob3N0IHsNCiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19tbWNfY29tcGF0
-aWJsZSBtdDI3MTJfY29tcGF0ID0gew0KIAkuY2xrX2Rpdl9iaXRzID0gMTIsDQorCS5yZWNoZWNr
-X3NkaW9faXJxID0gZmFsc2UsDQogCS5oczQwMF90dW5lID0gZmFsc2UsDQogCS5wYWRfdHVuZV9y
-ZWcgPSBNU0RDX1BBRF9UVU5FMCwNCiAJLmFzeW5jX2ZpZm8gPSB0cnVlLA0KQEAgLTQ5Niw2ICs1
-MDMsNyBAQCBzdHJ1Y3QgbXNkY19ob3N0IHsNCiANCiBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19t
-bWNfY29tcGF0aWJsZSBtdDc2MjJfY29tcGF0ID0gew0KIAkuY2xrX2Rpdl9iaXRzID0gMTIsDQor
-CS5yZWNoZWNrX3NkaW9faXJxID0gZmFsc2UsDQogCS5oczQwMF90dW5lID0gZmFsc2UsDQogCS5w
-YWRfdHVuZV9yZWcgPSBNU0RDX1BBRF9UVU5FMCwNCiAJLmFzeW5jX2ZpZm8gPSB0cnVlLA0KQEAg
-LTUwOCw2ICs1MTYsNyBAQCBzdHJ1Y3QgbXNkY19ob3N0IHsNCiANCiBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IG10a19tbWNfY29tcGF0aWJsZSBtdDg1MTZfY29tcGF0ID0gew0KIAkuY2xrX2Rpdl9iaXRz
-ID0gMTIsDQorCS5yZWNoZWNrX3NkaW9faXJxID0gZmFsc2UsDQogCS5oczQwMF90dW5lID0gZmFs
-c2UsDQogCS5wYWRfdHVuZV9yZWcgPSBNU0RDX1BBRF9UVU5FMCwNCiAJLmFzeW5jX2ZpZm8gPSB0
-cnVlLA0KQEAgLTUxOCw2ICs1MjcsNyBAQCBzdHJ1Y3QgbXNkY19ob3N0IHsNCiANCiBzdGF0aWMg
-Y29uc3Qgc3RydWN0IG10a19tbWNfY29tcGF0aWJsZSBtdDc2MjBfY29tcGF0ID0gew0KIAkuY2xr
-X2Rpdl9iaXRzID0gOCwNCisJLnJlY2hlY2tfc2Rpb19pcnEgPSBmYWxzZSwNCiAJLmhzNDAwX3R1
-bmUgPSBmYWxzZSwNCiAJLnBhZF90dW5lX3JlZyA9IE1TRENfUEFEX1RVTkUsDQogCS5hc3luY19m
-aWZvID0gZmFsc2UsDQpAQCAtMTAwNyw2ICsxMDE3LDMwIEBAIHN0YXRpYyBpbnQgbXNkY19hdXRv
-X2NtZF9kb25lKHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsIGludCBldmVudHMsDQogCXJldHVybiBj
-bWQtPmVycm9yOw0KIH0NCiANCisvKioNCisgKiBtc2RjX3JlY2hlY2tfc2Rpb19pcnEgLSByZWNo
-ZWNrIHdoZXRoZXIgdGhlIFNESU8gaXJxIGlzIGxvc3QNCisgKg0KKyAqIEhvc3QgY29udHJvbGxl
-ciBtYXkgbG9zdCBpbnRlcnJ1cHQgaW4gc29tZSBzcGVjaWFsIGNhc2UuDQorICogQWRkIFNESU8g
-aXJxIHJlY2hlY2sgbWVjaGFuaXNtIHRvIG1ha2Ugc3VyZSBhbGwgaW50ZXJydXB0cw0KKyAqIGNh
-biBiZSBwcm9jZXNzZWQgaW1tZWRpYXRlbHkNCisgKg0KKyAqLw0KK3N0YXRpYyB2b2lkIG1zZGNf
-cmVjaGVja19zZGlvX2lycShzdHJ1Y3QgbXNkY19ob3N0ICpob3N0KQ0KK3sNCisJdTMyIHJlZ19p
-bnQsIHJlZ19pbnRlbiwgcmVnX3BzOw0KKw0KKwlpZiAoKGhvc3QtPm1tYy0+Y2FwcyAmIE1NQ19D
-QVBfU0RJT19JUlEpKSB7DQorCQlyZWdfaW50ZW4gPSByZWFkbChob3N0LT5iYXNlICsgTVNEQ19J
-TlRFTik7DQorCQlpZiAocmVnX2ludGVuICYgTVNEQ19JTlRFTl9TRElPSVJRKSB7DQorCQkJcmVn
-X2ludCA9IHJlYWRsKGhvc3QtPmJhc2UgKyBNU0RDX0lOVCk7DQorCQkJcmVnX3BzID0gcmVhZGwo
-aG9zdC0+YmFzZSArIE1TRENfUFMpOw0KKwkJCWlmICghKChyZWdfaW50ICYgTVNEQ19JTlRfU0RJ
-T0lSUSkgfHwNCisJCQkgICAgICAocmVnX3BzICYgTVNEQ19QU19EQVRBMSkpKQ0KKwkJCQlzZGlv
-X3NpZ25hbF9pcnEoaG9zdC0+bW1jKTsNCisJCX0NCisJfQ0KK30NCisNCiBzdGF0aWMgdm9pZCBt
-c2RjX3RyYWNrX2NtZF9kYXRhKHN0cnVjdCBtc2RjX2hvc3QgKmhvc3QsDQogCQkJCXN0cnVjdCBt
-bWNfY29tbWFuZCAqY21kLCBzdHJ1Y3QgbW1jX2RhdGEgKmRhdGEpDQogew0KQEAgLTEwMzUsNiAr
-MTA2OSw4IEBAIHN0YXRpYyB2b2lkIG1zZGNfcmVxdWVzdF9kb25lKHN0cnVjdCBtc2RjX2hvc3Qg
-Kmhvc3QsIHN0cnVjdCBtbWNfcmVxdWVzdCAqbXJxKQ0KIAlpZiAoaG9zdC0+ZXJyb3IpDQogCQlt
-c2RjX3Jlc2V0X2h3KGhvc3QpOw0KIAltbWNfcmVxdWVzdF9kb25lKGhvc3QtPm1tYywgbXJxKTsN
-CisJaWYgKGhvc3QtPmRldl9jb21wLT5yZWNoZWNrX3NkaW9faXJxKQ0KKwkJbXNkY19yZWNoZWNr
-X3NkaW9faXJxKGhvc3QpOw0KIH0NCiANCiAvKiByZXR1cm5zIHRydWUgaWYgY29tbWFuZCBpcyBm
-dWxseSBoYW5kbGVkOyByZXR1cm5zIGZhbHNlIG90aGVyd2lzZSAqLw0KQEAgLTEzOTMsNiArMTQy
-OSw4IEBAIHN0YXRpYyB2b2lkIF9fbXNkY19lbmFibGVfc2Rpb19pcnEoc3RydWN0IG1zZGNfaG9z
-dCAqaG9zdCwgaW50IGVuYikNCiAJaWYgKGVuYikgew0KIAkJc2RyX3NldF9iaXRzKGhvc3QtPmJh
-c2UgKyBNU0RDX0lOVEVOLCBNU0RDX0lOVEVOX1NESU9JUlEpOw0KIAkJc2RyX3NldF9iaXRzKGhv
-c3QtPmJhc2UgKyBTRENfQ0ZHLCBTRENfQ0ZHX1NESU9JREUpOw0KKwkJaWYgKGhvc3QtPmRldl9j
-b21wLT5yZWNoZWNrX3NkaW9faXJxKQ0KKwkJCW1zZGNfcmVjaGVja19zZGlvX2lycShob3N0KTsN
-CiAJfSBlbHNlIHsNCiAJCXNkcl9jbHJfYml0cyhob3N0LT5iYXNlICsgTVNEQ19JTlRFTiwgTVNE
-Q19JTlRFTl9TRElPSVJRKTsNCiAJCXNkcl9jbHJfYml0cyhob3N0LT5iYXNlICsgU0RDX0NGRywg
-U0RDX0NGR19TRElPSURFKTsNCi0tIA0KMS45LjENCg==
+My Name is Miss Amina Ibrahim from Libya, I am 22 years old, I am in
+St.Christopher's Parish for refugee in Burkina Faso under United
+Nations High commission for Refugee ,I lost my parents in the recent
 
+war in  Libya, right now am in Burkina Faso, please save my life i am
+in danger need your help in transferring my inheritance my father left
+behind for me in a Bank in Burkina Faso here,i have every document for
+
+the transfer, all i need is a foreigner who will stand as the foreign
+partner to my father and beneficiary of the fund. The money deposited
+in the Bank is US10.5 MILLION UNITED STATES DOLLAR) I just need this
+
+fund to be transfer to your account so that I will come over to your
+country and complete my education as you know that my country have
+been in deep crisis due to the war .and I cannot go back there again
+
+because I have nobody again all of my family were killed in the war.
+If you are interested to save me and help me receive my inheritance
+fund Please get back to me aminaibrahim0007@gmail.com
+Miss Amina IBRAHIM.
