@@ -2,88 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835001438E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C526E1438ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbgAUJBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:01:55 -0500
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:44839 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUJBz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:01:55 -0500
-Received: by mail-lj1-f181.google.com with SMTP id q8so1861131ljj.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:01:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=afnx+B71cegV5q+X/wf5E0hqEyBS8gYxOHw2pHAP4kA=;
-        b=gUtEqbH3wrzEHS6VY12SMMG7F1oEFdMbmxOnSmV4lxTFUJt2d5TlLqYNoOFecZufw3
-         a477lxgVbqZX5rkopOK4Zc9Ce8D9w3bbijX36LD91VxAT/0/dMhB1THRgNYBGW/EqNma
-         lCggK0dE6zrfQIfexStSjXp3gfgrJFHEzM+qXfoBqL5X8m25H9NeNOa0wk+O+nN0/DQO
-         2OGq5nkoX+gGJIWoFhx+A6nmMLnmzVt4VcGSsSe2QV+OyUnSyeIISP09DKZYczpHLnFX
-         Pmw/PVCQjRHpOakl2TWxyYhuXsY42mHETBVkoL+b/F7TIC5iBcaR0QNGIAIEc3zDEpAR
-         jtiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=afnx+B71cegV5q+X/wf5E0hqEyBS8gYxOHw2pHAP4kA=;
-        b=c4AzGYWFV+nEeFidzdqnqcOxIM4ZFFSwXKyVj5pWE+RroYaOTTijCmT8rd9OpL0HwI
-         +tm3kXc3dxLD2yx/1sPrf5nzyPZugf6HQ/CQxJreI41hGo5RhSY6JcXvQNYuAY1j5ml+
-         /uEmDsqtw3YJaPEvcUC6TpWubSzArMZuZjxTjZFZ4xd0uvm/UoixB+WH9K0a6z1NGxAF
-         IZXy3V8P8U7an4KBjR5Z9bO9QVuxLRdJQ5eh8TqnTFsfmJx57VwuSRxCLMYdKjZIdXNa
-         0thZb+ua+ymIOOpMn19fTP57c2GlDvh5xM/ZbUafEqrE3Tjj955gti4SRXnynmNQwkgq
-         OQQQ==
-X-Gm-Message-State: APjAAAWfw62mt51ApnfaVLGsJAjfwmn6zEvi7FJ3UqphnwSUeC0mdfk9
-        eIzKxVNWCzuCtEImH9Ke6W5Zcxu5tJAzng==
-X-Google-Smtp-Source: APXvYqyMnIQZDBbTNeeLyMo1ILlAA3ZNKrbHRjmpJy1YuY8TagG3jH62uv3BdLWZpWLfJOp8iVr43g==
-X-Received: by 2002:a2e:916:: with SMTP id 22mr15885841ljj.60.1579597312835;
-        Tue, 21 Jan 2020 01:01:52 -0800 (PST)
-Received: from ?IPv6:2a00:1fa0:4257:4d38:8de3:4197:be8e:7729? ([2a00:1fa0:4257:4d38:8de3:4197:be8e:7729])
-        by smtp.gmail.com with ESMTPSA id 195sm18030740ljj.55.2020.01.21.01.01.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 01:01:51 -0800 (PST)
-Subject: Re: [PATCH -next] drivers: net: declance: fix comparing pointer to 0
-To:     Chen Zhou <chenzhou10@huawei.com>, davem@davemloft.net,
-        mhabets@solarflare.com, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200121013553.15252-1-chenzhou10@huawei.com>
- <40eb3815-f677-c2fd-3e67-4b39bb332f48@cogentembedded.com>
- <86f4d4a0-627d-84aa-c785-4dac426b7cc6@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <c223c347-4c19-176f-4626-b096c12c0558@cogentembedded.com>
-Date:   Tue, 21 Jan 2020 12:01:45 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728765AbgAUJEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:04:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727360AbgAUJEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:04:02 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B318217F4;
+        Tue, 21 Jan 2020 09:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579597441;
+        bh=0H0bh1Jo/UYT268NBP9XJ/xrV/lNAdl64vvZCHXIpWU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1KWMsrnqW/cswbFn9+0WcD81L2LSztxIrowKZN9mQBc0XgGK/rtvvFp/2lwyIlSAF
+         RakyBoq4cYNF1jTtQNoy90XRMpcpVgIkQc48g4BTNIAHVWjeSYFi+OM+SCpD+XZlSJ
+         W4vL7hdPmGsfFRhiU9tX/JPKW9JPfX/Tg/ztA340=
+Date:   Tue, 21 Jan 2020 10:03:58 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/9] arm64: dts: allwinner: Enable button wakeup on
+ Orange Pi PC2
+Message-ID: <20200121090358.6mbrbhabtg6gkhpx@gilmour.lan>
+References: <20200119163104.13274-1-samuel@sholland.org>
 MIME-Version: 1.0
-In-Reply-To: <86f4d4a0-627d-84aa-c785-4dac426b7cc6@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c7ftjrc3bbfqytxr"
+Content-Disposition: inline
+In-Reply-To: <20200119163104.13274-1-samuel@sholland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.01.2020 11:54, Chen Zhou wrote:
 
->>> Fixes coccicheck warning:
->>>
->>> ./drivers/net/ethernet/amd/declance.c:611:14-15:
->>>      WARNING comparing pointer to 0
->>>
->>> Compare pointer-typed values to NULL rather than 0.
->>
->>     I don't see NULL in the patch -- you used ! instead.
-> 
-> Yeah, i used ! here.
+--c7ftjrc3bbfqytxr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Make the patch description match the diff, please.
+On Sun, Jan 19, 2020 at 10:30:56AM -0600, Samuel Holland wrote:
+> The Orange Pi PC2 features a GPIO button. As the button is connected to
+> Port L (pin PL3), it can be used as a wakeup source. Enable this.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-> Thanks,
-> Chen Zhou
+Applied, thanks!
+Maxime
 
-MBR, Sergei
+--c7ftjrc3bbfqytxr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXia+fgAKCRDj7w1vZxhR
+xRkVAP943gYCXiKg93jTbLbHeiSAWTJCK7Vv7DiW+3NyES0zmQD+OHcexubzHhjo
+SLUbywQHwdDXWublL3xrFtyl1lb0WAo=
+=+s0l
+-----END PGP SIGNATURE-----
+
+--c7ftjrc3bbfqytxr--
