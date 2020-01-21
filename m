@@ -2,81 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5708014470A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 354E614470D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbgAUWLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:11:31 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35915 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729064AbgAUWL1 (ORCPT
+        id S1728901AbgAUWOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:14:52 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53156 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbgAUWOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:11:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id j17so4690490edp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 14:11:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x52RfIzWuhptiT6HtlO6I538NLkJPevuS3cIwYyZteg=;
-        b=s/rSw8mvL48WPMh/ngVylCpVlto/w/+l5lPClTNQgf8CDydp9BA5lDSfeI1kWU6uHG
-         +nNcYIO7Ec+B/37EzZnnAzaHWk8rXhIIWEpJrS4SBTW+VSPxVwoC0T2MgqNgkhyLq9ur
-         sXrxGR+rzlid5R924smwd9wb1o3y6PWF9nRCkdfDNO47lnYRCW+iMnf2QUZ7KLXiiF4g
-         ACFETfI7/6ZW/XcM55v/bWCZeS+noIhIpfUWyiWFshrbcEgv0qRlAoW+yD8F67NyYHGE
-         IsCiVkI+FbIHz5detETS+LDAYI+hWa5kFOUTYXZysK3vuocEt4A27ojjizGTd8MpNjX0
-         JUjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x52RfIzWuhptiT6HtlO6I538NLkJPevuS3cIwYyZteg=;
-        b=TLYYeki8lUeFr7Gw7nDdXQH2QvjzvjngbAH8KSrNcrZKbcONuOnmOPivT9YYI+O+Pg
-         V+ASkD+I3b6fGknRIYGnviCFGhkIeYJIl1NPOO+GCsVLvHMR1hGVqALtet2uTKuRnaxk
-         NZtuhB8tCpOmaJB8dmbTTIAAlKfAVBsH+w9owcoZfQqUdbIbERJUxJ6ekPBFxFCham0L
-         l5V+DQL0bo04+FqHpfLQJtmXD8K+eB0dEh6kyBl/+lGJO6+2BEfEzQ427OGqpNPyA6co
-         W6phZ2nfDr2tFyR30ZHYNwOaZsz9A8uTQ6mnj2w1Y096ldfX2D3tsqj3h0UgQn4Yh1/o
-         8F8w==
-X-Gm-Message-State: APjAAAU8AoGI/8p+jm8F8S0orcpUk0EwYSSHYUxSQiuKqA03uSmJ+IeM
-        CMInbS3VJwB551h1OE2v+85Pi+5+FkWvoPyiqiU=
-X-Google-Smtp-Source: APXvYqy2Lvp66HQg3tF0U4y7uCLYIvj+NbcFeMsCn8O5mdlF4fZ8zrHwSodtdIlnVzrkNoyj9B2fqN0+7Jg90Y1Co7s=
-X-Received: by 2002:a05:6402:221c:: with SMTP id cq28mr342907edb.110.1579644686374;
- Tue, 21 Jan 2020 14:11:26 -0800 (PST)
+        Tue, 21 Jan 2020 17:14:51 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iu1nL-000IWy-7c; Tue, 21 Jan 2020 22:14:47 +0000
+Date:   Tue, 21 Jan 2020 22:14:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200121221447.GD23230@ZenIV.linux.org.uk>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120110438.ak7jpyy66clx5v6x@pali>
+ <875zh6pc0f.fsf@mail.parknet.co.jp>
+ <20200120214046.f6uq7rlih7diqahz@pali>
+ <20200120224625.GE8904@ZenIV.linux.org.uk>
+ <20200120235745.hzza3fkehlmw5s45@pali>
+ <20200121000701.GG8904@ZenIV.linux.org.uk>
+ <20200121203405.7g7gisb3q55u2y2f@pali>
+ <20200121213625.GB23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20200121103413.1337-1-geert+renesas@glider.be>
- <20200121103722.1781-1-geert+renesas@glider.be> <20200121103722.1781-12-geert+renesas@glider.be>
-In-Reply-To: <20200121103722.1781-12-geert+renesas@glider.be>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 21 Jan 2020 23:11:15 +0100
-Message-ID: <CAFBinCD=LTAT-HQ+wSSmLQux+W5Y6vBju6RQDwf_1t1FhZoXgw@mail.gmail.com>
-Subject: Re: [PATCH 12/20] ARM: meson: Drop unneeded select of COMMON_CLK
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200121213625.GB23230@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 12:47 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Support for Amlogic Meson SoCs depends on ARCH_MULTI_V7, and thus on
-> ARCH_MULTIPLATFORM.
-> As the latter selects COMMON_CLK, there is no need for ARCH_MESON to
-> select COMMON_CLK.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Tue, Jan 21, 2020 at 09:36:25PM +0000, Al Viro wrote:
+> On Tue, Jan 21, 2020 at 09:34:05PM +0100, Pali Rohár wrote:
+> 
+> > This is a great idea to get FAT equivalence classes. Thank you!
+> > 
+> > Now I quickly tried it... and it failed. FAT has restriction for number
+> > of files in a directory, so I would have to do it in more clever way,
+> > e.g prepare N directories and then try to create/open file for each
+> > single-point string in every directory until it success or fail in every
+> > one.
+> 
+> IIRC, the limitation in root directory was much harder than in
+> subdirectories...  Not sure, though - it had been a long time since
+> I had to touch *FAT for any reasons...
 
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: linux-amlogic@lists.infradead.org
-I assume that Kevin should take this through the linux-amlogic tree
-(instead of someone else applying the whole series directly to the
-arm-soc tree)?
-
-
-Martin
+Interesting...  FWIW, Linux vfat happily creates 65536 files in root
+directory.  What are the native limits?
