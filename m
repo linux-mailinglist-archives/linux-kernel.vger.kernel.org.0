@@ -2,115 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0DA1442F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D9714430F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgAURTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 12:19:13 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40366 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729293AbgAURTN (ORCPT
+        id S1729127AbgAURVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 12:21:15 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33195 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbgAURVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 12:19:13 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so4009515wmi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 09:19:12 -0800 (PST)
+        Tue, 21 Jan 2020 12:21:15 -0500
+Received: by mail-oi1-f196.google.com with SMTP id q81so3330146oig.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 09:21:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=haPd6HRvqtRLXCPbKwJIqyrzbzZjxA8VnTnctWQzHDQ=;
-        b=V3RDjf48Ukt0EGvEB2uID5QG+IuQGdlsKsBAVfkHlSYnb1Xv93A92YrzpguYKFALWI
-         UwIZfxIyimaFSUW5d1y+/EfTV74zGVbxhVkaqVP5s3Dj/Fp8aGAV14uIUA1uxF1DcH0t
-         IKMswMCWnZZAho3mplkrBDA4RWxs+38kvWH7rLKoCuTPmacKNYUmYy8IN5WbvoHEQ4Ne
-         vOeM+eEFSyArJLkgVd9mSSrMIDM7q0j/H19ogL07dQcQxb+61IbdnpGi5L5TCbumgBeT
-         wVFOsETaP1NSsMRYE1RFOxbzKT+JBGaWUwNML4Qw26nxXiXxeOwzaZCRpHX5g2POwMzA
-         Op6Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q5QgG9WnPTL3nteIJEXmB0Es5EWve1SbvFBsjUgPlKU=;
+        b=Hqck99IjyucVajmKBNg5n6iwdy1Ba0Mz2Hv7kvqwVGnr1C5wiqxxGa6DCxk+QAHJMw
+         cXceKiYFoYrkDPegt/RiLyqFE5RrUbXQmskCI624CSUZwIkdsYeR7ozgCXW/2NkqjUky
+         zg5KXfgHjVYYDDWNfVZ+wcouy7tJQ8JJJ4ATWB9qwFy0TrYv28pZxxpkNpETf5xjLwjF
+         k+H6lk6iR3rq1X88xVaAVMLnUBS2zqYVoBub6hlkuDBppV1PkIgYMt+ELbbvNGUory2d
+         sR/mOkrzrP4IaEbwArJZYpYycJ7S5WK2drEdwQXGv8OQlFmyEPsHKxNi7GI/RXlpY2/f
+         mSRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=haPd6HRvqtRLXCPbKwJIqyrzbzZjxA8VnTnctWQzHDQ=;
-        b=gYr1n/oa4lRlR4agI5mGDjds5igWcpVgHQaLZxgQQ1+/wRwPV2+n5RZQsyuZPLVgmx
-         A7hkFLs8ZHzrAS+8DZj8okEzL/G3n9uFABYnpuZqaILrsGnJjRzySnnUtfpG6Mh4nLIw
-         IRvDWuoCeLmsccm+1VE2SwchS0+p0hRuuvmgt7IQQOKIMflz1+s4sExV6WzfEzNuAvIv
-         TRtKP5ugfiqGkb0jZJEOiQWIC4iWpfljEDXrY6fKqfkVRPaWy9+o4a3oaQnO+p/OYLPw
-         5tN5zZVbDeJhjEWQQTGEu/dCsEhhV5kj79FhcZVsb/HmvW80VPhF4OQaX4uEYyqXWPL4
-         fdcQ==
-X-Gm-Message-State: APjAAAWbzvMW4CnirtX2nzN0/5rdqxDqrJlbsEki1nIvtmWeR1H3lIgX
-        lXqWRLNBn2765yJUnZrG02Fcew==
-X-Google-Smtp-Source: APXvYqybAtRFD3tR6SvMFsaIZbOuse1eNvM1AEYQtBuLj9xMw29hn5KAlx1+3UIYOJMKj8S9Vnb+hw==
-X-Received: by 2002:a7b:cd86:: with SMTP id y6mr159546wmj.5.1579627151673;
-        Tue, 21 Jan 2020 09:19:11 -0800 (PST)
-Received: from cheddar.halon.org.uk (cheddar.halon.org.uk. [93.93.131.118])
-        by smtp.gmail.com with ESMTPSA id b16sm55167860wrj.23.2020.01.21.09.19.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Jan 2020 09:19:11 -0800 (PST)
-Received: from bsmtp by cheddar.halon.org.uk with local-bsmtp (Exim 4.89)
-        (envelope-from <steve.mcintyre@linaro.org>)
-        id 1itxBG-0002ib-Nt; Tue, 21 Jan 2020 17:19:10 +0000
-Received: from steve by tack.einval.org with local (Exim 4.92)
-        (envelope-from <steve.mcintyre@linaro.org>)
-        id 1itxAl-0003E3-KQ; Tue, 21 Jan 2020 17:18:39 +0000
-Date:   Tue, 21 Jan 2020 17:18:39 +0000
-From:   Steve McIntyre <steve.mcintyre@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     David Gibson <david@gibson.dropbear.id.au>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Simon Glass <sjg@chromium.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/3] dtc: Add dtb build information option
-Message-ID: <20200121171833.GG6796@tack.einval.com>
-References: <20200113181625.3130-1-alexandre.torgue@st.com>
- <20200113181625.3130-2-alexandre.torgue@st.com>
- <20200116005741.GB54439@umbus>
- <d2594b79-a45d-dcac-3642-90016a1408b8@st.com>
- <20200117090937.GU54439@umbus>
- <CAL_JsqKTsX9efYDMjGahFDxj0cEfzozeNrY1Nq1bECzgOZGqdQ@mail.gmail.com>
- <20200119063916.GD54439@umbus>
- <CAL_Jsq+-O0cpw9YtVGAjFWstu-=uXVgK0ccgyRj+bjR93gPriw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q5QgG9WnPTL3nteIJEXmB0Es5EWve1SbvFBsjUgPlKU=;
+        b=PxdNV37YudsVKEdzFhwZFa+QlM3Gz5g7Cntg9r+TKmhUutZXq3z9NHdD4wP6MeOkYb
+         3cVGRc8daKrRdyg6wSwTE8XRfjQBbzWldZkUn0FOxtI0PVervnTMBWqR6A1W+Nk9qHda
+         1R8qVlpqott1UTHrvpuB3k3Qja1tcrv0uGtINdLDiMMSTjJRjJHUzrWt/1i7j9A5+LQ9
+         ww2q29R0kPKNf6KJPedzyiMvYNigGLH2wBbGRvqkxvtauO4Yd9qH2+CLlG7zbOt2V5/f
+         O5Yvtn684ggUkvkEZ7T4iO+OhEl0j8fw23UBTaimA+FtP/QWOqBevK0jL73+WpPkp0ik
+         ewCw==
+X-Gm-Message-State: APjAAAU8VzTXgsqap9hbsd6BZpSfFN9tQH47lwIWja63w1Jssrrdo61X
+        0LYB93Glax7wCD+FzqB6rZUXycBrNt70VMPHrcKdywL4lDE=
+X-Google-Smtp-Source: APXvYqy/cHUnTgqn2AvhCUymfYtPS40fUfd4xCVnC3WQvi+Po8Vm5Fie2sP6ED7bhcqYTLpTOVe/2NqjYrJ36UAvcqo=
+X-Received: by 2002:aca:4a08:: with SMTP id x8mr3813040oia.39.1579627274088;
+ Tue, 21 Jan 2020 09:21:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+-O0cpw9YtVGAjFWstu-=uXVgK0ccgyRj+bjR93gPriw@mail.gmail.com>
-X-attached: none
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-wibble: sender_address steve.mcintyre@linaro.org
+References: <20200121160312.26545-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20200121160312.26545-1-mathieu.desnoyers@efficios.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 21 Jan 2020 18:20:47 +0100
+Message-ID: <CAG48ez2bQdoT9y7HkyU06DTazysUDdPdJe+gyV-NxgQA7JWQVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] pin_on_cpu: Introduce thread CPU pinning system call
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Turner <pjt@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Maurer <bmaurer@fb.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 09:59:44AM -0600, Rob Herring wrote:
->On Sun, Jan 19, 2020 at 12:41 AM David Gibson
-><david@gibson.dropbear.id.au> wrote:
->>
->> It's not really about who consumes it.  It's about defining a
->> namespace for the new property to exist in, since it's not part of a
->> relevant standard (if we wanted to make it such, we should pin down
->> what goes in there with much more precision).
+On Tue, Jan 21, 2020 at 5:13 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+> There is an important use-case which is not possible with the
+> "rseq" (Restartable Sequences) system call, which was left as
+> future work.
 >
->I can't think of any cases of the 'linux' prefix not being about who
->consumes it. And we often end up dropping 'linux' because it turns out
->to not be Linux specific. I don't care to see u-boot,build-info,
->freebsd,build-info, etc. when a given dtb can only have 1 of those.
+> That use-case is to modify user-space per-cpu data structures
+> belonging to specific CPUs which may be brought offline and
+> online again by CPU hotplug. This can be used by memory
+> allocators to migrate free memory pools when CPUs are brought
+> offline, or by ring buffer consumers to target specific per-CPU
+> buffers, even when CPUs are brought offline.
+>
+> A few rather complex prior attempts were made to solve this.
+> Those were based on in-kernel interpreters (cpu_opv, do_on_cpu).
+> That complexity was generally frowned upon, even by their author.
+>
+> This patch fulfills this use-case in a refreshingly simple way:
+> it introduces a "pin_on_cpu" system call, which allows user-space
+> threads to pin themselves on a specific CPU (which needs to be
+> present in the thread's allowed cpu mask), and then clear this
+> pinned state.
+[...]
+> For instance, this allows implementing this userspace library API
+> for incrementing a per-cpu counter for a specific cpu number
+> received as parameter:
+>
+> static inline __attribute__((always_inline))
+> int percpu_addv(intptr_t *v, intptr_t count, int cpu)
+> {
+>         int ret;
+>
+>         ret = rseq_addv(v, count, cpu);
+> check:
+>         if (rseq_unlikely(ret)) {
+>                 pin_on_cpu_set(cpu);
+>                 ret = rseq_addv(v, count, percpu_current_cpu());
+>                 pin_on_cpu_clear();
+>                 goto check;
+>         }
+>         return 0;
+> }
 
-Yes, exactly. What would happen if somebody (tried to) fill in more
-than one of XXXX.build-info? It makes no sense.
+What does userspace have to do if the set of allowed CPUs switches all
+the time? For example, on Android, if you first open Chrome and then
+look at its allowed CPUs, Chrome is allowed to use all CPU cores
+because it's running in the foreground:
 
->My intent is this property name is added to the DT spec, but I don't
->agree we should define what's in it beyond a string. It is information
->that is useful for humans identifying what the dtb was built from.
+walleye:/ # ps -AZ | grep 'android.chrome$'
+u:r:untrusted_app:s0:c145,c256,c512,c768 u0_a145 7845 805 1474472
+197868 SyS_epoll_wait f09c0194 S com.android.chrome
+walleye:/ # grep cpuset /proc/7845/cgroup; grep Cpus_allowed_list
+/proc/7845/status
+3:cpuset:/top-app
+Cpus_allowed_list: 0-7
 
-Nod - defining this as a free-form string lets people put their own
-information in, without us having to try and agree on a full spec
-which we'll need to update as ideas change.
+But if you then switch to the home screen, the application is moved
+into a different cgroup, and is restricted to two CPU cores:
 
--- 
-Steve McIntyre                                steve.mcintyre@linaro.org
-<http://www.linaro.org/> Linaro.org | Open source software for ARM SoCs
+walleye:/ # grep cpuset /proc/7845/cgroup; grep Cpus_allowed_list
+/proc/7845/status
+3:cpuset:/background
+Cpus_allowed_list: 0-1
 
+At the same time, I also wonder whether it is a good idea to allow
+userspace to stay active on a CPU even after the task has been told to
+move to another CPU core - that's probably not exactly a big deal, but
+seems suboptimal to me.
+
+
+I'm wondering whether it might be possible to rework this mechanism
+such that, instead of moving the current task onto a target CPU, it
+prevents all *other* threads of the current process from running on
+that CPU (either entirely or in user mode). That might be the easiest
+way to take care of issues like CPU hotplugging and changing cpusets
+all at once? The only potential issue I see with that approach would
+be that you wouldn't be able to use it for inter-process
+communication; and I have no idea whether this would be good or bad
+performance-wise.
