@@ -2,95 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1E01443DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D0C61443D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 19:00:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbgAUSBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 13:01:50 -0500
-Received: from mail.suchdamage.org ([52.9.186.167]:40058 "EHLO
-        mail.suchdamage.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbgAUSBt (ORCPT
+        id S1729277AbgAUSAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 13:00:32 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44903 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbgAUSAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 13:01:49 -0500
-X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 13:01:49 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.suchdamage.org (Postfix) with ESMTP id 5E9192F536;
-        Tue, 21 Jan 2020 12:54:23 -0500 (EST)
-Received: from mail.suchdamage.org ([127.0.0.1])
-        by localhost (mail.suchdamage.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WfyCN7mdvcTx; Tue, 21 Jan 2020 12:54:22 -0500 (EST)
-Received: from carter-zimmerman.suchdamage.org (c-24-147-244-250.hsd1.ma.comcast.net [24.147.244.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "laptop", Issuer "laptop" (not verified))
-        (Authenticated sender: hartmans-laptop)
-        by mail.suchdamage.org (Postfix) with ESMTPSA;
-        Tue, 21 Jan 2020 12:54:22 -0500 (EST)
-Received: by carter-zimmerman.suchdamage.org (Postfix, from userid 8042)
-        id 8EB97C3B78; Tue, 21 Jan 2020 12:54:21 -0500 (EST)
-From:   Sam Hartman <hartmans@debian.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Sam Hartman <hartmans@debian.org>,
-        Zhenzhong Duan <zhenzhong.duan@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: Question about dynamic minor number of misc device
-References: <CAFH1YnOad7aVjoX_PR6mLqT=pXQjpBW9ZDHkKYzNkeistFkA4A@mail.gmail.com>
-        <CAK8P3a3DwaZnRff7CCrJoSxP_MeVUn1S6nRd+hb5rHnv9dBgLQ@mail.gmail.com>
-        <CAFH1YnMDL1gBNT4vr+C=eGGoCYJvkVDnoXUVN8OL9Xs3668Z+Q@mail.gmail.com>
-        <CAK8P3a0aFr546fF+=LDm3rwZ-sK-xC8VLYTZjOEn+o6fVixRHg@mail.gmail.com>
-        <20200120221323.GJ15860@mit.edu>
-        <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
-        <20200121163110.GK15860@mit.edu>
-Date:   Tue, 21 Jan 2020 12:54:21 -0500
-In-Reply-To: <20200121163110.GK15860@mit.edu> (Theodore Y. Ts'o's message of
-        "Tue, 21 Jan 2020 11:31:10 -0500")
-Message-ID: <tslh80o3dbm.fsf@suchdamage.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 21 Jan 2020 13:00:32 -0500
+Received: by mail-oi1-f196.google.com with SMTP id d62so3396803oia.11;
+        Tue, 21 Jan 2020 10:00:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SoGNpAAYd8DkgVCg9hs0SkAVcBA4n3ThwNDs+CIvNyk=;
+        b=t+ezNWbDC5rg1Nq+ExG1kGjBJcafOCVblECPp0CIoK76CAGe8Eh6yi0npLrNWcDY8+
+         oJgsLkJpwJLYOM7Y2B9fqbA4D1T651YKEeKvT1kkTUcM7uHyGHr8mxWz7VCQAT4ycPMb
+         wJA2MAVJE2Vx6fgsFnsp2yIKTbMzQCSaibqT7uqb12udcksObCTNCLpdHUbXH0C0bgQK
+         jFlavRPNv43pVt/j2Xx9eOAmYbjEdiqORWFA3XLLWtadvIhMsttw3BwrjE2Yzg1UnScY
+         0Jgni9ixVNGXfVn9Z4utvb9ekvJ5Y9Kov0+qUvab/TF6Duuse+eNdotZ/e6TKzFwsPJP
+         qN4Q==
+X-Gm-Message-State: APjAAAUYzYZkibj7sBeXwWMPsCoys4N5XcPDaKMugGvx+zMSiYcA4GHt
+        ghdPtagfJ29TPp6roAC2fg==
+X-Google-Smtp-Source: APXvYqxV/jfzDtlEscsmucJbThOSjtw0N+fNnRo93t5V2zWaWVxVOSgi81r7XVL1s+pZoFyxAk9rlg==
+X-Received: by 2002:aca:e146:: with SMTP id y67mr3739978oig.93.1579629631200;
+        Tue, 21 Jan 2020 10:00:31 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s83sm12139907oif.33.2020.01.21.10.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 10:00:30 -0800 (PST)
+Received: (nullmailer pid 362 invoked by uid 1000);
+        Tue, 21 Jan 2020 18:00:29 -0000
+Date:   Tue, 21 Jan 2020 12:00:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Logan Shaw <logan.shaw@alliedtelesis.co.nz>
+Cc:     linux@roeck-us.net, jdelvare@suse.com, robh+dt@kernel.org,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Joshua.Scott@alliedtelesis.co.nz,
+        Chris.Packham@alliedtelesis.co.nz, logan.shaw@alliedtelesis.co.nz
+Subject: Re: [PATCH v4 2/2] hwmon: (adt7475) Added attenuator bypass support
+Message-ID: <20200121180029.GA32498@bogus>
+References: <20200120001703.9927-1-logan.shaw@alliedtelesis.co.nz>
+ <20200120001703.9927-3-logan.shaw@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120001703.9927-3-logan.shaw@alliedtelesis.co.nz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Theodore" == Theodore Y Ts'o <tytso@mit.edu> writes:
+On Mon, 20 Jan 2020 13:17:03 +1300, Logan Shaw wrote:
+> 
+> Added a new file documenting the adt7475 devicetree and added the four
+> new properties to it.
+> 
+> Signed-off-by: Logan Shaw <logan.shaw@alliedtelesis.co.nz>
+> ---
+> ---
+>  .../devicetree/bindings/hwmon/adt7475.yaml    | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.yaml
+> 
 
-    Theodore> Sam,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-    Theodore> Would you happen to know how commonly used the speakup system would be
-    Theodore> --- in particular, on non-udev systems where changing the minor number
-    Theodore> of the device node might break some folks?  Does your hardware system
-    Theodore> use speakup, or some other interface?
+Documentation/devicetree/bindings/hwmon/adt7475.example.dts:19.11-24: Warning (reg_format): /example-0/hwmon@2e:reg: property has invalid length (4 bytes) (#address-cells == 1, #size-cells == 1)
+Documentation/devicetree/bindings/hwmon/adt7475.example.dt.yaml: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/hwmon/adt7475.example.dt.yaml: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/hwmon/adt7475.example.dt.yaml: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
 
-Speakup is used by things like the Debian Installer in speech mode.
-I'd assume D-I uses udev.
-
-However Speakup is also likely to be used by blind people who prefer
-older environments--no GUI, no pulseaudio, that sort of thing.
-No udev is kind of pushing that mindset to the extreme though.
-Speakup is not typically used without a keyboard or similar, so you're
-not going to see it on embedded systems.
-
-
-
-
-
-    Theodore> Also, who would be the best people to reach out at the
-    Theodore> linux-speakup.org project to verify what the potential impact might be
-    Theodore> of making this change.  It looks like some of the web pages are a bit
-    Theodore> dated, so I wasn't sure what's up to date.
-
-I might ask on debian-accessibility@lists.debian.org.
-My recollection is that the upstream is not very energetic, and that the
-distros keep speakup working because it's quite important for some
-people.
-We broke it on hda_intel for the original Buster release and that
-certainly generated lots of user feedback.
-
-debian-accessibility is Debian specific.  There is the more general
-blinux-l@lists.redhat.com (blind linux users), but that lists tends to
-be so user focused that you might not get good feedback to a question
-like this.
-
---Sam
+See https://patchwork.ozlabs.org/patch/1225573
+Please check and re-submit.
