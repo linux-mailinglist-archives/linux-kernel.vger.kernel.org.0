@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5CB14413B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A81A914416B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbgAUQBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:01:34 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15612 "EHLO mga17.intel.com"
+        id S1729928AbgAUQCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:02:55 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18280 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbgAUQB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729393AbgAUQB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Jan 2020 11:01:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:28 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 08:01:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,346,1574150400"; 
-   d="scan'208";a="250299090"
+   d="scan'208";a="275336470"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Jan 2020 08:01:24 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Jan 2020 08:01:25 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 74B6C795; Tue, 21 Jan 2020 18:01:15 +0200 (EET)
+        id 7FF20836; Tue, 21 Jan 2020 18:01:15 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -38,9 +38,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Mark Brown <broonie@kernel.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 17/38] platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
-Date:   Tue, 21 Jan 2020 19:00:53 +0300
-Message-Id: <20200121160114.60007-18-mika.westerberg@linux.intel.com>
+Subject: [PATCH v4 18/38] platform/x86: intel_pmc_ipc: Make intel_pmc_gcr_update() static
+Date:   Tue, 21 Jan 2020 19:00:54 +0300
+Message-Id: <20200121160114.60007-19-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
 References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
@@ -51,87 +51,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the IPC util to use the new SCU IPC API where the SCU IPC
-instance is passed to the functions.
+This function is not called outside of intel_pmc_ipc.c so we can make it
+static instead.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_scu_ipcutil.c | 43 +++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/intel_pmc_ipc.h | 6 ------
+ drivers/platform/x86/intel_pmc_ipc.c | 3 +--
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_scu_ipcutil.c b/drivers/platform/x86/intel_scu_ipcutil.c
-index 8afe6fa06d7b..b7c10c15a3d6 100644
---- a/drivers/platform/x86/intel_scu_ipcutil.c
-+++ b/drivers/platform/x86/intel_scu_ipcutil.c
-@@ -22,6 +22,9 @@
+diff --git a/arch/x86/include/asm/intel_pmc_ipc.h b/arch/x86/include/asm/intel_pmc_ipc.h
+index 9e7adcdbe031..3b2e8b461520 100644
+--- a/arch/x86/include/asm/intel_pmc_ipc.h
++++ b/arch/x86/include/asm/intel_pmc_ipc.h
+@@ -40,7 +40,6 @@ int intel_pmc_s0ix_counter_read(u64 *data);
+ int intel_pmc_gcr_read(u32 offset, u32 *data);
+ int intel_pmc_gcr_read64(u32 offset, u64 *data);
+ int intel_pmc_gcr_write(u32 offset, u32 data);
+-int intel_pmc_gcr_update(u32 offset, u32 mask, u32 val);
  
- static int major;
+ #else
  
-+struct intel_scu_ipc_dev *scu;
-+static DEFINE_MUTEX(scu_lock);
-+
- /* IOCTL commands */
- #define	INTE_SCU_IPC_REGISTER_READ	0
- #define INTE_SCU_IPC_REGISTER_WRITE	1
-@@ -52,12 +55,12 @@ static int scu_reg_access(u32 cmd, struct scu_ipc_data  *data)
- 
- 	switch (cmd) {
- 	case INTE_SCU_IPC_REGISTER_READ:
--		return intel_scu_ipc_readv(data->addr, data->data, count);
-+		return intel_scu_ipc_dev_readv(scu, data->addr, data->data, count);
- 	case INTE_SCU_IPC_REGISTER_WRITE:
--		return intel_scu_ipc_writev(data->addr, data->data, count);
-+		return intel_scu_ipc_dev_writev(scu, data->addr, data->data, count);
- 	case INTE_SCU_IPC_REGISTER_UPDATE:
--		return intel_scu_ipc_update_register(data->addr[0],
--						    data->data[0], data->mask);
-+		return intel_scu_ipc_dev_update(scu, data->addr[0], data->data[0],
-+						data->mask);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -91,8 +94,40 @@ static long scu_ipc_ioctl(struct file *fp, unsigned int cmd,
- 	return 0;
+@@ -81,11 +80,6 @@ static inline int intel_pmc_gcr_write(u32 offset, u32 data)
+ 	return -EINVAL;
  }
  
-+static int scu_ipc_open(struct inode *inode, struct file *file)
-+{
-+	int ret = 0;
-+
-+	/* Only single open at the time */
-+	mutex_lock(&scu_lock);
-+	if (scu) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
-+
-+	scu = intel_scu_ipc_dev_get();
-+	if (!scu)
-+		ret = -ENODEV;
-+
-+unlock:
-+	mutex_unlock(&scu_lock);
-+	return ret;
-+}
-+
-+static int scu_ipc_release(struct inode *inode, struct file *file)
-+{
-+	mutex_lock(&scu_lock);
-+	intel_scu_ipc_dev_put(scu);
-+	scu = NULL;
-+	mutex_unlock(&scu_lock);
-+
-+	return 0;
-+}
-+
- static const struct file_operations scu_ipc_fops = {
- 	.unlocked_ioctl = scu_ipc_ioctl,
-+	.open = scu_ipc_open,
-+	.release = scu_ipc_release,
- };
+-static inline int intel_pmc_gcr_update(u32 offset, u32 mask, u32 val)
+-{
+-	return -EINVAL;
+-}
+-
+ #endif /*CONFIG_INTEL_PMC_IPC*/
  
- static int __init ipc_module_init(void)
+ #endif
+diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
+index 5c1da2bb1435..9229c7a16536 100644
+--- a/drivers/platform/x86/intel_pmc_ipc.c
++++ b/drivers/platform/x86/intel_pmc_ipc.c
+@@ -309,7 +309,7 @@ EXPORT_SYMBOL_GPL(intel_pmc_gcr_write);
+  *
+  * Return:	negative value on error or 0 on success.
+  */
+-int intel_pmc_gcr_update(u32 offset, u32 mask, u32 val)
++static int intel_pmc_gcr_update(u32 offset, u32 mask, u32 val)
+ {
+ 	u32 new_val;
+ 	int ret = 0;
+@@ -339,7 +339,6 @@ int intel_pmc_gcr_update(u32 offset, u32 mask, u32 val)
+ 	spin_unlock(&ipcdev.gcr_lock);
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(intel_pmc_gcr_update);
+ 
+ static int update_no_reboot_bit(void *priv, bool set)
+ {
 -- 
 2.24.1
 
