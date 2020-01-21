@@ -2,72 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB64F143D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 890AD143D8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:01:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbgAUNC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 08:02:27 -0500
-Received: from smtprelay0179.hostedemail.com ([216.40.44.179]:34261 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726920AbgAUNC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 08:02:27 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 6FA62838434A;
-        Tue, 21 Jan 2020 13:02:25 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3871:3872:4321:4605:5007:7576:10004:10400:10848:10967:11026:11232:11658:11914:12043:12296:12297:12438:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21627:21740:21990:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: time50_6c45a5c0ebf2e
-X-Filterd-Recvd-Size: 1817
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 21 Jan 2020 13:02:23 +0000 (UTC)
-Message-ID: <aba420a3be9272236795dbc14380991bbf72c657.camel@perches.com>
-Subject: Re: [PATCH net 2/9] r8152: reset flow control patch when linking on
- for RTL8153B
-From:   Joe Perches <joe@perches.com>
-To:     David Miller <davem@davemloft.net>, hayeswang@realtek.com
-Cc:     netdev@vger.kernel.org, nic_swsd@realtek.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        pmalani@chromium.org, grundler@chromium.org
-Date:   Tue, 21 Jan 2020 05:01:23 -0800
-In-Reply-To: <20200121.135439.1619270282552230019.davem@davemloft.net>
-References: <1394712342-15778-338-Taiwan-albertk@realtek.com>
-         <1394712342-15778-340-Taiwan-albertk@realtek.com>
-         <20200121.135439.1619270282552230019.davem@davemloft.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1728847AbgAUNBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 08:01:51 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:60610 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726920AbgAUNBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 08:01:50 -0500
+Received: from ip092042140082.rev.nessus.at ([92.42.140.82] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1itt9w-0003e0-H3; Tue, 21 Jan 2020 14:01:32 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] media: rockchip/rga: add rk3228-rga to rockchip_rga_match[]
+Date:   Tue, 21 Jan 2020 14:01:31 +0100
+Message-ID: <1798689.nCamLzREIU@phil>
+In-Reply-To: <241033bf82fc7e955dd20c0084bfd4f6fc9fc75b.camel@collabora.com>
+References: <20200120194158.25357-1-justin.swartz@risingedge.co.za> <241033bf82fc7e955dd20c0084bfd4f6fc9fc75b.camel@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2020-01-21 at 13:54 +0100, David Miller wrote:
-> From: Hayes Wang <hayeswang@realtek.com>
-> Date: Tue, 21 Jan 2020 20:40:28 +0800
-> 
-> > When linking ON, the patch of flow control has to be reset. This
-> > makes sure the patch works normally.
-[]
-> > diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-[]
-> > @@ -2857,6 +2857,7 @@ static void r8153_set_rx_early_size(struct r8152 *tp)
-> >  
-> >  static int rtl8153_enable(struct r8152 *tp)
-> >  {
-> > +     u32 ocp_data;
-> >       if (test_bit(RTL8152_UNPLUG, &tp->flags))
-> >               return -ENODEV;
-> >  
-> 
-> Please put an empty line after the local variable declarations.
+Hi Ezequiel,
 
-Local scoping is generally better.
+Am Dienstag, 21. Januar 2020, 11:45:01 CET schrieb Ezequiel Garcia:
+> On Mon, 2020-01-20 at 19:41 +0000, Justin Swartz wrote:
+> > Add an entry to the rockchip_rga_match array for "rockchip,rk3228-rga"
+> > 
+> > Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+> > ---
+> >  drivers/media/platform/rockchip/rga/rga.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+> > index e9ff12b6b..268116cd5 100644
+> > --- a/drivers/media/platform/rockchip/rga/rga.c
+> > +++ b/drivers/media/platform/rockchip/rga/rga.c
+> > @@ -956,6 +956,9 @@ static const struct dev_pm_ops rga_pm = {
+> >  
+> >  static const struct of_device_id rockchip_rga_match[] = {
+> >  	{
+> > +		.compatible = "rockchip,rk3228-rga",
+> > +	},
+> 
+> Unless you need to tune something in the driver
+> specifically for rk3228, then you don't need a
+> new compatible string.
+> 
+> As the name implies, it's just a "compatible",
+> so you may simply declare your rga dts node as
+> compatible to "rockchip,rk3288-rga".
+> 
+> (Of course, this means we shouldn't have added
+> the rk3399 compatible string.)
 
-Perhaps declare ocp_data inside the if branch
-where it's used.  
+small correction, we normally do that in two parts in the dts,
+	compatible = "rockchip,rk3228-rga", "rockchip,rk3288-rga"
+
+etc. So the compatible needs to be added to binding document but
+not necessarily to the driver but does leave us the option of later
+defining that new compatible in the driver to handle quirks that may
+be discovered later on, without needing to adapt existing devicetrees.
+
+
+Heiko
 
 
