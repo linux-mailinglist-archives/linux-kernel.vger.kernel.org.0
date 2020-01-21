@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1522143B1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 913DF143B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgAUKh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:37:29 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:38424 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729387AbgAUKh2 (ORCPT
+        id S1729903AbgAUKiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:38:01 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:51452 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729526AbgAUKh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 Jan 2020 05:37:28 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id sydS2100i5USYZQ06ydSo3; Tue, 21 Jan 2020 11:37:26 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id sydS2100R5USYZQ06ydSyE; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-00011e-BD; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-00011i-Cd; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-0000UL-A8; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-0000UO-Au; Tue, 21 Jan 2020 11:37:26 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
         Olof Johansson <olof@lixom.net>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 13/20] ARM: mmp: Drop unneeded select of COMMON_CLK
-Date:   Tue, 21 Jan 2020 11:37:15 +0100
-Message-Id: <20200121103722.1781-13-geert+renesas@glider.be>
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH 14/20] ARM: mvebu: Drop unneeded select of HAVE_SMP
+Date:   Tue, 21 Jan 2020 11:37:16 +0100
+Message-Id: <20200121103722.1781-14-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200121103722.1781-1-geert+renesas@glider.be>
 References: <20200121103413.1337-1-geert+renesas@glider.be>
@@ -40,31 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for Marvell MMP ARMv5 platforms depends on ARCH_MULTI_V5, and
-thus on ARCH_MULTIPLATFORM.
-As the latter selects COMMON_CLK, there is no need for MACH_MMP_DT to
-select COMMON_CLK.
+Support for Marvell Armada 375, 380, 385, and 39x SoCs depends on
+ARCH_MULTI_V7.
+As the latter selects HAVE_SMP, there is no need for MACH_ARMADA_375,
+MACH_ARMADA_38X, and MACH_ARMADA_39X to select HAVE_SMP.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 ---
 All patches in this series are independent of each other.
 Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
 
- arch/arm/mach-mmp/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-mvebu/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
-index b58a03b18bdef14c..6fe1550f43ec6aef 100644
---- a/arch/arm/mach-mmp/Kconfig
-+++ b/arch/arm/mach-mmp/Kconfig
-@@ -110,7 +110,6 @@ config MACH_MMP_DT
- 	depends on ARCH_MULTI_V5
- 	select PINCTRL
- 	select PINCTRL_SINGLE
--	select COMMON_CLK
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select CPU_MOHAWK
+diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+index 7a5629b9bede4e3f..34dbeaab94b07e52 100644
+--- a/arch/arm/mach-mvebu/Kconfig
++++ b/arch/arm/mach-mvebu/Kconfig
+@@ -47,7 +47,6 @@ config MACH_ARMADA_375
+ 	select ARMADA_375_CLK
+ 	select HAVE_ARM_SCU
+ 	select HAVE_ARM_TWD if SMP
+-	select HAVE_SMP
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_375
+ 	help
+@@ -66,7 +65,6 @@ config MACH_ARMADA_38X
+ 	select ARMADA_38X_CLK
+ 	select HAVE_ARM_SCU
+ 	select HAVE_ARM_TWD if SMP
+-	select HAVE_SMP
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_38X
+ 	help
+@@ -82,7 +80,6 @@ config MACH_ARMADA_39X
+ 	select CACHE_L2X0
+ 	select HAVE_ARM_SCU
+ 	select HAVE_ARM_TWD if SMP
+-	select HAVE_SMP
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_39X
  	help
 -- 
 2.17.1
