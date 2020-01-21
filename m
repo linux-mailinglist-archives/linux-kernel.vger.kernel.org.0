@@ -2,101 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385EC14386B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:38:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F0A143872
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgAUIiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:38:13 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43524 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgAUIiM (ORCPT
+        id S1728852AbgAUIjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 03:39:17 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34035 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728093AbgAUIjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:38:12 -0500
-Received: by mail-wr1-f67.google.com with SMTP id d16so2109806wre.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 00:38:11 -0800 (PST)
+        Tue, 21 Jan 2020 03:39:16 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l18so1571180lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 00:39:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jk5Wx13aALIRFc9OEyWr5O2M9z/s/X8a3dyscVUUbeM=;
-        b=Vu72ipY46bRKQQcMO0zOsxUNH1XRZcBQX9175sZt0Z4vkWD93rkpHHRMg4bSceUiHD
-         NnwG3kiEKtI7pvIXFGVoJ3aTsXCFLMmSxBxzL51EGbkSBQoCOvVTp1T+qMuPCJUJS7R3
-         5VkgPuErnwfzuIzckGG3n3ks+OxbFz4rfuURVjQN2qn3IXAE8umVqYE0c0YhVxys0WmO
-         cxelVH0LHVLQVmIJhdNpDvltOD8R02JCq6KXuKOeq7kocD1yc3EZXa9fuX665zzSajZA
-         zzd3OUOcOWi9OXIa/4YBLgr8GBRlksdRq0mk0vEswoPJttwcG3u89QQVJma65/taCebk
-         6srA==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hsNWoes18WxCFqI2xo+zG2UAVBdbnLW1RdahXtCWkN4=;
+        b=ogeQ32MOdjzdgAmxRr2eY6wFvxsdi2q0zPB1rFdofpYEO51IIsVHTP/MpXts48N+Hu
+         4iZtIN1cDXQuFYvBGceJ5W03NNZraJNYMDKMSvJOsV+lneWXcfyzASCoSAqZQihD2yEM
+         QdR/SJOIEFHL8SXJ581I6hl5NpDqF6nH7lxfCZQmjvsmwfc9zvkQiN3Xw/YMv82SD2f2
+         Ev5dOkK0Dl59TsTdsxmED6+cxcIYkHOvcHdM5IM1NU2kwzezkUMm6G8LimxsPNcxSP/d
+         5hJm2EW0ST6IRLKF9J/typuxf8l7gKRBMVHY/PbUh5iEVxcNkVDOrrSBubvTbYNahV9K
+         /Sxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jk5Wx13aALIRFc9OEyWr5O2M9z/s/X8a3dyscVUUbeM=;
-        b=KI3b4JruWnhSf8Fe8JF02PO4dWImnFzp2SooH0bodKa8IXNeOO4gs+9lo7caoNwX58
-         7xg3mJxPhipotelNqZ0SLWkuD30K1je1htEqvynBBaBE9CmdvxTdaWVZrl1kVqQjEgru
-         OTYDlMHuY+E6DWPOyebmSetsnMJz/ra5LGqYnoijPJMnGkPlLPL6Q+ALn4zwYpf8yZZO
-         oOXjrPmQCK61Ti+7v6P8E6FoGXsjaLFuYAJ1AxOegLsVyWcyoWEB9KJca0X3OO424Rk6
-         HEpSqQGK/2ztF1sF1cLHN02gTNovRki2mDSlzaUaQAHuldv/ovESOsBwSADGaC7Wy6/n
-         Bbuw==
-X-Gm-Message-State: APjAAAXrUkexzv3SxqWT2JXM4AR77MIJWj5bzXbyr6eB9mwcN0xSGYTU
-        fUS7S1fIiljhMOZTve15H83dNQ==
-X-Google-Smtp-Source: APXvYqylzQd5oj+pBr35FBanKNF1RamtKyP9ljtz3C1yzs18rVM3Lpgdo/Vl7TdSYosdK7z4T0FnKA==
-X-Received: by 2002:a5d:6408:: with SMTP id z8mr3920795wru.122.1579595890851;
-        Tue, 21 Jan 2020 00:38:10 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id b17sm50814845wrp.49.2020.01.21.00.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 00:38:10 -0800 (PST)
-Date:   Tue, 21 Jan 2020 08:38:25 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Orson Zhai <orson.unisoc@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        baolin.wang@unisoc.com, chunyan.zhang@unisoc.com,
-        Orson Zhai <orson.zhai@unisoc.com>
-Subject: Re: [PATCH V5] mfd: syscon: Add arguments support for syscon
- reference
-Message-ID: <20200121083825.GI15507@dell>
-References: <1579590578-8709-1-git-send-email-orson.unisoc@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hsNWoes18WxCFqI2xo+zG2UAVBdbnLW1RdahXtCWkN4=;
+        b=jzvfrhdKSGXAqpcLfppI9/Gh7YMJkO6zl/haQ8NwYltNDjsPFfQol776aYfdM4cvD6
+         qEUGdYWZuqKSGntS2EbGEQmvaEVIuEQTQGBhDOjs4TRtMs+whAg23BIleeJCma+aeBRG
+         ZuPL28Ldvp6YzvTzbi7SghROOJZH7gfzWWVOStIMcHsWOFm9A2toIBRL8YiVSnQ70rdB
+         r2u5uTDsR9AzZQY4TpzxQvz3FKJ/WaLa/BPwX8ueEjUW/0PdfWn9/WCQwr43spFV22Xa
+         qiALF7Edxzrp9avg7P73HPKCG27STVPcPuGR7LCo8WqHfD67UdVRsI4EpgIbxosDghCA
+         WrIQ==
+X-Gm-Message-State: APjAAAWenl8o8hG7tTj4jYtjjA+AYUbJhaQLNEBCjzupCcuH3aMEJnFl
+        X3WYoMHHA3M8lyHaYVmT2Prd5D4jNjz+bA==
+X-Google-Smtp-Source: APXvYqwKhPhYL0ooaJpzntwbDv2rsPpjcDAD4+2ocnxH+WdV/2FygoMaU5dMv0QJe5KSTwUYfqw3Ow==
+X-Received: by 2002:ac2:43c6:: with SMTP id u6mr2027596lfl.191.1579595953303;
+        Tue, 21 Jan 2020 00:39:13 -0800 (PST)
+Received: from ?IPv6:2a00:1fa0:4257:4d38:8de3:4197:be8e:7729? ([2a00:1fa0:4257:4d38:8de3:4197:be8e:7729])
+        by smtp.gmail.com with ESMTPSA id b1sm21197686ljp.72.2020.01.21.00.39.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 00:39:12 -0800 (PST)
+Subject: Re: [PATCH -next] drivers: net: declance: fix comparing pointer to 0
+To:     Chen Zhou <chenzhou10@huawei.com>, davem@davemloft.net,
+        mhabets@solarflare.com, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200121013553.15252-1-chenzhou10@huawei.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <40eb3815-f677-c2fd-3e67-4b39bb332f48@cogentembedded.com>
+Date:   Tue, 21 Jan 2020 11:39:05 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1579590578-8709-1-git-send-email-orson.unisoc@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200121013553.15252-1-chenzhou10@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Jan 2020, Orson Zhai wrote:
+Hello!
 
-> From: Orson Zhai <orson.zhai@unisoc.com>
+On 21.01.2020 4:35, Chen Zhou wrote:
+
+> Fixes coccicheck warning:
 > 
-> There are a lot of similar global registers being used across multiple SoCs
-> from Unisoc. But most of these registers are assigned with different offset
-> for different SoCs. It is hard to handle all of them in an all-in-one
-> kernel image.
+> ./drivers/net/ethernet/amd/declance.c:611:14-15:
+> 	WARNING comparing pointer to 0
 > 
-> Add a helper function to get regmap with arguments where we could put some
-> extra information such as the offset value.
-> 
-> Signed-off-by: Orson Zhai <orson.zhai@unisoc.com>
-> Tested-by: Baolin Wang <baolin.wang@unisoc.com>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Compare pointer-typed values to NULL rather than 0.
+
+    I don't see NULL in the patch -- you used ! instead.
+
+> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
 > ---
-> Change V5:
-> 	Removed unexpected preceding spaces replaced by email system.
-> 	The patch has been tested for local mailing and applying.
+>   drivers/net/ethernet/amd/declance.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/mfd/syscon.c       | 29 +++++++++++++++++++++++++++++
->  include/linux/mfd/syscon.h | 14 ++++++++++++++
->  2 files changed, 43 insertions(+)
+> diff --git a/drivers/net/ethernet/amd/declance.c b/drivers/net/ethernet/amd/declance.c
+> index 6592a2d..7282ce5 100644
+> --- a/drivers/net/ethernet/amd/declance.c
+> +++ b/drivers/net/ethernet/amd/declance.c
+> @@ -608,7 +608,7 @@ static int lance_rx(struct net_device *dev)
+>   			len = (*rds_ptr(rd, mblength, lp->type) & 0xfff) - 4;
+>   			skb = netdev_alloc_skb(dev, len + 2);
+>   
+> -			if (skb == 0) {
+> +			if (!skb) {
+>   				dev->stats.rx_dropped++;
+>   				*rds_ptr(rd, mblength, lp->type) = 0;
+>   				*rds_ptr(rd, rmd1, lp->type) =
 
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+MBR, Sergei
