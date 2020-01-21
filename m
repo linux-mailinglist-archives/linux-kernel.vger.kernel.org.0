@@ -2,162 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F5A2144171
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C68144215
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbgAUQDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:03:08 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:56402 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729504AbgAUQDF (ORCPT
+        id S1729509AbgAUQXF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:23:05 -0500
+Received: from gateway30.websitewelcome.com ([192.185.198.26]:37912 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728916AbgAUQXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:03:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579622583;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=R93kv0W0ESiBmPn+Fcdbi6eCG8MLqbjSKamhdoxhulg=;
-        b=Tdr6xS9f8G0CbYZX9ciRlmIeVf+jNQNQynchgMPpyfk6/hporBnwBWbVhbzXxe/fXGHrlx
-        zSh9OMLk2UW9+KzWMu5/b1H47VbyANavjCpDFjlp7gzdxReYgrETntjRAXFWagOmateigw
-        5ZknbEvF+GB2ilpC5z7pK5TiHT9/1SA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-_gcyxaBqO327POIqDM-lJA-1; Tue, 21 Jan 2020 11:03:01 -0500
-X-MC-Unique: _gcyxaBqO327POIqDM-lJA-1
-Received: by mail-wr1-f70.google.com with SMTP id o6so1502868wrp.8
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 08:03:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R93kv0W0ESiBmPn+Fcdbi6eCG8MLqbjSKamhdoxhulg=;
-        b=b6wv43b204dQD6FQh2UkQ/fvjB9u7BtDAMTiE7/9OFXeVYhd7SqTcIhijJstkQaw/1
-         CHR0mccHVSbUHCn8ZPGSXBnwcGFEjhaDizWgaiS1mYE372e9TyUyr561BsZT9p708z2t
-         7cLsBeaDdcv+CV7hcbH4Pr/sSW+8joFjCBvjEc8QbqjgsRI1tXQt6kdKS/Tbe0Q4pOti
-         2nN8vYzCTJMKIE8Zax3dBABJInuoldROGopM6IU1SNWZws28RXx7QHnVLO2yZrXP6BQ6
-         d86gzz4G/0McOGXha1iYiY/mtFvxnqVl4aK1n9gHhe8NGBSJ5KYjh10CQHbAWppLvxXE
-         yFQg==
-X-Gm-Message-State: APjAAAVra3lj7yqylkYAGuOmBLKvGgOimEjUtpVWhaLgjIkGCW64ePyd
-        /PkhpWxujt0JX4X0P6ms2Bsd5/VCdzAqPNay3mGmQ8ihigHqIX2FKWUsJChaY7DtpOv7/YsKmZE
-        50Gnm4OZ73AayUPWGO0ArUaiI
-X-Received: by 2002:adf:f1cb:: with SMTP id z11mr5729610wro.375.1579622580562;
-        Tue, 21 Jan 2020 08:03:00 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzMHt2H+ShpdzeVhVrpHI6paJyzrz7FPhvqP5WICGqAsGn0xpsokZgxOLpYQcmGqfYCMCMYHQ==
-X-Received: by 2002:adf:f1cb:: with SMTP id z11mr5729584wro.375.1579622580321;
-        Tue, 21 Jan 2020 08:03:00 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id c4sm4349792wml.7.2020.01.21.08.02.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 08:02:59 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH RFC] x86/speculation: Clarify Spectre-v2 mitigation when STIBP/IBPB features are unsupported
-Date:   Tue, 21 Jan 2020 17:02:57 +0100
-Message-Id: <20200121160257.302999-1-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.24.1
+        Tue, 21 Jan 2020 11:23:04 -0500
+X-Greylist: delayed 1334 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 11:23:04 EST
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 44806E0A2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 10:00:48 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id tvxPi0pkPNBC3tvxQiIuKH; Tue, 21 Jan 2020 10:00:48 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:References:Cc:To:From:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6ChmYwIt/PYVu63qiw5XDFo0+SOUO2+IHcayeo6xM0U=; b=qGwDGN7V9297Z6popRlUE35HWx
+        oEg25kpJIGAKW+HtcaYUrsAjAz9I1dxjpixFymhhP5PMuXxmw1XSYz1rS54wCSTTl5jPr/IiGvcwR
+        17FvqDNyfTxNVPadYzzY0GgLfKn+C1KiB7WpLC+askm0g2ITdPWbDGCmF6jAbRdGnh9nOsGU8DVed
+        SFQ8XF2RIhnaL+wj5Hcx8+F0jplRI+zmuIQKOJZ0wL5kUsgifxwYZLnCbGMYJjlG+0U4zDu/4FHq1
+        E3RncTWQ8W+oB5Ha9ZAiz0prAtHHfhDW7Ck9ZVxTICHBdI+QIlnJ5+OlI5DHqczVA5Ti8rvc7MBUC
+        JN5pye6w==;
+Received: from [189.152.234.38] (port=56252 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1itvxP-000wwS-Lr; Tue, 21 Jan 2020 10:00:47 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mikael Magnusson <mikachu@gmail.com>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org
+References: <957960eb-118f-21c7-8901-50f54d65d7cb@embeddedor.com>
+ <20200121150053.31457-1-mikachu@gmail.com>
+ <995ff17c-81e2-15ad-c776-f07c8d61385b@embeddedor.com>
+ <b66589b1-7e33-70ee-6389-87ea83268bb6@embeddedor.com>
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] tty: n_hdlc: Use flexible-array member
+Message-ID: <c4c917cb-da96-fbdf-84ea-be700ed06526@embeddedor.com>
+Date:   Tue, 21 Jan 2020 10:03:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <b66589b1-7e33-70ee-6389-87ea83268bb6@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.234.38
+X-Source-L: No
+X-Exim-ID: 1itvxP-000wwS-Lr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.152.234.38]:56252
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When STIBP/IBPB features are not supported (no microcode update,
-AWS/Azure/... instances deliberately hiding SPEC_CTRL for performance
-reasons,...) /sys/devices/system/cpu/vulnerabilities/spectre_v2 looks like
 
-  Mitigation: Full generic retpoline, STIBP: disabled, RSB filling
 
-and this looks imperfect. In particular, STIBP is 'disabled' and 'IBPB'
-is not mentioned while both features are just not supported. Also, for
-STIBP the 'disabled' state (SPECTRE_V2_USER_NONE) can represent both
-the absence of hardware support and deliberate user's choice
-(spectre_v2_user=off)
+On 1/21/20 09:24, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 1/21/20 09:14, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 1/21/20 09:00, Mikael Magnusson wrote:
+>>> Gustavo Silva wrote:
+>>>> On 1/20/20 23:54, Jiri Slaby wrote:
+>>>>> On 21. 01. 20, 0:45, Gustavo A. R. Silva wrote:
+>>>>>> diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+>>>>>> index 98361acd3053..b5499ca8757e 100644
+>>>>>> --- a/drivers/tty/n_hdlc.c
+>>>>>> +++ b/drivers/tty/n_hdlc.c
+>>>>>> @@ -115,7 +115,7 @@
+>>>>>>  struct n_hdlc_buf {
+>>>>>>    struct list_head  list_item;
+>>>>>>    int     count;
+>>>>>> -  char      buf[1];
+>>>>>> +  char      buf[];
+>>>>>>  };
+>>>>>>  
+>>>>>>  #define N_HDLC_BUF_SIZE (sizeof(struct n_hdlc_buf) + maxframe)
+>>>>>
+>>>>> Have you checked, that you don't have to "+ 1" here now?
+>>>>>
+>>>>
+>>>> Yep. That's not necessary.
+>>>>
+>>>> _In terms of memory allocation_, zero-length/one-element arrays and flexible-array
+>>>> members work exactly the same way.
+>>>
+>>> This is not true, but maybe it's still not necessary in this particular code, I didn't examine it.
+>>>
+>>
+>> I should have said _in terms of dynamic memory allocation_.
+>>
+>> Your example is correct:
+>>
+>> "... a one-element array always occupies at least as much space as a single object of the type."[1]
+>>
+>> But the above does not affect on the current code.
+>>
+> 
+> Oh wait! Yeah; I see the issue in #define N_HDLC_BUF_SIZE (sizeof(struct n_hdlc_buf) + maxframe) now...
+> 
 
-Make the following adjustments:
-- Output 'unsupported' for both STIBP/IBPB when there's no support in
-  hardware.
-- Output 'unneeded' for STIBP when SMT is disabled/missing (and this
-  switch_to_cond_stibp is off).
+This would be the new patch; and I'm making use the the struct_size helper
+this time, to safely calculate the allocation size:
 
-RFC. Some tools out there may be looking at this information so by
-changing the output we're breaking them. Also, it may make sense to
-separate kernel and userspace protections and switch to something like
+diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+index 98361acd3053..27b506bf03ce 100644
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -115,11 +115,9 @@
+ struct n_hdlc_buf {
+        struct list_head  list_item;
+        int               count;
+-       char              buf[1];
++       char              buf[];
+ };
 
-  Mitigation: Kernel: Full generic retpoline, RSB filling; Userspace:
-   Vulnerable
+-#define        N_HDLC_BUF_SIZE (sizeof(struct n_hdlc_buf) + maxframe)
+-
+ struct n_hdlc_buf_list {
+        struct list_head  list;
+        int               count;
+@@ -524,7 +522,8 @@ static void n_hdlc_tty_receive(struct tty_struct *tty, const __u8 *data,
+                /* no buffers in free list, attempt to allocate another rx buffer */
+                /* unless the maximum count has been reached */
+                if (n_hdlc->rx_buf_list.count < MAX_RX_BUF_COUNT)
+-                       buf = kmalloc(N_HDLC_BUF_SIZE, GFP_ATOMIC);
++                       buf = kmalloc(struct_size(buf, buf, maxframe),
++                                     GFP_ATOMIC);
+        }
 
-for the above mentioned case.
+        if (!buf) {
+@@ -853,7 +852,7 @@ static struct n_hdlc *n_hdlc_alloc(void)
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- Documentation/admin-guide/hw-vuln/spectre.rst | 3 +++
- arch/x86/kernel/cpu/bugs.c                    | 9 +++++++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+        /* allocate free rx buffer list */
+        for(i=0;i<DEFAULT_RX_BUF_COUNT;i++) {
+-               buf = kmalloc(N_HDLC_BUF_SIZE, GFP_KERNEL);
++               buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
+                if (buf)
+                        n_hdlc_buf_put(&n_hdlc->rx_free_buf_list,buf);
+                else if (debuglevel >= DEBUG_LEVEL_INFO)
+@@ -862,7 +861,7 @@ static struct n_hdlc *n_hdlc_alloc(void)
 
-diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
-index e05e581af5cf..2b8a42d0c57b 100644
---- a/Documentation/admin-guide/hw-vuln/spectre.rst
-+++ b/Documentation/admin-guide/hw-vuln/spectre.rst
-@@ -385,6 +385,7 @@ The possible values in this file are:
-     an x86 only feature. For more details see below.
- 
-   ===================   ========================================================
-+  'IBPB: unsupported'   IBPB is not supported by hardware
-   'IBPB: disabled'      IBPB unused
-   'IBPB: always-on'     Use IBPB on all tasks
-   'IBPB: conditional'   Use IBPB on SECCOMP or indirect branch restricted tasks
-@@ -396,6 +397,8 @@ The possible values in this file are:
-     only feature. For more details see below.
- 
-   ====================  ========================================================
-+  'STIBP: unsupported'  STIBP is not supported by hardware
-+  'STIBP: unneeded'     STIBP is not needed because SMT is disabled
-   'STIBP: disabled'     STIBP unused
-   'STIBP: forced'       Use STIBP on all tasks
-   'STIBP: conditional'  Use STIBP on SECCOMP or indirect branch restricted tasks
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 8bf64899f56a..d72a36fe042b 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1496,7 +1496,10 @@ static char *stibp_state(void)
- 
- 	switch (spectre_v2_user) {
- 	case SPECTRE_V2_USER_NONE:
--		return ", STIBP: disabled";
-+		if (boot_cpu_has(X86_FEATURE_STIBP))
-+			return ", STIBP: disabled";
-+		else
-+			return ", STIBP: unsupported";
- 	case SPECTRE_V2_USER_STRICT:
- 		return ", STIBP: forced";
- 	case SPECTRE_V2_USER_STRICT_PREFERRED:
-@@ -1505,6 +1508,8 @@ static char *stibp_state(void)
- 	case SPECTRE_V2_USER_SECCOMP:
- 		if (static_key_enabled(&switch_to_cond_stibp))
- 			return ", STIBP: conditional";
-+		else
-+			return ", STIBP: unneeded";
- 	}
- 	return "";
- }
-@@ -1518,7 +1523,7 @@ static char *ibpb_state(void)
- 			return ", IBPB: conditional";
- 		return ", IBPB: disabled";
- 	}
--	return "";
-+	return ", IBPB: unsupported";
- }
- 
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
--- 
-2.24.1
+        /* allocate free tx buffer list */
+        for(i=0;i<DEFAULT_TX_BUF_COUNT;i++) {
+-               buf = kmalloc(N_HDLC_BUF_SIZE, GFP_KERNEL);
++               buf = kmalloc(struct_size(buf, buf, maxframe), GFP_KERNEL);
+                if (buf)
+                        n_hdlc_buf_put(&n_hdlc->tx_free_buf_list,buf);
+                else if (debuglevel >= DEBUG_LEVEL_INFO)
 
+
+And it seems that that extra "+ 1" is not needed. The frame size is always being
+verified in multiple places:
+
+
+/* verify frame size */
+ if (count > maxframe ) {
+                if (debuglevel & DEBUG_LEVEL_INFO)
+                        printk (KERN_WARNING
+                                "n_hdlc_tty_write: truncating user packet "
+                                "from %lu to %d\n", (unsigned long) count,
+                                maxframe );
+                count = maxframe;
+        }
+		    ^^^^^^		
+and _count_ is being limited to _maxframe_, before copying data into _buf_ :
+
+/* copy received data to HDLC buffer */
+        memcpy(buf->buf,data,count);
+        buf->count=count;
+
+So we might save some bytes, too.
+
+I'll properly write and send v2, shortly.
+
+Thanks
+--
+Gustavo
