@@ -2,65 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F8D143C6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:00:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1819B143C6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 13:02:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbgAUMAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 07:00:53 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:43816 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbgAUMAw (ORCPT
+        id S1729416AbgAUMCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 07:02:01 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42237 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbgAUMCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 07:00:52 -0500
-Received: by mail-il1-f194.google.com with SMTP id v69so2141197ili.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 04:00:52 -0800 (PST)
+        Tue, 21 Jan 2020 07:02:00 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b79so1534009vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 04:02:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=6P/vdwl7x1jkvFSesO7zn5E3E2crcPSqEuHXnboZ+xM=;
-        b=d7S63zRrLg5b08g/ibv3e1PUb71qGOCzwDGfDu9VK5LiQ/Ztg9UGgVMCaiaZ2SOZcC
-         82iMpvx3hFdH7HbkRanEAfnvOZpJ9b8j4FbRHRMVxxC5eJIZnD5luUY2p2Wt1IYGBqS3
-         01Ns8JmKwbFr+KjWIXOFsZx33+eyXOXQVecp7nDGtf/xhH35KAtA3ndM45uVaAdtrbq9
-         IadihS2Mq/OCjVOvGRbAXIWp9edZPnDxHpT0N6DP4AJLr7DH8fNH+jOLmVzLfdK9lHkx
-         gaZ25P/tkKbllV1NjLwbZv7j8Rw9grOTdLupn47WqFYPKu31ZX+dy15kweC5SQFjEQ0k
-         zL3g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WlDPGUCXlEVeTcZhHawX07d2lxqh/Mdp7/s77E+/zJk=;
+        b=DfQ8Yf58JeljkgTbS9a3cao8ML5+qV3DAnHkunbr6P8ZYoE8SUvNa1Rf0hVrg43uKJ
+         kqX0jYwwVIB8lTLwl8EbNxpWl1YtOU3tCQOMd1IX7BfJ0T+LwkxMPMll8T6cmu0ah5rq
+         NNLC5WfsRD5iyXp1L9pfxQu9gdjwVUdO1glJ1maM+uYHzZAXRpIqt4PAib1HaoDkODN0
+         jcm3IlJ5gksSzosGgVcDcYW16DhgnzTqWvQO9CCv9B/kcJbh91U4vGPQUeYd3qDbo2V0
+         xgZv0VOsjmkqWYX+6LdS0cyPzdLRxiFD5rWCijz6aSl1+wlg2PAjECRYhAiHRs0CdPBO
+         cZkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=6P/vdwl7x1jkvFSesO7zn5E3E2crcPSqEuHXnboZ+xM=;
-        b=rYM8VSQVFruVCFWB9BsWydDtSTjLLMpgcUXJTV5yi2GDJLT5gKRNTDb3RVomhpGuLQ
-         m3Qu5j9olVtRJjY10GYEp0hUJP9mh42uDD5EstAALgdUDi97YxjprC5eMzv9++y1+WZ3
-         H+TiNRVMK4aItJeOiynE3Jm3VjnXsFOjSc2sQX7exQ8NU3qvKqJhzh80RquXxwv9kdq3
-         mKDb8EhsluQTMb5Bn+Z9zV8+rSHC8GZ5qLDZp5L4h6uUulBuARwHqKmLBQ0RX2sf8DXj
-         lGzFEhNBja8uVEbAO9S6rZDyD6SyHUQWshdzMaNdjymkXdzCz8Qvx+6oL/8MWwOkKCD1
-         zT6A==
-X-Gm-Message-State: APjAAAUJgK49M8o1M7+W0M6Ri0keHWx/SFPPuGz/fJtgVlvVJY5kaVwx
-        qpwfdPzr+NDrus9GX0YGF1xSQ3vyq7pcDtEGzGw=
-X-Google-Smtp-Source: APXvYqz0fbVVeZnx1eKDAbvoa7JGbhJaBHk+4mjd9M1IhyrbtuIfLypWKsJthRrb0qDdEARGbVLwXGCRe6QejtcdywI=
-X-Received: by 2002:a92:8108:: with SMTP id e8mr3520432ild.138.1579608052247;
- Tue, 21 Jan 2020 04:00:52 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WlDPGUCXlEVeTcZhHawX07d2lxqh/Mdp7/s77E+/zJk=;
+        b=kGjwfSqbjUF8kz9Zvsq4NYTFenPrV57Us6UiUFtw54/PbLQG4VeCwcwjFfyC5G4A7S
+         FQtLBxrKPDCDqCdvZc9QZvMli0Ep6ZFXiRbjpwpSqivT4ah+4IAPqgYtxgCE5tbPJ3E6
+         KjDEJLpu3P3RonFPvsdEaQ5F2HGa0exxWw6tkhASPRV3jH+No4yEl2kunQ9uhBNevh2Z
+         WJS/0Wo0Qmbd+ImRhlPZhVp0s4XHMAMsaryCOkbxnOHvIhthmRPFL4TfkBV2N3qyYgJj
+         FVAQva72yqDNM0VSj2wHxAFErwnMvEf6rfE+nRzh4yBkq3vcT0hiTeUF5be+4ZDLAU/K
+         IzYQ==
+X-Gm-Message-State: APjAAAWoDkeHfmmaEI6uPNY8yqyFVdkk50FF1Cg+EZ5H+5JYj2jrQz+V
+        LusRylaL/CStPL0sQuUlQA96tVA656yO7l/Ia/dOPw==
+X-Google-Smtp-Source: APXvYqz2LEHuJMC+X8IU73bToBskn+ELWXDHBTXmfrBQoD8n5OvOsFOieWKumRukn3ny3dcoDaCxoZahX5z/weTMUNA=
+X-Received: by 2002:a67:cd96:: with SMTP id r22mr2417118vsl.165.1579608119447;
+ Tue, 21 Jan 2020 04:01:59 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6622:223:0:0:0:0 with HTTP; Tue, 21 Jan 2020 04:00:51
- -0800 (PST)
-Reply-To: michellegoodman45@gmail.com
-From:   Shayma <shaymamarwan08@gmail.com>
-Date:   Tue, 21 Jan 2020 12:00:51 +0000
-Message-ID: <CA+HOoT0sMVGwACzQBS9f--5GXfQ5XDpEP0+7PR2k7BV218HpKQ@mail.gmail.com>
-Subject: From Michelle
-To:     undisclosed-recipients:;
+References: <cover.1578560282.git.benchuanggli@gmail.com> <CACT4zj9B8BSebZgf5-nc3zGYhsAGQ6gTRvfFf9r1DBB_mpRtHA@mail.gmail.com>
+In-Reply-To: <CACT4zj9B8BSebZgf5-nc3zGYhsAGQ6gTRvfFf9r1DBB_mpRtHA@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 21 Jan 2020 13:01:22 +0100
+Message-ID: <CAPDyKFpVN1w7sRbcSAOezVYAkq0pq6kCFo0gjT3TO4FVqDCe=A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/6] Add support UHS-II for GL9755
+To:     Ben Chuang <benchuanggli@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greg.tu@genesyslogic.com.tw,
+        Ben Chuang <ben.chuang@genesyslogic.com.tw>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sveiki,
-D=C4=81rg=C4=81 ceru, ka esat sa=C5=86=C4=93mis manu zi=C5=86ojumu, man ir =
-nepiecie=C5=A1ama j=C5=ABsu
-steidzama atbilde, man ir kaut kas jums nekav=C4=93joties j=C4=81atkl=C4=81=
-j
-Mi=C5=A1ela
-Paldies
+On Tue, 21 Jan 2020 at 10:37, Ben Chuang <benchuanggli@gmail.com> wrote:
+>
+> Hi Uffe and Adrian,
+>
+> On Thu, Jan 9, 2020 at 5:13 PM Ben Chuang <benchuanggli@gmail.com> wrote:
+> >
+> > Hi Uffe and Adrian,
+> >
+> > These patches support UHS-II and fix GL9755 UHS-II compatibility.
+> >
+> > The parts of UHS-II are based on [1][2] and porting to Linux 5.5-rc5.
+> > I have seen that Uffe comment that splitting the UHS-II parts into smaller
+> > patches. Other than splitting into small patches, could you give me some
+> > suggestions for refactoring/splitting files?
+> >
+> > Best regards,
+> > Ben
+>
+> Gentle Ping, Any comments?
+
+I coming to this, but I need some additional time. In any case, thanks
+for posting this and for pinging!
+
+[...]
+
+Kind regards
+Uffe
