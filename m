@@ -2,224 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95136143823
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC87214380C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 09:08:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbgAUIVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 03:21:23 -0500
-Received: from mga07.intel.com ([134.134.136.100]:55315 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbgAUIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 03:21:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 00:21:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,345,1574150400"; 
-   d="scan'208";a="215459015"
-Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.16])
-  by orsmga007.jf.intel.com with ESMTP; 21 Jan 2020 00:21:19 -0800
-Date:   Tue, 21 Jan 2020 03:12:07 -0500
-From:   Yan Zhao <yan.y.zhao@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        id S1727360AbgAUIIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 03:08:44 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56802 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgAUIIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 03:08:44 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00L88bcl012886;
+        Tue, 21 Jan 2020 08:08:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=JokcTFeEjvvq9Vxxb4wYvQgUwTXVTIvxWBKr0alh1Jc=;
+ b=YxB/bbIrZAJGeDGXg+zMWRsC40uHGOzqMvZVCRwlBNsCG1ixv2mFPW+h1xjHN3+Ib+x9
+ 3FiELGyRhB4zAfSqmu88OxOqPTu3pzd8PkGUOOesvjwwaBpPDSxLxUxLTlm8IjlAD0hZ
+ SJmQfsdOqcM+czuehY6jeCvdCkXZlCTn/14u9tXri0LfPZCirOPrkItt/IFbkr43fhbs
+ m7YbR4KUqFj9ggIY5wr1gh5lyeEjn4YB1wwATuf5iZmi43ZrRHpzh5RrtszYUrLrGi4k
+ G3eRXvenJcJCcmEfszq7SmuNSuRthRQ5HMFlfLe6hUR9bc9rBOakjwJF71U1kMvmpCUN TA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2xksyq36ef-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jan 2020 08:08:37 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00L88Fqo074370;
+        Tue, 21 Jan 2020 08:08:37 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xnpfnhqpf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jan 2020 08:08:37 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00L88aYj018372;
+        Tue, 21 Jan 2020 08:08:36 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Jan 2020 00:08:35 -0800
+Date:   Tue, 21 Jan 2020 11:13:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Vladimir Stankovic <vladimir.stankovic@displaylink.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Petar Kovacevic <petar.kovacevic@displaylink.com>,
+        Nikola Simic <nikola.simic@displaylink.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>
-Subject: Re: [PATCH v2 2/2] drm/i915/gvt: subsitute kvm_read/write_guest with
- vfio_dma_rw
-Message-ID: <20200121081207.GE1759@joy-OptiPlex-7040>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20200115034132.2753-1-yan.y.zhao@intel.com>
- <20200115035455.12417-1-yan.y.zhao@intel.com>
- <20200115130651.29d7e9e0@w520.home>
- <20200116054941.GB1759@joy-OptiPlex-7040>
- <20200116083729.40983f38@w520.home>
- <20200119100637.GD1759@joy-OptiPlex-7040>
- <20200120130157.0ee7042d@w520.home>
+        Marko Miljkovic <marko.miljkovic@displaylink.com>,
+        Stefan Lugonjic <stefan.lugonjic@displaylink.com>
+Subject: Re: staging: Add MA USB Host driver
+Message-ID: <20200121081306.GG21151@kadam>
+References: <VI1PR10MB19659B32E563620B4D63AF1A91320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
+ <VI1PR10MB1965A077526FE296608D5B1191320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
+ <VI1PR10MB19658F2B6FDAD88FAA05546591320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120130157.0ee7042d@w520.home>
+In-Reply-To: <VI1PR10MB19658F2B6FDAD88FAA05546591320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9506 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001210069
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9506 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001210069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 04:01:57AM +0800, Alex Williamson wrote:
-> On Sun, 19 Jan 2020 05:06:37 -0500
-> Yan Zhao <yan.y.zhao@intel.com> wrote:
-> 
-> > On Thu, Jan 16, 2020 at 11:37:29PM +0800, Alex Williamson wrote:
-> > > On Thu, 16 Jan 2020 00:49:41 -0500
-> > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > >   
-> > > > On Thu, Jan 16, 2020 at 04:06:51AM +0800, Alex Williamson wrote:  
-> > > > > On Tue, 14 Jan 2020 22:54:55 -0500
-> > > > > Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > >     
-> > > > > > As a device model, it is better to read/write guest memory using vfio
-> > > > > > interface, so that vfio is able to maintain dirty info of device IOVAs.
-> > > > > > 
-> > > > > > Compared to kvm interfaces kvm_read/write_guest(), vfio_dma_rw() has ~600
-> > > > > > cycles more overhead on average.
-> > > > > > 
-> > > > > > -------------------------------------
-> > > > > > |    interface     | avg cpu cycles |
-> > > > > > |-----------------------------------|
-> > > > > > | kvm_write_guest  |     1554       |
-> > > > > > | ----------------------------------|
-> > > > > > | kvm_read_guest   |     707        |
-> > > > > > |-----------------------------------|
-> > > > > > | vfio_dma_rw(w)   |     2274       |
-> > > > > > |-----------------------------------|
-> > > > > > | vfio_dma_rw(r)   |     1378       |
-> > > > > > -------------------------------------    
-> > > > > 
-> > > > > In v1 you had:
-> > > > > 
-> > > > > -------------------------------------
-> > > > > |    interface     | avg cpu cycles |
-> > > > > |-----------------------------------|
-> > > > > | kvm_write_guest  |     1546       |
-> > > > > | ----------------------------------|
-> > > > > | kvm_read_guest   |     686        |
-> > > > > |-----------------------------------|
-> > > > > | vfio_iova_rw(w)  |     2233       |
-> > > > > |-----------------------------------|
-> > > > > | vfio_iova_rw(r)  |     1262       |
-> > > > > -------------------------------------
-> > > > > 
-> > > > > So the kvm numbers remained within +0.5-3% while the vfio numbers are
-> > > > > now +1.8-9.2%.  I would have expected the algorithm change to at least
-> > > > > not be worse for small accesses and be better for accesses crossing
-> > > > > page boundaries.  Do you know what happened?
-> > > > >    
-> > > > I only tested the 4 interfaces in GVT's environment, where most of the
-> > > > guest memory accesses are less than one page.
-> > > > And the different fluctuations should be caused by the locks.
-> > > > vfio_dma_rw contends locks with other vfio accesses which are assumed to
-> > > > be abundant in the case of GVT.  
-> > > 
-> > > Hmm, so maybe it's time to convert vfio_iommu.lock from a mutex to a
-> > > rwsem?  Thanks,
-> > >   
-> > 
-> > hi Alex
-> > I tested your rwsem patches at (https://lkml.org/lkml/2020/1/16/1869).
-> > They works without any runtime error at my side. :) 
-> > However, I found out that the previous fluctuation may be because I didn't
-> > take read/write counts in to account.
-> > For example. though the two tests have different avg read/write cycles,
-> > their average cycles are almost the same.
-> >  ______________________________________________________________________
-> > |        | avg read |            | avg write |            |            |
-> > |        | cycles   | read cnt   | cycles    | write cnt  | avg cycles |
-> > |----------------------------------------------------------------------|
-> > | test 1 |   1339   | 29,587,120 |  2258     | 17,098,364 |    1676    |
-> > | test 2 |   1340   | 28,454,262 |  2238     | 16,501,788 |    1670    |
-> >  ----------------------------------------------------------------------
-> > 
-> > After measuring the exact read/write cnt and cycles of a specific workload,
-> > I get below findings:
-> > 
-> > (1) with single VM running glmark2 inside.
-> > glmark2: 40M+ read+write cnt, among which 63% is read.
-> > among reads, 48% is of PAGE_SIZE, the rest is less than a page.
-> > among writes, 100% is less than a page.
-> > 
-> >  __________________________________________________
-> > |       cycles         | read | write |  avg | inc |
-> > |--------------------------------------------------|
-> > | kvm_read/write_page  |  694 |  1506 |  993 |  /  |
-> > |--------------------------------------------------|
-> > |  vfio_dma_rw(mutex)  | 1340 |  2248 | 1673 | 680 |
-> > |--------------------------------------------------|
-> > | vfio_dma_rw(rwsem r) | 1323 |  2198 | 1645 | 653 |
-> >  ---------------------------------------------------
-> > 
-> > so vfio_dma_rw generally has 650+ more cycles per each read/write.
-> > While kvm->srcu is of 160 cycles on average with one vm is running, the
-> > cycles spending on locks for vfio_dma_rw spread like this:
-> >  ___________________________
-> > |        cycles       | avg |
-> > |---------------------------|
-> > |     iommu->lock     | 117 |
-> > |---------------------------|
-> > |   vfio.group_lock   | 108 |
-> > |---------------------------|
-> > | group->unbound_lock | 114 |
-> > |---------------------------|
-> > |  group->device_lock | 115 |
-> > |---------------------------|
-> > |     group->mutex    | 113 |
-> >  ---------------------------
-> > 
-> > I measured the cycles for a mutex without any contention is 104 cycles
-> > on average (including time for get_cycles() and measured in the same way
-> > as other locks). So the contention of a single lock in a single vm
-> > environment is light. probably because there's a vgpu lock hold in GVT already.
-> > 
-> > (2) with two VMs each running glmark2 inside.
-> > The contention increases a little.
-> > 
-> >  ___________________________________________________
-> > |       cycles         | read | write |  avg | inc  |
-> > |---------------------------------------------------|
-> > | kvm_read/write_page  | 1035 |  1832 | 1325 |  /   |
-> > |---------------------------------------------------|
-> > |  vfio_dma_rw(mutex)  | 2104 |  2886 | 2390 | 1065 |
-> > |---------------------------------------------------|
-> > | vfio_dma_rw(rwsem r) | 1965 |  2778 | 2260 | 935  |
-> >  ---------------------------------------------------
-> > 
-> > 
-> >  -----------------------------------------------
-> > |     avg cycles       |   one VM   |  two VMs  |
-> > |-----------------------------------------------|
-> > |  iommu lock (mutex)  |     117    |   150     |
-> > |-----------------------------------|-----------|
-> > | iommu lock (rwsem r) |     117    |   156     |
-> > |-----------------------------------|-----------|
-> > |   kvm->srcu          |     160    |   213     |
-> >  -----------------------------------------------
-> > 
-> > In the kvm case, avg cycles increased 332 cycles, while kvm->srcu only costed
-> > 213 cycles. The rest 109 cycles may be spent on atomic operations.
-> > But I didn't measure them, as get_cycles() operation itself would influence final
-> > cycles by ~20 cycles.
-> 
-> It seems like we need to extend the vfio external user interface so
-> that GVT-g can hold the group and container user references across
-> multiple calls.  For instance if we had a
-> vfio_group_get_external_user_from_dev() (based on
-> vfio_group_get_external_user()) then i915 could get an opaque
-> vfio_group pointer which it could use to call vfio_group_dma_rw() which
-> would leave us with only the iommu rw_sem locking.  i915 would release
-> the reference with vfio_group_put_external_user() when the device is
-> released.  The same could be done with the pin pages interface to
-> streamline that as well.  Thoughts?  Thanks,
->
-hi Alex,
-it works!
-now the average vfio_dma_rw cycles can reduced to 1198. 
-one thing I want to propose is that, in sight of dma->task is always user
-space process, instead of calling get_task_mm(dma->task), can we just use
-"mmget_not_zero(dma->task->mm)"? in this way, the avg cycles can
-further reduce to 1051.
+On Mon, Jan 20, 2020 at 09:30:43AM +0000, Vladimir Stankovic wrote:
+> +int mausb_enqueue_event_from_user(uint8_t madev_addr, uint32_t all_events)
+> +{
+> +	unsigned long flags;
+> +	uint16_t num_of_completed,
+> +		 num_of_events;
+> +	struct mausb_device *dev;
+> +
+> +	spin_lock_irqsave(&mss.lock, flags);
+> +	dev = mausb_get_dev_from_addr_unsafe(madev_addr);
+> +
+> +	if (!dev) {
+> +		spin_unlock_irqrestore(&mss.lock, flags);
+> +		return 0;
+> +	}
+> +
+> +	spin_lock_irqsave(&dev->num_of_user_events_lock, flags);
+> +	num_of_completed = (uint16_t)all_events +
+> +			   (uint16_t)dev->num_of_user_events;
+> +	num_of_events	 = (all_events >> (8 * sizeof(num_of_events))) +
+> +		(dev->num_of_user_events >> (8 * sizeof(num_of_events)));
+> +	dev->num_of_user_events  = num_of_completed;
+> +	dev->num_of_user_events |= (uint32_t)num_of_events <<
+> +		(8 * sizeof(num_of_events));
 
-Thanks
-Yan
+I might be missing something.  Why can't we just declare two struct
+members instead of doing these bit shifts to fit two values into
+dev->num_of_user_events?
 
-> 
-> _______________________________________________
-> intel-gvt-dev mailing list
-> intel-gvt-dev@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
+> +	spin_unlock_irqrestore(&dev->num_of_user_events_lock, flags);
+> +	queue_work(dev->workq, &dev->work);
+> +	spin_unlock_irqrestore(&mss.lock, flags);
+> +
+> +	return 0;
+> +}
+
+regards,
+dan carpenter
