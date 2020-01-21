@@ -2,153 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122E71441BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025C51441C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbgAUQKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:10:11 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50579 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgAUQKL (ORCPT
+        id S1729378AbgAUQLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:11:11 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24372 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729238AbgAUQLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:10:11 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1itw6K-00023c-2Z; Tue, 21 Jan 2020 17:10:00 +0100
-Message-ID: <1971902c68ff805ee0b4a66f558afe06e6edf0c5.camel@pengutronix.de>
-Subject: Re: [PATCH] drm/etnaviv: only reject timeouts with tv_nsec >= 2
- seconds
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 21 Jan 2020 17:09:56 +0100
-In-Reply-To: <20200121125546.GA71415@bogon.m.sigxcpu.org>
-References: <20200121114553.2667556-1-arnd@arndb.de>
-         <20200121125546.GA71415@bogon.m.sigxcpu.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 21 Jan 2020 11:11:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579623069;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=heVKG+KSMzawq2hC2KgTNTV1AZM6QZ5629QiClM/r1A=;
+        b=DvWqyFeXCIVWIQfTa6O7EDCPLTdyr2SpUsYk90z6zYMD8GekQWRK7ypH10El6l+/4Z0A7+
+        F2G+klwk1qN3woOZ5U6X5sAm1eDB/G+ONAjg7w2RR+gnjOVpOP6zhJqgmOQc9jkmshQUdS
+        fQ/DH7wgt+zRO1gaKVtntuZo9Mr3aiQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-298-2Vtp-qc_OfeKGDhAjMVAfQ-1; Tue, 21 Jan 2020 11:11:02 -0500
+X-MC-Unique: 2Vtp-qc_OfeKGDhAjMVAfQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A4B4113784C;
+        Tue, 21 Jan 2020 16:11:00 +0000 (UTC)
+Received: from treble (ovpn-122-154.rdu2.redhat.com [10.10.122.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C81E2898C;
+        Tue, 21 Jan 2020 16:10:47 +0000 (UTC)
+Date:   Tue, 21 Jan 2020 10:10:45 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+Message-ID: <20200121161045.dhihqibnpyrk2lsu@treble>
+References: <20191015135634.GK2328@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz>
+ <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com>
+ <20191015153120.GA21580@linux-8ccs>
+ <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
+ <20191015182705.1aeec284@gandalf.local.home>
+ <20191016074217.GL2328@hirez.programming.kicks-ass.net>
+ <20191021150549.bitgqifqk2tbd3aj@treble>
+ <20200120165039.6hohicj5o52gdghu@treble>
+ <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guido,
-
-On Di, 2020-01-21 at 13:55 +0100, Guido Günther wrote:
-> Hi,
-> On Tue, Jan 21, 2020 at 12:45:25PM +0100, Arnd Bergmann wrote:
-> > As Guido Günther reported, get_abs_timeout() in the etnaviv user space
-> > sometimes passes timeouts with nanosecond values larger than 1000000000,
-> > which gets rejected after my first patch.
+On Tue, Jan 21, 2020 at 09:35:28AM +0100, Miroslav Benes wrote:
+> On Mon, 20 Jan 2020, Josh Poimboeuf wrote:
+> 
+> > On Mon, Oct 21, 2019 at 10:05:49AM -0500, Josh Poimboeuf wrote:
+> > > On Wed, Oct 16, 2019 at 09:42:17AM +0200, Peter Zijlstra wrote:
+> > > > > which are not compatible with livepatching. GCC upstream now has
+> > > > > -flive-patching option, which disables all those interfering optimizations.
+> > > > 
+> > > > Which, IIRC, has a significant performance impact and should thus really
+> > > > not be used...
+> > > > 
+> > > > If distros ship that crap, I'm going to laugh at them the next time they
+> > > > want a single digit performance improvement because *important*.
+> > > 
+> > > I have a crazy plan to try to use objtool to detect function changes at
+> > > a binary level, which would hopefully allow us to drop this flag.
+> > > 
+> > > But regardless, I wonder if we enabled this flag prematurely.  We still
+> > > don't have a reasonable way to use it for creating source-based live
+> > > patches upstream, and it should really be optional for CONFIG_LIVEPATCH,
+> > > since kpatch-build doesn't need it.
 > > 
-> > To avoid breaking this, while also not allowing completely arbitrary
-> > values, set the limit to 1999999999 and use set_normalized_timespec64()
-> > to get the correct format before comparing it.
+> > I also just discovered that -flive-patching is responsible for all those
+> > "unreachable instruction" objtool warnings which Randy has been
+> > dutifully bugging me about over the last several months.  For some
+> > reason it subtly breaks GCC implicit noreturn detection for local
+> > functions.
 > 
-> I'm seeing values up to 5 seconds so I need
-> 
->      if (args->timeout.tv_nsec > (5 * NSEC_PER_SEC))
-> 
-> to unbreak rendering. Which seems to match what mesa's get_abs_timeout()
-> does and how it's invoked.
+> Ugh, that is unfortunate. Have you reported it?
 
-I have not tested this myself yet, only looked at the code. From the
-code I quoted earlier, I don't see how we end up with 5 * NSEC_PER_SEC
-in the tv_nsec member, even if the timeout passed to get_abs_timeout()
-is 5 seconds.
+Not yet (but I plan to).
 
-Regards,
-Lucas
+> > At this point, I only see downsides of -flive-patching, at least until
+> > we actually have real upstream code which needs it.
+> 
+> Can you explain this? The option makes GCC to avoid optimizations which 
+> are difficult to detect and would make live patching unsafe. I consider it 
+> useful as it is, so if you shared the other downsides and what you meant 
+> by real upstream code, we could discuss it.
 
->    with that:
-> 
-> Tested-by: Guido Günther <agx@sigxcpu.org>
-> 
-> Cheers,
->  -- Guido
-> 
-> > This also addresses the off-by-1 glitch reported by Ben Hutchings.
-> > 
-> > Fixes: 172a216ff334 ("drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC")
-> > Cc: Guido Günther <agx@sigxcpu.org>
-> > Link: https://patchwork.kernel.org/patch/11291089/
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++---
-> >  drivers/gpu/drm/etnaviv/etnaviv_drv.h |  6 ++----
-> >  2 files changed, 9 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> > index 3eb0f9223bea..d94740c123d3 100644
-> > --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> > +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> > @@ -292,7 +292,11 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
-> >  	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
-> >  		return -EINVAL;
-> >  
-> > -	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-> > +	/*
-> > +	 * existing user space passes non-normalized timespecs, but never
-> > +	 * more than 2 seconds worth of nanoseconds
-> > +	 */
-> > +	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
-> >  		return -EINVAL;
-> >  
-> >  	obj = drm_gem_object_lookup(file, args->handle);
-> > @@ -358,7 +362,7 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
-> >  	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
-> >  		return -EINVAL;
-> >  
-> > -	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-> > +	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
-> >  		return -EINVAL;
-> >  
-> >  	if (args->pipe >= ETNA_MAX_PIPES)
-> > @@ -412,7 +416,7 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
-> >  	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
-> >  		return -EINVAL;
-> >  
-> > -	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-> > +	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
-> >  		return -EINVAL;
-> >  
-> >  	if (args->pipe >= ETNA_MAX_PIPES)
-> > diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> > index efc656efeb0f..3e47050af706 100644
-> > --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> > +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-> > @@ -109,12 +109,10 @@ static inline size_t size_vstruct(size_t nelem, size_t elem_size, size_t base)
-> >  static inline unsigned long etnaviv_timeout_to_jiffies(
-> >  	const struct drm_etnaviv_timespec *timeout)
-> >  {
-> > -	struct timespec64 ts, to = {
-> > -		.tv_sec = timeout->tv_sec,
-> > -		.tv_nsec = timeout->tv_nsec,
-> > -	};
-> > +	struct timespec64 ts, to;
-> >  
-> >  	ktime_get_ts64(&ts);
-> > +	set_normalized_timespec64(&to, timeout->tv_sec, timeout->tv_nsec);
-> >  
-> >  	/* timeouts before "now" have already expired */
-> >  	if (timespec64_compare(&to, &ts) <= 0)
-> > -- 
-> > 2.25.0
-> > 
+Only SLES needs it right?  Why inflict it on other livepatch users?  By
+"real upstream code" I mean there's no (documented) way to create live
+patches using the method which relies on this flag.  So I don't see any
+upstream benefits for having it enabled.
+
+-- 
+Josh
 
