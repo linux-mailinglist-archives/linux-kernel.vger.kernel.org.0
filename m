@@ -2,91 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE218144714
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 930C1144718
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbgAUWSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:18:21 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37976 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727847AbgAUWSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:18:21 -0500
-Received: from zn.tnic (p200300EC2F0B0400D0DA90B2E65C1373.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:400:d0da:90b2:e65c:1373])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3FBC51EC01AD;
-        Tue, 21 Jan 2020 23:18:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1579645100;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=PjPHjZTCcO1Xfdc6VGvvRJ5SETWJDEcSmBfdzjuSv4M=;
-        b=hsabktVCuuLbLIUesA80Vwr/7fElNFE6aXm4DfwSudNN68hllEhbXxNEEKQIqN9rbcFd08
-        hgUkD/vXH/qi6amJO3LCX9KMIt11YrxB4pKTOL1dCu6kD0u+/XQ3m2Dqx48yPa7KArc35F
-        2UBneNvBs2hF26ydOk/gvzQ/BUP+hg0=
-Date:   Tue, 21 Jan 2020 23:18:15 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Marco Elver <elver@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] x86/mm/pat: silence a data race in cpa_4k_install
-Message-ID: <20200121221814.GQ7808@zn.tnic>
-References: <20200121151503.2934-1-cai@lca.pw>
- <CANpmjNPR+mbadR0DDKGUhTkaXJi=vsHmhvq3+Rz0Hrx=E9V_Qg@mail.gmail.com>
- <20200121152853.GI7808@zn.tnic>
- <44A4276D-5530-4DAA-8FC7-753D03ADD2F3@lca.pw>
- <CANpmjNO7mTEMc6pvpVVXdu2r6cMg_N8QkRffEHHG-WNFXE4CjA@mail.gmail.com>
- <20200121154528.GK7808@zn.tnic>
- <E9162CDC-BBC5-4D69-87FB-C93AB8B3D581@lca.pw>
+        id S1729129AbgAUWT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:19:56 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34436 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbgAUWTz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 17:19:55 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r11so2292446pgf.1;
+        Tue, 21 Jan 2020 14:19:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=87q9xhoPKVsZRpT7sXkkO2m2/qUarjs1kR3PGeTcCa8=;
+        b=V6+0gFQxv4KVdfOevLuORPsMA0IRumBkHZGOYQyPErMao8SthHHq7cBPYxHBMZjQGI
+         TNZuiJNT4SeYK8K0hdMIqq7jJSaF40Tp7OuUfxFOqlBI+iSSJX63CpbOZS0BcUeIGeoA
+         iVRvlfpR6KCTMSGOZyFpbivijF8HsnSHpmRCRG2298dfJEJmdXkeWIZl4Mz6IMyuebYc
+         5KqCSCfsCnmhYTj4RyLanptRRVWnLmbu/hd3dMZYbxEFVWfms6NurkIlCs2oanVYqAHO
+         Viop3Ydl33vbMniGsD8HecJnNHKeAxPqa1Nmu3bZGcKMAQRrsEP/LsWkBH6TrqNOqSjv
+         G0sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=87q9xhoPKVsZRpT7sXkkO2m2/qUarjs1kR3PGeTcCa8=;
+        b=hgHab1ttOOuH3FRnCuCAJ1glqxLk4HVJbU827Yy2+GEwzU+qyhX+wNNk25yRxnHbtk
+         cYcHWXNuG8ICDHXRet/rhAEnd5kauhkzJj8b9TDxJaBafpEezRgYjd/tWOGCCc75tWGz
+         CsffxYnFmia1dfBiFPxKGPl+9Ea1zfNwfaVzaV02A+aHHNV07S60iheOSVUMZq1brKmg
+         /FfFnRsi+v4NSqgdgQzEPd0XelKRj1V48bcUu0UxbiK7QrqwSittxuLMAIR8eD8y1RRv
+         vNt7sP9HmPFkc9c8w+OPvmEAUVWlTecShiDlYGgYICb2KdU5aHYqfApx3xrFi+nYIY6+
+         hMnA==
+X-Gm-Message-State: APjAAAU4nxyPF86fhkO/YFJnq0hPuUhnAKpKkn4MdiVd9+8o1QhfIw5q
+        zbZ/6XwfzT7eo7tOur6lZgJHQRmU
+X-Google-Smtp-Source: APXvYqzX+G5EAYzlbOeRoettvDYSWW16bHWnmdXsnq9AUn5obiFNsulAcXmnW6RhQSNdd6qnIwIbQQ==
+X-Received: by 2002:a62:5447:: with SMTP id i68mr6697130pfb.44.1579645194049;
+        Tue, 21 Jan 2020 14:19:54 -0800 (PST)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id a1sm43969982pfo.68.2020.01.21.14.19.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 14:19:53 -0800 (PST)
+Subject: Re: [PATCH net v2 01/12] net/sonic: Add mutual exclusion for
+ accessing shared state
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>,
+        Laurent Vivier <laurent@vivier.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1579641728.git.fthain@telegraphics.com.au>
+ <d7c6081de558e2fe5693a35bb735724411134cb5.1579641728.git.fthain@telegraphics.com.au>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <0113c00f-3f77-8324-95a8-31dd6f64fa6a@gmail.com>
+Date:   Tue, 21 Jan 2020 14:19:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <d7c6081de558e2fe5693a35bb735724411134cb5.1579641728.git.fthain@telegraphics.com.au>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <E9162CDC-BBC5-4D69-87FB-C93AB8B3D581@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 03:21:35PM -0500, Qian Cai wrote:
-> Actually "__no_kcsan" does not work because I have
 
-Why, because KCSAN conflicts with inlining? I'm looking at the comment
-over __no_kasan_or_inline.
 
-> CONFIG_OPTIMIZE_INLINING=y (GCC 8.3.1) here, so it has to be,
+On 1/21/20 1:22 PM, Finn Thain wrote:
+> The netif_stop_queue() call in sonic_send_packet() races with the
+> netif_wake_queue() call in sonic_interrupt(). This causes issues
+> like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
+> Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
+> Update a comment to clarify the synchronization properties.
 > 
-> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-> index 20823392f4f2..fabbf8a33b7f 100644
-> --- a/arch/x86/mm/pat/set_memory.c
-> +++ b/arch/x86/mm/pat/set_memory.c
-> @@ -126,7 +126,7 @@ static inline void cpa_inc_2m_checked(void)
->         cpa_2m_checked++;
->  }
+> Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+
+> @@ -284,9 +287,16 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+>  	struct net_device *dev = dev_id;
+>  	struct sonic_local *lp = netdev_priv(dev);
+>  	int status;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&lp->lock, flags);
+
+
+This is a hard irq handler, no need to block hard irqs.
+
+spin_lock() here is enough.
+
+> +
+> +	status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
+> +	if (!status) {
+> +		spin_unlock_irqrestore(&lp->lock, flags);
 >  
-> -static inline void cpa_inc_4k_install(void)
-> +static inline void __no_kcsan_or_inline cpa_inc_4k_install(void)
->  {
->         cpa_4k_install++;
->  }
-> 
-> Are you fine with it or data_race() looks better?
+> -	if (!(status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT))
+>  		return IRQ_NONE;
+> +	}
+>  
+>  	do {
+>  		if (status & SONIC_INT_PKTRX) {
+> @@ -300,11 +310,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+>  			int td_status;
+>  			int freed_some = 0;
+>  
+> -			/* At this point, cur_tx is the index of a TD that is one of:
+> -			 *   unallocated/freed                          (status set   & tx_skb[entry] clear)
+> -			 *   allocated and sent                         (status set   & tx_skb[entry] set  )
+> -			 *   allocated and not yet sent                 (status clear & tx_skb[entry] set  )
+> -			 *   still being allocated by sonic_send_packet (status clear & tx_skb[entry] clear)
+> +			/* The state of a Transmit Descriptor may be inferred
+> +			 * from { tx_skb[entry], td_status } as follows.
+> +			 * { clear, clear } => the TD has never been used
+> +			 * { set,   clear } => the TD was handed to SONIC
+> +			 * { set,   set   } => the TD was handed back
+> +			 * { clear, set   } => the TD is available for re-use
+>  			 */
+>  
+>  			netif_dbg(lp, intr, dev, "%s: tx done\n", __func__);
+> @@ -406,7 +417,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+>  		/* load CAM done */
+>  		if (status & SONIC_INT_LCD)
+>  			SONIC_WRITE(SONIC_ISR, SONIC_INT_LCD); /* clear the interrupt */
+> -	} while((status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT));
+> +
+> +		status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
+> +	} while (status);
+> +
+> +	spin_unlock_irqrestore(&lp->lock, flags);
+> +
+>  	return IRQ_HANDLED;
 
-This one looks marginally better because the annotation is still outside
-of the function, so to speak.
 
-Btw, looking at the other "inc" CPA statistics functions there, does it
-mean that for KCSAN they all need to be annotated now too?
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
