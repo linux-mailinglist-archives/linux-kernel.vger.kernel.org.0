@@ -2,106 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE482144293
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:56:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C2BE14429D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbgAUQ4v convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 11:56:51 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44113 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgAUQ4v (ORCPT
+        id S1729279AbgAUQ6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:58:00 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45201 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729191AbgAUQ56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:56:51 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d62so3179433oia.11;
-        Tue, 21 Jan 2020 08:56:50 -0800 (PST)
+        Tue, 21 Jan 2020 11:57:58 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so2842066lfa.12;
+        Tue, 21 Jan 2020 08:57:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=13rfNwxyiR9yuh7eK/7sBMvhz8O70v72cEL2FYuVuuw=;
+        b=CMjx9T7PtY1kfCg2UepPrVQ1Hpe7hOMZU/pLX4viCwRLqN/qlrwhwyJUAuQPjE73ha
+         MX/QAp600urA0KcCNWXi70P5jCWzwjVxgQdgQA704meGkw9BBq6HfJljGniXS3/tV6Sh
+         rXBfa93dOG1XoDH6wLQCKUghxqXlCcCanLsdxNZZstCtE6HheuASHqU29T6tw3SVtPWU
+         r8F+INeCbTbPEWEn1Rq/XwxUg6AB3TLDfVXIoSjfBUZopXm3iLKOE9u19hdcshXffCr2
+         FJnK3dgh+wGWAq6lTe7pFuGusnmjcTf1NzYb6LY0QsEIthGl1F4d0fdSgUlCbUWnLjOk
+         tqoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=L48dqKCWqUM40uiIIvW7gNnbpv7oxB/Hh4H4mqqlPcE=;
-        b=W8dAF/1C7IWuwNsJrxxbXrJ1eHsVyu5teK4sqN7LgP1WVbuX+i8P3ESJoBh8q6CYAa
-         kW3qDjB+HszxVthFlfIqjs8gJeAYBet4Yb2PGSDJ5hV9EV0BRvnSE8jOuDPaJ9vlO+ef
-         3fbZRsN+DTZhrIHO9+Be6jsZ1tMZJ9Zhm+snbEXfEFYbq68tpKIbN/I2QWEH+nGGX7RF
-         OK9txUVV9fuu7wsGyZHxkoanEYx3RVbdgoarpbHm3XuvTlx8fuCD4TrnGdwmpHnIvNEX
-         KaVVcLPraHvjeE/uo3CLgH4uDOBqvh9Pz0KrlMUW9KvcegHAFnbD/BkSOnkzBy7ZzGtj
-         /Qyw==
-X-Gm-Message-State: APjAAAVPgmZUiZZqc08+/iHKkhKpoSeVIF2mcrDYYgCkEbr8itStG8Cm
-        7DbMP5/30S+sD8pUmrX9Gu+RfUsTiT7wumssEp0CpA==
-X-Google-Smtp-Source: APXvYqyPmBDzNEz7+Zh6YxhQJWlleEoCehXnih04KMLq9z2SKftc/FZQrx4589Dqi/vJU/ZbqAYZSamTVF6BS4uWuAM=
-X-Received: by 2002:a05:6808:1c5:: with SMTP id x5mr3750017oic.57.1579625810328;
- Tue, 21 Jan 2020 08:56:50 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=13rfNwxyiR9yuh7eK/7sBMvhz8O70v72cEL2FYuVuuw=;
+        b=CSxAA09tZzsnRQuA+RjcP+hJRetplg6bHbM6OVmglOz0ze9IRk6ctQNByVHm7f3jBU
+         cBaiOONoo2/dEnuDVa+HOY6aPkDFKsWxtQtVR+4CtYiqhfw7JWqIqMwH5/9AkwisKZzZ
+         65i+ls1ekhtnKjpKTYLrRm6sRuR+DOBAaGyYzkK61zAt7gvSFRa1iginDAqPApM4xdHt
+         +HZ4RDNdymslV8NY0zwW79ObWxWZw2eQc/nCnlf9j01x0AnVGaPEB8wVTFGQSR9a9BGf
+         jQWqMCO+YRBVz8LrMLtn1mCvfX/ZCbTJAeqduggdMTfCPwnxEmtZViJBpropbDP+6hNN
+         Hs0Q==
+X-Gm-Message-State: APjAAAVLfWc56mWRMtnMpiTxBf58q2WQJ8Q5L4zQMTxqN1kZsk6muzmG
+        +SwmRBk9/EngQyMMQtxcgyGp6V5S
+X-Google-Smtp-Source: APXvYqz8y+exlJhNtla7NozdORcCyX05vAJjJeIxAxEhtNFlCSv1FCczCahSTpmAE+gzeqg/mFl3pg==
+X-Received: by 2002:ac2:5216:: with SMTP id a22mr3177132lfl.18.1579625875608;
+        Tue, 21 Jan 2020 08:57:55 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id r20sm19173224lfi.91.2020.01.21.08.57.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 08:57:55 -0800 (PST)
+Subject: Re: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration
+ from clock driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
+ <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
+ <9765b723-33af-9863-72c9-8094203c8cb8@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f2506b91-0199-f2a5-ea8c-ace7b651b443@gmail.com>
+Date:   Tue, 21 Jan 2020 19:57:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20200121134157.20396-1-sakari.ailus@linux.intel.com>
- <20200121134157.20396-7-sakari.ailus@linux.intel.com> <CAJZ5v0iJXUjK0n7mkqxagX9FtOmMsLqVMmU2xpQOLSb0aBWSMA@mail.gmail.com>
- <20200121161856.GZ5440@paasikivi.fi.intel.com>
-In-Reply-To: <20200121161856.GZ5440@paasikivi.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 21 Jan 2020 17:56:39 +0100
-Message-ID: <CAJZ5v0ho8ry7iTXBTxHMjwcqT+EGT2mRy2rmp+o7rmG0apYimQ@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] Documentation: ACPI: Document probe-low-power _DSD property
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Mani, Rajmohan" <rajmohan.mani@intel.com>,
-        Tomasz Figa <tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <9765b723-33af-9863-72c9-8094203c8cb8@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 5:19 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> On Tue, Jan 21, 2020 at 05:09:44PM +0100, Rafael J. Wysocki wrote:
-> > On Tue, Jan 21, 2020 at 2:41 PM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Document the probe-low-power _DSD property and how it is used with I²C
-> > > drivers.
-> > >
-> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > ---
-> > >  .../acpi/dsd/probe-low-power.rst              | 28 +++++++++++++++++++
-> > >  Documentation/firmware-guide/acpi/index.rst   |  1 +
-> > >  2 files changed, 29 insertions(+)
-> > >  create mode 100644 Documentation/firmware-guide/acpi/dsd/probe-low-power.rst
-> > >
-> > > diff --git a/Documentation/firmware-guide/acpi/dsd/probe-low-power.rst b/Documentation/firmware-guide/acpi/dsd/probe-low-power.rst
-> > > new file mode 100644
-> > > index 0000000000000..e0343ffefe071
-> > > --- /dev/null
-> > > +++ b/Documentation/firmware-guide/acpi/dsd/probe-low-power.rst
-> > > @@ -0,0 +1,28 @@
-> > > +.. SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +======================================
-> > > +Probing I²C devices in low power state
-> > > +======================================
-> > > +
-> > > +Introduction
-> > > +============
-> > > +
-> > > +In some cases it may be preferred to leave certain devices powered off for
-> > > +the entire system bootup if powering on these devices has adverse side
-> > > +effects, beyond just powering on the said device. The _DSD property
-> > > +"probe-low-power" has been defined for this purpose.
-> >
-> > Well, if you say "has been defined", you need to provide a pointer to
-> > the definition document (a specification of some sort or similar).
->
-> How about:
->
-> s/has been defined/is used/
+21.01.2020 19:19, Sowjanya Komatineni пишет:
+> 
+> On 1/19/20 7:04 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 14.01.2020 10:24, Sowjanya Komatineni пишет:
+>>
+>> [snip]
+>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra30.c
+>>> b/drivers/clk/tegra/clk-tegra30.c
+>>> index 5732fdbe20db..53d1c48532ae 100644
+>>> --- a/drivers/clk/tegra/clk-tegra30.c
+>>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>>> @@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[]
+>>> __initdata = {
+>>>        { TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>>        { TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>>        { TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>> -     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
+>>> -     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
+>>> -     { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+>>> +     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
+>>> +     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
+>>>        { TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>        { TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>        { TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>
+>> What about to use the assigned-clock-rates in device-tree and thus to
+>> remove those PLL_A entries?
+> 
+> Yes clock rates can be used and also PLL rate is set based on sample
+> rate during hw_params. So this can be removed.
+> 
+> But PLLA clock rates are not related to this patch series and also
+> changing this needs audio function testing across all platforms and
+> currently we don't have audio functional tests in place for older
+> platforms.
+> 
+> All audio clocks proper fixes and cleanup b/w clock driver and audio
+> driver will be done separately.
 
-I would say "Linux recognizes the ... that can be used for this purpose."
+If there are real plans to make sound driver to drive the PLLA rate,
+then indeed should be fine to keep it as-is for now.
