@@ -2,87 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B192414422D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DF3144231
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 17:31:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbgAUQaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 11:30:20 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51124 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726555AbgAUQaU (ORCPT
+        id S1729212AbgAUQb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 11:31:27 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52182 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726555AbgAUQb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:30:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579624218;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mxflqPtTzg3Ku1VbkLyyrn7MV7M3mR8q27sY9MnBA2o=;
-        b=CkU8pzFdFImRSWI76gxeNkQ65ju4U28Zz+B7r6t3DkRDyWjkJhTtGUUupgr1QecMRrkXac
-        EyOmoPwwBzxQwkcOaMXpA0WjwQMCicxv9KN/awcZ+ajDuDbKSqjIDJPrXeTHRS9sLPoe5n
-        c5yrZcg/l5ll20kE8VSQZSbP02umpv8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-90-6-u4abFTOKCN3lU35lN2Fg-1; Tue, 21 Jan 2020 11:30:16 -0500
-X-MC-Unique: 6-u4abFTOKCN3lU35lN2Fg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 09BCB101FEAF;
-        Tue, 21 Jan 2020 16:30:14 +0000 (UTC)
-Received: from treble (ovpn-122-154.rdu2.redhat.com [10.10.122.154])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 08DCA48;
-        Tue, 21 Jan 2020 16:30:12 +0000 (UTC)
-Date:   Tue, 21 Jan 2020 10:30:11 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Julien Thierry <jthierry@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        peterz@infradead.org, raphael.gault@arm.com,
-        catalin.marinas@arm.com, will@kernel.org
-Subject: Re: [RFC v5 04/57] objtool: check: Ignore empty alternative groups
-Message-ID: <20200121163011.tk5koyg24gzuhoaa@treble>
-References: <20200109160300.26150-1-jthierry@redhat.com>
- <20200109160300.26150-5-jthierry@redhat.com>
+        Tue, 21 Jan 2020 11:31:27 -0500
+Received: from callcc.thunk.org (rrcs-67-53-201-206.west.biz.rr.com [67.53.201.206])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00LGVBCR018494
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Jan 2020 11:31:13 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 30D94420057; Tue, 21 Jan 2020 11:31:10 -0500 (EST)
+Date:   Tue, 21 Jan 2020 11:31:10 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Sam Hartman <hartmans@debian.org>
+Cc:     Zhenzhong Duan <zhenzhong.duan@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Question about dynamic minor number of misc device
+Message-ID: <20200121163110.GK15860@mit.edu>
+References: <CAFH1YnOad7aVjoX_PR6mLqT=pXQjpBW9ZDHkKYzNkeistFkA4A@mail.gmail.com>
+ <CAK8P3a3DwaZnRff7CCrJoSxP_MeVUn1S6nRd+hb5rHnv9dBgLQ@mail.gmail.com>
+ <CAFH1YnMDL1gBNT4vr+C=eGGoCYJvkVDnoXUVN8OL9Xs3668Z+Q@mail.gmail.com>
+ <CAK8P3a0aFr546fF+=LDm3rwZ-sK-xC8VLYTZjOEn+o6fVixRHg@mail.gmail.com>
+ <20200120221323.GJ15860@mit.edu>
+ <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200109160300.26150-5-jthierry@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CAK8P3a2aLxAgjp2_Vb0bKw-0PMVRXKtFw=2giF0MY6hgAQpQRg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 04:02:07PM +0000, Julien Thierry wrote:
-> Atlernative section can contain entries for alternatives with no
-> instructions. Objtool will currently crash when handling such an entry.
+On Tue, Jan 21, 2020 at 08:56:37AM +0100, Arnd Bergmann wrote:
+> > > I think one patch to move the ones with unique names would be fine,
+> > > but then separate patches for
+> > >
+> > > - FLASH_MINOR move and rename to avoid conflict
+> > > - change speakup to dynamic minors
+> > > - support for high dynamic minor numbers if you are really motivated
+> > >   (probably nobody needs these)
+> >
+> > Are we sure that reassigning minor device number conflits isn't going
+> > to break systems?  Especially those on random, older, architectures
+> > they might not be using udev.
 > 
-> Just skip that entry, but still give a warning to discourage useless
-> entries.
-> 
-> Signed-off-by: Julien Thierry <jthierry@redhat.com>
-> ---
->  tools/objtool/check.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 5968e6f08891..27e5380e0e0b 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -866,6 +866,13 @@ static int add_special_section_alts(struct objtool_file *file)
->  		}
->  
->  		if (special_alt->group) {
-> +			if (!special_alt->orig_len) {
-> +				WARN("empty alternative entry at %s+0x%lx",
-> +				     orig_insn->sec->name,
-> +				     orig_insn->offset);
-> +				continue;
-> +			}
-> +
+> To clarify: the only numbers that I think should be changed to dynamic
+> allocation are for drivers/staging/speakup. While this is a fairly old
+> subsystem, I would expect that it being staging means we can be a
+> little more progressive with the changes.
 
-I think WARN_FUNC() can be used here instead.
+Sam,
 
--- 
-Josh
+Would you happen to know how commonly used the speakup system would be
+--- in particular, on non-udev systems where changing the minor number
+of the device node might break some folks?  Does your hardware system
+use speakup, or some other interface?
 
+Also, who would be the best people to reach out at the
+linux-speakup.org project to verify what the potential impact might be
+of making this change.  It looks like some of the web pages are a bit
+dated, so I wasn't sure what's up to date.
+
+Thanks!!
+
+						- Ted
