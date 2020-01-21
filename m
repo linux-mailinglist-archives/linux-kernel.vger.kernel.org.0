@@ -2,117 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 047F9143973
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7A5143980
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:32:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbgAUJ0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:26:50 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34810 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUJ0t (ORCPT
+        id S1729044AbgAUJcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:32:05 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37762 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728712AbgAUJcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:26:49 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a15so2347166otf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:26:49 -0800 (PST)
+        Tue, 21 Jan 2020 04:32:04 -0500
+Received: by mail-wm1-f68.google.com with SMTP id f129so2188361wmf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:32:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=015iS5ab+bbbbqMto8iml1toavjBX/achPCg/YdPZXI=;
-        b=mBGUwf1spvYZf9aFcmTrpdCatsnzV28NF2Iulhvl37FQidV/Sb8q/fRo66G5tdixYK
-         pySnzNwWjF6pb3nTpQB4v+3FxmP1dgO4YpwDNaZAg14XI+VvjkyQth+VWsr3vmy6VqA1
-         +XcquIQgOrsv8XkWpJ828ZuXnZZQRdVW6N7hyQbpxaT4xVe+sjyxOeaa8fGVMeLQvpaW
-         NJTxAeq3X8BwieYTtkGrdGXQ0doEtBkNZFaSpsriMwTZcioKK1ypCfIJPvSgUNiu0Wy6
-         iDtSJNKspPd6vUHJPAs/WJjBCno4ysLB8vgTCjmtLanqQSbVOnkuMDk94fWQ9y+f8gQg
-         /VBg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=imtrsyE4PqkfOuBH2bEU5/ycShpe5DgMQpGEtomyMa0=;
+        b=rtcJ+LQlDZ/dhGfo9Iu5OJd4+HKMy2yzD9iSGdalzOoIEncUjzsz5/aNNTd5RjsSc8
+         zO8R7IWeVumQmIJtNgo4RVZt7gUhd5yZRRBQqVDryoKs8BU04+PpGfSZJNvnjsH/62yj
+         utNq7GGLPGyTxTb1yb3mltp6nzJAjgAWU6qQKOTamwB12SgQZpUurDCVdShHDY4zSwRt
+         27hnYDJCXhMMgdvO1mW+7T9xCr4uphzvbjrusTEF0ylfATpdKENfYomQu6F+lwzn6RUS
+         UpDbh4WVRvpRmqp5fb/B2A+GM9Tidwg6k1/Hgf4wLH/tybPmLM/Hd8ve+be8A6ZldBH9
+         pQLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=015iS5ab+bbbbqMto8iml1toavjBX/achPCg/YdPZXI=;
-        b=J5dfZ8Nri1PV7aSNRWyXZ8LFKd74ao63fp+UzUWSZhYAnqP7UIWJ373xmA4W9OXQX8
-         pJVtt/+ZRHkq1tnrRdB2+hAWPFYmR+8P2xUgZw56sxIiPEhC5EQgRAcPtOOIVzP7scpN
-         +uCtAQ4QhGu7rau2y5k7gzRsY19MK7xaJS3rFGMG6EMUJbPLGKTFpW+VadyL5nPWBxK4
-         tVQsC0q1n1sscAOjjEJzlATNVLmHWqhg78cLXIAH0dOy1TOJ4ovHhmYJbcckjppk35Ey
-         ym8bjLVOOsmdJmeymYZp9J48/a/XBEPOQYM7ft3aFU83eRKPlcQnHaiRTlqgciJ1stxg
-         Te1A==
-X-Gm-Message-State: APjAAAWwYksnj9vFMMwWZfPnRwmVdZegk3HTeEQzdJA8B7BDdTT6t4Hk
-        BKBT45tm/LR72yci8GyNVgWfQxfkXz6qvrwZ9YRD/g==
-X-Google-Smtp-Source: APXvYqx5S5usi1vwj/772yfSdbnumknzUZMoWDH+DDcFbK+cc/0m2U2mpFUD46GX+AyVTi7VBQQ9tuKuy4LUEAbLPQA=
-X-Received: by 2002:a9d:7410:: with SMTP id n16mr3006138otk.23.1579598807989;
- Tue, 21 Jan 2020 01:26:47 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=imtrsyE4PqkfOuBH2bEU5/ycShpe5DgMQpGEtomyMa0=;
+        b=QsLgEeDdpWkuurr66DARhyAY3cxGvch4nS5qL5iTru/V9NgtSCAY9bGElVbd59Vf4A
+         1HD65Xc88ybtpbXAfV7PzbFSJNWReSJu0Npw1aW9L7NrX0YAyNd2JsT7qTmQel5OWm0Q
+         cOjMOtahoC+Y3/KFDrSZ57JrXBvKTwwOMewuhixbGHXmfEKJEgkDF41AACTEhzYsqPp3
+         kf8ehxw9axEjwU2ipFD9AVaxDyzISR/SwdT6/gPA/0z2xLuGH1UJFNnMm2F0417BjpEr
+         xyTUSINd67sADRdf27zhSgdREYC/vruZlaXvHM4qGOjBzJxsrDiav2swusawgAY0O+1Q
+         15Xw==
+X-Gm-Message-State: APjAAAWhOSyRW1+dIiknFfSxf0UOymjZhuLKL8x7BGAS9YCQ2Og8dA8S
+        1uFkv3pBS0QqTXkz/kmfa/V9ng==
+X-Google-Smtp-Source: APXvYqxXLTNXCnqXFHWAqOhNn4BqFUdupPBlV6/fm+9Ho9HF0rYCv/gYw3ZqBCY91j9ikIx2kYRjiw==
+X-Received: by 2002:a1c:a584:: with SMTP id o126mr3199652wme.163.1579599122625;
+        Tue, 21 Jan 2020 01:32:02 -0800 (PST)
+Received: from google.com ([2a00:79e0:d:110:d6cc:2030:37c1:9964])
+        by smtp.gmail.com with ESMTPSA id g7sm51210925wrq.21.2020.01.21.01.32.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 01:32:01 -0800 (PST)
+Date:   Tue, 21 Jan 2020 09:31:58 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-imx@nxp.com, Morten.Rasmussen@arm.com, Chris.Redpath@arm.com,
+        ionela.voinescu@arm.com, javi.merino@arm.com,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com, rjw@rjwysocki.net,
+        sudeep.holla@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+        sboyd@kernel.org, rui.zhang@intel.com, amit.kucheria@verdurent.com,
+        daniel.lezcano@linaro.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+        kernel@pengutronix.de, khilman@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, robh@kernel.org,
+        matthias.bgg@gmail.com, steven.price@arm.com,
+        tomeu.vizoso@collabora.com, alyssa.rosenzweig@collabora.com,
+        airlied@linux.ie, daniel@ffwll.ch, kernel-team@android.com
+Subject: Re: [PATCH 1/4] PM / EM: and devices to Energy Model
+Message-ID: <20200121093158.GA154455@google.com>
+References: <20200116152032.11301-1-lukasz.luba@arm.com>
+ <20200116152032.11301-2-lukasz.luba@arm.com>
+ <20200117105437.GA211774@google.com>
+ <40587d98-0e8d-cbac-dbf5-d26501d47a8c@arm.com>
+ <20200120150918.GA164543@google.com>
+ <8332c4ac-2a7d-1e2d-76e9-7c979a666257@arm.com>
+ <b02da0ed-9e0b-36db-9813-daa334cbf2ba@arm.com>
 MIME-Version: 1.0
-References: <20200121041200.2260-1-cai@lca.pw> <20200121072744.GA7808@zn.tnic>
- <CANpmjNPFRCRg9wnFwyJpZVg8Urb9HAdZ++e3xbh1LXPjgAs4kw@mail.gmail.com> <20200121091633.GF7808@zn.tnic>
-In-Reply-To: <20200121091633.GF7808@zn.tnic>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 21 Jan 2020 10:26:36 +0100
-Message-ID: <CANpmjNMi8ULSt3MJ+MGUQRHj4xYE1FY4PmTSbHZr3TTe4-g7TQ@mail.gmail.com>
-Subject: Re: [PATCH -next] x86/mm/pat: fix a data race in cpa_inc_4k_install
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b02da0ed-9e0b-36db-9813-daa334cbf2ba@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Jan 2020 at 10:16, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Jan 21, 2020 at 09:19:18AM +0100, Marco Elver wrote:
-> > As I said in my email that you also copied to the message, this is
-> > just a stats counter. For the general case, I think we reached
-> > consensus that such accesses should intentionally remain data races:
-> >   https://lore.kernel.org/linux-fsdevel/CAHk-=wg5CkOEF8DTez1Qu0XTEFw_oHhxN98bDnFqbY7HL5AB2g@mail.gmail.com/T/#u
->
-> Yap, I agree with Linus on the legibility aspect.
->
-> > Either you can use the data_race() macro, making this
-> > 'data_race(cpa_4k_install++)' -- this effectively documents the
-> > intentional data race --
-> >
-> > or just blacklist the entire file by putting
-> >   KCSAN_SANITIZE_set_memory.o := n
-> > into the Makefile.
-> >
-> > [ Note that there are 2 more ways to blacklist:
-> >   - __no_kcsan function attribute, for blacklisting entire functions.
-> >   - KCSAN_SANITIZE :=n in the Makefile, blacklisting all compilation
-> > units in the Makefile. ]
->
-> Do we have all those official methods how to make KCSAN happy,
-> documented somewhere?
+On Monday 20 Jan 2020 at 18:38:41 (+0000), Lukasz Luba wrote:
+> I think we could avoid this additional argument 'cpumask'. I have
+> checked the cpufreq_cpu_get function, which should do be good for this:
+> 
+> ---------->8-------------------------
+> static int _get_sharing_cpus(struct device *cpu_dev, struct cpumask *span)
+> {
+>         struct cpufreq_policy *policy;
+> 
+>         policy = cpufreq_cpu_get(cpu_dev->id);
+>         if (policy) {
+>                 cpumask_copy(span, policy->cpus);
 
-Yes, it's in Documentation/dev-tools/kcsan.rst. I sent a patch last
-month, which is in the -rcu tree:
-  http://lkml.kernel.org/r/20191212000709.166889-1-elver@google.com
+That should be with 'policy->related_cpus', but yes if the policy
+cpumasks have been populated this approach is OK I think.
 
-> > I leave it to you what makes more sense. I don't know if there are
-> > other data races lurking here, since cpa_4k_install is not the only
-> > stats counter.
->
-> In this particular case and if it were me, I'd prefer the __no_kcsan
-> function attribute because it is kept outside of the function body. But
-> I can't find __no_kcsan in current tip:
->
-> $ git grep __no_kcsan
-> .h:204:static __no_kcsan_or_inline bool constant_test_bit(long nr, const volatile unsigned long *addr)
-> include/linux/compiler.h:215:# define __no_kcsan_or_inline __no_sanitize_thread notrace __maybe_unused
-> include/linux/compiler.h:216:# define __no_sanitize_or_inline __no_kcsan_or_inline
-> include/linux/compiler.h:218:# define __no_kcsan_or_inline __always_inline
-> include/linux/compiler.h:225:static __no_kcsan_or_inline
-> include/linux/compiler.h:238:static __no_kcsan_or_inline
->
-> just this "glued together" thing __no_kcsan_or_inline.
-
-As far as I can tell it's not yet in -tip, but only in -rcu (and
--next). I believe it should be in -tip soon.
+>                 cpufreq_cpu_put(policy);
+>                 return 0;
+>         } else {
+>                 return -EINVAL;
+>         }
+> }
+> --------------------------8<-------------------------------
 
 Thanks,
--- Marco
+Quentin
