@@ -2,84 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F35C1446B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 542AE1446F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:10:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbgAUWAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:00:25 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46045 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbgAUWAZ (ORCPT
+        id S1729387AbgAUWKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:10:43 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44790 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729043AbgAUWKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:00:25 -0500
-Received: by mail-oi1-f193.google.com with SMTP id n16so4124573oie.12;
-        Tue, 21 Jan 2020 14:00:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KLk2O/IKuSbiV0tR8rjrjmOXKw++jN6rlAX6P6oLFbI=;
-        b=UUxvAKptw65tGmDmD8AtJPVrv5HawYbrlhLhi2IMgqjbRdRRi4ykJr4SD6Pg9V2SZ/
-         KqjuN/0xSRpb4CxIHdvim1F+/BJzvhlIbmrmp2P6rDY4vvPl95dv6WxbclBJNTPWLf0w
-         7kF0OmnQCG7N2nPpXe85Cer3o8i4T7dy1vuei5xoktrI7OVKAzFncqchN8LLC8eCWNV9
-         XP9MsIHi0kvIimGcLoa2GJ9CPzO8M/jS0EzOcz3Jy9esz7YrexFvOhDVTkaobBfQDg6h
-         07JMPaWshDWmr2W2Y1fAVLzRmBq96DDq3fJJblPxmE3nJhTR5J0KOgTVP/O6R0fupeyH
-         IQHg==
-X-Gm-Message-State: APjAAAVJF+y769pH+j1VTwq8fG3k2+CyuEDzPhrA4/32NEz/eeVHgSRp
-        y1QLz/porBBc2EjCvIA8sw==
-X-Google-Smtp-Source: APXvYqyrJcCLm65IFp9RrnaNPk0Kj24N9+PbvJbLGG+xddxwNzL2Rmb4y7wEB7BGH5EV0QhX139X+w==
-X-Received: by 2002:aca:c74e:: with SMTP id x75mr4769148oif.140.1579644024678;
-        Tue, 21 Jan 2020 14:00:24 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 69sm13989543oth.17.2020.01.21.14.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 14:00:23 -0800 (PST)
-Received: (nullmailer pid 13395 invoked by uid 1000);
-        Tue, 21 Jan 2020 22:00:22 -0000
-Date:   Tue, 21 Jan 2020 16:00:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, robh@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, olivier.moysan@st.com
-Subject: Re: [PATCH v3] ASoC: dt-bindings: stm32: convert spdfirx to
- json-schema
-Message-ID: <20200121220022.GA12737@bogus>
-References: <20200117170352.16040-1-olivier.moysan@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117170352.16040-1-olivier.moysan@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 Jan 2020 17:10:37 -0500
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 4A79029994; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>,
+        Laurent Vivier <laurent@vivier.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <e20133bf43ec6f5967a3330dacaf38f653bf3061.1579641728.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1579641728.git.fthain@telegraphics.com.au>
+References: <cover.1579641728.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net v2 05/12] net/sonic: Fix receive buffer handling
+Date:   Wed, 22 Jan 2020 08:22:08 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020 18:03:52 +0100, Olivier Moysan wrote:
-> Convert the STM32 SPDIFRX bindings to DT schema format using json-schema.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-> ---
-> Changes in v2:
-> - Add "additionalProperties: false"
-> - Also change minItems to 2 for dmas property, as both DMAs are required.
-> 
-> Changes in v3:
-> - Drop minItems/maxItems for dmas property, remove ref to stm32-dma.txt.
-> ---
->  .../bindings/sound/st,stm32-spdifrx.txt       | 56 -------------
->  .../bindings/sound/st,stm32-spdifrx.yaml      | 80 +++++++++++++++++++
->  2 files changed, 80 insertions(+), 56 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/st,stm32-spdifrx.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-> 
+The SONIC can sometimes advance its rx buffer pointer (RRP register)
+without advancing its rx descriptor pointer (CRDA register). As a result
+the index of the current rx descriptor may not equal that of the current
+rx buffer. The driver mistakenly assumes that they are always equal.
+This assumption leads to incorrect packet lengths and possible packet
+duplication. Avoid this by calling a new function to locate the buffer
+corresponding to a given descriptor.
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/net/ethernet/natsemi/sonic.c | 36 ++++++++++++++++++++++++----
+ drivers/net/ethernet/natsemi/sonic.h |  5 ++--
+ 2 files changed, 34 insertions(+), 7 deletions(-)
 
-If a tag was not added on purpose, please state why and what changed.
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 5ba705ad7d4e..3387f7bc1a80 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -408,6 +408,22 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++/* Return the array index corresponding to a given Receive Buffer pointer. */
++
++static inline int index_from_addr(struct sonic_local *lp, dma_addr_t addr,
++				  unsigned int last)
++{
++	unsigned int i = last;
++
++	do {
++		i = (i + 1) & SONIC_RRS_MASK;
++		if (addr == lp->rx_laddr[i])
++			return i;
++	} while (i != last);
++
++	return -ENOENT;
++}
++
+ /*
+  * We have a good packet(s), pass it/them up the network stack.
+  */
+@@ -427,6 +443,16 @@ static void sonic_rx(struct net_device *dev)
+ 
+ 		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
+ 		if (status & SONIC_RCR_PRX) {
++			u32 addr = (sonic_rda_get(dev, entry,
++						  SONIC_RD_PKTPTR_H) << 16) |
++				   sonic_rda_get(dev, entry, SONIC_RD_PKTPTR_L);
++			int i = index_from_addr(lp, addr, entry);
++
++			if (i < 0) {
++				WARN_ONCE(1, "failed to find buffer!\n");
++				break;
++			}
++
+ 			/* Malloc up new buffer. */
+ 			new_skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
+ 			if (new_skb == NULL) {
+@@ -448,7 +474,7 @@ static void sonic_rx(struct net_device *dev)
+ 
+ 			/* now we have a new skb to replace it, pass the used one up the stack */
+ 			dma_unmap_single(lp->device, lp->rx_laddr[entry], SONIC_RBSIZE, DMA_FROM_DEVICE);
+-			used_skb = lp->rx_skb[entry];
++			used_skb = lp->rx_skb[i];
+ 			pkt_len = sonic_rda_get(dev, entry, SONIC_RD_PKTLEN);
+ 			skb_trim(used_skb, pkt_len);
+ 			used_skb->protocol = eth_type_trans(used_skb, dev);
+@@ -457,13 +483,13 @@ static void sonic_rx(struct net_device *dev)
+ 			lp->stats.rx_bytes += pkt_len;
+ 
+ 			/* and insert the new skb */
+-			lp->rx_laddr[entry] = new_laddr;
+-			lp->rx_skb[entry] = new_skb;
++			lp->rx_laddr[i] = new_laddr;
++			lp->rx_skb[i] = new_skb;
+ 
+ 			bufadr_l = (unsigned long)new_laddr & 0xffff;
+ 			bufadr_h = (unsigned long)new_laddr >> 16;
+-			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_L, bufadr_l);
+-			sonic_rra_put(dev, entry, SONIC_RR_BUFADR_H, bufadr_h);
++			sonic_rra_put(dev, i, SONIC_RR_BUFADR_L, bufadr_l);
++			sonic_rra_put(dev, i, SONIC_RR_BUFADR_H, bufadr_h);
+ 		} else {
+ 			/* This should only happen, if we enable accepting broken packets. */
+ 		}
+diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
+index 9e4ff8dd032d..e6d47e45c5c2 100644
+--- a/drivers/net/ethernet/natsemi/sonic.h
++++ b/drivers/net/ethernet/natsemi/sonic.h
+@@ -275,8 +275,9 @@
+ #define SONIC_NUM_RDS   SONIC_NUM_RRS /* number of receive descriptors */
+ #define SONIC_NUM_TDS   16            /* number of transmit descriptors */
+ 
+-#define SONIC_RDS_MASK  (SONIC_NUM_RDS-1)
+-#define SONIC_TDS_MASK  (SONIC_NUM_TDS-1)
++#define SONIC_RRS_MASK  (SONIC_NUM_RRS - 1)
++#define SONIC_RDS_MASK  (SONIC_NUM_RDS - 1)
++#define SONIC_TDS_MASK  (SONIC_NUM_TDS - 1)
+ 
+ #define SONIC_RBSIZE	1520          /* size of one resource buffer */
+ 
+-- 
+2.24.1
+
