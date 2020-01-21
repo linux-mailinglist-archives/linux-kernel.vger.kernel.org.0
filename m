@@ -2,65 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5F6143AF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:26:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9E1143AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 11:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbgAUKZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 05:25:52 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:53349 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729793AbgAUKZw (ORCPT
+        id S1729437AbgAUK2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 05:28:15 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:53626 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728931AbgAUK2P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:25:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0ToHewX3_1579602349;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHewX3_1579602349)
+        Tue, 21 Jan 2020 05:28:15 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0ToHg3hQ_1579602492;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0ToHg3hQ_1579602492)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 21 Jan 2020 18:25:49 +0800
+          Tue, 21 Jan 2020 18:28:13 +0800
+Subject: Re: [PATCH] fs/gfs2: remove IS_DINODE
+To:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        cluster-devel <cluster-devel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1579596552-257820-1-git-send-email-alex.shi@linux.alibaba.com>
+ <CAHpGcMJ6DazJ_rMPB2uUKfH-1oxVy=RoLvt2nMEvcdWWCnWjDw@mail.gmail.com>
 From:   Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Pankaj gupta <pagupta@redhat.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: remove unused macro
-Date:   Tue, 21 Jan 2020 18:25:44 +0800
-Message-Id: <1579602344-57171-1-git-send-email-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-To:     unlisted-recipients:; (no To-header on input)
+Message-ID: <e29431c1-1dfc-5e65-fa43-829184ed7209@linux.alibaba.com>
+Date:   Tue, 21 Jan 2020 18:26:24 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <CAHpGcMJ6DazJ_rMPB2uUKfH-1oxVy=RoLvt2nMEvcdWWCnWjDw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KPMBITS is never used from it was introduced. better to remove it.
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com> 
-Cc: Andrew Morton <akpm@linux-foundation.org> 
-Cc: David Hildenbrand <david@redhat.com> 
-Cc: "Michael S. Tsirkin" <mst@redhat.com> 
-Cc: Pankaj gupta <pagupta@redhat.com> 
-Cc: Konstantin Khlebnikov <koct9i@gmail.com> 
-Cc: linux-kernel@vger.kernel.org 
-Cc: linux-fsdevel@vger.kernel.org 
----
- fs/proc/page.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 7c952ee732e6..c4b1005a82bc 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -19,7 +19,6 @@
- 
- #define KPMSIZE sizeof(u64)
- #define KPMMASK (KPMSIZE - 1)
--#define KPMBITS (KPMSIZE * BITS_PER_BYTE)
- 
- /* /proc/kpagecount - an array exposing page counts
-  *
--- 
-1.8.3.1
+在 2020/1/21 下午6:23, Andreas Grünbacher 写道:
+> Alex,
+> 
+> Am Di., 21. Jan. 2020 um 09:50 Uhr schrieb Alex Shi
+> <alex.shi@linux.alibaba.com>:
+>> After commit 1579343a73e3 ("GFS2: Remove dirent_first() function"), this
+>> macro isn't used any more. so remove it.
+>>
+>> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+>> Cc: Bob Peterson <rpeterso@redhat.com>
+>> Cc: Andreas Gruenbacher <agruenba@redhat.com>
+>> Cc: cluster-devel@redhat.com
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  fs/gfs2/dir.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
+>> index eb9c0578978f..636a8d0f3dab 100644
+>> --- a/fs/gfs2/dir.c
+>> +++ b/fs/gfs2/dir.c
+>> @@ -74,7 +74,6 @@
+>>  #include "util.h"
+>>
+>>  #define IS_LEAF     1 /* Hashed (leaf) directory */
+>> -#define IS_DINODE   2 /* Linear (stuffed dinode block) directory */
+> 
+> The same is true for the IS_LEAF macro. I'm adjusting the patch accordingly.
+> 
 
+I oversee this. Sorry.
+
+> The other patch removing the LBIT macros looks good as well, so I'm
+> applying both.
+
+Thanks a lot!
+Alex
