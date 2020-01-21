@@ -2,87 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB283144702
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F841446EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbgAUWLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:11:11 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44820 "EHLO
+        id S1729402AbgAUWKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:10:44 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44792 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729159AbgAUWKi (ORCPT
+        with ESMTP id S1728205AbgAUWKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:10:38 -0500
+        Tue, 21 Jan 2020 17:10:37 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id BB758299BB; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
+        id AB6F8299AA; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <1c8e6d3d2bb946007ce417d038f95a4bb7b9d8ad.1579641728.git.fthain@telegraphics.com.au>
+Message-Id: <b605d20bb6530e19f560f4d95951b64d7da9c056.1579641728.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1579641728.git.fthain@telegraphics.com.au>
 References: <cover.1579641728.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v2 12/12] net/sonic: Prevent tx watchdog timeout
+Subject: [PATCH net v2 11/12] net/sonic: Fix CAM initialization
 Date:   Wed, 22 Jan 2020 08:22:08 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Section 5.5.3.2 of the datasheet says,
+Section 4.3.1 of the datasheet says,
 
-    If FIFO Underrun, Byte Count Mismatch, Excessive Collision, or
-    Excessive Deferral (if enabled) errors occur, transmission ceases.
+    This bit [TXP] must not be set if a Load CAM operation is in
+    progress (LCAM is set). The SONIC will lock up if both bits are
+    set simultaneously.
 
-In this situation, the chip asserts a TXER interrupt rather than TXDN.
-But the handler for the TXDN is the only way that the transmit queue
-gets restarted. Hence, an aborted transmission can result in a watchdog
-timeout.
+Testing has shown that the driver sometimes attempts to set LCAM
+while TXP is set. Avoid this by waiting for command completion
+before and after giving the LCAM command.
 
-This problem can be reproduced on congested link, as that can result in
-excessive transmitter collisions. Another way to reproduce this is with
-a FIFO Underrun, which may be caused by DMA latency.
+After issuing the Load CAM command, poll for !SONIC_CR_LCAM rather than
+SONIC_INT_LCD, because the SONIC_CR_TXP bit can't be used until
+!SONIC_CR_LCAM.
 
-In event of a TXER interrupt, prevent a watchdog timeout by restarting
-transmission.
+When in reset mode, take the opportunity to reset the CAM Enable
+register.
 
 Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/net/ethernet/natsemi/sonic.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/natsemi/sonic.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index b712cc6a2560..bbb1a7ec1ed0 100644
+index 55660acf5ccc..b712cc6a2560 100644
 --- a/drivers/net/ethernet/natsemi/sonic.c
 +++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -411,10 +411,19 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 			lp->stats.rx_missed_errors += 65536;
- 
- 		/* transmit error */
--		if (status & SONIC_INT_TXER)
--			if (SONIC_READ(SONIC_TCR) & SONIC_TCR_FU)
--				netif_dbg(lp, tx_err, dev, "%s: tx fifo underrun\n",
--					  __func__);
-+		if (status & SONIC_INT_TXER) {
-+			u16 tcr = SONIC_READ(SONIC_TCR);
+@@ -634,6 +634,8 @@ static void sonic_multicast_list(struct net_device *dev)
+ 		    (netdev_mc_count(dev) > 15)) {
+ 			rcr |= SONIC_RCR_AMC;
+ 		} else {
++			unsigned long flags;
 +
-+			netif_dbg(lp, tx_err, dev, "%s: TXER intr, TCR %04x\n",
-+				  __func__, tcr);
+ 			netif_dbg(lp, ifup, dev, "%s: mc_count %d\n", __func__,
+ 				  netdev_mc_count(dev));
+ 			sonic_set_cam_enable(dev, 1);  /* always enable our own address */
+@@ -647,9 +649,14 @@ static void sonic_multicast_list(struct net_device *dev)
+ 				i++;
+ 			}
+ 			SONIC_WRITE(SONIC_CDC, 16);
+-			/* issue Load CAM command */
+ 			SONIC_WRITE(SONIC_CDP, lp->cda_laddr & 0xffff);
 +
-+			if (tcr & (SONIC_TCR_EXD | SONIC_TCR_EXC |
-+				   SONIC_TCR_FU | SONIC_TCR_BCM)) {
-+				/* Aborted transmission. Try again. */
-+				netif_stop_queue(dev);
-+				SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
-+			}
-+		}
++			/* LCAM and TXP commands can't be used simultaneously */
++			local_irq_save(flags);
++			sonic_quiesce(dev, SONIC_CR_TXP);
+ 			SONIC_WRITE(SONIC_CMD, SONIC_CR_LCAM);
++			sonic_quiesce(dev, SONIC_CR_LCAM);
++			local_irq_restore(flags);
+ 		}
+ 	}
  
- 		/* bus retry */
- 		if (status & SONIC_INT_BR) {
+@@ -675,6 +682,9 @@ static int sonic_init(struct net_device *dev)
+ 	SONIC_WRITE(SONIC_ISR, 0x7fff);
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+ 
++	/* While in reset mode, clear CAM Enable register */
++	SONIC_WRITE(SONIC_CE, 0);
++
+ 	/*
+ 	 * clear software reset flag, disable receiver, clear and
+ 	 * enable interrupts, then completely initialize the SONIC
+@@ -785,14 +795,7 @@ static int sonic_init(struct net_device *dev)
+ 	 * load the CAM
+ 	 */
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_LCAM);
+-
+-	i = 0;
+-	while (i++ < 100) {
+-		if (SONIC_READ(SONIC_ISR) & SONIC_INT_LCD)
+-			break;
+-	}
+-	netif_dbg(lp, ifup, dev, "%s: CMD=%x, ISR=%x, i=%d\n", __func__,
+-		  SONIC_READ(SONIC_CMD), SONIC_READ(SONIC_ISR), i);
++	sonic_quiesce(dev, SONIC_CR_LCAM);
+ 
+ 	/*
+ 	 * enable receiver, disable loopback
 -- 
 2.24.1
 
