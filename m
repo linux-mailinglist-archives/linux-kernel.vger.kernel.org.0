@@ -2,81 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 481751436B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 06:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42689143680
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 06:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbgAUF3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 00:29:00 -0500
-Received: from m176148.mail.qiye.163.com ([59.111.176.148]:63367 "EHLO
-        m176148.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgAUF27 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 00:28:59 -0500
-X-Greylist: delayed 515 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 00:28:59 EST
-Received: from vivo.com (wm-8.qy.internal [127.0.0.1])
-        by m176148.mail.qiye.163.com (Hmail) with ESMTP id A650F1A37B5;
-        Tue, 21 Jan 2020 13:20:19 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AFAA8AA0CH7o6kMJF-XfXKq9.3.1579584019640.Hmail.wenhu.wang@vivo.com>
-To:     Scott Wood <oss@buserror.net>
-Cc:     wangwenhu <wenhu.pku@gmail.com>,
-        Kumar Gala <galak@kernel.crashing.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        trivial@kernel.org, Rai Harninder <harninder.rai@nxp.com>
-Subject: =?UTF-8?B?UmU6W1BBVENIXSBwb3dlcnBjL0tjb25maWc6IE1ha2UgRlNMXzg1WFhfQ0FDSEVfU1JBTSBjb25maWd1cmFibGU=?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.227
-In-Reply-To: <bd0fa23b900fe967a8c3c11abd1ba9a47cec474f.camel@buserror.net>
+        id S1727141AbgAUFTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 00:19:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:38304 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbgAUFTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 00:19:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5143F31B;
+        Mon, 20 Jan 2020 21:19:20 -0800 (PST)
+Received: from [10.162.16.78] (p8cg001049571a15.blr.arm.com [10.162.16.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E03213F52E;
+        Mon, 20 Jan 2020 21:19:18 -0800 (PST)
+Subject: Re: [Patch v2 1/4] mm: enable dump several reasons for __dump_page()
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rientjes@google.com
+References: <20200120030415.15925-1-richardw.yang@linux.intel.com>
+ <20200120030415.15925-2-richardw.yang@linux.intel.com>
+ <8426f31b-606e-deca-acbe-dd59b193e113@arm.com>
+ <20200120085530.GB18028@richard>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <1c2e1cd6-5b65-79d7-f332-b866d5446c71@arm.com>
+Date:   Tue, 21 Jan 2020 10:50:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: from wenhu.wang@vivo.com( [58.251.74.227) ] by ajax-webmail ( [127.0.0.1] ) ; Tue, 21 Jan 2020 13:20:19 +0800 (GMT+08:00)
-From:   =?UTF-8?B?546L5paH6JmO?= <wenhu.wang@vivo.com>
-Date:   Tue, 21 Jan 2020 13:20:19 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVCSktCQkJMTE9CSElDTVlXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhNSktMQkpPSEhPN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6PTo6Qzo6SzgzTBRNEDYxPVYjHSMwCkJVSFVKTkxCTkNPS0lKQkJDVTMWGhIXVQweFRMOVQwa
-        FRw7DRINFFUYFBZFWVdZEgtZQVlOQ1VJTkpVTE9VSUlMWVdZCAFZQU9MQ0I3Bg++
-X-HM-Tid: 0a6fc68b5ce59394kuwsa650f1a37b5
+In-Reply-To: <20200120085530.GB18028@richard>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4KRGF0ZTogMjAyMC0wMS0yMSAxMToy
-NToyNQpUbzogIHdhbmd3ZW5odSA8d2VuaHUucGt1QGdtYWlsLmNvbT4sS3VtYXIgR2FsYSA8Z2Fs
-YWtAa2VybmVsLmNyYXNoaW5nLm9yZz4sQmVuamFtaW4gSGVycmVuc2NobWlkdCA8YmVuaEBrZXJu
-ZWwuY3Jhc2hpbmcub3JnPixQYXVsIE1hY2tlcnJhcyA8cGF1bHVzQHNhbWJhLm9yZz4sTWljaGFl
-bCBFbGxlcm1hbiA8bXBlQGVsbGVybWFuLmlkLmF1PixsaW51eHBwYy1kZXZAbGlzdHMub3psYWJz
-Lm9yZyxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCkNjOiAgdHJpdmlhbEBrZXJuZWwub3Jn
-LHdlbmh1LndhbmdAdml2by5jb20sUmFpIEhhcm5pbmRlciA8aGFybmluZGVyLnJhaUBueHAuY29t
-PgpTdWJqZWN0OiBSZTogW1BBVENIXSBwb3dlcnBjL0tjb25maWc6IE1ha2UgRlNMXzg1WFhfQ0FD
-SEVfU1JBTSBjb25maWd1cmFibGU+T24gTW9uLCAyMDIwLTAxLTIwIGF0IDA2OjQzIC0wODAwLCB3
-YW5nd2VuaHUgd3JvdGU6Cj4+IEZyb206IHdhbmd3ZW5odSA8d2VuaHUud2FuZ0B2aXZvLmNvbT4K
-Pj4gCj4+IFdoZW4gZ2VuZXJhdGluZyAuY29uZmlnIGZpbGUgd2l0aCBtZW51Y29uZmlnIG9uIEZy
-ZWVzY2FsZSBCT09LRQo+PiBTT0MsIEZTTF84NVhYX0NBQ0hFX1NSQU0gaXMgbm90IGNvbmZpZ3Vy
-YWJsZSBmb3IgdGhlIGxhY2sgb2YKPj4gZGVzY3JpcHRpb24gaW4gdGhlIEtjb25maWcgZmllbGQs
-IHdoaWNoIG1ha2VzIGl0IGltcG9zc2libGUKPj4gdG8gc3VwcG9ydCBMMkNhY2hlLVNyYW0gZHJp
-dmVyLiBBZGQgYSBkZXNjcmlwdGlvbiB0byBtYWtlIGl0Cj4+IGNvbmZpZ3VyYWJsZS4KPj4gCj4+
-IFNpZ25lZC1vZmYtYnk6IHdhbmd3ZW5odSA8d2VuaHUud2FuZ0B2aXZvLmNvbT4KPgo+VGhlIGlu
-dGVudCB3YXMgdGhhdCBkcml2ZXJzIHVzaW5nIHRoZSBTUkFNIEFQSSB3b3VsZCBzZWxlY3QgdGhl
-IHN5bWJvbC4gIFdoYXQKPmlzIHRoZSB1c2UgY2FzZSBmb3Igc2VsZWN0aW5nIGl0IG1hbnVhbGx5
-Pwo+CgpXaXRoIGEgcmVwb3NpdG9yeSBvZiBtdWx0aXBsZSBwcm9kdWN0cyhtZWFuaW5nIGRpZmZl
-cmVudCBkZWZjb25maWdzKSBhbmQgbXVsdGlwbGUKZGV2ZWxvcGVycywgdGhlIEtjb25maWdzIG9m
-IHRoZSBLZXJuZWwgU291cmNlIFRyZWUgY2hhbmdlIGZyZXF1ZW50bHkuIFNvIHRoZSAibWFrZSBt
-ZW51Y29uZmlnIgpwcm9jZXNzIGlzIG5lZWRlZCBmb3IgZGVmY29uZmlncycgcmUtZ2VuZXJhdGlu
-ZyBvciB1cGRhdGluZyBmb3IgdGhlIGNvbXBsZXhpdHkgb2YgZGVwZW5kZW5jaWVzCmJldHdlZW4g
-ZGlmZmVyZW50IGZlYXR1cmVzIGRlZmluZWQgaW4gdGhlIEtjb25maWdzLgoKPlNpbmNlIHRoaXMg
-Y29kZSB3YXMgYWRkZWQgYWxtb3N0IHRlbiB5ZWFycyBhZ28gYW5kIHRoZXJlIGFyZSBzdGlsbCBu
-byAoaW4tCj50cmVlPykgdXNlcnMgb2YgdGhlIEFQSSwgd2Ugc2hvdWxkIGp1c3QgcmVtb3ZlIHRo
-ZSBzcmFtIGNvZGUgKHVubGVzcyB0aGlzCj5wcm9kcyBzb21lb25lIHRvIHN1Ym1pdCBzdWNoIGEg
-dXNlciB2ZXJ5IHNvb24pLgo+CgpZZXMsIHByZXR0eSBsb25nIGEgdGltZS4gQnV0IHdlIERPIHJl
-YWxseSB1c2UgdGhlIEFQSSBub3cgZm9yIFBQQ0U1MDAvRnJlZXNjYWxlIFNvQy4KTGlrZSBzb21l
-dGltZXMgd2UgbmVlZCB0byByZXNldCB0aGUgd2hvbGUgUkFNLCB0aGVuIHRoZSBMMi1DYWNoZSB3
-b3VsZCBiZSB1c2VkIGFzClNSQU0gZm9yIGJhY2t1cCB1c2luZy4gU2luY2UgaXQgaXMgdXNlZnVs
-IGZvciB1cyBub3csIGEgcmUtY29uc2lkZXJhdGlvbiBpcyByZWNvbW1hbmRlZC4KCj4tU2NvdHQK
-Pgo+CgotLQpXZW5odQp2aXZvDQoNCg==
+
+
+On 01/20/2020 02:25 PM, Wei Yang wrote:
+> On Mon, Jan 20, 2020 at 11:42:30AM +0530, Anshuman Khandual wrote:
+>>
+>>
+>> On 01/20/2020 08:34 AM, Wei Yang wrote:
+>>> This is a preparation to dump all reasons during check page.
+>>
+>> This really makes sense rather then just picking the reason from
+>> the last "if" statement.
+>>
+>>>
+>>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>> ---
+>>>  include/linux/mmdebug.h |  2 +-
+>>>  mm/debug.c              | 11 ++++++-----
+>>>  mm/page_alloc.c         |  2 +-
+>>>  3 files changed, 8 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+>>> index 2ad72d2c8cc5..f0a612db8bae 100644
+>>> --- a/include/linux/mmdebug.h
+>>> +++ b/include/linux/mmdebug.h
+>>> @@ -10,7 +10,7 @@ struct vm_area_struct;
+>>>  struct mm_struct;
+>>>  
+>>>  extern void dump_page(struct page *page, const char *reason);
+>>> -extern void __dump_page(struct page *page, const char *reason);
+>>> +extern void __dump_page(struct page *page, int num, const char **reason);
+>>>  void dump_vma(const struct vm_area_struct *vma);
+>>>  void dump_mm(const struct mm_struct *mm);
+>>>  
+>>> diff --git a/mm/debug.c b/mm/debug.c
+>>> index 0461df1207cb..a8ac6f951f9f 100644
+>>> --- a/mm/debug.c
+>>> +++ b/mm/debug.c
+>>> @@ -42,11 +42,11 @@ const struct trace_print_flags vmaflag_names[] = {
+>>>  	{0, NULL}
+>>>  };
+>>>  
+>>> -void __dump_page(struct page *page, const char *reason)
+>>> +void __dump_page(struct page *page, int num, const char **reason)
+>>>  {
+>>>  	struct address_space *mapping;
+>>>  	bool page_poisoned = PagePoisoned(page);
+>>> -	int mapcount;
+>>> +	int mapcount, i;
+>>>  
+>>>  	/*
+>>>  	 * If struct page is poisoned don't access Page*() functions as that
+>>> @@ -97,8 +97,9 @@ void __dump_page(struct page *page, const char *reason)
+>>>  			sizeof(unsigned long), page,
+>>>  			sizeof(struct page), false);
+>>>  
+>>> -	if (reason)
+>>> -		pr_warn("page dumped because: %s\n", reason);
+>>> +	pr_warn("page dumped because:\n");
+>>> +	for (i = 0; i < num; i++)
+>>> +		pr_warn("\t%s\n", reason[i]);
+>>
+>> We should have a NR_BAD_PAGE_REASONS or something to cap this iteration
+>> and also check reason[i] for non-NULL before trying to print the array.
+>> There might be call sites like the following which will be problematic
+>> otherwise.
+>>
+>> split_huge_page_to_list() -> dump_page(head, NULL)
+>>
+> 
+> You are right, I missed this case.
+> 
+>>>  
+>>>  #ifdef CONFIG_MEMCG
+>>>  	if (!page_poisoned && page->mem_cgroup)
+>>
+>> While here, will it be better to move the above debug print block after
+>> mem_cgroup block instead ?
+>>
+> 
+> Not sure, let's see whether others have some idea.
+> 
+>>> @@ -108,7 +109,7 @@ void __dump_page(struct page *page, const char *reason)
+>>>  
+>>>  void dump_page(struct page *page, const char *reason)
+>>>  {
+>>> -	__dump_page(page, reason);
+>>> +	__dump_page(page, 1, &reason);
+>>>  	dump_page_owner(page);
+>>>  }
+>>>  EXPORT_SYMBOL(dump_page);
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index d047bf7d8fd4..0cf6218aaba7 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -638,7 +638,7 @@ static void bad_page(struct page *page, const char *reason,
+>>>  
+>>>  	pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
+>>>  		current->comm, page_to_pfn(page));
+>>> -	__dump_page(page, reason);
+>>> +	__dump_page(page, 1, &reason);
+>>>  	bad_flags &= page->flags;
+>>>  	if (bad_flags)
+>>>  		pr_alert("bad because of flags: %#lx(%pGp)\n",
+>>>
+>>
+>> Do we still need to have bad_flags ? After consolidating all reasons making
+>> a page bad should not we just print page->flags unconditionally each time and
+>> let the user decipher it instead. __dump_page() will print page->flags for
+>> each case (atleast after the new patch from Vlastimil). AFAICS, the only
+>> place currently consuming bad_flags is bad_page() which seems redundant after
+>> first calling __dump_page().
+> 
+> Hmm... I don't catch this. The work in __dump_page() seems a little different
+> from this one. Not sure we could remove it.
+
+Lets look at 'bad_flags' as it exists today without this series.
+
+It gets evaluated in free_pages_check_bad() and check_new_page_bad() before
+being passed into bad_page(). All other call sites for bad_page() just pass
+0 for 'bad_flags'. Now in bad_page(), we have
+
+        __dump_page(page, reason);
+        bad_flags &= page->flags;
+        if (bad_flags)
+                pr_alert("bad because of flags: %#lx(%pGp)\n",
+                                                bad_flags, &bad_flags);
+
+Here, bad_flags &= page->flags will always be positive when 'reason'
+is either
+
+"PAGE_FLAGS_CHECK_AT_FREE flag(s) set"
+
+or
+
+"PAGE_FLAGS_CHECK_AT_PREP flag set"
+
+The point here is we dont need to print bad_flags here as __dump_page()
+already prints page->flags universally along with the "bad_reason"
+after the following change.
+
+[1] https://patchwork.kernel.org/patch/11332035/
