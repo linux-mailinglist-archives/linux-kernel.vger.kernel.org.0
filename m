@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CF51446FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB283144702
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 23:11:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbgAUWKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 17:10:36 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44722 "EHLO
+        id S1729427AbgAUWLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 17:11:11 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:44820 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgAUWKg (ORCPT
+        with ESMTP id S1729159AbgAUWKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 17:10:36 -0500
+        Tue, 21 Jan 2020 17:10:38 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id DDD5229980; Tue, 21 Jan 2020 17:10:35 -0500 (EST)
-Message-Id: <cover.1579641728.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v2 00/12] Fixes for SONIC ethernet driver
-Date:   Wed, 22 Jan 2020 08:22:08 +1100
+        id BB758299BB; Tue, 21 Jan 2020 17:10:36 -0500 (EST)
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Chris Zankel <chris@zankel.net>,
         Laurent Vivier <laurent@vivier.eu>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1c8e6d3d2bb946007ce417d038f95a4bb7b9d8ad.1579641728.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1579641728.git.fthain@telegraphics.com.au>
+References: <cover.1579641728.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net v2 12/12] net/sonic: Prevent tx watchdog timeout
+Date:   Wed, 22 Jan 2020 08:22:08 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Section 5.5.3.2 of the datasheet says,
 
-Various SONIC driver problems have become apparent over the years,
-including tx watchdog timeouts, lost packets and duplicated packets.
+    If FIFO Underrun, Byte Count Mismatch, Excessive Collision, or
+    Excessive Deferral (if enabled) errors occur, transmission ceases.
 
-The problems are mostly caused by bugs in buffer handling, locking and
-(re-)initialization code.
+In this situation, the chip asserts a TXER interrupt rather than TXDN.
+But the handler for the TXDN is the only way that the transmit queue
+gets restarted. Hence, an aborted transmission can result in a watchdog
+timeout.
 
-This patch series resolves these problems.
+This problem can be reproduced on congested link, as that can result in
+excessive transmitter collisions. Another way to reproduce this is with
+a FIFO Underrun, which may be caused by DMA latency.
 
-This series has been tested on National Semiconductor hardware (macsonic),
-qemu-system-m68k (macsonic) and qemu-system-mips64el (jazzsonic).
+In event of a TXER interrupt, prevent a watchdog timeout by restarting
+transmission.
 
-The emulated dp8393x device used in QEMU also has bugs.
-I have fixed the bugs that I know of in a series of patches at,
-https://github.com/fthain/qemu/commits/sonic
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-Changed since v1:
- - Minor revisions as described in commit logs.
- - Deferred net-next patches.
+ drivers/net/ethernet/natsemi/sonic.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-
-Finn Thain (12):
-  net/sonic: Add mutual exclusion for accessing shared state
-  net/sonic: Clear interrupt flags immediately
-  net/sonic: Use MMIO accessors
-  net/sonic: Fix interface error stats collection
-  net/sonic: Fix receive buffer handling
-  net/sonic: Avoid needless receive descriptor EOL flag updates
-  net/sonic: Improve receive descriptor status flag check
-  net/sonic: Fix receive buffer replenishment
-  net/sonic: Quiesce SONIC before re-initializing descriptor memory
-  net/sonic: Fix command register usage
-  net/sonic: Fix CAM initialization
-  net/sonic: Prevent tx watchdog timeout
-
- drivers/net/ethernet/natsemi/sonic.c | 380 ++++++++++++++++-----------
- drivers/net/ethernet/natsemi/sonic.h |  44 +++-
- 2 files changed, 262 insertions(+), 162 deletions(-)
-
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index b712cc6a2560..bbb1a7ec1ed0 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -411,10 +411,19 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
+ 			lp->stats.rx_missed_errors += 65536;
+ 
+ 		/* transmit error */
+-		if (status & SONIC_INT_TXER)
+-			if (SONIC_READ(SONIC_TCR) & SONIC_TCR_FU)
+-				netif_dbg(lp, tx_err, dev, "%s: tx fifo underrun\n",
+-					  __func__);
++		if (status & SONIC_INT_TXER) {
++			u16 tcr = SONIC_READ(SONIC_TCR);
++
++			netif_dbg(lp, tx_err, dev, "%s: TXER intr, TCR %04x\n",
++				  __func__, tcr);
++
++			if (tcr & (SONIC_TCR_EXD | SONIC_TCR_EXC |
++				   SONIC_TCR_FU | SONIC_TCR_BCM)) {
++				/* Aborted transmission. Try again. */
++				netif_stop_queue(dev);
++				SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
++			}
++		}
+ 
+ 		/* bus retry */
+ 		if (status & SONIC_INT_BR) {
 -- 
 2.24.1
 
