@@ -2,92 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CFDC1440F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1612D144102
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 16:53:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbgAUPvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 10:51:01 -0500
-Received: from mail-qt1-f174.google.com ([209.85.160.174]:37446 "EHLO
-        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgAUPvB (ORCPT
+        id S1729224AbgAUPwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 10:52:36 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:65260 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728186AbgAUPwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 10:51:01 -0500
-Received: by mail-qt1-f174.google.com with SMTP id w47so2984755qtk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 07:51:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:date:subject:message-id
-         :cc:to;
-        bh=TSx1IacjA36C7gRcUNqAiUk52Ru2xAt6jsIMGDeM5kc=;
-        b=FSED5JXeH7JMEFRDifhZbjZ4BjsiEodHmzWcTAdNLBgEJ0gWI+N0lPPP1IPNqXHf4S
-         zDWOcuNV/9WBBka7TdArzN2hfkxuq2A4VqDhgo2uEG77umIYL1kmlo/JLHcrz8Thdeeq
-         xd56xjAmYkHad1d7vpAPWP25Fi7hLSgpsWpPl7G8sXOK7Xy/Vki3ZAf/EqjTXwT98ESU
-         8HVY0YhlpVn88LP8e+mx6vwCyKkJJMF/IYczprzhSKDCKUjDwQbki+cfTqOUlCEU4xG3
-         GubVElkTj5l0Caa6j/0wWqWd5UBqQ+BT29Z/oEiQIetZXlCMqhnIOTQbx+I86bY//l1C
-         Dt5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version:date
-         :subject:message-id:cc:to;
-        bh=TSx1IacjA36C7gRcUNqAiUk52Ru2xAt6jsIMGDeM5kc=;
-        b=RJv/G6T+YI6xIOZxv+mEJiIseEA6ipxUjZHPbBy+nWCDKaMGgi4VVM9ve3bgP95fvz
-         xf94UpZhCU1d5SJ0UCyniyzh2BoUoxPhH4Fg58hQzCnlkOH+ry0ME+KtqjVK3yC4J+CK
-         QUFvSeVpgMhOa4434ByLCTOLHHzRI2yZK2cqTx4h9fMZdrCj/RsIekcQhA3/L0dDkHnM
-         VWyryvFdrm8806J43+Nbh6QWyuCN9sxsh86gZA8ZUXecwEtDUPzNOFZ7hq6+6L7f/RBO
-         YUrNwsmVS1NQHrQxTT/Xyod59m7DgLs+af7PcxnsxHKq6AKPSooVzzefRM3goA6fwJU0
-         rmpQ==
-X-Gm-Message-State: APjAAAWkSoNft6KqL9orGf7/hzsIljEmC2tN9XgD05fqWwxg1aMGUdMz
-        GEUmhd6BnYUeD7nCIwmft7r/RF3B+BUdjA==
-X-Google-Smtp-Source: APXvYqwaCrYcu9GXaMWjCpD9zq1ed1F/qgV/p031Oq8MDLRDLZBsg6KywZCQBNkdHctFIqUqr+XJtA==
-X-Received: by 2002:ac8:7356:: with SMTP id q22mr5067604qtp.162.1579621858159;
-        Tue, 21 Jan 2020 07:50:58 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id t3sm19740433qtc.8.2020.01.21.07.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 07:50:57 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Date:   Tue, 21 Jan 2020 10:50:56 -0500
-Subject: Re: [PATCH -next] x86/mm/pat: silence a data race in cpa_4k_install
-Message-Id: <388BB7AF-C7AB-4F0D-B79A-A43097C12E62@lca.pw>
-Cc:     Marco Elver <elver@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-X-Mailer: iPhone Mail (17C54)
+        Tue, 21 Jan 2020 10:52:35 -0500
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 21 Jan 2020 21:22:32 +0530
+Received: from harigovi-linux.qualcomm.com ([10.204.66.157])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 21 Jan 2020 21:22:12 +0530
+Received: by harigovi-linux.qualcomm.com (Postfix, from userid 2332695)
+        id 5306B2762; Tue, 21 Jan 2020 21:22:11 +0530 (IST)
+From:   Harigovindan P <harigovi@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        kalyan_t@codeaurora.org, nganji@codeaurora.org
+Subject: [v1] arm64: dts: sc7180: add display dt nodes
+Date:   Tue, 21 Jan 2020 21:22:08 +0530
+Message-Id: <1579621928-18619-1-git-send-email-harigovi@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add display, DSI hardware DT nodes for sc7180.
 
+Signed-off-by: Harigovindan P <harigovi@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi | 125 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 125 insertions(+)
+ mode change 100644 => 100755 arch/arm64/boot/dts/qcom/sc7180.dtsi
 
-> On Jan 21, 2020, at 10:45 AM, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> Perhaps because you've been dealing with KCSAN for so long. :-)
->=20
-> The main angle here, IMO, is that this "fix" is being done solely for
-> KCSAN. Or is there another reason to "fix" intentional data races? At
-> least I don't see one. And the text says
->=20
-> "This will generate a lot of noise on a debug kernel with
-> debug_pagealloc with KCSAN enabled which could render the system
-> unusable."
->=20
-> So yes, I think it should say something about making KCSAN happy.
->=20
-> Oh, and while at it I'd prefer it if it did the __no_kcsan function
-> annotation instead of the data_race() thing.
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+old mode 100644
+new mode 100755
+index 8011c5f..963f5c1
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -1151,6 +1151,131 @@
+ 			};
+ 		};
+ 
++		mdss: mdss@ae00000 {
++			compatible = "qcom,sc7180-mdss";
++			reg = <0 0x0ae00000 0 0x1000>;
++			reg-names = "mdss";
++
++			power-domains = <&dispcc MDSS_GDSC>;
++
++			clocks = <&gcc GCC_DISP_AHB_CLK>,
++				 <&gcc GCC_DISP_HF_AXI_CLK>,
++				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			clock-names = "iface", "gcc_bus", "core";
++
++			assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			assigned-clock-rates = <300000000>;
++
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			iommus = <&apps_smmu 0x800 0x2>;
++
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++
++			mdss_mdp: mdp@ae01000 {
++				compatible = "qcom,sc7180-dpu";
++				reg = <0 0x0ae00000 0 0x1000>,
++				      <0 0x0ae01000 0 0x8f000>,
++				      <0 0x0aeb0000 0 0x2008>,
++				      <0 0x0af03000 0 0x16>;
++				reg-names = "mdss","mdp", "vbif", "disp_cc";
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
++					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				clock-names = "iface", "rot", "lut", "core",
++						"vsync";
++				assigned-clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>,
++						  <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				assigned-clock-rates = <300000000>,
++						       <19200000>;
++
++				interrupt-parent = <&mdss>;
++				interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dpu_intf1_out: endpoint {
++							remote-endpoint = <&dsi0_in>;
++						};
++					};
++				};
++			};
++
++			dsi0: qcom,mdss_dsi_ctrl0@ae94000 {
++				compatible = "qcom,mdss-dsi-ctrl";
++				reg = <0 0x0ae94000 0 0x400>;
++				reg-names = "dsi_ctrl";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
++
++				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
++					<&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
++					<&dispcc DISP_CC_MDSS_PCLK0_CLK>,
++					<&dispcc DISP_CC_MDSS_ESC0_CLK>,
++					<&dispcc DISP_CC_MDSS_AHB_CLK>,
++					<&gcc GCC_DISP_HF_AXI_CLK>;
++				clock-names = "byte",
++                                              "byte_intf",
++                                              "pixel",
++                                              "core",
++                                              "iface",
++                                              "bus";
++
++				phys = <&dsi0_phy>;
++				phy-names = "dsi";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dsi0_in: endpoint {
++							remote-endpoint = <&dpu_intf1_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						dsi0_out: endpoint {
++						};
++					};
++				};
++			};
++
++			dsi0_phy: dsi-phy0@ae94400 {
++				compatible = "qcom,dsi-phy-10nm";
++				reg = <0 0x0ae94400 0 0x200>,
++				      <0 0x0ae94600 0 0x280>,
++				      <0 0x0ae94a00 0 0x1e0>;
++				reg-names = "dsi_phy",
++					    "dsi_phy_lane",
++					    "dsi_pll";
++
++				#clock-cells = <1>;
++				#phy-cells = <0>;
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>;
++				clock-names = "iface";
++
++			};
++		};
++
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sc7180-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>;
+-- 
+2.7.4
 
-Or the patch title could be =E2=80=9Cplay KCSAN well with debug_pagealloc=E2=
-=80=9D?
-
-I am fine with __no_kcsan as well. I just need to retest the whole thing fir=
-st.=
