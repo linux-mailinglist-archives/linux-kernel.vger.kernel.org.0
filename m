@@ -2,101 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E116A143EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:59:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E61F1143EC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 15:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbgAUN7L convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 08:59:11 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:48531 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgAUN7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 08:59:10 -0500
-X-Originating-IP: 90.76.211.102
-Received: from xps13 (lfbn-tou-1-1151-102.w90-76.abo.wanadoo.fr [90.76.211.102])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id B446B60016;
-        Tue, 21 Jan 2020 13:59:08 +0000 (UTC)
-Date:   Tue, 21 Jan 2020 14:59:07 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        christoph.muellner@theobroma-systems.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: fix px30 lvds ports
-Message-ID: <20200121145907.7fef0316@xps13>
-In-Reply-To: <20200121134510.3893487-1-heiko@sntech.de>
-References: <20200121134510.3893487-1-heiko@sntech.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729145AbgAUOAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 09:00:50 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45620 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728186AbgAUOAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 09:00:50 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E2C832175FCBBEF9725C;
+        Tue, 21 Jan 2020 22:00:46 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 21 Jan 2020 22:00:36 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <tao.zhou1@amd.com>, <Hawking.Zhang@amd.com>,
+        <Felix.Kuehling@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH -next 00/14] drm/amdgpu: remove unnecessary conversion to bool 
+Date:   Tue, 21 Jan 2020 21:55:26 +0800
+Message-ID: <20200121135540.165798-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiko,
+This patch series remove unnecessary conversion to bool in dir 
+drivers/gpu/drm/amd/amdgpu/, which is detected by coccicheck.
 
-Heiko Stuebner <heiko@sntech.de> wrote on Tue, 21 Jan 2020 14:45:10
-+0100:
+Chen Zhou (14):
+  drm/amdgpu: remove unnecessary conversion to bool in mmhub_v1_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in vega10_ih.c
+  drm/amdgpu: remove unnecessary conversion to bool in navi10_ih.c
+  drm/amdgpu: remove unnecessary conversion to bool in gfx_v10_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in sdma_v5_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in athub_v1_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in amdgpu_acp.c
+  drm/amdgpu: remove unnecessary conversion to bool in soc15.c
+  drm/amdgpu: remove unnecessary conversion to bool in nv.c
+  drm/amdgpu: remove unnecessary conversion to bool in mmhub_v9_4.c
+  drm/amdgpu: remove unnecessary conversion to bool in amdgpu_device.c
+  drm/amdgpu: remove unnecessary conversion to bool in athub_v2_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in sdma_v4_0.c
+  drm/amdgpu: remove unnecessary conversion to bool in gfx_v9_0.c
 
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> 
-> The lvds controller has two ports. port@0 for the connection
-> to the display controller(s) and port@1 for the connection to
-> the panel, so should have a ports node covering the port@x nodes.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> ---
->  arch/arm64/boot/dts/rockchip/px30.dtsi | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
-> index 9b1c92132007..37e014444214 100644
-> --- a/arch/arm64/boot/dts/rockchip/px30.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
-> @@ -421,19 +421,24 @@ lvds: lvds {
->  			rockchip,output = "lvds";
->  			status = "disabled";
->  
-> -			port@0 {
-> -				reg = <0>;
-> +			ports {
->  				#address-cells = <1>;
->  				#size-cells = <0>;
->  
-> -				lvds_vopb_in: endpoint@0 {
-> +				port@0 {
->  					reg = <0>;
-> -					remote-endpoint = <&vopb_out_lvds>;
-> -				};
-> -
-> -				lvds_vopl_in: endpoint@1 {
-> -					reg = <1>;
-> -					remote-endpoint = <&vopl_out_lvds>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					lvds_vopb_in: endpoint@0 {
-> +						reg = <0>;
-> +						remote-endpoint = <&vopb_out_lvds>;
-> +					};
-> +
-> +					lvds_vopl_in: endpoint@1 {
-> +						reg = <1>;
-> +						remote-endpoint = <&vopl_out_lvds>;
-> +					};
->  				};
->  			};
->  		};
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c    |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  8 +++-----
+ drivers/gpu/drm/amd/amdgpu/athub_v1_0.c    |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/athub_v2_0.c    |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c     |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c      |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/mmhub_v1_0.c    |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/mmhub_v2_0.c    |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/mmhub_v9_4.c    |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/navi10_ih.c     |  2 +-
+ drivers/gpu/drm/amd/amdgpu/nv.c            |  8 ++++----
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c     |  6 +++---
+ drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c     |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/soc15.c         | 28 ++++++++++++++--------------
+ drivers/gpu/drm/amd/amdgpu/vega10_ih.c     |  2 +-
+ 15 files changed, 43 insertions(+), 45 deletions(-)
 
-I don't know the exact rule but this seems cleaner indeed.
+-- 
+2.7.4
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-
-Thanks,
-Miquèl
