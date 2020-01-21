@@ -2,101 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0FC1435B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 03:30:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9951435B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 03:34:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbgAUCau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 Jan 2020 21:30:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35735 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgAUCaq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 Jan 2020 21:30:46 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i23so682302pfo.2;
-        Mon, 20 Jan 2020 18:30:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=15Ev+vhTYmEGrxqjsxkzwNHnzWlaEO3FV3/3cfAruV8=;
-        b=eBPXNp3S203JS4dGarOV3mfwZ6vV2RF8OYLGYHZYIlw19Fkn3LZdHSfQo4gUqqb0Uj
-         TDkkhge6Cd5/mSOw/p23s0c7ZCzp9PYOJm5/OiO0yUGwmttr5X0VRRC6Z2KboyXj9QX7
-         wUnBQruiZT03frAsBZtfpJf5wN2qnyVapXXBa0MlRWAzrJ8OFEyg9Q7oUyNsA5zO6TxM
-         U5R9zrE3Av34TzLgUIgPliezWPVg1yPOBvEHvx+WeF19WrnNM7U9Ea1coQ6u2MIDbpE/
-         nKcHhGi5z/K7lS725x5NfAizb8hgS9geLKrsCV/OhYMKM1Z5pwZJMgGWQt3ajA6LTQTA
-         QqJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=15Ev+vhTYmEGrxqjsxkzwNHnzWlaEO3FV3/3cfAruV8=;
-        b=EQqWlhRfcr5JstVyEuliFM4++yME22B1LPUcxMQ6EwCUlO7RpYXZEprPhefzuw/vcv
-         YZTJEO7994xQp3Z0dwdw7d0DwWl3AMQD+TM05p1cdzgMgKc0ynOHrMahWPwuEwfLUzk9
-         1ifffgcdMLStfN8lh+dPUesooBP0tpli3a+Yp2snH28GX7PgOJOppbam2Zu5vx0z+eaW
-         J/NmNgo5mEgPkM2O6fiGis/N0exwvkmPYFSaxlqDFssN0sc58dPiRJBTN4idfgzC8LvQ
-         WsBdaVuLY18cm7LdXLmCTksI0ZuhKL9PiEzMH2m977+YJCx+1hIOP4Tf1+uRMzdju1iJ
-         yaBA==
-X-Gm-Message-State: APjAAAV4FWVPVUg6FET5R+BEluPGbG22/mSgEU9K9HwiN+PFcBhTtQLj
-        AQxgpXmHP/gCSsOgOR0SPIJtfbjr
-X-Google-Smtp-Source: APXvYqzvaq+qKUe1377GVvmrk9hGDVCMRXbBlCMFtDcES3exf/pfY7RNXElmdI3YrvQmLgTWpQIa9g==
-X-Received: by 2002:a63:9d4e:: with SMTP id i75mr2855098pgd.231.1579573845746;
-        Mon, 20 Jan 2020 18:30:45 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e1sm41055426pfl.98.2020.01.20.18.30.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jan 2020 18:30:45 -0800 (PST)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     linux-hwmon@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Brad Campbell <lists2009@fnarfbargle.com>,
-        =?UTF-8?q?Ondrej=20=C4=8Cerman?= <ocerman@sda1.eu>,
-        Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>,
-        Holger Kiehl <Holger.Kiehl@dwd.de>,
-        Michael Larabel <michael@phoronix.com>,
-        Jonathan McDowell <noodles@earth.li>,
-        Ken Moffat <zarniwhoop73@googlemail.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Darren Salt <devspam@moreofthesa.me.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v3 5/5] hwmon: (k10temp) Don't show temperature limits on Ryzen (Zen) CPUs
-Date:   Mon, 20 Jan 2020 18:30:27 -0800
-Message-Id: <20200121023027.2081-6-linux@roeck-us.net>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200121023027.2081-1-linux@roeck-us.net>
-References: <20200121023027.2081-1-linux@roeck-us.net>
+        id S1729044AbgAUCec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 Jan 2020 21:34:32 -0500
+Received: from mga18.intel.com ([134.134.136.126]:1658 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726890AbgAUCeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 Jan 2020 21:34:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 18:33:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,344,1574150400"; 
+   d="scan'208";a="425342745"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Jan 2020 18:33:56 -0800
+Date:   Tue, 21 Jan 2020 10:34:08 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Wei Yang <richardw.yang@linux.intel.com>
+Cc:     akpm@linux-foundation.org, yang.shi@linux.alibaba.com,
+        jhubbard@nvidia.com, vbabka@suse.cz, cl@linux.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, mhocko@kernel.org
+Subject: Re: [Patch v2] mm/migrate.c: also overwrite error when it is bigger
+ than zero
+Message-ID: <20200121023408.GA3636@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20200119065753.21694-1-richardw.yang@linux.intel.com>
+ <20200121015326.GE1567@richard>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200121015326.GE1567@richard>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The maximum Tdie or Tctl is not published for Ryzen CPUs. What is
-known, however, is that the traditional value of 70 degrees C is no
-longer correct. Displaying it is meaningless, confusing, and wrong.
-Stop doing it.
+On Tue, Jan 21, 2020 at 09:53:26AM +0800, Wei Yang wrote:
+>On Sun, Jan 19, 2020 at 02:57:53PM +0800, Wei Yang wrote:
+>>If we get here after successfully adding page to list, err would be
+>>1 to indicate the page is queued in the list.
+>>
+>>Current code has two problems:
+>>
+>>  * on success, 0 is not returned
+>>  * on error, if add_page_for_migratioin() return 1, and the following err1
+>>    from do_move_pages_to_node() is set, the err1 is not returned since err
+>>    is 1
+>>
+>>And these behaviors break the user interface.
+>>
+>>Fixes: e0153fc2c760 ("mm: move_pages: return valid node id in status if the
+>>page is already on the target node").
+>>Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>>
+>>---
+>>v2:
+>>  * put more words to explain the error case
+>>---
+>> mm/migrate.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>>diff --git a/mm/migrate.c b/mm/migrate.c
+>>index 86873b6f38a7..430fdccc733e 100644
+>>--- a/mm/migrate.c
+>>+++ b/mm/migrate.c
+>>@@ -1676,7 +1676,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+>> 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
+>> 	if (!err1)
+>> 		err1 = store_status(status, start, current_node, i - start);
+>>-	if (!err)
+>>+	if (err >= 0)
+>> 		err = err1;
+>
+>Ok, as mentioned by Yang and Michal, only err == 0 means no error.
+>
+>Sounds this regression should be fixed in another place. Let me send out
+>another patch.
+>
 
-Tested-by: Brad Campbell <lists2009@fnarfbargle.com>
-Tested-by: Holger Kiehl <holger.kiehl@dwd.de>
-Tested-by: Michael Larabel <michael@phoronix.com>
-Tested-by: Jonathan McDowell <noodles@earth.li>
-Tested-by: Ken Moffat <zarniwhoop73@googlemail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/hwmon/k10temp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm... I took another look into the case, this fix should work.
 
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index 9e8b1c1bcbbd..6076a84cb3ae 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -349,7 +349,7 @@ static umode_t k10temp_is_visible(const void *_data,
- 			}
- 			break;
- 		case hwmon_temp_max:
--			if (channel)
-+			if (channel || data->show_tdie)
- 				return 0;
- 			break;
- 		case hwmon_temp_crit:
+But yes, the semantic here is a little confusion. Look forward your comments
+here.
+
+>> out:
+>> 	return err;
+>>-- 
+>>2.17.1
+>
+>-- 
+>Wei Yang
+>Help you, Help me
+
 -- 
-2.17.1
-
+Wei Yang
+Help you, Help me
