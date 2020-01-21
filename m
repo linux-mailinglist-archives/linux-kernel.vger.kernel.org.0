@@ -2,132 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BFBB143C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF1C143C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:47:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgAULqV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 Jan 2020 06:46:21 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:35923 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgAULqU (ORCPT
+        id S1729188AbgAULrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 06:47:05 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25978 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726052AbgAULrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 06:46:20 -0500
-Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MV2Sk-1j0ukv0vQs-00S3nR for <linux-kernel@vger.kernel.org>; Tue, 21 Jan
- 2020 12:46:19 +0100
-Received: by mail-qv1-f42.google.com with SMTP id y8so1259460qvk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:46:19 -0800 (PST)
-X-Gm-Message-State: APjAAAVttoVmBLTrUHTVAfYnoIEDiVPAdj9bHUjGnSsfwcMzHUUaTAW0
-        1s8WowqXMqipFWg0W2hOFrT5kJTEJxPCFAJjIK8=
-X-Google-Smtp-Source: APXvYqyxZGlIFCBF780+KS/2bkfvq0hP+a0/hThj2asG4RwHxIFlbrU9wtbrUp8O1361oVkawD1TQHBg3rBp7/M4I3g=
-X-Received: by 2002:a0c:e7c7:: with SMTP id c7mr4350634qvo.222.1579607178086;
- Tue, 21 Jan 2020 03:46:18 -0800 (PST)
+        Tue, 21 Jan 2020 06:47:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579607224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uX1VzSMfdN4ap89a7gOpBGNu3Gszqn3pc1p3J0UV56o=;
+        b=d0l6JDBgm41wlXtswPD/hUVioPwMlMgs2onIl0ymmkC1s8QT4zeUYW1bFPfrCSB6YSqooS
+        4owTxM4/v+IH6gEFU4uje33ZM1b89opxZG6AwWa9Vrwh7N8akvEQ2YjyvPcMJLpHhoks8G
+        TAh9T0fWR1Tgqfxsb2S29vlu38moZCQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-371-_Nht7sUyPlmHvSzXTXm4tA-1; Tue, 21 Jan 2020 06:47:00 -0500
+X-MC-Unique: _Nht7sUyPlmHvSzXTXm4tA-1
+Received: by mail-wr1-f71.google.com with SMTP id r2so1195502wrp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:47:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=uX1VzSMfdN4ap89a7gOpBGNu3Gszqn3pc1p3J0UV56o=;
+        b=pN82dzwBzlFLD9ea/WzF7SPRw/1rOH++ibXFdGo1bY30FivXmvc+fXDTXpuntD2H3E
+         3NDzJYJk98vrqcAdpj0342FK6S58lUm4co4QZzCxMfbJ0C3kwDFxu739NTVo+fLMUSSD
+         hHQvq7Yi1PMjllIfUjEIFYENl/kRPA6XKzzkQuqTDkutde0R0SmFvdQxkk9i7CDRDmmM
+         m5kejbQgqpty/m7gLoSGRNMQbjA08OogJiDQ2Kv00ZA3nMEpkbmA51GLz8uFLAbrHcRS
+         viPEG5nQWZGJk1qF/nLz1jzxxJUF/w4mSsr44f3BuBZ9oEhWO3Sd6qIbS6EGthrnivDf
+         EF3A==
+X-Gm-Message-State: APjAAAXOEakK8330cH0LLRLj1vIeGem/POG60NIDHt7YCC6kYFgA3gzr
+        zubrn31TRkr4tA106FQz4BtsJ7XbaGDf/muC+3cM3cOJi3jVut9ZNbWVSb2/xy2uh2bGlxGGLjF
+        mg1/IYAwHauFkuy/Dubp6698x
+X-Received: by 2002:a7b:cd11:: with SMTP id f17mr3920169wmj.48.1579607219492;
+        Tue, 21 Jan 2020 03:46:59 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwknGcoXUhKfXzpud+5Jv20G9KzAXp8anNgnJUjFXlYSeOq0W7o0EzOmF8juuVPnn+gIzE65g==
+X-Received: by 2002:a7b:cd11:: with SMTP id f17mr3920145wmj.48.1579607219287;
+        Tue, 21 Jan 2020 03:46:59 -0800 (PST)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id b21sm3865365wmd.37.2020.01.21.03.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 03:46:58 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     thuth@redhat.com, drjones@redhat.com, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com
+Subject: Re: [PATCH] selftests: KVM: AMD Nested SVM test infrastructure
+In-Reply-To: <a288001b-56a6-363b-18c0-18a1e1876ccc@redhat.com>
+References: <20200117173753.21434-1-eric.auger@redhat.com> <87pnfeflgb.fsf@vitty.brq.redhat.com> <a288001b-56a6-363b-18c0-18a1e1876ccc@redhat.com>
+Date:   Tue, 21 Jan 2020 12:46:57 +0100
+Message-ID: <877e1lf2vi.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20191213204936.3643476-1-arnd@arndb.de> <20191213205417.3871055-4-arnd@arndb.de>
- <20200117154726.GA328525@bogon.m.sigxcpu.org> <aaf2f587a61dee42c25805c3fe7916bed4dbd0c3.camel@pengutronix.de>
- <CAK8P3a3hyDeskg0ix=1+yNihqacZ5rqsXaHbRsBfPt7zFr8EOw@mail.gmail.com> <8d86fcb526ee14c7e6c80a787db645192c2c7c33.camel@pengutronix.de>
-In-Reply-To: <8d86fcb526ee14c7e6c80a787db645192c2c7c33.camel@pengutronix.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 21 Jan 2020 12:46:01 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0tKt_ZfAPnPKbaOQ9j3A+kS0LypeGA46epdyQw-knitA@mail.gmail.com>
-Message-ID: <CAK8P3a0tKt_ZfAPnPKbaOQ9j3A+kS0LypeGA46epdyQw-knitA@mail.gmail.com>
-Subject: Re: [PATCH v2 13/24] drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:KBPpsYpnrBSGOdCwCE4yT4gNfvFTP/DIyrZDD00LB+G6/iaNwQs
- ntl1BvH3NIoSTPYU5TmFoGHnj3D3EUg8Wcy9CmWlumLul798VkaHzl8Re+vcJz/Tq1bec7P
- SE80JdS3fXvgaeJKRnG057tOQNr76wN8/Je/3/nKn/0MjaU7zPOxKt1EWwvCLwfMIN9Nyzi
- Uy/Uj+nwj/K+1z1mpY8Og==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:cBEZqDmt+Mo=:vedcsuiFNF4ab6FJwf4/q7
- 5WJJ9HMFXCkH4zHL26l3/gq/SUdzGZ1Tb320w1ejIBTupd09skVK3UPDmaylLWeoHrQ8KxdfF
- hbYQLhvDQujxWZcknq4LzkzBprqLeWVp9Xcq54R3E/WRhofe9+Gotkq2VYDdRm7B1LIF8vWb4
- 2KjS4D1a2dElMln6qsgEaQVBqMvG9NViPVnEQkjhMnX7T57V1iY9ohErBS8l0JyHylVbtk3O0
- 2d6214LMWcjCGR5n/oc9kIVrblhZjmddZnK6XedqbjkXz+KBkAL5Jz6XPyWNxiANAdYvffaYv
- wFBbU8iQsKKscbU4KG21BvkKP+jtyEQYSx+VSfwK5TMpGYSjnaAZmpEaPFdTvm1HmUD+DIJ2u
- mmiYG38SKfRB1xSOabTYkK5M6J2eS/oGcOeNfR7Mn8IOcOy8FBQ6QNfRs2HIEcrL9wdq34g67
- v/Wlri3thoSp6exZHRQpoXUq1M8IVoSH1lj4/DZBOKkflL2ZnvyR7C2lumELvyK6JaeoqIlps
- huUIRn/Tn2CD4eooXorACvYg8GOIYqrXTPwpanlWJBT05Wo6emfp/A+EaFVECoPGXRfx0dKL3
- kTy1wTXyILLKAVLJuIbNFDE1Unh3koDag+pEZ8e5+nnA5Z1hzub4BMCxecwlp5RZiGZlcLCnq
- CnDTlUp9rVlTkQwHG+pq9HEI5i9hy1WLc+vibNQ9ePegBaoc8KymZS/9kFCTs2ChUhXgoVCjn
- YGqiW6AQZmD1zSoGageZuRQIpHtaWJ7YZmaP8LwSrdlgXyL/tOIdnUnQmZiOjS8WV0ZBhNjMF
- DfKLMxlhkZV/DHvVrJljq+6j/Y5fAVraEZmviUbnuH/s6YFHXx3lvjXomynbJQaA9ONxrzilc
- +VZ4Zu1vTpvA0c6kupOA==
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 11:22 AM Lucas Stach <l.stach@pengutronix.de> wrote:
->
-> On Mo, 2020-01-20 at 19:47 +0100, Arnd Bergmann wrote:
-> > On Mon, Jan 20, 2020 at 6:48 PM Lucas Stach <l.stach@pengutronix.de> wrote:
-> > > On Fr, 2020-01-17 at 16:47 +0100, Guido Günther wrote:
-> > > > This breaks rendering here on arm64/gc7000 due to
-> > > >
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_PREP or DRM_IOCTL_MSM_GEM_CPU_PREP, 0xfffff7888680) = -1 EINVAL (Invalid argument)
-> > > > ioctl(6, DRM_IOCTL_ETNAVIV_GEM_CPU_FINI or DRM_IOCTL_QXL_CLIENTCAP, 0xfffff78885e0) = 0
-> > > >
-> > > > This is due to
-> > > >
-> > > >     get_abs_timeout(&req.timeout, 5000000000);
-> > > >
-> > > > in etna_bo_cpu_prep which can exceed NSEC_PER_SEC.
-> > > >
-> > > > Should i send a patch to revert that change since it breaks existing userspace?
-> > >
-> > > No need to revert. This patch has not been applied to the etnaviv tree
-> > > yet, I guess it's just in one of Arnds branches feeding into -next.
-> > >
-> > > That part of userspace is pretty dumb, as it misses to renormalize
-> > > tv_nsec when it overflows the second boundary. So if what I see is
-> > > correct it should be enough to allow 2 * NSEC_PER_SEC, which should
-> > > both reject broken large timeout and keep existing userspace working.
-> >
-> > Ah, so it's never more than 2 billion nanoseconds in known user space?
-> > I can definitely change my patch (actually add one on top) to allow that
-> > and handle it as before, or alternatively accept any 64-bit nanosecond value
-> > as arm64 already did, but make it less inefficient to handle.
->
-> So the broken userspace code looks like this:
->
-> static inline void get_abs_timeout(struct drm_etnaviv_timespec *tv, uint64_t ns)
-> {
->         struct timespec t;
->         uint32_t s = ns / 1000000000;
->         clock_gettime(CLOCK_MONOTONIC, &t);
->         tv->tv_sec = t.tv_sec + s;
->         tv->tv_nsec = t.tv_nsec + ns - (s * 1000000000);
-> }
->
-> Which means it _tries_ to do the right thing by putting the billion
-> part into the tv_sec member and only the remaining ns part is added to
-> tv_nsec, but then it fails to propagate a tv_nsec overflow over
-> NSEC_PER_SEC into tv_sec.
->
-> Which means the tv_nsec should never be more than 2 * NSEC_PER_SEC in
-> known userspace. I would prefer if we could make the interface as
-> strict as possible (i.e. no arbitrary large numbers in tv_nsec), while
-> keeping this specific corner case working.
+Auger Eric <eric.auger@redhat.com> writes:
 
-I've added a patch on top of my 2038 branch, please have a look at that.
+> Hi Vitaly,
+>
+> On 1/20/20 11:53 AM, Vitaly Kuznetsov wrote:
+>> Eric Auger <eric.auger@redhat.com> writes:
+>> 
 
-      Arnd
+...
+
+>>> +
+>>> +static struct test tests[] = {
+>>> +	/* name, supported, custom setup, l2 code, exit code, custom check, finished */
+>>> +	{"vmmcall", NULL, NULL, l2_vmcall, SVM_EXIT_VMMCALL},
+>>> +	{"vmrun", NULL, NULL, l2_vmrun, SVM_EXIT_VMRUN},
+>>> +	{"CR3 read intercept", NULL, prepare_cr3_intercept, l2_cr3_read, SVM_EXIT_READ_CR3},
+>>> +};
+>> 
+>> selftests are usualy not that well structured :-) E.g. we don't have
+>> sub-tests and a way to specify which one to run so there is a single
+>> flow when everything is being executed. I'd suggest to keep things as
+>> simple as possibe (especially in the basic 'svm' test).
+> In this case the differences between the tests is very tiny. One line on
+> L2 and one line on L1 to check the exit status. I wondered whether it
+> deserves to have separate test files for that. I did not intend to run
+> the subtests separately nor to add many more subtests but rather saw all
+> of them as a single basic test. More complex tests would be definitively
+> separate.
+>
+> But if the consensus is to keep each tests separate, I will do.
+>
+
+No, I wasn't asking for that, it's just that the 'tests' array looks
+like we're going to add more and more here (like we do in
+kvm-unit-tests). If it's not the case you can probably simplify the code
+by executing these three checks consequently without defining any
+'sub-test' stuctures (like we do for other selftests). But I don't have
+a strong opinion on this so we can keep things the way they are.
+
+-- 
+Vitaly
+
