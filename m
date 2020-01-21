@@ -2,136 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADCD143C36
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CE4143C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 12:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbgAULq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 06:46:28 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:42287 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgAULq1 (ORCPT
+        id S1729144AbgAULpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 06:45:35 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:32855 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbgAULpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 06:46:27 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N5mSj-1jhyoV2BSN-017CgH; Tue, 21 Jan 2020 12:46:00 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>, Rob Herring <robh@kernel.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/etnaviv: only reject timeouts with tv_nsec >= 2 seconds
-Date:   Tue, 21 Jan 2020 12:45:25 +0100
-Message-Id: <20200121114553.2667556-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.25.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mC7FeQHazeOL/EsiloGVwenBqO1CqSzKh9a3azedjzvSyEdynvt
- PTIDkCtpkmSAi0hqrYtN76EzktImZwsEkh0+c9a1+oN67MRE439lpwzjVi5IyhqBMsix/Vx
- ifIKxKovG+T653zcUc8vdD0nVKWHd8AxwwkoaF51DpPrCMvQ6d624FEzGnKgvuIAkIAFp4Y
- KI3camDDhBDgIB75lVIAA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9P78OmeT3W0=:SH2hT2Gyde3yA/AfdHEewi
- 9UYWvun/XZNKgNXHoEQkKw8tmTTgY1IFjtViM9tiCn20dQzXqDeKTUnw4/puATqhanXuGAjml
- 4mqXuyhHPbPPmXmfKN7n14u1uY+0OHeWBp1ZAaUkkxdRYLeOjJfq57z2VhNnP813Dzhvoie0A
- ix6fxh9pb9aEyR9Z541+Vr9l5s+a/gX6TS2+0VuZrx4MhpEgsSYpkqFpXOCFN2kljTVjrYSA0
- SQSC24h5OGcq2HD2Y7GDBWzWkfWpABo5qm66hilTrfGxm89HZ3EHc01W3pe91YZ7U3hMSR3OW
- D62+2Itr5NXjtNhvjidNeBd2UcqLfu7VoymS0X895yV92hwNnZQOqVhOdawxYAcihXzeZOzov
- 1UKwsZv9IFebv9faPCPdHG2CRkOsFbhx+kZK8ZOwddoaHS3/KePFQZE3i9675NdwnrUzvmq9N
- y0brONYTtiRHLfC079hEng50khqQG9Q3+9YicMrlQQwMTw2Tt2mncuQbXaAk1rPQjmm1enOLQ
- C70OKrGiQNCaR8YsPOTa48OJhh2syTB1wgi1WGrgScEyZpTmTTWCL2Sh9rkfUmPPEVbNJT26G
- XxlELPJs4QaCLaT26iGicdw0SKgPb2TEkO8cpAI51ghu0+XpVXgcUJW+A4J6smoNcq3GeX/J6
- WCCrlkbTCr0lY2B8MrgypKacuQjDqXPif5uwJmd2grONww6wMfrzoTFAqdyJxjVEOnPbNbrmD
- lFlPnGjmwnS/3xsCLTZrrR9u3EyM7Y1DVXMwe9LwSFzapRaJayFC9kqXk9KzLNQJhbD1SpdsD
- q4TN7NSZfSOQZoCHf32AOxAfg/6l5nStTyKH3Txx+cF3PkFqo7A8ZCeF5LJeJ094CiUhNKfc9
- oyoLcIVRJgqFsOVsDiDg==
+        Tue, 21 Jan 2020 06:45:35 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d5so2336700qto.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 03:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=2RAq65fE1p08MEyXCEbcjOGodQ3rvsuPnBMUCzsOXfs=;
+        b=qUXNszkrfraMVH0sN6CssRY3CrV5i+a6z/l/iPyFXKM/8qQ+nZF4SmPIVj7nc8xi5K
+         Cg97C6gB5Z2+rLZgSMY+ThXdzHxVfecADR654yef5v22MaZprnpqp6X2DJaqq0/SKCIb
+         gqU5Wg8+AVJLoZYrR1fBMxsE3OnjiC8DEXP36TivLOWwT8LCboWHo7fGmXDb7EY7weqG
+         bfy5kLd7BxFpI+dQ4LOkz3kF8Rwl4oe7P8G958Exlo3j9sL4EuGhVK+xD6pk2X5p42e1
+         142xtY9WcoWGAu5objVL+6SJM11kjdO14P5U+nfjaI39YfEjkqAFy5JnstrQeayFrUqg
+         0dnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=2RAq65fE1p08MEyXCEbcjOGodQ3rvsuPnBMUCzsOXfs=;
+        b=tlJ8CWfd/XNh3bl9rSBrEAFkUQ939K00WPaS7GWBOVfW0wl1O7dnD+gtXIavVwH0PO
+         TaUnp4JHtYZL0CAa3iRBcs26Q7tP2jTyKGZ4agLX3I2qVtU/NdjnMa9dJacP9oI5ERLW
+         Z/2TPicuqbqgYBNAvx0LFcHgUCV6Ja+NhSZtud4KbBHdgD7ciefduVNs4gW474QmMylV
+         IQL8lll6+Zme3eDa5qWHAfm0MJ8JIoY2kKzHZIv6mnhB6ho+t4kXbT9gaVjzNPHVZSM1
+         ZHykLMrXHw235NuE/McNEAOO7CMHxCy6KPH9B6jF5DYFWQDYwkZBrAkb7kzeIHBFeU9c
+         rgew==
+X-Gm-Message-State: APjAAAUqMRxjRsU8CqMpk97jaaqTfMOCwP/4mFeiDAPg3g1NvJ0lXa8G
+        z3Bn1r1HnQEXGPbqZ31LT/S/fw==
+X-Google-Smtp-Source: APXvYqxKEeM+44Nc7BAN0DXttf0/JeAGaenDL9DVvgOTKS/vfhm8fetjaInkx0TGeZ119e12MTEjaw==
+X-Received: by 2002:ac8:730c:: with SMTP id x12mr4085646qto.186.1579607134345;
+        Tue, 21 Jan 2020 03:45:34 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u52sm19538008qta.23.2020.01.21.03.45.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 03:45:33 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: Boot warning at rcu_check_gp_start_stall()
+Date:   Tue, 21 Jan 2020 06:45:32 -0500
+Message-Id: <D7FEEB19-B519-4AC6-ABA4-250200E2A4E9@lca.pw>
+References: <20200121050941.GO2935@paulmck-ThinkPad-P72>
+Cc:     rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200121050941.GO2935@paulmck-ThinkPad-P72>
+To:     paulmck@kernel.org
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Guido Günther reported, get_abs_timeout() in the etnaviv user space
-sometimes passes timeouts with nanosecond values larger than 1000000000,
-which gets rejected after my first patch.
 
-To avoid breaking this, while also not allowing completely arbitrary
-values, set the limit to 1999999999 and use set_normalized_timespec64()
-to get the correct format before comparing it.
 
-This also addresses the off-by-1 glitch reported by Ben Hutchings.
+> On Jan 21, 2020, at 12:09 AM, Paul E. McKenney <paulmck@kernel.org> wrote:=
 
-Fixes: 172a216ff334 ("drm/etnaviv: reject timeouts with tv_nsec >= NSEC_PER_SEC")
-Cc: Guido Günther <agx@sigxcpu.org>
-Link: https://patchwork.kernel.org/patch/11291089/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++---
- drivers/gpu/drm/etnaviv/etnaviv_drv.h |  6 ++----
- 2 files changed, 9 insertions(+), 7 deletions(-)
+>=20
+> This is what you get when a grace period has been requested, but does
+> not start within 21 seconds or so.  The "->state: 0x1ffff" is a new one
+> on me -- that normally happens only before RCU's grace-period kthread
+> has been spawned.  But by 97 seconds after boot, it should definitely
+> already be up and running.
+>=20
+> Is the system responsive at this point?
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 3eb0f9223bea..d94740c123d3 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -292,7 +292,11 @@ static int etnaviv_ioctl_gem_cpu_prep(struct drm_device *dev, void *data,
- 	if (args->op & ~(ETNA_PREP_READ | ETNA_PREP_WRITE | ETNA_PREP_NOSYNC))
- 		return -EINVAL;
- 
--	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-+	/*
-+	 * existing user space passes non-normalized timespecs, but never
-+	 * more than 2 seconds worth of nanoseconds
-+	 */
-+	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
- 		return -EINVAL;
- 
- 	obj = drm_gem_object_lookup(file, args->handle);
-@@ -358,7 +362,7 @@ static int etnaviv_ioctl_wait_fence(struct drm_device *dev, void *data,
- 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
- 		return -EINVAL;
- 
--	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-+	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
- 		return -EINVAL;
- 
- 	if (args->pipe >= ETNA_MAX_PIPES)
-@@ -412,7 +416,7 @@ static int etnaviv_ioctl_gem_wait(struct drm_device *dev, void *data,
- 	if (args->flags & ~(ETNA_WAIT_NONBLOCK))
- 		return -EINVAL;
- 
--	if (args->timeout.tv_nsec > NSEC_PER_SEC)
-+	if (args->timeout.tv_nsec >= (2 * NSEC_PER_SEC))
- 		return -EINVAL;
- 
- 	if (args->pipe >= ETNA_MAX_PIPES)
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-index efc656efeb0f..3e47050af706 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
-@@ -109,12 +109,10 @@ static inline size_t size_vstruct(size_t nelem, size_t elem_size, size_t base)
- static inline unsigned long etnaviv_timeout_to_jiffies(
- 	const struct drm_etnaviv_timespec *timeout)
- {
--	struct timespec64 ts, to = {
--		.tv_sec = timeout->tv_sec,
--		.tv_nsec = timeout->tv_nsec,
--	};
-+	struct timespec64 ts, to;
- 
- 	ktime_get_ts64(&ts);
-+	set_normalized_timespec64(&to, timeout->tv_sec, timeout->tv_nsec);
- 
- 	/* timeouts before "now" have already expired */
- 	if (timespec64_compare(&to, &ts) <= 0)
--- 
-2.25.0
+Yes, it works fine.
 
+>=20
+> Except...  Why is it taking 96 seconds for the system to get to the point
+> where it prints "Dentry cache hash table entries:"?  That happens at 0.139=
+
+> seconds on my laptop.  And at about the same time on a much larger system.=
+
+>=20
+> I could easily imagine that all sorts of things would break when boot
+> takes that long.
+
+I suppose the kernel has CONFIG_EFI_PGT_DUMP=3Dy, so it takes a while to run=
+ just before rcu_check_gp_start_stall().=
