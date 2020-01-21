@@ -2,157 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B429143705
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 07:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E2F14372C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 07:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbgAUGT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 01:19:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33355 "EHLO mga14.intel.com"
+        id S1728831AbgAUGfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 01:35:06 -0500
+Received: from mout0.freenet.de ([195.4.92.90]:33188 "EHLO mout0.freenet.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729073AbgAUGTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 01:19:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jan 2020 22:19:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,344,1574150400"; 
-   d="scan'208";a="278302177"
-Received: from hyperv-sh3.bj.intel.com ([10.240.193.95])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Jan 2020 22:19:52 -0800
-From:   Jing Liu <jing2.liu@linux.intel.com>
-To:     virtio-dev@lists.oasis-open.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, Jing Liu <jing2.liu@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Liu Jiang <gerry@linux.alibaba.com>,
-        Zha Bin <zhabin@linux.alibaba.com>
-Subject: [virtio-dev] [PATCH v2 5/5] virtio-mmio: MSI vector and event mapping
-Date:   Tue, 21 Jan 2020 21:54:33 +0800
-Message-Id: <1579614873-21907-6-git-send-email-jing2.liu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579614873-21907-1-git-send-email-jing2.liu@linux.intel.com>
-References: <1579614873-21907-1-git-send-email-jing2.liu@linux.intel.com>
+        id S1725890AbgAUGfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 01:35:05 -0500
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jan 2020 01:35:03 EST
+Received: from [195.4.92.165] (helo=mjail2.freenet.de)
+        by mout0.freenet.de with esmtpa (ID andihartmann@freenet.de) (port 25) (Exim 4.92 #3)
+        id 1itn34-0004wO-8u
+        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:30:02 +0100
+Received: from [::1] (port=48248 helo=mjail2.freenet.de)
+        by mjail2.freenet.de with esmtpa (ID andihartmann@freenet.de) (Exim 4.92 #3)
+        id 1itn34-0002y4-75
+        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:30:02 +0100
+Received: from sub8.freenet.de ([195.4.92.127]:59914)
+        by mjail2.freenet.de with esmtpa (ID andihartmann@freenet.de) (Exim 4.92 #3)
+        id 1itn0z-00026u-M3
+        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:27:53 +0100
+Received: from p200300de571bdf00505400fffe15ac42.dip0.t-ipconnect.de ([2003:de:571b:df00:5054:ff:fe15:ac42]:57682 helo=mail.maya.org)
+        by sub8.freenet.de with esmtpsa (ID andihartmann@freenet.de) (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (port 465) (Exim 4.92 #3)
+        id 1itn0z-0007Q7-Jw
+        for linux-kernel@vger.kernel.org; Tue, 21 Jan 2020 07:27:53 +0100
+Received: internal info suppressed
+References: <20200118172615.26329-1-linux@roeck-us.net>
+To:     Kernel-Mailingliste <linux-kernel@vger.kernel.org>
+From:   Andreas Hartmann <andihartmann@01019freenet.de>
+Autocrypt: addr=andihartmann@01019freenet.de; keydata=
+ xsDiBDz/vtQRBAC+OSpes1p57fA8ENLYy3Nl/CpEvtRoDdhy7DPyc1+adE57vpK52naRfaZB
+ f0RSMvIZwJYggMio+emiN5Du7kL9y2IEjmHBvp/1x68dEwswHP9X4hJmHmyOJL3IB2WsvEdh
+ QF97913bWX34MYCeuOoSJ1OWvBLGfNs0zv70HOTfJwCgricyy8N1itEryLwoeu5HWz0SmDED
+ /2IiuDhPZ332i0Ylp40RQb2Wb0xBvpscVeRZDItsYYbJ/Sgmso1sn93sFFWmmrvGUyg3MNCt
+ +u+7P8Wg3VXte8cHbNwdzNtXHTfYyTcgZXC4xJN2akZt4pdR531mXyP2kFxmKtAEmW6bNpvV
+ oNnkgZVWvoT4BHLloLzA62JUEgFJA/9dHilAVS3Ezv5ECB02Lt2vNNzMvPlyNbxBhWnrb6VC
+ mFMCRg9bOK2io1zYb8C4gEpJ33wl8hEBxOWfCOEEKesAUCjViosNvxqGNtGWjk5p1O2QBWE2
+ D6u5+itACQRqhmmgNl+dK6Of2yGG9GxOYWozIELEfL9ZB4xQ7A2tDFR0Zs1HQW5kcmVhcyBI
+ YXJ0bWFubiAod2VpbCBkZXIgUmVjaG5lciBuZXUgaGVpc3N0KSA8YW5kcmVhc0BkdWFsYy5t
+ YXlhLm9yZz7CYAQTEQIAIAUCTMsY3gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBhU
+ mcTgYeNVT1QAoJ4cJ2jl6Jgmi+PmWCXPk4m8lgAGAKCjkxgK/PjE3+cNsLa/xEpReqYwRs7A
+ TQQ8/77WEAQAqBBex8oxPC1srpaSFbq8NCM/Gy7SKucKsQPqG/De46WQESbmnMElVft2xCBC
+ rOJ7E02k10h/twe0yQnNdXMJDMDM0w0EEyX9ljekIr3SFbXpU2S4wUl3C6CW2hizUgOyLsg0
+ chpfGMB9+wiVycyjZahafoc14wuuDj5BqWEOCccAAwcD/14lh1PTPKx4hs7ITtFZh5TI6+5f
+ xAWIBBUeQL+GEt+CKwyNc/hWp8YTPJ3SAedmDrEMX+2yPO95KeIfg6bnnIVvI/aTR/vJFsWK
+ GKMx+KaKx+IEwuhCpNIMUASpJWRvVlo3lMIvqAMJIBj79uKq/X9fppblcJst29QVO6aWf3Gh
+ wkYEGBECAAYFAjz/vtYACgkQGFSZxOBh41VBAgCfZRiPCQ+jNvdT5iR2fEblqTtBrF0An0nb
+ M8B1Lpkm44214BbtIQKneVrYwkYEGBECAAYFAjz/vtcACgkQGFSZxOBh41UjjgCgoua1QYf+
+ FcHpxrRgoioO3D7ddkUAnAkRf8FH9i94x8f6LfS4npozycQc
+Subject: Re: [PATCH v2 0/5] hwmon: k10temp driver improvements
+Message-ID: <c5d5aafb-282e-9ed1-ff1e-be6105446d39@01019freenet.de>
+Date:   Tue, 21 Jan 2020 07:27:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
+MIME-Version: 1.0
+In-Reply-To: <20200118172615.26329-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SURBL_BLOCKED,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on mail.maya.org
+X-Originated-At: 2003:de:571b:df00:5054:ff:fe15:ac42!57682
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bit 1 msi_sharing reported in the MsiState register indicates the mapping mode
-device uses.
+On 18.01.20 at 18:26 Guenter Roeck wrote:
+> This patch series implements various improvements for the k10temp driver.
 
-Bit 1 is 0 - device uses MSI non-sharing mode. This indicates vector per event and
-fixed static vectors and events relationship. This fits for devices with a high interrupt
-rate and best performance;
-Bit 1 is 1 - device uses MSI sharing mode. This indicates vectors and events
-dynamic mapping and fits for devices not requiring a high interrupt rate.
+Tested with Asus Prime X370-PRO / 1700X / Linux 5.4.x
 
-Co-developed-by: Chao Peng <chao.p.peng@linux.intel.com>
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Co-developed-by: Liu Jiang <gerry@linux.alibaba.com>
-Signed-off-by: Liu Jiang <gerry@linux.alibaba.com>
-Co-developed-by: Zha Bin <zhabin@linux.alibaba.com>
-Signed-off-by: Zha Bin <zhabin@linux.alibaba.com>
-Signed-off-by: Jing Liu <jing2.liu@linux.intel.com>
----
- content.tex | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
- msi-state.c |  3 ++-
- 2 files changed, 49 insertions(+), 2 deletions(-)
+Tested-By: Andreas Hartmann <andihartmann@01019freenet.de>
 
-diff --git a/content.tex b/content.tex
-index dcf6c71..2fd1686 100644
---- a/content.tex
-+++ b/content.tex
-@@ -1770,7 +1770,8 @@ \subsection{MMIO Device Register Layout}\label{sec:Virtio Transport Options / Vi
-   \hline
-   \mmioreg{MsiState}{MSI state}{0x0c4}{R}{%
-     When VIRTIO_F_MMIO_MSI has been negotiated, reading
--    from this register returns the global MSI enable/disable status.
-+    from this register returns the global MSI enable/disable status
-+    and whether device uses MSI sharing mode.
-     \lstinputlisting{msi-state.c}
-   }
-   \hline
-@@ -1926,12 +1927,18 @@ \subsubsection{Device Initialization}\label{sec:Virtio Transport Options / Virti
- mask and unmask the MSI vector applying to the one selected by writing
- to \field{MsiVecSel}.
- 
-+VIRTIO_MMIO_MSI_CMD_MAP_CONFIG command is to set the configuration event and MSI vector
-+mapping. VIRTIO_MMIO_MSI_CMD_MAP_QUEUE is to set the queue event and MSI vector
-+mapping. They SHOULD only be used in MSI sharing mode.
-+
- \begin{lstlisting}
- #define  VIRTIO_MMIO_MSI_CMD_ENABLE           0x1
- #define  VIRTIO_MMIO_MSI_CMD_DISABLE          0x2
- #define  VIRTIO_MMIO_MSI_CMD_CONFIGURE        0x3
- #define  VIRTIO_MMIO_MSI_CMD_MASK             0x4
- #define  VIRTIO_MMIO_MSI_CMD_UNMASK           0x5
-+#define  VIRTIO_MMIO_MSI_CMD_MAP_CONFIG       0x6
-+#define  VIRTIO_MMIO_MSI_CMD_MAP_QUEUE        0x7
- \end{lstlisting}
- 
- Setting a special NO_VECTOR value means disabling an interrupt for an event type.
-@@ -1941,10 +1948,49 @@ \subsubsection{Device Initialization}\label{sec:Virtio Transport Options / Virti
- #define VIRTIO_MMIO_MSI_NO_VECTOR             0xffffffff
- \end{lstlisting}
- 
-+\subparagraph{MSI Vector and Event Mapping}\label{sec:Virtio Transport Options / Virtio Over MMIO / MMIO-specific Initialization And Device Operation / Device Initialization / MSI Vector Configuration}
-+The reported \field{msi_sharing} bit in the \field{MsiState} return value shows
-+the MSI sharing mode that device uses.
-+
-+When \field{msi_sharing} bit is 0, it indicates the device uses non-sharing mode
-+and vector per event fixed static relationship is used. The first vector is for device
-+configuraiton change event, the second vector is for virtqueue 1, the third vector
-+is for virtqueue 2 and so on.
-+
-+When \field{msi_sharing} bit is 1, it indicates the device uses MSI sharing mode,
-+and the vector and event mapping is dynamic. Writing \field{MsiVecSel}
-+followed by writing VIRTIO_MMIO_MSI_CMD_MAP_CONFIG/VIRTIO_MMIO_MSI_CMD_MAP_QUEUE command
-+maps interrupts triggered by the configuration change/selected queue events respectively
-+to the corresponding MSI vector.
-+
-+\devicenormative{\subparagraph}{MSI Vector Configuration}{Virtio Transport Options / Virtio Over MMIO / MMIO-specific Initialization And Device Operation / MSI Vector Configuration}
-+
-+When the device reports \field{msi_sharing} bit as 0, it SHOULD support a number of
-+vectors that greater than the maximum number of virtqueues.
-+Device MUST report the number of vectors supported in \field{MsiVecNum}.
-+
-+When the device reports \field{msi_sharing} bit as 1, it SHOULD support at least
-+2 MSI vectors and MUST report in \field{MsiVecNum}. Device SHOULD support mapping any
-+event type to any vector under \field{MsiVecNum}.
-+
-+Device MUST support unmapping any event type (NO_VECTOR).
-+
-+The device SHOULD restrict the reported \field{msi_sharing} and \field{MsiVecNum}
-+to a value that might benefit system performance.
-+
-+\begin{note}
-+For example, a device which does not expect to send interrupts at a high rate might
-+return \field{msi_sharing} bit as 1.
-+\end{note}
-+
- \drivernormative{\subparagraph}{MSI Vector Configuration}{Virtio Transport Options / Virtio Over MMIO / MMIO-specific Initialization And Device Operation / MSI Vector Configuration}
- When VIRTIO_F_MMIO_MSI has been negotiated, driver should try to configure
- and enable MSI.
- 
-+To set up the event and vector mapping for MSI sharing mode, driver SHOULD
-+write a valid \field{MsiVecSel} followed by VIRTIO_MMIO_MSI_CMD_MAP_CONFIG/VIRTIO_MMIO_MSI_CMD_MAP_QUEUE
-+command to map the configuration change/selected queue events respectively.
-+
- To configure MSI vector, driver SHOULD firstly specify the MSI vector index by
- writing to \field{MsiVecSel}.
- Then notify the MSI address and data by writing to \field{MsiAddrLow}, \field{MsiAddrHigh},
-diff --git a/msi-state.c b/msi-state.c
-index b1fa0c1..d470be4 100644
---- a/msi-state.c
-+++ b/msi-state.c
-@@ -1,4 +1,5 @@
- le32 {
-     msi_enabled : 1;
--    reserved : 31;
-+    msi_sharing: 1;
-+    reserved : 30;
- };
--- 
-2.7.4
+Idle:
 
+it8665-isa-0290
+Adapter: ISA adapter
+in0:          +0.88 V  (min =  +1.27 V, max =  +2.00 V)
+in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
+in2:          +2.05 V  (min =  +1.23 V, max =  +0.16 V)
+in3:          +2.01 V  (min =  +1.53 V, max =  +2.25 V)
+in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
+in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
+in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
+3VSB:         +3.31 V  (min =  +2.46 V, max =  +5.43 V)
+Vbat:         +3.25 V
++3.3V:        +3.31 V
+Fan CPU:      594 RPM  (min =   10 RPM)
+Fan back:     380 RPM  (min =   11 RPM)
+Fan front:    415 RPM  (min =   12 RPM)
+fan5:           0 RPM  (min =   -1 RPM)  ALARM
+fan6:           0 RPM  (min =   -1 RPM)  ALARM
+CPU:          +28.0°C  (low  = +112.0°C, high =  -5.0°C)
+Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
+temp3:        +29.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
+temp4:        +29.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
+temp5:        +29.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
+temp6:        +29.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
+intrusion0:  ALARM
+
+k10temp-pci-00c3
+Adapter: PCI adapter
+Vcore:        +0.90 V
+Vsoc:         +0.90 V
+CPU:          +28.6°C  (high = +70.0°C)
+Tctl:         +48.6°C
+Icore:        +5.20 A
+Isoc:         +7.21 A
+
+
+Load:
+
+it8665-isa-0290
+Adapter: ISA adapter
+in0:          +1.38 V  (min =  +1.27 V, max =  +2.00 V)
+in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
+in2:          +2.04 V  (min =  +1.23 V, max =  +0.16 V)
+in3:          +2.01 V  (min =  +1.53 V, max =  +2.25 V)
+in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
+in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
+in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
+3VSB:         +3.33 V  (min =  +2.46 V, max =  +5.43 V)
+Vbat:         +3.25 V
++3.3V:        +3.33 V
+Fan CPU:      798 RPM  (min =   10 RPM)
+Fan back:     481 RPM  (min =   11 RPM)
+Fan front:    460 RPM  (min =   12 RPM)
+fan5:           0 RPM  (min =   -1 RPM)  ALARM
+fan6:           0 RPM  (min =   -1 RPM)  ALARM
+CPU:          +43.0°C  (low  = +112.0°C, high =  -5.0°C)
+Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
+temp3:        +33.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
+temp4:        +33.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
+temp5:        +33.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
+temp6:        +33.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
+intrusion0:  ALARM
+
+k10temp-pci-00c3
+Adapter: PCI adapter
+Vcore:        +1.30 V
+Vsoc:         +0.90 V
+CPU:          +49.5°C  (high = +70.0°C)
+Tctl:         +69.5°C
+Icore:       +77.94 A
+Isoc:         +9.02 A
+
+
+it8665-isa-0290
+Adapter: ISA adapter
+in0:          +1.36 V  (min =  +1.27 V, max =  +2.00 V)
+in1:          +2.52 V  (min =  +2.76 V, max =  +2.55 V)
+in2:          +2.04 V  (min =  +1.23 V, max =  +0.16 V)
+in3:          +2.00 V  (min =  +1.53 V, max =  +2.25 V)
+in4:          +0.03 V  (min =  +2.67 V, max =  +2.43 V)
+in5:          +0.03 V  (min =  +2.39 V, max =  +1.21 V)
+in6:          +0.03 V  (min =  +1.67 V, max =  +0.56 V)
+3VSB:         +3.33 V  (min =  +2.46 V, max =  +5.43 V)
+Vbat:         +3.25 V
++3.3V:        +3.33 V
+Fan CPU:     1044 RPM  (min =   10 RPM)
+Fan back:     722 RPM  (min =   11 RPM)
+Fan front:    633 RPM  (min =   12 RPM)
+fan5:           0 RPM  (min =   -1 RPM)  ALARM
+fan6:           0 RPM  (min =   -1 RPM)  ALARM
+CPU:          +49.0°C  (low  = +112.0°C, high =  -5.0°C)
+Motherboard:  +30.0°C  (low  = -33.0°C, high = -18.0°C)  sensor = thermistor
+temp3:        +39.0°C  (low  =  -1.0°C, high = -105.0°C)  sensor = thermistor
+temp4:        +39.0°C  (low  = -74.0°C, high = +126.0°C)  sensor = thermistor
+temp5:        +39.0°C  (low  = -49.0°C, high = +127.0°C)  sensor = thermistor
+temp6:        +39.0°C  (low  = -82.0°C, high = -79.0°C)  sensor = thermistor
+intrusion0:  ALARM
+
+k10temp-pci-00c3
+Adapter: PCI adapter
+Vcore:        +1.30 V
+Vsoc:         +0.90 V
+CPU:          +52.1°C  (high = +70.0°C)
+Tctl:         +72.1°C
+Icore:       +78.98 A
+Isoc:         +9.02 A
+
+
+=> I can see slight differences regarding CPU temperature and Vcore between it8665 and k10temp - especially on high load (kernel compile).
+
+
+Thanks
+Andreas
