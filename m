@@ -2,74 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4181E143931
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8E714396E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:25:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729235AbgAUJLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:11:53 -0500
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:55411 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728456AbgAUJLw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:11:52 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 09E1A1C2E5C
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 09:11:51 +0000 (GMT)
-Received: (qmail 30159 invoked from network); 21 Jan 2020 09:11:50 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 21 Jan 2020 09:11:50 -0000
-Date:   Tue, 21 Jan 2020 09:11:48 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Phil Auld <pauld@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Parth Shah <parth@linux.ibm.com>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched, fair: Allow a small load imbalance between low
- utilisation SD_NUMA domains v4
-Message-ID: <20200121091148.GV3466@techsingularity.net>
-References: <20200114101319.GO3466@techsingularity.net>
- <20200117175631.GC20112@linux.vnet.ibm.com>
- <20200117215853.GS3466@techsingularity.net>
- <20200120080935.GD20112@linux.vnet.ibm.com>
- <20200120083354.GT3466@techsingularity.net>
- <20200120172706.GE20112@linux.vnet.ibm.com>
- <20200120182100.GU3466@techsingularity.net>
- <20200121085501.GF20112@linux.vnet.ibm.com>
+        id S1729225AbgAUJZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:25:25 -0500
+Received: from mxs2.seznam.cz ([77.75.76.125]:16145 "EHLO mxs2.seznam.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727360AbgAUJZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:25:24 -0500
+Received: from email.seznam.cz
+        by email-smtpc6a.ng.seznam.cz (email-smtpc6a.ng.seznam.cz [10.23.10.165])
+        id 1147b704a41cd616114e52d7;
+        Tue, 21 Jan 2020 10:25:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1579598722; bh=PvU0cFOvUsfloxGX8SrbXYl4hNSdH8LczMmuSRYmOzQ=;
+        h=Received:Reply-To:Subject:To:Cc:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=VTlcersm2c8UBlMiK5tTjrAuaMLmUcEKHr5i3aMOmTiWNrRy16xzU/3BVvLGZKSOG
+         RSJaheeEjrls896p6N03x1U484y7Qez9B9D3VW0UrXEjJyD6rh0uR4ZuKYlF3SY7UL
+         XL/H2tvcsxIC5JXKi7ekxGWb5PwVwtbDrHgwjEpc=
+Received: from [77.75.76.48] (unknown-62-130.xilinx.com [149.199.62.130])
+        by email-relay9.ng.seznam.cz (Seznam SMTPD 1.3.108) with ESMTP;
+        Tue, 21 Jan 2020 10:11:57 +0100 (CET)  
+Reply-To: monstr@monstr.eu
+Subject: Re: [PATCH V4 1/4] dt-bindings: crypto: Add bindings for ZynqMP AES
+ driver
+To:     Kalyani Akula <kalyani.akula@xilinx.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     git <git@xilinx.com>, Harsh Jain <harshj@xilinx.com>,
+        Sarat Chand Savitala <saratcha@xilinx.com>,
+        Mohan <mohand@xilinx.com>, Kalyani Akul <kalyania@xilinx.com>
+References: <1574235842-7930-1-git-send-email-kalyani.akula@xilinx.com>
+ <1574235842-7930-2-git-send-email-kalyani.akula@xilinx.com>
+From:   Michal Simek <monstr@seznam.cz>
+Message-ID: <b5696361-3b62-deb4-61d6-a9b64bb6f9c3@seznam.cz>
+Date:   Tue, 21 Jan 2020 10:11:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20200121085501.GF20112@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1574235842-7930-2-git-send-email-kalyani.akula@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 02:25:01PM +0530, Srikar Dronamraju wrote:
-> * Mel Gorman <mgorman@techsingularity.net> [2020-01-20 18:21:00]:
+On 20. 11. 19 8:43, Kalyani Akula wrote:
+> Add documentation to describe Xilinx ZynqMP AES driver bindings.
 > 
-> > Understood. At the moment, I'm going to assume that the patch has zero
-> > impact on your workload but confirmation that the other test programs
-> > trigger no traces would be appreciated.
-> > 
+> Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
+> ---
+>  Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.txt
 > 
-> Yes, I confirm there were no traces when run with other test programs too.
+> diff --git a/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.txt b/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.txt
+> new file mode 100644
+> index 0000000..226bfb9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.txt
+> @@ -0,0 +1,12 @@
+> +Xilinx ZynqMP AES hw acceleration support
+> +
+> +The ZynqMP PS-AES hw accelerator is used to encrypt/decrypt
+> +the given user data.
+> +
+> +Required properties:
+> +- compatible: should contain "xlnx,zynqmp-aes"
+> +
+> +Example:
+> +	zynqmp_aes {
+> +		compatible = "xlnx,zynqmp-aes";
+> +	};
 > 
 
-Ok, great, thanks for confirming that!
+Ok. This should be converted to yaml and it should be placed to
+zynqmp_firmware node as is done for clk, pcap, nvmem, power, reset and
+genpd.
 
-Peter or Ingo, I think at this point all review comments have been
-addressed. Is there anything else you'd like before picking the patch
-up?
-
--- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Michal
