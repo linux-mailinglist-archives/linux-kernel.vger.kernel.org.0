@@ -2,88 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ADDF1443BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30CF61443C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbgAUR4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 12:56:19 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42312 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbgAUR4T (ORCPT
+        id S1729285AbgAUR5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 12:57:44 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34796 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbgAUR5n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 12:56:19 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p9so1645179plk.9;
-        Tue, 21 Jan 2020 09:56:18 -0800 (PST)
+        Tue, 21 Jan 2020 12:57:43 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l136so3437057oig.1;
+        Tue, 21 Jan 2020 09:57:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+7UcIYyupUrT8UqdxAteZ1t6SxPyW7FNiWE6g1e+Uv0=;
-        b=AFneFU8tAym4plBbE3InWVUlktNscK05ah9eYmr0DAdE4uVt0eTf6ci/Lze8YwFscS
-         Yo+xartsefE6e+d2YjyWuvh5AiWVNh+1XiKKLeyIV75G/vYO7grsQ2S7fHMY9VDmrwLq
-         ZbqP+b/hf4LnBvYkHk6Muv1atfQc+csSQ7Z/Jp1xcnbTxSOWGaKkyviEwq7nOnVne+UP
-         IdguyqsifpLz1gkpSE2NyCWWrzRMVqPwE9XT7u0EHUoqd0c5RLt2ZpT7s2nPqfsMxHFJ
-         GTEoc9sNOr+ITUAWqrpAHkRRoA4+g3bPmC2B3VUyzyzVQPyGMDeeQs4lO0OUMpzNCaE4
-         NFww==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mp6DdFVSXVePI6iSGCnPMxvllFc7taA3faXPCTrJyOk=;
+        b=fvs0k64WTpLPoEYSU10yB4vhu1oKNCS3z851fAJBpMS31H71pFpdt95LE6mt0lodMh
+         Jdqv99H4gGi4rcE1ufxinz/IjL1qBRzTshBYn4yImdugBHqsI/JvBDKbrLNnszNs8xDQ
+         7CACHghR7TC+u1H1Yz57CoWfMmQiueT0PCEvJJHkVw72rFCT5yBklHSpu+SqGcn8vxNN
+         8/lDvlGdM44tQFfDAWN260vjs6rXfoO5JpDNlqIuhvQJWCGbaCFHPIxVhRtMpVzJM3ye
+         NPI62fQL1BoPCFs8rgxB6F9lcQFjMQlGgM4h7Y0zL2uDpQAFC7BdMYhoTEx8/xAwnt7p
+         C3Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+7UcIYyupUrT8UqdxAteZ1t6SxPyW7FNiWE6g1e+Uv0=;
-        b=Y1BvCaW/sxBRQ0n/IW8faZkBpxASaDD4mOYowH9c/95cfOI8peOSIEW0Z6R/d+/gcz
-         MGvG+PD5ZLl9ymt/gxApN+WCtRyau1auyJyJX9TXYE5eoM1gJXplcZylAAM9bxyA/eei
-         NREzd1zr3vibNB/sHaApSGFqixYFLKO8/L3VASQwZoti6wNTxIua5QIwxj7KCeCMj0wd
-         0GEWqA8Ih//YEDx9c0DICesUyeH03jFVRBUEjnjWoJCEgGaJ/sohwcMEiMts4colOzB7
-         jb+3lMWLSHpBuCIVU2Lgf6YGu/n3vVdwnpgTDqYjuzgTH30ZYq6wXWLNGgmalnBZywO5
-         ehlw==
-X-Gm-Message-State: APjAAAVCr2sWTgfpLygif8CFWHbBgduWNsKcsg4azoKjpmjlntg5Ant/
-        sL+AHl7quBjm+I+JYhUsFDQ=
-X-Google-Smtp-Source: APXvYqzF3Luq7je6jNzK1lpqgZmnNfY1NSaU0MalFpmd0APMREaWtHVxWlb7Ns7PUC8OMAHl2iwR2A==
-X-Received: by 2002:a17:902:ab95:: with SMTP id f21mr6430870plr.336.1579629378476;
-        Tue, 21 Jan 2020 09:56:18 -0800 (PST)
-Received: from ?IPv6:2001:4898:d8:28:140e:bf9b:65a6:dd72? ([2001:4898:80e8:8:941d:bf9b:65a6:dd72])
-        by smtp.gmail.com with ESMTPSA id fa21sm76780pjb.17.2020.01.21.09.56.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 09:56:17 -0800 (PST)
-Subject: Re: [PATCH v9 1/2] dt-bindings: edac: arm-dmc520.txt
-To:     Rob Herring <robh+dt@kernel.org>, Borislav Petkov <bp@alien8.de>
-Cc:     James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, hangl@microsoft.com,
-        Lei Wang <lewan@microsoft.com>, ruizhao@microsoft.com,
-        shji@microsoft.com, Scott Branden <scott.branden@broadcom.com>,
-        Yuqing Shen <yuqing.shen@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>, wangglei@gmail.com
-References: <4fbf026a-4878-cd65-55f7-7d992782b331@gmail.com>
- <20200116233939.GI27148@zn.tnic>
- <CAL_JsqKqC_xm9rrHYaO87BtEv=-ji080p_G8axFduqu1mcqHCA@mail.gmail.com>
-From:   Shiping Ji <shiping.linux@gmail.com>
-Message-ID: <0723718a-f359-77b2-f66c-dd531cb19952@gmail.com>
-Date:   Tue, 21 Jan 2020 09:56:15 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mp6DdFVSXVePI6iSGCnPMxvllFc7taA3faXPCTrJyOk=;
+        b=hfQGcjjWghvA35CTt3kKlehWLtCMqUhn7rxmgEig062Hd0y6yyO87TaC8hZxeDmnEL
+         Ql+2l5/ny9wMgTZJzZtlfB16WhB3vV+5eybDi1ZKcuN5SjHLI+oQ1SJfrURq2Yp+ipE0
+         bdtkPns61LsupGBIFp3RKknA4NcqPiIJ7R/AxC453b+0Bpu/uRwlUJ12evAFAzCY20J3
+         0fzi2tf5SohtoUS4ckfwgLgC70a4ULFv0n1t6KE7GmVucFDv2a0zPjmv0TKy1MLAR5vE
+         hq7U+fRbCCbnlZXjrSXI39KKpHs3s5LsnXL+BumfcxnmlUbpU+V6BmOuczUy+STzNbGt
+         fdiQ==
+X-Gm-Message-State: APjAAAV185nsAcdawaUq0BRvHnviOLKoeSDXrYqndt35QKN+GTV39YYb
+        pe8E6BsGnv3kXQ4FUiimagx8mmY2VoJzfWS4cHw=
+X-Google-Smtp-Source: APXvYqz8UqpqSR+lXSTxQDudfV5ATY6jfXYA7jHRsg0MIEWnG2M2frTp3v08cP9d/Qo4VBKw58GIa5lu+/MAx1m8ARs=
+X-Received: by 2002:aca:4ad5:: with SMTP id x204mr3773363oia.162.1579629462726;
+ Tue, 21 Jan 2020 09:57:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKqC_xm9rrHYaO87BtEv=-ji080p_G8axFduqu1mcqHCA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200108162211.22358-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200108162211.22358-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200108162211.22358-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 21 Jan 2020 17:57:18 +0000
+Message-ID: <CA+V-a8s1Jx8uZiSr0uiryS492EbFRoFg9QTwkosZsuyfRYp-3g@mail.gmail.com>
+Subject: Re: [v3 4/6] dt-bindings: PCI: rcar: Add bindings for R-Car PCIe
+ endpoint controller
+To:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/2020 9:53 AM, Rob Herring wrote:
+Hi Rob/Kishon,
 
-> Would be happy for a schema, but not going to ask for that on a v9.
+On Wed, Jan 8, 2020 at 4:22 PM Lad Prabhakar <prabhakar.csengg@gmail.com> wrote:
+>
+> This patch adds the bindings for the R-Car PCIe endpoint driver.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/pci/rcar-pci-ep.yaml  | 76 +++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> new file mode 100644
+> index 000000000000..99c2a1174463
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2020 Renesas Electronics Europe GmbH - https://www.renesas.com/eu/en/
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/rcar-pcie-ep.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas R-Car PCIe Endpoint
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,r8a774c0-pcie-ep
+> +      - const: renesas,rcar-gen3-pcie-ep
+> +
+> +  reg:
+> +    maxItems: 5
+> +
+> +  reg-names:
+> +    items:
+> +      - const: apb-base
+> +      - const: memory0
+> +      - const: memory1
+> +      - const: memory2
+> +      - const: memory3
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pcie
+> +
+> +  max-functions:
+> +    minimum: 1
+> +    maximum: 6
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - resets
+> +  - power-domains
+> +  - clocks
+> +  - clock-names
+> +  - max-functions
+> +
+apart from dt_binding_check error are we OK with dt bindings ?
 
-I drafted the schema, do you have some tools/instrutions to validate against the DTS? I want to make sure the schema is indeed correct.
+Cheers,
+--Prabhakar
 
-Thanks!
-
--- 
-Best regards,
-Shiping Ji
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r8a774c0-cpg-mssr.h>
+> +    #include <dt-bindings/power/r8a774c0-sysc.h>
+> +
+> +     pcie0_ep: pcie-ep@fe000000 {
+> +            compatible = "renesas,r8a774c0-pcie-ep",
+> +                         "renesas,rcar-gen3-pcie-ep";
+> +            reg = <0 0xfe000000 0 0x80000>,
+> +                  <0x0 0xfe100000 0 0x100000>,
+> +                  <0x0 0xfe200000 0 0x200000>,
+> +                  <0x0 0x30000000 0 0x8000000>,
+> +                  <0x0 0x38000000 0 0x8000000>;
+> +            reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
+> +            resets = <&cpg 319>;
+> +            power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +            clocks = <&cpg CPG_MOD 319>;
+> +            clock-names = "pcie";
+> +            max-functions = /bits/ 8 <1>;
+> +    };
+> --
+> 2.20.1
+>
