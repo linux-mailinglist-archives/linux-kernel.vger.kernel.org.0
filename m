@@ -2,82 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AF59143E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1653143E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 14:48:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbgAUNsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 08:48:15 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:33746 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbgAUNsN (ORCPT
+        id S1729140AbgAUNsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 08:48:11 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52650 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728811AbgAUNsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 08:48:13 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 7CD053C0579;
-        Tue, 21 Jan 2020 14:48:12 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7gAHNuPTEEUS; Tue, 21 Jan 2020 14:48:06 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id E599C3C00C5;
-        Tue, 21 Jan 2020 14:48:06 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 21 Jan
- 2020 14:48:06 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH] arm64: kbuild: remove compressed images on 'make ARCH=arm64 (dist)clean'
-Date:   Tue, 21 Jan 2020 14:47:39 +0100
-Message-ID: <20200121134739.22879-1-erosca@de.adit-jv.com>
-X-Mailer: git-send-email 2.25.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.72.93.66]
+        Tue, 21 Jan 2020 08:48:11 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so3027503wmc.2;
+        Tue, 21 Jan 2020 05:48:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=FZjCfdCwsLgD1MIWUQtYRR8hOJhqjphscHVRCJxvEAE=;
+        b=et4rDCDCIEejNLTYKWnB7T64LDOz0nUySgRJ2whWdx6FTDx+fU1BYPsgI/fY9/8Bgi
+         90e/RE1F5lqUDl2NigBVuF0aAF1LadwjJiG5C1VWdO7FTDfZYupmvQWH/IjHV0MmhGSP
+         gFyXqEPhHnIBL5yxkD932+GNvsxjoj7VYWuXfTQt0fV4SAdHG7y1RrFw7cZHF3JkpIf7
+         Xq6e5oUjg38yDd4M4M7NkLrzOoffEp31M746keTKJPMq6c/GIiH/GDiEs/7H4pVpKU+H
+         XgYKLtImL4jd+oXzKGVMqKB/MQxwm6tJEHu+Mxdx2qfPfCXYy16afCfWYMBbOQ/apdWW
+         6kmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=FZjCfdCwsLgD1MIWUQtYRR8hOJhqjphscHVRCJxvEAE=;
+        b=hvD87kpver75Cj1qOL0YNdxS2MTZ3Mp42vbPRSktjAQN0u3yBxu8+Sj3GvT+SjHASf
+         oyfI1KWrNvqBcbS3LlM1ujmhPaxtXD4n1vp4ZKMNclhrz9/Qq/IC81Mlqqx5C31f0dhR
+         n2Nk2nqKxGM3BYZ1fA9oNe9a1aa2eIwFqj8yHHZUEKYfgboeBLaM81PUsSPUvQE80TkD
+         Hc/YqqTftL8j+WYuH1Gz5pid0yGLBKU2qlyJOlbpA/n9qS4+DRf7tNe70/Ox3sXaranS
+         GYb6b9e+QXLWW4ho+5Xh7wzH2fsIFIOmNceBJNXrlSxxuO+1EjqypfgbaZyeoH7BJWT5
+         mUKA==
+X-Gm-Message-State: APjAAAWlcvQPGfrkrCDuSRlVZhTpQLKmx7XbxMARhYmb4B/LsOkn+pGp
+        aphjp0l5zbzmak4h6eEyVeoFPS3D
+X-Google-Smtp-Source: APXvYqy+s2vCZ/TdTgraG4Nc6LKsnRVP6bkYC6XS72xKihGczMaMO4ER/PgAvwCBhaaRo4JKC9yngg==
+X-Received: by 2002:a1c:a745:: with SMTP id q66mr4232830wme.167.1579614489036;
+        Tue, 21 Jan 2020 05:48:09 -0800 (PST)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id b17sm51975006wrp.49.2020.01.21.05.48.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 Jan 2020 05:48:08 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: x86: list MSR_IA32_UCODE_REV as an emulated MSR
+Date:   Tue, 21 Jan 2020 14:48:05 +0100
+Message-Id: <1579614487-44583-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dirk Behme <dirk.behme@de.bosch.com>
+Even if it's read-only, it can still be written to by userspace.  Let
+them know by adding it to KVM_GET_MSR_INDEX_LIST.
 
-Since v4.3-rc1 commit 0723c05fb75e44 ("arm64: enable more compressed
-Image formats"), it is possible to build Image.{bz2,lz4,lzma,lzo}
-AArch64 images. However, the commit missed adding support for removing
-those images on 'make ARCH=arm64 (dist)clean'.
-
-Fix this by adding them to the target list.
-Make sure to match the order of the recipes in the makefile.
-
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/arm64/boot/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/Makefile b/arch/arm64/boot/Makefile
-index 1f012c506434..cd3414898d10 100644
---- a/arch/arm64/boot/Makefile
-+++ b/arch/arm64/boot/Makefile
-@@ -16,7 +16,7 @@
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 3e70af42f65b..9f24f5d16854 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1228,6 +1228,7 @@ bool kvm_rdpmc(struct kvm_vcpu *vcpu)
+ 	MSR_MISC_FEATURES_ENABLES,
+ 	MSR_AMD64_VIRT_SPEC_CTRL,
+ 	MSR_IA32_POWER_CTL,
++	MSR_IA32_UCODE_REV,
  
- OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
- 
--targets := Image Image.gz
-+targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo
- 
- $(obj)/Image: vmlinux FORCE
- 	$(call if_changed,objcopy)
+ 	/*
+ 	 * The following list leaves out MSRs whose values are determined
 -- 
-2.25.0
+1.8.3.1
 
