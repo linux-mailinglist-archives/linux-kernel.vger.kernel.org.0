@@ -2,31 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9622714432D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:29:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50FE914432E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 18:29:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbgAUR3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 12:29:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:46508 "EHLO foss.arm.com"
+        id S1729262AbgAUR3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 12:29:03 -0500
+Received: from foss.arm.com ([217.140.110.172]:46528 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbgAUR27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 12:28:59 -0500
+        id S1728186AbgAUR3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 12:29:02 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2A5130E;
-        Tue, 21 Jan 2020 09:28:58 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56D5D328;
+        Tue, 21 Jan 2020 09:29:01 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52D533F6C4;
-        Tue, 21 Jan 2020 09:28:58 -0800 (PST)
-Date:   Tue, 21 Jan 2020 17:28:56 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C94B63F6C4;
+        Tue, 21 Jan 2020 09:29:00 -0800 (PST)
+Date:   Tue, 21 Jan 2020 17:28:59 +0000
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     Sameer Pujar <spujar@nvidia.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        John Stultz <john.stultz@linaro.org>, john.stultz@linaro.org,
-        lars@metafoo.de, lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: soc-generic-dmaengine-pcm: Fix error handling" to the asoc tree
-In-Reply-To: <1579505286-32085-1-git-send-email-shengjiu.wang@nxp.com>
-Message-Id: <applied-1579505286-32085-1-git-send-email-shengjiu.wang@nxp.com>
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: soc-pcm: crash in snd_soc_dapm_new_dai" to the asoc tree
+In-Reply-To: <1579443563-12287-1-git-send-email-spujar@nvidia.com>
+Message-Id: <applied-1579443563-12287-1-git-send-email-spujar@nvidia.com>
 X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -35,7 +34,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: soc-generic-dmaengine-pcm: Fix error handling
+   ASoC: soc-pcm: crash in snd_soc_dapm_new_dai
 
 has been applied to the asoc tree at
 
@@ -60,61 +59,50 @@ to this mail.
 Thanks,
 Mark
 
-From 130128098a4e5ce9a0dfbdf9a7e27a43579901fd Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Mon, 20 Jan 2020 15:28:06 +0800
-Subject: [PATCH] ASoC: soc-generic-dmaengine-pcm: Fix error handling
+From af4bac11531fbc0b5955fdccbe3f5ea265cd7374 Mon Sep 17 00:00:00 2001
+From: Sameer Pujar <spujar@nvidia.com>
+Date: Sun, 19 Jan 2020 19:49:23 +0530
+Subject: [PATCH] ASoC: soc-pcm: crash in snd_soc_dapm_new_dai
 
-Remove the return value checking, that is to align with the code
-before adding snd_dmaengine_pcm_refine_runtime_hwparams function.
+Crash happens in snd_soc_dapm_new_dai() when substream->private_data
+access is made and substream is NULL here. This is seen for DAIs where
+only playback or capture stream is defined. This seems to be happening
+for codec2codec DAI link.
 
-Otherwise it causes a regression on the HiKey board:
+Both playback and capture are 0 during soc_new_pcm(). This is probably
+happening because cpu_dai and codec_dai are both validated either for
+SNDRV_PCM_STREAM_PLAYBACK or SNDRV_PCM_STREAM_CAPTURE.
 
-[   17.721424] hi6210_i2s f7118000.i2s: ASoC: can't open component f7118000.i2s: -6
+Shouldn't be playback = 1 when,
+ - playback stream is available for codec_dai AND
+ - capture stream is available for cpu_dai
 
-Fixes: e957204e732b ("ASoC: pcm_dmaengine: Extract snd_dmaengine_pcm_refine_runtime_hwparams")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reported-by: John Stultz <john.stultz@linaro.org>
-Link: https://lore.kernel.org/r/1579505286-32085-1-git-send-email-shengjiu.wang@nxp.com
+and vice-versa for capture = 1?
+
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Link: https://lore.kernel.org/r/1579443563-12287-1-git-send-email-spujar@nvidia.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ sound/soc/soc-pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index a428ff393ea2..2b5f3b1b062b 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -117,7 +117,6 @@ dmaengine_pcm_set_runtime_hwparams(struct snd_soc_component *component,
- 	struct dma_chan *chan = pcm->chan[substream->stream];
- 	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct snd_pcm_hardware hw;
--	int ret;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index b78f6ff2b1d3..f70bec7815ee 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -2916,10 +2916,10 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
  
- 	if (pcm->config && pcm->config->pcm_hardware)
- 		return snd_soc_set_runtime_hwparams(substream,
-@@ -138,12 +137,15 @@ dmaengine_pcm_set_runtime_hwparams(struct snd_soc_component *component,
- 	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
- 		hw.info |= SNDRV_PCM_INFO_BATCH;
+ 		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_PLAYBACK) &&
+-			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_PLAYBACK))
++			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_CAPTURE))
+ 				playback = 1;
+ 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_CAPTURE) &&
+-			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_CAPTURE))
++			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_PLAYBACK))
+ 				capture = 1;
+ 		}
  
--	ret = snd_dmaengine_pcm_refine_runtime_hwparams(substream,
--							dma_data,
--							&hw,
--							chan);
--	if (ret)
--		return ret;
-+	/**
-+	 * FIXME: Remove the return value check to align with the code
-+	 * before adding snd_dmaengine_pcm_refine_runtime_hwparams
-+	 * function.
-+	 */
-+	snd_dmaengine_pcm_refine_runtime_hwparams(substream,
-+						  dma_data,
-+						  &hw,
-+						  chan);
- 
- 	return snd_soc_set_runtime_hwparams(substream, &hw);
- }
 -- 
 2.20.1
 
