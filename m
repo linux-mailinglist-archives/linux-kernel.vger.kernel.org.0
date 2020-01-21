@@ -2,249 +2,357 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4C71439BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:44:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4971439C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 Jan 2020 10:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbgAUJoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 04:44:20 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33109 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728794AbgAUJoU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 04:44:20 -0500
-Received: by mail-oi1-f196.google.com with SMTP id q81so2000166oig.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 01:44:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HBcIIfisjpHPiUGpBDs8d1gs27EtkgCyjibCW2LJEj4=;
-        b=TJpn6ykwqB4Vn0EAKwJqzsYZixKHikBAzb5djqAgU4H0a4U82v15ofay2fp9I2zjv0
-         rFLu8FZZLQvVjoVPJYts8cwSdEFHEe/C6AkGTEh1javqW7yO0B1/U+GCQyWocx7Si555
-         lkBE/oxL0/+jSUxCkUXCI9x9ATvdKRF40GfIUgw2VPpkQDmgbI54e7d+KhuQmIhXWWdt
-         6/43BN6pIoabijuDCDQPNqJ3/xgyqLvvt13h4kJRKTM9iC+mn10XQL0Wf2XNTDu4HAk5
-         ibVvupmClDfK1XmTtFy5fjpUWeNN8RA6cqi+AJO9RdBs/XqauDivcOAB0E/Z8TMtHPjx
-         OQkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HBcIIfisjpHPiUGpBDs8d1gs27EtkgCyjibCW2LJEj4=;
-        b=qed8XWT+aLp089FHcoJXczDcIJEz5tot/8GSIyxGGQxfXdYbO45qqKUdf4ah+8UV9w
-         aNNxECFW1EBwPFvfj1YYLd6kyFq6a6K7qcNJCnePZll0AKnJM878MLDS5fywSlkIxy+5
-         +EvPhD1bGYqElRPhYgOAn29VFL/bpBMYcZ6J+c5ozAbLL5b/ItdX9ELrSeUBWMA+mtrU
-         gwclYn1cTV9sFSVi0k4lWUOpisRthTishnSDAXN600psoMakmzA1thTjKitWj9K2CP4o
-         qyv892zXWMT7+1wsQjNLVZokGrNWdK6Xawx9OWkaXxsXdgQEepGPOYqIGiNASD+kH1qL
-         OH8A==
-X-Gm-Message-State: APjAAAXliKMtouf+Q4UpeyhslAyb4VKVZudoR4gVeMGNJTAv9t9RmfYS
-        +H7Lh5mm1r4+S3dAwPO4Kmcgju4SVVWLxbF8MBYBwA==
-X-Google-Smtp-Source: APXvYqwBDo7cc0K8uN2ZqwjLs+PJgLgUkGJKSeXtEYuyEFDEVd7xRwW/2gVSkgwP14IWiZZTMpevPZ8zcLLMF268nvc=
-X-Received: by 2002:aca:b183:: with SMTP id a125mr2373497oif.83.1579599858446;
- Tue, 21 Jan 2020 01:44:18 -0800 (PST)
+        id S1729247AbgAUJrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 04:47:05 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55022 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbgAUJrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 04:47:04 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1itq6Y-0005sV-Ne; Tue, 21 Jan 2020 12:45:50 +0300
+Subject: Re: [PATCH block v2 2/3] block: Add support for REQ_NOZERO flag
+To:     Bob Liu <bob.liu@oracle.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+        axboe@kernel.dk, tytso@mit.edu, adilger.kernel@dilger.ca,
+        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
+        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
+        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        bvanassche@acm.org, dhowells@redhat.com, asml.silence@gmail.com
+References: <157917805422.88675.6477661554332322975.stgit@localhost.localdomain>
+ <157917816325.88675.16481772163916741596.stgit@localhost.localdomain>
+ <a6f36a19-0607-fc1e-d2da-37aa00c4b76e@oracle.com>
+ <fe055cf4-db28-e72d-c247-3a9c921919f5@virtuozzo.com>
+ <71039bfe-764f-441a-115f-1065ca8096bf@oracle.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <4fc1e8bc-801b-eab2-2882-95568ca9d65e@virtuozzo.com>
+Date:   Tue, 21 Jan 2020 12:45:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200120141927.114373-1-elver@google.com> <CACT4Y+bnRoKinPopVqyxj4av6_xa_OUN0wwnidpO3dX3iYq_gg@mail.gmail.com>
- <CACT4Y+YuTT6kZ-AkgU0c1o09qmQdFWr4_Sds4jaDg-Va6g6jkA@mail.gmail.com>
- <CACT4Y+acrXkA-ixjQXqNf1EC=fpgTWf3Rcevxxon0DfrPdD-UQ@mail.gmail.com>
- <CANpmjNNcXUF-=Y-hmry9-xEoNpJd0WH+fOcJJM6kv2eRm5v-kg@mail.gmail.com>
- <CACT4Y+bD3cNxfaWOuhHz338MoVoaHpw-E8+b7v6mo_ir2KD46Q@mail.gmail.com>
- <CANpmjNN-8CLN9v7MehNUXy=iEXOfFHwpAUEPivGM573EQqmCZw@mail.gmail.com> <CACT4Y+bgLy=AiCdLauBaSi_Q1gQsqQ08hr1-ipz60k+WFdmiuA@mail.gmail.com>
-In-Reply-To: <CACT4Y+bgLy=AiCdLauBaSi_Q1gQsqQ08hr1-ipz60k+WFdmiuA@mail.gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Tue, 21 Jan 2020 10:44:06 +0100
-Message-ID: <CANpmjNPCGM9V++Vq_UtLJoLbzLdVfgJg0kWAkK=E+829may9Uw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] include/linux: Add instrumented.h infrastructure
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Borkmann <daniel@iogearbox.net>, cyphar@cyphar.com,
-        Kees Cook <keescook@chromium.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <71039bfe-764f-441a-115f-1065ca8096bf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 Jan 2020 at 17:39, Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Mon, Jan 20, 2020 at 5:25 PM Marco Elver <elver@google.com> wrote:
-> > > > > > > > This adds instrumented.h, which provides generic wrappers for memory
-> > > > > > > > access instrumentation that the compiler cannot emit for various
-> > > > > > > > sanitizers. Currently this unifies KASAN and KCSAN instrumentation. In
-> > > > > > > > future this will also include KMSAN instrumentation.
-> > > > > > > >
-> > > > > > > > Note that, copy_{to,from}_user require special instrumentation,
-> > > > > > > > providing hooks before and after the access, since we may need to know
-> > > > > > > > the actual bytes accessed (currently this is relevant for KCSAN, and is
-> > > > > > > > also relevant in future for KMSAN).
-> > > > > > > >
-> > > > > > > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > > > > Signed-off-by: Marco Elver <elver@google.com>
-> > > > > > > > ---
-> > > > > > > >  include/linux/instrumented.h | 153 +++++++++++++++++++++++++++++++++++
-> > > > > > > >  1 file changed, 153 insertions(+)
-> > > > > > > >  create mode 100644 include/linux/instrumented.h
-> > > > > > > >
-> > > > > > > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> > > > > > > > new file mode 100644
-> > > > > > > > index 000000000000..9f83c8520223
-> > > > > > > > --- /dev/null
-> > > > > > > > +++ b/include/linux/instrumented.h
-> > > > > > > > @@ -0,0 +1,153 @@
-> > > > > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > > > > +
-> > > > > > > > +/*
-> > > > > > > > + * This header provides generic wrappers for memory access instrumentation that
-> > > > > > > > + * the compiler cannot emit for: KASAN, KCSAN.
-> > > > > > > > + */
-> > > > > > > > +#ifndef _LINUX_INSTRUMENTED_H
-> > > > > > > > +#define _LINUX_INSTRUMENTED_H
-> > > > > > > > +
-> > > > > > > > +#include <linux/compiler.h>
-> > > > > > > > +#include <linux/kasan-checks.h>
-> > > > > > > > +#include <linux/kcsan-checks.h>
-> > > > > > > > +#include <linux/types.h>
-> > > > > > > > +
-> > > > > > > > +/**
-> > > > > > > > + * instrument_read - instrument regular read access
-> > > > > > > > + *
-> > > > > > > > + * Instrument a regular read access. The instrumentation should be inserted
-> > > > > > > > + * before the actual read happens.
-> > > > > > > > + *
-> > > > > > > > + * @ptr address of access
-> > > > > > > > + * @size size of access
-> > > > > > > > + */
-> > > > > > >
-> > > > > > > Based on offline discussion, that's what we add for KMSAN:
-> > > > > > >
-> > > > > > > > +static __always_inline void instrument_read(const volatile void *v, size_t size)
-> > > > > > > > +{
-> > > > > > > > +       kasan_check_read(v, size);
-> > > > > > > > +       kcsan_check_read(v, size);
-> > > > > > >
-> > > > > > > KMSAN: nothing
-> > > > > >
-> > > > > > KMSAN also has instrumentation in
-> > > > > > copy_to_user_page/copy_from_user_page. Do we need to do anything for
-> > > > > > KASAN/KCSAN for these functions?
-> > > >
-> > > > copy_to_user_page/copy_from_user_page can be instrumented with
-> > > > instrument_copy_{to,from}_user_. I prefer keeping this series with no
-> > > > functional change intended for KASAN at least.
-> > > >
-> > > > > There is also copy_user_highpage.
-> > > > >
-> > > > > And ioread/write8/16/32_rep: do we need any instrumentation there. It
-> > > > > seems we want both KSAN and KCSAN too. One may argue that KCSAN
-> > > > > instrumentation there is to super critical at this point, but KASAN
-> > > > > instrumentation is important, if anything to prevent silent memory
-> > > > > corruptions. How do we instrument there? I don't see how it maps to
-> > > > > any of the existing instrumentation functions.
-> > > >
-> > > > These should be able to use the regular instrument_{read,write}. I
-> > > > prefer keeping this series with no functional change intended for
-> > > > KASAN at least.
-> > >
-> > > instrument_{read,write} will not contain any KMSAN instrumentation,
-> > > which means we will effectively remove KMSAN instrumentation, which is
-> > > weird because we instrumented these functions because of KMSAN in the
-> > > first place...
+On 21.01.2020 09:13, Bob Liu wrote:
+> On 1/20/20 6:02 PM, Kirill Tkhai wrote:
+>> On 19.01.2020 04:50, Bob Liu wrote:
+>>> On 1/16/20 8:36 PM, Kirill Tkhai wrote:
+>>>> This adds support for REQ_NOZERO extension of REQ_OP_WRITE_ZEROES
+>>>> operation, which encourages a block device driver to just allocate
+>>>> blocks (or mark them allocated) instead of actual blocks zeroing.
+>>>> REQ_NOZERO is aimed to be used for network filesystems providing
+>>>> a block device interface. Also, block devices, which map a file
+>>>> on other filesystem (like loop), may use this for less fragmentation
+>>>> and batching fallocate() requests. Hypervisors like QEMU may
+>>>> introduce optimizations of clusters allocations based on this.
+>>>>
+>>>> BLKDEV_ZERO_ALLOCATE is a new corresponding flag for
+>>>> blkdev_issue_zeroout().
+>>>>> CC: Martin K. Petersen <martin.petersen@oracle.com>
+>>>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>>>> ---
+>>>>  block/blk-core.c          |    6 +++---
+>>>>  block/blk-lib.c           |   17 ++++++++++-------
+>>>>  block/blk-merge.c         |    9 ++++++---
+>>>>  block/blk-settings.c      |   17 +++++++++++++++++
+>>>>  fs/block_dev.c            |    4 ++++
+>>>>  include/linux/blk_types.h |    5 ++++-
+>>>>  include/linux/blkdev.h    |   31 ++++++++++++++++++++++++-------
+>>>>  7 files changed, 68 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/block/blk-core.c b/block/blk-core.c
+>>>> index 50a5de025d5e..2edcd55624f1 100644
+>>>> --- a/block/blk-core.c
+>>>> +++ b/block/blk-core.c
+>>>> @@ -978,7 +978,7 @@ generic_make_request_checks(struct bio *bio)
+>>>>  			goto not_supported;
+>>>>  		break;
+>>>>  	case REQ_OP_WRITE_ZEROES:
+>>>> -		if (!q->limits.max_write_zeroes_sectors)
+>>>> +		if (!blk_queue_get_max_write_zeroes_sectors(q, bio->bi_opf))
+>>>>  			goto not_supported;
+>>>>  		break;
+>>>>  	default:
+>>>> @@ -1250,10 +1250,10 @@ EXPORT_SYMBOL(submit_bio);
+>>>>  static int blk_cloned_rq_check_limits(struct request_queue *q,
+>>>>  				      struct request *rq)
+>>>>  {
+>>>> -	if (blk_rq_sectors(rq) > blk_queue_get_max_sectors(q, req_op(rq))) {
+>>>> +	if (blk_rq_sectors(rq) > blk_queue_get_max_sectors(q, rq->cmd_flags)) {
+>>>>  		printk(KERN_ERR "%s: over max size limit. (%u > %u)\n",
+>>>>  			__func__, blk_rq_sectors(rq),
+>>>> -			blk_queue_get_max_sectors(q, req_op(rq)));
+>>>> +			blk_queue_get_max_sectors(q, rq->cmd_flags));
+>>>>  		return -EIO;
+>>>>  	}
+>>>>  
+>>>> diff --git a/block/blk-lib.c b/block/blk-lib.c
+>>>> index 3e38c93cfc53..3e80279eb029 100644
+>>>> --- a/block/blk-lib.c
+>>>> +++ b/block/blk-lib.c
+>>>> @@ -214,7 +214,7 @@ static int __blkdev_issue_write_zeroes(struct block_device *bdev,
+>>>>  		struct bio **biop, unsigned flags)
+>>>>  {
+>>>>  	struct bio *bio = *biop;
+>>>> -	unsigned int max_write_zeroes_sectors;
+>>>> +	unsigned int max_write_zeroes_sectors, req_flags = 0;
+>>>>  	struct request_queue *q = bdev_get_queue(bdev);
+>>>>  
+>>>>  	if (!q)
+>>>> @@ -224,18 +224,21 @@ static int __blkdev_issue_write_zeroes(struct block_device *bdev,
+>>>>  		return -EPERM;
+>>>>  
+>>>>  	/* Ensure that max_write_zeroes_sectors doesn't overflow bi_size */
+>>>> -	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bdev, 0);
+>>>> +	max_write_zeroes_sectors = bdev_write_zeroes_sectors(bdev, flags);
+>>>>  
+>>>>  	if (max_write_zeroes_sectors == 0)
+>>>>  		return -EOPNOTSUPP;
+>>>>  
+>>>> +	if (flags & BLKDEV_ZERO_NOUNMAP)
+>>>> +		req_flags |= REQ_NOUNMAP;
+>>>> +	if (flags & BLKDEV_ZERO_ALLOCATE)
+>>>> +		req_flags |= REQ_NOZERO|REQ_NOUNMAP;
+>>>> +
+>>>>  	while (nr_sects) {
+>>>>  		bio = blk_next_bio(bio, 0, gfp_mask);
+>>>>  		bio->bi_iter.bi_sector = sector;
+>>>>  		bio_set_dev(bio, bdev);
+>>>> -		bio->bi_opf = REQ_OP_WRITE_ZEROES;
+>>>> -		if (flags & BLKDEV_ZERO_NOUNMAP)
+>>>> -			bio->bi_opf |= REQ_NOUNMAP;
+>>>> +		bio->bi_opf = REQ_OP_WRITE_ZEROES | req_flags;
+>>>>  
+>>>>  		if (nr_sects > max_write_zeroes_sectors) {
+>>>>  			bio->bi_iter.bi_size = max_write_zeroes_sectors << 9;
+>>>> @@ -362,7 +365,7 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>>>>  	sector_t bs_mask;
+>>>>  	struct bio *bio;
+>>>>  	struct blk_plug plug;
+>>>> -	bool try_write_zeroes = !!bdev_write_zeroes_sectors(bdev, 0);
+>>>> +	bool try_write_zeroes = !!bdev_write_zeroes_sectors(bdev, flags);
+>>>>  
+>>>>  	bs_mask = (bdev_logical_block_size(bdev) >> 9) - 1;
+>>>>  	if ((sector | nr_sects) & bs_mask)
+>>>> @@ -391,7 +394,7 @@ int blkdev_issue_zeroout(struct block_device *bdev, sector_t sector,
+>>>>  			try_write_zeroes = false;
+>>>>  			goto retry;
+>>>>  		}
+>>>> -		if (!bdev_write_zeroes_sectors(bdev, 0)) {
+>>>> +		if (!bdev_write_zeroes_sectors(bdev, flags)) {
+>>>>  			/*
+>>>>  			 * Zeroing offload support was indicated, but the
+>>>>  			 * device reported ILLEGAL REQUEST (for some devices
+>>>> diff --git a/block/blk-merge.c b/block/blk-merge.c
+>>>> index 347782a24a35..e3ce4b87bbaa 100644
+>>>> --- a/block/blk-merge.c
+>>>> +++ b/block/blk-merge.c
+>>>> @@ -105,15 +105,18 @@ static struct bio *blk_bio_discard_split(struct request_queue *q,
+>>>>  static struct bio *blk_bio_write_zeroes_split(struct request_queue *q,
+>>>>  		struct bio *bio, struct bio_set *bs, unsigned *nsegs)
+>>>>  {
+>>>> +	unsigned int max_sectors;
+>>>> +
+>>>> +	max_sectors = blk_queue_get_max_write_zeroes_sectors(q, bio->bi_opf);
+>>>>  	*nsegs = 0;
+>>>>  
+>>>> -	if (!q->limits.max_write_zeroes_sectors)
+>>>> +	if (!max_sectors)
+>>>>  		return NULL;
+>>>>  
+>>>> -	if (bio_sectors(bio) <= q->limits.max_write_zeroes_sectors)
+>>>> +	if (bio_sectors(bio) <= max_sectors)
+>>>>  		return NULL;
+>>>>  
+>>>> -	return bio_split(bio, q->limits.max_write_zeroes_sectors, GFP_NOIO, bs);
+>>>> +	return bio_split(bio, max_sectors, GFP_NOIO, bs);
+>>>>  }
+>>>>  
+>>>>  static struct bio *blk_bio_write_same_split(struct request_queue *q,
+>>>> diff --git a/block/blk-settings.c b/block/blk-settings.c
+>>>> index 5f6dcc7a47bd..f682374c5106 100644
+>>>> --- a/block/blk-settings.c
+>>>> +++ b/block/blk-settings.c
+>>>> @@ -48,6 +48,7 @@ void blk_set_default_limits(struct queue_limits *lim)
+>>>>  	lim->chunk_sectors = 0;
+>>>>  	lim->max_write_same_sectors = 0;
+>>>>  	lim->max_write_zeroes_sectors = 0;
+>>>> +	lim->max_allocate_sectors = 0;
+>>>>  	lim->max_discard_sectors = 0;
+>>>>  	lim->max_hw_discard_sectors = 0;
+>>>>  	lim->discard_granularity = 0;
+>>>> @@ -83,6 +84,7 @@ void blk_set_stacking_limits(struct queue_limits *lim)
+>>>>  	lim->max_dev_sectors = UINT_MAX;
+>>>>  	lim->max_write_same_sectors = UINT_MAX;
+>>>>  	lim->max_write_zeroes_sectors = UINT_MAX;
+>>>> +	lim->max_allocate_sectors = UINT_MAX;
+>>>>  }
+>>>>  EXPORT_SYMBOL(blk_set_stacking_limits);
+>>>>  
+>>>> @@ -257,6 +259,19 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
+>>>>  }
+>>>>  EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
+>>>>  
+>>>> +/**
+>>>> + * blk_queue_max_allocate_sectors - set max sectors for a single
+>>>> + *                                  allocate request
+>>>> + * @q:  the request queue for the device
+>>>> + * @max_allocate_sectors: maximum number of sectors to write per command
+>>>> + **/
+>>>> +void blk_queue_max_allocate_sectors(struct request_queue *q,
+>>>> +		unsigned int max_allocate_sectors)
+>>>> +{
+>>>> +	q->limits.max_allocate_sectors = max_allocate_sectors;
+>>>> +}
+>>>> +EXPORT_SYMBOL(blk_queue_max_allocate_sectors);
+>>>> +
+>>>
+>>> I'd suggest split this to a separated patch.
+>>
+>> Yeah, this function is used in [3/3] only, so in may go after this patch [2/3] as a separate patch.
+>>
+>>>>  /**
+>>>>   * blk_queue_max_segments - set max hw segments for a request for this queue
+>>>>   * @q:  the request queue for the device
+>>>> @@ -506,6 +521,8 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+>>>>  					b->max_write_same_sectors);
+>>>>  	t->max_write_zeroes_sectors = min(t->max_write_zeroes_sectors,
+>>>>  					b->max_write_zeroes_sectors);
+>>>> +	t->max_allocate_sectors = min(t->max_allocate_sectors,
+>>>> +					b->max_allocate_sectors);
+>>>>  	t->bounce_pfn = min_not_zero(t->bounce_pfn, b->bounce_pfn);
+>>>>  
+>>>>  	t->seg_boundary_mask = min_not_zero(t->seg_boundary_mask,
+>>>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>>>> index 69bf2fb6f7cd..1ffef894b3bd 100644
+>>>> --- a/fs/block_dev.c
+>>>> +++ b/fs/block_dev.c
+>>>> @@ -2122,6 +2122,10 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+>>>>  		error = blkdev_issue_zeroout(bdev, start >> 9, len >> 9,
+>>>>  					     GFP_KERNEL, BLKDEV_ZERO_NOFALLBACK);
+>>>>  		break;
+>>>> +	case FALLOC_FL_KEEP_SIZE:
+>>>> +		error = blkdev_issue_zeroout(bdev, start >> 9, len >> 9,
+>>>> +			GFP_KERNEL, BLKDEV_ZERO_ALLOCATE | BLKDEV_ZERO_NOFALLBACK);
+>>>> +		break;
+>>>>  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE | FALLOC_FL_NO_HIDE_STALE:
+>>>>  		error = blkdev_issue_discard(bdev, start >> 9, len >> 9,
+>>>>  					     GFP_KERNEL, 0);
+>>>> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+>>>> index 70254ae11769..9ed166860099 100644
+>>>> --- a/include/linux/blk_types.h
+>>>> +++ b/include/linux/blk_types.h
+>>>> @@ -335,7 +335,9 @@ enum req_flag_bits {
+>>>>  
+>>>>  	/* command specific flags for REQ_OP_WRITE_ZEROES: */
+>>>>  	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+>>>> -
+>>>> +	__REQ_NOZERO,		/* only notify about allocated blocks,
+>>>> +				 * and do not actual zero them
+>>>> +				 */
+>>>>  	__REQ_HIPRI,
+>>>>  
+>>>>  	/* for driver use */
+>>>> @@ -362,6 +364,7 @@ enum req_flag_bits {
+>>>>  #define REQ_CGROUP_PUNT		(1ULL << __REQ_CGROUP_PUNT)
+>>>>  
+>>>>  #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+>>>> +#define REQ_NOZERO		(1ULL << __REQ_NOZERO)
+>>>>  #define REQ_HIPRI		(1ULL << __REQ_HIPRI)
+>>>>  
+>>>>  #define REQ_DRV			(1ULL << __REQ_DRV)
+>>>> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+>>>> index 4cd69552df9a..f4ec5db64432 100644
+>>>> --- a/include/linux/blkdev.h
+>>>> +++ b/include/linux/blkdev.h
+>>>> @@ -336,6 +336,7 @@ struct queue_limits {
+>>>>  	unsigned int		max_hw_discard_sectors;
+>>>>  	unsigned int		max_write_same_sectors;
+>>>>  	unsigned int		max_write_zeroes_sectors;
+>>>> +	unsigned int		max_allocate_sectors;
+>>>>  	unsigned int		discard_granularity;
+>>>>  	unsigned int		discard_alignment;
+>>>>  
+>>>> @@ -988,9 +989,19 @@ static inline struct bio_vec req_bvec(struct request *rq)
+>>>>  	return mp_bvec_iter_bvec(rq->bio->bi_io_vec, rq->bio->bi_iter);
+>>>>  }
+>>>>  
+>>>> +static inline unsigned int blk_queue_get_max_write_zeroes_sectors(
+>>>> +		struct request_queue *q, unsigned int op_flags)
+>>>> +{
+>>>> +	if (op_flags & REQ_NOZERO)
+>>>> +		return q->limits.max_allocate_sectors;
+>>>> +	return q->limits.max_write_zeroes_sectors;
+>>>> +}
+>>>> +
+>>>
+>>> And this one.
+>>
+>> It looks it won't be good, since this will require to declare REQ_NOZERO
+>> in a separate patch. This will tear off the flag declaration from the logic.
+>>
+>>> Also, should we consider other code path used q->limits.max_write_zeroes_sectors?
+>>
+>> Other code paths should not dereference q->limits.max_allocate_sectors, unless
+>> it is directly set in not-zero value. In case of max_allocate_sectors is zero,
+>> high-level primitives (generic_make_request_checks(), __blkdev_issue_write_zeroes(), ..)
+>> complete such the bios immediately. Other drivers may need additional work
+>> to support this, and really only subset of drivers need support of this, so this is
+>> not a subject of this patchset.
+>>
+>> Hm, it looks like there is an exception, which may inherit stack limits from children.
+>> Device-mapper will pick all the limits we enable for children.
+>> We may disable REQ_WRITE_ZEROES|REQ_NOZERO directly there, since it's not supported
+>> in this driver yet.
+>>
+>> Are you hinting at this here?
+>>
+> 
+> Oh, I mean other place references q->limits.max_write_zeroes_sectors.
+> Like in drivers/md/dm-io.c:
+> 		special_cmd_max_sectors = q->limits.max_write_zeroes_sectors;
+> 
+> Now there should use blk_queue_get_max_write_zeroes_sectors() instead of use
+> q->limits.max_write_zeroes_sectors directly?
 
-I missed this. Yes, you're right.
+For dm I don't think so. This primitive is for code simplifying, while
+there it won't solve any readability problems. It will be only byte swapping
+before real introduction of allocation support for dm. We will use the primitive
+for places, which support both plain "write zeroes" and "write zeroes allocates",
+while it is not need for other places.
 
-> > > > > There is also kmsan_check_skb/kmsan_handle_dma/kmsan_handle_urb that
-> > > > > does not seem to map to any of the instrumentation functions.
-> > > >
-> > > > For now, I would rather that there are some one-off special
-> > > > instrumentation, like for KMSAN. Coming up with a unified interface
-> > > > here that, without the use-cases even settled, seems hard to justify.
-> > > > Once instrumentation for these have settled, unifying the interface
-> > > > would have better justification.
-> > >
-> > > I would assume they may also require an annotation that checks the
-> > > memory region under all 3 tools and we don't have such annotation
-> > > (same as the previous case and effectively copy_to_user). I would
-> > > expect such annotation will be used in more places once we start
-> > > looking for more opportunities.
-> >
-> > Agreed, I'm certainly not against adding these. We may need to
-> > introduce 'instrument_dma_' etc. However, would it be reasonable to do
-> > this in a separate follow-up patch-series, to avoid stalling bitops
-> > instrumentation?  Assuming that the 8 hooks in instrumented.h right
-> > now are reasonable, and such future changes add new hooks, I think
-> > that would be the more pragmatic approach.
->
-> I think it would be a wrong direction. Just like this change does not
-> introduce all of instrument_test_and_set_bit,
-> instrument___clear_bit_unlock, instrument_copyin,
-> instrument_copyout_mcsafe, instrument_atomic_andnot, .... All of these
-> can be grouped into a very small set of cases with respect to what
-> type of memory access they do from the point of view of sanitizers.
-> And we introduce instrumentation for these _types_ of accesses, rather
-> than application functions (we don't care much if the access is for
-> atomic operations, copy to/from user, usb, dma, skb or something
-> else). It seems that our set of instrumentation annotations can't
-> handle some very basic cases...
-
-With the ioread/write, dma, skb, urb, user-copy cases in mind, it just
-appears to me that attempting to find a minimal unifying set of
-instrumentation hooks might lead us in circles, given we only have the
-following options:
-
-1. Do not introduce 'instrumented.h', and drop this series. With KMSAN
-in mind, this is what I mentioned I preferred in the first place, and
-just add a few dozen lines in each place we need to instrument. Yes,
-yes, it's not as convenient, but at least we'll know it'll be correct
-without having to reason about all cases and all sanitizers all at
-once (with KMSAN not being in any kernel tree even).
-
-2. This patch series, keeping 'instrumented.h', but only keep what we
-use right now. This is knowing we'll likely have to add a number of
-special cases (user-copy, ioread/write, etc) for now. Again,
-KASAN/KCSAN probably want the same thing, but I don't know how much
-conflict there will be with KMSAN after all is said and done. We will
-incrementally add what is required, with unifying things later. This
-will also satisfy Arnd's constraint of no empty functions:
-http://lkml.kernel.org/r/CAK8P3a32sVU4umk2FLnWnMGMQxThvMHAKxVM+G4X-hMgpBsXMA@mail.gmail.com
-
-3. Try to find a minimal set of instrumentation hooks that cater to
-all tools (KASAN, KCSAN, KMSAN). Without even having all
-instrumentation (without the 'instrumented.h' infrastructure) in
-place, I feel this will not be too successful. I think we can do this
-once we have instrumentation for all tools, in all places. Then
-unifying all of them should be a non-functional-change refactor.
-Essentially, this option depends on (1).
-
-However, now we have some constraints which are difficult to satisfy
-all at once:
-1. Essentially we were told to avoid (1), based on Arnd's suggestion
-to simplify the instrumentation. Therefore we thought (2) would be a
-good idea.
-2. Now that we know what (2) looks like, it seems you prefer (3),
-because we should also cater to KMSAN with this patch series.
-3. No unused hooks.
-
-Given we have a KMSAN<-(1)<-(3) dependency, but we were told to avoid
-(1), empty functions, and KMSAN hasn't yet landed, we can't reasonably
-do (3). Since you dislike (2), we're stuck.
-
-Any options I missed?
-
-Thanks,
--- Marco
+> If yes, then I think codes related with function blk_queue_get_max_write_zeroes_sectors() should
+> also be split to separated patch.
+> 
+>> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+>> index 0a2cc197f62b..b8aa5f6f9ce1 100644
+>> --- a/drivers/md/dm-table.c
+>> +++ b/drivers/md/dm-table.c
+>> @@ -489,6 +489,7 @@ static int dm_set_device_limits(struct dm_target *ti, struct dm_dev *dev,
+>>  		       (unsigned long long) start << SECTOR_SHIFT);
+>>  
+>>  	limits->zoned = blk_queue_zoned_model(q);
+>> +	limits->max_allocate_sectors = 0;
+>>  
+>>  	return 0;
+>>  }
+>> @@ -1548,6 +1549,7 @@ int dm_calculate_queue_limits(struct dm_table *table,
+>>  			       dm_device_name(table->md),
+>>  			       (unsigned long long) ti->begin,
+>>  			       (unsigned long long) ti->len);
+>> +		limits->max_allocate_sectors = 0;
+>>  
+>>  		/*
+>>  		 * FIXME: this should likely be moved to blk_stack_limits(), would
