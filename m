@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640AF144F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22BC5144FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732968AbgAVJiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55046 "EHLO mail.kernel.org"
+        id S2387568AbgAVJl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:41:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729148AbgAVJiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:20 -0500
+        id S2387544AbgAVJlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:15 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D58D2467F;
-        Wed, 22 Jan 2020 09:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8ED724680;
+        Wed, 22 Jan 2020 09:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685899;
-        bh=kkBMsYslEkYNPYzHKXDUibNKOCy004q3kA+dqlieGVM=;
+        s=default; t=1579686075;
+        bh=1AI0GKeVFPui5D7Xd+X1N/rgXNMOMBvlax163fQ8wHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CdJm9x9FqmtlOv962KcpLJf5pfaeL5cjdVUl9xox342Xztd8okNAstNA4Y4u4VHoH
-         DsLhUF+2HrgHkKeZm4+m50jvsCnZdlFJRed/PoDfdclWr4XZ7kEGzKm+F3/uoJnnxN
-         4GIPXZGu46qmd4nwyhkBoljW6oAtpbhHO9bPnY2E=
+        b=CSR1EbKtYwjV7+FEsp/zWbLnvadWTnkXdI7IHUf1uKPAHIBDro9GWYjEj7lMSoxLW
+         2BRKNkZFppD2o+yRdqOBxiKZ4m5wK9DuPg6I/tN7EAANjhIF+bgDqlOpbgsnCU7g4Z
+         Nv7haWVxONy8ggZJCSrTN24nkU5Id5Tiy9+ye8v4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+2b2ef983f973e5c40943@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 04/65] ALSA: seq: Fix racy access for queue timer in proc read
-Date:   Wed, 22 Jan 2020 10:28:49 +0100
-Message-Id: <20200122092752.109061533@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.19 034/103] x86/CPU/AMD: Ensure clearing of SME/SEV features is maintained
+Date:   Wed, 22 Jan 2020 10:28:50 +0100
+Message-Id: <20200122092808.971627907@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit 60adcfde92fa40fcb2dbf7cc52f9b096e0cd109a upstream.
+commit a006483b2f97af685f0e60f3a547c9ad4c9b9e94 upstream.
 
-snd_seq_info_timer_read() reads the information of the timer assigned
-for each queue, but it's done in a racy way which may lead to UAF as
-spotted by syzkaller.
+If the SME and SEV features are present via CPUID, but memory encryption
+support is not enabled (MSR 0xC001_0010[23]), the feature flags are cleared
+using clear_cpu_cap(). However, if get_cpu_cap() is later called, these
+feature flags will be reset back to present, which is not desired.
 
-This patch applies the missing q->timer_mutex lock while accessing the
-timer object as well as a slight code change to adapt the standard
-coding style.
+Change from using clear_cpu_cap() to setup_clear_cpu_cap() so that the
+clearing of the flags is maintained.
 
-Reported-by: syzbot+2b2ef983f973e5c40943@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20200115203733.26530-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: <stable@vger.kernel.org> # 4.16.x-
+Link: https://lkml.kernel.org/r/226de90a703c3c0be5a49565047905ac4e94e8f3.1579125915.git.thomas.lendacky@amd.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_timer.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/amd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/core/seq/seq_timer.c
-+++ b/sound/core/seq/seq_timer.c
-@@ -479,15 +479,19 @@ void snd_seq_info_timer_read(struct snd_
- 		q = queueptr(idx);
- 		if (q == NULL)
- 			continue;
--		if ((tmr = q->timer) == NULL ||
--		    (ti = tmr->timeri) == NULL) {
--			queuefree(q);
--			continue;
--		}
-+		mutex_lock(&q->timer_mutex);
-+		tmr = q->timer;
-+		if (!tmr)
-+			goto unlock;
-+		ti = tmr->timeri;
-+		if (!ti)
-+			goto unlock;
- 		snd_iprintf(buffer, "Timer for queue %i : %s\n", q->queue, ti->timer->name);
- 		resolution = snd_timer_resolution(ti) * tmr->ticks;
- 		snd_iprintf(buffer, "  Period time : %lu.%09lu\n", resolution / 1000000000, resolution % 1000000000);
- 		snd_iprintf(buffer, "  Skew : %u / %u\n", tmr->skew, tmr->skew_base);
-+unlock:
-+		mutex_unlock(&q->timer_mutex);
- 		queuefree(q);
-  	}
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -609,9 +609,9 @@ static void early_detect_mem_encrypt(str
+ 		return;
+ 
+ clear_all:
+-		clear_cpu_cap(c, X86_FEATURE_SME);
++		setup_clear_cpu_cap(X86_FEATURE_SME);
+ clear_sev:
+-		clear_cpu_cap(c, X86_FEATURE_SEV);
++		setup_clear_cpu_cap(X86_FEATURE_SEV);
+ 	}
  }
+ 
 
 
