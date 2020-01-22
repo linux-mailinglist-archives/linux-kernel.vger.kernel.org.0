@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CFB144F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97095145024
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbgAVJgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51376 "EHLO mail.kernel.org"
+        id S2388009AbgAVJoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:44:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731591AbgAVJgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:36:00 -0500
+        id S2388002AbgAVJoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:44:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF0002467A;
-        Wed, 22 Jan 2020 09:35:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3587E24689;
+        Wed, 22 Jan 2020 09:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685760;
-        bh=69r7vk7uHEpTuwlwwAtbipRDW/05if9LicMmlZJ/A5g=;
+        s=default; t=1579686248;
+        bh=3rHlzasWHcPAFaggQC/NRvYs/QBTLjHsJ2g+/APZs0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QXcepaWFy8nfgFniH56r4ClN/sNFlesDuLukVYvoyv0cghibCzTysghEmCy844IE/
-         YnzQerzJ3YhdUSfK5XSLN6fLD82qwXrxDt/XPBRP2XKEkqcWMLSA6AARDdIwekICfp
-         ZgdAzpA/QBEOr5Vt+J5SgMxZJR60v3AkQkHYW39c=
+        b=s6Z3qktDFGapnkOsL6ENGy6oXflMsozkk7iuIkhQ5pTNxbl0CRpgp4gA7QttBBYpY
+         mD4TYFtIM1P4ooLhZs8JhJLgRoFutEinoUH3CSXcXYYhMuHX0jZcB5xHO8b8RnP1jl
+         RHA8BpZiQexnNMXxWHKCZf1Iad4+ez7Vgwb/1W2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 69/97] net: stmmac: 16KB buffer must be 16 byte aligned
-Date:   Wed, 22 Jan 2020 10:29:13 +0100
-Message-Id: <20200122092807.473973825@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.19 058/103] cfg80211: fix page refcount issue in A-MSDU decap
+Date:   Wed, 22 Jan 2020 10:29:14 +0100
+Message-Id: <20200122092812.743594611@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-commit 8605131747e7e1fd8f6c9f97a00287aae2b2c640 upstream.
+commit 81c044fc3bdc5b7be967cd3682528ea94b58c06a upstream.
 
-The 16KB RX Buffer must also be 16 byte aligned. Fix it.
+The fragments attached to a skb can be part of a compound page. In that case,
+page_ref_inc will increment the refcount for the wrong page. Fix this by
+using get_page instead, which calls page_ref_inc on the compound head and
+also checks for overflow.
 
-Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2b67f944f88c ("cfg80211: reuse existing page fragments in A-MSDU rx")
+Cc: stable@vger.kernel.org
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Link: https://lore.kernel.org/r/20200113182107.20461-1-nbd@nbd.name
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/util.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -326,8 +326,8 @@ struct dma_features {
- 	unsigned int enh_desc;
- };
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -537,7 +537,7 @@ __frame_add_frag(struct sk_buff *skb, st
+ 	struct skb_shared_info *sh = skb_shinfo(skb);
+ 	int page_offset;
  
--/* GMAC TX FIFO is 8K, Rx FIFO is 16K */
--#define BUF_SIZE_16KiB 16384
-+/* RX Buffer size must be multiple of 4/8/16 bytes */
-+#define BUF_SIZE_16KiB 16368
- #define BUF_SIZE_8KiB 8192
- #define BUF_SIZE_4KiB 4096
- #define BUF_SIZE_2KiB 2048
+-	page_ref_inc(page);
++	get_page(page);
+ 	page_offset = ptr - page_address(page);
+ 	skb_add_rx_frag(skb, sh->nr_frags, page, page_offset, len, size);
+ }
 
 
