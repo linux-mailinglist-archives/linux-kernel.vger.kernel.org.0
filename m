@@ -2,182 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD7D145484
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8335D145495
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:53:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgAVMor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 07:44:47 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:53265 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728998AbgAVMor (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 07:44:47 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id AAB6223061;
-        Wed, 22 Jan 2020 13:44:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1579697085;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c8glKPE3mtcxWK7EcKAqhmptjvy0DHsDGU/Oht3Gsm0=;
-        b=uemOHiP0AM6jmU+xGLo1O55NL1lMnlXQvHkkaSrvJqMXFsxNAFCY9lIY08vBboWgZP8b6h
-        zPFuoPjQGE219HHheFPmyKuIW8Ed1IwCsT3E0XiA2yJNXlKeCyMgc1sKvsmLx5jlGdTgRZ
-        ShQjYvvJVlkUycCAIUfZOfHtFbLbsxI=
+        id S1729019AbgAVMxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 07:53:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:10066 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727453AbgAVMxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 07:53:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 04:53:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,350,1574150400"; 
+   d="scan'208";a="283659268"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 22 Jan 2020 04:53:02 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 22 Jan 2020 14:53:00 +0200
+Date:   Wed, 22 Jan 2020 14:53:00 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Brown <broonie@kernel.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 37/38] platform/x86: intel_pmc_ipc: Convert to MFD
+Message-ID: <20200122125300.GO2665@lahna.fi.intel.com>
+References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
+ <20200121160114.60007-38-mika.westerberg@linux.intel.com>
+ <20200122123454.GL15507@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 22 Jan 2020 13:44:44 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Tudor.Ambarus@microchip.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, richard@nod.at,
-        boris.brezillon@collabora.com, miquel.raynal@bootlin.com,
-        marex@denx.de
-Subject: Re: [PATCH v2] mtd: spi-nor: keep lock bits if they are non-volatile
-In-Reply-To: <990b9b16-36e5-ce73-36c7-0ebfa391c26b@ti.com>
-References: <20200103221229.7287-1-michael@walle.cc>
- <8187061.UfBqSTmf1g@192.168.0.113>
- <62b578b07d5eb46a015dafd4c2f45bc2@walle.cc>
- <5323055.WqobA3rpa8@192.168.0.113>
- <990b9b16-36e5-ce73-36c7-0ebfa391c26b@ti.com>
-Message-ID: <e64cc3ac32d2b44c9e6f4b4f795354ae@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: /
-X-Spam-Status: No, score=-0.10
-X-Rspamd-Server: web
-X-Spam-Score: -0.10
-X-Rspamd-Queue-Id: AAB6223061
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         NEURAL_HAM(-0.00)[-0.662];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122123454.GL15507@dell>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
-
-Am 2020-01-22 13:10, schrieb Vignesh Raghavendra:
-> On 22/01/20 12:23 am, Tudor.Ambarus@microchip.com wrote:
->> Hi, Michael, Vignesh,
->> 
->> On Sunday, January 12, 2020 12:50:57 AM EET Michael Walle wrote:
->>> EXTERNAL EMAIL: Do not click links or open attachments unless you 
->>> know the
->>> content is safe
-> [...]
+On Wed, Jan 22, 2020 at 12:34:54PM +0000, Lee Jones wrote:
+> > +static int intel_pmc_probe(struct platform_device *pdev)
+> > +{
+> > +	struct intel_scu_ipc_pdata pdata = {};
+> > +	struct intel_pmc_dev *pmc;
+> > +	int ret;
+> > +
+> > +	pmc = devm_kzalloc(&pdev->dev, sizeof(*pmc), GFP_KERNEL);
+> > +	if (!pmc)
+> > +		return -ENOMEM;
+> > +
+> > +	pmc->dev = &pdev->dev;
+> > +	spin_lock_init(&pmc->gcr_lock);
+> > +
+> > +	ret = intel_pmc_get_resources(pdev, pmc, &pdata);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Failed to request resources\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	pmc->scu = devm_intel_scu_ipc_register(&pdev->dev, &pdata);
+> > +	if (IS_ERR(pmc->scu))
+> > +		return PTR_ERR(pmc->scu);
 > 
->>>> I see three choices:
->>>> 1/ dt prop which gives a per flash granularity. The prop is related 
->>>> to
->>>> hw
->>>> protection and there might be some chances to get this accepted, 
->>>> maybe
->>>> it is
->>>> worth to involve Rob. But I tend to share Vignesh's opinion, this 
->>>> would
->>>> configure the flash and not describe it.
->>> 
->>> Still my preferred way. but also see below. But I wouldn't say it
->> 
->> Try to convince Rob.
->> 
->>> configures the
->>> flash but describe that the user want to use the write protection.
->>> 
->>>> 2/ kconfig option, the behavior would be enforced on all the 
->>>> flashes.
->>>> It would
->>>> be similar to what we have with CONFIG_MTD_SPI_NOR_USE_4K_SECTORS. I
->>>> did a
->>>> patch to address this some time ago:
->>>> https://patchwork.ozlabs.org/patch/
->>>> 1133278/
->>> 
->>> Mhh. If we would combine this with this patch that would be at least 
->>> a
->>> step into
->>> the right direction. At least a distro could enable that kernel 
->>> option
->>> without
->>> breaking old boards/flashes. Because as outlined about you need that 
->>> for
->>> flashes
->>> in category (2). Or you'd have to do a flash_unlock every time you 
->>> want
->>> to write
->>> to it. But that would be really a backwards incompatible change.. ;)
->>> 
->>>> 3/ module param, the behavior would be enforced on all the flashes.
->>>> 
->>>> Preferences or suggestions?
->>> 
->> I would go with 2/ or 3/. Vignesh, what do you prefer and why?
->> 
+> *_register is better than *_probe.  If it was called that (or maybe
+> *_init) initially I may have missed the issue altogether ...
 > 
-> I dont like option 1, because I am not convinced that this is a HW
-> description to be put in DT.  IIUC, problem is more of what to do with
-> locking configuration that is done before Linux comes up(either in
-> previous boot or by bootloader or POR default). Current code just
-> discards it and unlocks entire flash.
+> However, I still think it the SCU IPC *device* needs to be a device
+> driver and abide by the rules, ensuring it uses the device driver
+> model/API.  As such, it should be registered and probed as a device.
 
-But this is not the main problem. It is rather the intention of the
-user to actually want write protect the flash (for flashes who has
-proper support for them, that is the ones which have non-volatile
-bits).
+Which type of device you suggest here? And which bus it should be
+registered to? I think we can make this create a platform_device but
+then we would need to do that from the PCI driver as well which seems
+unnecessary since we already have the struct pci_dev.
 
-Flashes with volatile bits are another subject. Here it might be useful
-to unlock them either at probe time or when we first write to them, so
-the user doesn't need to know if its this kind of flash and he would
-actually have to unlock the flash before writing. I've left the
-behaviour for these flashes as it was before.
+For instance in drivers/mfd/intel-lpss* we use similar approach (the
+core part is library that gets called by probe drivers (ACPI, PCI). We
+don't create any additional platform_devices.
 
-And yes, u-boot suffers from the same problem, eg. it unlocks the whole
-flash too. I guess they inherited the behaviour from linux. But I
-wanted to start with linux first.
+There is another twist. Ideally we would like to see the SCU IPC probed
+and intialized before the MFD children so that we know the SCU IPC is
+ready by the time the children devices are created. I guess we could
+work it around by returning -EPROBE_DEFER but that does not feel right
+to be honest.
 
-> But proposal is not to touch those bits at probe time and leave this
-> upto userspace to handle.
-
-No, my proposal was to divide the flashes into two categories. The
-unlocking is only done on the flashes which have volatile locking bits,
-thus even when the new option is enabled it won't break access to these
-flashes.
-
-> Adding a Kconfig does not scale well for multi-platform builds. There
-> would not be a way to have protection enabled on one platform but
-> disabled on other. Does not scale for multiple flashes either
-> 
-> Option 3 sounds least bad among all. If module param can be designed to
-> be a string then, we could control locking behavior to be per flash
-> using flash name.
-
-What about both? A kconfig option which defines the default for the
-kernel parameter? My fear is that once it is a kernel parameter it is
-easy to forget (thus having the non-volatile bits, the flash is
-completely unlocked again) and it is not very handy; for proper write
-protection you'd always have to have this parameter.
-
-btw. I don't see a need to have this option per flash, because once
-the user actually enables it, he is aware that its for all of his
-flashes. I haven't seen flashes which has non-volatile protection bits
-_and_ are protected by default. There shouldn't be a noticable
-difference for the user if the option when enabled.
-
--michael
+Thanks!
