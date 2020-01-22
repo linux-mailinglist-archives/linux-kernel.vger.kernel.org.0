@@ -2,87 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA62144E9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F15A4145030
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbgAVJZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:25:38 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34835 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVJZi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:25:38 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p17so6367987wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:25:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jl1D3AmziTwVaydKZMicfuuKx92SzNFy1wg6z3sQOu8=;
-        b=QWf4OAlw4HblNZpibCzinKXmVcQxe2T3DfOdm82fH1kR0Jy8WNv+EvTlK7H9S+2b5V
-         6n4s6TI9j+qvwWD89eXAY4eDuqw5rfoI8xRW5t31OQdI02Em/Jcng6UEPc/Z7fBvmWcy
-         1HHC/4EpUgA5szvKHBynZhxUgdzdnCq0Hv5rmbgcg9W+GrFcsTx5iiM3xUZ8FX/7KVNW
-         Qpe4pt8y82X9eT/OV+GaI9zSNq3fnqGpIaD20d3czbeOC6wukZGh9xua5d/u33wq4D4I
-         thyksjj+mUNYd5z3wbuon9IKV+KzAGO9j9s2bSQCd3h/9FILqKaTfW9QTjUTCS9/eQpp
-         wtZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jl1D3AmziTwVaydKZMicfuuKx92SzNFy1wg6z3sQOu8=;
-        b=XACu0Ozm2KrPuYkwvn0Gm2Le/E42F5vOqU8WSSKKST4l+vTpFjd0xoKMS8OgHRqn6r
-         uwKTl1kjj+bNSQv5TJCGBX9vA0mru/beTj2a5m5J8iyOtEIJ7pky5CGg4fBajjO4I9Ow
-         0At+lftoXsVjRP3S7+Z9+J8cLbCJmziM1Aa21JU1Xa4nLfmLLqaKBDjtdRBynghiIYLF
-         FYCSrMF7kN46NH4W2Wll2qFKE+bELFhW+EXuA3JzP3TSjbznW2q2SVqEpUuJ4DTaQp7f
-         RH8zkeKtf2Ft2sXwEYUnH54lTzeVcNnx9FVvS/8j3lOWm1LQBloL9hkUFcV/zwW/+AUY
-         AVzg==
-X-Gm-Message-State: APjAAAUdk4ZjMSk7Eqjaj7dUtg4Y8YC4jRwZ1315f3y+xw7D+b4OrBdB
-        kEDpga0Vyz3aCP+Tzq3FfgWNkw==
-X-Google-Smtp-Source: APXvYqzbK5xmg3Q8pvvBxsVKUN7iX5VNKCEhjLiLQ4URYMDIPnu2V9Aj/FpSlwqF5Jr7ga/yDdQT5g==
-X-Received: by 2002:a7b:c08d:: with SMTP id r13mr2021190wmh.104.1579685135848;
-        Wed, 22 Jan 2020 01:25:35 -0800 (PST)
-Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id g25sm4134125wmh.3.2020.01.22.01.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 01:25:35 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: reset: meson: add gxl internal dac reset
-Date:   Wed, 22 Jan 2020 10:25:26 +0100
-Message-Id: <20200122092526.2436421-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.24.1
+        id S2388047AbgAVJoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387737AbgAVJo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:44:29 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8B0D2467B;
+        Wed, 22 Jan 2020 09:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579686268;
+        bh=WXqow2Q5kJyEZxVqPMNEHF7RhyCD/SsnKIZuMpVzlp4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sX0l3ha0HjGvA3BBnvMi3onsrvUcJWjxo8QljGoxsvdIFc1j/8g1DGh2XlSkue+cT
+         JTNnie7MckyuH/LupjNgqKVM8otAxG5ngRaaZjbT+VByiD37DQO+w1VKseMYLgYs/N
+         NLxxgw+aAGw1kz2ijk6Dpz7vtPyYF20TnibGETDg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 5.4 001/222] ARM: dts: meson8: fix the size of the PMU registers
+Date:   Wed, 22 Jan 2020 10:26:27 +0100
+Message-Id: <20200122092833.441430663@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
+References: <20200122092833.339495161@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the reset line of the internal DAC found on the amlogic gxl SoC family
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+commit 46c9585ed4af688ff1be6d4e76d7ed2f04de4fba upstream.
+
+The PMU registers are at least 0x18 bytes wide. Meson8b already uses a
+size of 0x18. The structure of the PMU registers on Meson8 and Meson8b
+is similar but not identical.
+
+Meson8 and Meson8b have the following registers in common (starting at
+AOBUS + 0xe0):
+  #define AO_RTI_PWR_A9_CNTL0 0xe0 (0x38 << 2)
+  #define AO_RTI_PWR_A9_CNTL1 0xe4 (0x39 << 2)
+  #define AO_RTI_GEN_PWR_SLEEP0 0xe8 (0x3a << 2)
+  #define AO_RTI_GEN_PWR_ISO0 0x4c (0x3b << 2)
+
+Meson8b additionally has these three registers:
+  #define AO_RTI_GEN_PWR_ACK0 0xf0 (0x3c << 2)
+  #define AO_RTI_PWR_A9_MEM_PD0 0xf4 (0x3d << 2)
+  #define AO_RTI_PWR_A9_MEM_PD1 0xf8 (0x3e << 2)
+
+Thus we can assume that the register size of the PMU IP blocks is
+identical on both SoCs (and Meson8 just contains some reserved registers
+in that area) because the CEC registers start right after the PMU
+(AO_RTI_*) registers at AOBUS + 0x100 (0x40 << 2).
+
+The upcoming power domain driver will need to read and write the
+AO_RTI_GEN_PWR_SLEEP0 and AO_RTI_GEN_PWR_ISO0 registers, so the updated
+size is needed for that driver to work.
+
+Fixes: 4a5a27116b447d ("ARM: dts: meson8: add support for booting the secondary CPU cores")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/dt-bindings/reset/amlogic,meson-gxbb-reset.h | 2 +-
+ arch/arm/boot/dts/meson8.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/reset/amlogic,meson-gxbb-reset.h b/include/dt-bindings/reset/amlogic,meson-gxbb-reset.h
-index ea5058618863..883bfd3bcbad 100644
---- a/include/dt-bindings/reset/amlogic,meson-gxbb-reset.h
-+++ b/include/dt-bindings/reset/amlogic,meson-gxbb-reset.h
-@@ -69,7 +69,7 @@
- #define RESET_SYS_CPU_L2		58
- #define RESET_SYS_CPU_P			59
- #define RESET_SYS_CPU_MBIST		60
--/*					61	*/
-+#define RESET_ACODEC			61
- /*					62	*/
- /*					63	*/
- /*	RESET2					*/
--- 
-2.24.1
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -253,7 +253,7 @@
+ &aobus {
+ 	pmu: pmu@e0 {
+ 		compatible = "amlogic,meson8-pmu", "syscon";
+-		reg = <0xe0 0x8>;
++		reg = <0xe0 0x18>;
+ 	};
+ 
+ 	pinctrl_aobus: pinctrl@84 {
+
 
