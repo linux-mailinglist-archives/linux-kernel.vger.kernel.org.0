@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA281450FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC90144F5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbgAVJhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:37:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53940 "EHLO mail.kernel.org"
+        id S1730385AbgAVJhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:37:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732662AbgAVJhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:45 -0500
+        id S1732274AbgAVJg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:36:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C28F82467E;
-        Wed, 22 Jan 2020 09:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80A3924687;
+        Wed, 22 Jan 2020 09:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685865;
-        bh=+2FjCr9YaSsUpap2iFDUqs8WIMpwcmCcbVjOTTroLZ0=;
+        s=default; t=1579685819;
+        bh=0oVE52zL6GJ9e+7w58+ti/f/AmU2UEGHs4+W8Fw55n0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCLtMw1xZmwpsyNem6cg2LMKTbUwWW+38LYQwJGUhHgdfq9WCx8JcfkBQyKhUIOIb
-         Ppme+5i6JlPrCUMc4NZf9yiNS/G77Y1c4UOK8tSdYmkIqJ7j4E53vndvoqclDCfCHB
-         SI0r27fE+ETdMFawPNh8t7EY5NgXREqFX8UCi+ec=
+        b=CaHBeMvyrEkN65/lC4fcZKDZ6UkLcOy8dRTKRumsuCLqqV/XU33K67gDE1zzV2FuQ
+         De3v2FpQj/CS/K0zx4Zk9Kba2lYuA9ZRCBj76twTY8n3gbmgiyYFSfspSaVBWAcZ7l
+         E3Ul/SSFEnAjEovlqFdRQ2GhxAmcOAkQDBzvjJNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 14/65] USB: serial: ch341: handle unbound port at reset_resume
-Date:   Wed, 22 Jan 2020 10:28:59 +0100
-Message-Id: <20200122092753.130397269@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Lars=20M=C3=B6llendorf?= <lars.moellendorf@plating.de>,
+        Lars-Peter Clausen <lars@metafoo.de>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.9 56/97] iio: buffer: align the size of scan bytes to size of the largest element
+Date:   Wed, 22 Jan 2020 10:29:00 +0100
+Message-Id: <20200122092805.443292933@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,40 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Lars Möllendorf <lars.moellendorf@plating.de>
 
-commit 4d5ef53f75c22d28f490bcc5c771fcc610a9afa4 upstream.
+commit 883f616530692d81cb70f8a32d85c0d2afc05f69 upstream.
 
-Check for NULL port data in reset_resume() to avoid dereferencing a NULL
-pointer in case the port device isn't bound to a driver (e.g. after a
-failed control request at port probe).
+Previous versions of `iio_compute_scan_bytes` only aligned each element
+to its own length (i.e. its own natural alignment). Because multiple
+consecutive sets of scan elements are buffered this does not work in
+case the computed scan bytes do not align with the natural alignment of
+the first scan element in the set.
 
-Fixes: 1ded7ea47b88 ("USB: ch341 serial: fix port number changed after resume")
-Cc: stable <stable@vger.kernel.org>     # 2.6.30
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+This commit fixes this by aligning the scan bytes to the natural
+alignment of the largest scan element in the set.
+
+Fixes: 959d2952d124 ("staging:iio: make iio_sw_buffer_preenable much more general.")
+Signed-off-by: Lars Möllendorf <lars.moellendorf@plating.de>
+Reviewed-by: Lars-Peter Clausen <lars@metafoo.de>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ch341.c |    6 +++++-
+ drivers/iio/industrialio-buffer.c |    6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/ch341.c
-+++ b/drivers/usb/serial/ch341.c
-@@ -592,9 +592,13 @@ static int ch341_tiocmget(struct tty_str
- static int ch341_reset_resume(struct usb_serial *serial)
+--- a/drivers/iio/industrialio-buffer.c
++++ b/drivers/iio/industrialio-buffer.c
+@@ -546,7 +546,7 @@ static int iio_compute_scan_bytes(struct
+ 				const unsigned long *mask, bool timestamp)
  {
- 	struct usb_serial_port *port = serial->port[0];
--	struct ch341_private *priv = usb_get_serial_port_data(port);
-+	struct ch341_private *priv;
- 	int ret;
+ 	unsigned bytes = 0;
+-	int length, i;
++	int length, i, largest = 0;
  
-+	priv = usb_get_serial_port_data(port);
-+	if (!priv)
-+		return 0;
+ 	/* How much space will the demuxed element take? */
+ 	for_each_set_bit(i, mask,
+@@ -554,13 +554,17 @@ static int iio_compute_scan_bytes(struct
+ 		length = iio_storage_bytes_for_si(indio_dev, i);
+ 		bytes = ALIGN(bytes, length);
+ 		bytes += length;
++		largest = max(largest, length);
+ 	}
+ 
+ 	if (timestamp) {
+ 		length = iio_storage_bytes_for_timestamp(indio_dev);
+ 		bytes = ALIGN(bytes, length);
+ 		bytes += length;
++		largest = max(largest, length);
+ 	}
 +
- 	/* reconfigure ch341 serial port after bus-reset */
- 	ch341_configure(serial->dev, priv);
++	bytes = ALIGN(bytes, largest);
+ 	return bytes;
+ }
  
 
 
