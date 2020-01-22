@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230B0144F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93DC8144EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733117AbgAVJiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55712 "EHLO mail.kernel.org"
+        id S1730256AbgAVJcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733097AbgAVJim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:42 -0500
+        id S1729247AbgAVJcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 481152467B;
-        Wed, 22 Jan 2020 09:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26EBE2071E;
+        Wed, 22 Jan 2020 09:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685921;
-        bh=0W1V3W8CggVjNQyaN/zVeXev/bVrx1JcSlDjkkeRYbQ=;
+        s=default; t=1579685569;
+        bh=UQ5VAOVQ+FVHhGXA0WA7/9hntlL6iFc09BvrShyOi6I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zi8q41BuzEWFbAZTJeAf8y42cznEPwIqZDHRGewj+LJJwP+cu77DxMeCpGVd+J7bD
-         euFZvm7ZO9TtG38W+mndCqxvHzTqXuPppzOWi8QtgZ2GIpbU9dpiNJqq2Rk1p4ZnCQ
-         UrC6b2dsDYetfuT+IWdeh2oWq3T1eU3qLg30tICE=
+        b=ZoQsZ4LDRsDsJC+VZfJLdE+zAHJhVBnPEHyFR8v4koD1+8oq1s7mGyK/AidQc3EtD
+         7+yMrzsdCubPXw9lMDPMnVJnVvUF9kE1tKjORn6K9I37bRr8Mz3pyx4HhABGDSWNhD
+         9qW+NQ6hzbFrs8Z68eoQYdxSoC/r3wruGPjY3SCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 37/65] netfilter: fix a use-after-free in mtype_destroy()
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        RENARD Pierre-Francois <pfrenard@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 66/76] net: usb: lan78xx: limit size of local TSO packets
 Date:   Wed, 22 Jan 2020 10:29:22 +0100
-Message-Id: <20200122092756.195019267@linuxfoundation.org>
+Message-Id: <20200122092801.422221341@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit c120959387efa51479056fd01dc90adfba7a590c upstream.
+[ Upstream commit f8d7408a4d7f60f8b2df0f81decdc882dd9c20dc ]
 
-map->members is freed by ip_set_free() right before using it in
-mtype_ext_cleanup() again. So we just have to move it down.
+lan78xx_tx_bh() makes sure to not exceed MAX_SINGLE_PACKET_SIZE
+bytes in the aggregated packets it builds, but does
+nothing to prevent large GSO packets being submitted.
 
-Reported-by: syzbot+4c3cc6dbe7259dbf9054@syzkaller.appspotmail.com
-Fixes: 40cd63bf33b2 ("netfilter: ipset: Support extensions which need a per data destroy function")
-Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Pierre-Francois reported various hangs when/if TSO is enabled.
+
+For localy generated packets, we can use netif_set_gso_max_size()
+to limit the size of TSO packets.
+
+Note that forwarded packets could still hit the issue,
+so a complete fix might require implementing .ndo_features_check
+for this driver, forcing a software segmentation if the size
+of the TSO packet exceeds MAX_SINGLE_PACKET_SIZE.
+
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: RENARD Pierre-Francois <pfrenard@gmail.com>
+Tested-by: RENARD Pierre-Francois <pfrenard@gmail.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>
+Cc: Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/ipset/ip_set_bitmap_gen.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/netfilter/ipset/ip_set_bitmap_gen.h
-+++ b/net/netfilter/ipset/ip_set_bitmap_gen.h
-@@ -64,9 +64,9 @@ mtype_destroy(struct ip_set *set)
- 	if (SET_WITH_TIMEOUT(set))
- 		del_timer_sync(&map->gc);
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2961,6 +2961,7 @@ static int lan78xx_probe(struct usb_inte
  
--	ip_set_free(map->members);
- 	if (set->dsize && set->extensions & IPSET_EXT_DESTROY)
- 		mtype_ext_cleanup(set);
-+	ip_set_free(map->members);
- 	ip_set_free(map);
+ 	if (netdev->mtu > (dev->hard_mtu - netdev->hard_header_len))
+ 		netdev->mtu = dev->hard_mtu - netdev->hard_header_len;
++	netif_set_gso_max_size(netdev, MAX_SINGLE_PACKET_SIZE - MAX_HEADER);
  
- 	set->data = NULL;
+ 	dev->ep_blkin = (intf->cur_altsetting)->endpoint + 0;
+ 	dev->ep_blkout = (intf->cur_altsetting)->endpoint + 1;
 
 
