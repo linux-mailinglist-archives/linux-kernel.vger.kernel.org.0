@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1AE14513C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D2E144EE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732700AbgAVJwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:52:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51240 "EHLO mail.kernel.org"
+        id S1729463AbgAVJcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730771AbgAVJf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:56 -0500
+        id S1729439AbgAVJcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD70F24683;
-        Wed, 22 Jan 2020 09:35:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE9E32071E;
+        Wed, 22 Jan 2020 09:32:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685755;
-        bh=sniDWG76cP0p1zzZmg0UOTJ1OyzKMNJHs3a6FuOzDhI=;
+        s=default; t=1579685540;
+        bh=yuc2WD3xnHmcdfjcvYL1sN24yQMukUchQOZdU/paCYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUecTaS/VUXl+s9nEw7CsCLHwu/pokl+44AFmIjuxDcXDq5krrc86KMDL7E/IWSEt
-         MTf3qaDuM7BVXcVT0Z2WcbaVu7hHbftlpSNLSUb89Rnf+8XPA8DuVEi+C/B2ZMsAzT
-         vBYI6K/f5Teb0kFNFaZ1ZXf+xtYldCuDQDJXgpR0=
+        b=DIj2ekrGCGZbMSEB2IfwlLxFKmeMxqOQqNh3gGrRX8d7DXOGWFqGrxicCmkanLs+h
+         B3wd4iFi/Ll5N+GW9QBjXGOk+kAy9KvyRgpijeNzC/o5+KU+dxvhljWnfOLAIKqEjE
+         RQhLbHdp5KnlQCtkLzrw4oonU4wWPXluChVc6P3U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>, Jin Yao <yao.jin@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.9 67/97] perf report: Fix incorrectly added dimensions as switch perf data file
+        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 55/76] USB: serial: io_edgeport: use irqsave() in USBs complete callback
 Date:   Wed, 22 Jan 2020 10:29:11 +0100
-Message-Id: <20200122092807.138995506@linuxfoundation.org>
+Message-Id: <20200122092759.185198066@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,69 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: John Ogness <john.ogness@linutronix.de>
 
-commit 0feba17bd7ee3b7e03d141f119049dcc23efa94e upstream.
+[ Upstream commit dd1fae527612543e560e84f2eba4f6ef2006ac55 ]
 
-We observed an issue that was some extra columns displayed after switching
-perf data file in browser. The steps to reproduce:
+The USB completion callback does not disable interrupts while acquiring
+the lock. We want to remove the local_irq_disable() invocation from
+__usb_hcd_giveback_urb() and therefore it is required for the callback
+handler to disable the interrupts while acquiring the lock.
+The callback may be invoked either in IRQ or BH context depending on the
+USB host controller.
+Use the _irqsave() variant of the locking primitives.
 
-1. perf record -a -e cycles,instructions -- sleep 3
-2. perf report --group
-3. In browser, we use hotkey 's' to switch to another perf.data
-4. Now in browser, the extra columns 'Self' and 'Children' are displayed.
-
-The issue is setup_sorting() executed again after repeat path, so dimensions
-are added again.
-
-This patch checks the last key returned from __cmd_report(). If it's
-K_SWITCH_INPUT_DATA, skips the setup_sorting().
-
-Fixes: ad0de0971b7f ("perf report: Enable the runtime switching of perf data file")
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Feng Tang <feng.tang@intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191220013722.20592-1-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-report.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/serial/io_edgeport.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -671,6 +671,7 @@ int cmd_report(int argc, const char **ar
- 	struct stat st;
- 	bool has_br_stack = false;
- 	int branch_mode = -1;
-+	int last_key = 0;
- 	bool branch_call_mode = false;
- 	char callchain_default_opt[] = CALLCHAIN_DEFAULT_OPT;
- 	const char * const report_usage[] = {
-@@ -956,7 +957,8 @@ repeat:
- 	else
- 		use_browser = 0;
+diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+index 4db280e6fac9..1995e6306b88 100644
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -572,6 +572,7 @@ static void edge_interrupt_callback(struct urb *urb)
+ 	struct usb_serial_port *port;
+ 	unsigned char *data = urb->transfer_buffer;
+ 	int length = urb->actual_length;
++	unsigned long flags;
+ 	int bytes_avail;
+ 	int position;
+ 	int txCredits;
+@@ -603,7 +604,7 @@ static void edge_interrupt_callback(struct urb *urb)
+ 		if (length > 1) {
+ 			bytes_avail = data[0] | (data[1] << 8);
+ 			if (bytes_avail) {
+-				spin_lock(&edge_serial->es_lock);
++				spin_lock_irqsave(&edge_serial->es_lock, flags);
+ 				edge_serial->rxBytesAvail += bytes_avail;
+ 				dev_dbg(dev,
+ 					"%s - bytes_avail=%d, rxBytesAvail=%d, read_in_progress=%d\n",
+@@ -626,7 +627,8 @@ static void edge_interrupt_callback(struct urb *urb)
+ 						edge_serial->read_in_progress = false;
+ 					}
+ 				}
+-				spin_unlock(&edge_serial->es_lock);
++				spin_unlock_irqrestore(&edge_serial->es_lock,
++						       flags);
+ 			}
+ 		}
+ 		/* grab the txcredits for the ports if available */
+@@ -639,9 +641,11 @@ static void edge_interrupt_callback(struct urb *urb)
+ 				port = edge_serial->serial->port[portNumber];
+ 				edge_port = usb_get_serial_port_data(port);
+ 				if (edge_port->open) {
+-					spin_lock(&edge_port->ep_lock);
++					spin_lock_irqsave(&edge_port->ep_lock,
++							  flags);
+ 					edge_port->txCredits += txCredits;
+-					spin_unlock(&edge_port->ep_lock);
++					spin_unlock_irqrestore(&edge_port->ep_lock,
++							       flags);
+ 					dev_dbg(dev, "%s - txcredits for port%d = %d\n",
+ 						__func__, portNumber,
+ 						edge_port->txCredits);
+@@ -682,6 +686,7 @@ static void edge_bulk_in_callback(struct urb *urb)
+ 	int			retval;
+ 	__u16			raw_data_length;
+ 	int status = urb->status;
++	unsigned long flags;
  
--	if (setup_sorting(session->evlist) < 0) {
-+	if ((last_key != K_SWITCH_INPUT_DATA) &&
-+	    (setup_sorting(session->evlist) < 0)) {
- 		if (sort_order)
- 			parse_options_usage(report_usage, options, "s", 1);
- 		if (field_order)
-@@ -1011,6 +1013,7 @@ repeat:
- 	ret = __cmd_report(&report);
- 	if (ret == K_SWITCH_INPUT_DATA) {
- 		perf_session__delete(session);
-+		last_key = K_SWITCH_INPUT_DATA;
- 		goto repeat;
- 	} else
- 		ret = 0;
+ 	if (status) {
+ 		dev_dbg(&urb->dev->dev, "%s - nonzero read bulk status received: %d\n",
+@@ -701,7 +706,7 @@ static void edge_bulk_in_callback(struct urb *urb)
+ 
+ 	usb_serial_debug_data(dev, __func__, raw_data_length, data);
+ 
+-	spin_lock(&edge_serial->es_lock);
++	spin_lock_irqsave(&edge_serial->es_lock, flags);
+ 
+ 	/* decrement our rxBytes available by the number that we just got */
+ 	edge_serial->rxBytesAvail -= raw_data_length;
+@@ -725,7 +730,7 @@ static void edge_bulk_in_callback(struct urb *urb)
+ 		edge_serial->read_in_progress = false;
+ 	}
+ 
+-	spin_unlock(&edge_serial->es_lock);
++	spin_unlock_irqrestore(&edge_serial->es_lock, flags);
+ }
+ 
+ 
+-- 
+2.20.1
+
 
 
