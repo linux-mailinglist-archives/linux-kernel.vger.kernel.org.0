@@ -2,76 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3820314495D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 02:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5655144963
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 02:39:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgAVBhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 20:37:46 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9231 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728899AbgAVBhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 20:37:45 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 94515A7B96BBE26574CC;
-        Wed, 22 Jan 2020 09:37:42 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 22 Jan 2020 09:37:33 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
-        <jingoohan1@gmail.com>, <b.zolnierkie@samsung.com>
-CC:     <kgunda@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH -next v2] backlight: qcom-wled: fix unsigned comparison to zero
-Date:   Wed, 22 Jan 2020 09:32:40 +0800
-Message-ID: <20200122013240.132861-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728998AbgAVBjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 20:39:41 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38096 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbgAVBjl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 20:39:41 -0500
+Received: by mail-pj1-f68.google.com with SMTP id l35so2565579pje.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 17:39:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GR5h1tt2wJy5kG2UEKPuOm//LxmTSWIE80O9BC6vjqA=;
+        b=W333QISVONGD08j00/Y3QQwYv0ParIpCj6sdrKhnnuuTcSuDqKiL420+3RE+GuwwGs
+         hnjJKbHvMWu8cZ1a4c2TBFaiQ994byvcG5nIQSz4JYvaVaVEnAeEaMGIUxblvg7naCbm
+         aO+dVJLE9HoeG0xzjx6R0naDuqgvOiTEYRPbU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GR5h1tt2wJy5kG2UEKPuOm//LxmTSWIE80O9BC6vjqA=;
+        b=nqam0ylmKvtrvtSBNsPaNi4n1u9HcYllRzMfRBb8KbKKFwLiQ2BnOd8JSdm8bZodwv
+         GumUstUdsfnuSYgJ19J3Zxxv4cWdqzWZKURkkgVOo/b2s+QQYNIHByzjA7CU6WRdc3KF
+         fP3bmjJVoDIDtGxUW21ZjolpK2eWBT5zbcxMcC4/J1a9xyShrRBgfm/hGnVJ/nuxd2bT
+         dAOMbm53TNXrbcZMOhb3wCaJ+QHwj8aI5SA6t2w6PgdG7cuKTH44j90RbUFGRytC2Jpi
+         zXVXXpFTS7XVlF2aSOv4AkPdoV7ReH2HQdCCdgpif60P6XIjx2VPzIelEO8lQ2OJEW0q
+         m10A==
+X-Gm-Message-State: APjAAAUM9g9WuE7Pzm6Aiv+dAKk1vK3CJDKfmaJXnZkkJs67eUKSXSH3
+        rXD8ACmltazGUg+r+m48BV6LTA==
+X-Google-Smtp-Source: APXvYqz3f5+DfmqCYbZN/U5SqXNvv9ofxo48LEFi5s7hXjc+PcN/p7YpBg1Nbu6vnuOWYfKMlALv+g==
+X-Received: by 2002:a17:902:6b4b:: with SMTP id g11mr8223389plt.26.1579657180827;
+        Tue, 21 Jan 2020 17:39:40 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:5bbb:c872:f2b1:f53b])
+        by smtp.gmail.com with ESMTPSA id w4sm666460pjt.23.2020.01.21.17.39.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 17:39:40 -0800 (PST)
+Date:   Wed, 22 Jan 2020 10:39:37 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 02/15] videobuf2: handle V4L2 buffer cache flags
+Message-ID: <20200122013937.GC149602@google.com>
+References: <20191217032034.54897-1-senozhatsky@chromium.org>
+ <20191217032034.54897-3-senozhatsky@chromium.org>
+ <ada2381c-2c1c-17c3-c190-48439ae1657a@xs4all.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ada2381c-2c1c-17c3-c190-48439ae1657a@xs4all.nl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
-./drivers/video/backlight/qcom-wled.c:1104:5-15:
-	WARNING: Unsigned expression compared with zero: string_len > 0
+Hi,
 
-The unsigned variable string_len is assigned a return value from the call
-to of_property_count_elems_of_size(), which may return negative error code.
+Sorry for the delayed.
 
-Fixes: 775d2ffb4af6 ("backlight: qcom-wled: Restructure the driver for WLED3")
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On (20/01/10 11:24), Hans Verkuil wrote:
+> On 12/17/19 4:20 AM, Sergey Senozhatsky wrote:
+> > Set video buffer cache management flags corresponding to V4L2 cache
+> > flags.
+> > 
+> > Both ->prepare() and ->finish() cache management hints should be
+> > passed during this stage (buffer preparation), because there is no
+> > other way for user-space to skip ->finish() cache flush.
+> > 
+> > There are two possible alternative approaches:
+> > - The first one is to move cache sync from ->finish() to dqbuf().
+> >   But this breaks some drivers, that need to fix-up buffers before
+> >   dequeueing them.
+> > 
+> > - The second one is to move ->finish() call from ->done() to dqbuf.
+> 
+> Please combine this patch with patch 13/15!
 
-changes in v2:
-- fix commit message description.
+OK.
 
----
- drivers/video/backlight/qcom-wled.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[..]
+> >  }
+> >  
+> > +static void set_buffer_cache_hints(struct vb2_queue *q,
+> > +				   struct vb2_buffer *vb,
+> > +				   struct v4l2_buffer *b)
+> > +{
+> > +	vb->need_cache_sync_on_prepare = 1;
+> > +
+> > +	if (q->dma_dir != DMA_TO_DEVICE)
+> 
+> What should be done when dma_dir == DMA_BIDIRECTIONAL?
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index d46052d..3d276b3 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -956,8 +956,8 @@ static int wled_configure(struct wled *wled, int version)
- 	struct wled_config *cfg = &wled->cfg;
- 	struct device *dev = wled->dev;
- 	const __be32 *prop_addr;
--	u32 size, val, c, string_len;
--	int rc, i, j;
-+	u32 size, val, c;
-+	int rc, i, j, string_len;
- 
- 	const struct wled_u32_opts *u32_opts = NULL;
- 	const struct wled_u32_opts wled3_opts[] = {
--- 
-2.7.4
+Well, ->need_cache_sync_on_prepare/->need_cache_sync_on_finish are set,
+by default. If the queue supports user-space cache hints (driver has
+set ->allow_cache_hints), then user-space can override cache behavior.
+We probably cannot enforce any other behavior here. Am I missing
+something?
 
+> > +		vb->need_cache_sync_on_finish = 1;
+> > +	else
+> > +		vb->need_cache_sync_on_finish = 0;
+> > +
+> > +	if (!q->allow_cache_hints)
+> > +		return;
+> > +
+> > +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_INVALIDATE)
+> > +		vb->need_cache_sync_on_finish = 0;
+> > +
+> > +	if (b->flags & V4L2_BUF_FLAG_NO_CACHE_CLEAN)
+> > +		vb->need_cache_sync_on_prepare = 0;
+> > +}
+
+	-ss
