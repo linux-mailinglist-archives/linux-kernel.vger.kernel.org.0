@@ -2,256 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4471458F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:45:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D102214591D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:56:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbgAVPpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 10:45:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23601 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725836AbgAVPo7 (ORCPT
+        id S1726442AbgAVP4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 10:56:38 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34729 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbgAVP4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 10:44:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579707897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zv+bCnNOl3qjnstEYa92uxa3f6bv0jFexwgAKSb/Wgw=;
-        b=crYe09iw3f0ZsDcGNGiKRcQoXgbubt3ieRWhv71QnKg2ua5fayT83nE2OBhR3YQEuf5KY0
-        UShW4DppuZjZWaGruROWKPxd5cN1+Okx0VxZ9n53YTd7ynCcgdZbnEuY0cO3ttiJzslysc
-        z5/7ptEYXN2wqbbOttLu8/ZxigzVtjA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-190-JoF28ss-OPS5ZXXKYCMaSA-1; Wed, 22 Jan 2020 10:44:52 -0500
-X-MC-Unique: JoF28ss-OPS5ZXXKYCMaSA-1
-Received: by mail-wr1-f70.google.com with SMTP id b13so3222947wrx.22
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 07:44:51 -0800 (PST)
+        Wed, 22 Jan 2020 10:56:38 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so6522325oig.1;
+        Wed, 22 Jan 2020 07:56:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=R4YvNeAxb3+eLRoT3iNAV5v/H9LROR+XP6+YqY0F8A0=;
+        b=sVdqrKFomB0aPeYSCV23RAlQHynJ8Zh5XM40HaNxdWx9s/kFaiywgVYg9uiA8EeyCK
+         uifR+qxkaEvNvBTzJKm5nkOBOXL3xKtu50MxEj17aV6rdc0owS8WOv4LnE0Gi3U5yzv9
+         mw7hkNqEAJn5wGVwzGSI0JM8bB4uapHL/RjpBiqMFaFfUZ1nqmjR5+AI9aJcev/JpQ46
+         6X7/cmTP/1JcGDpWlsWFoMMs+fxJQg5PQIiFhcJQlPHgXHD27vkEbt2F1Xlb8RYWwnAj
+         Dy4itGviB3qcHbwLv+Hr5Zo3dthpj1twcZ/KIM2zgdrIv1QkUO8aWdGzS2v2/AATuVr/
+         o84w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zv+bCnNOl3qjnstEYa92uxa3f6bv0jFexwgAKSb/Wgw=;
-        b=eVT9z1N7/MCF8YQcw0bqrN87zxRxQC157FC5zZ5N1r3ziLfgRJZL8bPdtsKA9gCeNo
-         bMbJjYJT4vUDpvoglnh3mW3UnEwxdnZO0INvnT+3jqC7nJ5jZmNHc0IV35oqCShsG+1Z
-         U6h8JzFCuCkkHqMB52BtWC2o0gLcfmOH+NBhnE3JsO/CtDuYCR4OC2kzZlzwQDiw1rCp
-         EKcztuFGPym9i1qtFMfwMtrHPTMUj7I5zhDVmshiYG0Ajc4uZ09cVZ/Pj1feRwLs3sTP
-         s571SsglHh7Om+FfhJU6q5B8cTP1TSJmTOUvEykbOANxfm2ULAetDDmCxWEJeVbusL1F
-         OI8w==
-X-Gm-Message-State: APjAAAXvj4X8OlHDPsLewow4Di/tIc7B9iZjN3pv40JJX7j6vcYVwoHx
-        LQe59WZy49nKEPb8zdW2DTOXiTIFzFK4nxXwqmlHN+Ex7nPRdikGfGBprKJOJ2F/xFM+QUKTMqg
-        8gvEVSBfE18ovi2QSUozmAPL0
-X-Received: by 2002:a1c:1f51:: with SMTP id f78mr3608528wmf.60.1579707890544;
-        Wed, 22 Jan 2020 07:44:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzf+zGrSWPw3ihUGr7p4vlyzpMTPSct3QELlX5YtRHHUGB/lGQLmBvKenlxYxVN83lyYY0RNQ==
-X-Received: by 2002:a1c:1f51:: with SMTP id f78mr3608506wmf.60.1579707890287;
-        Wed, 22 Jan 2020 07:44:50 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:b8fe:679e:87eb:c059? ([2001:b07:6468:f312:b8fe:679e:87eb:c059])
-        by smtp.gmail.com with ESMTPSA id q3sm4358926wmj.38.2020.01.22.07.44.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2020 07:44:49 -0800 (PST)
-Subject: Re: [PATCH] svm/avic: iommu/amd: Flush IOMMU IRT after update all
- entries
-To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Cc:     "joro@8bytes.org" <joro@8bytes.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-References: <20190320081432.2606-1-suravee.suthikulpanit@amd.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <d599b411-3f1e-c67e-dd39-ad4ef42764e7@redhat.com>
-Date:   Wed, 22 Jan 2020 16:44:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=R4YvNeAxb3+eLRoT3iNAV5v/H9LROR+XP6+YqY0F8A0=;
+        b=RqBc+xQyJWURtMcYKX0fGWSY3A80CtIfcvA1RJdZpg07aaLccsfEiULB8F3sMwtwhN
+         WqrajYQbDc4nHJyvjmQ0TrDFjrBdSYFQJfWTCAVOgaeCmzdS096t3Ye8A9cfLBQ9O2+/
+         DC8E21BV/piETiUl4yILWGkVhOJRk29jLUI4GZJnksphs+EVVTvyhKFJcAXctOEFwHpW
+         +x15c2YxtoMf+DSg0UNaAEsPeGhiu/HJDKrloqos3Ia0RgmwRJjS3q5yhVqsuCBbZfTg
+         YonDoq/tOOnJb79mccF4lGLR/mayEfehfApRi5f1PU0zjOPcUT07A3no9ngRdn8EXTTl
+         bI/A==
+X-Gm-Message-State: APjAAAWotUPCv/OP2jifQ6m42piqNtBlxbzv7KF8LZWYVnCWl3GGcF1e
+        ia6X62WZ/r7U3Wip+SygmV0QIQX11twTtcE7Y6Thjcc2JJ6LeA==
+X-Google-Smtp-Source: APXvYqzHRs45g0og3SLdnL+tfRY0UJ1urZmaXCSg4tzMqQCf9ZF8Uoir744AldMq2KxxR1+23k1YwTfGz2vs8JLKw8k=
+X-Received: by 2002:a05:6808:2c4:: with SMTP id a4mr7000891oid.22.1579708097962;
+ Wed, 22 Jan 2020 07:48:17 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190320081432.2606-1-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+From:   Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
+Date:   Wed, 22 Jan 2020 16:48:06 +0100
+Message-ID: <CAODFU0pi6MVJ+XgUmZRS_+ihAyZF+aq_V7sdnbeNeDtPzCZS=A@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] pin_on_cpu: Introduce thread CPU pinning system call
+To:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/03/19 09:14, Suthikulpanit, Suravee wrote:
-> When AVIC is enabled and the VM has discrete device assignment,
-> the interrupt remapping table (IRT) is used to keep track of which
-> destination APIC ID the IOMMU will inject the device interrput to.
-> 
-> This means every time a vcpu is blocked or context-switched (i.e.
-> vcpu_blocking/unblocking() and vcpu_load/put()), the information
-> in IRT must be updated and the IOMMU IRT flush command must be
-> issued.
-> 
-> The current implementation flushes IOMMU IRT every time an entry
-> is modified. If the assigned device has large number of interrupts
-> (hence large number of entries), this would add large amount of
-> overhead to vcpu context-switch. Instead, this can be optmized by
-> only flush IRT once per vcpu context-switch per device after all
-> IRT entries are modified.
-> 
-> The function amd_iommu_update_ga() is refactored to only update
-> IRT entry, while the amd_iommu_sync_ga() is introduced to allow
-> IRT flushing to be done separately.
-> 
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  arch/x86/kvm/svm.c        | 35 ++++++++++++++++++++++++++++++++++-
->  drivers/iommu/amd_iommu.c | 20 +++++++++++++++++---
->  include/linux/amd-iommu.h | 13 ++++++++++---
->  3 files changed, 61 insertions(+), 7 deletions(-)
+Hello
 
-I found this patch in my inbox...  I'd rather avoid allocating 8k of RAM
-per vCPU.  Can you make it per-VM?
+I would like to note that this does not help userspace to express
+dynamic scheduling relationships among processes/threads such as "do
+not run processes A and B on the same core" or "run processes A and B
+on cores sharing the same L2 cache".
 
-Paolo
-
-> +	/*
-> +	 * Bitmap used to store PCI devid to sync
-> +	 * AMD IOMMU interrupt remapping table
-> +	 */
-> +	unsigned long *avic_devid_sync_bitmap;
->  };
->  
->  /*
-> @@ -1984,6 +1992,7 @@ static inline int
->  avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu, bool r)
->  {
->  	int ret = 0;
-> +	int devid = 0;
->  	unsigned long flags;
->  	struct amd_svm_iommu_ir *ir;
->  	struct vcpu_svm *svm = to_svm(vcpu);
-> @@ -2001,9 +2010,21 @@ avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu, bool r)
->  		goto out;
->  
->  	list_for_each_entry(ir, &svm->ir_list, node) {
-> -		ret = amd_iommu_update_ga(cpu, r, ir->data);
-> +		ret = amd_iommu_update_ga(cpu, r, ir->data, &devid);
->  		if (ret)
->  			break;
-> +		set_bit(devid, svm->avic_devid_sync_bitmap);
-> +	}
-> +
-> +	/* Sync AMD IOMMU interrupt remapping table changes for each device. */
-> +	devid = find_next_bit(svm->avic_devid_sync_bitmap,
-> +			      AVIC_DEVID_BITMAP_SIZE, 0);
-> +
-> +	while (devid < AVIC_DEVID_BITMAP_SIZE) {
-> +		clear_bit(devid, svm->avic_devid_sync_bitmap);
-> +		ret = amd_iommu_sync_ga(devid);
-> +		devid = find_next_bit(svm->avic_devid_sync_bitmap,
-> +				      AVIC_DEVID_BITMAP_SIZE, devid+1);
->  	}
->  out:
->  	spin_unlock_irqrestore(&svm->ir_list_lock, flags);
-> @@ -2107,6 +2128,13 @@ static int avic_init_vcpu(struct vcpu_svm *svm)
->  	INIT_LIST_HEAD(&svm->ir_list);
->  	spin_lock_init(&svm->ir_list_lock);
->  
-> +	svm->avic_devid_sync_bitmap = (void *)__get_free_pages(
-> +					GFP_KERNEL | __GFP_ZERO,
-> +					get_order(AVIC_DEVID_BITMAP_SIZE/8));
-> +	if (svm->avic_devid_sync_bitmap == NULL)
-> +		ret = -ENOMEM;
-> +	memset(svm->avic_devid_sync_bitmap, 0, AVIC_DEVID_BITMAP_SIZE/8);
-> +
->  	return ret;
->  }
->  
-> @@ -2221,6 +2249,11 @@ static void svm_free_vcpu(struct kvm_vcpu *vcpu)
->  	__free_pages(virt_to_page(svm->msrpm), MSRPM_ALLOC_ORDER);
->  	__free_page(virt_to_page(svm->nested.hsave));
->  	__free_pages(virt_to_page(svm->nested.msrpm), MSRPM_ALLOC_ORDER);
-> +
-> +	free_pages((unsigned long)svm->avic_devid_sync_bitmap,
-> +		   get_order(AVIC_DEVID_BITMAP_SIZE/8));
-> +	svm->avic_devid_sync_bitmap = NULL;
-> +
->  	kvm_vcpu_uninit(vcpu);
->  	kmem_cache_free(x86_fpu_cache, svm->vcpu.arch.guest_fpu);
->  	kmem_cache_free(kvm_vcpu_cache, svm);
-> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> index 2a7b78bb98b4..637bcc9192e5 100644
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@ -4499,7 +4499,20 @@ int amd_iommu_create_irq_domain(struct amd_iommu *iommu)
->  	return 0;
->  }
->  
-> -int amd_iommu_update_ga(int cpu, bool is_run, void *data)
-> +int amd_iommu_sync_ga(int devid)
-> +{
-> +	struct amd_iommu *iommu = amd_iommu_rlookup_table[devid];
-> +
-> +	if (!iommu)
-> +		return -ENODEV;
-> +
-> +	iommu_flush_irt(iommu, devid);
-> +	iommu_completion_wait(iommu);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(amd_iommu_sync_ga);
-> +
-> +int amd_iommu_update_ga(int cpu, bool is_run, void *data, int *id)
->  {
->  	unsigned long flags;
->  	struct amd_iommu *iommu;
-> @@ -4521,6 +4534,9 @@ int amd_iommu_update_ga(int cpu, bool is_run, void *data)
->  	if (!table)
->  		return -ENODEV;
->  
-> +	if (id)
-> +		*id = devid;
-> +
->  	raw_spin_lock_irqsave(&table->lock, flags);
->  
->  	if (ref->lo.fields_vapic.guest_mode) {
-> @@ -4536,8 +4552,6 @@ int amd_iommu_update_ga(int cpu, bool is_run, void *data)
->  
->  	raw_spin_unlock_irqrestore(&table->lock, flags);
->  
-> -	iommu_flush_irt(iommu, devid);
-> -	iommu_completion_wait(iommu);
->  	return 0;
->  }
->  EXPORT_SYMBOL(amd_iommu_update_ga);
-> diff --git a/include/linux/amd-iommu.h b/include/linux/amd-iommu.h
-> index 09751d349963..b94d4b33dfd7 100644
-> --- a/include/linux/amd-iommu.h
-> +++ b/include/linux/amd-iommu.h
-> @@ -193,8 +193,9 @@ static inline int amd_iommu_detect(void) { return -ENODEV; }
->  /* IOMMU AVIC Function */
->  extern int amd_iommu_register_ga_log_notifier(int (*notifier)(u32));
->  
-> -extern int
-> -amd_iommu_update_ga(int cpu, bool is_run, void *data);
-> +extern int amd_iommu_update_ga(int cpu, bool is_run, void *data, int *devid);
-> +
-> +extern int amd_iommu_sync_ga(int devid);
->  
->  #else /* defined(CONFIG_AMD_IOMMU) && defined(CONFIG_IRQ_REMAP) */
->  
-> @@ -205,7 +206,13 @@ amd_iommu_register_ga_log_notifier(int (*notifier)(u32))
->  }
->  
->  static inline int
-> -amd_iommu_update_ga(int cpu, bool is_run, void *data)
-> +amd_iommu_update_ga(int cpu, bool is_run, void *data, int *devid)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline int
-> +amd_iommu_sync_ga(int devid)
->  {
->  	return 0;
->  }
-> 
-
+Sincerely
+Jan
