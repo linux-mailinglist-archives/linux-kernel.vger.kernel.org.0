@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569CC144EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E9F1450C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbgAVJbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:31:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
+        id S1733126AbgAVJsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:48:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729437AbgAVJa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:30:56 -0500
+        id S2387570AbgAVJl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2AFD2071E;
-        Wed, 22 Jan 2020 09:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57FBE2468A;
+        Wed, 22 Jan 2020 09:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685456;
-        bh=1sZwyDzsZStdE1HgfxdQMDQY0KfdLKvbmwsdZjONnM4=;
+        s=default; t=1579686087;
+        bh=bHIOlDCc12NvQDoeLBIZyV2bubQ9X2WM6D1OFMp2MTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0vbg6gL36Uwe3YfcXOEXWgy68g1d8fZZcIcSVXRxOqWpH7grdthjjKpgOAMD/oBTQ
-         yro/HRvW8BMh1nZhdneKxtZAJ+CB7U1E54wUAyTB8cRlqDfr4RyG8fTS5ldXVWVLHB
-         f1NcyeRaDrwz5LNgA/8Rv7D7FNQbGAsUwTASgBko=
+        b=a8LnSOffNhECi6jP+GXg+PGNx+RWAWm2mO3LftkgeBCsHoILJjCdRXYyZgfijcRJ7
+         IAD/JwbnbOAQh3pcmJBTchDCOdSUg9/QpLx0sLAaAasGR3gYrYSvkcut9/faOJJXQc
+         +jSedcgZdWKkn1XWyn0AKJwvPCWopQrISQGmgwzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 21/76] hsr: reset network header when supervision frame is created
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 021/103] ASoC: msm8916-wcd-analog: Fix MIC BIAS Internal1
 Date:   Wed, 22 Jan 2020 10:28:37 +0100
-Message-Id: <20200122092753.778521511@linuxfoundation.org>
+Message-Id: <20200122092806.919211534@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-commit 3ed0a1d563903bdb4b4c36c58c4d9c1bcb23a6e6 upstream.
+commit 057efcf9faea4769cf1020677d93d040db9b23f3 upstream.
 
-The supervision frame is L2 frame.
-When supervision frame is created, hsr module doesn't set network header.
-If tap routine is enabled, dev_queue_xmit_nit() is called and it checks
-network_header. If network_header pointer wasn't set(or invalid),
-it resets network_header and warns.
-In order to avoid unnecessary warning message, resetting network_header
-is needed.
+MIC BIAS Internal1 is broken at the moment because we always
+enable the internal rbias resistor to the TX2 line (connected to
+the headset microphone), rather than enabling the resistor connected
+to TX1.
 
-Test commands:
-    ip netns add nst
-    ip link add veth0 type veth peer name veth1
-    ip link add veth2 type veth peer name veth3
-    ip link set veth1 netns nst
-    ip link set veth3 netns nst
-    ip link set veth0 up
-    ip link set veth2 up
-    ip link add hsr0 type hsr slave1 veth0 slave2 veth2
-    ip a a 192.168.100.1/24 dev hsr0
-    ip link set hsr0 up
-    ip netns exec nst ip link set veth1 up
-    ip netns exec nst ip link set veth3 up
-    ip netns exec nst ip link add hsr1 type hsr slave1 veth1 slave2 veth3
-    ip netns exec nst ip a a 192.168.100.2/24 dev hsr1
-    ip netns exec nst ip link set hsr1 up
-    tcpdump -nei veth0
+Move the RBIAS code to pm8916_wcd_analog_enable_micbias_int1/2()
+to fix this.
 
-Splat looks like:
-[  175.852292][    C3] protocol 88fb is buggy, dev veth0
-
-Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 585e881e5b9e ("ASoC: codecs: Add msm8916-wcd analog codec")
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Link: https://lore.kernel.org/r/20200111164006.43074-3-stephan@gerhold.net
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/hsr/hsr_device.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/msm8916-wcd-analog.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -289,6 +289,8 @@ static void send_hsr_supervision_frame(s
- 			    skb->dev->dev_addr, skb->len) <= 0)
- 		goto out;
- 	skb_reset_mac_header(skb);
-+	skb_reset_network_header(skb);
-+	skb_reset_transport_header(skb);
+--- a/sound/soc/codecs/msm8916-wcd-analog.c
++++ b/sound/soc/codecs/msm8916-wcd-analog.c
+@@ -388,9 +388,6 @@ static int pm8916_wcd_analog_enable_micb
  
- 	hsr_stag = (typeof(hsr_stag)) skb_put(skb, sizeof(*hsr_stag));
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+-		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
+-				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
+ 		snd_soc_component_update_bits(component, reg, MICB_1_EN_PULL_DOWN_EN_MASK, 0);
+ 		snd_soc_component_update_bits(component, CDC_A_MICB_1_EN,
+ 				    MICB_1_EN_OPA_STG2_TAIL_CURR_MASK,
+@@ -440,6 +437,14 @@ static int pm8916_wcd_analog_enable_micb
+ 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
  
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX1_INT_RBIAS_EN_ENABLE);
++		break;
++	}
++
+ 	return pm8916_wcd_analog_enable_micbias_int(component, event, w->reg,
+ 						     wcd->micbias1_cap_mode);
+ }
+@@ -550,6 +555,11 @@ static int pm8916_wcd_analog_enable_micb
+ 	struct pm8916_wcd_analog_priv *wcd = snd_soc_component_get_drvdata(component);
+ 
+ 	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		snd_soc_component_update_bits(component, CDC_A_MICB_1_INT_RBIAS,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_MASK,
++				    MICB_1_INT_TX2_INT_RBIAS_EN_ENABLE);
++		break;
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		pm8916_mbhc_configure_bias(wcd, true);
+ 		break;
 
 
