@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FA014566C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A7114564D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731685AbgAVN0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:26:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
+        id S1731157AbgAVNZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:25:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731669AbgAVN0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:26:45 -0500
+        id S1731131AbgAVNZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:25:04 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EED62467F;
-        Wed, 22 Jan 2020 13:26:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0195F2467B;
+        Wed, 22 Jan 2020 13:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699603;
-        bh=+oCw+/pc4ZhoX6n0TJ3ziiklgPspFnfabr0Y5rbi8OU=;
+        s=default; t=1579699503;
+        bh=VY+e001eqKGE4m+ZqZaJPIa6rFwDCRWMN7NXie69oK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iHQ4guA45vJoeHvG90Zp8m/sK8O9iXO8xVbiZ4hGgP7V9QXJOJiZMpw9d+FIoa8QE
-         poAUxpyvqxgOY9AUTQA5N9hAfE+rP/PB4Sl65E1xxHLLGEEm+x/1/RKtblLEcwuS/Q
-         FnMe0IRB8VFl+RWZfwAtcP4eBcfrbqRdaBh8fg/0=
+        b=lLAjMS+IIH69F+Jnx+bjwayudiJsMBJhGAgjKiUECbRV/k2CPhWUZLwOBw2Bzg3Ll
+         kL/CU/P8Xh+lxHNqUw3qZLVqx4TanxqKGieE2U4K3k7kPDCRUgYzWZ+5+RbKF5v97K
+         ++6OStzCmLlFgWqYDfHoX7TGtobzqpQeyyE6oH78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Kevin ldir Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Amit Cohen <amitc@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 156/222] net: sched: act_ctinfo: fix memory leak
-Date:   Wed, 22 Jan 2020 10:29:02 +0100
-Message-Id: <20200122092844.887337125@linuxfoundation.org>
+Subject: [PATCH 5.4 166/222] selftests: mlxsw: qos_mc_aware: Fix mausezahn invocation
+Date:   Wed, 22 Jan 2020 10:29:12 +0100
+Message-Id: <20200122092845.597727250@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -47,84 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 09d4f10a5e78d76a53e3e584f1e6a701b6d24108 ]
+commit fef6d6704944c7be72fd2b77c021f1aed3d5df0d upstream.
 
-Implement a cleanup method to properly free ci->params
+Mausezahn does not recognize "own" as a keyword on source IP address. As a
+result, the MC stream is not running at all, and therefore no UC
+degradation can be observed even in principle.
 
-BUG: memory leak
-unreferenced object 0xffff88811746e2c0 (size 64):
-  comm "syz-executor617", pid 7106, jiffies 4294943055 (age 14.250s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    c0 34 60 84 ff ff ff ff 00 00 00 00 00 00 00 00  .4`.............
-  backtrace:
-    [<0000000015aa236f>] kmemleak_alloc_recursive include/linux/kmemleak.h:43 [inline]
-    [<0000000015aa236f>] slab_post_alloc_hook mm/slab.h:586 [inline]
-    [<0000000015aa236f>] slab_alloc mm/slab.c:3320 [inline]
-    [<0000000015aa236f>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3549
-    [<000000002c946bd1>] kmalloc include/linux/slab.h:556 [inline]
-    [<000000002c946bd1>] kzalloc include/linux/slab.h:670 [inline]
-    [<000000002c946bd1>] tcf_ctinfo_init+0x21a/0x530 net/sched/act_ctinfo.c:236
-    [<0000000086952cca>] tcf_action_init_1+0x400/0x5b0 net/sched/act_api.c:944
-    [<000000005ab29bf8>] tcf_action_init+0x135/0x1c0 net/sched/act_api.c:1000
-    [<00000000392f56f9>] tcf_action_add+0x9a/0x200 net/sched/act_api.c:1410
-    [<0000000088f3c5dd>] tc_ctl_action+0x14d/0x1bb net/sched/act_api.c:1465
-    [<000000006b39d986>] rtnetlink_rcv_msg+0x178/0x4b0 net/core/rtnetlink.c:5424
-    [<00000000fd6ecace>] netlink_rcv_skb+0x61/0x170 net/netlink/af_netlink.c:2477
-    [<0000000047493d02>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5442
-    [<00000000bdcf8286>] netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-    [<00000000bdcf8286>] netlink_unicast+0x223/0x310 net/netlink/af_netlink.c:1328
-    [<00000000fc5b92d9>] netlink_sendmsg+0x2c0/0x570 net/netlink/af_netlink.c:1917
-    [<00000000da84d076>] sock_sendmsg_nosec net/socket.c:639 [inline]
-    [<00000000da84d076>] sock_sendmsg+0x54/0x70 net/socket.c:659
-    [<0000000042fb2eee>] ____sys_sendmsg+0x2d0/0x300 net/socket.c:2330
-    [<000000008f23f67e>] ___sys_sendmsg+0x8a/0xd0 net/socket.c:2384
-    [<00000000d838e4f6>] __sys_sendmsg+0x80/0xf0 net/socket.c:2417
-    [<00000000289a9cb1>] __do_sys_sendmsg net/socket.c:2426 [inline]
-    [<00000000289a9cb1>] __se_sys_sendmsg net/socket.c:2424 [inline]
-    [<00000000289a9cb1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2424
+Fix the invocation, and tighten the test: due to the minimum shaper
+configured at the MC TCs, we always expect about 20% degradation. Fail the
+test if it is lower.
 
-Fixes: 24ec483cec98 ("net: sched: Introduce act_ctinfo action")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Kevin 'ldir' Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Toke Høiland-Jørgensen <toke@redhat.com>
-Acked-by: Kevin 'ldir' Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+Fixes: 573363a68f27 ("selftests: mlxsw: Add qos_lib.sh")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Reported-by: Amit Cohen <amitc@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/act_ctinfo.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
 
---- a/net/sched/act_ctinfo.c
-+++ b/net/sched/act_ctinfo.c
-@@ -360,6 +360,16 @@ static int tcf_ctinfo_search(struct net
- 	return tcf_idr_search(tn, a, index);
- }
+---
+ tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
++++ b/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
+@@ -232,7 +232,7 @@ test_mc_aware()
+ 	stop_traffic
+ 	local ucth1=${uc_rate[1]}
  
-+static void tcf_ctinfo_cleanup(struct tc_action *a)
-+{
-+	struct tcf_ctinfo *ci = to_ctinfo(a);
-+	struct tcf_ctinfo_params *cp;
+-	start_traffic $h1 own bc bc
++	start_traffic $h1 192.0.2.65 bc bc
+ 
+ 	local d0=$(date +%s)
+ 	local t0=$(ethtool_stats_get $h3 rx_octets_prio_0)
+@@ -254,7 +254,11 @@ test_mc_aware()
+ 			ret = 100 * ($ucth1 - $ucth2) / $ucth1
+ 			if (ret > 0) { ret } else { 0 }
+ 		    ")
+-	check_err $(bc <<< "$deg > 25")
 +
-+	cp = rcu_dereference_protected(ci->params, 1);
-+	if (cp)
-+		kfree_rcu(cp, rcu);
-+}
-+
- static struct tc_action_ops act_ctinfo_ops = {
- 	.kind	= "ctinfo",
- 	.id	= TCA_ID_CTINFO,
-@@ -367,6 +377,7 @@ static struct tc_action_ops act_ctinfo_o
- 	.act	= tcf_ctinfo_act,
- 	.dump	= tcf_ctinfo_dump,
- 	.init	= tcf_ctinfo_init,
-+	.cleanup= tcf_ctinfo_cleanup,
- 	.walk	= tcf_ctinfo_walker,
- 	.lookup	= tcf_ctinfo_search,
- 	.size	= sizeof(struct tcf_ctinfo),
++	# Minimum shaper of 200Mbps on MC TCs should cause about 20% of
++	# degradation on 1Gbps link.
++	check_err $(bc <<< "$deg < 15") "Minimum shaper not in effect"
++	check_err $(bc <<< "$deg > 25") "MC traffic degrades UC performance too much"
+ 
+ 	local interval=$((d1 - d0))
+ 	local mc_ir=$(rate $u0 $u1 $interval)
 
 
