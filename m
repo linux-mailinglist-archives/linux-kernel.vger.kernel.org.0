@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28845144F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0472F14505C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731460AbgAVJfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:35:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50808 "EHLO mail.kernel.org"
+        id S2387674AbgAVJmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731411AbgAVJfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:39 -0500
+        id S2387654AbgAVJl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25EF52071E;
-        Wed, 22 Jan 2020 09:35:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488FF24686;
+        Wed, 22 Jan 2020 09:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685738;
-        bh=lFrp2fT6oAwU0C505gdh33LnzaHuMVacMPBXsfkRemY=;
+        s=default; t=1579686116;
+        bh=dez6bY75cECNOLPtutvRtSN4Rc+ag1aEluc3e4CHQk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oUw57gQI4oaMiHrjbg2EX3UnLVg1OB/WgPBGxbU0gLwNQXnOYbGKhXab8u8QB1JgM
-         qoQ9nBB3NR2YsSwt1MeCtQmTbW6K3Gl2HIMv/QVTaKYeySdbcev/6TKiONB0f7949f
-         uX2O3UVjqXzsT1Umq7Gnm7CGAgIjnmzAmO+UxF3s=
+        b=EGjd8U4kLUz9WGnyQgqlpXAnxIwBeS/q8r6OyFgcZAMKzBz/82v7QSTXojGWEPEbw
+         2CUzAfLpn/a7sHGq60GP88xsJUjH6MQe2fcVfoM9PXVvLw61qbysBlBG0eJiMxLBxa
+         aMNTpXGxuFoe8jAkdj+Oe35xJJCewae+3dwx1XYI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 60/97] USB: serial: ch341: handle unbound port at reset_resume
-Date:   Wed, 22 Jan 2020 10:29:04 +0100
-Message-Id: <20200122092806.068924638@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.19 049/103] ARM: dts: imx7: Fix Toradex Colibri iMX7S 256MB NAND flash support
+Date:   Wed, 22 Jan 2020 10:29:05 +0100
+Message-Id: <20200122092811.156385679@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,40 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-commit 4d5ef53f75c22d28f490bcc5c771fcc610a9afa4 upstream.
+commit 4b0b97e651ecf29f20248420b52b6864fbd40bc2 upstream.
 
-Check for NULL port data in reset_resume() to avoid dereferencing a NULL
-pointer in case the port device isn't bound to a driver (e.g. after a
-failed control request at port probe).
+Turns out when introducing the eMMC version the gpmi node required for
+NAND flash support got enabled exclusively on Colibri iMX7D 512MB.
 
-Fixes: 1ded7ea47b88 ("USB: ch341 serial: fix port number changed after resume")
-Cc: stable <stable@vger.kernel.org>     # 2.6.30
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: f928a4a377e4 ("ARM: dts: imx7: add Toradex Colibri iMX7D 1GB (eMMC) support")
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ch341.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7s-colibri.dtsi |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/serial/ch341.c
-+++ b/drivers/usb/serial/ch341.c
-@@ -555,9 +555,13 @@ static int ch341_tiocmget(struct tty_str
- static int ch341_reset_resume(struct usb_serial *serial)
- {
- 	struct usb_serial_port *port = serial->port[0];
--	struct ch341_private *priv = usb_get_serial_port_data(port);
-+	struct ch341_private *priv;
- 	int ret;
- 
-+	priv = usb_get_serial_port_data(port);
-+	if (!priv)
-+		return 0;
+--- a/arch/arm/boot/dts/imx7s-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7s-colibri.dtsi
+@@ -49,3 +49,7 @@
+ 		reg = <0x80000000 0x10000000>;
+ 	};
+ };
 +
- 	/* reconfigure ch341 serial port after bus-reset */
- 	ch341_configure(serial->dev, priv);
- 
++&gpmi {
++	status = "okay";
++};
 
 
