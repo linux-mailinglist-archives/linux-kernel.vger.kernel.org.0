@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CA1914518D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:55:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B2D144F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbgAVJdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:33:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
+        id S1733154AbgAVJjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730535AbgAVJd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:27 -0500
+        id S1733145AbgAVJjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:39:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04DBC2071E;
-        Wed, 22 Jan 2020 09:33:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B26224680;
+        Wed, 22 Jan 2020 09:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685606;
-        bh=5WGXINjDL/R7zx+fD0zm5V5l3QeZzUfRZvA3tvado8I=;
+        s=default; t=1579685946;
+        bh=NJH0x6mrZKdduu+9oqEYWb28XwjUZRK5hBaz8Far3hA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lGX+TUCejXR5I/p2Za41Nv+z7BCT4bjpDNXrFkDNmNVMk+N9A45bx9xciwu+bp+pp
-         oFMs52FpyaZOygVIh/PIdFg27HMdWtqADVeDR588A7iLhMK59p4dkWDwO1sDQfQhJQ
-         FTB+z9iAgjn7QwnQDGyefhdlwUoA3feA9wgfC4lw=
+        b=KPUar8aknSp+jtflZXmAvFkEksnffPo/A6AWJXowfRZaDstsVjAI4klpozR5nrK1a
+         NN/sFgxu8QPPwtUiRSqvcBrYnLLS0/IcMhCp2QSZPjWaIIsiFsfyfw1Pe3CduYwGAi
+         CtKDADpe5JckjMK5Leb9L1jt5BYMX/wVVn16bq3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 4.4 75/76] perf probe: Fix wrong address verification
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 46/65] net/wan/fsl_ucc_hdlc: fix out of bounds write on array utdm_info
 Date:   Wed, 22 Jan 2020 10:29:31 +0100
-Message-Id: <20200122092803.019704608@linuxfoundation.org>
+Message-Id: <20200122092757.708527510@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,126 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 07d369857808b7e8e471bbbbb0074a6718f89b31 upstream.
+[ Upstream commit ddf420390526ede3b9ff559ac89f58cb59d9db2f ]
 
-Since there are some DIE which has only ranges instead of the
-combination of entrypc/highpc, address verification must use
-dwarf_haspc() instead of dwarf_entrypc/dwarf_highpc.
+Array utdm_info is declared as an array of MAX_HDLC_NUM (4) elements
+however up to UCC_MAX_NUM (8) elements are potentially being written
+to it.  Currently we have an array out-of-bounds write error on the
+last 4 elements. Fix this by making utdm_info UCC_MAX_NUM elements in
+size.
 
-Also, the ranges only DIE will have a partial code in different section
-(e.g. unlikely code will be in text.unlikely as "FUNC.cold" symbol). In
-that case, we can not use dwarf_entrypc() or die_entrypc(), because the
-offset from original DIE can be a minus value.
-
-Instead, this simply gets the symbol and offset from symtab.
-
-Without this patch;
-
-  # perf probe -D clear_tasks_mm_cpumask:1
-  Failed to get entry address of clear_tasks_mm_cpumask
-    Error: Failed to add events.
-
-And with this patch:
-
-  # perf probe -D clear_tasks_mm_cpumask:1
-  p:probe/clear_tasks_mm_cpumask clear_tasks_mm_cpumask+0
-  p:probe/clear_tasks_mm_cpumask_1 clear_tasks_mm_cpumask+5
-  p:probe/clear_tasks_mm_cpumask_2 clear_tasks_mm_cpumask+8
-  p:probe/clear_tasks_mm_cpumask_3 clear_tasks_mm_cpumask+16
-  p:probe/clear_tasks_mm_cpumask_4 clear_tasks_mm_cpumask+82
-
-Committer testing:
-
-I managed to reproduce the above:
-
-  [root@quaco ~]# perf probe -D clear_tasks_mm_cpumask:1
-  p:probe/clear_tasks_mm_cpumask _text+919968
-  p:probe/clear_tasks_mm_cpumask_1 _text+919973
-  p:probe/clear_tasks_mm_cpumask_2 _text+919976
-  [root@quaco ~]#
-
-But then when trying to actually put the probe in place, it fails if I
-use :0 as the offset:
-
-  [root@quaco ~]# perf probe -L clear_tasks_mm_cpumask | head -5
-  <clear_tasks_mm_cpumask@/usr/src/debug/kernel-5.2.fc30/linux-5.2.18-200.fc30.x86_64/kernel/cpu.c:0>
-        0  void clear_tasks_mm_cpumask(int cpu)
-        1  {
-        2  	struct task_struct *p;
-
-  [root@quaco ~]# perf probe clear_tasks_mm_cpumask:0
-  Probe point 'clear_tasks_mm_cpumask' not found.
-    Error: Failed to add events.
-  [root@quaco
-
-The next patch is needed to fix this case.
-
-Fixes: 576b523721b7 ("perf probe: Fix probing symbols with optimization suffix")
-Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/157199318513.8075.10463906803299647907.stgit@devnote2
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Addresses-Coverity: ("Out-of-bounds write")
+Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/perf/util/probe-finder.c |   32 ++++++++++----------------------
- 1 file changed, 10 insertions(+), 22 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -597,38 +597,26 @@ static int convert_to_trace_point(Dwarf_
- 				  const char *function,
- 				  struct probe_trace_point *tp)
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -76,7 +76,7 @@ static struct ucc_tdm_info utdm_primary_
+ 	},
+ };
+ 
+-static struct ucc_tdm_info utdm_info[MAX_HDLC_NUM];
++static struct ucc_tdm_info utdm_info[UCC_MAX_NUM];
+ 
+ static int uhdlc_init(struct ucc_hdlc_private *priv)
  {
--	Dwarf_Addr eaddr, highaddr;
-+	Dwarf_Addr eaddr;
- 	GElf_Sym sym;
- 	const char *symbol;
- 
- 	/* Verify the address is correct */
--	if (dwarf_entrypc(sp_die, &eaddr) != 0) {
--		pr_warning("Failed to get entry address of %s\n",
--			   dwarf_diename(sp_die));
--		return -ENOENT;
--	}
--	if (dwarf_highpc(sp_die, &highaddr) != 0) {
--		pr_warning("Failed to get end address of %s\n",
--			   dwarf_diename(sp_die));
--		return -ENOENT;
--	}
--	if (paddr > highaddr) {
--		pr_warning("Offset specified is greater than size of %s\n",
-+	if (!dwarf_haspc(sp_die, paddr)) {
-+		pr_warning("Specified offset is out of %s\n",
- 			   dwarf_diename(sp_die));
- 		return -EINVAL;
- 	}
- 
--	symbol = dwarf_diename(sp_die);
-+	/* Try to get actual symbol name from symtab */
-+	symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
- 	if (!symbol) {
--		/* Try to get the symbol name from symtab */
--		symbol = dwfl_module_addrsym(mod, paddr, &sym, NULL);
--		if (!symbol) {
--			pr_warning("Failed to find symbol at 0x%lx\n",
--				   (unsigned long)paddr);
--			return -ENOENT;
--		}
--		eaddr = sym.st_value;
-+		pr_warning("Failed to find symbol at 0x%lx\n",
-+			   (unsigned long)paddr);
-+		return -ENOENT;
- 	}
-+	eaddr = sym.st_value;
-+
- 	tp->offset = (unsigned long)(paddr - eaddr);
- 	tp->address = (unsigned long)paddr;
- 	tp->symbol = strdup(symbol);
 
 
