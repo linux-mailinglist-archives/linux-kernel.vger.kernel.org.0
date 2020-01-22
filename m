@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9CFC144EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EAB7144FD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbgAVJcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:32:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45522 "EHLO mail.kernel.org"
+        id S2387440AbgAVJlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730136AbgAVJcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:32:33 -0500
+        id S2387528AbgAVJlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29D002071E;
-        Wed, 22 Jan 2020 09:32:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8188024689;
+        Wed, 22 Jan 2020 09:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685552;
-        bh=wV4sBakQ3b/c4Lez57pR0uixWdNUh8E6EcO69dxaw7k=;
+        s=default; t=1579686073;
+        bh=QbD96Y8SIqgfAk5UQVoUIntMT0XVrmCym2yPFD+G9zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtyTWqphfB8yaehboktIzBSVzaOxgS5fWh0qXkKekJo2qxB6TiEheLaoWQ1EUSHDX
-         VVLh12R0EJXpw7yKfkqA676s8kZYdl7zkJ97ZLp8dHwBUnlOvLFz+yql/6jkOidxUY
-         AexnrBMf2tmNxPyenehvDZLOLsV1BebTteKKxCTo=
+        b=IMSZJFiRlObpqb4RpAKx9AZKfVpc8onbqJ+0ydtFhMs6kAmQ15UIm4BqQuq13dsXd
+         IQPMMn4Ykzf42Yae6OPieJkK0DbDJTWSPOUYEEY23sWs7BzUjhgq4q2WBrfm33BiFW
+         Jpf2H3e3a7EnyHAtUtbhY0NU0sITz3jvqQ1EdrVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.4 33/76] media: exynos4-is: Fix recursive locking in isp_video_release()
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Borislav Petkov <bp@suse.de>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        john.stultz@linaro.org, sboyd@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, tj@kernel.org,
+        Tony Luck <tony.luck@intel.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+        x86-ml <x86@kernel.org>
+Subject: [PATCH 4.19 033/103] x86/resctrl: Fix an imbalance in domain_remove_cpu()
 Date:   Wed, 22 Jan 2020 10:28:49 +0100
-Message-Id: <20200122092755.304524185@linuxfoundation.org>
+Message-Id: <20200122092808.807154512@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +51,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
+From: Qian Cai <cai@lca.pw>
 
-commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd upstream.
+commit e278af89f1ba0a9ef20947db6afc2c9afa37e85b upstream.
 
->From isp_video_release(), &isp->video_lock is held and subsequent
-vb2_fop_release() tries to lock vdev->lock which is same with the
-previous one. Replace vb2_fop_release() with _vb2_fop_release() to
-fix the recursive locking.
+A system that supports resource monitoring may have multiple resources
+while not all of these resources are capable of monitoring. Monitoring
+related state is initialized only for resources that are capable of
+monitoring and correspondingly this state should subsequently only be
+removed from these resources that are capable of monitoring.
 
-Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+domain_add_cpu() calls domain_setup_mon_state() only when r->mon_capable
+is true where it will initialize d->mbm_over. However,
+domain_remove_cpu() calls cancel_delayed_work(&d->mbm_over) without
+checking r->mon_capable resulting in an attempt to cancel d->mbm_over on
+all resources, even those that never initialized d->mbm_over because
+they are not capable of monitoring. Hence, it triggers a debugobjects
+warning when offlining CPUs because those timer debugobjects are never
+initialized:
+
+  ODEBUG: assert_init not available (active state 0) object type:
+  timer_list hint: 0x0
+  WARNING: CPU: 143 PID: 789 at lib/debugobjects.c:484
+  debug_print_object
+  Hardware name: HP Synergy 680 Gen9/Synergy 680 Gen9 Compute Module, BIOS I40 05/23/2018
+  RIP: 0010:debug_print_object
+  Call Trace:
+  debug_object_assert_init
+  del_timer
+  try_to_grab_pending
+  cancel_delayed_work
+  resctrl_offline_cpu
+  cpuhp_invoke_callback
+  cpuhp_thread_fun
+  smpboot_thread_fn
+  kthread
+  ret_from_fork
+
+Fixes: e33026831bdb ("x86/intel_rdt/mbm: Handle counter overflow")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: john.stultz@linaro.org
+Cc: sboyd@kernel.org
+Cc: <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: tj@kernel.org
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191211033042.2188-1-cai@lca.pw
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c |    2 +-
+ arch/x86/kernel/cpu/intel_rdt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -323,7 +323,7 @@ static int isp_video_release(struct file
- 		ivc->streaming = 0;
- 	}
- 
--	vb2_fop_release(file);
-+	_vb2_fop_release(file, NULL);
- 
- 	if (v4l2_fh_is_singular_file(file)) {
- 		fimc_pipeline_call(&ivc->ve, close);
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -595,7 +595,7 @@ static void domain_remove_cpu(int cpu, s
+ 		if (static_branch_unlikely(&rdt_mon_enable_key))
+ 			rmdir_mondata_subdir_allrdtgrp(r, d->id);
+ 		list_del(&d->list);
+-		if (is_mbm_enabled())
++		if (r->mon_capable && is_mbm_enabled())
+ 			cancel_delayed_work(&d->mbm_over);
+ 		if (is_llc_occupancy_enabled() &&  has_busy_rmid(r, d)) {
+ 			/*
 
 
