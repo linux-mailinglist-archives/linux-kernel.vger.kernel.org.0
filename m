@@ -2,68 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A021144C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:21:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9A0144C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:23:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgAVHVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 02:21:48 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51382 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725884AbgAVHVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 02:21:47 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 958936BF22A3041C68A4;
-        Wed, 22 Jan 2020 15:21:45 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 22 Jan 2020 15:21:38 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <jens.wiklander@linaro.org>, <Rijo-john.Thomas@amd.com>
-CC:     <yaohongbo@huawei.com>, <chenzhou10@huawei.com>,
-        <tee-dev@lists.linaro.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] tee: amdtee: amdtee depends on CRYPTO_DEV_CCP_DD
-Date:   Wed, 22 Jan 2020 15:16:43 +0800
-Message-ID: <20200122071643.8122-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728992AbgAVHXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 02:23:44 -0500
+Received: from mga14.intel.com ([192.55.52.115]:18401 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbgAVHXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 02:23:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 23:23:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,348,1574150400"; 
+   d="scan'208";a="399924578"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.167]) ([10.237.72.167])
+  by orsmga005.jf.intel.com with ESMTP; 21 Jan 2020 23:23:39 -0800
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Add system suspend/resume callbacks
+To:     Shaik Sajida Bhanu <sbhanu@codeaurora.org>, ulf.hansson@linaro.org
+Cc:     asutoshd@codeaurora.org, stummala@codeaurora.org,
+        vbadigan@codeaurora.org, sayalil@codeaurora.org,
+        cang@codeaurora.org, rampraka@codeaurora.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org
+References: <1579617022-13031-1-git-send-email-sbhanu@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c851e723-3e6c-4548-bb67-05a6023b4169@intel.com>
+Date:   Wed, 22 Jan 2020 09:22:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1579617022-13031-1-git-send-email-sbhanu@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CRYPTO_DEV_CCP_DD=m and AMDTEE=y, the following error is seen
-while building call.c or core.c
+On 21/01/20 4:30 pm, Shaik Sajida Bhanu wrote:
+> Add system suspend/resume callbacks to sdhci-msm platform driver.
 
-drivers/tee/amdtee/call.o: In function `handle_unload_ta':
-call.c:(.text+0x35f): undefined reference to `psp_tee_process_cmd'
-drivers/tee/amdtee/core.o: In function `amdtee_driver_init':
-core.c:(.init.text+0xf): undefined reference to `psp_check_tee_status
+There were already callbacks, so the commit subject and messages really do
+not tell what this change is about or why it is needed.  Please explain some
+more.
 
-Fix the config dependency for AMDTEE here.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 757cc3e9ff ("tee: add AMD-TEE driver")
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
----
- drivers/tee/amdtee/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tee/amdtee/Kconfig b/drivers/tee/amdtee/Kconfig
-index 4e32b6413b41..191f9715fa9a 100644
---- a/drivers/tee/amdtee/Kconfig
-+++ b/drivers/tee/amdtee/Kconfig
-@@ -3,6 +3,6 @@
- config AMDTEE
- 	tristate "AMD-TEE"
- 	default m
--	depends on CRYPTO_DEV_SP_PSP
-+	depends on CRYPTO_DEV_SP_PSP && CRYPTO_DEV_CCP_DD
- 	help
- 	  This implements AMD's Trusted Execution Environment (TEE) driver.
--- 
-2.20.1
+> 
+> Signed-off-by: Shaik Sajida Bhanu <sbhanu@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 47 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 45 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 71f29ba..4984857 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -2028,9 +2028,52 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+>  	return 0;
+>  }
+>  
+> +static int sdhci_msm_suspend(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	int ret = 0;
+> +
+> +	if (host->mmc->caps2 & MMC_CAP2_CQE) {
+> +		ret = cqhci_suspend(host->mmc);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	disable_irq(msm_host->pwr_irq);
+> +	ret = sdhci_suspend_host(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sdhci_msm_runtime_suspend(dev);
+> +}
+> +
+> +static int sdhci_msm_resume(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	int ret = 0;
+> +
+> +	ret = sdhci_msm_runtime_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sdhci_resume_host(host);
+> +	if (ret < 0)
+> +		return ret;
+> +	enable_irq(msm_host->pwr_irq);
+> +
+> +	if (host->mmc->caps2 & MMC_CAP2_CQE)
+> +		ret = cqhci_resume(host->mmc);
+> +
+> +	return ret;
+> +}
+> +
+>  static const struct dev_pm_ops sdhci_msm_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> -				pm_runtime_force_resume)
+> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_msm_suspend,
+> +				sdhci_msm_resume)
+>  	SET_RUNTIME_PM_OPS(sdhci_msm_runtime_suspend,
+>  			   sdhci_msm_runtime_resume,
+>  			   NULL)
+> 
 
