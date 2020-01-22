@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 511A2145652
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41430145654
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbgAVN0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:26:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46412 "EHLO mail.kernel.org"
+        id S1731494AbgAVN0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:26:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729774AbgAVNZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:25:59 -0500
+        id S1729327AbgAVN0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:26:05 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A15F92467E;
-        Wed, 22 Jan 2020 13:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7D2F2467B;
+        Wed, 22 Jan 2020 13:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699557;
-        bh=SpDzbbOwicUHa4Zm+r4y/NZKqNvo4lpUqQrWehgGjZg=;
+        s=default; t=1579699564;
+        bh=1F2zi7pq1RSBl+NUKdEC8uEGfqm9GnKVSvaEqmsslZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b49UKK4Zvd9Ly8KK8QKhFG7QKLDSmXyBJvCIWpoxvfsl50DtCty7S7/1ZQ/IN8n0z
-         elFOvc0UYzCP7NXn/7/QQ5dv8bi95519gQ5LHa0aZ6Jj61qAyhxV4s8ZrOqPjZEXs1
-         Z01deUI3PTESrllwhiQ+rAjZ3iSe18xOxJvKhMhY=
+        b=Hzvn/HiF4fqin8sUltqjnQAKIe1hcm/o4QLMSB1Lcp4jDXp05gMx6X7+4y5QBm0je
+         dc2wDUvOAxRbK7t2343hen4vpVJ4pF3o5RBupLKTiU/5AxXBnnD4plM+qxhBW/MmZk
+         tagmM3o89aOPPPx6HWUyXL+tPo3wcWWRfQvQ1nIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 5.4 178/222] arm64: dts: meson-gxl-s905x-khadas-vim: fix gpio-keys-polled node
-Date:   Wed, 22 Jan 2020 10:29:24 +0100
-Message-Id: <20200122092846.441350088@linuxfoundation.org>
+        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 5.4 180/222] arm64: dts: marvell: Add AP806-dual missing CPU clocks
+Date:   Wed, 22 Jan 2020 10:29:26 +0100
+Message-Id: <20200122092846.580105305@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -44,40 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit d5f6fa904ecbadbb8e9fa6302b0fc165bec0559a upstream.
+commit e231c6d47cca4b5df51bcf72dec1af767e63feaf upstream.
 
-Fix DTC warnings:
+CPU clocks have been added to AP806-quad but not to the -dual
+variant.
 
-arch/arm/dts/meson-gxl-s905x-khadas-vim.dtb: Warning (avoid_unnecessary_addr_size):
-   /gpio-keys-polled: unnecessary #address-cells/#size-cells
-      without "ranges" or child "reg" property
-
-Fixes: e15d2774b8c0 ("ARM64: dts: meson-gxl: add support for the Khadas VIM board")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: c00bc38354cf ("arm64: dts: marvell: Add cpu clock node on Armada 7K/8K")
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-@@ -33,11 +33,9 @@
- 
- 	gpio-keys-polled {
- 		compatible = "gpio-keys-polled";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 		poll-interval = <100>;
- 
--		button@0 {
-+		power-button {
- 			label = "power";
- 			linux,code = <KEY_POWER>;
- 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
+--- a/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806-dual.dtsi
+@@ -21,6 +21,7 @@
+ 			reg = <0x000>;
+ 			enable-method = "psci";
+ 			#cooling-cells = <2>;
++			clocks = <&cpu_clk 0>;
+ 		};
+ 		cpu1: cpu@1 {
+ 			device_type = "cpu";
+@@ -28,6 +29,7 @@
+ 			reg = <0x001>;
+ 			enable-method = "psci";
+ 			#cooling-cells = <2>;
++			clocks = <&cpu_clk 0>;
+ 		};
+ 	};
+ };
 
 
