@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89CFA144F72
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E786145093
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731794AbgAVJh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:37:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54214 "EHLO mail.kernel.org"
+        id S2387492AbgAVJl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731453AbgAVJhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:55 -0500
+        id S2387624AbgAVJlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6818F2467B;
-        Wed, 22 Jan 2020 09:37:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12E1B2467B;
+        Wed, 22 Jan 2020 09:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685874;
-        bh=zaYJ2yYnkIPpR/nxOzLlloLcX9c1tGE1ScxMW6b+25s=;
+        s=default; t=1579686109;
+        bh=5KGiFtPDCtBNnlUpwuwCkTLUluovlgdstuOfe64TrN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hAyIxv/4YxpHsxTLrwgU/514EZVCjd7ufSpzfjU0OTIpJXC9pzLcfR28LlFaxhBAq
-         aZXSk8SK7pURVEAEcexoIOz4+C8eE4b/7BadccX3JJVWDwP9qNfRJLcBchXdkUKa8f
-         jlg1A6+b5kTFRAiDpyHZxPUzVC/Schk7fK6MJElc=
+        b=JqxmtY+ldXtHWWjliep7jkBTe0NEd/yVRmzkgx50ZCL8wmDHY0Lv4RCEA7yq355XI
+         mYrooXZOQNm+HCXAjzyYKThvUnXNnI7RRCX0vK5XykvFbhK8fFn8BUEqz9wkPy/V9Z
+         j10x6r51XEDXCV8MNL68i4cPn0ZdvdORkgrWYEr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 18/65] scsi: fnic: fix invalid stack access
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.19 047/103] ARM: dts: imx6qdl: Add Engicam i.Core 1.5 MX6
 Date:   Wed, 22 Jan 2020 10:29:03 +0100
-Message-Id: <20200122092753.652944512@linuxfoundation.org>
+Message-Id: <20200122092810.874280626@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,122 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jacopo Mondi <jacopo@jmondi.org>
 
-commit 42ec15ceaea74b5f7a621fc6686cbf69ca66c4cf upstream.
+commit 37c045d25e90038682b845de0a1db43c8301694d upstream.
 
-gcc -O3 warns that some local variables are not properly initialized:
+The 1.5 version of Engicam's i.Core MX6 CPU module features a different clock
+provider for the ethernet's PHY interface. Adjust the FEC ptp clock to
+reference CLK_ENET_REF clock source, and set SION bit of
+MX6QDL_PAD_GPIO_16__ENET_REF_CLK to adjust the input path of that pin.
 
-drivers/scsi/fnic/vnic_dev.c: In function 'fnic_dev_hang_notify':
-drivers/scsi/fnic/vnic_dev.c:511:16: error: 'a0' is used uninitialized in this function [-Werror=uninitialized]
-  vdev->args[0] = *a0;
-  ~~~~~~~~~~~~~~^~~~~
-drivers/scsi/fnic/vnic_dev.c:691:6: note: 'a0' was declared here
-  u64 a0, a1;
-      ^~
-drivers/scsi/fnic/vnic_dev.c:512:16: error: 'a1' is used uninitialized in this function [-Werror=uninitialized]
-  vdev->args[1] = *a1;
-  ~~~~~~~~~~~~~~^~~~~
-drivers/scsi/fnic/vnic_dev.c:691:10: note: 'a1' was declared here
-  u64 a0, a1;
-          ^~
-drivers/scsi/fnic/vnic_dev.c: In function 'fnic_dev_mac_addr':
-drivers/scsi/fnic/vnic_dev.c:512:16: error: 'a1' is used uninitialized in this function [-Werror=uninitialized]
-  vdev->args[1] = *a1;
-  ~~~~~~~~~~~~~~^~~~~
-drivers/scsi/fnic/vnic_dev.c:698:10: note: 'a1' was declared here
-  u64 a0, a1;
-          ^~
+The newly introduced imx6ql-icore-1.5.dtsi allows to collect in a single
+place differences between version '1.0' and '1.5' of the module.
 
-Apparently the code relies on the local variables occupying adjacent memory
-locations in the same order, but this is of course not guaranteed.
-
-Use an array of two u64 variables where needed to make it work correctly.
-
-I suspect there is also an endianness bug here, but have not digged in deep
-enough to be sure.
-
-Fixes: 5df6d737dd4b ("[SCSI] fnic: Add new Cisco PCI-Express FCoE HBA")
-Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20200107201602.4096790-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Daniel Díaz <daniel.diaz@linaro.org>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/fnic/vnic_dev.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi |   34 +++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
---- a/drivers/scsi/fnic/vnic_dev.c
-+++ b/drivers/scsi/fnic/vnic_dev.c
-@@ -445,26 +445,26 @@ int vnic_dev_soft_reset_done(struct vnic
- 
- int vnic_dev_hang_notify(struct vnic_dev *vdev)
- {
--	u64 a0, a1;
-+	u64 a0 = 0, a1 = 0;
- 	int wait = 1000;
- 	return vnic_dev_cmd(vdev, CMD_HANG_NOTIFY, &a0, &a1, wait);
- }
- 
- int vnic_dev_mac_addr(struct vnic_dev *vdev, u8 *mac_addr)
- {
--	u64 a0, a1;
-+	u64 a[2] = {};
- 	int wait = 1000;
- 	int err, i;
- 
- 	for (i = 0; i < ETH_ALEN; i++)
- 		mac_addr[i] = 0;
- 
--	err = vnic_dev_cmd(vdev, CMD_MAC_ADDR, &a0, &a1, wait);
-+	err = vnic_dev_cmd(vdev, CMD_MAC_ADDR, &a[0], &a[1], wait);
- 	if (err)
- 		return err;
- 
- 	for (i = 0; i < ETH_ALEN; i++)
--		mac_addr[i] = ((u8 *)&a0)[i];
-+		mac_addr[i] = ((u8 *)&a)[i];
- 
- 	return 0;
- }
-@@ -489,30 +489,30 @@ void vnic_dev_packet_filter(struct vnic_
- 
- void vnic_dev_add_addr(struct vnic_dev *vdev, u8 *addr)
- {
--	u64 a0 = 0, a1 = 0;
-+	u64 a[2] = {};
- 	int wait = 1000;
- 	int err;
- 	int i;
- 
- 	for (i = 0; i < ETH_ALEN; i++)
--		((u8 *)&a0)[i] = addr[i];
-+		((u8 *)&a)[i] = addr[i];
- 
--	err = vnic_dev_cmd(vdev, CMD_ADDR_ADD, &a0, &a1, wait);
-+	err = vnic_dev_cmd(vdev, CMD_ADDR_ADD, &a[0], &a[1], wait);
- 	if (err)
- 		pr_err("Can't add addr [%pM], %d\n", addr, err);
- }
- 
- void vnic_dev_del_addr(struct vnic_dev *vdev, u8 *addr)
- {
--	u64 a0 = 0, a1 = 0;
-+	u64 a[2] = {};
- 	int wait = 1000;
- 	int err;
- 	int i;
- 
- 	for (i = 0; i < ETH_ALEN; i++)
--		((u8 *)&a0)[i] = addr[i];
-+		((u8 *)&a)[i] = addr[i];
- 
--	err = vnic_dev_cmd(vdev, CMD_ADDR_DEL, &a0, &a1, wait);
-+	err = vnic_dev_cmd(vdev, CMD_ADDR_DEL, &a[0], &a[1], wait);
- 	if (err)
- 		pr_err("Can't del addr [%pM], %d\n", addr, err);
- }
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2018 Jacopo Mondi <jacopo@jmondi.org>
++ */
++
++#include "imx6qdl-icore.dtsi"
++
++&iomuxc {
++	pinctrl_enet: enetgrp {
++		fsl,pins = <
++			MX6QDL_PAD_ENET_CRS_DV__ENET_RX_EN	0x1b0b0
++			MX6QDL_PAD_GPIO_16__ENET_REF_CLK	0x4001b0b0
++			MX6QDL_PAD_ENET_TX_EN__ENET_TX_EN	0x1b0b0
++			MX6QDL_PAD_ENET_RXD1__ENET_RX_DATA1	0x1b0b0
++			MX6QDL_PAD_ENET_RXD0__ENET_RX_DATA0	0x1b0b0
++			MX6QDL_PAD_ENET_TXD1__ENET_TX_DATA1	0x1b0b0
++			MX6QDL_PAD_ENET_TXD0__ENET_TX_DATA0	0x1b0b0
++			MX6QDL_PAD_ENET_MDC__ENET_MDC		0x1b0b0
++			MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
++			MX6QDL_PAD_GPIO_17__GPIO7_IO12		0x1b0b0
++		>;
++	};
++};
++
++&fec {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet>;
++	phy-reset-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
++	clocks = <&clks IMX6QDL_CLK_ENET>,
++		 <&clks IMX6QDL_CLK_ENET>,
++		 <&clks IMX6QDL_CLK_ENET_REF>;
++	phy-mode = "rmii";
++	status = "okay";
++};
 
 
