@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D51145014
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AFFB144FA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387918AbgAVJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:43:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
+        id S1732690AbgAVJjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387898AbgAVJnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:37 -0500
+        id S1733278AbgAVJjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:39:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24A142468D;
-        Wed, 22 Jan 2020 09:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3356C24686;
+        Wed, 22 Jan 2020 09:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686216;
-        bh=tUh9PihcYxzFYZBFE2oWj/PpwZ5irhZl9ayz1NK6Wlc=;
+        s=default; t=1579685987;
+        bh=I7dlXjRbJ5ROP2NmstYpT9Prk+guF4Hnv28jyGcDR00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xGne94NtdD4eVKZzgsSJ+nYy6ei3PQVJVCSaJVuNOAZmIkcv/v9cvYUocmw/FSJRW
-         JsilWjCOltvn/x0VtOk+FETqePclYhTyibf4ldBGu0gSzDP5Cn5VwBxxmyNlwdmjbs
-         +toKHG6cHdUAcDpmSReklxm4m7/TgWRmtYC4fkN8=
+        b=zPpta//gGMo0ATPeYLesklCEPz02g4yz9jHuZJAzBu2sO8ggVSrcoh+BedKFA1cZl
+         ouMc8yKOLaxjiU9niF6FZb8SnSWNt5KyE8gAPaSxYo9aDyKvqmWWEEVE22Pf3J436w
+         MzfssE3i5d3d4KoZv9pTtujGDv6JFuYCFqTikAq0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sushma Kalakota <sushmax.kalakota@intel.com>
-Subject: [PATCH 4.19 090/103] drm/nouveau/bar/gf100: ensure BAR is mapped
-Date:   Wed, 22 Jan 2020 10:29:46 +0100
-Message-Id: <20200122092815.731691833@linuxfoundation.org>
+        stable@vger.kernel.org, David Bond <dbond@suse.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 62/65] scsi: qla2xxx: fix rports not being mark as lost in sync fabric scan
+Date:   Wed, 22 Jan 2020 10:29:47 +0100
+Message-Id: <20200122092800.857296720@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Derrick <jonathan.derrick@intel.com>
+From: Martin Wilck <mwilck@suse.com>
 
-commit 12e08beb32d64b6070b718630490db83dd321c8c upstream.
+commit d341e9a8f2cffe4000c610225c629f62c7489c74 upstream.
 
-If the BAR is zero size, it indicates it was never successfully mapped.
-Ensure that the BAR is valid during initialization before attempting to
-use it.
+In qla2x00_find_all_fabric_devs(), fcport->flags & FCF_LOGIN_NEEDED is a
+necessary condition for logging into new rports, but not for dropping lost
+ones.
 
-Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-Signed-off-by: Sushma Kalakota <sushmax.kalakota@intel.com>
+Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
+Link: https://lore.kernel.org/r/20191122221912.20100-2-martin.wilck@suse.com
+Tested-by: David Bond <dbond@suse.com>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
-@@ -94,6 +94,8 @@ gf100_bar_oneinit_bar(struct gf100_bar *
- 		return ret;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -5145,8 +5145,7 @@ qla2x00_find_all_fabric_devs(scsi_qla_ho
+ 		if (test_bit(LOOP_RESYNC_NEEDED, &vha->dpc_flags))
+ 			break;
  
- 	bar_len = device->func->resource_size(device, bar_nr);
-+	if (!bar_len)
-+		return -ENOMEM;
- 	if (bar_nr == 3 && bar->bar2_halve)
- 		bar_len >>= 1;
+-		if ((fcport->flags & FCF_FABRIC_DEVICE) == 0 ||
+-		    (fcport->flags & FCF_LOGIN_NEEDED) == 0)
++		if ((fcport->flags & FCF_FABRIC_DEVICE) == 0)
+ 			continue;
  
+ 		if (fcport->scan_state == QLA_FCPORT_SCAN) {
+@@ -5171,7 +5170,8 @@ qla2x00_find_all_fabric_devs(scsi_qla_ho
+ 			}
+ 		}
+ 
+-		if (fcport->scan_state == QLA_FCPORT_FOUND)
++		if (fcport->scan_state == QLA_FCPORT_FOUND &&
++		    (fcport->flags & FCF_LOGIN_NEEDED) != 0)
+ 			qla24xx_fcport_handle_login(vha, fcport);
+ 	}
+ 	return (rval);
 
 
