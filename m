@@ -2,139 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282561456A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 001D4145605
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbgAVN2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:28:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729475AbgAVN2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:28:21 -0500
-Received: from localhost (unknown [84.241.205.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD745205F4;
-        Wed, 22 Jan 2020 13:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699700;
-        bh=B0o91/X1hA5pHnJBim6slfSMQUUad8ZS+O7ujX7kfsM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wF+/ZCs5qV69Ha5k4OmTzv5Vu0ONF7eUS5mtJluHSUU7iJAGkX0UPZ2UAx1F/GSHT
-         dv2bFctAWHYDY0M61wbYkeg1pfTpFasKwLkqw4XI71nj/HRMuDgCjcjWLFVWZrXaGn
-         PVLq/Xm2QeD4cwtGqtwemUlTreIOiwVm9DuCnRzQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eddie James <eajames@linux.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 5.4 222/222] hwmon: (pmbus/ibm-cffps) Fix LED blink behavior
-Date:   Wed, 22 Jan 2020 10:30:08 +0100
-Message-Id: <20200122092849.577706593@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
-References: <20200122092833.339495161@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729496AbgAVNS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:18:59 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:46332 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbgAVNSt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:18:49 -0500
+Received: by mail-qv1-f65.google.com with SMTP id u1so3151807qvk.13;
+        Wed, 22 Jan 2020 05:18:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2lJ5QNgwpRzOQbAxO/609U7b0x37hAivNqISTiD3HWo=;
+        b=aYOfRDZ2x/NIOkNxI0T5WwT9IKeenQ5Qj5QgjdSkvzB9zaLSPrFkdcP75g6PBgCUHB
+         BjIFsqZVRyzDuGwoR0j6al2mPKgqO+GbTPu1LVjvaX2gOB1riGK/AN40r3hOtQM0pjv5
+         JALRRXGAsu602xHDh+pTHWbYigHkO1rlKZZbAbE6GzAX8P6aIrnt50UuVG8+JmsbPcH0
+         6YFBlNB596A+EuYvCJihR5OXrYrWVuXzYJQvjFgLATyLcO24tLeMxi6onhYovyCOp2dZ
+         u8XazXCECVBembnkGztqlsVWhdjGj50kfaS4MuIaX6s6ZmtYLcPGjCGKhBn0Ztr5dFyq
+         xR4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2lJ5QNgwpRzOQbAxO/609U7b0x37hAivNqISTiD3HWo=;
+        b=C1/+h3GkJX4+flIkCC63Dqguq7KamjC98/Dk8Q/josOyCnPEUDmeBPOylXyMHPOdEq
+         RNv+duaxobsGgyljexljpm1IK5TS0Y9+EDMMfZN5as6iDuFqNx1Tq9GIrejLx3zPTN6U
+         WsYSh9P+atkJ1+YqkgjzVJQ5cbNSIIrFm65vbe0IfXtlsY+D6iIJMBtv0k/R2GuUgzCZ
+         NBHiLJlPQPFv27NjAtJnEkQ1O7bbCMR77jDSo049IPnhnBRszjRRPUFuX+dS7rnEumbl
+         w+0bTQHpjylxNHBEJ3EzMC/d5amM/kUfJepUfc1jp3c8c6G5Kjox3RPG9oT0ZkEUEZ32
+         xXhQ==
+X-Gm-Message-State: APjAAAVT/wIB+UMcXwplquN/eOniQCCKlBuEVcToreS0OSLabvVKi0SD
+        LKBOcrJBNwkEJDx15zo+PpYvkMxukGPARUM+XSc=
+X-Google-Smtp-Source: APXvYqwe1tNtAHutt+OKYyVgggbsjlCJPHnkoUAFE3fGJNLbqgPPHAYuflcG/x45cWhnXrOUgefEoGROyWiij874d00=
+X-Received: by 2002:ad4:408c:: with SMTP id l12mr10445440qvp.164.1579699128301;
+ Wed, 22 Jan 2020 05:18:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1579581860-29560-1-git-send-email-gupt21@gmail.com> <20200122131320.GA20984@ninjato>
+In-Reply-To: <20200122131320.GA20984@ninjato>
+From:   rishi gupta <gupt21@gmail.com>
+Date:   Wed, 22 Jan 2020 18:48:37 +0530
+Message-ID: <CALUj-gsJ4aKDzir2qArSrt3uNMwO-L3KbOzUFpikj6K5pQ=wtw@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: mcp2221: add usb to i2c-smbus host bridge driver
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        wsa+renesas@sang-engineering.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eddie James <eajames@linux.ibm.com>
+It is both I2C and SMBus.
+Title of the product itself is "USB 2.0 to I^2C/UART Protocol
+Converter with GPIO"
+https://www.microchip.com/wwwproducts/en/MCP2221A
 
-commit 92b39ad440968bab38eb6577d63c12994601ed94 upstream.
+If I am mistaken in something, please help me with specific thing so
+that I can dive more from that perspective.
 
-The LED blink_set function incorrectly did not tell the PSU LED to blink
-if brightness was LED_OFF. Fix this, and also correct the LED_OFF
-command data, which should give control of the LED back to the PSU
-firmware. Also prevent I2C failures from getting the driver LED state
-out of sync and add some dev_dbg statements.
-
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Link: https://lore.kernel.org/r/20191106200106.29519-3-eajames@linux.ibm.com
-Fixes: ef9e1cdf419a3 ("hwmon: (pmbus/cffps) Add led class device for power supply fault led")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/hwmon/pmbus/ibm-cffps.c |   27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
-
---- a/drivers/hwmon/pmbus/ibm-cffps.c
-+++ b/drivers/hwmon/pmbus/ibm-cffps.c
-@@ -39,9 +39,13 @@
- #define CFFPS_MFR_VAUX_FAULT			BIT(6)
- #define CFFPS_MFR_CURRENT_SHARE_WARNING		BIT(7)
- 
-+/*
-+ * LED off state actually relinquishes LED control to PSU firmware, so it can
-+ * turn on the LED for faults.
-+ */
-+#define CFFPS_LED_OFF				0
- #define CFFPS_LED_BLINK				BIT(0)
- #define CFFPS_LED_ON				BIT(1)
--#define CFFPS_LED_OFF				BIT(2)
- #define CFFPS_BLINK_RATE_MS			250
- 
- enum {
-@@ -296,23 +300,31 @@ static int ibm_cffps_led_brightness_set(
- 					enum led_brightness brightness)
- {
- 	int rc;
-+	u8 next_led_state;
- 	struct ibm_cffps *psu = container_of(led_cdev, struct ibm_cffps, led);
- 
- 	if (brightness == LED_OFF) {
--		psu->led_state = CFFPS_LED_OFF;
-+		next_led_state = CFFPS_LED_OFF;
- 	} else {
- 		brightness = LED_FULL;
-+
- 		if (psu->led_state != CFFPS_LED_BLINK)
--			psu->led_state = CFFPS_LED_ON;
-+			next_led_state = CFFPS_LED_ON;
-+		else
-+			next_led_state = CFFPS_LED_BLINK;
- 	}
- 
-+	dev_dbg(&psu->client->dev, "LED brightness set: %d. Command: %d.\n",
-+		brightness, next_led_state);
-+
- 	pmbus_set_page(psu->client, 0);
- 
- 	rc = i2c_smbus_write_byte_data(psu->client, CFFPS_SYS_CONFIG_CMD,
--				       psu->led_state);
-+				       next_led_state);
- 	if (rc < 0)
- 		return rc;
- 
-+	psu->led_state = next_led_state;
- 	led_cdev->brightness = brightness;
- 
- 	return 0;
-@@ -325,10 +337,7 @@ static int ibm_cffps_led_blink_set(struc
- 	int rc;
- 	struct ibm_cffps *psu = container_of(led_cdev, struct ibm_cffps, led);
- 
--	psu->led_state = CFFPS_LED_BLINK;
--
--	if (led_cdev->brightness == LED_OFF)
--		return 0;
-+	dev_dbg(&psu->client->dev, "LED blink set.\n");
- 
- 	pmbus_set_page(psu->client, 0);
- 
-@@ -337,6 +346,8 @@ static int ibm_cffps_led_blink_set(struc
- 	if (rc < 0)
- 		return rc;
- 
-+	psu->led_state = CFFPS_LED_BLINK;
-+	led_cdev->brightness = LED_FULL;
- 	*delay_on = CFFPS_BLINK_RATE_MS;
- 	*delay_off = CFFPS_BLINK_RATE_MS;
- 
-
-
+On Wed, Jan 22, 2020 at 6:43 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+> On Tue, Jan 21, 2020 at 10:14:20AM +0530, Rishi Gupta wrote:
+> > MCP2221 is a USB HID to I2C/SMbus host bridge device. This
+> > commit implements i2c and smbus host adapter support. 7-bit
+> > address and i2c multi-message transaction is also supported.
+> >
+> > Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+>
+> My main concern is there are quite some limitations in mcp_i2c_xfer().
+> Looking at them, I think we should just drop it. This seems to be an
+> SMBus controller, not I2C. Or?
+>
