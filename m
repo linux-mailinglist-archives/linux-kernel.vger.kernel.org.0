@@ -2,145 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A40145690
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0ED1456B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbgAVN1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:27:49 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40603 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730133AbgAVN1r (ORCPT
+        id S1731650AbgAVN2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:28:54 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:13019 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729106AbgAVN2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:27:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so7244469wrn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 05:27:45 -0800 (PST)
+        Wed, 22 Jan 2020 08:28:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jxYjF1m7XVJ6yybgNC7PWK2OFBXviRpzBklnqTmBfrc=;
-        b=KCjP0s0u1syQwG7xSgBAkB7NM6G2zwgALAMpMu4MUwf57nzgUcuDYJveJ4U9g+6xYW
-         G6PKJc8TiUZCoUm7cCu4MQUE+8H19cfQwiZ4uC61vqiypTbUm/KMMsl8CDG/7qqQGjbG
-         yn0y4ljg3jMtahbG8BkbDkg1k4DhiYnrgytUdWXC7K8o1B/RP7lJfpPoHGlmep+KGpOo
-         DmR22mqQ3cKgZtb4G5hRfHvGt/IMLpUJPR0ANOa34je3lBDJdRQv5lpIf7pYlMVWOPyf
-         8eJ5Z0ROAIkZA0Iy+NltNxg8SeamFHZrXnrr0zY5ZfSfbtrh2DUDJ/LdiQtZve3Zcf/B
-         CaHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jxYjF1m7XVJ6yybgNC7PWK2OFBXviRpzBklnqTmBfrc=;
-        b=M+N6KF8MgaRCT+GcUrN8EZ1lNy9yW/Sffy42T2Y0cWK6BmyR3LoBUm+Y/3QHuQBC4U
-         +DJYgOm5YhgsUGDvg0ATSMHr4756UTmXh1Bpb9Rv57khuwEVSfJ6xgcBbSWpDRkYSCCR
-         37TAxGqz1rICKczZoOF5oRdv5eO065FOQMqvMeEs8Opt050zN+bxkIjJF+tDKuL0eQX0
-         TGJePPhpyEj2MBwOJsQi/05d/ESrGJBZgc9PCCFKPZoN35tPSbFbTG95h6k3ysIpzD69
-         tOPPIMfRF130VXHvBo8H/Q9XInVXIuf5NCaIYFa+Tm3rys4O1ZeNsLPLzLE5hqdnbMB5
-         0tGA==
-X-Gm-Message-State: APjAAAVHkNWyPQRD5qwts5pjP/v8xhMt1NbJ9jA+qen4ZU4lEVyt/8ul
-        yhGr5kjJ2UK8nhyRY5Q84u4stQ==
-X-Google-Smtp-Source: APXvYqxRR7C7wAkzSx2A3Iw/Hy6BV0R2oBVkQXOxu3NbXbaRXGg2QsuNN71lzk4nBUNqTavF8LqBCQ==
-X-Received: by 2002:a5d:44ca:: with SMTP id z10mr11301374wrr.266.1579699664807;
-        Wed, 22 Jan 2020 05:27:44 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id p18sm4086602wmg.4.2020.01.22.05.27.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 05:27:44 -0800 (PST)
-Date:   Wed, 22 Jan 2020 13:27:57 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Brown <broonie@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 37/38] platform/x86: intel_pmc_ipc: Convert to MFD
-Message-ID: <20200122132757.GM15507@dell>
-References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
- <20200121160114.60007-38-mika.westerberg@linux.intel.com>
- <20200122123454.GL15507@dell>
- <20200122125300.GO2665@lahna.fi.intel.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1579699731; x=1611235731;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   mime-version;
+  bh=ey5rjg4mda5FhTLJWi1oq6Krp59ycus1HT0dQ739AXY=;
+  b=GDoX0rS0g7Bgl6Msw+ER+sczNg11mIxNhIIYX2OcdQEpLOoIH5oon+ID
+   mOLxlRE0DzfUe1VUAhAb/QVp4oXlHuPUXllsXcsJ/KvwlSiEUYsT2Y0UQ
+   /Aoasn2KzNWIldjo6GmBGAaxyduXuwc8z+rnak0owxHU/F+g3RkY6v+sh
+   E=;
+IronPort-SDR: HiUJIsusC/kKMOyUWLsjcfATwG4l6ckaqzbkN0XGdVQ/Dqilutw6gaCaKrUGvqQUEBjxqcR0Cr
+ G5ccOjyeb07g==
+X-IronPort-AV: E=Sophos;i="5.70,350,1574121600"; 
+   d="scan'208";a="12762489"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 22 Jan 2020 13:28:50 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id A1B3CA2210;
+        Wed, 22 Jan 2020 13:28:44 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Wed, 22 Jan 2020 13:28:43 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.16) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 22 Jan 2020 13:28:35 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     SeongJae Park <sjpark@amazon.com>,
+        Minchan Kim <minchan@kernel.org>, <sspatil@google.com>,
+        <kirill@shutemov.name>, <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-api@vger.kernel.org>, <oleksandr@redhat.com>,
+        <surenb@google.com>, <timmurray@google.com>, <dancol@google.com>,
+        <sonnyrao@google.com>, <bgeffon@google.com>, <hannes@cmpxchg.org>,
+        <shakeelb@google.com>, <joaodias@google.com>,
+        <ktkhai@virtuozzo.com>, <christian.brauner@ubuntu.com>,
+        <sjpark@amazon.de>
+Subject: Re: Re: Re: [PATCH v2 2/5] mm: introduce external memory hinting API
+Date:   Wed, 22 Jan 2020 14:28:20 +0100
+Message-ID: <20200122132820.29180-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200122100233.GT29276@dhcp22.suse.cz> (raw)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200122125300.GO2665@lahna.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.16]
+X-ClientProxiedBy: EX13D08UWB001.ant.amazon.com (10.43.161.104) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Jan 2020, Mika Westerberg wrote:
+On Wed, 22 Jan 2020 11:02:33 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-> On Wed, Jan 22, 2020 at 12:34:54PM +0000, Lee Jones wrote:
-> > > +static int intel_pmc_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct intel_scu_ipc_pdata pdata = {};
-> > > +	struct intel_pmc_dev *pmc;
-> > > +	int ret;
-> > > +
-> > > +	pmc = devm_kzalloc(&pdev->dev, sizeof(*pmc), GFP_KERNEL);
-> > > +	if (!pmc)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	pmc->dev = &pdev->dev;
-> > > +	spin_lock_init(&pmc->gcr_lock);
-> > > +
-> > > +	ret = intel_pmc_get_resources(pdev, pmc, &pdata);
-> > > +	if (ret) {
-> > > +		dev_err(&pdev->dev, "Failed to request resources\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	pmc->scu = devm_intel_scu_ipc_register(&pdev->dev, &pdata);
-> > > +	if (IS_ERR(pmc->scu))
-> > > +		return PTR_ERR(pmc->scu);
+> On Wed 22-01-20 10:36:24, SeongJae Park wrote:
+> > On Wed, 22 Jan 2020 09:28:53 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 > > 
-> > *_register is better than *_probe.  If it was called that (or maybe
-> > *_init) initially I may have missed the issue altogether ...
+> > > On Tue 21-01-20 10:32:12, Minchan Kim wrote:
+> > > > On Mon, Jan 20, 2020 at 08:58:25AM +0100, Michal Hocko wrote:
+> > > [...]
+> > > > > The interface really has to be robust to future potential usecases.
+> > > > 
+> > > > I do understand your concern but for me, it's chicken and egg problem.
+> > > > We usually do best effort to make something perfect as far as possible
+> > > > but we also don't do over-engineering without real usecase from the
+> > > > beginning.
+> > > > 
+> > > > I already told you how we could synchronize among processes and potential
+> > > > way to be extended Daniel suggested(That's why current API has extra field
+> > > > for the cookie) even though we don't need it right now.
+> > > 
+> > > If you can synchronize with the target task then you do not need a
+> > > remote interface. Just use ptrace and you are done with it.
+> > > 
+> > > > If you want to suggest the other way, please explain why your idea is
+> > > > better and why we need it at this moment.
+> > > 
+> > > I believe I have explained my concerns and why they matter. All you are
+> > > saying is that you do not care because your particular usecase doesn't
+> > > care. And that is a first signal of a future disaster when we end up
+> > > with a broken and unfixable interface we have to maintain for ever.
+> > > 
+> > > I will not go as far as to nack this but you should seriously think
+> > > about other potential usecases and how they would work and what we are
+> > > going to do when a first non-cooperative userspace memory management
+> > > usecase materializes.
 > > 
-> > However, I still think it the SCU IPC *device* needs to be a device
-> > driver and abide by the rules, ensuring it uses the device driver
-> > model/API.  As such, it should be registered and probed as a device.
+> > Beside of the specific environment of Android, I think there are many ways to
+> > know the address space layout and access patterns of other processes.  The
+> > idle_page_tracking might be an example that widelay available.
+> > 
+> > Of course, the information might not strictly correct due to the timing issue,
+> > but could be still worth to be used under some extreme situations, such as
+> > memory pressure or fragmentation.  For the same reason, ptrace() would not be
+> > sufficient, as we have no perfect control, but only some level of control that
+> > would be useful under specific situations.
 > 
-> Which type of device you suggest here? And which bus it should be
-> registered to? I think we can make this create a platform_device but
-> then we would need to do that from the PCI driver as well which seems
-> unnecessary since we already have the struct pci_dev.
+> I am not sure I see your point. I am talking about races where a remote
+> task is operating on a completely different object because the one it
+> checked for has been unmapped and new one mapped over it. Memory
+> pressure or a fragmentation will not change the object itself. Sure the
+> memory might be reclaimed but that should be completely OK unless I am
+> missing something.
 
-What kind of device is it?
+Thank you for pointing out your concerns in more detail.  I was assuming a case
+using MADV_PAGEOUT or MADV_HUGEPAGE like hints under access frequency
+monitoring for better performance under memory pressure or fragmentation,
+respectively.  Under the race, such hints might incur some performance
+degradation, but no critical problem such as SEGV.  I previously implemented
+such optimization for research purpose and it was worthy.  Nonetheless, it was
+just a research purpose hack.
 
-Refrain from using platform device, unless it is one please.
+MADV_FREE like hints might result in SEGV and thus of course should be avoided.
+But, to my perspective, the 4 hints madvise_process() is currently supporting
+(COLD, PAGEOUT, MERGEABLE, UNMERGEABLE) are not too risky even under the race.
+That's why I said the incorrect information could be worth to be used under
+some extreme situations.
 
-> For instance in drivers/mfd/intel-lpss* we use similar approach (the
-> core part is library that gets called by probe drivers (ACPI, PCI). We
-> don't create any additional platform_devices.
+> 
+> > I assume the users of this systemcall would understand the tradeoff and make
+> > decisions.
+> 
+> I disagree. My experience tells me that users tend to squeeze the
+> maximum and beyond and hope they get what they want.
+> 
+> > Also, as the users already have the right to do the tradeoff, I
+> > think it's fair.  In other words, I think the caller has both the power and the
+> > responsibility to deal with the time-to-check-time-to-react problem.
+> > 
+> > Nonetheless, I also agree this is important concern and the patch would be
+> > better if it adds more detailed documentation regarding this issue.
+> 
+> If there is _really_ a strong consensus that the racy interface is
+> reasonable then it absolutely has to be described with a clearly state
+> that those races might result in hard to predict behavior unless all
+> tasks sharing the address space are blocked between the check and the
+> madvise call.
 
-That's different.  Here the *-acpi.c and *-pci.c are only used as
-registration hooks into the same device.  The semantics we're
-discussing are seemingly used to probe/init a different device in a
-separate subsystem.
+So, it's still too risky to simply believe users to do the things well on their
+responsibility, but a strong real consensus on needs and clear description
+might justify this.  I also agreed.
 
-> There is another twist. Ideally we would like to see the SCU IPC probed
-> and intialized before the MFD children so that we know the SCU IPC is
-> ready by the time the children devices are created. I guess we could
-> work it around by returning -EPROBE_DEFER but that does not feel right
-> to be honest.
 
-That's precisely what -EPROBE_DEFER was designed for.
+Thanks,
+SeongJae Park
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
