@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7DBC145611
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 021EB145609
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbgAVNUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:20:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36300 "EHLO mail.kernel.org"
+        id S1729541AbgAVNTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:19:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbgAVNUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:20:11 -0500
+        id S1729501AbgAVNS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:18:59 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 239112467A;
-        Wed, 22 Jan 2020 13:20:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B18920678;
+        Wed, 22 Jan 2020 13:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699210;
-        bh=Pnms0mdwSSW50PLMZds+9J5iQ+280m3bmjraUAgTnto=;
+        s=default; t=1579699139;
+        bh=jFgFEl3kD3YwrxxbrLfUwQV2Yq1uZPEM9yM+PSVcEpI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUM76JBNXhaxPLyE9cMjz5ZK1jGPQsxQ//MYvznp1+0rXRlmy3c03gDrcxxiRiIw0
-         cHkpTkubKk95ptjtG9D0iWdAz+jhkMtdXyCdXlyZ9cKnhD/TKbJRGr0ix4xTyHsCco
-         fKbAdnru/+nCjcKfijJbOoJ/xg9xT1HodZbQYTl4=
+        b=MOllp4plEBW6Ppj3RiXqYc5DDXNliEv+XVQM0fclN1M1FxZmZj7jzPPehid7nVzGH
+         xxh9SiOn0UCT7+3uUf5D1cIkgFDE0T4AES23LM+lkMt8vcqkuP1/fj2n7au9PiAcVE
+         RqwaJeV61EGRgh3zS8qLyfLAI1+FhaxNZGqZQGDo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru Tachici <alexandru.tachici@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.4 038/222] iio: adc: ad7124: Fix DT channel configuration
-Date:   Wed, 22 Jan 2020 10:27:04 +0100
-Message-Id: <20200122092836.253449337@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.4 052/222] USB: serial: quatech2: handle unbound ports
+Date:   Wed, 22 Jan 2020 10:27:18 +0100
+Message-Id: <20200122092837.340138921@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,68 +42,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Tachici <alexandru.tachici@analog.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit d7857e4ee1ba69732b16c73b2f2dde83ecd78ee4 upstream.
+commit 9715a43eea77e42678a1002623f2d9a78f5b81a1 upstream.
 
-This patch fixes device tree channel configuration.
+Check for NULL port data in the modem- and line-status handlers to avoid
+dereferencing a NULL pointer in the unlikely case where a port device
+isn't bound to a driver (e.g. after an allocation failure on port
+probe).
 
-ad7124 driver reads channels configuration from the device tree.
-It expects to find channel specifications as child nodes.
-Before this patch ad7124 driver assumed that the child nodes are parsed
-by for_each_available_child_of_node in the order 0,1,2,3...
+Note that the other (stubbed) event handlers qt2_process_xmit_empty()
+and qt2_process_flush() would need similar sanity checks in case they
+are ever implemented.
 
-This is wrong and the real order of the children can be seen by running:
-dtc -I fs /sys/firmware/devicetree/base on the machine.
-
-For example, running this on an rpi 3B+ yields the real
-children order: 4,2,0,7,5,3,1,6
-
-Before this patch the driver assigned the channel configuration
-like this:
-        - 0 <- 4
-        - 1 <- 2
-        - 2 <- 0
-        ........
-For example, the symptoms can be observed by connecting the 4th channel
-to a 1V tension and then reading the in_voltage0-voltage19_raw sysfs
-(multiplied of course by the scale) one would see that channel 0
-measures 1V and channel 4 measures only noise.
-
-Now the driver uses the reg property of each child in order to
-correctly identify to which channel the parsed configuration
-belongs to.
-
-Fixes b3af341bbd966: ("iio: adc: Add ad7124 support")
-Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: f7a33e608d9a ("USB: serial: add quatech2 usb to serial driver")
+Cc: stable <stable@vger.kernel.org>     # 3.5
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad7124.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/usb/serial/quatech2.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -494,13 +494,11 @@ static int ad7124_of_parse_channel_confi
- 		st->channel_config[channel].buf_negative =
- 			of_property_read_bool(child, "adi,buffered-negative");
+--- a/drivers/usb/serial/quatech2.c
++++ b/drivers/usb/serial/quatech2.c
+@@ -841,7 +841,10 @@ static void qt2_update_msr(struct usb_se
+ 	u8 newMSR = (u8) *ch;
+ 	unsigned long flags;
  
--		*chan = ad7124_channel_template;
--		chan->address = channel;
--		chan->scan_index = channel;
--		chan->channel = ain[0];
--		chan->channel2 = ain[1];
--
--		chan++;
-+		chan[channel] = ad7124_channel_template;
-+		chan[channel].address = channel;
-+		chan[channel].scan_index = channel;
-+		chan[channel].channel = ain[0];
-+		chan[channel].channel2 = ain[1];
- 	}
++	/* May be called from qt2_process_read_urb() for an unbound port. */
+ 	port_priv = usb_get_serial_port_data(port);
++	if (!port_priv)
++		return;
  
- 	return 0;
+ 	spin_lock_irqsave(&port_priv->lock, flags);
+ 	port_priv->shadowMSR = newMSR;
+@@ -869,7 +872,10 @@ static void qt2_update_lsr(struct usb_se
+ 	unsigned long flags;
+ 	u8 newLSR = (u8) *ch;
+ 
++	/* May be called from qt2_process_read_urb() for an unbound port. */
+ 	port_priv = usb_get_serial_port_data(port);
++	if (!port_priv)
++		return;
+ 
+ 	if (newLSR & UART_LSR_BI)
+ 		newLSR &= (u8) (UART_LSR_OE | UART_LSR_BI);
 
 
