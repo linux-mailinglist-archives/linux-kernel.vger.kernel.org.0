@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 206D1145175
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31322144EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbgAVJe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:34:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48886 "EHLO mail.kernel.org"
+        id S1729393AbgAVJav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:30:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730206AbgAVJeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:34:24 -0500
+        id S1729352AbgAVJaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:30:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A505B2467C;
-        Wed, 22 Jan 2020 09:34:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939662465B;
+        Wed, 22 Jan 2020 09:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685663;
-        bh=P7rZRElKkOwxcczbNkXYkerQ7t32gQFeDOJWyqJPqGo=;
+        s=default; t=1579685446;
+        bh=KeMuUU1uohJ1StY+/CmAWDNzajPxBmntrU56E74dvHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxVGqquZOiOJvHJ0BtmXr6+18KP8LpDVdmGvORTmXhQAGjEUVoaq0SnytdwZJiVXx
-         /sdZ2EJmmMFHmrUzerXym1TgGtYuoy4bK4Zs2eSYWoIbypxkMN/W0X9q8HOVnofoH0
-         mrXIdZYSokiOjhOcVzlF6n5K1vXd5O4nyH0FBxQc=
+        b=JEu08xsgq7odDBZlsrTHQj1D1lbHhWn2/1SzUQg9AkOk3vsryqPpMEgIBRiOg5mYp
+         +5feYV8AKeVuImE99R1e7pojKnL7w/Uw0A4+K/DwmYe2y3LR+jUnI1U9S/R64Ga8lg
+         qO8uPmJLzps86jcR/iya6WSR4I1MDPP4ax+2q9jY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.9 29/97] iio: imu: adis16480: assign bias value only if operation succeeded
-Date:   Wed, 22 Jan 2020 10:28:33 +0100
-Message-Id: <20200122092801.018446040@linuxfoundation.org>
+        stable@vger.kernel.org, Ran Bi <ran.bi@mediatek.com>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.4 18/76] rtc: mt6397: fix alarm register overwrite
+Date:   Wed, 22 Jan 2020 10:28:34 +0100
+Message-Id: <20200122092753.457349847@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +44,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Ran Bi <ran.bi@mediatek.com>
 
-commit 9b742763d9d4195e823ae6ece760c9ed0500c1dc upstream.
+commit 653997eeecef95c3ead4fba1b2d27e6a5854d6cd upstream.
 
-This was found only after the whole thing with the inline functions, but
-the compiler actually found something. The value of the `bias` (in
-adis16480_get_calibbias()) should only be set if the read operation was
-successful.
+Alarm registers high byte was reserved for other functions.
+This add mask in alarm registers operation functions.
+This also fix error condition in interrupt handler.
 
-No actual known problem occurs as users of this function all
-ultimately check the return value.  Hence probably not stable material.
+Fixes: fc2979118f3f ("rtc: mediatek: Add MT6397 RTC driver")
 
-Fixes: 2f3abe6cbb6c9 ("iio:imu: Add support for the ADIS16480 and similar IMUs")
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Ran Bi <ran.bi@mediatek.com>
+Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Link: https://lore.kernel.org/r/1576057435-3561-6-git-send-email-hsin-hsiung.wang@mediatek.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/adis16480.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-mt6397.c |   47 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
 
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -372,12 +372,14 @@ static int adis16480_get_calibbias(struc
- 	case IIO_MAGN:
- 	case IIO_PRESSURE:
- 		ret = adis_read_reg_16(&st->adis, reg, &val16);
--		*bias = sign_extend32(val16, 15);
-+		if (ret == 0)
-+			*bias = sign_extend32(val16, 15);
- 		break;
- 	case IIO_ANGL_VEL:
- 	case IIO_ACCEL:
- 		ret = adis_read_reg_32(&st->adis, reg, &val32);
--		*bias = sign_extend32(val32, 31);
-+		if (ret == 0)
-+			*bias = sign_extend32(val32, 31);
- 		break;
- 	default:
- 			ret = -EINVAL;
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -55,6 +55,14 @@
+ 
+ #define RTC_AL_SEC		0x0018
+ 
++#define RTC_AL_SEC_MASK		0x003f
++#define RTC_AL_MIN_MASK		0x003f
++#define RTC_AL_HOU_MASK		0x001f
++#define RTC_AL_DOM_MASK		0x001f
++#define RTC_AL_DOW_MASK		0x0007
++#define RTC_AL_MTH_MASK		0x000f
++#define RTC_AL_YEA_MASK		0x007f
++
+ #define RTC_PDN2		0x002e
+ #define RTC_PDN2_PWRON_ALARM	BIT(4)
+ 
+@@ -111,7 +119,7 @@ static irqreturn_t mtk_rtc_irq_handler_t
+ 		irqen = irqsta & ~RTC_IRQ_EN_AL;
+ 		mutex_lock(&rtc->lock);
+ 		if (regmap_write(rtc->regmap, rtc->addr_base + RTC_IRQ_EN,
+-				 irqen) < 0)
++				 irqen) == 0)
+ 			mtk_rtc_write_trigger(rtc);
+ 		mutex_unlock(&rtc->lock);
+ 
+@@ -233,12 +241,12 @@ static int mtk_rtc_read_alarm(struct dev
+ 	alm->pending = !!(pdn2 & RTC_PDN2_PWRON_ALARM);
+ 	mutex_unlock(&rtc->lock);
+ 
+-	tm->tm_sec = data[RTC_OFFSET_SEC];
+-	tm->tm_min = data[RTC_OFFSET_MIN];
+-	tm->tm_hour = data[RTC_OFFSET_HOUR];
+-	tm->tm_mday = data[RTC_OFFSET_DOM];
+-	tm->tm_mon = data[RTC_OFFSET_MTH];
+-	tm->tm_year = data[RTC_OFFSET_YEAR];
++	tm->tm_sec = data[RTC_OFFSET_SEC] & RTC_AL_SEC_MASK;
++	tm->tm_min = data[RTC_OFFSET_MIN] & RTC_AL_MIN_MASK;
++	tm->tm_hour = data[RTC_OFFSET_HOUR] & RTC_AL_HOU_MASK;
++	tm->tm_mday = data[RTC_OFFSET_DOM] & RTC_AL_DOM_MASK;
++	tm->tm_mon = data[RTC_OFFSET_MTH] & RTC_AL_MTH_MASK;
++	tm->tm_year = data[RTC_OFFSET_YEAR] & RTC_AL_YEA_MASK;
+ 
+ 	tm->tm_year += RTC_MIN_YEAR_OFFSET;
+ 	tm->tm_mon--;
+@@ -259,14 +267,25 @@ static int mtk_rtc_set_alarm(struct devi
+ 	tm->tm_year -= RTC_MIN_YEAR_OFFSET;
+ 	tm->tm_mon++;
+ 
+-	data[RTC_OFFSET_SEC] = tm->tm_sec;
+-	data[RTC_OFFSET_MIN] = tm->tm_min;
+-	data[RTC_OFFSET_HOUR] = tm->tm_hour;
+-	data[RTC_OFFSET_DOM] = tm->tm_mday;
+-	data[RTC_OFFSET_MTH] = tm->tm_mon;
+-	data[RTC_OFFSET_YEAR] = tm->tm_year;
+-
+ 	mutex_lock(&rtc->lock);
++	ret = regmap_bulk_read(rtc->regmap, rtc->addr_base + RTC_AL_SEC,
++			       data, RTC_OFFSET_COUNT);
++	if (ret < 0)
++		goto exit;
++
++	data[RTC_OFFSET_SEC] = ((data[RTC_OFFSET_SEC] & ~(RTC_AL_SEC_MASK)) |
++				(tm->tm_sec & RTC_AL_SEC_MASK));
++	data[RTC_OFFSET_MIN] = ((data[RTC_OFFSET_MIN] & ~(RTC_AL_MIN_MASK)) |
++				(tm->tm_min & RTC_AL_MIN_MASK));
++	data[RTC_OFFSET_HOUR] = ((data[RTC_OFFSET_HOUR] & ~(RTC_AL_HOU_MASK)) |
++				(tm->tm_hour & RTC_AL_HOU_MASK));
++	data[RTC_OFFSET_DOM] = ((data[RTC_OFFSET_DOM] & ~(RTC_AL_DOM_MASK)) |
++				(tm->tm_mday & RTC_AL_DOM_MASK));
++	data[RTC_OFFSET_MTH] = ((data[RTC_OFFSET_MTH] & ~(RTC_AL_MTH_MASK)) |
++				(tm->tm_mon & RTC_AL_MTH_MASK));
++	data[RTC_OFFSET_YEAR] = ((data[RTC_OFFSET_YEAR] & ~(RTC_AL_YEA_MASK)) |
++				(tm->tm_year & RTC_AL_YEA_MASK));
++
+ 	if (alm->enabled) {
+ 		ret = regmap_bulk_write(rtc->regmap,
+ 					rtc->addr_base + RTC_AL_SEC,
 
 
