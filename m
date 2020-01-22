@@ -2,100 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC2D145A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5A4145A75
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:59:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbgAVQ7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 11:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbgAVQ7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:59:44 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12FE21569;
-        Wed, 22 Jan 2020 16:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579712383;
-        bh=axCIRA2Fp40xz/PdCBrqisOsaXQORO761mDIdm/EdF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NCzGgx/3vnrSJJuVUl7qDvT6q3vrPzmFP2jhpCD5p16G6vIJ0G1RmelNZl8L+ChQq
-         YvNxtFTXPdfCfTyvyDIze5uxkYkOyVaBo4tu0bKT1bgCQqxJrYm29QJ8YhQvXTt0Di
-         14RsZw9x+SkRtVfLQ1Bfmwe18/9oZKd5Dj9LB1go=
-Date:   Wed, 22 Jan 2020 16:59:39 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     mingo@redhat.com, peterz@infradead.org, elver@google.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locking/osq_lock: fix a data race in osq_wait_next
-Message-ID: <20200122165938.GA16974@willie-the-truck>
-References: <20200122163857.4605-1-cai@lca.pw>
+        id S1729107AbgAVQ7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 11:59:55 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41378 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgAVQ7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 11:59:55 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i1so29777oie.8;
+        Wed, 22 Jan 2020 08:59:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MDfiBL9hRIkQihktjqWJHDulsuoBJ4pn4Oh6gdd9G/o=;
+        b=BIxbQFRpL9/7x6Cj6gIxJYC4go+KlEF3aIAHdEpfWQuAyR6o3SMpV5rOPhZGdyztoi
+         gWfYPyu1rhQ16FQUBrRJEbmqS/0WUy3r+A9aZooGlR1DAnLDx+sMNmrsW8wBaF/V5O5J
+         ij9gt3CXoBOCvMIaXv3DjqLwxTb7bhL6G+ZhdaYoYCHXuWO5RkK58KlUwsPav2BOnvMX
+         hpTP8a2IzMDI0oLy1l1ftRI4niUhxBMG24opfh0au/ei6wjbkkEaKffqC7jmFMQwgW3O
+         vRjZcD0rTnMNulz9iURTKUNwLTpus+0J6+R8ujC+fxbABjabhNxuZB2VfbzhZTa1a1iT
+         aSpA==
+X-Gm-Message-State: APjAAAWv/FVqN1L50J6gfHuEkayD5kAr9+kAFPwK0hG/1jLrDBJEdV8J
+        nRoVT/CrmsRMSzuphFL7zAJHZAo=
+X-Google-Smtp-Source: APXvYqy/buEH2irQzHZ7iB8zOrFJTgu/RpXFmiyIgGAQ/cqqf+k0u1vTUvftpZN1fotzOGFfgb9/EA==
+X-Received: by 2002:aca:5490:: with SMTP id i138mr7622913oib.69.1579712394590;
+        Wed, 22 Jan 2020 08:59:54 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j186sm13213861oih.55.2020.01.22.08.59.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 08:59:54 -0800 (PST)
+Received: (nullmailer pid 8001 invoked by uid 1000);
+        Wed, 22 Jan 2020 16:59:53 -0000
+Date:   Wed, 22 Jan 2020 10:59:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kamal Dasu <kdasu.kdev@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] dt: bindings: brcmnand: Add support for flash-edu
+Message-ID: <20200122165953.GA7321@bogus>
+References: <20200121200011.32296-1-kdasu.kdev@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200122163857.4605-1-cai@lca.pw>
+In-Reply-To: <20200121200011.32296-1-kdasu.kdev@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 11:38:57AM -0500, Qian Cai wrote:
-> KCSAN complains,
+On Tue, 21 Jan 2020 15:00:06 -0500, Kamal Dasu wrote:
+> Adding support for EBI DMA unit (EDU).
 > 
->  write (marked) to 0xffff941ca3b3be00 of 8 bytes by task 670 on cpu 6:
->   osq_lock+0x24c/0x340
->   __mutex_lock+0x277/0xd20
->   mutex_lock_nested+0x31/0x40
->   memcg_create_kmem_cache+0x2e/0x190
->   memcg_kmem_cache_create_func+0x40/0x80
->   process_one_work+0x54c/0xbe0
->   worker_thread+0x80/0x650
->   kthread+0x1e0/0x200
->   ret_from_fork+0x27/0x50
-> 
->  read to 0xffff941ca3b3be00 of 8 bytes by task 703 on cpu 44:
->   osq_lock+0x18e/0x340
->   __mutex_lock+0x277/0xd20
->   mutex_lock_nested+0x31/0x40
->   memcg_create_kmem_cache+0x2e/0x190
->   memcg_kmem_cache_create_func+0x40/0x80
->   process_one_work+0x54c/0xbe0
->   worker_thread+0x80/0x650
->   kthread+0x1e0/0x200
->   ret_from_fork+0x27/0x50
-> 
-> which points to those lines in osq_wait_next(),
-> 
->   next = xchg(&node->next, NULL);
->   if (next)
-> 	break;
-> 
-> Since only the read is outside of critical sections, fixed it by adding
-> a READ_ONCE().
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 > ---
->  kernel/locking/osq_lock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/mtd/brcm,brcmnand.txt          | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
-> index 6ef600aa0f47..8f565165019a 100644
-> --- a/kernel/locking/osq_lock.c
-> +++ b/kernel/locking/osq_lock.c
-> @@ -77,7 +77,7 @@ osq_wait_next(struct optimistic_spin_queue *lock,
->  		 */
->  		if (node->next) {
->  			next = xchg(&node->next, NULL);
-> -			if (next)
-> +			if (READ_ONCE(next))
->  				break;
->  		}
 
-I don't understand this; 'next' is a local variable.
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-Not keen on the onslaught of random "add a READ_ONCE() to shut the
-sanitiser up" patches we're going to get from kcsan :(
-
-Will
+If a tag was not added on purpose, please state why and what changed.
