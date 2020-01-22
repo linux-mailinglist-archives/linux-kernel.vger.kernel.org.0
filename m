@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3E3145143
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B71B144EE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731984AbgAVJxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:53:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
+        id S1730037AbgAVJcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729347AbgAVJft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:49 -0500
+        id S1730012AbgAVJcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD2ED24680;
-        Wed, 22 Jan 2020 09:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A36124673;
+        Wed, 22 Jan 2020 09:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685748;
-        bh=avVuupftrpIesruOtjhHe5uiBqt8Nkzb/LAcbD4pABg=;
+        s=default; t=1579685532;
+        bh=tAEX8k+O68fJuZfYx6mQBJTYLpBE2CrVhQuydpAimMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ebmLiJGmPI3SuLBJMgJcf8L1HX0FaS+yn8Aak7GujhTZD896DG+F1AIc4ErswwwKS
-         INxdF6ztyB6ZTqEeZX80GGMB8GkQx5CiIPeWQLi3UL4x7dKyeixpR3jMCL2wVoL2Hc
-         G2qkoapb62EF0rCKtmSV1ATbyzK+vNxfuamlLv7k=
+        b=XzyTTNdyUMQ9pu9seHXKg7UbvNNHAXjSZHunlRER6UVUJ4iaNCumPi+99jcb8NfHo
+         WWMYh22ckozYQkJGfGJDcOEJqUbm6j79yPpv1A+oOBtU/4SKyIgy4I7sQQUpGKNAF6
+         a43sBjuBA0RrfL78qsOuOeIkAg1OfGgCplboLkt4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keiya Nobuta <nobuta.keiya@fujitsu.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.9 64/97] usb: core: hub: Improved device recognition on remote wakeup
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 52/76] mm/page-writeback.c: avoid potential division by zero in wb_min_max_ratio()
 Date:   Wed, 22 Jan 2020 10:29:08 +0100
-Message-Id: <20200122092806.651629548@linuxfoundation.org>
+Message-Id: <20200122092758.575784196@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,65 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keiya Nobuta <nobuta.keiya@fujitsu.com>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-commit 9c06ac4c83df6d6fbdbf7488fbad822b4002ba19 upstream.
+commit 6d9e8c651dd979aa666bee15f086745f3ea9c4b3 upstream.
 
-If hub_activate() is called before D+ has stabilized after remote
-wakeup, the following situation might occur:
+Patch series "use div64_ul() instead of div_u64() if the divisor is
+unsigned long".
 
-         __      ___________________
-        /  \    /
-D+   __/    \__/
+We were first inspired by commit b0ab99e7736a ("sched: Fix possible divide
+by zero in avg_atom () calculation"), then refer to the recently analyzed
+mm code, we found this suspicious place.
 
-Hub  _______________________________
-          |  ^   ^           ^
-          |  |   |           |
-Host _____v__|___|___________|______
-          |  |   |           |
-          |  |   |           \-- Interrupt Transfer (*3)
-          |  |    \-- ClearPortFeature (*2)
-          |   \-- GetPortStatus (*1)
-          \-- Host detects remote wakeup
+ 201                 if (min) {
+ 202                         min *= this_bw;
+ 203                         do_div(min, tot_bw);
+ 204                 }
 
-- D+ goes high, Host starts running by remote wakeup
-- D+ is not stable, goes low
-- Host requests GetPortStatus at (*1) and gets the following hub status:
-  - Current Connect Status bit is 0
-  - Connect Status Change bit is 1
-- D+ stabilizes, goes high
-- Host requests ClearPortFeature and thus Connect Status Change bit is
-  cleared at (*2)
-- After waiting 100 ms, Host starts the Interrupt Transfer at (*3)
-- Since the Connect Status Change bit is 0, Hub returns NAK.
+And we also disassembled and confirmed it:
 
-In this case, port_event() is not called in hub_event() and Host cannot
-recognize device. To solve this issue, flag change_bits even if only
-Connect Status Change bit is 1 when got in the first GetPortStatus.
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 201
+  0xffffffff811c37da <__wb_calc_thresh+234>:      xor    %r10d,%r10d
+  0xffffffff811c37dd <__wb_calc_thresh+237>:      test   %rax,%rax
+  0xffffffff811c37e0 <__wb_calc_thresh+240>:      je 0xffffffff811c3800 <__wb_calc_thresh+272>
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 202
+  0xffffffff811c37e2 <__wb_calc_thresh+242>:      imul   %r8,%rax
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 203
+  0xffffffff811c37e6 <__wb_calc_thresh+246>:      mov    %r9d,%r10d    ---> truncates it to 32 bits here
+  0xffffffff811c37e9 <__wb_calc_thresh+249>:      xor    %edx,%edx
+  0xffffffff811c37eb <__wb_calc_thresh+251>:      div    %r10
+  0xffffffff811c37ee <__wb_calc_thresh+254>:      imul   %rbx,%rax
+  0xffffffff811c37f2 <__wb_calc_thresh+258>:      shr    $0x2,%rax
+  0xffffffff811c37f6 <__wb_calc_thresh+262>:      mul    %rcx
+  0xffffffff811c37f9 <__wb_calc_thresh+265>:      shr    $0x2,%rdx
+  0xffffffff811c37fd <__wb_calc_thresh+269>:      mov    %rdx,%r10
 
-This issue occurs rarely because it only if D+ changes during a very
-short time between GetPortStatus and ClearPortFeature. However, it is
-fatal if it occurs in embedded system.
+This series uses div64_ul() instead of div_u64() if the divisor is
+unsigned long, to avoid truncation to 32-bit on 64-bit platforms.
 
-Signed-off-by: Keiya Nobuta <nobuta.keiya@fujitsu.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Link: https://lore.kernel.org/r/20200109051448.28150-1-nobuta.keiya@fujitsu.com
+This patch (of 3):
+
+The variables 'min' and 'max' are unsigned long and do_div truncates
+them to 32 bits, which means it can test non-zero and be truncated to
+zero for division.  Fix this issue by using div64_ul() instead.
+
+Link: http://lkml.kernel.org/r/20200102081442.8273-2-wenyang@linux.alibaba.com
+Fixes: 693108a8a667 ("writeback: make bdi->min/max_ratio handling cgroup writeback aware")
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/page-writeback.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1162,6 +1162,7 @@ static void hub_activate(struct usb_hub
- 			 * PORT_OVER_CURRENT is not. So check for any of them.
- 			 */
- 			if (udev || (portstatus & USB_PORT_STAT_CONNECTION) ||
-+			    (portchange & USB_PORT_STAT_C_CONNECTION) ||
- 			    (portstatus & USB_PORT_STAT_OVERCURRENT) ||
- 			    (portchange & USB_PORT_STAT_C_OVERCURRENT))
- 				set_bit(port1, hub->change_bits);
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -200,11 +200,11 @@ static void wb_min_max_ratio(struct bdi_
+ 	if (this_bw < tot_bw) {
+ 		if (min) {
+ 			min *= this_bw;
+-			do_div(min, tot_bw);
++			min = div64_ul(min, tot_bw);
+ 		}
+ 		if (max < 100) {
+ 			max *= this_bw;
+-			do_div(max, tot_bw);
++			max = div64_ul(max, tot_bw);
+ 		}
+ 	}
+ 
 
 
