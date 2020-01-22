@@ -2,62 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D102214591D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E681145906
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 16:51:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgAVP4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 10:56:38 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34729 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbgAVP4i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 10:56:38 -0500
-Received: by mail-oi1-f193.google.com with SMTP id l136so6522325oig.1;
-        Wed, 22 Jan 2020 07:56:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=R4YvNeAxb3+eLRoT3iNAV5v/H9LROR+XP6+YqY0F8A0=;
-        b=sVdqrKFomB0aPeYSCV23RAlQHynJ8Zh5XM40HaNxdWx9s/kFaiywgVYg9uiA8EeyCK
-         uifR+qxkaEvNvBTzJKm5nkOBOXL3xKtu50MxEj17aV6rdc0owS8WOv4LnE0Gi3U5yzv9
-         mw7hkNqEAJn5wGVwzGSI0JM8bB4uapHL/RjpBiqMFaFfUZ1nqmjR5+AI9aJcev/JpQ46
-         6X7/cmTP/1JcGDpWlsWFoMMs+fxJQg5PQIiFhcJQlPHgXHD27vkEbt2F1Xlb8RYWwnAj
-         Dy4itGviB3qcHbwLv+Hr5Zo3dthpj1twcZ/KIM2zgdrIv1QkUO8aWdGzS2v2/AATuVr/
-         o84w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=R4YvNeAxb3+eLRoT3iNAV5v/H9LROR+XP6+YqY0F8A0=;
-        b=RqBc+xQyJWURtMcYKX0fGWSY3A80CtIfcvA1RJdZpg07aaLccsfEiULB8F3sMwtwhN
-         WqrajYQbDc4nHJyvjmQ0TrDFjrBdSYFQJfWTCAVOgaeCmzdS096t3Ye8A9cfLBQ9O2+/
-         DC8E21BV/piETiUl4yILWGkVhOJRk29jLUI4GZJnksphs+EVVTvyhKFJcAXctOEFwHpW
-         +x15c2YxtoMf+DSg0UNaAEsPeGhiu/HJDKrloqos3Ia0RgmwRJjS3q5yhVqsuCBbZfTg
-         YonDoq/tOOnJb79mccF4lGLR/mayEfehfApRi5f1PU0zjOPcUT07A3no9ngRdn8EXTTl
-         bI/A==
-X-Gm-Message-State: APjAAAWotUPCv/OP2jifQ6m42piqNtBlxbzv7KF8LZWYVnCWl3GGcF1e
-        ia6X62WZ/r7U3Wip+SygmV0QIQX11twTtcE7Y6Thjcc2JJ6LeA==
-X-Google-Smtp-Source: APXvYqzHRs45g0og3SLdnL+tfRY0UJ1urZmaXCSg4tzMqQCf9ZF8Uoir744AldMq2KxxR1+23k1YwTfGz2vs8JLKw8k=
-X-Received: by 2002:a05:6808:2c4:: with SMTP id a4mr7000891oid.22.1579708097962;
- Wed, 22 Jan 2020 07:48:17 -0800 (PST)
+        id S1726194AbgAVPvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 10:51:11 -0500
+Received: from mga14.intel.com ([192.55.52.115]:54041 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbgAVPvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 10:51:09 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 07:51:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,350,1574150400"; 
+   d="scan'208";a="425895201"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Jan 2020 07:51:09 -0800
+Date:   Wed, 22 Jan 2020 07:51:08 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>,
+        linux-kernel@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Subject: Re: [PATCH RFC 2/3] x86/kvm/hyper-v: move VMX controls sanitization
+ out of nested_enable_evmcs()
+Message-ID: <20200122155108.GA7201@linux.intel.com>
+References: <20200115171014.56405-1-vkuznets@redhat.com>
+ <20200115171014.56405-3-vkuznets@redhat.com>
+ <6c4bdb57-08fb-2c2d-9234-b7efffeb72ed@redhat.com>
+ <20200122054724.GD18513@linux.intel.com>
+ <9c126d75-225b-3b1b-d97a-bcec1f189e02@redhat.com>
+ <87eevrsf3s.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-From:   Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
-Date:   Wed, 22 Jan 2020 16:48:06 +0100
-Message-ID: <CAODFU0pi6MVJ+XgUmZRS_+ihAyZF+aq_V7sdnbeNeDtPzCZS=A@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] pin_on_cpu: Introduce thread CPU pinning system call
-To:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87eevrsf3s.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Wed, Jan 22, 2020 at 04:08:55PM +0100, Vitaly Kuznetsov wrote:
+> Paolo Bonzini <pbonzini@redhat.com> writes:
+> 
+> > On 22/01/20 06:47, Sean Christopherson wrote:
+> >>> Yes, it most likely is and it would be nice if Microsoft fixed it, but I
+> >>> guess we're stuck with it for existing Windows versions.  Well, for one
+> >>> we found a bug in Hyper-V and not the converse. :)
+> >>>
+> >>> There is a problem with this approach, in that we're stuck with it
+> >>> forever due to live migration.  But I guess if in the future eVMCS v2
+> >>> adds an apic_address field we can limit the hack to eVMCS v1.  Another
+> >>> possibility is to use the quirks mechanism but it's overkill for now.
+> >>>
+> >>> Unless there are objections, I plan to apply these patches.
+> >> Doesn't applying this patch contradict your earlier opinion?  This patch
+> >> would still hide the affected controls from the guest because the host
+> >> controls enlightened_vmcs_enabled.
+> >
+> > It does.  Unfortunately the key sentence is "we're stuck with it for
+> > existing Windows versions". :(
 
-I would like to note that this does not help userspace to express
-dynamic scheduling relationships among processes/threads such as "do
-not run processes A and B on the same core" or "run processes A and B
-on cores sharing the same L2 cache".
+Ah, I didn't understand what "it" referred to :-)
 
-Sincerely
-Jan
+> >> Rather than update vmx->nested.msrs or filter vmx_get_msr(), what about
+> >> manually adding eVMCS consistency checks on the disallowed bits and handle
+> >> SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES as a one-off case by simply
+> >> clearing it from the eVMCS?  Or alternatively, squashing all the disallowed
+> >> bits.
+> >
+> > Hmm, that is also a possibility.  It's a very hacky one, but I guess
+> > adding APIC virtualization to eVMCS would require bumping the version to
+> > 2.  Vitaly, what do you think?
+> 
+> As I already replied to Sean I like the idea to filter out unsupported
+> controls from eVMCS but unfortunately it doesn't work: Hyper-V actually
+> expects APIC virtualization to work when it enables
+> SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES (I have no idea how without
+> apic_access_addr field but). I checked and at least Hyper-V 2016 doesn't
+> boot (when >1 vCPU).
+
+Nice.
+
+I still don't see what we gain from applying this patch.  Once eVMCS is
+enabled by userspace, which presumably happens before the guest is launched,
+the guest will see the eVMCS-unfriendly controls as being unsupported, both
+for eVMCS and regular VMCS.  AFAICT, we're adding a fairly ugly hack to KVM
+just so that KVM can lie to userspace about what controls will be exposed to
+the guest.
+
+Can we extend the API to use cap->args[1] to control whether or not the
+unsupported controls are removed from vmx->nested.msrs?  Userspace could
+pass '1' to leave the controls untouched and then surgically hide the
+controls that the guest is too dumb to know it shouldn't use by writing the
+appropriate MSRs.  Assuming existing userspace is expected/required to zero
+out args[1..3], this would be fully backwards compatible.
+
+
+diff --git a/arch/x86/kvm/vmx/evmcs.c b/arch/x86/kvm/vmx/evmcs.c
+index 72359709cdc1..241a769be738 100644
+--- a/arch/x86/kvm/vmx/evmcs.c
++++ b/arch/x86/kvm/vmx/evmcs.c
+@@ -346,8 +346,8 @@ uint16_t nested_get_evmcs_version(struct kvm_vcpu *vcpu)
+        return 0;
+ }
+
+-int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+-                       uint16_t *vmcs_version)
++int nested_enable_evmcs(struct kvm_vcpu *vcpu, uint16_t *vmcs_version,
++                       bool allow_unsupported_controls)
+ {
+        struct vcpu_vmx *vmx = to_vmx(vcpu);
+        bool evmcs_already_enabled = vmx->nested.enlightened_vmcs_enabled;
+@@ -358,7 +358,7 @@ int nested_enable_evmcs(struct kvm_vcpu *vcpu,
+                *vmcs_version = nested_get_evmcs_version(vcpu);
+
+        /* We don't support disabling the feature for simplicity. */
+-       if (evmcs_already_enabled)
++       if (evmcs_already_enabled || allow_unsupported_controls)
+                return 0;
+
+        vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 0cccc52e2d0a..5e1b8d51277b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4005,7 +4005,8 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
+        case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
+                if (!kvm_x86_ops->nested_enable_evmcs)
+                        return -ENOTTY;
+-               r = kvm_x86_ops->nested_enable_evmcs(vcpu, &vmcs_version);
++               r = kvm_x86_ops->nested_enable_evmcs(vcpu, &vmcs_version,
++                                                    cap->args[1]);
+                if (!r) {
+                        user_ptr = (void __user *)(uintptr_t)cap->args[0];
+                        if (copy_to_user(user_ptr, &vmcs_version,
