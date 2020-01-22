@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEC90144F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68049144ED8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730385AbgAVJhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:37:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52778 "EHLO mail.kernel.org"
+        id S1729924AbgAVJb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:31:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732274AbgAVJg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:36:59 -0500
+        id S1729876AbgAVJbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:31:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80A3924687;
-        Wed, 22 Jan 2020 09:36:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D604224673;
+        Wed, 22 Jan 2020 09:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685819;
-        bh=0oVE52zL6GJ9e+7w58+ti/f/AmU2UEGHs4+W8Fw55n0=;
+        s=default; t=1579685510;
+        bh=Gvw4IBVvTbh7LJegV1H9BhU7bNh5YLZ2sWO/BXanA6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CaHBeMvyrEkN65/lC4fcZKDZ6UkLcOy8dRTKRumsuCLqqV/XU33K67gDE1zzV2FuQ
-         De3v2FpQj/CS/K0zx4Zk9Kba2lYuA9ZRCBj76twTY8n3gbmgiyYFSfspSaVBWAcZ7l
-         E3Ul/SSFEnAjEovlqFdRQ2GhxAmcOAkQDBzvjJNo=
+        b=arDZ8kv12mActkM/Cucbykz3AI5QR/Vh95hor7f6qxrZEw7+BXv4xqJdm9FhR1dbq
+         x5KDNm/XsDmLJdQGl5Tyn6XmptBRDDBwvyCYqntO7RfnYiaRrXW36u3p+mrw5OhvKb
+         pR7vb7V7FnsWllmxqGWIiwbukosNuzYGjMimN8ig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Lars=20M=C3=B6llendorf?= <lars.moellendorf@plating.de>,
-        Lars-Peter Clausen <lars@metafoo.de>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.9 56/97] iio: buffer: align the size of scan bytes to size of the largest element
+        stable@vger.kernel.org, Martin Jansen <martin.jansen@opticon.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 44/76] USB: serial: opticon: fix control-message timeouts
 Date:   Wed, 22 Jan 2020 10:29:00 +0100
-Message-Id: <20200122092805.443292933@linuxfoundation.org>
+Message-Id: <20200122092757.098385108@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars Möllendorf <lars.moellendorf@plating.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit 883f616530692d81cb70f8a32d85c0d2afc05f69 upstream.
+commit 5e28055f340275a8616eee88ef19186631b4d136 upstream.
 
-Previous versions of `iio_compute_scan_bytes` only aligned each element
-to its own length (i.e. its own natural alignment). Because multiple
-consecutive sets of scan elements are buffered this does not work in
-case the computed scan bytes do not align with the natural alignment of
-the first scan element in the set.
+The driver was issuing synchronous uninterruptible control requests
+without using a timeout. This could lead to the driver hanging
+on open() or tiocmset() due to a malfunctioning (or malicious) device
+until the device is physically disconnected.
 
-This commit fixes this by aligning the scan bytes to the natural
-alignment of the largest scan element in the set.
+The USB upper limit of five seconds per request should be more than
+enough.
 
-Fixes: 959d2952d124 ("staging:iio: make iio_sw_buffer_preenable much more general.")
-Signed-off-by: Lars Möllendorf <lars.moellendorf@plating.de>
-Reviewed-by: Lars-Peter Clausen <lars@metafoo.de>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 309a057932ab ("USB: opticon: add rts and cts support")
+Cc: stable <stable@vger.kernel.org>     # 2.6.39
+Cc: Martin Jansen <martin.jansen@opticon.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/industrialio-buffer.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/usb/serial/opticon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -546,7 +546,7 @@ static int iio_compute_scan_bytes(struct
- 				const unsigned long *mask, bool timestamp)
- {
- 	unsigned bytes = 0;
--	int length, i;
-+	int length, i, largest = 0;
+--- a/drivers/usb/serial/opticon.c
++++ b/drivers/usb/serial/opticon.c
+@@ -116,7 +116,7 @@ static int send_control_msg(struct usb_s
+ 	retval = usb_control_msg(serial->dev, usb_sndctrlpipe(serial->dev, 0),
+ 				requesttype,
+ 				USB_DIR_OUT|USB_TYPE_VENDOR|USB_RECIP_INTERFACE,
+-				0, 0, buffer, 1, 0);
++				0, 0, buffer, 1, USB_CTRL_SET_TIMEOUT);
+ 	kfree(buffer);
  
- 	/* How much space will the demuxed element take? */
- 	for_each_set_bit(i, mask,
-@@ -554,13 +554,17 @@ static int iio_compute_scan_bytes(struct
- 		length = iio_storage_bytes_for_si(indio_dev, i);
- 		bytes = ALIGN(bytes, length);
- 		bytes += length;
-+		largest = max(largest, length);
- 	}
- 
- 	if (timestamp) {
- 		length = iio_storage_bytes_for_timestamp(indio_dev);
- 		bytes = ALIGN(bytes, length);
- 		bytes += length;
-+		largest = max(largest, length);
- 	}
-+
-+	bytes = ALIGN(bytes, largest);
- 	return bytes;
- }
- 
+ 	if (retval < 0)
 
 
