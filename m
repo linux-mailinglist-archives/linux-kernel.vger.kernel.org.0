@@ -2,90 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67406144F09
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E104144F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbgAVJdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:33:54 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36079 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbgAVJdt (ORCPT
+        id S1730953AbgAVJeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:34:36 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33756 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730926AbgAVJee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:49 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iuCOK-0003Me-Dh; Wed, 22 Jan 2020 09:33:40 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: btcoex: fix spelling mistake "initilized" -> "initialized"
-Date:   Wed, 22 Jan 2020 09:33:40 +0000
-Message-Id: <20200122093340.2800226-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Wed, 22 Jan 2020 04:34:34 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q81so5512723oig.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:34:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ynAECvucuhMvbP8cwS6QYymonzK/uMzxWqNsu6RxVOQ=;
+        b=zDMOYEs9suLo1wloXAuvTs9YuKNSsBp5Hh/My3IXvDI6pIh0N2z5UqrziYJxv+bYpB
+         l50xJH65RISb7s2LXKuIi/E7S9p056wetT4ckJ4EMLpqz4XK9oULN60ECDbtiqxoQdSX
+         +GzjIx8Y4IuBR1HS2aQGWRlscUJXE6WEueyP7X2B83ydNU9jzKEIk4xz9xds8p+yd4pU
+         VaOQr8TdMNrp/PtAhkXAF8yr/DOaO6CX5qFTzirH7j7WXFn8E/P4d7ncmuNOKz2IaUe3
+         Bu9s/PMnIIuYfwZV/Nem2ypzDq9hT9n+hhZdnhfwK2wwXuU3hIEjMRqwHUHKzsQBESJU
+         x+qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ynAECvucuhMvbP8cwS6QYymonzK/uMzxWqNsu6RxVOQ=;
+        b=lESAPWWUKMOHduvqprCLDcKi/GBBTyguRNhgWkzB/YPwD94fLTevOVnjAKGqL5dI4P
+         XDNvcWvo5m8NIbmh5w9NB1k8uzbjN86iEvWgCUWDGLQ+wJ9TtoA7jsLN1lac7Y2jc1jI
+         zXhK8QlHjCantdCQLxsJAXOksabsJVRPukVTCKtEMIn/xo72gWD+pvTzjYTECkYVY2bC
+         AmlvQlICR8bKKmR/w50UJGRU3mcNZpBYeMCbh6OcGBckMacF2YaDpiWwG0oFa8AeBh/G
+         OEiSmdwT4Mv28Du563EHrpcTcNXqwJ5mJiJLsosuBjwEB5CnztmsAhbm/r7R1YZDRpPd
+         eMdQ==
+X-Gm-Message-State: APjAAAVnE3yMHfoQsJ/w+Yz4yk5u8hfdQhu3HoX2U0Dwid1gFJZtT5xp
+        Yx7MzXuc9k6y7CVj4LfxwKMp7AYnGngQDQsmrktbnw==
+X-Google-Smtp-Source: APXvYqwbzDz1LV33C9eQRfMQ66DgycbUpabSvDxrpEo286vM48FZGUaJUsNg4Vuy0HVPZJ0WcR6p/x4MsZDxM7YGMsc=
+X-Received: by 2002:a54:4f14:: with SMTP id e20mr6057794oiy.84.1579685673521;
+ Wed, 22 Jan 2020 01:34:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20200122091238.65484-1-yaohongbo@huawei.com>
+In-Reply-To: <20200122091238.65484-1-yaohongbo@huawei.com>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Wed, 22 Jan 2020 10:34:22 +0100
+Message-ID: <CAHUa44FMK8WC_1H5QKz706qZyM4215vX9MQYCkPno1M40-MX0g@mail.gmail.com>
+Subject: Re: [PATCH RESEND -next] tee: amdtee: amdtee depends on CRYPTO_DEV_CCP_DD
+To:     Hongbo Yao <yaohongbo@huawei.com>
+Cc:     "Thomas, Rijo-john" <Rijo-john.Thomas@amd.com>,
+        chenzhou10@huawei.com,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rangasamy, Devaraj" <Devaraj.Rangasamy@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jan 22, 2020 at 10:17 AM Hongbo Yao <yaohongbo@huawei.com> wrote:
+>
+> If CRYPTO_DEV_CCP_DD=m and AMDTEE=y, the following error is seen
+> while building call.c or core.c
+>
+> drivers/tee/amdtee/call.o: In function `handle_unload_ta':
+> call.c:(.text+0x35f): undefined reference to `psp_tee_process_cmd'
+> drivers/tee/amdtee/core.o: In function `amdtee_driver_init':
+> core.c:(.init.text+0xf): undefined reference to `psp_check_tee_status
+>
+> Fix the config dependency for AMDTEE here.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 757cc3e9ff ("tee: add AMD-TEE driver")
+> Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+> Reviewed-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+> ---
+>  drivers/tee/amdtee/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is a spelling mistake in one of the fields in the btc_coexist struct,
-fix it.
+Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 2 +-
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c   | 2 +-
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Thanks,
+Jens
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-index 3c96c320236c..658ff425c256 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-@@ -862,7 +862,7 @@ static void btc8192e2ant_set_sw_rf_rx_lpf_corner(struct btc_coexist *btcoexist,
- 		/* Resume RF Rx LPF corner
- 		 * After initialized, we can use coex_dm->btRf0x1eBackup
- 		 */
--		if (btcoexist->initilized) {
-+		if (btcoexist->initialized) {
- 			RT_TRACE(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
- 				 "[BTCoex], Resume RF Rx LPF corner!!\n");
- 			btcoexist->btc_set_rf_reg(btcoexist, BTC_RF_A, 0x1e,
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index 191dafd03189..a4940a3842de 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1461,7 +1461,7 @@ void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist)
- 			ex_btc8192e2ant_init_coex_dm(btcoexist);
- 	}
- 
--	btcoexist->initilized = true;
-+	btcoexist->initialized = true;
- }
- 
- void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type)
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-index 8c0a7fdbf200..a96a995dd850 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-@@ -679,7 +679,7 @@ struct btc_coexist {
- 	bool auto_report_2ant;
- 	bool dbg_mode_1ant;
- 	bool dbg_mode_2ant;
--	bool initilized;
-+	bool initialized;
- 	bool stop_coex_dm;
- 	bool manual_control;
- 	struct btc_statistics statistics;
--- 
-2.24.0
-
+>
+> diff --git a/drivers/tee/amdtee/Kconfig b/drivers/tee/amdtee/Kconfig
+> index 4e32b6413b41..191f9715fa9a 100644
+> --- a/drivers/tee/amdtee/Kconfig
+> +++ b/drivers/tee/amdtee/Kconfig
+> @@ -3,6 +3,6 @@
+>  config AMDTEE
+>         tristate "AMD-TEE"
+>         default m
+> -       depends on CRYPTO_DEV_SP_PSP
+> +       depends on CRYPTO_DEV_SP_PSP && CRYPTO_DEV_CCP_DD
+>         help
+>           This implements AMD's Trusted Execution Environment (TEE) driver.
+> --
+> 2.20.1
+>
