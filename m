@@ -2,143 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD440144E6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38629144E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbgAVJPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:15:23 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35735 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbgAVJPX (ORCPT
+        id S1729188AbgAVJQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:16:12 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51022 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAVJQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:15:23 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so6336696wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:15:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MtAxVDIFvvyihRVixTQiC8r4kLneR6vfxUmvLHhCL5I=;
-        b=sLmtYG0zpyJeNHaOSjZGWQ6mtLVP1VGmyWgfn8SCysGDSxSVDtepU7aQLzH6/LjTFx
-         sagQmaEaiyfEdXFeMRlXDWqh5XD7YaUZvF9hsc3SmmPXHJZT3f9YalLnFtW0Vd2o6G3q
-         iHAbYb5XH0CbifqSbqg4ckgHq9hz3hQPuUXpsTuqqYxaGrk/EJqyo0aVE6/WmmTXref4
-         3YHyOwA1Y82IvGEgw58/+/YdHbdSLtRUD4SfwIDGG+gSkOdJhdTyAcOcE0jZdb/a/ybz
-         tB7UXEVhemSrkf0nyTjp+dFnkWIPuxr7rfZjr4OXUi5nuIF3ZqrCsGM5+n/wdvSLijoO
-         ulCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MtAxVDIFvvyihRVixTQiC8r4kLneR6vfxUmvLHhCL5I=;
-        b=ZD7nYnjulWrzup3DdDR22s+0Nvrk60U5J/u3cuadRSAvlXjfoxDwFwB1vJQFiVeerB
-         9msLWVcinxxTqcGOkjTWR61FmJWHbZjNdNK+8z0bM7TJuaRmuwpGqx/040ER7SECUlhJ
-         SoYlgyQYfaLmE1yTuWMnAfNYIUdT7CkDzrDJJIxE1LIFFNGcF+li7kBKqR8GY3SaX2y/
-         hRbwm4UHWoFa47mOjGu77GrwrPcFUy3BjYyfmKqyGf/hRa0VL2yWoZJajc+kZpQTfijK
-         /YPDFYyybAvWUc5kgOQvhV3zXEaaJ/C87zhG/uWzRZ8vxPw2u+gWaH5quGY2H+85XOVS
-         oXuw==
-X-Gm-Message-State: APjAAAWhmoEvCeUbWYq7zEEOrVjgYsMG1Wjrcp9OHUZcifcgnjixQ3RN
-        Yh/b0AFwgKSC16anctuedqQRzZVZAIk=
-X-Google-Smtp-Source: APXvYqybJyZZtNLiR7ygGpGJn8BaX3PeiNcJokU+VY70l2t4/jyQwxNtnsvoIjPghifI/i3tz2SYHQ==
-X-Received: by 2002:a1c:a952:: with SMTP id s79mr1947884wme.83.1579684520454;
-        Wed, 22 Jan 2020 01:15:20 -0800 (PST)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id g25sm4097652wmh.3.2020.01.22.01.15.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Jan 2020 01:15:19 -0800 (PST)
-Subject: Re: [GIT PULL 00/12] interconnect changes for 5.6
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200117095816.23575-1-georgi.djakov@linaro.org>
- <20200122090556.GA2613910@kroah.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <179d487b-aa77-ee70-2433-e3ee498040ea@linaro.org>
-Date:   Wed, 22 Jan 2020 11:15:19 +0200
+        Wed, 22 Jan 2020 04:16:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=de9Krq9WPfYisRqIZvIrOmUj6iWBtQLyqA73nPcoF8w=; b=l9JX2nkNY2fxHyIdZU7hasx5C
+        PBAR9hJawsYgfFkrmRqc/Rjh1IZYJO9JKWNA/kTgBrTBI6NJYM1mVz+5892V502NDKCzWe+a/cedz
+        IgBMO7Lak5koQUkdc6XRGW+Cxgx1IFlGMhxK/BDZHDEqSp+VIgX8KoG+Q98hR69t91IxUo8mH6ICV
+        QdbYVrcxHkR7rxlE9HZKz8cX2eIjfOEg1Jla68Zfw8fLDY8bhsUfe8uqKlNmrBU+fVsNKRpsWJCnC
+        3VLMaxDYrVEZeFvBf9Wy6GOW/953cYk8n8ZDqUzwmfq/SUg9RjFEsy13DG2O3uC7fXfzf8eaW2eDb
+        Uhla+mRVA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iuC73-0002ue-Uc; Wed, 22 Jan 2020 09:15:50 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D3ADD305D3F;
+        Wed, 22 Jan 2020 10:14:07 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5E84920983E34; Wed, 22 Jan 2020 10:15:47 +0100 (CET)
+Date:   Wed, 22 Jan 2020 10:15:47 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+Subject: Re: [PATCH v7 1/5] locking/qspinlock: Rename mcs lock/unlock macros
+ and make them more generic
+Message-ID: <20200122091547.GU14879@hirez.programming.kicks-ass.net>
+References: <20191125210709.10293-1-alex.kogan@oracle.com>
+ <20191125210709.10293-2-alex.kogan@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20200122090556.GA2613910@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191125210709.10293-2-alex.kogan@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/20 11:05, Greg KH wrote:
-> On Fri, Jan 17, 2020 at 11:58:04AM +0200, Georgi Djakov wrote:
->> Hi Greg,
->>
->> Here are the interconnect patches for the 5.6-rc1 merge window.
->>
->> - New core helper functions for some common functionalities in drivers.
->> - Improvements in the information exposed via debugfs.
->> - Basic tracepoints support.
->> - New interconnect driver for msm8916 platforms.
->> - Misc fixes.
->>
->> All patches have been for a while in linux-next without reported issues.
->> Please consider queuing them into char-misc-next.
->>
->> The same is also available via a pull request with a signed tag below.
->>
->> Thanks,
->> Georgi
->>
->> The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
->>
->>   Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
->>
->> are available in the Git repository at:
->>
->>   https://git.linaro.org/people/georgi.djakov/linux.git tags/icc-5.6-rc1
-> 
-> Pulled and pushed out, thanks.
-> 
+On Mon, Nov 25, 2019 at 04:07:05PM -0500, Alex Kogan wrote:
 
-Thanks! Just sent you a ping email a few minutes ago. Please ignore it.
-Georgi
+> --- a/arch/arm/include/asm/mcs_spinlock.h
+> +++ b/arch/arm/include/asm/mcs_spinlock.h
+> @@ -6,7 +6,7 @@
+>  #include <asm/spinlock.h>
+>  
+>  /* MCS spin-locking. */
+> -#define arch_mcs_spin_lock_contended(lock)				\
+> +#define arch_mcs_spin_lock(lock)				\
+>  do {									\
+>  	/* Ensure prior stores are observed before we enter wfe. */	\
+>  	smp_mb();							\
+> @@ -14,9 +14,9 @@ do {									\
+>  		wfe();							\
+>  } while (0)								\
+>  
+> -#define arch_mcs_spin_unlock_contended(lock)				\
+> +#define arch_mcs_pass_lock(lock, val)					\
+>  do {									\
+> -	smp_store_release(lock, 1);					\
+> +	smp_store_release((lock), (val));				\
+>  	dsb_sev();							\
+>  } while (0)
 
+So I hate those names; it used to be clear this was the contended path,
+not so anymore. arch_mcs_spin_lock() in particular is grossly misnamed
+now.
+
+'s/arch_mcs_spin_lock/arch_mcs_spin_wait/g' could perhaps work, if you
+really want to get rid of the _contended suffix.
+
+Also, pass_lock seems unfortunately named...
