@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265A314508E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BDC1450FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbgAVJrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:47:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33704 "EHLO mail.kernel.org"
+        id S1732267AbgAVJul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:50:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387661AbgAVJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:42:04 -0500
+        id S1730977AbgAVJiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D05824690;
-        Wed, 22 Jan 2020 09:42:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4306D2467E;
+        Wed, 22 Jan 2020 09:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686124;
-        bh=ukVkUyF05fhN75MBR5+oeu5iKDPLeh+x2ejrY96sZbU=;
+        s=default; t=1579685889;
+        bh=B6CoHhvLw7WB8SuV6DdMNus0dYLAJVGCvhoAIgBNBjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rD8jhizHHO8m5WTohmt6GeqLYf95VhdQXYWG1Efn7T8i5v1/5CEVJtjP8QFHQxC6G
-         0P8KDwh0FjdQbbzp7IEm2g9RgIt3M8aEGWREA9fIeEEmNvIjvZaMCvywXJJikNEhqS
-         gFEZBV7z548pV0Eu1tc0yLHgwY/FLLsPoBwXpfpk=
+        b=aH2GrSjU1vc1P/Na0Ks2PlRxOqvP6g5c6lAnzkwI52ELIlaqD9CnyOoFFCYzY2iUV
+         K3GcxOQraEF3Lg7h99BL7BGNIRbgVsoP+rS3wkS7ttvD56skIRSIQ6v0o1e/ZA6H4h
+         IDxKn3U4o89xQlXpfDJYNU46DxIDzSPlsaLXTGHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bharath Vedartham <linux.bhar@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Hans de Goede <hdegoede@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/103] mm/huge_memory.c: make __thp_get_unmapped_area static
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 23/65] x86/efistub: Disable paging at mixed mode entry
 Date:   Wed, 22 Jan 2020 10:29:08 +0100
-Message-Id: <20200122092811.542790118@linuxfoundation.org>
+Message-Id: <20200122092754.276233918@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,38 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bharath Vedartham <linux.bhar@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
 
-[ Upstream commit b3b07077b01ecbbd98efede778c195567de25b71 ]
+commit 4911ee401b7ceff8f38e0ac597cbf503d71e690c upstream.
 
-__thp_get_unmapped_area is only used in mm/huge_memory.c.  Make it static.
-Tested by building and booting the kernel.
+The EFI mixed mode entry code goes through the ordinary startup_32()
+routine before jumping into the kernel's EFI boot code in 64-bit
+mode. The 32-bit startup code must be entered with paging disabled,
+but this is not documented as a requirement for the EFI handover
+protocol, and so we should disable paging explicitly when entering
+the kernel from 32-bit EFI firmware.
 
-Link: http://lkml.kernel.org/r/20190504102353.GA22525@bharath12345-Inspiron-5559
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Cc: <stable@vger.kernel.org>
+Cc: Arvind Sankar <nivedita@alum.mit.edu>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191224132909.102540-4-ardb@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/huge_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/boot/compressed/head_64.S |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 5a1771bd5d04..950466876625 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -509,7 +509,7 @@ void prep_transhuge_page(struct page *page)
- 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
- }
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -227,6 +227,11 @@ ENTRY(efi32_stub_entry)
+ 	leal	efi32_config(%ebp), %eax
+ 	movl	%eax, efi_config(%ebp)
  
--unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
-+static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
- 		loff_t off, unsigned long flags, unsigned long size)
- {
- 	unsigned long addr;
--- 
-2.20.1
-
++	/* Disable paging */
++	movl	%cr0, %eax
++	btrl	$X86_CR0_PG_BIT, %eax
++	movl	%eax, %cr0
++
+ 	jmp	startup_32
+ ENDPROC(efi32_stub_entry)
+ #endif
 
 
