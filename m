@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAA85144FF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA8F145127
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:52:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387779AbgAVJmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:42:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34648 "EHLO mail.kernel.org"
+        id S1731212AbgAVJwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:52:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387757AbgAVJml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:42:41 -0500
+        id S1729537AbgAVJgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:36:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 222B924687;
-        Wed, 22 Jan 2020 09:42:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2362620704;
+        Wed, 22 Jan 2020 09:36:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686160;
-        bh=7B3vAG2RIkwU8Eh5pEf069RrjsX8ed1jhGzTsQLF7V0=;
+        s=default; t=1579685794;
+        bh=4G1bl+B1LB5qunalYRtT9DKmA9QL2r8v0aWeztvtY9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4U1HGSZhYHY4Ef07smhDjZBH4lQKaveyzCwR6SNhs8RA735u64DwUEl9kpb3Cljx
-         DOsFC3lfUagSljHbNMlW0gfjlEqiou9UfsZtPqZhJ4EFH2+SRpWgVK0xnCjr7+jqrS
-         4X4X0itG6kqhDOvCnkOAB7ZygnOLMJxFBfRxG9I8=
+        b=HqkqxQJlz5FqL1Fg9rNMB8NHxIfjELWAXRJe/0twGkI8TgiEGsahRYsNudPpzB6gG
+         tcdlmC/UYOYO4vFAZLtcwEgDJrREdWPtH+k62Ng7CEwb3KKgiYVTAMMZ/XwREcDkaZ
+         UyBke/gNV4/E6tO6i0MtVueo9LNtHsWcbR7W0dIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 069/103] net: dsa: tag_qca: fix doubled Tx statistics
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jurgen Van Ham <juvanham@gmail.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 81/97] macvlan: use skb_reset_mac_header() in macvlan_queue_xmit()
 Date:   Wed, 22 Jan 2020 10:29:25 +0100
-Message-Id: <20200122092813.867796961@linuxfoundation.org>
+Message-Id: <20200122092809.361448368@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
+[ Upstream commit 1712b2fff8c682d145c7889d2290696647d82dab ]
 
-DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
-("net: dsa: Refactor transmit path to eliminate duplication"), so
-any accounting inside tagger callbacks is redundant and can lead to
-messing up the stats.
-This bug is present in Qualcomm tagger since day 0.
+I missed the fact that macvlan_broadcast() can be used both
+in RX and TX.
 
-Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+skb_eth_hdr() makes only sense in TX paths, so we can not
+use it blindly in macvlan_broadcast()
+
+Fixes: 96cc4b69581d ("macvlan: do not assume mac_header is set in macvlan_broadcast()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jurgen Van Ham <juvanham@gmail.com>
+Tested-by: Matteo Croce <mcroce@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/dsa/tag_qca.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/macvlan.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/dsa/tag_qca.c
-+++ b/net/dsa/tag_qca.c
-@@ -41,9 +41,6 @@ static struct sk_buff *qca_tag_xmit(stru
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
- 	u16 *phdr, hdr;
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -234,7 +234,7 @@ static void macvlan_broadcast(struct sk_
+ 			      struct net_device *src,
+ 			      enum macvlan_mode mode)
+ {
+-	const struct ethhdr *eth = skb_eth_hdr(skb);
++	const struct ethhdr *eth = eth_hdr(skb);
+ 	const struct macvlan_dev *vlan;
+ 	struct sk_buff *nskb;
+ 	unsigned int i;
+@@ -487,10 +487,11 @@ static int macvlan_queue_xmit(struct sk_
+ 	const struct macvlan_dev *dest;
  
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes += skb->len;
--
- 	if (skb_cow_head(skb, 0) < 0)
- 		return NULL;
+ 	if (vlan->mode == MACVLAN_MODE_BRIDGE) {
+-		const struct ethhdr *eth = (void *)skb->data;
++		const struct ethhdr *eth = skb_eth_hdr(skb);
  
+ 		/* send to other bridge ports directly */
+ 		if (is_multicast_ether_addr(eth->h_dest)) {
++			skb_reset_mac_header(skb);
+ 			macvlan_broadcast(skb, port, dev, MACVLAN_MODE_BRIDGE);
+ 			goto xmit_world;
+ 		}
 
 
