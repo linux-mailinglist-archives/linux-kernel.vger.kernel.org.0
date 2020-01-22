@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1368145000
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D391450D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbgAVJm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:42:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35026 "EHLO mail.kernel.org"
+        id S1733160AbgAVJjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:39:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387795AbgAVJm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:42:56 -0500
+        id S1733145AbgAVJjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:39:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0EC624686;
-        Wed, 22 Jan 2020 09:42:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29E0724680;
+        Wed, 22 Jan 2020 09:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686175;
-        bh=H1Lcg5rw+RgdPVHED2wBfHLTyKq6l7C8E9zOH9Hlf1E=;
+        s=default; t=1579685948;
+        bh=RR+nFKij4VabaC5YVhm66/fxmKNHMt8p/paFyJe6+2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=giCUcAIFGD6gg0oUYgxhj2FHSan9Un2l1fonJ6F2Cdhj47nxgkbWRsn9ADG3dJ+Rt
-         lAXkH4OW9vdCRviBiQQABbGALYUHKVE8Wg9yLXrcBUV1scsHZXqP/vO+yHHq0hr25x
-         U2eZTB8KT2tJ3MFwCbYaSWUNXlgso58DlYnBvu7w=
+        b=Ti3lBZLPCkDKl5aEP71xO2sVzgBAxiWv+RuaKwWx2iWGueMWUQQGBf+8Po0i8eUK2
+         3WJQU2YYptPVxu617A8LGUMI97wAUqAEiH0+8AETAy6etOnUl1z5D341b1QQb2gpJ6
+         j0QKr+nVnB0NwprlSPsjDibB7SCBI+5qBcocmU2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pengcheng Yang <yangpc@wangsu.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Antti Laakso <antti.laakso@intel.com>,
+        Vladis Dronov <vdronov@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 075/103] tcp: fix marked lost packets not being retransmitted
-Date:   Wed, 22 Jan 2020 10:29:31 +0100
-Message-Id: <20200122092814.391579511@linuxfoundation.org>
+Subject: [PATCH 4.14 47/65] ptp: free ptp device pin descriptors properly
+Date:   Wed, 22 Jan 2020 10:29:32 +0100
+Message-Id: <20200122092757.884265813@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,83 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pengcheng Yang <yangpc@wangsu.com>
+From: Vladis Dronov <vdronov@redhat.com>
 
-[ Upstream commit e176b1ba476cf36f723cfcc7a9e57f3cb47dec70 ]
+[ Upstream commit 75718584cb3c64e6269109d4d54f888ac5a5fd15 ]
 
-When the packet pointed to by retransmit_skb_hint is unlinked by ACK,
-retransmit_skb_hint will be set to NULL in tcp_clean_rtx_queue().
-If packet loss is detected at this time, retransmit_skb_hint will be set
-to point to the current packet loss in tcp_verify_retransmit_hint(),
-then the packets that were previously marked lost but not retransmitted
-due to the restriction of cwnd will be skipped and cannot be
-retransmitted.
+There is a bug in ptp_clock_unregister(), where ptp_cleanup_pin_groups()
+first frees ptp->pin_{,dev_}attr, but then posix_clock_unregister() needs
+them to destroy a related sysfs device.
 
-To fix this, when retransmit_skb_hint is NULL, retransmit_skb_hint can
-be reset only after all marked lost packets are retransmitted
-(retrans_out >= lost_out), otherwise we need to traverse from
-tcp_rtx_queue_head in tcp_xmit_retransmit_queue().
+These functions can not be just swapped, as posix_clock_unregister() frees
+ptp which is needed in the ptp_cleanup_pin_groups(). Fix this by calling
+ptp_cleanup_pin_groups() in ptp_clock_release(), right before ptp is freed.
 
-Packetdrill to demonstrate:
+This makes this patch fix an UAF bug in a patch which fixes an UAF bug.
 
-// Disable RACK and set max_reordering to keep things simple
-    0 `sysctl -q net.ipv4.tcp_recovery=0`
-   +0 `sysctl -q net.ipv4.tcp_max_reordering=3`
-
-// Establish a connection
-   +0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-   +0 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
-   +0 bind(3, ..., ...) = 0
-   +0 listen(3, 1) = 0
-
-  +.1 < S 0:0(0) win 32792 <mss 1000,sackOK,nop,nop,nop,wscale 7>
-   +0 > S. 0:0(0) ack 1 <...>
- +.01 < . 1:1(0) ack 1 win 257
-   +0 accept(3, ..., ...) = 4
-
-// Send 8 data segments
-   +0 write(4, ..., 8000) = 8000
-   +0 > P. 1:8001(8000) ack 1
-
-// Enter recovery and 1:3001 is marked lost
- +.01 < . 1:1(0) ack 1 win 257 <sack 3001:4001,nop,nop>
-   +0 < . 1:1(0) ack 1 win 257 <sack 5001:6001 3001:4001,nop,nop>
-   +0 < . 1:1(0) ack 1 win 257 <sack 5001:7001 3001:4001,nop,nop>
-
-// Retransmit 1:1001, now retransmit_skb_hint points to 1001:2001
-   +0 > . 1:1001(1000) ack 1
-
-// 1001:2001 was ACKed causing retransmit_skb_hint to be set to NULL
- +.01 < . 1:1(0) ack 2001 win 257 <sack 5001:8001 3001:4001,nop,nop>
-// Now retransmit_skb_hint points to 4001:5001 which is now marked lost
-
-// BUG: 2001:3001 was not retransmitted
-   +0 > . 2001:3001(1000) ack 1
-
-Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Tested-by: Neal Cardwell <ncardwell@google.com>
+Reported-by: Antti Laakso <antti.laakso@intel.com>
+Fixes: a33121e5487b ("ptp: fix the race between the release of ptp_clock and cdev")
+Link: https://lore.kernel.org/netdev/3d2bd09735dbdaf003585ca376b7c1e5b69a19bd.camel@intel.com/
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/ptp/ptp_clock.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -901,9 +901,10 @@ static void tcp_check_sack_reordering(st
- /* This must be called before lost_out is incremented */
- static void tcp_verify_retransmit_hint(struct tcp_sock *tp, struct sk_buff *skb)
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -179,6 +179,7 @@ static void ptp_clock_release(struct dev
  {
--	if (!tp->retransmit_skb_hint ||
--	    before(TCP_SKB_CB(skb)->seq,
--		   TCP_SKB_CB(tp->retransmit_skb_hint)->seq))
-+	if ((!tp->retransmit_skb_hint && tp->retrans_out >= tp->lost_out) ||
-+	    (tp->retransmit_skb_hint &&
-+	     before(TCP_SKB_CB(skb)->seq,
-+		    TCP_SKB_CB(tp->retransmit_skb_hint)->seq)))
- 		tp->retransmit_skb_hint = skb;
- }
+ 	struct ptp_clock *ptp = container_of(dev, struct ptp_clock, dev);
  
++	ptp_cleanup_pin_groups(ptp);
+ 	mutex_destroy(&ptp->tsevq_mux);
+ 	mutex_destroy(&ptp->pincfg_mux);
+ 	ida_simple_remove(&ptp_clocks_map, ptp->index);
+@@ -315,9 +316,8 @@ int ptp_clock_unregister(struct ptp_cloc
+ 	if (ptp->pps_source)
+ 		pps_unregister_source(ptp->pps_source);
+ 
+-	ptp_cleanup_pin_groups(ptp);
+-
+ 	posix_clock_unregister(&ptp->clock);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ptp_clock_unregister);
 
 
