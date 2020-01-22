@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56678144EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C72D2144F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbgAVJbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:31:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
+        id S1730984AbgAVJem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:34:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729473AbgAVJbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:31:01 -0500
+        id S1730959AbgAVJek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:34:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB13124672;
-        Wed, 22 Jan 2020 09:31:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1B1B2467A;
+        Wed, 22 Jan 2020 09:34:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685461;
-        bh=L4QAyqnjIbE6eR2gdAHHZr8L2R5BTRnTzBoUgeZVtl0=;
+        s=default; t=1579685680;
+        bh=pGGSznadTDpUp/QlK1glxUgOtEg1Tqrc/xNzw4ipz7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w2i72pUrQWV5sxrBl9kJYclI7xWfho/dPJqfdjfGgzCMtPPkmtjd8X8cyCUlUFJId
-         /NV6rk+gPsbBpPXp+hcs07fHf3DkQVjN7nidAvxxm6j16XgQpEb1zBS4Afa+gZS4AK
-         NYNnJL1+1GK4nCTmnTRhYMGafioOBlSpvK9oYK94=
+        b=yOFaJpLhqzb1r53R/rJEqtZoxWPSE+963RoxbD8uY3oouWYQ6hY8j0IlQSiYSRbtC
+         jt4cWUyHwt5k+Pt6IoK0McHJpkaukem9xewQ7XIevVo8rFNF+uywl8Y42Pus/Q73L9
+         3EjLHUeJB7m0WefFItzENWUblNSGgwwATlQYvPAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Honggang Li <honli@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 23/76] RDMA/srpt: Report the SCSI residual to the initiator
+        stable@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 4.9 35/97] tty: serial: imx: use the sg count from dma_map_sg
 Date:   Wed, 22 Jan 2020 10:28:39 +0100
-Message-Id: <20200122092754.097947390@linuxfoundation.org>
+Message-Id: <20200122092802.178322001@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +42,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Peng Fan <peng.fan@nxp.com>
 
-commit e88982ad1bb12db699de96fbc07096359ef6176c upstream.
+commit 596fd8dffb745afcebc0ec6968e17fe29f02044c upstream.
 
-The code added by this patch is similar to the code that already exists in
-ibmvscsis_determine_resid(). This patch has been tested by running the
-following command:
+The dmaengine_prep_slave_sg needs to use sg count returned
+by dma_map_sg, not use sport->dma_tx_nents, because the return
+value of dma_map_sg is not always same with "nents".
 
-strace sg_raw -r 1k /dev/sdb 12 00 00 00 60 00 -o inquiry.bin |&
-    grep resid=
-
-Link: https://lore.kernel.org/r/20191105214632.183302-1-bvanassche@acm.org
-Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Acked-by: Honggang Li <honli@redhat.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: b4cdc8f61beb ("serial: imx: add DMA support for imx6q")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Link: https://lore.kernel.org/r/1573108875-26530-1-git-send-email-peng.fan@nxp.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/tty/serial/imx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -1513,9 +1513,11 @@ static int srpt_build_cmd_rsp(struct srp
- 			      struct srpt_send_ioctx *ioctx, u64 tag,
- 			      int status)
- {
-+	struct se_cmd *cmd = &ioctx->cmd;
- 	struct srp_rsp *srp_rsp;
- 	const u8 *sense_data;
- 	int sense_data_len, max_sense_len;
-+	u32 resid = cmd->residual_count;
- 
- 	/*
- 	 * The lowest bit of all SAM-3 status codes is zero (see also
-@@ -1537,6 +1539,28 @@ static int srpt_build_cmd_rsp(struct srp
- 	srp_rsp->tag = tag;
- 	srp_rsp->status = status;
- 
-+	if (cmd->se_cmd_flags & SCF_UNDERFLOW_BIT) {
-+		if (cmd->data_direction == DMA_TO_DEVICE) {
-+			/* residual data from an underflow write */
-+			srp_rsp->flags = SRP_RSP_FLAG_DOUNDER;
-+			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
-+		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
-+			/* residual data from an underflow read */
-+			srp_rsp->flags = SRP_RSP_FLAG_DIUNDER;
-+			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
-+		}
-+	} else if (cmd->se_cmd_flags & SCF_OVERFLOW_BIT) {
-+		if (cmd->data_direction == DMA_TO_DEVICE) {
-+			/* residual data from an overflow write */
-+			srp_rsp->flags = SRP_RSP_FLAG_DOOVER;
-+			srp_rsp->data_out_res_cnt = cpu_to_be32(resid);
-+		} else if (cmd->data_direction == DMA_FROM_DEVICE) {
-+			/* residual data from an overflow read */
-+			srp_rsp->flags = SRP_RSP_FLAG_DIOVER;
-+			srp_rsp->data_in_res_cnt = cpu_to_be32(resid);
-+		}
-+	}
-+
- 	if (sense_data_len) {
- 		BUILD_BUG_ON(MIN_MAX_RSP_SIZE <= sizeof(*srp_rsp));
- 		max_sense_len = ch->max_ti_iu_len - sizeof(*srp_rsp);
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -548,7 +548,7 @@ static void imx_dma_tx(struct imx_port *
+ 		dev_err(dev, "DMA mapping error for TX.\n");
+ 		return;
+ 	}
+-	desc = dmaengine_prep_slave_sg(chan, sgl, sport->dma_tx_nents,
++	desc = dmaengine_prep_slave_sg(chan, sgl, ret,
+ 					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
+ 	if (!desc) {
+ 		dma_unmap_sg(dev, sgl, sport->dma_tx_nents,
 
 
