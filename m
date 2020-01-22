@@ -2,80 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B35614546C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:34:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 556C414546E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:34:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbgAVMeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 07:34:31 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41187 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbgAVMea (ORCPT
+        id S1729180AbgAVMen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 07:34:43 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37455 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728981AbgAVMen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 07:34:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id x8so3440847pgk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 04:34:29 -0800 (PST)
+        Wed, 22 Jan 2020 07:34:43 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w15so7109692wru.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 04:34:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=lZ5XQ8woGCj82deNflWFheY+Mr22+3/Wvk1BEErnu6Q=;
-        b=u99i495SfQyD2pbs9X39CPR6fbIXUnn8nxfVA7UY3P2QueSJLot5WflQOYd+A+7WoL
-         tIXkb3JonTKaAdzGBNYVqO5sTQLI6KmUnL1VipU44/A7pRwqgmDhq3GWHn4pRG16vKPY
-         jfpKpZlsuwEbUd875Cz69AMgAelhLzSkw/bz2tqrh5bP40gRZN7JWUF3g57JDah36gfk
-         2aMEUOFEe/0iOm4/+WDRJ2yPIy3XWPgxSFNCzAPTC0pJAvWZ8CUvxE0zZgoXQSDtbGZT
-         LPdUoQWPrJk5H+lLVUrdteGZJvAPzDvMSeXW+IbHVWx0Sgi0N8Bf1yccG7kJQGBweyL0
-         Z5Ig==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2GhRGBXZ61sShjbspHfKcYEQZWltM3X6lSFo674t7to=;
+        b=FwwQRJcqKeYK89XfK/oqpBjkHe/ET6/B3wFHE96E1Fv3USCGYrXz9UWnYqIIpb5LZl
+         3lao0QZ5pbKC9hTFCkWQpXIlGmbZn9zxuC45CJxLz0BYfpmQ7/wh7a8uQQ34mpwT9iwY
+         HUpqTyFvG/+ob791WuSKlYbkXJSC5pwZPfWl/yyLx3TUHGLnbxk4CUNgCDfXlkGphLSF
+         fKtM7fuQBc4UZ7JbUhGLuGCVOx3N/QP8cmt4s9w/4V9aFcOjHlqsFUXc/udsPrYW2N4J
+         dBgkK00wbTZVqv0kfRSOenAE5uIDp/JdvVdFVCdRN31LkQgcjg4NXB33kakpPDRqhJR8
+         EgTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=lZ5XQ8woGCj82deNflWFheY+Mr22+3/Wvk1BEErnu6Q=;
-        b=e/V1L+eRLk/i9z+lUlPN1wDjA4hgiVM5GjkMW/7dRYwHmoTDqwUK96Bhpe/pDNHrk3
-         qpr1MPnL8ZFvCGQQ8FvwtL0A5vCoCCkgcggEk/h6gwfjEjA6BmMRJwHB7gVqZvPocx2m
-         v3HQ58OS/GtcLIOpTBtx5TWytxqN/vvcT8heCd54hWmtNYt41IaWliV9K92bcUEglbJF
-         2vqNqGS132XPFdbs9uz+cSWeYx3Jg66I0X6Mwwevzo3eV7oxiOkqj7Y1jrVw7CCBpwZT
-         lazfGjE7qEYEVRZURlOWHfDzDM3+MWsVZlbj9llebeMcfIvu5I0XUXx/zDCjyDIT9hfG
-         RQ2A==
-X-Gm-Message-State: APjAAAVbMXisXi5YOkQ4vTOVUIlUjhvhKPhEbQNaebFTOVcH6B/PVRId
-        xrTPAnjnZJnihIS46ptJlnkjwq8TYuKlbuzFR78=
-X-Google-Smtp-Source: APXvYqyCtO5uL/g3n16d5UsZKLIf2+r0xGGoNKR0Pkc9BBZcZuD4DdinNk6NcHWMXMHtz0uhm4FoBeukWORmh1oNLag=
-X-Received: by 2002:a63:9d8f:: with SMTP id i137mr10774582pgd.33.1579696469327;
- Wed, 22 Jan 2020 04:34:29 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2GhRGBXZ61sShjbspHfKcYEQZWltM3X6lSFo674t7to=;
+        b=nFIgNVmmYuI95UtLCQHTOFBhXL+aUMtfvZHaqFrgphEkZAOZWkEmTojxnH1RDG1zKV
+         GlmIWB+VIdr2+PLvzB54KABMMg7LIk8F6t1fczFC5Nful7lMRmk2fF0Nb5YwZvEXISZb
+         EGpLMbb4jinsJt61bBd7Poe6otsdFB5CDdq1JwryX5m3yPRk5cyKOCoxYjAsGo9dv+Yg
+         5su9UIuJr1fwMnOXgDSZfxM9x5IIhEXFTPvK0Bla5jiPuMbIKb4olpsaxX0ESjV/9I1S
+         rCzALKvAVgh5qCTbMmzBAeLqlZ/pCfwVWvWdjL4gAD7gZ7wTf4ifW59hNtbjHVEovrNl
+         lCtw==
+X-Gm-Message-State: APjAAAXhf/fU5dWpzoRKE3RYMT7EYC8TbgqOwolKtMN15c9IGFceBwUj
+        VrsEIW1AD05pRUlsz5U8BOfmz8zTa/I=
+X-Google-Smtp-Source: APXvYqyByoPvWV0lN8iAWU7bNGHwXyB94LMbplyJgmq9E//WLFRbgrouqlRAp+2Y9VbNJ+oLcMjDBQ==
+X-Received: by 2002:a05:6000:cb:: with SMTP id q11mr11101981wrx.14.1579696481402;
+        Wed, 22 Jan 2020 04:34:41 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id h8sm60333141wrx.63.2020.01.22.04.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 04:34:40 -0800 (PST)
+Date:   Wed, 22 Jan 2020 12:34:54 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Brown <broonie@kernel.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 37/38] platform/x86: intel_pmc_ipc: Convert to MFD
+Message-ID: <20200122123454.GL15507@dell>
+References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
+ <20200121160114.60007-38-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:c08d:0:0:0:0 with HTTP; Wed, 22 Jan 2020 04:34:28
- -0800 (PST)
-Reply-To: aishagaddafiaam@gmail.com
-From:   Aisha Gaddafi <zackogbalegelfirm@gmail.com>
-Date:   Wed, 22 Jan 2020 13:34:28 +0100
-Message-ID: <CACs6TTNvCkL1uU64jFjBg2QHsfR2_C7o0mWR_xcbCwXmKsh1fQ@mail.gmail.com>
-Subject: Hello Dear Very Confidential,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200121160114.60007-38-mika.westerberg@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Very Confidential,
+On Tue, 21 Jan 2020, Mika Westerberg wrote:
 
+> This driver only creates a bunch of platform devices sharing resources
+> belonging to the PMC device. This is pretty much what MFD subsystem is
+> for so move the driver there, renaming it to intel_pmc_bxt.c which
+> should be more clear what it is.
+> 
+> MFD subsystem provides nice helper APIs for subdevice creation so
+> convert the driver to use those. Unfortunately the ACPI device includes
+> separate resources for most of the subdevices so we cannot simply call
+> mfd_add_devices() to create all of them but instead we need to call it
+> separately for each device.
+> 
+> The new MFD driver continues to expose two sysfs attributes that allow
+> userspace to send IPC commands to the PMC/SCU to avoid breaking any
+> existing applications that may use these. Generally this is bad idea so
+> document this in the ABI documentation.
+> 
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  .../ABI/obsolete/sysfs-driver-intel_pmc_bxt   |  22 +
+>  arch/x86/include/asm/intel_pmc_ipc.h          |  47 --
+>  arch/x86/include/asm/intel_telemetry.h        |   1 +
+>  drivers/mfd/Kconfig                           |  16 +-
+>  drivers/mfd/Makefile                          |   1 +
+>  drivers/mfd/intel_pmc_bxt.c                   | 496 ++++++++++++++
+>  drivers/platform/x86/Kconfig                  |  16 +-
+>  drivers/platform/x86/Makefile                 |   1 -
+>  drivers/platform/x86/intel_pmc_ipc.c          | 645 ------------------
+>  .../platform/x86/intel_telemetry_debugfs.c    |  12 +-
+>  drivers/platform/x86/intel_telemetry_pltdrv.c |   2 +
+>  drivers/usb/typec/tcpm/Kconfig                |   2 +-
+>  include/linux/mfd/intel_pmc_bxt.h             |  21 +
+>  13 files changed, 572 insertions(+), 710 deletions(-)
+>  create mode 100644 Documentation/ABI/obsolete/sysfs-driver-intel_pmc_bxt
+>  delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
+>  create mode 100644 drivers/mfd/intel_pmc_bxt.c
+>  delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
+>  create mode 100644 include/linux/mfd/intel_pmc_bxt.h
 
+[...]
 
+> +static int intel_pmc_probe(struct platform_device *pdev)
+> +{
+> +	struct intel_scu_ipc_pdata pdata = {};
+> +	struct intel_pmc_dev *pmc;
+> +	int ret;
+> +
+> +	pmc = devm_kzalloc(&pdev->dev, sizeof(*pmc), GFP_KERNEL);
+> +	if (!pmc)
+> +		return -ENOMEM;
+> +
+> +	pmc->dev = &pdev->dev;
+> +	spin_lock_init(&pmc->gcr_lock);
+> +
+> +	ret = intel_pmc_get_resources(pdev, pmc, &pdata);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to request resources\n");
+> +		return ret;
+> +	}
+> +
+> +	pmc->scu = devm_intel_scu_ipc_register(&pdev->dev, &pdata);
+> +	if (IS_ERR(pmc->scu))
+> +		return PTR_ERR(pmc->scu);
 
-I am Aisha Gaddafi, Daughter of the former Libyan leader, Col. Muammar
-Gaddafi. I am offering you a partnership proposal in a classified
-monetary transaction, which involves the need to secretly relocate and
-secures some of our family funds concealed in a special escrow dormant
-holding with a financial services company in Africa. I am in a very
-difficult situation and I must immediately relocate this fund for
-safety and investments purposes.
+*_register is better than *_probe.  If it was called that (or maybe
+*_init) initially I may have missed the issue altogether ...
 
-More so, this must be done in such a way that it must not be tied to
-me as a result of my father's death and politics circumstances. More
-details of the transaction will be disclosed to you once you can
-assure me that you can be trusted to handle this. Honesty and trust is
-what I am in quest of, so therefore your assurance of confidentiality
-and trust will be highly appreciated. For further clarification.
+However, I still think it the SCU IPC *device* needs to be a device
+driver and abide by the rules, ensuring it uses the device driver
+model/API.  As such, it should be registered and probed as a device.
 
+If you require something from it you should call into it (perhaps
+using a register function like above), but that should be done *after*
+the device has been bound and probed.
 
-Thank you
+> +	platform_set_drvdata(pdev, pmc);
+> +
+> +	ret = intel_pmc_create_devices(pmc);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "Failed to create PMC devices\n");
+> +
+> +	return ret;
+> +}
 
-Aisha  Gaddafi
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
