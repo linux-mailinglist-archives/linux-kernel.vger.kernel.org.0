@@ -2,71 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2684014512C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:52:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC78145155
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732620AbgAVJwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:52:19 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:51800 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730891AbgAVJwQ (ORCPT
+        id S1732473AbgAVJxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:53:32 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40618 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731295AbgAVJxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:52:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5abJ1QnasX2RGu56JYvUsjvfRt1I9ljUh2ZesPKbuT0=; b=p8YLls2HIIhVbHUeXOH91k+ND
-        OvNM0vHGgLEU4LoIC4sR30p/ug+nv96bSBCBWjq8l93N+i9prze9knLA4/p35cqdr3nJQVBUSp+o/
-        oUb4PFxfkOIi69TOwLODpt8DvaMCrmoHePkSZYiGnOT4b5TFC6j6SvtAyJND2jVQVASGGJNtJCk8H
-        gzTGEqoI1YWFAoID4SKv/vHa+Yh53KIJBrWIJ3QAChO4kVLOyCCHkhHMCI5F4q6HBoFWvKKAE7KwI
-        8ItWBXpUMuC6Py0PqUk4h0mY62cq7XZWizzuJ2415jg0iVSKoh6kc9brledLrHGOTx5Fu1UCakadr
-        mCdZZvQsQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iuCfb-0003jg-MM; Wed, 22 Jan 2020 09:51:31 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 25F9A3079DF;
-        Wed, 22 Jan 2020 10:49:48 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9B47B20983E31; Wed, 22 Jan 2020 10:51:27 +0100 (CET)
-Date:   Wed, 22 Jan 2020 10:51:27 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alex Kogan <alex.kogan@oracle.com>
-Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
-        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        guohanjun@huawei.com, jglauber@marvell.com,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        dave.dice@oracle.com, rahul.x.yadav@oracle.com
-Subject: Re: [PATCH v7 3/5] locking/qspinlock: Introduce CNA into the slow
- path of qspinlock
-Message-ID: <20200122095127.GC14946@hirez.programming.kicks-ass.net>
-References: <20191125210709.10293-1-alex.kogan@oracle.com>
- <20191125210709.10293-4-alex.kogan@oracle.com>
- <20200121202919.GM11457@worktop.programming.kicks-ass.net>
+        Wed, 22 Jan 2020 04:53:30 -0500
+Received: by mail-qk1-f195.google.com with SMTP id c17so5776474qkg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:53:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
+        b=Vvcyg9ajPsGRqCg5vdCGGcjfjAwjtzP/XrC9OXM+74J+BGbkz5db2jdC1DSBy4VrkK
+         d6bI/BfgJcluwR/H6IW/7ALxNhTimaWCWEsHeD6ZtJ+Wko5tT9l3CLI8hA2pYvSFocBw
+         uVswg+yB2qWezZxvzu5aBt3/RNuIvwlumYnSad1U5NtUeIo6qKFcLNUHoc6af4lz0iIa
+         PiANNRayTWL+/K5Jd9cPBoT4T6cTbf4Zx1Z6UyHi7/s5/trmcXSv/aC8xtyVpwh1bEjN
+         s4Zsb8X5P98sldXGefPzLnOZKbdIPgtdYsUc8wRcuMe07Ot5kQ6q1D1I5Cbu0pxraH+m
+         elCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=1OTCzRuZLXKgKtG0YjZ5OtZ6bjyEuVtHenJ+Tqkqok8=;
+        b=YDSPI1ABZbQ3ADjUnbV4fm0wFlfY2Ec8nzJyH5F/+MTV0LmqBtkhEq2SnC5Oao2M1u
+         3J184lJ0HDP5PwPLsMPnU87tWTHGYas7sMMGj9ct5T9OJam1pw02xeTuBSdHuI/SbZJA
+         m4aYEmH5c4JD3mvNZV2K1bOG+Q3tpNqLSrJ16p5GV+/WFW3Bg6Gtt4TggoF97uljpBWV
+         zNbe8Brdt1XzZJsQbw8oRQwizl3dB8lcDifk6Dgad3Dt1haFSfm2ZBJagzfQlFi2Iwc5
+         ztH3NCXNTXPL0x4tmhJHSXCpXzYOGn5k7wDQjyvU3rHyTd1nfqDpBjVF88YUAaw1n6wW
+         ECQw==
+X-Gm-Message-State: APjAAAVpwiTUkSv6U8jY74aQxBwr8vPMGJ4LFD7Ntzl8hkDExe7FnzbB
+        5jsk3WNU4Mt0gQt5oE0p4TxZaKw7qY1YIMvSR38=
+X-Google-Smtp-Source: APXvYqwNDvhQB6R3RyAHJkaIl8lcJVqzOVU+RM3Yh9hSZxSTO491gCBMCBZCctxDAuu0EUQ4Y9p+wvrzFrikeGOOxCE=
+X-Received: by 2002:ae9:e206:: with SMTP id c6mr9276479qkc.105.1579686809756;
+ Wed, 22 Jan 2020 01:53:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121202919.GM11457@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a0c:c382:0:0:0:0:0 with HTTP; Wed, 22 Jan 2020 01:53:29
+ -0800 (PST)
+Reply-To: aishagaddafi969@aol.com
+From:   AISHA GADDAFI <aishagddafi680@gmail.com>
+Date:   Wed, 22 Jan 2020 01:53:29 -0800
+Message-ID: <CAO3JireTMvH=8kSkqY9LojM84G76PBn1iQi6X9jrra4-i740vw@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 09:29:19PM +0100, Peter Zijlstra wrote:
-> 
-> various notes and changes in the below.
+-- 
+Dear Friend (Assalamu Alaikum),
 
-Also, sorry for replying to v7 and v8, I forgot to refresh email on the
-laptop and had spotty cell service last night and only found v7 in that
-mailbox.
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
 
-Afaict none of the things I commented on were fundamentally changed
-though.
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
+
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+aishagaddafi969@aol.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: aishagaddafi969@aol.com
