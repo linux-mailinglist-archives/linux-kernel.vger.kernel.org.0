@@ -2,99 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7720514502D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B113145198
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:55:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbgAVJo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:44:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387776AbgAVJoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:44:23 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9BA52468B;
-        Wed, 22 Jan 2020 09:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686263;
-        bh=gEMbZSf7gz/38fyK2S0QNO50FzA33PkIo6Ay1nYgqT0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DycamOghaO5tOni2q2frO4wY1bwON5mcQx4ubgFpau2LrdbtLlVjvrXPZPyemXkj2
-         WS39eBtVkKyE2UVjQjaLd9L/4ZaNAFyZLEIlrD8lkeHtiphGA6OVfl+alydLvJKuG/
-         6+891UYq+xhPUC5NpsLtAuR6KcR0mf6TbypY7L2A=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eddie James <eajames@linux.ibm.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 103/103] hwmon: (pmbus/ibm-cffps) Switch LEDs to blocking brightness call
-Date:   Wed, 22 Jan 2020 10:29:59 +0100
-Message-Id: <20200122092817.056849882@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730910AbgAVJzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:55:19 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46786 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730377AbgAVJdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:33:14 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E3C529708B054E010687;
+        Wed, 22 Jan 2020 17:33:11 +0800 (CST)
+Received: from [127.0.0.1] (10.133.208.128) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 Jan 2020
+ 17:33:10 +0800
+To:     <tytso@mit.edu>, <jack@suse.com>, <linux-ext4@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   wangyan <wangyan122@huawei.com>
+Subject: [PATCH] jbd2: delete the duplicated words in the comments
+Message-ID: <12087f77-ab4d-c7ba-53b4-893dbf0026f0@huawei.com>
+Date:   Wed, 22 Jan 2020 17:33:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.208.128]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eddie James <eajames@linux.ibm.com>
+Delete the duplicated words "is" in the comments
 
-commit 9861ff954c7e83e2f738ce16fbe15f8a1e121771 upstream.
-
-Since i2c_smbus functions can sleep, the brightness setting function
-for this driver must be the blocking version to avoid scheduling while
-atomic.
-
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Link: https://lore.kernel.org/r/20191106200106.29519-2-eajames@linux.ibm.com
-Fixes: ef9e1cdf419a3 ("hwmon: (pmbus/cffps) Add led class device for power supply fault led")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Yan Wang <wangyan122@huawei.com>
 ---
- drivers/hwmon/pmbus/ibm-cffps.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/jbd2/transaction.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwmon/pmbus/ibm-cffps.c
-+++ b/drivers/hwmon/pmbus/ibm-cffps.c
-@@ -269,8 +269,8 @@ static int ibm_cffps_read_word_data(stru
- 	return rc;
- }
- 
--static void ibm_cffps_led_brightness_set(struct led_classdev *led_cdev,
--					 enum led_brightness brightness)
-+static int ibm_cffps_led_brightness_set(struct led_classdev *led_cdev,
-+					enum led_brightness brightness)
- {
- 	int rc;
- 	struct ibm_cffps *psu = container_of(led_cdev, struct ibm_cffps, led);
-@@ -286,9 +286,11 @@ static void ibm_cffps_led_brightness_set
- 	rc = i2c_smbus_write_byte_data(psu->client, CFFPS_SYS_CONFIG_CMD,
- 				       psu->led_state);
- 	if (rc < 0)
--		return;
-+		return rc;
- 
- 	led_cdev->brightness = brightness;
-+
-+	return 0;
- }
- 
- static int ibm_cffps_led_blink_set(struct led_classdev *led_cdev,
-@@ -324,7 +326,7 @@ static void ibm_cffps_create_led_class(s
- 		 client->addr);
- 	psu->led.name = psu->led_name;
- 	psu->led.max_brightness = LED_FULL;
--	psu->led.brightness_set = ibm_cffps_led_brightness_set;
-+	psu->led.brightness_set_blocking = ibm_cffps_led_brightness_set;
- 	psu->led.blink_set = ibm_cffps_led_blink_set;
- 
- 	rc = devm_led_classdev_register(dev, &psu->led);
-
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 27b9f9dee434..5c3abbaccb57 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -525,7 +525,7 @@ EXPORT_SYMBOL(jbd2__journal_start);
+  * modified buffers in the log.  We block until the log can guarantee
+  * that much space. Additionally, if rsv_blocks > 0, we also create another
+  * handle with rsv_blocks reserved blocks in the journal. This handle is
+- * is stored in h_rsv_handle. It is not attached to any particular transaction
++ * stored in h_rsv_handle. It is not attached to any particular transaction
+  * and thus doesn't block transaction commit. If the caller uses this reserved
+  * handle, it has to set h_rsv_handle to NULL as otherwise jbd2_journal_stop()
+  * on the parent handle will dispose the reserved one. Reserved handle has to
+-- 
+2.19.1
 
