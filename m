@@ -2,161 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB523145B9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:31:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3311B145B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbgAVSbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 13:31:18 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:43077 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgAVSbR (ORCPT
+        id S1726103AbgAVSiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 13:38:17 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53542 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbgAVSiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 13:31:17 -0500
-Received: by mail-qv1-f65.google.com with SMTP id p2so210706qvo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 10:31:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KsSmCaLhw2eH8Ck1bfIH7ogc6/ppRHUB+hk51YkiZzE=;
-        b=u0FpVPQrv4MeJj0uTvYpr+Sr33hV6aI1K+Gy8Mixj42CY52n6sZTaMWDIYtZSSCP24
-         mk9AQBCjBEZZe/npyXvADUGSV7Bm/VG+E0ISXV7nQTLQINJU53OZm0CsA7WB6ZEmjmRK
-         pO0ElN1AQ3/y67SssU92eOrzZRg0MKD3ME3UblFkLpoa73KGxdADtGQrWy9scDLLZEn1
-         cBQjulW+4DY/St0t8MIpZkDxNDNaQ6UYuWCw+oUB3dFEwi8KBcScjaWaD0a22oqbJREl
-         xzWXKZUcI7ERm13Gre8OHCeZmsTaUtphwjUy+FCbkLULIvv3cbrV+hnaYWW+HYDN+Tso
-         qRHw==
+        Wed, 22 Jan 2020 13:38:16 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m24so140168wmc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 10:38:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KsSmCaLhw2eH8Ck1bfIH7ogc6/ppRHUB+hk51YkiZzE=;
-        b=Eu+HKIsmfTyT5ueaIzq2JwzJ78e88CBWHpnisZVa9sfHxLvcYLxSpG8ojNsMCyZuJz
-         EJUaBx89GsC/yXLYUBOtGAvjuLgdLyM52aVCdY8+1x5j/V1A5trDcYtK94ifGD94rSH+
-         RSqk07N9KI9XXJYQ3KQ7OuWm5TThm1RUYllbWG5IsqVn/slaQC3XJi4RRc+sNnxKCcoc
-         JzNI1fCS+W6/N3DYVZV4DLP3jDYMZwXMAIcepvsF7hroc57/PWZ6Lqt1xdZruzdd4l/X
-         AWxNvBw9YQ0S5cwjA0d6fyZZcYYvRL221UA1zRmkCRYMaFG3foKL8ekCJ+iMVxx2VEJ7
-         y/bA==
-X-Gm-Message-State: APjAAAUAhWWi50TkkIkG6QA9/1DVZh5GVdyasmkUATIty6LV1G778Py4
-        usONVcksN6Ymql10QLjbN/c2cQ==
-X-Google-Smtp-Source: APXvYqxy5nz3O1ZcaVlvpMPrQvwHVVq/hD6LsggY1jWvqsQCA/JvE8PXN7YnabEslIy3Dhx0ZUE6xg==
-X-Received: by 2002:a05:6214:982:: with SMTP id dt2mr11565088qvb.174.1579717875415;
-        Wed, 22 Jan 2020 10:31:15 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::3:203c])
-        by smtp.gmail.com with ESMTPSA id x3sm21488705qts.35.2020.01.22.10.31.14
+        bh=966BgYgZRUlLppOTZ8GZw5dVZmBTcRyeqAhJa9bwYzU=;
+        b=DYfHAjx7twU4SPZDvRNfCHI0viHQbc6AaSjHitsYODC/o7cqvw6mPOT8re8rPmGAsd
+         ppCNce7zf5ZgIz1hoYa12zq7xSxIpSDntVkPR5pHeTFyib62Uf7gGG+hZ2KuO/sUzohj
+         mVbwOtB54SNF8odEAyf4BB/plhD/cU9UnzaO/pfNKa2jiJymHu2OaACrLRbnphGmkfWg
+         XiCfWDJuOLTUSyGKXjC2WrLIS7yTVid+nGMf6fmhWjEjkAPbtNvDsayGpSOrnRSxIACP
+         4At21NUL352ZvlnebxfZk4TypDjSugNwDfWM+ZVAyT9WhR0vbLSRNgc7yWmpZDx0fngS
+         ZCHA==
+X-Gm-Message-State: APjAAAWmtZyxBzdPDom3wg1kONN2+aKmpLsNburKPhcjY0Y66fUvE+gt
+        NMV4R1QCvPJjuTrbZ/A5oE4=
+X-Google-Smtp-Source: APXvYqytlJusKX0Kz3YLI2vL5MLf0VI1Z1xBBIdMBORZVE6octNROw4k0V6HC2FB29J3ObqpMFnQGw==
+X-Received: by 2002:a05:600c:2c06:: with SMTP id q6mr4482299wmg.154.1579718294349;
+        Wed, 22 Jan 2020 10:38:14 -0800 (PST)
+Received: from localhost (ip-37-188-245-167.eurotel.cz. [37.188.245.167])
+        by smtp.gmail.com with ESMTPSA id j12sm63168372wrw.54.2020.01.22.10.38.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 10:31:14 -0800 (PST)
-Date:   Wed, 22 Jan 2020 13:31:13 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, willy@infradead.org,
-        shakeelb@google.com, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
+        Wed, 22 Jan 2020 10:38:13 -0800 (PST)
+Date:   Wed, 22 Jan 2020 19:38:09 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonardo Bras <leonardo@linux.ibm.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v8 03/10] mm/lru: replace pgdat lru_lock with lruvec lock
-Message-ID: <20200122183113.GA98452@cmpxchg.org>
-References: <1579143909-156105-1-git-send-email-alex.shi@linux.alibaba.com>
- <1579143909-156105-4-git-send-email-alex.shi@linux.alibaba.com>
- <20200116215222.GA64230@cmpxchg.org>
- <9ee80b68-a78f-714a-c727-1f6d2b4f87ea@linux.alibaba.com>
- <20200121160005.GA69293@cmpxchg.org>
- <0bd0a561-93cc-11b6-1eae-24b450b0f033@linux.alibaba.com>
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        lantianyu1986@gmail.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH RFC v1] mm: is_mem_section_removable() overhaul
+Message-ID: <20200122183809.GB29276@dhcp22.suse.cz>
+References: <CAPcyv4jvmYRbX9i+1_LvHoTDGABadHbYH3NVkqczKsQ4fsf74g@mail.gmail.com>
+ <20200120074816.GG18451@dhcp22.suse.cz>
+ <a5f0bd8d-de5e-9f27-5c94-7746a3d20a95@redhat.com>
+ <20200121120714.GJ29276@dhcp22.suse.cz>
+ <a29b49b9-28ad-44fa-6c0b-90cd43902f29@redhat.com>
+ <20200122104230.GU29276@dhcp22.suse.cz>
+ <98b6c208-b4dd-9052-43f6-543068c649cc@redhat.com>
+ <816ddd66-c90b-76f1-f4a0-72fe41263edd@redhat.com>
+ <20200122164618.GY29276@dhcp22.suse.cz>
+ <626d344e-8243-c161-cd07-ed1276eba73d@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0bd0a561-93cc-11b6-1eae-24b450b0f033@linux.alibaba.com>
+In-Reply-To: <626d344e-8243-c161-cd07-ed1276eba73d@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 08:01:29PM +0800, Alex Shi wrote:
-> Yes I understand isolatation would exclusive by PageLRU, but forgive my
-> stupid, I didn't figure out how a new page lruvec adding could be blocked.
+On Wed 22-01-20 19:15:47, David Hildenbrand wrote:
+> On 22.01.20 17:46, Michal Hocko wrote:
+> > On Wed 22-01-20 12:58:16, David Hildenbrand wrote:
+[...]
+> >> Especially interesting for IBM z Systems, whereby memory
+> >> onlining/offlining will trigger the actual population of memory in the
+> >> hypervisor. So if an admin wants to offline some memory (to give it back
+> >> to the hypervisor), it would use lsmem to identify such blocks first,
+> >> instead of trying random blocks until one offlining request succeeds.
+> > 
+> > I am sorry for being dense here but I still do not understand why s390
+> 
+> It's good that we talk about it :) It's hard to reconstruct actual use
+> cases from tools and some documentation only ...
+> 
+> Side note (just FYI): One difference on s390x compared to other
+> architectures (AFAIKS) is that once memory is offline, you might not be
+> allowed (by the hypervisor) to online it again - because it was
+> effectively unplugged. Such memory is not removed via remove_memory(),
+> it's simply kept offline.
 
-I don't see why we would need this. Can you elaborate where you think
-this is a problem?
+I have a very vague understanding of s390 specialities but this is not
+really relevant to the discussion AFAICS because this happens _after_
+offlining.
+ 
+> > and the way how it does the hotremove matters here. Afterall there are
+> > no arch specific operations done until the memory is offlined. Also
+> > randomly checking memory blocks and then hoping that the offline will
+> > succeed is not way much different from just trying the offline the
+> > block. Both have to crawl through the pfn range and bail out on the
+> > unmovable memory.
+> 
+> I think in general we have to approaches to memory unplugging.
+> 
+> 1. Know explicitly what you want to unplug (e.g., a DIMM spanning
+> multiple memory blocks).
+> 
+> 2. Find random memory blocks you can offline/unplug.
+> 
+> 
+> For 1, I think we both agree that we don't need this. Just try to
+> offline and you know if it worked.
+> 
+> Now of course, for 2 you can try random blocks until you succeeded. From
+> a sysadmin point of view that's very inefficient. From a powerpc-utils
+> point of view, that's inefficient.
 
-If compaction races with charging for example, compaction doesn't need
-to prevent a new page from being added to an lruvec. PageLRU is only
-set after page->mem_cgroup is updated, so there are two race outcomes:
-
-1) TestClearPageLRU() fails. That means the page isn't (fully) created
-yet and cannot be migrated. We goto isolate_fail before even trying to
-lock the lruvec.
-
-2) TestClearPageLRU() succeeds. That means the page was fully created
-and page->mem_cgroup has been set up. Anybody who now wants to change
-page->mem_cgroup needs PageLRU, but we have it, so lruvec is stable.
-
-I.e. cgroup charging does this:
-
-	page->mem_cgroup = new_group
-
-	lock(pgdat->lru_lock)
-	SetPageLRU()
-	add_page_to_lru_list()
-	unlock(pgdat->lru_lock)
-
-and compaction currently does this:
-
-	lock(pgdat->lru_lock)
-	if (!PageLRU())
-		goto isolate_fail
-	// __isolate_lru_page:
-	if (!get_page_unless_zero())
-		goto isolate_fail
-	ClearPageLRU()
-	del_page_from_lru_list()
-	unlock(pgdat->lru_lock)
-
-We can replace charging with this:
-
-	page->mem_cgroup = new_group
-
-	lock(lruvec->lru_lock)
-	add_page_to_lru_list()
-	unlock(lruvec->lru_lock)
-
-	SetPageLRU()
-
-and the compaction sequence with something like this:
-
-	if (!get_page_unless_zero())
-		goto isolate_fail
-
-	if (!TestClearPageLRU())
-		goto isolate_fail_put
-
-	// We got PageLRU, so charging is complete and nobody
-	// can modify page->mem_cgroup until we set it again.
-
-	lruvec = mem_cgroup_page_lruvec(page, pgdat)
-	lock(lruvec->lru_lock)
-	del_page_from_lru_list()
-	unlock(lruvec->lru_lock)
-
+How exactly is check + offline more optimal then offline which makes
+check as its first step? I will get to your later points after this is
+clarified.
+-- 
+Michal Hocko
+SUSE Labs
