@@ -2,120 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A15814536A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2150414536D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 12:09:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgAVLGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 06:06:32 -0500
-Received: from mail.wangsu.com ([123.103.51.227]:44552 "EHLO wangsu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725911AbgAVLGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 06:06:31 -0500
-Received: from 137.localdomain (unknown [59.61.78.232])
-        by app2 (Coremail) with SMTP id 4zNnewBnh2uxLChe+KUOAA--.844S2;
-        Wed, 22 Jan 2020 19:06:26 +0800 (CST)
-From:   Pengcheng Yang <yangpc@wangsu.com>
-To:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        jannh@google.com, viro@zeniv.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, Pengcheng Yang <yangpc@wangsu.com>
-Subject: [PATCH RESEND] kernel/relay.c: fix read_pos error when multiple readers
-Date:   Wed, 22 Jan 2020 19:06:15 +0800
-Message-Id: <1579691175-28949-1-git-send-email-yangpc@wangsu.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: 4zNnewBnh2uxLChe+KUOAA--.844S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrW3tw15WrWktFy8XF1xAFb_yoW5Xry8pr
-        Z0kayrAr4vqa4fuFyrKF4kXFyfG34fXF40vrW8W3WxZr9rGrs5AFWrGa4YqryUJw1ktw4U
-        Kw4j9wn7tr40yFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgS1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l8cAvFVAK
-        0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4
-        x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2
-        z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4
-        xG64xvF2IEw4CE5I8CrVC2j2WlYx0E74AGY7Cv6cx26r48McvjeVCFs4IE7xkEbVWUJVW8
-        JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4kMx
-        AIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_Gr4l4I8I3I0E4IkC6x0Yz7v_Jr0_
-        Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-        CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
-        I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0x
-        vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kfnx
-        nUUI43ZEXa7VU04CJPUUUUU==
-X-CM-SenderInfo: p1dqw1nf6zt0xjvxhudrp/
+        id S1729165AbgAVLIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 06:08:52 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35330 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729037AbgAVLIv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 06:08:51 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so6726223wmb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 03:08:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/QxijJMYTIJinF8V9bOrqtS4KGLiuqhnFZl4QbyPRY=;
+        b=C9jZRoXsUwcqjPQhcoVmI2ElcZew/wsjk3az+5v3copiv8k+v2XIz7toq4RQqSugln
+         HhwF3g4wsZe9/R0l0T8VGCCaj1asImY+eskODMV8T7GJhP+ZsmiEvprqlA/vq4IYGKKR
+         uOrIFQ0L+he9J72oyZdsaTP7T8YHFewSl8rQXAB9I0iY3QUXoPiTwMIksz+qRznPiJ2e
+         WON3VdUuJ1kPjVAvUdZg2riMMtdC3sCRoGJCgQ1zFcIRW92A045ZIC1ssmJvVj46pH+t
+         s4iEuVTdSziqcPM8Z01mpu40mIqKpNdxzR3S4lRdot3S9s4juNyN7tuSQKF3A+CfTQ77
+         YsLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/QxijJMYTIJinF8V9bOrqtS4KGLiuqhnFZl4QbyPRY=;
+        b=cKgGkiGFyD99jQkc+hQcCLIS0ThVTvM6dREzw6Jq6ZGD4UQKPH9cWQH5dxnqwmD31s
+         933QTI+lPPWPObW7zezdDMZaLn9vS4+OkM8KP/Zm+S0DMggJ1vDNJTUtbiHWMM1PR9fg
+         ThQEowA9ws6roBA7cQpRJE2smRbUMb4OeixWnhWSdtPbqqCqn41PdOCksXT1x3E6oLcP
+         MNdaa7ysFkolTaJgyWCqyr88CUqC0RDoDAj4FQUMRBjxq122FGso4UBx/fg5YcVJK9H/
+         9/EkgPAhWkkbRxlDeo95bvyrF/xMbTGOmVNXMSpKrsZR+7a4C/NFkvznECHXv5EQXGID
+         G6GQ==
+X-Gm-Message-State: APjAAAWao+Zdpe47pKdPP3OR+4kUVBSdD8Cyd3bls7EQfST5mNTxY/su
+        9/cRkt0Cl2AA9sS1ShFQSWU=
+X-Google-Smtp-Source: APXvYqw/hNW4vnUyHCYO86uMFLlBAX3aXktEgSX5uf+c6AQoCxCtN0YNtab8ZCu2YtE4WzbcKOM8qQ==
+X-Received: by 2002:a05:600c:30a:: with SMTP id q10mr2446398wmd.84.1579691329918;
+        Wed, 22 Jan 2020 03:08:49 -0800 (PST)
+Received: from wambui.zuku.co.ke ([197.237.61.225])
+        by smtp.googlemail.com with ESMTPSA id l3sm52454380wrt.29.2020.01.22.03.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 03:08:49 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch
+Cc:     sean@poorly.run, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] conversion to struct drm_device logging macros.
+Date:   Wed, 22 Jan 2020 14:08:38 +0300
+Message-Id: <20200122110844.2022-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When reading, read_pos should start with bytes_consumed,
-not file->f_pos. Because when there is more than one reader,
-the read_pos corresponding to file->f_pos may have been consumed,
-which will cause the data that has been consumed to be read
-and the bytes_consumed update error.
+This series continues the ongoing conversion to the new struct
+drm_device based logging macros for debug in i915.
 
-Signed-off-by: Pengcheng Yang <yangpc@wangsu.com>
----
- kernel/relay.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+v2: address merge conflict in i915/display/intel_dp.c due to newer
+changes in file.
 
-diff --git a/kernel/relay.c b/kernel/relay.c
-index ade14fb..07ee1a7 100644
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -991,14 +991,14 @@ static void relay_file_read_consume(struct rchan_buf *buf,
- /*
-  *	relay_file_read_avail - boolean, are there unconsumed bytes available?
-  */
--static int relay_file_read_avail(struct rchan_buf *buf, size_t read_pos)
-+static int relay_file_read_avail(struct rchan_buf *buf)
- {
- 	size_t subbuf_size = buf->chan->subbuf_size;
- 	size_t n_subbufs = buf->chan->n_subbufs;
- 	size_t produced = buf->subbufs_produced;
- 	size_t consumed = buf->subbufs_consumed;
- 
--	relay_file_read_consume(buf, read_pos, 0);
-+	relay_file_read_consume(buf, 0, 0);
- 
- 	consumed = buf->subbufs_consumed;
- 
-@@ -1059,23 +1059,20 @@ static size_t relay_file_read_subbuf_avail(size_t read_pos,
- 
- /**
-  *	relay_file_read_start_pos - find the first available byte to read
-- *	@read_pos: file read position
-  *	@buf: relay channel buffer
-  *
-- *	If the @read_pos is in the middle of padding, return the
-+ *	If the read_pos is in the middle of padding, return the
-  *	position of the first actually available byte, otherwise
-  *	return the original value.
-  */
--static size_t relay_file_read_start_pos(size_t read_pos,
--					struct rchan_buf *buf)
-+static size_t relay_file_read_start_pos(struct rchan_buf *buf)
- {
- 	size_t read_subbuf, padding, padding_start, padding_end;
- 	size_t subbuf_size = buf->chan->subbuf_size;
- 	size_t n_subbufs = buf->chan->n_subbufs;
- 	size_t consumed = buf->subbufs_consumed % n_subbufs;
-+	size_t read_pos = consumed * subbuf_size + buf->bytes_consumed;
- 
--	if (!read_pos)
--		read_pos = consumed * subbuf_size + buf->bytes_consumed;
- 	read_subbuf = read_pos / subbuf_size;
- 	padding = buf->padding[read_subbuf];
- 	padding_start = (read_subbuf + 1) * subbuf_size - padding;
-@@ -1131,10 +1128,10 @@ static ssize_t relay_file_read(struct file *filp,
- 	do {
- 		void *from;
- 
--		if (!relay_file_read_avail(buf, *ppos))
-+		if (!relay_file_read_avail(buf))
- 			break;
- 
--		read_start = relay_file_read_start_pos(*ppos, buf);
-+		read_start = relay_file_read_start_pos(buf);
- 		avail = relay_file_read_subbuf_avail(read_start, buf);
- 		if (!avail)
- 			break;
+Wambui Karuga (6):
+  drm/i915/dsi: conversion to struct drm_device log macros
+  drm/i915/ddi: convert to struct drm_device log macros.
+  drm/i915/power: convert to struct drm_device macros in
+    display/intel_display_power.c
+  drm/i915/dp: conversion to struct drm_device logging macros.
+  drm/i915/opregion: conversion to struct drm_device logging macros.
+  drm/i915/hdcp: conversion to struct drm_device based logging macros
+
+ drivers/gpu/drm/i915/display/icl_dsi.c        |  82 ++--
+ drivers/gpu/drm/i915/display/intel_ddi.c      |  98 +++--
+ .../drm/i915/display/intel_display_power.c    | 177 +++++----
+ drivers/gpu/drm/i915/display/intel_dp.c       | 357 ++++++++++--------
+ drivers/gpu/drm/i915/display/intel_hdcp.c     | 138 ++++---
+ drivers/gpu/drm/i915/display/intel_opregion.c | 134 ++++---
+ 6 files changed, 576 insertions(+), 410 deletions(-)
+
 -- 
-1.8.3.1
+2.25.0
 
