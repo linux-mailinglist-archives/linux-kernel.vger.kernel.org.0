@@ -2,106 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A24F31456E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:39:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27FFD1456D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbgAVNjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:39:20 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46584 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbgAVNjU (ORCPT
+        id S1729133AbgAVNg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:36:27 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46253 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbgAVNgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:39:20 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00MDd0cM057467;
-        Wed, 22 Jan 2020 07:39:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579700340;
-        bh=co1m/tnZ+ImTwD3yuXyZxVaG3wlifWau9XX6MEe8Chg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=taziyYJQlSzT2GyfKCypQhi5IB6lZr9GRxURow+X6+pPSQokO3HMZ5n1Ktm1eOZV+
-         QOsv5YUsmbCQO9rciykyNX8OSaR8Ff8g2cuKfD4CCH/IloXOHZA9/Fm6d1FFzbQAcT
-         LwBwM8c5O1wWlnzNP20hbrcxQGLBFFveLKn91q14=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00MDd05r065172
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 Jan 2020 07:39:00 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
- Jan 2020 07:38:59 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 22 Jan 2020 07:38:59 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00MDcxqI104110;
-        Wed, 22 Jan 2020 07:38:59 -0600
-Subject: Re: [PATCH 1/3] dt-bindings: net: can: m_can: Add Documentation for
- stb-gpios
-To:     Faiz Abbas <faiz_abbas@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
-CC:     <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <davem@davemloft.net>, <mkl@pengutronix.de>,
-        <wg@grandegger.com>, <sriram.dash@samsung.com>, <nm@ti.com>,
-        <t-kristo@ti.com>
-References: <20200122080310.24653-1-faiz_abbas@ti.com>
- <20200122080310.24653-2-faiz_abbas@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <c3b0eeb8-bd78-aa96-4783-62dc93f03bfe@ti.com>
-Date:   Wed, 22 Jan 2020 07:35:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 22 Jan 2020 08:36:25 -0500
+Received: by mail-ed1-f66.google.com with SMTP id m8so6621743edi.13;
+        Wed, 22 Jan 2020 05:36:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rPi4ROFzsj9v9Yx3fg182Uf1p3zkTl0Xvf77j31SJxw=;
+        b=P69vDtf91B4HM/O3oFsfX2/LVUJ7YL0ol/zXhScdV8CW5lSOrViPcy7tmLzS+YfaZa
+         Dq0qRlPCYfhg1cHeUuKEystP04xuF9APw1yeTnbApLPGPozh2/BQRWInCGMRZsdrkNbN
+         ZUggkMe8zTZBy50n2xvLaywK4GZUsAYaX7Fn8ZKwe1YcH7SuV0rn8khurmzl/B1U8cSM
+         VIMUuaOxfVH4eohvY6vf0Vz8SiErqehjuvp+Kf0ItQOBngf/mkKaBaD1WRyLMhVesHWk
+         jc00XmmKdh4oZmWL/plV/ujY4knFUyDIdAQERWtSw8V6Uitr3twcDIeyoSVhA+/rpfC0
+         wSOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rPi4ROFzsj9v9Yx3fg182Uf1p3zkTl0Xvf77j31SJxw=;
+        b=E5MNgcreRNEzSkhKBgOK2BJK4afJfV7wlcirGl2TzRsQOpXmFw8zCQpnr4N2L1jmwY
+         k5dXtPfA1I4r6TUzse5PXMnCqr4rTG+DFkKsM3Lv9u56QoogVY/a+Nn5MA7Twx0B9ieh
+         byqILnWo4O4FR7EoMjz9M85cMCIqH4tBHh42RN7MmLV4vpknEgposCjXIgXss5gbKF2z
+         sYYoUtvCF3lnWlYP+kz/gpnWuiMn7FBLlitJnmw4H/FAB3IFYuXlf3vz46OdK68x7CIG
+         UHv2pCZ5tBoHeUsXB++pcgGDi4THD7IfB3tMgY6AvtwUDaCGEtRDVsx8qvtGZ5LE03zP
+         n50A==
+X-Gm-Message-State: APjAAAXDXjdUde3oBFhLanv7ixOLRVSUZuoMlkrCBGDkx0Zm7SymiO62
+        CrFug8ZROn+DbyudyLjotf5X03vjK+k8gqTlKfU=
+X-Google-Smtp-Source: APXvYqybpwJk49J6SOt3Kqbx+6+Q1Nsz5SCFEvvBnm/8ce9xFmLSeYtDL4RduJx+fNImMpRWBAtjAZgnAPncZErPaG0=
+X-Received: by 2002:a17:906:3195:: with SMTP id 21mr2569283ejy.207.1579700183507;
+ Wed, 22 Jan 2020 05:36:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200122080310.24653-2-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1578560282.git.benchuanggli@gmail.com> <CACT4zj9B8BSebZgf5-nc3zGYhsAGQ6gTRvfFf9r1DBB_mpRtHA@mail.gmail.com>
+ <CAPDyKFpVN1w7sRbcSAOezVYAkq0pq6kCFo0gjT3TO4FVqDCe=A@mail.gmail.com>
+In-Reply-To: <CAPDyKFpVN1w7sRbcSAOezVYAkq0pq6kCFo0gjT3TO4FVqDCe=A@mail.gmail.com>
+From:   Ben Chuang <benchuanggli@gmail.com>
+Date:   Wed, 22 Jan 2020 21:36:11 +0800
+Message-ID: <CACT4zj9ecfB==BhN7fm=0AmK3Y08ey4_7SYXeAtUg-3fcGhL-w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/6] Add support UHS-II for GL9755
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        greg.tu@genesyslogic.com.tw,
+        Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Faiz
-
-On 1/22/20 2:03 AM, Faiz Abbas wrote:
-> The CAN transceiver on some boards has an STB pin which is
-> used to control its standby mode. Add an optional property
-> stb-gpios to toggle the same.
+On Tue, Jan 21, 2020 at 8:02 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> ---
->   Documentation/devicetree/bindings/net/can/m_can.txt | 2 ++
->   1 file changed, 2 insertions(+)
+> On Tue, 21 Jan 2020 at 10:37, Ben Chuang <benchuanggli@gmail.com> wrote:
+> >
+> > Hi Uffe and Adrian,
+> >
+> > On Thu, Jan 9, 2020 at 5:13 PM Ben Chuang <benchuanggli@gmail.com> wrote:
+> > >
+> > > Hi Uffe and Adrian,
+> > >
+> > > These patches support UHS-II and fix GL9755 UHS-II compatibility.
+> > >
+> > > The parts of UHS-II are based on [1][2] and porting to Linux 5.5-rc5.
+> > > I have seen that Uffe comment that splitting the UHS-II parts into smaller
+> > > patches. Other than splitting into small patches, could you give me some
+> > > suggestions for refactoring/splitting files?
+> > >
+> > > Best regards,
+> > > Ben
+> >
+> > Gentle Ping, Any comments?
 >
-> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
-> index ed614383af9c..cc8ba3f7a2aa 100644
-> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
-> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
-> @@ -48,6 +48,8 @@ Optional Subnode:
->   			  that can be used for CAN/CAN-FD modes. See
->   			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
->   			  for details.
-> +stb-gpios		: gpio node to toggle the STB (standby) signal on the transceiver
-> +
+> I coming to this, but I need some additional time. In any case, thanks
+> for posting this and for pinging!
+>
+Thank you for taking the time and pinging back quickly. :-)
+I will wait patiently for the next reply.
 
-The m_can.txt is for the m_can framework.  If this is specific to the 
-platform then it really does not belong here.
+> [...]
+>
+> Kind regards
+> Uffe
 
-If the platform has specific nodes then maybe we need a 
-m_can_platform.txt binding for specific platform nodes.  But I leave 
-that decision to Rob.
-
-Also I prefer you spell out standby like the gpios are spelled out in 
-the tcan binding.
-
-Dan
-
-
->   Example:
->   SoC dtsi:
->   m_can1: can@20e8000 {
+Best regards,
+Ben
