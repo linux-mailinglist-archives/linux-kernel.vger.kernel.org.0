@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8227145117
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B60B144EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732393AbgAVJvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:51:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52970 "EHLO mail.kernel.org"
+        id S1729955AbgAVJcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:32:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732387AbgAVJhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:06 -0500
+        id S1729935AbgAVJcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:32:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A46052467E;
-        Wed, 22 Jan 2020 09:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3FD724673;
+        Wed, 22 Jan 2020 09:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685826;
-        bh=VduW93Y0Qt9OjW9JLQTSDDgaDytptO9GJJ+sjcxCw08=;
+        s=default; t=1579685520;
+        bh=54W6OgmCDqeTuJsLiKooVfT40af7XsuLNWDViJLgAhU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2JTWW9wEv2YediYJURlmiN+Of+57kcB0nIi/uvy8zZvfIJA55I7GABMh9vM5EiO+p
-         uWuCGnCBRM+UERqt+4pNzelUixONhP9iBHrTMhm3uTNxkk7+Y6BwFWLsrBjLaiQxIX
-         COVugq82lNx/dXD7GlV3eL+BxV3P1YVBc6IiJHVc=
+        b=t0ZIq6iibEjdqT6OWWZL+XhdQ6skU3hwYjYMF21ynOI+g+67cWgZSz1VYEiBLBQ6/
+         qsjwMxpwqAQ3+ZahDAXAetlcVZWKd+cSVLM0jTECVvDSnSVgWQy6WK66PIZTd/s0Dk
+         cBEhd+3aEMFWOj3BkEDc2mMd9xZs/PdGWjR+By04=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 59/97] USB: serial: suppress driver bind attributes
-Date:   Wed, 22 Jan 2020 10:29:03 +0100
-Message-Id: <20200122092805.915683644@linuxfoundation.org>
+Subject: [PATCH 4.4 48/76] USB: serial: quatech2: handle unbound ports
+Date:   Wed, 22 Jan 2020 10:29:04 +0100
+Message-Id: <20200122092757.863621015@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit fdb838efa31e1ed9a13ae6ad0b64e30fdbd00570 upstream.
+commit 9715a43eea77e42678a1002623f2d9a78f5b81a1 upstream.
 
-USB-serial drivers must not be unbound from their ports before the
-corresponding USB driver is unbound from the parent interface so
-suppress the bind and unbind attributes.
+Check for NULL port data in the modem- and line-status handlers to avoid
+dereferencing a NULL pointer in the unlikely case where a port device
+isn't bound to a driver (e.g. after an allocation failure on port
+probe).
 
-Unbinding a serial driver while it's port is open is a sure way to
-trigger a crash as any driver state is released on unbind while port
-hangup is handled on the parent USB interface level. Drivers for
-multiport devices where ports share a resource such as an interrupt
-endpoint also generally cannot handle individual ports going away.
+Note that the other (stubbed) event handlers qt2_process_xmit_empty()
+and qt2_process_flush() would need similar sanity checks in case they
+are ever implemented.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
+Fixes: f7a33e608d9a ("USB: serial: add quatech2 usb to serial driver")
+Cc: stable <stable@vger.kernel.org>     # 3.5
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/quatech2.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -1351,6 +1351,9 @@ static int usb_serial_register(struct us
- 		return -EINVAL;
- 	}
+--- a/drivers/usb/serial/quatech2.c
++++ b/drivers/usb/serial/quatech2.c
+@@ -872,7 +872,10 @@ static void qt2_update_msr(struct usb_se
+ 	u8 newMSR = (u8) *ch;
+ 	unsigned long flags;
  
-+	/* Prevent individual ports from being unbound. */
-+	driver->driver.suppress_bind_attrs = true;
-+
- 	usb_serial_operations_init(driver);
++	/* May be called from qt2_process_read_urb() for an unbound port. */
+ 	port_priv = usb_get_serial_port_data(port);
++	if (!port_priv)
++		return;
  
- 	/* Add this device to our list of devices */
+ 	spin_lock_irqsave(&port_priv->lock, flags);
+ 	port_priv->shadowMSR = newMSR;
+@@ -900,7 +903,10 @@ static void qt2_update_lsr(struct usb_se
+ 	unsigned long flags;
+ 	u8 newLSR = (u8) *ch;
+ 
++	/* May be called from qt2_process_read_urb() for an unbound port. */
+ 	port_priv = usb_get_serial_port_data(port);
++	if (!port_priv)
++		return;
+ 
+ 	if (newLSR & UART_LSR_BI)
+ 		newLSR &= (u8) (UART_LSR_OE | UART_LSR_BI);
 
 
