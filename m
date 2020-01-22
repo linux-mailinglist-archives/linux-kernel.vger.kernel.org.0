@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B165A144F40
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2AE144FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbgAVJgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51174 "EHLO mail.kernel.org"
+        id S1733165AbgAVJkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:40:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730716AbgAVJfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:53 -0500
+        id S1732879AbgAVJkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:40:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D13D20704;
-        Wed, 22 Jan 2020 09:35:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1AE524686;
+        Wed, 22 Jan 2020 09:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685753;
-        bh=ULzRYP2OrIeIGLif+7P/9iBBG1jNhnAQbs30VcaK2p4=;
+        s=default; t=1579686009;
+        bh=6peGELComVwPJobIqCDWWvnmKmDPtlCrb3OFIpVkbPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oVjc9MBgX4gMAJp1aOqgz6Dyy2jNWECYaLUA83Z2odZNu5wpHB7m06HdB9wHsbaDE
-         N8rx7DnEzxWgckGb36M3FtUnACee68ZggHpj08RKeOhaah1b9BWSOYB3XOBDwmdfI6
-         rPQ5X51zCi3UoIRP9F5jniZ5rWNqn5m9SBJoCDuQ=
+        b=EIefOkZaC+qqRYB4NLF94tbvQWbpLbCnS1PUZW/V6y2TZgovw/b15oKggxNE8GbJp
+         9zrAwtth7mVwSIc9IQAWPkuUQUGIf9dV9r98/lRfFmwZW8MEHj2ojXDW6FatrRiWXi
+         2fjyIkM42bfDdbEZ1puKjX5elTXh9DtIPqZvyX1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuya Fujita <fujita.yuya@fujitsu.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 66/97] perf hists: Fix variable names inconsistency in hists__for_each() macro
-Date:   Wed, 22 Jan 2020 10:29:10 +0100
-Message-Id: <20200122092806.958463630@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Willhalm, Thomas" <thomas.willhalm@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 26/65] mm/shmem.c: thp, shmem: fix conflict of above-47bit hint address and PMD alignment
+Date:   Wed, 22 Jan 2020 10:29:11 +0100
+Message-Id: <20200122092754.541271857@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +49,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuya Fujita <fujita.yuya@fujitsu.com>
+From: Kirill A. Shutemov <kirill@shutemov.name>
 
-commit 55347ec340af401437680fd0e88df6739a967f9f upstream.
+commit 991589974d9c9ecb24ee3799ec8c415c730598a2 upstream.
 
-Variable names are inconsistent in hists__for_each macro().
+Shmem/tmpfs tries to provide THP-friendly mappings if huge pages are
+enabled.  But it doesn't work well with above-47bit hint address.
 
-Due to this inconsistency, the macro replaces its second argument with
-"fmt" regardless of its original name.
+Normally, the kernel doesn't create userspace mappings above 47-bit,
+even if the machine allows this (such as with 5-level paging on x86-64).
+Not all user space is ready to handle wide addresses.  It's known that
+at least some JIT compilers use higher bits in pointers to encode their
+information.
 
-So far it works because only "fmt" is passed to the second argument.
-However, this behavior is not expected and should be fixed.
+Userspace can ask for allocation from full address space by specifying
+hint address (with or without MAP_FIXED) above 47-bits.  If the
+application doesn't need a particular address, but wants to allocate
+from whole address space it can specify -1 as a hint address.
 
-Fixes: f0786af536bb ("perf hists: Introduce hists__for_each_format macro")
-Fixes: aa6f50af822a ("perf hists: Introduce hists__for_each_sort_list macro")
-Signed-off-by: Yuya Fujita <fujita.yuya@fujitsu.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/OSAPR01MB1588E1C47AC22043175DE1B2E8520@OSAPR01MB1588.jpnprd01.prod.outlook.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Unfortunately, this trick breaks THP alignment in shmem/tmp:
+shmem_get_unmapped_area() would not try to allocate PMD-aligned area if
+*any* hint address specified.
+
+This can be fixed by requesting the aligned area if the we failed to
+allocated at user-specified hint address.  The request with inflated
+length will also take the user-specified hint address.  This way we will
+not lose an allocation request from the full address space.
+
+[kirill@shutemov.name: fold in a fixup]
+  Link: http://lkml.kernel.org/r/20191223231309.t6bh5hkbmokihpfu@box
+Link: http://lkml.kernel.org/r/20191220142548.7118-3-kirill.shutemov@linux.intel.com
+Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: "Willhalm, Thomas" <thomas.willhalm@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>
+Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/hist.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/shmem.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -312,10 +312,10 @@ static inline void perf_hpp__prepend_sor
- 	list_for_each_entry_safe(format, tmp, &(_list)->sorts, sort_list)
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2052,9 +2052,10 @@ unsigned long shmem_get_unmapped_area(st
+ 	/*
+ 	 * Our priority is to support MAP_SHARED mapped hugely;
+ 	 * and support MAP_PRIVATE mapped hugely too, until it is COWed.
+-	 * But if caller specified an address hint, respect that as before.
++	 * But if caller specified an address hint and we allocated area there
++	 * successfully, respect that as before.
+ 	 */
+-	if (uaddr)
++	if (uaddr == addr)
+ 		return addr;
  
- #define hists__for_each_format(hists, format) \
--	perf_hpp_list__for_each_format((hists)->hpp_list, fmt)
-+	perf_hpp_list__for_each_format((hists)->hpp_list, format)
+ 	if (shmem_huge != SHMEM_HUGE_FORCE) {
+@@ -2088,7 +2089,7 @@ unsigned long shmem_get_unmapped_area(st
+ 	if (inflated_len < len)
+ 		return addr;
  
- #define hists__for_each_sort_list(hists, format) \
--	perf_hpp_list__for_each_sort_list((hists)->hpp_list, fmt)
-+	perf_hpp_list__for_each_sort_list((hists)->hpp_list, format)
- 
- extern struct perf_hpp_fmt perf_hpp__format[];
- 
+-	inflated_addr = get_area(NULL, 0, inflated_len, 0, flags);
++	inflated_addr = get_area(NULL, uaddr, inflated_len, 0, flags);
+ 	if (IS_ERR_VALUE(inflated_addr))
+ 		return addr;
+ 	if (inflated_addr & ~PAGE_MASK)
 
 
