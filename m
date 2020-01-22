@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CB21450F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63BB9144F29
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732839AbgAVJiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
+        id S1731100AbgAVJfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732804AbgAVJiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:00 -0500
+        id S1729527AbgAVJfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:35:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 542532467B;
-        Wed, 22 Jan 2020 09:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C26B2467E;
+        Wed, 22 Jan 2020 09:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685879;
-        bh=/lJrhMRLesbT5WY05MPZcG0zypEGf3iElPWNFbRIDJI=;
+        s=default; t=1579685704;
+        bh=ZmS3ecpNKbKpZ80YMGwX6STvyWgGYbJUG1w6hAEWutk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OxTb3YXCnv297luf92SCYbUEMrlweT65RHMKvhK1/s+3llp0dHgdJETH05l3o3g9P
-         +XxaPi+GmnCzpdWFZvGMrdNBlDF7ZLK4kywaAF1+MsVjs8EL/972pu0UzDGQuMIJQ5
-         SN4IpIxKCuWhnbhjJfoPR/owqvnGrclRrvpDD7W8=
+        b=H9nKtKLUByfCO3ogfoUfmHoyocWCNzXMGujEYma6SBPlSMokwEUxC8u2oRkpG2xyj
+         /yhYHTF240QPipD2BxoVrWkLoJlqAQbb09hDzGVdKOtzdJBgw/vnpHHwESw8PZ0oab
+         iHTERM5XJJdwDQqXZhPX106B0yfcmFBVBdX3L56c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.14 02/65] clk: Dont try to enable critical clocks if prepare failed
-Date:   Wed, 22 Jan 2020 10:28:47 +0100
-Message-Id: <20200122092751.947135301@linuxfoundation.org>
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 44/97] scsi: libcxgbi: fix NULL pointer dereference in cxgbi_device_destroy()
+Date:   Wed, 22 Jan 2020 10:28:48 +0100
+Message-Id: <20200122092803.619501461@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Varun Prakash <varun@chelsio.com>
 
-commit 12ead77432f2ce32dea797742316d15c5800cb32 upstream.
+[ Upstream commit 71482fde704efdd8c3abe0faf34d922c61e8d76b ]
 
-The following traceback is seen if a critical clock fails to prepare.
+If cxgb4i_ddp_init() fails then cdev->cdev2ppm will be NULL, so add a check
+for NULL pointer before dereferencing it.
 
-bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-------------[ cut here ]------------
-Enabling unprepared plld_per
-WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
-...
-Call trace:
- clk_core_enable+0xcc/0x2c0
- __clk_register+0x5c4/0x788
- devm_clk_hw_register+0x4c/0xb0
- bcm2835_register_pll_divider+0xc0/0x150
- bcm2835_clk_probe+0x134/0x1e8
- platform_drv_probe+0x50/0xa0
- really_probe+0xd4/0x308
- driver_probe_device+0x54/0xe8
- device_driver_attach+0x6c/0x78
- __driver_attach+0x54/0xd8
-...
-
-Check return values from clk_core_prepare() and clk_core_enable() and
-bail out if any of those functions returns an error.
-
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lkml.kernel.org/r/20191225163429.29694-1-linux@roeck-us.net
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/1576676731-3068-1-git-send-email-varun@chelsio.com
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/scsi/cxgbi/libcxgbi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2482,11 +2482,17 @@ static int __clk_core_init(struct clk_co
- 	if (core->flags & CLK_IS_CRITICAL) {
- 		unsigned long flags;
- 
--		clk_core_prepare(core);
-+		ret = clk_core_prepare(core);
-+		if (ret)
-+			goto out;
- 
- 		flags = clk_enable_lock();
--		clk_core_enable(core);
-+		ret = clk_core_enable(core);
- 		clk_enable_unlock(flags);
-+		if (ret) {
-+			clk_core_unprepare(core);
-+			goto out;
-+		}
- 	}
- 
- 	/*
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index e974106f2bb5..3d6e653f5147 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -121,7 +121,8 @@ static inline void cxgbi_device_destroy(struct cxgbi_device *cdev)
+ 		"cdev 0x%p, p# %u.\n", cdev, cdev->nports);
+ 	cxgbi_hbas_remove(cdev);
+ 	cxgbi_device_portmap_cleanup(cdev);
+-	cxgbi_ppm_release(cdev->cdev2ppm(cdev));
++	if (cdev->cdev2ppm)
++		cxgbi_ppm_release(cdev->cdev2ppm(cdev));
+ 	if (cdev->pmap.max_connect)
+ 		cxgbi_free_big_mem(cdev->pmap.port_csk);
+ 	kfree(cdev);
+-- 
+2.20.1
+
 
 
