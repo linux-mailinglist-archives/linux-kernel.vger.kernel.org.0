@@ -2,81 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429BF144A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4653A144A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:22:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbgAVDUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 22:20:06 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53928 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729251AbgAVDUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 22:20:02 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B5A0C6220C8716D5A6A5;
-        Wed, 22 Jan 2020 11:20:00 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 Jan 2020
- 11:19:53 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <josef@toxicpanda.com>, <axboe@kernel.dk>, <sunke32@huawei.com>,
-        <mchristi@redhat.com>
-CC:     <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [v2] nbd: add a flush_workqueue in nbd_start_device
-Date:   Wed, 22 Jan 2020 11:18:57 +0800
-Message-ID: <20200122031857.5859-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1729196AbgAVDTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 22:19:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728779AbgAVDTZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 Jan 2020 22:19:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xvFKwj3rwmGWzeThWcd7d3rmYbLkm5ktTQrerysyp1c=; b=byvNTIopxeYqXcxl5IbLITlbQ
+        e1yUvJ0eOpprtdcX6NkHe2qlQiEdb9/8kDbB/UC/uXs+cxnuvr/DYdmazf/EoiOSRdfccl6hkZKL3
+        gYbE7XCHiMRn4h8bdxzueJCy/Ty+C2Zhwsd5g5LvV3ujLNknP2JFFmJWP4PyofVoGTfp98f5mLuwh
+        m8YbYguXs2Zdq0JZrp9rskLzePEpNzao2QFaYZH93wlnXHu7zAnxQO30HFmFhOFgXrQPqHjRJub3L
+        3hAcuUzALcUH8c/tg7mz1AYuqRwu8J09MCR8yRZH5gjvpNVbqW2fnP51zQPNtxzWQGmEqVO3TH6bh
+        8l8lJpvIA==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iu6Y7-0007pl-PP; Wed, 22 Jan 2020 03:19:23 +0000
+Subject: Re: mmotm 2020-01-21-13-28 uploaded (struct proc_ops)
+To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>
+References: <20200121212915.APuBK%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d18345b6-616f-4ea3-7b9e-956f8edc26b7@infradead.org>
+Date:   Tue, 21 Jan 2020 19:19:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20200121212915.APuBK%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kzalloc fail, may cause trying to destroy the
-workqueue from inside the workqueue.
+On 1/21/20 1:29 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2020-01-21-13-28 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-If num_connections is m (2 < m), and NO.1 ~ NO.n
-(1 < n < m) kzalloc are successful. The NO.(n + 1)
-failed. Then, nbd_start_device will return ENOMEM
-to nbd_start_device_ioctl, and nbd_start_device_ioctl
-will return immediately without running flush_workqueue.
-However, we still have n recv threads. If nbd_release
-run first, recv threads may have to drop the last
-config_refs and try to destroy the workqueue from
-inside the workqueue.
+and when CONFIG_PROC_FS is not set/enabled, kernel/sched/psi.c gets:
 
-To fix it, add a flush_workqueue in nbd_start_device.
+../kernel/sched/psi.c: In function ‘psi_proc_init’:
+../kernel/sched/psi.c:1287:56: error: macro "proc_create" requires 4 arguments, but only 3 given
+   proc_create("pressure/cpu", 0, NULL &psi_cpu_proc_ops);
+                                                        ^
+../kernel/sched/psi.c:1287:3: error: ‘proc_create’ undeclared (first use in this function); did you mean ‘sock_create’?
+   proc_create("pressure/cpu", 0, NULL &psi_cpu_proc_ops);
+   ^~~~~~~~~~~
+   sock_create
 
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- drivers/block/nbd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index b4607dd96185..78181908f0df 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1265,6 +1265,16 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		args = kzalloc(sizeof(*args), GFP_KERNEL);
- 		if (!args) {
- 			sock_shutdown(nbd);
-+			/*
-+			 * If num_connections is m (2 < m),
-+			 * and NO.1 ~ NO.n(1 < n < m) kzallocs are successful.
-+			 * But NO.(n + 1) failed. We still have n recv threads.
-+			 * So, add flush_workqueue here to prevent recv threads
-+			 * dropping the last config_refs and trying to destroy
-+			 * the workqueue from inside the workqueue.
-+			 */
-+			if (i)
-+				flush_workqueue(nbd->recv_workq);
- 			return -ENOMEM;
- 		}
- 		sk_set_memalloc(config->socks[i]->sock->sk);
 -- 
-2.17.2
+~Randy
 
