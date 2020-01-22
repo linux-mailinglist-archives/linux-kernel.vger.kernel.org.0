@@ -2,100 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70BB14533C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D899F145346
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 11:59:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgAVK6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 05:58:34 -0500
-Received: from relay.sw.ru ([185.231.240.75]:49996 "EHLO relay.sw.ru"
+        id S1729539AbgAVK7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 05:59:34 -0500
+Received: from mail.dlink.ru ([178.170.168.18]:54914 "EHLO fd.dlink.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728733AbgAVK6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 05:58:31 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1iuDiL-0002gz-Dg; Wed, 22 Jan 2020 13:58:25 +0300
-Subject: [PATCH v5 6/6] loop: Add support for REQ_ALLOCATE
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        martin.petersen@oracle.com, bob.liu@oracle.com, axboe@kernel.dk,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        song@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        Chaitanya.Kulkarni@wdc.com, darrick.wong@oracle.com,
-        ming.lei@redhat.com, osandov@fb.com, jthumshirn@suse.de,
-        minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
-        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
-        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com, ktkhai@virtuozzo.com
-Date:   Wed, 22 Jan 2020 13:58:25 +0300
-Message-ID: <157969070494.174869.1733513737078026259.stgit@localhost.localdomain>
-In-Reply-To: <157968992539.174869.7490844754165043549.stgit@localhost.localdomain>
-References: <157968992539.174869.7490844754165043549.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1726219AbgAVK7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 05:59:34 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id D56191B2025C; Wed, 22 Jan 2020 13:59:31 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru D56191B2025C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1579690772; bh=q9dD2Cr59uR3VZnrDzVBjRZfBPQ42Iq20hp5A0NIbfM=;
+        h=From:To:Cc:Subject:Date;
+        b=bj5rSvCSaAQYN8nKQtedqE3otEt+XcbfBX4n4ivOTeJKRB/dfY2pguBTs9l6Tsk8w
+         Lrzfv9/3bLsdP9N4fNxM8tgH9lZ6sq4qvibz8cm/1tsCTNvCMyFG0n/2HB7TWPbFFX
+         KEDYtvnjYsowDwtIX9DG8GWodrWT/hH9sycM5AmU=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,USER_IN_WHITELIST
+        autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 319741B204A3;
+        Wed, 22 Jan 2020 13:59:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 319741B204A3
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id CF9EC1B217C5;
+        Wed, 22 Jan 2020 13:59:18 +0300 (MSK)
+Received: from localhost.localdomain (unknown [196.196.203.126])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Wed, 22 Jan 2020 13:59:18 +0300 (MSK)
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     Paul Burton <paulburton@kernel.org>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Alexander Lobakin <alobakin@dlink.ru>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH mips-next 0/5] MIPS: a set of misc Kconfig/Kbuild improvements
+Date:   Wed, 22 Jan 2020 13:58:47 +0300
+Message-Id: <20200122105852.8788-1-alobakin@dlink.ru>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support for new modifier of REQ_OP_WRITE_ZEROES command.
-This results in allocation extents in backing file instead
-of actual blocks zeroing.
+This patchset aims mainly at MIPS and Generic MIPS Kconfig optimizations
+except for the last patch that removes redundant BASE_BAUD override for
+Generic MIPS. If it should go out of this series, please let me know.
+All changes were fully tested on Generic MIPS32R2 board, but I admit
+there potentionally might be any non-critical issues on other systems
+(unlikely though).
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- drivers/block/loop.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Alexander Lobakin (5):
+  MIPS: don't explicitly select LIBFDT in Kconfig
+  MIPS: generic: don't unconditionally select PINCTRL
+  MIPS: make CPU_HAS_LOAD_STORE_LR opt-out
+  MIPS: sort MIPS and MIPS_GENERIC Kconfig selects alphabetically
+    (again)
+  Revert "MIPS: Add custom serial.h with BASE_BAUD override for generic
+    kernel"
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 739b372a5112..bfe76d9adf09 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -581,6 +581,15 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	return 0;
- }
- 
-+static unsigned int write_zeroes_to_fallocate_mode(unsigned int flags)
-+{
-+	if (flags & REQ_ALLOCATE)
-+		return 0;
-+	if (flags & REQ_NOUNMAP)
-+		return FALLOC_FL_ZERO_RANGE;
-+	return FALLOC_FL_PUNCH_HOLE;
-+}
-+
- static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- {
- 	struct loop_cmd *cmd = blk_mq_rq_to_pdu(rq);
-@@ -604,9 +613,7 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 		 * write zeroes the range.  Otherwise, punch them out.
- 		 */
- 		return lo_fallocate(lo, rq, pos,
--			(rq->cmd_flags & REQ_NOUNMAP) ?
--				FALLOC_FL_ZERO_RANGE :
--				FALLOC_FL_PUNCH_HOLE);
-+			write_zeroes_to_fallocate_mode(rq->cmd_flags));
- 	case REQ_OP_DISCARD:
- 		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
- 	case REQ_OP_WRITE:
-@@ -877,6 +884,7 @@ static void loop_config_discard(struct loop_device *lo)
- 		q->limits.discard_alignment = 0;
- 		blk_queue_max_discard_sectors(q, 0);
- 		blk_queue_max_write_zeroes_sectors(q, 0);
-+		blk_queue_max_allocate_sectors(q, 0);
- 		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
- 		return;
- 	}
-@@ -886,6 +894,7 @@ static void loop_config_discard(struct loop_device *lo)
- 
- 	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
- 	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-+	blk_queue_max_allocate_sectors(q, UINT_MAX >> 9);
- 	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
- }
- 
+ arch/mips/Kconfig                             | 60 ++++++-------------
+ arch/mips/configs/generic/board-ocelot.config |  1 +
+ arch/mips/include/asm/Kbuild                  |  1 +
+ arch/mips/include/asm/serial.h                | 18 ------
+ arch/mips/kernel/unaligned.c                  | 36 +++++------
+ arch/mips/lib/memcpy.S                        | 14 ++---
+ arch/mips/lib/memset.S                        | 16 ++---
+ 7 files changed, 52 insertions(+), 94 deletions(-)
+ delete mode 100644 arch/mips/include/asm/serial.h
 
+-- 
+2.25.0
 
