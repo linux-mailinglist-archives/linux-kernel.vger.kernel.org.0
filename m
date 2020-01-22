@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9F01455CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CEF41455CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbgAVNZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:25:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45040 "EHLO mail.kernel.org"
+        id S1731259AbgAVNZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:25:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729730AbgAVNZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:25:20 -0500
+        id S1730667AbgAVNZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:25:24 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E49F4205F4;
-        Wed, 22 Jan 2020 13:25:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 155F22467B;
+        Wed, 22 Jan 2020 13:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699519;
-        bh=nmQXkcSiUAJqWYJ+V3uerZ+yCxSq758WLrSrWnOS+G4=;
+        s=default; t=1579699522;
+        bh=fCIJuCwbP3GeGUag2GXGI+Y0xJ8Y2Pe80IWo5Xlaxi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZPtsyzeq0/N7Rgm2NC5PcyCzkqwMQKYDe6Twah7VwdoTKG3QMTTCOMgtqbJHqpsYa
-         6arGcT0MONGINWoByOpCjuS7q2dDgN9DwzsJu7x+Oe9T2nz1UnqypZ1WYWc8wOo/Q6
-         ygUPJgQUtDU/Ry8LSfM7Jh0AmvJf7a8ngZTFglfg=
+        b=wVkoyk6jfvqldGmYEi07Uw245tO7JB3pgL06bAxdqFwJkyxSCDK+F5y3LHvuuoJ3J
+         rX3+bjwZ5Mqbe7Cl+KsGm9/puZDziHwUB/i6nzyFcdQFhV9+G4ZPy2mHZgu73DpM4O
+         sIMi3d33kdBRI+dcdOYMUXx8BfZPYoY5eDWj/1LI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>
-Subject: [PATCH 5.4 170/222] xen/blkfront: Adjust indentation in xlvbd_alloc_gendisk
-Date:   Wed, 22 Jan 2020 10:29:16 +0100
-Message-Id: <20200122092845.880318995@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 5.4 171/222] dt-bindings: Add missing properties keyword enclosing snps,tso
+Date:   Wed, 22 Jan 2020 10:29:17 +0100
+Message-Id: <20200122092845.950277758@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,51 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Rob Herring <robh@kernel.org>
 
-commit 589b72894f53124a39d1bb3c0cecaf9dcabac417 upstream.
+commit dbce0b65046d1735d7054c54ec2387dba84ba258 upstream.
 
-Clang warns:
+DT property definitions must be under a 'properties' keyword. This was
+missing for 'snps,tso' in an if/then clause. A meta-schema fix will
+catch future errors like this.
 
-../drivers/block/xen-blkfront.c:1117:4: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                nr_parts = PARTS_PER_DISK;
-                ^
-../drivers/block/xen-blkfront.c:1115:3: note: previous statement is here
-                if (err)
-                ^
-
-This is because there is a space at the beginning of this line; remove
-it so that the indentation is consistent according to the Linux kernel
-coding style and clang no longer warns.
-
-While we are here, the previous line has some trailing whitespace; clean
-that up as well.
-
-Fixes: c80a420995e7 ("xen-blkfront: handle Xen major numbers other than XENVBD")
-Link: https://github.com/ClangBuiltLinux/linux/issues/791
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Acked-by: Roger Pau Monné <roger.pau@citrix.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: 7db3545aef5f ("dt-bindings: net: stmmac: Convert the binding to a schemas")
+Cc: "David S. Miller" <davem@davemloft.net>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/xen-blkfront.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -1113,8 +1113,8 @@ static int xlvbd_alloc_gendisk(blkif_sec
- 	if (!VDEV_IS_EXTENDED(info->vdevice)) {
- 		err = xen_translate_vdev(info->vdevice, &minor, &offset);
- 		if (err)
--			return err;		
-- 		nr_parts = PARTS_PER_DISK;
-+			return err;
-+		nr_parts = PARTS_PER_DISK;
- 	} else {
- 		minor = BLKIF_MINOR_EXT(info->vdevice);
- 		nr_parts = PARTS_PER_EXT_DISK;
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -347,6 +347,7 @@ allOf:
+               - st,spear600-gmac
+ 
+     then:
++      properties:
+         snps,tso:
+           $ref: /schemas/types.yaml#definitions/flag
+           description:
 
 
