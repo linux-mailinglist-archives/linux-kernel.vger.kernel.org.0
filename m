@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C15144EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 366EF144F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730424AbgAVJdP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:33:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46742 "EHLO mail.kernel.org"
+        id S1731430AbgAVJfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:35:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730389AbgAVJdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:12 -0500
+        id S1730073AbgAVJfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:35:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A18224672;
-        Wed, 22 Jan 2020 09:33:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8B052071E;
+        Wed, 22 Jan 2020 09:35:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685591;
-        bh=oVR09RXwD+Caqh8KGU2MUoFJs1hb7GDQlstUaaRVI4c=;
+        s=default; t=1579685736;
+        bh=o5ENOhAOLvVXmvZAAxOD8ynA2Hhx+mzchRgQvihpNNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xX7ICEDE5Dsh9tmXlFITlCI9AgCkWOIyFytDytCWXCJr0vLatPGZoA01ytZea/nYb
-         kDmqJKX4+3gxXUWduLGPdvsaX9qZMJUX8Pf9kW175CatKT5MFhZ2paluaKuwhK12oh
-         nS06U73g1MU9KVpMtL6uTgP9kflr6apbLXepmlK4=
+        b=CgGZkcLiFlMssMIhDRhV0mx/iTIUhQ91wI+d0+8ZsyGgU2tJ9CjxQRuQZwVFdTreT
+         YL+mLGDp++VHmNMZD9YOGN2OeWaXYDPtzMckpXjytu3DhU/Yj41vRtC2Nf0ZZYq8hG
+         wwIOxVRWczncJYClVVOSui5gSojyB7vDWnsUqQz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai Li <li.kai4@h3c.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Changwei Ge <gechangwei@live.cn>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 39/76] ocfs2: call journal flush to mark journal as empty after journal recovery when mount
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 4.9 51/97] dt-bindings: reset: meson8b: fix duplicate reset IDs
 Date:   Wed, 22 Jan 2020 10:28:55 +0100
-Message-Id: <20200122092756.298577214@linuxfoundation.org>
+Message-Id: <20200122092804.728189898@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,132 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Li <li.kai4@h3c.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 397eac17f86f404f5ba31d8c3e39ec3124b39fd3 ]
+commit 4881873f4cc1460f63d85fa81363d56be328ccdc upstream.
 
-If journal is dirty when mount, it will be replayed but jbd2 sb log tail
-cannot be updated to mark a new start because journal->j_flag has
-already been set with JBD2_ABORT first in journal_init_common.
+According to the public S805 datasheet the RESET2 register uses the
+following bits for the PIC_DC, PSC and NAND reset lines:
+- PIC_DC is at bit 3 (meaning: RESET_VD_RMEM + 3)
+- PSC is at bit 4 (meaning: RESET_VD_RMEM + 4)
+- NAND is at bit 5 (meaning: RESET_VD_RMEM + 4)
 
-When a new transaction is committed, it will be recored in block 1
-first(journal->j_tail is set to 1 in journal_reset).  If emergency
-restart happens again before journal super block is updated
-unfortunately, the new recorded trans will not be replayed in the next
-mount.
+Update the reset IDs of these three reset lines so they don't conflict
+with PIC_DC and map to the actual hardware reset lines.
 
-The following steps describe this procedure in detail.
-1. mount and touch some files
-2. these transactions are committed to journal area but not checkpointed
-3. emergency restart
-4. mount again and its journals are replayed
-5. journal super block's first s_start is 1, but its s_seq is not updated
-6. touch a new file and its trans is committed but not checkpointed
-7. emergency restart again
-8. mount and journal is dirty, but trans committed in 6 will not be
-replayed.
+Fixes: 79795e20a184eb ("dt-bindings: reset: Add bindings for the Meson SoC Reset Controller")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This exception happens easily when this lun is used by only one node.
-If it is used by multi-nodes, other node will replay its journal and its
-journal super block will be updated after recovery like what this patch
-does.
-
-ocfs2_recover_node->ocfs2_replay_journal.
-
-The following jbd2 journal can be generated by touching a new file after
-journal is replayed, and seq 15 is the first valid commit, but first seq
-is 13 in journal super block.
-
-logdump:
-  Block 0: Journal Superblock
-  Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
-  Blocksize: 4096   Total Blocks: 32768   First Block: 1
-  First Commit ID: 13   Start Log Blknum: 1
-  Error: 0
-  Feature Compat: 0
-  Feature Incompat: 2 block64
-  Feature RO compat: 0
-  Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
-  FS Share Cnt: 1   Dynamic Superblk Blknum: 0
-  Per Txn Block Limit    Journal: 0    Data: 0
-
-  Block 1: Journal Commit Block
-  Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
-
-  Block 2: Journal Descriptor
-  Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
-  No. Blocknum        Flags
-   0. 587             none
-  UUID: 00000000000000000000000000000000
-   1. 8257792         JBD2_FLAG_SAME_UUID
-   2. 619             JBD2_FLAG_SAME_UUID
-   3. 24772864        JBD2_FLAG_SAME_UUID
-   4. 8257802         JBD2_FLAG_SAME_UUID
-   5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
-  ...
-  Block 7: Inode
-  Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
-  FS Generation: 2839773110 (0xa9437fb6)
-  CRC32: 00000000   ECC: 0000
-  Type: Regular   Attr: 0x0   Flags: Valid
-  Dynamic Features: (0x1) InlineData
-  User: 0 (root)   Group: 0 (root)   Size: 7
-  Links: 1   Clusters: 0
-  ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
-  atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
-  mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
-  dtime: 0x0 -- Thu Jan  1 08:00:00 1970
-  ...
-  Block 9: Journal Commit Block
-  Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
-
-The following is journal recovery log when recovering the upper jbd2
-journal when mount again.
-
-syslog:
-  ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
-  fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
-  fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
-  fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
-  fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
-
-Due to first commit seq 13 recorded in journal super is not consistent
-with the value recorded in block 1(seq is 14), journal recovery will be
-terminated before seq 15 even though it is an unbroken commit, inode
-8257802 is a new file and it will be lost.
-
-Link: http://lkml.kernel.org/r/20191217020140.2197-1-li.kai4@h3c.com
-Signed-off-by: Kai Li <li.kai4@h3c.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Reviewed-by: Changwei Ge <gechangwei@live.cn>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/journal.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/dt-bindings/reset/amlogic,meson8b-reset.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ocfs2/journal.c
-+++ b/fs/ocfs2/journal.c
-@@ -1080,6 +1080,14 @@ int ocfs2_journal_load(struct ocfs2_jour
- 
- 	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
- 
-+	if (replayed) {
-+		jbd2_journal_lock_updates(journal->j_journal);
-+		status = jbd2_journal_flush(journal->j_journal);
-+		jbd2_journal_unlock_updates(journal->j_journal);
-+		if (status < 0)
-+			mlog_errno(status);
-+	}
-+
- 	status = ocfs2_journal_toggle_dirty(osb, 1, replayed);
- 	if (status < 0) {
- 		mlog_errno(status);
+--- a/include/dt-bindings/reset/amlogic,meson8b-reset.h
++++ b/include/dt-bindings/reset/amlogic,meson8b-reset.h
+@@ -95,9 +95,9 @@
+ #define RESET_VD_RMEM			64
+ #define RESET_AUDIN			65
+ #define RESET_DBLK			66
+-#define RESET_PIC_DC			66
+-#define RESET_PSC			66
+-#define RESET_NAND			66
++#define RESET_PIC_DC			67
++#define RESET_PSC			68
++#define RESET_NAND			69
+ #define RESET_GE2D			70
+ #define RESET_PARSER_REG		71
+ #define RESET_PARSER_FETCH		72
 
 
