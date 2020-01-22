@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C02145EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FBA0145ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:52:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgAVWqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 17:46:09 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40070 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbgAVWqI (ORCPT
+        id S1726103AbgAVWwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 17:52:34 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46371 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbgAVWwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 17:46:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so921300wrn.7;
-        Wed, 22 Jan 2020 14:46:07 -0800 (PST)
+        Wed, 22 Jan 2020 17:52:34 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e25so946298qtr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 14:52:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pWxnPQXLd+Q1xr02wkxqUJDAE8DS8+PwJcPiG+afbrk=;
-        b=I0fdhWiB41zdWDXu3XXbsSFAdjgrRW152IEIC/13IrtPI/utS9IBzUHxzsWQOORADu
-         FNJW2ywG6LfuQ+Iw432bFzTM0OP/gSZYvZ+C8KnxErBOlO72oom9mSqUgI3f4YHYoc6J
-         LKXwOuZAQ5jbFfmWCZIUackWR4dboT1eVR/58v1aASUJf+XrWCTiEtwxglbS5fanZAsB
-         iHERNVZ5WU73kN0JJJDx8D9o1Mphl/ZyZshW3I2FFCzTbFNSZujINWTwOgsqgukTrGWw
-         Ugs/edLPj9isfGj1bH39KXgbt8fAzVlmlAYGVFe6g9ydc2nqidgPuylBwQksmZxPXWaM
-         8mKA==
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TlzFuMN5WGqxTwmnmnvw8wSSnVNjq0KtrS8uU4t4Cyw=;
+        b=CJr8Td396b552XC8GS+pTDnJzuUX+RE2nvYHEPgTShH30TM5zB4C0k0TYkP8U+W4i9
+         IGvtpVPvJC46R/tRFjXhEx6X0N0zFNM62bGflWwHuF3uXYE5r8uPcVgz4RuCvXp8ICrH
+         nvJqtNcoqjjvTlkd6ZjKDC43QEp1gaxEA/f66SjGSOSFGTviT+fbmLRhjEfMzFuBzmjw
+         PGCq2+HGcz0pttVFJ+A4vz1abSsf8M/YnxRv98Z4GpkUgusz1SVwqomEBunRVlgICmT9
+         nbOzB4zoP5d1IB6+7AymC5LWPE3xpG0m/XZTIbHEOj9J/V1Ti7rJreNPSbIxjy8Y5rzk
+         2mNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pWxnPQXLd+Q1xr02wkxqUJDAE8DS8+PwJcPiG+afbrk=;
-        b=ARnYrcL2oy53srfBhD3m1udEnaGb/ZRt2M0X6aHM8O2iP37jzGC+8txjU8dREB2+gn
-         R1UnErbx6imqMYyY1kdUqmv7td7VAI4eMqpDkZxlz7+OUa4lKRXUmFxXCYImhe2XXL1V
-         f08dqrAfSLoBqFaFXXdXTutdXcLXeUjBl9WzXZ7dE3VVIH/l8ImTciWzKGRqVshJv5qD
-         1eWzXNArRPfHAyNq7wZWHc1rjl8Qs4HD7+w8HEexUgBEUZ6e8m3g8GI+zuAI1xOonbN2
-         Zc6mZpDl8ceslcbode0PNzDF+YWD2Vkll6K+Q/hjtsryr4yTW8u4yWJbt4QUNW+SI8tU
-         GVMw==
-X-Gm-Message-State: APjAAAUzvhs2xY9IT2jRFnYzCVG1BQLJTujLHppMu8xZsAJ0+9TOxVI8
-        aVWBrLBoMY5QLSYPkPc0MTg=
-X-Google-Smtp-Source: APXvYqzB0krEdYHfsT/a9zb3dXi65M8ljwfJsmqQQOo0r/RttSk83FS5IrLrFgtXh1DnTPNL1Rj7WQ==
-X-Received: by 2002:adf:fa43:: with SMTP id y3mr13505642wrr.65.1579733166449;
-        Wed, 22 Jan 2020 14:46:06 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id f1sm342559wro.85.2020.01.22.14.46.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Jan 2020 14:46:06 -0800 (PST)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     broonie@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: spi: spi-rockchip: add description for rk3328
-Date:   Wed, 22 Jan 2020 23:45:55 +0100
-Message-Id: <20200122224555.6845-3-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200122224555.6845-1-jbx6244@gmail.com>
-References: <20200122224555.6845-1-jbx6244@gmail.com>
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TlzFuMN5WGqxTwmnmnvw8wSSnVNjq0KtrS8uU4t4Cyw=;
+        b=YHFcmeDOToy3PeLS8Lc38HcT2PR22dj/PdlvkQfUfM367mySdq18FZjYV/jbH6kXnj
+         ZU15gsqHl4J4uF8nb2IBL6Wn7Bsz8/+8Pbj1uaB5ycMSxoW5PW5ZAIL9Mio8LEULI8Jl
+         QLCcJg/f6AgYTNzO4k/u+Jtd7ueW8wzEvGsGocTeg5BlOPc4gXoGNm/f4HVoLO3eGaCK
+         NzKK0AhMKkE98TI7SCa3uQEZYwyNeXLOgeG8ved2AIEww5eG5enPqLIJxLo3LS3enZaW
+         Gz5wZE+6C/TJnjFjhA0Um8tIQ2Pba3Rr1qZy0F38GS3sKsf9iWShiAE6M97pDbziZc2y
+         Wv7w==
+X-Gm-Message-State: APjAAAWrbfykLpG9uCnRsB7dnwn1dUAf9yYf0n+YD8t+nL6YW1XJCE54
+        2jYT6h3wjBdhHLg80Iawxjs=
+X-Google-Smtp-Source: APXvYqyDelrmrc5zRUa7Mbumt+Tl4k73BLnMhcmcyoWFRuMoisfwVVLOZD03O+Cdxe4Yv4ca9aVLUw==
+X-Received: by 2002:aed:2150:: with SMTP id 74mr12975461qtc.323.1579733552983;
+        Wed, 22 Jan 2020 14:52:32 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id p19sm41164qte.81.2020.01.22.14.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 14:52:32 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 22 Jan 2020 17:52:30 -0500
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     "Luck, Tony" <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v12] x86/split_lock: Enable split lock detection by kernel
+Message-ID: <20200122225230.GB2331824@rani.riverdale.lan>
+References: <20191122152715.GA1909@hirez.programming.kicks-ass.net>
+ <20191123003056.GA28761@agluck-desk2.amr.corp.intel.com>
+ <20191125161348.GA12178@linux.intel.com>
+ <20191212085948.GS2827@hirez.programming.kicks-ass.net>
+ <20200110192409.GA23315@agluck-desk2.amr.corp.intel.com>
+ <20200114055521.GI14928@linux.intel.com>
+ <20200115222754.GA13804@agluck-desk2.amr.corp.intel.com>
+ <20200115225724.GA18268@linux.intel.com>
+ <20200122185514.GA16010@agluck-desk2.amr.corp.intel.com>
+ <20200122224245.GA2331824@rani.riverdale.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200122224245.GA2331824@rani.riverdale.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The description below is already in use for rk3328.dtsi,
-but was somehow never added to a document, so add
-"rockchip,rk3328-spi", "rockchip,rk3066-spi"
-for spi nodes on a rk3328 platform to spi-rockchip.yaml.
+On Wed, Jan 22, 2020 at 05:42:51PM -0500, Arvind Sankar wrote:
+> 
+> Peter [2] called this a possible DOS vector. If userspace is malicious
+> rather than buggy, couldn't it simply ignore SIGBUS?
+> 
+> [2] https://lore.kernel.org/lkml/20191121131522.GX5671@hirez.programming.kicks-ass.net/
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/spi/spi-rockchip.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-index a797a4748..5e0fab1bc 100644
---- a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-@@ -30,6 +30,7 @@ properties:
-             - rockchip,rk3188-spi  #for rk3188 SoCs.
-             - rockchip,rk3288-spi  #for rk3288 SoCs.
-             - rockchip,rk3308-spi  #for rk3308 SoCs.
-+            - rockchip,rk3328-spi  #for rk3328 SoCs.
-             - rockchip,rk3368-spi  #for rk3368 SoCs.
-             - rockchip,rk3399-spi  #for rk3399 SoCs.
-           - const: rockchip,rk3066-spi
--- 
-2.11.0
-
+Ignore this last bit, wasn't thinking right.
