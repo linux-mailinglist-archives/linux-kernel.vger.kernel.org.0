@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B081455C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 148011455C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbgAVNZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:25:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44418 "EHLO mail.kernel.org"
+        id S1731187AbgAVNZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731117AbgAVNZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:25:01 -0500
+        id S1730771AbgAVNZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:25:10 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D51532467B;
-        Wed, 22 Jan 2020 13:24:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 217CA2467B;
+        Wed, 22 Jan 2020 13:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699500;
-        bh=ikhNzRPjtLv6agTCVjiSdi6VCJA/GFt+zgLfGnJjqAI=;
+        s=default; t=1579699509;
+        bh=rXFJZWdzOEkV5l16XswJpgwbtlDI+Ti+0UfzDeHAtfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fcV46VuyQRWD4FHI14s7H6jx7rS4/eYqRoH8PD3bBtOGsm8hITQilDrUS2dgFSCNR
-         M7KHdlpAUCbEpv5gkIXQHA29of1mFfnWOcjZi9rfnlx32U7rgL/qooNYJ6rtnDRSFE
-         x/4d7q6XXlP6H0SBnsfvSXaodqLbG9CWu6iai7Jo=
+        b=z5w3DukuKQxDqxCi1rqn5tjID+uW7MwJX0LKTwamcwoHdFTQVuT8XoB3Jy0JRvNAI
+         edIC1khUji1j4lz0JTur5Eq2XeY1OiJSyFZh+oDlUhplGoxcZh1YA9qtAA4Z4+knrD
+         0osOS9/8y1JE+EXqyXeUppcZPhdWRnMMpep5xHXQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 165/222] net: stmmac: selftests: Mark as fail when received VLAN ID != expected
-Date:   Wed, 22 Jan 2020 10:29:11 +0100
-Message-Id: <20200122092845.527092902@linuxfoundation.org>
+Subject: [PATCH 5.4 167/222] net: stmmac: selftests: Update status when disabling RSS
+Date:   Wed, 22 Jan 2020 10:29:13 +0100
+Message-Id: <20200122092845.668971634@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,35 +45,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-commit d39b68e5a736afa67d2e9cfb158efdd237d99dbd upstream.
+commit e715d74504352968cf24ac95476706bc911a69cd upstream.
 
-When the VLAN ID does not match the expected one it means filter failed
-in HW. Fix it.
+We are disabling RSS on HW but not updating the internal private status
+to the 'disabled' state. This is needed for next tc commit that will
+check if RSS is disabled before trying to apply filters.
 
-Fixes: 94e18382003c ("net: stmmac: selftests: Add selftest for VLAN TX Offload")
+Fixes: 4647e021193d ("net: stmmac: selftests: Add selftest for L3/L4 Filters")
 Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c |   20 +++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
-@@ -853,8 +853,12 @@ static int stmmac_test_vlan_validate(str
- 	if (tpriv->vlan_id) {
- 		if (skb->vlan_proto != htons(proto))
- 			goto out;
--		if (skb->vlan_tci != tpriv->vlan_id)
-+		if (skb->vlan_tci != tpriv->vlan_id) {
-+			/* Means filter did not work. */
-+			tpriv->ok = false;
-+			complete(&tpriv->comp);
- 			goto out;
-+		}
- 	}
+@@ -1297,16 +1297,19 @@ static int __stmmac_test_l3filt(struct s
+ 	struct stmmac_packet_attrs attr = { };
+ 	struct flow_dissector *dissector;
+ 	struct flow_cls_offload *cls;
++	int ret, old_enable = 0;
+ 	struct flow_rule *rule;
+-	int ret;
  
- 	ehdr = (struct ethhdr *)skb_mac_header(skb);
+ 	if (!tc_can_offload(priv->dev))
+ 		return -EOPNOTSUPP;
+ 	if (!priv->dma_cap.l3l4fnum)
+ 		return -EOPNOTSUPP;
+-	if (priv->rss.enable)
++	if (priv->rss.enable) {
++		old_enable = priv->rss.enable;
++		priv->rss.enable = false;
+ 		stmmac_rss_configure(priv, priv->hw, NULL,
+ 				     priv->plat->rx_queues_to_use);
++	}
+ 
+ 	dissector = kzalloc(sizeof(*dissector), GFP_KERNEL);
+ 	if (!dissector) {
+@@ -1373,7 +1376,8 @@ cleanup_cls:
+ cleanup_dissector:
+ 	kfree(dissector);
+ cleanup_rss:
+-	if (priv->rss.enable) {
++	if (old_enable) {
++		priv->rss.enable = old_enable;
+ 		stmmac_rss_configure(priv, priv->hw, &priv->rss,
+ 				     priv->plat->rx_queues_to_use);
+ 	}
+@@ -1418,16 +1422,19 @@ static int __stmmac_test_l4filt(struct s
+ 	struct stmmac_packet_attrs attr = { };
+ 	struct flow_dissector *dissector;
+ 	struct flow_cls_offload *cls;
++	int ret, old_enable = 0;
+ 	struct flow_rule *rule;
+-	int ret;
+ 
+ 	if (!tc_can_offload(priv->dev))
+ 		return -EOPNOTSUPP;
+ 	if (!priv->dma_cap.l3l4fnum)
+ 		return -EOPNOTSUPP;
+-	if (priv->rss.enable)
++	if (priv->rss.enable) {
++		old_enable = priv->rss.enable;
++		priv->rss.enable = false;
+ 		stmmac_rss_configure(priv, priv->hw, NULL,
+ 				     priv->plat->rx_queues_to_use);
++	}
+ 
+ 	dissector = kzalloc(sizeof(*dissector), GFP_KERNEL);
+ 	if (!dissector) {
+@@ -1499,7 +1506,8 @@ cleanup_cls:
+ cleanup_dissector:
+ 	kfree(dissector);
+ cleanup_rss:
+-	if (priv->rss.enable) {
++	if (old_enable) {
++		priv->rss.enable = old_enable;
+ 		stmmac_rss_configure(priv, priv->hw, &priv->rss,
+ 				     priv->plat->rx_queues_to_use);
+ 	}
 
 
