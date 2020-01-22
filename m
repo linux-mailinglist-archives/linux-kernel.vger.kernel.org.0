@@ -2,118 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27181144E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBC7144E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbgAVJQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:16:44 -0500
-Received: from mga18.intel.com ([134.134.136.126]:50803 "EHLO mga18.intel.com"
+        id S1729195AbgAVJSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:18:14 -0500
+Received: from mga02.intel.com ([134.134.136.20]:11326 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbgAVJQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:16:43 -0500
+        id S1725911AbgAVJSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:18:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 01:16:42 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 01:18:13 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,349,1574150400"; 
-   d="scan'208";a="215840368"
-Received: from mlblandf-mobl2.amr.corp.intel.com (HELO localhost) ([10.252.37.232])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2020 01:16:38 -0800
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org
-Cc:     Perry Yuan <pyuan@redhat.com>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Lee Shawn C <shawn.c.lee@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] drm/i915: Don't use VBT for detecting DPCD backlight controls
-In-Reply-To: <20200117232155.135579-1-lyude@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20200116211623.53799-5-lyude@redhat.com> <20200117232155.135579-1-lyude@redhat.com>
-Date:   Wed, 22 Jan 2020 11:17:32 +0200
-Message-ID: <87lfpzj1eb.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+   d="scan'208";a="244993465"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by orsmga002.jf.intel.com with ESMTP; 22 Jan 2020 01:18:11 -0800
+From:   "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, broonie@kernel.org,
+        linux-spi@vger.kernel.org, vigneshr@ti.com
+Cc:     robh+dt@kernel.org, dan.carpenter@oracle.com,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Subject: [PATCH v7 0/2] spi: cadence-quadpsi: Add support for the Cadence QSPI controller
+Date:   Wed, 22 Jan 2020 17:18:07 +0800
+Message-Id: <20200122091809.43069-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Jan 2020, Lyude Paul <lyude@redhat.com> wrote:
-> Despite the fact that the VBT appears to have a field for specifying
-> that a system is equipped with a panel that supports standard VESA
-> backlight controls over the DP AUX channel, so far every system we've
-> spotted DPCD backlight control support on doesn't actually set this
-> field correctly and all have it set to INTEL_BACKLIGHT_DISPLAY_DDI.
->
-> While we don't know the exact reason for this VBT misuse, talking with
-> some vendors indicated that there's a good number of laptop panels out
-> there that supposedly support both PWM backlight controls and DPCD
-> backlight controls as a workaround until Intel supports DPCD backlight
-> controls across platforms universally. This being said, the X1 Extreme
-> 2nd Gen that I have here (note that Lenovo is not the hardware vendor
-> that informed us of this) PWM backlight controls are advertised, but
-> only DPCD controls actually function. I'm going to make an educated
-> guess here and say that on systems like this one, it's likely that PWM
-> backlight controls might have been intended to work but were never
-> really tested by QA.
->
-> Since we really need backlights to work without any extra module
-> parameters, let's take the risk here and rely on the standard DPCD caps
-> to tell us whether AUX backlight controls are supported or not. We still
-> check the VBT, just so we can print a debugging message on systems that
-> advertise DPCD backlight support on the panel but not in the VBT.
->
-> Changes since v3:
-> * Print a debugging message if we enable DPCD backlight control on a
->   device which doesn't report DPCD backlight controls in it's VBT,
->   instead of warning on custom panel backlight interfaces.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=112376
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Cc: Perry Yuan <pyuan@redhat.com>
-> Cc: AceLan Kao <acelan.kao@canonical.com>
+Add support for the Cadence QSPI controller. This controller is
+present in the Intel Lightning Mountain(LGM) SoCs, Altera and TI SoCs.
+This driver has been tested on the Intel LGM SoCs.
 
-Thanks for the patch, pushed to dinq, fingers crossed! ;)
+This driver does not support generic SPI and also the implementation
+only supports spi-mem interface to replace the existing driver in
+mtd/spi-nor/cadence-quadspi.c, the existing driver only support SPI-NOR
+flash memory.
 
-BR,
-Jani.
+Thanks Vignesh for the review, modify, test and confirm the patch 
+which is based on spi-mem based cadence driver working on TI's platform.
+after few changes started working on Intel's platform as well.
 
-> ---
->  drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> index 77a759361c5c..0f8edc775375 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp_aux_backlight.c
-> @@ -328,15 +328,16 @@ intel_dp_aux_display_control_capable(struct intel_connector *connector)
->  int intel_dp_aux_init_backlight_funcs(struct intel_connector *intel_connector)
->  {
->  	struct intel_panel *panel = &intel_connector->panel;
-> -	struct drm_i915_private *dev_priv = to_i915(intel_connector->base.dev);
-> +	enum intel_backlight_type type =
-> +		to_i915(intel_connector->base.dev)->vbt.backlight.type;
->  
->  	if (i915_modparams.enable_dpcd_backlight == 0 ||
->  	    (i915_modparams.enable_dpcd_backlight == -1 &&
-> -	    dev_priv->vbt.backlight.type != INTEL_BACKLIGHT_VESA_EDP_AUX_INTERFACE))
-> +	     !intel_dp_aux_display_control_capable(intel_connector)))
->  		return -ENODEV;
->  
-> -	if (!intel_dp_aux_display_control_capable(intel_connector))
-> -		return -ENODEV;
-> +	if (type != INTEL_BACKLIGHT_VESA_EDP_AUX_INTERFACE)
-> +		DRM_DEBUG_DRIVER("Ignoring VBT backlight type\n");
->  
->  	panel->backlight.setup = intel_dp_aux_setup_backlight;
->  	panel->backlight.enable = intel_dp_aux_enable_backlight;
+changes from v6:
+ -- Add the Signed-off-by Vignesh in commit message
+ -- bus_num, num_chipselect added to avoid the garbage bus number
+    during the probe and spi_register.
+ -- master mode bits updated 
+ -- address sequence is different from TI and Intel SoC Ip handling
+    so modified as per Intel and differentiating by use_dac_mode variable.
+ -- dummy cycles also different b/w two platforms, so keeping separate check
+ -- checkpatch errors which are intentional left as is for better readability
+
+changes from v5:
+ -- kbuild test robot warnings fixed
+ -- Add Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
+
+changes from v4:
+ -- kbuild test robot warnings fixed
+ -- Add Reborted-by: tag
+
+changes from v3:
+spi-cadence-quadspi.c
+ -- static to all functions wrt to local to the file.
+ -- Prefix cqspi_ and make the function static
+ -- cmd_ops, data_ops and dummy_ops dropped
+ -- addr_ops kept since it is required for address calculation.
+ -- devm_ used for supported functions , removed legacy API's
+ -- removed "indirect" name from functions
+ -- replaced by master->mode_bits = SPI_RX_QUAD | SPI_TX_DUAL | SPI_RX_DUAL | SPI_RX_OCTAL;
+    as per Vignesh susggestion
+ -- removed free functions since devm_ handles automatically.
+ -- dropped all unused Macros
+
+YAML file update:
+ -- cadence,qspi.yaml file name replace by cdns,qspi-nor.yaml
+ -- compatible string updated as per Vignesh suggestion
+ -- for single entry, removed descriptions
+ -- removed optional parameters
+  Build Result:
+   linux$ make DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml dt_binding_check
+    CHKDT   Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+    SCHEMA  Documentation/devicetree/bindings/processed-schema.yaml
+    DTC     Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dt.yaml
+    CHECK   Documentation/devicetree/bindings/spi/cdns,qspi-nor.example.dt.yaml
+
+Ramuthevar Vadivel Murugan (2):
+  dt-bindings: spi: Add schema for Cadence QSPI Controller driver
+  spi: cadence-quadpsi: Add support for the Cadence QSPI controller
+
+ .../devicetree/bindings/spi/cdns,qspi-nor.yaml     |  147 ++
+ drivers/spi/Kconfig                                |    8 +
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/spi-cadence-quadspi.c                  | 1563 ++++++++++++++++++++
+ 4 files changed, 1719 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml
+ create mode 100644 drivers/spi/spi-cadence-quadspi.c
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.11.0
+
