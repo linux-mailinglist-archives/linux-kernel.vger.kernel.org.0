@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F76144FA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A47145070
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733265AbgAVJjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:39:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57838 "EHLO mail.kernel.org"
+        id S2387903AbgAVJnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:43:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732572AbgAVJjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:39:40 -0500
+        id S2387691AbgAVJnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB6912467B;
-        Wed, 22 Jan 2020 09:39:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 475D724686;
+        Wed, 22 Jan 2020 09:43:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685980;
-        bh=e36sjmPaCPPq1/i9Ltj188SqoWa1clYoefAn7mPbTaA=;
+        s=default; t=1579686211;
+        bh=GV0cVfM3rOwlCRUBvizdFqhrMkxgQw+dIKL/KIt5lXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmKXIYpQI4yjC7Z0WovD3x8XMnmYE63miJRwNQGNa7iHhh1c4ofASQQKDyDgV36tp
-         lgw2tOjc5OEKsb+6JjbuVK4hy2xTaWRw5OCqvsGm7bk/GkvkNRAYHSrlMgQax5V5sM
-         XjF+P6R0zlOA7S6RkY8Jbwl4cnyO46qhtNtOz7ps=
+        b=sWgVx+VgHJWWYFc+kv82LAHhf+fhjbvN41WQo9uaYRBU7Du+zigoRIZnZeJPTFGQA
+         DAVB2LIQUv3uGK3mln4aarR9BhrK2qz1KsBI04Kanv3eeyBI9ppbMkC2MgEhWeoJWp
+         E7MGAw4tulvFM3OkYT+WZPe1OW94QAVrwqV1gdds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 59/65] scsi: bnx2i: fix potential use after free
+        stable@vger.kernel.org,
+        Angelo Dureghello <angelo.dureghello@timesys.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.19 088/103] mtd: devices: fix mchp23k256 read and write
 Date:   Wed, 22 Jan 2020 10:29:44 +0100
-Message-Id: <20200122092800.251654611@linuxfoundation.org>
+Message-Id: <20200122092815.524815562@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Angelo Dureghello <angelo.dureghello@timesys.com>
 
-commit 29d28f2b8d3736ac61c28ef7e20fda63795b74d9 upstream.
+commit 14f89e088155314d311e4d4dd9f2b4ccaeef92b2 upstream.
 
-The member hba->pcidev may be used after its reference is dropped. Move the
-put function to where it is never used to avoid potential use after free
-issues.
+Due to the use of sizeof(), command size set for the spi transfer
+was wrong. Driver was sending and receiving always 1 byte less
+and especially on write, it was hanging.
 
-Fixes: a77171806515 ("[SCSI] bnx2i: Removed the reference to the netdev->base_addr")
-Link: https://lore.kernel.org/r/1573043541-19126-1-git-send-email-bianpan2016@163.com
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+echo -n -e "\\x1\\x2\\x3\\x4" > /dev/mtd1
+
+And read part too now works as expected.
+
+hexdump -C -n16 /dev/mtd1
+00000000  01 02 03 04 ab f3 ad c2  ab e3 f4 36 dd 38 04 15
+00000010
+
+Fixes: 4379075a870b ("mtd: mchp23k256: Add support for mchp23lcv1024")
+Signed-off-by: Angelo Dureghello <angelo.dureghello@timesys.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/bnx2i/bnx2i_iscsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/devices/mchp23k256.c |   20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
---- a/drivers/scsi/bnx2i/bnx2i_iscsi.c
-+++ b/drivers/scsi/bnx2i/bnx2i_iscsi.c
-@@ -915,12 +915,12 @@ void bnx2i_free_hba(struct bnx2i_hba *hb
- 	INIT_LIST_HEAD(&hba->ep_ofld_list);
- 	INIT_LIST_HEAD(&hba->ep_active_list);
- 	INIT_LIST_HEAD(&hba->ep_destroy_list);
--	pci_dev_put(hba->pcidev);
+--- a/drivers/mtd/devices/mchp23k256.c
++++ b/drivers/mtd/devices/mchp23k256.c
+@@ -68,15 +68,17 @@ static int mchp23k256_write(struct mtd_i
+ 	struct spi_transfer transfer[2] = {};
+ 	struct spi_message message;
+ 	unsigned char command[MAX_CMD_SIZE];
+-	int ret;
++	int ret, cmd_len;
  
- 	if (hba->regview) {
- 		pci_iounmap(hba->pcidev, hba->regview);
- 		hba->regview = NULL;
- 	}
-+	pci_dev_put(hba->pcidev);
- 	bnx2i_free_mp_bdt(hba);
- 	bnx2i_release_free_cid_que(hba);
- 	iscsi_host_free(shost);
+ 	spi_message_init(&message);
+ 
++	cmd_len = mchp23k256_cmdsz(flash);
++
+ 	command[0] = MCHP23K256_CMD_WRITE;
+ 	mchp23k256_addr2cmd(flash, to, command);
+ 
+ 	transfer[0].tx_buf = command;
+-	transfer[0].len = mchp23k256_cmdsz(flash);
++	transfer[0].len = cmd_len;
+ 	spi_message_add_tail(&transfer[0], &message);
+ 
+ 	transfer[1].tx_buf = buf;
+@@ -92,8 +94,8 @@ static int mchp23k256_write(struct mtd_i
+ 	if (ret)
+ 		return ret;
+ 
+-	if (retlen && message.actual_length > sizeof(command))
+-		*retlen += message.actual_length - sizeof(command);
++	if (retlen && message.actual_length > cmd_len)
++		*retlen += message.actual_length - cmd_len;
+ 
+ 	return 0;
+ }
+@@ -105,16 +107,18 @@ static int mchp23k256_read(struct mtd_in
+ 	struct spi_transfer transfer[2] = {};
+ 	struct spi_message message;
+ 	unsigned char command[MAX_CMD_SIZE];
+-	int ret;
++	int ret, cmd_len;
+ 
+ 	spi_message_init(&message);
+ 
++	cmd_len = mchp23k256_cmdsz(flash);
++
+ 	memset(&transfer, 0, sizeof(transfer));
+ 	command[0] = MCHP23K256_CMD_READ;
+ 	mchp23k256_addr2cmd(flash, from, command);
+ 
+ 	transfer[0].tx_buf = command;
+-	transfer[0].len = mchp23k256_cmdsz(flash);
++	transfer[0].len = cmd_len;
+ 	spi_message_add_tail(&transfer[0], &message);
+ 
+ 	transfer[1].rx_buf = buf;
+@@ -130,8 +134,8 @@ static int mchp23k256_read(struct mtd_in
+ 	if (ret)
+ 		return ret;
+ 
+-	if (retlen && message.actual_length > sizeof(command))
+-		*retlen += message.actual_length - sizeof(command);
++	if (retlen && message.actual_length > cmd_len)
++		*retlen += message.actual_length - cmd_len;
+ 
+ 	return 0;
+ }
 
 
