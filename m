@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7F7144F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B98145094
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732780AbgAVJhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54142 "EHLO mail.kernel.org"
+        id S2387646AbgAVJlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:41:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731330AbgAVJhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:53 -0500
+        id S2387617AbgAVJlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 059B42467B;
-        Wed, 22 Jan 2020 09:37:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0EA724686;
+        Wed, 22 Jan 2020 09:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685872;
-        bh=uhZOXfEgUVaxst/qSwstVCoU4ELf0vVVov0AgutJGmg=;
+        s=default; t=1579686107;
+        bh=tAEX8k+O68fJuZfYx6mQBJTYLpBE2CrVhQuydpAimMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rk/c2z7893NR2j89TLbJJmKHyJRoEcwyi6K5+vmJt536+/D6Ie8HOG3AuGjORngFa
-         s4qU+4AHcDrdiXcaAfQXeML79L/j2ejbj5Y+EFo/oixLGTWwbglForj1T862kjCjKx
-         LeZsZ8MJ/voQYwZgqId8Wau8LAbgRaBanhcZUggQ=
+        b=sWT1jJQSzDAVvkMK9js/fyLGwVIpD1fDoBHHYU2S256O9B8mRA5F9J8zfkV8AmFrf
+         xfM2dgbdEfvzhZ2n9ipiWR0EE/SUhrw27+TEVUfIXchScPFmaQk0U4aEAYpId8TQd2
+         IUHO39VaHJYp/3kYCEG9mjtmw2qvYlM+n12DE/7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 17/65] USB: serial: quatech2: handle unbound ports
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 046/103] mm/page-writeback.c: avoid potential division by zero in wb_min_max_ratio()
 Date:   Wed, 22 Jan 2020 10:29:02 +0100
-Message-Id: <20200122092753.508347592@linuxfoundation.org>
+Message-Id: <20200122092810.734690455@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,52 +46,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-commit 9715a43eea77e42678a1002623f2d9a78f5b81a1 upstream.
+commit 6d9e8c651dd979aa666bee15f086745f3ea9c4b3 upstream.
 
-Check for NULL port data in the modem- and line-status handlers to avoid
-dereferencing a NULL pointer in the unlikely case where a port device
-isn't bound to a driver (e.g. after an allocation failure on port
-probe).
+Patch series "use div64_ul() instead of div_u64() if the divisor is
+unsigned long".
 
-Note that the other (stubbed) event handlers qt2_process_xmit_empty()
-and qt2_process_flush() would need similar sanity checks in case they
-are ever implemented.
+We were first inspired by commit b0ab99e7736a ("sched: Fix possible divide
+by zero in avg_atom () calculation"), then refer to the recently analyzed
+mm code, we found this suspicious place.
 
-Fixes: f7a33e608d9a ("USB: serial: add quatech2 usb to serial driver")
-Cc: stable <stable@vger.kernel.org>     # 3.5
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+ 201                 if (min) {
+ 202                         min *= this_bw;
+ 203                         do_div(min, tot_bw);
+ 204                 }
+
+And we also disassembled and confirmed it:
+
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 201
+  0xffffffff811c37da <__wb_calc_thresh+234>:      xor    %r10d,%r10d
+  0xffffffff811c37dd <__wb_calc_thresh+237>:      test   %rax,%rax
+  0xffffffff811c37e0 <__wb_calc_thresh+240>:      je 0xffffffff811c3800 <__wb_calc_thresh+272>
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 202
+  0xffffffff811c37e2 <__wb_calc_thresh+242>:      imul   %r8,%rax
+  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 203
+  0xffffffff811c37e6 <__wb_calc_thresh+246>:      mov    %r9d,%r10d    ---> truncates it to 32 bits here
+  0xffffffff811c37e9 <__wb_calc_thresh+249>:      xor    %edx,%edx
+  0xffffffff811c37eb <__wb_calc_thresh+251>:      div    %r10
+  0xffffffff811c37ee <__wb_calc_thresh+254>:      imul   %rbx,%rax
+  0xffffffff811c37f2 <__wb_calc_thresh+258>:      shr    $0x2,%rax
+  0xffffffff811c37f6 <__wb_calc_thresh+262>:      mul    %rcx
+  0xffffffff811c37f9 <__wb_calc_thresh+265>:      shr    $0x2,%rdx
+  0xffffffff811c37fd <__wb_calc_thresh+269>:      mov    %rdx,%r10
+
+This series uses div64_ul() instead of div_u64() if the divisor is
+unsigned long, to avoid truncation to 32-bit on 64-bit platforms.
+
+This patch (of 3):
+
+The variables 'min' and 'max' are unsigned long and do_div truncates
+them to 32 bits, which means it can test non-zero and be truncated to
+zero for division.  Fix this issue by using div64_ul() instead.
+
+Link: http://lkml.kernel.org/r/20200102081442.8273-2-wenyang@linux.alibaba.com
+Fixes: 693108a8a667 ("writeback: make bdi->min/max_ratio handling cgroup writeback aware")
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/quatech2.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/page-writeback.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/quatech2.c
-+++ b/drivers/usb/serial/quatech2.c
-@@ -867,7 +867,10 @@ static void qt2_update_msr(struct usb_se
- 	u8 newMSR = (u8) *ch;
- 	unsigned long flags;
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -200,11 +200,11 @@ static void wb_min_max_ratio(struct bdi_
+ 	if (this_bw < tot_bw) {
+ 		if (min) {
+ 			min *= this_bw;
+-			do_div(min, tot_bw);
++			min = div64_ul(min, tot_bw);
+ 		}
+ 		if (max < 100) {
+ 			max *= this_bw;
+-			do_div(max, tot_bw);
++			max = div64_ul(max, tot_bw);
+ 		}
+ 	}
  
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
- 
- 	spin_lock_irqsave(&port_priv->lock, flags);
- 	port_priv->shadowMSR = newMSR;
-@@ -895,7 +898,10 @@ static void qt2_update_lsr(struct usb_se
- 	unsigned long flags;
- 	u8 newLSR = (u8) *ch;
- 
-+	/* May be called from qt2_process_read_urb() for an unbound port. */
- 	port_priv = usb_get_serial_port_data(port);
-+	if (!port_priv)
-+		return;
- 
- 	if (newLSR & UART_LSR_BI)
- 		newLSR &= (u8) (UART_LSR_OE | UART_LSR_BI);
 
 
