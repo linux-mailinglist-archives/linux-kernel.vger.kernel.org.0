@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCB5144F3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDC2144FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbgAVJf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:35:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51118 "EHLO mail.kernel.org"
+        id S2387686AbgAVJmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731497AbgAVJfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:51 -0500
+        id S2387675AbgAVJmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:42:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FBDD24686;
-        Wed, 22 Jan 2020 09:35:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C746C24686;
+        Wed, 22 Jan 2020 09:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685750;
-        bh=B6CoHhvLw7WB8SuV6DdMNus0dYLAJVGCvhoAIgBNBjk=;
+        s=default; t=1579686126;
+        bh=eoX59fLjM2SRPxKMb6/ZkmgdRhP7HL/zBS9pFqPsnfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gikLSaVUMj+KKZvKE0Ya5sezCA6E3kAiQCqE8nsc5NksnsThXpub4djNWebDj+bXY
-         s17QEkDi0oh70Qa8AZwmH4UKS+MsYDszlJfuTvBkge29+MviJpxayJc2xVC91Rce7+
-         q/pZl3BicB0OrNFaay2KBwDteW5XAl0gU5jAJWGo=
+        b=peGSW4AfjKQ8dZLdnijTKNn4HUf5cyjpLxSeVcE6o51/Er/T/lSThnlQKijveTFKQ
+         f3nfbrrJS3/fsnZ6L6Ta8fG6T/jJsE638QZk2yzwojcF9Ip6Yf4p4+SeslflNIKO2D
+         mfLjc35whTsCh8YPbG/23s6n3dU2fBOCL5mLV53w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Willhalm <thomas.willhalm@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 65/97] x86/efistub: Disable paging at mixed mode entry
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 053/103] mm/huge_memory.c: thp: fix conflict of above-47bit hint address and PMD alignment
 Date:   Wed, 22 Jan 2020 10:29:09 +0100
-Message-Id: <20200122092806.799324450@linuxfoundation.org>
+Message-Id: <20200122092811.664061994@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +50,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Kirill A. Shutemov <kirill@shutemov.name>
 
-commit 4911ee401b7ceff8f38e0ac597cbf503d71e690c upstream.
+[ Upstream commit 97d3d0f9a1cf132c63c0b8b8bd497b8a56283dd9 ]
 
-The EFI mixed mode entry code goes through the ordinary startup_32()
-routine before jumping into the kernel's EFI boot code in 64-bit
-mode. The 32-bit startup code must be entered with paging disabled,
-but this is not documented as a requirement for the EFI handover
-protocol, and so we should disable paging explicitly when entering
-the kernel from 32-bit EFI firmware.
+Patch series "Fix two above-47bit hint address vs.  THP bugs".
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+The two get_unmapped_area() implementations have to be fixed to provide
+THP-friendly mappings if above-47bit hint address is specified.
+
+This patch (of 2):
+
+Filesystems use thp_get_unmapped_area() to provide THP-friendly
+mappings.  For DAX in particular.
+
+Normally, the kernel doesn't create userspace mappings above 47-bit,
+even if the machine allows this (such as with 5-level paging on x86-64).
+Not all user space is ready to handle wide addresses.  It's known that
+at least some JIT compilers use higher bits in pointers to encode their
+information.
+
+Userspace can ask for allocation from full address space by specifying
+hint address (with or without MAP_FIXED) above 47-bits.  If the
+application doesn't need a particular address, but wants to allocate
+from whole address space it can specify -1 as a hint address.
+
+Unfortunately, this trick breaks thp_get_unmapped_area(): the function
+would not try to allocate PMD-aligned area if *any* hint address
+specified.
+
+Modify the routine to handle it correctly:
+
+ - Try to allocate the space at the specified hint address with length
+   padding required for PMD alignment.
+ - If failed, retry without length padding (but with the same hint
+   address);
+ - If the returned address matches the hint address return it.
+ - Otherwise, align the address as required for THP and return.
+
+The user specified hint address is passed down to get_unmapped_area() so
+above-47bit hint address will be taken into account without breaking
+alignment requirements.
+
+Link: http://lkml.kernel.org/r/20191220142548.7118-2-kirill.shutemov@linux.intel.com
+Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Thomas Willhalm <thomas.willhalm@intel.com>
+Tested-by: Dan Williams <dan.j.williams@intel.com>
+Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>
 Cc: <stable@vger.kernel.org>
-Cc: Arvind Sankar <nivedita@alum.mit.edu>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191224132909.102540-4-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/head_64.S |    5 +++++
- 1 file changed, 5 insertions(+)
+ mm/huge_memory.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -227,6 +227,11 @@ ENTRY(efi32_stub_entry)
- 	leal	efi32_config(%ebp), %eax
- 	movl	%eax, efi_config(%ebp)
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 950466876625..5bb93cf18009 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -509,13 +509,13 @@ void prep_transhuge_page(struct page *page)
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
+ }
  
-+	/* Disable paging */
-+	movl	%cr0, %eax
-+	btrl	$X86_CR0_PG_BIT, %eax
-+	movl	%eax, %cr0
+-static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
++static unsigned long __thp_get_unmapped_area(struct file *filp,
++		unsigned long addr, unsigned long len,
+ 		loff_t off, unsigned long flags, unsigned long size)
+ {
+-	unsigned long addr;
+ 	loff_t off_end = off + len;
+ 	loff_t off_align = round_up(off, size);
+-	unsigned long len_pad;
++	unsigned long len_pad, ret;
+ 
+ 	if (off_end <= off_align || (off_end - off_align) < size)
+ 		return 0;
+@@ -524,30 +524,40 @@ static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long le
+ 	if (len_pad < len || (off + len_pad) < off)
+ 		return 0;
+ 
+-	addr = current->mm->get_unmapped_area(filp, 0, len_pad,
++	ret = current->mm->get_unmapped_area(filp, addr, len_pad,
+ 					      off >> PAGE_SHIFT, flags);
+-	if (IS_ERR_VALUE(addr))
 +
- 	jmp	startup_32
- ENDPROC(efi32_stub_entry)
- #endif
++	/*
++	 * The failure might be due to length padding. The caller will retry
++	 * without the padding.
++	 */
++	if (IS_ERR_VALUE(ret))
+ 		return 0;
+ 
+-	addr += (off - addr) & (size - 1);
+-	return addr;
++	/*
++	 * Do not try to align to THP boundary if allocation at the address
++	 * hint succeeds.
++	 */
++	if (ret == addr)
++		return addr;
++
++	ret += (off - ret) & (size - 1);
++	return ret;
+ }
+ 
+ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags)
+ {
++	unsigned long ret;
+ 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+ 
+-	if (addr)
+-		goto out;
+ 	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+ 		goto out;
+ 
+-	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
+-	if (addr)
+-		return addr;
+-
+- out:
++	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
++	if (ret)
++		return ret;
++out:
+ 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
+ }
+ EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+-- 
+2.20.1
+
 
 
