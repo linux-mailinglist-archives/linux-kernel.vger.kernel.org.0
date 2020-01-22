@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CC814506C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8010145083
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:47:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387566AbgAVJnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:43:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
+        id S1729563AbgAVJqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:46:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387852AbgAVJnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:43:15 -0500
+        id S2387513AbgAVJnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 426E124680;
-        Wed, 22 Jan 2020 09:43:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB4F224689;
+        Wed, 22 Jan 2020 09:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686194;
-        bh=h9wDXmwEsFdoPohpB5Y3eEkycsp8x/x34bOnIPfQ6gw=;
+        s=default; t=1579686197;
+        bh=SpDzbbOwicUHa4Zm+r4y/NZKqNvo4lpUqQrWehgGjZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ar5GX2OlQGLPGgRWHV5PUE0ru9txdHWQaqfWBzWXcnAl6jvdCv0xaf73A1iVNV+xh
-         yIp6HmMMIrT9Z9RryRLUfxldXWJR+fUcq1qfdCANu4yz3GAV8iDqeWQR51oBHqB+oj
-         sY0LN5EHdQ+kqPQZCpiGqfeVUoiDP/t574jm07d4=
+        b=ONzDCBBE1d8sX5MX2Mi5xhA7RSCfTVmtbrY4yZuszxsVc3px3zjAEl6/kHQxlM34y
+         plcfhW2cby7SiY8m4gw+feDRJdQJA3lxc608WVsOacmc6ht0lS4kzzQXjTKZrnOhqE
+         PoruTBw5WZAwRUjPp7MsPA7jUTKxAHXMLGeZY46k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 082/103] cw1200: Fix a signedness bug in cw1200_load_firmware()
-Date:   Wed, 22 Jan 2020 10:29:38 +0100
-Message-Id: <20200122092814.970803207@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 4.19 083/103] arm64: dts: meson-gxl-s905x-khadas-vim: fix gpio-keys-polled node
+Date:   Wed, 22 Jan 2020 10:29:39 +0100
+Message-Id: <20200122092815.061520037@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
 References: <20200122092803.587683021@linuxfoundation.org>
@@ -43,39 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-commit 4a50d454502f1401171ff061a5424583f91266db upstream.
+commit d5f6fa904ecbadbb8e9fa6302b0fc165bec0559a upstream.
 
-The "priv->hw_type" is an enum and in this context GCC will treat it
-as an unsigned int so the error handling will never trigger.
+Fix DTC warnings:
 
-Fixes: a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+arch/arm/dts/meson-gxl-s905x-khadas-vim.dtb: Warning (avoid_unnecessary_addr_size):
+   /gpio-keys-polled: unnecessary #address-cells/#size-cells
+      without "ranges" or child "reg" property
+
+Fixes: e15d2774b8c0 ("ARM64: dts: meson-gxl: add support for the Khadas VIM board")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/st/cw1200/fwio.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/wireless/st/cw1200/fwio.c
-+++ b/drivers/net/wireless/st/cw1200/fwio.c
-@@ -323,12 +323,12 @@ int cw1200_load_firmware(struct cw1200_c
- 		goto out;
- 	}
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -33,11 +33,9 @@
  
--	priv->hw_type = cw1200_get_hw_type(val32, &major_revision);
--	if (priv->hw_type < 0) {
-+	ret = cw1200_get_hw_type(val32, &major_revision);
-+	if (ret < 0) {
- 		pr_err("Can't deduce hardware type.\n");
--		ret = -ENOTSUPP;
- 		goto out;
- 	}
-+	priv->hw_type = ret;
+ 	gpio-keys-polled {
+ 		compatible = "gpio-keys-polled";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		poll-interval = <100>;
  
- 	/* Set DPLL Reg value, and read back to confirm writes work */
- 	ret = cw1200_reg_write_32(priv, ST90TDS_TSET_GEN_R_W_REG_ID,
+-		button@0 {
++		power-button {
+ 			label = "power";
+ 			linux,code = <KEY_POWER>;
+ 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
 
 
