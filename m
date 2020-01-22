@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33001144F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA9F144EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733069AbgAVJib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:38:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55252 "EHLO mail.kernel.org"
+        id S1730364AbgAVJdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:33:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733027AbgAVJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:27 -0500
+        id S1729496AbgAVJdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:33:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D74A2467F;
-        Wed, 22 Jan 2020 09:38:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B34C24672;
+        Wed, 22 Jan 2020 09:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685906;
-        bh=FwLbWFeFbvdUrH5giB50SJAEdUAePu1BlpASRib3hG4=;
+        s=default; t=1579685584;
+        bh=wbfoAA42oX5l4yauXATlXAMyCq6qjlKLDgmai3tPlJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IINMkjGF4qQrSNAUvfXcpZUu5fknQPZKw8WqY3bwWWwvsUneFXRNG3+pQw4NWeC7X
-         4NR5o9ww5wpqELbJx+tMhuO/kVJYDmQaeaNqFdP7NY6LB4JyNarHmnLqqn4dAf59rk
-         HGFP4uNFvykfe6/3S+UOPyk2gGwo4mlMZULw/4iY=
+        b=VhD5J9rgWbvaq57NR9MowP2Dmnpu6PWOhhmJXyFW1cW2iwiPEg6TDWR86ySTd5Fy8
+         3qWTXdqT5zRPtQnR7fNJIhbO4A0DYyZ0nCkIifQmu+EtLweiLQMr71cnu6qYFpTGun
+         SM830QfaSdquU7r27xCkB54tPrmOAUA2YUv8eYlY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 07/65] ARM: dts: am571x-idk: Fix gpios property to have the correct  gpio number
+        stable@vger.kernel.org, Kars de Jong <jongk@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.4 36/76] rtc: msm6242: Fix reading of 10-hour digit
 Date:   Wed, 22 Jan 2020 10:28:52 +0100
-Message-Id: <20200122092752.331828273@linuxfoundation.org>
+Message-Id: <20200122092755.802958083@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Kars de Jong <jongk@linux-m68k.org>
 
-commit 0c4eb2a6b3c6b0facd0a3bccda5db22e7b3b6f96 upstream.
+commit e34494c8df0cd96fc432efae121db3212c46ae48 upstream.
 
-commit d23f3839fe97d8dce03d ("ARM: dts: DRA7: Add pcie1 dt node for
-EP mode") while adding the dt node for EP mode for DRA7 platform,
-added rc node for am571x-idk and populated gpios property with
-"gpio3 23". However the GPIO_PCIE_SWRST line is actually connected
-to "gpio5 18". Fix it here. (The patch adding "gpio3 23" was tested
-with another am57x board in EP mode which doesn't rely on reset from
-host).
+The driver was reading the wrong register as the 10-hour digit due to
+a misplaced ')'. It was in fact reading the 1-second digit register due
+to this bug.
 
-Cc: stable <stable@vger.kernel.org> # 4.14+
-Fixes: d23f3839fe97d8dce03d ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Also remove the use of a magic number for the hour mask and use the define
+for it which was already present.
+
+Fixes: 4f9b9bba1dd1 ("rtc: Add an RTC driver for the Oki MSM6242")
+Tested-by: Kars de Jong <jongk@linux-m68k.org>
+Signed-off-by: Kars de Jong <jongk@linux-m68k.org>
+Link: https://lore.kernel.org/r/20191116110548.8562-1-jongk@linux-m68k.org
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/am571x-idk.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-msm6242.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am571x-idk.dts
-+++ b/arch/arm/boot/dts/am571x-idk.dts
-@@ -93,7 +93,7 @@
- 
- &pcie1_rc {
- 	status = "okay";
--	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
-+	gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
- };
- 
- &pcie1_ep {
+--- a/drivers/rtc/rtc-msm6242.c
++++ b/drivers/rtc/rtc-msm6242.c
+@@ -132,7 +132,8 @@ static int msm6242_read_time(struct devi
+ 		      msm6242_read(priv, MSM6242_SECOND1);
+ 	tm->tm_min  = msm6242_read(priv, MSM6242_MINUTE10) * 10 +
+ 		      msm6242_read(priv, MSM6242_MINUTE1);
+-	tm->tm_hour = (msm6242_read(priv, MSM6242_HOUR10 & 3)) * 10 +
++	tm->tm_hour = (msm6242_read(priv, MSM6242_HOUR10) &
++		       MSM6242_HOUR10_HR_MASK) * 10 +
+ 		      msm6242_read(priv, MSM6242_HOUR1);
+ 	tm->tm_mday = msm6242_read(priv, MSM6242_DAY10) * 10 +
+ 		      msm6242_read(priv, MSM6242_DAY1);
 
 
