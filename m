@@ -2,139 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7F7144BFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 446AE144C08
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbgAVGwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 01:52:06 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:36311 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbgAVGwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 01:52:05 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 482bg62dYRz9v1G1;
-        Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=Zey8fdjO; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id oG7b4NC5O0Sq; Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 482bg619Vtz9v1G0;
-        Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579675922; bh=AYb/CdJwlLdwhR85yWkNEPcYAl+1WHLldoMOxAkLGpM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Zey8fdjOenKuqzua5w7ccePCzStkQRBuJaWxnsJVniBNEICcjqz/Qq/mZfkoDcKWj
-         m7jTcAVVcCwoLKA8mePd5gFGZTjv/4HtUxHQIysp9aTF3f5X20ObtxEcM/gKav5zr+
-         TtH/cAfLoGS2ZgGfk8V5vjYRKFaDLsXnVLmJ2Heg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E56D58B7EC;
-        Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id T8XazIT7FdGs; Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-Received: from [172.25.230.100] (po15451.idsi0.si.c-s.fr [172.25.230.100])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BF7998B776;
-        Wed, 22 Jan 2020 07:52:02 +0100 (CET)
-Subject: Re: GCC bug ? Re: [PATCH v2 10/10] powerpc/32s: Implement Kernel
- Userspace Access Protection
-To:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, ruscur@russell.cc,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1552292207.git.christophe.leroy@c-s.fr>
- <a2847248a92cb1641b1740fa121c5a30593ae662.1552292207.git.christophe.leroy@c-s.fr>
- <87ftqfu7j1.fsf@concordia.ellerman.id.au>
- <a008a182-f1db-073c-7d38-27bfd1fd8676@c-s.fr>
- <20200121195501.GJ3191@gate.crashing.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <af9ad296-401c-cb5c-868a-7a6f91d1e8bc@c-s.fr>
-Date:   Wed, 22 Jan 2020 07:52:02 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728916AbgAVGx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 01:53:26 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:7754 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725884AbgAVGxY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 01:53:24 -0500
+X-UUID: 7ea6983bb9d9486785d06bcd5b84f0db-20200122
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Bkkv2SlP/58V7+P3Bi8i3ZC64d86zcDO203xGyHiNBg=;
+        b=lFTMEXVlMJsyXXM9Pka6P0VqG6juX++DUWU+D3/25oO25OqA2jQgoRA+zsaekCDW/etkHGAkwXvqTqnyCg1tgKwH0tfoYzfryc1kGrCPeycSRSlDOs9Cqkworb8FtYi4HKwkSwM1Oofb2O6QyFkkEQBZvNRcG46Co+iCorZKc/o=;
+X-UUID: 7ea6983bb9d9486785d06bcd5b84f0db-20200122
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2060551540; Wed, 22 Jan 2020 14:53:17 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 22 Jan 2020 14:52:13 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 22 Jan 2020 14:51:57 +0800
+From:   <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v8 1/6] pinctrl: mediatek: Check gpio pin number and use binary search in mtk_hw_pin_field_lookup()
+Date:   Wed, 22 Jan 2020 14:53:09 +0800
+Message-ID: <1579675994-7001-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-In-Reply-To: <20200121195501.GJ3191@gate.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 660429F95FABC97ED3652C11CAB95C6BF2D0D521B77C9A655959A16674A913DA2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RnJvbTogTGlnaHQgSHNpZWggPGxpZ2h0LmhzaWVoQG1lZGlhdGVrLmNvbT4NCg0KMS4gQ2hlY2sg
+aWYgZ3BpbyBwaW4gbnVtYmVyIGlzIGluIHZhbGlkIHJhbmdlIHRvIHByZXZlbnQgZnJvbSBnZXQg
+aW52YWxpZA0KICAgcG9pbnRlciAnZGVzYycgaW4gdGhlIGZvbGxvd2luZyBjb2RlOg0KCWRlc2Mg
+PSAoY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9dOw0KDQoy
+LiBJbXByb3ZlICBtdGtfaHdfcGluX2ZpZWxkX2xvb2t1cCgpDQoyLjEgTW9kaWZ5IG10a19od19w
+aW5fZmllbGRfbG9va3VwKCkgdG8gdXNlIGJpbmFyeSBzZWFyY2ggZm9yIGFjY2VsZXJhdGluZw0K
+ICAgICBzZWFyY2guDQoyLjIgQ29ycmVjdCBtZXNzYWdlIGFmdGVyIHRoZSBmb2xsb3dpbmcgY2hl
+Y2sgZmFpbDoNCiAgICBpZiAoaHctPnNvYy0+cmVnX2NhbCAmJiBody0+c29jLT5yZWdfY2FsW2Zp
+ZWxkXS5yYW5nZSkgew0KCQlyYyA9ICZody0+c29jLT5yZWdfY2FsW2ZpZWxkXTsNCiAgICBUaGUg
+b3JpZ2luYWwgbWVzc2FnZSBpczoNCiAgICAJIk5vdCBzdXBwb3J0IGZpZWxkICVkIGZvciBwaW4g
+JWQgKCVzKVxuIg0KICAgIEhvd2V2ZXIsIHRoZSBjaGVjayBpcyBvbiBzb2MgY2hpcCBsZXZlbCwg
+bm90IG9uIHBpbiBsZXZlbCB5ZXQuDQogICAgU28gdGhlIG1lc3NhZ2UgaXMgY29ycmVjdGVkIGFz
+Og0KICAgIAkiTm90IHN1cHBvcnQgZmllbGQgJWQgZm9yIHRoaXMgc29jXG4iDQoNClNpZ25lZC1v
+ZmYtYnk6IExpZ2h0IEhzaWVoIDxsaWdodC5oc2llaEBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2
+ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMgfCAyNyArKysrKysr
+KysrKysrKysrKystLS0tLS0NCiBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1wYXJp
+cy5jICAgICAgICAgfCAyNSArKysrKysrKysrKysrKysrKysrKysrDQogMiBmaWxlcyBjaGFuZ2Vk
+LCA0NiBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jIGIvZHJpdmVycy9waW5j
+dHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jDQppbmRleCAyMGUxYzg5Li5kNjNl
+MDVlIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNv
+bW1vbi12Mi5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29t
+bW9uLXYyLmMNCkBAIC02OCwzMiArNjgsNDQgQEAgc3RhdGljIGludCBtdGtfaHdfcGluX2ZpZWxk
+X2xvb2t1cChzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3LA0KIHsNCiAJY29uc3Qgc3RydWN0IG10a19w
+aW5fZmllbGRfY2FsYyAqYywgKmU7DQogCWNvbnN0IHN0cnVjdCBtdGtfcGluX3JlZ19jYWxjICpy
+YzsNCisJaW50IHN0YXJ0ID0gMCwgZW5kLCBjaGVjazsNCisJYm9vbCBmb3VuZCA9IGZhbHNlOw0K
+IAl1MzIgYml0czsNCiANCiAJaWYgKGh3LT5zb2MtPnJlZ19jYWwgJiYgaHctPnNvYy0+cmVnX2Nh
+bFtmaWVsZF0ucmFuZ2UpIHsNCiAJCXJjID0gJmh3LT5zb2MtPnJlZ19jYWxbZmllbGRdOw0KIAl9
+IGVsc2Ugew0KIAkJZGV2X2RiZyhody0+ZGV2LA0KLQkJCSJOb3Qgc3VwcG9ydCBmaWVsZCAlZCBm
+b3IgcGluICVkICglcylcbiIsDQotCQkJZmllbGQsIGRlc2MtPm51bWJlciwgZGVzYy0+bmFtZSk7
+DQorCQkJIk5vdCBzdXBwb3J0IGZpZWxkICVkIGZvciB0aGlzIHNvY1xuIiwgZmllbGQpOw0KIAkJ
+cmV0dXJuIC1FTk9UU1VQUDsNCiAJfQ0KIA0KKwllbmQgPSByYy0+bnJhbmdlcyAtIDE7DQogCWMg
+PSByYy0+cmFuZ2U7DQogCWUgPSBjICsgcmMtPm5yYW5nZXM7DQogDQotCXdoaWxlIChjIDwgZSkg
+ew0KLQkJaWYgKGRlc2MtPm51bWJlciA+PSBjLT5zX3BpbiAmJiBkZXNjLT5udW1iZXIgPD0gYy0+
+ZV9waW4pDQorCXdoaWxlIChzdGFydCA8PSBlbmQpIHsNCisJCWNoZWNrID0gKHN0YXJ0ICsgZW5k
+KSA+PiAxOw0KKwkJaWYgKGRlc2MtPm51bWJlciA+PSByYy0+cmFuZ2VbY2hlY2tdLnNfcGluDQor
+CQkgJiYgZGVzYy0+bnVtYmVyIDw9IHJjLT5yYW5nZVtjaGVja10uZV9waW4pIHsNCisJCQlmb3Vu
+ZCA9IHRydWU7DQorCQkJYnJlYWs7DQorCQl9IGVsc2UgaWYgKHN0YXJ0ID09IGVuZCkNCiAJCQli
+cmVhazsNCi0JCWMrKzsNCisJCWVsc2UgaWYgKGRlc2MtPm51bWJlciA8IHJjLT5yYW5nZVtjaGVj
+a10uc19waW4pDQorCQkJZW5kID0gY2hlY2sgLSAxOw0KKwkJZWxzZQ0KKwkJCXN0YXJ0ID0gY2hl
+Y2sgKyAxOw0KIAl9DQogDQotCWlmIChjID49IGUpIHsNCisJaWYgKCFmb3VuZCkgew0KIAkJZGV2
+X2RiZyhody0+ZGV2LCAiTm90IHN1cHBvcnQgZmllbGQgJWQgZm9yIHBpbiA9ICVkICglcylcbiIs
+DQogCQkJZmllbGQsIGRlc2MtPm51bWJlciwgZGVzYy0+bmFtZSk7DQogCQlyZXR1cm4gLUVOT1RT
+VVBQOw0KIAl9DQogDQorCWMgPSByYy0+cmFuZ2UgKyBjaGVjazsNCisNCiAJaWYgKGMtPmlfYmFz
+ZSA+IGh3LT5uYmFzZSAtIDEpIHsNCiAJCWRldl9lcnIoaHctPmRldiwNCiAJCQkiSW52YWxpZCBi
+YXNlIGZvciBmaWVsZCAlZCBmb3IgcGluID0gJWQgKCVzKVxuIiwNCkBAIC0xODIsNiArMTk0LDkg
+QEAgaW50IG10a19od19zZXRfdmFsdWUoc3RydWN0IG10a19waW5jdHJsICpodywgY29uc3Qgc3Ry
+dWN0IG10a19waW5fZGVzYyAqZGVzYywNCiAJaWYgKGVycikNCiAJCXJldHVybiBlcnI7DQogDQor
+CWlmICh2YWx1ZSA8IDAgfHwgdmFsdWUgPiBwZi5tYXNrKQ0KKwkJcmV0dXJuIC1FSU5WQUw7DQor
+DQogCWlmICghcGYubmV4dCkNCiAJCW10a19ybXcoaHcsIHBmLmluZGV4LCBwZi5vZmZzZXQsIHBm
+Lm1hc2sgPDwgcGYuYml0cG9zLA0KIAkJCSh2YWx1ZSAmIHBmLm1hc2spIDw8IHBmLmJpdHBvcyk7
+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYyBi
+L2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLXBhcmlzLmMNCmluZGV4IDkyMzI2NGQu
+LjNlMTNhZTcgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1w
+YXJpcy5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1wYXJpcy5jDQpA
+QCAtODEsNiArODEsOCBAQCBzdGF0aWMgaW50IG10a19waW5jb25mX2dldChzdHJ1Y3QgcGluY3Ry
+bF9kZXYgKnBjdGxkZXYsDQogCWludCB2YWwsIHZhbDIsIGVyciwgcmVnLCByZXQgPSAxOw0KIAlj
+b25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICpkZXNjOw0KIA0KKwlpZiAocGluID49IGh3LT5zb2Mt
+Pm5waW5zKQ0KKwkJcmV0dXJuIC1FSU5WQUw7DQogCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10a19w
+aW5fZGVzYyAqKSZody0+c29jLT5waW5zW3Bpbl07DQogDQogCXN3aXRjaCAocGFyYW0pIHsNCkBA
+IC0yMDYsNiArMjA4LDEwIEBAIHN0YXRpYyBpbnQgbXRrX3BpbmNvbmZfc2V0KHN0cnVjdCBwaW5j
+dHJsX2RldiAqcGN0bGRldiwgdW5zaWduZWQgaW50IHBpbiwNCiAJaW50IGVyciA9IDA7DQogCXUz
+MiByZWc7DQogDQorCWlmIChwaW4gPj0gaHctPnNvYy0+bnBpbnMpIHsNCisJCWVyciA9IC1FSU5W
+QUw7DQorCQlnb3RvIGVycjsNCisJfQ0KIAlkZXNjID0gKGNvbnN0IHN0cnVjdCBtdGtfcGluX2Rl
+c2MgKikmaHctPnNvYy0+cGluc1twaW5dOw0KIA0KIAlzd2l0Y2ggKCh1MzIpcGFyYW0pIHsNCkBA
+IC02OTMsNiArNjk5LDkgQEAgc3RhdGljIGludCBtdGtfZ3Bpb19nZXRfZGlyZWN0aW9uKHN0cnVj
+dCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGludCBncGlvKQ0KIAljb25zdCBzdHJ1Y3QgbXRr
+X3Bpbl9kZXNjICpkZXNjOw0KIAlpbnQgdmFsdWUsIGVycjsNCiANCisJaWYgKGdwaW8gPiBody0+
+c29jLT5ucGlucykNCisJCXJldHVybiAtRUlOVkFMOw0KKw0KIAlkZXNjID0gKGNvbnN0IHN0cnVj
+dCBtdGtfcGluX2Rlc2MgKikmaHctPnNvYy0+cGluc1tncGlvXTsNCiANCiAJZXJyID0gbXRrX2h3
+X2dldF92YWx1ZShodywgZGVzYywgUElOQ1RSTF9QSU5fUkVHX0RJUiwgJnZhbHVlKTsNCkBAIC03
+MDgsNiArNzE3LDkgQEAgc3RhdGljIGludCBtdGtfZ3Bpb19nZXQoc3RydWN0IGdwaW9fY2hpcCAq
+Y2hpcCwgdW5zaWduZWQgaW50IGdwaW8pDQogCWNvbnN0IHN0cnVjdCBtdGtfcGluX2Rlc2MgKmRl
+c2M7DQogCWludCB2YWx1ZSwgZXJyOw0KIA0KKwlpZiAoZ3BpbyA+IGh3LT5zb2MtPm5waW5zKQ0K
+KwkJcmV0dXJuIC1FSU5WQUw7DQorDQogCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10a19waW5fZGVz
+YyAqKSZody0+c29jLT5waW5zW2dwaW9dOw0KIA0KIAllcnIgPSBtdGtfaHdfZ2V0X3ZhbHVlKGh3
+LCBkZXNjLCBQSU5DVFJMX1BJTl9SRUdfREksICZ2YWx1ZSk7DQpAQCAtNzIyLDYgKzczNCw5IEBA
+IHN0YXRpYyB2b2lkIG10a19ncGlvX3NldChzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNpZ25l
+ZCBpbnQgZ3BpbywgaW50IHZhbHVlKQ0KIAlzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3ID0gZ3Bpb2No
+aXBfZ2V0X2RhdGEoY2hpcCk7DQogCWNvbnN0IHN0cnVjdCBtdGtfcGluX2Rlc2MgKmRlc2M7DQog
+DQorCWlmIChncGlvID4gaHctPnNvYy0+bnBpbnMpDQorCQlyZXR1cm47DQorDQogCWRlc2MgPSAo
+Y29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9dOw0KIA0KIAlt
+dGtfaHdfc2V0X3ZhbHVlKGh3LCBkZXNjLCBQSU5DVFJMX1BJTl9SRUdfRE8sICEhdmFsdWUpOw0K
+QEAgLTcyOSwxMiArNzQ0LDIyIEBAIHN0YXRpYyB2b2lkIG10a19ncGlvX3NldChzdHJ1Y3QgZ3Bp
+b19jaGlwICpjaGlwLCB1bnNpZ25lZCBpbnQgZ3BpbywgaW50IHZhbHVlKQ0KIA0KIHN0YXRpYyBp
+bnQgbXRrX2dwaW9fZGlyZWN0aW9uX2lucHV0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2ln
+bmVkIGludCBncGlvKQ0KIHsNCisJc3RydWN0IG10a19waW5jdHJsICpodyA9IGdwaW9jaGlwX2dl
+dF9kYXRhKGNoaXApOw0KKw0KKwlpZiAoZ3BpbyA+IGh3LT5zb2MtPm5waW5zKQ0KKwkJcmV0dXJu
+IC1FSU5WQUw7DQorDQogCXJldHVybiBwaW5jdHJsX2dwaW9fZGlyZWN0aW9uX2lucHV0KGNoaXAt
+PmJhc2UgKyBncGlvKTsNCiB9DQogDQogc3RhdGljIGludCBtdGtfZ3Bpb19kaXJlY3Rpb25fb3V0
+cHV0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGludCBncGlvLA0KIAkJCQkgICAg
+IGludCB2YWx1ZSkNCiB7DQorCXN0cnVjdCBtdGtfcGluY3RybCAqaHcgPSBncGlvY2hpcF9nZXRf
+ZGF0YShjaGlwKTsNCisNCisJaWYgKGdwaW8gPiBody0+c29jLT5ucGlucykNCisJCXJldHVybiAt
+RUlOVkFMOw0KKw0KIAltdGtfZ3Bpb19zZXQoY2hpcCwgZ3BpbywgdmFsdWUpOw0KIA0KIAlyZXR1
+cm4gcGluY3RybF9ncGlvX2RpcmVjdGlvbl9vdXRwdXQoY2hpcC0+YmFzZSArIGdwaW8pOw0KLS0g
+DQoxLjguMS4xLmRpcnR5DQo=
 
-
-Le 21/01/2020 à 20:55, Segher Boessenkool a écrit :
-> On Tue, Jan 21, 2020 at 05:22:32PM +0000, Christophe Leroy wrote:
->> g1() should return 3, not 5.
-> 
-> What makes you say that?
-
-What makes me say that is that NULL is obviously a constant pointer and 
-I think we are all expecting gcc to see it as a constant during kernel 
-build, ie at -O2
-
-> 
-> "A return of 0 does not indicate that the
->   value is _not_ a constant, but merely that GCC cannot prove it is a
->   constant with the specified value of the '-O' option."
-> 
-> (And the rules it uses for this are *not* the same as C "constant
-> expressions" or C "integer constant expression" or C "arithmetic
-> constant expression" or anything like that -- which should be already
-> obvious from that it changes with different -Ox).
-> 
-> You can use builtin_constant_p to have the compiler do something better
-> if the compiler feels like it, but not anything more.  Often people
-> want stronger guarantees, but when they see how much less often it then
-> returns "true", they do not want that either.
-> 
-
-in asm/book3s/64/kup-radix.h we have:
-
-static inline void allow_user_access(void __user *to, const void __user 
-*from,
-				     unsigned long size)
-{
-	// This is written so we can resolve to a single case at build time
-	if (__builtin_constant_p(to) && to == NULL)
-		set_kuap(AMR_KUAP_BLOCK_WRITE);
-	else if (__builtin_constant_p(from) && from == NULL)
-		set_kuap(AMR_KUAP_BLOCK_READ);
-	else
-		set_kuap(0);
-}
-
-and in asm/kup.h we have:
-
-static inline void allow_read_from_user(const void __user *from, 
-unsigned long size)
-{
-	allow_user_access(NULL, from, size);
-}
-
-static inline void allow_write_to_user(void __user *to, unsigned long size)
-{
-	allow_user_access(to, NULL, size);
-}
-
-
-If GCC doesn't see NULL as a constant, then the above doesn't work as 
-expected.
-
-What's surprising and frustrating is that if you remove the 
-__builtin_constant_p() and only leave the NULL check, then GCC sees it 
-as a constant and drops the other leg.
-
-So if we remove the __builtin_constant_p(to) and leave only the (to == 
-NULL), it will work as expected for allow_read_from_user(). But for the 
-others where (to) is not a constant, the NULL test will remain together 
-with the associated leg.
-
-Christophe
