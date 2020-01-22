@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CD3D144FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5D51145014
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733281AbgAVJjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:39:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57976 "EHLO mail.kernel.org"
+        id S2387918AbgAVJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:43:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732419AbgAVJjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:39:45 -0500
+        id S2387898AbgAVJnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:43:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4E1224684;
-        Wed, 22 Jan 2020 09:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24A142468D;
+        Wed, 22 Jan 2020 09:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685985;
-        bh=ByJV8LNOxXprRSGYwY0g5W6MMeyQmbLWaBeIrQJURbA=;
+        s=default; t=1579686216;
+        bh=tUh9PihcYxzFYZBFE2oWj/PpwZ5irhZl9ayz1NK6Wlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mmiHZaocDCoK5xlzzsRZsh2JlBHLUz8TcGUqEtcEvRRU2yPyrx3/YslXS3k4YtrFx
-         2Hb74xgMbHIBVVsxzV+KKL8bSM3GM7m548qAhOTWLCYkrpw2cbQRWKZ12DLCxNgTJD
-         Ij+bhRH6sBkeC9YPQo5e6U3ScPX6zWLCuNRJxTwE=
+        b=xGne94NtdD4eVKZzgsSJ+nYy6ei3PQVJVCSaJVuNOAZmIkcv/v9cvYUocmw/FSJRW
+         JsilWjCOltvn/x0VtOk+FETqePclYhTyibf4ldBGu0gSzDP5Cn5VwBxxmyNlwdmjbs
+         +toKHG6cHdUAcDpmSReklxm4m7/TgWRmtYC4fkN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Hernandez <michael.hernandez@cavium.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 61/65] scsi: qla2xxx: Fix qla2x00_request_irqs() for MSI
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Sushma Kalakota <sushmax.kalakota@intel.com>
+Subject: [PATCH 4.19 090/103] drm/nouveau/bar/gf100: ensure BAR is mapped
 Date:   Wed, 22 Jan 2020 10:29:46 +0100
-Message-Id: <20200122092800.658372944@linuxfoundation.org>
+Message-Id: <20200122092815.731691833@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Jon Derrick <jonathan.derrick@intel.com>
 
-commit 45dc8f2d9c94ed74a5e31e63e9136a19a7e16081 upstream.
+commit 12e08beb32d64b6070b718630490db83dd321c8c upstream.
 
-Commit 4fa183455988 ("scsi: qla2xxx: Utilize pci_alloc_irq_vectors/
-pci_free_irq_vectors calls.") use pci_alloc_irq_vectors() to replace
-pci_enable_msi() but it didn't handle the return value correctly. This bug
-make qla2x00 always fail to setup MSI if MSI-X fail, so fix it.
+If the BAR is zero size, it indicates it was never successfully mapped.
+Ensure that the BAR is valid during initialization before attempting to
+use it.
 
-BTW, improve the log message of return value in qla2x00_request_irqs() to
-avoid confusion.
-
-Fixes: 4fa183455988 ("scsi: qla2xxx: Utilize pci_alloc_irq_vectors/pci_free_irq_vectors calls.")
-Cc: Michael Hernandez <michael.hernandez@cavium.com>
-Link: https://lore.kernel.org/r/1574314847-14280-1-git-send-email-chenhc@lemote.com
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Sushma Kalakota <sushmax.kalakota@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_isr.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -3519,7 +3519,7 @@ qla2x00_request_irqs(struct qla_hw_data
- skip_msix:
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bar/gf100.c
+@@ -94,6 +94,8 @@ gf100_bar_oneinit_bar(struct gf100_bar *
+ 		return ret;
  
- 	ql_log(ql_log_info, vha, 0x0037,
--	    "Falling back-to MSI mode -%d.\n", ret);
-+	    "Falling back-to MSI mode -- ret=%d.\n", ret);
+ 	bar_len = device->func->resource_size(device, bar_nr);
++	if (!bar_len)
++		return -ENOMEM;
+ 	if (bar_nr == 3 && bar->bar2_halve)
+ 		bar_len >>= 1;
  
- 	if (!IS_QLA24XX(ha) && !IS_QLA2532(ha) && !IS_QLA8432(ha) &&
- 	    !IS_QLA8001(ha) && !IS_P3P_TYPE(ha) && !IS_QLAFX00(ha) &&
-@@ -3527,13 +3527,13 @@ skip_msix:
- 		goto skip_msi;
- 
- 	ret = pci_alloc_irq_vectors(ha->pdev, 1, 1, PCI_IRQ_MSI);
--	if (!ret) {
-+	if (ret > 0) {
- 		ql_dbg(ql_dbg_init, vha, 0x0038,
- 		    "MSI: Enabled.\n");
- 		ha->flags.msi_enabled = 1;
- 	} else
- 		ql_log(ql_log_warn, vha, 0x0039,
--		    "Falling back-to INTa mode -- %d.\n", ret);
-+		    "Falling back-to INTa mode -- ret=%d.\n", ret);
- skip_msi:
- 
- 	/* Skip INTx on ISP82xx. */
 
 
