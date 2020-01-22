@@ -2,109 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2D0145CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 21:17:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A017145D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 21:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAVURO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 15:17:14 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:52140 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVURO (ORCPT
+        id S1728139AbgAVUWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 15:22:00 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41167 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbgAVUWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 15:17:14 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A85F71C0357; Wed, 22 Jan 2020 21:17:12 +0100 (CET)
-Date:   Wed, 22 Jan 2020 21:17:11 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org
-Subject: [GIT PULL] LEDs changes for 5.5-rc8
-Message-ID: <20200122201711.GA29496@amd>
+        Wed, 22 Jan 2020 15:22:00 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so489457ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 12:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SlE70b9GGvg8Ik4bLAYKDMNh9X9O3cEIpNzQoPhTPYI=;
+        b=bCqidwoCk+OIE0ZI+CE4W2w0NLFTQOV8nbURBEy6IU6TNwZL60tIfObVGJ/dQnYSnt
+         +bsfk4ZN/ECzjHzdhYbVVu1phdqX8VqAR3ZUgPJiazPotTKeSCr2mEg3UkTp918K+mwl
+         4wx8A+HT0ub+/MioSwUoY/eaUSxVlo6UkPViztK3rSUZpsy5sE3mD2c9tZzfdZ9WDRov
+         kPnYquChZRi7Xq+myJsRX9fdS2iDF7SPsCV63yKqNTgDS9NT8dgJRH4cPbN5jGuTwc3C
+         y1yxfgRlq+G0YYQaWVUJFisye4Sk2JJNDpSdr9I9pySxRHBa/uySjI7F0TBb+kHQey5G
+         aTYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SlE70b9GGvg8Ik4bLAYKDMNh9X9O3cEIpNzQoPhTPYI=;
+        b=rjy2rNUztDQSpyyib4RMSEXHsclnUHn/oqOiipWiLwwfj7fclxy/dPHyxVq2C45pn/
+         3wYwtWmyykH3asGbrxCJJImf3CPje9OHEmwbS0TbRWIrvPQTjVjxbd9ovlvPxICfdY+I
+         I+id5ZmpNwJdLispLuYCeSLPuoBOIRMaUNIq2CpILPe0DBE2J4P6sj8EpCSNnvq3gPhn
+         geJU9xeoMIj2Qxit2oodarbr9ysNC4a2I5hWHWSy8FpPJjL++tKWlOLzy27k+q2Y6uBn
+         HugHJMUi8atCkm3Mt+Ejaa+BbPr07eV8xP50zV/yf1rvrZqE/y5j9lHrfd2cXkhvSjy7
+         CSdw==
+X-Gm-Message-State: APjAAAVy4xjxabcoRAkplkAjL/fml2feQjD3CgZ/vav8a+KrYNHEx+FL
+        RXz4ntZPPGAUc8WpHZiCVjJNuree03VNWzkh1nxXCQ==
+X-Google-Smtp-Source: APXvYqxAyOGy3TmikKcAXOITTYIlBv8awZbFxrro6cVwaB6Gi0h3uw1y0ZtvzHEEISpymMnzseO8lYsGGSECl4Jxquo=
+X-Received: by 2002:a2e:965a:: with SMTP id z26mr18377280ljh.104.1579724517965;
+ Wed, 22 Jan 2020 12:21:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 23 Jan 2020 01:51:46 +0530
+Message-ID: <CA+G9fYt5FzE_ZpPJvRavoowaKTDwH76PhUu8ak4VGkfueiy67A@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/76] 4.4.211-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 22 Jan 2020 at 15:01, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.4.211 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 24 Jan 2020 09:25:24 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.211-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
+Summary
+------------------------------------------------------------------------
 
-  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
+kernel: 4.4.211-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 14fe1f1189f56887f53ae61e2e3218be16f0c2db
+git describe: v4.4.210-77-g14fe1f1189f5
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.210-77-g14fe1f1189f5
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git/ tags/=
-leds-5.5-rc8
+No regressions (compared to build v4.4.210)
 
-for you to fetch changes up to 43108c72cf1d518f3ce62d3b1c8a9ffa38ddc28b:
 
-  leds: lm3532: add pointer to documentation and fix typo (2020-01-22 21:08=
-:24 +0100)
+No fixes (compared to build v4.4.210)
 
-----------------------------------------------------------------
-Changes for Linus for -rc8.
+Ran 15214 total tests in the following environments and test suites.
 
-Jacek's commit is why I'm requesting this pull; it fixes regression in
-debugging output in sysfs. Others are just bugfixes that should be
-safe. Everything was in -next for while.
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
-Now, I noticed one commit is from "Pavel" and it is supposed to be
-=66rom "Pavel Machek". Can you pull it anyway, or should I redo the
-request? Or feel free to edit/drop that commit.
+Test Suites
+-----------
+* build
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-open-posix-tests
+* ltp-sched-tests
+* spectre-meltdown-checker-test
+* kvm-unit-tests
+* ltp-cap_bounds-tests
+* ltp-cpuhotplug-tests
+* ltp-fcntl-locktests-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* v4l2-compliance
+* perf
+* install-android-platform-tools-r2600
 
-Best regards,
-								Pavel
+Summary
+------------------------------------------------------------------------
 
-----------------------------------------------------------------
-Bartosz Golaszewski (1):
-      led: max77650: add of_match table
+kernel: 4.4.208-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git branch: 4.4.208-rc1-hikey-20200101-645
+git commit: 45aaddb4efb9c8a83ada6caeb9594f7fc5130ec3
+git describe: 4.4.208-rc1-hikey-20200101-645
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.208-rc1-hikey-20200101-645
 
-Jacek Anaszewski (1):
-      leds: gpio: Fix uninitialized gpio label for fwnode based probe
 
-Pavel (1):
-      leds: lm3532: add pointer to documentation and fix typo
+No regressions (compared to build 4.4.208-rc1-hikey-20200101-644)
 
-Pavel Machek (2):
-      ledtrig-pattern: fix email address quoting in MODULE_AUTHOR()
-      leds: rb532: cleanup whitespace
 
-Sakari Ailus (1):
-      leds-as3645a: Drop fwnode reference on ignored node
+No fixes (compared to build 4.4.208-rc1-hikey-20200101-644)
 
- drivers/leds/leds-as3645a.c            |  3 ++-
- drivers/leds/leds-gpio.c               | 10 +++++++++-
- drivers/leds/leds-lm3532.c             |  3 ++-
- drivers/leds/leds-max77650.c           |  7 +++++++
- drivers/leds/leds-rb532.c              |  1 -
- drivers/leds/trigger/ledtrig-pattern.c |  4 ++--
- 6 files changed, 22 insertions(+), 6 deletions(-)
+Ran 1568 total tests in the following environments and test suites.
+
+Environments
+--------------
+- hi6220-hikey - arm64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
 
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl4orccACgkQMOfwapXb+vIhHACfUZ9wQ9GkIKpyxLKk2Rz93ne0
-GSMAn3v/CdOgceIvlx3tgc4WSrYfAEnb
-=VROh
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+Linaro LKFT
+https://lkft.linaro.org
