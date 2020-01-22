@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3B91144F42
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBCB144FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbgAVJgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51324 "EHLO mail.kernel.org"
+        id S2387717AbgAVJm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730935AbgAVJf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:35:59 -0500
+        id S2387693AbgAVJmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:42:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 567002467C;
-        Wed, 22 Jan 2020 09:35:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A303224684;
+        Wed, 22 Jan 2020 09:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685757;
-        bh=tAEX8k+O68fJuZfYx6mQBJTYLpBE2CrVhQuydpAimMg=;
+        s=default; t=1579686136;
+        bh=Urpniaqut/q3HUaVtjktcxUFh2wDJZ2zVBJXOCjYXeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/YfMRRK776OLNqgyR1n+DXJube5+rbwcwptAgLphvAmiHcm7txYrRMiqHcckYRxG
-         NtsJwgW3/62T2m4yOZWBTWiPEJTh/VlDHYvPAjJEfObgYkLG2oBtOa2ChiN8S0sCXt
-         nSjIjJRVIkqiFOHutP14GeHyN2Ij1XLa0eGFFEec=
+        b=b+LX2nJGBDZKGND77xghsI2cCg/lZlDydOXOzfHayEeNTGYFyoHh/caoy1Eo1kAeU
+         6oJBVtJ9rE++ZkmGqnUwrTzfPjy0VYzJONKvKRO5bVyuANjzCO77OLNwHP1L7ajMp9
+         35Nb0/Ui7p9bbvjyo9HuflrQGpkYANnONa6h10XE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Tejun Heo <tj@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 68/97] mm/page-writeback.c: avoid potential division by zero in wb_min_max_ratio()
-Date:   Wed, 22 Jan 2020 10:29:12 +0100
-Message-Id: <20200122092807.307956778@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.19 057/103] cfg80211: fix memory leak in cfg80211_cqm_rssi_update
+Date:   Wed, 22 Jan 2020 10:29:13 +0100
+Message-Id: <20200122092812.214296368@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,79 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-commit 6d9e8c651dd979aa666bee15f086745f3ea9c4b3 upstream.
+commit df16737d438f534d0cc9948c7c5158f1986c5c87 upstream.
 
-Patch series "use div64_ul() instead of div_u64() if the divisor is
-unsigned long".
+The per-tid statistics need to be released after the call to rdev_get_station
 
-We were first inspired by commit b0ab99e7736a ("sched: Fix possible divide
-by zero in avg_atom () calculation"), then refer to the recently analyzed
-mm code, we found this suspicious place.
-
- 201                 if (min) {
- 202                         min *= this_bw;
- 203                         do_div(min, tot_bw);
- 204                 }
-
-And we also disassembled and confirmed it:
-
-  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 201
-  0xffffffff811c37da <__wb_calc_thresh+234>:      xor    %r10d,%r10d
-  0xffffffff811c37dd <__wb_calc_thresh+237>:      test   %rax,%rax
-  0xffffffff811c37e0 <__wb_calc_thresh+240>:      je 0xffffffff811c3800 <__wb_calc_thresh+272>
-  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 202
-  0xffffffff811c37e2 <__wb_calc_thresh+242>:      imul   %r8,%rax
-  /usr/src/debug/kernel-4.9.168-016.ali3000/linux-4.9.168-016.ali3000.alios7.x86_64/mm/page-writeback.c: 203
-  0xffffffff811c37e6 <__wb_calc_thresh+246>:      mov    %r9d,%r10d    ---> truncates it to 32 bits here
-  0xffffffff811c37e9 <__wb_calc_thresh+249>:      xor    %edx,%edx
-  0xffffffff811c37eb <__wb_calc_thresh+251>:      div    %r10
-  0xffffffff811c37ee <__wb_calc_thresh+254>:      imul   %rbx,%rax
-  0xffffffff811c37f2 <__wb_calc_thresh+258>:      shr    $0x2,%rax
-  0xffffffff811c37f6 <__wb_calc_thresh+262>:      mul    %rcx
-  0xffffffff811c37f9 <__wb_calc_thresh+265>:      shr    $0x2,%rdx
-  0xffffffff811c37fd <__wb_calc_thresh+269>:      mov    %rdx,%r10
-
-This series uses div64_ul() instead of div_u64() if the divisor is
-unsigned long, to avoid truncation to 32-bit on 64-bit platforms.
-
-This patch (of 3):
-
-The variables 'min' and 'max' are unsigned long and do_div truncates
-them to 32 bits, which means it can test non-zero and be truncated to
-zero for division.  Fix this issue by using div64_ul() instead.
-
-Link: http://lkml.kernel.org/r/20200102081442.8273-2-wenyang@linux.alibaba.com
-Fixes: 693108a8a667 ("writeback: make bdi->min/max_ratio handling cgroup writeback aware")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Fixes: 8689c051a201 ("cfg80211: dynamically allocate per-tid stats for station info")
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Link: https://lore.kernel.org/r/20200108170630.33680-2-nbd@nbd.name
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page-writeback.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/wireless/nl80211.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -200,11 +200,11 @@ static void wb_min_max_ratio(struct bdi_
- 	if (this_bw < tot_bw) {
- 		if (min) {
- 			min *= this_bw;
--			do_div(min, tot_bw);
-+			min = div64_ul(min, tot_bw);
- 		}
- 		if (max < 100) {
- 			max *= this_bw;
--			do_div(max, tot_bw);
-+			max = div64_ul(max, tot_bw);
- 		}
- 	}
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10305,6 +10305,7 @@ static int cfg80211_cqm_rssi_update(stru
+ 		if (err)
+ 			return err;
  
++		cfg80211_sinfo_release_content(&sinfo);
+ 		if (sinfo.filled & BIT_ULL(NL80211_STA_INFO_BEACON_SIGNAL_AVG))
+ 			wdev->cqm_config->last_rssi_event_value =
+ 				(s8) sinfo.rx_beacon_signal_avg;
 
 
