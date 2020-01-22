@@ -2,115 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14867144AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 06:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF5FA144AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 06:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725856AbgAVFAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 00:00:14 -0500
-Received: from mga01.intel.com ([192.55.52.88]:43691 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgAVFAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 00:00:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jan 2020 21:00:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,348,1574150400"; 
-   d="scan'208";a="215782796"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.138]) ([10.239.159.138])
-  by orsmga007.jf.intel.com with ESMTP; 21 Jan 2020 21:00:11 -0800
-Cc:     baolu.lu@linux.intel.com, kevin.tian@intel.com,
-        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jacob.jun.pan@intel.com,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Subject: Re: [RFC PATCH 0/4] iommu: Per-group default domain type
-To:     John Garry <john.garry@huawei.com>, Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-References: <20200101052648.14295-1-baolu.lu@linux.intel.com>
- <ba7a7e6a-8b23-fca0-a8bb-72c4dbfa8390@huawei.com>
- <f417cd0b-1bf7-7da2-3a64-b8b74b03da02@linux.intel.com>
- <0fbcbd62-cf8a-1c3c-c702-f9bf59497867@huawei.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <3bf07c3c-2a49-9aba-6835-53e4e80da4a2@linux.intel.com>
-Date:   Wed, 22 Jan 2020 12:58:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1725883AbgAVFCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 00:02:21 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41994 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgAVFCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 00:02:21 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00M52EbK034781;
+        Tue, 21 Jan 2020 23:02:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579669334;
+        bh=19Euv4bypX6Nyf5cnWQL/mS9NVJvz1Qup12v8d47CGY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NCRNfyWuc/18KD4nNqw6EIUZdIKLO4uIUnoiv4ipzx/IwraS4DtamhJa0iNEi0l/4
+         5YvNzKFkUQbtC2J+KC9Tl+Z6xftNufhBsN2IDu4/IUQsMm6DXa+ACLOlnpxVjAv49j
+         gdpa8v9LKz895pnMTvNjAEc1Nwyz3NI63ucoitI0=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00M52E70073297
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Jan 2020 23:02:14 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 21
+ Jan 2020 23:02:14 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 21 Jan 2020 23:02:14 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00M528Us130655;
+        Tue, 21 Jan 2020 23:02:09 -0600
+Subject: Re: [PATCH 2/5] arm64: dts: ti: k3-j721e-main: Add serdes_ln_ctrl
+ node to select SERDES lane mux
+To:     Rob Herring <robh@kernel.org>
+CC:     Roger Quadros <rogerq@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Nishanth Menon <nm@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Vignesh R <vigneshr@ti.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200108111830.8482-1-rogerq@ti.com>
+ <20200108111830.8482-3-rogerq@ti.com> <20200115014724.GA20772@bogus>
+ <1c55f0a8-99e3-934f-e8b8-d090df06a12e@ti.com>
+ <CAL_JsqLfJDN2LnqWHehFiM-SQyeqQAk2wjoKRbBiPy4tc5OkMQ@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d1b9fb54-9f6b-ef23-1c6f-d4c341a22785@ti.com>
+Date:   Wed, 22 Jan 2020 10:35:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <0fbcbd62-cf8a-1c3c-c702-f9bf59497867@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAL_JsqLfJDN2LnqWHehFiM-SQyeqQAk2wjoKRbBiPy4tc5OkMQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Rob,
 
-On 1/21/20 6:14 PM, John Garry wrote:
-> On 21/01/2020 00:43, Lu Baolu wrote:
->>>> An IOMMU group represents the smallest set of devices that are 
->>>> considered
->>>> to be isolated. All devices belonging to an IOMMU group share a default
->>>> domain for DMA APIs. There are two types of default domain: 
->>>> IOMMU_DOMAIN_DMA
->>>> and IOMMU_DOMAIN_IDENTITY. The former means IOMMU translation, while 
->>>> the
->>>> latter means IOMMU by-pass.
->>>>
->>>> Currently, the default domain type for the IOMMU groups is determined
->>>> globally. All IOMMU groups use a single default domain type. The global
->>>> default domain type can be adjusted by kernel build configuration or
->>>> kernel parameters.
->>>>
->>>> More and more users are looking forward to a fine grained default 
->>>> domain
->>>> type. For example, with the global default domain type set to 
->>>> translation,
->>>> the OEM verndors or end users might want some trusted and fast-speed 
->>>> devices
->>>> to bypass IOMMU for performance gains. On the other hand, with global
->>>> default domain type set to by-pass, some devices with limited system
->>>> memory addressing capability might want IOMMU translation to remove the
->>>> bounce buffer overhead.
->>>
->>> Hi Lu Baolu,
->>>
->>> Do you think that it would be a more common usecase to want 
->>> kernel-managed devices to be passthrough for performance reasons and 
->>> some select devices to be in DMA domain, like those with limited 
->>> address cap or whose drivers request huge amounts of memory?
->>>
->>> I just think it would be more manageable to set kernel commandline 
->>> parameters for this, i.e. those select few which want DMA domain.
->>>
-> 
-> Hi Baolu,
-> 
+On 21/01/20 11:27 PM, Rob Herring wrote:
+> On Mon, Jan 20, 2020 at 11:10 PM Kishon Vijay Abraham I <kishon@ti.com> wrote:
 >>
->> It's just two sides of a coin. Currently, iommu subsystem make DMA
->> domain by default, that's the reason why I selected to let user set
->> which devices are willing to use identity domains.
+>> Hi Rob,
 >>
+>> On 15/01/20 7:17 AM, Rob Herring wrote:
+>>> On Wed, Jan 08, 2020 at 01:18:27PM +0200, Roger Quadros wrote:
+>>>> From: Kishon Vijay Abraham I <kishon@ti.com>
+>>>>
+>>>> Add serdes_ln_ctrl node used for selecting SERDES lane mux.
+>>>>
+>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>> ---
+>>>>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 26 +++++++++++
+>>>>  include/dt-bindings/mux/mux-j721e-wiz.h   | 53 +++++++++++++++++++++++
+>>>>  2 files changed, 79 insertions(+)
+>>>>  create mode 100644 include/dt-bindings/mux/mux-j721e-wiz.h
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+>>>> index 24cb78db28e4..6741c1e67f50 100644
+>>>> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+>>>> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+>>>> @@ -5,6 +5,8 @@
+>>>>   * Copyright (C) 2016-2019 Texas Instruments Incorporated - http://www.ti.com/
+>>>>   */
+>>>>  #include <dt-bindings/phy/phy.h>
+>>>> +#include <dt-bindings/mux/mux.h>
+>>>> +#include <dt-bindings/mux/mux-j721e-wiz.h>
+>>>>
+>>>>  &cbass_main {
+>>>>      msmc_ram: sram@70000000 {
+>>>> @@ -19,6 +21,30 @@
+>>>>              };
+>>>>      };
+>>>>
+>>>> +    scm_conf: scm_conf@100000 {
+>>>
+>>> Don't use '_' in node names.
+>>
+>> Okay.
+>>>
+>>>> +            compatible = "syscon", "simple-mfd";
+>>>
+>>> Needs a specific compatible especially since the child node doesn't have
+>>> one.
+>>
+>> Child node has "mmio-mux" as compatible no? Are you referring to
+>> something else here?
 > 
-> OK, understood.
-> 
-> There was an alternate solution here which would allow per-group type to 
-> be updated via sysfs:
-> 
-> https://lore.kernel.org/linux-iommu/cover.1566353521.git.sai.praneeth.prakhya@intel.com/ 
-> 
+> I'm referring to exactly what I quoted, but that's also a generic
+> compatible, so you'd never be able to match any of this block to a
+> specific driver or handle any quirks.
 
-Yes. My patch set just tries to do this statically during boot time.
+Okay, right now we didn't see the need for a specific compatible but I
+guess that is necessary to make it more future proof. Will add a
+specific compatible.
 
-> 
-> Any idea what happened to that?
-
-No idea. Sai might have more information. :-)
-
-Best regards,
-baolu
+Thanks
+Kishon
