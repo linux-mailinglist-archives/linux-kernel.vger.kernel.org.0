@@ -2,71 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D051454EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:17:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2471145529
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725972AbgAVNRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:17:11 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38299 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbgAVNRL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:17:11 -0500
-Received: by mail-io1-f69.google.com with SMTP id x2so3992541iog.5
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 05:17:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=q8d++/wf474qD0e3n6akST7oeUoD70f6uMqqKr37OqA=;
-        b=OxC8t1eUnR1hhDanWz5l8vtk2eRPNyar1FtiqVeh/V3TJwCgS6W+UtWycFAaGqzkR6
-         Dlyhs99mbmFRW4vskCE7gb4QeIRwkAxJZsBGU129WnaIHv7HUnwGu78JZVtEzEZAWewY
-         Akgy9BT3e6Lhd0wZbX9OtpMLmJv8nV2IS+w6Shje5yHB8PUiGN4egGjixRiKw+3hZhZV
-         Q1ynLk3/Wly2B59REi0CKnySd6NzqFc22F6wlbxTtXGJ3uzOaYZCoXyLLzPKiFjIqu0g
-         ojv1flZbbjGJc4Yoaz4PIqfVB8lPINfeZN0mSI2Nz8nxewTEvN4p/vjsxWLMkOQNtxt3
-         Ha9A==
-X-Gm-Message-State: APjAAAV3ixZW2SqDfEzyxSKqRPBHSOAV9qTZ7UKuFUTA78n2YMdVSm7W
-        Wx0acdPlj1RjfSDYeul4HWFihRO/MNqzQFuqBnkmSR5jiYSx
-X-Google-Smtp-Source: APXvYqwV8CXUBnqjY6vuxlK1hHV5Zl4H0aCT5yiXTKQ6Q9PVoPv6WQz37pE0RLKUQ8jBy66zMk2BNIBTY9Z1iQ/OGhZui1zU5gij
-MIME-Version: 1.0
-X-Received: by 2002:a92:2804:: with SMTP id l4mr7966514ilf.136.1579699030791;
- Wed, 22 Jan 2020 05:17:10 -0800 (PST)
-Date:   Wed, 22 Jan 2020 05:17:10 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000951cea059cba579b@google.com>
-Subject: linux-next build error (7)
-From:   syzbot <syzbot+dc92421ed22129134c0f@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1729679AbgAVNT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:19:28 -0500
+Received: from gate.crashing.org ([63.228.1.57]:38045 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728665AbgAVNTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:19:24 -0500
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 00MDIsXk010897;
+        Wed, 22 Jan 2020 07:18:54 -0600
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 00MDIsPK010895;
+        Wed, 22 Jan 2020 07:18:54 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Wed, 22 Jan 2020 07:18:54 -0600
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, ruscur@russell.cc,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: GCC bug ? Re: [PATCH v2 10/10] powerpc/32s: Implement Kernel Userspace Access Protection
+Message-ID: <20200122131854.GK3191@gate.crashing.org>
+References: <cover.1552292207.git.christophe.leroy@c-s.fr> <a2847248a92cb1641b1740fa121c5a30593ae662.1552292207.git.christophe.leroy@c-s.fr> <87ftqfu7j1.fsf@concordia.ellerman.id.au> <a008a182-f1db-073c-7d38-27bfd1fd8676@c-s.fr> <20200121195501.GJ3191@gate.crashing.org> <8501a33e-6c76-b6bd-9d8e-985313f94579@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8501a33e-6c76-b6bd-9d8e-985313f94579@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi!
 
-syzbot found the following crash on:
+On Wed, Jan 22, 2020 at 07:57:15AM +0100, Christophe Leroy wrote:
+> GCC doc also says:
+> 
+> "if you use it in an inlined function and pass an argument of the 
+> function as the argument to the built-in, GCC never returns 1 when you 
+> call the inline function with a string constant"
+> 
+> Does GCC considers (void*)0 as a string constant ?
 
-HEAD commit:    ba0b4dfd Add linux-next specific files for 20200122
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17caa985e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7b604c617a6b217c
-dashboard link: https://syzkaller.appspot.com/bug?extid=dc92421ed22129134c0f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+No, because it isn't (it's a pointer, not an array of characters).
 
-Unfortunately, I don't have any reproducer for this crash yet.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+dc92421ed22129134c0f@syzkaller.appspotmail.com
-
-/syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:560: undefined reference to `__efi64_thunk'
-/syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:902: undefined reference to `efi_uv1_memmap_phys_prolog'
-/syzkaller/managers/upstream-linux-next-kasan-gce-root/kernel/arch/x86/platform/efi/efi_64.c:921: undefined reference to `efi_uv1_memmap_phys_epilog'
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Segher
