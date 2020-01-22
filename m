@@ -2,135 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37EDC144CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 09:05:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BFE144CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 09:06:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbgAVIEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 03:04:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726219AbgAVID6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 03:03:58 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 767322467E;
-        Wed, 22 Jan 2020 08:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579680237;
-        bh=uhNh35++n4Ngc7P+XTxtgYH80K0m5rying8RPY3VnfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s4f3bM9M+wq9F/v4FTn40Ar4ZPZQA/FOlLgp6vmvTkMfMsTyT36FHR1sZSqTUoCWg
-         qGaUcxcJOzyhgqlMw4/ZZHo/t8pL242GlITkge4pa2l2ggDXDi4eziqJOhR+3Rjj21
-         yVLnessqtmtLlfpVUjHkrb4Vzcf7fmykyWN87PSw=
-Date:   Wed, 22 Jan 2020 08:03:53 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jason Baron <jbaron@akamai.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH] dynamic_debug: allow to work if debugfs is disabled
-Message-ID: <20200122080352.GA15354@willie-the-truck>
-References: <20200122074343.GA2099098@kroah.com>
+        id S1726078AbgAVIG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 03:06:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36332 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgAVIG5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 03:06:57 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p17so6114430wma.1;
+        Wed, 22 Jan 2020 00:06:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yQD6BMfgsUB2zOq+Dz3vFA3XMaEJr7rjWMT5V31lJ5U=;
+        b=ZBu6YbsZXpXW8FW+V/QXVy9LG1vHdZlIpNTchpPtw9k6TpMWs5gc43Fmgvk37HA5cA
+         7u8B0KRjBTuHUAqZUc71KCYTY0dlt29J3CRQAFxfUsWcXXDqalhD8LIQhvKTTi+YR+/B
+         CT/S+5H+JMhQGAvVY8jIFRtij9tFI70TiENjHTbUAdj34ACb9K5eBTkt9ERVoMy/WAWM
+         sOv62shNju8FkQptsVsjTTI+/Vz5wuf0Rwj7VrcScuiPIiHj0iToebcVEUdDqsi0CdoI
+         mHTW4U4zN6dVWRwHLIR4Xa+5ROmkk+PP+WfCZk0yAFC3Idn1Cxk6liS0Bk2rzS/HJtCM
+         mOFw==
+X-Gm-Message-State: APjAAAUrUlok2n/h/VE/8R4n+ykqEr2eku6FKwXOGp4vaEjWmHXraYGt
+        6dGg4omiNe3KPLVvefcgvvkVSIRX
+X-Google-Smtp-Source: APXvYqwNgTz3qLi4HX2cdSOMQc1vCTzd88y/8o+O59L5Ua2zKcJ3ht7mYGYZCXzAvQJpyMQxasO53A==
+X-Received: by 2002:a1c:f003:: with SMTP id a3mr1584888wmb.41.1579680414195;
+        Wed, 22 Jan 2020 00:06:54 -0800 (PST)
+Received: from localhost (ip-37-188-245-167.eurotel.cz. [37.188.245.167])
+        by smtp.gmail.com with ESMTPSA id p15sm2716017wma.40.2020.01.22.00.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 00:06:52 -0800 (PST)
+Date:   Wed, 22 Jan 2020 09:06:51 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm: move_pages: fix the return value if there are
+ not-migrated pages
+Message-ID: <20200122080651.GN29276@dhcp22.suse.cz>
+References: <1579325203-16405-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20200120130624.GD18451@dhcp22.suse.cz>
+ <20200120131744.GE18451@dhcp22.suse.cz>
+ <20200121014416.GC1567@richard>
+ <20200121084040.GC29276@dhcp22.suse.cz>
+ <27b993f4-cc50-d5a9-1cda-89dd022aea16@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200122074343.GA2099098@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <27b993f4-cc50-d5a9-1cda-89dd022aea16@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 08:43:43AM +0100, Greg Kroah-Hartman wrote:
-> With the realization that having debugfs enabled on "production" systems is
-> generally not a good idea, debugfs is being disabled from more and more
-> platforms over time.  However, the functionality of dynamic debugging still is
-> needed at times, and since it relies on debugfs for its user api, having
-> debugfs disabled also forces dynamic debug to be disabled.
-
-Why is the dyndbg= command-line option not sufficient for these use-cases?
-
-> To get around this, move the "control" file for dynamic_debug to procfs IFF
-> debugfs is disabled.  This lets people turn on debugging as needed at runtime
-> for individual driverfs and subsystems.
-
-Hmm. If something called "dynamic_debug" is getting moved out of debugfs,
-this does raise the question as to what (if anything) should be left behind.
-I worry this is a bit of a slippery slope...
-
-Anywho, comments below.
-
-> Reported-by: many different companies
-> Cc: Jason Baron <jbaron@akamai.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  .../admin-guide/dynamic-debug-howto.rst         |  3 +++
->  lib/Kconfig.debug                               |  2 +-
->  lib/dynamic_debug.c                             | 17 ++++++++++++++---
->  3 files changed, 18 insertions(+), 4 deletions(-)
+On Tue 21-01-20 11:01:30, Yang Shi wrote:
 > 
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 252e5ef324e5..41f43a373a6a 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -54,6 +54,9 @@ If you make a mistake with the syntax, the write will fail thus::
->  				<debugfs>/dynamic_debug/control
->    -bash: echo: write error: Invalid argument
->  
-> +Note, for systems without 'debugfs' enabled, the control file can be
-> +also found in ``/proc/dynamic_debug/control``.
-> +
->  Viewing Dynamic Debug Behaviour
->  ===============================
->  
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 5ffe144c9794..01d4add8b963 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -98,7 +98,7 @@ config DYNAMIC_DEBUG
->  	bool "Enable dynamic printk() support"
->  	default n
->  	depends on PRINTK
-> -	depends on DEBUG_FS
-> +	depends on (DEBUG_FS || PROC_FS)
->  	help
->  
->  	  Compiles debug level messages into the kernel, which would noti
+> 
+> On 1/21/20 12:40 AM, Michal Hocko wrote:
+> > On Tue 21-01-20 09:44:16, Wei Yang wrote:
+> > > On Mon, Jan 20, 2020 at 02:17:44PM +0100, Michal Hocko wrote:
+> > > > On Mon 20-01-20 14:06:26, Michal Hocko wrote:
+> > > > > On Sat 18-01-20 13:26:43, Yang Shi wrote:
+> > > > > > The do_move_pages_to_node() might return > 0 value, the number of pages
+> > > > > > that are not migrated, then the value will be returned to userspace
+> > > > > > directly.  But, move_pages() syscall would just return 0 or errno.  So,
+> > > > > > we need reset the return value to 0 for such case as what pre-v4.17 did.
+> > > > > The patch is wrong. migrate_pages returns the number of pages it
+> > > > > _hasn't_ migrated or -errno. Yeah that semantic sucks but...
+> > > > > So err != 0 is always an error. Except err > 0 doesn't really provide
+> > > > > any useful information to the userspace. I cannot really remember what
+> > > > > was the actual behavior before my rework because there were some gotchas
+> > > > > hidden there.
+> > > > OK, so I've double checked. do_move_page_to_node_array would carry the
+> > > > error code over to do_pages_move and it would store the status stored
+> > > > in the pm array. It contains page_to_nid(page) so the resulting code
+> > > > indeed behaves properly before my change and this is a regression. I
+> > > Thanks, I see the change.
+> > > 
+> > > > have a very vague recollection that this has been brought up already.
+> > > > <...looks in notes...>
+> > > > Found it! The report is
+> > > > http://lkml.kernel.org/r/0329efa0984b9b0252ef166abb4498c0795fab36.1535113317.git.jstancek@redhat.com
+> > > > and my proposed workaround was http://lkml.kernel.org/r/20180829145537.GZ10223@dhcp22.suse.cz
+> > > Well, the above two links return 404.
+> > You are right. They are not archived for some reason. Anyway, the patch
+> > I was proposing back then is below:
+> > 
+> > commit cfb88c266b645197135cde2905c2bfc82f6d82a9
+> > Author: Michal Hocko <mhocko@suse.com>
+> > Date:   Wed Nov 14 12:19:09 2018 +0100
+> > 
+> >      mm: fix do_pages_move error reporting
+> >      a49bd4d71637 ("mm, numa: rework do_pages_move") has changed the way how
+> >      we report error to layers above. As the changelog mentioned the semantic
+> >      was quite unclear previously because the return 0 could mean both
+> >      success and failure.
+> >      The above mentioned commit didn't get all the way down to fix this
+> >      completely because it doesn't report pages that we even haven't
+> >      attempted to migrate and therefore we cannot simply say that the
+> >      semantic is:
+> >      - err < 0 - errno
+> >      - err >= 0 number of non-migrated pages.
+> >      Fixes: a49bd4d71637 ("mm, numa: rework do_pages_move")
+> >      Signed-off-by: Michal Hocko <mhocko@suse.com>
+> 
+> Thanks, Michal. But, it looks this patch still could return > 0 value (the
+> total number of non-migrated pages, including not even attempted pages) too,
+> but the problem we are trying to fix is to make do_pages_move() return <= 0
+> value only since the man page of move_pages() doesn't allow return > 0
+> value.
 
-The help text here also needs updating, since it refers to debugfs.
+Yes this patch just lives with the changed semantic and tries to make it
+sensible. So if some page cannot be migrated then we just stop and
+return the number of non migrated pages at the tail of the given array.
+This would make error handling slightly easier because you know that
+count - ret pages of the array can be skipped if ret >= 0.
 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index c60409138e13..077b2d6623ac 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -993,13 +993,24 @@ static __initdata int ddebug_init_success;
->  
->  static int __init dynamic_debug_init_debugfs(void)
->  {
-> -	struct dentry *dir;
-> +	struct dentry *debugfs_dir;
-> +	struct proc_dir_entry *procfs_dir;
->  
->  	if (!ddebug_init_success)
->  		return -ENODEV;
->  
-> -	dir = debugfs_create_dir("dynamic_debug", NULL);
-> -	debugfs_create_file("control", 0644, dir, NULL, &ddebug_proc_fops);
-> +	/* Create the control file in debugfs if it is enabled */
-> +	if (debugfs_initialized) {
-> +		debugfs_dir = debugfs_create_dir("dynamic_debug", NULL);
-> +		debugfs_create_file("control", 0644, debugfs_dir, NULL,
-> +				    &ddebug_proc_fops);
-> +		return 0;
-> +	}
-> +
-> +	/* No debugfs so put it in procfs instead */
-> +	procfs_dir = proc_mkdir("dynamic_debug", NULL);
-> +	if (procfs_dir)
-> +		proc_create("control", 0x644, procfs_dir, &ddebug_proc_fops);
+> And, by looking into the old code (v4.16), I spotted another problem. The
+> migrate_pages() would store the migration failure error code into
+> page_to_node->status. So, When do_move_page_to_node_array() returns > 0
+> value, the return value would be reset to 0 and the migration error codes
+> for non-migrated pages would be stored into status to return to userspace.
+> But, the rework removed this.
+> 
+> I didn't dig into the intention of the rework, is it expected?
 
-Shouldn't this be octal rather than hex? Even then, I don't understand what
-use it is being able to read but not write to this file. Perhaps make it
-0600 for /proc ?
+I have tried to preserve the original semantic as possible. As explained
+in the changelog there were quite some discrepancies even before. This
+new one was not really intentional. We have effectively two options
+here. Either somebody really depend on the former semantic and we have
+to fix this or we can relax the semantic as the above patch attempts.
 
-Will
+I would be more inclined for the second option as nobody has complained
+about the new semantic except for few ltp tests which do not represent
+real workload. If you have a real usecase then speak up please.
+-- 
+Michal Hocko
+SUSE Labs
