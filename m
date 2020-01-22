@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F00A145624
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1616145629
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgAVNVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:21:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37966 "EHLO mail.kernel.org"
+        id S1730291AbgAVNVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:21:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728792AbgAVNVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:21:12 -0500
+        id S1730256AbgAVNV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:21:28 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F27552468D;
-        Wed, 22 Jan 2020 13:21:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 846D6205F4;
+        Wed, 22 Jan 2020 13:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699271;
-        bh=ic33uoAVKVnzOnT9K0frrp+YlGW8qj6wsHLkx6rMn9c=;
+        s=default; t=1579699288;
+        bh=dez6bY75cECNOLPtutvRtSN4Rc+ag1aEluc3e4CHQk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yOHMXC6Kzf+X5iF/2Crs36+ol9SK9hqZO2rKPtpzot0Jtl1KmBlOwT6TX6hnq+/qR
-         V5rElZ0UO56zB7lkZ5dfhTON7Da5ZLSowNr0MaGGqRr0Iwi/PSMZkEAZbgkeVTbs7G
-         RXL7wmaJv+wbcy4LgtHtYkwUMOAvD6R/DfP/CqBc=
+        b=GPuy5AM/NQIpR9xxC4rc23bDLkyRL5rp2mxMO2Ir2I+r9AiLv8ZXAvPPneQ+JcNru
+         GNyTccdHZi5Vseer4CE5diD4AKACATvy8A+lz/H3kpZk3VFCy3vbxENYk1Gtkj9VPq
+         OlYdkogqPyCd7RCW/kRppJtLVhbuLmn6mtKvXWAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        stable@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 5.4 093/222] ARM: dts: imx6qdl-sabresd: Remove incorrect power supply assignment
-Date:   Wed, 22 Jan 2020 10:27:59 +0100
-Message-Id: <20200122092840.396293510@linuxfoundation.org>
+Subject: [PATCH 5.4 098/222] ARM: dts: imx7: Fix Toradex Colibri iMX7S 256MB NAND flash support
+Date:   Wed, 22 Jan 2020 10:28:04 +0100
+Message-Id: <20200122092840.757722524@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -43,39 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-commit 4521de30fbb3f5be0db58de93582ebce72c9d44f upstream.
+commit 4b0b97e651ecf29f20248420b52b6864fbd40bc2 upstream.
 
-The vdd3p0 LDO's input should be from external USB VBUS directly, NOT
-PMIC's power supply, the vdd3p0 LDO's target output voltage can be
-controlled by SW, and it requires input voltage to be high enough, with
-incorrect power supply assigned, if the power supply's voltage is lower
-than the LDO target output voltage, it will return fail and skip the LDO
-voltage adjustment, so remove the power supply assignment for vdd3p0 to
-avoid such scenario.
+Turns out when introducing the eMMC version the gpmi node required for
+NAND flash support got enabled exclusively on Colibri iMX7D 512MB.
 
-Fixes: 93385546ba36 ("ARM: dts: imx6qdl-sabresd: Assign corresponding power supply for LDOs")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Fixes: f928a4a377e4 ("ARM: dts: imx7: add Toradex Colibri iMX7D 1GB (eMMC) support")
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx6qdl-sabresd.dtsi |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/imx7s-colibri.dtsi |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-@@ -749,10 +749,6 @@
- 	vin-supply = <&vgen5_reg>;
+--- a/arch/arm/boot/dts/imx7s-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7s-colibri.dtsi
+@@ -49,3 +49,7 @@
+ 		reg = <0x80000000 0x10000000>;
+ 	};
  };
- 
--&reg_vdd3p0 {
--	vin-supply = <&sw2_reg>;
--};
--
- &reg_vdd2p5 {
- 	vin-supply = <&vgen5_reg>;
- };
++
++&gpmi {
++	status = "okay";
++};
 
 
