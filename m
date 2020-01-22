@@ -2,79 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4653A144A52
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA50144A58
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 04:22:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbgAVDTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 Jan 2020 22:19:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51624 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728779AbgAVDTZ (ORCPT
+        id S1729273AbgAVDUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 Jan 2020 22:20:02 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:56700 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729248AbgAVDUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 Jan 2020 22:19:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xvFKwj3rwmGWzeThWcd7d3rmYbLkm5ktTQrerysyp1c=; b=byvNTIopxeYqXcxl5IbLITlbQ
-        e1yUvJ0eOpprtdcX6NkHe2qlQiEdb9/8kDbB/UC/uXs+cxnuvr/DYdmazf/EoiOSRdfccl6hkZKL3
-        gYbE7XCHiMRn4h8bdxzueJCy/Ty+C2Zhwsd5g5LvV3ujLNknP2JFFmJWP4PyofVoGTfp98f5mLuwh
-        m8YbYguXs2Zdq0JZrp9rskLzePEpNzao2QFaYZH93wlnXHu7zAnxQO30HFmFhOFgXrQPqHjRJub3L
-        3hAcuUzALcUH8c/tg7mz1AYuqRwu8J09MCR8yRZH5gjvpNVbqW2fnP51zQPNtxzWQGmEqVO3TH6bh
-        8l8lJpvIA==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iu6Y7-0007pl-PP; Wed, 22 Jan 2020 03:19:23 +0000
-Subject: Re: mmotm 2020-01-21-13-28 uploaded (struct proc_ops)
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-References: <20200121212915.APuBK%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d18345b6-616f-4ea3-7b9e-956f8edc26b7@infradead.org>
-Date:   Tue, 21 Jan 2020 19:19:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 21 Jan 2020 22:20:02 -0500
+Received: by mail-io1-f70.google.com with SMTP id d13so3129468ioo.23
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 19:20:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Q+V6MdfziKIz0rbDvk/UXGQIlbKYZGAYXmvHdG0XHko=;
+        b=PEVOtkKF7wPs5qYAPRYRfDqKeqknz+AgbyiHIMQ8H/ZdkrpK0eTe9VwXhVyve0lzSU
+         Qcaoss3yYTz9Dr6IZGdhX+xr6g+hKvyARXIVOZA5rwhsZ9bwY+j5K51fadBSnvqdIOqU
+         dPLa3GCh5JnGzohFAUCLz1zSiyDY2jk6CaEsyJJ8g8dxUO1eSVpmX4yuy7SHrpe7+4TL
+         BbPqXlzV3lFXANjmgJE/lUs+CD/TL+PGbu2aeQXNRh8Bw44QB8zseyKHluaUFGJO8kU4
+         605m273TRHSud9yfqzQQvs17TVhvgUfsvwQl7MMeIwbpyCI4LnKVt20Kc22Bi1BBwLzm
+         paOA==
+X-Gm-Message-State: APjAAAX3L7eVSLMCmXFPA+6vzMeVqoIHqMV1xKk2Bfc+ms8TP6Nvnk/z
+        1Rp2QPvgZJL8Qox3+xVUxXSyTBarvpb3ucrUtj3XpOhmLdjE
+X-Google-Smtp-Source: APXvYqy+uydHS2wj8B3br4rKAZaNttmqlZ2vOJL3KADXaffFC3CoRkqx64UrmHbPL/Z+BdkU6gah06YpVkq7VIafjd3pXuRhagi3
 MIME-Version: 1.0
-In-Reply-To: <20200121212915.APuBK%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:860f:: with SMTP id g15mr6227655ild.297.1579663201195;
+ Tue, 21 Jan 2020 19:20:01 -0800 (PST)
+Date:   Tue, 21 Jan 2020 19:20:01 -0800
+In-Reply-To: <000000000000310afa059cabd024@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f8dfac059cb1ff9b@google.com>
+Subject: Re: WARNING in cbq_destroy_class
+From:   syzbot <syzbot+0a0596220218fcb603a8@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, echaudro@redhat.com, ivecera@redhat.com,
+        jhs@mojatatu.com, jiri@mellanox.com, jiri@resnulli.us,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/21/20 1:29 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2020-01-21-13-28 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+syzbot has bisected this bug to:
 
-and when CONFIG_PROC_FS is not set/enabled, kernel/sched/psi.c gets:
+commit d51aae68b142f48232257e96ce317db25445418d
+Author: Jiri Pirko <jiri@mellanox.com>
+Date:   Mon Nov 27 17:37:21 2017 +0000
 
-../kernel/sched/psi.c: In function ‘psi_proc_init’:
-../kernel/sched/psi.c:1287:56: error: macro "proc_create" requires 4 arguments, but only 3 given
-   proc_create("pressure/cpu", 0, NULL &psi_cpu_proc_ops);
-                                                        ^
-../kernel/sched/psi.c:1287:3: error: ‘proc_create’ undeclared (first use in this function); did you mean ‘sock_create’?
-   proc_create("pressure/cpu", 0, NULL &psi_cpu_proc_ops);
-   ^~~~~~~~~~~
-   sock_create
+    net: sched: cbq: create block for q->link.block
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12efb80de00000
+start commit:   80892772 hsr: Fix a compilation error
+git tree:       net
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=11efb80de00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16efb80de00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a0596220218fcb603a8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f107d1e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12114335e00000
 
--- 
-~Randy
+Reported-by: syzbot+0a0596220218fcb603a8@syzkaller.appspotmail.com
+Fixes: d51aae68b142 ("net: sched: cbq: create block for q->link.block")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
