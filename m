@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248B0144F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:39:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 820E2144FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730845AbgAVJjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
+        id S2387800AbgAVJm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732769AbgAVJi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:38:56 -0500
+        id S1733105AbgAVJmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:42:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2C242467E;
-        Wed, 22 Jan 2020 09:38:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C77772467B;
+        Wed, 22 Jan 2020 09:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685936;
-        bh=jlwuOc04JQ/mlkGK+K25zV2RTSgLEUG02HcCGOeRKdg=;
+        s=default; t=1579686170;
+        bh=RR+nFKij4VabaC5YVhm66/fxmKNHMt8p/paFyJe6+2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCuv0VlvHhIASNl8ARt17H5ojjbeNXbWaoPPsafE7PqsCqpUCXd907E2vE7KcDOUw
-         1rf6030EttarspBFD6V5yJxZKe6IlGJ0Q/ZUW/xVcfJFmMTX3cOIlTCSTzZAuLZtHo
-         xVyTCOI0092MBwJuyd0MPbG4HZFruevsbxMIE9Z0=
+        b=WM85pIwpnElUY2EzTgTf/V7wPQz4SH+hQLrxV99ZR2VaVDQ+NOUCHZNtg7j2USl91
+         F1oc288JvcgPX8oau2FkT8SpxgeXxSjIZY7SSEl1BUWdRTdRmiTqm8HGsCeqaGVT8j
+         iCsc/OSyVAAJoJlwHB03aYI27yLN7wSV3MfgubBc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Antti Laakso <antti.laakso@intel.com>,
+        Vladis Dronov <vdronov@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 43/65] net: dsa: tag_qca: fix doubled Tx statistics
-Date:   Wed, 22 Jan 2020 10:29:28 +0100
-Message-Id: <20200122092757.188372831@linuxfoundation.org>
+Subject: [PATCH 4.19 073/103] ptp: free ptp device pin descriptors properly
+Date:   Wed, 22 Jan 2020 10:29:29 +0100
+Message-Id: <20200122092814.232958966@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
+From: Vladis Dronov <vdronov@redhat.com>
 
-[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
+[ Upstream commit 75718584cb3c64e6269109d4d54f888ac5a5fd15 ]
 
-DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
-("net: dsa: Refactor transmit path to eliminate duplication"), so
-any accounting inside tagger callbacks is redundant and can lead to
-messing up the stats.
-This bug is present in Qualcomm tagger since day 0.
+There is a bug in ptp_clock_unregister(), where ptp_cleanup_pin_groups()
+first frees ptp->pin_{,dev_}attr, but then posix_clock_unregister() needs
+them to destroy a related sysfs device.
 
-Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+These functions can not be just swapped, as posix_clock_unregister() frees
+ptp which is needed in the ptp_cleanup_pin_groups(). Fix this by calling
+ptp_cleanup_pin_groups() in ptp_clock_release(), right before ptp is freed.
+
+This makes this patch fix an UAF bug in a patch which fixes an UAF bug.
+
+Reported-by: Antti Laakso <antti.laakso@intel.com>
+Fixes: a33121e5487b ("ptp: fix the race between the release of ptp_clock and cdev")
+Link: https://lore.kernel.org/netdev/3d2bd09735dbdaf003585ca376b7c1e5b69a19bd.camel@intel.com/
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/tag_qca.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/ptp/ptp_clock.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/dsa/tag_qca.c
-+++ b/net/dsa/tag_qca.c
-@@ -41,9 +41,6 @@ static struct sk_buff *qca_tag_xmit(stru
- 	struct dsa_slave_priv *p = netdev_priv(dev);
- 	u16 *phdr, hdr;
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -179,6 +179,7 @@ static void ptp_clock_release(struct dev
+ {
+ 	struct ptp_clock *ptp = container_of(dev, struct ptp_clock, dev);
  
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes += skb->len;
++	ptp_cleanup_pin_groups(ptp);
+ 	mutex_destroy(&ptp->tsevq_mux);
+ 	mutex_destroy(&ptp->pincfg_mux);
+ 	ida_simple_remove(&ptp_clocks_map, ptp->index);
+@@ -315,9 +316,8 @@ int ptp_clock_unregister(struct ptp_cloc
+ 	if (ptp->pps_source)
+ 		pps_unregister_source(ptp->pps_source);
+ 
+-	ptp_cleanup_pin_groups(ptp);
 -
- 	if (skb_cow_head(skb, 0) < 0)
- 		return NULL;
- 
+ 	posix_clock_unregister(&ptp->clock);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(ptp_clock_unregister);
 
 
