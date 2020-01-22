@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE04145756
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33AEF145769
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 15:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgAVOAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 09:00:24 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45822 "EHLO
+        id S1725940AbgAVOFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 09:05:18 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34993 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728205AbgAVOAW (ORCPT
+        with ESMTP id S1725805AbgAVOFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 09:00:22 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j42so7329724wrj.12;
-        Wed, 22 Jan 2020 06:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=S37mEzjCuwUx3aUpRGSkg86M1G/8BxlVxMLDTrBU45Q=;
-        b=gKeNkdhQteJze3+inzS/DmFaXeftA2GIDDb5gWL2wbUMDsgt9u0CKsv3dVmRkjfA2b
-         rsZ0D44FZ5gBrRpFWM+jBXNdPD7q8HdQX7+TuqboIOU+GyYeB+d28926IQKuIcnXX5Ht
-         NCnX2AAsEhIYtVW0eVl6rp+3aGTD3/6dzfsRMLOCr7wMjaFl3jpAO8xLEYNXzqgrIcEt
-         vEK7ER5Jb48mcyFMnMnzsZWxMktW3qLkSgmbciwTuufiD1P2FaaYIGPkWLuq2biBh6FV
-         6Xs1pj4JkDWGEoLCU+hPia4ytI4SO61Y0mNVyzQKM4HHwzhXoocRM7OjLIwxRAedsiP5
-         +EGA==
+        Wed, 22 Jan 2020 09:05:17 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g17so7423166wro.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 06:05:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=S37mEzjCuwUx3aUpRGSkg86M1G/8BxlVxMLDTrBU45Q=;
-        b=pfud9V33xMOzFX/IXvEphtPPYBmJbg3998P77/H+cqd5AHlRrkFSd2gH/u+hU/RQy6
-         //NQRm9etPTMfc6o+NIMMAXCtxdZOEHAuRxFP8gfyuYZi2suHAwS1W6KVt5ky3yPOeai
-         dn+hE7GSFgi/+ogSscd5sRReKMScLijGLhqDsooi7b5R1QCNJRqpVL8QeKLMEqrBQvh7
-         MRA1wIU2KJZg+/99JM110Kly5dZIUWaizUe1V/jNMIYKxDT0GDI75+9IJGWq5shsEI5c
-         nHkrXD3RiGnB1csGh6bD5KKqg+CcE9NYHZoDkI07THXgNtlFUn3xt2jLVs+ptofeiU2r
-         vctA==
-X-Gm-Message-State: APjAAAWoIaR+FYPr0OSNrM5lA7KrbLO0aHHlb+XLJXx9sYl3c3I+q1TP
-        bq+MoOe0+al4J8gFj+0yvPY=
-X-Google-Smtp-Source: APXvYqxy7k3w+Ry+EG/OXolbGJ7YMhHfWHqAGRBmrzdj+tQhUspgDtyTLtuwJscjM4rMsMprG13zFg==
-X-Received: by 2002:adf:b64b:: with SMTP id i11mr11998529wre.58.1579701621000;
-        Wed, 22 Jan 2020 06:00:21 -0800 (PST)
-Received: from localhost.localdomain (p5DCFF1C1.dip0.t-ipconnect.de. [93.207.241.193])
-        by smtp.gmail.com with ESMTPSA id g2sm57388270wrw.76.2020.01.22.06.00.19
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nTDawKBuPPz3RFrkaA7TRY9Jia2zninb0DeM+/pbQ8U=;
+        b=tTNJEUiVNp5/UYXZRpKKGk5pmUcetJfgebRlMhACXOcx/da29zUBSO3zp0UCohbIQp
+         +sCPpGjGpVXU1xNyPpiUP6vvMlDPJKXs+7JCNYBuEDM1EL8gDR2wLye2KYFuCxB+lDKZ
+         MxzSTiVdHMY19bo9Yoqlarrg9zNwuyXwIG6jHDpsDZZJm1Wg6+iEcirB75WtzwMGzcaw
+         mgKktaJygxjshVnaJMUQYVQlBSk0grcWZeAJ2hmUVSrjb1ZLYED9eklLDiTpIXOiNgxW
+         0/MJZhqJviHbJeIxgcQ3VDK18pfZ9yl1bcbcM8QPTbkW5PfO85PgDyaK+PhdSewMS0ir
+         Iqyg==
+X-Gm-Message-State: APjAAAUl9b0RAXZ5poBM9dyhLib/TGFLnEt8T5cqaKl4iJgSpDUc0e+O
+        +KS4g8Rj3qqk8CprmhV6+is=
+X-Google-Smtp-Source: APXvYqxlAP+/wQo+U5G/hC5nhSUhqcfVX0b3qdlQz+EBZiRxKCsql6s8v1dOdo8DVwgg6iphafdn3g==
+X-Received: by 2002:a05:6000:1241:: with SMTP id j1mr11170497wrx.26.1579701916005;
+        Wed, 22 Jan 2020 06:05:16 -0800 (PST)
+Received: from debian (41.142.6.51.dyn.plus.net. [51.6.142.41])
+        by smtp.gmail.com with ESMTPSA id b137sm4417661wme.26.2020.01.22.06.05.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 06:00:20 -0800 (PST)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
-        davem@davemloft.net, mchehab+samsung@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] MAINTAINERS: Add entry for mp5416 PMIC driver
-Date:   Wed, 22 Jan 2020 14:59:58 +0100
-Message-Id: <20200122135958.13663-4-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200122135958.13663-1-sravanhome@gmail.com>
-References: <20200122135958.13663-1-sravanhome@gmail.com>
+        Wed, 22 Jan 2020 06:05:15 -0800 (PST)
+Date:   Wed, 22 Jan 2020 14:05:12 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Sergey Dyasli <sergey.dyasli@citrix.com>
+Cc:     Paul Durrant <pdurrant@gmail.com>, xen-devel@lists.xen.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        George Dunlap <george.dunlap@citrix.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Wei Liu <wei.liu@kernel.org>
+Subject: Re: [PATCH v2 4/4] xen/netback: fix grant copy across page boundary
+Message-ID: <20200122140512.zxtld5sanohpmgt2@debian>
+References: <20200117125834.14552-1-sergey.dyasli@citrix.com>
+ <20200117125834.14552-5-sergey.dyasli@citrix.com>
+ <CACCGGhApXXnQwfBN_LioAh+8bk-cAAQ2ciua-MnnQoMBUfap6g@mail.gmail.com>
+ <85b36733-7f54-fdfd-045d-b8e8a92d84c5@citrix.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85b36733-7f54-fdfd-045d-b8e8a92d84c5@citrix.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Monolithic Power Systems mp5416 PMIC driver.
+On Wed, Jan 22, 2020 at 10:07:35AM +0000, Sergey Dyasli wrote:
+> On 20/01/2020 08:58, Paul Durrant wrote:
+> > On Fri, 17 Jan 2020 at 12:59, Sergey Dyasli <sergey.dyasli@citrix.com> wrote:
+> >>
+> >> From: Ross Lagerwall <ross.lagerwall@citrix.com>
+> >>
+> >> When KASAN (or SLUB_DEBUG) is turned on, there is a higher chance that
+> >> non-power-of-two allocations are not aligned to the next power of 2 of
+> >> the size. Therefore, handle grant copies that cross page boundaries.
+> >>
+> >> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+> >> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
+> >> ---
+> >> v1 --> v2:
+> >> - Use sizeof_field(struct sk_buff, cb)) instead of magic number 48
+> >> - Slightly update commit message
+> >>
+> >> RFC --> v1:
+> >> - Added BUILD_BUG_ON to the netback patch
+> >> - xenvif_idx_release() now located outside the loop
+> >>
+> >> CC: Wei Liu <wei.liu@kernel.org>
+> >> CC: Paul Durrant <paul@xen.org>
+> >
+> > Acked-by: Paul Durrant <paul@xen.org>
+> 
+> Thanks! I believe this patch can go in independently from the other
+> patches in the series. What else is required for this?
 
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+This patch didn't Cc the network development list so David Miller
+wouldn't be able to pick it up.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9aa438cb9836..e575029f5b89 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11240,7 +11240,9 @@ F:	drivers/tty/mxser.*
- MONOLITHIC POWER SYSTEM PMIC DRIVER
- M:	Saravanan Sekar <sravanhome@gmail.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/regulator/mps,mp5416.yaml
- F:	Documentation/devicetree/bindings/regulator/mpq7920.yaml
-+F:	drivers/regulator/mp5416.c
- F:	drivers/regulator/mpq7920.c
- F:	drivers/regulator/mpq7920.h
- 
--- 
-2.17.1
+Wei.
 
+> 
+> --
+> Sergey
