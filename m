@@ -2,116 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EA6145E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D518B145E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbgAVWHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 17:07:19 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58607 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVWHS (ORCPT
+        id S1729112AbgAVWYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 17:24:24 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47890 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbgAVWYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 17:07:18 -0500
-X-Originating-IP: 90.65.92.102
-Received: from localhost (lfbn-lyo-1-1913-102.w90-65.abo.wanadoo.fr [90.65.92.102])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 084E2FF806;
-        Wed, 22 Jan 2020 22:07:15 +0000 (UTC)
-Date:   Wed, 22 Jan 2020 23:07:15 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Michael McCormick <michael.mccormick@enatel.net>
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: pcf85063: Add pcf85063 clkout control to common
- clock framework
-Message-ID: <20200122220715.GB3392@piout.net>
-References: <20190902043727.GA24684@michael-Latitude-5590>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902043727.GA24684@michael-Latitude-5590>
+        Wed, 22 Jan 2020 17:24:03 -0500
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id 01A7C299C1; Wed, 22 Jan 2020 17:23:59 -0500 (EST)
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Chris Zankel <chris@zankel.net>,
+        Laurent Vivier <laurent@vivier.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <16c5c444451ae30a6b64d41a48851ec9cafbe003.1579730846.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1579730846.git.fthain@telegraphics.com.au>
+References: <cover.1579730846.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH net v3 11/12] net/sonic: Fix CAM initialization
+Date:   Thu, 23 Jan 2020 09:07:26 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Section 4.3.1 of the datasheet says,
 
-I'm sorry for the very late review, please Cc me on RTC patches.
+    This bit [TXP] must not be set if a Load CAM operation is in
+    progress (LCAM is set). The SONIC will lock up if both bits are
+    set simultaneously.
 
-It seems the patch has been mangled and tabs became spaces. Also, a few
-alignments are off.
+Testing has shown that the driver sometimes attempts to set LCAM
+while TXP is set. Avoid this by waiting for command completion
+before and after giving the LCAM command.
 
-On 02/09/2019 16:37:27+1200, Michael McCormick wrote:
-> Signed-off-by: Michael McCormick <michael.mccormick@enatel.net>
-> ---
->  drivers/rtc/rtc-pcf85063.c | 153 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 153 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
-> index 1afa6d9fa9fb..f47d3a6b997d 100644
-> --- a/drivers/rtc/rtc-pcf85063.c
-> +++ b/drivers/rtc/rtc-pcf85063.c
-> @@ -9,6 +9,7 @@
->   * Copyright (C) 2019 Micro Crystal AG
->   * Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
->   */
-> +#include <linux/clk-provider.h>
->  #include <linux/i2c.h>
->  #include <linux/bcd.h>
->  #include <linux/rtc.h>
-> @@ -44,6 +45,16 @@
->  #define PCF85063_OFFSET_STEP0          4340
->  #define PCF85063_OFFSET_STEP1          4069
-> 
-> +#define PCF85063_REG_CLKO_F_MASK       0x07 /* frequency mask */
-> +#define PCF85063_REG_CLKO_F_32768HZ    0x00
-> +#define PCF85063_REG_CLKO_F_16384HZ    0x01
-> +#define PCF85063_REG_CLKO_F_8192HZ     0x02
-> +#define PCF85063_REG_CLKO_F_4096HZ     0x03
-> +#define PCF85063_REG_CLKO_F_2048HZ     0x04
-> +#define PCF85063_REG_CLKO_F_1024HZ     0x05
-> +#define PCF85063_REG_CLKO_F_1HZ                0x06
+After issuing the Load CAM command, poll for !SONIC_CR_LCAM rather than
+SONIC_INT_LCD, because the SONIC_CR_TXP bit can't be used until
+!SONIC_CR_LCAM.
 
-Most of those defines are not used, I don't think they are necessary.
+When in reset mode, take the opportunity to reset the CAM Enable
+register.
 
-> +static int pcf85063_clkout_control(struct clk_hw *hw, bool enable)
-> +{
-> +       struct pcf85063 *pcf85063 = clkout_hw_to_pcf85063(hw);
-> +       unsigned char buf;
-> +
-> +       if (enable)
-> +               buf = PCF85063_REG_CLKO_F_32768HZ;
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+Changed since v2:
+ - Finish conversion to spin_lock_irqsave/spin_unlock_irqrestore.
+---
+ drivers/net/ethernet/natsemi/sonic.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-This doesn't work properly if the clock was already enabled and had a
-proper rate already set. I think you need to read out the currently set
-rate and update PCF85063_REG_CTRL2 only if PCF85063_REG_CLKO_F_OFF is
-set.
-
-> +       else
-> +               buf = PCF85063_REG_CLKO_F_OFF;
-> +
-> +       return regmap_update_bits(pcf85063->regmap, PCF85063_REG_CTRL2,
-> +                                 PCF85063_REG_CLKO_F_MASK, buf);
-> +}
-> +
-> +static struct clk *pcf85063_clkout_register_clk(struct pcf85063 *pcf85063)
-> +{
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +       int ret;
-> +
-> +       /* disable the clkout output */
-> +       ret = regmap_update_bits(pcf85063->regmap, PCF85063_REG_CTRL2,
-> +                                PCF85063_REG_CLKO_F_MASK, PCF85063_REG_CLKO_F_OFF);
-
-This has to be left to the common clock framework to figure that nothing
-is using this clock and disable it. I guess this is the whole point of
-this patch but you can't hardcode it here because this will introduce a
-glitch for all the actual users of the clock.
-
-
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 914cec2ccc28..27b6f6585527 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -634,6 +634,8 @@ static void sonic_multicast_list(struct net_device *dev)
+ 		    (netdev_mc_count(dev) > 15)) {
+ 			rcr |= SONIC_RCR_AMC;
+ 		} else {
++			unsigned long flags;
++
+ 			netif_dbg(lp, ifup, dev, "%s: mc_count %d\n", __func__,
+ 				  netdev_mc_count(dev));
+ 			sonic_set_cam_enable(dev, 1);  /* always enable our own address */
+@@ -647,9 +649,14 @@ static void sonic_multicast_list(struct net_device *dev)
+ 				i++;
+ 			}
+ 			SONIC_WRITE(SONIC_CDC, 16);
+-			/* issue Load CAM command */
+ 			SONIC_WRITE(SONIC_CDP, lp->cda_laddr & 0xffff);
++
++			/* LCAM and TXP commands can't be used simultaneously */
++			spin_lock_irqsave(&lp->lock, flags);
++			sonic_quiesce(dev, SONIC_CR_TXP);
+ 			SONIC_WRITE(SONIC_CMD, SONIC_CR_LCAM);
++			sonic_quiesce(dev, SONIC_CR_LCAM);
++			spin_unlock_irqrestore(&lp->lock, flags);
+ 		}
+ 	}
+ 
+@@ -675,6 +682,9 @@ static int sonic_init(struct net_device *dev)
+ 	SONIC_WRITE(SONIC_ISR, 0x7fff);
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_RST);
+ 
++	/* While in reset mode, clear CAM Enable register */
++	SONIC_WRITE(SONIC_CE, 0);
++
+ 	/*
+ 	 * clear software reset flag, disable receiver, clear and
+ 	 * enable interrupts, then completely initialize the SONIC
+@@ -785,14 +795,7 @@ static int sonic_init(struct net_device *dev)
+ 	 * load the CAM
+ 	 */
+ 	SONIC_WRITE(SONIC_CMD, SONIC_CR_LCAM);
+-
+-	i = 0;
+-	while (i++ < 100) {
+-		if (SONIC_READ(SONIC_ISR) & SONIC_INT_LCD)
+-			break;
+-	}
+-	netif_dbg(lp, ifup, dev, "%s: CMD=%x, ISR=%x, i=%d\n", __func__,
+-		  SONIC_READ(SONIC_CMD), SONIC_READ(SONIC_ISR), i);
++	sonic_quiesce(dev, SONIC_CR_LCAM);
+ 
+ 	/*
+ 	 * enable receiver, disable loopback
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.24.1
+
