@@ -2,67 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C91CC1456D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A24F31456E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:39:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729031AbgAVNeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:34:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbgAVNep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:34:45 -0500
-Received: from localhost (unknown [84.241.205.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1FE820678;
-        Wed, 22 Jan 2020 13:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579700085;
-        bh=d2mYPxa87MRYm5UwCu/FJrQarRLPYrf+VNX1F7YpAK8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uFdPpZlo059AeOpfzlYQVpJtkvniTznRa3UGvuIcxh+wo99IRgeK6BEinpUQZfxTe
-         iJn1fp4sXRDisbYhu0PKGdRkb1SQ5DCroTMfjMQHNzQJnbK5N7uAoRh3cVw7L3AcKR
-         iQeI3Y8gzBi6UMy7Hk16aFfRCx3/kTrMVJQZcl20=
-Date:   Wed, 22 Jan 2020 14:34:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        "David E . Box" <david.e.box@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Brown <broonie@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/38] platform/x86: intel_scu_ipc: Fix interrupt
- support
-Message-ID: <20200122133440.GA4963@kroah.com>
-References: <20200121160114.60007-1-mika.westerberg@linux.intel.com>
- <20200121160114.60007-7-mika.westerberg@linux.intel.com>
+        id S1729117AbgAVNjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:39:20 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46584 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbgAVNjU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:39:20 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00MDd0cM057467;
+        Wed, 22 Jan 2020 07:39:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579700340;
+        bh=co1m/tnZ+ImTwD3yuXyZxVaG3wlifWau9XX6MEe8Chg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=taziyYJQlSzT2GyfKCypQhi5IB6lZr9GRxURow+X6+pPSQokO3HMZ5n1Ktm1eOZV+
+         QOsv5YUsmbCQO9rciykyNX8OSaR8Ff8g2cuKfD4CCH/IloXOHZA9/Fm6d1FFzbQAcT
+         LwBwM8c5O1wWlnzNP20hbrcxQGLBFFveLKn91q14=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00MDd05r065172
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 Jan 2020 07:39:00 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 22
+ Jan 2020 07:38:59 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 22 Jan 2020 07:38:59 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00MDcxqI104110;
+        Wed, 22 Jan 2020 07:38:59 -0600
+Subject: Re: [PATCH 1/3] dt-bindings: net: can: m_can: Add Documentation for
+ stb-gpios
+To:     Faiz Abbas <faiz_abbas@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>
+CC:     <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <davem@davemloft.net>, <mkl@pengutronix.de>,
+        <wg@grandegger.com>, <sriram.dash@samsung.com>, <nm@ti.com>,
+        <t-kristo@ti.com>
+References: <20200122080310.24653-1-faiz_abbas@ti.com>
+ <20200122080310.24653-2-faiz_abbas@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c3b0eeb8-bd78-aa96-4783-62dc93f03bfe@ti.com>
+Date:   Wed, 22 Jan 2020 07:35:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121160114.60007-7-mika.westerberg@linux.intel.com>
+In-Reply-To: <20200122080310.24653-2-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 07:00:42PM +0300, Mika Westerberg wrote:
-> Currently the driver has disabled interrupt support for Tangier but
-> actually interrupt works just fine if the command is not written twice
-> in a row. Also we need to ack the interrupt in the handler.
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Faiz
 
-Why isn't this patch 1 of the series and cc:ed to stable?
+On 1/22/20 2:03 AM, Faiz Abbas wrote:
+> The CAN transceiver on some boards has an STB pin which is
+> used to control its standby mode. Add an optional property
+> stb-gpios to toggle the same.
+>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>   Documentation/devicetree/bindings/net/can/m_can.txt | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/net/can/m_can.txt b/Documentation/devicetree/bindings/net/can/m_can.txt
+> index ed614383af9c..cc8ba3f7a2aa 100644
+> --- a/Documentation/devicetree/bindings/net/can/m_can.txt
+> +++ b/Documentation/devicetree/bindings/net/can/m_can.txt
+> @@ -48,6 +48,8 @@ Optional Subnode:
+>   			  that can be used for CAN/CAN-FD modes. See
+>   			  Documentation/devicetree/bindings/net/can/can-transceiver.txt
+>   			  for details.
+> +stb-gpios		: gpio node to toggle the STB (standby) signal on the transceiver
+> +
 
-thanks,
+The m_can.txt is for the m_can framework.  If this is specific to the 
+platform then it really does not belong here.
 
-greg k-h
+If the platform has specific nodes then maybe we need a 
+m_can_platform.txt binding for specific platform nodes.  But I leave 
+that decision to Rob.
+
+Also I prefer you spell out standby like the gpios are spelled out in 
+the tcan binding.
+
+Dan
+
+
+>   Example:
+>   SoC dtsi:
+>   m_can1: can@20e8000 {
