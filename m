@@ -2,79 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1798B145ABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 18:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D08145AC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 18:25:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbgAVRYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 12:24:04 -0500
-Received: from www62.your-server.de ([213.133.104.62]:50054 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgAVRYE (ORCPT
+        id S1729143AbgAVRZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 12:25:09 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:25378 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbgAVRZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:24:04 -0500
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iuJjW-0004We-30; Wed, 22 Jan 2020 18:24:02 +0100
-Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=linux-3.fritz.box)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1iuJjV-000RE1-PV; Wed, 22 Jan 2020 18:24:01 +0100
-Subject: Re: [PATCH v2] bpf: btf: Always output invariant hit in pahole DWARF
- to BTF transform
-To:     Chris Down <chris@chrisdown.name>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-References: <20200122000110.GA310073@chrisdown.name>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <fcea8bd9-2bea-ddb2-449e-8640e772c487@iogearbox.net>
-Date:   Wed, 22 Jan 2020 18:24:01 +0100
+        Wed, 22 Jan 2020 12:25:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579713908;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VHvnfO/LwUwnWaPYXVcUEbXAoTeNUswOZpwb/FvyBhE=;
+        b=aTsgulfu5IiudvfMpFVC8LqaCLvatRb4cd/I8HIGaekKV7UJjVicICHoJ3nCYzs9TYZZqg
+        sypt7gHsLFTFPLi3CQBLlFwWQ9sC5EpzHISIb3p/pVG8AvPef8OmdtJdNhm4LrpfYmQyJd
+        eD/ukK/PAY67NiVXgtMb2llJNqcTURE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-146-ckjOS28dPFaMDyNWePyqDQ-1; Wed, 22 Jan 2020 12:25:06 -0500
+X-MC-Unique: ckjOS28dPFaMDyNWePyqDQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 492019920A;
+        Wed, 22 Jan 2020 17:25:03 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 61CEC87023;
+        Wed, 22 Jan 2020 17:24:59 +0000 (UTC)
+Subject: Re: [PATCH v9 0/5] Add NUMA-awareness to qspinlock
+To:     Lihao Liang <lihaoliang@google.com>,
+        Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com, dave.dice@oracle.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        Will Deacon <will@kernel.org>
+References: <20200115035920.54451-1-alex.kogan@oracle.com>
+ <CAC4j=Y8rCeTX9oKKbh+dCdTP8Ud4hW1ybu+iE7t_nxMSYBOR5w@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <4e15fa1d-9540-3274-502a-4195a0d46f63@redhat.com>
+Date:   Wed, 22 Jan 2020 12:24:58 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200122000110.GA310073@chrisdown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAC4j=Y8rCeTX9oKKbh+dCdTP8Ud4hW1ybu+iE7t_nxMSYBOR5w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25703/Wed Jan 22 12:37:53 2020)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/22/20 1:01 AM, Chris Down wrote:
-> When trying to compile with CONFIG_DEBUG_INFO_BTF enabled, I got this
-> error:
-> 
->      % make -s
->      Failed to generate BTF for vmlinux
->      Try to disable CONFIG_DEBUG_INFO_BTF
->      make[3]: *** [vmlinux] Error 1
-> 
-> Compiling again without -s shows the true error (that pahole is
-> missing), but since this is fatal, we should show the error
-> unconditionally on stderr as well, not silence it using the `info`
-> function. With this patch:
-> 
->      % make -s
->      BTF: .tmp_vmlinux.btf: pahole (pahole) is not available
->      Failed to generate BTF for vmlinux
->      Try to disable CONFIG_DEBUG_INFO_BTF
->      make[3]: *** [vmlinux] Error 1
-> 
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Cc: Stanislav Fomichev <sdf@google.com>
-> Cc: Andrii Nakryiko <andriin@fb.com>
-> Cc: John Fastabend <john.fastabend@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: bpf@vger.kernel.org
-> Cc: kernel-team@fb.com
+On 1/22/20 6:45 AM, Lihao Liang wrote:
+> Hi Alex,
+>
+> On Wed, Jan 22, 2020 at 10:28 AM Alex Kogan <alex.kogan@oracle.com> wro=
+te:
+>> Summary
+>> -------
+>>
+>> Lock throughput can be increased by handing a lock to a waiter on the
+>> same NUMA node as the lock holder, provided care is taken to avoid
+>> starvation of waiters on other NUMA nodes. This patch introduces CNA
+>> (compact NUMA-aware lock) as the slow path for qspinlock. It is
+>> enabled through a configuration option (NUMA_AWARE_SPINLOCKS).
+>>
+> Thanks for your patches. The experimental results look promising!
+>
+> I understand that the new CNA qspinlock uses randomization to achieve
+> long-term fairness, and provides the numa_spinlock_threshold parameter
+> for users to tune. As Linux runs extremely diverse workloads, it is not
+> clear how randomization affects its fairness, and how users with
+> different requirements are supposed to tune this parameter.
+>
+> To this end, Will and I consider it beneficial to be able to answer the
+> following question:
+>
+> With different values of numa_spinlock_threshold and
+> SHUFFLE_REDUCTION_PROB_ARG, how long do threads running on different
+> sockets have to wait to acquire the lock? This is particularly relevant
+> in high contention situations when new threads keep arriving on the sam=
+e
+> socket as the lock holder.
+>
+> In this email, I try to provide some formal analysis to address this
+> question. Let's assume the probability for the lock to stay on the
+> same socket is *at least* p, which corresponds to the probability for
+> the function probably(unsigned int num_bits) in the patch to return *fa=
+lse*,
+> where SHUFFLE_REDUCTION_PROB_ARG is passed as the value of num_bits to =
+the
+> function.
 
-Applied, thanks!
+That is not strictly true from my understanding of the code. The
+probably() function does not come into play if a secondary queue is
+present. Also calling cna_scan_main_queue() doesn't guarantee that a
+waiter in the same node can be found. So the simple mathematical
+analysis isn't that applicable in this case. One will have to do an
+actual simulation to find out what the actual behavior will be.
+
+The comment in the code states that:
+
+/*
+=C2=A0* Controls the probability for enabling the scan of the main queue =
+when
+=C2=A0* the secondary queue is empty. The chosen value reduces the amount=
+ of
+=C2=A0* unnecessary shuffling of threads between the two waiting queues w=
+hen
+=C2=A0* the contention is low, while responding fast enough and enabling
+=C2=A0* the shuffling when the contention is high.
+=C2=A0*/
+#define SHUFFLE_REDUCTION_PROB_ARG=C2=A0 (7)
+
+Cheers,
+Longman
+
+
+
