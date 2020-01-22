@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC15E144EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B671451D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbgAVJcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:32:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
+        id S1731278AbgAVJ4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:56:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbgAVJbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:31:53 -0500
+        id S1729903AbgAVJbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:31:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D79A2467A;
-        Wed, 22 Jan 2020 09:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E06D124673;
+        Wed, 22 Jan 2020 09:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685513;
-        bh=rfyTEBDo4u3jtWxJP62Z6HW7TktOsKaBxa7T+Abi5iA=;
+        s=default; t=1579685515;
+        bh=lFrp2fT6oAwU0C505gdh33LnzaHuMVacMPBXsfkRemY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oGRHEvjzzxXLGiL+eK4hA2t3M+VRe3JR2o0c9HodkRovHdS+i+w9Qo0CtTizCCHEj
-         FaEpLs6juISza926+4vCEK/F6fSCK4RdmZPc/+L6WmTWWAfQYbOn1OWADkDEvrubfQ
-         u91UwURdaBF3D1XZCZtssadoqwM0shtF1589pTtE=
+        b=yh/hWh7TK5NYf+qQeqasmNwDzcgmcHF2UFDwp20ki1dhaPmmERLz5MGCHGroxFwti
+         v8q+WaVQ1xYFEEO0Hvp/TDVSFc+1E5ShuPQfSAbyq8iT+/Xc6cbs+gPymzVCSNAx2k
+         tr1djPCaxsy8l+k4Onppla0fNp+O7LJEZqHke/Kg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 45/76] USB: serial: suppress driver bind attributes
-Date:   Wed, 22 Jan 2020 10:29:01 +0100
-Message-Id: <20200122092757.309020249@linuxfoundation.org>
+Subject: [PATCH 4.4 46/76] USB: serial: ch341: handle unbound port at reset_resume
+Date:   Wed, 22 Jan 2020 10:29:02 +0100
+Message-Id: <20200122092757.494045423@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
 References: <20200122092751.587775548@linuxfoundation.org>
@@ -44,39 +44,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit fdb838efa31e1ed9a13ae6ad0b64e30fdbd00570 upstream.
+commit 4d5ef53f75c22d28f490bcc5c771fcc610a9afa4 upstream.
 
-USB-serial drivers must not be unbound from their ports before the
-corresponding USB driver is unbound from the parent interface so
-suppress the bind and unbind attributes.
+Check for NULL port data in reset_resume() to avoid dereferencing a NULL
+pointer in case the port device isn't bound to a driver (e.g. after a
+failed control request at port probe).
 
-Unbinding a serial driver while it's port is open is a sure way to
-trigger a crash as any driver state is released on unbind while port
-hangup is handled on the parent USB interface level. Drivers for
-multiport devices where ports share a resource such as an interrupt
-endpoint also generally cannot handle individual ports going away.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
+Fixes: 1ded7ea47b88 ("USB: ch341 serial: fix port number changed after resume")
+Cc: stable <stable@vger.kernel.org>     # 2.6.30
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/ch341.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -1350,6 +1350,9 @@ static int usb_serial_register(struct us
- 		return -EINVAL;
- 	}
+--- a/drivers/usb/serial/ch341.c
++++ b/drivers/usb/serial/ch341.c
+@@ -555,9 +555,13 @@ static int ch341_tiocmget(struct tty_str
+ static int ch341_reset_resume(struct usb_serial *serial)
+ {
+ 	struct usb_serial_port *port = serial->port[0];
+-	struct ch341_private *priv = usb_get_serial_port_data(port);
++	struct ch341_private *priv;
+ 	int ret;
  
-+	/* Prevent individual ports from being unbound. */
-+	driver->driver.suppress_bind_attrs = true;
++	priv = usb_get_serial_port_data(port);
++	if (!priv)
++		return 0;
 +
- 	usb_serial_operations_init(driver);
+ 	/* reconfigure ch341 serial port after bus-reset */
+ 	ch341_configure(serial->dev, priv);
  
- 	/* Add this device to our list of devices */
 
 
