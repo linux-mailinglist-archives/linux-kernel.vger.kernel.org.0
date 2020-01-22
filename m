@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F98E1455C2
+	by mail.lfdr.de (Postfix) with ESMTP id B211B1455C3
 	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbgAVNY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:24:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44238 "EHLO mail.kernel.org"
+        id S1731112AbgAVNZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:25:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbgAVNYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:24:55 -0500
+        id S1731083AbgAVNY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:24:57 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EE9024688;
-        Wed, 22 Jan 2020 13:24:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53A8C24688;
+        Wed, 22 Jan 2020 13:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699493;
-        bh=8u5bBSZvcbj5TDvKR7jmKt4eiSeLil8Ogw8aRHcZKuk=;
+        s=default; t=1579699496;
+        bh=+nEocEXu79xcANSH/l4JyDJI85CzV1CQLsYWCtinu6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HrEgr8eUCOf0oh1O8jyZYUBvcH0lPJV2qyao26OCblvpzc6rAJFPWKTrNhVPM4F/C
-         cV+JgtC8BcrKAAmYZr0BlxGwF/GFb22vZobPUVwxVXslOlWCrOPGLqYaxcxzXAj32q
-         XkHtSkvIUFjWaKNcZwufLW6fmJzaU1Xcfvi5Vd0I=
+        b=mw1Ev+we5tsOI+Ovfs5jz8FHN0hvHDBfSd+DLFPGHihtOUQ4F4iOUhCpKDqfu/3CB
+         0uYWYcG6xRI5XyBsSIdvKCTCooFlqE4sJgAQHY3ZOIXJzbNcDiqfccn+tpvt/9gfB3
+         KJbnLB+DBCVhI6quhpANPpbnR5Ik3a0SPd0vzrp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Jose Abreu <Jose.Abreu@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 163/222] mlxsw: spectrum_qdisc: Include MC TCs in Qdisc counters
-Date:   Wed, 22 Jan 2020 10:29:09 +0100
-Message-Id: <20200122092845.384279560@linuxfoundation.org>
+Subject: [PATCH 5.4 164/222] net: stmmac: selftests: Make it work in Synopsys AXS101 boards
+Date:   Wed, 22 Jan 2020 10:29:10 +0100
+Message-Id: <20200122092845.456111419@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,109 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Machata <petrm@mellanox.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-commit 85005b82e59fa7bb7388b12594ab2067bf73d66c upstream.
+commit 0b9f932edc1a461933bfde08e620362e2190e0dd upstream.
 
-mlxsw configures Spectrum in such a way that BUM traffic is passed not
-through its nominal traffic class TC, but through its MC counterpart TC+8.
-However, when collecting statistics, Qdiscs only look at the nominal TC and
-ignore the MC TC.
+Synopsys AXS101 boards do not support unaligned memory loads or stores.
+Change the selftests mechanism to explicity:
+- Not add extra alignment in TX SKB
+- Use the unaligned version of ether_addr_equal()
 
-Add two helpers to compute the value for logical TC from the constituents,
-one for backlog, the other for tail drops. Use them throughout instead of
-going through the xstats pointer directly.
-
-Counters for TX bytes and packets are deduced from packet priority
-counters, and therefore already include BUM traffic. wred_drop counter is
-irrelevant on MC TCs, because RED is not enabled on them.
-
-Fixes: 7b8195306694 ("mlxsw: spectrum: Configure MC-aware mode on mlxsw ports")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Fixes: 091810dbded9 ("net: stmmac: Introduce selftests support")
+Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c |   30 ++++++++++++++-----
- 1 file changed, 23 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c |   20 +++++++++--------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_qdisc.c
-@@ -195,6 +195,20 @@ mlxsw_sp_qdisc_get_xstats(struct mlxsw_s
- 	return -EOPNOTSUPP;
- }
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
+@@ -80,7 +80,7 @@ static struct sk_buff *stmmac_test_get_u
+ 	if (attr->max_size && (attr->max_size > size))
+ 		size = attr->max_size;
  
-+static u64
-+mlxsw_sp_xstats_backlog(struct mlxsw_sp_port_xstats *xstats, int tclass_num)
-+{
-+	return xstats->backlog[tclass_num] +
-+	       xstats->backlog[tclass_num + 8];
-+}
-+
-+static u64
-+mlxsw_sp_xstats_tail_drop(struct mlxsw_sp_port_xstats *xstats, int tclass_num)
-+{
-+	return xstats->tail_drop[tclass_num] +
-+	       xstats->tail_drop[tclass_num + 8];
-+}
-+
- static void
- mlxsw_sp_qdisc_bstats_per_priority_get(struct mlxsw_sp_port_xstats *xstats,
- 				       u8 prio_bitmap, u64 *tx_packets,
-@@ -269,7 +283,7 @@ mlxsw_sp_setup_tc_qdisc_red_clean_stats(
- 					       &stats_base->tx_bytes);
- 	red_base->prob_mark = xstats->ecn;
- 	red_base->prob_drop = xstats->wred_drop[tclass_num];
--	red_base->pdrop = xstats->tail_drop[tclass_num];
-+	red_base->pdrop = mlxsw_sp_xstats_tail_drop(xstats, tclass_num);
+-	skb = netdev_alloc_skb_ip_align(priv->dev, size);
++	skb = netdev_alloc_skb(priv->dev, size);
+ 	if (!skb)
+ 		return NULL;
  
- 	stats_base->overlimits = red_base->prob_drop + red_base->prob_mark;
- 	stats_base->drops = red_base->prob_drop + red_base->pdrop;
-@@ -369,7 +383,8 @@ mlxsw_sp_qdisc_get_red_xstats(struct mlx
+@@ -244,6 +244,8 @@ static int stmmac_test_loopback_validate
+ 					 struct net_device *orig_ndev)
+ {
+ 	struct stmmac_test_priv *tpriv = pt->af_packet_priv;
++	unsigned char *src = tpriv->packet->src;
++	unsigned char *dst = tpriv->packet->dst;
+ 	struct stmmachdr *shdr;
+ 	struct ethhdr *ehdr;
+ 	struct udphdr *uhdr;
+@@ -260,15 +262,15 @@ static int stmmac_test_loopback_validate
+ 		goto out;
  
- 	early_drops = xstats->wred_drop[tclass_num] - xstats_base->prob_drop;
- 	marks = xstats->ecn - xstats_base->prob_mark;
--	pdrops = xstats->tail_drop[tclass_num] - xstats_base->pdrop;
-+	pdrops = mlxsw_sp_xstats_tail_drop(xstats, tclass_num) -
-+		 xstats_base->pdrop;
- 
- 	res->pdrop += pdrops;
- 	res->prob_drop += early_drops;
-@@ -402,9 +417,10 @@ mlxsw_sp_qdisc_get_red_stats(struct mlxs
- 
- 	overlimits = xstats->wred_drop[tclass_num] + xstats->ecn -
- 		     stats_base->overlimits;
--	drops = xstats->wred_drop[tclass_num] + xstats->tail_drop[tclass_num] -
-+	drops = xstats->wred_drop[tclass_num] +
-+		mlxsw_sp_xstats_tail_drop(xstats, tclass_num) -
- 		stats_base->drops;
--	backlog = xstats->backlog[tclass_num];
-+	backlog = mlxsw_sp_xstats_backlog(xstats, tclass_num);
- 
- 	_bstats_update(stats_ptr->bstats, tx_bytes, tx_packets);
- 	stats_ptr->qstats->overlimits += overlimits;
-@@ -575,9 +591,9 @@ mlxsw_sp_qdisc_get_prio_stats(struct mlx
- 	tx_packets = stats->tx_packets - stats_base->tx_packets;
- 
- 	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++) {
--		drops += xstats->tail_drop[i];
-+		drops += mlxsw_sp_xstats_tail_drop(xstats, i);
- 		drops += xstats->wred_drop[i];
--		backlog += xstats->backlog[i];
-+		backlog += mlxsw_sp_xstats_backlog(xstats, i);
+ 	ehdr = (struct ethhdr *)skb_mac_header(skb);
+-	if (tpriv->packet->dst) {
+-		if (!ether_addr_equal(ehdr->h_dest, tpriv->packet->dst))
++	if (dst) {
++		if (!ether_addr_equal_unaligned(ehdr->h_dest, dst))
+ 			goto out;
  	}
- 	drops = drops - stats_base->drops;
- 
-@@ -613,7 +629,7 @@ mlxsw_sp_setup_tc_qdisc_prio_clean_stats
- 
- 	stats_base->drops = 0;
- 	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++) {
--		stats_base->drops += xstats->tail_drop[i];
-+		stats_base->drops += mlxsw_sp_xstats_tail_drop(xstats, i);
- 		stats_base->drops += xstats->wred_drop[i];
+ 	if (tpriv->packet->sarc) {
+-		if (!ether_addr_equal(ehdr->h_source, ehdr->h_dest))
++		if (!ether_addr_equal_unaligned(ehdr->h_source, ehdr->h_dest))
+ 			goto out;
+-	} else if (tpriv->packet->src) {
+-		if (!ether_addr_equal(ehdr->h_source, tpriv->packet->src))
++	} else if (src) {
++		if (!ether_addr_equal_unaligned(ehdr->h_source, src))
+ 			goto out;
  	}
  
+@@ -714,7 +716,7 @@ static int stmmac_test_flowctrl_validate
+ 	struct ethhdr *ehdr;
+ 
+ 	ehdr = (struct ethhdr *)skb_mac_header(skb);
+-	if (!ether_addr_equal(ehdr->h_source, orig_ndev->dev_addr))
++	if (!ether_addr_equal_unaligned(ehdr->h_source, orig_ndev->dev_addr))
+ 		goto out;
+ 	if (ehdr->h_proto != htons(ETH_P_PAUSE))
+ 		goto out;
+@@ -856,7 +858,7 @@ static int stmmac_test_vlan_validate(str
+ 	}
+ 
+ 	ehdr = (struct ethhdr *)skb_mac_header(skb);
+-	if (!ether_addr_equal(ehdr->h_dest, tpriv->packet->dst))
++	if (!ether_addr_equal_unaligned(ehdr->h_dest, tpriv->packet->dst))
+ 		goto out;
+ 
+ 	ihdr = ip_hdr(skb);
+@@ -1546,7 +1548,7 @@ static int stmmac_test_arp_validate(stru
+ 	struct arphdr *ahdr;
+ 
+ 	ehdr = (struct ethhdr *)skb_mac_header(skb);
+-	if (!ether_addr_equal(ehdr->h_dest, tpriv->packet->src))
++	if (!ether_addr_equal_unaligned(ehdr->h_dest, tpriv->packet->src))
+ 		goto out;
+ 
+ 	ahdr = arp_hdr(skb);
 
 
