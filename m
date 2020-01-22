@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18F8A1450CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9A7144EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbgAVJs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:48:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
+        id S1729654AbgAVJbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:31:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387470AbgAVJkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:40:42 -0500
+        id S1729637AbgAVJbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:31:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D82602467B;
-        Wed, 22 Jan 2020 09:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEC1A2467C;
+        Wed, 22 Jan 2020 09:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686041;
-        bh=o5ENOhAOLvVXmvZAAxOD8ynA2Hhx+mzchRgQvihpNNg=;
+        s=default; t=1579685478;
+        bh=ESPBaorZREIc1Iodc78RRklB2074hleeUq2CS2ya8QA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M22pXMQc6bElc/ClEJ2LAcebJwdHyBsaFXhE36vOIuGbUJI5xvGE/8UUG0CrMh6gT
-         ap4MwhWRK3No33SdKLh/ums02NmO9a6AqCUk6fz1FZY8AEDLcbxk77kHNCOo3yj0yh
-         XsTW8/TIufoM+tVY5c6cdSOILXAqmNZVdjkYdOek=
+        b=Z3mh0ukLyHosPEz5Kj0RUptyNNYKaqiJ4h88zgN7Lbs03RLnZrW+0N2frl3uP/sQl
+         2DVo2jMYTUyn8+v4QVsmBxsbVMOs92J4Dag5iPmP+5kFot9uyeci6YTdBrOX/FZ+ru
+         wT8xnr1DFNim8LRLqw3FNCQdA0H/P3Zo27A4CTgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.19 003/103] dt-bindings: reset: meson8b: fix duplicate reset IDs
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 03/76] HID: hidraw, uhid: Always report EPOLLOUT
 Date:   Wed, 22 Jan 2020 10:28:19 +0100
-Message-Id: <20200122092804.144652552@linuxfoundation.org>
+Message-Id: <20200122092752.061247214@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
+References: <20200122092751.587775548@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit 4881873f4cc1460f63d85fa81363d56be328ccdc upstream.
+[ Upstream commit 9e635c2851df6caee651e589fbf937b637973c91 ]
 
-According to the public S805 datasheet the RESET2 register uses the
-following bits for the PIC_DC, PSC and NAND reset lines:
-- PIC_DC is at bit 3 (meaning: RESET_VD_RMEM + 3)
-- PSC is at bit 4 (meaning: RESET_VD_RMEM + 4)
-- NAND is at bit 5 (meaning: RESET_VD_RMEM + 4)
+hidraw and uhid device nodes are always available for writing so we should
+always report EPOLLOUT and EPOLLWRNORM bits, not only in the cases when
+there is nothing to read.
 
-Update the reset IDs of these three reset lines so they don't conflict
-with PIC_DC and map to the actual hardware reset lines.
-
-Fixes: 79795e20a184eb ("dt-bindings: reset: Add bindings for the Meson SoC Reset Controller")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: be54e7461ffdc ("HID: uhid: Fix returning EPOLLOUT from uhid_char_poll")
+Fixes: 9f3b61dc1dd7b ("HID: hidraw: Fix returning EPOLLOUT from hidraw_poll")
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/dt-bindings/reset/amlogic,meson8b-reset.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/hidraw.c | 7 ++++---
+ drivers/hid/uhid.c   | 5 +++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/include/dt-bindings/reset/amlogic,meson8b-reset.h
-+++ b/include/dt-bindings/reset/amlogic,meson8b-reset.h
-@@ -95,9 +95,9 @@
- #define RESET_VD_RMEM			64
- #define RESET_AUDIN			65
- #define RESET_DBLK			66
--#define RESET_PIC_DC			66
--#define RESET_PSC			66
--#define RESET_NAND			66
-+#define RESET_PIC_DC			67
-+#define RESET_PSC			68
-+#define RESET_NAND			69
- #define RESET_GE2D			70
- #define RESET_PARSER_REG		71
- #define RESET_PARSER_FETCH		72
+diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+index e60d9c88bd35..ef9e196b54a5 100644
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -262,13 +262,14 @@ out:
+ static unsigned int hidraw_poll(struct file *file, poll_table *wait)
+ {
+ 	struct hidraw_list *list = file->private_data;
++	unsigned int mask = POLLOUT | POLLWRNORM; /* hidraw is always writable */
+ 
+ 	poll_wait(file, &list->hidraw->wait, wait);
+ 	if (list->head != list->tail)
+-		return POLLIN | POLLRDNORM;
++		mask |= POLLIN | POLLRDNORM;
+ 	if (!list->hidraw->exist)
+-		return POLLERR | POLLHUP;
+-	return POLLOUT | POLLWRNORM;
++		mask |= POLLERR | POLLHUP;
++	return mask;
+ }
+ 
+ static int hidraw_open(struct inode *inode, struct file *file)
+diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+index ea0c860ee842..a7ba4db8cff7 100644
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -769,13 +769,14 @@ unlock:
+ static unsigned int uhid_char_poll(struct file *file, poll_table *wait)
+ {
+ 	struct uhid_device *uhid = file->private_data;
++	unsigned int mask = POLLOUT | POLLWRNORM; /* uhid is always writable */
+ 
+ 	poll_wait(file, &uhid->waitq, wait);
+ 
+ 	if (uhid->head != uhid->tail)
+-		return POLLIN | POLLRDNORM;
++		mask |= POLLIN | POLLRDNORM;
+ 
+-	return EPOLLOUT | EPOLLWRNORM;
++	return mask;
+ }
+ 
+ static const struct file_operations uhid_fops = {
+-- 
+2.20.1
+
 
 
