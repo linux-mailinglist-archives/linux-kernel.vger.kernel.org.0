@@ -2,88 +2,370 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1849B145448
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15D7714543E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbgAVMP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 07:15:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33218 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729299AbgAVMPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 07:15:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 550A8B259;
-        Wed, 22 Jan 2020 12:15:51 +0000 (UTC)
-Date:   Wed, 22 Jan 2020 13:15:49 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        bristot@redhat.com, jbaron@akamai.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
-        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
-In-Reply-To: <20200121161045.dhihqibnpyrk2lsu@treble>
-Message-ID: <alpine.LSU.2.21.2001221312030.15957@pobox.suse.cz>
-References: <20191015135634.GK2328@hirez.programming.kicks-ass.net> <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz> <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com> <20191015153120.GA21580@linux-8ccs> <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
- <20191015182705.1aeec284@gandalf.local.home> <20191016074217.GL2328@hirez.programming.kicks-ass.net> <20191021150549.bitgqifqk2tbd3aj@treble> <20200120165039.6hohicj5o52gdghu@treble> <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz>
- <20200121161045.dhihqibnpyrk2lsu@treble>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1729098AbgAVMPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 07:15:41 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:30028 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726204AbgAVMPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 07:15:41 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00MCF6qR012257;
+        Wed, 22 Jan 2020 07:15:17 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2xkvrbjpxm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Jan 2020 07:15:17 -0500
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 00MCFGZW041101
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Wed, 22 Jan 2020 07:15:16 -0500
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 22 Jan
+ 2020 07:15:14 -0500
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Wed, 22 Jan 2020 04:15:14 -0800
+Received: from ben-Latitude-E6540.ad.analog.com ([10.48.65.231])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 00MCF511031122;
+        Wed, 22 Jan 2020 07:15:05 -0500
+From:   Beniamin Bia <beniamin.bia@analog.com>
+To:     <jic23@kernel.org>
+CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <biabeniamin@outlook.com>,
+        <knaack.h@gmx.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Beniamin Bia <beniamin.bia@analog.com>
+Subject: [PATCH v2 1/3] iio: amplifiers: hmc425a: Add support for HMC425A step attenuator with gpio interface
+Date:   Wed, 22 Jan 2020 14:17:00 +0200
+Message-ID: <20200122121702.30494-1-beniamin.bia@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ impostorscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-2001220112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Jan 2020, Josh Poimboeuf wrote:
+From: Michael Hennerich <michael.hennerich@analog.com>
 
-> On Tue, Jan 21, 2020 at 09:35:28AM +0100, Miroslav Benes wrote:
-> > On Mon, 20 Jan 2020, Josh Poimboeuf wrote:
-> > 
-> > > On Mon, Oct 21, 2019 at 10:05:49AM -0500, Josh Poimboeuf wrote:
-> > > > On Wed, Oct 16, 2019 at 09:42:17AM +0200, Peter Zijlstra wrote:
-> > > > > > which are not compatible with livepatching. GCC upstream now has
-> > > > > > -flive-patching option, which disables all those interfering optimizations.
-> > > > > 
-> > > > > Which, IIRC, has a significant performance impact and should thus really
-> > > > > not be used...
-> > > > > 
-> > > > > If distros ship that crap, I'm going to laugh at them the next time they
-> > > > > want a single digit performance improvement because *important*.
-> > > > 
-> > > > I have a crazy plan to try to use objtool to detect function changes at
-> > > > a binary level, which would hopefully allow us to drop this flag.
-> > > > 
-> > > > But regardless, I wonder if we enabled this flag prematurely.  We still
-> > > > don't have a reasonable way to use it for creating source-based live
-> > > > patches upstream, and it should really be optional for CONFIG_LIVEPATCH,
-> > > > since kpatch-build doesn't need it.
-> > > 
-> > > I also just discovered that -flive-patching is responsible for all those
-> > > "unreachable instruction" objtool warnings which Randy has been
-> > > dutifully bugging me about over the last several months.  For some
-> > > reason it subtly breaks GCC implicit noreturn detection for local
-> > > functions.
-> > 
-> > Ugh, that is unfortunate. Have you reported it?
-> 
-> Not yet (but I plan to).
+This patch adds support for the HMC425A 0.5 dB LSB GaAs MMIC 6-BIT
+DIGITAL POSITIVE CONTROL ATTENUATOR, 2.2 - 8.0 GHz.
 
-My findings so far...
+Datasheet:
+https://www.analog.com/media/en/technical-documentation/data-sheets/hmc425A.pdf
 
-I bisected through GCC options which -flive-patching disables and 
--fno-ipa-pure-const is the culprit. I got no warnings without the option 
-with my config.
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+---
+ drivers/iio/amplifiers/Kconfig   |  10 ++
+ drivers/iio/amplifiers/Makefile  |   1 +
+ drivers/iio/amplifiers/hmc425a.c | 251 +++++++++++++++++++++++++++++++
+ 3 files changed, 262 insertions(+)
+ create mode 100644 drivers/iio/amplifiers/hmc425a.c
 
-Then I found out allmodconfig was ok even with -flive-patching. 
-CONFIG_GCOV is the difference. CONFIG_GCOV=y seems to make the warnings go 
-away here.
+diff --git a/drivers/iio/amplifiers/Kconfig b/drivers/iio/amplifiers/Kconfig
+index da7f126d197b..9b02c9a2bc8a 100644
+--- a/drivers/iio/amplifiers/Kconfig
++++ b/drivers/iio/amplifiers/Kconfig
+@@ -22,4 +22,14 @@ config AD8366
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ad8366.
+ 
++config HMC425
++	tristate "Analog Devices HMC425A and similar GPIO Gain Amplifiers"
++	depends on GPIOLIB
++	help
++	  Say yes here to build support for Analog Devices HMC425A and similar
++	  gain amplifiers or step attenuators.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called hmc425a.
++
+ endmenu
+diff --git a/drivers/iio/amplifiers/Makefile b/drivers/iio/amplifiers/Makefile
+index 9abef2ebe9bc..19a89db1d9b1 100644
+--- a/drivers/iio/amplifiers/Makefile
++++ b/drivers/iio/amplifiers/Makefile
+@@ -5,3 +5,4 @@
+ 
+ # When adding new entries keep the list in alphabetical order
+ obj-$(CONFIG_AD8366) += ad8366.o
++obj-$(CONFIG_HMC425) += hmc425a.o
+\ No newline at end of file
+diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hmc425a.c
+new file mode 100644
+index 000000000000..0a412d56eb8f
+--- /dev/null
++++ b/drivers/iio/amplifiers/hmc425a.c
+@@ -0,0 +1,251 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * HMC425A and similar Gain Amplifiers
++ *
++ * Copyright 2020 Analog Devices Inc.
++ */
++
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/iio/iio.h>
++#include <linux/iio/sysfs.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/regulator/consumer.h>
++#include <linux/sysfs.h>
++
++enum hmc425a_type {
++	ID_HMC425A,
++};
++
++struct hmc425a_chip_info {
++	const char			*name;
++	const struct iio_chan_spec	*channels;
++	unsigned int			num_channels;
++	unsigned int			num_gpios;
++	int				gain_min;
++	int				gain_max;
++	int				default_gain;
++};
++
++struct hmc425a_state {
++	struct	regulator *reg;
++	struct	mutex lock; /* protect sensor state */
++	struct	hmc425a_chip_info *chip_info;
++	struct	gpio_descs *gpios;
++	enum	hmc425a_type type;
++	u32	gain;
++};
++
++static int hmc425a_write(struct iio_dev *indio_dev, u32 value)
++{
++	struct hmc425a_state *st = iio_priv(indio_dev);
++	int i, *values;
++
++	values = kmalloc_array(st->chip_info->num_gpios, sizeof(int),
++			       GFP_KERNEL);
++	if (!values)
++		return -ENOMEM;
++
++	for (i = 0; i < st->chip_info->num_gpios; i++)
++		values[i] = (value >> i) & 1;
++
++	gpiod_set_array_value_cansleep(st->gpios->ndescs, st->gpios->desc,
++				       values);
++	kfree(values);
++	return 0;
++}
++
++static int hmc425a_read_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan, int *val,
++			    int *val2, long m)
++{
++	struct hmc425a_state *st = iio_priv(indio_dev);
++	int code, gain = 0;
++	int ret;
++
++	mutex_lock(&st->lock);
++	switch (m) {
++	case IIO_CHAN_INFO_HARDWAREGAIN:
++		code = st->gain;
++
++		switch (st->type) {
++		case ID_HMC425A:
++			gain = ~code * -500;
++			break;
++		}
++
++		*val = gain / 1000;
++		*val2 = (gain % 1000) * 1000;
++
++		ret = IIO_VAL_INT_PLUS_MICRO_DB;
++		break;
++	default:
++		ret = -EINVAL;
++	}
++	mutex_unlock(&st->lock);
++
++	return ret;
++};
++
++static int hmc425a_write_raw(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan, int val,
++			     int val2, long mask)
++{
++	struct hmc425a_state *st = iio_priv(indio_dev);
++	struct hmc425a_chip_info *inf = st->chip_info;
++	int code = 0, gain;
++	int ret;
++
++	if (val < 0)
++		gain = (val * 1000) - (val2 / 1000);
++	else
++		gain = (val * 1000) + (val2 / 1000);
++
++	if (gain > inf->gain_max || gain < inf->gain_min)
++		return -EINVAL;
++
++	switch (st->type) {
++	case ID_HMC425A:
++		code = ~((abs(gain) / 500) & 0x3F);
++		break;
++	}
++
++	mutex_lock(&st->lock);
++	switch (mask) {
++	case IIO_CHAN_INFO_HARDWAREGAIN:
++		st->gain = code;
++
++		ret = hmc425a_write(indio_dev, st->gain);
++		break;
++	default:
++		ret = -EINVAL;
++	}
++	mutex_unlock(&st->lock);
++
++	return ret;
++}
++
++static const struct iio_info hmc425a_info = {
++	.read_raw = &hmc425a_read_raw,
++	.write_raw = &hmc425a_write_raw,
++};
++
++#define HMC425A_CHAN(_channel)                                          \
++{                                                                      \
++	.type = IIO_VOLTAGE, .output = 1, .indexed = 1,                \
++	.channel = _channel,                                           \
++	.info_mask_separate = BIT(IIO_CHAN_INFO_HARDWAREGAIN),         \
++}
++
++static const struct iio_chan_spec hmc425a_channels[] = {
++	HMC425A_CHAN(0),
++};
++
++/* Match table for of_platform binding */
++static const struct of_device_id hmc425a_of_match[] = {
++	{ .compatible = "adi,hmc425a", .data = (void *)ID_HMC425A },
++	{},
++};
++MODULE_DEVICE_TABLE(of, hmc425a_of_match);
++
++static void hmc425a_reg_disable(void *data)
++{
++	struct hmc425a_state *st = data;
++
++	regulator_disable(st->reg);
++}
++
++static struct hmc425a_chip_info hmc425a_chip_info_tbl[] = {
++	[ID_HMC425A] = {
++		.name = "hmc425a",
++		.channels = hmc425a_channels,
++		.num_channels = ARRAY_SIZE(hmc425a_channels),
++		.num_gpios = 6,
++		.gain_min = -31500,
++		.gain_max = 0,
++		.default_gain = -0x40, /* set default gain -31.5db*/
++	},
++};
++
++static int hmc425a_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *id;
++	struct iio_dev *indio_dev;
++	struct hmc425a_state *st;
++	int ret;
++
++	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*st));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	st = iio_priv(indio_dev);
++	id = of_match_device(hmc425a_of_match, &pdev->dev);
++	if (!id)
++		ret = -ENODEV;
++
++	st->type = (enum hmc425a_type)id->data;
++
++	st->chip_info = &hmc425a_chip_info_tbl[st->type];
++	indio_dev->num_channels = st->chip_info->num_channels;
++	indio_dev->channels = st->chip_info->channels;
++	indio_dev->name = st->chip_info->name;
++	st->gain = st->chip_info->default_gain;
++
++	st->gpios = devm_gpiod_get_array(&pdev->dev, "ctrl", GPIOD_OUT_LOW);
++	if (IS_ERR(st->gpios)) {
++		ret = PTR_ERR(st->gpios);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "failed to get gpios\n");
++		return ret;
++	}
++
++	if (st->gpios->ndescs != st->chip_info->num_gpios) {
++		dev_err(&pdev->dev, "%d GPIOs needed to operate\n",
++			st->chip_info->num_gpios);
++		return -ENODEV;
++	}
++
++	st->reg = devm_regulator_get_optional(&pdev->dev, "vcc-supply");
++	if (IS_ERR(st->reg)) {
++		if (PTR_ERR(st->reg) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
++		st->reg = NULL;
++	} else {
++		ret = regulator_enable(st->reg);
++		if (ret)
++			return ret;
++		ret = devm_add_action_or_reset(&pdev->dev, hmc425a_reg_disable,
++					       st);
++		if (ret)
++			return ret;
++	}
++
++	platform_set_drvdata(pdev, indio_dev);
++	mutex_init(&st->lock);
++
++	indio_dev->dev.parent = &pdev->dev;
++	indio_dev->info = &hmc425a_info;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	return devm_iio_device_register(&pdev->dev, indio_dev);
++}
++
++static struct platform_driver hmc425a_driver = {
++	.driver = {
++		.name = KBUILD_MODNAME,
++		.of_match_table = hmc425a_of_match,
++	},
++	.probe = hmc425a_probe,
++};
++module_platform_driver(hmc425a_driver);
++
++MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
++MODULE_DESCRIPTION("Analog Devices HMC425A and similar GPIO control Gain Amplifiers");
++MODULE_LICENSE("GPL v2");
+-- 
+2.17.1
 
-/me goes staring
