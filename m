@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C478144F6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 489D014509B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:48:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732717AbgAVJhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:37:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54012 "EHLO mail.kernel.org"
+        id S1729663AbgAVJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:47:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732686AbgAVJhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:37:48 -0500
+        id S1729629AbgAVJlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:41:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B82824683;
-        Wed, 22 Jan 2020 09:37:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 914F924686;
+        Wed, 22 Jan 2020 09:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685867;
-        bh=o64mhM6k92BdbsbuxILfR/eSSMZ+l+VfMkricKBtRHI=;
+        s=default; t=1579686102;
+        bh=X2+KNYrnWc7xc7JQJmIwQfuTJNrbwS5UPIVPMmDqCPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onZ+YLyOj8Psh3jRElsjzoGBFdAR0ZN2v7HudV4Z4N9WDwnfMvfV3NPIJALOBTg8D
-         S2o1m53XOs3hLgpCJlEG3f2qcMSipnvsqgsXmPHszQckIkVdA74wGKIi4Zzgeko6HL
-         d5qRUhcoWzA49uprff1JfgfHATYNi3ebflWzd7fM=
+        b=V6hkPNyK1kAbdCaXzpWQjbR8U70aBCsy24uTwNRQQTqvQsL8rf6sZ3U0G9qTWCDV2
+         cfzMRzHX+O6lygq4EwitFOJ5GjggCXyc3gHjovv/k9TxS27+OrMKsB9onvRBJL1Bmj
+         HfcloUCk71/3EjDl6Xo+YaMS1f3Ga8h6dbBVaJN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 15/65] USB: serial: io_edgeport: add missing active-port sanity check
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 044/103] btrfs: do not delete mismatched root refs
 Date:   Wed, 22 Jan 2020 10:29:00 +0100
-Message-Id: <20200122092753.268216419@linuxfoundation.org>
+Message-Id: <20200122092810.489624554@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
-References: <20200122092750.976732974@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,67 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 1568c58d11a7c851bd09341aeefd6a1c308ac40d upstream.
+commit 423a716cd7be16fb08690760691befe3be97d3fc upstream.
 
-The driver receives the active port number from the device, but never
-made sure that the port number was valid. This could lead to a
-NULL-pointer dereference or memory corruption in case a device sends
-data for an invalid port.
+btrfs_del_root_ref() will simply WARN_ON() if the ref doesn't match in
+any way, and then continue to delete the reference.  This shouldn't
+happen, we have these values because there's more to the reference than
+the original root and the sub root.  If any of these checks fail, return
+-ENOENT.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/io_edgeport.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/btrfs/root-tree.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -1733,7 +1733,8 @@ static void edge_break(struct tty_struct
- static void process_rcvd_data(struct edgeport_serial *edge_serial,
- 				unsigned char *buffer, __u16 bufferLength)
- {
--	struct device *dev = &edge_serial->serial->dev->dev;
-+	struct usb_serial *serial = edge_serial->serial;
-+	struct device *dev = &serial->dev->dev;
- 	struct usb_serial_port *port;
- 	struct edgeport_port *edge_port;
- 	__u16 lastBufferLength;
-@@ -1838,9 +1839,8 @@ static void process_rcvd_data(struct edg
+--- a/fs/btrfs/root-tree.c
++++ b/fs/btrfs/root-tree.c
+@@ -370,11 +370,13 @@ again:
+ 		leaf = path->nodes[0];
+ 		ref = btrfs_item_ptr(leaf, path->slots[0],
+ 				     struct btrfs_root_ref);
+-
+-		WARN_ON(btrfs_root_ref_dirid(leaf, ref) != dirid);
+-		WARN_ON(btrfs_root_ref_name_len(leaf, ref) != name_len);
+ 		ptr = (unsigned long)(ref + 1);
+-		WARN_ON(memcmp_extent_buffer(leaf, name, ptr, name_len));
++		if ((btrfs_root_ref_dirid(leaf, ref) != dirid) ||
++		    (btrfs_root_ref_name_len(leaf, ref) != name_len) ||
++		    memcmp_extent_buffer(leaf, name, ptr, name_len)) {
++			err = -ENOENT;
++			goto out;
++		}
+ 		*sequence = btrfs_root_ref_sequence(leaf, ref);
  
- 			/* spit this data back into the tty driver if this
- 			   port is open */
--			if (rxLen) {
--				port = edge_serial->serial->port[
--							edge_serial->rxPort];
-+			if (rxLen && edge_serial->rxPort < serial->num_ports) {
-+				port = serial->port[edge_serial->rxPort];
- 				edge_port = usb_get_serial_port_data(port);
- 				if (edge_port->open) {
- 					dev_dbg(dev, "%s - Sending %d bytes to TTY for port %d\n",
-@@ -1850,8 +1850,8 @@ static void process_rcvd_data(struct edg
- 							rxLen);
- 					edge_port->port->icount.rx += rxLen;
- 				}
--				buffer += rxLen;
- 			}
-+			buffer += rxLen;
- 			break;
- 
- 		case EXPECT_HDR3:	/* Expect 3rd byte of status header */
-@@ -1886,6 +1886,8 @@ static void process_rcvd_status(struct e
- 	__u8 code = edge_serial->rxStatusCode;
- 
- 	/* switch the port pointer to the one being currently talked about */
-+	if (edge_serial->rxPort >= edge_serial->serial->num_ports)
-+		return;
- 	port = edge_serial->serial->port[edge_serial->rxPort];
- 	edge_port = usb_get_serial_port_data(port);
- 	if (edge_port == NULL) {
+ 		ret = btrfs_del_item(trans, tree_root, path);
 
 
