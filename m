@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D2E144EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A4A144F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbgAVJcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:32:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45074 "EHLO mail.kernel.org"
+        id S1731217AbgAVJil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:38:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729439AbgAVJcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:32:20 -0500
+        id S1731745AbgAVJih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE9E32071E;
-        Wed, 22 Jan 2020 09:32:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 333322467F;
+        Wed, 22 Jan 2020 09:38:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685540;
-        bh=yuc2WD3xnHmcdfjcvYL1sN24yQMukUchQOZdU/paCYU=;
+        s=default; t=1579685916;
+        bh=kkhHPsIUtD/Op93ihqK6Wwi4izPXgNFnmiocKWLEYPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DIj2ekrGCGZbMSEB2IfwlLxFKmeMxqOQqNh3gGrRX8d7DXOGWFqGrxicCmkanLs+h
-         B3wd4iFi/Ll5N+GW9QBjXGOk+kAy9KvyRgpijeNzC/o5+KU+dxvhljWnfOLAIKqEjE
-         RQhLbHdp5KnlQCtkLzrw4oonU4wWPXluChVc6P3U=
+        b=2U3H1xtsUvUazzk4/cMR8nWwDT9t1NY4EpTSQjeyQXGwC+VURC3w8aAKvXMcUeR6n
+         7H0gPn5JTJ/javLXoJTr4gPMlsIJQ+9s2u3j+qv9OYxHVtutDH3DlpsxxvxAWMz9Hz
+         BXeWtWIaMtwcHQkHPxfFFiyPT9v/dEKQ8jLqqgAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 55/76] USB: serial: io_edgeport: use irqsave() in USBs complete callback
-Date:   Wed, 22 Jan 2020 10:29:11 +0100
-Message-Id: <20200122092759.185198066@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 27/65] btrfs: fix memory leak in qgroup accounting
+Date:   Wed, 22 Jan 2020 10:29:12 +0100
+Message-Id: <20200122092754.653813842@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,99 +44,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-[ Upstream commit dd1fae527612543e560e84f2eba4f6ef2006ac55 ]
+commit 26ef8493e1ab771cb01d27defca2fa1315dc3980 upstream.
 
-The USB completion callback does not disable interrupts while acquiring
-the lock. We want to remove the local_irq_disable() invocation from
-__usb_hcd_giveback_urb() and therefore it is required for the callback
-handler to disable the interrupts while acquiring the lock.
-The callback may be invoked either in IRQ or BH context depending on the
-USB host controller.
-Use the _irqsave() variant of the locking primitives.
+When running xfstests on the current btrfs I get the following splat from
+kmemleak:
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+unreferenced object 0xffff88821b2404e0 (size 32):
+  comm "kworker/u4:7", pid 26663, jiffies 4295283698 (age 8.776s)
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 10 ff fd 26 82 88 ff ff  ...........&....
+    10 ff fd 26 82 88 ff ff 20 ff fd 26 82 88 ff ff  ...&.... ..&....
+  backtrace:
+    [<00000000f94fd43f>] ulist_alloc+0x25/0x60 [btrfs]
+    [<00000000fd023d99>] btrfs_find_all_roots_safe+0x41/0x100 [btrfs]
+    [<000000008f17bd32>] btrfs_find_all_roots+0x52/0x70 [btrfs]
+    [<00000000b7660afb>] btrfs_qgroup_rescan_worker+0x343/0x680 [btrfs]
+    [<0000000058e66778>] btrfs_work_helper+0xac/0x1e0 [btrfs]
+    [<00000000f0188930>] process_one_work+0x1cf/0x350
+    [<00000000af5f2f8e>] worker_thread+0x28/0x3c0
+    [<00000000b55a1add>] kthread+0x109/0x120
+    [<00000000f88cbd17>] ret_from_fork+0x35/0x40
+
+This corresponds to:
+
+  (gdb) l *(btrfs_find_all_roots_safe+0x41)
+  0x8d7e1 is in btrfs_find_all_roots_safe (fs/btrfs/backref.c:1413).
+  1408
+  1409            tmp = ulist_alloc(GFP_NOFS);
+  1410            if (!tmp)
+  1411                    return -ENOMEM;
+  1412            *roots = ulist_alloc(GFP_NOFS);
+  1413            if (!*roots) {
+  1414                    ulist_free(tmp);
+  1415                    return -ENOMEM;
+  1416            }
+  1417
+
+Following the lifetime of the allocated 'roots' ulist, it gets freed
+again in btrfs_qgroup_account_extent().
+
+But this does not happen if the function is called with the
+'BTRFS_FS_QUOTA_ENABLED' flag cleared, then btrfs_qgroup_account_extent()
+does a short leave and directly returns.
+
+Instead of directly returning we should jump to the 'out_free' in order to
+free all resources as expected.
+
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+[ add comment ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/usb/serial/io_edgeport.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ fs/btrfs/qgroup.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-index 4db280e6fac9..1995e6306b88 100644
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -572,6 +572,7 @@ static void edge_interrupt_callback(struct urb *urb)
- 	struct usb_serial_port *port;
- 	unsigned char *data = urb->transfer_buffer;
- 	int length = urb->actual_length;
-+	unsigned long flags;
- 	int bytes_avail;
- 	int position;
- 	int txCredits;
-@@ -603,7 +604,7 @@ static void edge_interrupt_callback(struct urb *urb)
- 		if (length > 1) {
- 			bytes_avail = data[0] | (data[1] << 8);
- 			if (bytes_avail) {
--				spin_lock(&edge_serial->es_lock);
-+				spin_lock_irqsave(&edge_serial->es_lock, flags);
- 				edge_serial->rxBytesAvail += bytes_avail;
- 				dev_dbg(dev,
- 					"%s - bytes_avail=%d, rxBytesAvail=%d, read_in_progress=%d\n",
-@@ -626,7 +627,8 @@ static void edge_interrupt_callback(struct urb *urb)
- 						edge_serial->read_in_progress = false;
- 					}
- 				}
--				spin_unlock(&edge_serial->es_lock);
-+				spin_unlock_irqrestore(&edge_serial->es_lock,
-+						       flags);
- 			}
- 		}
- 		/* grab the txcredits for the ports if available */
-@@ -639,9 +641,11 @@ static void edge_interrupt_callback(struct urb *urb)
- 				port = edge_serial->serial->port[portNumber];
- 				edge_port = usb_get_serial_port_data(port);
- 				if (edge_port->open) {
--					spin_lock(&edge_port->ep_lock);
-+					spin_lock_irqsave(&edge_port->ep_lock,
-+							  flags);
- 					edge_port->txCredits += txCredits;
--					spin_unlock(&edge_port->ep_lock);
-+					spin_unlock_irqrestore(&edge_port->ep_lock,
-+							       flags);
- 					dev_dbg(dev, "%s - txcredits for port%d = %d\n",
- 						__func__, portNumber,
- 						edge_port->txCredits);
-@@ -682,6 +686,7 @@ static void edge_bulk_in_callback(struct urb *urb)
- 	int			retval;
- 	__u16			raw_data_length;
- 	int status = urb->status;
-+	unsigned long flags;
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1928,8 +1928,12 @@ btrfs_qgroup_account_extent(struct btrfs
+ 	u64 nr_old_roots = 0;
+ 	int ret = 0;
  
- 	if (status) {
- 		dev_dbg(&urb->dev->dev, "%s - nonzero read bulk status received: %d\n",
-@@ -701,7 +706,7 @@ static void edge_bulk_in_callback(struct urb *urb)
++	/*
++	 * If quotas get disabled meanwhile, the resouces need to be freed and
++	 * we can't just exit here.
++	 */
+ 	if (!test_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags))
+-		return 0;
++		goto out_free;
  
- 	usb_serial_debug_data(dev, __func__, raw_data_length, data);
- 
--	spin_lock(&edge_serial->es_lock);
-+	spin_lock_irqsave(&edge_serial->es_lock, flags);
- 
- 	/* decrement our rxBytes available by the number that we just got */
- 	edge_serial->rxBytesAvail -= raw_data_length;
-@@ -725,7 +730,7 @@ static void edge_bulk_in_callback(struct urb *urb)
- 		edge_serial->read_in_progress = false;
- 	}
- 
--	spin_unlock(&edge_serial->es_lock);
-+	spin_unlock_irqrestore(&edge_serial->es_lock, flags);
- }
- 
- 
--- 
-2.20.1
-
+ 	if (new_roots) {
+ 		if (!maybe_fs_roots(new_roots))
 
 
