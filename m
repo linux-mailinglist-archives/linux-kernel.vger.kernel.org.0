@@ -2,62 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E68144CA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D11144C96
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 08:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbgAVHxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 02:53:08 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57488 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726083AbgAVHxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 02:53:08 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AD14DC6E8B170EEAAC4C;
-        Wed, 22 Jan 2020 15:53:05 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 22 Jan 2020 15:52:57 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     David Howells <dhowells@redhat.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next v2] watch_queue: fix error return code in watch_queue_set_size()
-Date:   Wed, 22 Jan 2020 07:48:07 +0000
-Message-ID: <20200122074807.10849-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200120085411.116252-1-weiyongjun1@huawei.com>
-References: <20200120085411.116252-1-weiyongjun1@huawei.com>
+        id S1727453AbgAVHsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 02:48:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbgAVHsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 02:48:42 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4279924656;
+        Wed, 22 Jan 2020 07:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579679321;
+        bh=Y+3AIPhelZvMyzyyNgMwljM/N8u04hwazgjoLNG8NZE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MGWrSViQ+Kqi84fNtmwtHLmei4RYl7jcYmtvd3GM985/iPGVHIgvVsnRh91ZzM4Z3
+         Nh9z7YKPKQyVrsx11g2MQgmAr0DTbKjb/A1kmnp4/A9PswhItSSDqlH6RwdLHvGscA
+         ya93dycoqf4X91OHpu+nPtszNZhqglzRMxCbJudA=
+Date:   Wed, 22 Jan 2020 08:48:39 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Vladimir Stankovic <vladimir.stankovic@displaylink.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Petar Kovacevic <petar.kovacevic@displaylink.com>,
+        Nikola Simic <nikola.simic@displaylink.com>,
+        Stefan Lugonjic <stefan.lugonjic@displaylink.com>,
+        Marko Miljkovic <marko.miljkovic@displaylink.com>
+Subject: Re: [External] Re: staging: Add MA USB Host driver
+Message-ID: <20200122074839.GA2099857@kroah.com>
+References: <VI1PR10MB19659B32E563620B4D63AF1A91320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
+ <VI1PR10MB1965A077526FE296608D5B1191320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
+ <VI1PR10MB19658F2B6FDAD88FAA05546591320@VI1PR10MB1965.EURPRD10.PROD.OUTLOOK.COM>
+ <20200122070312.GB2068857@kroah.com>
+ <aba22f24-1124-2203-b9f6-4a5e9274a8a8@displaylink.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aba22f24-1124-2203-b9f6-4a5e9274a8a8@displaylink.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to return negative error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+On Wed, Jan 22, 2020 at 07:40:59AM +0000, Vladimir Stankovic wrote:
+> Hi Greg,
+> 
+> Our intention was to follow Linux kernel development process and add our
+> driver to staging first.
 
-Fixes: 009b0aa00c5a ("pipe: Add general notification queue support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- kernel/watch_queue.c | 1 +
- 1 file changed, 1 insertion(+)
+That's not the "normal" development process at all, where did you read
+that?
 
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index f195cbbbb3d3..f1028761cb9c 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -251,6 +251,7 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
- 	if (ret < 0)
- 		goto error;
- 
-+	ret = -ENOMEM;
- 	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
- 	if (!pages)
- 		goto error;
+staging is only for code that needs lots of work, and almost always
+merging a driver through staging takes _more_ work from the submitter
+than it does to submit it through the "normal" subsystem.
 
+So if you want to do more work, hey, by all means, send it here :)
 
+thanks,
 
+greg k-h
