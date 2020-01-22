@@ -2,64 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5DF145BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8961145BBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 19:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgAVSuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 13:50:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725884AbgAVSuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 13:50:23 -0500
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 426D5217F4;
-        Wed, 22 Jan 2020 18:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579719023;
-        bh=fQoQAjUDEAVwQrQeHLA+HkE9LCpRN8ToPkGfhrFGRTI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b+Ot0Q5erq2ofBuHbSY4jl60BHqd5jvaTS2Z5b8zY9E2CCjpW/gUY7SmA6zxes5u5
-         bi2BHeBPk6IhlFZECSrGz8HnFEfhJ/4Xept9OHvYsE9MiemYO4T6gr5/d3FMtJxid7
-         4ziXuAQ8YYQEQWVs78cHw3ipxSjKjkn0OWuYacAs=
-Date:   Wed, 22 Jan 2020 18:50:17 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v2 0/1] arm/arm64: add support for folded p4d page tables
-Message-ID: <20200122185017.GA17321@willie-the-truck>
-References: <20200113111323.10463-1-rppt@kernel.org>
+        id S1728205AbgAVSvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 13:51:15 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44313 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVSvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 13:51:14 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v201so369994lfa.11
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 10:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ioinkAh+8hdBjKUdjvbPg5cD8nQTjz9Mvaag/O1Zfys=;
+        b=vRogBaF9UTfXPjeHyGqb2gtDG1LjoYaZY5MYvVinMWT4Enta6ifi55KXyBM1f6wf+K
+         hzUbXdLlAXo4+fD8QBq/QXemZ/JMV+HViaZXHtn+13vZrghRsZzK4yNrpoHc6xO9h5yo
+         ly+JmalLEu2N71ldvZ9hR1NcG2U7LDTsO+qN9jNpjpMbSgn5dW7zhIc23MaJVAb0K/fn
+         1BJ8hkPDxblsltfCmuKQ8FXh7QlDIYNr1xzl1dSGAFLqRa4J4Z4aouyBmty/CDedTzJW
+         F/V9BrBA2iiLpAxPywlG7hH09R7IkULMx8DO9C+FISntXZv/tTiHOPN9iPlIxNqE1q0M
+         pzFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ioinkAh+8hdBjKUdjvbPg5cD8nQTjz9Mvaag/O1Zfys=;
+        b=hFdpp/UfFPZvYyqKEZLvKOqHFsNMxhAxM7BVdyh/lOqr9mrT3Skk0KrEsP1zFwR9gY
+         vPnxwpFO1VFO6vk0RULUveTZOaXFg3TrhI0hxwUk0xgws32m4aptmVFcKqD4aVDisMkh
+         hzczIU4wltyA9vH20MXzQ9pEsSITmBvXFmCRHcc65Q2oIKf2c4es2rNMIViDTtldhtNV
+         G+OPEK6luAbxiTvpc5m8lqZbH3Rl+zF74eri3tCoohRi3pItSvwkcIVf9BPGEDYw9x+F
+         ibaNDUtp4Z85BdvxZ+GrL+1IuKqDoCGwTT7H+RZ0wrPSIldj1ggT0oIxssIwf6HBfvB1
+         laHQ==
+X-Gm-Message-State: APjAAAXK+dfi8bdEK3PMORDHgqNIXQvOQJKGAM/NxcvaU137dulqUfB1
+        8+sjFHJl2JwjXUcd1xuyq6w=
+X-Google-Smtp-Source: APXvYqyp01p4opRWn6sRi832huT3A1VyUSfAOZO3Zo+RzrucpLbJ3i53cF6s9cRvxWwKEfMZxgysKg==
+X-Received: by 2002:ac2:5964:: with SMTP id h4mr2505320lfp.213.1579719072960;
+        Wed, 22 Jan 2020 10:51:12 -0800 (PST)
+Received: from uranus.localdomain ([5.18.171.94])
+        by smtp.gmail.com with ESMTPSA id y194sm8736491lff.94.2020.01.22.10.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2020 10:51:11 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 0CE4246180B; Wed, 22 Jan 2020 21:51:11 +0300 (MSK)
+Date:   Wed, 22 Jan 2020 21:51:11 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, alex.shi@linux.alibaba.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, bigeasy@linutronix.de,
+        pankaj.laxminarayan.bharadiya@intel.com, aubrey.li@linux.intel.com,
+        dave.hansen@intel.com
+Subject: Re: [PATCH] x86/pkeys: add check for pkey "overflow"
+Message-ID: <20200122185111.GK2437@uranus>
+References: <20200122165346.AD4DA150@viggo.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200113111323.10463-1-rppt@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200122165346.AD4DA150@viggo.jf.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 01:13:22PM +0200, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On Wed, Jan 22, 2020 at 08:53:46AM -0800, Dave Hansen wrote:
 > 
-> This is a part of clean up of the page table manipulation code that aims to
-> remove asm-generic/5level-fixup.h and asm-generic/pgtable-nop4d-hack.h
+> Alex Shi reported the pkey macros above arch_set_user_pkey_access()
+> to be unused.  They are unused, and even refer to a nonexistent
+> CONFIG option.
 > 
-> There is a single patch for both arm and arm64 because doing the conversion
-> separately would mean breaking the shared mmu bits in virt/kvm/arm.
+> @@ -922,6 +920,13 @@ int arch_set_user_pkey_access(struct tas
+>  	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * This code should only be called with valid 'pkey'
+> +	 * values originating from in-kernel users.  Complain
+> +	 * if a bad value is observed.
+> +	 */
+> +	WARN_ON_ONCE(pkey >= arch_max_pkey());
 
-Unfortunately, that's going to be really hard to merge, as the two
-architectures are maintained in different trees and the breadth of this
-patch series is likely to lead to conflicts in both.
+Should not we rather abort this operation and exit with EINVAL
+or something similar instead of calling wrmsr with overflowed
+value? IOW,
 
-Will
+	if (pkey >= arch_max_pkey()) {
+		WARN_ON_ONCE(1);
+		return -EINVAL;
+	}
