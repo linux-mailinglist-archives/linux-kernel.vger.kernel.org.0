@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FDEA144F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A229145189
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:54:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbgAVJdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:33:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47600 "EHLO mail.kernel.org"
+        id S1731628AbgAVJyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:54:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730652AbgAVJdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:33:39 -0500
+        id S1729585AbgAVJdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:33:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21F4324673;
-        Wed, 22 Jan 2020 09:33:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A6532467E;
+        Wed, 22 Jan 2020 09:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685618;
-        bh=cm0N/0lJNmZhuDHSPO3+0TrF6RJZN6w5OWe9cQ5tPgk=;
+        s=default; t=1579685621;
+        bh=/wEpG8+rGRpvPsJpHqetDWHO0F3KN8BmiHNTL9nb+Jo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sT/iUdU8hk2v7MUY6ccc2BbcPYmoQ03pEbNu7dcyN17zmERIjclALnulcanPVs9ck
-         VPy4mOBCVVA40rVFAICuVXWdTPg8BI7ErEmgiXnmN0MpCBiML0nBlS3VCKWw/oPKaU
-         unAaWhhsaqy9F3I1rgW+CGoG0L11awIK3uWhzGgc=
+        b=QodqYnY+2fPX8Uspac2Nxf1YtNGIpnDhROKwz3/IYOv63sP2kLqLp2A64sl1Yvq0I
+         dY5AvnfZW4tbFdj93YWTb+I562q56WAJDjY+Bbp/ueKTA+v/5+52hW+mg/7dH5Ecok
+         jR4DFJSF6BZ04OrXGVr2jLdoJtATaBh9YaMmTrUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Peter Robinson <pbrobinson@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Dedy Lansky <dlansky@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 11/97] arm64: Make sure permission updates happen for pmd/pud
-Date:   Wed, 22 Jan 2020 10:28:15 +0100
-Message-Id: <20200122092757.606897333@linuxfoundation.org>
+Subject: [PATCH 4.9 12/97] cfg80211/mac80211: make ieee80211_send_layer2_update a public function
+Date:   Wed, 22 Jan 2020 10:28:16 +0100
+Message-Id: <20200122092757.795990590@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
 References: <20200122092755.678349497@linuxfoundation.org>
@@ -46,72 +44,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laura Abbott <labbott@redhat.com>
+From: Dedy Lansky <dlansky@codeaurora.org>
 
-commit 82034c23fcbc2389c73d97737f61fa2dd6526413 upstream.
+commit 30ca1aa536211f5ac3de0173513a7a99a98a97f3 upstream.
 
-Commit 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-disallowed block mappings for ioremap since that code does not honor
-break-before-make. The same APIs are also used for permission updating
-though and the extra checks prevent the permission updates from happening,
-even though this should be permitted. This results in read-only permissions
-not being fully applied. Visibly, this can occasionaly be seen as a failure
-on the built in rodata test when the test data ends up in a section or
-as an odd RW gap on the page table dump. Fix this by using
-pgattr_change_is_safe instead of p*d_present for determining if the
-change is permitted.
+Make ieee80211_send_layer2_update() a common function so other drivers
+can re-use it.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
-Reported-by: Peter Robinson <pbrobinson@gmail.com>
-Fixes: 15122ee2c515 ("arm64: Enforce BBM for huge IO/VMAP mappings")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Dedy Lansky <dlansky@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[bwh: Backported to 4.9 as dependency of commit 3e493173b784
+ "mac80211: Do not send Layer 2 Update frame before authorization":
+ - Retain type-casting of skb_put() return value
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/mm/mmu.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ include/net/cfg80211.h |   11 +++++++++++
+ net/mac80211/cfg.c     |   48 ++----------------------------------------------
+ net/wireless/util.c    |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 58 insertions(+), 46 deletions(-)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -799,13 +799,15 @@ int pud_set_huge(pud_t *pudp, phys_addr_
- {
- 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
-+	pud_t new_pud = pfn_pud(__phys_to_pfn(phys), sect_prot);
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -4182,6 +4182,17 @@ const u8 *cfg80211_find_vendor_ie(unsign
+ 				  const u8 *ies, int len);
  
--	/* ioremap_page_range doesn't honour BBM */
--	if (pud_present(READ_ONCE(*pudp)))
-+	/* Only allow permission changes for now */
-+	if (!pgattr_change_is_safe(READ_ONCE(pud_val(*pudp)),
-+				   pud_val(new_pud)))
- 		return 0;
- 
- 	BUG_ON(phys & ~PUD_MASK);
--	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
-+	set_pud(pudp, new_pud);
- 	return 1;
+ /**
++ * cfg80211_send_layer2_update - send layer 2 update frame
++ *
++ * @dev: network device
++ * @addr: STA MAC address
++ *
++ * Wireless drivers can use this function to update forwarding tables in bridge
++ * devices upon STA association.
++ */
++void cfg80211_send_layer2_update(struct net_device *dev, const u8 *addr);
++
++/**
+  * DOC: Regulatory enforcement infrastructure
+  *
+  * TODO
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1048,50 +1048,6 @@ static int ieee80211_stop_ap(struct wiph
+ 	return 0;
  }
  
-@@ -813,13 +815,15 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_
- {
- 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
-+	pmd_t new_pmd = pfn_pmd(__phys_to_pfn(phys), sect_prot);
+-/* Layer 2 Update frame (802.2 Type 1 LLC XID Update response) */
+-struct iapp_layer2_update {
+-	u8 da[ETH_ALEN];	/* broadcast */
+-	u8 sa[ETH_ALEN];	/* STA addr */
+-	__be16 len;		/* 6 */
+-	u8 dsap;		/* 0 */
+-	u8 ssap;		/* 0 */
+-	u8 control;
+-	u8 xid_info[3];
+-} __packed;
+-
+-static void ieee80211_send_layer2_update(struct sta_info *sta)
+-{
+-	struct iapp_layer2_update *msg;
+-	struct sk_buff *skb;
+-
+-	/* Send Level 2 Update Frame to update forwarding tables in layer 2
+-	 * bridge devices */
+-
+-	skb = dev_alloc_skb(sizeof(*msg));
+-	if (!skb)
+-		return;
+-	msg = (struct iapp_layer2_update *)skb_put(skb, sizeof(*msg));
+-
+-	/* 802.2 Type 1 Logical Link Control (LLC) Exchange Identifier (XID)
+-	 * Update response frame; IEEE Std 802.2-1998, 5.4.1.2.1 */
+-
+-	eth_broadcast_addr(msg->da);
+-	memcpy(msg->sa, sta->sta.addr, ETH_ALEN);
+-	msg->len = htons(6);
+-	msg->dsap = 0;
+-	msg->ssap = 0x01;	/* NULL LSAP, CR Bit: Response */
+-	msg->control = 0xaf;	/* XID response lsb.1111F101.
+-				 * F=0 (no poll command; unsolicited frame) */
+-	msg->xid_info[0] = 0x81;	/* XID format identifier */
+-	msg->xid_info[1] = 1;	/* LLC types/classes: Type 1 LLC */
+-	msg->xid_info[2] = 0;	/* XID sender's receive window size (RW) */
+-
+-	skb->dev = sta->sdata->dev;
+-	skb->protocol = eth_type_trans(skb, sta->sdata->dev);
+-	memset(skb->cb, 0, sizeof(skb->cb));
+-	netif_rx_ni(skb);
+-}
+-
+ static int sta_apply_auth_flags(struct ieee80211_local *local,
+ 				struct sta_info *sta,
+ 				u32 mask, u32 set)
+@@ -1455,7 +1411,7 @@ static int ieee80211_add_station(struct
+ 	}
  
--	/* ioremap_page_range doesn't honour BBM */
--	if (pmd_present(READ_ONCE(*pmdp)))
-+	/* Only allow permission changes for now */
-+	if (!pgattr_change_is_safe(READ_ONCE(pmd_val(*pmdp)),
-+				   pmd_val(new_pmd)))
- 		return 0;
+ 	if (layer2_update)
+-		ieee80211_send_layer2_update(sta);
++		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
  
- 	BUG_ON(phys & ~PMD_MASK);
--	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
-+	set_pmd(pmdp, new_pmd);
- 	return 1;
- }
+ 	rcu_read_unlock();
  
+@@ -1565,7 +1521,7 @@ static int ieee80211_change_station(stru
+ 				atomic_inc(&sta->sdata->bss->num_mcast_sta);
+ 		}
+ 
+-		ieee80211_send_layer2_update(sta);
++		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
+ 	}
+ 
+ 	err = sta_apply_parameters(local, sta, params);
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -1794,3 +1794,48 @@ EXPORT_SYMBOL(rfc1042_header);
+ const unsigned char bridge_tunnel_header[] __aligned(2) =
+ 	{ 0xaa, 0xaa, 0x03, 0x00, 0x00, 0xf8 };
+ EXPORT_SYMBOL(bridge_tunnel_header);
++
++/* Layer 2 Update frame (802.2 Type 1 LLC XID Update response) */
++struct iapp_layer2_update {
++	u8 da[ETH_ALEN];	/* broadcast */
++	u8 sa[ETH_ALEN];	/* STA addr */
++	__be16 len;		/* 6 */
++	u8 dsap;		/* 0 */
++	u8 ssap;		/* 0 */
++	u8 control;
++	u8 xid_info[3];
++} __packed;
++
++void cfg80211_send_layer2_update(struct net_device *dev, const u8 *addr)
++{
++	struct iapp_layer2_update *msg;
++	struct sk_buff *skb;
++
++	/* Send Level 2 Update Frame to update forwarding tables in layer 2
++	 * bridge devices */
++
++	skb = dev_alloc_skb(sizeof(*msg));
++	if (!skb)
++		return;
++	msg = (struct iapp_layer2_update *)skb_put(skb, sizeof(*msg));
++
++	/* 802.2 Type 1 Logical Link Control (LLC) Exchange Identifier (XID)
++	 * Update response frame; IEEE Std 802.2-1998, 5.4.1.2.1 */
++
++	eth_broadcast_addr(msg->da);
++	ether_addr_copy(msg->sa, addr);
++	msg->len = htons(6);
++	msg->dsap = 0;
++	msg->ssap = 0x01;	/* NULL LSAP, CR Bit: Response */
++	msg->control = 0xaf;	/* XID response lsb.1111F101.
++				 * F=0 (no poll command; unsolicited frame) */
++	msg->xid_info[0] = 0x81;	/* XID format identifier */
++	msg->xid_info[1] = 1;	/* LLC types/classes: Type 1 LLC */
++	msg->xid_info[2] = 0;	/* XID sender's receive window size (RW) */
++
++	skb->dev = dev;
++	skb->protocol = eth_type_trans(skb, dev);
++	memset(skb->cb, 0, sizeof(skb->cb));
++	netif_rx_ni(skb);
++}
++EXPORT_SYMBOL(cfg80211_send_layer2_update);
 
 
