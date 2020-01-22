@@ -2,73 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2777145952
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F2E145957
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbgAVQF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 11:05:56 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45998 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgAVQFz (ORCPT
+        id S1728139AbgAVQGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 11:06:34 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:29226 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgAVQGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:05:55 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so6686109otp.12;
-        Wed, 22 Jan 2020 08:05:55 -0800 (PST)
+        Wed, 22 Jan 2020 11:06:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579709192;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=x8qyk16EQoiKQDWHcoCsrg8S6aLPNFCtfv1vrpksIQM=;
+        b=YxvtTadojmsMr4r6k+8pAn4VFANRjfQpHM9p/AnMMBMaUPQ/dj1uZC+mTxCrRgB641D9uV
+        d8xkMR//KdJVfoiIhClozmxsfbr7ECiGNckODzRgPaJwYKiPhjsYstVuXp7ORA4NSZqXjn
+        WEaKY1GWpN6lxMrgHy42G4B0AJAT3WA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-12-gSaC6T76OlKouqo9iLABYA-1; Wed, 22 Jan 2020 11:06:31 -0500
+X-MC-Unique: gSaC6T76OlKouqo9iLABYA-1
+Received: by mail-wr1-f69.google.com with SMTP id j13so3272795wrr.20
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 08:06:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BADTgUineejOK2n1J7lKkTEFQH19K5N1CEhgckXRAeo=;
-        b=Xb2u4+JjpWuvbkSqc6C3uXRckfBpxtQgrx2kq4FdXuuDN/SY91dpzoMG9s9C2znemm
-         JGmgDagQOIBMYQxdkoPF67nM017xt+Mu7OuphrA2hCij4l+D5PVKTb06E+dIyiqJPGpQ
-         Ozc6+qtNzoTg4xxVCajzPEkwNHmTFD8iaFApaTe866nXTurfHgYtTjyhOF0S3mhBNmGV
-         VDNI66KpJ8fs0/f1Gd5xBs1TtijUTZoRKgAxrAGt7bVpEmOmJI8SflcS+9hUeGhsGsp0
-         S7GLGY6BsJhbDu7iBD058G6j3v0jL4lvvsMwqQ03B4Pv0SBDwqGc5k8OOqjW+DH6a+6h
-         oR2Q==
-X-Gm-Message-State: APjAAAW8VvTnkTfln/HglogrLIaU39aaMM6IhH6TZDgSaS1JLE3yC7m+
-        bCFqcwAVApKmgGNAweNgIA==
-X-Google-Smtp-Source: APXvYqzU2mv1jLT2PDfalGIskqeW8nSLgN1KpqimkaMRG6wWiRuYAxbX9pFvaWjoXG/gl6a0X2+rRw==
-X-Received: by 2002:a9d:75da:: with SMTP id c26mr7977313otl.40.1579709154723;
-        Wed, 22 Jan 2020 08:05:54 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a17sm14694628otp.66.2020.01.22.08.05.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:05:54 -0800 (PST)
-Received: (nullmailer pid 10857 invoked by uid 1000);
-        Wed, 22 Jan 2020 16:05:53 -0000
-Date:   Wed, 22 Jan 2020 10:05:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        heiko@sntech.de, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: rockchip-dw-mshc: add
- description for rk3308
-Message-ID: <20200122160553.GA10824@bogus>
-References: <20200116152230.29831-1-jbx6244@gmail.com>
- <20200116152230.29831-3-jbx6244@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=x8qyk16EQoiKQDWHcoCsrg8S6aLPNFCtfv1vrpksIQM=;
+        b=prS+hpqce4ImLFQ7JRldg3GQfKGZClIIr7LpU4v1XZSqOPdWONYooQCKJM/u2TjSG/
+         8uyP/fVey441jtVNiVdIZK0nV5fLsXqgTbQ9UE1AT8IhVGLjx0sFr6Tu1SEHcpJWPKIE
+         MFlkJ/RUiqfPn91/SmAPjgcpEQM+mUV+QO2KxSmxYiGdNPqaeis9rKSblBElUlrePfZa
+         uU98cwLQeYpidvjy1qCE79FoI35NLanm89r8sSNGqtNP+5hp9qxkzQbGQLOeZuAkEUq5
+         tCcYkh++WzZYXB4SfVSAIH+VCssib6CPfiwOsy9CG/vTO8zMbkAqVc2zWLRtTciApRXr
+         iSdg==
+X-Gm-Message-State: APjAAAVRw3rIZdRuUciwL36WyHU3m92QSvQUKZc1ch2qSTe+ZuWLLcsB
+        NWkUxrqxc6mrw/yrm6ug87B/0HzCdCNly7rR16QPmmTPWnXdxOlBPt1yPNof1j6hKmyZ22NUwA1
+        B03VHPuWI23i90+JANeHMfoFq
+X-Received: by 2002:a1c:9602:: with SMTP id y2mr3643020wmd.23.1579709188818;
+        Wed, 22 Jan 2020 08:06:28 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyEpgRbW+shvDD7JCspQO++0KMJsnqySv9bIuY1pzJqxjjS6lrQbEYxP/XEfn+24miwuSmtHQ==
+X-Received: by 2002:a1c:9602:: with SMTP id y2mr3642990wmd.23.1579709188357;
+        Wed, 22 Jan 2020 08:06:28 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:b8fe:679e:87eb:c059? ([2001:b07:6468:f312:b8fe:679e:87eb:c059])
+        by smtp.gmail.com with ESMTPSA id s15sm54142437wrp.4.2020.01.22.08.06.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 08:06:27 -0800 (PST)
+Subject: Re: [PATCH v5 18/18] svm: Allow AVIC with in-kernel irqchip mode
+To:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, joro@8bytes.org, vkuznets@redhat.com,
+        rkagan@virtuozzo.com, graf@amazon.com, jschoenh@amazon.de,
+        karahmed@amazon.de, rimasluk@amazon.com, jon.grimm@amd.com
+References: <1573762520-80328-1-git-send-email-suravee.suthikulpanit@amd.com>
+ <1573762520-80328-19-git-send-email-suravee.suthikulpanit@amd.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <72b5dc17-1056-098d-e830-56e19cc769ab@redhat.com>
+Date:   Wed, 22 Jan 2020 17:06:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116152230.29831-3-jbx6244@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1573762520-80328-19-git-send-email-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 16:22:30 +0100, Johan Jonker wrote:
-> The description below is already in use for rk3308.dtsi,
-> but was somehow never added to a document, so add
-> "rockchip,rk3308-dw-mshc", "rockchip,rk3288-dw-mshc"
-> for mmc nodes on a rk3308 platform to rockchip-dw-mshc.yaml.
+On 14/11/19 21:15, Suravee Suthikulpanit wrote:
+> Once run-time AVIC activate/deactivate is supported, and EOI workaround
+> for AVIC is implemented, we can remove the kernel irqchip split mode
+> requirement for AVIC.
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> Hence, remove the check for irqchip split mode when enabling AVIC.
+> 
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 > ---
->  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/x86/kvm/svm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 2dfdd7c..2cba5be 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5149,7 +5149,7 @@ static void svm_set_virtual_apic_mode(struct kvm_vcpu *vcpu)
+>  
+>  static bool svm_get_enable_apicv(struct kvm *kvm)
+>  {
+> -	return avic && irqchip_split(kvm);
+> +	return avic;
+>  }
+>  
+>  static void svm_hwapic_irr_update(struct kvm_vcpu *vcpu, int max_irr)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Since I'm going to remove get_enable_apicv, this patch will look like
+this instead:
+
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index ceead401a696..1c4a26d34913 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2074,7 +2074,7 @@ static int svm_vm_init(struct kvm *kvm)
+ 			return ret;
+ 	}
+
+-	kvm_apicv_init(kvm, avic && irqchip_split(kvm));
++	kvm_apicv_init(kvm, avic);
+ 	return 0;
+ }
+
+
+Paolo
+
