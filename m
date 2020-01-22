@@ -2,71 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FDA8145967
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AAF145970
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:08:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgAVQI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 11:08:28 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38815 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728916AbgAVQIZ (ORCPT
+        id S1729112AbgAVQIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 11:08:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728609AbgAVQIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:08:25 -0500
-Received: by mail-ot1-f68.google.com with SMTP id z9so6748916oth.5;
-        Wed, 22 Jan 2020 08:08:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fJ6RphyD8sSyPTqyOLqAI/Xz7E4nNP+XR5CyPMuI564=;
-        b=BP0JmMHeWNbH2s3xrZkfG/MUGgwt4T/GJq0kR96G9AkFbzotPU/JwjMKhN/g2KPU+5
-         YhVkuhS2gMYjo5RJ1tiaYUuNyICRfrfjn+BnljYJMJTgwZuH0P9vSSuxmssW8M21k5EU
-         qwey/57t80DqixS2qcSgDv7jLAwgCgH/5rbEhtegL427b0XZw3JblaNtyOHXOhKrsjsb
-         PlvwpqoYQ3o0kplqdCPeVM8AU4hSOLBdW1adBCY9Qd2LDXjKuoZcT7FUFH7vTv/RDn/c
-         T7Gl1GqUa7rcM5aHhDFN4HvIJnOKOSbCIK4db4Z8GI4M1uK9PnxtaRqSCluiZJKQ7UKF
-         MGcA==
-X-Gm-Message-State: APjAAAUWd7kGZ8DwwqhIWM2JpSvB+WRtBI4tkeNCJlZ2yreEjBbDImWn
-        ZNc19xnji8u3RUB4yP/lRg==
-X-Google-Smtp-Source: APXvYqxLEOxbsL08vDuEoLiLKQY5f0wqCbNPih8yNmPTCMWHpkhVewkTCUhbZi3T/uga/TLzgU10Zg==
-X-Received: by 2002:a05:6830:10c6:: with SMTP id z6mr8270289oto.203.1579709304565;
-        Wed, 22 Jan 2020 08:08:24 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y13sm14708687otk.40.2020.01.22.08.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:08:23 -0800 (PST)
-Received: (nullmailer pid 15086 invoked by uid 1000);
-        Wed, 22 Jan 2020 16:08:22 -0000
-Date:   Wed, 22 Jan 2020 10:08:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Emmanuel Vadot <manu@freebsd.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
-        dianders@chromium.org, andy.yan@rock-chips.com,
-        robin.murphy@arm.com, mka@chromium.org, jagan@amarulasolutions.com,
-        nick@khadas.com, kever.yang@rock-chips.com, m.reichl@fivetechno.de,
-        aballier@gentoo.org, pbrobinson@gmail.com, vicencb@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Emmanuel Vadot <manu@freebsd.org>
-Subject: Re: [PATCH 1/2] dt-bindings: Add doc for Pine64 Pinebook Pro
-Message-ID: <20200122160822.GA15049@bogus>
-References: <20200116225617.6318-1-manu@freebsd.org>
+        Wed, 22 Jan 2020 11:08:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=b27aDBY4y/7/Q6nm414arkj4keuFN7/ZdwTBl4SydLg=; b=c0znPXb8/MVKdiAmIXi2H2dtb
+        VhINTEL9zM48Q+iEMmYPfSxCWAQWJhY1kfdLnAVX+t3i+gY09dDNwr/AF5HAQfGibXUcqZ7T01Ovg
+        t/l2baN3AGIkuL4r/CtHKyTFnU7s16ASxTXK3Zob3nacfBhJhcP9Adk3/6orhtxk7Y4Wo39xt4RMx
+        br5/iJJ+TR9MPWYsbis1lnE378k6hac7wi096v1molBwvcva2ztUUAUk8r4UdebYkr8L8VH7HD/xC
+        Tx4ew3ySHhsbmQWo7GEVdIKiTP8N615mfPqU9y+jxOE41GNmfDQWmoZFLqnWVPCZaYX9LT23YPW79
+        4/soRaf9g==;
+Received: from [2601:1c0:6280:3f0::ed68]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iuIYX-0007T4-6F; Wed, 22 Jan 2020 16:08:37 +0000
+Subject: Re: [PATCH v1 06/11] Documentation: pstore/blk: blkoops: create
+ document for pstore_blk
+To:     liaoweixiong <liaoweixiong@allwinnertech.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org
+References: <1579482233-2672-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1579482233-2672-7-git-send-email-liaoweixiong@allwinnertech.com>
+ <b9cd734b-8bb1-5e26-a7ed-fbc79ab2d958@infradead.org>
+ <c87bdf3a-f129-a2a7-40b2-2220f79b505a@allwinnertech.com>
+ <40d7f57a-119e-e51f-99a5-63e85ab5ab91@infradead.org>
+ <3337f687-a668-c058-178b-a1438641c519@allwinnertech.com>
+ <597e2b49-667a-490e-91b6-641ca25401d8@infradead.org>
+ <6d94b9d5-abef-db5e-1c80-00ea8c1b0003@allwinnertech.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <325251e8-79e6-ed07-f5e0-b8c149757766@infradead.org>
+Date:   Wed, 22 Jan 2020 08:08:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116225617.6318-1-manu@freebsd.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6d94b9d5-abef-db5e-1c80-00ea8c1b0003@allwinnertech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 16 Jan 2020 23:56:16 +0100, Emmanuel Vadot wrote:
-> Add a compatible for Pine64 Pinebook Pro
-> 
-> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+On 1/22/20 7:01 AM, liaoweixiong wrote:
+> On 2020/1/21 下午11:34, Randy Dunlap wrote:
+>> On 1/21/20 12:19 AM, liaoweixiong wrote:
+>>> hi Randy Dunlap,
+>>>
+>>> On 2020/1/21 2:36 PM, Randy Dunlap wrote:
+>>>> On 1/20/20 9:23 PM, liaoweixiong wrote:
+>>>>> hi Randy Dunlap,
+>>>>>
+>>>>> On 2020/1/21 PM12:13, Randy Dunlap wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> I have some documentation comments for you:
+>>>>>>
+>>>>>>
+>>>>>> On 1/19/20 5:03 PM, WeiXiong Liao wrote:
+>>>>>>> The document, at Documentation/admin-guide/pstore-block.rst, tells us
+>>>>>>> how to use pstore/blk and blkoops.
+>>>>>>>
+>>>>>>> Signed-off-by: WeiXiong Liao <liaoweixiong@allwinnertech.com>
+>>>>>>> ---
+>>>>>>>    Documentation/admin-guide/pstore-block.rst | 278 +++++++++++++++++++++++++++++
+>>>>>>>    MAINTAINERS                                |   1 +
+>>>>>>>    fs/pstore/Kconfig                          |   2 +
+>>>>>>>    3 files changed, 281 insertions(+)
+>>>>>>>    create mode 100644 Documentation/admin-guide/pstore-block.rst
+>>>>>>>
+>>>>>>> diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..58418d429c55
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/admin-guide/pstore-block.rst
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>>>>>>> +Compression and header
+>>>>>>> +----------------------
+>>>>>>> +
+>>>>>>> +Block device is large enough for uncompressed dmesg data. Actually we do not
+>>>>>>> +recommend data compression because pstore/blk will insert some information into
+>>>>>>> +the first line of dmesg data. For example::
+>>>>>>> +
+>>>>>>> +        Panic: Total 16 times
+>>>>>>> +
+>>>>>>> +It means that it's the 16th times panic log since the first booting. Sometimes
+>>>>>>
+>>>>>>                                  time of a panic log since ...
+>>>>>>
+>>>>>
+>>>>> Should it be like this?
+>>>>> It means the time of a panic log since the first booting.
+>>>>
+>>>> That sounds like clock time, not the number of instances or occurrences.
+>>>>
+>>>
+>>> It is an oops/panic counter too. How about this?
+>>>
+>>> It means that it's OOPS/PANIC for the 16th time since the first booting.
+>>
+>>                                                    since the last booting {or boot}.
+>>
+> 
+> Not the last booting but the first booting. This is the number of
+> triggers since the first time the system was installed.
+
+OK, so it's a persistent counter.
+Thanks for the clarification.
+
+-- 
+~Randy
+
