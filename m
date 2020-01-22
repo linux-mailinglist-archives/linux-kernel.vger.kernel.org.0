@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 950FD144FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33001144F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387575AbgAVJla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:41:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60684 "EHLO mail.kernel.org"
+        id S1733069AbgAVJib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:38:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387512AbgAVJlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:41:18 -0500
+        id S1733027AbgAVJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:38:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6683C2467B;
-        Wed, 22 Jan 2020 09:41:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D74A2467F;
+        Wed, 22 Jan 2020 09:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579686077;
-        bh=RSUDhfPhXk0dWiZ10UxNgdPkWdvoHWDWWByQvoZi8Lo=;
+        s=default; t=1579685906;
+        bh=FwLbWFeFbvdUrH5giB50SJAEdUAePu1BlpASRib3hG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fDeqOYTwOI9QlI+TYTAiIhMN9Gtv02zMie3FrZJBP2cjk9EJbSKmVjQ+RiihlnHu/
-         aqqaRPKBuEsUv0jzVHZzfIjFcXVuWu0nOygbzZC846RDnlbuHlAIewr53qZKlkyu8+
-         hqwnZky+4rfg7p+wb9LUgTilxj2fwIqMfFW6c00s=
+        b=IINMkjGF4qQrSNAUvfXcpZUu5fknQPZKw8WqY3bwWWwvsUneFXRNG3+pQw4NWeC7X
+         4NR5o9ww5wpqELbJx+tMhuO/kVJYDmQaeaNqFdP7NY6LB4JyNarHmnLqqn4dAf59rk
+         HGFP4uNFvykfe6/3S+UOPyk2gGwo4mlMZULw/4iY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 035/103] x86/efistub: Disable paging at mixed mode entry
-Date:   Wed, 22 Jan 2020 10:28:51 +0100
-Message-Id: <20200122092809.152269979@linuxfoundation.org>
+        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.14 07/65] ARM: dts: am571x-idk: Fix gpios property to have the correct  gpio number
+Date:   Wed, 22 Jan 2020 10:28:52 +0100
+Message-Id: <20200122092752.331828273@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
-References: <20200122092803.587683021@linuxfoundation.org>
+In-Reply-To: <20200122092750.976732974@linuxfoundation.org>
+References: <20200122092750.976732974@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,46 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 4911ee401b7ceff8f38e0ac597cbf503d71e690c upstream.
+commit 0c4eb2a6b3c6b0facd0a3bccda5db22e7b3b6f96 upstream.
 
-The EFI mixed mode entry code goes through the ordinary startup_32()
-routine before jumping into the kernel's EFI boot code in 64-bit
-mode. The 32-bit startup code must be entered with paging disabled,
-but this is not documented as a requirement for the EFI handover
-protocol, and so we should disable paging explicitly when entering
-the kernel from 32-bit EFI firmware.
+commit d23f3839fe97d8dce03d ("ARM: dts: DRA7: Add pcie1 dt node for
+EP mode") while adding the dt node for EP mode for DRA7 platform,
+added rc node for am571x-idk and populated gpios property with
+"gpio3 23". However the GPIO_PCIE_SWRST line is actually connected
+to "gpio5 18". Fix it here. (The patch adding "gpio3 23" was tested
+with another am57x board in EP mode which doesn't rely on reset from
+host).
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Arvind Sankar <nivedita@alum.mit.edu>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191224132909.102540-4-ardb@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Fixes: d23f3839fe97d8dce03d ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/head_64.S |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/am571x-idk.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -244,6 +244,11 @@ ENTRY(efi32_stub_entry)
- 	leal	efi32_config(%ebp), %eax
- 	movl	%eax, efi_config(%ebp)
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -93,7 +93,7 @@
  
-+	/* Disable paging */
-+	movl	%cr0, %eax
-+	btrl	$X86_CR0_PG_BIT, %eax
-+	movl	%eax, %cr0
-+
- 	jmp	startup_32
- ENDPROC(efi32_stub_entry)
- #endif
+ &pcie1_rc {
+ 	status = "okay";
+-	gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
++	gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
+ };
+ 
+ &pcie1_ep {
 
 
