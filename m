@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD7D1451E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:57:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B921614515F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbgAVJbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:31:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42950 "EHLO mail.kernel.org"
+        id S1731005AbgAVJet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:34:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729527AbgAVJbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:31:07 -0500
+        id S1730989AbgAVJep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:34:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADA7E24673;
-        Wed, 22 Jan 2020 09:31:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C332024672;
+        Wed, 22 Jan 2020 09:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685466;
-        bh=6BnNUWJF6aYZydoM8RpxRCigJKk8/js3efYHnlbHI4A=;
+        s=default; t=1579685685;
+        bh=J2Uu6xeW8tRMtlFYFag5dwkPExafMGRmGM8omqTSyzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNtLZ8AVc0XhFHMz2sk4SOHcmofHzPcMsf0JKZkFEaNppa45kkw1beErkem2GmM30
-         Y1JvbDgCK6iWENMVDjahPb1NoYRw+jeqv5OZe8HyKtPYhRxuxuRHO5W9sk0MXVvzBk
-         313gn1pl5YyBodd21czFKnxfUSfY4vPKxgpDndlc=
+        b=r54mBELV0iC6zfyIx8MxPYxQJz2SoAh7tR+qN51D1dXWQCIt7lHCLbyjxmQY0QbXm
+         /NayGtrTzUACskvO1yFoiPHpIi/vAbFE++aMsXUHekQaPPwPwfAW4/dnej7pop9lym
+         wwQd7HQGhy+S616ib7unudZ9S4qQmxXw1bshdvrY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 25/76] scsi: sd: Clear sdkp->protection_type if disk is reformatted without PI
+        stable@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 4.9 37/97] media: exynos4-is: Fix recursive locking in isp_video_release()
 Date:   Wed, 22 Jan 2020 10:28:41 +0100
-Message-Id: <20200122092754.326792715@linuxfoundation.org>
+Message-Id: <20200122092802.518015494@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-commit 465f4edaecc6c37f81349233e84d46246bcac11a upstream.
+commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd upstream.
 
-If an attached disk with protection information enabled is reformatted
-to Type 0 the revalidation code does not clear the original protection
-type and subsequent accesses will keep setting RDPROTECT/WRPROTECT.
+>From isp_video_release(), &isp->video_lock is held and subsequent
+vb2_fop_release() tries to lock vdev->lock which is same with the
+previous one. Replace vb2_fop_release() with _vb2_fop_release() to
+fix the recursive locking.
 
-Set the protection type to 0 if the disk reports PROT_EN=0 in READ
-CAPACITY(16).
-
-[mkp: commit desc]
-
-Fixes: fe542396da73 ("[SCSI] sd: Ensure we correctly disable devices with unknown protection type")
-Link: https://lore.kernel.org/r/1578532344-101668-1-git-send-email-chenxiang66@hisilicon.com
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1998,8 +1998,10 @@ static int sd_read_protection_type(struc
- 	u8 type;
- 	int ret = 0;
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -316,7 +316,7 @@ static int isp_video_release(struct file
+ 		ivc->streaming = 0;
+ 	}
  
--	if (scsi_device_protection(sdp) == 0 || (buffer[12] & 1) == 0)
-+	if (scsi_device_protection(sdp) == 0 || (buffer[12] & 1) == 0) {
-+		sdkp->protection_type = 0;
- 		return ret;
-+	}
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
  
- 	type = ((buffer[12] >> 1) & 7) + 1; /* P_TYPE 0 = Type 1 */
- 
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
 
 
