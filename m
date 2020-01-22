@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C32E8144EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED2914514C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:53:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbgAVJa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:30:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41760 "EHLO mail.kernel.org"
+        id S1730843AbgAVJxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:53:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbgAVJa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:30:27 -0500
+        id S1731379AbgAVJfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:35:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B449A2465B;
-        Wed, 22 Jan 2020 09:30:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5650424673;
+        Wed, 22 Jan 2020 09:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685424;
-        bh=o7W4D99RUUOyMLnHzoKuvSoaHllAdLOWgJ1kmK1ffgo=;
+        s=default; t=1579685733;
+        bh=UfNcciLhGR8mUtx9Sy6RXf1jvwXSevNstUj4IZjS/Dc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=StnE7Ex89OkxZuT7I5GeNgWUueUpR4p8POxXnP02aCjX/CxjOfiDmM/Al5lvaFWwR
-         8rACNQXGhNuE54Ifo7C4imrv957CJQJqiN9O6yQuWcJo4kcX4YzRewj4sGUIRTa5g7
-         B0FsgoVx3VkU6/SEKTQWyj2APzGw8syEz2nQ1U4A=
+        b=Zd2xM5+eqcqXJmgqBYsg1ahGg8nhIMVTxZW/mhvlwTdPZ/mlPuiKyEH6zVAFeknXb
+         /clmJ1b5Z/6CWOgzGB+bJNkn9kS156GItzAgxdLSdyhci0pHktJst/Z2zVbfJBqP4n
+         eABrql75kBGi+p9g2TLhKZkjaCh8vku8ObaBq+cw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabian Henneke <fabian.henneke@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 01/76] hidraw: Return EPOLLOUT from hidraw_poll
+        stable@vger.kernel.org, Jouni Malinen <jouni@codeaurora.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 13/97] mac80211: Do not send Layer 2 Update frame before authorization
 Date:   Wed, 22 Jan 2020 10:28:17 +0100
-Message-Id: <20200122092751.885292472@linuxfoundation.org>
+Message-Id: <20200122092757.991592555@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092751.587775548@linuxfoundation.org>
-References: <20200122092751.587775548@linuxfoundation.org>
+In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
+References: <20200122092755.678349497@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,40 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabian Henneke <fabian.henneke@gmail.com>
+From: Jouni Malinen <jouni@codeaurora.org>
 
-[ Upstream commit 378b80370aa1fe50f9c48a3ac8af3e416e73b89f ]
+commit 3e493173b7841259a08c5c8e5cbe90adb349da7e upstream.
 
-Always return EPOLLOUT from hidraw_poll when a device is connected.
-This is safe since writes are always possible (but will always block).
+The Layer 2 Update frame is used to update bridges when a station roams
+to another AP even if that STA does not transmit any frames after the
+reassociation. This behavior was described in IEEE Std 802.11F-2003 as
+something that would happen based on MLME-ASSOCIATE.indication, i.e.,
+before completing 4-way handshake. However, this IEEE trial-use
+recommended practice document was published before RSN (IEEE Std
+802.11i-2004) and as such, did not consider RSN use cases. Furthermore,
+IEEE Std 802.11F-2003 was withdrawn in 2006 and as such, has not been
+maintained amd should not be used anymore.
 
-hidraw does not support non-blocking writes and instead always calls
-blocking backend functions on write requests. Hence, so far, a call to
-poll never returned EPOLLOUT, which confuses tools like socat.
+Sending out the Layer 2 Update frame immediately after association is
+fine for open networks (and also when using SAE, FT protocol, or FILS
+authentication when the station is actually authenticated by the time
+association completes). However, it is not appropriate for cases where
+RSN is used with PSK or EAP authentication since the station is actually
+fully authenticated only once the 4-way handshake completes after
+authentication and attackers might be able to use the unauthenticated
+triggering of Layer 2 Update frame transmission to disrupt bridge
+behavior.
 
-Signed-off-by: Fabian Henneke <fabian.henneke@gmail.com>
-In-reply-to: <CA+hv5qkyis03CgYTWeWX9cr0my-d2Oe+aZo+mjmWRXgjrGqyrw@mail.gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix this by postponing transmission of the Layer 2 Update frame from
+station entry addition to the point when the station entry is marked
+authorized. Similarly, send out the VLAN binding update only if the STA
+entry has already been authorized.
+
+Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 4.9: adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/hidraw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/cfg.c      |   11 +++--------
+ net/mac80211/sta_info.c |    4 ++++
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index 627a24d3ea7c..27d2f5a48a11 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -265,7 +265,7 @@ static unsigned int hidraw_poll(struct file *file, poll_table *wait)
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1357,7 +1357,6 @@ static int ieee80211_add_station(struct
+ 	struct sta_info *sta;
+ 	struct ieee80211_sub_if_data *sdata;
+ 	int err;
+-	int layer2_update;
  
- 	poll_wait(file, &list->hidraw->wait, wait);
- 	if (list->head != list->tail)
--		return POLLIN | POLLRDNORM;
-+		return POLLIN | POLLRDNORM | POLLOUT;
- 	if (!list->hidraw->exist)
- 		return POLLERR | POLLHUP;
+ 	if (params->vlan) {
+ 		sdata = IEEE80211_DEV_TO_SUB_IF(params->vlan);
+@@ -1401,18 +1400,12 @@ static int ieee80211_add_station(struct
+ 	    test_sta_flag(sta, WLAN_STA_ASSOC))
+ 		rate_control_rate_init(sta);
+ 
+-	layer2_update = sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
+-		sdata->vif.type == NL80211_IFTYPE_AP;
+-
+ 	err = sta_info_insert_rcu(sta);
+ 	if (err) {
+ 		rcu_read_unlock();
+ 		return err;
+ 	}
+ 
+-	if (layer2_update)
+-		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
+-
+ 	rcu_read_unlock();
+ 
  	return 0;
--- 
-2.20.1
-
+@@ -1521,7 +1514,9 @@ static int ieee80211_change_station(stru
+ 				atomic_inc(&sta->sdata->bss->num_mcast_sta);
+ 		}
+ 
+-		cfg80211_send_layer2_update(sta->sdata->dev, sta->sta.addr);
++		if (sta->sta_state == IEEE80211_STA_AUTHORIZED)
++			cfg80211_send_layer2_update(sta->sdata->dev,
++						    sta->sta.addr);
+ 	}
+ 
+ 	err = sta_apply_parameters(local, sta, params);
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@ -1896,6 +1896,10 @@ int sta_info_move_state(struct sta_info
+ 			ieee80211_check_fast_xmit(sta);
+ 			ieee80211_check_fast_rx(sta);
+ 		}
++		if (sta->sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
++		    sta->sdata->vif.type == NL80211_IFTYPE_AP)
++			cfg80211_send_layer2_update(sta->sdata->dev,
++						    sta->sta.addr);
+ 		break;
+ 	default:
+ 		break;
 
 
