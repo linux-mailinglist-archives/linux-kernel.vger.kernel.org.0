@@ -2,187 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83551145E7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9515B145E64
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 23:10:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgAVWYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 17:24:04 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47750 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAVWYD (ORCPT
+        id S1726231AbgAVWKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 17:10:08 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41150 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVWKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 17:24:03 -0500
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 2974929988; Wed, 22 Jan 2020 17:23:59 -0500 (EST)
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Chris Zankel <chris@zankel.net>,
-        Laurent Vivier <laurent@vivier.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <0c53b516bac19ca785b0a8e9ada7bcb6970fda5b.1579730846.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1579730846.git.fthain@telegraphics.com.au>
-References: <cover.1579730846.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net v3 01/12] net/sonic: Add mutual exclusion for accessing
- shared state
-Date:   Thu, 23 Jan 2020 09:07:26 +1100
+        Wed, 22 Jan 2020 17:10:07 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i1so969362oie.8;
+        Wed, 22 Jan 2020 14:10:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tzE/usQUC+/qHervq9qIJkerRx4RijErGd72FUWsdgM=;
+        b=gtZOmaZSaQA1RT0gYAY3tpH2TX8tqCQrvkx0lHqwRJqlYa9AUwawy8ZprbPbfwpvsG
+         6rakUY0G3Vkv8cHjk1tshjNXUrlLZ4cvEtrK8AhoQmRCk+v00Mtcd+55QW8dAssRccah
+         D0gdYwfGpTQSMeXo3ynX2P4ZzxinEJfasyaKk3p8mjZKFEDwxgvE5kjBzjlSG5E7eGw3
+         wo72JBSn+hFrMQTjT8P9HN7M7U7q/LbR7hn054GnIkawXrCXbzDwsKai2wV7rz9f1tw/
+         cGIJJw9I9s0fzWGdQcJuxzN7xkjjJWSSTM1lkGW1wWMugV9OLR6sv/xWf/1xUDL/RvRo
+         fKVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tzE/usQUC+/qHervq9qIJkerRx4RijErGd72FUWsdgM=;
+        b=AOj5mmawQsZ5Ynn9bSh2uY9fvh3s4hTGD+m8mIZFPolHEGrueUI0fS3uJlxNsB1Aqi
+         C5omgYQsPRcvBGnZFZVW8V+QBOUJZFCHJvzdpYZR7gdyQ4oJqrKJVD/syemajHIe+VnL
+         ciK9WkP479WwLfixvrem/vUOGU8eEDoMU3V2JQ+WTOMSZxwSAW6eV1newlsxXxvExry0
+         k4KmiE/1BuFTVOrBYODxbkAqedtcN9/bte+KXKX0hVi9go3kD7XoRg1iQh34Ue+EpVw4
+         4lgInSqHkWxBknGKLPolB6CvGNMYQ0pMmp8JQ533LDzLMkTj7hv1W0or8COr9OH+nFjy
+         wQQQ==
+X-Gm-Message-State: APjAAAUfGCXCM7CEuyATlO0j2NzlETNxh3tjG4w+WaYwQRz5l8c9O5Dy
+        hj3G5MhQBm4szpGbDkdrJhXD3dJG49CBJTaMA8hgRwSKFT0=
+X-Google-Smtp-Source: APXvYqzLaIvFXXa9sDzzeC+7Der05z+2y7PvAqMVLAjIHy8ILzkiBB98xdRD6ZfV72sFmE1yONU6J0ZcD+whAVa6nj8=
+X-Received: by 2002:aca:1011:: with SMTP id 17mr8450834oiq.72.1579731006685;
+ Wed, 22 Jan 2020 14:10:06 -0800 (PST)
+MIME-Version: 1.0
+References: <0000000000006370ef059cabac14@google.com> <50239085-ff0f-f797-99af-1a0e58bc5e2e@gmail.com>
+ <CAM_iQpXqh1ucVST199c72V22zLPujZy-54p=c5ar=Q9bWNq7OA@mail.gmail.com> <7056f971-8fae-ce88-7e9a-7983e4f57bb2@gmail.com>
+In-Reply-To: <7056f971-8fae-ce88-7e9a-7983e4f57bb2@gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Wed, 22 Jan 2020 14:09:55 -0800
+Message-ID: <CAM_iQpWw_pP0zm8VgRoYgeMu=b8v8ECmXAcfSC8WGraQ8CNk+Q@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in __nla_put_nohdr
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     syzbot <syzbot+5af9a90dad568aa9f611@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The netif_stop_queue() call in sonic_send_packet() races with the
-netif_wake_queue() call in sonic_interrupt(). This causes issues
-like "NETDEV WATCHDOG: eth0 (macsonic): transmit queue 0 timed out".
-Fix this by disabling interrupts when accessing tx_skb[] and next_tx.
-Update a comment to clarify the synchronization properties.
+On Wed, Jan 22, 2020 at 12:33 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+>
+> On 1/22/20 12:27 PM, Cong Wang wrote:
+> > On Tue, Jan 21, 2020 at 11:55 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >> em_nbyte_change() sets
+> >> em->datalen = sizeof(*nbyte) + nbyte->len;
+> >>
+> >> But later tcf_em_validate() overwrites em->datalen with the user provide value (em->datalen = data_len; )
+> >> which can be bigger than the allocated (kmemdup) space in em_nbyte_change()
+> >>
+> >> Should net/sched/em_nbyte.c() provide a dump() handler to avoid this issue ?
+> >
+> > I think for those who implement ->change() we should leave
+> > ->datalen untouched to respect their choices. I don't see why
+> > we have to set it twice.
+> >
+> >
+>
+> Agreed, but we need to audit them to make sure all of them are setting ->datalen
+>
 
-Fixes: efcce839360f ("[PATCH] macsonic/jazzsonic network drivers update")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
-Changed since v1:
- - Added spin lock, as requested by Geert.
-Changed since v2:
- - Added comment to explain the need for an irq lock.
----
- drivers/net/ethernet/natsemi/sonic.c | 49 ++++++++++++++++++++--------
- drivers/net/ethernet/natsemi/sonic.h |  1 +
- 2 files changed, 36 insertions(+), 14 deletions(-)
+I audited all of them, either sets ->datalen in ->change() or just
+implements a ops->datalen. I will send the patch out once passed
+syzbot test.
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index b339125b2f09..8a7cff516281 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -64,6 +64,8 @@ static int sonic_open(struct net_device *dev)
- 
- 	netif_dbg(lp, ifup, dev, "%s: initializing sonic driver\n", __func__);
- 
-+	spin_lock_init(&lp->lock);
-+
- 	for (i = 0; i < SONIC_NUM_RRS; i++) {
- 		struct sk_buff *skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
- 		if (skb == NULL) {
-@@ -206,8 +208,6 @@ static void sonic_tx_timeout(struct net_device *dev)
-  *   wake the tx queue
-  * Concurrently with all of this, the SONIC is potentially writing to
-  * the status flags of the TDs.
-- * Until some mutual exclusion is added, this code will not work with SMP. However,
-- * MIPS Jazz machines and m68k Macs were all uni-processor machines.
-  */
- 
- static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
-@@ -215,7 +215,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	struct sonic_local *lp = netdev_priv(dev);
- 	dma_addr_t laddr;
- 	int length;
--	int entry = lp->next_tx;
-+	int entry;
-+	unsigned long flags;
- 
- 	netif_dbg(lp, tx_queued, dev, "%s: skb=%p\n", __func__, skb);
- 
-@@ -237,6 +238,10 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 		return NETDEV_TX_OK;
- 	}
- 
-+	spin_lock_irqsave(&lp->lock, flags);
-+
-+	entry = lp->next_tx;
-+
- 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
- 	sonic_tda_put(dev, entry, SONIC_TD_FRAG_COUNT, 1);   /* single fragment */
- 	sonic_tda_put(dev, entry, SONIC_TD_PKTSIZE, length); /* length of packet */
-@@ -246,10 +251,6 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	sonic_tda_put(dev, entry, SONIC_TD_LINK,
- 		sonic_tda_get(dev, entry, SONIC_TD_LINK) | SONIC_EOL);
- 
--	/*
--	 * Must set tx_skb[entry] only after clearing status, and
--	 * before clearing EOL and before stopping queue
--	 */
- 	wmb();
- 	lp->tx_len[entry] = length;
- 	lp->tx_laddr[entry] = laddr;
-@@ -272,6 +273,8 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 
- 	SONIC_WRITE(SONIC_CMD, SONIC_CR_TXP);
- 
-+	spin_unlock_irqrestore(&lp->lock, flags);
-+
- 	return NETDEV_TX_OK;
- }
- 
-@@ -284,9 +287,21 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 	struct net_device *dev = dev_id;
- 	struct sonic_local *lp = netdev_priv(dev);
- 	int status;
-+	unsigned long flags;
-+
-+	/* The lock has two purposes. Firstly, it synchronizes sonic_interrupt()
-+	 * with sonic_send_packet() so that the two functions can share state.
-+	 * Secondly, it makes sonic_interrupt() re-entrant, as that is required
-+	 * by macsonic which must use two IRQs with different priority levels.
-+	 */
-+	spin_lock_irqsave(&lp->lock, flags);
-+
-+	status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
-+	if (!status) {
-+		spin_unlock_irqrestore(&lp->lock, flags);
- 
--	if (!(status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT))
- 		return IRQ_NONE;
-+	}
- 
- 	do {
- 		if (status & SONIC_INT_PKTRX) {
-@@ -300,11 +315,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 			int td_status;
- 			int freed_some = 0;
- 
--			/* At this point, cur_tx is the index of a TD that is one of:
--			 *   unallocated/freed                          (status set   & tx_skb[entry] clear)
--			 *   allocated and sent                         (status set   & tx_skb[entry] set  )
--			 *   allocated and not yet sent                 (status clear & tx_skb[entry] set  )
--			 *   still being allocated by sonic_send_packet (status clear & tx_skb[entry] clear)
-+			/* The state of a Transmit Descriptor may be inferred
-+			 * from { tx_skb[entry], td_status } as follows.
-+			 * { clear, clear } => the TD has never been used
-+			 * { set,   clear } => the TD was handed to SONIC
-+			 * { set,   set   } => the TD was handed back
-+			 * { clear, set   } => the TD is available for re-use
- 			 */
- 
- 			netif_dbg(lp, intr, dev, "%s: tx done\n", __func__);
-@@ -406,7 +422,12 @@ static irqreturn_t sonic_interrupt(int irq, void *dev_id)
- 		/* load CAM done */
- 		if (status & SONIC_INT_LCD)
- 			SONIC_WRITE(SONIC_ISR, SONIC_INT_LCD); /* clear the interrupt */
--	} while((status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT));
-+
-+		status = SONIC_READ(SONIC_ISR) & SONIC_IMR_DEFAULT;
-+	} while (status);
-+
-+	spin_unlock_irqrestore(&lp->lock, flags);
-+
- 	return IRQ_HANDLED;
- }
- 
-diff --git a/drivers/net/ethernet/natsemi/sonic.h b/drivers/net/ethernet/natsemi/sonic.h
-index 2b27f7049acb..f9506863e9d1 100644
---- a/drivers/net/ethernet/natsemi/sonic.h
-+++ b/drivers/net/ethernet/natsemi/sonic.h
-@@ -322,6 +322,7 @@ struct sonic_local {
- 	int msg_enable;
- 	struct device *device;         /* generic device */
- 	struct net_device_stats stats;
-+	spinlock_t lock;
- };
- 
- #define TX_TIMEOUT (3 * HZ)
--- 
-2.24.1
-
+Thanks.
