@@ -2,224 +2,257 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0126144BF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05FE8144BED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 07:47:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgAVGsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 01:48:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51728 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725862AbgAVGsQ (ORCPT
+        id S1726049AbgAVGrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 01:47:49 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37677 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbgAVGrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 01:48:16 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00M6lwMF173395
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:48:14 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xkwq8n37c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Jan 2020 01:48:09 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kjain@linux.ibm.com>;
-        Wed, 22 Jan 2020 06:47:47 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 Jan 2020 06:47:44 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00M6lgDE39452868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jan 2020 06:47:42 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ADB8B4203F;
-        Wed, 22 Jan 2020 06:47:42 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86C2042042;
-        Wed, 22 Jan 2020 06:47:40 +0000 (GMT)
-Received: from localhost.in.ibm.com (unknown [9.124.35.61])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Jan 2020 06:47:40 +0000 (GMT)
-From:   Kajol Jain <kjain@linux.ibm.com>
-To:     acme@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        kjain@linux.ibm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2] tools/perf/metricgroup: Fix printing event names of metric group with multiple events incase of overlapping events
-Date:   Wed, 22 Jan 2020 12:17:21 +0530
-X-Mailer: git-send-email 2.21.0
+        Wed, 22 Jan 2020 01:47:49 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so5927522wmf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 Jan 2020 22:47:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=RlZojd1SiUbb/OeinLf3J4JHQYZOcdIDU8W+cj9iulk=;
+        b=y3SDRICUNCTGVEfhGZo3blD0LEuV77fDMIPVvItjjaewXSwlnd2aurAbs4B6f2ZfO9
+         noTpfd/TLhRPe73LaqAlVAlUpe9wyusPNWjzu6vJFZa2BynslasKCb7iA/W6a0OtVXEb
+         YxA0s37yA5jB/OS9ued6UM66oYP0dbwc47AWnfGEFj34PV7BBCI0X7qn8Y7f4e2k3c88
+         WOx8BMTixv+0jHe4TSUTmJYaLdx+0xE9RP3llvtF4/XJKNvYwpb6AqmKUOikzdnec5Bx
+         i5iCXi2jcxrUBOHnA0Gzz3mt7fRahb+yu5yXcDkPoIYs2Ti6M32/nnTIP7g7e4wRI1D0
+         7u2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=RlZojd1SiUbb/OeinLf3J4JHQYZOcdIDU8W+cj9iulk=;
+        b=FbPinxU58ktHUKiy4yGfmcu5Vq0tK1r8N4LTOq1Efstb6D/mN0/ANOqAzxjEh5rO7J
+         nC0uzst+jf1DUTmlXWxtMudKfNQNlFwosjkN8bc+0ohRwmHw9O+B4HETQWnPPd75w3+Y
+         jsIR56FX9nhD06O/G2bIjF0b6G8cYs4frE+O2v3C61ks6f89tpyFzUAuK2w0CMzZIyCK
+         yZEyFHkabZrgENbpRJmWJ37yMUovD9rga+95hM1M7Fbtt9TuL/nJEQu6zAcoAco1DdQf
+         L6AhYV0LI0YAY212OgwQLEblcdIvtNqpXfH2S//K/T8T334bQ0JJ+SuG2EwrP/AaGSF3
+         6kUg==
+X-Gm-Message-State: APjAAAVHGSp4+WJAb4fWVunNk1nYL/YY/80r9+nvsfc+MESfRdpoYDj5
+        F9YPILNFDBmfbCkG5rf60k1e9Q==
+X-Google-Smtp-Source: APXvYqxE0JBWhtarBcJMiWajDjZfirf67dUMAGz9LTC5QD8210pTuLsvsl7JRG+MChOSyTnzZODhrQ==
+X-Received: by 2002:a7b:cf08:: with SMTP id l8mr1124469wmg.169.1579675665355;
+        Tue, 21 Jan 2020 22:47:45 -0800 (PST)
+Received: from [173.194.76.108] ([149.199.62.130])
+        by smtp.gmail.com with ESMTPSA id q19sm2532169wmc.12.2020.01.21.22.47.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2020 22:47:44 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] asm-generic: Make dma-contiguous.h a mandatory
+ include/asm header
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        git@xilinx.com, Christoph Hellwig <hch@lst.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        linux-mips@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>, X86 ML <x86@kernel.org>,
+        Guo Ren <guoren@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org, "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+References: <cover.1579248206.git.michal.simek@xilinx.com>
+ <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
+ <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
+From:   Michal Simek <monstr@monstr.eu>
+Autocrypt: addr=monstr@monstr.eu; keydata=
+ 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
+ 0Z1MQlmNcq2bhOMzTxuXX2NDzUZs4aqEyZQ=
+Message-ID: <5dac2fdd-6e4e-dd16-a149-fbdd8117ac1c@monstr.eu>
+Date:   Wed, 22 Jan 2020 07:47:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012206-0012-0000-0000-0000037F91A2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012206-0013-0000-0000-000021BBD3BE
-Message-Id: <20200122064721.24276-1-kjain@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-17_05:2020-01-16,2020-01-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- suspectscore=1 phishscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001220061
+In-Reply-To: <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="2dbNcSDggiI5dxMnAV22UCPQ9muiAKI4S"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f01642e4912b ("perf metricgroup: Support multiple
-events for metricgroup") introduced support for multiple events
-in a metric group. But with the current upstream, metric events
-names are not printed properly incase we try to run multiple
-metric groups with overlapping event.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--2dbNcSDggiI5dxMnAV22UCPQ9muiAKI4S
+Content-Type: multipart/mixed; boundary="FbunjY3XOg7TLNQEYAVrl68e0gK20Tj5W";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Michal Simek <michal.simek@xilinx.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, git@xilinx.com,
+ Christoph Hellwig <hch@lst.de>, Christoph Hellwig <hch@infradead.org>,
+ Paul Burton <paulburton@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Borislav Petkov <bp@alien8.de>, linux-mips@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>,
+ linux-arch <linux-arch@vger.kernel.org>,
+ linux-s390 <linux-s390@vger.kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, X86 ML <x86@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Wesley Terpstra <wesley@sifive.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ralf Baechle <ralf@linux-mips.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ linux-xtensa@linux-xtensa.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Will Deacon <will@kernel.org>, Christian Borntraeger
+ <borntraeger@de.ibm.com>, Deepa Dinamani <deepa.kernel@gmail.com>,
+ Chris Zankel <chris@zankel.net>, Ingo Molnar <mingo@redhat.com>,
+ Waiman Long <longman@redhat.com>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Albert Ou <aou@eecs.berkeley.edu>, Vasily Gorbik <gor@linux.ibm.com>,
+ James Hogan <jhogan@kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Message-ID: <5dac2fdd-6e4e-dd16-a149-fbdd8117ac1c@monstr.eu>
+Subject: Re: [PATCH v2 1/2] asm-generic: Make dma-contiguous.h a mandatory
+ include/asm header
+References: <cover.1579248206.git.michal.simek@xilinx.com>
+ <0274919c5e3b134df19d943f99cb7e84e5135ccd.1579248206.git.michal.simek@xilinx.com>
+ <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
+In-Reply-To: <CAK7LNARdiTxajZcXH0g7t6nEis-1ebv7Ta6wBdgGgS6O29O7+A@mail.gmail.com>
 
-With current upstream version, incase of overlapping metric events
-issue is, we always start our comparision logic from start.
-So, the events which already matched with some metric group also
-take part in comparision logic. Because of that when we have overlapping
-events, we end up matching current metric group event with already matched
-one.
+--FbunjY3XOg7TLNQEYAVrl68e0gK20Tj5W
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-For example, in skylake machine we have metric event CoreIPC and
-Instructions. Both of them need 'inst_retired.any' event value.
-As events in Instructions is subset of events in CoreIPC, they
-endup in pointing to same 'inst_retired.any' value.
+On 21. 01. 20 16:43, Masahiro Yamada wrote:
+> Hi.
+>=20
+> On Fri, Jan 17, 2020 at 5:03 PM Michal Simek <michal.simek@xilinx.com> =
+wrote:
+>>
+>> dma-continuguous.h is generic for all architectures except arm32 which=
+ has
+>> its own version.
+>=20
+>=20
+>=20
+> Currently, <asm/dma-contiguous.h> is present
+> for only architectures that select HAVE_DMA_CONTIGUOUS.
+>=20
+> After this commit, the other architectures will end
+> up with generating the unused header.
+>=20
+> That would not be a big deal, but
+> it could be mentioned in the commit message?
 
-In skylake platform:
+I have not a problem with mentioning it but not sure if this was done in
+past.
 
-command:# ./perf stat -M CoreIPC,Instructions  -C 0 sleep 1
+Thanks,
+Michal
 
- Performance counter stats for 'CPU(s) 0':
 
-     1,254,992,790      inst_retired.any          # 1254992790.0
-                                                    Instructions
-                                                  #      1.3 CoreIPC
-       977,172,805      cycles
-     1,254,992,756      inst_retired.any
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
 
-       1.000802596 seconds time elapsed
 
-command:# sudo ./perf stat -M UPI,IPC sleep 1
 
-   Performance counter stats for 'sleep 1':
+--FbunjY3XOg7TLNQEYAVrl68e0gK20Tj5W--
 
-           948,650      uops_retired.retire_slots
-           866,182      inst_retired.any          #      0.7 IPC
-           866,182      inst_retired.any
-         1,175,671      cpu_clk_unhalted.thread
+--2dbNcSDggiI5dxMnAV22UCPQ9muiAKI4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Patch fixes the issue by adding a new variable 'evlist_iter' in evlist
-itself to keep track of events which already matched with some group.
-It points to event in perf_evlist from where next match should start.
-Because we need to make sure, we match correct set of events belongs to
-corresponding metric group.
+-----BEGIN PGP SIGNATURE-----
 
-With this patch:
-In skylake platform:
+iF0EARECAB0WIQQbPNTMvXmYlBPRwx7KSWXLKUoMIQUCXifv/wAKCRDKSWXLKUoM
+IVUkAJ9gJ/92v49cM3s26jCgIZyQ1BDZJwCggrGUMIoHH0J6KEp9UuM3wHKXoAo=
+=zquH
+-----END PGP SIGNATURE-----
 
-command:# ./perf stat -M CoreIPC,Instructions  -C 0 sleep 1
-
- Performance counter stats for 'CPU(s) 0':
-
-       149,481,533      inst_retired.any          #      0.8 CoreIPC
-       186,244,218      cycles
-       149,479,362      inst_retired.any          # 149479362.0
-                                                        Instructions
-
-       1.001655885 seconds time elapsed
-
-command:# ./perf stat -M UPI,IPC sleep 1
- Performance counter stats for 'CPU(s) 0':
-
-        16,858,849      uops_retired.retire_slots #      1.3 UPI
-        12,529,178      inst_retired.any
-        12,529,558      inst_retired.any          #      0.3 IPC
-        39,936,071      cpu_clk_unhalted.thread
-
-       1.001413978 seconds time elapsed
-
-Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/util/evlist.h      |  1 +
- tools/perf/util/metricgroup.c | 14 +++++++++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
----
-Changelog:
-v1 -> v2
-- Rather then adding static variable in metricgroup.c,
-  add a new variable in evlist itself with name 'evlist_iter'
----
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index f5bd5c386df1..255f872aee92 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -54,6 +54,7 @@ struct evlist {
- 	bool		 enabled;
- 	int		 id_pos;
- 	int		 is_pos;
-+	int		 evlist_iter;
- 	u64		 combined_sample_type;
- 	enum bkw_mmap_state bkw_mmap_state;
- 	struct {
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 02aee946b6c1..911fab4ac04b 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -96,10 +96,13 @@ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
- 				      struct evsel **metric_events)
- {
- 	struct evsel *ev;
--	int i = 0;
-+	int i = 0, j = 0;
- 	bool leader_found;
- 
- 	evlist__for_each_entry (perf_evlist, ev) {
-+		j++;
-+		if (j <= perf_evlist->evlist_iter)
-+			continue;
- 		if (!strcmp(ev->name, ids[i])) {
- 			if (!metric_events[i])
- 				metric_events[i] = ev;
-@@ -147,6 +150,8 @@ static struct evsel *find_evsel_group(struct evlist *perf_evlist,
- 		}
- 	}
- 
-+	perf_evlist->evlist_iter = j;
-+
- 	return metric_events[0];
- }
- 
-@@ -161,6 +166,13 @@ static int metricgroup__setup_events(struct list_head *groups,
- 	struct egroup *eg;
- 	struct evsel *evsel;
- 
-+	/*
-+	 * Reset the evlist_iter. This is needed because
-+	 * when we start comparision logic in find_evsel_group(),
-+	 * need to start it from very first event present in evlist.
-+	 */
-+	perf_evlist->evlist_iter = 0;
-+
- 	list_for_each_entry (eg, groups, nd) {
- 		struct evsel **metric_events;
- 
--- 
-2.21.0
-
+--2dbNcSDggiI5dxMnAV22UCPQ9muiAKI4S--
