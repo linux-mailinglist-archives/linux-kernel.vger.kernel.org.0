@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B964F145960
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:08:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E27145962
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 17:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgAVQIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 11:08:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39528 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727893AbgAVQIP (ORCPT
+        id S1729028AbgAVQIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 11:08:23 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45641 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728916AbgAVQIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:08:15 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q10so54347pfs.6;
-        Wed, 22 Jan 2020 08:08:15 -0800 (PST)
+        Wed, 22 Jan 2020 11:08:16 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22so3184159pls.12;
+        Wed, 22 Jan 2020 08:08:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2FX8hkBQRIVKzLF6fak6RVFFu8mh4YpGVmgXJ4QJ8+A=;
-        b=BtjmCRcQGgLG13JNbyQcqvw1d7FncnhmmlfC7BrwLI9SgdarBtkD34Jd2dMzxApQBa
-         Lu5NLN23Kvn0jUjppIXAGI+ziK8vPs8aUi2os3EzZXhqgYCwuUfdyUDmTy8Vmii/CNVa
-         +y9QiGmYJzb9Bl1DZNxMQDmWQs9QgdCj2DSt2PCMZsDFJ9k1EbkoxQ1H9o+f0Pb0hiv1
-         DskLBrXzVdwE9nZ9sdzknvyqKLZxvGPpfQQd2wWMkjS5Ye2HzsoY0nqsINgjnAWXshOh
-         YXERG6SAaJjsN2fgt7+LJWkNAck0Ab7RyZiIXtW3J2csPXqTag7Ca3tOVlnwlzTFGtRM
-         QSJg==
+        bh=+A9ykUPfPxJXCw9WtHI2g/2sRcbbhg6dL7PEV6UBAQU=;
+        b=L6BEkR9P8vKY5SGcvcW0rJIeE5nVeTg9l/t24JYJJv3fTtJtF7++OSndbpK2efGded
+         OvlY8WFTiRlO4BU+tiav/ryaj/9nOmnn++hRfy1t+0tBv2TRYIczThgYC9pURYAmyssB
+         ldJWH/v4pAPg30nP9xqh/bLdZ+5uFJmxpfA4GyFHGbC/hPoTB+00tZUl9ufFB2Z70mrS
+         wy+U9KamEZGK6JSrcunqFjwpj4ct17kAR34Bbb62f1dZs3I0PA+ct0wLwbPMkjAcHrc2
+         dtkLX4vWROkBgrnVq2nHn6vQGX6wsCPwD1AIEfyftLeI2UCcRycB/F52WJa/gT3mwIKr
+         SJJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=2FX8hkBQRIVKzLF6fak6RVFFu8mh4YpGVmgXJ4QJ8+A=;
-        b=oD1NIMSD6nP/83f0ErPnwS5cU4ZY2tXiyusDaRS4cU7krgeSk3yt2gZysiPyeLxDze
-         q59t561ouxJWfdOBECIBNkJIlq2BG/dPFjaweHoZ9kL5PMoK6U7vzDhi41s6OXDhHMWp
-         ao+5flrMh3z+yQBio7uxaOpCJ3ZmvfdtnPhoPhMXTOqnf2WYr8bxACmCalfRLk33CRjM
-         kznEhsjqrv926pcJ8ApYNjsAWVwLoBr/nNw8RauPUeJ+8GWr9irj2Y72YVsuKCyakFn7
-         OGhPRAaWPxZQxgi9Kwi+EYo7gXXq8miED8T4rt2cPx7qgh4agX8lg1EzdUkqJiKPwQha
-         xqrg==
-X-Gm-Message-State: APjAAAUWKIy185gDpeZ422iLVkFO/dvRwIjaSobTqEbHZl9jwwdx5Vjv
-        CPbLDzGKLZpwJK3lq1hSaUtTdRoo
-X-Google-Smtp-Source: APXvYqzubpsOibWHX6h3gEkcxRlpMdFDFfMz5ojFlsp+mQPhITeIB/+oTr4V7DEDALhO18xls1oGDg==
-X-Received: by 2002:a63:63c3:: with SMTP id x186mr11883635pgb.294.1579709294552;
-        Wed, 22 Jan 2020 08:08:14 -0800 (PST)
+        bh=+A9ykUPfPxJXCw9WtHI2g/2sRcbbhg6dL7PEV6UBAQU=;
+        b=CkUTe0hBwbaQj+tS9jCEkfu/wdPlKox9dy+6dIOtggT5lpwAepOUp80L/bRxLdwm+0
+         muawNrcci948d4w/xVV35PGSTEKNvBchZAn9QWJRftLQhbRJIqKryacBCZOGROMXgJkW
+         lFE6wOorZB9OcHGsJd+SYGR/g7siUnF1HgBchB9WWfD8SIu/yMPK0ZzexavMdhNIH8gD
+         sYZmT0sc+pMp3sVBWdx+nQSjilmF7nvrpHR67Ko20mfXEOEGa3gl43YRgnEU9tRQyuqP
+         gt08shvNyantmjwyr/Bql6AAO6FRBGnPzCMaT7Yitbs0AXCX1KVpHT8gFGoacYrYvwWX
+         0iGg==
+X-Gm-Message-State: APjAAAWXNoXJvk3Jp9oN13wwK7i+K+dX7DLLQ6ULU/wyXP7yqe36XrVM
+        H+guKGryWUDkUIGVxOIfSyyNE1Pd
+X-Google-Smtp-Source: APXvYqxFnKCI2USSxZjJ1GD7zCIJh/usyDrJIhPq9giT+5vJVfgKGP2i7V0rNbr5RTKS7p0v3YNUzw==
+X-Received: by 2002:a17:90a:fb45:: with SMTP id iq5mr3811531pjb.93.1579709296038;
+        Wed, 22 Jan 2020 08:08:16 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d4sm3869191pjg.19.2020.01.22.08.08.13
+        by smtp.gmail.com with ESMTPSA id l21sm47637074pff.100.2020.01.22.08.08.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Jan 2020 08:08:14 -0800 (PST)
+        Wed, 22 Jan 2020 08:08:15 -0800 (PST)
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     linux-hwmon@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
@@ -58,9 +58,9 @@ Cc:     linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         Darren Salt <devspam@moreofthesa.me.uk>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v4 5/6] hwmon: (k10temp) Don't show temperature limits on Ryzen (Zen) CPUs
-Date:   Wed, 22 Jan 2020 08:07:59 -0800
-Message-Id: <20200122160800.12560-6-linux@roeck-us.net>
+Subject: [PATCH v4 6/6] hwmon: (k10temp) Add debugfs support
+Date:   Wed, 22 Jan 2020 08:08:00 -0800
+Message-Id: <20200122160800.12560-7-linux@roeck-us.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200122160800.12560-1-linux@roeck-us.net>
 References: <20200122160800.12560-1-linux@roeck-us.net>
@@ -69,35 +69,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The maximum Tdie or Tctl is not published for Ryzen CPUs. What is
-known, however, is that the traditional value of 70 degrees C is no
-longer correct. On top of that, the limit applies to Tctl, not to Tdie.
-Displaying it in either context is meaningless, confusing, and wrong.
-Stop doing it.
+Show thermal and SVI registers for Family 17h CPUs.
 
-Tested-by: Brad Campbell <lists2009@fnarfbargle.com>
-Tested-by: Holger Kiehl <holger.kiehl@dwd.de>
-Tested-by: Michael Larabel <michael@phoronix.com>
-Tested-by: Jonathan McDowell <noodles@earth.li>
-Tested-by: Ken Moffat <zarniwhoop73@googlemail.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/hwmon/k10temp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/k10temp.c | 78 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index b961e12c6f58..4a470b5195ee 100644
+index 4a470b5195ee..5e3f43594084 100644
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
-@@ -355,7 +355,7 @@ static umode_t k10temp_is_visible(const void *_data,
- 			}
- 			break;
- 		case hwmon_temp_max:
--			if (channel)
-+			if (channel || data->show_tdie)
- 				return 0;
- 			break;
- 		case hwmon_temp_crit:
+@@ -26,6 +26,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/hwmon.h>
+ #include <linux/init.h>
+@@ -442,6 +443,76 @@ static bool has_erratum_319(struct pci_dev *pdev)
+ 	       (boot_cpu_data.x86_model == 4 && boot_cpu_data.x86_stepping <= 2);
+ }
+ 
++#ifdef CONFIG_DEBUG_FS
++
++static void k10temp_smn_regs_show(struct seq_file *s, struct pci_dev *pdev,
++				  u32 addr, int count)
++{
++	u32 reg;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		if (!(i & 3))
++			seq_printf(s, "0x%06x: ", addr + i * 4);
++		amd_smn_read(amd_pci_dev_to_node_id(pdev), addr + i * 4, &reg);
++		seq_printf(s, "%08x ", reg);
++		if ((i & 3) == 3)
++			seq_puts(s, "\n");
++	}
++}
++
++static int svi_show(struct seq_file *s, void *unused)
++{
++	struct k10temp_data *data = s->private;
++
++	k10temp_smn_regs_show(s, data->pdev, F17H_M01H_SVI, 32);
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(svi);
++
++static int thm_show(struct seq_file *s, void *unused)
++{
++	struct k10temp_data *data = s->private;
++
++	k10temp_smn_regs_show(s, data->pdev,
++			      F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, 256);
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(thm);
++
++static void k10temp_debugfs_cleanup(void *ddir)
++{
++	debugfs_remove_recursive(ddir);
++}
++
++static void k10temp_init_debugfs(struct k10temp_data *data)
++{
++	struct dentry *debugfs;
++	char name[32];
++
++	/* Only show debugfs data for Family 17h/18h CPUs */
++	if (!data->show_tdie)
++		return;
++
++	scnprintf(name, sizeof(name), "k10temp-%s", pci_name(data->pdev));
++
++	debugfs = debugfs_create_dir(name, NULL);
++	if (debugfs) {
++		debugfs_create_file("svi", 0444, debugfs, data, &svi_fops);
++		debugfs_create_file("thm", 0444, debugfs, data, &thm_fops);
++		devm_add_action_or_reset(&data->pdev->dev,
++					 k10temp_debugfs_cleanup, debugfs);
++	}
++}
++
++#else
++
++static void k10temp_init_debugfs(struct k10temp_data *data)
++{
++}
++
++#endif
++
+ static const struct hwmon_channel_info *k10temp_info[] = {
+ 	HWMON_CHANNEL_INFO(temp,
+ 			   HWMON_T_INPUT | HWMON_T_MAX |
+@@ -553,7 +624,12 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "k10temp", data,
+ 							 &k10temp_chip_info,
+ 							 NULL);
+-	return PTR_ERR_OR_ZERO(hwmon_dev);
++	if (IS_ERR(hwmon_dev))
++		return PTR_ERR(hwmon_dev);
++
++	k10temp_init_debugfs(data);
++
++	return 0;
+ }
+ 
+ static const struct pci_device_id k10temp_id_table[] = {
 -- 
 2.17.1
 
