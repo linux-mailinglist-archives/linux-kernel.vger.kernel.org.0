@@ -2,74 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F095145440
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1849B145448
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 13:16:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbgAVMPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 07:15:47 -0500
-Received: from foss.arm.com ([217.140.110.172]:55698 "EHLO foss.arm.com"
+        id S1729337AbgAVMP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 07:15:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33218 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726204AbgAVMPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 07:15:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67B90328;
-        Wed, 22 Jan 2020 04:15:46 -0800 (PST)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 324543F52E;
-        Wed, 22 Jan 2020 04:15:45 -0800 (PST)
-Date:   Wed, 22 Jan 2020 12:15:38 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     arnd@arndb.de, jassisinghbrar@gmail.com, cristian.marussi@arm.com,
-        peng.fan@nxp.com, peter.hilber@opensynergy.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH V4] firmware: arm_scmi: Make scmi core independent of the
- transport type
-Message-ID: <20200122121538.GA31240@bogus>
-References: <20200121183818.GA11522@bogus>
- <a9ec58818b5e0c982810e74efe3f5f22b930ae40.1579660436.git.viresh.kumar@linaro.org>
+        id S1729299AbgAVMPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 07:15:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 550A8B259;
+        Wed, 22 Jan 2020 12:15:51 +0000 (UTC)
+Date:   Wed, 22 Jan 2020 13:15:49 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        bristot@redhat.com, jbaron@akamai.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, namit@vmware.com, hpa@zytor.com, luto@kernel.org,
+        ard.biesheuvel@linaro.org, live-patching@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 5/6] x86/ftrace: Use text_poke()
+In-Reply-To: <20200121161045.dhihqibnpyrk2lsu@treble>
+Message-ID: <alpine.LSU.2.21.2001221312030.15957@pobox.suse.cz>
+References: <20191015135634.GK2328@hirez.programming.kicks-ass.net> <alpine.LSU.2.21.1910151611000.13169@pobox.suse.cz> <88bab814-ea24-ece9-2bc0-7a1e10a62f12@redhat.com> <20191015153120.GA21580@linux-8ccs> <7e9c7dd1-809e-f130-26a3-3d3328477437@redhat.com>
+ <20191015182705.1aeec284@gandalf.local.home> <20191016074217.GL2328@hirez.programming.kicks-ass.net> <20191021150549.bitgqifqk2tbd3aj@treble> <20200120165039.6hohicj5o52gdghu@treble> <alpine.LSU.2.21.2001210922060.6036@pobox.suse.cz>
+ <20200121161045.dhihqibnpyrk2lsu@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9ec58818b5e0c982810e74efe3f5f22b930ae40.1579660436.git.viresh.kumar@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 08:06:23AM +0530, Viresh Kumar wrote:
-> The SCMI specification is fairly independent of the transport protocol,
-> which can be a simple mailbox (already implemented) or anything else.
-> The current Linux implementation however is very much dependent on the
-> mailbox transport layer.
->
-> This patch makes the SCMI core code (driver.c) independent of the
-> mailbox transport layer and moves all mailbox related code to a new
-> file: mailbox.c.
->
-> We can now implement more transport protocols to transport SCMI
-> messages.
->
-> The transport protocols just need to provide struct scmi_transport_ops,
-> with its version of the callbacks to enable exchange of SCMI messages.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> @Sudeep: It was my mistake that I didn't check if there is something
-> already queued for next release and you never told me as well earlier :)
->
+On Tue, 21 Jan 2020, Josh Poimboeuf wrote:
 
-No I didn't want to distract the discussion with that silly thing.
+> On Tue, Jan 21, 2020 at 09:35:28AM +0100, Miroslav Benes wrote:
+> > On Mon, 20 Jan 2020, Josh Poimboeuf wrote:
+> > 
+> > > On Mon, Oct 21, 2019 at 10:05:49AM -0500, Josh Poimboeuf wrote:
+> > > > On Wed, Oct 16, 2019 at 09:42:17AM +0200, Peter Zijlstra wrote:
+> > > > > > which are not compatible with livepatching. GCC upstream now has
+> > > > > > -flive-patching option, which disables all those interfering optimizations.
+> > > > > 
+> > > > > Which, IIRC, has a significant performance impact and should thus really
+> > > > > not be used...
+> > > > > 
+> > > > > If distros ship that crap, I'm going to laugh at them the next time they
+> > > > > want a single digit performance improvement because *important*.
+> > > > 
+> > > > I have a crazy plan to try to use objtool to detect function changes at
+> > > > a binary level, which would hopefully allow us to drop this flag.
+> > > > 
+> > > > But regardless, I wonder if we enabled this flag prematurely.  We still
+> > > > don't have a reasonable way to use it for creating source-based live
+> > > > patches upstream, and it should really be optional for CONFIG_LIVEPATCH,
+> > > > since kpatch-build doesn't need it.
+> > > 
+> > > I also just discovered that -flive-patching is responsible for all those
+> > > "unreachable instruction" objtool warnings which Randy has been
+> > > dutifully bugging me about over the last several months.  For some
+> > > reason it subtly breaks GCC implicit noreturn detection for local
+> > > functions.
+> > 
+> > Ugh, that is unfortunate. Have you reported it?
+> 
+> Not yet (but I plan to).
 
-> Can you please help me getting this tested, now that I have rebased it
-> as well :) ?
->
+My findings so far...
 
-Sure, I will give it a go on my Juno. Thanks for the rebase, makes it
-simpler.
+I bisected through GCC options which -flive-patching disables and 
+-fno-ipa-pure-const is the culprit. I got no warnings without the option 
+with my config.
 
---
-Regards,
-Sudeep
+Then I found out allmodconfig was ok even with -flive-patching. 
+CONFIG_GCOV is the difference. CONFIG_GCOV=y seems to make the warnings go 
+away here.
+
+/me goes staring
