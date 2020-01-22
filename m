@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5949F144F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52DCC144FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:42:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbgAVJgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:36:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52222 "EHLO mail.kernel.org"
+        id S2387788AbgAVJms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:42:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731268AbgAVJgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:36:39 -0500
+        id S2387777AbgAVJmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:42:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F169320704;
-        Wed, 22 Jan 2020 09:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA2ED2467B;
+        Wed, 22 Jan 2020 09:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579685799;
-        bh=CtDNPQM0JsyQC2PUySSifKGoLe1qIywQcUz1zW0SFdg=;
+        s=default; t=1579686165;
+        bh=qQTligRoMn1rcwW1M0BXrXltC+2WE7lvseXzLYSYWGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNhGtUITl9GCBZgvicUV04yug4v11CST2d9vLV9MZqEN/jQ3KXzztSbtWdXdH44rx
-         qc5t0Ngah1tcaUUFS1yyezCWwFjoq/PqBzabSEkwHUVYWJrBObT81vUc0BqMoLXfZg
-         Me2zkA/T4u0JOQ07WwJ5Z33kY8e1WtrRm2Cr/7xo=
+        b=wn+NkSyv7c+6vfJhsyokSJThThUqlmG/SEerQAhM/60INh07jBg8j9O1aI6cWFgBR
+         /f5Q7i2ZRUWQnYHFVnxSk9o+z9T5EAlkj2RaHvOH/xhGTXtm1106h4WjgeuBZN18K5
+         xuW3J3qAGYctoMHI7Y0MdiZ3sODRFTvSe/1RAKps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        RENARD Pierre-Francois <pfrenard@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 83/97] net/wan/fsl_ucc_hdlc: fix out of bounds write on array utdm_info
+Subject: [PATCH 4.19 071/103] net: usb: lan78xx: limit size of local TSO packets
 Date:   Wed, 22 Jan 2020 10:29:27 +0100
-Message-Id: <20200122092809.683512719@linuxfoundation.org>
+Message-Id: <20200122092814.032899084@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122092755.678349497@linuxfoundation.org>
-References: <20200122092755.678349497@linuxfoundation.org>
+In-Reply-To: <20200122092803.587683021@linuxfoundation.org>
+References: <20200122092803.587683021@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit ddf420390526ede3b9ff559ac89f58cb59d9db2f ]
+[ Upstream commit f8d7408a4d7f60f8b2df0f81decdc882dd9c20dc ]
 
-Array utdm_info is declared as an array of MAX_HDLC_NUM (4) elements
-however up to UCC_MAX_NUM (8) elements are potentially being written
-to it.  Currently we have an array out-of-bounds write error on the
-last 4 elements. Fix this by making utdm_info UCC_MAX_NUM elements in
-size.
+lan78xx_tx_bh() makes sure to not exceed MAX_SINGLE_PACKET_SIZE
+bytes in the aggregated packets it builds, but does
+nothing to prevent large GSO packets being submitted.
 
-Addresses-Coverity: ("Out-of-bounds write")
-Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Pierre-Francois reported various hangs when/if TSO is enabled.
+
+For localy generated packets, we can use netif_set_gso_max_size()
+to limit the size of TSO packets.
+
+Note that forwarded packets could still hit the issue,
+so a complete fix might require implementing .ndo_features_check
+for this driver, forcing a software segmentation if the size
+of the TSO packet exceeds MAX_SINGLE_PACKET_SIZE.
+
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: RENARD Pierre-Francois <pfrenard@gmail.com>
+Tested-by: RENARD Pierre-Francois <pfrenard@gmail.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Woojung Huh <woojung.huh@microchip.com>
+Cc: Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -77,7 +77,7 @@ static struct ucc_tdm_info utdm_primary_
- 	},
- };
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -3769,6 +3769,7 @@ static int lan78xx_probe(struct usb_inte
  
--static struct ucc_tdm_info utdm_info[MAX_HDLC_NUM];
-+static struct ucc_tdm_info utdm_info[UCC_MAX_NUM];
+ 	/* MTU range: 68 - 9000 */
+ 	netdev->max_mtu = MAX_SINGLE_PACKET_SIZE;
++	netif_set_gso_max_size(netdev, MAX_SINGLE_PACKET_SIZE - MAX_HEADER);
  
- static int uhdlc_init(struct ucc_hdlc_private *priv)
- {
+ 	dev->ep_blkin = (intf->cur_altsetting)->endpoint + 0;
+ 	dev->ep_blkout = (intf->cur_altsetting)->endpoint + 1;
 
 
