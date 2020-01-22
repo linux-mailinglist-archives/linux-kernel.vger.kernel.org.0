@@ -2,71 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D558F144E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A813144E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 10:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbgAVJRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 04:17:41 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726049AbgAVJRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:17:41 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AEB42BAE94895711F33B;
-        Wed, 22 Jan 2020 17:17:39 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 22 Jan 2020 17:17:32 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <jens.wiklander@linaro.org>, <Rijo-john.Thomas@amd.com>
-CC:     <yaohongbo@huawei.com>, <chenzhou10@huawei.com>,
-        <tee-dev@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-        <Devaraj.Rangasamy@amd.com>, <herbert@gondor.apana.org.au>,
-        <linux-crypto@vger.kernel.org>
-Subject: [PATCH RESEND -next] tee: amdtee: amdtee depends on CRYPTO_DEV_CCP_DD
-Date:   Wed, 22 Jan 2020 17:12:38 +0800
-Message-ID: <20200122091238.65484-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729199AbgAVJNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 04:13:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35663 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgAVJNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:13:00 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iuC4A-0001v2-FY; Wed, 22 Jan 2020 09:12:50 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: ufs: fix spelling mistake "initilized" -> "initialized"
+Date:   Wed, 22 Jan 2020 09:12:50 +0000
+Message-Id: <20200122091250.2777221-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CRYPTO_DEV_CCP_DD=m and AMDTEE=y, the following error is seen
-while building call.c or core.c
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/tee/amdtee/call.o: In function `handle_unload_ta':
-call.c:(.text+0x35f): undefined reference to `psp_tee_process_cmd'
-drivers/tee/amdtee/core.o: In function `amdtee_driver_init':
-core.c:(.init.text+0xf): undefined reference to `psp_check_tee_status
+There is a spelling mistake in a pr_err message. Fix it.
 
-Fix the config dependency for AMDTEE here.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 757cc3e9ff ("tee: add AMD-TEE driver")
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-Reviewed-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tee/amdtee/Kconfig | 2 +-
+ drivers/scsi/ufs/ufs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tee/amdtee/Kconfig b/drivers/tee/amdtee/Kconfig
-index 4e32b6413b41..191f9715fa9a 100644
---- a/drivers/tee/amdtee/Kconfig
-+++ b/drivers/tee/amdtee/Kconfig
-@@ -3,6 +3,6 @@
- config AMDTEE
- 	tristate "AMD-TEE"
- 	default m
--	depends on CRYPTO_DEV_SP_PSP
-+	depends on CRYPTO_DEV_SP_PSP && CRYPTO_DEV_CCP_DD
- 	help
- 	  This implements AMD's Trusted Execution Environment (TEE) driver.
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index dde2eb02f76f..cfe380348bf0 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -546,7 +546,7 @@ static inline bool ufs_is_valid_unit_desc_lun(struct ufs_dev_info *dev_info,
+ 		u8 lun)
+ {
+ 	if (!dev_info || !dev_info->max_lu_supported) {
+-		pr_err("Max General LU supported by UFS isn't initilized\n");
++		pr_err("Max General LU supported by UFS isn't initialized\n");
+ 		return false;
+ 	}
+ 
 -- 
-2.20.1
+2.24.0
 
