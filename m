@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F21F1455A2
+	by mail.lfdr.de (Postfix) with ESMTP id B125E1455A3
 	for <lists+linux-kernel@lfdr.de>; Wed, 22 Jan 2020 14:25:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbgAVNXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 Jan 2020 08:23:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        id S1730838AbgAVNX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 Jan 2020 08:23:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbgAVNXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Jan 2020 08:23:44 -0500
+        id S1730009AbgAVNXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Jan 2020 08:23:51 -0500
 Received: from localhost (unknown [84.241.205.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44EFB2467B;
-        Wed, 22 Jan 2020 13:23:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 056F72467B;
+        Wed, 22 Jan 2020 13:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579699423;
-        bh=Bw8ZGxJXZ1WFo1MtttC8xFlL7eSGqbHYNSdsB62/luU=;
+        s=default; t=1579699430;
+        bh=htLogQ1exQb6Tbgh6oLLzXYdn/pzCzc2t9ke4pJ0jzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mVqcjz2CoOwW0aSDzWo3tBqNH9vEeUE4sG8fGxixm08+mVFbeEhYOIgDm8Q8JKj2e
-         oVMoZ18E3mHBNpMsR4Lnmu+q6mN105+iQXF2hEqfWDDfz9npybnQuvBbWdbE65sojR
-         63l5cpsMZnOQssTN6DLyt4j4YKOeAM33HkCvJDII=
+        b=RJ/KP5AYCVfPCTyHmznibJOcveCSzO2OXntBeQ3ihkGsgUZ13ORnpDPXPx01uBKgc
+         BwJCVOr7ujdnW4ziZcQrHgaO+34/s2YgF1p3HVYQZ64vk+1Eg+SUZgxgqbmIPDB2cY
+         x1CFhtDKJdjeCQ7XlGMw8SCoAQF0N41h5FF4hGSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Alexander Lobakin <alobakin@dlink.ru>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 139/222] net: dsa: tag_qca: fix doubled Tx statistics
-Date:   Wed, 22 Jan 2020 10:28:45 +0100
-Message-Id: <20200122092843.689580438@linuxfoundation.org>
+Subject: [PATCH 5.4 141/222] net: hns: fix soft lockup when there is not enough memory
+Date:   Wed, 22 Jan 2020 10:28:47 +0100
+Message-Id: <20200122092843.829070021@linuxfoundation.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200122092833.339495161@linuxfoundation.org>
 References: <20200122092833.339495161@linuxfoundation.org>
@@ -45,37 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lobakin <alobakin@dlink.ru>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit bd5874da57edd001b35cf28ae737779498c16a56 ]
+[ Upstream commit 49edd6a2c456150870ddcef5b7ed11b21d849e13 ]
 
-DSA subsystem takes care of netdev statistics since commit 4ed70ce9f01c
-("net: dsa: Refactor transmit path to eliminate duplication"), so
-any accounting inside tagger callbacks is redundant and can lead to
-messing up the stats.
-This bug is present in Qualcomm tagger since day 0.
+When there is not enough memory and napi_alloc_skb() return NULL,
+the HNS driver will print error message, and than try again, if
+the memory is not enough for a while, huge error message and the
+retry operation will cause soft lockup.
 
-Fixes: cafdc45c949b ("net-next: dsa: add Qualcomm tag RX/TX handler")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+When napi_alloc_skb() return NULL because of no memory, we can
+get a warn_alloc() call trace, so this patch deletes the error
+message. We already use polling mode to handle irq, but the
+retry operation will render the polling weight inactive, this
+patch just return budget when the rx is not completed to avoid
+dead loop.
+
+Fixes: 36eedfde1a36 ("net: hns: Optimize hns_nic_common_poll for better performance")
+Fixes: b5996f11ea54 ("net: add Hisilicon Network Subsystem basic ethernet support")
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dsa/tag_qca.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/dsa/tag_qca.c
-+++ b/net/dsa/tag_qca.c
-@@ -33,9 +33,6 @@ static struct sk_buff *qca_tag_xmit(stru
- 	struct dsa_port *dp = dsa_slave_to_port(dev);
- 	u16 *phdr, hdr;
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -565,7 +565,6 @@ static int hns_nic_poll_rx_skb(struct hn
+ 	skb = *out_skb = napi_alloc_skb(&ring_data->napi,
+ 					HNS_RX_HEAD_SIZE);
+ 	if (unlikely(!skb)) {
+-		netdev_err(ndev, "alloc rx skb fail\n");
+ 		ring->stats.sw_err_cnt++;
+ 		return -ENOMEM;
+ 	}
+@@ -1056,7 +1055,6 @@ static int hns_nic_common_poll(struct na
+ 		container_of(napi, struct hns_nic_ring_data, napi);
+ 	struct hnae_ring *ring = ring_data->ring;
  
--	dev->stats.tx_packets++;
--	dev->stats.tx_bytes += skb->len;
--
- 	if (skb_cow_head(skb, 0) < 0)
- 		return NULL;
+-try_again:
+ 	clean_complete += ring_data->poll_one(
+ 				ring_data, budget - clean_complete,
+ 				ring_data->ex_process);
+@@ -1066,7 +1064,7 @@ try_again:
+ 			napi_complete(napi);
+ 			ring->q->handle->dev->ops->toggle_ring_irq(ring, 0);
+ 		} else {
+-			goto try_again;
++			return budget;
+ 		}
+ 	}
  
 
 
